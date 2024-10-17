@@ -26,54 +26,54 @@ import androidx.test.uiautomator.UiDevice
 /**
  * Default timeout.
  */
-val defaultTimeout: Long = 5.seconds
+public val defaultTimeout: Long = 5.seconds
 
 /**
  * Mock server ip address.
  */
-val mockServerUrl: String get() = device.exec("ip neigh").lines().first().split(" ").first()
+public val mockServerUrl: String get() = device.exec("ip neigh").lines().first().split(" ").first()
 
 /**
  * UIDevice property initialized by singleton [UiDevice.getInstance] method, for the running Instrumentation.
  */
-val device: UiDevice get() = UiDevice.getInstance(instrumentation)
+public val device: UiDevice get() = UiDevice.getInstance(instrumentation)
 
 /**
  * Application context.
  */
-val appContext: Context get() = InstrumentationRegistry.getInstrumentation().targetContext
+public val appContext: Context get() = InstrumentationRegistry.getInstrumentation().targetContext
 
 /**
  * Instrumentation context.
  */
-val testContext: Context get() = InstrumentationRegistry.getInstrumentation().context
+public val testContext: Context get() = InstrumentationRegistry.getInstrumentation().context
 
 /**
  * AssetManager for androidTest environment.
  */
-val testAssets: AssetManager = testContext.assets
+public val testAssets: AssetManager = testContext.assets
 
 /**
  * Test runner instrumentation.
  */
-val instrumentation: Instrumentation get() = InstrumentationRegistry.getInstrumentation()
+public val instrumentation: Instrumentation get() = InstrumentationRegistry.getInstrumentation()
 
 /**
  * Application resources.
  */
-val resources: Resources get() = appContext.resources
+public val resources: Resources get() = appContext.resources
 
 /**
  * Application package name.
  */
-val packageName: String get() = appContext.packageName.removeSuffix(".test")
+public val packageName: String get() = appContext.packageName.removeSuffix(".test")
 
 /**
  * Get name of the resource by id.
  */
-infix fun Resources.nameOf(viewId: Int): String = getResourceName(viewId)
+public infix fun Resources.nameOf(viewId: Int): String = getResourceName(viewId)
 
 /**
  * Get string value of the resource by id.
  */
-infix fun Context.stringOf(stringResId: Int) = getString(stringResId)
+public infix fun Context.stringOf(stringResId: Int): String = getString(stringResId)

@@ -26,33 +26,33 @@ import kotlin.reflect.KClass
 /**
  * BySelector extension function, which is getting the UIObject.
  */
-fun BySelector.findObject() : UiObject2 {
+public fun BySelector.findObject() : UiObject2 {
     return device.findObject(this)
 }
 
 /**
  * BySelector extension function, which is getting the UIObject.
  */
-fun BySelector.findObjects() : List<UiObject2> {
+public fun BySelector.findObjects() : List<UiObject2> {
     return device.findObjects(this)
 }
 
 /**
  * UIDevice extension function, which is getting the UIObject by utilizing the [byIdSelector] with id value.
  */
-infix fun UiDevice.findObjectById(viewId: Int): UiObject2 = findObject(By.displayId(viewId))
+public infix fun UiDevice.findObjectById(viewId: Int): UiObject2 = findObject(By.displayId(viewId))
 
 /**
  * UIDevice extension function, which is getting the UIObject by selecting the component with text value.
  */
-infix fun UiDevice.findObjectByText(text: String): UiObject2 = findObject(By.text(text))
+public infix fun UiDevice.findObjectByText(text: String): UiObject2 = findObject(By.text(text))
 
 /**
  * UIDevice extension function, which is getting the UIObject by selecting the component that contains text value.
  */
-infix fun UiDevice.findObjectByTextContains(text: String): UiObject2 = findObject(By.textContains(text))
+public infix fun UiDevice.findObjectByTextContains(text: String): UiObject2 = findObject(By.textContains(text))
 
 /**
  * UIDevice extension function, which is getting the UIObject by selecting the component with [KClass] type.
  */
-infix fun <K : View> UiDevice.findObjectByType(kClass: () -> KClass<K>): UiObject2 = findObject(By.clazz(kClass().java))
+public infix fun <K : View> UiDevice.findObjectByType(kClass: () -> KClass<K>): UiObject2 = findObject(By.clazz(kClass().java))

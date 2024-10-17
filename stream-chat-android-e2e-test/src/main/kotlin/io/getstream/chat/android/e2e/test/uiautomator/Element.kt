@@ -19,19 +19,19 @@ package io.getstream.chat.android.compose.uiautomator
 import androidx.test.uiautomator.BySelector
 import androidx.test.uiautomator.UiObject2
 
-fun BySelector.isEnabled(): Boolean {
+public fun BySelector.isEnabled(): Boolean {
     return this.findObject().isEnabled
 }
 
-fun BySelector.isChecked(): Boolean {
+public fun BySelector.isChecked(): Boolean {
     return this.findObject().isChecked
 }
 
-fun BySelector.isDisplayed(): Boolean {
+public fun BySelector.isDisplayed(): Boolean {
     return this.findObjects().isNotEmpty()
 }
 
-fun BySelector.scrollUpUntilDisplayed(scrolls: Int = 5) : UiObject2 {
+public fun BySelector.scrollUpUntilDisplayed(scrolls: Int = 5) : UiObject2 {
     var counter = scrolls
     while (!this.isDisplayed() && counter > 0) {
         device.swipeDown()
@@ -40,7 +40,7 @@ fun BySelector.scrollUpUntilDisplayed(scrolls: Int = 5) : UiObject2 {
     return this.findObject()
 }
 
-fun BySelector.scrollDownUntilDisplayed(scrolls: Int = 5) : UiObject2 {
+public fun BySelector.scrollDownUntilDisplayed(scrolls: Int = 5) : UiObject2 {
     var counter = scrolls
     while (!this.isDisplayed() && counter > 0) {
         device.swipeUp()

@@ -19,18 +19,18 @@ package io.getstream.chat.android.compose.uiautomator
 import android.graphics.Point
 import android.graphics.Rect
 
-fun Rect.bottomPoint(): Point {
+public fun Rect.bottomPoint(): Point {
     val x = right - ((right - left) / 2)
     val y = bottom
     return Point(x, y)
 }
 
-fun Rect.leftPoint(): Point {
+public fun Rect.leftPoint(): Point {
     val x = left
     val y = bottom - ((bottom - top) / 2)
     return Point(x, y)
 }
 
-fun Long.toSeconds(): Int = (this / 1000).toInt()
+public fun Long.toSeconds(): Int = (this / 1000).toInt()
 
-val Int.seconds: Long get() = (this * 1000).toLong()
+public val Int.seconds: Long get() = (this * 1000).toLong()

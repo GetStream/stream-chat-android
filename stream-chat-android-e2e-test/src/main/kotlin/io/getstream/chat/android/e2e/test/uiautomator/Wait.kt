@@ -20,15 +20,15 @@ import androidx.test.uiautomator.BySelector
 import androidx.test.uiautomator.UiObject2
 import androidx.test.uiautomator.Until
 
-fun sleep(timeOutMillis: Long = defaultTimeout) {
+public fun sleep(timeOutMillis: Long = defaultTimeout) {
     Thread.sleep(timeOutMillis)
 }
 
-fun BySelector.waitToAppear(timeOutMillis: Long = defaultTimeout) : UiObject2 {
+public fun BySelector.waitToAppear(timeOutMillis: Long = defaultTimeout) : UiObject2 {
     device.wait(Until.hasObject(this), timeOutMillis)
     return device.findObject(this)
 }
 
-fun BySelector.waitToDisappear(timeOutMillis: Long = defaultTimeout) {
+public fun BySelector.waitToDisappear(timeOutMillis: Long = defaultTimeout) {
     device.wait(Until.gone(this), timeOutMillis)
 }

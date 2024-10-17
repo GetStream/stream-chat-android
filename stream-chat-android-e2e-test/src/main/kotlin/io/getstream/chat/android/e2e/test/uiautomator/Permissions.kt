@@ -23,18 +23,18 @@ import androidx.test.uiautomator.UiDevice
 /**
  * Grant app permissions.
  */
-fun UiDevice.grantPermission(permission: String) =
+public fun UiDevice.grantPermission(permission: String): String =
     exec("pm grant $packageName $permission")
 
 /**
  * Revoke app permissions.
  */
-fun UiDevice.revokePermission(permission: String) =
+public fun UiDevice.revokePermission(permission: String): String =
     exec("pm revoke $packageName $permission")
 
 /**
  * Checking whether the permission is allowed.
  */
-fun UiDevice.isPermissionAllowed(permission: () -> String): Boolean {
+public fun UiDevice.isPermissionAllowed(permission: () -> String): Boolean {
     return ContextCompat.checkSelfPermission(appContext, permission()) == PermissionChecker.PERMISSION_GRANTED
 }

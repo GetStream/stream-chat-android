@@ -21,47 +21,9 @@ android {
 }
 
 dependencies {
-    api project(":stream-chat-android-ui-common")
-
-    // Kotlin
-    implementation Dependencies.kotlinReflect
-    implementation Dependencies.coroutinesCore
-    implementation Dependencies.coroutinesTest
-
-    // Google libs
-    implementation Dependencies.androidxActivityKtx
-    implementation Dependencies.androidxAnnotations
-    implementation Dependencies.androidxAppCompat
-    implementation Dependencies.workRuntimeKtx
-
-    // Tests
-    testImplementation Dependencies.moshiKotlin
-    testImplementation Dependencies.junitJupiterApi
-    testImplementation Dependencies.junitJupiterParams
-    testRuntimeOnly Dependencies.junitJupiterEngine
-    testRuntimeOnly Dependencies.junitVintageEngine
-
-    testImplementation Dependencies.androidxTest
-    testImplementation Dependencies.androidxTestJunit
-    testImplementation Dependencies.androidxArchCoreTest
-    testImplementation Dependencies.androidxRecyclerview // for performance test
-    testImplementation Dependencies.roomTesting
-    testImplementation Dependencies.workTesting
-
-    testImplementation Dependencies.robolectric
-
-    testImplementation Dependencies.kluent
-    testImplementation Dependencies.mockito
-    testImplementation Dependencies.mockitoKotlin
-    testImplementation Dependencies.turbine
-
-    // Instrumentation tests
-    androidTestImplementation Dependencies.androidxTestJunit
-    androidTestImplementation Dependencies.espressoCore
-    androidTestImplementation Dependencies.junit4
-    androidTestImplementation Dependencies.kluent
-    androidTestImplementation Dependencies.mockito
-    androidTestImplementation Dependencies.mockitoKotlin
+    implementation(Dependencies.androidxTest)
+    implementation(Dependencies.androidxUiAutomator)
+    implementation(Dependencies.androidxTestMonitor)
 
     detektPlugins(Dependencies.detektFormatting)
 }

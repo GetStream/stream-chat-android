@@ -140,12 +140,12 @@ dependencies {
     // Firebase
     implementation Dependencies.firebaseAnalytics
     implementation Dependencies.firebaseCrashlytics
-    implementation 'androidx.test:monitor:1.7.2'
 
-    // E2E Testing
+    // Instrumentation tests
     androidTestImplementation(Dependencies.androidxTestRunner)
     androidTestImplementation(Dependencies.androidxUiAutomator)
     androidTestImplementation(Dependencies.androidxTestJunitKtx)
+    androidTestImplementation(Dependencies.androidxTestMonitor)
     androidTestImplementation(Dependencies.allureKotlinModel)
     androidTestImplementation(Dependencies.allureKotlinJunit)
     androidTestImplementation(Dependencies.allureKotlinCommons)

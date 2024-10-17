@@ -19,38 +19,30 @@ package io.getstream.chat.android.compose.uiautomator
 import android.content.Intent
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
-import io.getstream.chat.android.e2e.test.SomeClass
 
-fun UiDevice.exec(command: String): String {
+public fun UiDevice.exec(command: String): String {
     return executeShellCommand(command)
 }
 
-fun UiDevice.startApp() {
-    // We can use code from "android-chat-android-e2e-test" module
-    SomeClass().someMethod()
-
-    // Proof of Concept #1
+public fun UiDevice.startApp() {
     val intent = testContext.packageManager.getLaunchIntentForPackage(packageName)
     intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-
-    // Proof of Concept #2
     intent?.putExtra("BASE_URL", "http://$mockServerUrl:4568")
-
     testContext.startActivity(intent)
 }
 
-fun UiObject2.typeText(text: String) : UiObject2 {
+public fun UiObject2.typeText(text: String) : UiObject2 {
     this.text = text
     return this
 }
 
-fun UiObject2.longPress(steps: Int = 100) {
+public fun UiObject2.longPress(steps: Int = 100) {
     val centerX = this.visibleBounds.centerX()
     val centerY = this.visibleBounds.centerY()
     device.swipe(centerX, centerY, centerX, centerY, steps)
 }
 
-fun UiDevice.swipeDown(steps: Int = 10, times: Int = 1) {
+public fun UiDevice.swipeDown(steps: Int = 10, times: Int = 1) {
     repeat(times) {
         val middleOfTheScreenHorizontally = displayWidth / 2
         val middleOfTheScreenVertically = displayHeight / 2
@@ -64,7 +56,7 @@ fun UiDevice.swipeDown(steps: Int = 10, times: Int = 1) {
     }
 }
 
-fun UiDevice.swipeUp(steps: Int = 10, times: Int = 1) {
+public fun UiDevice.swipeUp(steps: Int = 10, times: Int = 1) {
     repeat(times) {
         val middleOfTheScreenHorizontally = displayWidth / 2
         val middleOfTheScreenVertically = displayHeight / 2
