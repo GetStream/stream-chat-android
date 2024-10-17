@@ -62,7 +62,7 @@ internal fun DownstreamPollDto.toDomain(currentUserId: UserId?): Poll {
  *
  * @return Option
  */
-private fun DownstreamOptionDto.toDomain(): Option = Option(
+internal fun DownstreamOptionDto.toDomain(): Option = Option(
     id = id,
     text = text,
 )

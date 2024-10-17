@@ -25,6 +25,7 @@ import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
 
 /**
@@ -321,5 +322,17 @@ internal fun DeleteDeviceIdentifier(
 ): Int {
     var result = "DeleteDevice".hashCode()
     result = 31 * result + device.hashCode()
+    return result
+}
+
+/**
+ * Identifier for a [ChatClient.connectUser] call.
+ */
+@Suppress("FunctionName", "MagicNumber")
+internal fun ConnectUserIdentifier(
+    user: User,
+): Int {
+    var result = "ConnectUser".hashCode()
+    result = 31 * result + user.id.hashCode()
     return result
 }

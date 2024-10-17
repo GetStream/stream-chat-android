@@ -2216,6 +2216,12 @@ public class MessageListController(
         }
     }
 
+    public fun addPollOption(poll: Poll, option: String) {
+        scope.launch {
+            chatClient.suggestPollOption(poll.id, option).await()
+        }
+    }
+
     /**
      * A class designed for error event propagation.
      *
