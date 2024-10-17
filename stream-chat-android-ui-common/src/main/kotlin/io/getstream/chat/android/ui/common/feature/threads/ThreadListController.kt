@@ -37,25 +37,19 @@ import kotlinx.coroutines.launch
  * Controller responsible for managing the Threads list state. It serves as a central place for the state management and
  * business logic related to the Threads list.
  *
+ * @param threadLimit The number of threads to load per page.
+ * @param threadReplyLimit The number of replies per thread to load.
+ * @param threadParticipantLimit The number of participants per thread to load.
  * @param chatClient The [ChatClient] instance for retrieving the Threads related data.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @InternalStreamChatApi
 public class ThreadListController(
+    private val threadLimit: Int,
+    private val threadReplyLimit: Int,
+    private val threadParticipantLimit: Int,
     private val chatClient: ChatClient = ChatClient.instance(),
 ) {
-
-    private companion object {
-        private val INITIAL_STATE = ThreadListState(
-            threads = emptyList(),
-            isLoading = true,
-            isLoadingMore = false,
-            unseenThreadsCount = 0,
-        )
-        private const val QUERY_LIMIT = 25
-        private const val QUERY_REPLY_LIMIT = 10
-        private const val QUERY_PARTICIPANT_LIMIT = 10
-    }
 
     /**
      * Exposes the current thread list state.
@@ -66,9 +60,9 @@ public class ThreadListController(
 
     private val scope = CoroutineScope(DispatcherProvider.Main + SupervisorJob())
     private val query = QueryThreadsRequest(
-        limit = QUERY_LIMIT,
-        replyLimit = QUERY_REPLY_LIMIT,
-        participantLimit = QUERY_PARTICIPANT_LIMIT,
+        limit = threadLimit,
+        replyLimit = threadReplyLimit,
+        participantLimit = threadParticipantLimit,
         watch = true,
     )
     private val queryThreadsState = chatClient.queryThreadsAsState(
@@ -120,5 +114,32 @@ public class ThreadListController(
         }
         // Load next page only if the 'next' param exists
         return queryThreadsState.value?.next?.value != null
+    }
+
+    public companion object {
+        /**
+         * Default value for the thread limit.
+         */
+        @InternalStreamChatApi
+        public const val DEFAULT_THREAD_LIMIT: Int = 25
+
+        /**
+         * Default value for the thread reply limit.
+         */
+        @InternalStreamChatApi
+        public const val DEFAULT_THREAD_REPLY_LIMIT: Int = 10
+
+        /**
+         * Default value for the thread participant limit.
+         */
+        @InternalStreamChatApi
+        public const val DEFAULT_THREAD_PARTICIPANT_LIMIT: Int = 10
+
+        private val INITIAL_STATE = ThreadListState(
+            threads = emptyList(),
+            isLoading = true,
+            isLoadingMore = false,
+            unseenThreadsCount = 0,
+        )
     }
 }

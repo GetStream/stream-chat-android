@@ -3269,7 +3269,7 @@ internal constructor(
     @CheckResult
     @InternalStreamChatApi
     public fun queryThreadsResult(query: QueryThreadsRequest): Call<QueryThreadsResult> {
-        return queryThreadsInternal(query)
+        return api.queryThreads(query)
             .doOnStart(userScope) {
                 plugins.forEach { plugin ->
                     plugin.onQueryThreadsRequest(query)
@@ -3283,17 +3283,6 @@ internal constructor(
             .precondition(plugins) {
                 onQueryThreadsPrecondition(query)
             }
-    }
-
-    /**
-     * Queries the threads without applying side-effects.
-     *
-     * @param query The [QueryThreadsRequest] holding query parameters to be applied for the search.
-     */
-    @CheckResult
-    @InternalStreamChatApi
-    public fun queryThreadsInternal(query: QueryThreadsRequest): Call<QueryThreadsResult> {
-        return api.queryThreads(query)
     }
 
     /**
