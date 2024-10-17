@@ -17,6 +17,8 @@
 package io.getstream.chat.android.client.extensions.internal
 
 import io.getstream.chat.android.client.events.AnswerCastedEvent
+import io.getstream.chat.android.client.events.PollClosedEvent
+import io.getstream.chat.android.client.events.PollUpdatedEvent
 import io.getstream.chat.android.client.events.VoteCastedEvent
 import io.getstream.chat.android.client.events.VoteChangedEvent
 import io.getstream.chat.android.client.events.VoteRemovedEvent
@@ -78,5 +80,22 @@ public fun AnswerCastedEvent.processPoll(
     return poll.copy(
         answers = answers.values.toList(),
         ownVotes = oldPoll?.ownVotes ?: poll.ownVotes,
+    )
+}
+
+@InternalStreamChatApi
+public fun PollClosedEvent.processPoll(
+    getOldPoll: (String) -> Poll?,
+): Poll =
+    getOldPoll(poll.id)?.copy(closed = true) ?: poll
+
+@InternalStreamChatApi
+public fun PollUpdatedEvent.processPoll(
+    getOldPoll: (String) -> Poll?,
+): Poll {
+    val oldPoll = getOldPoll(poll.id)
+    return poll.copy(
+        ownVotes = oldPoll?.ownVotes ?: poll.ownVotes,
+        answers = oldPoll?.answers ?: poll.answers,
     )
 }
