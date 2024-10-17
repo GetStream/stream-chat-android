@@ -71,9 +71,10 @@ import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
  * @param onDismissRequest Handler for dismissing the dialog.
  * @param onBackPressed Handler for pressing a back button.
  */
+@Suppress("LongMethod")
 @Composable
 public fun PollMoreOptionsDialog(
-    selectedPoll: SelectedPoll?,
+    selectedPoll: SelectedPoll,
     listViewModel: MessageListViewModel,
     onDismissRequest: () -> Unit,
     onBackPressed: () -> Unit,
