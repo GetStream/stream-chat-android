@@ -275,14 +275,14 @@ private fun PollMessageContent(
             if (poll.answers.isNotEmpty()) {
                 item {
                     PollOptionButton(
-                        text = "View Answers",
+                        text = stringResource(R.string.stream_compose_view_answers),
                         onButtonClicked = { selectPoll.invoke(message, poll, PollSelectionType.ViewAnswers) },
                     )
                 }
             } else if (!poll.closed) {
                 item {
                     PollOptionButton(
-                        text = "Add Answer",
+                        text = stringResource(R.string.stream_compose_add_answer),
                         onButtonClicked = { showAddAnswerDialog.value = true },
                     )
                 }
