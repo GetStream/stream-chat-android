@@ -75,6 +75,7 @@ import io.getstream.chat.android.client.extensions.internal.addMember
 import io.getstream.chat.android.client.extensions.internal.addMembership
 import io.getstream.chat.android.client.extensions.internal.enrichIfNeeded
 import io.getstream.chat.android.client.extensions.internal.mergeReactions
+import io.getstream.chat.android.client.extensions.internal.processPoll
 import io.getstream.chat.android.client.extensions.internal.removeMember
 import io.getstream.chat.android.client.extensions.internal.removeMembership
 import io.getstream.chat.android.client.extensions.internal.updateMember
@@ -682,52 +683,10 @@ internal class EventHandlerSequential(
                 is PollClosedEvent -> batch.addPoll(event.poll)
                 is PollDeletedEvent -> batch.addPoll(event.poll)
                 is PollUpdatedEvent -> batch.addPoll(event.poll)
-                is VoteCastedEvent -> {
-                    val ownVotes =
-                        (
-                            batch.getPoll(event.poll.id)?.ownVotes?.associateBy { it.id }
-                                ?: emptyMap()
-                            ) +
-                            listOfNotNull(event.newVote.takeIf { it.user?.id == currentUserId }).associateBy { it.id }
-                    batch.addPoll(
-                        event.poll.copy(
-                            ownVotes = ownVotes.values.toList(),
-                        ),
-                    )
-                }
-                is VoteChangedEvent -> {
-                    val ownVotes = event.newVote.takeIf { it.user?.id == currentUserId }?.let { listOf(it) }
-                        ?: batch.getPoll(event.poll.id)?.ownVotes
-                    batch.addPoll(
-                        event.poll.copy(
-                            ownVotes = ownVotes ?: emptyList(),
-                        ),
-                    )
-                }
-                is VoteRemovedEvent -> {
-                    val ownVotes =
-                        (
-                            batch.getPoll(event.poll.id)?.ownVotes?.associateBy { it.id }
-                                ?: emptyMap()
-                            ) - event.removedVote.id
-                    batch.addPoll(
-                        event.poll.copy(
-                            ownVotes = ownVotes.values.toList(),
-                        ),
-                    )
-                }
-                is AnswerCastedEvent -> {
-                    val answers = (
-                        batch.getPoll(event.poll.id)?.answers
-                            ?.associateBy { it.id }
-                            ?: emptyMap()
-                        ) + (event.newAnswer.id to event.newAnswer)
-                    batch.addPoll(
-                        event.poll.copy(
-                            answers = answers.values.toList(),
-                        ),
-                    )
-                }
+                is VoteCastedEvent -> batch.addPoll(event.processPoll(currentUserId, batch::getPoll))
+                is VoteChangedEvent -> batch.addPoll(event.processPoll(currentUserId, batch::getPoll))
+                is VoteRemovedEvent -> batch.addPoll(event.processPoll(batch::getPoll))
+                is AnswerCastedEvent -> batch.addPoll(event.processPoll(batch::getPoll))
                 else -> Unit
             }
         }
