@@ -22,9 +22,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.state.extensions.queryThreadsAsState
 import io.getstream.chat.android.ui.common.state.threads.ThreadListState
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -58,7 +56,7 @@ public class ThreadListController(
     public val state: StateFlow<ThreadListState>
         get() = _state
 
-    private val scope = CoroutineScope(DispatcherProvider.Main + SupervisorJob())
+    private val scope = chatClient.inheritScope { DispatcherProvider.IO }
     private val query = QueryThreadsRequest(
         limit = threadLimit,
         replyLimit = threadReplyLimit,
