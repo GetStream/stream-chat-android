@@ -24,14 +24,28 @@ import io.getstream.chat.android.ui.common.feature.threads.ThreadListController
  * A ViewModel factory for creating a [ThreadListViewModel].
  *
  * @see ThreadListViewModel
+ *
+ * @param threadLimit The number of threads to load per page.
+ * @param threadReplyLimit The number of replies per thread to load.
+ * @param threadParticipantLimit The number of participants per thread to load.
  */
-internal class ThreadsViewModelFactory : ViewModelProvider.Factory {
+internal class ThreadsViewModelFactory(
+    private val threadLimit: Int = ThreadListController.DEFAULT_THREAD_LIMIT,
+    private val threadReplyLimit: Int = ThreadListController.DEFAULT_THREAD_REPLY_LIMIT,
+    private val threadParticipantLimit: Int = ThreadListController.DEFAULT_THREAD_PARTICIPANT_LIMIT,
+) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         require(modelClass == ThreadListViewModel::class.java) {
             "ThreadsViewModelFactory can only create instances of ThreadListViewModel"
         }
         @Suppress("UNCHECKED_CAST")
-        return ThreadListViewModel(controller = ThreadListController()) as T
+        return ThreadListViewModel(
+            controller = ThreadListController(
+                threadLimit = threadLimit,
+                threadReplyLimit = threadReplyLimit,
+                threadParticipantLimit = threadParticipantLimit,
+            ),
+        ) as T
     }
 }

@@ -54,7 +54,7 @@ internal class QueryThreadsLogic(private val stateLogic: QueryThreadsStateLogic)
             logger.d { errorMsg }
             return Result.Failure(Error.GenericError(errorMsg))
         }
-        return if (stateLogic.isLoadingMore() && isNextPageRequest(request)) {
+        return if (stateLogic.isLoadingMore() && request.isNextPageRequest()) {
             val errorMsg = "Already loading the next page of threads, ignoring all other next page requests."
             logger.d { errorMsg }
             Result.Failure(Error.GenericError(errorMsg))
@@ -70,7 +70,7 @@ internal class QueryThreadsLogic(private val stateLogic: QueryThreadsStateLogic)
      * @param request The [QueryThreadsRequest] used to fetch the threads.
      */
     internal fun onQueryThreadsRequest(request: QueryThreadsRequest) {
-        if (isNextPageRequest(request)) {
+        if (request.isNextPageRequest()) {
             stateLogic.setLoadingMore(true)
         } else {
             stateLogic.setLoading(true)
@@ -86,15 +86,11 @@ internal class QueryThreadsLogic(private val stateLogic: QueryThreadsStateLogic)
      * @param request The [QueryThreadsRequest] used to fetch the threads.
      */
     internal fun onQueryThreadsResult(result: Result<QueryThreadsResult>, request: QueryThreadsRequest) {
-        val isNextPageRequest = isNextPageRequest(request)
-        if (isNextPageRequest) {
-            stateLogic.setLoadingMore(false)
-        } else {
-            stateLogic.setLoading(false)
-        }
+        stateLogic.setLoadingMore(false)
+        stateLogic.setLoading(false)
         when (result) {
             is Result.Success -> {
-                if (isNextPageRequest) {
+                if (request.isNextPageRequest()) {
                     stateLogic.appendThreads(result.value.threads)
                 } else {
                     stateLogic.setThreads(result.value.threads)
@@ -129,7 +125,7 @@ internal class QueryThreadsLogic(private val stateLogic: QueryThreadsStateLogic)
         }
     }
 
-    private fun isNextPageRequest(request: QueryThreadsRequest) = request.next != null
+    private fun QueryThreadsRequest.isNextPageRequest() = this.next != null
 
     private fun addNewThreadMessage(event: NotificationThreadMessageNewEvent) {
         val threads = stateLogic.getThreads()

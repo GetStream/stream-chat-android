@@ -104,23 +104,22 @@ internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMuta
      */
     internal fun updateParent(parent: Message): Boolean {
         val oldThreads = getThreads()
-        val oldThread = oldThreads.find { it.parentMessageId == parent.id }
-        oldThread ?: return false // no matching parent message was found
-        val newThread = oldThread.copy(
-            parentMessage = parent,
-            deletedAt = parent.deletedAt,
-            updatedAt = parent.updatedAt,
-            replyCount = parent.replyCount,
-        )
+        var threadFound = false
         val newThreads = oldThreads.map {
-            if (it.parentMessageId == newThread.parentMessageId) {
-                newThread
+            if (it.parentMessageId == parent.id) {
+                threadFound = true
+                it.copy(
+                    parentMessage = parent,
+                    deletedAt = parent.deletedAt,
+                    updatedAt = parent.updatedAt,
+                    replyCount = parent.replyCount,
+                )
             } else {
                 it
             }
         }
         mutableState.setThreads(newThreads)
-        return true // matching parent message was found and updated
+        return threadFound
     }
 
     /**
@@ -130,33 +129,32 @@ internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMuta
      */
     internal fun upsertReply(reply: Message) {
         val oldThreads = getThreads()
-        val thread = oldThreads.find { it.parentMessageId == reply.parentId }
-        thread ?: return
-        val oldReplies = thread.latestReplies
-        val newReplies = if (oldReplies.any { it.id == reply.id }) {
-            // update
-            oldReplies.map {
-                if (it.id == reply.id) {
-                    reply
-                } else {
-                    it
+        val newThreads = oldThreads.map { thread ->
+            if (thread.parentMessageId == reply.parentId) {
+                val newReplies = upsertMessageInList(reply, thread.latestReplies)
+                val sortedNewReplies = newReplies.sortedBy {
+                    it.createdAt ?: it.createdLocallyAt
                 }
-            }
-        } else {
-            // insert
-            oldReplies + listOf(reply)
-        }
-        val sortedNewReplies = newReplies.sortedBy {
-            it.createdAt ?: it.createdLocallyAt
-        }
-        val newThread = thread.copy(latestReplies = sortedNewReplies)
-        val newThreads = oldThreads.map {
-            if (it.parentMessageId == newThread.parentMessageId) {
-                newThread
+                thread.copy(latestReplies = sortedNewReplies)
             } else {
-                it
+                thread
             }
         }
         mutableState.setThreads(newThreads)
+    }
+
+    private fun upsertMessageInList(newMessage: Message, messages: List<Message>): List<Message> {
+        // Insert
+        if (messages.none { it.id == newMessage.id }) {
+            return messages + listOf(newMessage)
+        }
+        // Update
+        return messages.map { message ->
+            if (message.id == newMessage.id) {
+                newMessage
+            } else {
+                message
+            }
+        }
     }
 }

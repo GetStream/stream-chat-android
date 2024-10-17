@@ -89,13 +89,11 @@ internal fun ThreadItem(
         thread.channel?.let { channel ->
             ThreadTitle(channel, currentUser)
         }
-        thread.parentMessage?.let { parentMessage ->
-            val unreadCount = unreadCountForUser(thread, currentUser)
-            ParentMessageContent(
-                parentMessage = parentMessage,
-                unreadCount = unreadCount,
-            )
-        }
+        val unreadCount = unreadCountForUser(thread, currentUser)
+        ParentMessageContent(
+            parentMessage = thread.parentMessage,
+            unreadCount = unreadCount,
+        )
         thread.latestReplies.lastOrNull()?.let { reply ->
             Spacer(modifier = Modifier.height(8.dp))
             LatestReplyContent(reply = reply)
@@ -200,7 +198,7 @@ private fun LatestReplyContent(reply: Message) {
 
 private fun unreadCountForUser(thread: Thread, user: User?) =
     thread.read
-        ?.find { it.user.id == user?.id }
+        .find { it.user.id == user?.id }
         ?.unreadMessages
         ?: 0
 
