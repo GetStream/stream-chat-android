@@ -65,6 +65,7 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
  * @param onGiphyActionClick Handler when the user taps on Giphy message actions.
  * @param onCastVote Handler for casting a vote on an option.
  * @param onClosePoll Handler for closing a poll.
+ * @param onPollUpdated Handler for updating a poll.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onUserAvatarClick Handler when users avatar is clicked.
  * @param onLinkClick Handler for clicking on a link in the message.
@@ -90,6 +91,7 @@ public fun MessageContainer(
     onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
     selectPoll: (Message, Poll, PollSelectionType) -> Unit = { _, _, _ -> },
     onClosePoll: (String) -> Unit = {},
+    onAddPollOption: (poll: Poll, option: String) -> Unit = { _, _ -> },
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onUserAvatarClick: ((User) -> Unit)? = null,
@@ -120,6 +122,7 @@ public fun MessageContainer(
             onRemoveVote = onRemoveVote,
             selectPoll = selectPoll,
             onClosePoll = onClosePoll,
+            onAddPollOption = onAddPollOption,
             onGiphyActionClick = onGiphyActionClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onQuotedMessageClick = onQuotedMessageClick,
@@ -282,6 +285,7 @@ internal fun DefaultMessageItem(
     onLinkClick: ((Message, String) -> Unit)? = null,
     onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
     onCastVote: (Message, Poll, Option) -> Unit,
+    onAddPollOption: (poll: Poll, option: String) -> Unit = { _, _ -> },
     onRemoveVote: (Message, Poll, Vote) -> Unit,
     selectPoll: (Message, Poll, PollSelectionType) -> Unit,
     onClosePoll: (String) -> Unit,
@@ -301,6 +305,7 @@ internal fun DefaultMessageItem(
         onRemoveVote = onRemoveVote,
         selectPoll = selectPoll,
         onClosePoll = onClosePoll,
+        onAddPollOption = onAddPollOption,
         onGiphyActionClick = onGiphyActionClick,
         onQuotedMessageClick = onQuotedMessageClick,
         onUserAvatarClick = onUserAvatarClick,

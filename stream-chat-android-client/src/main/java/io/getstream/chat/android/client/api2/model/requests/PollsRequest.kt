@@ -57,6 +57,16 @@ internal data class PollRequest(
 }
 
 /**
+ * Used for suggesting a new option for a poll.
+ *
+ * @property poll_option the option object.
+ */
+@JsonClass(generateAdapter = true)
+internal data class SuggestPollOptionRequest(
+    val text: String,
+)
+
+/**
  * Used for voting on a poll.
  *
  * @property vote the vote object.

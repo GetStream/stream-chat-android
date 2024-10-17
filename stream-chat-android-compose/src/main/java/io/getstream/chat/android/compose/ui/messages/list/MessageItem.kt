@@ -111,6 +111,7 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
  * @param onCastVote Handler for casting a vote on an option.
  * @param onMoreOption Handler for seeing more options.
  * @param onClosePoll Handler for closing a poll.
+ * @param onAddPollOption Handler for adding a poll option.
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onUserAvatarClick Handler when users avatar is clicked.
@@ -142,6 +143,7 @@ public fun MessageItem(
     onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
     selectPoll: (Message, Poll, PollSelectionType) -> Unit = { _, _, _ -> },
     onClosePoll: (String) -> Unit = {},
+    onAddPollOption: (poll: Poll, option: String) -> Unit = { _, _ -> },
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onUserAvatarClick: (() -> Unit)? = null,
@@ -175,6 +177,7 @@ public fun MessageItem(
             onRemoveVote = onRemoveVote,
             selectPoll = selectPoll,
             onClosePoll = onClosePoll,
+            onAddPollOption = onAddPollOption,
         )
     },
     footerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
@@ -434,6 +437,7 @@ internal fun DefaultMessageItemTrailingContent(
  * @param onCastVote Handler when a user cast a vote on an option.
  * @param onRemoveVote Handler when a user cast a remove on an option.
  * @param onClosePoll Handler when a user close a poll.
+ * @param onAddPollOption Handler when a user add a poll option.
  */
 @Suppress("LongParameterList")
 @Composable
@@ -450,6 +454,7 @@ internal fun DefaultMessageItemCenterContent(
     onRemoveVote: (Message, Poll, Vote) -> Unit,
     selectPoll: (Message, Poll, PollSelectionType) -> Unit,
     onClosePoll: (String) -> Unit,
+    onAddPollOption: (poll: Poll, option: String) -> Unit,
 ) {
     val modifier = Modifier.widthIn(max = ChatTheme.dimens.messageItemMaxWidth)
     if (messageItem.message.isPoll()) {
@@ -467,6 +472,7 @@ internal fun DefaultMessageItemCenterContent(
             onRemoveVote = onRemoveVote,
             selectPoll = selectPoll,
             onClosePoll = onClosePoll,
+            onAddPollOption = onAddPollOption,
             onLongItemClick = onLongItemClick,
         )
     } else if (messageItem.message.isEmojiOnlyWithoutBubble()) {

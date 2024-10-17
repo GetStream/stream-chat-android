@@ -24,15 +24,19 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.widget.ImageView
+import coil.ImageLoader
 import coil.drawable.MovieDrawable
 import coil.drawable.ScaleDrawable
+import coil.imageLoader
 import coil.load
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.common.disposable.CoilDisposable
 import io.getstream.chat.android.ui.common.disposable.Disposable
+import io.getstream.chat.android.ui.common.helper.DefaultImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.DefaultImageHeadersProvider
+import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.ui.common.images.internal.StreamCoil.streamImageLoader
 import kotlinx.coroutines.withContext
@@ -41,6 +45,7 @@ import okhttp3.Headers.Companion.toHeaders
 internal object CoilStreamImageLoader : StreamImageLoader {
 
     override var imageHeadersProvider: ImageHeadersProvider = DefaultImageHeadersProvider
+    override var imageAssetTransformer: ImageAssetTransformer = DefaultImageAssetTransformer
 
     override suspend fun loadAsBitmap(
         context: Context,
@@ -48,10 +53,11 @@ internal object CoilStreamImageLoader : StreamImageLoader {
         transformation: StreamImageLoader.ImageTransformation,
     ): Bitmap? = withContext(DispatcherProvider.IO) {
         url.takeUnless(String::isBlank)
-            ?.let { url ->
+            .transformedAsset()
+            ?.let { asset ->
                 val imageResult = context.streamImageLoader.execute(
                     ImageRequest.Builder(context)
-                        .headers(imageHeadersProvider.getImageRequestHeaders(url).toHeaders())
+                        .headers(imageHeadersProvider.getImageRequestHeaders(asset.toString()).toHeaders())
                         .data(url)
                         .applyTransformation(transformation)
                         .build(),
@@ -69,11 +75,7 @@ internal object CoilStreamImageLoader : StreamImageLoader {
         onComplete: () -> Unit,
     ): Disposable {
         val context = target.context
-        val disposable = target.load(data, context.streamImageLoader) {
-            data?.toString()?.let { url ->
-                headers(imageHeadersProvider.getImageRequestHeaders(url).toHeaders())
-            }
-
+        val disposable = target.loadDisposables(data, context.streamImageLoader) {
             if (placeholderResId != null) {
                 placeholder(placeholderResId)
                 fallback(placeholderResId)
@@ -101,11 +103,7 @@ internal object CoilStreamImageLoader : StreamImageLoader {
         onComplete: () -> Unit,
     ): Disposable {
         val context = target.context
-        val disposable = target.load(data, context.streamImageLoader) {
-            data?.toString()?.let { url ->
-                headers(imageHeadersProvider.getImageRequestHeaders(url).toHeaders())
-            }
-
+        val disposable = target.loadDisposables(data, context.streamImageLoader) {
             if (placeholderDrawable != null) {
                 placeholder(placeholderDrawable)
                 fallback(placeholderDrawable)
@@ -146,7 +144,8 @@ internal object CoilStreamImageLoader : StreamImageLoader {
         val context = target.context
 
         val drawable = withContext(DispatcherProvider.IO) {
-            val headersMap = data?.toString()?.let { url ->
+            val asset = data.transformedAsset()
+            val headersMap = asset?.toString()?.let { url ->
                 imageHeadersProvider.getImageRequestHeaders(url)
             } ?: emptyMap()
             val result = context.streamImageLoader.execute(
@@ -155,7 +154,7 @@ internal object CoilStreamImageLoader : StreamImageLoader {
                     .placeholder(placeholderDrawable)
                     .fallback(placeholderDrawable)
                     .error(placeholderDrawable)
-                    .data(data)
+                    .data(asset)
                     .listener(
                         onStart = { onStart() },
                         onCancel = { onComplete() },
@@ -189,11 +188,7 @@ internal object CoilStreamImageLoader : StreamImageLoader {
         onComplete: () -> Unit,
     ): Disposable {
         val context = target.context
-        val disposable = target.load(uri, context.streamImageLoader) {
-            uri?.toString()?.let { url ->
-                headers(imageHeadersProvider.getImageRequestHeaders(url).toHeaders())
-            }
-
+        val disposable = target.loadDisposables(uri, context.streamImageLoader) {
             if (placeholderResId != null) {
                 placeholder(placeholderResId)
                 fallback(placeholderResId)
@@ -211,6 +206,25 @@ internal object CoilStreamImageLoader : StreamImageLoader {
 
         return CoilDisposable(disposable)
     }
+
+    private fun ImageView.loadDisposables(
+        data: Any?,
+        imageLoader: ImageLoader = context.imageLoader,
+        builder: ImageRequest.Builder.() -> Unit = {},
+    ): coil.request.Disposable {
+        val asset = data.transformedAsset()
+        return this.load(
+            asset,
+            imageLoader,
+        ) {
+            asset?.toString()?.let { url ->
+                headers(imageHeadersProvider.getImageRequestHeaders(url).toHeaders())
+            }
+            builder()
+        }
+    }
+
+    private fun Any?.transformedAsset(): Any? = this?.let(imageAssetTransformer::transform)
 
     private fun ImageRequest.Builder.applyTransformation(
         transformation: StreamImageLoader.ImageTransformation,

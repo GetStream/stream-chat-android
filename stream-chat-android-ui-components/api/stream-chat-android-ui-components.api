@@ -9,6 +9,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final fun getDateFormatter ()Lio/getstream/chat/android/ui/common/helper/DateFormatter;
 	public static final fun getDecoratorProviderFactory ()Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/DecoratorProviderFactory;
 	public static final fun getFonts ()Lio/getstream/chat/android/ui/font/ChatFonts;
+	public static final fun getImageAssetTransformer ()Lio/getstream/chat/android/ui/common/helper/ImageAssetTransformer;
 	public static final fun getImageHeadersProvider ()Lio/getstream/chat/android/ui/common/helper/ImageHeadersProvider;
 	public static final fun getMessagePreviewFormatter ()Lio/getstream/chat/android/ui/helper/MessagePreviewFormatter;
 	public static final fun getMessageTextTransformer ()Lio/getstream/chat/android/ui/helper/transformer/ChatMessageTextTransformer;
@@ -30,6 +31,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final fun setDateFormatter (Lio/getstream/chat/android/ui/common/helper/DateFormatter;)V
 	public static final fun setDecoratorProviderFactory (Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/DecoratorProviderFactory;)V
 	public static final fun setFonts (Lio/getstream/chat/android/ui/font/ChatFonts;)V
+	public static final fun setImageAssetTransformer (Lio/getstream/chat/android/ui/common/helper/ImageAssetTransformer;)V
 	public static final fun setImageHeadersProvider (Lio/getstream/chat/android/ui/common/helper/ImageHeadersProvider;)V
 	public static final fun setMessagePreviewFormatter (Lio/getstream/chat/android/ui/helper/MessagePreviewFormatter;)V
 	public static final fun setMessageTextTransformer (Lio/getstream/chat/android/ui/helper/transformer/ChatMessageTextTransformer;)V
@@ -3956,15 +3958,15 @@ public final class io/getstream/chat/android/ui/initializer/ChatUIInitializer : 
 
 public final class io/getstream/chat/android/ui/model/MessageListItemWrapper {
 	public fun <init> ()V
-	public fun <init> (Ljava/util/List;ZZZZ)V
-	public synthetic fun <init> (Ljava/util/List;ZZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/util/List;ZZZZLio/getstream/chat/android/ui/common/state/messages/list/NewMessageState;)V
+	public synthetic fun <init> (Ljava/util/List;ZZZZLio/getstream/chat/android/ui/common/state/messages/list/NewMessageState;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/List;
 	public final fun component2 ()Z
 	public final fun component3 ()Z
 	public final fun component4 ()Z
 	public final fun component5 ()Z
-	public final fun copy (Ljava/util/List;ZZZZ)Lio/getstream/chat/android/ui/model/MessageListItemWrapper;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/model/MessageListItemWrapper;Ljava/util/List;ZZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/model/MessageListItemWrapper;
+	public final fun copy (Ljava/util/List;ZZZZLio/getstream/chat/android/ui/common/state/messages/list/NewMessageState;)Lio/getstream/chat/android/ui/model/MessageListItemWrapper;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/model/MessageListItemWrapper;Ljava/util/List;ZZZZLio/getstream/chat/android/ui/common/state/messages/list/NewMessageState;ILjava/lang/Object;)Lio/getstream/chat/android/ui/model/MessageListItemWrapper;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAreNewestMessagesLoaded ()Z
 	public final fun getHasNewMessages ()Z
@@ -4044,7 +4046,8 @@ public final class io/getstream/chat/android/ui/utils/extensions/MessageListItem
 }
 
 public final class io/getstream/chat/android/ui/utils/extensions/MessageListStateKt {
-	public static final fun toMessageListItemWrapper (Lio/getstream/chat/android/ui/common/state/messages/list/MessageListState;Z)Lio/getstream/chat/android/ui/model/MessageListItemWrapper;
+	public static final fun toMessageListItemWrapper (Lio/getstream/chat/android/ui/common/state/messages/list/MessageListState;ZLio/getstream/chat/android/ui/common/state/messages/list/NewMessageState;)Lio/getstream/chat/android/ui/model/MessageListItemWrapper;
+	public static synthetic fun toMessageListItemWrapper$default (Lio/getstream/chat/android/ui/common/state/messages/list/MessageListState;ZLio/getstream/chat/android/ui/common/state/messages/list/NewMessageState;ILjava/lang/Object;)Lio/getstream/chat/android/ui/model/MessageListItemWrapper;
 }
 
 public final class io/getstream/chat/android/ui/utils/extensions/UserKt {
@@ -4726,11 +4729,15 @@ public abstract class io/getstream/chat/android/ui/viewmodel/messages/MessageLis
 
 public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$State$Loading : io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$State {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$State$Loading;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$State$NavigateUp : io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$State {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$State$NavigateUp;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 

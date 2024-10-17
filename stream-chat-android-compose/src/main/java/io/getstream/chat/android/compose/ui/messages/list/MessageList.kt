@@ -129,6 +129,9 @@ public fun MessageList(
     onClosePoll: (String) -> Unit = { pollId ->
         viewModel.closePoll(pollId = pollId)
     },
+    onAddPollOption: (poll: Poll, option: String) -> Unit = { poll, option ->
+        viewModel.addPollOption(poll, option)
+    },
     onQuotedMessageClick: (Message) -> Unit = { message ->
         viewModel.scrollToMessage(
             messageId = message.id,
@@ -168,6 +171,7 @@ public fun MessageList(
             selectPoll = selectPoll,
             onPollUpdated = onPollUpdated,
             onClosePoll = onClosePoll,
+            onAddPollOption = onAddPollOption,
             onThreadClick = onThreadClick,
             onLongItemClick = onLongItemClick,
             onReactionsClick = onReactionsClick,
@@ -238,6 +242,7 @@ internal fun DefaultMessageContainer(
     onRemoveVote: (Message, Poll, Vote) -> Unit,
     selectPoll: (Message, Poll, PollSelectionType) -> Unit,
     onClosePoll: (String) -> Unit = { _ -> },
+    onAddPollOption: (poll: Poll, option: String) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
     onUserAvatarClick: ((User) -> Unit)? = null,
     onLinkClick: ((Message, String) -> Unit)? = null,
@@ -255,6 +260,7 @@ internal fun DefaultMessageContainer(
         onRemoveVote = onRemoveVote,
         selectPoll = selectPoll,
         onClosePoll = onClosePoll,
+        onAddPollOption = onAddPollOption,
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         onQuotedMessageClick = onQuotedMessageClick,
         onUserAvatarClick = onUserAvatarClick,
@@ -344,6 +350,7 @@ public fun MessageList(
     onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
     selectPoll: (Message, Poll, PollSelectionType) -> Unit = { _, _, _ -> },
     onClosePoll: (String) -> Unit = { _ -> },
+    onAddPollOption: (poll: Poll, option: String) -> Unit = { _, _ -> },
     onThreadClick: (Message) -> Unit = {},
     onLongItemClick: (Message) -> Unit = {},
     onReactionsClick: (Message) -> Unit = {},
@@ -377,6 +384,7 @@ public fun MessageList(
             onRemoveVote = onRemoveVote,
             selectPoll = selectPoll,
             onClosePoll = onClosePoll,
+            onAddPollOption = onAddPollOption,
             onLongItemClick = onLongItemClick,
             onThreadClick = onThreadClick,
             onReactionsClick = onReactionsClick,

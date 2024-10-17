@@ -20,8 +20,10 @@ import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api2.model.requests.PollRequest
 import io.getstream.chat.android.client.api2.model.requests.PollUpdateRequest
 import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
+import io.getstream.chat.android.client.api2.model.requests.SuggestPollOptionRequest
 import io.getstream.chat.android.client.api2.model.response.PollResponse
 import io.getstream.chat.android.client.api2.model.response.PollVoteResponse
+import io.getstream.chat.android.client.api2.model.response.SuggestPollOptionResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -41,6 +43,20 @@ internal interface PollsApi {
      */
     @POST("/polls")
     fun createPoll(@Body pollRequest: PollRequest): RetrofitCall<PollResponse>
+
+    /**
+     * Suggest a new option for a poll.
+     *
+     * @param pollId The poll ID.
+     * @param suggestPollOptionRequest The suggest poll option request.
+     *
+     * @return The suggest poll option response.
+     */
+    @POST("/polls/{poll_id}/options")
+    fun suggestPollOption(
+        @Path("poll_id") pollId: String,
+        @Body suggestPollOptionRequest: SuggestPollOptionRequest,
+    ): RetrofitCall<SuggestPollOptionResponse>
 
     /**
      * Casts a vote on a poll.

@@ -53,7 +53,9 @@ import io.getstream.chat.android.compose.ui.util.ReactionIconFactory
 import io.getstream.chat.android.compose.ui.util.SearchResultNameFormatter
 import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoaderFactory
 import io.getstream.chat.android.ui.common.helper.DateFormatter
+import io.getstream.chat.android.ui.common.helper.DefaultImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.DefaultImageHeadersProvider
+import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.ui.common.helper.TimeProvider
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
@@ -127,6 +129,9 @@ private val LocalSearchResultNameFormatter = compositionLocalOf<SearchResultName
 }
 private val LocalStreamImageHeadersProvider = compositionLocalOf<ImageHeadersProvider> {
     error("No ImageHeadersProvider provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+private val LocalStreamImageAssetTransformer = compositionLocalOf<ImageAssetTransformer> {
+    error("No ImageAssetTransformer provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 private val LocalMessageAlignmentProvider = compositionLocalOf<MessageAlignmentProvider> {
     error("No MessageAlignmentProvider provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
@@ -222,6 +227,7 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param channelNameFormatter [ChannelNameFormatter] Used throughout the app for channel names.
  * @param messagePreviewFormatter [MessagePreviewFormatter] Used to generate a string preview for the given message.
  * @param imageLoaderFactory A factory that creates new Coil [ImageLoader] instances.
+ * @param imageAssetTransformer [ImageAssetTransformer] Used to transform image assets.
  * @param imageHeadersProvider [ImageHeadersProvider] Used to provide headers for image requests.
  * @param messageAlignmentProvider [MessageAlignmentProvider] Used to provide message alignment for the given message.
  * @param messageOptionsTheme [MessageOptionsTheme] Theme for the message option list in the selected message menu.
@@ -273,6 +279,7 @@ public fun ChatTheme(
     searchResultNameFormatter: SearchResultNameFormatter = SearchResultNameFormatter.defaultFormatter(),
     imageLoaderFactory: StreamCoilImageLoaderFactory = StreamCoilImageLoaderFactory.defaultFactory(),
     imageHeadersProvider: ImageHeadersProvider = DefaultImageHeadersProvider,
+    imageAssetTransformer: ImageAssetTransformer = DefaultImageAssetTransformer,
     messageAlignmentProvider: MessageAlignmentProvider = MessageAlignmentProvider.defaultMessageAlignmentProvider(),
     messageOptionsTheme: MessageOptionsTheme = MessageOptionsTheme.defaultTheme(),
     messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment = MessageOptionsUserReactionAlignment.END,
@@ -361,6 +368,7 @@ public fun ChatTheme(
         LocalAttachmentPickerTheme provides attachmentPickerTheme,
         LocalStreamImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current.applicationContext),
         LocalStreamImageHeadersProvider provides imageHeadersProvider,
+        LocalStreamImageAssetTransformer provides imageAssetTransformer,
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
         LocalMessageOptionsTheme provides messageOptionsTheme,
         LocalMessageOptionsUserReactionAlignment provides messageOptionsUserReactionAlignment,
@@ -640,10 +648,21 @@ public object ChatTheme {
         @ReadOnlyComposable
         get() = LocalAttachmentPickerTheme.current
 
+    /**
+     * Retrieves the current [ImageHeadersProvider] at the call site's position in the hierarchy.
+     */
     public val streamImageHeadersProvider: ImageHeadersProvider
         @Composable
         @ReadOnlyComposable
         get() = LocalStreamImageHeadersProvider.current
+
+    /**
+     * Retrieves the current [ImageAssetTransformer] at the call site's position in the hierarchy.
+     */
+    public val streamImageAssetTransformer: ImageAssetTransformer
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalStreamImageAssetTransformer.current
 
     /**
      * Retrieves the current [autoTranslationEnabled] value at the call site's position in the hierarchy.

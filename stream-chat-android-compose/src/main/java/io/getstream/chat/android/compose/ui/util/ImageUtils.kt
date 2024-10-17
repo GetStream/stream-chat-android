@@ -42,6 +42,7 @@ import com.skydoves.landscapist.components.rememberImageComponent
 import com.skydoves.landscapist.plugins.ImagePlugin
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.uiutils.util.adjustColorBrightness
 import kotlin.math.abs
@@ -161,7 +162,9 @@ public fun StreamImage(
     failure: @Composable (BoxScope.(imageState: CoilImageState.Failure) -> Unit)? = null,
 ) {
     CoilImage(
-        imageRequest = imageRequest.provideHeaders(LocalContext.current, ChatTheme.streamImageHeadersProvider),
+        imageRequest = imageRequest
+            .convertUrl(LocalContext.current, ChatTheme.streamImageAssetTransformer)
+            .provideHeaders(LocalContext.current, ChatTheme.streamImageHeadersProvider),
         imageLoader = { LocalStreamImageLoader.current },
         modifier = modifier,
         component = component,
@@ -258,7 +261,9 @@ public fun rememberStreamImagePainter(
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
 ): AsyncImagePainter {
     return rememberAsyncImagePainter(
-        model = model.provideHeaders(LocalContext.current, ChatTheme.streamImageHeadersProvider),
+        model = model
+            .convertUrl(LocalContext.current, ChatTheme.streamImageAssetTransformer)
+            .provideHeaders(LocalContext.current, ChatTheme.streamImageHeadersProvider),
         imageLoader = LocalStreamImageLoader.current,
         placeholder = placeholderPainter,
         error = errorPainter,
@@ -269,6 +274,20 @@ public fun rememberStreamImagePainter(
         onLoading = onLoading,
         filterQuality = filterQuality,
     )
+}
+
+private fun (() -> ImageRequest).convertUrl(
+    context: Context,
+    imageAssetTransformer: ImageAssetTransformer,
+): () -> ImageRequest = { this().convertUrl(context, imageAssetTransformer) }
+
+private fun ImageRequest.convertUrl(
+    context: Context,
+    imageAssetTransformer: ImageAssetTransformer,
+): ImageRequest {
+    return this.newBuilder(context)
+        .data(imageAssetTransformer.transform(data))
+        .build()
 }
 
 /**
