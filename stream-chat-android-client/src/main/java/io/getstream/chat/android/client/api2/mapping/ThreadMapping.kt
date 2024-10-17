@@ -24,23 +24,23 @@ import io.getstream.chat.android.models.UserId
 
 internal fun DownstreamThreadDto.toDomain(currentUserId: UserId?): Thread =
     Thread(
-        activeParticipantCount = active_participant_count,
+        activeParticipantCount = active_participant_count ?: 0,
         cid = channel_cid,
         channel = channel?.toDomain(currentUserId),
         parentMessageId = parent_message_id,
-        parentMessage = parent_message?.toDomain(currentUserId),
+        parentMessage = parent_message.toDomain(currentUserId),
         createdByUserId = created_by_user_id,
         createdBy = created_by?.toDomain(currentUserId),
         replyCount = reply_count,
         participantCount = participant_count,
-        threadParticipants = thread_participants?.map { it.toDomain(currentUserId) },
+        threadParticipants = thread_participants.orEmpty().map { it.toDomain(currentUserId) },
         lastMessageAt = last_message_at,
         createdAt = created_at,
         updatedAt = updated_at,
         deletedAt = deleted_at,
         title = title,
         latestReplies = latest_replies.map { it.toDomain(currentUserId) },
-        read = read?.map { it.toDomain(currentUserId, last_message_at) },
+        read = read.orEmpty().map { it.toDomain(currentUserId, last_message_at) },
     )
 
 internal fun DownstreamThreadParticipantDto.toDomain(currentUserId: UserId?): User = user.toDomain(currentUserId)

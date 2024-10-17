@@ -388,6 +388,9 @@ public abstract interface class io/getstream/chat/android/ui/common/feature/mess
 public final class io/getstream/chat/android/ui/common/feature/messages/list/MessagePositionHandler$Companion {
 }
 
+public final class io/getstream/chat/android/ui/common/feature/threads/ThreadListController$Companion {
+}
+
 public abstract interface class io/getstream/chat/android/ui/common/helper/ClipboardHandler {
 	public abstract fun copyMessage (Lio/getstream/chat/android/models/Message;)V
 }
