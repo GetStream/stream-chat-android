@@ -680,9 +680,9 @@ internal class EventHandlerSequential(
                 is UserUpdatedEvent -> if (event.user.id == currentUserId) {
                     repos.insertCurrentUser(event.user)
                 }
-                is PollClosedEvent -> batch.addPoll(event.poll)
+                is PollClosedEvent -> batch.addPoll(event.processPoll(batch::getPoll))
                 is PollDeletedEvent -> batch.addPoll(event.poll)
-                is PollUpdatedEvent -> batch.addPoll(event.poll)
+                is PollUpdatedEvent -> batch.addPoll(event.processPoll(batch::getPoll))
                 is VoteCastedEvent -> batch.addPoll(event.processPoll(currentUserId, batch::getPoll))
                 is VoteChangedEvent -> batch.addPoll(event.processPoll(currentUserId, batch::getPoll))
                 is VoteRemovedEvent -> batch.addPoll(event.processPoll(batch::getPoll))
