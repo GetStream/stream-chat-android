@@ -50,7 +50,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
-import io.getstream.chat.android.compose.ui.pinned.DefaultPinnedMessageListLoadingMoreContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadListViewModel
 import io.getstream.chat.android.models.Thread
@@ -305,7 +304,7 @@ private fun DefaultThreadListLoadingContentPreview() {
 private fun DefaultThreadListLoadingMoreContentPreview() {
     ChatTheme {
         Surface {
-            DefaultPinnedMessageListLoadingMoreContent()
+            DefaultThreadListLoadingMoreContent()
         }
     }
 }
