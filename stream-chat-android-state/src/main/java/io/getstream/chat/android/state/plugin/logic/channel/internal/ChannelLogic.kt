@@ -80,6 +80,7 @@ import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.extensions.internal.applyPagination
+import io.getstream.chat.android.client.extensions.internal.processPoll
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Channel
@@ -679,48 +680,12 @@ internal class ChannelLogic(
             is PollClosedEvent -> channelStateLogic.upsertPoll(event.poll)
             is PollDeletedEvent -> channelStateLogic.upsertPoll(event.poll)
             is PollUpdatedEvent -> channelStateLogic.upsertPoll(event.poll)
-            is VoteCastedEvent -> {
-                val ownVotes =
-                    (
-                        channelStateLogic.getPoll(event.poll.id)?.ownVotes?.associateBy { it.id }
-                            ?: emptyMap()
-                        ) +
-                        listOfNotNull(event.newVote.takeIf { it.user?.id == currentUserId }).associateBy { it.id }
-                channelStateLogic.upsertPoll(
-                    event.poll.copy(
-                        ownVotes = ownVotes.values.toList(),
-                    ),
-                )
-            }
-            is VoteChangedEvent -> {
-                val ownVotes = event.newVote.takeIf { it.user?.id == currentUserId }?.let { listOf(it) }
-                    ?: channelStateLogic.getPoll(event.poll.id)?.ownVotes
-                channelStateLogic.upsertPoll(
-                    event.poll.copy(
-                        ownVotes = ownVotes ?: emptyList(),
-                    ),
-                )
-            }
-            is VoteRemovedEvent -> {
-                val ownVotes =
-                    (
-                        channelStateLogic.getPoll(event.poll.id)?.ownVotes?.associateBy { it.id }
-                            ?: emptyMap()
-                        ) - event.removedVote.id
-                channelStateLogic.upsertPoll(
-                    event.poll.copy(
-                        ownVotes = ownVotes.values.toList(),
-                    ),
-                )
-            }
-            is AnswerCastedEvent -> {
-                val answers = event.poll.answers.associateBy { it.id } + (event.newAnswer.id to event.newAnswer)
-                channelStateLogic.upsertPoll(
-                    event.poll.copy(
-                        answers = answers.values.toList(),
-                    ),
-                )
-            }
+            is VoteCastedEvent ->
+                channelStateLogic.upsertPoll(event.processPoll(currentUserId, channelStateLogic::getPoll))
+            is VoteChangedEvent ->
+                channelStateLogic.upsertPoll(event.processPoll(currentUserId, channelStateLogic::getPoll))
+            is VoteRemovedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
+            is AnswerCastedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
         }
     }
 
