@@ -61,12 +61,14 @@ import io.getstream.chat.android.compose.ui.components.composer.InputField
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Answer
+import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 
 @Suppress("LongMethod", "MagicNumber")
 @Composable
 public fun PollAnswersDialog(
     selectedPoll: SelectedPoll,
+    showAnonymousAvatar: Boolean,
     listViewModel: MessageListViewModel,
     onDismissRequest: () -> Unit,
     onBackPressed: () -> Unit,
@@ -121,7 +123,10 @@ public fun PollAnswersDialog(
                     items = poll.answers,
                     key = { answer -> answer.id },
                 ) { answer ->
-                    PollAnswersItem(answer = answer)
+                    PollAnswersItem(
+                        answer = answer,
+                        showAvatar = (poll.votingVisibility == VotingVisibility.PUBLIC) || showAnonymousAvatar,
+                    )
                 }
 
                 item { Spacer(modifier = Modifier.height(16.dp)) }
@@ -164,6 +169,7 @@ public fun PollAnswersDialog(
 @Composable
 internal fun PollAnswersItem(
     answer: Answer,
+    showAvatar: Boolean,
 ) {
     Column(
         modifier = Modifier
@@ -194,7 +200,7 @@ internal fun PollAnswersItem(
         Spacer(modifier = Modifier.height(16.dp))
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            val user = answer.user
+            val user = answer.user?.takeIf { showAvatar }
             if (user != null) {
                 UserAvatar(
                     modifier = Modifier.size(20.dp),
