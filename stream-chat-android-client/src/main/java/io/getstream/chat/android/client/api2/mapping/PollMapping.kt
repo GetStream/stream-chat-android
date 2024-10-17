@@ -48,22 +48,7 @@ internal fun DownstreamPollDto.toDomain(currentUserId: UserId?): Poll {
         .values
         .toList()
 
-    val answer = (
-        (
-            latest_votes_by_option
-                ?.values
-                ?.flatten()
-                ?.filter { it.is_answer == true }
-                ?.map { it.toAnswerDomain(currentUserId) }
-                ?: emptyList()
-            ) +
-            own_votes
-                .filter { it.is_answer == true }
-                .map { it.toAnswerDomain(currentUserId) }
-        )
-        .associateBy { it.id }
-        .values
-        .toList()
+    val answer = latest_answers?.map { it.toAnswerDomain(currentUserId) } ?: emptyList()
 
     return Poll(
         id = id,
