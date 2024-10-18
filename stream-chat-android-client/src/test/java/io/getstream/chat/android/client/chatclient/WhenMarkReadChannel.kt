@@ -59,7 +59,7 @@ internal class WhenMarkReadChannel : BaseChatClientTest() {
     private inner class Fixture {
 
         init {
-            whenever(api.markRead(any(), any(), any())) doReturn mock<Unit>().asCall()
+            whenever(api.markRead(any(), any(), any(), any())) doReturn mock<Unit>().asCall()
         }
 
         fun givenPlugin(plugin: Plugin) = apply {
