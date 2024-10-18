@@ -2187,7 +2187,7 @@ internal constructor(
         channelId: String,
         messageId: String,
     ): Call<Unit> {
-        return api.markRead(channelType, channelId, messageId = messageId)
+        return api.markRead(channelType, channelId, messageId)
             .doOnStart(userScope) {
                 logger.d { "[markMessageRead] #doOnStart; cid: $channelType:$channelId, msgId: $messageId" }
             }
@@ -2209,7 +2209,7 @@ internal constructor(
         channelId: String,
         threadId: String,
     ): Call<Unit> {
-        return api.markRead(channelType, channelId, threadId = threadId)
+        return api.markThreadRead(channelType, channelId, threadId)
     }
 
     @CheckResult

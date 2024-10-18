@@ -20,6 +20,6 @@ import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 internal data class MarkReadRequest(
-    val message_id: String,
-    val thread_id: String,
+    val message_id: String = "",
+    val thread_id: String? = null,
 )
