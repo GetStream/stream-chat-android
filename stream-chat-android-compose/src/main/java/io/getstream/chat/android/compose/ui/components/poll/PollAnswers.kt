@@ -43,6 +43,8 @@ import androidx.compose.material.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -73,6 +75,8 @@ public fun PollAnswersDialog(
     onDismissRequest: () -> Unit,
     onBackPressed: () -> Unit,
 ) {
+    val user by listViewModel.user.collectAsState()
+    val currentUserAnswer = selectedPoll.poll.answers.firstOrNull { it.user?.id == user?.id }
     val state = remember {
         MutableTransitionState(false).apply {
             // Start the animation immediately.
@@ -82,6 +86,7 @@ public fun PollAnswersDialog(
     val showAddAnswerDialog = remember { mutableStateOf(false) }
     if (showAddAnswerDialog.value) {
         AddAnswerDialog(
+            initMessage = currentUserAnswer?.text ?: "",
             onDismiss = { showAddAnswerDialog.value = false },
             onNewAnswer = { newAnswer ->
                 listViewModel.castAnswer(selectedPoll.message, selectedPoll.poll, newAnswer)
@@ -127,6 +132,7 @@ public fun PollAnswersDialog(
                         answer = answer,
                         showAvatar = (poll.votingVisibility == VotingVisibility.PUBLIC) || showAnonymousAvatar,
                     )
+                    Spacer(modifier = Modifier.height(8.dp))
                 }
 
                 item { Spacer(modifier = Modifier.height(16.dp)) }
@@ -153,7 +159,12 @@ public fun PollAnswersDialog(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(vertical = 11.dp),
-                                text = stringResource(id = R.string.stream_compose_add_answer),
+                                text = stringResource(
+                                    id = when (currentUserAnswer == null) {
+                                        true -> R.string.stream_compose_add_answer
+                                        false -> R.string.stream_compose_edit_answer
+                                    },
+                                ),
                                 textAlign = TextAlign.Center,
                                 color = ChatTheme.colors.primaryAccent,
                                 fontSize = 16.sp,
@@ -231,13 +242,23 @@ internal fun PollAnswersItem(
 
 @Composable
 internal fun AddAnswerDialog(
+    initMessage: String,
     onDismiss: () -> Unit,
     onNewAnswer: (newOption: String) -> Unit,
 ) {
-    val newOption = remember { mutableStateOf("") }
+    val newOption = remember { mutableStateOf(initMessage) }
     val focusRequester = remember { FocusRequester() }
     AlertDialog(
-        title = { Text(text = stringResource(R.string.stream_compose_add_answer)) },
+        title = {
+            Text(
+                text = stringResource(
+                    when (initMessage.isBlank()) {
+                        true -> R.string.stream_compose_add_answer
+                        false -> R.string.stream_compose_edit_answer
+                    },
+                ),
+            )
+        },
         text = {
             InputField(
                 value = newOption.value,
