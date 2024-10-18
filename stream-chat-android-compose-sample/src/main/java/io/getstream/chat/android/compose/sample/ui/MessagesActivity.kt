@@ -139,65 +139,74 @@ class MessagesActivity : BaseConnectedActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
-            val isInDarkMode = isSystemInDarkTheme()
-            val colors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors()
-            val typography = StreamTypography.defaultTypography()
-            val shapes = StreamShapes.defaultShapes()
-            val messageComposerTheme = MessageComposerTheme.defaultTheme(isInDarkMode, typography, shapes, colors)
-            ChatTheme(
-                isInDarkMode = isInDarkMode,
-                colors = colors,
-                shapes = shapes,
-                typography = typography,
-                dateFormatter = ChatApp.dateFormatter,
-                autoTranslationEnabled = ChatApp.autoTranslationEnabled,
-                isComposerLinkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
-                allowUIAutomationTest = true,
-                messageComposerTheme = messageComposerTheme.let {
-                    it.copy(
-                        attachmentCancelIcon = it.attachmentCancelIcon.copy(
-                            painter = painterResource(id = R.drawable.stream_compose_ic_clear),
-                            tint = colors.overlayDark,
-                            backgroundColor = colors.appBackground,
-                        ),
-                        audioRecording = it.audioRecording.copy(
-                            enabled = true,
-                            showRecordButtonOverSend = false,
-                        ),
-                    )
-                },
-                attachmentPickerTheme = AttachmentPickerTheme.defaultTheme(colors).copy(
-                    backgroundOverlay = colors.overlayDark,
-                    backgroundSecondary = colors.inputBackground,
-                    backgroundPrimary = colors.barsBackground,
-                ),
-                reactionOptionsTheme = ReactionOptionsTheme.defaultTheme(),
-                messageOptionsTheme = MessageOptionsTheme.defaultTheme(
-                    optionVisibility = MessageOptionItemVisibility(),
-                ),
-            ) {
-                Column {
-                    if (BuildConfig.DEBUG) {
-                        MembersList(viewModel = membersViewModel)
-                    }
-                    MessagesScreen(
-                        viewModelFactory = factory,
-                        reactionSorting = ReactionSortingByLastReactionAt,
-                        onBackPressed = { finish() },
-                        onHeaderTitleClick = ::openChannelInfo,
-                        onUserAvatarClick = { user ->
-                            Log.i("MessagesActivity", "user avatar clicked: ${user.id}")
-                        },
-                        onUserMentionClick = { user ->
-                          Log.i("MessagesActivity", "user mention tapped: ${user.id}")
-                        },
-                    )
-                }
-                // MyCustomUi()
-            }
+            SetupChatTheme()
         }
+    }
+
+    @Composable
+    private fun SetupChatTheme() {
+        val isInDarkMode = isSystemInDarkTheme()
+        val colors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors()
+        val typography = StreamTypography.defaultTypography()
+        val shapes = StreamShapes.defaultShapes()
+        val messageComposerTheme = MessageComposerTheme.defaultTheme(isInDarkMode, typography, shapes, colors)
+        ChatTheme(
+            isInDarkMode = isInDarkMode,
+            colors = colors,
+            shapes = shapes,
+            typography = typography,
+            dateFormatter = ChatApp.dateFormatter,
+            autoTranslationEnabled = ChatApp.autoTranslationEnabled,
+            isComposerLinkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
+            allowUIAutomationTest = true,
+            messageComposerTheme = messageComposerTheme.let {
+                it.copy(
+                    attachmentCancelIcon = it.attachmentCancelIcon.copy(
+                        painter = painterResource(id = R.drawable.stream_compose_ic_clear),
+                        tint = colors.overlayDark,
+                        backgroundColor = colors.appBackground,
+                    ),
+                    audioRecording = it.audioRecording.copy(
+                        enabled = true,
+                        showRecordButtonOverSend = false,
+                    ),
+                )
+            },
+            attachmentPickerTheme = AttachmentPickerTheme.defaultTheme(colors).copy(
+                backgroundOverlay = colors.overlayDark,
+                backgroundSecondary = colors.inputBackground,
+                backgroundPrimary = colors.barsBackground,
+            ),
+            reactionOptionsTheme = ReactionOptionsTheme.defaultTheme(),
+            messageOptionsTheme = MessageOptionsTheme.defaultTheme(
+                optionVisibility = MessageOptionItemVisibility(),
+            ),
+        ) {
+            SetupContent()
+        }
+    }
+
+    @Composable
+    private fun SetupContent() {
+        Column {
+            if (BuildConfig.DEBUG) {
+                MembersList(viewModel = membersViewModel)
+            }
+            MessagesScreen(
+                viewModelFactory = factory,
+                reactionSorting = ReactionSortingByLastReactionAt,
+                onBackPressed = { finish() },
+                onHeaderTitleClick = ::openChannelInfo,
+                onUserAvatarClick = { user ->
+                    Log.i("MessagesActivity", "user avatar clicked: ${user.id}")
+                },
+                onUserMentionClick = { user ->
+                    Log.i("MessagesActivity", "user mention tapped: ${user.id}")
+                },
+            )
+        }
+        // MyCustomUi()
     }
 
     private fun openChannelInfo(channel: Channel) {
