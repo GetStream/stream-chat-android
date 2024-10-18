@@ -74,7 +74,7 @@ import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
  */
 @Composable
 public fun PollViewResultDialog(
-    selectedPoll: SelectedPoll?,
+    selectedPoll: SelectedPoll,
     onDismissRequest: () -> Unit,
     onBackPressed: () -> Unit,
 ) {

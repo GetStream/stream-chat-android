@@ -141,6 +141,7 @@ public fun MessageItem(
     onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
     onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
     selectPoll: (Message, Poll, PollSelectionType) -> Unit = { _, _, _ -> },
+    onAddAnswer: (message: Message, poll: Poll, answer: String) -> Unit = { _, _, _ -> },
     onClosePoll: (String) -> Unit = {},
     onAddPollOption: (poll: Poll, option: String) -> Unit = { _, _ -> },
     onGiphyActionClick: (GiphyAction) -> Unit = {},
@@ -173,6 +174,7 @@ public fun MessageItem(
             onCastVote = onCastVote,
             onRemoveVote = onRemoveVote,
             selectPoll = selectPoll,
+            onAddAnswer = onAddAnswer,
             onClosePoll = onClosePoll,
             onAddPollOption = onAddPollOption,
         )
@@ -436,8 +438,8 @@ internal fun DefaultMessageItemTrailingContent(
  * @param onClosePoll Handler when a user close a poll.
  * @param onAddPollOption Handler when a user add a poll option.
  */
-@Composable
 @Suppress("LongParameterList")
+@Composable
 internal fun DefaultMessageItemCenterContent(
     messageItem: MessageItemState,
     onLongItemClick: (Message) -> Unit = {},
@@ -449,6 +451,7 @@ internal fun DefaultMessageItemCenterContent(
     onCastVote: (Message, Poll, Option) -> Unit,
     onRemoveVote: (Message, Poll, Vote) -> Unit,
     selectPoll: (Message, Poll, PollSelectionType) -> Unit,
+    onAddAnswer: (message: Message, poll: Poll, answer: String) -> Unit,
     onClosePoll: (String) -> Unit,
     onAddPollOption: (poll: Poll, option: String) -> Unit,
 ) {
@@ -470,6 +473,7 @@ internal fun DefaultMessageItemCenterContent(
             onClosePoll = onClosePoll,
             onAddPollOption = onAddPollOption,
             onLongItemClick = onLongItemClick,
+            onAddAnswer = onAddAnswer,
         )
     } else if (messageItem.message.isEmojiOnlyWithoutBubble()) {
         EmojiMessageContent(
