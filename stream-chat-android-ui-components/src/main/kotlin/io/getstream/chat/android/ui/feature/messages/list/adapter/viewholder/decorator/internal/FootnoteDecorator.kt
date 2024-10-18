@@ -21,6 +21,7 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
+import io.getstream.chat.android.client.utils.message.belongsToThread
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isEphemeral
 import io.getstream.chat.android.client.utils.message.isGiphy
@@ -243,11 +244,10 @@ internal class FootnoteDecorator(
         anchorView: View,
         data: MessageListItem.MessageItem,
     ) {
-        val isSimpleFootnoteMode = data.message.replyCount == 0 || data.isThreadMode
-        if (isSimpleFootnoteMode) {
-            setupSimpleFootnoteWithRootConstraints(footnoteView, root, anchorView, data)
-        } else {
-            setupThreadFootnote(footnoteView, root, threadGuideline, data)
+        val isThreadFootnote = data.message.belongsToThread() && !data.isThreadMode
+        when (isThreadFootnote) {
+            true -> setupThreadFootnote(footnoteView, root, threadGuideline, data)
+            false -> setupSimpleFootnoteWithRootConstraints(footnoteView, root, anchorView, data)
         }
         footnoteView.applyGravity(data.isMine)
     }

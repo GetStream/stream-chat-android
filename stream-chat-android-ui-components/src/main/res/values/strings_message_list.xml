@@ -32,9 +32,11 @@
     <string name="stream_ui_message_list_attachment_upload_progress">%1$s / %2$s</string>
     <string name="stream_ui_message_list_pinned_message">Pinned by %s</string>
     <string name="stream_ui_message_list_pinned_message_you">You</string>
-    <plurals name="stream_ui_message_list_thread_reply">
-        <item quantity="one">Thread Reply</item>
-        <item quantity="other">%d Thread Replies</item>
+    <string name="stream_ui_message_list_thread_footnote_thread_reply">Thread reply</string>
+    <string name="stream_ui_message_list_thread_footnote_thread_replies">%d Thread Replies</string>
+    <plurals name="stream_ui_message_list_thread_footnote">
+        <item quantity="one">@string/stream_ui_message_list_thread_footnote_thread_reply</item>
+        <item quantity="other">@string/stream_ui_message_list_thread_footnote_thread_replies</item>
     </plurals>
     <plurals name="stream_ui_message_list_thread_separator">
         <item quantity="one">%d Reply</item>
