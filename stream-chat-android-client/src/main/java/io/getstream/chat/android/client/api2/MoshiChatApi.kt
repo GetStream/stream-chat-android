@@ -697,11 +697,14 @@ constructor(
         ).map(this::flattenChannel)
     }
 
-    override fun markRead(channelType: String, channelId: String, messageId: String): Call<Unit> {
+    override fun markRead(channelType: String, channelId: String, messageId: String, threadId: String): Call<Unit> {
         return channelApi.markRead(
             channelType = channelType,
             channelId = channelId,
-            request = MarkReadRequest(messageId),
+            request = MarkReadRequest(
+                message_id = messageId,
+                thread_id = threadId,
+            ),
         ).toUnitCall()
     }
 

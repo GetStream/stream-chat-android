@@ -273,6 +273,7 @@ internal interface ChatApi {
         channelType: String,
         channelId: String,
         messageId: String = "",
+        threadId: String = "",
     ): Call<Unit>
 
     @CheckResult

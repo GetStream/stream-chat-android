@@ -2187,13 +2187,29 @@ internal constructor(
         channelId: String,
         messageId: String,
     ): Call<Unit> {
-        return api.markRead(channelType, channelId, messageId)
+        return api.markRead(channelType, channelId, messageId = messageId)
             .doOnStart(userScope) {
                 logger.d { "[markMessageRead] #doOnStart; cid: $channelType:$channelId, msgId: $messageId" }
             }
             .doOnResult(userScope) {
                 logger.v { "[markMessageRead] #doOnResult; completed($channelType:$channelId-$messageId): $it" }
             }
+    }
+
+    /**
+     * Marks a given thread as read.
+     *
+     * @param channelType The type of the channel in which the thread resides.
+     * @param channelId The ID of the channel in which the thread resides.
+     * @param threadId The ID of the thread to mark as read.
+     */
+    @CheckResult
+    public fun markThreadRead(
+        channelType: String,
+        channelId: String,
+        threadId: String,
+    ): Call<Unit> {
+        return api.markRead(channelType, channelId, threadId = threadId)
     }
 
     @CheckResult
