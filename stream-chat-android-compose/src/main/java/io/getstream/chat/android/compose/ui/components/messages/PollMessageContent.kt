@@ -199,6 +199,7 @@ private fun PollMessageContent(
 
     if (showAddAnswerDialog.value) {
         AddAnswerDialog(
+            initMessage = "",
             onDismiss = { showAddAnswerDialog.value = false },
             onNewAnswer = { newAnswer -> onAddAnswer.invoke(newAnswer) },
         )
