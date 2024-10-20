@@ -87,11 +87,13 @@ public open class AttachmentDestination(
 
         if (url.isNullOrEmpty()) {
             logger.e { "Wrong URL for attachment. Attachment: $attachment" }
-            Toast.makeText(
-                context,
-                context.getString(R.string.stream_ui_message_list_attachment_invalid_url),
-                Toast.LENGTH_SHORT,
-            ).show()
+            if (attachment.type == AttachmentType.UNKNOWN) {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.stream_ui_message_list_attachment_invalid_url),
+                    Toast.LENGTH_SHORT,
+                ).show()
+            }
             return
         }
 
