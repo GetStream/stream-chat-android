@@ -146,7 +146,9 @@ internal class StreamMediaPlayer(
                 currentSpeed + SPEED_INCREMENT
             }
 
-            if (playerState == PlayerState.PLAYING && mediaPlayer.isSpeedSettable()) {
+            if ((playerState == PlayerState.PLAYING || playerState == PlayerState.PAUSE) &&
+                mediaPlayer.isSpeedSettable()
+            ) {
                 playingSpeed = newSpeed
                 mediaPlayer.speed = newSpeed
                 publishSpeed(currentAudioHash, newSpeed)
