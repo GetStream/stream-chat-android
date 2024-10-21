@@ -61,6 +61,7 @@ class Events(val client: ChatClient, val channelClient: ChannelClient) {
                 // Use event data
                 val unreadCount = event.me.totalUnreadCount
                 val unreadChannels = event.me.unreadChannels
+                val unreadThreads = event.me.unreadThreads
             }
         }
 

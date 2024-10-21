@@ -31,6 +31,7 @@ public class UnreadCounts {
                     User userRes = result.getOrNull().getUser();
                     int unreadChannels = userRes.getUnreadChannels();
                     int totalUnreadCount = userRes.getTotalUnreadCount();
+                    int unreadThreads = userRes.getUnreadThreads();
                 } else {
                     // Handle error
                 }
