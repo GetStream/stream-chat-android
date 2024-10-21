@@ -39,6 +39,7 @@ import java.util.Date
  * @param lastActive Date of last activity.
  * @param totalUnreadCount The total unread messages count for the current user.
  * @param unreadChannels The total unread channels count for the current user.
+ * @param unreadThreads The total number of unread threads for the current user.
  * @param mutes A list of users muted by the current user.
  * @param teams List of teams user is a part of.
  * @param channelMutes A list of channels muted by the current user.
@@ -62,6 +63,7 @@ public data class User(
     val lastActive: Date? = null,
     val totalUnreadCount: Int = 0,
     val unreadChannels: Int = 0,
+    val unreadThreads: Int = 0,
     val mutes: List<Mute> = listOf(),
     val teams: List<String> = listOf(),
     val channelMutes: List<ChannelMute> = emptyList(),
@@ -101,6 +103,7 @@ public data class User(
             "online" -> online
             "total_unread_count", "totalUnreadCount" -> totalUnreadCount
             "unread_channels", "unreadChannels" -> unreadChannels
+            "unread_threads", "unreadThreads" -> unreadThreads
             "created_at", "createdAt" -> createdAt
             "deactivated_at", "deactivatedAt" -> deactivatedAt
             "updated_at", "updatedAt" -> updatedAt
@@ -129,6 +132,7 @@ public data class User(
         private var lastActive: Date? = null
         private var totalUnreadCount: Int = 0
         private var unreadChannels: Int = 0
+        private var unreadThreads: Int = 0
         private var mutes: List<Mute> = listOf()
         private var teams: List<String> = listOf()
         private var channelMutes: List<ChannelMute> = emptyList()
@@ -151,6 +155,7 @@ public data class User(
             lastActive = user.lastActive
             totalUnreadCount = user.totalUnreadCount
             unreadChannels = user.unreadChannels
+            unreadThreads = user.unreadThreads
             mutes = user.mutes
             teams = user.teams
             channelMutes = user.channelMutes
@@ -175,6 +180,7 @@ public data class User(
             this.totalUnreadCount = totalUnreadCount
         }
         public fun withUnreadChannels(unreadChannels: Int): Builder = apply { this.unreadChannels = unreadChannels }
+        public fun withUnreadThreads(unreadThreads: Int): Builder = apply { this.unreadThreads = unreadThreads }
         public fun withMutes(mutes: List<Mute>): Builder = apply { this.mutes = mutes }
         public fun withTeams(teams: List<String>): Builder = apply { this.teams = teams }
         public fun withChannelMutes(channelMutes: List<ChannelMute>): Builder = apply {
@@ -200,6 +206,7 @@ public data class User(
                 lastActive = lastActive,
                 totalUnreadCount = totalUnreadCount,
                 unreadChannels = unreadChannels,
+                unreadThreads = unreadThreads,
                 mutes = mutes,
                 teams = teams,
                 channelMutes = channelMutes,
