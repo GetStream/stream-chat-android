@@ -20,3 +20,7 @@ import io.getstream.chat.android.models.User
 
 public val User.initials: String
     get() = name.initials()
+
+public fun List<User>.getUserByNameOrId(nameOrId: String): User? {
+    return firstOrNull { it.name == nameOrId } ?: firstOrNull { it.id == nameOrId }
+}

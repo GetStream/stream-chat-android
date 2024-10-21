@@ -1703,6 +1703,7 @@ public final class io/getstream/chat/android/ui/common/utils/extensions/MessageK
 
 public final class io/getstream/chat/android/ui/common/utils/extensions/UserKt {
 	public static final fun getInitials (Lio/getstream/chat/android/models/User;)Ljava/lang/String;
+	public static final fun getUserByNameOrId (Ljava/util/List;Ljava/lang/String;)Lio/getstream/chat/android/models/User;
 }
 
 public abstract interface class io/getstream/chat/android/ui/common/utils/typing/TypingUpdatesBuffer {
