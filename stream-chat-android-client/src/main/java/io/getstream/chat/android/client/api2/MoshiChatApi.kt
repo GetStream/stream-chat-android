@@ -702,7 +702,15 @@ constructor(
         return channelApi.markRead(
             channelType = channelType,
             channelId = channelId,
-            request = MarkReadRequest(messageId),
+            request = MarkReadRequest(message_id = messageId),
+        ).toUnitCall()
+    }
+
+    override fun markThreadRead(channelType: String, channelId: String, threadId: String): Call<Unit> {
+        return channelApi.markRead(
+            channelType = channelType,
+            channelId = channelId,
+            request = MarkReadRequest(thread_id = threadId),
         ).toUnitCall()
     }
 
