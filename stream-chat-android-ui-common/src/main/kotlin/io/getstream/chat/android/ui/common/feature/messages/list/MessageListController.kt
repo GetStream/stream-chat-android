@@ -1606,22 +1606,36 @@ public class MessageListController(
         }
         this.lastSeenMessageId = messageId
 
-        cid.cidToTypeAndId().let { (channelType, channelId) ->
-            if (isInThread) {
-                // TODO sort out thread unreads when
-                //  https://github.com/GetStream/stream-chat-android/pull/4122 has been merged in
-                // chatClient.markThreadRead(channelType, channelId, mode.parentMessage.id)
-            } else {
-                chatClient.markRead(channelType, channelId).enqueue(
-                    onError = { error ->
-                        logger.e {
-                            "Could not mark cid: $channelId as read. Error message: ${error.message}. " +
-                                "Cause: ${error.extractCause()}"
-                        }
-                    },
-                )
-            }
+        if (isInThread) {
+            markThreadAsRead()
+        } else {
+            markChannelAsRead()
         }
+    }
+
+    private fun markChannelAsRead() {
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        chatClient.markRead(channelType, channelId).enqueue(
+            onError = { error ->
+                logger.e {
+                    "Could not mark cid: $channelId as read. Error message: ${error.message}. " +
+                        "Cause: ${error.extractCause()}"
+                }
+            },
+        )
+    }
+
+    private fun markThreadAsRead() {
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        val threadId = (_mode.value as? MessageMode.MessageThread)?.parentMessage?.id ?: return
+        chatClient.markThreadRead(channelType, channelId, threadId).enqueue(
+            onError = { error ->
+                logger.e {
+                    "Could not mark thread with id: $threadId as read. Error message: ${error.message}. " +
+                        "Cause: ${error.extractCause()}"
+                }
+            },
+        )
     }
 
     /**

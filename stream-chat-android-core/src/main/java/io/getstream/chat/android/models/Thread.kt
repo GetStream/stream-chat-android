@@ -19,6 +19,29 @@ package io.getstream.chat.android.models
 import androidx.compose.runtime.Immutable
 import java.util.Date
 
+/**
+ * Domain model for a thread. Holds all information related to a thread.
+ *
+ * @param activeParticipantCount The number of active participants in the thread.
+ * @param cid Id of the channel in which the thread resides.
+ * @param channel The [Channel] object holding info about the channel if which the thread resides.
+ * @param parentMessageId The ID of the parent message of the thread.
+ * @param parentMessage The parent message of the thread. (Note: This object is not always delivered, sometimes we only
+ * receive the ID of the parent message - [parentMessageId]).
+ * @param createdByUserId The ID of the [User] which created the thread.
+ * @param createdBy The [User] which created the thread. (Note: This object is not always delivered, sometimes we only
+ * receive the ID of the user - [createdByUserId]).
+ * @param replyCount The number of replies in the thread.
+ * @param participantCount The number of participants in the thread.
+ * @param threadParticipants The list of participants in the thread.
+ * @param lastMessageAt Date of the last message in the thread.
+ * @param createdAt Date when the thread was created.
+ * @param updatedAt Date of the most recent update of the thread.
+ * @param deletedAt Date when the thread was deleted (null if the thread is not deleted).
+ * @param title The title of the thread.
+ * @param latestReplies The list of latest replies in the thread.
+ * @param read Information about the read status for the participants in the thread.
+ */
 @Immutable
 public data class Thread(
     val activeParticipantCount: Int,
@@ -30,10 +53,10 @@ public data class Thread(
     val createdBy: User?,
     val replyCount: Int,
     val participantCount: Int,
-    val threadParticipants: List<User>,
+    val threadParticipants: List<ThreadParticipant>,
     val lastMessageAt: Date,
     val createdAt: Date,
-    val updatedAt: Date?,
+    val updatedAt: Date,
     val deletedAt: Date?,
     val title: String,
     val latestReplies: List<Message>,

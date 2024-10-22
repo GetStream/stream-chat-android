@@ -18,7 +18,10 @@ package io.getstream.chat.android.state.plugin.logic.channel.thread.internal
 
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
+import io.getstream.chat.android.models.ThreadInfo
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.state.querythreads.internal.QueryThreadsMutableState
+import java.util.Date
 
 /**
  * Logic for managing the state of the threads list.
@@ -111,7 +114,7 @@ internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMuta
                 it.copy(
                     parentMessage = parent,
                     deletedAt = parent.deletedAt,
-                    updatedAt = parent.updatedAt,
+                    updatedAt = parent.updatedAt ?: it.updatedAt,
                     replyCount = parent.replyCount,
                 )
             } else {
@@ -141,6 +144,46 @@ internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMuta
             }
         }
         mutableState.setThreads(newThreads)
+    }
+
+    /**
+     * Marks the given thread as read by the given user.
+     *
+     * @param threadInfo The [ThreadInfo] holding info about the [Thread] which should be marked as read.
+     * @param user The [User] for which the thread should be marked as read.
+     * @param createdAt The [Date] of the 'mark read' event.
+     */
+    internal fun markThreadAsReadByUser(threadInfo: ThreadInfo, user: User, createdAt: Date) {
+        val updatedThreads = getThreads().map { thread ->
+            if (threadInfo.parentMessageId == thread.parentMessageId) {
+                val updatedRead = thread.read.map { read ->
+                    if (read.user.id == user.id) {
+                        read.copy(
+                            user = user,
+                            unreadMessages = 0,
+                            lastReceivedEventDate = createdAt,
+                        )
+                    } else {
+                        read
+                    }
+                }
+                thread.copy(
+                    activeParticipantCount = threadInfo.activeParticipantCount,
+                    deletedAt = threadInfo.deletedAt,
+                    lastMessageAt = threadInfo.lastMessageAt ?: thread.lastMessageAt,
+                    parentMessage = threadInfo.parentMessage ?: thread.parentMessage,
+                    participantCount = threadInfo.participantCount,
+                    replyCount = threadInfo.replyCount,
+                    threadParticipants = threadInfo.threadParticipants,
+                    title = threadInfo.title,
+                    updatedAt = threadInfo.updatedAt,
+                    read = updatedRead,
+                )
+            } else {
+                thread
+            }
+        }
+        setThreads(updatedThreads)
     }
 
     private fun upsertMessageInList(newMessage: Message, messages: List<Message>): List<Message> {

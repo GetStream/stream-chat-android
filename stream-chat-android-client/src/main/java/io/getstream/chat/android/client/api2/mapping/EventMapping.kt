@@ -352,6 +352,7 @@ private fun MessageReadEventDto.toDomain(currentUserId: UserId?): MessageReadEve
         cid = cid,
         channelType = channel_type,
         channelId = channel_id,
+        thread = thread?.toDomain(currentUserId),
     )
 }
 
@@ -490,6 +491,10 @@ private fun NotificationMarkReadEventDto.toDomain(currentUserId: UserId?): Notif
         channelId = channel_id,
         totalUnreadCount = total_unread_count,
         unreadChannels = unread_channels,
+        threadId = thread_id,
+        thread = thread?.toDomain(currentUserId),
+        unreadThreads = unread_threads,
+        unreadThreadMessages = unread_thread_messages,
     )
 }
 

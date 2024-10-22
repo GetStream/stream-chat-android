@@ -55,6 +55,7 @@ import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
+import io.getstream.chat.android.client.events.NotificationThreadMessageNewEvent
 import io.getstream.chat.android.client.events.PollClosedEvent
 import io.getstream.chat.android.client.events.PollDeletedEvent
 import io.getstream.chat.android.client.events.PollUpdatedEvent
@@ -294,6 +295,10 @@ internal class EventHandlerSequential(
             unreadThreadsCount = user.unreadThreads
         }
 
+        val modifyUnreadThreadsCount = { newValue: Int? ->
+            unreadThreadsCount = newValue ?: unreadThreadsCount
+        }
+
         val hasReadEventsCapability = parameterizedLazy<String, Boolean> { cid ->
             // can we somehow get rid of repos usage here?
             repos.hasReadEventsCapability(cid)
@@ -322,9 +327,15 @@ internal class EventHandlerSequential(
                         modifyValuesFromEvent(event)
                     }
                 }
+                is NotificationThreadMessageNewEvent -> if (batchEvent.isFromSocketConnection) {
+                    if (hasReadEventsCapability(event.cid)) {
+                        modifyUnreadThreadsCount(event.unreadThreads)
+                    }
+                }
                 is NotificationMarkReadEvent -> if (batchEvent.isFromSocketConnection) {
                     if (hasReadEventsCapability(event.cid)) {
                         modifyValuesFromEvent(event)
+                        modifyUnreadThreadsCount(event.unreadThreads)
                     }
                 }
                 is NotificationMarkUnreadEvent -> if (batchEvent.isFromSocketConnection) {

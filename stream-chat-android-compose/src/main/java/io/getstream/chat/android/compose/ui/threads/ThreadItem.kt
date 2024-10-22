@@ -56,6 +56,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
+import io.getstream.chat.android.models.ThreadParticipant
 import io.getstream.chat.android.models.User
 import java.util.Date
 
@@ -234,10 +235,13 @@ private fun ThreadItemPreview() {
                 createdBy = user2,
                 replyCount = 3,
                 participantCount = 2,
-                threadParticipants = listOf(user1, user2),
+                threadParticipants = listOf(
+                    ThreadParticipant(user1, user1.id),
+                    ThreadParticipant(user2, user2.id),
+                ),
                 lastMessageAt = Date(),
                 createdAt = Date(),
-                updatedAt = null,
+                updatedAt = Date(),
                 deletedAt = null,
                 title = "Group ride preparation and discussion",
                 latestReplies = listOf(

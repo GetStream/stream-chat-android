@@ -19,7 +19,9 @@ package io.getstream.chat.android.state.plugin.logic.channel.thread.internal
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.MessageDeletedEvent
+import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
+import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationThreadMessageNewEvent
 import io.getstream.chat.android.client.events.ReactionDeletedEvent
@@ -114,10 +116,16 @@ internal class QueryThreadsLogic(private val stateLogic: QueryThreadsStateLogic)
 
     private fun handleEvent(event: ChatEvent) {
         when (event) {
-            is NotificationThreadMessageNewEvent -> addNewThreadMessage(event)
+            // Destructive operation - remove the threads completely from the list
             is NotificationChannelDeletedEvent -> deleteThreadsFromChannel(event.cid)
-            is MessageDeletedEvent -> updateParentOrReply(event.message)
+            // Informs about a new thread (loaded, not loaded, or newly created thread)
+            is NotificationThreadMessageNewEvent -> onNewThreadMessageNotification(event)
+            // (Potentially) Informs about reading of a thread
+            is MessageReadEvent -> markThreadAsRead(event)
+            // (Potentially) Updates/Inserts a message in a thread
+            is NewMessageEvent -> updateParentOrReply(event.message)
             is MessageUpdatedEvent -> updateParentOrReply(event.message)
+            is MessageDeletedEvent -> updateParentOrReply(event.message)
             is ReactionNewEvent -> updateParentOrReply(event.message)
             is ReactionUpdateEvent -> updateParentOrReply(event.message)
             is ReactionDeletedEvent -> updateParentOrReply(event.message)
@@ -127,18 +135,14 @@ internal class QueryThreadsLogic(private val stateLogic: QueryThreadsStateLogic)
 
     private fun QueryThreadsRequest.isNextPageRequest() = this.next != null
 
-    private fun addNewThreadMessage(event: NotificationThreadMessageNewEvent) {
+    private fun onNewThreadMessageNotification(event: NotificationThreadMessageNewEvent) {
+        val newMessageThreadId = event.message.parentId ?: return
+        // Update the unseenThreadIsd if the relevant thread is not loaded (yet)
         val threads = stateLogic.getThreads()
-        val thread = threads.find { it.parentMessageId == event.message.parentId }
-        if (thread == null) {
-            // Thread is not (yet) loaded, just update the state of unseenThreadIds
-            event.message.parentId?.let { parentId ->
-                stateLogic.addUnseenThreadId(parentId)
-            }
-            return
+        if (threads.none { it.parentMessageId == newMessageThreadId }) {
+            stateLogic.addUnseenThreadId(newMessageThreadId)
         }
-        // Update the thread inline if it is already loaded
-        stateLogic.upsertReply(reply = event.message)
+        // If the thread is loaded, it will be updated by message.new + message.updated events
     }
 
     /**
@@ -151,6 +155,20 @@ internal class QueryThreadsLogic(private val stateLogic: QueryThreadsStateLogic)
         if (!parentUpdated) {
             stateLogic.upsertReply(reply = message)
         }
+    }
+
+    /**
+     * Marks a given thread as read by a user, if the [MessageReadEvent] is delivered for a thread.
+     *
+     * @param event The [MessageReadEvent] informing about the read state change.
+     */
+    private fun markThreadAsRead(event: MessageReadEvent) {
+        val threadInfo = event.thread ?: return
+        stateLogic.markThreadAsReadByUser(
+            threadInfo = threadInfo,
+            user = event.user,
+            createdAt = event.createdAt,
+        )
     }
 
     /**
