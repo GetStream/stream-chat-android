@@ -44,6 +44,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `GlobalState::unreadThreadsCount` property to observe the number of unread threads. [#5452](https://github.com/GetStream/stream-chat-android/pull/5452)
 
 ### ⚠️ Changed
 
