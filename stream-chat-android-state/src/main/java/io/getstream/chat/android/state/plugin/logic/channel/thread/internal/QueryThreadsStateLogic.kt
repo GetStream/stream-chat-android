@@ -16,9 +16,11 @@
 
 package io.getstream.chat.android.state.plugin.logic.channel.thread.internal
 
+import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
+import io.getstream.chat.android.models.ThreadParticipant
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.state.querythreads.internal.QueryThreadsMutableState
 import java.util.Date
@@ -131,14 +133,11 @@ internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMuta
      * @param reply The reply to upsert.
      */
     internal fun upsertReply(reply: Message) {
+        if (reply.parentId == null) return
         val oldThreads = getThreads()
         val newThreads = oldThreads.map { thread ->
             if (thread.parentMessageId == reply.parentId) {
-                val newReplies = upsertMessageInList(reply, thread.latestReplies)
-                val sortedNewReplies = newReplies.sortedBy {
-                    it.createdAt ?: it.createdLocallyAt
-                }
-                thread.copy(latestReplies = sortedNewReplies)
+                upsertReplyInThread(thread, reply)
             } else {
                 thread
             }
@@ -186,6 +185,47 @@ internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMuta
         setThreads(updatedThreads)
     }
 
+    private fun upsertReplyInThread(thread: Thread, reply: Message): Thread {
+        val newReplies = upsertMessageInList(reply, thread.latestReplies)
+        val isInsert = newReplies.size > thread.latestReplies.size
+        val sortedNewReplies = newReplies.sortedBy {
+            it.createdAt ?: it.createdLocallyAt
+        }
+        val replyCount = if (isInsert) {
+            thread.replyCount + 1
+        } else {
+            thread.replyCount
+        }
+        val lastMessageAt = sortedNewReplies.lastOrNull()?.let { latestReply ->
+            latestReply.createdAt ?: latestReply.createdLocallyAt
+        }
+        // The new message could be from a new thread participant
+        val threadParticipants = if (isInsert) {
+            upsertThreadParticipantInList(
+                newParticipant = ThreadParticipant(user = reply.user, userId = reply.user.id),
+                participants = thread.threadParticipants,
+            )
+        } else {
+            thread.threadParticipants
+        }
+        val participantCount = threadParticipants.size
+        // Update read counts (+1 for each non-sender of the message)
+        val read = if (isInsert) {
+            updateReadCounts(thread.read, reply)
+        } else {
+            thread.read
+        }
+        return thread.copy(
+            replyCount = replyCount,
+            lastMessageAt = lastMessageAt ?: thread.lastMessageAt,
+            updatedAt = lastMessageAt ?: thread.updatedAt,
+            participantCount = participantCount,
+            threadParticipants = threadParticipants,
+            latestReplies = sortedNewReplies,
+            read = read,
+        )
+    }
+
     private fun upsertMessageInList(newMessage: Message, messages: List<Message>): List<Message> {
         // Insert
         if (messages.none { it.id == newMessage.id }) {
@@ -197,6 +237,34 @@ internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMuta
                 newMessage
             } else {
                 message
+            }
+        }
+    }
+
+    private fun upsertThreadParticipantInList(
+        newParticipant: ThreadParticipant,
+        participants: List<ThreadParticipant>,
+    ): List<ThreadParticipant> {
+        // Insert
+        if (participants.none { it.userId == newParticipant.userId }) {
+            return participants + listOf(newParticipant)
+        }
+        // Update
+        return participants.map { participant ->
+            if (participant.userId == newParticipant.userId) {
+                newParticipant
+            } else {
+                participant
+            }
+        }
+    }
+
+    private fun updateReadCounts(read: List<ChannelUserRead>, reply: Message): List<ChannelUserRead> {
+        return read.map { userRead ->
+            if (userRead.user.id != reply.user.id) {
+                userRead.copy(unreadMessages = userRead.unreadMessages + 1)
+            } else {
+                userRead
             }
         }
     }
