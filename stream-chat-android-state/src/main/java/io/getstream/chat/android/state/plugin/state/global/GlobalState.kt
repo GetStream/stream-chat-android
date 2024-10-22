@@ -40,6 +40,11 @@ public interface GlobalState {
     public val channelUnreadCount: StateFlow<Int>
 
     /**
+     * The number of unread threads for the current user.
+     */
+    public val unreadThreadsCount: StateFlow<Int>
+
+    /**
      * list of users that you've muted.
      */
     public val muted: StateFlow<List<Mute>>

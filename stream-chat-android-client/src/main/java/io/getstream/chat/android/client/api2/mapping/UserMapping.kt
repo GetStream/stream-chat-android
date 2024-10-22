@@ -57,6 +57,7 @@ internal fun DownstreamUserDto.toDomain(currentUserId: UserId?): User =
         lastActive = last_active,
         totalUnreadCount = total_unread_count,
         unreadChannels = unread_channels,
+        unreadThreads = unread_threads,
         mutes = mutes.orEmpty().map { it.toDomain(currentUserId) },
         teams = teams,
         channelMutes = channel_mutes.orEmpty().map { it.toDomain(currentUserId) },

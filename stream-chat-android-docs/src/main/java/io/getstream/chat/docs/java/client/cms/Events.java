@@ -69,6 +69,7 @@ public class Events {
                         // Use event data
                         int unreadCount = event.getMe().getTotalUnreadCount();
                         int unreadChannels = event.getMe().getUnreadChannels();
+                        int unreadThreads = event.getMe().getUnreadThreads();
                     }
             );
         }

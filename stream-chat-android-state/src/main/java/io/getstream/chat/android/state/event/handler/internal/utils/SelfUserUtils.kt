@@ -37,4 +37,5 @@ internal fun MutableGlobalState.updateCurrentUser(currentUser: User?, receivedUs
     setChannelMutes(me.channelMutes)
     setTotalUnreadCount(me.totalUnreadCount)
     setChannelUnreadCount(me.unreadChannels)
+    setUnreadThreadsCount(me.unreadThreads)
 }
