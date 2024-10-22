@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.tests
 
 import io.getstream.chat.android.compose.robots.assertTest
-import io.getstream.chat.android.compose.uiautomator.sleep
 import io.qameta.allure.kotlin.Allure.step
 import org.junit.Test
 
@@ -31,7 +30,7 @@ class SampleTest : StreamTestCase() {
                 .openChannel()
         }
         step("WHEN participant sends a message") {
-            participantRobot.sendMessage("Testme33")
+            participantRobot.sendMessage("Test")
         }
         step("THEN user receives a message") {
             userRobot.assertTest()
@@ -46,7 +45,7 @@ class SampleTest : StreamTestCase() {
                 .openChannel()
         }
         step("WHEN user sends a message") {
-            participantRobot.sendMessage("Testme44")
+            participantRobot.sendMessage("Test")
         }
         step("THEN message list updates") {
             userRobot.assertTest()

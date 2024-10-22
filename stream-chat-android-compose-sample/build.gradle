@@ -21,6 +21,10 @@ android {
         testInstrumentationRunnerArguments["clearPackageData"] = "true"
     }
 
+    testOptions {
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
+    }
+
     File signFile = rootProject.file('.sign/keystore.properties')
     if (signFile.exists()) {
         Properties properties = new Properties()
@@ -146,6 +150,7 @@ dependencies {
     androidTestImplementation(Dependencies.androidxUiAutomator)
     androidTestImplementation(Dependencies.androidxTestJunitKtx)
     androidTestImplementation(Dependencies.androidxTestMonitor)
+    androidTestUtil(Dependencies.androidxTestOrchestrator)
     androidTestImplementation(Dependencies.allureKotlinModel)
     androidTestImplementation(Dependencies.allureKotlinJunit)
     androidTestImplementation(Dependencies.allureKotlinCommons)
