@@ -2196,6 +2196,22 @@ internal constructor(
             }
     }
 
+    /**
+     * Marks a given thread as read.
+     *
+     * @param channelType The type of the channel in which the thread resides.
+     * @param channelId The ID of the channel in which the thread resides.
+     * @param threadId The ID of the thread to mark as read.
+     */
+    @CheckResult
+    public fun markThreadRead(
+        channelType: String,
+        channelId: String,
+        threadId: String,
+    ): Call<Unit> {
+        return api.markThreadRead(channelType, channelId, threadId)
+    }
+
     @CheckResult
     public fun showChannel(channelType: String, channelId: String): Call<Unit> {
         return api.showChannel(channelType, channelId)

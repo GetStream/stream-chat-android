@@ -22,6 +22,8 @@
 - Avoid multiple `ChatClient::connectUser` invocations by sharing the `Call`. [#5439](https://github.com/GetStream/stream-chat-android/pull/5439)
 
 ### ✅ Added
+- Add `ChatClient::markThreadRead` to mark a given thread as read. [#5447](https://github.com/GetStream/stream-chat-android/pull/5447)
+- Add `ChannelClient::markThreadRead` to mark a given thread as read. [#5447](https://github.com/GetStream/stream-chat-android/pull/5447)
 
 ### ⚠️ Changed
 
