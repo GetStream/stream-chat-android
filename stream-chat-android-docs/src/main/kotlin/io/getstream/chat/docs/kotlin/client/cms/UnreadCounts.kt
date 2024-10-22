@@ -27,6 +27,7 @@ class UnreadCounts(val client: ChatClient, val channelClient: ChannelClient) {
                         val user = result.value.user
                         val unreadChannels = user.unreadChannels
                         val totalUnreadCount = user.totalUnreadCount
+                        val unreadThreads = user.unreadThreads
                     }
                     is Result.Failure -> {
                         // Handler error

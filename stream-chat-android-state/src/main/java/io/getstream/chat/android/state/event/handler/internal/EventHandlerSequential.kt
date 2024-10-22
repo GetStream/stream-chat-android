@@ -280,6 +280,7 @@ internal class EventHandlerSequential(
         var me = clientState.user.value
         var totalUnreadCount = mutableGlobalState.totalUnreadCount.value
         var channelUnreadCount = mutableGlobalState.channelUnreadCount.value
+        var unreadThreadsCount = mutableGlobalState.unreadThreadsCount.value
 
         val modifyValuesFromEvent = { event: HasUnreadCounts ->
             totalUnreadCount = event.totalUnreadCount
@@ -290,6 +291,7 @@ internal class EventHandlerSequential(
             me = user
             totalUnreadCount = user.totalUnreadCount
             channelUnreadCount = user.unreadChannels
+            unreadThreadsCount = user.unreadThreads
         }
 
         val hasReadEventsCapability = parameterizedLazy<String, Boolean> { cid ->
@@ -346,6 +348,7 @@ internal class EventHandlerSequential(
         }
         mutableGlobalState.setTotalUnreadCount(totalUnreadCount)
         mutableGlobalState.setChannelUnreadCount(channelUnreadCount)
+        mutableGlobalState.setUnreadThreadsCount(unreadThreadsCount)
         logger.v { "[updateGlobalState] completed batchId: ${batchEvent.id}" }
     }
 
