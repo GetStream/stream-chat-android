@@ -50,7 +50,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param onClick Action invoked when the user clicks on the banner.
  */
 @Composable
-internal fun UnreadThreadsBanner(
+public fun UnreadThreadsBanner(
     unreadThreads: Int,
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,

@@ -79,7 +79,7 @@ import io.getstream.chat.android.models.User
  * Override this to provide a custom loading component shown during the loading of more items.
  */
 @Composable
-internal fun ThreadList(
+public fun ThreadList(
     viewModel: ThreadListViewModel,
     modifier: Modifier = Modifier,
     currentUser: User? = ChatClient.instance().getCurrentUser(),

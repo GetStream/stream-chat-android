@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.ui.common.state.threads
 
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Thread
 
 /**
@@ -27,7 +26,6 @@ import io.getstream.chat.android.models.Thread
  * @param isLoadingMore Indicator if there is loading of the next page of threads in progress.
  * @param unseenThreadsCount The number of threads that we know that exist, but are not (yet) loaded in the list.
  */
-@InternalStreamChatApi
 public data class ThreadListState(
     val threads: List<Thread>,
     val isLoading: Boolean,

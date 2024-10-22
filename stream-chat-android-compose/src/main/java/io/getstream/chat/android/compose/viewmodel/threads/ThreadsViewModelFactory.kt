@@ -29,7 +29,7 @@ import io.getstream.chat.android.ui.common.feature.threads.ThreadListController
  * @param threadReplyLimit The number of replies per thread to load.
  * @param threadParticipantLimit The number of participants per thread to load.
  */
-internal class ThreadsViewModelFactory(
+public class ThreadsViewModelFactory(
     private val threadLimit: Int = ThreadListController.DEFAULT_THREAD_LIMIT,
     private val threadReplyLimit: Int = ThreadListController.DEFAULT_THREAD_REPLY_LIMIT,
     private val threadParticipantLimit: Int = ThreadListController.DEFAULT_THREAD_PARTICIPANT_LIMIT,
