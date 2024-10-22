@@ -17,16 +17,31 @@
 package io.getstream.chat.android.compose.tests
 
 import android.Manifest.permission
+import io.getstream.chat.android.compose.robots.UserRobot
 import io.getstream.chat.android.compose.uiautomator.device
 import io.getstream.chat.android.compose.uiautomator.grantPermission
+import io.getstream.chat.android.compose.uiautomator.mockServer
+import io.getstream.chat.android.compose.uiautomator.sleep
 import io.getstream.chat.android.compose.uiautomator.startApp
+import io.getstream.chat.android.compose.uiautomator.stopApp
+import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
+import org.junit.After
 import org.junit.Before
 
 open class StreamTestCase {
 
+    val userRobot = UserRobot()
+    val participantRobot = ParticipantRobot()
+
     @Before
     fun setUp() {
+        mockServer.start()
         device.startApp()
         device.grantPermission(permission.POST_NOTIFICATIONS)
+    }
+
+    @After
+    fun tearDown() {
+        mockServer.stop()
     }
 }

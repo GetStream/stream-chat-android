@@ -16,19 +16,40 @@
 
 package io.getstream.chat.android.compose.tests
 
-import io.getstream.chat.android.compose.pages.LoginPage
+import io.getstream.chat.android.compose.robots.assertTest
 import io.getstream.chat.android.compose.uiautomator.sleep
-import io.getstream.chat.android.compose.uiautomator.waitToAppear
 import io.qameta.allure.kotlin.Allure.step
 import org.junit.Test
 
 class SampleTest : StreamTestCase() {
 
     @Test
-    fun testSample() {
-        step("Sample step") {
-            LoginPage.loginButton.waitToAppear().click()
-            sleep()
+    fun test_messageListUpdates_whenParticipantSendsMessage() {
+        step("GIVEN user opens a channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        step("WHEN participant sends a message") {
+            participantRobot.sendMessage("Testme33")
+        }
+        step("THEN user receives a message") {
+            userRobot.assertTest()
+        }
+    }
+
+    @Test
+    fun test_messageListUpdates_whenUserSendsMessage() {
+        step("GIVEN user opens a channel") {
+            userRobot
+                .login()
+                .openChannel()
+        }
+        step("WHEN user sends a message") {
+            participantRobot.sendMessage("Testme44")
+        }
+        step("THEN message list updates") {
+            userRobot.assertTest()
         }
     }
 }

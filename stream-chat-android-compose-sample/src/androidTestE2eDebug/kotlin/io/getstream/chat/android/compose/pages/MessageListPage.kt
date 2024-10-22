@@ -16,5 +16,12 @@
 
 package io.getstream.chat.android.compose.pages
 
-class MessageListPage {
+open class MessageListPage {
+
+    class ContextMenu {
+
+        companion object {
+
+        }
+    }
 }

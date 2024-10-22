@@ -16,25 +16,16 @@
 
 package io.getstream.chat.android.compose.uiautomator
 
-import androidx.core.content.ContextCompat
-import androidx.core.content.PermissionChecker
 import androidx.test.uiautomator.UiDevice
 
 /**
  * Grant app permissions.
  */
 public fun UiDevice.grantPermission(permission: String): String =
-    exec("pm grant $packageName $permission")
+    executeShellCommand("pm grant $packageName $permission")
 
 /**
  * Revoke app permissions.
  */
 public fun UiDevice.revokePermission(permission: String): String =
-    exec("pm revoke $packageName $permission")
-
-/**
- * Checking whether the permission is allowed.
- */
-public fun UiDevice.isPermissionAllowed(permission: () -> String): Boolean {
-    return ContextCompat.checkSelfPermission(appContext, permission()) == PermissionChecker.PERMISSION_GRANTED
-}
+    executeShellCommand("pm revoke $packageName $permission")

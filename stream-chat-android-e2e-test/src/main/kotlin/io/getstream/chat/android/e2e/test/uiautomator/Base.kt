@@ -22,6 +22,7 @@ import android.content.res.AssetManager
 import android.content.res.Resources
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
+import io.getstream.chat.android.e2e.test.mockserver.MockServer
 
 /**
  * Default timeout.
@@ -29,9 +30,9 @@ import androidx.test.uiautomator.UiDevice
 public val defaultTimeout: Long = 5.seconds
 
 /**
- * Mock server ip address.
+ * Mock Server.
  */
-public val mockServerUrl: String get() = device.exec("ip neigh").lines().first().split(" ").first()
+public val mockServer: MockServer get() = MockServer()
 
 /**
  * UIDevice property initialized by singleton [UiDevice.getInstance] method, for the running Instrumentation.

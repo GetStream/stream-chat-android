@@ -21,6 +21,7 @@ android {
 }
 
 dependencies {
+    implementation(Dependencies.okhttp)
     implementation(Dependencies.androidxTest)
     implementation(Dependencies.androidxUiAutomator)
     implementation(Dependencies.androidxTestMonitor)

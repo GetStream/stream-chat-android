@@ -22,5 +22,18 @@ class ChannelListPage {
 
     companion object {
         val searchField = By.res("Stream_SearchInput")
+        val channels = By.text("Sync Mock Server") // FIXME
+        val createChannelButton = "" // FIXME
+    }
+
+    class Channel {
+
+        companion object {
+            val avatar = "" // FIXME
+            val name = "" // FIXME
+            val preview = "" // FIXME
+            val readStatus = "" // FIXME
+            val timestamp = "" // FIXME
+        }
     }
 }

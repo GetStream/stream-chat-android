@@ -16,5 +16,5 @@
 
 package io.getstream.chat.android.compose.pages
 
-class ThreadPage {
+class ThreadPage : MessageListPage() {
 }

@@ -38,11 +38,6 @@ public fun BySelector.findObjects() : List<UiObject2> {
 }
 
 /**
- * UIDevice extension function, which is getting the UIObject by utilizing the [byIdSelector] with id value.
- */
-public infix fun UiDevice.findObjectById(viewId: Int): UiObject2 = findObject(By.displayId(viewId))
-
-/**
  * UIDevice extension function, which is getting the UIObject by selecting the component with text value.
  */
 public infix fun UiDevice.findObjectByText(text: String): UiObject2 = findObject(By.text(text))

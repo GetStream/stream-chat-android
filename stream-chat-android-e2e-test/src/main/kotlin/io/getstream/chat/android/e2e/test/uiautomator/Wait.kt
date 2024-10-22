@@ -26,7 +26,17 @@ public fun sleep(timeOutMillis: Long = defaultTimeout) {
 
 public fun BySelector.waitToAppear(timeOutMillis: Long = defaultTimeout) : UiObject2 {
     device.wait(Until.hasObject(this), timeOutMillis)
-    return device.findObject(this)
+    return findObject()
+}
+
+public fun BySelector.waitToAppear(withIndex: Int, timeOutMillis: Long = defaultTimeout) : UiObject2 {
+    device.wait(Until.hasObject(this), timeOutMillis)
+    return findObjects()[withIndex]
+}
+
+public fun BySelector.wait(timeOutMillis: Long = defaultTimeout) : BySelector {
+    device.wait(Until.hasObject(this), timeOutMillis)
+    return this
 }
 
 public fun BySelector.waitToDisappear(timeOutMillis: Long = defaultTimeout) {

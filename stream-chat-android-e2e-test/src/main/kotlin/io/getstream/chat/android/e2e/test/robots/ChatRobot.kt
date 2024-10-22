@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.robots
+package io.getstream.chat.android.e2e.test.robots
 
-class ParticipantRobot {
+public class ChatRobot {
 }
