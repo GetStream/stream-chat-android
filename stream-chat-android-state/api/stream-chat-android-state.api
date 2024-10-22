@@ -145,6 +145,7 @@ public abstract interface class io/getstream/chat/android/state/plugin/state/glo
 	public abstract fun getMuted ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getTotalUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getTypingChannels ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getUnreadThreadsCount ()Lkotlinx/coroutines/flow/StateFlow;
 }
 
 public abstract class io/getstream/chat/android/state/plugin/state/querychannels/ChannelsStateData {

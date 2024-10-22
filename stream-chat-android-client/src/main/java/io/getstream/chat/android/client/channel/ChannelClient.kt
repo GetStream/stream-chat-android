@@ -403,6 +403,16 @@ public class ChannelClient internal constructor(
         return client.markMessageRead(channelType, channelId, messageId)
     }
 
+    /**
+     * Marks a given thread in the channel as read.
+     *
+     * @param threadId The ID of the thread to mark as read.
+     */
+    @CheckResult
+    public fun markThreadRead(threadId: String): Call<Unit> {
+        return client.markThreadRead(channelType, channelId, threadId)
+    }
+
     @CheckResult
     public fun markUnread(messageId: String): Call<Unit> {
         return client.markUnread(channelType, channelId, messageId)
