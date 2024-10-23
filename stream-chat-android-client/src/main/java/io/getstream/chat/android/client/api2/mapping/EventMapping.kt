@@ -18,6 +18,7 @@
 
 package io.getstream.chat.android.client.api2.mapping
 
+import io.getstream.chat.android.client.api2.model.dto.AnswerCastedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelHiddenEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelTruncatedEventDto
@@ -74,6 +75,7 @@ import io.getstream.chat.android.client.api2.model.dto.UserUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteCastedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteChangedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteRemovedEventDto
+import io.getstream.chat.android.client.events.AnswerCastedEvent
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
@@ -197,6 +199,7 @@ internal fun ChatEventDto.toDomain(currentUserId: UserId?): ChatEvent {
         is PollUpdatedEventDto -> toDomain(currentUserId)
         is VoteCastedEventDto -> toDomain(currentUserId)
         is VoteChangedEventDto -> toDomain(currentUserId)
+        is AnswerCastedEventDto -> toDomain(currentUserId)
         is VoteRemovedEventDto -> toDomain(currentUserId)
     }
 }
@@ -811,6 +814,21 @@ private fun VoteCastedEventDto.toDomain(currentUserId: UserId?): VoteCastedEvent
         channelId = channelId,
         poll = newPoll,
         newVote = pollVote,
+    )
+}
+
+private fun AnswerCastedEventDto.toDomain(currentUserId: UserId?): AnswerCastedEvent {
+    val newAnswer = poll_vote.toAnswerDomain(currentUserId)
+    val (channelType, channelId) = cid.cidToTypeAndId()
+    return AnswerCastedEvent(
+        type = type,
+        createdAt = created_at.date,
+        rawCreatedAt = created_at.rawDate,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        poll = poll.toDomain(currentUserId),
+        newAnswer = newAnswer,
     )
 }
 

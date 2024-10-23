@@ -17,6 +17,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun appSettings ()Lio/getstream/result/call/Call;
 	public final fun banUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lio/getstream/result/call/Call;
 	public final fun blockUser (Ljava/lang/String;)Lio/getstream/result/call/Call;
+	public final fun castPollAnswer (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun castPollVote (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Option;)Lio/getstream/result/call/Call;
 	public final fun channel (Ljava/lang/String;)Lio/getstream/chat/android/client/channel/ChannelClient;
 	public final fun channel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/channel/ChannelClient;
@@ -917,6 +918,31 @@ public abstract class io/getstream/chat/android/client/errors/cause/StreamSdkExc
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (Ljava/lang/Throwable;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class io/getstream/chat/android/client/events/AnswerCastedEvent : io/getstream/chat/android/client/events/CidEvent, io/getstream/chat/android/client/events/HasPoll {
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Poll;Lio/getstream/chat/android/models/Answer;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Date;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Lio/getstream/chat/android/models/Poll;
+	public final fun component8 ()Lio/getstream/chat/android/models/Answer;
+	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Poll;Lio/getstream/chat/android/models/Answer;)Lio/getstream/chat/android/client/events/AnswerCastedEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/AnswerCastedEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Poll;Lio/getstream/chat/android/models/Answer;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/AnswerCastedEvent;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChannelId ()Ljava/lang/String;
+	public fun getChannelType ()Ljava/lang/String;
+	public fun getCid ()Ljava/lang/String;
+	public fun getCreatedAt ()Ljava/util/Date;
+	public final fun getNewAnswer ()Lio/getstream/chat/android/models/Answer;
+	public fun getPoll ()Lio/getstream/chat/android/models/Poll;
+	public fun getRawCreatedAt ()Ljava/lang/String;
+	public fun getType ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/events/ChannelDeletedEvent : io/getstream/chat/android/client/events/CidEvent, io/getstream/chat/android/client/events/HasChannel {

@@ -22,6 +22,7 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.rawType
+import io.getstream.chat.android.client.api2.model.dto.AnswerCastedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelHiddenEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelTruncatedEventDto
@@ -148,6 +149,7 @@ internal class EventDtoAdapter(
     private val pollClosedEventAdapter = moshi.adapter(PollClosedEventDto::class.java)
     private val voteCastedEventAdapter = moshi.adapter(VoteCastedEventDto::class.java)
     private val voteChangedEventAdapter = moshi.adapter(VoteChangedEventDto::class.java)
+    private val answerCastedEventAdapter = moshi.adapter(AnswerCastedEventDto::class.java)
     private val voteRemovedEventAdapter = moshi.adapter(VoteRemovedEventDto::class.java)
 
     @Suppress("LongMethod", "ComplexMethod", "ReturnCount")
@@ -220,8 +222,14 @@ internal class EventDtoAdapter(
             EventType.POLL_UPDATED -> pollUpdatedEventAdapter
             EventType.POLL_DELETED -> pollDeletedEventAdapter
             EventType.POLL_CLOSED -> pollClosedEventAdapter
-            EventType.POLL_VOTE_CASTED -> voteCastedEventAdapter
-            EventType.POLL_VOTE_CHANGED -> voteChangedEventAdapter
+            EventType.POLL_VOTE_CASTED -> when (map.containsAnswer()) {
+                true -> answerCastedEventAdapter
+                else -> voteCastedEventAdapter
+            }
+            EventType.POLL_VOTE_CHANGED -> when (map.containsAnswer()) {
+                true -> answerCastedEventAdapter
+                else -> voteChangedEventAdapter
+            }
             EventType.POLL_VOTE_REMOVED -> voteRemovedEventAdapter
             else -> // Custom case, early return
                 return UnknownEventDto(
@@ -234,6 +242,9 @@ internal class EventDtoAdapter(
 
         return adapter.fromJsonValue(map)
     }
+
+    private fun Map<String, Any?>.containsAnswer(): Boolean =
+        (((this["poll_vote"] as? Map<String, Any?>)?.get("is_answer") as? Boolean) ?: false)
 
     override fun toJson(writer: JsonWriter, value: ChatEventDto?) {
         error("Can't convert this event to Json $value")

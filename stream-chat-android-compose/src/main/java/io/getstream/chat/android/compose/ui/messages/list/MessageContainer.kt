@@ -90,6 +90,7 @@ public fun MessageContainer(
     onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
     onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
     selectPoll: (Message, Poll, PollSelectionType) -> Unit = { _, _, _ -> },
+    onAddAnswer: (message: Message, poll: Poll, answer: String) -> Unit = { _, _, _ -> },
     onClosePoll: (String) -> Unit = {},
     onAddPollOption: (poll: Poll, option: String) -> Unit = { _, _ -> },
     onGiphyActionClick: (GiphyAction) -> Unit = {},
@@ -131,6 +132,7 @@ public fun MessageContainer(
             },
             onLinkClick = onLinkClick,
             onUserMentionClick = onUserMentionClick,
+            onAddAnswer = onAddAnswer,
         )
     },
     typingIndicatorContent: @Composable (TypingItemState) -> Unit = { },
@@ -284,6 +286,7 @@ internal fun DefaultMessageItem(
     onGiphyActionClick: (GiphyAction) -> Unit,
     onLinkClick: ((Message, String) -> Unit)? = null,
     onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
+    onAddAnswer: (message: Message, poll: Poll, answer: String) -> Unit = { _, _, _ -> },
     onCastVote: (Message, Poll, Option) -> Unit,
     onAddPollOption: (poll: Poll, option: String) -> Unit = { _, _ -> },
     onRemoveVote: (Message, Poll, Vote) -> Unit,
@@ -312,5 +315,6 @@ internal fun DefaultMessageItem(
         onLinkClick = onLinkClick,
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         onUserMentionClick = onUserMentionClick,
+        onAddAnswer = onAddAnswer,
     )
 }

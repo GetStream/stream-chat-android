@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.events.AnswerCastedEvent
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
@@ -80,6 +81,7 @@ import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.extensions.internal.applyPagination
+import io.getstream.chat.android.client.extensions.internal.processPoll
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Channel
@@ -679,43 +681,15 @@ internal class ChannelLogic(
             is UnknownEvent,
             is UserDeletedEvent,
             -> Unit // Ignore these events
-            is PollClosedEvent -> channelStateLogic.upsertPoll(event.poll)
+            is PollClosedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
             is PollDeletedEvent -> channelStateLogic.upsertPoll(event.poll)
-            is PollUpdatedEvent -> channelStateLogic.upsertPoll(event.poll)
-            is VoteCastedEvent -> {
-                val ownVotes =
-                    (
-                        channelStateLogic.getPoll(event.poll.id)?.ownVotes?.associateBy { it.id }
-                            ?: emptyMap()
-                        ) +
-                        listOfNotNull(event.newVote.takeIf { it.user?.id == currentUserId }).associateBy { it.id }
-                channelStateLogic.upsertPoll(
-                    event.poll.copy(
-                        ownVotes = ownVotes.values.toList(),
-                    ),
-                )
-            }
-            is VoteChangedEvent -> {
-                val ownVotes = event.newVote.takeIf { it.user?.id == currentUserId }?.let { listOf(it) }
-                    ?: channelStateLogic.getPoll(event.poll.id)?.ownVotes
-                channelStateLogic.upsertPoll(
-                    event.poll.copy(
-                        ownVotes = ownVotes ?: emptyList(),
-                    ),
-                )
-            }
-            is VoteRemovedEvent -> {
-                val ownVotes =
-                    (
-                        channelStateLogic.getPoll(event.poll.id)?.ownVotes?.associateBy { it.id }
-                            ?: emptyMap()
-                        ) - event.removedVote.id
-                channelStateLogic.upsertPoll(
-                    event.poll.copy(
-                        ownVotes = ownVotes.values.toList(),
-                    ),
-                )
-            }
+            is PollUpdatedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
+            is VoteCastedEvent ->
+                channelStateLogic.upsertPoll(event.processPoll(currentUserId, channelStateLogic::getPoll))
+            is VoteChangedEvent ->
+                channelStateLogic.upsertPoll(event.processPoll(currentUserId, channelStateLogic::getPoll))
+            is VoteRemovedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
+            is AnswerCastedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
         }
     }
 

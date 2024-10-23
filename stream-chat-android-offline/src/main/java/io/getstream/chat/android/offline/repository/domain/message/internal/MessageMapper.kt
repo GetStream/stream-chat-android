@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.offline.repository.domain.message.internal
 
+import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
@@ -225,6 +226,7 @@ internal fun Poll.toEntity(): PollEntity = PollEntity(
     voteCountsByOption = voteCountsByOption,
     ownVotes = ownVotes.map { it.toEntity() },
     closed = closed,
+    answers = answers.map { it.toEntity() },
 )
 
 internal fun Option.toEntity(): OptionEntity = OptionEntity(
@@ -236,6 +238,15 @@ internal fun Vote.toEntity(): VoteEntity = VoteEntity(
     id = id,
     optionId = optionId,
     pollId = pollId,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    userId = user?.id,
+)
+
+private fun Answer.toEntity(): AnswerEntity = AnswerEntity(
+    id = id,
+    pollId = pollId,
+    text = text,
     createdAt = createdAt,
     updatedAt = updatedAt,
     userId = user?.id,
@@ -264,6 +275,7 @@ internal suspend fun PollEntity.toModel(
     voteCountsByOption = voteCountsByOption,
     ownVotes = ownVotes.map { it.toModel(getUser) },
     closed = closed,
+    answers = answers.map { it.toModel(getUser) },
 )
 
 private fun OptionEntity.toModel(): Option = Option(
@@ -277,6 +289,17 @@ private suspend fun VoteEntity.toModel(
     id = id,
     optionId = optionId,
     pollId = pollId,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    user = userId?.let { getUser(it) },
+)
+
+private suspend fun AnswerEntity.toModel(
+    getUser: suspend (userId: String) -> User,
+): Answer = Answer(
+    id = id,
+    pollId = pollId,
+    text = text,
     createdAt = createdAt,
     updatedAt = updatedAt,
     user = userId?.let { getUser(it) },
