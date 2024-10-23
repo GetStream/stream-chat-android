@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
+import io.getstream.chat.android.client.utils.message.belongsToThread
 import io.getstream.chat.android.client.utils.message.isModerationError
 import io.getstream.chat.android.client.utils.message.isThreadReply
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
@@ -197,6 +198,9 @@ public class MessageListView : ConstraintLayout {
     private var threadStartHandler = ThreadStartHandler {
         throw IllegalStateException("onStartThreadHandler must be set.")
     }
+    private var openThreadHandler = OpenThreadHandler {
+        throw IllegalStateException("onStartThreadHandler must be set.")
+    }
     private var replyMessageClickListener = OnReplyMessageClickListener {
         // no-op
         false
@@ -341,8 +345,8 @@ public class MessageListView : ConstraintLayout {
             val replyTo = message.replyTo
 
             when {
-                message.replyCount > 0 -> {
-                    threadStartHandler.onStartThread(message)
+                message.belongsToThread() -> {
+                    openThreadHandler.onOpenThread(message)
                     true
                 }
 
@@ -452,12 +456,8 @@ public class MessageListView : ConstraintLayout {
 
     private val defaultThreadClickListener =
         OnThreadClickListener { message ->
-            if (message.replyCount > 0) {
-                threadStartHandler.onStartThread(message)
-                true
-            } else {
-                false
-            }
+            message.belongsToThread()
+                .also { if (it) openThreadHandler.onOpenThread(message) }
         }
 
     private val attachmentGalleryDestination =
@@ -1857,6 +1857,15 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
+     * Sets the handler used when opening a thread.
+     *
+     * @param openThreadHandler The handler to use.
+     */
+    public fun setOpenThreadHandler(openThreadHandler: OpenThreadHandler) {
+        this.openThreadHandler = openThreadHandler
+    }
+
+    /**
      * Sets the handler used when the message is going to be flagged.
      *
      * @param messageFlagHandler The handler to use.
@@ -2460,6 +2469,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface ThreadStartHandler {
         public fun onStartThread(message: Message)
+    }
+
+    public fun interface OpenThreadHandler {
+        public fun onOpenThread(message: Message)
     }
 
     public fun interface GiphySendHandler {

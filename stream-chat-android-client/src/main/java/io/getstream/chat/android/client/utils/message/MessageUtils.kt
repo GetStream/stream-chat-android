@@ -156,6 +156,11 @@ public fun Message.isThreadStart(): Boolean = threadParticipants.isNotEmpty()
 public fun Message.isThreadReply(): Boolean = !parentId.isNullOrEmpty()
 
 /**
+ * @return If the message belongs to a thread.
+ */
+public fun Message.belongsToThread(): Boolean = this.isThreadStart() || this.isThreadReply()
+
+/**
  * @return If the message contains quoted message.
  */
 public fun Message.isReply(): Boolean = replyTo != null
