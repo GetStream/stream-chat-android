@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.state.plugin.logic.channel.thread.internal
+package io.getstream.chat.android.state.plugin.logic.querythreads.internal
 
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.events.ChatEvent
