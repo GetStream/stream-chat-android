@@ -1,11 +1,5 @@
-# UNRELEASED CHANGELOG
+# October 23th, 2024 - 6.5.2
 ## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
 ### ⚠️ Changed
 - Deprecate `NotInFilterObject` because it is not supported backend-side anymore. [#5393](https://github.com/GetStream/stream-chat-android/pull/5393)
 - Deprecate `AttachmentsPickerTabFactories.defaultFactoriesWithoutStoragePermissions()` in favor of a more configurable method. [#5430](https://github.com/GetStream/stream-chat-android/pull/5430)
@@ -25,44 +19,13 @@
 - Add `ChatClient::markThreadRead` to mark a given thread as read. [#5447](https://github.com/GetStream/stream-chat-android/pull/5447)
 - Add `ChannelClient::markThreadRead` to mark a given thread as read. [#5447](https://github.com/GetStream/stream-chat-android/pull/5447)
 
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Add `GlobalState::unreadThreadsCount` property to observe the number of unread threads. [#5452](https://github.com/GetStream/stream-chat-android/pull/5452)
 
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Added `ImageAssetTransformer` to transform image assets before rendering them on the UI. [#5438](https://github.com/GetStream/stream-chat-android/pull/5438)
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
@@ -70,21 +33,13 @@
 - Fix `CAMERA` permission request when using the capture photo/video attachment picker from `AttachmentsPickerSystemTabFactory`. [#5430](https://github.com/GetStream/stream-chat-android/pull/5430)
 - Fixed `MessageListView` scroll to the bottom behaviour when a new message is added. [#5427](https://github.com/GetStream/stream-chat-android/pull/5427)
 
-### ⬆️ Improved
-
 ### ✅ Added
 - Added `ChatUI.imageAssetTransformer` to transform image assets before rendering them on the UI. [#5438](https://github.com/GetStream/stream-chat-android/pull/5438)
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fix `CAMERA` permission request when using the capture photo/video attachment picker from `AttachmentsPickerSystemTabFactory`. [#5430](https://github.com/GetStream/stream-chat-android/pull/5430)
 - Fixed `MessageList` scroll to the bottom behaviour when a new message is added. [#5427](https://github.com/GetStream/stream-chat-android/pull/5427)
-
-### ⬆️ Improved
 
 ### ✅ Added
 - Added `ChannelListViewModel.refresh` method to refresh the channel list. [#5425](https://github.com/GetStream/stream-chat-android/pull/5425)
@@ -98,19 +53,6 @@
 
 ### ⚠️ Changed
 - Exposed `DefaultMessageComposerRecordingContent` and `DefaultAudioRecordButton` components. [#5433](https://github.com/GetStream/stream-chat-android/pull/5433) 
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # September 26th, 2024 - 6.5.1
 ## Common changes for all artifacts
