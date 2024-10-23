@@ -134,6 +134,7 @@ public final class io/getstream/chat/android/ui/common/feature/messages/list/Mes
 	public final fun banUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)V
 	public static synthetic fun banUser$default (Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)V
 	public final fun blockUser (Ljava/lang/String;)V
+	public final fun castAnswer (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
 	public final fun castVote (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Option;)V
 	public final fun clearNewMessageState ()V
 	public final fun closePoll (Lio/getstream/chat/android/models/Poll;)V
@@ -1546,6 +1547,14 @@ public abstract class io/getstream/chat/android/ui/common/state/messages/poll/Po
 public final class io/getstream/chat/android/ui/common/state/messages/poll/PollSelectionType$MoreOption : io/getstream/chat/android/ui/common/state/messages/poll/PollSelectionType {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/messages/poll/PollSelectionType$MoreOption;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/poll/PollSelectionType$ViewAnswers : io/getstream/chat/android/ui/common/state/messages/poll/PollSelectionType {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/messages/poll/PollSelectionType$ViewAnswers;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;

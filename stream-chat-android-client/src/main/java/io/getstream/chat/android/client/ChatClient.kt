@@ -1537,6 +1537,15 @@ internal constructor(
         return api.castPollVote(messageId, pollId, option.id)
     }
 
+    @CheckResult
+    public fun castPollAnswer(
+        messageId: String,
+        pollId: String,
+        answer: String,
+    ): Call<Vote> {
+        return api.castPollAnswer(messageId, pollId, answer)
+    }
+
     /**
      * Remove a vote for a poll in a message.
      *

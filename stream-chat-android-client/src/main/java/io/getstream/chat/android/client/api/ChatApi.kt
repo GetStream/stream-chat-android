@@ -495,6 +495,9 @@ internal interface ChatApi {
     fun castPollVote(messageId: String, pollId: String, optionId: String): Call<Vote>
 
     @CheckResult
+    fun castPollAnswer(messageId: String, pollId: String, answer: String): Call<Vote>
+
+    @CheckResult
     fun removePollVote(messageId: String, pollId: String, voteId: String): Call<Vote>
 
     @CheckResult

@@ -63,6 +63,7 @@ import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemS
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.moderatedmessage.ModeratedMessageDialog
+import io.getstream.chat.android.compose.ui.components.poll.PollAnswersDialog
 import io.getstream.chat.android.compose.ui.components.poll.PollMoreOptionsDialog
 import io.getstream.chat.android.compose.ui.components.poll.PollViewResultDialog
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
@@ -125,6 +126,7 @@ import io.getstream.chat.android.ui.common.state.messages.updateMessage
  * @param skipPushNotification If new messages should skip triggering a push notification when sent. False by default.
  * @param skipEnrichUrl If new messages being sent, or existing ones being updated should skip enriching the URL.
  * If URL is not enriched, it will not be displayed as a link attachment. False by default.
+ * @param showAnonymousAvatar If the user avatar should be shown on comments for polls with anonymous voting visibility.
  * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
  * @param topBarContent custom top bar content to be displayed on top of the messages list.
  * @param bottomBarContent custom bottom bar content to be displayed at the bottom of the messages list.
@@ -145,6 +147,7 @@ public fun MessagesScreen(
     onUserMentionClick: (User) -> Unit = {},
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
+    showAnonymousAvatar: Boolean = false,
     threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
     topBarContent: @Composable (BackAction) -> Unit = {
         DefaultTopBarContent(
@@ -291,7 +294,10 @@ public fun MessagesScreen(
             skipEnrichUrl = skipEnrichUrl,
         )
         MessageDialogs(listViewModel = listViewModel)
-        PollDialogs(listViewModel = listViewModel)
+        PollDialogs(
+            listViewModel = listViewModel,
+            showAnonymousAvatar = showAnonymousAvatar,
+        )
     }
 }
 
@@ -688,6 +694,7 @@ public fun BoxScope.AttachmentsPickerMenu(
                             name = action.question,
                             options = action.options.filter { it.title.isNotEmpty() }.map { it.title },
                             allowUserSuggestedOptions = action.switches.any { it.key == "allowUserSuggestedOptions" && it.enabled },
+                            allowAnswers = action.switches.any { it.key == "allowAnswers" && it.enabled },
                             votingVisibility = if (action.switches.any { it.key == "votingVisibility" && it.enabled }) {
                                 VotingVisibility.ANONYMOUS
                             } else {
@@ -812,7 +819,10 @@ public fun MessageDialogs(listViewModel: MessageListViewModel) {
 }
 
 @Composable
-public fun PollDialogs(listViewModel: MessageListViewModel) {
+public fun PollDialogs(
+    listViewModel: MessageListViewModel,
+    showAnonymousAvatar: Boolean,
+) {
     val dismiss = { listViewModel.displayPollMoreOptions(null) }
     val selectedPoll = listViewModel.pollState.selectedPoll
 
@@ -828,6 +838,16 @@ public fun PollDialogs(listViewModel: MessageListViewModel) {
     if (selectedPoll?.pollSelectionType == PollSelectionType.ViewResult) {
         PollViewResultDialog(
             selectedPoll = selectedPoll,
+            onDismissRequest = { dismiss.invoke() },
+            onBackPressed = { dismiss.invoke() },
+        )
+    }
+
+    if (selectedPoll?.pollSelectionType == PollSelectionType.ViewAnswers) {
+        PollAnswersDialog(
+            selectedPoll = selectedPoll,
+            showAnonymousAvatar = showAnonymousAvatar,
+            listViewModel = listViewModel,
             onDismissRequest = { dismiss.invoke() },
             onBackPressed = { dismiss.invoke() },
         )

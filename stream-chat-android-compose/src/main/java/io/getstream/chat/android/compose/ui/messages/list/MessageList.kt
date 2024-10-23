@@ -126,6 +126,9 @@ public fun MessageList(
     selectPoll: (Message, Poll, PollSelectionType) -> Unit = { message, poll, selectionType ->
         viewModel.displayPollMoreOptions(selectedPoll = SelectedPoll(poll, message, selectionType))
     },
+    onAddAnswer: (message: Message, poll: Poll, answer: String) -> Unit = { message, poll, answer ->
+        viewModel.castAnswer(message, poll, answer)
+    },
     onClosePoll: (String) -> Unit = { pollId ->
         viewModel.closePoll(pollId = pollId)
     },
@@ -180,6 +183,7 @@ public fun MessageList(
             onUserAvatarClick = onUserAvatarClick,
             onLinkClick = onMessageLinkClick,
             onUserMentionClick = onUserMentionClick,
+            onAddAnswer = onAddAnswer,
         )
     },
 ) {
@@ -205,6 +209,8 @@ public fun MessageList(
         onMessagesPageEndReached = onMessagesPageEndReached,
         onScrollToBottom = onScrollToBottomClicked,
         onMessageLinkClick = onMessageLinkClick,
+        onClosePoll = onClosePoll,
+        onAddAnswer = onAddAnswer,
     )
 }
 
@@ -241,6 +247,7 @@ internal fun DefaultMessageContainer(
     onCastVote: (Message, Poll, Option) -> Unit,
     onRemoveVote: (Message, Poll, Vote) -> Unit,
     selectPoll: (Message, Poll, PollSelectionType) -> Unit,
+    onAddAnswer: (message: Message, poll: Poll, answer: String) -> Unit,
     onClosePoll: (String) -> Unit = { _ -> },
     onAddPollOption: (poll: Poll, option: String) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
@@ -266,6 +273,7 @@ internal fun DefaultMessageContainer(
         onUserAvatarClick = onUserAvatarClick,
         onLinkClick = onLinkClick,
         onUserMentionClick = onUserMentionClick,
+        onAddAnswer = onAddAnswer,
     )
 }
 
@@ -349,6 +357,7 @@ public fun MessageList(
     onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
     onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
     selectPoll: (Message, Poll, PollSelectionType) -> Unit = { _, _, _ -> },
+    onAddAnswer: (message: Message, poll: Poll, answer: String) -> Unit,
     onClosePoll: (String) -> Unit = { _ -> },
     onAddPollOption: (poll: Poll, option: String) -> Unit = { _, _ -> },
     onThreadClick: (Message) -> Unit = {},
@@ -394,6 +403,7 @@ public fun MessageList(
             onUserAvatarClick = onUserAvatarClick,
             onLinkClick = onMessageLinkClick,
             onUserMentionClick = onUserMentionClick,
+            onAddAnswer = onAddAnswer,
         )
     },
 ) {
