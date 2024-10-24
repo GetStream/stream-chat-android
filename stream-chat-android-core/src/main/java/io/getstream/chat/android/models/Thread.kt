@@ -21,18 +21,20 @@ import java.util.Date
 
 @Immutable
 public data class Thread(
+    val activeParticipantCount: Int,
     val cid: String,
-    val channelInfo: ChannelInfo,
+    val channel: Channel?,
     val parentMessageId: String,
     val parentMessage: Message,
     val createdByUserId: String,
-    val createdBy: User,
+    val createdBy: User?,
     val replyCount: Int,
     val participantCount: Int,
     val threadParticipants: List<User>,
     val lastMessageAt: Date,
     val createdAt: Date,
     val updatedAt: Date?,
+    val deletedAt: Date?,
     val title: String,
     val latestReplies: List<Message>,
     val read: List<ChannelUserRead>,

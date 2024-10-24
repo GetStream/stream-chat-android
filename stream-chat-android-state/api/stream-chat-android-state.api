@@ -125,6 +125,7 @@ public final class io/getstream/chat/android/state/plugin/state/StateRegistry {
 	public final fun channel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/channel/state/ChannelState;
 	public final fun clear ()V
 	public final fun queryChannels (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;)Lio/getstream/chat/android/state/plugin/state/querychannels/QueryChannelsState;
+	public final fun queryThreads ()Lio/getstream/chat/android/state/plugin/state/querythreads/QueryThreadsState;
 	public final fun thread (Ljava/lang/String;)Lio/getstream/chat/android/state/plugin/state/channel/thread/ThreadState;
 }
 
@@ -190,6 +191,14 @@ public abstract interface class io/getstream/chat/android/state/plugin/state/que
 	public abstract fun getRecoveryNeeded ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getSort ()Lio/getstream/chat/android/models/querysort/QuerySorter;
 	public abstract fun setChatEventHandlerFactory (Lio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;)V
+}
+
+public abstract interface class io/getstream/chat/android/state/plugin/state/querythreads/QueryThreadsState {
+	public abstract fun getLoading ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getLoadingMore ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getNext ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getThreads ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getUnseenThreadIds ()Lkotlinx/coroutines/flow/StateFlow;
 }
 
 public class io/getstream/chat/android/state/utils/Event {

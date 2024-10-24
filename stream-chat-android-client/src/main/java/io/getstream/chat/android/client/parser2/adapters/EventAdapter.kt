@@ -58,6 +58,7 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationMarkUnreadEve
 import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMutesUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
+import io.getstream.chat.android.client.api2.model.dto.NotificationThreadMessageNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.PollClosedEventDto
 import io.getstream.chat.android.client.api2.model.dto.PollDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.PollUpdatedEventDto
@@ -123,6 +124,8 @@ internal class EventDtoAdapter(
     private val notificationMarkUnreadEventAdapter = moshi.adapter(NotificationMarkUnreadEventDto::class.java)
     private val markAllReadEventAdapter = moshi.adapter(MarkAllReadEventDto::class.java)
     private val notificationMessageNewEventAdapter = moshi.adapter(NotificationMessageNewEventDto::class.java)
+    private val notificationThreadMessageNewEventAdapter =
+        moshi.adapter(NotificationThreadMessageNewEventDto::class.java)
     private val notificationInvitedEventAdapter = moshi.adapter(NotificationInvitedEventDto::class.java)
     private val notificationInviteAcceptedEventAdapter = moshi.adapter(NotificationInviteAcceptedEventDto::class.java)
     private val notificationInviteRejectedEventAdapter = moshi.adapter(NotificationInviteRejectedEventDto::class.java)
@@ -196,6 +199,7 @@ internal class EventDtoAdapter(
             }
             EventType.NOTIFICATION_MARK_UNREAD -> notificationMarkUnreadEventAdapter
             EventType.NOTIFICATION_MESSAGE_NEW -> notificationMessageNewEventAdapter
+            EventType.NOTIFICATION_THREAD_MESSAGE_NEW -> notificationThreadMessageNewEventAdapter
             EventType.NOTIFICATION_INVITED -> notificationInvitedEventAdapter
             EventType.NOTIFICATION_INVITE_ACCEPTED -> notificationInviteAcceptedEventAdapter
             EventType.NOTIFICATION_INVITE_REJECTED -> notificationInviteRejectedEventAdapter

@@ -105,6 +105,17 @@ public sealed interface HasUnreadCounts {
 }
 
 /**
+ * Interface that marks a [ChatEvent] as having the information about unread thread counts.
+ *
+ * The list of events which contains unread counts:
+ * - notification.thread_message_new
+ */
+public sealed interface HasUnreadThreadCounts {
+    public val unreadThreads: Int
+    public val unreadThreadMessages: Int
+}
+
+/**
  * Triggered when a channel is deleted
  */
 public data class ChannelDeletedEvent(
@@ -461,6 +472,22 @@ public data class NotificationMessageNewEvent(
     override val totalUnreadCount: Int = 0,
     override val unreadChannels: Int = 0,
 ) : CidEvent(), HasChannel, HasMessage, HasUnreadCounts
+
+/**
+ * Triggered when a message is added to a channel as a thread reply.
+ */
+public data class NotificationThreadMessageNewEvent(
+    override val type: String,
+    override val cid: String,
+    override val channelId: String,
+    override val channelType: String,
+    override val message: Message,
+    override val channel: Channel,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val unreadThreads: Int,
+    override val unreadThreadMessages: Int,
+) : CidEvent(), HasMessage, HasChannel, HasUnreadThreadCounts
 
 /**
  * Triggered when the user mutes are updated
