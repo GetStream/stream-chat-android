@@ -56,6 +56,7 @@ import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
+import io.getstream.chat.android.client.events.NotificationThreadMessageNewEvent
 import io.getstream.chat.android.client.events.PollClosedEvent
 import io.getstream.chat.android.client.events.PollDeletedEvent
 import io.getstream.chat.android.client.events.PollUpdatedEvent
@@ -267,6 +268,7 @@ internal class EventHandlerSequential(
             updateGlobalState(event)
             updateChannelsState(event)
             updateOfflineStorage(event)
+            updateQueryThreadsState(event)
             updateThreadState(event)
             logger.v { "[handleBatchEvent] <<< id: ${event.id}" }
         } catch (e: Throwable) {
@@ -293,6 +295,10 @@ internal class EventHandlerSequential(
             totalUnreadCount = user.totalUnreadCount
             channelUnreadCount = user.unreadChannels
             unreadThreadsCount = user.unreadThreads
+        }
+
+        val modifyUnreadThreadsCount = { newValue: Int? ->
+            unreadThreadsCount = newValue ?: unreadThreadsCount
         }
 
         val hasReadEventsCapability = parameterizedLazy<String, Boolean> { cid ->
@@ -323,9 +329,15 @@ internal class EventHandlerSequential(
                         modifyValuesFromEvent(event)
                     }
                 }
+                is NotificationThreadMessageNewEvent -> if (batchEvent.isFromSocketConnection) {
+                    if (hasReadEventsCapability(event.cid)) {
+                        modifyUnreadThreadsCount(event.unreadThreads)
+                    }
+                }
                 is NotificationMarkReadEvent -> if (batchEvent.isFromSocketConnection) {
                     if (hasReadEventsCapability(event.cid)) {
                         modifyValuesFromEvent(event)
+                        modifyUnreadThreadsCount(event.unreadThreads)
                     }
                 }
                 is NotificationMarkUnreadEvent -> if (batchEvent.isFromSocketConnection) {
@@ -421,6 +433,11 @@ internal class EventHandlerSequential(
             }
         }.awaitAll()
         logger.v { "[updateChannelsState] completed batchId: ${batchEvent.id}" }
+    }
+
+    private fun updateQueryThreadsState(batchEvent: BatchEvent) {
+        logger.v { "[updateQueryThreadsState] batchEvent.size: ${batchEvent.size}" }
+        logicRegistry.queryThreads().handleEvents(batchEvent.sortedEvents)
     }
 
     private fun updateThreadState(batchEvent: BatchEvent) {

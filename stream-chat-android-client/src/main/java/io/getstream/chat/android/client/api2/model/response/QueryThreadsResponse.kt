@@ -25,9 +25,13 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
  *
  * @param threads: The list of threads.
  * @param duration: The duration of the request.
+ * @param prev: The identifier for the previous page of threads.
+ * @param next: The identifier for the next page of threads.
  */
 @JsonClass(generateAdapter = true)
 internal data class QueryThreadsResponse(
     val threads: List<DownstreamThreadDto>,
     val duration: String,
+    val prev: String?,
+    val next: String?,
 )

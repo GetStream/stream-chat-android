@@ -34,6 +34,8 @@ import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.Thre
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsDatabaseLogic
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsStateLogic
+import io.getstream.chat.android.state.plugin.logic.querythreads.internal.QueryThreadsLogic
+import io.getstream.chat.android.state.plugin.logic.querythreads.internal.QueryThreadsStateLogic
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.toMutableState
@@ -46,7 +48,8 @@ import java.util.concurrent.ConcurrentHashMap
  * Registry-container for logic objects related to:
  * 1. Query channels
  * 2. Query channel
- * 3. Query thread
+ * 3. Query threads
+ * 4. Query thread
  */
 @Suppress("LongParameterList")
 internal class LogicRegistry internal constructor(
@@ -64,6 +67,14 @@ internal class LogicRegistry internal constructor(
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsLogic> =
         ConcurrentHashMap()
     private val channels: ConcurrentHashMap<Pair<String, String>, ChannelLogic> = ConcurrentHashMap()
+
+    // Note: At the moment, there is no need for multiple instances of QueryThreadsLogic, as we always load all threads,
+    // without the option for filtering. Update this is we decide to support different queries.
+    private val queryThreads: QueryThreadsLogic = QueryThreadsLogic(
+        stateLogic = QueryThreadsStateLogic(
+            mutableState = stateRegistry.mutableQueryThreads(),
+        ),
+    )
     private val threads: ConcurrentHashMap<String, ThreadLogic> = ConcurrentHashMap()
 
     internal fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsLogic {
@@ -199,6 +210,11 @@ internal class LogicRegistry internal constructor(
     override fun channelStateLogic(channelType: String, channelId: String): ChannelStateLogic {
         return channel(channelType, channelId).stateLogic()
     }
+
+    /**
+     * Provides the [QueryThreadsLogic] handling the business logic and state management related to thread queries.
+     */
+    fun queryThreads(): QueryThreadsLogic = queryThreads
 
     /** Returns [ThreadLogic] of thread replies with parent message that has id equal to [messageId]. */
     fun thread(messageId: String): ThreadLogic {

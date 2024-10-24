@@ -19,6 +19,7 @@ package io.getstream.chat.android.state.plugin.state.internal
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.models.Message
@@ -28,6 +29,7 @@ import io.getstream.chat.android.state.model.querychannels.pagination.internal.Q
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
+import io.getstream.chat.android.state.plugin.state.querythreads.QueryThreadsState
 import io.getstream.log.taggedLogger
 import io.getstream.result.call.Call
 import io.getstream.result.call.launch
@@ -92,6 +94,19 @@ internal class ChatClientStateCalls(
                 this.isWatchChannel = true
             }
         return queryChannel(channelType, channelId, request)
+    }
+
+    /**
+     * Runs the [ChatClient.queryThreadsResult] operation with the provided [QueryThreadsRequest], and returns the
+     * [QueryThreadsState].
+     *
+     * @param request The [QueryThreadsRequest] used to perform the query threads operation.
+     */
+    internal suspend fun queryThreads(request: QueryThreadsRequest): QueryThreadsState {
+        chatClient.queryThreadsResult(request).launch(scope)
+        return deferredState
+            .await()
+            .queryThreads()
     }
 
     /** Reference request of the get thread replies query. */
