@@ -218,7 +218,7 @@ public class ChannelClient internal constructor(
         }
     }
 
-    @Suppress("ComplexMethod")
+    @Suppress("ComplexMethod", "LongMethod")
     private fun isRelevantForChannel(event: ChatEvent): Boolean {
         return when (event) {
             is ChannelDeletedEvent -> event.cid == cid
