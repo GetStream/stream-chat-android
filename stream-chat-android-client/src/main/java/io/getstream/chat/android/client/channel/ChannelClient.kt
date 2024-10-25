@@ -420,6 +420,17 @@ public class ChannelClient internal constructor(
         return client.markUnread(channelType, channelId, messageId)
     }
 
+    /**
+     * Marks a given thread in the channel starting from the given message as unread.
+     *
+     * @param messageId Id of the message from where the thread should be marked as unread.
+     * @param threadId Id of the thread to mark as unread.
+     */
+    @CheckResult
+    public fun markThreadUnread(threadId: String, messageId: String): Call<Unit> {
+        return client.markThreadUnread(channelType, channelId, threadId = threadId, messageId = messageId)
+    }
+
     @CheckResult
     public fun markRead(): Call<Unit> {
         return client.markRead(channelType, channelId)
