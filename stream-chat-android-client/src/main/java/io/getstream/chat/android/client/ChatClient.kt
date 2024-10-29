@@ -2486,6 +2486,24 @@ internal constructor(
             }
     }
 
+    /**
+     * Marks a given thread starting from the given message as unread.
+     *
+     * @param channelType Type of the channel.
+     * @param channelId Id of the channel.
+     * @param threadId Id of the thread to mark as unread.
+     * @param messageId Id of the message from where the thread should be marked as unread.
+     */
+    @CheckResult
+    public fun markThreadUnread(
+        channelType: String,
+        channelId: String,
+        threadId: String,
+        messageId: String,
+    ): Call<Unit> {
+        return api.markThreadUnread(channelType, channelId, threadId = threadId, messageId = messageId)
+    }
+
     @CheckResult
     public fun updateUsers(users: List<User>): Call<List<User>> {
         return api.updateUsers(users)

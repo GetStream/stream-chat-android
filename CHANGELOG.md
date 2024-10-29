@@ -16,6 +16,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `ChatClient::markThreadUnread` to mark a given thread as unread. [#5457](https://github.com/GetStream/stream-chat-android/pull/5457)
+- Add `ChannelClient::markThreadUnread` to mark a given thread as unread. [#5457](https://github.com/GetStream/stream-chat-android/pull/5457)
 
 ### ⚠️ Changed
 

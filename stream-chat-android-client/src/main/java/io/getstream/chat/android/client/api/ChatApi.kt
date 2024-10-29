@@ -291,6 +291,14 @@ internal interface ChatApi {
     ): Call<Unit>
 
     @CheckResult
+    fun markThreadUnread(
+        channelType: String,
+        channelId: String,
+        threadId: String,
+        messageId: String,
+    ): Call<Unit>
+
+    @CheckResult
     fun showChannel(channelType: String, channelId: String): Call<Unit>
 
     @CheckResult
