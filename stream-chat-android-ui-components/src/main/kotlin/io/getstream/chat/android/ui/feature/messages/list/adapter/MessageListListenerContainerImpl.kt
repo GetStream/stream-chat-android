@@ -20,6 +20,7 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnAtta
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnAttachmentDownloadClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnGiphySendListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnLinkClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMentionClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMessageClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMessageLongClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMessageRetryListener
@@ -42,6 +43,7 @@ internal class MessageListListenerContainerImpl(
     attachmentDownloadClickListener: OnAttachmentDownloadClickListener = OnAttachmentDownloadClickListener(EmptyFunctions.ONE_PARAM),
     reactionViewClickListener: OnReactionViewClickListener = OnReactionViewClickListener(EmptyFunctions.ONE_PARAM),
     userClickListener: OnUserClickListener = OnUserClickListener(EmptyFunctions.ONE_PARAM),
+    mentionClickListener: OnMentionClickListener = OnMentionClickListener(EmptyFunctions.ONE_PARAM),
     giphySendListener: OnGiphySendListener = OnGiphySendListener(EmptyFunctions.ONE_PARAM),
     linkClickListener: OnLinkClickListener = OnLinkClickListener(EmptyFunctions.ONE_PARAM),
     onUnreadLabelReachedListener: OnUnreadLabelReachedListener = OnUnreadLabelReachedListener { },
@@ -116,6 +118,14 @@ internal class MessageListListenerContainerImpl(
     ) { realListener ->
         OnUserClickListener { user ->
             realListener().onUserClick(user)
+        }
+    }
+
+    override var mentionClickListener: OnMentionClickListener by ListenerDelegate(
+        mentionClickListener,
+    ) { realListener ->
+        OnMentionClickListener { user ->
+            realListener().onMentionClick(user)
         }
     }
 
