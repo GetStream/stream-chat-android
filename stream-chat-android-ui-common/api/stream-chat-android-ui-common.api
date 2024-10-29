@@ -1680,12 +1680,6 @@ public class io/getstream/chat/android/ui/common/utils/Utils {
 	public static fun showSoftKeyboard (Landroid/view/View;)V
 }
 
-public abstract class io/getstream/chat/android/ui/common/utils/Utils$TextViewLinkHandler : android/text/method/LinkMovementMethod {
-	public fun <init> ()V
-	public abstract fun onLinkClick (Ljava/lang/String;)V
-	public fun onTouchEvent (Landroid/widget/TextView;Landroid/text/Spannable;Landroid/view/MotionEvent;)Z
-}
-
 public final class io/getstream/chat/android/ui/common/utils/extensions/AttachmentKt {
 	public static final fun getDisplayableName (Lio/getstream/chat/android/models/Attachment;)Ljava/lang/String;
 	public static final fun getImagePreviewUrl (Lio/getstream/chat/android/models/Attachment;)Ljava/lang/String;
