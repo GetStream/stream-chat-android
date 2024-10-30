@@ -21,11 +21,13 @@ import android.text.Spannable
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.text.style.URLSpan
 import android.text.util.Linkify
 import android.widget.TextView
 import androidx.core.util.PatternsCompat
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.User
 import java.util.Locale
 import java.util.regex.Pattern
 
@@ -48,17 +50,21 @@ public object Linkify {
      * make sure it is not repeatedly called on same text.
      *
      * @param textView TextView whose text is to be marked-up with links.
+     * @param mentionableUsers List of users to be marked-up with links.
      */
-    public fun addLinks(textView: TextView) {
+    public fun addLinks(
+        textView: TextView,
+        mentionableUsers: List<User>,
+    ) {
         val t: CharSequence = textView.text
 
         if (t is Spannable) {
-            if (addLinks(t)) {
+            if (addLinks(t, mentionableUsers)) {
                 addLinkMovementMethod(textView)
             }
         } else {
             val s = SpannableString.valueOf(t)
-            if (addLinks(s)) {
+            if (addLinks(s, mentionableUsers)) {
                 addLinkMovementMethod(textView)
                 textView.text = s
             }
@@ -73,19 +79,27 @@ public object Linkify {
      * @return True if at least one link is found and applied.
      */
     @SuppressLint("RestrictedApi")
-    private fun addLinks(spannable: Spannable): Boolean =
+    private fun addLinks(
+        spannable: Spannable,
+        mentionableUsers: List<User>,
+    ): Boolean =
         (
-            gatherLinks(
+            gatherSpanSpecs(
                 spannable,
                 PatternsCompat.AUTOLINK_WEB_URL,
-                listOf("http://", "https://", "rtsp://"),
                 Linkify.sUrlMatchFilter,
-            ) + gatherLinks(
+            ) { it.makeUrlSpan(listOf("http://", "https://", "rtsp://")) } + gatherSpanSpecs(
                 spannable,
                 PatternsCompat.AUTOLINK_EMAIL_ADDRESS,
-                listOf("mailto:"),
+
                 null,
-            )
+            ) { it.makeUrlSpan(listOf("mailto:")) } + mentionableUsers.flatMap { user ->
+                gatherSpanSpecs(
+                    spannable,
+                    Pattern.compile("((?:\\B|^)(@${user.name})(?:\\b|\$))"),
+                    null,
+                ) { UserSpan(user) }
+            }
             ).pruneOverlaps(spannable)
             .map { spannable.setSpan(it.span, it.start, it.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE) }
             .isNotEmpty()
@@ -128,16 +142,16 @@ public object Linkify {
      *
      * @param spannable Spannable text to apply the pattern.
      * @param pattern Pattern to apply.
-     * @param schemes List of schemes to check for.
      * @param matchFilter Filter to apply on the matched text.
+     * @param createSpan Function to create the span from the matched text.
      *
-     * @return List of LinkSpecs.
+     * @return List of SpanSpec.
      */
-    private fun gatherLinks(
+    private fun gatherSpanSpecs(
         spannable: Spannable,
         pattern: Pattern,
-        schemes: List<String>,
         matchFilter: Linkify.MatchFilter?,
+        createSpan: (String) -> ClickableSpan,
     ): List<SpanSpec> {
         val specs = mutableListOf<SpanSpec>()
         val m = pattern.matcher(spannable)
@@ -145,7 +159,7 @@ public object Linkify {
             val start = m.start()
             val end = m.end()
             if (matchFilter == null || matchFilter.acceptMatch(spannable, start, end)) {
-                m.group(0)?.makeUrlSpan(schemes)?.let { specs.add(SpanSpec(span = it, start = start, end = end)) }
+                m.group(0)?.let(createSpan)?.let { specs.add(SpanSpec(span = it, start = start, end = end)) }
             }
         }
         return specs
@@ -164,7 +178,7 @@ public object Linkify {
         }.toSet()
 
     private data class SpanSpec(
-        val span: URLSpan,
+        val span: ClickableSpan,
         val start: Int,
         val end: Int,
     )
