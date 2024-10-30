@@ -73,6 +73,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `ThreadList` component for showing the list of threads for the user.  
 
 ### ⚠️ Changed
 

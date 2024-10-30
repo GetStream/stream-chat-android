@@ -87,6 +87,7 @@ module.exports = {
             "compose/general-customization/attachment-factory",
           ],
         },
+        "compose/thread-components/thread-list",
         {
           "Utility Components": [
             "compose/utility-components/user-avatar",
