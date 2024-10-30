@@ -20,6 +20,7 @@ import android.text.method.LinkMovementMethod
 import android.view.View
 import android.widget.TextView
 import androidx.core.widget.doAfterTextChanged
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.feature.messages.list.internal.LongClickFriendlyLinkMovementMethod.Companion.set
 import io.getstream.chat.android.ui.utils.TextViewLinkHandler
 import io.getstream.chat.android.ui.utils.shouldConsumeLongTap
@@ -36,6 +37,7 @@ internal class LongClickFriendlyLinkMovementMethod private constructor(
     private val textView: TextView,
     private val longClickTarget: View,
     private val onLinkClicked: (url: String) -> Unit,
+    private val onUserClicked: (user: User) -> Unit,
 ) : TextViewLinkHandler() {
     private var isLongClick = false
 
@@ -54,11 +56,21 @@ internal class LongClickFriendlyLinkMovementMethod private constructor(
     }
 
     override fun onLinkClick(url: String) {
+        if (checkLongClick()) return
+        onLinkClicked(url)
+    }
+
+    private fun checkLongClick(): Boolean {
         if (isLongClick) {
             isLongClick = false
-            return
+            return true
         }
-        onLinkClicked(url)
+        return false
+    }
+
+    override fun onUserClick(user: User) {
+        if (checkLongClick()) return
+        onUserClicked(user)
     }
 
     companion object {
@@ -66,8 +78,9 @@ internal class LongClickFriendlyLinkMovementMethod private constructor(
             textView: TextView,
             longClickTarget: View,
             onLinkClicked: (url: String) -> Unit,
+            onMentionClicked: (user: User) -> Unit,
         ) {
-            LongClickFriendlyLinkMovementMethod(textView, longClickTarget, onLinkClicked)
+            LongClickFriendlyLinkMovementMethod(textView, longClickTarget, onLinkClicked, onMentionClicked)
         }
     }
 }

@@ -138,6 +138,7 @@ public class CustomAttachmentsViewHolder internal constructor(
                     textView = messageText,
                     longClickTarget = messageContainer,
                     onLinkClicked = container.linkClickListener::onLinkClick,
+                    onMentionClicked = container.mentionClickListener::onMentionClick,
                 )
             }
         }
@@ -152,6 +153,7 @@ public class CustomAttachmentsViewHolder internal constructor(
                 textView = binding.messageText,
                 longClickTarget = binding.messageContainer,
                 onLinkClicked = container.linkClickListener::onLinkClick,
+                onMentionClicked = container.mentionClickListener::onMentionClick,
             )
         }
     }

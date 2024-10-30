@@ -21,6 +21,7 @@ import android.text.method.LinkMovementMethod
 import android.text.style.URLSpan
 import android.view.MotionEvent
 import android.widget.TextView
+import io.getstream.chat.android.models.User
 
 internal abstract class TextViewLinkHandler : LinkMovementMethod() {
     override fun onTouchEvent(
@@ -44,8 +45,10 @@ internal abstract class TextViewLinkHandler : LinkMovementMethod() {
         val off = layout.getOffsetForHorizontal(line, x.toFloat())
 
         buffer.getSpans(off, off, URLSpan::class.java).firstOrNull()?.let { onLinkClick(it.url) }
+        buffer.getSpans(off, off, UserSpan::class.java).firstOrNull()?.let { onUserClick(it.user) }
         return true
     }
 
     abstract fun onLinkClick(url: String)
+    abstract fun onUserClick(user: User)
 }

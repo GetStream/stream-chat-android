@@ -72,6 +72,7 @@ public class MessagePlainTextViewHolder internal constructor(
                     textView = messageText,
                     longClickTarget = messageContainer,
                     onLinkClicked = container.linkClickListener::onLinkClick,
+                    onMentionClicked = container.mentionClickListener::onMentionClick,
                 )
             }
         }
