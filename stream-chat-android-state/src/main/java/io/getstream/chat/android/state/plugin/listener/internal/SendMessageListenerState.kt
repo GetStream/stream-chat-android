@@ -77,6 +77,7 @@ internal class SendMessageListenerState(private val logic: LogicRegistry) : Send
             .copy(syncStatus = SyncStatus.COMPLETED)
             .also { message ->
                 logic.channelFromMessage(message)?.upsertMessage(message)
+                logic.threads().upsertMessage(message)
                 logic.threadFromMessage(message)?.upsertMessage(message)
             }
     }
@@ -105,6 +106,7 @@ internal class SendMessageListenerState(private val logic: LogicRegistry) : Send
             updatedLocallyAt = Date(),
         ).also {
             logic.channelFromMessage(it)?.upsertMessage(it)
+            logic.threads().upsertMessage(message)
             logic.threadFromMessage(it)?.upsertMessage(it)
         }
     }

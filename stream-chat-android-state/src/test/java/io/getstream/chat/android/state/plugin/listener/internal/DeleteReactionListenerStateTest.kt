@@ -23,7 +23,7 @@ import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import io.getstream.chat.android.state.plugin.logic.querythreads.internal.QueryThreadsLogic
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -33,7 +33,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class DeleteReactionListenerStateTest {
     private val user = randomUser()
     private val defaultReaction = randomReaction(
@@ -50,9 +49,13 @@ internal class DeleteReactionListenerStateTest {
     private val channelLogic = mock<ChannelLogic> {
         on(it.getMessage(any())) doReturn defaultMessage
     }
+    private val threadsLogic = mock<QueryThreadsLogic> {
+        on(it.getMessage(any())) doReturn defaultMessage
+    }
     private val logicRegistry = mock<LogicRegistry> {
         on(it.channelFromMessageId(any())) doReturn channelLogic
         on(it.channel(any(), any())) doReturn channelLogic
+        on(it.threads()) doReturn threadsLogic
     }
 
     private val deleteReactionListenerDatabase = DeleteReactionListenerState(logicRegistry, clientState)
@@ -69,6 +72,11 @@ internal class DeleteReactionListenerStateTest {
         )
 
         verify(channelLogic).upsertMessage(
+            argThat { message ->
+                message.ownReactions.isEmpty() && message.latestReactions.isEmpty()
+            },
+        )
+        verify(threadsLogic).upsertMessage(
             argThat { message ->
                 message.ownReactions.isEmpty() && message.latestReactions.isEmpty()
             },

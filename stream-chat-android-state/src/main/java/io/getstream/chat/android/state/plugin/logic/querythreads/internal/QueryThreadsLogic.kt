@@ -114,6 +114,23 @@ internal class QueryThreadsLogic(private val stateLogic: QueryThreadsStateLogic)
      */
     internal fun handleEvents(events: List<ChatEvent>) = events.forEach(::handleEvent)
 
+    /**
+     * Retrieves a [Message] by its ID if it is stored in the Threads state.
+     */
+    internal fun getMessage(messageId: String): Message? =
+        stateLogic.getMessage(messageId)
+
+    /**
+     * Upsert the given [Message] in a [Thread] if such exists.
+     */
+    internal fun upsertMessage(message: Message) = updateParentOrReply(message)
+
+    /**
+     * Upsert the given [Message] from a [Thread] if such exists.
+     */
+    internal fun deleteMessage(message: Message) =
+        stateLogic.deleteMessage(message)
+
     private fun handleEvent(event: ChatEvent) {
         when (event) {
             // Destructive operation - remove the threads completely from the list

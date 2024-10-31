@@ -25,6 +25,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.state.querythreads.internal.QueryThreadsMutableState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
+import org.amshove.kluent.`should be`
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -169,12 +170,12 @@ internal class QueryThreadsStateLogicTest {
     fun `Given QueryThreadsStateLogic When calling appendThreads Should update mutableState`() {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
-        doNothing().whenever(mutableState).appendThreads(any())
+        doNothing().whenever(mutableState).upsertThreads(any())
         val logic = QueryThreadsStateLogic(mutableState)
         // when
         logic.appendThreads(emptyList())
         // then
-        verify(mutableState, times(1)).appendThreads(emptyList())
+        verify(mutableState, times(1)).upsertThreads(emptyList())
     }
 
     @Test
@@ -211,6 +212,86 @@ internal class QueryThreadsStateLogicTest {
         logic.clearUnseenThreadIds()
         // then
         verify(mutableState, times(1)).clearUnseenThreadIds()
+    }
+
+    @Test
+    fun `Given QueryTestStateLogic When calling getMessage for parent message Should return message`() {
+        // given
+        val mutableState = mock<QueryThreadsMutableState>()
+        whenever(mutableState.threadMap) doReturn mapOf("mId1" to threadList[0])
+        val logic = QueryThreadsStateLogic(mutableState)
+        // when
+        val message = logic.getMessage("mId1")
+        // then
+        message `should be equal to` threadList[0].parentMessage
+    }
+
+    @Test
+    fun `Given QueryTestStateLogic When calling getMessage for reply message Should return message`() {
+        // given
+        val mutableState = mock<QueryThreadsMutableState>()
+        whenever(mutableState.threadMap) doReturn mapOf("mId1" to threadList[0])
+        val logic = QueryThreadsStateLogic(mutableState)
+        // when
+        val message = logic.getMessage("mId2")
+        // then
+        message `should be equal to` threadList[0].latestReplies[0]
+    }
+
+    @Test
+    fun `Given QueryTestStateLogic When calling getMessage for unknown id Should return null`() {
+        // given
+        val mutableState = mock<QueryThreadsMutableState>()
+        whenever(mutableState.threadMap) doReturn mapOf("mId1" to threadList[0])
+        val logic = QueryThreadsStateLogic(mutableState)
+        // when
+        val message = logic.getMessage("mId3")
+        // then
+        message `should be` null
+    }
+
+    @Test
+    fun `Given QueryThreadsStateLogic When calling deleteMessage for parent message Should delete thread`() {
+        // given
+        val mutableState = mock<QueryThreadsMutableState>()
+        whenever(mutableState.threadMap) doReturn mapOf("mId1" to threadList[0])
+        doNothing().whenever(mutableState).deleteThread(any())
+        val logic = QueryThreadsStateLogic(mutableState)
+        // when
+        val messageToDelete = threadList[0].parentMessage
+        logic.deleteMessage(messageToDelete)
+        // then
+        verify(mutableState).deleteThread("mId1")
+    }
+
+    @Test
+    fun `Given QueryThreadsStateLogic When calling deleteMessage for reply message Should delete reply`() {
+        // given
+        val mutableState = mock<QueryThreadsMutableState>()
+        whenever(mutableState.threadMap) doReturn mapOf("mId1" to threadList[0])
+        doNothing().whenever(mutableState).deleteMessageFromThread(any(), any())
+        val logic = QueryThreadsStateLogic(mutableState)
+        // when
+        val messageToDelete = threadList[0].latestReplies[0]
+        logic.deleteMessage(messageToDelete)
+        // then
+        verify(mutableState).deleteMessageFromThread(threadId = "mId1", messageId = "mId2")
+    }
+
+    @Test
+    fun `Given QueryThreadsStateLogic When calling deleteMessage for unknown message Should do nothing`() {
+        // given
+        val mutableState = mock<QueryThreadsMutableState>()
+        whenever(mutableState.threadMap) doReturn mapOf("mId1" to threadList[0])
+        doNothing().whenever(mutableState).deleteThread(any())
+        doNothing().whenever(mutableState).deleteMessageFromThread(any(), any())
+        val logic = QueryThreadsStateLogic(mutableState)
+        // when
+        val messageToDelete = Message()
+        logic.deleteMessage(messageToDelete)
+        // then
+        verify(mutableState, never()).deleteThread(any())
+        verify(mutableState, never()).deleteMessageFromThread(any(), any())
     }
 
     @Test

@@ -37,9 +37,11 @@ import io.getstream.chat.android.models.ThreadParticipant
 import io.getstream.chat.android.models.User
 import io.getstream.result.Error
 import io.getstream.result.Result
+import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.doNothing
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
@@ -640,5 +642,60 @@ internal class QueryThreadsLogicTest {
         logic.handleEvents(listOf(event))
         // then
         verifyNoInteractions(stateLogic)
+    }
+
+    @Test
+    fun `Given QueryThreadsLogic When calling getMessage Should get message via stateLogic`() {
+        // given
+        val stateLogic = mock<QueryThreadsStateLogic>()
+        whenever(stateLogic.getMessage("mId1")) doReturn Message(id = "mId1")
+        val logic = QueryThreadsLogic(stateLogic)
+        // when
+        val message = logic.getMessage("mId1")
+        // then
+        message `should be equal to` Message(id = "mId1")
+        verify(stateLogic, times(1)).getMessage("mId1")
+    }
+
+    @Test
+    fun `Given QueryThreadsLogic When calling upsertMessage for parent Should update parent`() {
+        // given
+        val messageToUpsert = Message(id = "mId1", text = "Updated thread parent")
+        val stateLogic = mock<QueryThreadsStateLogic>()
+        whenever(stateLogic.getThreads()) doReturn threadList
+        whenever(stateLogic.updateParent(messageToUpsert)) doReturn true
+        val logic = QueryThreadsLogic(stateLogic)
+        // when
+        logic.upsertMessage(messageToUpsert)
+        // then
+        verify(stateLogic, times(1)).updateParent(messageToUpsert)
+        verify(stateLogic, never()).upsertReply(any())
+    }
+
+    @Test
+    fun `Given QueryThreadsLogic When calling upsertMessage for reply Should upsert reply`() {
+        // given
+        val messageToUpsert = Message(id = "mId4", parentId = "mId1", text = "New reply")
+        val stateLogic = mock<QueryThreadsStateLogic>()
+        whenever(stateLogic.getThreads()) doReturn threadList
+        val logic = QueryThreadsLogic(stateLogic)
+        // when
+        logic.upsertMessage(messageToUpsert)
+        // then
+        verify(stateLogic, times(1)).updateParent(messageToUpsert)
+        verify(stateLogic, times(1)).upsertReply(messageToUpsert)
+    }
+
+    @Test
+    fun `Given QueryThreadsLogic When calling deleteMessage Should delete message via stateLogic`() {
+        // given
+        val stateLogic = mock<QueryThreadsStateLogic>()
+        doNothing().whenever(stateLogic).deleteMessage(any())
+        val logic = QueryThreadsLogic(stateLogic)
+        // when
+        val messageToDelete = Message(id = "mId1")
+        logic.deleteMessage(messageToDelete)
+        // then
+        verify(stateLogic, times(1)).deleteMessage(messageToDelete)
     }
 }

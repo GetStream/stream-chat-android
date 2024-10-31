@@ -77,7 +77,7 @@ internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMuta
      * @param threads The new page of threads.
      */
     internal fun appendThreads(threads: List<Thread>) =
-        mutableState.appendThreads(threads)
+        mutableState.upsertThreads(threads)
 
     /**
      * Updates the identifier for the next page of threads in the [mutableState].
@@ -100,6 +100,31 @@ internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMuta
      */
     internal fun clearUnseenThreadIds() =
         mutableState.clearUnseenThreadIds()
+
+    /**
+     * Retrieves a message from the [mutableState] if it exists.
+     */
+    internal fun getMessage(messageId: String): Message? {
+        val threads = mutableState.threadMap
+        return threads[messageId]?.parentMessage
+            ?: threads.flatMap { it.value.latestReplies }.find { it.id == messageId }
+    }
+
+    /**
+     * Deletes a message from a [Thread] in the [mutableState].
+     *
+     * @param message The [Message] to delete.
+     */
+    internal fun deleteMessage(message: Message) {
+        val threads = mutableState.threadMap
+        if (message.parentId == null && threads.containsKey(message.id)) {
+            // Message is a thread parent
+            mutableState.deleteThread(message.id)
+        } else if (message.parentId != null) {
+            // Message is a potential thread reply
+            mutableState.deleteMessageFromThread(message.parentId, message.id)
+        }
+    }
 
     /**
      * Updates the parent message of a thread.

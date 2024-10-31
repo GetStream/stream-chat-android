@@ -52,7 +52,7 @@ internal class QueryThreadsMutableStateTest {
             updatedAt = Date(),
             deletedAt = null,
             title = "Thread 1",
-            latestReplies = listOf(Message()),
+            latestReplies = listOf(Message(id = "mId1")),
             read = emptyList(),
         ),
     )
@@ -134,7 +134,7 @@ internal class QueryThreadsMutableStateTest {
     }
 
     @Test
-    fun `Given QueryThreadsMutableState When calling appendThreads Should update threads`() = runTest {
+    fun `Given QueryThreadsMutableState When calling insertThreadsIfAbsent with new threads Should update threads`() = runTest {
         // given
         val mutableState = QueryThreadsMutableState()
         mutableState.threads.test {
@@ -142,13 +142,135 @@ internal class QueryThreadsMutableStateTest {
             initialValue `should be equal to` emptyList()
 
             // when
-            mutableState.appendThreads(threadList1)
+            mutableState.insertThreadsIfAbsent(threadList1)
+            val updatedValue = awaitItem()
+            updatedValue `should be equal to` threadList1
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `Given QueryThreadsMutableState When calling insertThreadsIfAbsent with existing threads Should do nothing`() = runTest {
+        // given
+        val mutableState = QueryThreadsMutableState()
+        mutableState.threads.test {
+            val initialValue = awaitItem()
+            initialValue `should be equal to` emptyList()
+
+            mutableState.setThreads(threadList1)
+            val updatedValue = awaitItem()
+            updatedValue `should be equal to` threadList1
+
+            // when
+            mutableState.insertThreadsIfAbsent(threadList1)
+            expectNoEvents() // Verify state is not updated
+        }
+    }
+
+    @Test
+    fun `Given QueryThreadsMutableState When calling upsertThreads with new threads Should insert threads`() = runTest {
+        // given
+        val mutableState = QueryThreadsMutableState()
+        mutableState.threads.test {
+            val initialValue = awaitItem()
+            initialValue `should be equal to` emptyList()
+
+            // when
+            mutableState.upsertThreads(threadList1)
             val updatedValue1 = awaitItem()
             updatedValue1 `should be equal to` threadList1
 
-            mutableState.appendThreads(threadList2)
+            mutableState.upsertThreads(threadList2)
             val updatedValue2 = awaitItem()
             updatedValue2 `should be equal to` (threadList1 + threadList2)
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `Given QueryThreadsMutableState When calling upsertThreads with existing threads Should update threads`() = runTest {
+        // given
+        val mutableState = QueryThreadsMutableState()
+        mutableState.threads.test {
+            val initialValue = awaitItem()
+            initialValue `should be equal to` emptyList()
+
+            // when
+            mutableState.upsertThreads(threadList1)
+            val updatedValue1 = awaitItem()
+            updatedValue1 `should be equal to` threadList1
+
+            val newThreads = listOf(threadList1[0].copy(title = "New thread title"))
+            mutableState.upsertThreads(newThreads)
+            val updatedValue2 = awaitItem()
+            updatedValue2 `should be equal to` newThreads
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `Given QueryThreadsMutableState When calling clearThreads Should update threads`() = runTest {
+        // given
+        val mutableState = QueryThreadsMutableState()
+        mutableState.threads.test {
+            val initialValue = awaitItem()
+            initialValue `should be equal to` emptyList()
+
+            // when
+            mutableState.upsertThreads(threadList1)
+            val updatedValue1 = awaitItem()
+            updatedValue1 `should be equal to` threadList1
+
+            mutableState.clearThreads()
+            val updatedValue2 = awaitItem()
+            updatedValue2 `should be equal to` emptyList()
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `Given QueryThreadsMutableState When calling deleteThread Should update threads`() = runTest {
+        // given
+        val mutableState = QueryThreadsMutableState()
+        mutableState.threads.test {
+            val initialValue = awaitItem()
+            initialValue `should be equal to` emptyList()
+
+            // when
+            mutableState.upsertThreads(threadList1)
+            val updatedValue1 = awaitItem()
+            updatedValue1 `should be equal to` threadList1
+
+            mutableState.deleteThread("pmId1")
+            val updatedValue2 = awaitItem()
+            updatedValue2 `should be equal to` emptyList()
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `Given QueryThreadsMutableState When calling deleteMessageFromThread Should update threads`() = runTest {
+        // given
+        val mutableState = QueryThreadsMutableState()
+        mutableState.threads.test {
+            val initialValue = awaitItem()
+            initialValue `should be equal to` emptyList()
+
+            // when
+            mutableState.upsertThreads(threadList1)
+            val updatedValue1 = awaitItem()
+            updatedValue1 `should be equal to` threadList1
+
+            mutableState.deleteMessageFromThread(threadId = "pmId1", messageId = "mId1")
+            val updatedValue2 = awaitItem()
+            val expectedThread = threadList1[0].copy(latestReplies = emptyList())
+            val expectedThreadList = listOf(expectedThread)
+            updatedValue2 `should be equal to` expectedThreadList
 
             cancelAndIgnoreRemainingEvents()
         }

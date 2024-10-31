@@ -214,7 +214,7 @@ internal class LogicRegistry internal constructor(
     /**
      * Provides the [QueryThreadsLogic] handling the business logic and state management related to thread queries.
      */
-    fun queryThreads(): QueryThreadsLogic = queryThreads
+    fun threads(): QueryThreadsLogic = queryThreads
 
     /** Returns [ThreadLogic] of thread replies with parent message that has id equal to [messageId]. */
     fun thread(messageId: String): ThreadLogic {
