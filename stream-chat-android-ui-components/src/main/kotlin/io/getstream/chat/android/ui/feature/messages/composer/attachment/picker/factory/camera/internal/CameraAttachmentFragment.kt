@@ -131,12 +131,16 @@ internal class CameraAttachmentFragment : Fragment() {
     }
 
     private fun onPermissionGranted() {
-        binding.grantPermissionsInclude.grantPermissionsContainer.isVisible = false
-        activityResultLauncher?.launch(Unit)
+        _binding?.run {
+            grantPermissionsInclude.grantPermissionsContainer.isVisible = false
+            activityResultLauncher?.launch(Unit)
+        }
     }
 
     private fun onPermissionDenied() {
-        binding.grantPermissionsInclude.grantPermissionsContainer.isVisible = true
+        _binding?.run {
+            grantPermissionsInclude.grantPermissionsContainer.isVisible = true
+        }
     }
 
     override fun onDestroyView() {
