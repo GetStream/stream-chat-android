@@ -26,14 +26,14 @@ import kotlin.reflect.KClass
 /**
  * BySelector extension function, which is getting the UIObject.
  */
-public fun BySelector.findObject() : UiObject2 {
+public fun BySelector.findObject(): UiObject2 {
     return device.findObject(this)
 }
 
 /**
  * BySelector extension function, which is getting the UIObject.
  */
-public fun BySelector.findObjects() : List<UiObject2> {
+public fun BySelector.findObjects(): List<UiObject2> {
     return device.findObjects(this)
 }
 
@@ -50,4 +50,6 @@ public infix fun UiDevice.findObjectByTextContains(text: String): UiObject2 = fi
 /**
  * UIDevice extension function, which is getting the UIObject by selecting the component with [KClass] type.
  */
-public infix fun <K : View> UiDevice.findObjectByType(kClass: () -> KClass<K>): UiObject2 = findObject(By.clazz(kClass().java))
+public infix fun <K : View> UiDevice.findObjectByType(
+    kClass: () -> KClass<K>
+): UiObject2 = findObject(By.clazz(kClass().java))

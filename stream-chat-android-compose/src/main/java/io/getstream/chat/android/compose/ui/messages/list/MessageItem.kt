@@ -277,9 +277,8 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
 
     if (!messageItem.isMine && (
             messageItem.showMessageFooter || messageItem.groupPosition.contains(MessagePosition.BOTTOM) || messageItem.groupPosition.contains(
-                MessagePosition.NONE,
+                MessagePosition.NONE)
             )
-        )
     ) {
         UserAvatar(
             modifier = modifier.testTag("Stream_UserAvatar"),

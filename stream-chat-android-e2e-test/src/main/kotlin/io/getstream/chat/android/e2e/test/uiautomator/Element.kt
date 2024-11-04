@@ -35,7 +35,7 @@ public fun BySelector.isDisplayed(): Boolean {
     return this.findObjects().isNotEmpty()
 }
 
-public fun BySelector.scrollUpUntilDisplayed(scrolls: Int = 5) : UiObject2 {
+public fun BySelector.scrollUpUntilDisplayed(scrolls: Int = 5): UiObject2 {
     var counter = scrolls
     while (!this.isDisplayed() && counter > 0) {
         device.swipeDown()
@@ -44,7 +44,7 @@ public fun BySelector.scrollUpUntilDisplayed(scrolls: Int = 5) : UiObject2 {
     return this.findObject()
 }
 
-public fun BySelector.scrollDownUntilDisplayed(scrolls: Int = 5) : UiObject2 {
+public fun BySelector.scrollDownUntilDisplayed(scrolls: Int = 5): UiObject2 {
     var counter = scrolls
     while (!this.isDisplayed() && counter > 0) {
         device.swipeUp()

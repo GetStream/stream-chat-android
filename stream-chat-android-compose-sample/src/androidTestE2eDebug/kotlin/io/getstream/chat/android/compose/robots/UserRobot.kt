@@ -26,7 +26,6 @@ import io.getstream.chat.android.compose.pages.MessageListPage.Composer
 import io.getstream.chat.android.compose.pages.ThreadPage
 import io.getstream.chat.android.compose.uiautomator.defaultTimeout
 import io.getstream.chat.android.compose.uiautomator.device
-import io.getstream.chat.android.compose.uiautomator.exists
 import io.getstream.chat.android.compose.uiautomator.findObject
 import io.getstream.chat.android.compose.uiautomator.findObjects
 import io.getstream.chat.android.compose.uiautomator.longPress
@@ -36,7 +35,7 @@ import io.getstream.chat.android.compose.uiautomator.typeText
 import io.getstream.chat.android.compose.uiautomator.wait
 import io.getstream.chat.android.compose.uiautomator.waitToAppear
 import io.getstream.chat.android.compose.uiautomator.waitToDisappear
-import io.getstream.chat.android.e2e.test.chat.ReactionType
+import io.getstream.chat.android.e2e.test.mockserver.ReactionType
 
 class UserRobot {
 
