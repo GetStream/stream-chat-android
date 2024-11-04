@@ -20,6 +20,8 @@ import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.models.Message
+import java.util.Calendar
+import java.util.Date
 
 /**
  * A SAM designed to evaluate if a date separator should be added between messages.
@@ -38,60 +40,40 @@ public fun interface DateSeparatorHandler {
 
     public companion object {
 
+        private val defaultDateSeparatorHandler = DateSeparatorHandler { previousMessage, message ->
+            !message.getCreatedAtOrDefault(NEVER).isInTheSameDay(
+                previousMessage?.getCreatedAtOrNull() ?: NEVER,
+            )
+        }
+
         /**
-         * @param separatorTimeMillis Time difference between two message after which we add the date separator.
+         * Creates a [DateSeparatorHandler] returning true if the messages are not in the same day.
          *
          * @return The default normal list date separator handler.
          */
-        public fun getDefaultDateSeparatorHandler(
-            separatorTimeMillis: Long = DateSeparatorDefaultHourThreshold,
-        ): DateSeparatorHandler = DateSeparatorHandler { previousMessage, message ->
-            if (previousMessage == null) {
-                true
-            } else {
-                shouldAddDateSeparator(previousMessage, message, separatorTimeMillis)
-            }
-        }
+        public fun getDefaultDateSeparatorHandler(): DateSeparatorHandler = defaultDateSeparatorHandler
 
         /**
-         * @param separatorTimeMillis Time difference between two message after which we add the date separator.
+         * Creates a [DateSeparatorHandler] returning true if the messages are not in the same day.
          *
          * @return The default thread date separator handler.
          */
-        public fun getDefaultThreadDateSeparatorHandler(
-            separatorTimeMillis: Long = DateSeparatorDefaultHourThreshold,
-        ): DateSeparatorHandler = DateSeparatorHandler { previousMessage, message ->
-            if (previousMessage == null) {
-                false
-            } else {
-                shouldAddDateSeparator(previousMessage, message, separatorTimeMillis)
+        public fun getDefaultThreadDateSeparatorHandler(): DateSeparatorHandler =
+            DateSeparatorHandler { previousMessage, message ->
+                previousMessage?.let { defaultDateSeparatorHandler.shouldAddDateSeparator(it, message) } ?: false
             }
-        }
 
         /**
-         * @param previousMessage The [Message] before the one we are currently evaluating.
-         * @param message The [Message] before which we want to add a date separator or not.
+         * Checks if the two dates are in the same day.
          *
-         * @return Whether to add the date separator or not depending on the time difference.
+         * @param that The date to compare with.
+         * @return True if the two dates are in the same day, false otherwise.
          */
-        private fun shouldAddDateSeparator(
-            previousMessage: Message?,
-            message: Message,
-            separatorTimeMillis: Long,
-        ): Boolean {
-            return (
-                message.getCreatedAtOrDefault(NEVER).time - (
-                    previousMessage?.getCreatedAtOrNull()?.time
-                        ?: NEVER.time
-                    )
-                ) >
-                separatorTimeMillis
+        private fun Date.isInTheSameDay(that: Date): Boolean {
+            val thisCalendar = Calendar.getInstance().apply { time = this@isInTheSameDay }
+            val thatCalendar = Calendar.getInstance().apply { time = that }
+            return thisCalendar.get(Calendar.DAY_OF_YEAR) == thatCalendar.get(Calendar.DAY_OF_YEAR) &&
+                thisCalendar.get(Calendar.YEAR) == thatCalendar.get(Calendar.YEAR)
         }
-
-        /**
-         * The default threshold for showing date separators. If the message difference in millis is equal to this
-         * number, then we show a separator, if it's enabled in the list.
-         */
-        private const val DateSeparatorDefaultHourThreshold: Long = 4 * 60 * 60 * 1000
     }
 }

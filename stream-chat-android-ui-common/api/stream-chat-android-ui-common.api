@@ -118,10 +118,8 @@ public abstract interface class io/getstream/chat/android/ui/common/feature/mess
 }
 
 public final class io/getstream/chat/android/ui/common/feature/messages/list/DateSeparatorHandler$Companion {
-	public final fun getDefaultDateSeparatorHandler (J)Lio/getstream/chat/android/ui/common/feature/messages/list/DateSeparatorHandler;
-	public static synthetic fun getDefaultDateSeparatorHandler$default (Lio/getstream/chat/android/ui/common/feature/messages/list/DateSeparatorHandler$Companion;JILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/messages/list/DateSeparatorHandler;
-	public final fun getDefaultThreadDateSeparatorHandler (J)Lio/getstream/chat/android/ui/common/feature/messages/list/DateSeparatorHandler;
-	public static synthetic fun getDefaultThreadDateSeparatorHandler$default (Lio/getstream/chat/android/ui/common/feature/messages/list/DateSeparatorHandler$Companion;JILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/messages/list/DateSeparatorHandler;
+	public final fun getDefaultDateSeparatorHandler ()Lio/getstream/chat/android/ui/common/feature/messages/list/DateSeparatorHandler;
+	public final fun getDefaultThreadDateSeparatorHandler ()Lio/getstream/chat/android/ui/common/feature/messages/list/DateSeparatorHandler;
 }
 
 public final class io/getstream/chat/android/ui/common/feature/messages/list/MessageListController {
