@@ -20,6 +20,7 @@ package io.getstream.chat.android.test
 
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.TestScope
@@ -34,12 +35,14 @@ import org.junit.jupiter.api.extension.ExtensionContext
 
 public class TestCoroutineExtension : BeforeEachCallback, BeforeAllCallback, AfterEachCallback, AfterAllCallback {
 
-    private var _scope: TestScope? = null
+    @OptIn(ExperimentalCoroutinesApi::class)
     public val dispatcher: TestDispatcher = UnconfinedTestDispatcher(TestCoroutineScheduler())
+    private var _scope: TestScope? = null
     public val scope: TestScope
         get() = requireNotNull(_scope)
     private var beforeAllCalled: Boolean = false
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun beforeAll(context: ExtensionContext) {
         TestLoggingHelper.initialize()
         Dispatchers.setMain(dispatcher)
@@ -54,6 +57,7 @@ public class TestCoroutineExtension : BeforeEachCallback, BeforeAllCallback, Aft
         check(beforeAllCalled) { "TestCoroutineExtension field must be static" }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun afterAll(context: ExtensionContext) {
         Dispatchers.resetMain()
         DispatcherProvider.reset()

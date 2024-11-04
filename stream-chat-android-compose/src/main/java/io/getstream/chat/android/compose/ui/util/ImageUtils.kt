@@ -30,7 +30,6 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.LayoutDirection
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter

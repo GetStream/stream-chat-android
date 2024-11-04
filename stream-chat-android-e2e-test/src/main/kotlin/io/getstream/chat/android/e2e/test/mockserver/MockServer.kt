@@ -8,7 +8,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.ResponseBody
 
 public var mockServerUrl: String? = null
-private val driverUrl: String = "http://10.0.2.2:4567"
+private const val driverUrl: String = "http://10.0.2.2:4567"
 private val okHttp: OkHttpClient = OkHttpClient()
 
 public class MockServer {

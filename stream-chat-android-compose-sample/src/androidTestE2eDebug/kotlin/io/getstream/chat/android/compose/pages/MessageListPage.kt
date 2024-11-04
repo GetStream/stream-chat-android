@@ -18,7 +18,7 @@ package io.getstream.chat.android.compose.pages
 
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.BySelector
-import io.getstream.chat.android.e2e.test.chat.ReactionType
+import io.getstream.chat.android.e2e.test.mockserver.ReactionType
 
 open class MessageListPage {
 
