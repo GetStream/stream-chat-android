@@ -48,7 +48,7 @@ public data class MessageModerationAction(
          * A flagged message means it was sent for review in the dashboard but the message was still published.
          */
         public val flag: MessageModerationAction = MessageModerationAction(
-            rawValue = "MESSAGE_RESPONSE_ACTION_BOUNCE",
+            rawValue = "MESSAGE_RESPONSE_ACTION_FLAG",
         )
 
         /**
