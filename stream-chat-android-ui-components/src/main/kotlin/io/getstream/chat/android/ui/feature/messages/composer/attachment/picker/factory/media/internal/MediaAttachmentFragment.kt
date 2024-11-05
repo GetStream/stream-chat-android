@@ -144,12 +144,16 @@ internal class MediaAttachmentFragment : Fragment() {
     }
 
     private fun onPermissionGranted() {
-        binding.grantPermissionsInclude.grantPermissionsContainer.isVisible = false
-        populateAttachments()
+        _binding?.run {
+            grantPermissionsInclude.grantPermissionsContainer.isVisible = false
+            populateAttachments()
+        }
     }
 
     private fun onPermissionDenied() {
-        binding.grantPermissionsInclude.grantPermissionsContainer.isVisible = true
+        _binding?.run {
+            grantPermissionsInclude.grantPermissionsContainer.isVisible = true
+        }
     }
 
     private fun updateMediaAttachment(attachmentMetaData: AttachmentMetaData) {

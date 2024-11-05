@@ -94,6 +94,12 @@ internal class AttachmentsPickerSystemFragment : Fragment() {
         setupViews()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        captureMedia?.unregister()
+        _binding = null
+    }
+
     private fun setupViews() {
         // Adjust visibility of the tabs based on the enabled flags
         if (!config.fileAttachmentsTabEnabled) {
@@ -148,7 +154,7 @@ internal class AttachmentsPickerSystemFragment : Fragment() {
         captureMedia?.let {
             binding.buttonCapture.setOnClickListener {
                 checkCameraPermissions {
-                    captureMedia?.launch(Unit)
+                    if (_binding != null) captureMedia?.launch(Unit)
                 }
             }
         }
