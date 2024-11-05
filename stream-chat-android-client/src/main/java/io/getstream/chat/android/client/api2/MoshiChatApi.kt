@@ -722,6 +722,22 @@ constructor(
         ).toUnitCall()
     }
 
+    override fun markThreadUnread(
+        channelType: String,
+        channelId: String,
+        threadId: String,
+        messageId: String,
+    ): Call<Unit> {
+        return channelApi.markUnread(
+            channelType = channelType,
+            channelId = channelId,
+            request = MarkUnreadRequest(
+                thread_id = threadId,
+                message_id = messageId,
+            ),
+        ).toUnitCall()
+    }
+
     override fun markAllRead(): Call<Unit> {
         return channelApi.markAllRead().toUnitCall()
     }

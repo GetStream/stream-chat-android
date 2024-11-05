@@ -99,6 +99,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun markMessageRead (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun markRead (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun markThreadRead (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
+	public final fun markThreadUnread (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun markUnread (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun muteChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun muteChannel (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lio/getstream/result/call/Call;
@@ -658,6 +659,7 @@ public final class io/getstream/chat/android/client/channel/ChannelClient {
 	public final fun markMessageRead (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun markRead ()Lio/getstream/result/call/Call;
 	public final fun markThreadRead (Ljava/lang/String;)Lio/getstream/result/call/Call;
+	public final fun markThreadUnread (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun markUnread (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun mute ()Lio/getstream/result/call/Call;
 	public final fun mute (Ljava/lang/Integer;)Lio/getstream/result/call/Call;
