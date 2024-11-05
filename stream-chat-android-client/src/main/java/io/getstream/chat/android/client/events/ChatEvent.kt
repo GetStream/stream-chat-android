@@ -448,7 +448,8 @@ public data class NotificationMarkUnreadEvent(
     val unreadMessages: Int,
     val firstUnreadMessageId: String,
     val lastReadMessageAt: Date,
-    val lastReadMessageId: String,
+    val lastReadMessageId: String?,
+    val unreadThreads: Int = 0,
 ) : CidEvent(), UserEvent, HasUnreadCounts
 
 /**

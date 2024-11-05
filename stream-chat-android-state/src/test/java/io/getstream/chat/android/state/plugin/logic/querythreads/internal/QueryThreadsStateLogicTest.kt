@@ -538,4 +538,45 @@ internal class QueryThreadsStateLogicTest {
         val expectedUpdatedThreadList = listOf(expectedUpdatedThread)
         verify(mutableState, times(1)).setThreads(expectedUpdatedThreadList)
     }
+
+    @Test
+    fun `Given QueryThreadsStateLogic When marking not existing thread as unread Should do nothing`() {
+        // given
+        val mutableState = mock<QueryThreadsMutableState>()
+        whenever(mutableState.threadMap) doReturn threadList.associateBy(Thread::parentMessageId)
+        val logic = QueryThreadsStateLogic(mutableState)
+        // when
+        val threadId = "mId2"
+        val user = User(id = "usrId2")
+        val createdAt = Date()
+        logic.markThreadAsUnreadByUser(threadId, user, createdAt)
+        // then
+        verify(mutableState, never()).upsertThreads(any())
+    }
+
+    @Test
+    fun `Given QueryThreadsStateLogic When marking thread as unread Should update mutableState`() {
+        // given
+        val mutableState = mock<QueryThreadsMutableState>()
+        whenever(mutableState.threadMap) doReturn threadList.associateBy(Thread::parentMessageId)
+        doNothing().whenever(mutableState).upsertThreads(any())
+        val logic = QueryThreadsStateLogic(mutableState)
+        // when
+        val threadId = "mId1"
+        val user = User(id = "usrId2")
+        val createdAt = Date()
+        logic.markThreadAsUnreadByUser(threadId, user, createdAt)
+        // then
+        val expectedUpdatedThread = threadList[0].copy(
+            read = threadList[0].read.map { read ->
+                if (read.user.id == user.id) {
+                    read.copy(user = user, unreadMessages = read.unreadMessages + 1, lastReceivedEventDate = createdAt)
+                } else {
+                    read
+                }
+            },
+        )
+        val expectedUpdatedThreadList = listOf(expectedUpdatedThread)
+        verify(mutableState, times(1)).upsertThreads(expectedUpdatedThreadList)
+    }
 }

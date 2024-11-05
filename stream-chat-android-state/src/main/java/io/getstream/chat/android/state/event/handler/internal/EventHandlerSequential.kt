@@ -343,6 +343,7 @@ internal class EventHandlerSequential(
                 is NotificationMarkUnreadEvent -> if (batchEvent.isFromSocketConnection) {
                     if (hasReadEventsCapability(event.cid)) {
                         modifyValuesFromEvent(event)
+                        modifyUnreadThreadsCount(event.unreadThreads)
                     }
                 }
                 is NewMessageEvent -> if (batchEvent.isFromSocketConnection) {

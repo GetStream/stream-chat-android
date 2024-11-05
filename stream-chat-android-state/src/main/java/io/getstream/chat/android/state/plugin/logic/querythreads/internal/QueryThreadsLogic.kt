@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
+import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationThreadMessageNewEvent
 import io.getstream.chat.android.client.events.ReactionDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
@@ -137,6 +138,8 @@ internal class QueryThreadsLogic(private val stateLogic: QueryThreadsStateLogic)
             is NotificationChannelDeletedEvent -> deleteThreadsFromChannel(event.cid)
             // Informs about a new thread (loaded, not loaded, or newly created thread)
             is NotificationThreadMessageNewEvent -> onNewThreadMessageNotification(event)
+            // (Potentially) Informs about marking a thread as unread
+            is NotificationMarkUnreadEvent -> markThreadAsUnread(event)
             // (Potentially) Informs about reading of a thread
             is MessageReadEvent -> markThreadAsRead(event)
             // (Potentially) Updates/Inserts a message in a thread
@@ -186,6 +189,20 @@ internal class QueryThreadsLogic(private val stateLogic: QueryThreadsStateLogic)
             user = event.user,
             createdAt = event.createdAt,
         )
+    }
+
+    /**
+     * Marks a given thread as unread by a user, if the [NotificationMarkUnreadEvent] is delivered for a thread.
+     *
+     * @param event The [NotificationMarkUnreadEvent] informing about the read state change.
+     */
+    private fun markThreadAsUnread(event: NotificationMarkUnreadEvent) {
+        // At the moment, this event does not return the thread id,
+        // so this is the only way to identify that this event is related to a thread
+        val isUnreadThread = event.lastReadMessageId == null
+        if (isUnreadThread) {
+            stateLogic.markThreadAsUnreadByUser(event.firstUnreadMessageId, event.user, event.createdAt)
+        }
     }
 
     /**

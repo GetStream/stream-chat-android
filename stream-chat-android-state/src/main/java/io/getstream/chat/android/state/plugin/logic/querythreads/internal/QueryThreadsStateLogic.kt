@@ -30,6 +30,7 @@ import java.util.Date
  *
  * @param mutableState Reference to the global [QueryThreadsMutableState].
  */
+@Suppress("TooManyFunctions")
 internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMutableState) {
 
     /**
@@ -208,6 +209,30 @@ internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMuta
             }
         }
         setThreads(updatedThreads)
+    }
+
+    /**
+     * Marks the given thread as read by the given user.
+     *
+     * @param threadId The ID of the message which was marked as unread. (to be found in the thread)
+     * @param user The [User] for which the thread should be marked as unread.
+     */
+    internal fun markThreadAsUnreadByUser(threadId: String, user: User, createdAt: Date) {
+        val thread = mutableState.threadMap[threadId] ?: return
+        val updatedRead = thread.read.map { read ->
+            if (read.user.id == user.id) {
+                read.copy(
+                    user = user,
+                    // Update this value to what the backend returns (when implemented)
+                    unreadMessages = read.unreadMessages + 1,
+                    lastReceivedEventDate = createdAt,
+                )
+            } else {
+                read
+            }
+        }
+        val updatedThread = thread.copy(read = updatedRead)
+        mutableState.upsertThreads(listOf(updatedThread))
     }
 
     private fun upsertReplyInThread(thread: Thread, reply: Message): Thread {

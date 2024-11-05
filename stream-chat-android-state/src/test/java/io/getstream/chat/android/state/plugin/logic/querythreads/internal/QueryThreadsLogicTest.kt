@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
+import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationThreadMessageNewEvent
 import io.getstream.chat.android.client.events.ReactionDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
@@ -296,6 +297,56 @@ internal class QueryThreadsLogicTest {
         logic.handleEvents(listOf(event))
         // then
         verify(stateLogic, times(1)).addUnseenThreadId("mId4")
+    }
+
+    @Test
+    fun `Given QueryThreadsLogic When handling NotificationMarkUnread for non thread Should do nothing`() {
+        // given
+        val event = NotificationMarkUnreadEvent(
+            type = "notification.mark_unread",
+            createdAt = Date(),
+            rawCreatedAt = "",
+            user = User(id = "usrId1"),
+            cid = "messaging:123",
+            channelType = "messaging",
+            channelId = "123",
+            lastReadMessageId = "mId1",
+            lastReadMessageAt = Date(),
+            firstUnreadMessageId = "mId2",
+            unreadMessages = 1,
+        )
+        val stateLogic = mock<QueryThreadsStateLogic>()
+        doNothing().whenever(stateLogic).markThreadAsUnreadByUser(any(), any(), any())
+        val logic = QueryThreadsLogic(stateLogic)
+        // when
+        logic.handleEvents(listOf(event))
+        // then
+        verify(stateLogic, never()).markThreadAsUnreadByUser(any(), any(), any())
+    }
+
+    @Test
+    fun `Given QueryThreadsLogic When handling NotificationMarkUnread for thread Should mark unread via stateLogic`() {
+        // given
+        val event = NotificationMarkUnreadEvent(
+            type = "notification.mark_unread",
+            createdAt = Date(),
+            rawCreatedAt = "",
+            user = User(id = "usrId1"),
+            cid = "messaging:123",
+            channelType = "messaging",
+            channelId = "123",
+            lastReadMessageId = null,
+            lastReadMessageAt = Date(),
+            firstUnreadMessageId = "mId1",
+            unreadMessages = 1,
+        )
+        val stateLogic = mock<QueryThreadsStateLogic>()
+        doNothing().whenever(stateLogic).markThreadAsUnreadByUser(any(), any(), any())
+        val logic = QueryThreadsLogic(stateLogic)
+        // when
+        logic.handleEvents(listOf(event))
+        // then
+        verify(stateLogic, times(1)).markThreadAsUnreadByUser(event.firstUnreadMessageId, event.user, event.createdAt)
     }
 
     @Test

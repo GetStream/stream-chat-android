@@ -1689,7 +1689,16 @@ public class MessageListController(
      */
     public fun markUnread(message: Message, onResult: (Result<Unit>) -> Unit = {}) {
         cid.cidToTypeAndId().let { (channelType, channelId) ->
-            chatClient.markUnread(channelType, channelId, message.id).enqueue { response ->
+            val call = when (val mode = mode.value) {
+                is MessageMode.Normal -> {
+                    chatClient.markUnread(channelType, channelId, messageId = message.id)
+                }
+
+                is MessageMode.MessageThread -> {
+                    chatClient.markThreadUnread(channelType, channelId, mode.parentMessage.id, messageId = message.id)
+                }
+            }
+            call.enqueue { response ->
                 onResult(response)
                 if (response is Result.Failure) {
                     onActionResult(response.value) {
