@@ -56,6 +56,10 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix crash in `CameraAttachmentFragment` related to permissions checks. [#5465](https://github.com/GetStream/stream-chat-android/pull/5465)
+- Fix crash in `FileAttachmentFragment` related to permissions checks. [#5465](https://github.com/GetStream/stream-chat-android/pull/5465)
+- Fix crash in `MediaAttachmentFragment` related to permissions checks. [#5465](https://github.com/GetStream/stream-chat-android/pull/5465)
+- Fix crash in `AttachmentsPickerSystemFragment` related to permissions checks. [#5465](https://github.com/GetStream/stream-chat-android/pull/5465)
 
 ### ⬆️ Improved
 
