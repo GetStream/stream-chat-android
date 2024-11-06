@@ -1,60 +1,8 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# November 06th, 2024 - 6.5.3
 ## stream-chat-android-client
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Add `ChatClient::markThreadUnread` to mark a given thread as unread. [#5457](https://github.com/GetStream/stream-chat-android/pull/5457)
 - Add `ChannelClient::markThreadUnread` to mark a given thread as unread. [#5457](https://github.com/GetStream/stream-chat-android/pull/5457)
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
@@ -62,36 +10,6 @@
 - Fix crash in `FileAttachmentFragment` related to permissions checks. [#5465](https://github.com/GetStream/stream-chat-android/pull/5465)
 - Fix crash in `MediaAttachmentFragment` related to permissions checks. [#5465](https://github.com/GetStream/stream-chat-android/pull/5465)
 - Fix crash in `AttachmentsPickerSystemFragment` related to permissions checks. [#5465](https://github.com/GetStream/stream-chat-android/pull/5465)
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-compose
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # October 23th, 2024 - 6.5.2
 ## Common changes for all artifacts
