@@ -16,8 +16,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Add `ChatClient::markThreadUnread` to mark a given thread as unread. [#5457](https://github.com/GetStream/stream-chat-android/pull/5457)
-- Add `ChannelClient::markThreadUnread` to mark a given thread as unread. [#5457](https://github.com/GetStream/stream-chat-android/pull/5457)
 
 ### ⚠️ Changed
 
@@ -58,10 +56,6 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fix crash in `CameraAttachmentFragment` related to permissions checks. [#5465](https://github.com/GetStream/stream-chat-android/pull/5465)
-- Fix crash in `FileAttachmentFragment` related to permissions checks. [#5465](https://github.com/GetStream/stream-chat-android/pull/5465)
-- Fix crash in `MediaAttachmentFragment` related to permissions checks. [#5465](https://github.com/GetStream/stream-chat-android/pull/5465)
-- Fix crash in `AttachmentsPickerSystemFragment` related to permissions checks. [#5465](https://github.com/GetStream/stream-chat-android/pull/5465)
 
 ### ⬆️ Improved
 
@@ -93,6 +87,19 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# November 06th, 2024 - 6.5.3
+## stream-chat-android-client
+### ✅ Added
+- Add `ChatClient::markThreadUnread` to mark a given thread as unread. [#5457](https://github.com/GetStream/stream-chat-android/pull/5457)
+- Add `ChannelClient::markThreadUnread` to mark a given thread as unread. [#5457](https://github.com/GetStream/stream-chat-android/pull/5457)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fix crash in `CameraAttachmentFragment` related to permissions checks. [#5465](https://github.com/GetStream/stream-chat-android/pull/5465)
+- Fix crash in `FileAttachmentFragment` related to permissions checks. [#5465](https://github.com/GetStream/stream-chat-android/pull/5465)
+- Fix crash in `MediaAttachmentFragment` related to permissions checks. [#5465](https://github.com/GetStream/stream-chat-android/pull/5465)
+- Fix crash in `AttachmentsPickerSystemFragment` related to permissions checks. [#5465](https://github.com/GetStream/stream-chat-android/pull/5465)
 
 # October 23th, 2024 - 6.5.2
 ## Common changes for all artifacts
