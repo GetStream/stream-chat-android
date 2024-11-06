@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.ui.messages.list
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.AnimationConstants
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,7 +36,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
@@ -78,6 +76,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
 import io.getstream.chat.android.compose.ui.util.isUploading
+import io.getstream.chat.android.compose.ui.util.padding
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
@@ -90,6 +89,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
+import io.getstream.log.StreamLog
 
 /**
  * The default message container for all messages in the Conversation/Messages screen.
@@ -443,7 +443,8 @@ internal fun DefaultMessageItemTrailingContent(
  */
 @Suppress("LongParameterList")
 @Composable
-internal fun DefaultMessageItemCenterContent(
+public fun DefaultMessageItemCenterContent(
+    modifier: Modifier = Modifier,
     messageItem: MessageItemState,
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
@@ -459,7 +460,7 @@ internal fun DefaultMessageItemCenterContent(
     onClosePoll: (String) -> Unit,
     onAddPollOption: (poll: Poll, option: String) -> Unit,
 ) {
-    val modifier = Modifier.widthIn(max = ChatTheme.dimens.messageItemMaxWidth)
+    val finalModifier = modifier.widthIn(max = ChatTheme.dimens.messageItemMaxWidth)
     if (messageItem.message.isPoll()) {
         val poll = messageItem.message.poll
         LaunchedEffect(key1 = poll) {
@@ -469,7 +470,7 @@ internal fun DefaultMessageItemCenterContent(
         }
 
         PollMessageContent(
-            modifier = modifier,
+            modifier = finalModifier,
             messageItem = messageItem,
             onCastVote = onCastVote,
             onRemoveVote = onRemoveVote,
@@ -481,7 +482,7 @@ internal fun DefaultMessageItemCenterContent(
         )
     } else if (messageItem.message.isEmojiOnlyWithoutBubble()) {
         EmojiMessageContent(
-            modifier = modifier,
+            modifier = finalModifier,
             messageItem = messageItem,
             onLongItemClick = onLongItemClick,
             onGiphyActionClick = onGiphyActionClick,
@@ -491,7 +492,7 @@ internal fun DefaultMessageItemCenterContent(
         )
     } else {
         RegularMessageContent(
-            modifier = modifier,
+            modifier = finalModifier,
             messageItem = messageItem,
             onLongItemClick = onLongItemClick,
             onGiphyActionClick = onGiphyActionClick,
@@ -515,7 +516,7 @@ internal fun DefaultMessageItemCenterContent(
  * @param onMediaGalleryPreviewResult Handler used when the user selects an option in the Media Gallery Preview screen.
  */
 @Composable
-internal fun EmojiMessageContent(
+public fun EmojiMessageContent(
     messageItem: MessageItemState,
     modifier: Modifier = Modifier,
     onLongItemClick: (Message) -> Unit = {},
@@ -570,7 +571,7 @@ internal fun EmojiMessageContent(
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  */
 @Composable
-internal fun RegularMessageContent(
+public fun RegularMessageContent(
     messageItem: MessageItemState,
     modifier: Modifier = Modifier,
     onLongItemClick: (Message) -> Unit = {},
@@ -584,16 +585,32 @@ internal fun RegularMessageContent(
     val position = messageItem.groupPosition
     val ownsMessage = messageItem.isMine
 
+    if (ownsMessage) StreamLog.i("RegularMessageContent") {
+        "[onCompose] message.text: ${messageItem.message.text}, position: $position"
+    } else StreamLog.v("RegularMessageContent") {
+        "[onCompose] message.text: ${messageItem.message.text}, position: $position"
+    }
+
+    val messageBubblePadding = when (ownsMessage) {
+        true -> ChatTheme.ownMessageTheme.contentPadding
+        else -> ChatTheme.otherMessageTheme.contentPadding
+    }
+
     val messageBubbleShape = getMessageBubbleShape(position = position, ownsMessage = ownsMessage)
 
     val messageBubbleColor = getMessageBubbleColor(message = message, ownsMessage = ownsMessage)
 
+    val messageBubbleBorder = when (ownsMessage) {
+        true -> ChatTheme.ownMessageTheme.backgroundBorder
+        else -> ChatTheme.otherMessageTheme.backgroundBorder
+    }
+
     if (!messageItem.isErrorOrFailed()) {
         MessageBubble(
-            modifier = modifier,
+            modifier = modifier.padding(messageBubblePadding),
             shape = messageBubbleShape,
             color = messageBubbleColor,
-            border = if (messageItem.isMine) null else BorderStroke(1.dp, ChatTheme.colors.borders),
+            border = messageBubbleBorder,
             content = {
                 MessageContent(
                     message = message,
@@ -647,9 +664,16 @@ internal fun RegularMessageContent(
  */
 @Composable
 private fun getMessageBubbleShape(position: List<MessagePosition>, ownsMessage: Boolean): Shape {
-    return when {
-        position.contains(MessagePosition.TOP) || position.contains(MessagePosition.MIDDLE) -> RoundedCornerShape(16.dp)
-        else -> if (ownsMessage) ChatTheme.shapes.myMessageBubble else ChatTheme.shapes.otherMessageBubble
+    val isTopOrMiddleInGroup = position.contains(MessagePosition.TOP) || position.contains(MessagePosition.MIDDLE)
+    return when (ownsMessage) {
+        true -> when (isTopOrMiddleInGroup) {
+            true -> ChatTheme.ownMessageTheme.backgroundShapes.regular
+            else -> ChatTheme.ownMessageTheme.backgroundShapes.bottom
+        }
+        else -> when (isTopOrMiddleInGroup) {
+            true -> ChatTheme.otherMessageTheme.backgroundShapes.regular
+            else -> ChatTheme.otherMessageTheme.backgroundShapes.bottom
+        }
     }
 }
 
@@ -664,16 +688,13 @@ private fun getMessageBubbleShape(position: List<MessagePosition>, ownsMessage: 
 private fun getMessageBubbleColor(message: Message, ownsMessage: Boolean): Color {
     return when {
         message.isGiphyEphemeral() -> ChatTheme.colors.giphyMessageBackground
-        message.isDeleted() -> if (ownsMessage) {
-            ChatTheme.ownMessageTheme.deletedBackgroundColor
-        } else {
-            ChatTheme.otherMessageTheme.deletedBackgroundColor
+        message.isDeleted() -> when (ownsMessage) {
+            true -> ChatTheme.ownMessageTheme.deletedBackgroundColor
+            else -> ChatTheme.otherMessageTheme.deletedBackgroundColor
         }
-
-        else -> if (ownsMessage) {
-            ChatTheme.ownMessageTheme.backgroundColor
-        } else {
-            ChatTheme.otherMessageTheme.backgroundColor
+        else -> when (ownsMessage) {
+            true -> ChatTheme.ownMessageTheme.backgroundColor
+            else -> ChatTheme.otherMessageTheme.backgroundColor
         }
     }
 }
