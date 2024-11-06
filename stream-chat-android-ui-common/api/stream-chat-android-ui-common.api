@@ -118,10 +118,8 @@ public abstract interface class io/getstream/chat/android/ui/common/feature/mess
 }
 
 public final class io/getstream/chat/android/ui/common/feature/messages/list/DateSeparatorHandler$Companion {
-	public final fun getDefaultDateSeparatorHandler (J)Lio/getstream/chat/android/ui/common/feature/messages/list/DateSeparatorHandler;
-	public static synthetic fun getDefaultDateSeparatorHandler$default (Lio/getstream/chat/android/ui/common/feature/messages/list/DateSeparatorHandler$Companion;JILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/messages/list/DateSeparatorHandler;
-	public final fun getDefaultThreadDateSeparatorHandler (J)Lio/getstream/chat/android/ui/common/feature/messages/list/DateSeparatorHandler;
-	public static synthetic fun getDefaultThreadDateSeparatorHandler$default (Lio/getstream/chat/android/ui/common/feature/messages/list/DateSeparatorHandler$Companion;JILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/messages/list/DateSeparatorHandler;
+	public final fun getDefaultDateSeparatorHandler ()Lio/getstream/chat/android/ui/common/feature/messages/list/DateSeparatorHandler;
+	public final fun getDefaultThreadDateSeparatorHandler ()Lio/getstream/chat/android/ui/common/feature/messages/list/DateSeparatorHandler;
 }
 
 public final class io/getstream/chat/android/ui/common/feature/messages/list/MessageListController {
@@ -1701,12 +1699,6 @@ public class io/getstream/chat/android/ui/common/utils/Utils {
 	public static fun hideSoftKeyboard (Landroid/view/View;)V
 	public static fun showSoftKeyboard (Landroid/content/Context;)V
 	public static fun showSoftKeyboard (Landroid/view/View;)V
-}
-
-public abstract class io/getstream/chat/android/ui/common/utils/Utils$TextViewLinkHandler : android/text/method/LinkMovementMethod {
-	public fun <init> ()V
-	public abstract fun onLinkClick (Ljava/lang/String;)V
-	public fun onTouchEvent (Landroid/widget/TextView;Landroid/text/Spannable;Landroid/view/MotionEvent;)Z
 }
 
 public final class io/getstream/chat/android/ui/common/utils/extensions/AttachmentKt {

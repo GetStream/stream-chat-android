@@ -572,7 +572,9 @@ public class MessageListView : ConstraintLayout {
             return@OnReactionViewClickListener true
         }
     private val defaultUserClickListener = OnUserClickListener {
-        /* Empty */
+        false
+    }
+    private val defaultMentionClickListener = OnMentionClickListener {
         false
     }
     private val defaultGiphySendListener =
@@ -1672,6 +1674,21 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
+     * Sets the mention click listener to be used by MessageListView.
+     *
+     * @param listener The listener to use. If null, the default will be used instead.
+     */
+    public fun setOnMentionClickListener(listener: OnMentionClickListener?) {
+        if (listener == null) {
+            listenerContainer.mentionClickListener = defaultMentionClickListener
+        } else {
+            listenerContainer.mentionClickListener = OnMentionClickListener { user ->
+                listener.onMentionClick(user) || defaultMentionClickListener.onMentionClick(user)
+            }
+        }
+    }
+
+    /**
      * Sets the link click listener to be used by MessageListView.
      *
      * @param linkClickListener The listener to use. If null, the default will be used instead.
@@ -2354,6 +2371,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface OnUserClickListener {
         public fun onUserClick(user: User): Boolean
+    }
+
+    public fun interface OnMentionClickListener {
+        public fun onMentionClick(user: User): Boolean
     }
 
     @Deprecated(
