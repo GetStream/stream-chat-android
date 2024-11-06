@@ -275,9 +275,11 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
         .size(24.dp)
         .align(Alignment.Bottom)
 
+    @Suppress("ComplexCondition")
     if (!messageItem.isMine && (
-            messageItem.showMessageFooter || messageItem.groupPosition.contains(MessagePosition.BOTTOM) || messageItem.groupPosition.contains(
-                MessagePosition.NONE)
+            messageItem.showMessageFooter ||
+                messageItem.groupPosition.contains(MessagePosition.BOTTOM) ||
+                messageItem.groupPosition.contains(MessagePosition.NONE)
             )
     ) {
         UserAvatar(

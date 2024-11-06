@@ -64,6 +64,7 @@ import io.getstream.chat.android.ui.common.utils.extensions.isMine
  * @param onLinkClick Handler used for clicking on a link in the message.
  */
 @Composable
+@Suppress("LongMethod")
 public fun MessageText(
     message: Message,
     currentUser: User?,
