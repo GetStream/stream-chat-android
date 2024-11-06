@@ -16,21 +16,20 @@
 
 package io.getstream.chat.android.compose.robots
 
-import io.getstream.chat.android.compose.pages.MessageListPage.MessageList.Message
+import io.getstream.chat.android.compose.pages.ChannelListPage.ChannelList.Channel
 import io.getstream.chat.android.compose.uiautomator.exists
 import io.getstream.chat.android.compose.uiautomator.waitToAppear
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 
-fun UserRobot.assertMessage(text: String) : UserRobot {
-    assertEquals(text, Message.text.waitToAppear().text)
-    assertTrue(Message.timestamp.exists())
+fun UserRobot.assertChannelAvatar(): UserRobot {
+    assertTrue(Channel.avatar.exists())
     return this
 }
 
-fun UserRobot.assertMessageAuthor(isCurrentUser: Boolean) : UserRobot {
-    assertNotEquals(isCurrentUser, Message.authorName.exists())
-    assertNotEquals(isCurrentUser, Message.avatar.exists())
+fun UserRobot.assertMessageInChannelPreview(text: String, fromCurrentUser: Boolean): UserRobot {
+    val expectedPreview = if (fromCurrentUser) "You: $text" else text
+    assertEquals(expectedPreview, Channel.messagePreview.waitToAppear().text.trimEnd())
+    assertTrue(Channel.timestamp.exists())
     return this
 }

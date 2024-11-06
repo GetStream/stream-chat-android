@@ -17,12 +17,10 @@
 package io.getstream.chat.android.compose.sample.data
 
 import android.content.Context
-import android.content.SharedPreferences
-import io.getstream.chat.android.models.User
 
 class UserCredentialsRepository(context: Context) {
     fun loadUserCredentials(): UserCredentials? = null
     fun loadApiKey(): String? = null
-    fun saveUserCredentials(userCredentials: UserCredentials) { /** No-op */ }
-    fun clearCredentials() { /** No-op */ }
+    fun saveUserCredentials(userCredentials: UserCredentials) { /* No-op */ }
+    fun clearCredentials() { /* No-op */ }
 }

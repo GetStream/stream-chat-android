@@ -51,5 +51,5 @@ public infix fun UiDevice.findObjectByTextContains(text: String): UiObject2 = fi
  * UIDevice extension function, which is getting the UIObject by selecting the component with [KClass] type.
  */
 public infix fun <K : View> UiDevice.findObjectByType(
-    kClass: () -> KClass<K>
+    kClass: () -> KClass<K>,
 ): UiObject2 = findObject(By.clazz(kClass().java))

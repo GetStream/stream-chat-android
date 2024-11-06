@@ -63,7 +63,7 @@ public class ParticipantRobot {
     public fun sendMessageInThread(text: String, alsoSendInChannel: Boolean = false): ParticipantRobot {
         mockServer.postRequest(
             "/participant/message?thread=true&thread_and_channel=$alsoSendInChannel",
-            text.toRequestBody("text".toMediaTypeOrNull())
+            text.toRequestBody("text".toMediaTypeOrNull()),
         )
         return this
     }
@@ -87,7 +87,7 @@ public class ParticipantRobot {
     public fun quoteMessageInThread(text: String, alsoSendInChannel: Boolean = false): ParticipantRobot {
         mockServer.postRequest(
             "/participant/message?quote=true&thread=true&thread_and_channel=$alsoSendInChannel",
-            text.toRequestBody("text".toMediaTypeOrNull())
+            text.toRequestBody("text".toMediaTypeOrNull()),
         )
         return this
     }
@@ -136,7 +136,7 @@ public class ParticipantRobot {
     public fun uploadAttachmentInThread(
         type: AttachmentType,
         count: Int = 1,
-        alsoSendInChannel: Boolean = false
+        alsoSendInChannel: Boolean = false,
     ): ParticipantRobot {
         val endpoint = "/participant/message?$type=$count&thread=true&thread_and_channel=$alsoSendInChannel"
         mockServer.postRequest(endpoint)
@@ -146,7 +146,7 @@ public class ParticipantRobot {
     public fun quoteMessageWithAttachmentInThread(
         type: AttachmentType,
         count: Int = 1,
-        alsoSendInChannel: Boolean = false
+        alsoSendInChannel: Boolean = false,
     ): ParticipantRobot {
         val endpoint = "/participant/message?quote=true&$type=$count&thread=true&thread_and_channel=$alsoSendInChannel"
         mockServer.postRequest(endpoint)

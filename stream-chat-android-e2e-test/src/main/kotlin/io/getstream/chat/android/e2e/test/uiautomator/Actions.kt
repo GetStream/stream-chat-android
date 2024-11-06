@@ -53,7 +53,7 @@ public fun UiDevice.swipeDown(steps: Int = 10, times: Int = 1) {
             middleOfTheScreenVertically,
             middleOfTheScreenHorizontally,
             displayHeight,
-            steps
+            steps,
         )
     }
 }
@@ -67,7 +67,7 @@ public fun UiDevice.swipeUp(steps: Int = 10, times: Int = 1) {
             middleOfTheScreenVertically,
             middleOfTheScreenHorizontally,
             0,
-            steps
+            steps,
         )
     }
 }
