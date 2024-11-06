@@ -31,6 +31,6 @@ public class AutoLinkableTextTransformer(
 
     override fun transformAndApply(textView: TextView, messageItem: MessageListItem.MessageItem) {
         transformer(textView, messageItem)
-        Linkify.addLinks(textView)
+        Linkify.addLinks(textView, messageItem.message.mentionedUsers)
     }
 }

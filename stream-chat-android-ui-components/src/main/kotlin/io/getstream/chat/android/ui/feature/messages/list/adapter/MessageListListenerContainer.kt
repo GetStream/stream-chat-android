@@ -27,6 +27,7 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnAtta
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnAttachmentDownloadClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnGiphySendListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnLinkClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMentionClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMessageClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMessageLongClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMessageRetryListener
@@ -69,6 +70,7 @@ public sealed interface MessageListListeners {
     public val attachmentDownloadClickListener: OnAttachmentDownloadClickListener
     public val reactionViewClickListener: OnReactionViewClickListener
     public val userClickListener: OnUserClickListener
+    public val mentionClickListener: OnMentionClickListener
     public val giphySendListener: OnGiphySendListener
     public val linkClickListener: OnLinkClickListener
     public val unreadLabelReachedListener: OnUnreadLabelReachedListener

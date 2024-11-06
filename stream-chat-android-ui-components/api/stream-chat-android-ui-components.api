@@ -2210,6 +2210,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/MessageLis
 	public final fun setOnAttachmentDownloadClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnAttachmentDownloadClickListener;)V
 	public final fun setOnEnterThreadListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnEnterThreadListener;)V
 	public final fun setOnLinkClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnLinkClickListener;)V
+	public final fun setOnMentionClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnMentionClickListener;)V
 	public final fun setOnMessageClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnMessageClickListener;)V
 	public final fun setOnMessageLongClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnMessageLongClickListener;)V
 	public final fun setOnMessageRetryListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnMessageRetryListener;)V
@@ -2411,6 +2412,10 @@ public abstract interface class io/getstream/chat/android/ui/feature/messages/li
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnLinkClickListener {
 	public abstract fun onLinkClick (Ljava/lang/String;)Z
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnMentionClickListener {
+	public abstract fun onMentionClick (Lio/getstream/chat/android/models/User;)Z
 }
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnMessageClickListener {
@@ -2972,6 +2977,7 @@ public abstract interface class io/getstream/chat/android/ui/feature/messages/li
 	public abstract fun getAttachmentDownloadClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnAttachmentDownloadClickListener;
 	public abstract fun getGiphySendListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnGiphySendListener;
 	public abstract fun getLinkClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnLinkClickListener;
+	public abstract fun getMentionClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnMentionClickListener;
 	public abstract fun getMessageClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnMessageClickListener;
 	public abstract fun getMessageLongClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnMessageLongClickListener;
 	public abstract fun getMessageRetryListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnMessageRetryListener;

@@ -132,6 +132,7 @@ public class LinkAttachmentsViewHolder internal constructor(
                 textView = binding.messageText,
                 longClickTarget = binding.messageContainer,
                 onLinkClicked = container.linkClickListener::onLinkClick,
+                onMentionClicked = container.mentionClickListener::onMentionClick,
             )
         }
     }

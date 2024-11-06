@@ -146,6 +146,7 @@ public class FileAttachmentsViewHolder internal constructor(
                 textView = binding.messageText,
                 longClickTarget = binding.messageContainer,
                 onLinkClicked = listenerContainer.linkClickListener::onLinkClick,
+                onMentionClicked = listenerContainer.mentionClickListener::onMentionClick,
             )
         }
     }
