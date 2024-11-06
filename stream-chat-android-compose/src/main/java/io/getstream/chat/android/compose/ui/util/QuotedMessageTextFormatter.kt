@@ -29,6 +29,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageTheme
 import io.getstream.chat.android.compose.ui.theme.StreamColors
+import io.getstream.chat.android.compose.ui.theme.StreamShapes
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -76,7 +77,8 @@ public fun interface QuotedMessageTextFormatter {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
-            textStyle: (isMine: Boolean) -> TextStyle = defaultTextStyle(isInDarkMode, typography, colors),
+            shapes: StreamShapes = StreamShapes.defaultShapes(),
+            textStyle: (isMine: Boolean) -> TextStyle = defaultTextStyle(isInDarkMode, typography, colors, shapes),
             builder: AnnotatedQuotedMessageTextBuilder? = null,
         ): QuotedMessageTextFormatter {
             return DefaultQuotedMessageTextFormatter(
@@ -114,8 +116,9 @@ public fun interface QuotedMessageTextFormatter {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
-            ownMessageTheme: MessageTheme = MessageTheme.defaultOwnTheme(isInDarkMode, typography, colors),
-            otherMessageTheme: MessageTheme = MessageTheme.defaultOtherTheme(isInDarkMode, typography, colors),
+            shapes: StreamShapes = StreamShapes.defaultShapes(),
+            ownMessageTheme: MessageTheme = MessageTheme.defaultOwnTheme(isInDarkMode, typography, colors, shapes),
+            otherMessageTheme: MessageTheme = MessageTheme.defaultOtherTheme(isInDarkMode, typography, colors, shapes),
             builder: AnnotatedQuotedMessageTextBuilder? = null,
         ): QuotedMessageTextFormatter {
             val textStyle = defaultTextStyle(ownMessageTheme, otherMessageTheme)
@@ -125,15 +128,21 @@ public fun interface QuotedMessageTextFormatter {
                 isInDarkMode,
                 typography,
                 colors,
+                shapes,
                 textStyle,
                 builder,
             )
         }
 
         @Composable
-        private fun defaultTextStyle(isInDarkMode: Boolean, typography: StreamTypography, colors: StreamColors): (Boolean) -> TextStyle {
-            val ownTheme = MessageTheme.defaultOwnTheme(isInDarkMode, typography, colors)
-            val otherTheme = MessageTheme.defaultOtherTheme(isInDarkMode, typography, colors)
+        private fun defaultTextStyle(
+            isInDarkMode: Boolean,
+            typography: StreamTypography,
+            colors: StreamColors,
+            shapes: StreamShapes,
+        ): (Boolean) -> TextStyle {
+            val ownTheme = MessageTheme.defaultOwnTheme(isInDarkMode, typography, colors, shapes)
+            val otherTheme = MessageTheme.defaultOtherTheme(isInDarkMode, typography, colors, shapes)
             return defaultTextStyle(ownTheme, otherTheme)
         }
 
@@ -141,8 +150,8 @@ public fun interface QuotedMessageTextFormatter {
         private fun defaultTextStyle(ownTheme: MessageTheme, otherTheme: MessageTheme): (Boolean) -> TextStyle {
             return { isMine ->
                 when (isMine) {
-                    true -> ownTheme.quotedTextStyle
-                    else -> otherTheme.quotedTextStyle
+                    true -> ownTheme.quoted.textStyle
+                    else -> otherTheme.quoted.textStyle
                 }
             }
         }

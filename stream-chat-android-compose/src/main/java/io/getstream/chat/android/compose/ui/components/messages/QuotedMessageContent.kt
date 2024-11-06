@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.ui.attachments.content.QuotedMessageAttachmentContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.padding
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.utils.extensions.isMine
@@ -51,22 +52,35 @@ public fun QuotedMessageContent(
     },
 ) {
     val messageBubbleShape = if (message.isMine(currentUser)) {
-        ChatTheme.shapes.myMessageBubble
+        ChatTheme.ownMessageTheme.quoted.backgroundShape
     } else {
-        ChatTheme.shapes.otherMessageBubble
+        ChatTheme.otherMessageTheme.quoted.backgroundShape
     }
 
     // The quoted section color depends on the author of the reply.
     val messageBubbleColor = if (replyMessage?.isMine(currentUser) != false) {
-        ChatTheme.ownMessageTheme.quotedBackgroundColor
+        ChatTheme.ownMessageTheme.quoted.backgroundColor
     } else {
-        ChatTheme.otherMessageTheme.quotedBackgroundColor
+        ChatTheme.otherMessageTheme.quoted.backgroundColor
+    }
+
+    val messageBubblePadding = if (replyMessage?.isMine(currentUser) != false) {
+        ChatTheme.ownMessageTheme.quoted.contentPadding
+    } else {
+        ChatTheme.otherMessageTheme.quoted.contentPadding
+    }
+
+    val messageBubbleBorder = if (replyMessage?.isMine(currentUser) != false) {
+        ChatTheme.ownMessageTheme.quoted.backgroundBorder
+    } else {
+        ChatTheme.otherMessageTheme.quoted.backgroundBorder
     }
 
     MessageBubble(
-        modifier = modifier,
+        modifier = modifier.padding(messageBubblePadding),
         shape = messageBubbleShape,
         color = messageBubbleColor,
+        border = messageBubbleBorder,
         content = {
             Row {
                 attachmentContent(message)

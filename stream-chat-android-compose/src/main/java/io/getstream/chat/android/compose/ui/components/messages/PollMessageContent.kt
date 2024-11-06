@@ -103,22 +103,36 @@ public fun PollMessageContent(
     val position = messageItem.groupPosition
     val ownsMessage = messageItem.isMine
 
-    val messageBubbleShape = when {
-        position.contains(MessagePosition.TOP) || position.contains(MessagePosition.MIDDLE) -> RoundedCornerShape(16.dp)
-        else -> {
-            if (ownsMessage) ChatTheme.shapes.myMessageBubble else ChatTheme.shapes.otherMessageBubble
+    val isTopOrMiddleInGroup = position.contains(MessagePosition.TOP) || position.contains(MessagePosition.MIDDLE)
+    val messageBubbleShape = when (ownsMessage) {
+        true -> when (isTopOrMiddleInGroup) {
+            true -> ChatTheme.ownMessageTheme.backgroundShapes.regular
+            else -> ChatTheme.ownMessageTheme.backgroundShapes.bottom
+        }
+        else -> when (isTopOrMiddleInGroup) {
+            true -> ChatTheme.otherMessageTheme.backgroundShapes.regular
+            else -> ChatTheme.otherMessageTheme.backgroundShapes.bottom
         }
     }
 
+    /*val messageBubbleColor = when {
+        message.isDeleted() -> when (ownsMessage) {
+            true -> ChatTheme.ownMessageTheme.deletedBackgroundColor
+            else -> ChatTheme.otherMessageTheme.deletedBackgroundColor
+        }
+        else -> when (ownsMessage) {
+            true -> ChatTheme.colors.linkBackground
+            else -> ChatTheme.otherMessageTheme.backgroundColor
+        }
+    }*/
     val messageBubbleColor = when {
         message.isDeleted() -> when (ownsMessage) {
             true -> ChatTheme.ownMessageTheme.deletedBackgroundColor
             else -> ChatTheme.otherMessageTheme.deletedBackgroundColor
         }
-
         else -> when (ownsMessage) {
-            true -> ChatTheme.colors.linkBackground
-            else -> ChatTheme.otherMessageTheme.backgroundColor
+            true -> ChatTheme.ownMessageTheme.poll.backgroundColor
+            else -> ChatTheme.otherMessageTheme.poll.backgroundColor
         }
     }
 
