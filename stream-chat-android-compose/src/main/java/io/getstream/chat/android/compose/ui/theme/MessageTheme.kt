@@ -49,9 +49,23 @@ public data class MessageTheme(
     val backgroundColor: Color,
     val backgroundBorder: BorderStroke?,
     val backgroundShapes: MessageBackgroundShapes,
-    @Deprecated("Use quoted.textStyle instead")
+    @Deprecated(
+        message = "Use quoted.textStyle instead",
+        replaceWith = ReplaceWith(
+            expression = "QuotedMessageStyle(textStyle = TextStyle(...))",
+            imports = arrayOf("io.getstream.chat.android.compose.ui.theme.MessageTheme.quoted.textStyle"),
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     val quotedTextStyle: TextStyle,
-    @Deprecated("Use quoted.backgroundColor instead")
+    @Deprecated(
+        message = "Use quoted.backgroundColor instead",
+        replaceWith = ReplaceWith(
+            expression = "QuotedMessageStyle(backgroundColor = Color(...))",
+            imports = arrayOf("io.getstream.chat.android.compose.ui.theme.MessageTheme.quoted.backgroundColor"),
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     val quotedBackgroundColor: Color,
     val deletedBackgroundColor: Color,
     val audioRecording: AudioRecordingAttachmentTheme,

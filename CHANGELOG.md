@@ -73,6 +73,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Expanded `MessageTheme` to allow customizing the message components. [#5466](https://github.com/GetStream/stream-chat-android/pull/5466)
 
 ### ❌ Removed
 
