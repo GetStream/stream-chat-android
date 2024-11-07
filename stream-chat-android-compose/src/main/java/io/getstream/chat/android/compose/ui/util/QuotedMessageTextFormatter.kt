@@ -117,8 +117,8 @@ public fun interface QuotedMessageTextFormatter {
                 else -> StreamColors.defaultColors()
             },
             shapes: StreamShapes = StreamShapes.defaultShapes(),
-            ownMessageTheme: MessageTheme = MessageTheme.defaultOwnTheme(isInDarkMode, typography, colors, shapes),
-            otherMessageTheme: MessageTheme = MessageTheme.defaultOtherTheme(isInDarkMode, typography, colors, shapes),
+            ownMessageTheme: MessageTheme = MessageTheme.defaultOwnTheme(isInDarkMode, typography, shapes, colors),
+            otherMessageTheme: MessageTheme = MessageTheme.defaultOtherTheme(isInDarkMode, typography, shapes, colors),
             builder: AnnotatedQuotedMessageTextBuilder? = null,
         ): QuotedMessageTextFormatter {
             val textStyle = defaultTextStyle(ownMessageTheme, otherMessageTheme)
@@ -141,8 +141,8 @@ public fun interface QuotedMessageTextFormatter {
             colors: StreamColors,
             shapes: StreamShapes,
         ): (Boolean) -> TextStyle {
-            val ownTheme = MessageTheme.defaultOwnTheme(isInDarkMode, typography, colors, shapes)
-            val otherTheme = MessageTheme.defaultOtherTheme(isInDarkMode, typography, colors, shapes)
+            val ownTheme = MessageTheme.defaultOwnTheme(isInDarkMode, typography, shapes, colors)
+            val otherTheme = MessageTheme.defaultOtherTheme(isInDarkMode, typography, shapes, colors)
             return defaultTextStyle(ownTheme, otherTheme)
         }
 

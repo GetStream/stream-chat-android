@@ -295,14 +295,14 @@ public fun ChatTheme(
     ownMessageTheme: MessageTheme = MessageTheme.defaultOwnTheme(
         isInDarkMode = isInDarkMode,
         typography = typography,
-        colors = colors,
         shapes = shapes,
+        colors = colors,
     ),
     otherMessageTheme: MessageTheme = MessageTheme.defaultOtherTheme(
         isInDarkMode = isInDarkMode,
         typography = typography,
-        colors = colors,
         shapes = shapes,
+        colors = colors,
     ),
     messageDateSeparatorTheme: MessageDateSeparatorTheme = MessageDateSeparatorTheme.defaultTheme(
         typography = typography,
@@ -322,8 +322,8 @@ public fun ChatTheme(
     messageTextFormatter: MessageTextFormatter = MessageTextFormatter.defaultFormatter(
         autoTranslationEnabled = autoTranslationEnabled,
         typography = typography,
-        colors = colors,
         shapes = shapes,
+        colors = colors,
         ownMessageTheme = ownMessageTheme,
         otherMessageTheme = otherMessageTheme,
     ),
@@ -331,8 +331,8 @@ public fun ChatTheme(
         autoTranslationEnabled = autoTranslationEnabled,
         context = LocalContext.current,
         typography = typography,
-        colors = colors,
         shapes = shapes,
+        colors = colors,
         ownMessageTheme = ownMessageTheme,
         otherMessageTheme = otherMessageTheme,
     ),

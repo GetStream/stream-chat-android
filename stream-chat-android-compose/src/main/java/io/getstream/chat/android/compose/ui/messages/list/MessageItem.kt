@@ -89,7 +89,6 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
-import io.getstream.log.StreamLog
 
 /**
  * The default message container for all messages in the Conversation/Messages screen.
@@ -488,7 +487,6 @@ public fun DefaultMessageItemCenterContent(
             onGiphyActionClick = onGiphyActionClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onQuotedMessageClick = onQuotedMessageClick,
-            onLinkClick = onLinkClick,
         )
     } else {
         RegularMessageContent(
@@ -512,7 +510,6 @@ public fun DefaultMessageItemCenterContent(
  * @param onLongItemClick Handler when the user selects a message, on long tap.
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
  * @param onQuotedMessageClick Handler for quoted message click action.
- * @param onLinkClick Handler for clicking on a link in the message.
  * @param onMediaGalleryPreviewResult Handler used when the user selects an option in the Media Gallery Preview screen.
  */
 @Composable
@@ -522,7 +519,6 @@ public fun EmojiMessageContent(
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
-    onLinkClick: ((Message, String) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
 ) {
     val message = messageItem.message
@@ -584,12 +580,6 @@ public fun RegularMessageContent(
     val message = messageItem.message
     val position = messageItem.groupPosition
     val ownsMessage = messageItem.isMine
-
-    if (ownsMessage) StreamLog.i("RegularMessageContent") {
-        "[onCompose] message.text: ${messageItem.message.text}, position: $position"
-    } else StreamLog.v("RegularMessageContent") {
-        "[onCompose] message.text: ${messageItem.message.text}, position: $position"
-    }
 
     val messageBubblePadding = when (ownsMessage) {
         true -> ChatTheme.ownMessageTheme.contentPadding
