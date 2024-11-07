@@ -108,7 +108,9 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
  * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onThreadClick Handler for thread clicks, if this message has a thread going.
  * @param onCastVote Handler for casting a vote on an option.
- * @param onMoreOption Handler for seeing more options.
+ * @param onRemoveVote Handler for removing a vote on an option.
+ * @param selectPoll Handler for selecting a poll.
+ * @param onAddAnswer Handler for adding an answer to a poll.
  * @param onClosePoll Handler for closing a poll.
  * @param onAddPollOption Handler for adding a poll option.
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
