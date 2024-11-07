@@ -35,6 +35,7 @@
           "reactions": true,
           "replies": true,
           "quotes": true,
+          "polls": false,
           "mutes": true,
           "uploads": true,
           "url_enrichment": true,
