@@ -2262,14 +2262,18 @@ public final class io/getstream/chat/android/compose/ui/theme/IconStyle {
 
 public final class io/getstream/chat/android/compose/ui/theme/MessageBackgroundShapes {
 	public static final field $stable I
-	public fun <init> (Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;)V
+	public fun <init> (Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;)V
 	public final fun component1 ()Landroidx/compose/ui/graphics/Shape;
 	public final fun component2 ()Landroidx/compose/ui/graphics/Shape;
-	public final fun copy (Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;)Lio/getstream/chat/android/compose/ui/theme/MessageBackgroundShapes;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/MessageBackgroundShapes;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/MessageBackgroundShapes;
+	public final fun component3 ()Landroidx/compose/ui/graphics/Shape;
+	public final fun component4 ()Landroidx/compose/ui/graphics/Shape;
+	public final fun copy (Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;)Lio/getstream/chat/android/compose/ui/theme/MessageBackgroundShapes;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/MessageBackgroundShapes;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/MessageBackgroundShapes;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBottom ()Landroidx/compose/ui/graphics/Shape;
-	public final fun getRegular ()Landroidx/compose/ui/graphics/Shape;
+	public final fun getMiddle ()Landroidx/compose/ui/graphics/Shape;
+	public final fun getNone ()Landroidx/compose/ui/graphics/Shape;
+	public final fun getTop ()Landroidx/compose/ui/graphics/Shape;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

@@ -583,26 +583,16 @@ public fun RegularMessageContent(
     val position = messageItem.groupPosition
     val ownsMessage = messageItem.isMine
 
-    val messageBubblePadding = when (ownsMessage) {
-        true -> ChatTheme.ownMessageTheme.contentPadding
-        else -> ChatTheme.otherMessageTheme.contentPadding
-    }
-
+    val messageTheme = if (ownsMessage) ChatTheme.ownMessageTheme else ChatTheme.otherMessageTheme
     val messageBubbleShape = getMessageBubbleShape(position = position, ownsMessage = ownsMessage)
-
     val messageBubbleColor = getMessageBubbleColor(message = message, ownsMessage = ownsMessage)
-
-    val messageBubbleBorder = when (ownsMessage) {
-        true -> ChatTheme.ownMessageTheme.backgroundBorder
-        else -> ChatTheme.otherMessageTheme.backgroundBorder
-    }
 
     if (!messageItem.isErrorOrFailed()) {
         MessageBubble(
-            modifier = modifier.padding(messageBubblePadding),
+            modifier = modifier.padding(messageTheme.contentPadding),
             shape = messageBubbleShape,
             color = messageBubbleColor,
-            border = messageBubbleBorder,
+            border = messageTheme.backgroundBorder,
             content = {
                 MessageContent(
                     message = message,
@@ -656,16 +646,12 @@ public fun RegularMessageContent(
  */
 @Composable
 private fun getMessageBubbleShape(position: List<MessagePosition>, ownsMessage: Boolean): Shape {
-    val isTopOrMiddleInGroup = position.contains(MessagePosition.TOP) || position.contains(MessagePosition.MIDDLE)
-    return when (ownsMessage) {
-        true -> when (isTopOrMiddleInGroup) {
-            true -> ChatTheme.ownMessageTheme.backgroundShapes.regular
-            else -> ChatTheme.ownMessageTheme.backgroundShapes.bottom
-        }
-        else -> when (isTopOrMiddleInGroup) {
-            true -> ChatTheme.otherMessageTheme.backgroundShapes.regular
-            else -> ChatTheme.otherMessageTheme.backgroundShapes.bottom
-        }
+    val theme = if (ownsMessage) ChatTheme.ownMessageTheme else ChatTheme.otherMessageTheme
+    return when {
+        position.contains(MessagePosition.TOP) -> theme.backgroundShapes.top
+        position.contains(MessagePosition.MIDDLE) -> theme.backgroundShapes.middle
+        position.contains(MessagePosition.BOTTOM) -> theme.backgroundShapes.bottom
+        else -> theme.backgroundShapes.none
     }
 }
 
@@ -678,16 +664,11 @@ private fun getMessageBubbleShape(position: List<MessagePosition>, ownsMessage: 
  */
 @Composable
 private fun getMessageBubbleColor(message: Message, ownsMessage: Boolean): Color {
+    val theme = if (ownsMessage) ChatTheme.ownMessageTheme else ChatTheme.otherMessageTheme
     return when {
         message.isGiphyEphemeral() -> ChatTheme.colors.giphyMessageBackground
-        message.isDeleted() -> when (ownsMessage) {
-            true -> ChatTheme.ownMessageTheme.deletedBackgroundColor
-            else -> ChatTheme.otherMessageTheme.deletedBackgroundColor
-        }
-        else -> when (ownsMessage) {
-            true -> ChatTheme.ownMessageTheme.backgroundColor
-            else -> ChatTheme.otherMessageTheme.backgroundColor
-        }
+        message.isDeleted() -> theme.deletedBackgroundColor
+        else -> theme.backgroundColor
     }
 }
 

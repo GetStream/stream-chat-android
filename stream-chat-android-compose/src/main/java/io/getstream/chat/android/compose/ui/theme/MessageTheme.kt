@@ -144,8 +144,13 @@ public data class MessageTheme(
                     else -> BorderStroke(1.dp, colors.borders)
                 },
                 backgroundShapes = MessageBackgroundShapes(
-                    regular = RoundedCornerShape(16.dp),
+                    top = RoundedCornerShape(16.dp),
+                    middle = RoundedCornerShape(16.dp),
                     bottom = when (own) {
+                        true -> shapes.myMessageBubble
+                        else -> shapes.otherMessageBubble
+                    },
+                    none = when (own) {
                         true -> shapes.myMessageBubble
                         else -> shapes.otherMessageBubble
                     },
@@ -196,12 +201,16 @@ public data class MessageTheme(
 }
 
 /**
- * Represents the shapes for the message background.
+ * Represents the shapes for the message background in different positions.
  *
- * @param regular The shape which is used for top and middle messages in a group.
+ * @param top The shape which is used for the top message in a group.
+ * @param middle The shape which is used for the middle message in a group.
  * @param bottom The shape which is used for the bottom message in a group.
+ * @param none The shape which is used for messages that are not in a group.
  */
 public data class MessageBackgroundShapes(
-    val regular: Shape,
+    val top: Shape,
+    val middle: Shape,
     val bottom: Shape,
+    val none: Shape,
 )
