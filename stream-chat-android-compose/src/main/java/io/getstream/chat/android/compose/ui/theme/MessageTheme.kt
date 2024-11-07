@@ -69,17 +69,17 @@ public data class MessageTheme(
         public fun defaultOwnTheme(
             isInDarkMode: Boolean = isSystemInDarkTheme(),
             typography: StreamTypography = StreamTypography.defaultTypography(),
+            shapes: StreamShapes = StreamShapes.defaultShapes(),
             colors: StreamColors = when (isInDarkMode) {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
-            shapes: StreamShapes = StreamShapes.defaultShapes(),
         ): MessageTheme = defaultTheme(
             own = true,
             isInDarkMode = isInDarkMode,
             typography = typography,
-            colors = colors,
             shapes = shapes,
+            colors = colors,
         )
 
         /**
@@ -91,17 +91,17 @@ public data class MessageTheme(
         public fun defaultOtherTheme(
             isInDarkMode: Boolean = isSystemInDarkTheme(),
             typography: StreamTypography = StreamTypography.defaultTypography(),
+            shapes: StreamShapes = StreamShapes.defaultShapes(),
             colors: StreamColors = when (isInDarkMode) {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
-            shapes: StreamShapes = StreamShapes.defaultShapes(),
         ): MessageTheme = defaultTheme(
             own = false,
             isInDarkMode = isInDarkMode,
             typography = typography,
-            colors = colors,
             shapes = shapes,
+            colors = colors,
         )
 
         @Composable
@@ -110,8 +110,8 @@ public data class MessageTheme(
             own: Boolean,
             isInDarkMode: Boolean,
             typography: StreamTypography,
-            colors: StreamColors,
             shapes: StreamShapes,
+            colors: StreamColors,
         ): MessageTheme {
             return MessageTheme(
                 textStyle = typography.bodyBold.copy(

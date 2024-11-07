@@ -91,22 +91,22 @@ public fun interface MessageTextFormatter {
             autoTranslationEnabled: Boolean,
             isInDarkMode: Boolean = isSystemInDarkTheme(),
             typography: StreamTypography = StreamTypography.defaultTypography(),
+            shapes: StreamShapes = StreamShapes.defaultShapes(),
             colors: StreamColors = when (isSystemInDarkTheme()) {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
-            shapes: StreamShapes = StreamShapes.defaultShapes(),
             ownMessageTheme: MessageTheme = MessageTheme.defaultOwnTheme(
                 isInDarkMode = isInDarkMode,
                 typography = typography,
-                colors = colors,
                 shapes = shapes,
+                colors = colors,
             ),
             otherMessageTheme: MessageTheme = MessageTheme.defaultOtherTheme(
                 isInDarkMode = isInDarkMode,
                 typography = typography,
-                colors = colors,
                 shapes = shapes,
+                colors = colors,
             ),
             builder: AnnotatedMessageTextBuilder? = null,
         ): MessageTextFormatter {
