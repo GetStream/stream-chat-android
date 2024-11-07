@@ -102,27 +102,17 @@ public fun PollMessageContent(
     val position = messageItem.groupPosition
     val ownsMessage = messageItem.isMine
 
-    val isTopOrMiddleInGroup = position.contains(MessagePosition.TOP) || position.contains(MessagePosition.MIDDLE)
-    val messageBubbleShape = when (ownsMessage) {
-        true -> when (isTopOrMiddleInGroup) {
-            true -> ChatTheme.ownMessageTheme.backgroundShapes.regular
-            else -> ChatTheme.ownMessageTheme.backgroundShapes.bottom
-        }
-        else -> when (isTopOrMiddleInGroup) {
-            true -> ChatTheme.otherMessageTheme.backgroundShapes.regular
-            else -> ChatTheme.otherMessageTheme.backgroundShapes.bottom
-        }
+    val messageTheme = if (ownsMessage) ChatTheme.ownMessageTheme else ChatTheme.otherMessageTheme
+    val messageBubbleShape = when {
+        position.contains(MessagePosition.TOP) -> messageTheme.backgroundShapes.top
+        position.contains(MessagePosition.MIDDLE) -> messageTheme.backgroundShapes.middle
+        position.contains(MessagePosition.BOTTOM) -> messageTheme.backgroundShapes.bottom
+        else -> messageTheme.backgroundShapes.none
     }
 
     val messageBubbleColor = when {
-        message.isDeleted() -> when (ownsMessage) {
-            true -> ChatTheme.ownMessageTheme.deletedBackgroundColor
-            else -> ChatTheme.otherMessageTheme.deletedBackgroundColor
-        }
-        else -> when (ownsMessage) {
-            true -> ChatTheme.ownMessageTheme.poll.backgroundColor
-            else -> ChatTheme.otherMessageTheme.poll.backgroundColor
-        }
+        message.isDeleted() -> messageTheme.deletedBackgroundColor
+        else -> messageTheme.poll.backgroundColor
     }
 
     val poll = message.poll
