@@ -22,8 +22,10 @@ import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
 import io.getstream.chat.android.client.persistance.repository.ReactionRepository
 import io.getstream.chat.android.client.persistance.repository.SyncStateRepository
+import io.getstream.chat.android.client.persistance.repository.ThreadsRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
@@ -33,6 +35,7 @@ import io.getstream.chat.android.offline.repository.domain.message.internal.Data
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.DatabaseQueryChannelsRepository
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.DatabaseReactionRepository
 import io.getstream.chat.android.offline.repository.domain.syncState.internal.DatabaseSyncStateRepository
+import io.getstream.chat.android.offline.repository.domain.threads.internal.DatabaseThreadsRepository
 import io.getstream.chat.android.offline.repository.domain.user.internal.DatabaseUserRepository
 import kotlinx.coroutines.CoroutineScope
 
@@ -89,6 +92,25 @@ internal class DatabaseRepositoryFactory(
         return databaseQueryChannelsRepository ?: run {
             DatabaseQueryChannelsRepository(database.queryChannelsDao()).also { repository ->
                 repositoriesCache[QueryChannelsRepository::class.java] = repository
+            }
+        }
+    }
+
+    override fun createThreadsRepository(
+        getUser: suspend (userId: String) -> User,
+        getMessage: suspend (messageId: String) -> Message?,
+        getChannel: suspend (cid: String) -> Channel?,
+    ): ThreadsRepository {
+        val repository = repositoriesCache[ThreadsRepository::class.java] as? ThreadsRepository?
+        return repository ?: run {
+            DatabaseThreadsRepository(
+                threadDao = database.threadDao(),
+                threadOrderDao = database.threadOrderDao(),
+                getUser = getUser,
+                getMessage = getMessage,
+                getChannel = getChannel,
+            ).also {
+                repositoriesCache[ThreadsRepository::class.java] = it
             }
         }
     }

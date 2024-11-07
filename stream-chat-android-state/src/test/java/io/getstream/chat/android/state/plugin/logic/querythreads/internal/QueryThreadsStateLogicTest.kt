@@ -167,15 +167,39 @@ internal class QueryThreadsStateLogicTest {
     }
 
     @Test
-    fun `Given QueryThreadsStateLogic When calling appendThreads Should update mutableState`() {
+    fun `Given QueryThreadsStateLogic When calling insertThreadsIfAbsent Should update mutableState`() {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
         doNothing().whenever(mutableState).upsertThreads(any())
         val logic = QueryThreadsStateLogic(mutableState)
         // when
-        logic.appendThreads(emptyList())
+        logic.insertThreadsIfAbsent(emptyList())
+        // then
+        verify(mutableState, times(1)).insertThreadsIfAbsent(emptyList())
+    }
+
+    @Test
+    fun `Given QueryThreadsStateLogic When calling upsertThreads Should update mutableState`() {
+        // given
+        val mutableState = mock<QueryThreadsMutableState>()
+        doNothing().whenever(mutableState).upsertThreads(any())
+        val logic = QueryThreadsStateLogic(mutableState)
+        // when
+        logic.upsertThreads(emptyList())
         // then
         verify(mutableState, times(1)).upsertThreads(emptyList())
+    }
+
+    @Test
+    fun `Given QueryThreadsStateLogic When calling clearThreads Should update mutableState`() {
+        // given
+        val mutableState = mock<QueryThreadsMutableState>()
+        doNothing().whenever(mutableState).upsertThreads(any())
+        val logic = QueryThreadsStateLogic(mutableState)
+        // when
+        logic.clearThreads()
+        // then
+        verify(mutableState, times(1)).clearThreads()
     }
 
     @Test
@@ -188,6 +212,19 @@ internal class QueryThreadsStateLogicTest {
         logic.setNext("nextCursor")
         // then
         verify(mutableState, times(1)).setNext("nextCursor")
+    }
+
+    @Test
+    fun `Given QueryThreadsStateLogic When getting unseenThreadIds Should return unseenThreadIds from mutableState`() {
+        // given
+        val mutableState = mock<QueryThreadsMutableState>()
+        whenever(mutableState.unseenThreadIds) doReturn MutableStateFlow(setOf("mId1"))
+        val logic = QueryThreadsStateLogic(mutableState)
+        // when
+        val unseenThreadIds = logic.getUnseenThreadIds()
+        // then
+        unseenThreadIds `should be equal to` setOf("mId1")
+        verify(mutableState, times(1)).unseenThreadIds
     }
 
     @Test
@@ -316,7 +353,7 @@ internal class QueryThreadsStateLogicTest {
     fun `Given QueryThreadsStateLogic When updating parent message which exists Should return true`() {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
-        whenever(mutableState.threads) doReturn MutableStateFlow(threadList)
+        whenever(mutableState.threadMap) doReturn threadList.associateBy(Thread::parentMessageId)
         val logic = QueryThreadsStateLogic(mutableState)
         val parent = Message(
             id = "mId1",
@@ -335,7 +372,7 @@ internal class QueryThreadsStateLogicTest {
         )
         val expectedUpdatedThreadList = listOf(expectedUpdatedThread)
         updated `should be equal to` true
-        verify(mutableState, times(1)).setThreads(expectedUpdatedThreadList)
+        verify(mutableState, times(1)).upsertThreads(expectedUpdatedThreadList)
     }
 
     @Test
@@ -361,7 +398,7 @@ internal class QueryThreadsStateLogicTest {
     fun `Given QueryThreadsStateLogic When upserting reply in unknown thread Should do nothing`() {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
-        whenever(mutableState.threads) doReturn MutableStateFlow(threadList)
+        whenever(mutableState.threadMap) doReturn threadList.associateBy(Thread::parentMessageId)
         val logic = QueryThreadsStateLogic(mutableState)
         val reply = Message(
             id = "mId3",
@@ -372,15 +409,15 @@ internal class QueryThreadsStateLogicTest {
         // when
         logic.upsertReply(reply)
         // then
-        verify(mutableState, times(1)).threads
-        verify(mutableState, times(1)).setThreads(threadList) // verify no changes
+        verify(mutableState, times(1)).threadMap
+        verify(mutableState, times(0)).upsertThreads(any())
     }
 
     @Test
     fun `Given QueryThreadsStateLogic When updating reply in existing thread Should update mutableState`() {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
-        whenever(mutableState.threads) doReturn MutableStateFlow(threadList)
+        whenever(mutableState.threadMap) doReturn threadList.associateBy(Thread::parentMessageId)
         val logic = QueryThreadsStateLogic(mutableState)
         val reply = Message(
             id = "mId2",
@@ -393,14 +430,14 @@ internal class QueryThreadsStateLogicTest {
         // then
         val expectedUpdatedThread = threadList[0].copy(latestReplies = listOf(reply))
         val expectedUpdatedThreadList = listOf(expectedUpdatedThread)
-        verify(mutableState, times(1)).setThreads(expectedUpdatedThreadList)
+        verify(mutableState, times(1)).upsertThreads(expectedUpdatedThreadList)
     }
 
     @Test
     fun `Given QueryThreadsStateLogic When inserting reply in existing thread from new participant Should update mutableState`() {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
-        whenever(mutableState.threads) doReturn MutableStateFlow(threadList)
+        whenever(mutableState.threadMap) doReturn threadList.associateBy(Thread::parentMessageId)
         val logic = QueryThreadsStateLogic(mutableState)
         val reply = Message(
             id = "mId3",
@@ -422,14 +459,14 @@ internal class QueryThreadsStateLogicTest {
             },
         )
         val expectedUpdatedThreadList = listOf(expectedUpdatedThread)
-        verify(mutableState, times(1)).setThreads(expectedUpdatedThreadList)
+        verify(mutableState, times(1)).upsertThreads(expectedUpdatedThreadList)
     }
 
     @Test
     fun `Given QueryThreadsStateLogic When inserting reply in existing thread from existing participant Should update mutableState`() {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
-        whenever(mutableState.threads) doReturn MutableStateFlow(threadList)
+        whenever(mutableState.threadMap) doReturn threadList.associateBy(Thread::parentMessageId)
         val logic = QueryThreadsStateLogic(mutableState)
         val reply = Message(
             id = "mId3",
@@ -453,14 +490,14 @@ internal class QueryThreadsStateLogicTest {
             },
         )
         val expectedUpdatedThreadList = listOf(expectedUpdatedThread)
-        verify(mutableState, times(1)).setThreads(expectedUpdatedThreadList)
+        verify(mutableState, times(1)).upsertThreads(expectedUpdatedThreadList)
     }
 
     @Test
     fun `Given QueryThreadsStateLogic When marking unknown thread as read Should do nothing`() {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
-        whenever(mutableState.threads) doReturn MutableStateFlow(threadList)
+        whenever(mutableState.threadMap) doReturn threadList.associateBy(Thread::parentMessageId)
         val logic = QueryThreadsStateLogic(mutableState)
         // when
         logic.markThreadAsReadByUser(
@@ -484,14 +521,14 @@ internal class QueryThreadsStateLogicTest {
             createdAt = Date(),
         )
         // then
-        verify(mutableState, times(1)).setThreads(threadList)
+        verify(mutableState, times(0)).upsertThreads(any())
     }
 
     @Test
     fun `Given QueryThreadsStateLogic When marking thread as read Should update mutableState`() {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
-        whenever(mutableState.threads) doReturn MutableStateFlow(threadList)
+        whenever(mutableState.threadMap) doReturn threadList.associateBy(Thread::parentMessageId)
         val logic = QueryThreadsStateLogic(mutableState)
         // when
         val threadInfo = ThreadInfo(
@@ -536,7 +573,7 @@ internal class QueryThreadsStateLogicTest {
             },
         )
         val expectedUpdatedThreadList = listOf(expectedUpdatedThread)
-        verify(mutableState, times(1)).setThreads(expectedUpdatedThreadList)
+        verify(mutableState, times(1)).upsertThreads(expectedUpdatedThreadList)
     }
 
     @Test

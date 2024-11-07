@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.utils.message.latestOrNull
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.log.StreamLog
@@ -44,7 +45,7 @@ import java.util.Date
  * val batch = batchBuilder.build(domainImpl)
  *
  * third, add the required updates via
- * batch.addUser, addChannel and addMessage methods
+ * batch.addUser, addChannel, addMessage and addThread methods
  *
  * fourth, execute the batch using
  * batch.execute()
@@ -57,6 +58,7 @@ internal class EventBatchUpdate private constructor(
     private val repos: RepositoryFacade,
     private val channelMap: MutableMap<String, Channel>,
     private val messageMap: MutableMap<String, Message>,
+    private val threadMap: MutableMap<String, Thread>,
     private val userMap: MutableMap<String, User>,
 ) {
 
@@ -85,8 +87,13 @@ internal class EventBatchUpdate private constructor(
         channelMap += (channel.cid to channel)
     }
 
+    fun addThread(thread: Thread) {
+        threadMap += (thread.parentMessageId to thread)
+    }
+
     fun getCurrentChannel(cId: String): Channel? = channelMap[cId]
     fun getCurrentMessage(messageId: String): Message? = messageMap[messageId]
+    fun getCurrentThread(threadId: String): Thread? = threadMap[threadId]
 
     fun addMessage(message: Message) {
         // ensure we store all users for this channel
@@ -128,6 +135,7 @@ internal class EventBatchUpdate private constructor(
         repos.insertUsers(userMap.values.toList())
         repos.insertChannels(channelMap.values.updateUsers(userMap))
         repos.insertMessages(messageMap.values.toList().updateUsers(userMap))
+        repos.insertThreads(threadMap.values.toList())
     }
 
     /**
@@ -161,6 +169,7 @@ internal class EventBatchUpdate private constructor(
         private val messagesToFetch = mutableSetOf<String>()
         private val users = mutableSetOf<User>()
         private val pollsToFetch = mutableSetOf<String>()
+        private val threadsToFetch = mutableSetOf<String>()
 
         fun addToFetchChannels(cIds: List<String>) {
             channelsToFetch += cIds
@@ -190,6 +199,10 @@ internal class EventBatchUpdate private constructor(
             pollsToFetch += pollId
         }
 
+        fun addThreadToFetch(threadId: String) {
+            threadsToFetch += threadId
+        }
+
         suspend fun build(
             globalState: GlobalState,
             repos: RepositoryFacade,
@@ -206,6 +219,8 @@ internal class EventBatchUpdate private constructor(
 
             val channelMap: Map<String, Channel> =
                 repos.selectChannels(channelsToFetch.toList()).associateBy(Channel::cid)
+            val threadMap: Map<String, Thread> =
+                repos.selectThreads(threadsToFetch.toList()).associateBy(Thread::parentMessageId)
             StreamLog.v(TAG) {
                 "[builder.build] id: $id, messageMap.size: ${messageMap.size}" +
                     ", channelMap.size: ${channelMap.size}"
@@ -218,6 +233,7 @@ internal class EventBatchUpdate private constructor(
                 repos,
                 channelMap.toMutableMap(),
                 messageMap.toMutableMap(),
+                threadMap.toMutableMap(),
                 users.associateBy(User::id).toMutableMap(),
             )
         }

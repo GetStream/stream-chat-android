@@ -172,7 +172,7 @@ public fun ThreadList(
         content = { padding ->
             Box(modifier = modifier.padding(padding)) {
                 when {
-                    state.isLoading -> loadingContent()
+                    state.threads.isEmpty() && state.isLoading -> loadingContent()
                     state.threads.isEmpty() -> emptyContent()
                     else -> Threads(
                         threads = state.threads,

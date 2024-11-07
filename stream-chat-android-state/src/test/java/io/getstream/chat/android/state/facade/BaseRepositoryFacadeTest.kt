@@ -24,8 +24,10 @@ import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepo
 import io.getstream.chat.android.client.persistance.repository.ReactionRepository
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.persistance.repository.SyncStateRepository
+import io.getstream.chat.android.client.persistance.repository.ThreadsRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -47,6 +49,7 @@ internal open class BaseRepositoryFacadeTest {
     protected lateinit var configs: ChannelConfigRepository
     protected lateinit var channels: ChannelRepository
     protected lateinit var queryChannels: QueryChannelsRepository
+    protected lateinit var threadsRepository: ThreadsRepository
     protected lateinit var messages: MessageRepository
     protected lateinit var reactions: ReactionRepository
     protected lateinit var syncState: SyncStateRepository
@@ -60,6 +63,7 @@ internal open class BaseRepositoryFacadeTest {
         configs = mock()
         channels = mock()
         queryChannels = mock()
+        threadsRepository = mock()
         messages = mock()
         reactions = mock()
         syncState = mock()
@@ -73,6 +77,12 @@ internal open class BaseRepositoryFacadeTest {
             ): ChannelRepository = channels
 
             override fun createQueryChannelsRepository(): QueryChannelsRepository = queryChannels
+            override fun createThreadsRepository(
+                getUser: suspend (userId: String) -> User,
+                getMessage: suspend (messageId: String) -> Message?,
+                getChannel: suspend (cid: String) -> Channel?,
+            ): ThreadsRepository = threadsRepository
+
             override fun createMessageRepository(getUser: suspend (userId: String) -> User): MessageRepository =
                 messages
 

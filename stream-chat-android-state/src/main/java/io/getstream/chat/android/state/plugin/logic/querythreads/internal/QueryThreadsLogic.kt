@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.QueryThreadsResult
+import io.getstream.chat.android.models.Thread
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -38,10 +39,17 @@ import io.getstream.result.Result
  * Logic class for "Query Threads" operations.
  *
  * @param stateLogic The [QueryThreadsStateLogic] managing the global state of the threads list.
+ * @param databaseLogic The [QueryThreadsDatabaseLogic] retrieving the (optional) offline database data.
  */
-internal class QueryThreadsLogic(private val stateLogic: QueryThreadsStateLogic) {
+internal class QueryThreadsLogic(
+    private val stateLogic: QueryThreadsStateLogic,
+    private val databaseLogic: QueryThreadsDatabaseLogic,
+) {
 
     private val logger by taggedLogger("Chat:QueryThreadsLogic")
+
+    // Keeps track of the threads that we loaded from back-end in the current session
+    private var threadIdsInSession: MutableList<String> = mutableListOf()
 
     /**
      * Run precondition for the request. If it returns [Result.Success] then the request is run otherwise it returns
@@ -72,11 +80,18 @@ internal class QueryThreadsLogic(private val stateLogic: QueryThreadsStateLogic)
      *
      * @param request The [QueryThreadsRequest] used to fetch the threads.
      */
-    internal fun onQueryThreadsRequest(request: QueryThreadsRequest) {
-        if (request.isNextPageRequest()) {
+    internal suspend fun onQueryThreadsRequest(request: QueryThreadsRequest) {
+        val isNextPageRequest = request.isNextPageRequest()
+        if (isNextPageRequest) {
             stateLogic.setLoadingMore(true)
         } else {
             stateLogic.setLoading(true)
+        }
+        if (isForceReload(request)) {
+            stateLogic.clearThreads()
+            stateLogic.clearUnseenThreadIds()
+        } else if (!isNextPageRequest) {
+            queryThreadsOffline(request)
         }
     }
 
@@ -88,18 +103,22 @@ internal class QueryThreadsLogic(private val stateLogic: QueryThreadsStateLogic)
      * operation failed.
      * @param request The [QueryThreadsRequest] used to fetch the threads.
      */
-    internal fun onQueryThreadsResult(result: Result<QueryThreadsResult>, request: QueryThreadsRequest) {
+    internal suspend fun onQueryThreadsResult(result: Result<QueryThreadsResult>, request: QueryThreadsRequest) {
         stateLogic.setLoadingMore(false)
         stateLogic.setLoading(false)
         when (result) {
             is Result.Success -> {
                 if (request.isNextPageRequest()) {
-                    stateLogic.appendThreads(result.value.threads)
+                    stateLogic.upsertThreads(result.value.threads)
+                    threadIdsInSession += result.value.threads.map(Thread::parentMessageId)
                 } else {
                     stateLogic.setThreads(result.value.threads)
                     stateLogic.clearUnseenThreadIds()
+                    threadIdsInSession = result.value.threads.map(Thread::parentMessageId).toMutableList()
                 }
                 stateLogic.setNext(result.value.next)
+                // Update local threads order
+                databaseLogic.setLocalThreadsOrder(threadIdsInSession)
             }
 
             is Result.Failure -> {
@@ -154,6 +173,9 @@ internal class QueryThreadsLogic(private val stateLogic: QueryThreadsStateLogic)
     }
 
     private fun QueryThreadsRequest.isNextPageRequest() = this.next != null
+
+    private fun isForceReload(request: QueryThreadsRequest) =
+        !request.isNextPageRequest() && stateLogic.getUnseenThreadIds().isNotEmpty()
 
     private fun onNewThreadMessageNotification(event: NotificationThreadMessageNewEvent) {
         val newMessageThreadId = event.message.parentId ?: return
@@ -213,5 +235,13 @@ internal class QueryThreadsLogic(private val stateLogic: QueryThreadsStateLogic)
         val threads = stateLogic.getThreads()
         val filteredThreads = threads.filterNot { it.cid == cid }
         stateLogic.setThreads(filteredThreads)
+    }
+
+    private suspend fun queryThreadsOffline(request: QueryThreadsRequest) {
+        val localThreadsOrder = databaseLogic.getLocalThreadsOrder().take(request.limit)
+        if (localThreadsOrder.isEmpty()) return
+        val localThreads = databaseLogic.getLocalThreads(localThreadsOrder)
+        if (localThreads.isEmpty()) return
+        stateLogic.insertThreadsIfAbsent(localThreads)
     }
 }

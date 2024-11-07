@@ -57,6 +57,10 @@ import io.getstream.chat.android.offline.repository.domain.reaction.internal.Rea
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionEntity
 import io.getstream.chat.android.offline.repository.domain.syncState.internal.SyncStateDao
 import io.getstream.chat.android.offline.repository.domain.syncState.internal.SyncStateEntity
+import io.getstream.chat.android.offline.repository.domain.threads.internal.ThreadDao
+import io.getstream.chat.android.offline.repository.domain.threads.internal.ThreadEntity
+import io.getstream.chat.android.offline.repository.domain.threads.internal.ThreadOrderDao
+import io.getstream.chat.android.offline.repository.domain.threads.internal.ThreadOrderEntity
 import io.getstream.chat.android.offline.repository.domain.user.internal.UserDao
 import io.getstream.chat.android.offline.repository.domain.user.internal.UserEntity
 
@@ -74,8 +78,10 @@ import io.getstream.chat.android.offline.repository.domain.user.internal.UserEnt
         CommandInnerEntity::class,
         SyncStateEntity::class,
         PollEntity::class,
+        ThreadEntity::class,
+        ThreadOrderEntity::class,
     ],
-    version = 78,
+    version = 79,
     exportSchema = false,
 )
 @TypeConverters(
@@ -106,6 +112,8 @@ internal abstract class ChatDatabase : RoomDatabase() {
     abstract fun syncStateDao(): SyncStateDao
     abstract fun attachmentDao(): AttachmentDao
     abstract fun pollDao(): PollDao
+    abstract fun threadDao(): ThreadDao
+    abstract fun threadOrderDao(): ThreadOrderDao
 
     companion object {
         @Volatile

@@ -231,7 +231,7 @@ internal fun DefaultLatestReplyContent(reply: Message) {
                 )
                 Timestamp(
                     modifier = Modifier.padding(start = 8.dp),
-                    date = reply.updatedAt,
+                    date = reply.updatedAt ?: reply.createdAt ?: reply.createdLocallyAt,
                 )
             }
         }

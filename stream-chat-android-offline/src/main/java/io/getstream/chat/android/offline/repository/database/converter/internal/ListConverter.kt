@@ -18,10 +18,14 @@ package io.getstream.chat.android.offline.repository.database.converter.internal
 
 import androidx.room.TypeConverter
 import com.squareup.moshi.adapter
+import io.getstream.chat.android.offline.repository.domain.channel.userread.internal.ChannelUserReadEntity
 
 internal class ListConverter {
     @OptIn(ExperimentalStdlibApi::class)
     private val adapter = moshi.adapter<List<String>>()
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private val channelUserReadListAdapter = moshi.adapter<List<ChannelUserReadEntity>>()
 
     @TypeConverter
     fun stringToStringList(data: String?): List<String>? {
@@ -34,5 +38,18 @@ internal class ListConverter {
     @TypeConverter
     fun stringListToString(someObjects: List<String>?): String? {
         return adapter.toJson(someObjects)
+    }
+
+    @TypeConverter
+    fun readListToString(data: List<ChannelUserReadEntity>?): String? {
+        return channelUserReadListAdapter.toJson(data)
+    }
+
+    @TypeConverter
+    fun stringToReadList(data: String?): List<ChannelUserReadEntity>? {
+        if (data.isNullOrEmpty() || data == "null") {
+            return emptyList()
+        }
+        return channelUserReadListAdapter.fromJson(data)
     }
 }
