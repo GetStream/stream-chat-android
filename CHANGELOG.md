@@ -51,6 +51,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- 🚨 Breaking change: The `MessagePositionHandler.handleMessagePosition` function now includes a new parameter, `isBeforeDateSeparator`, to handle message positioning more precisely within a group of messages. [#5466](https://github.com/GetStream/stream-chat-android/pull/5466)
 
 ### ❌ Removed
 
