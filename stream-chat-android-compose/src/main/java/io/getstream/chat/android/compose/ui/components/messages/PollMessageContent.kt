@@ -114,16 +114,6 @@ public fun PollMessageContent(
         }
     }
 
-    /*val messageBubbleColor = when {
-        message.isDeleted() -> when (ownsMessage) {
-            true -> ChatTheme.ownMessageTheme.deletedBackgroundColor
-            else -> ChatTheme.otherMessageTheme.deletedBackgroundColor
-        }
-        else -> when (ownsMessage) {
-            true -> ChatTheme.colors.linkBackground
-            else -> ChatTheme.otherMessageTheme.backgroundColor
-        }
-    }*/
     val messageBubbleColor = when {
         message.isDeleted() -> when (ownsMessage) {
             true -> ChatTheme.ownMessageTheme.deletedBackgroundColor
