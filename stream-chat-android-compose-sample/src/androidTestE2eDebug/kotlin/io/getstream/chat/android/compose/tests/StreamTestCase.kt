@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.tests
 
-import android.Manifest.permission
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.Manifest.permission.READ_MEDIA_IMAGES
 import android.Manifest.permission.READ_MEDIA_VIDEO

@@ -19,12 +19,14 @@ package io.getstream.chat.android.compose.tests
 import io.getstream.chat.android.compose.robots.assertMessage
 import io.getstream.chat.android.compose.robots.assertMessageAuthor
 import io.qameta.allure.kotlin.Allure.step
+import io.qameta.allure.kotlin.AllureId
 import org.junit.Test
 
 class MessageListTests : StreamTestCase() {
 
     private val sampleText = "Test"
 
+    @AllureId("5661")
     @Test
     fun test_messageListUpdates_whenParticipantSendsMessage() {
         step("GIVEN user opens a channel") {
@@ -42,6 +44,7 @@ class MessageListTests : StreamTestCase() {
         }
     }
 
+    @AllureId("5660")
     @Test
     fun test_messageListUpdates_whenUserSendsMessage() {
         step("GIVEN user opens a channel") {

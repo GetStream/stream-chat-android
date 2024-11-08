@@ -52,14 +52,13 @@ public fun MessageReadStatusIcon(
     currentUser: User?,
     modifier: Modifier = Modifier,
 ) {
-    val readStatues = channel.getReadStatuses(userToIgnore = currentUser)
-    val readCount = readStatues.count { it.time >= message.getCreatedAtOrThrow().time }
+    val readStatuses = channel.getReadStatuses(userToIgnore = currentUser)
+    val readCount = readStatuses.count { it.time >= message.getCreatedAtOrThrow().time }
     val isMessageRead = readCount != 0
 
     MessageReadStatusIcon(
         message = message,
         isMessageRead = isMessageRead,
-        modifier = modifier.testTag("Stream_ReadStatusIcon"),
         readCount = readCount,
     )
 }
