@@ -1162,7 +1162,7 @@ public final class io/getstream/chat/android/compose/ui/components/messages/Giph
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/MessageBubbleKt {
-	public static final fun MessageBubble-yWKOrZg (JLandroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/BorderStroke;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessageBubble-ZPw9REg (JLandroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/BorderStroke;Landroidx/compose/foundation/layout/PaddingValues;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/MessageContentKt {
@@ -2113,6 +2113,7 @@ public final class io/getstream/chat/android/compose/ui/theme/ComponentPadding {
 	public final fun getEnd-D9Ej5fM ()F
 	public final fun getStart-D9Ej5fM ()F
 	public final fun getTop-D9Ej5fM ()F
+	public final fun getValues ()Landroidx/compose/foundation/layout/PaddingValues;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
