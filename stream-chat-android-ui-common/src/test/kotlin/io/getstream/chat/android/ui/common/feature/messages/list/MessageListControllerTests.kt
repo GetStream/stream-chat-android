@@ -162,7 +162,7 @@ internal class MessageListControllerTests {
             val messages = listOf(
                 randomMessage(user = user1), // First message from user1
                 randomMessage(user = user2), // Second message from user2
-                randomMessage(user = user1)  // Third message from user1
+                randomMessage(user = user1), // Third message from user1
             )
             val messagesState = MutableStateFlow(messages)
             val controller = Fixture()
@@ -182,8 +182,8 @@ internal class MessageListControllerTests {
         runTest {
             val messages = listOf(
                 randomMessage(user = user1, type = MessageType.REGULAR),
-                randomMessage(user = user2, type = MessageType.REGULAR),  // Regular message from user2
-                randomMessage(user = user1, type = MessageType.SYSTEM) // System message from user1
+                randomMessage(user = user2, type = MessageType.REGULAR), // Regular message from user2
+                randomMessage(user = user1, type = MessageType.SYSTEM), // System message from user1
             )
             val messagesState = MutableStateFlow(messages)
             val controller = Fixture()
