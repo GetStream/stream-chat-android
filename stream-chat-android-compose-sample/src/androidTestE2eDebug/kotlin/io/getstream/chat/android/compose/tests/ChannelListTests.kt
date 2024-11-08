@@ -17,14 +17,17 @@
 package io.getstream.chat.android.compose.tests
 
 import io.getstream.chat.android.compose.robots.assertChannelAvatar
+import io.getstream.chat.android.compose.robots.assertMessageDeliveryStatus
 import io.getstream.chat.android.compose.robots.assertMessageInChannelPreview
 import io.qameta.allure.kotlin.Allure.step
+import io.qameta.allure.kotlin.AllureId
 import org.junit.Test
 
 class ChannelListTests : StreamTestCase() {
 
     private val sampleText = "Test"
 
+    @AllureId("6343")
     @Test
     fun test_channelPreviewUpdates_whenParticipantSendsMessage() {
         step("GIVEN user opens a channel") {
@@ -41,10 +44,12 @@ class ChannelListTests : StreamTestCase() {
         step("THEN user observes the new message in preview") {
             userRobot
                 .assertMessageInChannelPreview(sampleText, false)
+                .assertMessageDeliveryStatus(shouldBeVisible = false)
                 .assertChannelAvatar()
         }
     }
 
+    @AllureId("6344")
     @Test
     fun test_channelPreviewUpdates_whenUserSendsMessage() {
         step("GIVEN user opens a channel") {
@@ -61,7 +66,14 @@ class ChannelListTests : StreamTestCase() {
         step("THEN user observes the new message in preview") {
             userRobot
                 .assertMessageInChannelPreview(sampleText, true)
+                .assertMessageDeliveryStatus(shouldBeVisible = true, shouldBeRead = false)
                 .assertChannelAvatar()
+        }
+        step("WHEN participant reads the message") {
+            participantRobot.readMessage()
+        }
+        step("THEN user observes the new message in preview") {
+            userRobot.assertMessageDeliveryStatus(shouldBeVisible = true, shouldBeRead = true)
         }
     }
 }

@@ -260,7 +260,7 @@ private fun UserTypingIndicator(users: List<User>) {
 
 /**
  * Represents the default trailing content for the channel item. By default it shows
- * the the information about the last message for the channel item, such as its read state,
+ * the information about the last message for the channel item, such as its read state,
  * timestamp and how many unread messages the user has.
  *
  * @param channel The channel to show the info for.
