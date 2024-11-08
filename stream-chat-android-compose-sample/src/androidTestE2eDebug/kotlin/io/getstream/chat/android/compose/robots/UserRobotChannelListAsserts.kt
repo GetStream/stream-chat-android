@@ -18,7 +18,6 @@ package io.getstream.chat.android.compose.robots
 
 import io.getstream.chat.android.compose.pages.ChannelListPage.ChannelList.Channel
 import io.getstream.chat.android.compose.uiautomator.exists
-import io.getstream.chat.android.compose.uiautomator.findObject
 import io.getstream.chat.android.compose.uiautomator.wait
 import io.getstream.chat.android.compose.uiautomator.waitToAppear
 import org.junit.Assert.assertEquals
@@ -37,7 +36,7 @@ fun UserRobot.assertMessageInChannelPreview(text: String, fromCurrentUser: Boole
     return this
 }
 
-fun UserRobot.assertMessageDeliveryStatus(shouldBeVisible: Boolean, shouldBeRead: Boolean = false) : UserRobot {
+fun UserRobot.assertMessageDeliveryStatus(shouldBeVisible: Boolean, shouldBeRead: Boolean = false): UserRobot {
     if (shouldBeVisible) {
         val readStatus = if (shouldBeRead) Channel.readStatusIsRead else Channel.readStatusIsSent
         assertTrue(readStatus.wait().exists())
