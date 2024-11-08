@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.theme
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -112,6 +113,11 @@ public data class ComponentPadding(
          */
         public fun all(padding: Dp): ComponentPadding = ComponentPadding(padding, padding, padding, padding)
     }
+
+    /**
+     * Returns the Compose padding values.
+     */
+    val values: PaddingValues get() = PaddingValues(start, top, end, bottom)
 }
 
 /**

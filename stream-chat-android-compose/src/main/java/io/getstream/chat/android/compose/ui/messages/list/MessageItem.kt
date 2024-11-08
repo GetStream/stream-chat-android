@@ -589,10 +589,11 @@ public fun RegularMessageContent(
 
     if (!messageItem.isErrorOrFailed()) {
         MessageBubble(
-            modifier = modifier.padding(messageTheme.contentPadding),
+            modifier = modifier,
             shape = messageBubbleShape,
             color = messageBubbleColor,
             border = messageTheme.backgroundBorder,
+            contentPadding = messageTheme.contentPadding.values,
             content = {
                 MessageContent(
                     message = message,
