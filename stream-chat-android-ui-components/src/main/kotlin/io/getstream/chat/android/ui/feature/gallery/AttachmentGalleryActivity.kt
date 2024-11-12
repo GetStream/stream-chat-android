@@ -28,7 +28,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -116,9 +119,18 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
 
         binding = StreamUiActivityAttachmentGalleryBinding.inflate(streamThemeInflater)
         setContentView(binding.root)
+        setupEdgeToEdge()
         setupGalleryOverviewButton()
         binding.closeButton.setOnClickListener { finish() }
         viewModel.attachmentGalleryItemsLiveData.observe(this, ::setupGallery)
+    }
+
+    private fun setupEdgeToEdge() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(top = insets.top, left = insets.left, right = insets.right, bottom = insets.bottom)
+            WindowInsetsCompat.CONSUMED
+        }
     }
 
     private fun setupGallery(attachmentGalleryItems: List<AttachmentGalleryItem>) {

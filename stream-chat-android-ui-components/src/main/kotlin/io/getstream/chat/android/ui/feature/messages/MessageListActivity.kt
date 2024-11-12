@@ -20,6 +20,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentContainerBinding
 
@@ -34,6 +37,7 @@ public open class MessageListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = StreamUiFragmentContainerBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setupEdgeToEdge()
 
         if (savedInstanceState == null) {
             val cid = requireNotNull(intent.getStringExtra(EXTRA_CID)) {
@@ -56,6 +60,14 @@ public open class MessageListActivity : AppCompatActivity() {
             setFragment(MessageListFragment())
             showHeader(true)
             messageId(messageId)
+        }
+    }
+
+    private fun setupEdgeToEdge() {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { root, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.ime())
+            root.updatePadding(left = insets.left, top = insets.top, right = insets.right, bottom = insets.bottom)
+            WindowInsetsCompat.CONSUMED
         }
     }
 

@@ -28,22 +28,27 @@ import android.widget.MediaController
 import android.widget.ProgressBar
 import android.widget.Toast
 import android.widget.VideoView
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
@@ -51,7 +56,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.isVisible
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
@@ -62,6 +66,7 @@ import io.getstream.chat.android.compose.ui.util.mirrorRtl
 public class MediaPreviewActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setupEdgeToEdge()
         super.onCreate(savedInstanceState)
         val url = intent.getStringExtra(KEY_URL)
         val title = intent.getStringExtra(KEY_TITLE) ?: ""
@@ -73,8 +78,11 @@ public class MediaPreviewActivity : AppCompatActivity() {
 
         setContent {
             ChatTheme {
-                SetupSystemUI()
                 MediaPreviewScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black)
+                        .windowInsetsPadding(WindowInsets.systemBars),
                     url = url,
                     title = title,
                     onPlaybackError = {
@@ -101,6 +109,7 @@ public class MediaPreviewActivity : AppCompatActivity() {
      */
     @Composable
     private fun MediaPreviewScreen(
+        modifier: Modifier = Modifier,
         url: String,
         title: String,
         onPlaybackError: () -> Unit,
@@ -109,33 +118,19 @@ public class MediaPreviewActivity : AppCompatActivity() {
         BackHandler(enabled = true, onBack = onBackPressed)
 
         Scaffold(
-            modifier = Modifier.fillMaxSize(),
+            modifier = modifier,
             backgroundColor = Color.Black,
             topBar = { MediaPreviewToolbar(title, onBackPressed) },
             content = { MediaPreviewContent(url, onBackPressed, onPlaybackError) },
         )
     }
 
-    /**
-     * Responsible for updating the system UI.
-     */
-    @Composable
-    private fun SetupSystemUI() {
-        val systemUiController = rememberSystemUiController()
-
-        val statusBarColor = Color.Black
-        val navigationBarColor = Color.Black
-
-        SideEffect {
-            systemUiController.setStatusBarColor(
-                color = statusBarColor,
-                darkIcons = false,
-            )
-            systemUiController.setNavigationBarColor(
-                color = navigationBarColor,
-                darkIcons = false,
-            )
-        }
+    private fun setupEdgeToEdge() {
+        val barsColor = Color.Black.toArgb()
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(barsColor),
+            navigationBarStyle = SystemBarStyle.dark(barsColor),
+        )
     }
 
     /**
