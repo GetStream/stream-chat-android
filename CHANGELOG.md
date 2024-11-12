@@ -111,6 +111,7 @@
 
 ### ✅ Added
 - Add `MessageListViewModel.flagUser()` and `MessageListViewModel.unflagUser()` methods for flagging/un-flagging users. [#5478](https://github.com/GetStream/stream-chat-android/pull/5478)
+- Add edge-to-edge support for apps targeting Android 15. [#5469](https://github.com/GetStream/stream-chat-android/pull/5469)
 
 ### ⚠️ Changed
 
@@ -123,6 +124,7 @@
 
 ### ✅ Added
 - Add `MessageListViewModel.flagUser()` and `MessageListViewModel.unflagUser()` methods for flagging/un-flagging users. [#5478](https://github.com/GetStream/stream-chat-android/pull/5478)
+- Add edge-to-edge support for apps targeting Android 15. [#5469](https://github.com/GetStream/stream-chat-android/pull/5469)
 
 ### ⚠️ Changed
 - 🚨 Breaking change: Replace usage of `RippleTheme` with `StreamRippleConfiguration` for customizing ripples via `ChatTheme`. [#5475](https://github.com/GetStream/stream-chat-android/pull/5475)
