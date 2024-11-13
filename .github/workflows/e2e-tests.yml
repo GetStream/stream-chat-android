@@ -1,0 +1,113 @@
+name: E2E Tests
+
+on:
+  pull_request:
+
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
+
+jobs:
+  build-apks:
+    name: Build
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: adopt
+          java-version: 17
+      - uses: ./.github/actions/enable-kvm
+      - uses: ./.github/actions/ruby-cache
+      - uses: ./.github/actions/gradle-cache
+        with:
+          key-prefix: gradle-test
+      - name: Build apks
+        run: bundle exec fastlane build_e2e_test
+      - name: Upload apks
+        uses: actions/upload-artifact@v4.4.0
+        with:
+          name: apks
+          path: |
+            stream-chat-android-compose-sample/build/outputs/apk/e2e/debug/*.apk
+            stream-chat-android-compose-sample/build/outputs/apk/androidTest/e2e/debug/*.apk
+
+  allure_testops_launch:
+    name: Launch Allure TestOps
+    runs-on: ubuntu-24.04
+    needs: build-apks
+    outputs:
+      launch_id: ${{ steps.get_launch_id.outputs.launch_id }}
+    steps:
+    - uses: actions/checkout@v4.1.1
+    - uses: ./.github/actions/ruby-cache
+    - name: Launch Allure TestOps
+      run: bundle exec fastlane allure_launch
+      env:
+        ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
+        GITHUB_EVENT: ${{ toJson(github.event) }}
+    - id: get_launch_id
+      run: echo "launch_id=${{env.LAUNCH_ID}}" >> $GITHUB_OUTPUT
+      if: env.LAUNCH_ID != ''
+
+  run-tests:
+    name: Test
+    runs-on: ubuntu-24.04
+    needs:
+      - build-apks
+      - allure_testops_launch
+    env:
+      LAUNCH_ID: ${{ needs.allure_testops_launch.outputs.launch_id }}
+    steps:
+      - name: Connect Bot
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/download-artifact@v4.1.8
+        with:
+          name: apks
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: adopt
+          java-version: 17
+      - uses: ./.github/actions/enable-kvm
+      - uses: ./.github/actions/ruby-cache
+      - uses: ./.github/actions/gradle-cache
+        with:
+          key-prefix: gradle-test
+      - name: Run tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          disable-animations: true
+          profile: pixel
+          arch : x86_64
+          emulator-options: -no-snapshot-save -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -camera-back none -camera-front none
+          script: bundle exec fastlane run_e2e_test
+      - name: Allure TestOps Upload
+        if: env.LAUNCH_ID != '' && (success() || failure())
+        run: bundle exec fastlane allure_upload launch_id:$LAUNCH_ID
+        env:
+          ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
+      - name: Allure TestOps Launch Removal
+        if: env.LAUNCH_ID != '' && cancelled()
+        run: bundle exec fastlane allure_launch_removal launch_id:$LAUNCH_ID
+        env:
+          ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
+      - name: Upload test results
+        uses: actions/upload-artifact@v3.1.0
+        if: failure()
+        with:
+          name: test_report
+          path: |
+            ./**/build/reports/androidTests/*
+            fastlane/stream-chat-test-mock-server/logs/*

@@ -1,0 +1,66 @@
+#!/usr/bin/env ruby
+
+allure_project_id = '102'
+allure_url = 'https://streamio.testops.cloud'
+allure_api_url = "#{allure_url}/api"
+allure_regression_testplan = 'Regression Testing'
+allure_results_path = 'allure-results'
+
+desc 'Upload test results to Allure TestOps'
+lane :allure_upload do |options|
+  remove_duplicated_allure_results
+  allure_args = "-e #{allure_url} --project-id #{allure_project_id} --launch-id #{options[:launch_id]}"
+  sh("./allurectl launch reopen #{options[:launch_id]} || true") # to prevent allure from uploading results to a closed launch
+  sh("env BRANCH_NAME='#{current_branch}' ./allurectl upload #{allure_args} #{allure_results_path} || true")
+  UI.success("Check out test results in Allure TestOps: #{allure_url}/launch/#{options[:launch_id]} 🎉")
+end
+
+desc 'Create launch on Allure TestOps'
+lane :allure_launch do |options|
+  next unless is_check_required(sources: sources_matrix[:e2e], force_check: @force_check)
+
+  launch_id = allure_create_launch(
+    url: allure_api_url,
+    project_id: allure_project_id,
+    github_run_details: github_run_details,
+    cron: options[:cron]
+  )
+  sh("echo 'LAUNCH_ID=#{launch_id}' >> $GITHUB_ENV") if is_ci
+end
+
+desc 'Remove launch on Allure TestOps'
+lane :allure_launch_removal do |options|
+  allure_api(url: allure_api_url, path: "launch/#{options[:launch_id]}", http_method: 'DELETE')
+end
+
+desc 'Create test-case in Allure TestOps and get its id'
+lane :allure_testcase do
+  allure_create_testcase(url: allure_api_url, project_id: allure_project_id)
+end
+
+desc 'Sync and run regression test-plan on Allure TestOps'
+lane :allure_start_regression do |options|
+  allure_run_testplan(
+    url: allure_api_url,
+    project_id: allure_project_id,
+    release_version: options[:release_version],
+    testplan: allure_regression_testplan,
+    jira: options[:jira]
+  )
+end
+
+def github_run_details
+  return nil unless is_ci
+
+  github_path = "#{ENV.fetch('GITHUB_API_URL', nil)}/repos/#{ENV.fetch('GITHUB_REPOSITORY', nil)}/actions/runs/#{ENV.fetch('GITHUB_RUN_ID', nil)}"
+  output = sh(command: "curl -s -H 'authorization: Bearer #{ENV.fetch('GITHUB_TOKEN', nil)}' -X GET -G #{github_path}")
+  JSON.parse(output)
+end
+
+desc 'https://github.com/allure-framework/allure-kotlin/issues/73'
+lane :remove_duplicated_allure_results do
+  Dir.glob("#{allure_results_path}/*.json").each do |json_file|
+    json_data = JSON.parse(File.read(json_file))
+    FileUtils.rm(json_file) if json_data['steps'].is_a?(Array) && json_data['steps'].empty?
+  end
+end
