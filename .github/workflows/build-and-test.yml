@@ -95,6 +95,6 @@ jobs:
       - name: Upload artifact to Emerge
         uses: EmergeTools/emerge-upload-action@v1.0.2
         with:
-          artifact_path: ./stream-chat-android-compose-sample/build/outputs/apk/debug/stream-chat-android-compose-sample-debug.apk
+          artifact_path: ./stream-chat-android-compose-sample/build/outputs/apk/demo/debug/stream-chat-android-compose-sample-demo-debug.apk
           emerge_api_key: ${{ secrets.EMERGE_TOOLS_API_KEY }}
           build_type: debug
