@@ -105,3 +105,14 @@ docusaurus/shared
 
 .sign/keystore.properties
 .sign/release.keystore
+
+# fastlane
+!fastlane/.env
+fastlane/fastlane.log
+fastlane/report.xml
+fastlane/screenshots
+fastlane/test_output
+fastlane/allurectl
+fastlane/recordings
+allure-results
+stream-chat-test-mock-server

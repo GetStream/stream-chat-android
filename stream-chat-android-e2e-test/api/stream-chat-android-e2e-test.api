@@ -68,6 +68,11 @@ public final class io/getstream/chat/android/compose/uiautomator/WaitKt {
 	public static synthetic fun waitToDisappear$default (Landroidx/test/uiautomator/BySelector;JILjava/lang/Object;)Landroidx/test/uiautomator/BySelector;
 }
 
+public class io/getstream/chat/android/e2e/test/helpers/DatabaseOperations {
+	public fun <init> ()V
+	public fun clearDatabases ()V
+}
+
 public final class io/getstream/chat/android/e2e/test/mockserver/AttachmentType : java/lang/Enum {
 	public static final field FILE Lio/getstream/chat/android/e2e/test/mockserver/AttachmentType;
 	public static final field IMAGE Lio/getstream/chat/android/e2e/test/mockserver/AttachmentType;
@@ -83,7 +88,7 @@ public final class io/getstream/chat/android/e2e/test/mockserver/MockServer {
 	public final fun getRequest (Ljava/lang/String;)Lokhttp3/ResponseBody;
 	public final fun postRequest (Ljava/lang/String;Lokhttp3/RequestBody;)Lokhttp3/ResponseBody;
 	public static synthetic fun postRequest$default (Lio/getstream/chat/android/e2e/test/mockserver/MockServer;Ljava/lang/String;Lokhttp3/RequestBody;ILjava/lang/Object;)Lokhttp3/ResponseBody;
-	public final fun start ()V
+	public final fun start (Ljava/lang/String;)V
 	public final fun stop ()V
 }
 
@@ -140,5 +145,21 @@ public final class io/getstream/chat/android/e2e/test/robots/ParticipantRobot {
 	public static synthetic fun uploadAttachment$default (Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;Lio/getstream/chat/android/e2e/test/mockserver/AttachmentType;IILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
 	public final fun uploadAttachmentInThread (Lio/getstream/chat/android/e2e/test/mockserver/AttachmentType;IZ)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
 	public static synthetic fun uploadAttachmentInThread$default (Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;Lio/getstream/chat/android/e2e/test/mockserver/AttachmentType;IZILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
+}
+
+public abstract interface annotation class io/getstream/chat/android/e2e/test/rules/Retry : java/lang/annotation/Annotation {
+	public abstract fun times ()I
+}
+
+public final class io/getstream/chat/android/e2e/test/rules/RetryRule : org/junit/rules/TestRule {
+	public static final field Companion Lio/getstream/chat/android/e2e/test/rules/RetryRule$Companion;
+	public static final field DEFAULT_RETRIES I
+	public fun <init> ()V
+	public fun <init> (I)V
+	public synthetic fun <init> (IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun apply (Lorg/junit/runners/model/Statement;Lorg/junit/runner/Description;)Lorg/junit/runners/model/Statement;
+}
+
+public final class io/getstream/chat/android/e2e/test/rules/RetryRule$Companion {
 }
 

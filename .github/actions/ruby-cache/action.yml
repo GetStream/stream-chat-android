@@ -1,0 +1,9 @@
+name: 'Ruby Cache'
+description: 'Cache Ruby dependencies'
+runs:
+  using: "composite"
+  steps:
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.1
+        bundler-cache: true

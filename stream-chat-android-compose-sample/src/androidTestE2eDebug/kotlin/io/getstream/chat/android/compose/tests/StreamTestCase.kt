@@ -26,17 +26,38 @@ import io.getstream.chat.android.compose.uiautomator.grantPermission
 import io.getstream.chat.android.compose.uiautomator.mockServer
 import io.getstream.chat.android.compose.uiautomator.startApp
 import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
+import io.getstream.chat.android.e2e.test.rules.RetryRule
+import io.qameta.allure.android.rules.LogcatRule
+import io.qameta.allure.android.rules.ScreenshotRule
+import io.qameta.allure.android.rules.WindowHierarchyRule
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
+import org.junit.rules.TestName
 
 open class StreamTestCase {
 
     val userRobot = UserRobot()
     val participantRobot = ParticipantRobot()
 
+    @get:Rule
+    var testName: TestName = TestName()
+
+    @get:Rule
+    val screenshotRule = ScreenshotRule(mode = ScreenshotRule.Mode.FAILURE, screenshotName = "screenshot")
+
+    @get:Rule
+    val logcatRule = LogcatRule()
+
+    @get:Rule
+    val windowHierarchyRule = WindowHierarchyRule()
+
+    @get:Rule
+    val retryRule = RetryRule()
+
     @Before
     fun setUp() {
-        mockServer.start()
+        mockServer.start(testName.methodName)
         device.startApp()
         grantAppPermissions()
     }

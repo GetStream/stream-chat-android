@@ -32,6 +32,7 @@ jobs:
       - name: Detekt
         if: always()
         run: ./gradlew detekt
+
   vale:
     name: Vale doc linter
     runs-on: ubuntu-latest
@@ -107,3 +108,11 @@ jobs:
         with:
           name: testDebugUnitTest
           path: ./**/build/reports/tests/testDebugUnitTest
+
+  rubocop:
+    name: Rubocop
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: ./.github/actions/ruby-cache
+      - run: bundle exec fastlane rubocop
