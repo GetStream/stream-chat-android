@@ -140,7 +140,10 @@ public fun AudioRecordAttachmentContent(
     val viewModel = viewModel(AudioPlayerViewModel::class.java, factory = viewModelFactory)
 
     val audioRecordings = attachmentState.message.attachments
-        .filter { attachment -> attachment.isAudioRecording() && attachment.assetUrl != null }
+        .filter { attachment ->
+            val attachmentUrl = attachment.assetUrl ?: attachment.upload?.toUri()?.toString()
+            attachment.isAudioRecording() && attachmentUrl != null
+        }
 
     val playerState by viewModel.state.collectAsStateWithLifecycle()
 
@@ -241,7 +244,7 @@ internal fun AudioRecordAttachmentContentItemBase(
     onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
     tailContent: @Composable (isPlaying: Boolean) -> Unit = {},
 ) {
-    val attachmentUrl = attachment.assetUrl
+    val attachmentUrl = attachment.assetUrl ?: attachment.upload?.toUri()?.toString()
     val isCurrentAttachment = attachmentUrl == playerState.current.audioUri
     val trackProgress = playerState.current.playingProgress.takeIf { isCurrentAttachment }
         ?: attachmentUrl?.let { playerState.seekTo.getOrDefault(it.hashCode(), 0f) } ?: 0f
