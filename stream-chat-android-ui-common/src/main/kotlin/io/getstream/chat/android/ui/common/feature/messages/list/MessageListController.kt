@@ -843,13 +843,15 @@ public class MessageListController(
             val previousMessage = messages.getOrNull(index - 1)
             val nextMessage = messages.getOrNull(index + 1)
 
-            val shouldAddDateSeparator = dateSeparatorHandler.shouldAddDateSeparator(previousMessage, message)
+            val hasDateSeparatorBefore = dateSeparatorHandler.shouldAddDateSeparator(previousMessage, message)
+            val hasDateSeparatorAfter = nextMessage?.let { dateSeparatorHandler.shouldAddDateSeparator(message, it) } ?: false
 
             val position = messagePositionHandler.handleMessagePosition(
                 previousMessage = previousMessage,
                 message = message,
                 nextMessage = nextMessage,
-                isAfterDateSeparator = shouldAddDateSeparator,
+                isAfterDateSeparator = hasDateSeparatorBefore,
+                isBeforeDateSeparator = hasDateSeparatorAfter,
                 isInThread = isInThread,
             )
 
@@ -862,7 +864,7 @@ public class MessageListController(
                 nextMessage = nextMessage,
             )
 
-            if (shouldAddDateSeparator) {
+            if (hasDateSeparatorBefore) {
                 message.getCreatedAtOrNull()?.let { createdAt ->
                     groupedMessages.add(DateSeparatorItemState(createdAt))
                 }

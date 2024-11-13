@@ -3355,6 +3355,7 @@ internal constructor(
     @Suppress("TooManyFunctions")
     public class Builder(private val apiKey: String, private val appContext: Context) : ChatClientBuilder() {
 
+        private var forceInsecureConnection = false
         private var baseUrl: String = "chat.stream-io-api.com"
         private var cdnUrl: String = baseUrl
         private var logLevel = ChatLogLevel.NOTHING
@@ -3519,6 +3520,16 @@ internal constructor(
         }
 
         /**
+         * Force to use insecure connection (HTTP) instead of secure connection (HTTPS).
+         * This is useful for testing purposes.
+         * By default, the client uses HTTPS.
+         * Production apps should always use HTTPS.
+         */
+        public fun forceInsecureConnection(): Builder = apply {
+            forceInsecureConnection = true
+        }
+
+        /**
          * Inject a [RepositoryFactory.Provider] to use your own DB Persistence mechanism.
          */
         public fun withRepositoryFactoryProvider(provider: RepositoryFactory.Provider): Builder = apply {
@@ -3595,9 +3606,9 @@ internal constructor(
             }
 
             // Use clear text traffic for instrumented tests
-            val isLocalHost = baseUrl.contains("localhost")
-            val httpProtocol = if (isLocalHost) "http" else "https"
-            val wsProtocol = if (isLocalHost) "ws" else "wss"
+            val isInsecureConnection = baseUrl.contains("localhost") || forceInsecureConnection
+            val httpProtocol = if (isInsecureConnection) "http" else "https"
+            val wsProtocol = if (isInsecureConnection) "ws" else "wss"
             val lifecycle = ProcessLifecycleOwner.get().lifecycle
 
             val config = ChatClientConfig(

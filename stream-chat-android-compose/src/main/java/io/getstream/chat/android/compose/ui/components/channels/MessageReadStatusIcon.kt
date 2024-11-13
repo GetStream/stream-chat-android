@@ -23,6 +23,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -51,14 +52,13 @@ public fun MessageReadStatusIcon(
     currentUser: User?,
     modifier: Modifier = Modifier,
 ) {
-    val readStatues = channel.getReadStatuses(userToIgnore = currentUser)
-    val readCount = readStatues.count { it.time >= message.getCreatedAtOrThrow().time }
+    val readStatuses = channel.getReadStatuses(userToIgnore = currentUser)
+    val readCount = readStatuses.count { it.time >= message.getCreatedAtOrThrow().time }
     val isMessageRead = readCount != 0
 
     MessageReadStatusIcon(
         message = message,
         isMessageRead = isMessageRead,
-        modifier = modifier,
         readCount = readCount,
     )
 }
@@ -85,13 +85,16 @@ public fun MessageReadStatusIcon(
                 if (readCount > 1 && ChatTheme.readCountEnabled) {
                     Text(
                         text = readCount.toString(),
-                        modifier = Modifier.padding(horizontal = 2.dp),
+                        modifier = Modifier
+                            .padding(horizontal = 2.dp)
+                            .testTag("Stream_MessageReadCount"),
                         style = ChatTheme.typography.footnote,
                         color = ChatTheme.colors.textLowEmphasis,
                     )
                 }
 
                 Icon(
+                    modifier = Modifier.testTag("Stream_MessageReadStatus_isRead"),
                     painter = painterResource(id = R.drawable.stream_compose_message_seen),
                     contentDescription = null,
                     tint = ChatTheme.colors.primaryAccent,
@@ -100,7 +103,7 @@ public fun MessageReadStatusIcon(
         }
         syncStatus == SyncStatus.SYNC_NEEDED || syncStatus == SyncStatus.AWAITING_ATTACHMENTS -> {
             Icon(
-                modifier = modifier,
+                modifier = modifier.testTag("Stream_MessageReadStatus_isPending"),
                 painter = painterResource(id = R.drawable.stream_compose_ic_clock),
                 contentDescription = null,
                 tint = ChatTheme.colors.textLowEmphasis,
@@ -108,7 +111,7 @@ public fun MessageReadStatusIcon(
         }
         syncStatus == SyncStatus.COMPLETED -> {
             Icon(
-                modifier = modifier,
+                modifier = modifier.testTag("Stream_MessageReadStatus_isSent"),
                 painter = painterResource(id = R.drawable.stream_compose_message_sent),
                 contentDescription = null,
                 tint = ChatTheme.colors.textLowEmphasis,

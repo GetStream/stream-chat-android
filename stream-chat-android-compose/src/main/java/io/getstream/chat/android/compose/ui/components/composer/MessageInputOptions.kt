@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -87,7 +88,8 @@ public fun MessageInputOptions(
                     onClick = onCancelAction,
                     indication = rememberRipple(bounded = false),
                     interactionSource = remember { MutableInteractionSource() },
-                ),
+                )
+                .testTag("Stream_ComposerCancelButton"),
             painter = painterResource(id = R.drawable.stream_compose_ic_close),
             contentDescription = stringResource(id = R.string.stream_compose_cancel),
             tint = ChatTheme.colors.textLowEmphasis,

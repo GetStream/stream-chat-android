@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.utils.attachment.isImage
@@ -115,7 +116,8 @@ private fun DefaultItemOverlayContent() {
             .shadow(6.dp, shape = CircleShape)
             .background(color = Color.White, shape = CircleShape)
             .fillMaxWidth(0.25f)
-            .aspectRatio(1f),
+            .aspectRatio(1f)
+            .testTag("Stream_PlayButton"),
     )
 }
 

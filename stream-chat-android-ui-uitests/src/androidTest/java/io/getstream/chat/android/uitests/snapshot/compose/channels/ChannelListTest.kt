@@ -46,6 +46,7 @@ class ChannelListTest : ComposeScreenshotTest() {
                             ),
                             lastMessageAt = TestData.date1(),
                         ),
+                        typingUsers = emptyList(),
                     ),
                     ChannelItemState(
                         channel = TestData.channel2().copy(
@@ -58,6 +59,7 @@ class ChannelListTest : ComposeScreenshotTest() {
                             ),
                             lastMessageAt = TestData.date2(),
                         ),
+                        typingUsers = emptyList(),
                     ),
                     ChannelItemState(
                         channel = TestData.channel3().copy(
@@ -70,6 +72,7 @@ class ChannelListTest : ComposeScreenshotTest() {
                             ),
                             lastMessageAt = TestData.date3(),
                         ),
+                        typingUsers = emptyList(),
                     ),
                     ChannelItemState(
                         channel = TestData.channel4().copy(
@@ -82,6 +85,7 @@ class ChannelListTest : ComposeScreenshotTest() {
                             ),
                             lastMessageAt = TestData.date4(),
                         ),
+                        typingUsers = emptyList(),
                     ),
                 ),
             ),
@@ -121,6 +125,7 @@ class ChannelListTest : ComposeScreenshotTest() {
                             ),
                             lastMessageAt = TestData.date1(),
                         ),
+                        typingUsers = emptyList(),
                     ),
                     ChannelItemState(
                         channel = TestData.channel2().copy(
@@ -133,6 +138,7 @@ class ChannelListTest : ComposeScreenshotTest() {
                             ),
                             lastMessageAt = TestData.date2(),
                         ),
+                        typingUsers = emptyList(),
                     ),
                     ChannelItemState(
                         channel = TestData.channel3().copy(
@@ -145,6 +151,7 @@ class ChannelListTest : ComposeScreenshotTest() {
                             ),
                             lastMessageAt = TestData.date3(),
                         ),
+                        typingUsers = emptyList(),
                     ),
                     ChannelItemState(
                         channel = TestData.channel4().copy(
@@ -157,6 +164,7 @@ class ChannelListTest : ComposeScreenshotTest() {
                             ),
                             lastMessageAt = TestData.date4(),
                         ),
+                        typingUsers = emptyList(),
                     ),
                 ),
             ),

@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.ui.messages.list
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.AnimationConstants
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,7 +36,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
@@ -78,6 +76,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
 import io.getstream.chat.android.compose.ui.util.isUploading
+import io.getstream.chat.android.compose.ui.util.padding
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
@@ -109,7 +108,9 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
  * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onThreadClick Handler for thread clicks, if this message has a thread going.
  * @param onCastVote Handler for casting a vote on an option.
- * @param onMoreOption Handler for seeing more options.
+ * @param onRemoveVote Handler for removing a vote on an option.
+ * @param selectPoll Handler for selecting a poll.
+ * @param onAddAnswer Handler for adding an answer to a poll.
  * @param onClosePoll Handler for closing a poll.
  * @param onAddPollOption Handler for adding a poll option.
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
@@ -239,7 +240,8 @@ public fun MessageItem(
         Row(
             modifier
                 .widthIn(max = 300.dp)
-                .then(clickModifier),
+                .then(clickModifier)
+                .testTag("Stream_MessageCell"),
         ) {
             leadingContent(messageItem)
 
@@ -273,14 +275,15 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
         .size(24.dp)
         .align(Alignment.Bottom)
 
+    @Suppress("ComplexCondition")
     if (!messageItem.isMine && (
-            messageItem.showMessageFooter || messageItem.groupPosition.contains(MessagePosition.BOTTOM) || messageItem.groupPosition.contains(
-                MessagePosition.NONE,
-            )
+            messageItem.showMessageFooter ||
+                messageItem.groupPosition.contains(MessagePosition.BOTTOM) ||
+                messageItem.groupPosition.contains(MessagePosition.NONE)
             )
     ) {
         UserAvatar(
-            modifier = modifier,
+            modifier = modifier.testTag("Stream_UserAvatar"),
             user = messageItem.message.user,
             textStyle = ChatTheme.typography.captionBold,
             showOnlineIndicator = false,
@@ -443,7 +446,8 @@ internal fun DefaultMessageItemTrailingContent(
  */
 @Suppress("LongParameterList")
 @Composable
-internal fun DefaultMessageItemCenterContent(
+public fun DefaultMessageItemCenterContent(
+    modifier: Modifier = Modifier,
     messageItem: MessageItemState,
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
@@ -459,7 +463,7 @@ internal fun DefaultMessageItemCenterContent(
     onClosePoll: (String) -> Unit,
     onAddPollOption: (poll: Poll, option: String) -> Unit,
 ) {
-    val modifier = Modifier.widthIn(max = ChatTheme.dimens.messageItemMaxWidth)
+    val finalModifier = modifier.widthIn(max = ChatTheme.dimens.messageItemMaxWidth)
     if (messageItem.message.isPoll()) {
         val poll = messageItem.message.poll
         LaunchedEffect(key1 = poll) {
@@ -469,7 +473,7 @@ internal fun DefaultMessageItemCenterContent(
         }
 
         PollMessageContent(
-            modifier = modifier,
+            modifier = finalModifier,
             messageItem = messageItem,
             onCastVote = onCastVote,
             onRemoveVote = onRemoveVote,
@@ -481,17 +485,16 @@ internal fun DefaultMessageItemCenterContent(
         )
     } else if (messageItem.message.isEmojiOnlyWithoutBubble()) {
         EmojiMessageContent(
-            modifier = modifier,
+            modifier = finalModifier,
             messageItem = messageItem,
             onLongItemClick = onLongItemClick,
             onGiphyActionClick = onGiphyActionClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onQuotedMessageClick = onQuotedMessageClick,
-            onLinkClick = onLinkClick,
         )
     } else {
         RegularMessageContent(
-            modifier = modifier,
+            modifier = finalModifier,
             messageItem = messageItem,
             onLongItemClick = onLongItemClick,
             onGiphyActionClick = onGiphyActionClick,
@@ -511,17 +514,15 @@ internal fun DefaultMessageItemCenterContent(
  * @param onLongItemClick Handler when the user selects a message, on long tap.
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
  * @param onQuotedMessageClick Handler for quoted message click action.
- * @param onLinkClick Handler for clicking on a link in the message.
  * @param onMediaGalleryPreviewResult Handler used when the user selects an option in the Media Gallery Preview screen.
  */
 @Composable
-internal fun EmojiMessageContent(
+public fun EmojiMessageContent(
     messageItem: MessageItemState,
     modifier: Modifier = Modifier,
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
-    onLinkClick: ((Message, String) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
 ) {
     val message = messageItem.message
@@ -570,7 +571,7 @@ internal fun EmojiMessageContent(
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  */
 @Composable
-internal fun RegularMessageContent(
+public fun RegularMessageContent(
     messageItem: MessageItemState,
     modifier: Modifier = Modifier,
     onLongItemClick: (Message) -> Unit = {},
@@ -584,8 +585,8 @@ internal fun RegularMessageContent(
     val position = messageItem.groupPosition
     val ownsMessage = messageItem.isMine
 
+    val messageTheme = if (ownsMessage) ChatTheme.ownMessageTheme else ChatTheme.otherMessageTheme
     val messageBubbleShape = getMessageBubbleShape(position = position, ownsMessage = ownsMessage)
-
     val messageBubbleColor = getMessageBubbleColor(message = message, ownsMessage = ownsMessage)
 
     if (!messageItem.isErrorOrFailed()) {
@@ -593,7 +594,8 @@ internal fun RegularMessageContent(
             modifier = modifier,
             shape = messageBubbleShape,
             color = messageBubbleColor,
-            border = if (messageItem.isMine) null else BorderStroke(1.dp, ChatTheme.colors.borders),
+            border = messageTheme.backgroundBorder,
+            contentPadding = messageTheme.contentPadding.values,
             content = {
                 MessageContent(
                     message = message,
@@ -647,9 +649,12 @@ internal fun RegularMessageContent(
  */
 @Composable
 private fun getMessageBubbleShape(position: List<MessagePosition>, ownsMessage: Boolean): Shape {
+    val theme = if (ownsMessage) ChatTheme.ownMessageTheme else ChatTheme.otherMessageTheme
     return when {
-        position.contains(MessagePosition.TOP) || position.contains(MessagePosition.MIDDLE) -> RoundedCornerShape(16.dp)
-        else -> if (ownsMessage) ChatTheme.shapes.myMessageBubble else ChatTheme.shapes.otherMessageBubble
+        position.contains(MessagePosition.TOP) -> theme.backgroundShapes.top
+        position.contains(MessagePosition.MIDDLE) -> theme.backgroundShapes.middle
+        position.contains(MessagePosition.BOTTOM) -> theme.backgroundShapes.bottom
+        else -> theme.backgroundShapes.none
     }
 }
 
@@ -662,19 +667,11 @@ private fun getMessageBubbleShape(position: List<MessagePosition>, ownsMessage: 
  */
 @Composable
 private fun getMessageBubbleColor(message: Message, ownsMessage: Boolean): Color {
+    val theme = if (ownsMessage) ChatTheme.ownMessageTheme else ChatTheme.otherMessageTheme
     return when {
         message.isGiphyEphemeral() -> ChatTheme.colors.giphyMessageBackground
-        message.isDeleted() -> if (ownsMessage) {
-            ChatTheme.ownMessageTheme.deletedBackgroundColor
-        } else {
-            ChatTheme.otherMessageTheme.deletedBackgroundColor
-        }
-
-        else -> if (ownsMessage) {
-            ChatTheme.ownMessageTheme.backgroundColor
-        } else {
-            ChatTheme.otherMessageTheme.backgroundColor
-        }
+        message.isDeleted() -> theme.deletedBackgroundColor
+        else -> theme.backgroundColor
     }
 }
 

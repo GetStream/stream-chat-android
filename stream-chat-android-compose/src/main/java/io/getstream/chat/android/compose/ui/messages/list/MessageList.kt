@@ -357,7 +357,7 @@ public fun MessageList(
     onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
     onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
     selectPoll: (Message, Poll, PollSelectionType) -> Unit = { _, _, _ -> },
-    onAddAnswer: (message: Message, poll: Poll, answer: String) -> Unit,
+    onAddAnswer: (message: Message, poll: Poll, answer: String) -> Unit = { _, _, _ -> },
     onClosePoll: (String) -> Unit = { _ -> },
     onAddPollOption: (poll: Poll, option: String) -> Unit = { _, _ -> },
     onThreadClick: (Message) -> Unit = {},

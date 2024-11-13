@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -75,6 +76,7 @@ public fun InitialsAvatar(
     ) {
         Text(
             modifier = Modifier
+                .testTag("Stream_InitialsAvatar")
                 .align(Alignment.Center)
                 .offset(avatarOffset.x, avatarOffset.y),
             text = initials,

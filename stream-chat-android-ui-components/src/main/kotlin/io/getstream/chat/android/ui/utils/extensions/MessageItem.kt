@@ -21,9 +21,14 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 
+/**
+ * Checks if the message is the last in a group, meaning it has no messages below it.
+ * A message with [MessagePosition.NONE] is also considered the last in the group,
+ * as it represents a single isolated message.
+ */
 @InternalStreamChatApi
 public fun MessageListItem.MessageItem.isBottomPosition(): Boolean {
-    return MessagePosition.BOTTOM in positions
+    return MessagePosition.BOTTOM in positions || MessagePosition.NONE in positions
 }
 
 @InternalStreamChatApi

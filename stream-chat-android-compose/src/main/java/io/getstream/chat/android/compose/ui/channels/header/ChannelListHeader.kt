@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -134,7 +135,7 @@ internal fun DefaultChannelHeaderLeadingContent(
 
     if (currentUser != null) {
         UserAvatar(
-            modifier = size,
+            modifier = size.testTag("Stream_UserAvatar"),
             user = currentUser,
             contentDescription = currentUser.name,
             showOnlineIndicator = false,
@@ -205,7 +206,9 @@ internal fun DefaultChannelListHeaderTrailingContent(
         elevation = 4.dp,
     ) {
         Icon(
-            modifier = Modifier.wrapContentSize(),
+            modifier = Modifier
+                .wrapContentSize()
+                .testTag("Stream_CreateChannelIcon"),
             painter = painterResource(id = R.drawable.stream_compose_ic_new_chat),
             contentDescription = stringResource(id = R.string.stream_compose_channel_list_header_new_chat),
             tint = Color.White,

@@ -47,7 +47,7 @@ object ChatHelper {
     /**
      * Initializes the SDK with the given API key.
      */
-    fun initializeSdk(context: Context, apiKey: String) {
+    fun initializeSdk(context: Context, apiKey: String, baseUrl: String? = null) {
         Log.d(TAG, "[init] apiKey: $apiKey")
         val notificationConfig = NotificationConfig(
             pushDeviceGenerators = listOf(FirebasePushDeviceGenerator(providerName = "Firebase")),
@@ -83,6 +83,12 @@ object ChatHelper {
             .withPlugins(offlinePlugin, statePluginFactory)
             .logLevel(logLevel)
             .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
+            .apply {
+                baseUrl?.let {
+                    if (it.startsWith("http://")) forceInsecureConnection()
+                    baseUrl(it)
+                }
+            }
             .build()
     }
 

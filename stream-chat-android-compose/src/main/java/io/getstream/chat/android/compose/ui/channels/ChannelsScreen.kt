@@ -147,6 +147,7 @@ public fun ChannelsScreen(
                 if (searchMode != SearchMode.None) {
                     SearchInput(
                         modifier = Modifier
+                            .testTag("Stream_SearchInput")
                             .padding(horizontal = 12.dp, vertical = 8.dp)
                             .fillMaxWidth(),
                         query = searchQuery,
