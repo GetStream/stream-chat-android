@@ -20,6 +20,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.platform.testTag
 import io.getstream.chat.android.compose.state.DateFormatType
 import io.getstream.chat.android.compose.state.DateFormatType.DATE
 import io.getstream.chat.android.compose.state.DateFormatType.RELATIVE
@@ -55,7 +56,7 @@ public fun Timestamp(
     }
 
     Text(
-        modifier = modifier,
+        modifier = modifier.testTag("Stream_Timestamp"),
         text = timestamp,
         style = ChatTheme.typography.footnote,
         color = ChatTheme.colors.textLowEmphasis,

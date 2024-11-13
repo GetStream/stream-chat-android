@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
@@ -59,6 +60,7 @@ public fun MessageHeaderLabel(
 
         if (text != null) {
             Text(
+                modifier = Modifier.testTag("Stream_MessageHeaderLabel"),
                 text = text,
                 style = ChatTheme.typography.footnote,
                 color = ChatTheme.colors.textLowEmphasis,

@@ -179,7 +179,7 @@ internal fun RowScope.DefaultChannelItemCenterContent(
     ) {
         val channelName: (@Composable (modifier: Modifier) -> Unit) = @Composable {
             Text(
-                modifier = it,
+                modifier = it.testTag("Stream_ChannelName"),
                 text = ChatTheme.channelNameFormatter.formatChannelName(channelItemState.channel, currentUser),
                 style = ChatTheme.typography.bodyBold,
                 fontSize = 16.sp,
@@ -195,6 +195,7 @@ internal fun RowScope.DefaultChannelItemCenterContent(
 
                 Icon(
                     modifier = Modifier
+                        .testTag("Stream_ChannelMutedIcon")
                         .padding(start = 8.dp)
                         .size(16.dp),
                     painter = painterResource(id = R.drawable.stream_compose_ic_muted),
@@ -215,6 +216,7 @@ internal fun RowScope.DefaultChannelItemCenterContent(
 
             if (lastMessageText.isNotEmpty()) {
                 Text(
+                    modifier = Modifier.testTag("Stream_MessagePreview"),
                     text = lastMessageText,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -241,6 +243,7 @@ private fun UserTypingIndicator(users: List<User>) {
     ) {
         TypingIndicator()
         Text(
+            modifier = Modifier.testTag("Stream_ChannelListTypingIndicator"),
             text = LocalContext.current.resources.getQuantityString(
                 R.plurals.stream_compose_message_list_header_typing_users,
                 users.size,
@@ -257,7 +260,7 @@ private fun UserTypingIndicator(users: List<User>) {
 
 /**
  * Represents the default trailing content for the channel item. By default it shows
- * the the information about the last message for the channel item, such as its read state,
+ * the information about the last message for the channel item, such as its read state,
  * timestamp and how many unread messages the user has.
  *
  * @param channel The channel to show the info for.

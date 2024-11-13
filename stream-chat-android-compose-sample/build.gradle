@@ -1,5 +1,4 @@
 import io.getstream.chat.android.Dependencies
-import io.getstream.chat.android.Versions
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
@@ -18,6 +17,12 @@ android {
         applicationId "io.getstream.chat.android.compose.sample"
         versionCode sampleAppVersionCode
         versionName sampleAppVersionName
+        testInstrumentationRunner = "io.qameta.allure.android.runners.AllureAndroidJUnitRunner"
+        testInstrumentationRunnerArguments["clearPackageData"] = "true"
+    }
+
+    testOptions {
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
     }
 
     File signFile = rootProject.file('.sign/keystore.properties')
@@ -75,6 +80,24 @@ android {
         }
     }
 
+    flavorDimensions "version"
+    productFlavors {
+        demo {
+            dimension "version"
+        }
+        e2e {
+            dimension "version"
+            applicationIdSuffix ".e2etest"
+        }
+    }
+
+    variantFilter { variant ->
+        def names = variant.flavors*.name
+        if (buildType.name != "debug" && names.contains("e2e")) {
+            setIgnore(true)
+        }
+    }
+
     buildFeatures {
         compose true
         buildConfig true
@@ -121,6 +144,18 @@ dependencies {
     // Firebase
     implementation Dependencies.firebaseAnalytics
     implementation Dependencies.firebaseCrashlytics
+
+    // Instrumentation tests
+    androidTestImplementation(Dependencies.androidxTestRunner)
+    androidTestImplementation(Dependencies.androidxUiAutomator)
+    androidTestImplementation(Dependencies.androidxTestJunitKtx)
+    androidTestImplementation(Dependencies.androidxTestMonitor)
+    androidTestUtil(Dependencies.androidxTestOrchestrator)
+    androidTestImplementation(Dependencies.allureKotlinModel)
+    androidTestImplementation(Dependencies.allureKotlinJunit)
+    androidTestImplementation(Dependencies.allureKotlinCommons)
+    androidTestImplementation(Dependencies.allureKotlinAndroid)
+    androidTestImplementation(project(":stream-chat-android-e2e-test"))
 
     detektPlugins(Dependencies.detektFormatting)
 

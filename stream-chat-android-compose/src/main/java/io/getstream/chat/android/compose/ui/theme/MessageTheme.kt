@@ -16,18 +16,27 @@
 
 package io.getstream.chat.android.compose.ui.theme
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.AudioRecordingAttachmentTheme
+import io.getstream.chat.android.compose.ui.theme.messages.list.PollMessageStyle
+import io.getstream.chat.android.compose.ui.theme.messages.list.QuotedMessageStyle
 
 /**
  * Represents message theming.
  *
  * @param textStyle The text style for the messages.
+ * @param contentPadding The padding for the message content.
  * @param backgroundColor The background color for the messages.
+ * @param backgroundBorder The border for the message background.
+ * @param backgroundShapes The shapes for the message background.
  * @param quotedTextStyle The text style for the quoted messages contained in a reply.
  * @param quotedBackgroundColor The background color for the quoted messages.
  * @param deletedBackgroundColor The background color for the deleted messages.
@@ -36,11 +45,32 @@ import io.getstream.chat.android.compose.ui.theme.messages.attachments.AudioReco
 @Immutable
 public data class MessageTheme(
     val textStyle: TextStyle,
+    val contentPadding: ComponentPadding,
     val backgroundColor: Color,
+    val backgroundBorder: BorderStroke?,
+    val backgroundShapes: MessageBackgroundShapes,
+    @Deprecated(
+        message = "Use quoted.textStyle instead",
+        replaceWith = ReplaceWith(
+            expression = "QuotedMessageStyle(textStyle = TextStyle(...))",
+            imports = arrayOf("io.getstream.chat.android.compose.ui.theme.MessageTheme.quoted.textStyle"),
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     val quotedTextStyle: TextStyle,
+    @Deprecated(
+        message = "Use quoted.backgroundColor instead",
+        replaceWith = ReplaceWith(
+            expression = "QuotedMessageStyle(backgroundColor = Color(...))",
+            imports = arrayOf("io.getstream.chat.android.compose.ui.theme.MessageTheme.quoted.backgroundColor"),
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     val quotedBackgroundColor: Color,
     val deletedBackgroundColor: Color,
     val audioRecording: AudioRecordingAttachmentTheme,
+    val quoted: QuotedMessageStyle,
+    val poll: PollMessageStyle,
 ) {
     public companion object {
 
@@ -53,6 +83,7 @@ public data class MessageTheme(
         public fun defaultOwnTheme(
             isInDarkMode: Boolean = isSystemInDarkTheme(),
             typography: StreamTypography = StreamTypography.defaultTypography(),
+            shapes: StreamShapes = StreamShapes.defaultShapes(),
             colors: StreamColors = when (isInDarkMode) {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
@@ -61,6 +92,7 @@ public data class MessageTheme(
             own = true,
             isInDarkMode = isInDarkMode,
             typography = typography,
+            shapes = shapes,
             colors = colors,
         )
 
@@ -73,6 +105,7 @@ public data class MessageTheme(
         public fun defaultOtherTheme(
             isInDarkMode: Boolean = isSystemInDarkTheme(),
             typography: StreamTypography = StreamTypography.defaultTypography(),
+            shapes: StreamShapes = StreamShapes.defaultShapes(),
             colors: StreamColors = when (isInDarkMode) {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
@@ -81,6 +114,7 @@ public data class MessageTheme(
             own = false,
             isInDarkMode = isInDarkMode,
             typography = typography,
+            shapes = shapes,
             colors = colors,
         )
 
@@ -90,6 +124,7 @@ public data class MessageTheme(
             own: Boolean,
             isInDarkMode: Boolean,
             typography: StreamTypography,
+            shapes: StreamShapes,
             colors: StreamColors,
         ): MessageTheme {
             return MessageTheme(
@@ -99,16 +134,35 @@ public data class MessageTheme(
                         else -> colors.otherMessageText
                     },
                 ),
+                contentPadding = ComponentPadding.Zero,
                 backgroundColor = when (own) {
                     true -> colors.ownMessagesBackground
                     else -> colors.otherMessagesBackground
                 },
+                backgroundBorder = when (own) {
+                    true -> null
+                    else -> BorderStroke(1.dp, colors.borders)
+                },
+                backgroundShapes = MessageBackgroundShapes(
+                    top = RoundedCornerShape(16.dp),
+                    middle = RoundedCornerShape(16.dp),
+                    bottom = when (own) {
+                        true -> shapes.myMessageBubble
+                        else -> shapes.otherMessageBubble
+                    },
+                    none = when (own) {
+                        true -> shapes.myMessageBubble
+                        else -> shapes.otherMessageBubble
+                    },
+                ),
+                // Deprecated
                 quotedTextStyle = typography.bodyBold.copy(
                     color = when (own) {
                         true -> colors.ownMessageQuotedText
                         else -> colors.otherMessageQuotedText
                     },
                 ),
+                // Deprecated
                 quotedBackgroundColor = when (own) {
                     true -> colors.ownMessageQuotedBackground
                     else -> colors.otherMessageQuotedBackground
@@ -120,7 +174,43 @@ public data class MessageTheme(
                     typography = typography,
                     colors = colors,
                 ),
-            )
+                quoted = QuotedMessageStyle.defaultStyle(
+                    own = own,
+                    isInDarkMode = isInDarkMode,
+                    typography = typography,
+                    colors = colors,
+                    shapes = shapes,
+                ),
+                poll = PollMessageStyle.defaultStyle(
+                    own = own,
+                    isInDarkMode = isInDarkMode,
+                    typography = typography,
+                    colors = colors,
+                    shapes = shapes,
+                ),
+            ).let { theme ->
+                theme.copy(
+                    quoted = theme.quoted.copy(
+                        textStyle = theme.quotedTextStyle,
+                        backgroundColor = theme.quotedBackgroundColor,
+                    ),
+                )
+            }
         }
     }
 }
+
+/**
+ * Represents the shapes for the message background in different positions.
+ *
+ * @param top The shape which is used for the top message in a group.
+ * @param middle The shape which is used for the middle message in a group.
+ * @param bottom The shape which is used for the bottom message in a group.
+ * @param none The shape which is used for messages that are not in a group.
+ */
+public data class MessageBackgroundShapes(
+    val top: Shape,
+    val middle: Shape,
+    val bottom: Shape,
+    val none: Shape,
+)

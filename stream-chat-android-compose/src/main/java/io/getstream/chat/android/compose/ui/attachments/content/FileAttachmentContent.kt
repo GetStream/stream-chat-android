@@ -40,6 +40,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -165,6 +166,7 @@ private fun FileAttachmentDescription(
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
+            modifier = Modifier.testTag("Stream_FileAttachmentDescription"),
             text = attachment.title ?: attachment.name ?: "",
             style = ChatTheme.typography.bodyBold,
             maxLines = 1,
@@ -174,6 +176,7 @@ private fun FileAttachmentDescription(
 
         if (showFileSize(attachment)) {
             Text(
+                modifier = Modifier.testTag("Stream_FileAttachmentSize"),
                 text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong()),
                 style = ChatTheme.typography.footnote,
                 color = ChatTheme.colors.textLowEmphasis,
@@ -209,6 +212,7 @@ private fun RowScope.FileAttachmentDownloadIcon(attachment: Attachment) {
         modifier = Modifier
             .align(Alignment.Top)
             .padding(end = 2.dp)
+            .testTag("Stream_FileAttachmentDownloadButton")
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = rememberRipple(bounded = false),
@@ -263,6 +267,7 @@ public fun FileAttachmentImage(attachment: Attachment) {
         .let { baseModifier ->
             if (shape != null) baseModifier.clip(shape) else baseModifier
         }
+        .testTag("Stream_FileAttachmentImage")
 
     StreamImage(
         modifier = imageModifier,

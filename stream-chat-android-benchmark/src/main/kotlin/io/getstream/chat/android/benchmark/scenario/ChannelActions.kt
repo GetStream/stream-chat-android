@@ -33,7 +33,7 @@ fun MacrobenchmarkScope.channelsWaitForContent() = device.apply {
 }
 
 fun MacrobenchmarkScope.channelsScrollDownUp() = device.apply {
-    val channelList = waitAndFindObject(By.res("Stream_Channels"), STANDARD_TIMEOUT)
+    val channelList = waitAndFindObject(By.res("Stream_ChannelList"), STANDARD_TIMEOUT)
     flingElementDownUp(channelList)
 }
 

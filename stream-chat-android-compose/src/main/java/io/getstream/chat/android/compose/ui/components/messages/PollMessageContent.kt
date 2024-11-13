@@ -78,12 +78,11 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
  * @param messageItem The message item to show the content for.
  * @param modifier Modifier for styling.
  * @param onCastVote Callback when a user cast a vote on an option.
- * @param onMoreOption Callback when a user clicked seeing more options.
  * @param onRemoveVote Callback when a user remove a vote on an option.
  * @param selectPoll Callback when a user selects a poll.
+ * @param onAddAnswer Callback when a user adds a new answer to the poll.
  * @param onClosePoll Callback when a user closes a poll.
  * @param onAddPollOption Callback when a user adds a new option to the poll.
- * @param onAddAnswer Callback when a user adds a new answer to the poll.
  * @param onLongItemClick Handler when the user selects a message, on long tap.
  */
 @Suppress("LongParameterList", "LongMethod")
@@ -103,23 +102,17 @@ public fun PollMessageContent(
     val position = messageItem.groupPosition
     val ownsMessage = messageItem.isMine
 
+    val messageTheme = if (ownsMessage) ChatTheme.ownMessageTheme else ChatTheme.otherMessageTheme
     val messageBubbleShape = when {
-        position.contains(MessagePosition.TOP) || position.contains(MessagePosition.MIDDLE) -> RoundedCornerShape(16.dp)
-        else -> {
-            if (ownsMessage) ChatTheme.shapes.myMessageBubble else ChatTheme.shapes.otherMessageBubble
-        }
+        position.contains(MessagePosition.TOP) -> messageTheme.backgroundShapes.top
+        position.contains(MessagePosition.MIDDLE) -> messageTheme.backgroundShapes.middle
+        position.contains(MessagePosition.BOTTOM) -> messageTheme.backgroundShapes.bottom
+        else -> messageTheme.backgroundShapes.none
     }
 
     val messageBubbleColor = when {
-        message.isDeleted() -> when (ownsMessage) {
-            true -> ChatTheme.ownMessageTheme.deletedBackgroundColor
-            else -> ChatTheme.otherMessageTheme.deletedBackgroundColor
-        }
-
-        else -> when (ownsMessage) {
-            true -> ChatTheme.colors.linkBackground
-            else -> ChatTheme.otherMessageTheme.backgroundColor
-        }
+        message.isDeleted() -> messageTheme.deletedBackgroundColor
+        else -> messageTheme.poll.backgroundColor
     }
 
     val poll = message.poll

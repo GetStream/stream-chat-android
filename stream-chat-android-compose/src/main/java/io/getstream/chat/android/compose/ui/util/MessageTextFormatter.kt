@@ -23,6 +23,7 @@ import androidx.compose.ui.text.TextStyle
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageTheme
 import io.getstream.chat.android.compose.ui.theme.StreamColors
+import io.getstream.chat.android.compose.ui.theme.StreamShapes
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -90,6 +91,7 @@ public fun interface MessageTextFormatter {
             autoTranslationEnabled: Boolean,
             isInDarkMode: Boolean = isSystemInDarkTheme(),
             typography: StreamTypography = StreamTypography.defaultTypography(),
+            shapes: StreamShapes = StreamShapes.defaultShapes(),
             colors: StreamColors = when (isSystemInDarkTheme()) {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
@@ -97,11 +99,13 @@ public fun interface MessageTextFormatter {
             ownMessageTheme: MessageTheme = MessageTheme.defaultOwnTheme(
                 isInDarkMode = isInDarkMode,
                 typography = typography,
+                shapes = shapes,
                 colors = colors,
             ),
             otherMessageTheme: MessageTheme = MessageTheme.defaultOtherTheme(
                 isInDarkMode = isInDarkMode,
                 typography = typography,
+                shapes = shapes,
                 colors = colors,
             ),
             builder: AnnotatedMessageTextBuilder? = null,

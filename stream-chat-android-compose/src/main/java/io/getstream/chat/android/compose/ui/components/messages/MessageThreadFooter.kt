@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.state.messages.MessageAlignment
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -52,6 +53,7 @@ public fun MessageThreadFooter(
         }
 
         Text(
+            modifier = Modifier.testTag("Stream_ThreadRepliesLabel"),
             text = text,
             style = ChatTheme.typography.footnoteBold,
             color = ChatTheme.colors.primaryAccent,
