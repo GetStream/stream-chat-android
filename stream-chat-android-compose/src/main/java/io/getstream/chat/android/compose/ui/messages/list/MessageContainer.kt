@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
@@ -166,7 +167,9 @@ internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorItem
             shape = RoundedCornerShape(16.dp),
         ) {
             Text(
-                modifier = Modifier.padding(vertical = 2.dp, horizontal = 16.dp),
+                modifier = Modifier
+                    .padding(vertical = 2.dp, horizontal = 16.dp)
+                    .testTag("Stream_MessageDateSeparator"),
                 text = DateUtils.getRelativeTimeSpanString(
                     dateSeparator.date.time,
                     System.currentTimeMillis(),
@@ -189,7 +192,8 @@ internal fun DefaultMessageUnreadSeparatorContent(unreadSeparatorItemState: Unre
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(ChatTheme.messageUnreadSeparatorTheme.backgroundColor),
+            .background(ChatTheme.messageUnreadSeparatorTheme.backgroundColor)
+            .testTag("Stream_UnreadMessagesBadge"),
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -226,7 +230,9 @@ internal fun DefaultMessageThreadSeparatorContent(threadSeparator: ThreadDateSep
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            modifier = Modifier.padding(vertical = ChatTheme.dimens.threadSeparatorTextVerticalPadding),
+            modifier = Modifier
+                .padding(vertical = ChatTheme.dimens.threadSeparatorTextVerticalPadding)
+                .testTag("Stream_RepliesCount"),
             text = LocalContext.current.resources.getQuantityString(
                 R.plurals.stream_compose_message_list_thread_separator,
                 replyCount,

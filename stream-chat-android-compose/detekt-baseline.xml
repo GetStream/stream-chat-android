@@ -2,7 +2,6 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>ComplexCondition:MessageItem.kt$!messageItem.isMine &amp;&amp; ( messageItem.showMessageFooter || messageItem.groupPosition.contains(MessagePosition.BOTTOM) || messageItem.groupPosition.contains( MessagePosition.NONE, ) )</ID>
     <ID>ComplexCondition:MessageTranslatedLabel.kt$!isGiphy &amp;&amp; !isDeleted &amp;&amp; userLanguage != i18nLanguage &amp;&amp; translatedText != messageItem.message.text</ID>
     <ID>ComplexCondition:Messages.kt$!endOfMessages &amp;&amp; index == messages.lastIndex &amp;&amp; messages.isNotEmpty() &amp;&amp; lazyListState.isScrollInProgress</ID>
     <ID>ForbiddenComment:MessageText.kt$// TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808</ID>
@@ -22,6 +21,7 @@
     <ID>LongMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun VideoPreviewContent( attachment: Attachment, pagerState: PagerState, page: Int, onPlaybackError: () -> Unit, )</ID>
     <ID>LongMethod:MessageComposer.kt$@Composable internal fun DefaultComposerIntegrations( messageInputState: MessageComposerState, onAttachmentsClick: () -> Unit, onCommandsClick: () -> Unit, ownCapabilities: Set&lt;String>, )</ID>
     <ID>LongMethod:MessageOptions.kt$@Composable public fun defaultMessageOptionsState( selectedMessage: Message, currentUser: User?, isInThread: Boolean, ownCapabilities: Set&lt;String>, ): List&lt;MessageOptionItemState></ID>
+    <ID>LongMethod:MessageTheme.kt$MessageTheme.Companion$@Composable @Suppress("DEPRECATION_ERROR") private fun defaultTheme( own: Boolean, isInDarkMode: Boolean, typography: StreamTypography, shapes: StreamShapes, colors: StreamColors, ): MessageTheme</ID>
     <ID>LongMethod:PollCreationDiscardDialog.kt$@Composable public fun PollCreationDiscardDialog( usePlatformDefaultWidth: Boolean = false, onCancelClicked: () -> Unit, onDiscardClicked: () -> Unit, )</ID>
     <ID>LongMethod:PollMessageContent.kt$@Composable private fun PollOptionItem( modifier: Modifier = Modifier, poll: Poll, option: Option, voteCount: Int, totalVoteCount: Int, users: List&lt;User>, checkedCount: Int, checked: Boolean, onCastVote: () -> Unit, onRemoveVote: () -> Unit, )</ID>
     <ID>LongMethod:PollOptionList.kt$@Composable public fun PollOptionList( modifier: Modifier = Modifier, lazyListState: LazyListState = rememberLazyListState(), title: String = stringResource(id = R.string.stream_compose_poll_option_title), optionItems: List&lt;PollOptionItem> = emptyList(), onQuestionsChanged: (List&lt;PollOptionItem>) -> Unit, itemHeightSize: Dp = ChatTheme.dimens.pollOptionInputHeight, itemInnerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 4.dp), )</ID>
@@ -75,19 +75,15 @@
     <ID>MaxLineLength:ChatTheme.kt$error("No attachments picker tab factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")</ID>
     <ID>MaxLineLength:MediaAttachmentContent.kt$mediaGalleryPreviewLauncher: ManagedActivityResultLauncher&lt;MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?></ID>
     <ID>MaxLineLength:MessageItem.kt$message.isDeleted() &amp;&amp; messageItem.deletedMessageVisibility == DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER</ID>
-    <ID>MaxLineLength:MessageItem.kt$messageItem.showMessageFooter || messageItem.groupPosition.contains(MessagePosition.BOTTOM)</ID>
     <ID>MaxLineLength:MessageOptions.kt$iconPainter = painterResource(id = if (selectedMessage.pinned) R.drawable.stream_compose_ic_unpin_message else R.drawable.stream_compose_ic_pin_message)</ID>
     <ID>MaxLineLength:MessageOptions.kt$title = if (selectedMessage.pinned) R.string.stream_compose_unpin_message else R.string.stream_compose_pin_message</ID>
     <ID>MaxLineLength:MessagesScreen.kt$*</ID>
     <ID>MaxLineLength:MessagesScreen.kt$allowUserSuggestedOptions = action.switches.any { it.key == "allowUserSuggestedOptions" &amp;&amp; it.enabled }</ID>
     <ID>MaxLineLength:PollCreationHeader.kt$*</ID>
     <ID>MaxLineLength:PollSwitchItem.kt$PollSwitchInput$*</ID>
-    <ID>MaxLineLength:QuotedMessageTextFormatter.kt$QuotedMessageTextFormatter.Companion$private</ID>
     <ID>MaxLineLength:StreamAttachmentFactories.kt$StreamAttachmentFactories$mediaGalleryPreviewLauncher: ManagedActivityResultLauncher&lt;MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?></ID>
     <ID>MaxLineLength:StreamColors.kt$StreamColors$*</ID>
     <ID>MaxLineLength:WaveformSlider.kt$// StreamLog.v("WaveformTrack") { "[onDraw] startIdx: $startIdx, totalBars: $totalBars, visibleBarLimit: $visibleBarLimit, waveformData.size: ${waveformData.size}" }</ID>
-    <ID>ParameterListWrapping:QuotedMessageTextFormatter.kt$QuotedMessageTextFormatter.Companion$(Boolean)</ID>
-    <ID>ParameterListWrapping:QuotedMessageTextFormatter.kt$QuotedMessageTextFormatter.Companion$(isInDarkMode: Boolean, typography: StreamTypography, colors: StreamColors)</ID>
     <ID>ReturnCount:ChannelListViewModel.kt$ChannelListViewModel$private suspend fun loadMoreQueryChannels()</ID>
     <ID>ReturnCount:ChannelListViewModel.kt$ChannelListViewModel$private suspend fun loadMoreQueryMessages()</ID>
     <ID>TooManyFunctions:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity : AppCompatActivity</ID>

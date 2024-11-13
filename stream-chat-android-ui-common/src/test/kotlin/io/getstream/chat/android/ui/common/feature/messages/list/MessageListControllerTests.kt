@@ -27,6 +27,7 @@ import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
@@ -156,13 +157,13 @@ internal class MessageListControllerTests {
         }
 
     @Test
-    fun `Given regular message followed and preceded by other user message When grouping messages Should add top and bottom positions to messages`() =
+    fun `Given regular message followed and preceded by other user message When grouping messages Should add none position to the regular message`() =
         runTest {
-            var message = 0
-            val messages = randomMessageList(3) {
-                message++
-                randomMessage(user = if (message % 2 == 0) user1 else user2)
-            }
+            val messages = listOf(
+                randomMessage(user = user1), // First message from user1
+                randomMessage(user = user2), // Second message from user2
+                randomMessage(user = user1), // Third message from user1
+            )
             val messagesState = MutableStateFlow(messages)
             val controller = Fixture()
                 .givenCurrentUser()
@@ -170,20 +171,20 @@ internal class MessageListControllerTests {
                 .givenChannelState(messagesState = messagesState)
                 .get(dateSeparatorHandler = { _, _ -> false })
 
-            val expectedPosition = listOf(MessagePosition.TOP, MessagePosition.BOTTOM)
+            val expectedPosition = listOf(MessagePosition.NONE)
             val messagePosition = (controller.messageListState.value.messageItems[1] as MessageItemState).groupPosition
 
             messagePosition `should be equal to` expectedPosition
         }
 
     @Test
-    fun `Given regular message followed by system message When grouping messages Should add bottom position to the regular message`() =
+    fun `Given regular message followed by system message When grouping messages Should add none position to the regular message`() =
         runTest {
-            var message = 0
-            val messages = randomMessageList(3) {
-                message++
-                randomMessage(user = if (message % 2 == 0) user1 else user2)
-            }
+            val messages = listOf(
+                randomMessage(user = user1, type = MessageType.REGULAR),
+                randomMessage(user = user2, type = MessageType.REGULAR), // Regular message from user2
+                randomMessage(user = user1, type = MessageType.SYSTEM), // System message from user1
+            )
             val messagesState = MutableStateFlow(messages)
             val controller = Fixture()
                 .givenCurrentUser()
@@ -191,7 +192,7 @@ internal class MessageListControllerTests {
                 .givenChannelState(messagesState = messagesState)
                 .get(dateSeparatorHandler = { _, _ -> false })
 
-            val expectedPosition = listOf(MessagePosition.TOP, MessagePosition.BOTTOM)
+            val expectedPosition = listOf(MessagePosition.NONE)
             val messagePosition = (controller.messageListState.value.messageItems[1] as MessageItemState).groupPosition
 
             messagePosition `should be equal to` expectedPosition

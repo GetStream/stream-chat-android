@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.components.reactionoptions
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.previewdata.PreviewReactionOptionData
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
@@ -36,7 +37,7 @@ public fun ReactionOptionItem(
     modifier: Modifier = Modifier,
 ) {
     Image(
-        modifier = modifier,
+        modifier = modifier.testTag("Stream_Reaction_${option.type}"),
         painter = option.painter,
         contentDescription = option.type,
     )

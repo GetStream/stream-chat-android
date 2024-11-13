@@ -82,6 +82,7 @@ import io.getstream.chat.android.compose.ui.theme.AttachmentPickerTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageComposerTheme
 import io.getstream.chat.android.compose.ui.theme.MessageOptionsTheme
+import io.getstream.chat.android.compose.ui.theme.MessageTheme
 import io.getstream.chat.android.compose.ui.theme.ReactionOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.StreamColors
 import io.getstream.chat.android.compose.ui.theme.StreamShapes
@@ -151,6 +152,7 @@ class MessagesActivity : BaseConnectedActivity() {
         val typography = StreamTypography.defaultTypography()
         val shapes = StreamShapes.defaultShapes()
         val messageComposerTheme = MessageComposerTheme.defaultTheme(isInDarkMode, typography, shapes, colors)
+        val ownMessageTheme = MessageTheme.defaultOwnTheme(isInDarkMode, typography, shapes, colors)
         ChatTheme(
             isInDarkMode = isInDarkMode,
             colors = colors,
@@ -182,6 +184,7 @@ class MessagesActivity : BaseConnectedActivity() {
             messageOptionsTheme = MessageOptionsTheme.defaultTheme(
                 optionVisibility = MessageOptionItemVisibility(),
             ),
+            ownMessageTheme = ownMessageTheme,
         ) {
             SetupContent()
         }

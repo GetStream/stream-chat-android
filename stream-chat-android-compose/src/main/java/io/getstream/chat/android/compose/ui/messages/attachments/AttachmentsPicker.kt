@@ -43,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -222,7 +223,8 @@ private fun AttachmentPickerOptions(
                 Icon(
                     modifier = Modifier
                         .weight(1f)
-                        .mirrorRtl(layoutDirection = layoutDirection),
+                        .mirrorRtl(layoutDirection = layoutDirection)
+                        .testTag("Stream_AttachmentPickerSendButton"),
                     painter = painterResource(id = R.drawable.stream_compose_ic_left),
                     contentDescription = stringResource(id = R.string.stream_compose_send_attachment),
                     tint = if (hasPickedAttachments) {

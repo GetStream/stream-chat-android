@@ -72,7 +72,7 @@ public fun Channels(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .testTag("Stream_Channels"),
+                .testTag("Stream_ChannelList"),
             state = lazyListState,
             horizontalAlignment = Alignment.CenterHorizontally,
             contentPadding = contentPadding,

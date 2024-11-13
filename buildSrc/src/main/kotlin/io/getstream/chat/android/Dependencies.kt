@@ -3,6 +3,7 @@
 package io.getstream.chat.android
 
 object Versions {
+    internal const val ALLURE_KOTLIN = "2.4.0"
     internal const val ANDROID_GRADLE_PLUGIN = "8.4.2"
     internal const val ANDROID_JUNIT5_GRADLE_PLUGIN = "1.9.3.0"
     internal const val ANDROID_LEGACY_SUPPORT = "1.0.0"
@@ -22,9 +23,11 @@ object Versions {
     internal const val ANDROIDX_RECYCLERVIEW = "1.3.1"
     internal const val ANDROIDX_STARTUP = "1.1.1"
     internal const val ANDROIDX_TEST_CORE = "1.5.0"
+    internal const val ANDROIDX_TEST_MONITOR = "1.7.2"
+    internal const val ANDROIDX_TEST_ORCHESTRATOR = "1.5.1"
     internal const val ANDROIDX_TEST_JUNIT = "1.1.5"
     internal const val ANDROIDX_VIEW_PAGER_2 = "1.0.0"
-    internal const val ANDROIDX_UI_AUTOMATOR = "2.2.0"
+    internal const val ANDROIDX_UI_AUTOMATOR = "2.4.0-alpha01"
     internal const val ANDROIDX_TEST = "1.5.2"
     internal const val BASE_PROFILE = "1.3.1"
     internal const val COIL = "2.4.0"
@@ -106,6 +109,8 @@ object Dependencies {
     const val androidxStartup = "androidx.startup:startup-runtime:${Versions.ANDROIDX_STARTUP}"
     const val androidxTest = "androidx.test:core:${Versions.ANDROIDX_TEST_CORE}"
     const val androidxTestRunner = "androidx.test:runner:${Versions.ANDROIDX_TEST}"
+    const val androidxTestMonitor = "androidx.test:monitor:${Versions.ANDROIDX_TEST_MONITOR}"
+    const val androidxTestOrchestrator = "androidx.test:orchestrator:${Versions.ANDROIDX_TEST_ORCHESTRATOR}"
     const val androidxUiAutomator = "androidx.test.uiautomator:uiautomator:${Versions.ANDROIDX_UI_AUTOMATOR}"
     const val androidxTestKtx = "androidx.test:core-ktx:${Versions.ANDROIDX_TEST_CORE}"
     const val androidxLifecycleTesting = "androidx.lifecycle:lifecycle-runtime-testing:${Versions.ANDROIDX_LIFECYCLE}"
@@ -240,6 +245,10 @@ object Dependencies {
     const val turbine = "app.cash.turbine:turbine:${Versions.TURBINE}"
     const val workRuntimeKtx = "androidx.work:work-runtime-ktx:${Versions.WORK}"
     const val workTesting = "androidx.work:work-testing:${Versions.WORK}"
+    const val allureKotlinModel = "io.qameta.allure:allure-kotlin-model:${Versions.ALLURE_KOTLIN}"
+    const val allureKotlinCommons = "io.qameta.allure:allure-kotlin-commons:${Versions.ALLURE_KOTLIN}"
+    const val allureKotlinJunit = "io.qameta.allure:allure-kotlin-junit4:${Versions.ALLURE_KOTLIN}"
+    const val allureKotlinAndroid = "io.qameta.allure:allure-kotlin-android:${Versions.ALLURE_KOTLIN}"
 
     @JvmStatic
     fun isNonStable(version: String): Boolean = isStable(version).not()
