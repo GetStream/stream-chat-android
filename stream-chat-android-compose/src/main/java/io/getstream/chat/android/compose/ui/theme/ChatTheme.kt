@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalComposeUiApi::class)
+@file:OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class)
 
 package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
-import androidx.compose.material.ripple.LocalRippleTheme
-import androidx.compose.material.ripple.RippleTheme
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.LocalContentColor
+import androidx.compose.material.LocalRippleConfiguration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -213,7 +214,7 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param dimens The set of dimens we provide, wrapped in [StreamDimens].
  * @param typography The set of typography styles we provide, wrapped in [StreamTypography].
  * @param shapes The set of shapes we provide, wrapped in [StreamShapes].
- * @param rippleTheme Defines the appearance for ripples.
+ * @param rippleConfiguration Defines the appearance for ripples.
  * @param attachmentFactories Attachment factories that we provide.
  * @param attachmentPreviewHandlers Attachment preview handlers we provide.
  * @param quotedAttachmentFactories Quoted attachment factories that we provide.
@@ -257,7 +258,10 @@ public fun ChatTheme(
     dimens: StreamDimens = StreamDimens.defaultDimens(),
     typography: StreamTypography = StreamTypography.defaultTypography(),
     shapes: StreamShapes = StreamShapes.defaultShapes(),
-    rippleTheme: RippleTheme = StreamRippleTheme,
+    rippleConfiguration: StreamRippleConfiguration = StreamRippleConfiguration.defaultRippleConfiguration(
+        contentColor = LocalContentColor.current,
+        lightTheme = !isInDarkMode,
+    ),
     attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories(),
     attachmentPreviewHandlers: List<AttachmentPreviewHandler> =
         AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
@@ -348,7 +352,7 @@ public fun ChatTheme(
         LocalDimens provides dimens,
         LocalTypography provides typography,
         LocalShapes provides shapes,
-        LocalRippleTheme provides rippleTheme,
+        LocalRippleConfiguration provides rippleConfiguration.toRippleConfiguration(),
         LocalUseDefaultSystemMediaPicker provides useDefaultSystemMediaPicker,
         LocalAttachmentFactories provides attachmentFactories,
         LocalAttachmentPreviewHandlers provides attachmentPreviewHandlers,

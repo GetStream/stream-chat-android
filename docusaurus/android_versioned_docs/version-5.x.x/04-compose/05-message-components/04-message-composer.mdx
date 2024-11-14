@@ -188,7 +188,7 @@ fun MyCustomComposer() {
                             .size(24.dp)
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
-                                indication = rememberRipple()
+                                indication = ripple()
                             ) {
                                 val state = composerViewModel.messageComposerState.value
 

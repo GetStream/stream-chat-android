@@ -38,7 +38,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -452,7 +452,7 @@ internal fun MediaAttachmentContentItem(
             .testTag("Stream_MediaContent")
             .combinedClickable(
                 interactionSource = MutableInteractionSource(),
-                indication = rememberRipple(),
+                indication = ripple(),
                 onClick = {
                     if (message.syncStatus == SyncStatus.COMPLETED) {
                         onItemClick(
