@@ -3,6 +3,9 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Update dependency versions:
+  - Compose 1.7.5
+  - Compose Material 1.3.1
 
 ### ✅ Added
 
@@ -74,6 +77,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- 🚨 Breaking change: Replace usage of `RippleTheme` with `StreamRippleConfiguration` for customizing ripples via `ChatTheme`. [#5475](https://github.com/GetStream/stream-chat-android/pull/5475)
 - Expanded `MessageTheme` to allow customizing the message components. [#5466](https://github.com/GetStream/stream-chat-android/pull/5466)
 
 ### ❌ Removed
