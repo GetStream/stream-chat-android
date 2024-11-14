@@ -22,7 +22,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material.Text
-import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -60,7 +60,7 @@ public fun InitialsAvatar(
     val clickableModifier: Modifier = if (onClick != null) {
         modifier.clickable(
             onClick = onClick,
-            indication = rememberRipple(bounded = false),
+            indication = ripple(bounded = false),
             interactionSource = remember { MutableInteractionSource() },
         )
     } else {

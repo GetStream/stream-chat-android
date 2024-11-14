@@ -39,7 +39,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
-import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -173,7 +173,7 @@ class LoginActivity : AppCompatActivity() {
                         .height(64.dp)
                         .clickable(
                             onClick = { onUserCredentialsClick(userCredentials) },
-                            indication = rememberRipple(),
+                            indication = ripple(),
                             interactionSource = remember { MutableInteractionSource() },
                         )
                         .padding(horizontal = 16.dp),

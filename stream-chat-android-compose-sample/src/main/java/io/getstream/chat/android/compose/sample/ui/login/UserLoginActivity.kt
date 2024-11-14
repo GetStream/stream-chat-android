@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalComposeUiApi::class)
-
 package io.getstream.chat.android.compose.sample.ui.login
 
 import android.content.Context
@@ -42,11 +40,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
@@ -179,7 +176,7 @@ class UserLoginActivity : AppCompatActivity() {
                 .height(64.dp)
                 .clickable(
                     onClick = { onItemClick(userCredentials) },
-                    indication = rememberRipple(),
+                    indication = ripple(),
                     interactionSource = remember { MutableInteractionSource() },
                 )
                 .padding(horizontal = 16.dp),
@@ -230,7 +227,7 @@ class UserLoginActivity : AppCompatActivity() {
                 .height(64.dp)
                 .clickable(
                     onClick = { onItemClick() },
-                    indication = rememberRipple(),
+                    indication = ripple(),
                     interactionSource = remember { MutableInteractionSource() },
                 )
                 .padding(horizontal = 16.dp),

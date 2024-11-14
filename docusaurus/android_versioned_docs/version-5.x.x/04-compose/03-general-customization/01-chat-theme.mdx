@@ -7,7 +7,7 @@ The `ChatTheme` component is a wrapper that **you should use as the root** of al
 * `dimens`: Used for defining the dimensions of various components such as avatars, attachment content, reactions etc.
 * `typography`: Used for all text elements, to apply different text styles to each component. Can be used to change the typography completely.
 * `shapes`: Defines several shapes we use across our Compose UI components. Can be used to change the shape of messages, input fields, avatars and attachments.
-* `rippleTheme`: Defines the appearance for ripples. Can be used to override the ripple colors used in light and dark modes.
+* `rippleConfiguration`: Defines the appearance for ripples. Can be used to override the ripple colors used in light and dark modes.
 * `attachmentFactories`: Used to process messages and show different types of attachment UI, given the provided factories. Can be used to override the UI for file, image and link attachments, as well as to add custom attachment types.
 * `attachmentPreviewHandlers`: Used to provide previews for all supported attachment types. If you do not wish to use the default previews, you can customize this.
 * `quotedAttachmentFactories`: Used to process messages and show different types of attachment UI, when quoting a message that contains an attachment.
@@ -128,13 +128,13 @@ You can find all the shapes we expose in the [class documentation](https://githu
 
 These are really easy to customize, as you've seen before, and can make your app feel closer to your design system.
 
-### RippleTheme
+### StreamRippleConfiguration
 
-Defines the appearance for ripples. The default ripple theme is `StreamRippleTheme`.
+Defines the appearance for ripples.
 
-You can find out more about it by reading the [object documentation](https://github.com/GetStream/stream-chat-android/blob/v5/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/theme/StreamRippleTheme.kt).
+You can find out more about it by reading the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/theme/StreamRippleConfiguration.kt).
 
-You can easily customize the ripple colors in light and dark modes by overriding `ChatTheme.rippleTheme` with your own implementation of `RippleTheme`.
+You can easily customize the ripple colors in light and dark modes by overriding `ChatTheme.rippleConfiguration` with your own custom `StreamRippleConfiguration`.
 
 ### StreamAttachmentFactories
 
