@@ -65,7 +65,7 @@ object Versions {
     internal const val MARKWON = "4.6.2"
     internal const val MOCKITO_KOTLIN = "5.0.0"
     internal const val MOCKITO = "5.4.0"
-    internal const val MOSHI = "1.15.0"
+    internal const val MOSHI = "1.15.1"
     internal const val OK2CURL = "0.8.0"
     internal const val OKHTTP = "4.11.0"
     internal const val PAPARAZZI = "1.3.4"
