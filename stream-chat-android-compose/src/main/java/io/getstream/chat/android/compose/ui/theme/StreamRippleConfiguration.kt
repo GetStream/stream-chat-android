@@ -53,8 +53,7 @@ public class StreamRippleConfiguration(
 
 /**
  * Maps a [StreamRippleConfiguration] to the android [RippleConfiguration].
- * Utility method serving as a workaround for [RippleConfiguration] being experimental until compose v1.8.0,
- * so that we can opt-in internally, instead of exposing the experimental api outside of the [ChatTheme].
+ * Used to hide the internal implementation of the ripple configuration, and not expose it outside of [ChatTheme].
  */
 @OptIn(ExperimentalMaterialApi::class)
 internal fun StreamRippleConfiguration.toRippleConfiguration(): RippleConfiguration =
