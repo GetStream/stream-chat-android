@@ -10,7 +10,7 @@ object Versions {
     internal const val ANDROIDX_ACTIVITY_COMPOSE = "1.9.3"
     internal const val ANDROIDX_ACTIVITY_KTX = "1.9.3"
     internal const val ANDROIDX_ANNOTATIONS = "1.9.1"
-    internal const val ANDROIDX_APPCOMPAT = "1.6.1"
+    internal const val ANDROIDX_APPCOMPAT = "1.7.0"
     internal const val ANDROIDX_COMPOSE = "1.7.5"
     internal const val ANDROIDX_COMPOSE_CONSTRAINT_LAYOUT = "1.0.1"
     internal const val ANDROIDX_COMPOSE_MATERIAL3 = "1.3.1"
