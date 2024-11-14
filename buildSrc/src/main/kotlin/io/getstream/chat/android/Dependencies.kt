@@ -15,7 +15,7 @@ object Versions {
     internal const val ANDROIDX_COMPOSE_CONSTRAINT_LAYOUT = "1.0.1"
     internal const val ANDROIDX_COMPOSE_MATERIAL3 = "1.3.1"
     internal const val ANDROIDX_CORE_TEST = "2.2.0"
-    internal const val ANDROIDX_FRAGMENT = "1.6.1"
+    internal const val ANDROIDX_FRAGMENT = "1.8.5"
     internal const val ANDROIDX_KTX = "1.10.1"
     internal const val ANDROIDX_LIFECYCLE = "2.8.7"
     internal const val ANDROIDX_NAVIGATION = "2.5.3"
