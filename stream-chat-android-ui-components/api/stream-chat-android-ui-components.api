@@ -3062,6 +3062,13 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/vi
 	public final fun setMessage (Lio/getstream/chat/android/models/Message;ZLio/getstream/chat/android/ui/feature/messages/list/MessageReplyStyle;)V
 }
 
+public final class io/getstream/chat/android/ui/feature/messages/list/adapter/view/PollViewStyle : io/getstream/chat/android/ui/helper/ViewStyle {
+	public static final field INSTANCE Lio/getstream/chat/android/ui/feature/messages/list/adapter/view/PollViewStyle;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/feature/messages/list/adapter/view/internal/GiphyMediaAttachmentView : androidx/constraintlayout/widget/ConstraintLayout {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
