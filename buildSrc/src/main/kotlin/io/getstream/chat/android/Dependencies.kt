@@ -31,7 +31,7 @@ object Versions {
     internal const val ANDROIDX_TEST = "1.5.2"
     internal const val BASE_PROFILE = "1.3.1"
     internal const val COIL = "2.7.0"
-    internal const val COMPOSE_ACCOMPANIST = "0.32.0"
+    internal const val COMPOSE_ACCOMPANIST = "0.36.0"
     internal const val COMPOSE_STABLE_MARKER = "1.0.2"
     internal const val CONSTRAINT_LAYOUT = "2.2.0"
     internal const val COROUTINES = "1.9.0"
