@@ -69,7 +69,7 @@ object Versions {
     internal const val OK2CURL = "0.8.0"
     internal const val OKHTTP = "4.12.0"
     internal const val PAPARAZZI = "1.3.4"
-    internal const val PERMISSIONX = "1.7.1"
+    internal const val PERMISSIONX = "1.8.1"
     internal const val PHOTOVIEW = "1.0.1"
     internal const val RETROFIT = "2.11.0"
     internal const val ROBOLECTRIC = "4.10.3"
