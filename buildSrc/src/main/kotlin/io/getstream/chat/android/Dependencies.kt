@@ -52,7 +52,7 @@ object Versions {
     internal const val ITU_DATE_VERSION = "1.7.3"
     internal const val JSON = "20240303"
     internal const val JUNIT4 = "4.13.2"
-    internal const val JUNIT5 = "5.10.0"
+    internal const val JUNIT5 = "5.11.3"
     internal const val KEYBOARD_VISIBILITY_EVENT = "2.3.0"
     internal const val KLUENT = "1.73"
     internal const val KOTLIN = "2.0.10"
