@@ -61,7 +61,7 @@ object Versions {
     internal const val LANDSCAPIST = "2.3.6"
     internal const val LEAK_CANARY = "2.4"
     internal const val MATERIAL_COMPONENTS = "1.12.0"
-    internal const val MACRO_BENCHMARK = "1.2.3"
+    internal const val MACRO_BENCHMARK = "1.3.3"
     internal const val MARKWON = "4.6.2"
     internal const val MOCKITO_KOTLIN = "5.4.0"
     internal const val MOCKITO = "5.14.2"
