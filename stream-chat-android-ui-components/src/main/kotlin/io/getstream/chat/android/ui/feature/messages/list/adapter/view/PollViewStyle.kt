@@ -16,6 +16,72 @@
 
 package io.getstream.chat.android.ui.feature.messages.list.adapter.view
 
+import android.content.Context
+import android.graphics.Typeface
+import android.util.AttributeSet
+import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.font.TextStyle
+import io.getstream.chat.android.ui.helper.TransformStyle
 import io.getstream.chat.android.ui.helper.ViewStyle
+import io.getstream.chat.android.ui.utils.extensions.getColorCompat
+import io.getstream.chat.android.ui.utils.extensions.getDimension
+import io.getstream.chat.android.ui.utils.extensions.use
 
-public data object PollViewStyle : ViewStyle
+public data class PollViewStyle(
+    public val pollTitleTextStyle: TextStyle,
+    public val pollSubtitleTextStyle: TextStyle,
+) : ViewStyle {
+
+    internal companion object {
+        internal operator fun invoke(context: Context, attrs: AttributeSet?): PollViewStyle {
+            context.obtainStyledAttributes(
+                attrs,
+                R.styleable.PollView,
+                R.attr.streamUiMessageListPollStyle,
+                R.style.StreamUi_MessageList_Poll,
+            ).use { a ->
+                val pollTitleTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.PollView_streamUiPollTitleTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_large),
+                    )
+                    .color(
+                        R.styleable.PollView_streamUiPollTitleTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_primary),
+                    )
+                    .font(
+                        R.styleable.PollView_streamUiPollTitleFontAssets,
+                        R.styleable.PollView_streamUiPollTitleTextFont,
+                    )
+                    .style(
+                        R.styleable.PollView_streamUiPollTitleTextStyle,
+                        Typeface.NORMAL,
+                    )
+                    .build()
+
+                val pollSubtitleTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.PollView_streamUiPollSubtitleTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_medium),
+                    )
+                    .color(
+                        R.styleable.PollView_streamUiPollSubtitleTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary),
+                    )
+                    .font(
+                        R.styleable.PollView_streamUiPollSubtitleFontAssets,
+                        R.styleable.PollView_streamUiPollSubtitleTextFont,
+                    )
+                    .style(
+                        R.styleable.PollView_streamUiPollSubtitleTextStyle,
+                        Typeface.NORMAL,
+                    )
+                    .build()
+                return PollViewStyle(
+                    pollTitleTextStyle = pollTitleTextStyle,
+                    pollSubtitleTextStyle = pollSubtitleTextStyle,
+                ).let(TransformStyle.pollViewStyleTransformer::transform)
+            }
+        }
+    }
+}

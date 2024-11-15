@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<resources>
+    <!-- PollView -->
+    <declare-styleable name="PollView">
+
+        <!-- Text size of the poll title. -->
+        <attr name="streamUiPollTitleTextSize" format="dimension|reference" />
+        <!-- A color of the poll title. -->
+        <attr name="streamUiPollTitleTextColor" format="color|reference" />
+        <!-- Font assets reference for the poll title. -->
+        <attr name="streamUiPollTitleFontAssets" format="string" />
+        <!-- Font name of the poll title. -->
+        <attr name="streamUiPollTitleTextFont" format="reference" />
+        <!-- Text style of the poll title: "normal", "bold", and "italic". -->
+        <attr name="streamUiPollTitleTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <!-- Text size of the poll subtitle. -->
+        <attr name="streamUiPollSubtitleTextSize" format="dimension|reference" />
+        <!-- A color of the poll subtitle. -->
+        <attr name="streamUiPollSubtitleTextColor" format="color|reference" />
+        <!-- Font assets reference for the poll subtitle. -->
+        <attr name="streamUiPollSubtitleFontAssets" format="string" />
+        <!-- Font name of the poll subtitle. -->
+        <attr name="streamUiPollSubtitleTextFont" format="reference" />
+        <!-- Text style of the poll subtitle: "normal", "bold", and "italic". -->
+        <attr name="streamUiPollSubtitleTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+    </declare-styleable>
+</resources>
