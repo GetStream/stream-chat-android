@@ -34,6 +34,8 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemPollCloseBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollHeaderBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollResultsBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollShowAllOptionsBinding
+import io.getstream.chat.android.ui.feature.messages.list.adapter.view.PollViewStyle
+import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.log.taggedLogger
@@ -42,7 +44,7 @@ internal class PollView : RecyclerView {
 
     private val logger by taggedLogger("PollView")
 
-    // private lateinit var style: FileAttachmentViewStyle
+    private lateinit var style: PollViewStyle
 
     private lateinit var pollAdapter: PollAdapter
     var onOptionClick: ((Option) -> Unit) = { _ -> }
@@ -68,13 +70,14 @@ internal class PollView : RecyclerView {
     }
 
     private fun init(attrs: AttributeSet?) {
-        /** not implemented yet */
+        style = PollViewStyle(context, attrs)
     }
 
     fun setPoll(poll: Poll, isMine: Boolean) {
         logger.d { "[setPoll] poll: $poll" }
         if (!::pollAdapter.isInitialized) {
             pollAdapter = PollAdapter(
+                pollViewStyle = style,
                 onOptionClick = { option -> onOptionClick(option) },
                 onClosePollClick = { onClosePollClick(poll) },
                 onViewPollResultsClick = { onViewPollResultsClick(poll) },
@@ -121,6 +124,7 @@ internal class PollView : RecyclerView {
 }
 
 private class PollAdapter(
+    private val pollViewStyle: PollViewStyle,
     private val onOptionClick: (Option) -> Unit,
     private val onClosePollClick: () -> Unit,
     private val onViewPollResultsClick: () -> Unit,
@@ -138,7 +142,8 @@ private class PollAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PollItemViewHolder<out PollItem> {
         return when (viewType) {
             VIEW_TYPE_HEADER -> HeaderViewHolder(
-                StreamUiItemPollHeaderBinding.inflate(parent.streamThemeInflater, parent, false),
+                StreamUiItemPollHeaderBinding.inflate(parent.streamThemeInflater, parent, false)
+                    .applyStyle(pollViewStyle),
             )
             VIEW_TYPE_ANSWER -> AnswerViewHolder(
                 StreamUiItemPollAnswerBinding.inflate(parent.streamThemeInflater, parent, false),
@@ -300,4 +305,9 @@ private class ViewResultsViewHolder(
     override fun bind(pollItem: PollItem.ViewResults) {
         binding.root.setOnClickListener { onViewPollResultsClick() }
     }
+}
+
+private fun StreamUiItemPollHeaderBinding.applyStyle(style: PollViewStyle) = this.apply {
+    title.setTextStyle(style.pollTitleTextStyle)
+    subtitle.setTextStyle(style.pollSubtitleTextStyle)
 }
