@@ -95,5 +95,20 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
+
+        <!-- Text size of the poll results. -->
+        <attr name="streamUiPollResultsTextSize" format="dimension|reference" />
+        <!-- A color of the poll results. -->
+        <attr name="streamUiPollResultsTextColor" format="color|reference" />
+        <!-- Font assets reference for the poll results. -->
+        <attr name="streamUiPollResultsFontAssets" format="string" />
+        <!-- Font name of the poll results. -->
+        <attr name="streamUiPollResultsTextFont" format="reference" />
+        <!-- Text style of the poll results: "normal", "bold", and "italic". -->
+        <attr name="streamUiPollResultsTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
     </declare-styleable>
 </resources>

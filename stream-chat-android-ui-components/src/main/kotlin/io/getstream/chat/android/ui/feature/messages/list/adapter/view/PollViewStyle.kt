@@ -36,6 +36,7 @@ public data class PollViewStyle(
     public val pollOptionTextStyle: TextStyle,
     public val pollOptionVotesTextStyle: TextStyle,
     public val pollCloseTextStyle: TextStyle,
+    public val pollResultsTextStyle: TextStyle,
 ) : ViewStyle {
 
     internal companion object {
@@ -144,6 +145,25 @@ public data class PollViewStyle(
                         Typeface.NORMAL,
                     )
                     .build()
+
+                val pollResultsTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.PollView_streamUiPollResultsTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_large),
+                    )
+                    .color(
+                        R.styleable.PollView_streamUiPollResultsTextColor,
+                        context.getColorCompat(R.color.stream_ui_accent_blue),
+                    )
+                    .font(
+                        R.styleable.PollView_streamUiPollResultsFontAssets,
+                        R.styleable.PollView_streamUiPollResultsTextFont,
+                    )
+                    .style(
+                        R.styleable.PollView_streamUiPollResultsTextStyle,
+                        Typeface.NORMAL,
+                    )
+                    .build()
                 return PollViewStyle(
                     pollTitleTextStyle = pollTitleTextStyle,
                     pollSubtitleTextStyle = pollSubtitleTextStyle,
@@ -151,6 +171,7 @@ public data class PollViewStyle(
                     pollOptionTextStyle = pollOptionTextStyle,
                     pollOptionVotesTextStyle = pollVotesTextStyle,
                     pollCloseTextStyle = pollCloseTextStyle,
+                    pollResultsTextStyle = pollResultsTextStyle,
                 ).let(TransformStyle.pollViewStyleTransformer::transform)
             }
         }
