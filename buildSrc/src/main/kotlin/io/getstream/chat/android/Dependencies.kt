@@ -84,7 +84,7 @@ object Versions {
     internal const val TEST_PARAMETER_INJECTOR = "1.12"
     internal const val THREETENBP = "1.7.0"
     internal const val TIMBER = "5.0.1"
-    internal const val TURBINE = "1.0.0"
+    internal const val TURBINE = "1.2.0"
     internal const val WORK = "2.9.1"
 }
 
