@@ -20,7 +20,7 @@ object Versions {
     internal const val ANDROIDX_LIFECYCLE = "2.8.7"
     internal const val ANDROIDX_NAVIGATION = "2.8.4"
     internal const val ANDROIDX_PREFERENCES = "1.2.1"
-    internal const val ANDROIDX_RECYCLERVIEW = "1.3.1"
+    internal const val ANDROIDX_RECYCLERVIEW = "1.3.2"
     internal const val ANDROIDX_STARTUP = "1.1.1"
     internal const val ANDROIDX_TEST_CORE = "1.5.0"
     internal const val ANDROIDX_TEST_MONITOR = "1.7.2"
