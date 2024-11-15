@@ -79,7 +79,7 @@ object Versions {
     internal const val SHOT = "5.14.1"
     internal const val SPOTLESS = "6.20.0"
     internal const val STREAM_LOG = "1.3.1"
-    internal const val STREAM_PUSH = "1.1.8"
+    internal const val STREAM_PUSH = "1.1.9"
     internal const val STREAM_RESULT = "1.3.2"
     internal const val TEST_PARAMETER_INJECTOR = "1.12"
     internal const val THREETENBP = "1.7.0"
