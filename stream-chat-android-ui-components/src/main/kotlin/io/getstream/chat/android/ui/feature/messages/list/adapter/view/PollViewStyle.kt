@@ -18,6 +18,7 @@ package io.getstream.chat.android.ui.feature.messages.list.adapter.view
 
 import android.content.Context
 import android.graphics.Typeface
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.font.TextStyle
@@ -25,11 +26,15 @@ import io.getstream.chat.android.ui.helper.TransformStyle
 import io.getstream.chat.android.ui.helper.ViewStyle
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getDimension
+import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
 import io.getstream.chat.android.ui.utils.extensions.use
 
 public data class PollViewStyle(
     public val pollTitleTextStyle: TextStyle,
     public val pollSubtitleTextStyle: TextStyle,
+    public val pollOptionCheckDrawable: Drawable,
+    public val pollOptionTextStyle: TextStyle,
+    public val pollOptionVotesTextStyle: TextStyle,
 ) : ViewStyle {
 
     internal companion object {
@@ -59,6 +64,9 @@ public data class PollViewStyle(
                     )
                     .build()
 
+                val pollOptionCheckDrawable = a.getDrawable(R.styleable.PollView_streamUiPollOptionCheckDrawable)
+                    ?: context.getDrawableCompat(R.drawable.stream_ui_poll_option_selector)!!
+
                 val pollSubtitleTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.PollView_streamUiPollSubtitleTextSize,
@@ -77,9 +85,50 @@ public data class PollViewStyle(
                         Typeface.NORMAL,
                     )
                     .build()
+
+                val pollOptionTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.PollView_streamUiPollOptionTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_medium),
+                    )
+                    .color(
+                        R.styleable.PollView_streamUiPollOptionTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_primary),
+                    )
+                    .font(
+                        R.styleable.PollView_streamUiPollOptionFontAssets,
+                        R.styleable.PollView_streamUiPollOptionTextFont,
+                    )
+                    .style(
+                        R.styleable.PollView_streamUiPollOptionTextStyle,
+                        Typeface.NORMAL,
+                    )
+                    .build()
+
+                val pollVotesTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.PollView_streamUiPollVotesTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_medium),
+                    )
+                    .color(
+                        R.styleable.PollView_streamUiPollVotesTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_primary),
+                    )
+                    .font(
+                        R.styleable.PollView_streamUiPollVotesFontAssets,
+                        R.styleable.PollView_streamUiPollVotesTextFont,
+                    )
+                    .style(
+                        R.styleable.PollView_streamUiPollVotesTextStyle,
+                        Typeface.NORMAL,
+                    )
+                    .build()
                 return PollViewStyle(
                     pollTitleTextStyle = pollTitleTextStyle,
                     pollSubtitleTextStyle = pollSubtitleTextStyle,
+                    pollOptionCheckDrawable = pollOptionCheckDrawable,
+                    pollOptionTextStyle = pollOptionTextStyle,
+                    pollOptionVotesTextStyle = pollVotesTextStyle,
                 ).let(TransformStyle.pollViewStyleTransformer::transform)
             }
         }

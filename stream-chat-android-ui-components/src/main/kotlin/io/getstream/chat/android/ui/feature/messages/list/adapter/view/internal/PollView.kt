@@ -146,7 +146,8 @@ private class PollAdapter(
                     .applyStyle(pollViewStyle),
             )
             VIEW_TYPE_ANSWER -> AnswerViewHolder(
-                StreamUiItemPollAnswerBinding.inflate(parent.streamThemeInflater, parent, false),
+                StreamUiItemPollAnswerBinding.inflate(parent.streamThemeInflater, parent, false)
+                    .applyStyle(pollViewStyle),
                 onOptionClick,
             )
             VIEW_TYPE_CLOSE -> CloseViewHolder(
@@ -310,4 +311,10 @@ private class ViewResultsViewHolder(
 private fun StreamUiItemPollHeaderBinding.applyStyle(style: PollViewStyle) = this.apply {
     title.setTextStyle(style.pollTitleTextStyle)
     subtitle.setTextStyle(style.pollSubtitleTextStyle)
+}
+
+private fun StreamUiItemPollAnswerBinding.applyStyle(style: PollViewStyle) = this.apply {
+    check.setImageDrawable(style.pollOptionCheckDrawable.constantState?.newDrawable())
+    option.setTextStyle(style.pollOptionTextStyle)
+    votes.setTextStyle(style.pollOptionVotesTextStyle)
 }

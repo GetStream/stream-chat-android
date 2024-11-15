@@ -47,5 +47,38 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
+
+        <!-- The drawable of the check icon of poll option. -->
+        <attr name="streamUiPollOptionCheckDrawable" format="reference" />
+
+        <!-- Text size of the poll option. -->
+        <attr name="streamUiPollOptionTextSize" format="dimension|reference" />
+        <!-- A color of the poll option. -->
+        <attr name="streamUiPollOptionTextColor" format="color|reference" />
+        <!-- Font assets reference for the poll option. -->
+        <attr name="streamUiPollOptionFontAssets" format="string" />
+        <!-- Font name of the poll option. -->
+        <attr name="streamUiPollOptionTextFont" format="reference" />
+        <!-- Text style of the poll option: "normal", "bold", and "italic". -->
+        <attr name="streamUiPollOptionTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <!-- Text size of the poll votes. -->
+        <attr name="streamUiPollVotesTextSize" format="dimension|reference" />
+        <!-- A color of the poll votes. -->
+        <attr name="streamUiPollVotesTextColor" format="color|reference" />
+        <!-- Font assets reference for the poll votes. -->
+        <attr name="streamUiPollVotesFontAssets" format="string" />
+        <!-- Font name of the poll votes. -->
+        <attr name="streamUiPollVotesTextFont" format="reference" />
+        <!-- Text style of the poll votes: "normal", "bold", and "italic". -->
+        <attr name="streamUiPollVotesTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
     </declare-styleable>
 </resources>
