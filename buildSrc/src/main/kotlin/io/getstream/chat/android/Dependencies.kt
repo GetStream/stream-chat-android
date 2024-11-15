@@ -49,7 +49,7 @@ object Versions {
     internal const val GRADLE_NEXUS_PUBLISH_PLUGIN = "1.3.0"
     internal const val GRADLE_VERSIONS_PLUGIN = "0.47.0"
     internal const val HUAWEI_PUSH = "6.11.0.300"
-    internal const val ITU_DATE_VERSION = "1.7.3"
+    internal const val ITU_DATE_VERSION = "1.10.2"
     internal const val JSON = "20240303"
     internal const val JUNIT4 = "4.13.2"
     internal const val JUNIT5 = "5.11.3"
