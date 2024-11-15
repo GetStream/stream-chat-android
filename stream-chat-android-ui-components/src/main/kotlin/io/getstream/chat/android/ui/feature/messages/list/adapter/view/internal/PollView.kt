@@ -161,7 +161,8 @@ private class PollAdapter(
                 onViewPollResultsClick,
             )
             VIEW_TYPE_SHOW_ALL_OPTIONS -> ShowAllOptionsViewHolder(
-                StreamUiItemPollShowAllOptionsBinding.inflate(parent.streamThemeInflater, parent, false),
+                StreamUiItemPollShowAllOptionsBinding.inflate(parent.streamThemeInflater, parent, false)
+                    .applyStyle(pollViewStyle),
                 onShowAllOptionsClick,
             )
             else -> throw IllegalArgumentException("Unknown view type: $viewType")
@@ -327,4 +328,8 @@ private fun StreamUiItemPollCloseBinding.applyStyle(style: PollViewStyle) = this
 
 private fun StreamUiItemPollResultsBinding.applyStyle(style: PollViewStyle) = this.apply {
     pollResults.setTextStyle(style.pollResultsTextStyle)
+}
+
+private fun StreamUiItemPollShowAllOptionsBinding.applyStyle(style: PollViewStyle) = this.apply {
+    pollShowAllOptions.setTextStyle(style.pollShowAllOptionsTextStyle)
 }

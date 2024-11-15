@@ -110,5 +110,20 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
+
+        <!-- Text size of the show all options. -->
+        <attr name="streamUiPollShowAllOptionsTextSize" format="dimension|reference" />
+        <!-- A color of the show all options. -->
+        <attr name="streamUiPollShowAllOptionsTextColor" format="color|reference" />
+        <!-- Font assets reference for the show all options. -->
+        <attr name="streamUiPollShowAllOptionsFontAssets" format="string" />
+        <!-- Font name of the show all options. -->
+        <attr name="streamUiPollShowAllOptionsTextFont" format="reference" />
+        <!-- Text style of the show all options: "normal", "bold", and "italic". -->
+        <attr name="streamUiPollShowAllOptionsTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
     </declare-styleable>
 </resources>
