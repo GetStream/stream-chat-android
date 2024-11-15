@@ -3063,8 +3063,26 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/vi
 }
 
 public final class io/getstream/chat/android/ui/feature/messages/list/adapter/view/PollViewStyle : io/getstream/chat/android/ui/helper/ViewStyle {
-	public static final field INSTANCE Lio/getstream/chat/android/ui/feature/messages/list/adapter/view/PollViewStyle;
+	public fun <init> (Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;)V
+	public final fun component1 ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun component2 ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun component3 ()Landroid/graphics/drawable/Drawable;
+	public final fun component4 ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun component5 ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun component6 ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun component7 ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun component8 ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun copy (Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/view/PollViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/feature/messages/list/adapter/view/PollViewStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;ILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/view/PollViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getPollCloseTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun getPollOptionCheckDrawable ()Landroid/graphics/drawable/Drawable;
+	public final fun getPollOptionTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun getPollOptionVotesTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun getPollResultsTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun getPollShowAllOptionsTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun getPollSubtitleTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun getPollTitleTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
