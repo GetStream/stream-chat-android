@@ -71,7 +71,7 @@ object Versions {
     internal const val PAPARAZZI = "1.3.4"
     internal const val PERMISSIONX = "1.7.1"
     internal const val PHOTOVIEW = "1.0.1"
-    internal const val RETROFIT = "2.9.0"
+    internal const val RETROFIT = "2.11.0"
     internal const val ROBOLECTRIC = "4.10.3"
     internal const val REORDERABLE = "2.1.1"
     internal const val ROOM = "2.6.1"
