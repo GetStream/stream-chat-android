@@ -5,7 +5,7 @@ package io.getstream.chat.android
 object Versions {
     internal const val ALLURE_KOTLIN = "2.4.0"
     internal const val ANDROID_GRADLE_PLUGIN = "8.4.2"
-    internal const val ANDROID_JUNIT5_GRADLE_PLUGIN = "1.9.3.0"
+    internal const val ANDROID_JUNIT5_GRADLE_PLUGIN = "1.11.2.0"
     internal const val ANDROID_LEGACY_SUPPORT = "1.0.0"
     internal const val ANDROIDX_ACTIVITY_COMPOSE = "1.9.3"
     internal const val ANDROIDX_ACTIVITY_KTX = "1.9.3"
