@@ -35,9 +35,11 @@ public data class PollViewStyle(
     public val pollOptionCheckDrawable: Drawable,
     public val pollOptionTextStyle: TextStyle,
     public val pollOptionVotesTextStyle: TextStyle,
+    public val pollCloseTextStyle: TextStyle,
 ) : ViewStyle {
 
     internal companion object {
+        @Suppress("LongMethod")
         internal operator fun invoke(context: Context, attrs: AttributeSet?): PollViewStyle {
             context.obtainStyledAttributes(
                 attrs,
@@ -123,12 +125,32 @@ public data class PollViewStyle(
                         Typeface.NORMAL,
                     )
                     .build()
+
+                val pollCloseTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.PollView_streamUiPollCloseTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_large),
+                    )
+                    .color(
+                        R.styleable.PollView_streamUiPollCloseTextColor,
+                        context.getColorCompat(R.color.stream_ui_accent_blue),
+                    )
+                    .font(
+                        R.styleable.PollView_streamUiPollCloseFontAssets,
+                        R.styleable.PollView_streamUiPollCloseTextFont,
+                    )
+                    .style(
+                        R.styleable.PollView_streamUiPollCloseTextStyle,
+                        Typeface.NORMAL,
+                    )
+                    .build()
                 return PollViewStyle(
                     pollTitleTextStyle = pollTitleTextStyle,
                     pollSubtitleTextStyle = pollSubtitleTextStyle,
                     pollOptionCheckDrawable = pollOptionCheckDrawable,
                     pollOptionTextStyle = pollOptionTextStyle,
                     pollOptionVotesTextStyle = pollVotesTextStyle,
+                    pollCloseTextStyle = pollCloseTextStyle,
                 ).let(TransformStyle.pollViewStyleTransformer::transform)
             }
         }

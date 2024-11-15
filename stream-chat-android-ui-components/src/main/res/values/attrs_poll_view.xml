@@ -80,5 +80,20 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
+
+        <!-- Text size of the poll close. -->
+        <attr name="streamUiPollCloseTextSize" format="dimension|reference" />
+        <!-- A color of the poll close. -->
+        <attr name="streamUiPollCloseTextColor" format="color|reference" />
+        <!-- Font assets reference for the poll close. -->
+        <attr name="streamUiPollCloseFontAssets" format="string" />
+        <!-- Font name of the poll close. -->
+        <attr name="streamUiPollCloseTextFont" format="reference" />
+        <!-- Text style of the poll close: "normal", "bold", and "italic". -->
+        <attr name="streamUiPollCloseTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
     </declare-styleable>
 </resources>
