@@ -34,7 +34,7 @@ object Versions {
     internal const val COMPOSE_ACCOMPANIST = "0.32.0"
     internal const val COMPOSE_STABLE_MARKER = "1.0.2"
     internal const val CONSTRAINT_LAYOUT = "2.2.0"
-    internal const val COROUTINES = "1.8.1"
+    internal const val COROUTINES = "1.9.0"
     internal const val DETEKT_PLUGIN = "1.23.1"
     internal const val DOKKA = "1.9.0"
     internal const val ESPRESSO = "3.5.1"
