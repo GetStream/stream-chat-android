@@ -26,7 +26,7 @@ object Versions {
     internal const val ANDROIDX_TEST_MONITOR = "1.7.2"
     internal const val ANDROIDX_TEST_ORCHESTRATOR = "1.5.1"
     internal const val ANDROIDX_TEST_JUNIT = "1.1.5"
-    internal const val ANDROIDX_VIEW_PAGER_2 = "1.0.0"
+    internal const val ANDROIDX_VIEW_PAGER_2 = "1.1.0"
     internal const val ANDROIDX_UI_AUTOMATOR = "2.4.0-alpha01"
     internal const val ANDROIDX_TEST = "1.5.2"
     internal const val BASE_PROFILE = "1.3.1"
