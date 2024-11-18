@@ -167,13 +167,13 @@ internal class QueryThreadsStateLogicTest {
     }
 
     @Test
-    fun `Given QueryThreadsStateLogic When calling appendThreads Should update mutableState`() {
+    fun `Given QueryThreadsStateLogic When calling upsertThreads Should update mutableState`() {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
         doNothing().whenever(mutableState).upsertThreads(any())
         val logic = QueryThreadsStateLogic(mutableState)
         // when
-        logic.appendThreads(emptyList())
+        logic.upsertThreads(emptyList())
         // then
         verify(mutableState, times(1)).upsertThreads(emptyList())
     }

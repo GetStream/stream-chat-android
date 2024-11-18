@@ -94,7 +94,7 @@ internal class QueryThreadsLogic(private val stateLogic: QueryThreadsStateLogic)
         when (result) {
             is Result.Success -> {
                 if (request.isNextPageRequest()) {
-                    stateLogic.appendThreads(result.value.threads)
+                    stateLogic.upsertThreads(result.value.threads)
                 } else {
                     stateLogic.setThreads(result.value.threads)
                     stateLogic.clearUnseenThreadIds()

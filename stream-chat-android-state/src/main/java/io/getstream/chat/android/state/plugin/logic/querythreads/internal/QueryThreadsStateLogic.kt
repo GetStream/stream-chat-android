@@ -73,11 +73,11 @@ internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMuta
         mutableState.setThreads(threads)
 
     /**
-     * Appends the new page of [threads] to the current thread list.
+     * Upsert a list of threads in the [mutableState].
      *
-     * @param threads The new page of threads.
+     * @param threads The threads to upsert.
      */
-    internal fun appendThreads(threads: List<Thread>) =
+    internal fun upsertThreads(threads: List<Thread>) =
         mutableState.upsertThreads(threads)
 
     /**

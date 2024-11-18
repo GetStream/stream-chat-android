@@ -184,7 +184,7 @@ internal class QueryThreadsLogicTest {
         verify(stateLogic, times(1)).setThreads(emptyList())
         verify(stateLogic, times(1)).clearUnseenThreadIds()
         verify(stateLogic, times(1)).setNext("nextCursor")
-        verify(stateLogic, never()).appendThreads(any())
+        verify(stateLogic, never()).upsertThreads(any())
     }
 
     @Test
@@ -206,7 +206,7 @@ internal class QueryThreadsLogicTest {
         verify(stateLogic, times(1)).setLoading(false)
         verify(stateLogic, times(1)).setLoadingMore(false)
         verify(stateLogic, times(1)).setNext("page3Cursor")
-        verify(stateLogic, times(1)).appendThreads(emptyList())
+        verify(stateLogic, times(1)).upsertThreads(emptyList())
         verify(stateLogic, never()).setThreads(any())
         verify(stateLogic, never()).clearUnseenThreadIds()
     }
@@ -224,7 +224,7 @@ internal class QueryThreadsLogicTest {
         verify(stateLogic, times(1)).setLoading(false)
         verify(stateLogic, times(1)).setLoadingMore(false)
         verify(stateLogic, never()).setNext(any())
-        verify(stateLogic, never()).appendThreads(any())
+        verify(stateLogic, never()).upsertThreads(any())
         verify(stateLogic, never()).setThreads(any())
         verify(stateLogic, never()).clearUnseenThreadIds()
     }
