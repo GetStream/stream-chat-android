@@ -291,7 +291,6 @@ public class MessageListViewModel(
      * @param message Message to delete.
      */
     @JvmOverloads
-    @Suppress("ConvertArgumentToSet")
     public fun deleteMessage(message: Message, hard: Boolean = false) {
         messageListController.deleteMessage(message, hard)
     }
@@ -302,7 +301,6 @@ public class MessageListViewModel(
      *
      * @param message Message to delete.
      */
-    @Suppress("ConvertArgumentToSet")
     public fun flagMessage(
         message: Message,
         reason: String?,
