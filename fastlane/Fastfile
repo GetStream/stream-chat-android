@@ -7,9 +7,6 @@ import 'Allurefile'
 
 github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-android'
 test_flavor = 'stream-chat-android-compose-sample'
-androidx_test_orchestrator_version = '1.5.1'
-androidx_test_services_version = '1.5.0'
-allure_ctl_version = '2.15.1'
 mock_server_driver_port = 4567
 is_localhost = !is_ci
 @force_check = false
@@ -39,7 +36,7 @@ end
 
 lane :build_and_run_e2e_test do |options|
   build_e2e_test
-  run_e2e_test
+  run_e2e_test(batch: options[:batch], batch_count: options[:batch_count])
 end
 
 lane :build_e2e_test do
@@ -48,7 +45,7 @@ lane :build_e2e_test do
   gradle(tasks: [":#{test_flavor}:assembleE2eDebugAndroidTest", ":#{test_flavor}:assembleE2eDebug"])
 end
 
-lane :run_e2e_test do
+lane :run_e2e_test do |options|
   next unless is_check_required(sources: sources_matrix[:e2e], force_check: @force_check)
 
   allure_results_path = 'allure-results'
@@ -59,11 +56,11 @@ lane :run_e2e_test do
   start_mock_server
   install_test_services
 
-  Dir.chdir('..') do
-    stream_apk_path = is_ci ? '.' : "#{test_flavor}/build/outputs/apk"
-    sh("adb install -r '#{stream_apk_path}/e2e/debug/stream-chat-android-compose-sample-e2e-debug.apk'")
-    sh("adb install -r '#{stream_apk_path}/androidTest/e2e/debug/stream-chat-android-compose-sample-e2e-debug-androidTest.apk'")
-  end
+  stream_apk_folder_path = is_ci ? '..' : "../#{test_flavor}/build/outputs/apk"
+  stream_app_path = "#{stream_apk_folder_path}/e2e/debug/stream-chat-android-compose-sample-e2e-debug.apk"
+  stream_test_path = "#{stream_apk_folder_path}/androidTest/e2e/debug/stream-chat-android-compose-sample-e2e-debug-androidTest.apk"
+  sh("adb install -r #{stream_app_path}")
+  sh("adb install -r #{stream_test_path}")
 
   app_package_name = 'io.getstream.chat.android.compose.sample.e2etest.debug'
   test_package_name = "#{app_package_name}.test"
@@ -71,40 +68,42 @@ lane :run_e2e_test do
   orchestrator_package_name = 'androidx.test.orchestrator/.AndroidTestOrchestrator'
   androidx_test_services_path = sh('adb shell pm path androidx.test.services').strip
 
-  result = sh(
-    "adb shell 'CLASSPATH=#{androidx_test_services_path}' app_process / " \
-    'androidx.test.services.shellexecutor.ShellMain am instrument -w -e clearPackageData true ' \
-    "-e targetInstrumentation #{test_package_name}/#{runner_package_name} #{orchestrator_package_name}"
+  run_tests_in_batches = batch_tests(
+    batch: options[:batch],
+    batch_count: options[:batch_count],
+    test_apk_path: stream_test_path
   )
 
-  sh("adb exec-out sh -c 'cd #{adb_test_results_path} && tar cf - #{allure_results_path}' | tar xvf - -C .")
+  result = sh(
+    "adb shell 'CLASSPATH=#{androidx_test_services_path}' " \
+    'app_process / androidx.test.services.shellexecutor.ShellMain am instrument -w -e clearPackageData true ' \
+    "-e targetInstrumentation #{test_package_name}/#{runner_package_name} #{run_tests_in_batches} #{orchestrator_package_name}"
+  )
+
+  sh("adb exec-out sh -c 'cd #{adb_test_results_path} && tar cf - #{allure_results_path}' | tar xvf - -C .") if is_ci
   stop_mock_server
 
   UI.user_error!('Tests have failed!') if result.include?('Failures')
 end
 
-private_lane :install_test_services do
-  orchestrator_apk_path = "apks/orchestrator.apk"
-  test_services_apk_path = "apks/test-services.apk"
-  allure_ctl_path = "allurectl"
-  allure_ctl_arch = RbConfig::CONFIG['host_os'].include?('darwin') ? 'darwin_amd64' : 'linux_amd64'
-  maven_repo = 'https://dl.google.com/dl/android/maven2/androidx/test'
-
-  if [orchestrator_apk_path, test_services_apk_path, allure_ctl_path].any? { |f| !File.exist?(f) }
-    FileUtils.mkdir_p('apks')
-    sh("wget -O #{orchestrator_apk_path} '#{maven_repo}" \
-       "/orchestrator/#{androidx_test_orchestrator_version}/orchestrator-#{androidx_test_orchestrator_version}.apk' 2>/dev/null")
-    sh("wget -O #{test_services_apk_path} '#{maven_repo}" \
-       "/services/test-services/#{androidx_test_services_version}/test-services-#{androidx_test_services_version}.apk' 2>/dev/null")
-    sh("wget -O #{allure_ctl_path} " \
-       "'https://github.com/allure-framework/allurectl/releases/download/#{allure_ctl_version}/allurectl_#{allure_ctl_arch}' 2>/dev/null")
-    sh('chmod +x allurectl')
+private_lane :batch_tests do |options|
+  if options[:batch] && options[:batch_count]
+    install(tool: :test_parser)
+    sh("java -jar test-parser.jar #{options[:test_apk_path]} ./")
+    test_names = File.read('AllTests.txt').split
+    current_batch = test_names.each_slice((test_names.size.to_f / options[:batch_count].to_i).ceil).to_a[options[:batch].to_i]
+    "-e class #{current_batch.join(',')}"
+  else
+    ''
   end
+end
 
+private_lane :install_test_services do
+  FileUtils.mkdir_p('apks')
   device_api_level = sh('adb shell getprop ro.build.version.sdk').strip.to_i
-  force_queryable_option = device_api_level >= 30 ? '--force-queryable' : ''
-  sh("adb install #{force_queryable_option} -r #{orchestrator_apk_path}")
-  sh("adb install #{force_queryable_option} -r #{test_services_apk_path}")
+  install(tool: :test_orchestrator, api_level: device_api_level)
+  install(tool: :test_services, api_level: device_api_level)
+  install(tool: :allurectl, chmod: true) if is_ci
 end
 
 desc 'Run fastlane linting'
@@ -119,4 +118,31 @@ private_lane :sources_matrix do
     e2e: ['buildSrc', 'stream-chat-android', '.github/workflows/e2e-tests'],
     ruby: ['fastlane', 'Gemfile', 'Gemfile.lock']
   }
+end
+
+private_lane :install do |options|
+  case options[:tool]
+  when :test_orchestrator
+    v = '1.5.1'
+    output = 'apks/orchestrator.apk'
+    url = "https://dl.google.com/dl/android/maven2/androidx/test//orchestrator/#{v}/orchestrator-#{v}.apk"
+  when :test_services
+    v = '1.5.0'
+    output = 'apks/test-services.apk'
+    url = "https://dl.google.com/dl/android/maven2/androidx/test/services/test-services/#{v}/test-services-#{v}.apk"
+  when :test_parser
+    v = '2.2.1'
+    output = 'test-parser.jar'
+    url = "https://linkedin.jfrog.io/artifactory/open-source/com/linkedin/dextestparser/parser/#{v}/parser-#{v}-all.jar"
+  when :allurectl
+    v = '2.15.1'
+    output = 'allurectl'
+    arch = RbConfig::CONFIG['host_os'].include?('darwin') ? 'darwin_amd64' : 'linux_386'
+    url = "https://github.com/allure-framework/allurectl/releases/download/#{v}/allurectl_#{arch}"
+  else
+    UI.user_error!('Provide a correct tool name.')
+  end
+  sh("wget -O #{output} '#{url}' 2>/dev/null") unless File.exist?(output)
+  sh("adb install #{options[:api_level] >= 30 ? '--force-queryable' : ''} -r #{output}") if options[:api_level]
+  sh("chmod +x #{output}") if options[:chmod]
 end

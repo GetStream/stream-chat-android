@@ -12,11 +12,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.1.0
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3.6.0
-        with:
-          distribution: adopt
-          java-version: 17
+      - uses: ./.github/actions/java-cache
       - name: Prepare environment
         run: |
           git fetch --unshallow
@@ -44,11 +40,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.1.0
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3.6.0
-        with:
-          distribution: adopt
-          java-version: 17
+      - uses: ./.github/actions/java-cache
       - name: Prepare environment
         run: |
           git fetch --unshallow

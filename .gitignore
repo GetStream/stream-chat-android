@@ -114,5 +114,7 @@ fastlane/screenshots
 fastlane/test_output
 fastlane/allurectl
 fastlane/recordings
+fastlane/test-parser.jar
+fastlane/AllTests.txt
 allure-results
 stream-chat-test-mock-server

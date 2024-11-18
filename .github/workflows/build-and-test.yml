@@ -17,11 +17,7 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3.6.0
-        with:
-          distribution: adopt
-          java-version: 17
+      - uses: ./.github/actions/java-cache
       - name: Build
         run: ./gradlew assembleDebug :stream-chat-android-ui-uitests:assembleDebugAndroidTest
 
@@ -31,11 +27,7 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3.6.0
-        with:
-          distribution: adopt
-          java-version: 17
+      - uses: ./.github/actions/java-cache
       - name: Build
         run: ./gradlew assembleRelease
 
@@ -45,11 +37,7 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3.6.0
-        with:
-          distribution: adopt
-          java-version: 17
+      - uses: ./.github/actions/java-cache
       - name: Unit tests
         run: ./scripts/ci-unit-tests.sh
       - name: Upload testDebugUnitTest results
@@ -65,11 +53,7 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3.6.0
-        with:
-          distribution: adopt
-          java-version: 17
+      - uses: ./.github/actions/java-cache
       - name: build demo debug
         run: ./gradlew stream-chat-android-ui-components-sample:assembleDemoDebug
       - name: Upload artifact to Emerge
@@ -85,11 +69,7 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3.6.0
-        with:
-          distribution: adopt
-          java-version: 17
+      - uses: ./.github/actions/java-cache
       - name: build debug
         run: ./gradlew stream-chat-android-compose-sample:assembleDebug
       - name: Upload artifact to Emerge

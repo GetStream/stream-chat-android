@@ -3,7 +3,7 @@ name: ReleaseStart
 on:
   workflow_dispatch:
     inputs:
-      force_bump_minor_version: 
+      force_bump_minor_version:
         type: boolean
       skip_version_bump:
         type: boolean
@@ -19,11 +19,7 @@ jobs:
         with:
           ref: develop
           persist-credentials: false
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3.6.0
-        with:
-          distribution: adopt
-          java-version: 17
+      - uses: ./.github/actions/java-cache
       - name: Minor version bump
         if: "${{ github.event.inputs.force_bump_minor_version == 'true' && github.event.inputs.skip_version_bump != 'true' }}"
         run: ./gradlew minor-bump

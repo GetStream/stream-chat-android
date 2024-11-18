@@ -5,7 +5,7 @@ on:
     branches:
       - develop
   workflow_dispatch:
-  
+
 jobs:
   publish:
     name: Snapshot build and publish
@@ -13,11 +13,7 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3.6.0
-        with:
-          distribution: adopt
-          java-version: 17
+      - uses: ./.github/actions/java-cache
       - name: Release build
         # assembleRelease for all modules, excluding non-library modules: samples, docs
         run: ./gradlew assembleRelease -x :stream-chat-android-ui-components-sample:assembleRelease -x :stream-chat-android-compose-sample:assembleRelease -x :stream-chat-android-docs:assembleRelease

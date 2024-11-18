@@ -1,0 +1,30 @@
+name: E2E Build
+
+on:
+  workflow_call:
+    inputs:
+      app:
+        required: true
+        type: string
+
+jobs:
+  build:
+    name: ${{ inputs.app }} apks
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: ./.github/actions/java-cache
+      - uses: ./.github/actions/enable-kvm
+      - uses: ./.github/actions/ruby-cache
+      - uses: ./.github/actions/gradle-cache
+        with:
+          key-prefix: gradle-test
+      - name: Build apks
+        run: bundle exec fastlane build_e2e_test
+      - name: Upload apks
+        uses: actions/upload-artifact@v4.4.3
+        with:
+          name: apks
+          path: |
+            stream-chat-android-${{ inputs.app }}-sample/build/outputs/apk/e2e/debug/*.apk
+            stream-chat-android-${{ inputs.app }}-sample/build/outputs/apk/androidTest/e2e/debug/*.apk
