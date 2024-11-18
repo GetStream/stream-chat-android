@@ -1,0 +1,122 @@
+default_platform :android
+skip_docs
+
+require 'json'
+require 'net/http'
+import 'Allurefile'
+
+github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-android'
+test_flavor = 'stream-chat-android-compose-sample'
+androidx_test_orchestrator_version = '1.5.1'
+androidx_test_services_version = '1.5.0'
+allure_ctl_version = '2.15.1'
+mock_server_driver_port = 4567
+is_localhost = !is_ci
+@force_check = false
+
+before_all do |lane|
+  if is_ci
+    setup_ci
+    setup_git_config
+  end
+end
+
+lane :start_mock_server do
+  stop_mock_server if is_localhost
+  mock_server_repo = 'stream-chat-test-mock-server'
+  sh("rm -rf #{mock_server_repo}") if File.directory?(mock_server_repo)
+  sh("git clone git@github.com:#{github_repo.split('/').first}/#{mock_server_repo}.git")
+
+  Dir.chdir(mock_server_repo) do
+    FileUtils.mkdir_p('logs')
+    sh("bundle exec ruby driver.rb > logs/driver.log 2>&1 &")
+  end
+end
+
+lane :stop_mock_server do
+  Net::HTTP.get_response(URI("http://localhost:#{mock_server_driver_port}/stop")) rescue nil
+end
+
+lane :build_and_run_e2e_test do |options|
+  build_e2e_test
+  run_e2e_test
+end
+
+lane :build_e2e_test do
+  next unless is_check_required(sources: sources_matrix[:e2e], force_check: @force_check)
+
+  gradle(tasks: [":#{test_flavor}:assembleE2eDebugAndroidTest", ":#{test_flavor}:assembleE2eDebug"])
+end
+
+lane :run_e2e_test do
+  next unless is_check_required(sources: sources_matrix[:e2e], force_check: @force_check)
+
+  allure_results_path = 'allure-results'
+  adb_test_results_path = '/sdcard/googletest/test_outputfiles'
+  sh("rm -rf #{allure_results_path}")
+  sh("adb shell rm -rf #{adb_test_results_path}/#{allure_results_path}")
+
+  start_mock_server
+  install_test_services
+
+  Dir.chdir('..') do
+    stream_apk_path = is_ci ? '.' : "#{test_flavor}/build/outputs/apk"
+    sh("adb install -r '#{stream_apk_path}/e2e/debug/stream-chat-android-compose-sample-e2e-debug.apk'")
+    sh("adb install -r '#{stream_apk_path}/androidTest/e2e/debug/stream-chat-android-compose-sample-e2e-debug-androidTest.apk'")
+  end
+
+  app_package_name = 'io.getstream.chat.android.compose.sample.e2etest.debug'
+  test_package_name = "#{app_package_name}.test"
+  runner_package_name = 'io.qameta.allure.android.runners.AllureAndroidJUnitRunner'
+  orchestrator_package_name = 'androidx.test.orchestrator/.AndroidTestOrchestrator'
+  androidx_test_services_path = sh('adb shell pm path androidx.test.services').strip
+
+  result = sh(
+    "adb shell 'CLASSPATH=#{androidx_test_services_path}' app_process / " \
+    'androidx.test.services.shellexecutor.ShellMain am instrument -w -e clearPackageData true ' \
+    "-e targetInstrumentation #{test_package_name}/#{runner_package_name} #{orchestrator_package_name}"
+  )
+
+  sh("adb exec-out sh -c 'cd #{adb_test_results_path} && tar cf - #{allure_results_path}' | tar xvf - -C .")
+  stop_mock_server
+
+  UI.user_error!('Tests have failed!') if result.include?('Failures')
+end
+
+private_lane :install_test_services do
+  orchestrator_apk_path = "apks/orchestrator.apk"
+  test_services_apk_path = "apks/test-services.apk"
+  allure_ctl_path = "allurectl"
+  allure_ctl_arch = RbConfig::CONFIG['host_os'].include?('darwin') ? 'darwin_amd64' : 'linux_amd64'
+  maven_repo = 'https://dl.google.com/dl/android/maven2/androidx/test'
+
+  if [orchestrator_apk_path, test_services_apk_path, allure_ctl_path].any? { |f| !File.exist?(f) }
+    FileUtils.mkdir_p('apks')
+    sh("wget -O #{orchestrator_apk_path} '#{maven_repo}" \
+       "/orchestrator/#{androidx_test_orchestrator_version}/orchestrator-#{androidx_test_orchestrator_version}.apk' 2>/dev/null")
+    sh("wget -O #{test_services_apk_path} '#{maven_repo}" \
+       "/services/test-services/#{androidx_test_services_version}/test-services-#{androidx_test_services_version}.apk' 2>/dev/null")
+    sh("wget -O #{allure_ctl_path} " \
+       "'https://github.com/allure-framework/allurectl/releases/download/#{allure_ctl_version}/allurectl_#{allure_ctl_arch}' 2>/dev/null")
+    sh('chmod +x allurectl')
+  end
+
+  device_api_level = sh('adb shell getprop ro.build.version.sdk').strip.to_i
+  force_queryable_option = device_api_level >= 30 ? '--force-queryable' : ''
+  sh("adb install #{force_queryable_option} -r #{orchestrator_apk_path}")
+  sh("adb install #{force_queryable_option} -r #{test_services_apk_path}")
+end
+
+desc 'Run fastlane linting'
+lane :rubocop do
+  next unless is_check_required(sources: sources_matrix[:ruby], force_check: @force_check)
+
+  sh('bundle exec rubocop')
+end
+
+private_lane :sources_matrix do
+  {
+    e2e: ['buildSrc', 'stream-chat-android', '.github/workflows/e2e-tests'],
+    ruby: ['fastlane', 'Gemfile', 'Gemfile.lock']
+  }
+end

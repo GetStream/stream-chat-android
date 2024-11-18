@@ -29,8 +29,8 @@ private val okHttp: OkHttpClient = OkHttpClient()
 
 public class MockServer {
 
-    public fun start() {
-        val request = Request.Builder().url("$driverUrl/start").build()
+    public fun start(testName: String) {
+        val request = Request.Builder().url("$driverUrl/start/$testName").build()
         val response = okHttp.newCall(request).execute()
         val mockServerPort = response.body?.string().toString()
         val driverPort = driverUrl.split(":").last()

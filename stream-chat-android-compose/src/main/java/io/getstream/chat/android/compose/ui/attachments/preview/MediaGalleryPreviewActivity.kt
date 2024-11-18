@@ -73,7 +73,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
@@ -506,7 +506,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 .size(24.dp)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
-                    indication = rememberRipple(bounded = false),
+                    indication = ripple(bounded = false),
                     onClick = remember(mediaGalleryPreviewViewModel) {
                         {
                             mediaGalleryPreviewViewModel.toggleMediaOptions(
@@ -610,7 +610,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 .padding(8.dp)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
-                    indication = rememberRipple(),
+                    indication = ripple(),
                     onClick = remember(mediaGalleryPreviewViewModel) {
                         {
                             mediaGalleryPreviewViewModel.toggleMediaOptions(isShowingOptions = false)
@@ -1505,7 +1505,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     .align(Alignment.CenterStart)
                     .padding(8.dp)
                     .clickable(
-                        indication = rememberRipple(),
+                        indication = ripple(),
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = remember(mediaGalleryPreviewViewModel) {
                             {

@@ -24,7 +24,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
-import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
@@ -94,7 +94,7 @@ public fun ReactionOptions(
             Icon(
                 modifier = Modifier.clickable(
                     interactionSource = remember { MutableInteractionSource() },
-                    indication = rememberRipple(bounded = false),
+                    indication = ripple(bounded = false),
                     onClick = { onShowMoreReactionsSelected() },
                 ),
                 painter = painterResource(id = showMoreReactionsIcon),
@@ -122,7 +122,7 @@ internal fun DefaultReactionOptionItem(
             .size(ChatTheme.dimens.reactionOptionItemIconSize)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple(bounded = false),
+                indication = ripple(bounded = false),
                 onClick = { onReactionOptionSelected(option) },
             ),
         option = option,

@@ -25,6 +25,7 @@ dependencies {
     implementation(Dependencies.androidxTest)
     implementation(Dependencies.androidxUiAutomator)
     implementation(Dependencies.androidxTestMonitor)
+    implementation(Dependencies.androidxTestJunitKtx)
 
     detektPlugins(Dependencies.detektFormatting)
 }
