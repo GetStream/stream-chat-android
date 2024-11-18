@@ -391,6 +391,30 @@ public class MessageListViewModel(
     }
 
     /**
+     * Flags a user identified by the provided ID.
+     *
+     * @param userId The ID of the user to flag.
+     * @param reason The reason for flagging the user.
+     * @param customData Additional key-value data submitted with the request.
+     */
+    public fun flagUser(
+        userId: String,
+        reason: String? = null,
+        customData: Map<String, String> = emptyMap(),
+    ) {
+        messageListController.flagUser(userId = userId, reason = reason, customData = customData)
+    }
+
+    /**
+     * Un-flags a user identified by the provided ID.
+     *
+     * @param userId The ID of the user to un-flag.
+     */
+    public fun unflagUser(userId: String) {
+        messageListController.unflagUser(userId)
+    }
+
+    /**
      * Leaves the thread we're in and resets the state of the [messageMode] and both of the [MessageListState]s.
      */
     public fun leaveThread() {

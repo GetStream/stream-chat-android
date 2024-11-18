@@ -242,6 +242,8 @@ public class MessageListViewModel(
             is Event.UnbanUser -> messageListController.unbanUser(event.user.id)
             is Event.ShadowBanUser -> messageListController.shadowBanUser(event.user.id)
             is Event.RemoveShadowBanFromUser -> messageListController.removeShadowBanFromUser(event.user.id)
+            is Event.FlagUser -> messageListController.flagUser(event.userId, event.reason, event.customData)
+            is Event.UnflagUser -> messageListController.unflagUser(event.userId)
             is Event.RemoveAttachment -> messageListController.removeAttachment(event.messageId, event.attachment)
             is Event.FlagMessage -> messageListController.flagMessage(
                 event.message,
@@ -673,6 +675,26 @@ public class MessageListViewModel(
          * @param user The user to be blocked.
          */
         public data class RemoveShadowBanFromUser(val user: User) : Event()
+
+        /**
+         * Event for flagging a user.
+         *
+         * @param userId The ID of the user to flag.
+         * @param reason The reason for flagging the user.
+         * @param customData Additional key-value data submitted with the request.
+         */
+        public data class FlagUser(
+            val userId: String,
+            val reason: String? = null,
+            val customData: Map<String, String> = emptyMap(),
+        ) : Event()
+
+        /**
+         * Event for flagging a user.
+         *
+         * @param userId The ID of the user to un-flag.
+         */
+        public data class UnflagUser(val userId: String) : Event()
 
         /**
          * When the user replies to a message.

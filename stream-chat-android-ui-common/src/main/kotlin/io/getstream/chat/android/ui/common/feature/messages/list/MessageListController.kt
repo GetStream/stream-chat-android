@@ -2030,6 +2030,38 @@ public class MessageListController(
     }
 
     /**
+     * Flags a user identified by the provided ID.
+     *
+     * @param userId The ID of the user to flag.
+     * @param reason The reason for flagging the user.
+     * @param customData Additional key-value data submitted with the request.
+     */
+    public fun flagUser(
+        userId: String,
+        reason: String? = null,
+        customData: Map<String, String> = emptyMap(),
+    ) {
+        chatClient
+            .flagUser(userId = userId, reason = reason, customData = customData)
+            .enqueue(onError = { error ->
+                onActionResult(error) { ErrorEvent.FlagUserError(it) }
+            })
+    }
+
+    /**
+     * Un-flags a user identified by the provided ID.
+     *
+     * @param userId The ID of the user to un-flag.
+     */
+    public fun unflagUser(userId: String) {
+        chatClient
+            .unflagUser(userId = userId)
+            .enqueue(onError = { error ->
+                onActionResult(error) { ErrorEvent.UnflagUserError(it) }
+            })
+    }
+
+    /**
      * Block a user. Unlike ban the block is not channel related but rather directly to the user.
      *
      * @param userId the id of the user that will be blocked.
@@ -2321,6 +2353,20 @@ public class MessageListController(
          * @param streamError Contains the original [Throwable] along with a message.
          */
         public data class BlockUserError(override val streamError: Error) : ErrorEvent(streamError)
+
+        /**
+         * Error occurring during the operation of flagging a user.
+         *
+         * @param streamError Contains the original [Throwable] along with a message.
+         */
+        public data class FlagUserError(override val streamError: Error) : ErrorEvent(streamError)
+
+        /**
+         * Error occurring during the operation of un-flagging a user.
+         *
+         * @param streamError Contains the original [Throwable] along with a message.
+         */
+        public data class UnflagUserError(override val streamError: Error) : ErrorEvent(streamError)
 
         /**
          * When an error occurs while pinning a message.
