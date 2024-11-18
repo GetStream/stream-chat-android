@@ -3591,6 +3591,8 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public final fun dismissMessageAction (Lio/getstream/chat/android/ui/common/state/messages/MessageAction;)V
 	public final fun displayPollMoreOptions (Lio/getstream/chat/android/ui/common/state/messages/poll/SelectedPoll;)V
 	public final fun flagMessage (Lio/getstream/chat/android/models/Message;Ljava/lang/String;Ljava/util/Map;)V
+	public final fun flagUser (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)V
+	public static synthetic fun flagUser$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)V
 	public final fun getChannel ()Lio/getstream/chat/android/models/Channel;
 	public final fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getCurrentMessagesState ()Lio/getstream/chat/android/ui/common/state/messages/list/MessageListState;
@@ -3635,6 +3637,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public final fun shadowBanUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)V
 	public static synthetic fun shadowBanUser$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)V
 	public final fun unbanUser (Ljava/lang/String;)V
+	public final fun unflagUser (Ljava/lang/String;)V
 	public final fun unmuteUser (Ljava/lang/String;)V
 	public final fun updateLastSeenMessage (Lio/getstream/chat/android/models/Message;)V
 	public final fun updatePollState (Lio/getstream/chat/android/models/Poll;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/ui/common/state/messages/poll/PollSelectionType;)V

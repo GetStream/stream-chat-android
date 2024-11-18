@@ -52,6 +52,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `MessageListController.flagUser()` and `MessageListController.unflagUser()` methods for flagging/un-flagging users. [#5478](https://github.com/GetStream/stream-chat-android/pull/5478)
+- Add `MessageListController.ErrorEvent`s - `FlagUserError` and `UnflagUserError` representing errors which occurred during the execution of the corresponding operations. [#5478](https://github.com/GetStream/stream-chat-android/pull/5478)
 
 ### ⚠️ Changed
 - 🚨 Breaking change: The `MessagePositionHandler.handleMessagePosition` function now includes a new parameter, `isBeforeDateSeparator`, to handle message positioning more precisely within a group of messages. [#5466](https://github.com/GetStream/stream-chat-android/pull/5466)
@@ -64,6 +66,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `MessageListViewModel.flagUser()` and `MessageListViewModel.unflagUser()` methods for flagging/un-flagging users. [#5478](https://github.com/GetStream/stream-chat-android/pull/5478)
 
 ### ⚠️ Changed
 
@@ -75,6 +78,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `MessageListViewModel.flagUser()` and `MessageListViewModel.unflagUser()` methods for flagging/un-flagging users. [#5478](https://github.com/GetStream/stream-chat-android/pull/5478)
 - Added `ThreadList` component for showing the list of threads for the user.  
 
 ### ⚠️ Changed

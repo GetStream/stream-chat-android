@@ -309,6 +309,8 @@ public class MessageListView : ConstraintLayout {
             is MessageListController.ErrorEvent.MuteUserError -> R.string.stream_ui_message_list_error_mute_user
             is MessageListController.ErrorEvent.UnmuteUserError -> R.string.stream_ui_message_list_error_unmute_user
             is MessageListController.ErrorEvent.BlockUserError -> R.string.stream_ui_message_list_error_block_user
+            is MessageListController.ErrorEvent.FlagUserError -> R.string.stream_ui_message_list_error_flag_user
+            is MessageListController.ErrorEvent.UnflagUserError -> R.string.stream_ui_message_list_error_unflag_user
             is MessageListController.ErrorEvent.FlagMessageError -> R.string.stream_ui_message_list_error_flag_message
             is MessageListController.ErrorEvent.PinMessageError -> R.string.stream_ui_message_list_error_pin_message
             is MessageListController.ErrorEvent.UnpinMessageError -> R.string.stream_ui_message_list_error_unpin_message
