@@ -112,6 +112,7 @@
 ### ✅ Added
 - Add `MessageListViewModel.flagUser()` and `MessageListViewModel.unflagUser()` methods for flagging/un-flagging users. [#5478](https://github.com/GetStream/stream-chat-android/pull/5478)
 - Add edge-to-edge support for apps targeting Android 15. [#5469](https://github.com/GetStream/stream-chat-android/pull/5469)
+- Add styles for polls. [#5479](https://github.com/GetStream/stream-chat-android/pull/5479)
 
 ### ⚠️ Changed
 
