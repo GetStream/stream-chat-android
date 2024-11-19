@@ -12,7 +12,12 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.OnApplyWindowInsetsListener;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -30,6 +35,7 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
 
     private static final String KEY_URL = "url";
 
+    View rootView;
     WebView webView;
     ProgressBar progressBar;
 
@@ -42,8 +48,10 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.stream_activity_attachment_document);
+        rootView = findViewById(R.id.rootView);
         webView = findViewById(R.id.webView);
         progressBar = findViewById(R.id.progressBar);
+        setupEdgeToEdge();
         configUIs();
         init();
     }
@@ -52,6 +60,18 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String filePath = intent.getStringExtra(KEY_URL);
         loadDocument(filePath);
+    }
+
+    private void setupEdgeToEdge() {
+        ViewCompat.setOnApplyWindowInsetsListener(rootView, new OnApplyWindowInsetsListener() {
+            @NonNull
+            @Override
+            public WindowInsetsCompat onApplyWindowInsets(@NonNull View v, @NonNull WindowInsetsCompat insets) {
+                Insets systemBarInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                v.setPadding(systemBarInsets.left, systemBarInsets.top, systemBarInsets.right, systemBarInsets.bottom);
+                return WindowInsetsCompat.CONSUMED;
+            }
+        });
     }
 
     private void configUIs() {
