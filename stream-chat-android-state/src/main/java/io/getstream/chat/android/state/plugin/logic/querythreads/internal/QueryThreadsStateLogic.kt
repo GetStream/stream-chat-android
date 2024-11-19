@@ -199,7 +199,6 @@ internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMuta
                     parentMessage = threadInfo.parentMessage ?: thread.parentMessage,
                     participantCount = threadInfo.participantCount,
                     replyCount = threadInfo.replyCount,
-                    threadParticipants = threadInfo.threadParticipants,
                     title = threadInfo.title,
                     updatedAt = threadInfo.updatedAt,
                     read = updatedRead,

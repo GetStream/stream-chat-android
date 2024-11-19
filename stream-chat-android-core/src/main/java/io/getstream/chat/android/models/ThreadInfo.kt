@@ -52,7 +52,6 @@ public data class ThreadInfo(
     val parentMessageId: String,
     val participantCount: Int,
     val replyCount: Int,
-    val threadParticipants: List<ThreadParticipant>,
     val title: String,
     val updatedAt: Date,
 )
