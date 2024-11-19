@@ -4,8 +4,52 @@
 
 ### ⬆️ Improved
 - Update dependency versions:
+  - Android JUnit5 Gradle Plugin 1.11.2.0
+  - AndroidX Activity 1.9.3
+  - AndroidX Annotations 1.9.1
+  - AndroidX AppCompat 1.7.0
+  - AndroidX Fragment 1.8.5
+  - AndroidX Ktx 1.13.1
+  - AndroidX Lifecycle 2.8.7
+  - AndroidX Navigation 2.8.4
+  - AndroidX RecyclerView 1.3.2
+  - AndroidX StartUp 1.2.0
+  - Androidx ViewPager2 1.1.0
+  - Coil 2.7.0
   - Compose 1.7.5
+  - Compose Accompanist 0.36.0
+  - Compose ConstraintLayout 1.1.0
   - Compose Material 1.3.1
+  - Compose Stable Marker 1.0.5
+  - ConstraintLayout 2.2.0
+  - Coroutines 1.9.0
+  - Detekt plugin 1.23.7
+  - Dokka 1.9.20
+  - Firebase Analytics 22.1.2
+  - Firebase Crashlytics 19.2.1
+  - Firebase Crashlytics plugin 3.0.2
+  - Firebase Messaging 24.1.0
+  - Flipper 0.272.0
+  - Flipper SO Loader 0.12.1
+  - Google Services 4.4.2
+  - ITU Date 1.10.2
+  - Json 20240303
+  - JUnit5 5.11.3
+  - KSP 2.0.21-1.0.28
+  - Material Components 1.12.0
+  - Mockito 5.14.2
+  - Mockito Kotlin 5.4.0
+  - Moshi 1.15.1
+  - OkHttp 4.12.0
+  - PermissionX 1.8.1
+  - Photoview 1.0.2
+  - Retrofit 2.11.0
+  - Reorderable 2.4.0
+  - Room 2.6.1
+  - Stream Push 1.1.9
+  - ThreeTenBP 1.7.0
+  - Turbine 1.2.0
+  - Work 2.9.1
 
 ### ✅ Added
 
