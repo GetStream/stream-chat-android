@@ -24,8 +24,13 @@ import android.view.KeyEvent
 import android.widget.MediaController
 import android.widget.Toast
 import android.widget.VideoView
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentMediaBinding
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
@@ -56,7 +61,7 @@ public class AttachmentMediaActivity : AppCompatActivity() {
             return
         }
 
-        setupSystemUi()
+        setupEdgeToEdge()
         setupViews()
         setupVideoView()
     }
@@ -73,9 +78,17 @@ public class AttachmentMediaActivity : AppCompatActivity() {
     /**
      * Responsible for updating the system UI.
      */
-    private fun setupSystemUi() {
-        window.navigationBarColor = getColorCompat(R.color.stream_ui_literal_black)
-        window.statusBarColor = getColorCompat(R.color.stream_ui_literal_black)
+    private fun setupEdgeToEdge() {
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(getColorCompat(R.color.stream_ui_literal_black)),
+            navigationBarStyle = SystemBarStyle.dark(getColorCompat(R.color.stream_ui_literal_black)),
+        )
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.updatePadding(top = insets.top, left = insets.left, right = insets.right, bottom = insets.bottom)
+
+            WindowInsetsCompat.CONSUMED
+        }
     }
 
     /**
