@@ -22,10 +22,8 @@ import androidx.compose.runtime.Immutable
  * Model holding info about a thread participant.
  *
  * @param user The [User] as a thread participant (not always delivered).
- * @param userId The Id of the thread participant.
  */
 @Immutable
 public data class ThreadParticipant(
-    val user: User?,
-    val userId: String,
-)
+    override val user: User,
+) : UserEntity

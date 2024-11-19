@@ -277,8 +277,8 @@ private fun ThreadItemPreview() {
                 replyCount = 3,
                 participantCount = 2,
                 threadParticipants = listOf(
-                    ThreadParticipant(user1, user1.id),
-                    ThreadParticipant(user2, user2.id),
+                    ThreadParticipant(user1),
+                    ThreadParticipant(user2),
                 ),
                 lastMessageAt = Date(),
                 createdAt = Date(),

@@ -251,7 +251,7 @@ internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMuta
         // The new message could be from a new thread participant
         val threadParticipants = if (isInsert) {
             upsertThreadParticipantInList(
-                newParticipant = ThreadParticipant(user = reply.user, userId = reply.user.id),
+                newParticipant = ThreadParticipant(user = reply.user),
                 participants = thread.threadParticipants,
             )
         } else {
@@ -295,12 +295,12 @@ internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMuta
         participants: List<ThreadParticipant>,
     ): List<ThreadParticipant> {
         // Insert
-        if (participants.none { it.userId == newParticipant.userId }) {
+        if (participants.none { it.getUserId() == newParticipant.getUserId() }) {
             return participants + listOf(newParticipant)
         }
         // Update
         return participants.map { participant ->
-            if (participant.userId == newParticipant.userId) {
+            if (participant.getUserId() == newParticipant.getUserId()) {
                 newParticipant
             } else {
                 participant

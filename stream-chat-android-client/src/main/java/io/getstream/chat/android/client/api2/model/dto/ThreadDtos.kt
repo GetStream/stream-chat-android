@@ -94,7 +94,6 @@ internal data class DownstreamThreadInfoDto(
     val parent_message_id: String,
     val participant_count: Int?,
     val reply_count: Int?,
-    val thread_participants: List<DownstreamThreadParticipantDto>?,
     val title: String,
     val updated_at: Date,
 )
@@ -110,6 +109,6 @@ internal data class DownstreamThreadInfoDto(
 @JsonClass(generateAdapter = true)
 internal data class DownstreamThreadParticipantDto(
     val channel_cid: String,
-    val user: DownstreamUserDto?,
+    val user: DownstreamUserDto,
     val user_id: String,
 )

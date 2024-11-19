@@ -20,6 +20,7 @@ import app.cash.turbine.test
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadParticipant
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
@@ -44,8 +45,8 @@ internal class QueryThreadsMutableStateTest {
             replyCount = 1,
             participantCount = 2,
             threadParticipants = listOf(
-                ThreadParticipant(null, "usrId1"),
-                ThreadParticipant(null, "usrId1"),
+                ThreadParticipant(User("usrId1")),
+                ThreadParticipant(User("usrId2")),
             ),
             lastMessageAt = Date(),
             createdAt = Date(),
@@ -69,8 +70,8 @@ internal class QueryThreadsMutableStateTest {
             replyCount = 1,
             participantCount = 2,
             threadParticipants = listOf(
-                ThreadParticipant(null, "usrId1"),
-                ThreadParticipant(null, "usrId1"),
+                ThreadParticipant(User("usrId1")),
+                ThreadParticipant(User("usrId2")),
             ),
             lastMessageAt = Date(),
             createdAt = Date(),

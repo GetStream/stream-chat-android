@@ -63,6 +63,5 @@ internal fun DownstreamThreadInfoDto.toDomain(currentUserId: UserId?): ThreadInf
     )
 
 internal fun DownstreamThreadParticipantDto.toDomain(currentUserId: UserId?): ThreadParticipant = ThreadParticipant(
-    user = user?.toDomain(currentUserId),
-    userId = user_id,
+    user = user.toDomain(currentUserId),
 )

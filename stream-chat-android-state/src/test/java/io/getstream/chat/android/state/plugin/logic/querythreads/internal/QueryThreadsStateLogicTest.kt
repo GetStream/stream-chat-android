@@ -56,8 +56,8 @@ internal class QueryThreadsStateLogicTest {
             replyCount = 1,
             participantCount = 2,
             threadParticipants = listOf(
-                ThreadParticipant(User(id = "usrId1"), "usrId1"),
-                ThreadParticipant(User(id = "usrId2"), "usrId2"),
+                ThreadParticipant(User(id = "usrId1")),
+                ThreadParticipant(User(id = "usrId2")),
             ),
             lastMessageAt = Date(),
             createdAt = Date(),
@@ -416,7 +416,7 @@ internal class QueryThreadsStateLogicTest {
             latestReplies = threadList[0].latestReplies + listOf(reply),
             replyCount = 2,
             participantCount = 3,
-            threadParticipants = threadList[0].threadParticipants + listOf(ThreadParticipant(User("usrId3"), "usrId3")),
+            threadParticipants = threadList[0].threadParticipants + listOf(ThreadParticipant(User("usrId3"))),
             read = threadList[0].read.map { read ->
                 read.copy(unreadMessages = read.unreadMessages + 1)
             },
@@ -476,7 +476,6 @@ internal class QueryThreadsStateLogicTest {
                 parentMessageId = "mId13", // not a loaded thread
                 participantCount = 2,
                 replyCount = 2,
-                threadParticipants = emptyList(),
                 title = "Unknown thread",
                 updatedAt = Date(),
             ),
@@ -506,10 +505,6 @@ internal class QueryThreadsStateLogicTest {
             parentMessageId = "mId1", // loaded thread
             participantCount = 2,
             replyCount = 1,
-            threadParticipants = listOf(
-                ThreadParticipant(User(id = "usrId1"), "usrId1"),
-                ThreadParticipant(User(id = "usrId2"), "usrId2"),
-            ),
             title = "Thread 1",
             updatedAt = Date(),
         )
@@ -524,7 +519,6 @@ internal class QueryThreadsStateLogicTest {
             parentMessage = threadInfo.parentMessage ?: threadList[0].parentMessage,
             participantCount = threadInfo.participantCount,
             replyCount = threadInfo.replyCount,
-            threadParticipants = threadInfo.threadParticipants,
             title = threadInfo.title,
             updatedAt = threadInfo.updatedAt,
             read = threadList[0].read.map { read ->
