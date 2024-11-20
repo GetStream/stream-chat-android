@@ -408,7 +408,6 @@ internal class QueryThreadsLogicTest {
                 parentMessageId = "mId1",
                 participantCount = 2,
                 replyCount = 2,
-                threadParticipants = emptyList(),
                 title = "Thread 1",
                 updatedAt = Date(),
             ),

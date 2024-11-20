@@ -542,10 +542,6 @@ internal class QueryThreadsStateLogicTest {
             parentMessageId = "mId1", // loaded thread
             participantCount = 2,
             replyCount = 1,
-            threadParticipants = listOf(
-                ThreadParticipant(User(id = "usrId1"), "usrId1"),
-                ThreadParticipant(User(id = "usrId2"), "usrId2"),
-            ),
             title = "Thread 1",
             updatedAt = Date(),
         )

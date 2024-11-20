@@ -75,7 +75,7 @@ public fun Thread.upsertReply(reply: Message): Thread {
     // The new message could be from a new thread participant
     val threadParticipants = if (isInsert) {
         upsertThreadParticipantInList(
-            newParticipant = ThreadParticipant(user = reply.user, userId = reply.user.id),
+            newParticipant = ThreadParticipant(user = reply.user),
             participants = this.threadParticipants,
         )
     } else {
@@ -128,7 +128,6 @@ public fun Thread.markAsReadByUser(threadInfo: ThreadInfo, user: User, createdAt
         parentMessage = threadInfo.parentMessage ?: this.parentMessage,
         participantCount = threadInfo.participantCount,
         replyCount = threadInfo.replyCount,
-        threadParticipants = threadInfo.threadParticipants,
         title = threadInfo.title,
         updatedAt = threadInfo.updatedAt,
         read = updatedRead,
@@ -178,12 +177,12 @@ private fun upsertThreadParticipantInList(
     participants: List<ThreadParticipant>,
 ): List<ThreadParticipant> {
     // Insert
-    if (participants.none { it.userId == newParticipant.userId }) {
+    if (participants.none { it.getUserId() == newParticipant.getUserId() }) {
         return participants + listOf(newParticipant)
     }
     // Update
     return participants.map { participant ->
-        if (participant.userId == newParticipant.userId) {
+        if (participant.getUserId() == newParticipant.getUserId()) {
             newParticipant
         } else {
             participant

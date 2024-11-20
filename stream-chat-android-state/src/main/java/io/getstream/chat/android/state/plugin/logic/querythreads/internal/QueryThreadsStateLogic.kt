@@ -20,11 +20,9 @@ import io.getstream.chat.android.client.extensions.internal.markAsReadByUser
 import io.getstream.chat.android.client.extensions.internal.markAsUnreadByUser
 import io.getstream.chat.android.client.extensions.internal.updateParent
 import io.getstream.chat.android.client.extensions.internal.upsertReply
-import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
-import io.getstream.chat.android.models.ThreadParticipant
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.state.querythreads.internal.QueryThreadsMutableState
 import java.util.Date
