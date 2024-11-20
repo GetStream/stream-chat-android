@@ -74,6 +74,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add support for Threads. [#5481](https://github.com/GetStream/stream-chat-android/pull/5481)
 
 ### ⚠️ Changed
 
