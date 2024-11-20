@@ -32,24 +32,6 @@ jobs:
       - name: Detekt
         if: always()
         run: ./gradlew detekt
-  vale:
-    name: Vale doc linter
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: errata-ai/vale-action@reviewdog
-        with:
-          # added, diff_context, file, nofilter
-          filter_mode: nofilter
-          # github-pr-check, github-pr-review, github-check
-          reporter: github-pr-check
-          fail_on_error: true
-          files: docusaurus
-          version: "2.30.0"
-        env:
-          # Required, set by GitHub actions automatically:
-          # https://docs.github.com/en/actions/security-guides/automatic-token-authentication#about-the-github_token-secret
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
   api_check:
     name: API check
@@ -107,3 +89,11 @@ jobs:
         with:
           name: testDebugUnitTest
           path: ./**/build/reports/tests/testDebugUnitTest
+
+  rubocop:
+    name: Rubocop
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: ./.github/actions/ruby-cache
+      - run: bundle exec fastlane rubocop

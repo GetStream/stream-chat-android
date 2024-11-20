@@ -35,7 +35,6 @@ import java.util.Date
  * @param parentMessageId The ID of the parent message of the thread.
  * @param participantCount The number of participants in the thread.
  * @param replyCount The number of replies in the thread.
- * @param threadParticipants The list of participants in the thread.
  * @param title The title of the thread.
  * @param updatedAt Date of the most recent update of the thread.
  */
@@ -52,7 +51,6 @@ public data class ThreadInfo(
     val parentMessageId: String,
     val participantCount: Int,
     val replyCount: Int,
-    val threadParticipants: List<ThreadParticipant>,
     val title: String,
     val updatedAt: Date,
 )

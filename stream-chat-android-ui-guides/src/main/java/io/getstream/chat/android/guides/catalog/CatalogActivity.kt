@@ -34,7 +34,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
-import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -183,7 +183,7 @@ class CatalogActivity : AppCompatActivity() {
                 .padding(16.dp)
                 .clickable(
                     onClick = onClick,
-                    indication = rememberRipple(),
+                    indication = ripple(),
                     interactionSource = remember { MutableInteractionSource() },
                 ),
             elevation = 4.dp,

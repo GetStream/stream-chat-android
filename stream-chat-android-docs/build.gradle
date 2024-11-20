@@ -94,6 +94,7 @@ dependencies {
     implementation Dependencies.composeUiTooling
     implementation Dependencies.composeFoundation
     implementation Dependencies.composeMaterial
+    implementation Dependencies.composeMaterialIcons
     implementation Dependencies.composeActivity
     implementation Dependencies.composeViewModel
     implementation Dependencies.composeAccompanistPermissions

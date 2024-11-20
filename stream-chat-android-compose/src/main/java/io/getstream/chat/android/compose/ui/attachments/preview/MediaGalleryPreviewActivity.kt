@@ -28,7 +28,9 @@ import android.widget.FrameLayout
 import android.widget.MediaController
 import android.widget.Toast
 import android.widget.VideoView
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedVisibility
@@ -53,13 +55,16 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -73,10 +78,10 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -93,6 +98,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -112,7 +118,6 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil.CoilImageState
 import com.skydoves.landscapist.coil.rememberCoilImageState
@@ -250,7 +255,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 videoThumbnailsEnabled = videoThumbnailsEnabled,
                 streamCdnImageResizing = streamCdnImageResizing,
             ) {
-                SetupSystemUI()
+                SetupEdgeToEdge()
 
                 val message = mediaGalleryPreviewViewModel.message
 
@@ -271,21 +276,17 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * Responsible for updating the system UI.
-     */
     @Composable
-    private fun SetupSystemUI() {
-        val systemUiController = rememberSystemUiController()
-        val useDarkIcons = !isSystemInDarkTheme()
-
-        val systemBarsColor = ChatTheme.colors.barsBackground
-
-        SideEffect {
-            systemUiController.setSystemBarsColor(
-                color = systemBarsColor,
-                darkIcons = useDarkIcons,
-            )
+    private fun SetupEdgeToEdge() {
+        val nightMode = isSystemInDarkTheme()
+        val systemBarsColor = ChatTheme.colors.barsBackground.toArgb()
+        LaunchedEffect(nightMode) {
+            val style = if (nightMode) {
+                SystemBarStyle.dark(systemBarsColor)
+            } else {
+                SystemBarStyle.light(systemBarsColor, systemBarsColor)
+            }
+            enableEdgeToEdge(statusBarStyle = style, navigationBarStyle = style)
         }
     }
 
@@ -317,7 +318,12 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         val pagerState = rememberPagerState(initialPage = startingPosition)
         val coroutineScope = rememberCoroutineScope()
 
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(ChatTheme.colors.barsBackground)
+                .windowInsetsPadding(WindowInsets.systemBars),
+        ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 scaffoldState = scaffoldState,
@@ -506,7 +512,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 .size(24.dp)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
-                    indication = rememberRipple(bounded = false),
+                    indication = ripple(bounded = false),
                     onClick = remember(mediaGalleryPreviewViewModel) {
                         {
                             mediaGalleryPreviewViewModel.toggleMediaOptions(
@@ -610,7 +616,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 .padding(8.dp)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
-                    indication = rememberRipple(),
+                    indication = ripple(),
                     onClick = remember(mediaGalleryPreviewViewModel) {
                         {
                             mediaGalleryPreviewViewModel.toggleMediaOptions(isShowingOptions = false)
@@ -1505,7 +1511,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     .align(Alignment.CenterStart)
                     .padding(8.dp)
                     .clickable(
-                        indication = rememberRipple(),
+                        indication = ripple(),
                         interactionSource = remember { MutableInteractionSource() },
                         onClick = remember(mediaGalleryPreviewViewModel) {
                             {

@@ -31,7 +31,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -215,7 +215,7 @@ private fun RowScope.FileAttachmentDownloadIcon(attachment: Attachment) {
             .testTag("Stream_FileAttachmentDownloadButton")
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple(bounded = false),
+                indication = ripple(bounded = false),
             ) {
                 onDownloadHandleRequest(
                     context = context,

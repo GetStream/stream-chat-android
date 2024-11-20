@@ -68,8 +68,8 @@ internal class QueryThreadsLogicTest {
             replyCount = 1,
             participantCount = 2,
             threadParticipants = listOf(
-                ThreadParticipant(User(id = "usrId1"), "usrId1"),
-                ThreadParticipant(User(id = "usrId2"), "usrId2"),
+                ThreadParticipant(User(id = "usrId1")),
+                ThreadParticipant(User(id = "usrId2")),
             ),
             lastMessageAt = Date(),
             createdAt = Date(),

@@ -38,7 +38,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Card
 import androidx.compose.material.IconButton
 import androidx.compose.material.TextButton
-import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material.ripple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -166,7 +166,7 @@ public fun DefaultAudioRecordButton(
             .onSizeChanged { micSize = it }
             .indication(
                 interactionSource,
-                rememberRipple(
+                ripple(
                     bounded = true,
                     radius = with(density) { micSize.height.toDp() / 2 },
                 ),

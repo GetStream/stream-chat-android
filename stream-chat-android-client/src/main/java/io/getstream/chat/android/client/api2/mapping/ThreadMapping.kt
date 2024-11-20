@@ -58,12 +58,10 @@ internal fun DownstreamThreadInfoDto.toDomain(currentUserId: UserId?): ThreadInf
         parentMessageId = parent_message_id,
         participantCount = participant_count ?: 0,
         replyCount = reply_count ?: 0,
-        threadParticipants = thread_participants.orEmpty().map { it.toDomain(currentUserId) },
         title = title,
         updatedAt = updated_at,
     )
 
 internal fun DownstreamThreadParticipantDto.toDomain(currentUserId: UserId?): ThreadParticipant = ThreadParticipant(
-    user = user?.toDomain(currentUserId),
-    userId = user_id,
+    user = user.toDomain(currentUserId),
 )

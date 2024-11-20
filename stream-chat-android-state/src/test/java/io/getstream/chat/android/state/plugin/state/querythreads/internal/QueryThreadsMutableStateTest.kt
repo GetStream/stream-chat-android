@@ -20,6 +20,7 @@ import app.cash.turbine.test
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadParticipant
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
@@ -44,8 +45,8 @@ internal class QueryThreadsMutableStateTest {
             replyCount = 1,
             participantCount = 2,
             threadParticipants = listOf(
-                ThreadParticipant(null, "usrId1"),
-                ThreadParticipant(null, "usrId1"),
+                ThreadParticipant(User("usrId1")),
+                ThreadParticipant(User("usrId2")),
             ),
             lastMessageAt = Date(),
             createdAt = Date(),
@@ -69,8 +70,8 @@ internal class QueryThreadsMutableStateTest {
             replyCount = 1,
             participantCount = 2,
             threadParticipants = listOf(
-                ThreadParticipant(null, "usrId1"),
-                ThreadParticipant(null, "usrId1"),
+                ThreadParticipant(User("usrId1")),
+                ThreadParticipant(User("usrId2")),
             ),
             lastMessageAt = Date(),
             createdAt = Date(),
@@ -227,6 +228,50 @@ internal class QueryThreadsMutableStateTest {
             mutableState.clearThreads()
             val updatedValue2 = awaitItem()
             updatedValue2 `should be equal to` emptyList()
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `Given QueryThreadsMutableState When calling deleteThread Should update threads`() = runTest {
+        // given
+        val mutableState = QueryThreadsMutableState()
+        mutableState.threads.test {
+            val initialValue = awaitItem()
+            initialValue `should be equal to` emptyList()
+
+            // when
+            mutableState.upsertThreads(threadList1)
+            val updatedValue1 = awaitItem()
+            updatedValue1 `should be equal to` threadList1
+
+            mutableState.deleteThread("pmId1")
+            val updatedValue2 = awaitItem()
+            updatedValue2 `should be equal to` emptyList()
+
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `Given QueryThreadsMutableState When calling deleteMessageFromThread Should update threads`() = runTest {
+        // given
+        val mutableState = QueryThreadsMutableState()
+        mutableState.threads.test {
+            val initialValue = awaitItem()
+            initialValue `should be equal to` emptyList()
+
+            // when
+            mutableState.upsertThreads(threadList1)
+            val updatedValue1 = awaitItem()
+            updatedValue1 `should be equal to` threadList1
+
+            mutableState.deleteMessageFromThread(threadId = "pmId1", messageId = "mId1")
+            val updatedValue2 = awaitItem()
+            val expectedThread = threadList1[0].copy(latestReplies = emptyList())
+            val expectedThreadList = listOf(expectedThread)
+            updatedValue2 `should be equal to` expectedThreadList
 
             cancelAndIgnoreRemainingEvents()
         }
