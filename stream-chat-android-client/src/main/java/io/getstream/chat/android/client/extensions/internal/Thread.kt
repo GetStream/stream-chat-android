@@ -48,7 +48,6 @@ public fun Thread.updateParent(parent: Message): Thread {
         parentMessage = parent,
         deletedAt = parent.deletedAt,
         updatedAt = parent.updatedAt ?: this.updatedAt,
-        replyCount = parent.replyCount,
     )
 }
 
@@ -63,11 +62,6 @@ public fun Thread.upsertReply(reply: Message): Thread {
     val isInsert = newReplies.size > this.latestReplies.size
     val sortedNewReplies = newReplies.sortedBy {
         it.createdAt ?: it.createdLocallyAt
-    }
-    val replyCount = if (isInsert) {
-        this.replyCount + 1
-    } else {
-        this.replyCount
     }
     val lastMessageAt = sortedNewReplies.lastOrNull()?.let { latestReply ->
         latestReply.createdAt ?: latestReply.createdLocallyAt
@@ -89,7 +83,6 @@ public fun Thread.upsertReply(reply: Message): Thread {
         this.read
     }
     return this.copy(
-        replyCount = replyCount,
         lastMessageAt = lastMessageAt ?: this.lastMessageAt,
         updatedAt = lastMessageAt ?: this.updatedAt,
         participantCount = participantCount,
@@ -127,7 +120,6 @@ public fun Thread.markAsReadByUser(threadInfo: ThreadInfo, user: User, createdAt
         lastMessageAt = threadInfo.lastMessageAt ?: this.lastMessageAt,
         parentMessage = threadInfo.parentMessage ?: this.parentMessage,
         participantCount = threadInfo.participantCount,
-        replyCount = threadInfo.replyCount,
         title = threadInfo.title,
         updatedAt = threadInfo.updatedAt,
         read = updatedRead,

@@ -62,10 +62,9 @@ internal class QueryThreadsLogicTest {
             cid = "messaging:123",
             channel = null,
             parentMessageId = "mId1",
-            parentMessage = Message(id = "mId1", cid = "messaging:123", text = "Thread parent"),
+            parentMessage = Message(id = "mId1", cid = "messaging:123", text = "Thread parent", replyCount = 1),
             createdByUserId = "usrId1",
             createdBy = null,
-            replyCount = 1,
             participantCount = 2,
             threadParticipants = listOf(
                 ThreadParticipant(User(id = "usrId1")),

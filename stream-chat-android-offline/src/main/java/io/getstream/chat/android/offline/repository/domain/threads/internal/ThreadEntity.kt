@@ -33,7 +33,6 @@ internal class ThreadEntity(
     val activeParticipantCount: Int,
     val participantCount: Int,
     val threadParticipantIds: List<String>,
-    val replyCount: Int,
     val lastMessageAt: Date,
     val createdAt: Date,
     val updatedAt: Date,

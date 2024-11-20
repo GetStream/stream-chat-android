@@ -50,10 +50,10 @@ internal class QueryThreadsStateLogicTest {
                 id = "mId1",
                 cid = "messaging:123",
                 text = "Thread parent",
+                replyCount = 1,
             ),
             createdByUserId = "usrId1",
             createdBy = null,
-            replyCount = 1,
             participantCount = 2,
             threadParticipants = listOf(
                 ThreadParticipant(User(id = "usrId1")),
@@ -368,7 +368,6 @@ internal class QueryThreadsStateLogicTest {
             parentMessage = parent,
             deletedAt = parent.deletedAt,
             updatedAt = parent.updatedAt ?: threadList[0].updatedAt,
-            replyCount = parent.replyCount,
         )
         val expectedUpdatedThreadList = listOf(expectedUpdatedThread)
         updated `should be equal to` true
@@ -451,7 +450,6 @@ internal class QueryThreadsStateLogicTest {
         // then
         val expectedUpdatedThread = threadList[0].copy(
             latestReplies = threadList[0].latestReplies + listOf(reply),
-            replyCount = 2,
             participantCount = 3,
             threadParticipants = threadList[0].threadParticipants + listOf(ThreadParticipant(User("usrId3"))),
             read = threadList[0].read.map { read ->
@@ -480,7 +478,6 @@ internal class QueryThreadsStateLogicTest {
         // then
         val expectedUpdatedThread = threadList[0].copy(
             latestReplies = threadList[0].latestReplies + listOf(reply),
-            replyCount = 2,
             read = threadList[0].read.map { read ->
                 if (read.user.id == "usrId2") {
                     read
@@ -555,7 +552,6 @@ internal class QueryThreadsStateLogicTest {
             lastMessageAt = threadInfo.lastMessageAt ?: threadList[0].lastMessageAt,
             parentMessage = threadInfo.parentMessage ?: threadList[0].parentMessage,
             participantCount = threadInfo.participantCount,
-            replyCount = threadInfo.replyCount,
             title = threadInfo.title,
             updatedAt = threadInfo.updatedAt,
             read = threadList[0].read.map { read ->

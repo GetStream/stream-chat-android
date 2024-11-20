@@ -274,7 +274,6 @@ private fun ThreadItemPreview() {
                 ),
                 createdByUserId = "uid2",
                 createdBy = user2,
-                replyCount = 3,
                 participantCount = 2,
                 threadParticipants = listOf(
                     ThreadParticipant(user1),

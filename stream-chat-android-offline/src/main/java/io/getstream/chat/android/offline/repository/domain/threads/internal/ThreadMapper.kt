@@ -35,7 +35,6 @@ internal fun Thread.toEntity() = ThreadEntity(
     activeParticipantCount = activeParticipantCount,
     participantCount = participantCount,
     threadParticipantIds = threadParticipants.map { it.user.id },
-    replyCount = replyCount,
     lastMessageAt = lastMessageAt,
     createdAt = createdAt,
     updatedAt = updatedAt,
@@ -64,7 +63,6 @@ internal suspend fun ThreadEntity.toModel(
     threadParticipants = threadParticipantIds.map { userId ->
         ThreadParticipant(user = getUser(userId))
     },
-    replyCount = replyCount,
     lastMessageAt = lastMessageAt,
     createdAt = createdAt,
     updatedAt = updatedAt,

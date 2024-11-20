@@ -42,7 +42,6 @@ internal class QueryThreadsMutableStateTest {
             parentMessage = Message(),
             createdByUserId = "usrId1",
             createdBy = null,
-            replyCount = 1,
             participantCount = 2,
             threadParticipants = listOf(
                 ThreadParticipant(User("usrId1")),
@@ -67,7 +66,6 @@ internal class QueryThreadsMutableStateTest {
             parentMessage = Message(),
             createdByUserId = "usrId1",
             createdBy = null,
-            replyCount = 1,
             participantCount = 2,
             threadParticipants = listOf(
                 ThreadParticipant(User("usrId1")),

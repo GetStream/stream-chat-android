@@ -33,7 +33,6 @@ internal fun DownstreamThreadDto.toDomain(currentUserId: UserId?): Thread =
         parentMessage = parent_message.toDomain(currentUserId),
         createdByUserId = created_by_user_id,
         createdBy = created_by?.toDomain(currentUserId),
-        replyCount = reply_count,
         participantCount = participant_count,
         threadParticipants = thread_participants.orEmpty().map { it.toDomain(currentUserId) },
         lastMessageAt = last_message_at,
