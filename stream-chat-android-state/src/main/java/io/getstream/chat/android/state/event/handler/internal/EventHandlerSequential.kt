@@ -714,8 +714,8 @@ internal class EventHandlerSequential(
                         ?.updateReads(event.toChannelUserRead())
                         ?.let(batch::addChannel)
                     // Update corresponding thread if event was received for marking a thread as unread
-                    if (event.lastReadMessageId == null) {
-                        threadFromPendingUpdateOrRepo(batch, event.firstUnreadMessageId)
+                    event.threadId?.let { threadId ->
+                        threadFromPendingUpdateOrRepo(batch, threadId)
                             ?.markAsUnreadByUser(event.user, event.createdAt)
                             ?.let(batch::addThread)
                     }

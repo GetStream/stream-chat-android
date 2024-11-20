@@ -348,6 +348,7 @@ internal class QueryThreadsLogicTest {
             lastReadMessageId = "mId1",
             lastReadMessageAt = Date(),
             firstUnreadMessageId = "mId2",
+            threadId = null,
             unreadMessages = 1,
         )
         val stateLogic = mock<QueryThreadsStateLogic>()
@@ -374,6 +375,7 @@ internal class QueryThreadsLogicTest {
             lastReadMessageId = null,
             lastReadMessageAt = Date(),
             firstUnreadMessageId = "mId1",
+            threadId = "mId1",
             unreadMessages = 1,
         )
         val stateLogic = mock<QueryThreadsStateLogic>()
@@ -383,7 +385,7 @@ internal class QueryThreadsLogicTest {
         // when
         logic.handleEvents(listOf(event))
         // then
-        verify(stateLogic, times(1)).markThreadAsUnreadByUser(event.firstUnreadMessageId, event.user, event.createdAt)
+        verify(stateLogic, times(1)).markThreadAsUnreadByUser(event.threadId!!, event.user, event.createdAt)
     }
 
     @Test

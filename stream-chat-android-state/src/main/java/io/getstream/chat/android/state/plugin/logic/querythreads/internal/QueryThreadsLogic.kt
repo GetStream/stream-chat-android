@@ -219,12 +219,8 @@ internal class QueryThreadsLogic(
      * @param event The [NotificationMarkUnreadEvent] informing about the read state change.
      */
     private fun markThreadAsUnread(event: NotificationMarkUnreadEvent) {
-        // At the moment, this event does not return the thread id,
-        // so this is the only way to identify that this event is related to a thread
-        val isUnreadThread = event.lastReadMessageId == null
-        if (isUnreadThread) {
-            stateLogic.markThreadAsUnreadByUser(event.firstUnreadMessageId, event.user, event.createdAt)
-        }
+        val threadId = event.threadId ?: return
+        stateLogic.markThreadAsUnreadByUser(threadId, event.user, event.createdAt)
     }
 
     /**
