@@ -31,7 +31,6 @@ import java.util.Date
  * @param createdByUserId The ID of the [User] which created the thread.
  * @param createdBy The [User] which created the thread. (Note: This object is not always delivered, sometimes we only
  * receive the ID of the user - [createdByUserId]).
- * @param replyCount The number of replies in the thread.
  * @param participantCount The number of participants in the thread.
  * @param threadParticipants The list of participants in the thread.
  * @param lastMessageAt Date of the last message in the thread.
@@ -51,7 +50,6 @@ public data class Thread(
     val parentMessage: Message,
     val createdByUserId: String,
     val createdBy: User?,
-    val replyCount: Int,
     val participantCount: Int,
     val threadParticipants: List<ThreadParticipant>,
     val lastMessageAt: Date,
@@ -61,4 +59,11 @@ public data class Thread(
     val title: String,
     val latestReplies: List<Message>,
     val read: List<ChannelUserRead>,
-)
+) {
+
+    /**
+     * The number of replies in the thread (replies to the parent message).
+     */
+    val replyCount: Int
+        get() = parentMessage.replyCount
+}

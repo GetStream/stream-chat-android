@@ -231,7 +231,7 @@ internal fun DefaultLatestReplyContent(reply: Message) {
                 )
                 Timestamp(
                     modifier = Modifier.padding(start = 8.dp),
-                    date = reply.updatedAt,
+                    date = reply.updatedAt ?: reply.createdAt ?: reply.createdLocallyAt,
                 )
             }
         }
@@ -274,7 +274,6 @@ private fun ThreadItemPreview() {
                 ),
                 createdByUserId = "uid2",
                 createdBy = user2,
-                replyCount = 3,
                 participantCount = 2,
                 threadParticipants = listOf(
                     ThreadParticipant(user1),

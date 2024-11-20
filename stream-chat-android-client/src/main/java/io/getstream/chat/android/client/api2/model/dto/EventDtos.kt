@@ -287,6 +287,7 @@ internal data class NotificationMarkUnreadEventDto(
     val unread_messages: Int,
     val total_unread_count: Int,
     val unread_channels: Int,
+    val thread_id: String? = null,
     val unread_threads: Int = 0,
 ) : ChatEventDto()
 

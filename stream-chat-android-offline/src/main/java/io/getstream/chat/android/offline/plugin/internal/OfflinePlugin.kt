@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.plugin.listeners.GetMessageListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
+import io.getstream.chat.android.client.plugin.listeners.QueryThreadsListener
 import io.getstream.chat.android.client.plugin.listeners.SendAttachmentListener
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
@@ -74,6 +75,7 @@ internal class OfflinePlugin(
     private val deleteChannelListener: DeleteChannelListener,
     private val getMessageListener: GetMessageListener,
     private val fetchCurrentUserListener: FetchCurrentUserListener,
+    private val queryThreadsListener: QueryThreadsListener,
     private val provideDependency: (KClass<*>) -> Any? = { null },
 ) : Plugin,
     QueryChannelListener by queryChannelListener,
@@ -90,7 +92,8 @@ internal class OfflinePlugin(
     DeleteChannelListener by deleteChannelListener,
     SendAttachmentListener by sendAttachmentListener,
     GetMessageListener by getMessageListener,
-    FetchCurrentUserListener by fetchCurrentUserListener {
+    FetchCurrentUserListener by fetchCurrentUserListener,
+    QueryThreadsListener by queryThreadsListener {
 
     override fun onUserSet(user: User) {
         /* No-Op */

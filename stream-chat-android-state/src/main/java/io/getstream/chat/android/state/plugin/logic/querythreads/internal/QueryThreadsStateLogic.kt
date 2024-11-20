@@ -16,11 +16,13 @@
 
 package io.getstream.chat.android.state.plugin.logic.querythreads.internal
 
-import io.getstream.chat.android.models.ChannelUserRead
+import io.getstream.chat.android.client.extensions.internal.markAsReadByUser
+import io.getstream.chat.android.client.extensions.internal.markAsUnreadByUser
+import io.getstream.chat.android.client.extensions.internal.updateParent
+import io.getstream.chat.android.client.extensions.internal.upsertReply
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
-import io.getstream.chat.android.models.ThreadParticipant
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.state.querythreads.internal.QueryThreadsMutableState
 import java.util.Date
@@ -73,6 +75,14 @@ internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMuta
         mutableState.setThreads(threads)
 
     /**
+     * Inserts all [Thread]s that aren't already loaded into the [mutableState].
+     *
+     * @param threads The batch of [Thread]s to insert (if they don't already exist).
+     */
+    internal fun insertThreadsIfAbsent(threads: List<Thread>) =
+        mutableState.insertThreadsIfAbsent(threads)
+
+    /**
      * Upsert a list of threads in the [mutableState].
      *
      * @param threads The threads to upsert.
@@ -81,12 +91,23 @@ internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMuta
         mutableState.upsertThreads(threads)
 
     /**
+     * Clears all [Thread]s in the [mutableState].
+     */
+    internal fun clearThreads() =
+        mutableState.clearThreads()
+
+    /**
      * Updates the identifier for the next page of threads in the [mutableState].
      *
      * @param next The next page identifier.
      */
     internal fun setNext(next: String?) =
         mutableState.setNext(next)
+
+    /**
+     * Retrieves the current unseen thread IDs from the [mutableState].
+     */
+    internal fun getUnseenThreadIds() = mutableState.unseenThreadIds.value
 
     /**
      * Adds a new thread to the set of unseen thread IDs in the [mutableState].
@@ -134,23 +155,10 @@ internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMuta
      * @return true if matching parent message was found and was updated, false otherwise.
      */
     internal fun updateParent(parent: Message): Boolean {
-        val oldThreads = getThreads()
-        var threadFound = false
-        val newThreads = oldThreads.map {
-            if (it.parentMessageId == parent.id) {
-                threadFound = true
-                it.copy(
-                    parentMessage = parent,
-                    deletedAt = parent.deletedAt,
-                    updatedAt = parent.updatedAt ?: it.updatedAt,
-                    replyCount = parent.replyCount,
-                )
-            } else {
-                it
-            }
-        }
-        mutableState.setThreads(newThreads)
-        return threadFound
+        val thread = mutableState.threadMap[parent.id] ?: return false
+        val updatedThread = thread.updateParent(parent)
+        mutableState.upsertThreads(listOf(updatedThread))
+        return true
     }
 
     /**
@@ -159,16 +167,9 @@ internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMuta
      * @param reply The reply to upsert.
      */
     internal fun upsertReply(reply: Message) {
-        if (reply.parentId == null) return
-        val oldThreads = getThreads()
-        val newThreads = oldThreads.map { thread ->
-            if (thread.parentMessageId == reply.parentId) {
-                upsertReplyInThread(thread, reply)
-            } else {
-                thread
-            }
-        }
-        mutableState.setThreads(newThreads)
+        val thread = reply.parentId?.let { threadId -> mutableState.threadMap[threadId] } ?: return
+        val updatedThread = thread.upsertReply(reply)
+        mutableState.upsertThreads(listOf(updatedThread))
     }
 
     /**
@@ -179,35 +180,9 @@ internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMuta
      * @param createdAt The [Date] of the 'mark read' event.
      */
     internal fun markThreadAsReadByUser(threadInfo: ThreadInfo, user: User, createdAt: Date) {
-        val updatedThreads = getThreads().map { thread ->
-            if (threadInfo.parentMessageId == thread.parentMessageId) {
-                val updatedRead = thread.read.map { read ->
-                    if (read.user.id == user.id) {
-                        read.copy(
-                            user = user,
-                            unreadMessages = 0,
-                            lastReceivedEventDate = createdAt,
-                        )
-                    } else {
-                        read
-                    }
-                }
-                thread.copy(
-                    activeParticipantCount = threadInfo.activeParticipantCount,
-                    deletedAt = threadInfo.deletedAt,
-                    lastMessageAt = threadInfo.lastMessageAt ?: thread.lastMessageAt,
-                    parentMessage = threadInfo.parentMessage ?: thread.parentMessage,
-                    participantCount = threadInfo.participantCount,
-                    replyCount = threadInfo.replyCount,
-                    title = threadInfo.title,
-                    updatedAt = threadInfo.updatedAt,
-                    read = updatedRead,
-                )
-            } else {
-                thread
-            }
-        }
-        setThreads(updatedThreads)
+        val thread = mutableState.threadMap[threadInfo.parentMessageId] ?: return
+        val updatedThread = thread.markAsReadByUser(threadInfo, user, createdAt)
+        mutableState.upsertThreads(listOf(updatedThread))
     }
 
     /**
@@ -218,103 +193,7 @@ internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMuta
      */
     internal fun markThreadAsUnreadByUser(threadId: String, user: User, createdAt: Date) {
         val thread = mutableState.threadMap[threadId] ?: return
-        val updatedRead = thread.read.map { read ->
-            if (read.user.id == user.id) {
-                read.copy(
-                    user = user,
-                    // Update this value to what the backend returns (when implemented)
-                    unreadMessages = read.unreadMessages + 1,
-                    lastReceivedEventDate = createdAt,
-                )
-            } else {
-                read
-            }
-        }
-        val updatedThread = thread.copy(read = updatedRead)
+        val updatedThread = thread.markAsUnreadByUser(user, createdAt)
         mutableState.upsertThreads(listOf(updatedThread))
-    }
-
-    private fun upsertReplyInThread(thread: Thread, reply: Message): Thread {
-        val newReplies = upsertMessageInList(reply, thread.latestReplies)
-        val isInsert = newReplies.size > thread.latestReplies.size
-        val sortedNewReplies = newReplies.sortedBy {
-            it.createdAt ?: it.createdLocallyAt
-        }
-        val replyCount = if (isInsert) {
-            thread.replyCount + 1
-        } else {
-            thread.replyCount
-        }
-        val lastMessageAt = sortedNewReplies.lastOrNull()?.let { latestReply ->
-            latestReply.createdAt ?: latestReply.createdLocallyAt
-        }
-        // The new message could be from a new thread participant
-        val threadParticipants = if (isInsert) {
-            upsertThreadParticipantInList(
-                newParticipant = ThreadParticipant(user = reply.user),
-                participants = thread.threadParticipants,
-            )
-        } else {
-            thread.threadParticipants
-        }
-        val participantCount = threadParticipants.size
-        // Update read counts (+1 for each non-sender of the message)
-        val read = if (isInsert) {
-            updateReadCounts(thread.read, reply)
-        } else {
-            thread.read
-        }
-        return thread.copy(
-            replyCount = replyCount,
-            lastMessageAt = lastMessageAt ?: thread.lastMessageAt,
-            updatedAt = lastMessageAt ?: thread.updatedAt,
-            participantCount = participantCount,
-            threadParticipants = threadParticipants,
-            latestReplies = sortedNewReplies,
-            read = read,
-        )
-    }
-
-    private fun upsertMessageInList(newMessage: Message, messages: List<Message>): List<Message> {
-        // Insert
-        if (messages.none { it.id == newMessage.id }) {
-            return messages + listOf(newMessage)
-        }
-        // Update
-        return messages.map { message ->
-            if (message.id == newMessage.id) {
-                newMessage
-            } else {
-                message
-            }
-        }
-    }
-
-    private fun upsertThreadParticipantInList(
-        newParticipant: ThreadParticipant,
-        participants: List<ThreadParticipant>,
-    ): List<ThreadParticipant> {
-        // Insert
-        if (participants.none { it.getUserId() == newParticipant.getUserId() }) {
-            return participants + listOf(newParticipant)
-        }
-        // Update
-        return participants.map { participant ->
-            if (participant.getUserId() == newParticipant.getUserId()) {
-                newParticipant
-            } else {
-                participant
-            }
-        }
-    }
-
-    private fun updateReadCounts(read: List<ChannelUserRead>, reply: Message): List<ChannelUserRead> {
-        return read.map { userRead ->
-            if (userRead.user.id != reply.user.id) {
-                userRead.copy(unreadMessages = userRead.unreadMessages + 1)
-            } else {
-                userRead
-            }
-        }
     }
 }

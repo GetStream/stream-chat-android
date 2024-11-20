@@ -34,6 +34,7 @@ import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.Thre
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsDatabaseLogic
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsStateLogic
+import io.getstream.chat.android.state.plugin.logic.querythreads.internal.QueryThreadsDatabaseLogic
 import io.getstream.chat.android.state.plugin.logic.querythreads.internal.QueryThreadsLogic
 import io.getstream.chat.android.state.plugin.logic.querythreads.internal.QueryThreadsStateLogic
 import io.getstream.chat.android.state.plugin.state.StateRegistry
@@ -73,6 +74,9 @@ internal class LogicRegistry internal constructor(
     private val queryThreads: QueryThreadsLogic = QueryThreadsLogic(
         stateLogic = QueryThreadsStateLogic(
             mutableState = stateRegistry.mutableQueryThreads(),
+        ),
+        databaseLogic = QueryThreadsDatabaseLogic(
+            repository = repos,
         ),
     )
     private val threads: ConcurrentHashMap<String, ThreadLogic> = ConcurrentHashMap()

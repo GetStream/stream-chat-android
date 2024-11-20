@@ -44,6 +44,7 @@ import io.getstream.chat.android.offline.plugin.listener.internal.GetMessageList
 import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryChannelListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryMembersListenerDatabase
+import io.getstream.chat.android.offline.plugin.listener.internal.QueryThreadsListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.SendAttachmentsListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.SendMessageListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.SendReactionListenerDatabase
@@ -183,6 +184,10 @@ public class StreamOfflinePluginFactory @JvmOverloads constructor(
             userRepository = repositoryFacade,
         )
 
+        val queryThreadsListener = QueryThreadsListenerDatabase(
+            threadsRepository = repositoryFacade,
+        )
+
         return OfflinePlugin(
             activeUser = user,
             queryChannelListener = queryChannelListener,
@@ -200,6 +205,7 @@ public class StreamOfflinePluginFactory @JvmOverloads constructor(
             deleteChannelListener = deleteChannelListener,
             getMessageListener = getMessageListener,
             fetchCurrentUserListener = fetchCurrentUserListener,
+            queryThreadsListener = queryThreadsListener,
         )
     }
 

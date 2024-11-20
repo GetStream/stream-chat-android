@@ -516,6 +516,7 @@ private fun NotificationMarkUnreadEventDto.toDomain(currentUserId: UserId?): Not
         lastReadMessageId = last_read_message_id,
         lastReadMessageAt = last_read_at.date,
         unreadMessages = unread_messages,
+        threadId = thread_id,
         unreadThreads = unread_threads,
     )
 }

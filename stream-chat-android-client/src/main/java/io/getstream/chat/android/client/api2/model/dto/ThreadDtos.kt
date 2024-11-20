@@ -30,7 +30,6 @@ import java.util.Date
  * @param parent_message: The parent message.
  * @param created_by_user_id: The ID of the user who created the thread.
  * @param created_by: The user who created the thread.
- * @param reply_count: The number of replies in the thread.
  * @param participant_count: The number of participants in the thread.
  * @param thread_participants: The participants in the thread.
  * @param last_message_at: The date of the last message in the thread.
@@ -50,7 +49,6 @@ internal data class DownstreamThreadDto(
     val parent_message: DownstreamMessageDto,
     val created_by_user_id: String,
     val created_by: DownstreamUserDto?,
-    val reply_count: Int,
     val participant_count: Int,
     val thread_participants: List<DownstreamThreadParticipantDto>?,
     val last_message_at: Date,
@@ -77,7 +75,6 @@ internal data class DownstreamThreadDto(
  * @param parent_message_id: The parent message ID.
  * @param participant_count: The number of participants in the thread.
  * @param reply_count: The number of replies in the thread.
- * @param thread_participants: The participants in the thread.
  * @param title: The title of the thread.
  * @param updated_at: The date when the thread was updated.
  */
