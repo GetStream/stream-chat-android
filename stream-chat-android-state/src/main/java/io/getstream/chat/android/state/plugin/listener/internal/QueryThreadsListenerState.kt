@@ -24,21 +24,21 @@ import io.getstream.result.Result
 
 /**
  * [QueryThreadsListener] implementation for the [StatePlugin].
- * Ensures that the "Query Threads" state is properly populated by using the [LogicRegistry.queryThreads].
+ * Ensures that the "Query Threads" state is properly populated by using the [LogicRegistry.threads].
  *
  * @param logic The [LogicRegistry] providing the business logic.
  */
 internal class QueryThreadsListenerState(private val logic: LogicRegistry) : QueryThreadsListener {
 
     override suspend fun onQueryThreadsPrecondition(request: QueryThreadsRequest): Result<Unit> {
-        return logic.queryThreads().onQueryThreadsPrecondition(request)
+        return logic.threads().onQueryThreadsPrecondition(request)
     }
 
     override suspend fun onQueryThreadsRequest(request: QueryThreadsRequest) {
-        logic.queryThreads().onQueryThreadsRequest(request)
+        logic.threads().onQueryThreadsRequest(request)
     }
 
     override suspend fun onQueryThreadsResult(result: Result<QueryThreadsResult>, request: QueryThreadsRequest) {
-        logic.queryThreads().onQueryThreadsResult(result, request)
+        logic.threads().onQueryThreadsResult(result, request)
     }
 }

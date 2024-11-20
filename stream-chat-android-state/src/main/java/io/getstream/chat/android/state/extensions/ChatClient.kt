@@ -154,7 +154,6 @@ public fun ChatClient.watchChannelAsState(
  * @param request The [QueryThreadsRequest] used to perform the query threads operation.
  * @return A [StateFlow] emitting changes in the [QueryThreadsState].
  */
-@InternalStreamChatApi
 public fun ChatClient.queryThreadsAsState(
     request: QueryThreadsRequest,
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
@@ -371,6 +370,7 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
                 try {
                     require(message.isEphemeral()) { "Only ephemeral message can be canceled" }
                     logic.channelFromMessage(message)?.deleteMessage(message)
+                    logic.threads().deleteMessage(message)
                     logic.threadFromMessage(message)?.removeLocalMessage(message)
                     repositoryFacade.deleteChannelMessage(message)
 

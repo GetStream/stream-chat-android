@@ -29,13 +29,13 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.SearchLogic
-import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.QueryThreadsLogic
-import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.QueryThreadsStateLogic
 import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.ThreadStateLogic
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsDatabaseLogic
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsLogic
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsStateLogic
+import io.getstream.chat.android.state.plugin.logic.querythreads.internal.QueryThreadsLogic
+import io.getstream.chat.android.state.plugin.logic.querythreads.internal.QueryThreadsStateLogic
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.toMutableState
@@ -214,7 +214,7 @@ internal class LogicRegistry internal constructor(
     /**
      * Provides the [QueryThreadsLogic] handling the business logic and state management related to thread queries.
      */
-    fun queryThreads(): QueryThreadsLogic = queryThreads
+    fun threads(): QueryThreadsLogic = queryThreads
 
     /** Returns [ThreadLogic] of thread replies with parent message that has id equal to [messageId]. */
     fun thread(messageId: String): ThreadLogic {

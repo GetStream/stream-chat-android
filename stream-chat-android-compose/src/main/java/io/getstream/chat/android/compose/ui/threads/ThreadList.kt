@@ -54,6 +54,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadListViewModel
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.state.threads.ThreadListState
 
 /**
  * Composable rendering a paginated list of threads.
@@ -79,7 +80,7 @@ import io.getstream.chat.android.models.User
  * Override this to provide a custom loading component shown during the loading of more items.
  */
 @Composable
-internal fun ThreadList(
+public fun ThreadList(
     viewModel: ThreadListViewModel,
     modifier: Modifier = Modifier,
     currentUser: User? = ChatClient.instance().getCurrentUser(),
@@ -103,6 +104,67 @@ internal fun ThreadList(
     },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    ThreadList(
+        state = state,
+        modifier = modifier,
+        currentUser = currentUser,
+        onUnreadThreadsBannerClick = onUnreadThreadsBannerClick,
+        onThreadClick = onThreadClick,
+        onLoadMore = onLoadMore,
+        unreadThreadsBanner = unreadThreadsBanner,
+        itemContent = itemContent,
+        emptyContent = emptyContent,
+        loadingContent = loadingContent,
+        loadingMoreContent = loadingMoreContent,
+    )
+}
+
+/**
+ * Composable rendering a paginated list of threads.
+ * Optionally, it renders a banner informing about new threads/thread messages outside of the loaded pages of threads.
+ *
+ * @param state The [ThreadListState] holding the current thread list state.
+ * @param modifier [Modifier] instance for general styling.
+ * @param currentUser The currently logged [User], used for formatting the message in the thread preview.
+ * @param onUnreadThreadsBannerClick Action invoked when the user clicks on the "Unread threads" banner.
+ * @param onThreadClick Action invoked when the usr clicks on a thread item in the list.
+ * @param onLoadMore Action invoked when the current thread page was scrolled to the end, and a next page should be
+ * loaded.
+ * @param unreadThreadsBanner Composable rendering the "Unread threads" banner on the top of the list. Override it to
+ * provide a custom component to be rendered for displaying the number of new unread threads.
+ * @param itemContent Composable rendering each [Thread] item in the list. Override this to provide a custom component
+ * for rendering the items.
+ * @param emptyContent Composable shown when there are no threads to display. Override this to provide custom component
+ * for rendering the empty state.
+ * @param loadingContent Composable shown during the initial loading of the threads. Override this to provide a custom
+ * initial loading state.
+ * @param loadingMoreContent Composable shown at the bottom of the list during the loading of more threads (pagination).
+ * Override this to provide a custom loading component shown during the loading of more items.
+ */
+@Composable
+public fun ThreadList(
+    state: ThreadListState,
+    modifier: Modifier = Modifier,
+    currentUser: User? = ChatClient.instance().getCurrentUser(),
+    onUnreadThreadsBannerClick: () -> Unit,
+    onThreadClick: (Thread) -> Unit,
+    onLoadMore: () -> Unit,
+    unreadThreadsBanner: @Composable (Int) -> Unit = {
+        DefaultUnreadThreadsBanner(it, onClick = onUnreadThreadsBannerClick)
+    },
+    itemContent: @Composable (Thread) -> Unit = {
+        DefaultThreadItem(it, currentUser, onThreadClick)
+    },
+    emptyContent: @Composable () -> Unit = {
+        DefaultThreadListEmptyContent(modifier)
+    },
+    loadingContent: @Composable () -> Unit = {
+        DefaultThreadListLoadingContent(modifier)
+    },
+    loadingMoreContent: @Composable () -> Unit = {
+        DefaultThreadListLoadingMoreContent()
+    },
+) {
     Scaffold(
         topBar = {
             unreadThreadsBanner(state.unseenThreadsCount)
@@ -222,7 +284,7 @@ internal fun DefaultThreadItem(
 @Composable
 internal fun DefaultThreadListEmptyContent(modifier: Modifier = Modifier) {
     Column(
-        modifier = modifier.background(ChatTheme.colors.appBackground),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {

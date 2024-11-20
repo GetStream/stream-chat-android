@@ -26,6 +26,7 @@ import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.state.plugin.listener.internal.SendReactionListenerState
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.state.plugin.logic.querythreads.internal.QueryThreadsLogic
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -71,9 +72,13 @@ internal class SendReactionListenerStateTest {
     private val channelLogic: ChannelLogic = mock {
         on(it.getMessage(any())) doReturn defaultMessage
     }
+    private val threadsLogic: QueryThreadsLogic = mock {
+        on(it.getMessage(any())) doReturn defaultMessage
+    }
 
     private val logicRegistry: LogicRegistry = mock {
         on(it.channelFromMessageId(any())) doReturn channelLogic
+        on(it.threads()) doReturn threadsLogic
     }
 
     private val sendReactionListenerState = SendReactionListenerState(logicRegistry, clientState)
@@ -95,6 +100,15 @@ internal class SendReactionListenerStateTest {
                 }
             },
         )
+        verify(threadsLogic).upsertMessage(
+            argThat { message ->
+                message.latestReactions.any { reaction ->
+                    reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.IN_PROGRESS
+                } && message.ownReactions.any { reaction ->
+                    reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.IN_PROGRESS
+                }
+            },
+        )
     }
 
     @Test
@@ -108,6 +122,7 @@ internal class SendReactionListenerStateTest {
             )
 
             whenever(channelLogic.getMessage(any())) doReturn testMessage
+            whenever(threadsLogic.getMessage(any())) doReturn testMessage
 
             sendReactionListenerState.onSendReactionResult(
                 randomCID(),
@@ -118,6 +133,15 @@ internal class SendReactionListenerStateTest {
             )
 
             verify(channelLogic).upsertMessage(
+                argThat { message ->
+                    message.latestReactions.any { reaction ->
+                        reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.COMPLETED
+                    } && message.ownReactions.any { reaction ->
+                        reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.COMPLETED
+                    }
+                },
+            )
+            verify(threadsLogic).upsertMessage(
                 argThat { message ->
                     message.latestReactions.any { reaction ->
                         reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.COMPLETED

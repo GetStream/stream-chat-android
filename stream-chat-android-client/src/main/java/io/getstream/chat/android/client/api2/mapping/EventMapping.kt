@@ -355,6 +355,7 @@ private fun MessageReadEventDto.toDomain(currentUserId: UserId?): MessageReadEve
         cid = cid,
         channelType = channel_type,
         channelId = channel_id,
+        thread = thread?.toDomain(currentUserId),
     )
 }
 
@@ -493,6 +494,10 @@ private fun NotificationMarkReadEventDto.toDomain(currentUserId: UserId?): Notif
         channelId = channel_id,
         totalUnreadCount = total_unread_count,
         unreadChannels = unread_channels,
+        threadId = thread_id,
+        thread = thread?.toDomain(currentUserId),
+        unreadThreads = unread_threads,
+        unreadThreadMessages = unread_thread_messages,
     )
 }
 
@@ -511,6 +516,7 @@ private fun NotificationMarkUnreadEventDto.toDomain(currentUserId: UserId?): Not
         lastReadMessageId = last_read_message_id,
         lastReadMessageAt = last_read_at.date,
         unreadMessages = unread_messages,
+        unreadThreads = unread_threads,
     )
 }
 

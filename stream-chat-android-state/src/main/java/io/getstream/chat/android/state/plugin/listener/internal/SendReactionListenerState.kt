@@ -68,6 +68,11 @@ internal class SendReactionListenerState(
             ?.addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
         cachedChannelMessage?.let(channelLogic::upsertMessage)
 
+        val threadsLogic = logic.threads()
+        val cachedThreadsMessage = threadsLogic.getMessage(reaction.messageId)
+            ?.addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
+        cachedThreadsMessage?.let(threadsLogic::upsertMessage)
+
         val threadLogic = logic.threadFromMessageId(reaction.messageId)
         val cachedThreadMessage = threadLogic?.getMessage(reaction.messageId)
             ?.addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
@@ -91,6 +96,11 @@ internal class SendReactionListenerState(
                 ),
             )
         }
+
+        val threadsLogic = logic.threads()
+        val cachedThreadsMessage = threadsLogic.getMessage(reaction.messageId)
+            ?.updateReactionSyncStatus(originReaction = reaction, result = result)
+        cachedThreadsMessage?.let(threadsLogic::upsertMessage)
 
         val threadLogic = logic.threadFromMessageId(reaction.messageId)
         threadLogic?.getMessage(reaction.messageId)?.let { message ->

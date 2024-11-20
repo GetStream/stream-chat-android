@@ -21,9 +21,9 @@ import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.state.plugin.logic.querythreads.internal.QueryThreadsLogic
 import io.getstream.result.Error
 import io.getstream.result.Result
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -32,12 +32,13 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class ShuffleGiphyListenerStateTest {
 
     private val channelLogic: ChannelLogic = mock()
+    private val threadsLogic: QueryThreadsLogic = mock()
     private val logic: LogicRegistry = mock {
         on(it.channelFromMessage(any())) doReturn channelLogic
+        on(it.threads()) doReturn threadsLogic
     }
     private val shuffleGiphyListenerState = ShuffleGiphyListenerState(logic)
 
@@ -48,6 +49,7 @@ internal class ShuffleGiphyListenerStateTest {
         shuffleGiphyListenerState.onShuffleGiphyResult(randomCID(), Result.Success(testMessage))
 
         verify(channelLogic).upsertMessage(testMessage.copy(syncStatus = SyncStatus.COMPLETED))
+        verify(threadsLogic).upsertMessage(testMessage.copy(syncStatus = SyncStatus.COMPLETED))
     }
 
     @Test
@@ -55,5 +57,6 @@ internal class ShuffleGiphyListenerStateTest {
         shuffleGiphyListenerState.onShuffleGiphyResult(randomCID(), Result.Failure(Error.GenericError("")))
 
         verify(channelLogic, never()).upsertMessage(any())
+        verify(threadsLogic, never()).upsertMessage(any())
     }
 }

@@ -150,6 +150,7 @@ internal data class MessageReadEventDto(
     val cid: String,
     val channel_type: String,
     val channel_id: String,
+    val thread: DownstreamThreadInfoDto? = null,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -266,6 +267,10 @@ internal data class NotificationMarkReadEventDto(
     val channel_id: String,
     val total_unread_count: Int = 0,
     val unread_channels: Int = 0,
+    val thread_id: String? = null,
+    val thread: DownstreamThreadInfoDto? = null,
+    val unread_threads: Int? = null,
+    val unread_thread_messages: Int? = null,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -277,11 +282,12 @@ internal data class NotificationMarkUnreadEventDto(
     val channel_type: String,
     val channel_id: String,
     val first_unread_message_id: String,
-    val last_read_message_id: String,
+    val last_read_message_id: String?,
     val last_read_at: ExactDate,
     val unread_messages: Int,
     val total_unread_count: Int,
     val unread_channels: Int,
+    val unread_threads: Int = 0,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)

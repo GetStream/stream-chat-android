@@ -22,9 +22,9 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -56,6 +56,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
+import io.getstream.chat.android.models.ThreadParticipant
 import io.getstream.chat.android.models.User
 import java.util.Date
 
@@ -67,14 +68,34 @@ import java.util.Date
  * @param currentUser The currently logged [User], used for formatting the message in the thread preview.
  * @param onThreadClick Action invoked when the user clicks on the item.
  * @param modifier [Modifier] instance for general styling.
+ * @param titleContent Composable rendering the title of the thread item. Defaults to a 'thread' icon and the name of
+ * the channel in which the thread resides.
+ * @param replyToContent Composable rendering the preview of the thread parent message. Defaults to a preview of the
+ * parent message with a 'replied to:' prefix.
+ * @param unreadCountContent Composable rendering the badge indicator of unread replies in a thread. Defaults to a red
+ * circular badge with the unread count inside.
+ * @param latestReplyContent Composable rendering the preview of the latest reply in the thread. Defaults to a content
+ * composed of the reply author image, reply author name, preview of the reply text and a timestamp.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal fun ThreadItem(
+public fun ThreadItem(
     thread: Thread,
     currentUser: User?,
     onThreadClick: (Thread) -> Unit,
     modifier: Modifier = Modifier,
+    titleContent: @Composable (Channel) -> Unit = { channel ->
+        DefaultThreadTitle(channel, currentUser)
+    },
+    replyToContent: @Composable RowScope.(parentMessage: Message) -> Unit = { parentMessage ->
+        DefaultReplyToContent(parentMessage)
+    },
+    unreadCountContent: @Composable RowScope.(unreadCount: Int) -> Unit = { unreadCount ->
+        DefaultUnreadCountContent(unreadCount)
+    },
+    latestReplyContent: @Composable (reply: Message) -> Unit = { reply ->
+        DefaultLatestReplyContent(reply)
+    },
 ) {
     Column(
         modifier = modifier
@@ -87,28 +108,35 @@ internal fun ThreadItem(
             .padding(horizontal = 8.dp, vertical = 14.dp),
     ) {
         thread.channel?.let { channel ->
-            ThreadTitle(channel, currentUser)
+            titleContent(channel)
         }
         val unreadCount = unreadCountForUser(thread, currentUser)
-        ParentMessageContent(
-            parentMessage = thread.parentMessage,
-            unreadCount = unreadCount,
-        )
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            replyToContent(thread.parentMessage)
+            unreadCountContent(unreadCount)
+        }
         thread.latestReplies.lastOrNull()?.let { reply ->
-            Spacer(modifier = Modifier.height(8.dp))
-            LatestReplyContent(reply = reply)
+            latestReplyContent(reply)
         }
     }
 }
 
+/**
+ * Default representation of the thread title.
+ *
+ * @param channel The [Channel] in which the thread resides.
+ * @param currentUser The currently logged [User], used for formatting the message in the thread preview.
+ */
 @Composable
-private fun ThreadTitle(
+internal fun DefaultThreadTitle(
     channel: Channel,
     currentUser: User?,
-    modifier: Modifier = Modifier,
 ) {
     val title = ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser)
-    Row(modifier = modifier.fillMaxWidth()) {
+    Row(modifier = Modifier.fillMaxWidth()) {
         Icon(
             painter = painterResource(id = R.drawable.stream_compose_ic_thread),
             contentDescription = null,
@@ -125,38 +153,52 @@ private fun ThreadTitle(
     }
 }
 
+/**
+ * Default representation of the parent message preview in a thread.
+ *
+ * @param parentMessage The parent message of the thread.
+ */
 @Composable
-private fun ParentMessageContent(
-    parentMessage: Message,
-    unreadCount: Int,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        val prefix = stringResource(id = R.string.stream_compose_replied_to)
-        val text = formatMessage(parentMessage)
-        Text(
-            modifier = Modifier.weight(1f),
-            text = "$prefix$text",
-            fontSize = 12.sp,
-            color = ChatTheme.colors.textLowEmphasis,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            style = ChatTheme.typography.body,
+internal fun RowScope.DefaultReplyToContent(parentMessage: Message) {
+    val prefix = stringResource(id = R.string.stream_compose_replied_to)
+    val text = formatMessage(parentMessage)
+    Text(
+        modifier = Modifier.weight(1f),
+        text = "$prefix$text",
+        fontSize = 12.sp,
+        color = ChatTheme.colors.textLowEmphasis,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        style = ChatTheme.typography.body,
+    )
+}
+
+/**
+ * Default representation of the unread count badge.
+ *
+ * @param unreadCount The number of unread thread replies.
+ */
+@Composable
+internal fun RowScope.DefaultUnreadCountContent(unreadCount: Int) {
+    if (unreadCount > 0) {
+        UnreadCountIndicator(
+            unreadCount = unreadCount,
         )
-        if (unreadCount > 0) {
-            UnreadCountIndicator(
-                unreadCount = unreadCount,
-            )
-        }
     }
 }
 
+/**
+ * Default representation of the latest reply content in a thread.
+ *
+ * @param reply The latest reply [Message] in the thread.
+ */
 @Composable
-private fun LatestReplyContent(reply: Message) {
-    Row(modifier = Modifier.fillMaxWidth()) {
+internal fun DefaultLatestReplyContent(reply: Message) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp),
+    ) {
         UserAvatar(
             modifier = Modifier.size(ChatTheme.dimens.channelAvatarSize),
             user = reply.user,
@@ -234,10 +276,13 @@ private fun ThreadItemPreview() {
                 createdBy = user2,
                 replyCount = 3,
                 participantCount = 2,
-                threadParticipants = listOf(user1, user2),
+                threadParticipants = listOf(
+                    ThreadParticipant(user1),
+                    ThreadParticipant(user2),
+                ),
                 lastMessageAt = Date(),
                 createdAt = Date(),
-                updatedAt = null,
+                updatedAt = Date(),
                 deletedAt = null,
                 title = "Group ride preparation and discussion",
                 latestReplies = listOf(
@@ -264,10 +309,10 @@ private fun ThreadItemPreview() {
 
 @Composable
 @Preview
-private fun ThreadTitlePreview() {
+private fun DefaultThreadTitlePreview() {
     ChatTheme {
         Surface {
-            ThreadTitle(
+            DefaultThreadTitle(
                 channel = Channel(
                     id = "messaging:123",
                     type = "messaging",
@@ -281,16 +326,25 @@ private fun ThreadTitlePreview() {
 
 @Composable
 @Preview
+private fun DefaultUnreadCountContentPreview() {
+    ChatTheme {
+        Row {
+            DefaultUnreadCountContent(unreadCount = 17)
+        }
+    }
+}
+
+@Composable
+@Preview
 private fun ThreadParentMessageContentPreview() {
     ChatTheme {
-        Surface {
+        Row {
             val parentMessage = Message(
                 id = "message1",
                 cid = "messaging:123",
                 text = "Hey everyone, who's up for a group ride this Saturday morning?",
             )
-            val unreadCount = 2
-            ParentMessageContent(parentMessage, unreadCount)
+            DefaultReplyToContent(parentMessage)
         }
     }
 }
