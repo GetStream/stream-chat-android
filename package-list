@@ -106,6 +106,8 @@ io.getstream.chat.android.compose.ui.theme
 io.getstream.chat.android.compose.ui.theme.messages.attachments
 io.getstream.chat.android.compose.ui.theme.messages.composer
 io.getstream.chat.android.compose.ui.theme.messages.composer.attachments
+io.getstream.chat.android.compose.ui.theme.messages.list
+io.getstream.chat.android.compose.ui.threads
 io.getstream.chat.android.compose.ui.util
 io.getstream.chat.android.compose.util
 io.getstream.chat.android.compose.util.extensions
@@ -113,6 +115,7 @@ io.getstream.chat.android.compose.viewmodel.channels
 io.getstream.chat.android.compose.viewmodel.mediapreview
 io.getstream.chat.android.compose.viewmodel.messages
 io.getstream.chat.android.compose.viewmodel.pinned
+io.getstream.chat.android.compose.viewmodel.threads
 module:stream-chat-android-core
 io.getstream.chat.android
 io.getstream.chat.android.client
@@ -149,6 +152,7 @@ io.getstream.chat.android.state.plugin.state
 io.getstream.chat.android.state.plugin.state.channel.thread
 io.getstream.chat.android.state.plugin.state.global
 io.getstream.chat.android.state.plugin.state.querychannels
+io.getstream.chat.android.state.plugin.state.querythreads
 io.getstream.chat.android.state.utils
 module:stream-chat-android-ui-common
 io.getstream.chat.android.ui.common
@@ -162,6 +166,7 @@ io.getstream.chat.android.ui.common.feature.messages.composer.query.formatter
 io.getstream.chat.android.ui.common.feature.messages.composer.transliteration
 io.getstream.chat.android.ui.common.feature.messages.list
 io.getstream.chat.android.ui.common.feature.pinned
+io.getstream.chat.android.ui.common.feature.threads
 io.getstream.chat.android.ui.common.helper
 io.getstream.chat.android.ui.common.helper.internal
 io.getstream.chat.android.ui.common.images
@@ -174,6 +179,7 @@ io.getstream.chat.android.ui.common.state.messages.composer
 io.getstream.chat.android.ui.common.state.messages.list
 io.getstream.chat.android.ui.common.state.messages.poll
 io.getstream.chat.android.ui.common.state.pinned
+io.getstream.chat.android.ui.common.state.threads
 io.getstream.chat.android.ui.common.utils
 io.getstream.chat.android.ui.common.utils.extensions
 io.getstream.chat.android.ui.common.utils.typing
