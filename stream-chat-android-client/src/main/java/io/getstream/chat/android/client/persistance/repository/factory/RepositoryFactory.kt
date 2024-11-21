@@ -22,7 +22,9 @@ import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
 import io.getstream.chat.android.client.persistance.repository.ReactionRepository
 import io.getstream.chat.android.client.persistance.repository.SyncStateRepository
+import io.getstream.chat.android.client.persistance.repository.ThreadsRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 
@@ -56,6 +58,19 @@ public interface RepositoryFactory {
      * Creates [QueryChannelsRepository]
      */
     public fun createQueryChannelsRepository(): QueryChannelsRepository
+
+    /**
+     * Creates [ThreadsRepository].
+     *
+     * @param getUser Function returning a [User] for a given ID.
+     * @param getMessage Function returning a [Message] for a given ID.
+     * @param getChannel Function returning a [Channel] for a given ID.
+     */
+    public fun createThreadsRepository(
+        getUser: suspend (userId: String) -> User,
+        getMessage: suspend (messageId: String) -> Message?,
+        getChannel: suspend (cid: String) -> Channel?,
+    ): ThreadsRepository
 
     /**
      * Creates [MessageRepository]

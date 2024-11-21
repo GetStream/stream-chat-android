@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.state.plugin.state.querythreads.internal
 
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.state.plugin.state.querythreads.QueryThreadsState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,11 +28,19 @@ import kotlinx.coroutines.flow.update
  */
 internal class QueryThreadsMutableState : QueryThreadsState {
 
+    private val _threadMap: LinkedHashMap<String, Thread> = linkedMapOf()
+
     private var _threads: MutableStateFlow<List<Thread>>? = MutableStateFlow(emptyList())
     private var _loading: MutableStateFlow<Boolean>? = MutableStateFlow(false)
     private var _loadingMore: MutableStateFlow<Boolean>? = MutableStateFlow(false)
     private var _next: MutableStateFlow<String?>? = MutableStateFlow(null)
     private var _unseenThreadIds: MutableStateFlow<Set<String>>? = MutableStateFlow(emptySet())
+
+    /**
+     * Exposes a read-only map of the threads.
+     */
+    val threadMap: Map<String, Thread>
+        get() = _threadMap
 
     // Note: The backing flow will always be initialized at this point
     override val threads: StateFlow<List<Thread>> = _threads!!
@@ -64,17 +73,74 @@ internal class QueryThreadsMutableState : QueryThreadsState {
      * @param threads The new threads state.
      */
     internal fun setThreads(threads: List<Thread>) {
-        _threads?.value = threads
+        _threadMap.clear()
+        upsertThreads(threads)
     }
 
     /**
-     * Append the new page of [threads] to the current list of threads.
-     *
-     * @param threads The new page of threads.
+     * Inserts all [Thread]s which are not already existing. Attempts to insert (overwrite) an existing thread will be
+     * ignored.
      */
-    internal fun appendThreads(threads: List<Thread>) {
-        val currentThreads = _threads?.value.orEmpty()
-        _threads?.value = currentThreads + threads
+    internal fun insertThreadsIfAbsent(threads: List<Thread>) {
+        threads.forEach { thread ->
+            if (!_threadMap.containsKey(thread.parentMessageId)) {
+                _threadMap[thread.parentMessageId] = thread
+            }
+        }
+        // Update the public threadList
+        _threads?.value = _threadMap.values.toList()
+    }
+
+    /**
+     * Updates/Inserts the given [List] of [Thread]s.
+     *
+     * @param threads The new batch of threads.
+     */
+    internal fun upsertThreads(threads: List<Thread>) {
+        val entries = threads.associateBy(Thread::parentMessageId)
+        _threadMap.putAll(entries)
+        // Update the public threadList
+        _threads?.value = _threadMap.values.toList()
+    }
+
+    /**
+     * Removes a thread from the state.
+     *
+     * @param threadId The Id of the [Thread] to delete.
+     */
+    internal fun deleteThread(threadId: String) {
+        _threadMap.remove(threadId)
+        // Update the public threadList
+        _threads?.value = _threadMap.values.toList()
+    }
+
+    /**
+     * Deletes a [Message] from a [Thread] in the state.
+     *
+     * @param threadId Id of the [Thread] to delete the [Message] from.
+     * @param messageId The Id of the message to delete.
+     */
+    internal fun deleteMessageFromThread(threadId: String?, messageId: String) {
+        if (threadId == null) return
+        val thread = _threadMap[threadId] ?: return
+        val index = thread.latestReplies.indexOfFirst { message -> message.id == messageId }
+        if (index > -1) {
+            val updatedMessageList = thread.latestReplies.toMutableList()
+            updatedMessageList.removeAt(index)
+            val updatedThread = thread.copy(latestReplies = updatedMessageList)
+            _threadMap[threadId] = updatedThread
+            // Update the public threadList
+            _threads?.value = _threadMap.values.toList()
+        }
+    }
+
+    /**
+     * Clears all threads from the state.
+     */
+    internal fun clearThreads() {
+        _threadMap.clear()
+        // Update the public threadList
+        _threads?.value = _threadMap.values.toList()
     }
 
     /**
@@ -110,6 +176,7 @@ internal class QueryThreadsMutableState : QueryThreadsState {
      * Clears all data from the state.
      */
     internal fun destroy() {
+        _threadMap.clear()
         _threads = null
         _loading = null
         _loadingMore = null

@@ -56,6 +56,7 @@ import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
+import io.getstream.chat.android.client.events.NotificationThreadMessageNewEvent
 import io.getstream.chat.android.client.events.PollClosedEvent
 import io.getstream.chat.android.client.events.PollDeletedEvent
 import io.getstream.chat.android.client.events.PollUpdatedEvent
@@ -74,6 +75,8 @@ import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.addMember
 import io.getstream.chat.android.client.extensions.internal.addMembership
 import io.getstream.chat.android.client.extensions.internal.enrichIfNeeded
+import io.getstream.chat.android.client.extensions.internal.markAsReadByUser
+import io.getstream.chat.android.client.extensions.internal.markAsUnreadByUser
 import io.getstream.chat.android.client.extensions.internal.mergeReactions
 import io.getstream.chat.android.client.extensions.internal.processPoll
 import io.getstream.chat.android.client.extensions.internal.removeMember
@@ -82,6 +85,7 @@ import io.getstream.chat.android.client.extensions.internal.updateMember
 import io.getstream.chat.android.client.extensions.internal.updateMemberBanned
 import io.getstream.chat.android.client.extensions.internal.updateMembership
 import io.getstream.chat.android.client.extensions.internal.updateMembershipBanned
+import io.getstream.chat.android.client.extensions.internal.updateParentOrReply
 import io.getstream.chat.android.client.extensions.internal.updateReads
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -91,6 +95,7 @@ import io.getstream.chat.android.core.internal.lazy.parameterizedLazy
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.mergeChannelFromEvent
@@ -296,6 +301,10 @@ internal class EventHandlerSequential(
             unreadThreadsCount = user.unreadThreads
         }
 
+        val modifyUnreadThreadsCount = { newValue: Int? ->
+            unreadThreadsCount = newValue ?: unreadThreadsCount
+        }
+
         val hasReadEventsCapability = parameterizedLazy<String, Boolean> { cid ->
             // can we somehow get rid of repos usage here?
             repos.hasReadEventsCapability(cid)
@@ -324,14 +333,21 @@ internal class EventHandlerSequential(
                         modifyValuesFromEvent(event)
                     }
                 }
+                is NotificationThreadMessageNewEvent -> if (batchEvent.isFromSocketConnection) {
+                    if (hasReadEventsCapability(event.cid)) {
+                        modifyUnreadThreadsCount(event.unreadThreads)
+                    }
+                }
                 is NotificationMarkReadEvent -> if (batchEvent.isFromSocketConnection) {
                     if (hasReadEventsCapability(event.cid)) {
                         modifyValuesFromEvent(event)
+                        modifyUnreadThreadsCount(event.unreadThreads)
                     }
                 }
                 is NotificationMarkUnreadEvent -> if (batchEvent.isFromSocketConnection) {
                     if (hasReadEventsCapability(event.cid)) {
                         modifyValuesFromEvent(event)
+                        modifyUnreadThreadsCount(event.unreadThreads)
                     }
                 }
                 is NewMessageEvent -> if (batchEvent.isFromSocketConnection) {
@@ -426,7 +442,7 @@ internal class EventHandlerSequential(
 
     private fun updateQueryThreadsState(batchEvent: BatchEvent) {
         logger.v { "[updateQueryThreadsState] batchEvent.size: ${batchEvent.size}" }
-        logicRegistry.queryThreads().handleEvents(batchEvent.sortedEvents)
+        logicRegistry.threads().handleEvents(batchEvent.sortedEvents)
     }
 
     private fun updateThreadState(batchEvent: BatchEvent) {
@@ -497,20 +513,28 @@ internal class EventHandlerSequential(
                         messages = channel.messages + listOf(enrichedMessage),
                     )
                     batch.addChannel(updatedChannel)
+                    // Update thread data in DB if the new message is added to a thread
+                    batch.addThreadIfExists(enrichedMessage)
                 }
                 is MessageDeletedEvent -> {
+                    val enrichedMessage = event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
                     batch.addMessageData(
                         event.createdAt,
                         event.cid,
-                        event.message.enrichWithOwnReactions(batch, currentUserId, event.user),
+                        enrichedMessage,
                     )
+                    // Update thread data in DB if deleted message is related to a thread
+                    batch.addThreadIfExists(enrichedMessage)
                 }
                 is MessageUpdatedEvent -> {
+                    val enrichedMessage = event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
                     batch.addMessageData(
                         event.createdAt,
                         event.cid,
-                        event.message.enrichWithOwnReactions(batch, currentUserId, event.user),
+                        enrichedMessage,
                     )
+                    // Update thread data in DB if updated message is related to a thread
+                    batch.addThreadIfExists(enrichedMessage)
                 }
                 is NotificationMessageNewEvent -> {
                     batch.addMessageData(event.createdAt, event.cid, event.message)
@@ -563,13 +587,19 @@ internal class EventHandlerSequential(
                 }
 
                 is ReactionNewEvent -> {
-                    batch.addMessage(event.message.enrichWithOwnReactions(batch, currentUserId, event.user))
+                    val enrichedMessage = event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
+                    batch.addMessage(enrichedMessage)
+                    batch.addThreadIfExists(enrichedMessage)
                 }
                 is ReactionDeletedEvent -> {
-                    batch.addMessage(event.message.enrichWithOwnReactions(batch, currentUserId, event.user))
+                    val enrichedMessage = event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
+                    batch.addMessage(enrichedMessage)
+                    batch.addThreadIfExists(enrichedMessage)
                 }
                 is ReactionUpdateEvent -> {
-                    batch.addMessage(event.message.enrichWithOwnReactions(batch, currentUserId, event.user))
+                    val enrichedMessage = event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
+                    batch.addMessage(enrichedMessage)
+                    batch.addThreadIfExists(enrichedMessage)
                 }
                 is ChannelUserBannedEvent -> {
                     batch.getCurrentChannel(event.cid)?.let { channel ->
@@ -662,10 +692,17 @@ internal class EventHandlerSequential(
                 }
 
                 // get the channel, update reads, write the channel
-                is MessageReadEvent ->
+                is MessageReadEvent -> {
                     batch.getCurrentChannel(event.cid)
                         ?.updateReads(event.toChannelUserRead())
                         ?.let(batch::addChannel)
+                    // Update corresponding thread if event was received for marking a thread as read
+                    event.thread?.let { threadInfo ->
+                        threadFromPendingUpdateOrRepo(batch, threadInfo.parentMessageId)
+                            ?.markAsReadByUser(threadInfo, event.user, event.createdAt)
+                            ?.let(batch::addThread)
+                    }
+                }
 
                 is NotificationMarkReadEvent -> {
                     batch.getCurrentChannel(event.cid)
@@ -676,6 +713,12 @@ internal class EventHandlerSequential(
                     batch.getCurrentChannel(event.cid)
                         ?.updateReads(event.toChannelUserRead())
                         ?.let(batch::addChannel)
+                    // Update corresponding thread if event was received for marking a thread as unread
+                    event.threadId?.let { threadId ->
+                        threadFromPendingUpdateOrRepo(batch, threadId)
+                            ?.markAsUnreadByUser(event.user, event.createdAt)
+                            ?.let(batch::addThread)
+                    }
                 }
                 is GlobalUserBannedEvent -> {
                     batch.addUser(event.user.copy(banned = true))
@@ -795,6 +838,22 @@ internal class EventHandlerSequential(
                     "has id $currentUserId. Looks like there's a problem in the user set",
             )
         }
+    }
+
+    private suspend fun EventBatchUpdate.addThreadIfExists(message: Message) {
+        threadFromMessage(this, message)?.let { thread ->
+            val updatedThread = thread.updateParentOrReply(message)
+            this.addThread(updatedThread)
+        }
+    }
+
+    private suspend fun threadFromMessage(pendingUpdate: EventBatchUpdate, message: Message): Thread? {
+        return threadFromPendingUpdateOrRepo(pendingUpdate, message.id)
+            ?: message.parentId?.let { threadFromPendingUpdateOrRepo(pendingUpdate, it) }
+    }
+
+    private suspend fun threadFromPendingUpdateOrRepo(pendingUpdate: EventBatchUpdate, threadId: String): Thread? {
+        return pendingUpdate.getCurrentThread(threadId) ?: repos.selectThread(threadId)
     }
 
     companion object {

@@ -24,6 +24,7 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.ThreadInfo
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
 import io.getstream.result.Error
@@ -278,6 +279,7 @@ public data class MessageReadEvent(
     override val cid: String,
     override val channelType: String,
     override val channelId: String,
+    val thread: ThreadInfo? = null,
 ) : CidEvent(), UserEvent
 
 /**
@@ -424,6 +426,10 @@ public data class NotificationMarkReadEvent(
     override val channelId: String,
     override val totalUnreadCount: Int = 0,
     override val unreadChannels: Int = 0,
+    val threadId: String? = null,
+    val thread: ThreadInfo? = null,
+    val unreadThreads: Int? = null,
+    val unreadThreadMessages: Int? = null,
 ) : CidEvent(), UserEvent, HasUnreadCounts
 
 /**
@@ -442,7 +448,9 @@ public data class NotificationMarkUnreadEvent(
     val unreadMessages: Int,
     val firstUnreadMessageId: String,
     val lastReadMessageAt: Date,
-    val lastReadMessageId: String,
+    val lastReadMessageId: String?,
+    val threadId: String? = null,
+    val unreadThreads: Int = 0,
 ) : CidEvent(), UserEvent, HasUnreadCounts
 
 /**
