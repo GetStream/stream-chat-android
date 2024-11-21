@@ -13,9 +13,9 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4.2.2
-      - uses: ./.github/actions/java-cache
+      - uses: ./.github/actions/setup-java
       - uses: ./.github/actions/enable-kvm
-      - uses: ./.github/actions/ruby-cache
+      - uses: ./.github/actions/setup-ruby
       - uses: ./.github/actions/gradle-cache
         with:
           key-prefix: gradle-test

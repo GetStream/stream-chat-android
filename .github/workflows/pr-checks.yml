@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
-      - uses: ./.github/actions/java-cache
+      - uses: ./.github/actions/setup-java
       - uses: ./.github/actions/gradle-cache
         with:
           key-prefix: gradle-lint
@@ -35,7 +35,7 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
-      - uses: ./.github/actions/java-cache
+      - uses: ./.github/actions/setup-java
       - uses: ./.github/actions/gradle-cache
         with:
           key-prefix: gradle-APICheck
@@ -48,7 +48,7 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
-      - uses: ./.github/actions/java-cache
+      - uses: ./.github/actions/setup-java
       - uses: ./.github/actions/gradle-cache
         with:
           key-prefix: gradle-build
@@ -61,7 +61,7 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
-      - uses: ./.github/actions/java-cache
+      - uses: ./.github/actions/setup-java
       - uses: ./.github/actions/gradle-cache
         with:
           key-prefix: gradle-test
@@ -79,5 +79,5 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4.2.2
-      - uses: ./.github/actions/ruby-cache
+      - uses: ./.github/actions/setup-ruby
       - run: bundle exec fastlane rubocop

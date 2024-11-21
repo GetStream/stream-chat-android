@@ -41,12 +41,9 @@ jobs:
         continue-on-error: true
         with:
           name: apks
-      - uses: ./.github/actions/java-cache
+      - uses: ./.github/actions/setup-java
       - uses: ./.github/actions/enable-kvm
-      - uses: ./.github/actions/ruby-cache
-      - uses: ./.github/actions/gradle-cache
-        with:
-          key-prefix: gradle-test
+      - uses: ./.github/actions/setup-ruby
       - uses: ./.github/actions/allure-launch
         with:
           allure-token: ${{ secrets.ALLURE_TOKEN }}

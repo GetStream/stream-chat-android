@@ -19,7 +19,7 @@ jobs:
         with:
           ref: release
           persist-credentials: false
-      - uses: ./.github/actions/java-cache
+      - uses: ./.github/actions/setup-java
       - name: Release build
         # assembleRelease for all modules, excluding non-library modules: samples, docs
         run: ./gradlew assembleRelease -x :stream-chat-android-ui-components-sample:assembleRelease -x :stream-chat-android-compose-sample:assembleRelease -x :stream-chat-android-docs:assembleRelease

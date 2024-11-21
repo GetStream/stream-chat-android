@@ -15,7 +15,7 @@ jobs:
         with:
           ref: develop
           token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
-      - uses: ./.github/actions/java-cache
+      - uses: ./.github/actions/setup-java
       - uses: tibdex/github-app-token@v1.7.0
         id: generate-token
         with:

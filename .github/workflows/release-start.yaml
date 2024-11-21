@@ -19,7 +19,7 @@ jobs:
         with:
           ref: develop
           persist-credentials: false
-      - uses: ./.github/actions/java-cache
+      - uses: ./.github/actions/setup-java
       - name: Minor version bump
         if: "${{ github.event.inputs.force_bump_minor_version == 'true' && github.event.inputs.skip_version_bump != 'true' }}"
         run: ./gradlew minor-bump

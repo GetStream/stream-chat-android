@@ -1,4 +1,4 @@
-name: 'Java Cache'
+name: 'Setup Java'
 description: 'Setup Java'
 runs:
   using: "composite"
