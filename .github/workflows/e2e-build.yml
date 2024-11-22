@@ -21,6 +21,7 @@ jobs:
           key-prefix: gradle-test
       - name: Build apks
         run: bundle exec fastlane build_e2e_test
+        timeout-minutes: 30
       - name: Upload apks
         uses: actions/upload-artifact@v4.4.3
         with:

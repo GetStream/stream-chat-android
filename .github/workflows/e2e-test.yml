@@ -30,7 +30,7 @@ jobs:
           - batch: 0
           - batch: 1
     env:
-      ANDROID_API_LEVEL: 35
+      ANDROID_API_LEVEL: 34
     steps:
       - name: Connect Bot
         uses: webfactory/ssh-agent@v0.9.0
@@ -49,6 +49,7 @@ jobs:
           allure-token: ${{ secrets.ALLURE_TOKEN }}
       - name: Run tests
         uses: reactivecircus/android-emulator-runner@v2
+        timeout-minutes: 45
         with:
           api-level: ${{ env.ANDROID_API_LEVEL }}
           disable-animations: true
