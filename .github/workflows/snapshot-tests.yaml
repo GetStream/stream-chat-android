@@ -38,10 +38,7 @@ jobs:
           profile: pixel
           arch : x86_64
           emulator-options: ${{ vars.EMULATOR_OPTIONS }}
-          script: |
-            ./gradlew stream-chat-android-ui-uitests:executeScreenshotTests ${{ env.RECORD_SNAPSHOTS_IF_REQUIRED }} \
-              -Pandroid.testInstrumentationRunnerArguments.filter=io.getstream.chat.android.uitests.util.SnapshotTestFilter \
-              -Dorg.gradle.jvmargs="--add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.nio.channels=ALL-UNNAMED --add-exports java.base/sun.nio.ch=ALL-UNNAMED"
+          script: ./gradlew stream-chat-android-ui-uitests:executeScreenshotTests ${{ env.RECORD_SNAPSHOTS_IF_REQUIRED }} -Pandroid.testInstrumentationRunnerArguments.filter=io.getstream.chat.android.uitests.util.SnapshotTestFilter -Dorg.gradle.jvmargs="--add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.nio.channels=ALL-UNNAMED --add-exports java.base/sun.nio.ch=ALL-UNNAMED"
 
       # - name: Upload screnshot results
       #   if: failed() && ${{ github.event.inputs.record != 'true' }}
