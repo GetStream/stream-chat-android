@@ -26,7 +26,7 @@ jobs:
           key-prefix: gradle-test
 
       - name: Enable recording
-        if: ${{ github.event.inputs.record != 'true' }} # FIXME
+        # if: ${{ github.event.inputs.record == 'true' }} # FIXME
         run: echo 'RECORD_SNAPSHOTS_IF_REQUIRED=-Precord' >> $GITHUB_ENV
 
       - name: Snapshot tests
