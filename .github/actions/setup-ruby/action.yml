@@ -1,5 +1,5 @@
-name: 'Ruby Cache'
-description: 'Cache Ruby dependencies'
+name: 'Setup Ruby'
+description: 'Setup Ruby and cache bundler'
 runs:
   using: "composite"
   steps:
