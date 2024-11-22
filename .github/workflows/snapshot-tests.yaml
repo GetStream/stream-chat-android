@@ -1,36 +1,63 @@
-name: Snapshot-Test
+name: Snapshot Tests
 
 on:
+  pull_request:
+
   workflow_dispatch:
-  schedule:
-    # Every midnight
-    - cron: '0 0 * * *'
+    inputs:
+      record:
+        description: 'Should Snapshots be recorded on CI?'
+        type: boolean
+        required: false
+        default: false
 
 jobs:
   run_snapshot_tests:
-    name: Verify snapshots
-    runs-on: macos-latest
+    name: Run
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out code
-        uses: actions/checkout@v3.1.0
-        with:
-          ref: develop
+        uses: actions/checkout@v4.2.2
       - uses: ./.github/actions/setup-java
       - uses: ./.github/actions/gradle-cache
         with:
           key-prefix: gradle-test
+
+      - name: Enable recording
+        if: ${{ github.event.inputs.record == 'true' }} # FIXME
+        run: echo 'RECORD_SNAPSHOTS_IF_REQUIRED=-Precord' >> $GITHUB_ENV
+
       - name: Snapshot tests
         uses: reactivecircus/android-emulator-runner@v2
+        timeout-minutes: 60
         with:
-          api-level: 26
+          api-level: 28
           disable-animations: true
           profile: pixel
           arch : x86_64
           emulator-options: ${{ vars.EMULATOR_OPTIONS }}
-          script: ./gradlew stream-chat-android-ui-uitests:executeScreenshotTests -Pandroid.testInstrumentationRunnerArguments.filter=io.getstream.chat.android.uitests.util.SnapshotTestFilter
+          script: ./gradlew stream-chat-android-ui-uitests:executeScreenshotTests ${{ env.RECORD_SNAPSHOTS_IF_REQUIRED }} -Pandroid.testInstrumentationRunnerArguments.filter=io.getstream.chat.android.uitests.util.SnapshotTestFilter -Dorg.gradle.jvmargs="--add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.nio.channels=ALL-UNNAMED --add-exports java.base/sun.nio.ch=ALL-UNNAMED"
+
       - name: Upload screnshot results
-        if: always()
-        uses: actions/upload-artifact@v3.1.0
+        if: failed() && ${{ github.event.inputs.record != 'true' }}
+        uses: actions/upload-artifact@v4.4.3
         with:
           name: screenshots_reports
           path: ${{ github.workspace }}/stream-chat-android-ui-uitests/build/reports/*
+
+      - name: Upload screnshots
+        if: ${{ github.event.inputs.record == 'true' }} # FIXME
+        uses: actions/upload-artifact@v4.4.3
+        with:
+          name: screenshots
+          path: ${{ github.workspace }}/stream-chat-android-ui-uitests/screenshots/
+
+      - name: Create Pull Request
+        if: ${{ github.event.inputs.record == 'true' }} # FIXME
+        uses: peter-evans/create-pull-request@v4
+        with:
+          commit-message: "Update screenshots"
+          title: "Update screenshots"
+          delete-branch: true
+          reviewers: GetStream/android-developers-ui
+          branch: update-screenshots
