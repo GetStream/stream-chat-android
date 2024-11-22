@@ -54,19 +54,12 @@ public class PinnedMessageListController(
     private companion object {
 
         private const val QUERY_LIMIT = 30
-
-        private val INITIAL_STATE = PinnedMessageListState(
-            results = emptyList(),
-            isLoading = true,
-            canLoadMore = true,
-            nextDate = Date(),
-        )
     }
 
     /**
      * Exposes the current pinned messages list state.
      */
-    private val _state: MutableStateFlow<PinnedMessageListState> = MutableStateFlow(INITIAL_STATE)
+    private val _state: MutableStateFlow<PinnedMessageListState> = MutableStateFlow(initialState())
     public val state: StateFlow<PinnedMessageListState>
         get() = _state
 
@@ -86,12 +79,7 @@ public class PinnedMessageListController(
     public fun load() {
         scope.launch {
             // Ensure the state is updated with the current date(timestamp) for initial loading
-            _state.value = PinnedMessageListState(
-                results = emptyList(),
-                isLoading = true,
-                canLoadMore = true,
-                nextDate = Date(),
-            )
+            _state.value = initialState()
             loadPinnedMessages()
         }
     }
@@ -137,6 +125,7 @@ public class PinnedMessageListController(
                     )
                 }
             }
+
             is Result.Failure -> {
                 logger.d { "Loading pinned messages failed: ${result.value.message}" }
                 _state.update { current ->
@@ -154,11 +143,20 @@ public class PinnedMessageListController(
                 logger.d { "No more messages to load" }
                 false
             }
+
             currentState.isLoading -> {
                 logger.d { "Already loading" }
                 false
             }
+
             else -> true
         }
     }
+
+    private fun initialState() = PinnedMessageListState(
+        results = emptyList(),
+        isLoading = true,
+        canLoadMore = true,
+        nextDate = Date(),
+    )
 }
