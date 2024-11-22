@@ -36,6 +36,7 @@ jobs:
           disable-animations: true
           profile: pixel
           arch : x86_64
+          target : google_apis
           emulator-options: ${{ vars.EMULATOR_OPTIONS }}
           script: ./gradlew stream-chat-android-ui-uitests:executeScreenshotTests -Pandroid.testInstrumentationRunnerArguments.filter=io.getstream.chat.android.uitests.util.SnapshotTestFilter ${{ env.RECORD_SNAPSHOTS_IF_REQUIRED }}
 
