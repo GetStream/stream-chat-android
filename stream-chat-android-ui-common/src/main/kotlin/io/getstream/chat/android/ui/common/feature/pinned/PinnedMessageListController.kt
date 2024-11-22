@@ -85,6 +85,13 @@ public class PinnedMessageListController(
      */
     public fun load() {
         scope.launch {
+            // Ensure the state is updated with the current date(timestamp) for initial loading
+            _state.value = PinnedMessageListState(
+                results = emptyList(),
+                isLoading = true,
+                canLoadMore = true,
+                nextDate = Date(),
+            )
             loadPinnedMessages()
         }
     }
