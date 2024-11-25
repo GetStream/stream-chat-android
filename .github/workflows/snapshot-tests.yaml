@@ -1,7 +1,8 @@
 name: Snapshot Tests
 
 on:
-  pull_request:
+  # pull_request:
+  push:
 
   workflow_dispatch:
     inputs:
@@ -41,6 +42,7 @@ jobs:
       # - name: Upload test results
       #   if: failure()
       #   uses: actions/upload-artifact@v4.4.3
+      #   continue-on-error: true
       #   with:
       #     name: report
       #     path: ./**/build/reports/*
