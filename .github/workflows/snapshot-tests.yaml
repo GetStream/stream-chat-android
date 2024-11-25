@@ -24,7 +24,7 @@ jobs:
           key-prefix: gradle-test
 
       - name: Enable recording
-        if: ${{ github.event.inputs.record == 'true' }} # FIXME
+        # if: ${{ github.event.inputs.record == 'true' }} # FIXME
         run: echo 'RECORD_SNAPSHOTS_IF_REQUIRED=-Precord' >> $GITHUB_ENV
 
       - name: Snapshot tests
@@ -36,17 +36,20 @@ jobs:
           profile: pixel
           arch : x86_64
           emulator-options: ${{ vars.EMULATOR_OPTIONS }}
-          script: ./gradlew stream-chat-android-ui-uitests:executeScreenshotTests ${{ env.RECORD_SNAPSHOTS_IF_REQUIRED }} -Pandroid.testInstrumentationRunnerArguments.filter=io.getstream.chat.android.uitests.util.SnapshotTestFilter -Dorg.gradle.jvmargs="--add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.nio.channels=ALL-UNNAMED --add-exports java.base/sun.nio.ch=ALL-UNNAMED"
+          script: |
+            adb shell settings put global hidden_api_policy_pre_p_apps 1
+            adb shell settings put global hidden_api_policy_p_apps 1
+            ./gradlew stream-chat-android-ui-uitests:executeScreenshotTests ${{ env.RECORD_SNAPSHOTS_IF_REQUIRED }} -Pandroid.testInstrumentationRunnerArguments.filter=io.getstream.chat.android.uitests.util.SnapshotTestFilter -Dorg.gradle.jvmargs="--add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.nio.channels=ALL-UNNAMED --add-exports java.base/sun.nio.ch=ALL-UNNAMED"
 
-      - name: Upload test results
-        if: failure()
-        uses: actions/upload-artifact@v4.4.3
-        with:
-          name: report
-          path: build/reports/*
+      # - name: Upload test results
+      #   if: failure()
+      #   uses: actions/upload-artifact@v4.4.3
+      #   with:
+      #     name: report
+      #     path: ./**/build/reports/*
 
       - name: Create Pull Request
-        if: ${{ github.event.inputs.record == 'true' }}
+        # if: ${{ github.event.inputs.record == 'true' }}
         uses: peter-evans/create-pull-request@v4
         with:
           commit-message: "Update screenshots"
