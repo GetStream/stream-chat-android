@@ -66,7 +66,7 @@ internal class QueryChannelsSortTest {
             ) {
                 randomChannel(
                     createdAt = dateWithOffset(offsetSeconds = -100),
-                    lastMessageAt = dateWithOffset(offsetSeconds = it),
+                    channelLastMessageAt = dateWithOffset(offsetSeconds = it),
                 )
             },
             sortArguments(
@@ -75,7 +75,7 @@ internal class QueryChannelsSortTest {
             ) {
                 randomChannel(
                     createdAt = dateWithOffset(offsetSeconds = -100),
-                    lastMessageAt = dateWithOffset(offsetSeconds = -it),
+                    channelLastMessageAt = dateWithOffset(offsetSeconds = -it),
                 )
             },
             sortArguments(
@@ -84,7 +84,7 @@ internal class QueryChannelsSortTest {
             ) {
                 randomChannel(
                     createdAt = dateWithOffset(offsetSeconds = -100),
-                    lastMessageAt = dateWithOffset(offsetSeconds = it),
+                    channelLastMessageAt = dateWithOffset(offsetSeconds = it),
                 )
             },
             sortArguments(
@@ -93,7 +93,7 @@ internal class QueryChannelsSortTest {
             ) {
                 randomChannel(
                     createdAt = dateWithOffset(offsetSeconds = -100),
-                    lastMessageAt = dateWithOffset(offsetSeconds = -it),
+                    channelLastMessageAt = dateWithOffset(offsetSeconds = -it),
                 )
             },
         )
@@ -104,25 +104,25 @@ internal class QueryChannelsSortTest {
                 testName = "Sorting by lastMessageAt field reference in ascending order",
                 querySort = QuerySortByField.ascByName("lastMessageAt"),
             ) {
-                randomChannel(lastMessageAt = dateWithOffset(offsetSeconds = it))
+                randomChannel(channelLastMessageAt = dateWithOffset(offsetSeconds = it))
             },
             sortArguments(
                 testName = "Sorting by lastMessageAt field reference in descending order",
                 querySort = QuerySortByField.descByName("lastMessageAt"),
             ) {
-                randomChannel(lastMessageAt = dateWithOffset(offsetSeconds = -it))
+                randomChannel(channelLastMessageAt = dateWithOffset(offsetSeconds = -it))
             },
             sortArguments(
                 testName = "Sorting by last_message_at field name in ascending order",
                 querySort = QuerySortByField.ascByName("last_message_at"),
             ) {
-                randomChannel(lastMessageAt = dateWithOffset(offsetSeconds = it))
+                randomChannel(channelLastMessageAt = dateWithOffset(offsetSeconds = it))
             },
             sortArguments(
                 testName = "Sorting by last_message_at field name in descending order",
                 querySort = QuerySortByField.descByName("last_message_at"),
             ) {
-                randomChannel(lastMessageAt = dateWithOffset(offsetSeconds = -it))
+                randomChannel(channelLastMessageAt = dateWithOffset(offsetSeconds = -it))
             },
         )
 
