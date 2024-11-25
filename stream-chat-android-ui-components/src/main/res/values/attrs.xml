@@ -57,5 +57,6 @@
         <attr name="streamUiPinnedMessageListStyle" format="reference" />
         <attr name="streamUiMessageComposerViewStyle" format="reference" />
         <attr name="streamUiAudioRecordPlayerViewStyle" format="reference" />
+        <attr name="streamUiThreadListStyle" format="reference" />
     </declare-styleable>
 </resources>

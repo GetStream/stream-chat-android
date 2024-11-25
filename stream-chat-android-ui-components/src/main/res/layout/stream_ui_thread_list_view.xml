@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout"
+    >
+
+    <TextView
+        android:id="@+id/unreadThreadsBannerTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginVertical="6dp"
+        android:background="@drawable/stream_ui_shape_unread_threads_banner"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:padding="16dp"
+        android:textColor="@color/stream_ui_white"
+        android:textSize="16sp"
+        app:drawableEndCompat="@drawable/stream_ui_ic_union"
+        app:layout_constraintBottom_toTopOf="@id/threadListRecyclerView"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="17 new threads"
+        />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/threadListRecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/unreadThreadsBannerTextView"
+        tools:itemCount="4"
+        tools:listitem="@layout/stream_ui_item_thread_list"
+        />
+
+    <LinearLayout
+        android:id="@+id/emptyContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/stream_ui_spacing_medium"
+        android:visibility="gone"
+        >
+
+        <ImageView
+            android:id="@+id/emptyImage"
+            android:layout_width="112dp"
+            android:layout_height="112dp"
+            android:src="@drawable/stream_ui_ic_threads_empty"
+            tools:ignore="ContentDescription"
+            />
+
+        <TextView
+            android:id="@+id/emptyTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="@string/stream_ui_thread_list_empty_title"
+            android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"
+            android:textDirection="locale"
+            />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+</merge>
