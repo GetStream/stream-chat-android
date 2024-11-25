@@ -31,15 +31,12 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         timeout-minutes: 60
         with:
-          api-level: 28
+          api-level: 27
           disable-animations: true
           profile: pixel
           arch : x86_64
           emulator-options: ${{ vars.EMULATOR_OPTIONS }}
-          script: |
-            adb shell settings put global hidden_api_policy_pre_p_apps 1
-            adb shell settings put global hidden_api_policy_p_apps 1
-            ./gradlew stream-chat-android-ui-uitests:executeScreenshotTests ${{ env.RECORD_SNAPSHOTS_IF_REQUIRED }} -Pandroid.testInstrumentationRunnerArguments.filter=io.getstream.chat.android.uitests.util.SnapshotTestFilter -Dorg.gradle.jvmargs="--add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.nio.channels=ALL-UNNAMED --add-exports java.base/sun.nio.ch=ALL-UNNAMED"
+          script: ./gradlew stream-chat-android-ui-uitests:executeScreenshotTests ${{ env.RECORD_SNAPSHOTS_IF_REQUIRED }} -Pandroid.testInstrumentationRunnerArguments.filter=io.getstream.chat.android.uitests.util.SnapshotTestFilter -Dorg.gradle.jvmargs="--add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.nio.channels=ALL-UNNAMED --add-exports java.base/sun.nio.ch=ALL-UNNAMED"
 
       # - name: Upload test results
       #   if: failure()

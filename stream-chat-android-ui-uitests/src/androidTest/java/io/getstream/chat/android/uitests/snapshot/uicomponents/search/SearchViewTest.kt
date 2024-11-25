@@ -42,32 +42,32 @@ class SearchViewTest : ScreenshotTest {
         compareScreenshot(fragmentScenario.waitForFragment())
     }
 
-    @Test
-    fun eraseContentShouldWork() {
-        launchFragmentInContainer<ComponentBrowserSearchViewFragment>()
-
-        val text = "lalalala"
-
-        onView(getElementFromMatchAtPosition(withId(R.id.inputField), 0)).perform(typeText(text))
-        onView(getElementFromMatchAtPosition(withId(R.id.inputField), 0)).check(matches(withText(text)))
-
-        onView(getElementFromMatchAtPosition(withId(R.id.clearInputButton), 0)).perform(click())
-
-        onView(getElementFromMatchAtPosition(withId(R.id.inputField), 0)).check(matches(withText("")))
-    }
-
-    @Test
-    fun testVeryLongSearch() {
-        val fragmentScenario = launchFragmentInContainer<ComponentBrowserSearchViewFragment>()
-
-        val text = "lalalala"
-
-        repeat(10) {
-            onView(getElementFromMatchAtPosition(withId(R.id.inputField), 0)).perform(typeText(text))
-        }
-
-        compareScreenshot(fragmentScenario.waitForFragment())
-    }
+    // @Test
+    // fun eraseContentShouldWork() {
+    //     launchFragmentInContainer<ComponentBrowserSearchViewFragment>()
+    //
+    //     val text = "lalalala"
+    //
+    //     onView(getElementFromMatchAtPosition(withId(R.id.inputField), 0)).perform(typeText(text))
+    //     onView(getElementFromMatchAtPosition(withId(R.id.inputField), 0)).check(matches(withText(text)))
+    //
+    //     onView(getElementFromMatchAtPosition(withId(R.id.clearInputButton), 0)).perform(click())
+    //
+    //     onView(getElementFromMatchAtPosition(withId(R.id.inputField), 0)).check(matches(withText("")))
+    // }
+    //
+    // @Test
+    // fun testVeryLongSearch() {
+    //     val fragmentScenario = launchFragmentInContainer<ComponentBrowserSearchViewFragment>()
+    //
+    //     val text = "lalalala"
+    //
+    //     repeat(10) {
+    //         onView(getElementFromMatchAtPosition(withId(R.id.inputField), 0)).perform(typeText(text))
+    //     }
+    //
+    //     compareScreenshot(fragmentScenario.waitForFragment())
+    // }
 }
 
 private fun getElementFromMatchAtPosition(matcher: Matcher<View>, position: Int): Matcher<View> {

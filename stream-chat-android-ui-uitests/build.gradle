@@ -1,5 +1,4 @@
 import io.getstream.chat.android.Dependencies
-import io.getstream.chat.android.Versions
 
 plugins {
     id 'com.android.application'
