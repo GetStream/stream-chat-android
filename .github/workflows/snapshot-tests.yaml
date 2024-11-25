@@ -38,22 +38,15 @@ jobs:
           emulator-options: ${{ vars.EMULATOR_OPTIONS }}
           script: ./gradlew stream-chat-android-ui-uitests:executeScreenshotTests ${{ env.RECORD_SNAPSHOTS_IF_REQUIRED }} -Pandroid.testInstrumentationRunnerArguments.filter=io.getstream.chat.android.uitests.util.SnapshotTestFilter -Dorg.gradle.jvmargs="--add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.nio.channels=ALL-UNNAMED --add-exports java.base/sun.nio.ch=ALL-UNNAMED"
 
-      - name: Upload screnshot results
+      - name: Upload test results
         if: failed() && ${{ github.event.inputs.record != 'true' }}
         uses: actions/upload-artifact@v4.4.3
         with:
-          name: screenshots_reports
-          path: ${{ github.workspace }}/stream-chat-android-ui-uitests/build/reports/*
-
-      - name: Upload screnshots
-        if: ${{ github.event.inputs.record == 'true' }} # FIXME
-        uses: actions/upload-artifact@v4.4.3
-        with:
-          name: screenshots
-          path: ${{ github.workspace }}/stream-chat-android-ui-uitests/screenshots/
+          name: report
+          path: build/reports/*
 
       - name: Create Pull Request
-        if: ${{ github.event.inputs.record == 'true' }} # FIXME
+        if: ${{ github.event.inputs.record == 'true' }}
         uses: peter-evans/create-pull-request@v4
         with:
           commit-message: "Update screenshots"
