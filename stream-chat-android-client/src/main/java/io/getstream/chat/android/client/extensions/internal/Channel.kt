@@ -80,10 +80,6 @@ public fun Channel.updateLastMessage(
             )
     }
     return this.copy(
-        lastMessageAt = newMessages
-            .filterNot { it.parentId != null && !it.showInChannel }
-            .last()
-            .let { it.createdAt ?: it.createdLocallyAt },
         messages = newMessages,
         read = newReads,
     ).syncUnreadCountWithReads()

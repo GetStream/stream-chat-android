@@ -212,7 +212,7 @@ private fun ChannelDeletedEventDto.toDomain(currentUserId: UserId?): ChannelDele
         cid = cid,
         channelType = channel_type,
         channelId = channel_id,
-        channel = channel.toDomain(currentUserId),
+        channel = channel.toDomain(currentUserId, channel_last_message_at),
         user = user?.toDomain(currentUserId),
         channelLastMessageAt = channel_last_message_at,
     )
@@ -242,7 +242,7 @@ private fun ChannelTruncatedEventDto.toDomain(currentUserId: UserId?): ChannelTr
         channelId = channel_id,
         user = user?.toDomain(currentUserId),
         message = message?.toDomain(currentUserId),
-        channel = channel.toDomain(currentUserId),
+        channel = channel.toDomain(currentUserId, channel_last_message_at),
         channelLastMessageAt = channel_last_message_at,
     )
 }
@@ -256,7 +256,7 @@ private fun ChannelUpdatedEventDto.toDomain(currentUserId: UserId?): ChannelUpda
         channelType = channel_type,
         channelId = channel_id,
         message = message?.toDomain(currentUserId),
-        channel = channel.toDomain(currentUserId),
+        channel = channel.toDomain(currentUserId, channel_last_message_at),
         channelLastMessageAt = channel_last_message_at,
     )
 }
@@ -271,7 +271,7 @@ private fun ChannelUpdatedByUserEventDto.toDomain(currentUserId: UserId?): Chann
         channelId = channel_id,
         user = user.toDomain(currentUserId),
         message = message?.toDomain(currentUserId),
-        channel = channel.toDomain(currentUserId),
+        channel = channel.toDomain(currentUserId, channel_last_message_at),
         channelLastMessageAt = channel_last_message_at,
     )
 }
@@ -409,7 +409,7 @@ private fun NotificationAddedToChannelEventDto.toDomain(currentUserId: UserId?):
         cid = cid,
         channelType = channel_type,
         channelId = channel_id,
-        channel = channel.toDomain(currentUserId),
+        channel = channel.toDomain(currentUserId, channel_last_message_at),
         member = member.toDomain(currentUserId),
         totalUnreadCount = total_unread_count,
         unreadChannels = unread_channels,
@@ -425,7 +425,7 @@ private fun NotificationChannelDeletedEventDto.toDomain(currentUserId: UserId?):
         cid = cid,
         channelType = channel_type,
         channelId = channel_id,
-        channel = channel.toDomain(currentUserId),
+        channel = channel.toDomain(currentUserId, channel_last_message_at),
         totalUnreadCount = total_unread_count,
         unreadChannels = unread_channels,
         channelLastMessageAt = channel_last_message_at,
@@ -451,7 +451,7 @@ private fun NotificationChannelTruncatedEventDto.toDomain(currentUserId: UserId?
         cid = cid,
         channelType = channel_type,
         channelId = channel_id,
-        channel = channel.toDomain(currentUserId),
+        channel = channel.toDomain(currentUserId, channel_last_message_at),
         totalUnreadCount = total_unread_count,
         unreadChannels = unread_channels,
         channelLastMessageAt = channel_last_message_at,
@@ -468,7 +468,7 @@ private fun NotificationInviteAcceptedEventDto.toDomain(currentUserId: UserId?):
         channelId = channel_id,
         user = user.toDomain(currentUserId),
         member = member.toDomain(currentUserId),
-        channel = channel.toDomain(currentUserId),
+        channel = channel.toDomain(currentUserId, channel_last_message_at),
         channelLastMessageAt = channel_last_message_at,
     )
 }
@@ -483,7 +483,7 @@ private fun NotificationInviteRejectedEventDto.toDomain(currentUserId: UserId?):
         channelId = channel_id,
         user = user.toDomain(currentUserId),
         member = member.toDomain(currentUserId),
-        channel = channel.toDomain(currentUserId),
+        channel = channel.toDomain(currentUserId, channel_last_message_at),
         channelLastMessageAt = channel_last_message_at,
     )
 }
@@ -561,7 +561,7 @@ private fun NotificationMessageNewEventDto.toDomain(currentUserId: UserId?): Not
         cid = cid,
         channelType = channel_type,
         channelId = channel_id,
-        channel = channel.toDomain(currentUserId),
+        channel = channel.toDomain(currentUserId, channel_last_message_at),
         message = message.toDomain(currentUserId),
         totalUnreadCount = total_unread_count,
         unreadChannels = unread_channels,
@@ -576,7 +576,7 @@ private fun NotificationThreadMessageNewEventDto.toDomain(currentUserId: UserId?
         channelId = channel_id,
         channelType = channel_type,
         message = message.toDomain(currentUserId),
-        channel = channel.toDomain(currentUserId),
+        channel = channel.toDomain(currentUserId, channel_last_message_at),
         createdAt = created_at.date,
         rawCreatedAt = created_at.rawDate,
         unreadThreads = unread_threads,
@@ -605,7 +605,7 @@ private fun NotificationRemovedFromChannelEventDto.toDomain(
         cid = cid,
         channelType = channel_type,
         channelId = channel_id,
-        channel = channel.toDomain(currentUserId),
+        channel = channel.toDomain(currentUserId, channel_last_message_at),
         member = member.toDomain(currentUserId),
         channelLastMessageAt = channel_last_message_at,
     )
