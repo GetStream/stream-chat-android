@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:paddingTop="16dp"
+    android:paddingBottom="4dp"
+    >
+
+    <ImageView
+        android:id="@+id/threadImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:src="@drawable/stream_ui_ic_thread"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/threadTitleTextView"
+        style="@style/StreamUiTextAppearance.BodyBold"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/stream_ui_text_color_primary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/threadImage"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Channel without name"
+        />
+
+    <TextView
+        android:id="@+id/replyToTextView"
+        style="@style/StreamUiTextAppearance.Body"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/stream_ui_text_color_secondary"
+        app:layout_constraintEnd_toStartOf="@id/unreadCountBadge"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/threadTitleTextView"
+        tools:text="replied to: Hello everyone, who's up for a group ride this Saturday?"
+        />
+
+    <TextView
+        android:id="@+id/unreadCountBadge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/stream_ui_shape_badge_background"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:paddingStart="5dp"
+        android:paddingEnd="5dp"
+        android:textColor="@color/stream_ui_literal_white"
+        android:textDirection="locale"
+        android:textSize="@dimen/stream_ui_text_small"
+        app:layout_constraintBottom_toBottomOf="@id/replyToTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/replyToTextView"
+        tools:text="99"
+        />
+
+    <io.getstream.chat.android.ui.feature.messages.preview.internal.MessagePreviewView
+        android:id="@+id/latestReplyMessageView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/replyToTextView"
+        />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
