@@ -57,6 +57,7 @@ jobs:
           cron: true
       - name: Run tests
         uses: reactivecircus/android-emulator-runner@v2
+        timeout-minutes: 120
         with:
           api-level: ${{ env.ANDROID_API_LEVEL }}
           disable-animations: true
