@@ -214,6 +214,7 @@ private fun ChannelDeletedEventDto.toDomain(currentUserId: UserId?): ChannelDele
         channelId = channel_id,
         channel = channel.toDomain(currentUserId),
         user = user?.toDomain(currentUserId),
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -227,6 +228,7 @@ private fun ChannelHiddenEventDto.toDomain(currentUserId: UserId?): ChannelHidde
         channelId = channel_id,
         user = user.toDomain(currentUserId),
         clearHistory = clear_history,
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -241,6 +243,7 @@ private fun ChannelTruncatedEventDto.toDomain(currentUserId: UserId?): ChannelTr
         user = user?.toDomain(currentUserId),
         message = message?.toDomain(currentUserId),
         channel = channel.toDomain(currentUserId),
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -254,6 +257,7 @@ private fun ChannelUpdatedEventDto.toDomain(currentUserId: UserId?): ChannelUpda
         channelId = channel_id,
         message = message?.toDomain(currentUserId),
         channel = channel.toDomain(currentUserId),
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -268,6 +272,7 @@ private fun ChannelUpdatedByUserEventDto.toDomain(currentUserId: UserId?): Chann
         user = user.toDomain(currentUserId),
         message = message?.toDomain(currentUserId),
         channel = channel.toDomain(currentUserId),
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -280,6 +285,7 @@ private fun ChannelVisibleEventDto.toDomain(currentUserId: UserId?): ChannelVisi
         channelType = channel_type,
         channelId = channel_id,
         user = user.toDomain(currentUserId),
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -302,6 +308,7 @@ private fun MemberAddedEventDto.toDomain(currentUserId: UserId?): MemberAddedEve
         channelType = channel_type,
         channelId = channel_id,
         member = member.toDomain(currentUserId),
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -315,6 +322,7 @@ private fun MemberRemovedEventDto.toDomain(currentUserId: UserId?): MemberRemove
         channelType = channel_type,
         channelId = channel_id,
         member = member.toDomain(currentUserId),
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -328,6 +336,7 @@ private fun MemberUpdatedEventDto.toDomain(currentUserId: UserId?): MemberUpdate
         channelType = channel_type,
         channelId = channel_id,
         member = member.toDomain(currentUserId),
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -343,6 +352,7 @@ private fun MessageDeletedEventDto.toDomain(currentUserId: UserId?): MessageDele
         channelId = channel_id,
         message = message.toDomain(currentUserId),
         hardDelete = hard_delete ?: false,
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -356,6 +366,7 @@ private fun MessageReadEventDto.toDomain(currentUserId: UserId?): MessageReadEve
         channelType = channel_type,
         channelId = channel_id,
         thread = thread?.toDomain(currentUserId),
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -369,6 +380,7 @@ private fun MessageUpdatedEventDto.toDomain(currentUserId: UserId?): MessageUpda
         channelType = channel_type,
         channelId = channel_id,
         message = message.toDomain(currentUserId),
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -385,6 +397,7 @@ private fun NewMessageEventDto.toDomain(currentUserId: UserId?): NewMessageEvent
         watcherCount = watcher_count,
         totalUnreadCount = total_unread_count,
         unreadChannels = unread_channels,
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -400,6 +413,7 @@ private fun NotificationAddedToChannelEventDto.toDomain(currentUserId: UserId?):
         member = member.toDomain(currentUserId),
         totalUnreadCount = total_unread_count,
         unreadChannels = unread_channels,
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -414,6 +428,7 @@ private fun NotificationChannelDeletedEventDto.toDomain(currentUserId: UserId?):
         channel = channel.toDomain(currentUserId),
         totalUnreadCount = total_unread_count,
         unreadChannels = unread_channels,
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -439,6 +454,7 @@ private fun NotificationChannelTruncatedEventDto.toDomain(currentUserId: UserId?
         channel = channel.toDomain(currentUserId),
         totalUnreadCount = total_unread_count,
         unreadChannels = unread_channels,
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -453,6 +469,7 @@ private fun NotificationInviteAcceptedEventDto.toDomain(currentUserId: UserId?):
         user = user.toDomain(currentUserId),
         member = member.toDomain(currentUserId),
         channel = channel.toDomain(currentUserId),
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -467,6 +484,7 @@ private fun NotificationInviteRejectedEventDto.toDomain(currentUserId: UserId?):
         user = user.toDomain(currentUserId),
         member = member.toDomain(currentUserId),
         channel = channel.toDomain(currentUserId),
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -480,6 +498,7 @@ private fun NotificationInvitedEventDto.toDomain(currentUserId: UserId?): Notifi
         channelId = channel_id,
         user = user.toDomain(currentUserId),
         member = member.toDomain(currentUserId),
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -498,6 +517,7 @@ private fun NotificationMarkReadEventDto.toDomain(currentUserId: UserId?): Notif
         thread = thread?.toDomain(currentUserId),
         unreadThreads = unread_threads,
         unreadThreadMessages = unread_thread_messages,
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -518,6 +538,7 @@ private fun NotificationMarkUnreadEventDto.toDomain(currentUserId: UserId?): Not
         unreadMessages = unread_messages,
         threadId = thread_id,
         unreadThreads = unread_threads,
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -544,6 +565,7 @@ private fun NotificationMessageNewEventDto.toDomain(currentUserId: UserId?): Not
         message = message.toDomain(currentUserId),
         totalUnreadCount = total_unread_count,
         unreadChannels = unread_channels,
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -559,6 +581,7 @@ private fun NotificationThreadMessageNewEventDto.toDomain(currentUserId: UserId?
         rawCreatedAt = created_at.rawDate,
         unreadThreads = unread_threads,
         unreadThreadMessages = unread_thread_messages,
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -584,6 +607,7 @@ private fun NotificationRemovedFromChannelEventDto.toDomain(
         channelId = channel_id,
         channel = channel.toDomain(currentUserId),
         member = member.toDomain(currentUserId),
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -598,6 +622,7 @@ private fun ReactionDeletedEventDto.toDomain(currentUserId: UserId?): ReactionDe
         channelId = channel_id,
         message = message.toDomain(currentUserId),
         reaction = reaction.toDomain(currentUserId),
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -612,6 +637,7 @@ private fun ReactionNewEventDto.toDomain(currentUserId: UserId?): ReactionNewEve
         channelId = channel_id,
         message = message.toDomain(currentUserId),
         reaction = reaction.toDomain(currentUserId),
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -626,6 +652,7 @@ private fun ReactionUpdateEventDto.toDomain(currentUserId: UserId?): ReactionUpd
         channelId = channel_id,
         message = message.toDomain(currentUserId),
         reaction = reaction.toDomain(currentUserId),
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -639,6 +666,7 @@ private fun TypingStartEventDto.toDomain(currentUserId: UserId?): TypingStartEve
         channelType = channel_type,
         channelId = channel_id,
         parentId = parent_id,
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -652,6 +680,7 @@ private fun TypingStopEventDto.toDomain(currentUserId: UserId?): TypingStopEvent
         channelType = channel_type,
         channelId = channel_id,
         parentId = parent_id,
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -666,6 +695,7 @@ private fun ChannelUserBannedEventDto.toDomain(currentUserId: UserId?): ChannelU
         user = user.toDomain(currentUserId),
         expiration = expiration,
         shadow = shadow ?: false,
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -706,6 +736,7 @@ private fun UserStartWatchingEventDto.toDomain(currentUserId: UserId?): UserStar
         channelType = channel_type,
         channelId = channel_id,
         user = user.toDomain(currentUserId),
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -719,6 +750,7 @@ private fun UserStopWatchingEventDto.toDomain(currentUserId: UserId?): UserStopW
         channelType = channel_type,
         channelId = channel_id,
         user = user.toDomain(currentUserId),
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -731,6 +763,7 @@ private fun ChannelUserUnbannedEventDto.toDomain(currentUserId: UserId?): Channe
         cid = cid,
         channelType = channel_type,
         channelId = channel_id,
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -763,6 +796,7 @@ private fun PollClosedEventDto.toDomain(currentUserId: UserId?): PollClosedEvent
         channelType = channelType,
         channelId = channelId,
         poll = newPoll,
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -777,6 +811,7 @@ private fun PollDeletedEventDto.toDomain(currentUserId: UserId?): PollDeletedEve
         channelType = channelType,
         channelId = channelId,
         poll = newPoll,
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -791,6 +826,7 @@ private fun PollUpdatedEventDto.toDomain(currentUserId: UserId?): PollUpdatedEve
         channelType = channelType,
         channelId = channelId,
         poll = newPoll,
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -816,6 +852,7 @@ private fun VoteCastedEventDto.toDomain(currentUserId: UserId?): VoteCastedEvent
         channelId = channelId,
         poll = newPoll,
         newVote = pollVote,
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -831,6 +868,7 @@ private fun AnswerCastedEventDto.toDomain(currentUserId: UserId?): AnswerCastedE
         channelId = channelId,
         poll = poll.toDomain(currentUserId),
         newAnswer = newAnswer,
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -856,6 +894,7 @@ private fun VoteChangedEventDto.toDomain(currentUserId: UserId?): VoteChangedEve
         channelId = channelId,
         poll = newPoll,
         newVote = pollVote,
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
@@ -872,6 +911,7 @@ private fun VoteRemovedEventDto.toDomain(currentUserId: UserId?): VoteRemovedEve
         channelId = channelId,
         poll = newPoll,
         removedVote = removedVote,
+        channelLastMessageAt = channel_last_message_at,
     )
 }
 
