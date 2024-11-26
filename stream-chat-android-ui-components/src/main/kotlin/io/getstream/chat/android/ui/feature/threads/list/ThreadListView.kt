@@ -18,13 +18,10 @@ package io.getstream.chat.android.ui.feature.threads.list
 
 import android.content.Context
 import android.util.AttributeSet
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiThreadListViewBinding
@@ -71,15 +68,6 @@ public class ThreadListView : ConstraintLayout {
         binding.threadListRecyclerView.setHasFixedSize(true)
         binding.threadListRecyclerView.adapter = adapter
         binding.threadListRecyclerView.addOnScrollListener(scrollListener)
-
-        binding.threadListRecyclerView.addItemDecoration(
-            DividerItemDecoration(
-                context,
-                LinearLayoutManager.VERTICAL,
-            ).apply {
-                setDrawable(AppCompatResources.getDrawable(context, R.drawable.stream_ui_divider)!!)
-            },
-        )
 
         setBackgroundColor(style.backgroundColor)
         applyEmptyStateStyle(style)
