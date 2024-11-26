@@ -34,6 +34,19 @@ lane :stop_mock_server do
   Net::HTTP.get_response(URI("http://localhost:#{mock_server_driver_port}/stop")) rescue nil
 end
 
+lane :run_snapshot_test do |options|
+  next unless is_check_required(sources: sources_matrix[:ui], force_check: @force_check)
+
+  cmd = [
+    './gradlew',
+    'stream-chat-android-ui-uitests:executeScreenshotTests',
+    '-Pandroid.testInstrumentationRunnerArguments.filter=io.getstream.chat.android.uitests.util.SnapshotTestFilter',
+    '-Dorg.gradle.jvmargs="--add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.nio.channels=ALL-UNNAMED --add-exports java.base/sun.nio.ch=ALL-UNNAMED"'
+  ]
+  cmd << '-Precord' unless options[:record].to_s.empty?
+  Dir.chdir('..') { sh(cmd.join(' ')) }
+end
+
 lane :build_and_run_e2e_test do |options|
   build_e2e_test
   run_e2e_test(batch: options[:batch], batch_count: options[:batch_count])
@@ -115,7 +128,8 @@ end
 
 private_lane :sources_matrix do
   {
-    e2e: ['buildSrc', 'stream-chat-android', '.github/workflows/e2e-tests'],
+    ui: ['stream-chat-android-ui', '.github/workflows/snapshot-test'],
+    e2e: ['buildSrc', 'stream-chat-android', '.github/workflows/e2e-test'],
     ruby: ['fastlane', 'Gemfile', 'Gemfile.lock']
   }
 end
