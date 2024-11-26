@@ -186,6 +186,10 @@ class HomeFragment : Fragment() {
                 backgroundColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_accent_red)
                 badgeTextColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_literal_white)
             }
+            getOrCreateBadge(R.id.threads_fragment).apply {
+                backgroundColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_accent_red)
+                badgeTextColor = ContextCompat.getColor(requireContext(), R.color.stream_ui_literal_white)
+            }
         }
     }
 
@@ -229,6 +233,7 @@ class HomeFragment : Fragment() {
         binding.bottomNavigationView.apply {
             setBadgeNumber(R.id.channels_fragment, state.totalUnreadCount)
             setBadgeNumber(R.id.mentions_fragment, state.mentionsUnreadCount)
+            setBadgeNumber(R.id.threads_fragment, state.unreadThreadsCount)
         }
 
         nameTextView.text = state.user.name

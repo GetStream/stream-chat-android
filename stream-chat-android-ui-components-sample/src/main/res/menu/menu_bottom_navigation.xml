@@ -25,4 +25,9 @@
         android:icon="@drawable/ic_mentions"
         android:title="@string/home_bottom_nav_mentions"
         />
+    <item
+        android:id="@+id/threads_fragment"
+        android:icon="@drawable/ic_threads"
+        android:title="@string/home_bottom_nav_threads"
+        />
 </menu>

@@ -35,4 +35,12 @@
         android:label="MentionsFragment"
         tools:layout="@layout/fragment_mentions"
         />
+
+    <fragment
+        android:id="@+id/threads_fragment"
+        android:name="io.getstream.chat.ui.sample.feature.threads.ThreadsFragment"
+        android:label="ThreadsFragment"
+        tools:layout="@layout/fragment_threads"
+        />
+
 </navigation>

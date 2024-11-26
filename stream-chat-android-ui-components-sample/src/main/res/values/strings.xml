@@ -49,6 +49,7 @@
     <string name="home_drawer_sign_out">Sign Out</string>
     <string name="home_bottom_nav_chats">Chats</string>
     <string name="home_bottom_nav_mentions">Mentions</string>
+    <string name="home_bottom_nav_threads">Threads</string>
 
     <!-- Channel list -->
     <string name="channel_list_empty_title">Let\'s start chatting!</string>
