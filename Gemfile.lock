@@ -164,6 +164,7 @@ GEM
     json (2.8.1)
     jwt (2.9.3)
       base64
+    logger (1.6.1)
     mini_magick (4.13.2)
     mini_mime (1.1.5)
     multi_json (1.15.0)
@@ -186,8 +187,9 @@ GEM
       nio4r (~> 2.0)
     racc (1.8.1)
     rack (3.1.8)
-    rack-protection (4.0.0)
+    rack-protection (4.1.0)
       base64 (>= 0.1.0)
+      logger (>= 1.6.0)
       rack (>= 3.0.0, < 4)
     rack-session (2.0.0)
       rack (>= 3.0.0)
@@ -232,10 +234,11 @@ GEM
     simctl (1.6.10)
       CFPropertyList
       naturally
-    sinatra (4.0.0)
+    sinatra (4.1.0)
+      logger (>= 1.6.0)
       mustermann (~> 3.0)
       rack (>= 3.0.0, < 4)
-      rack-protection (= 4.0.0)
+      rack-protection (= 4.1.0)
       rack-session (>= 2.0.0, < 3)
       tilt (~> 2.0)
     sysrandom (1.0.5)
