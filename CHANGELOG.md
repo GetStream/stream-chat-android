@@ -45,6 +45,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fix wrong timestamp used for the initial loading of pinned messages in `PinnedMessageListController`. [#5483](https://github.com/GetStream/stream-chat-android/pull/5483)
 
 ### ⬆️ Improved
 
