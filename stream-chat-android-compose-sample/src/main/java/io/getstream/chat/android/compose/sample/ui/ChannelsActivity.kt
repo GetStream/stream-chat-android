@@ -319,7 +319,7 @@ class ChannelsActivity : BaseConnectedActivity() {
                 context = this,
                 channelId = thread.parentMessage.cid,
                 parentMessageId = thread.parentMessageId,
-            )
+            ),
         )
     }
 

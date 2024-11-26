@@ -601,7 +601,7 @@ public class MessageListController(
     }
 
     private fun initialFocusMessage() {
-        messageId ?: return  // No initial focus if no message id is provided
+        messageId ?: return // No initial focus if no message id is provided
         scope.launch {
             listState
                 .onCompletion {
