@@ -70,6 +70,7 @@ import io.getstream.chat.android.compose.viewmodel.threads.ThreadListViewModel
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadsViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.state.extensions.globalState
@@ -162,12 +163,7 @@ class ChannelsActivity : BaseConnectedActivity() {
             modifier = Modifier
                 .fillMaxSize()
                 .background(ChatTheme.colors.appBackground),
-            onThreadClick = { thread ->
-                val lastMessageInThread = thread.latestReplies.lastOrNull()
-                if (lastMessageInThread != null) {
-                    openMessages(lastMessageInThread)
-                }
-            },
+            onThreadClick = ::openThread,
         )
     }
 
@@ -314,6 +310,16 @@ class ChannelsActivity : BaseConnectedActivity() {
                 messageId = message.id,
                 parentMessageId = message.parentId,
             ),
+        )
+    }
+
+    private fun openThread(thread: Thread) {
+        startActivity(
+            MessagesActivity.createIntent(
+                context = this,
+                channelId = thread.parentMessage.cid,
+                parentMessageId = thread.parentMessageId,
+            )
         )
     }
 
