@@ -76,7 +76,7 @@ object Versions {
     internal const val REORDERABLE = "2.4.0"
     internal const val ROOM = "2.6.1"
     internal const val SHIMMER = "0.5.0"
-    internal const val SHOT = "5.14.1"
+    internal const val SHOT = "6.1.0"
     internal const val SPOTLESS = "6.20.0"
     internal const val STREAM_LOG = "1.3.1"
     internal const val STREAM_PUSH = "1.1.9"
