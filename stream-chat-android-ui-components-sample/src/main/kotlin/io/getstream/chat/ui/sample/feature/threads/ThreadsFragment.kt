@@ -61,6 +61,7 @@ class ThreadsFragment : Fragment() {
                 .navigateSafely(
                     HomeFragmentDirections.actionOpenChat(
                         cid = thread.parentMessage.cid,
+                        messageId = thread.parentMessageId,
                         parentMessageId = thread.parentMessageId,
                     ),
                 )
