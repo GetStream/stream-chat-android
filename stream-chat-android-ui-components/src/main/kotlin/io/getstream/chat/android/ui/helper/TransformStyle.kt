@@ -37,6 +37,7 @@ import io.getstream.chat.android.ui.feature.messages.list.ScrollButtonViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.UnreadLabelButtonStyle
 import io.getstream.chat.android.ui.feature.messages.list.UnsupportedAttachmentViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.MediaAttachmentViewStyle
+import io.getstream.chat.android.ui.feature.messages.list.adapter.view.PollViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.reactions.edit.EditReactionsViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.reactions.user.SingleReactionViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.reactions.view.ViewReactionsViewStyle
@@ -87,6 +88,9 @@ public object TransformStyle {
 
     @JvmStatic
     public var mediaAttachmentStyleTransformer: StyleTransformer<MediaAttachmentViewStyle> = noopTransformer()
+
+    @JvmStatic
+    public var pollViewStyleTransformer: StyleTransformer<PollViewStyle> = noopTransformer()
 
     @JvmStatic
     public var messageReplyStyleTransformer: StyleTransformer<MessageReplyStyle> = noopTransformer()

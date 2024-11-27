@@ -614,6 +614,31 @@
         <item name="streamUiMediaAttachmentMoreCountTextStyle">normal</item>
     </style>
 
+    <style name="StreamUi.MessageList.Poll" parent="StreamUi">
+        <item name="streamUiPollTitleTextSize">@dimen/stream_ui_text_large</item>
+        <item name="streamUiPollTitleTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiPollTitleTextStyle">normal</item>
+        <item name="streamUiPollOptionCheckDrawable">@drawable/stream_ui_poll_option_selector</item>
+        <item name="streamUiPollSubtitleTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiPollSubtitleTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiPollSubtitleTextStyle">normal</item>
+        <item name="streamUiPollOptionTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiPollOptionTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiPollOptionTextStyle">normal</item>
+        <item name="streamUiPollVotesTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiPollVotesTextColor">@color/stream_ui_text_color_primary</item>
+        <item name="streamUiPollVotesTextStyle">normal</item>
+        <item name="streamUiPollCloseTextSize">@dimen/stream_ui_text_large</item>
+        <item name="streamUiPollCloseTextColor">@color/stream_ui_accent_blue</item>
+        <item name="streamUiPollCloseTextStyle">normal</item>
+        <item name="streamUiPollResultsTextSize">@dimen/stream_ui_text_large</item>
+        <item name="streamUiPollResultsTextColor">@color/stream_ui_accent_blue</item>
+        <item name="streamUiPollResultsTextStyle">normal</item>
+        <item name="streamUiPollShowAllOptionsTextSize">@dimen/stream_ui_text_large</item>
+        <item name="streamUiPollShowAllOptionsTextColor">@color/stream_ui_accent_blue</item>
+        <item name="streamUiPollShowAllOptionsTextStyle">normal</item>
+    </style>
+
     <style name="StreamUi.MessageList.GiphyMediaAttachment" parent="StreamUi">
         <item name="streamUiGiphyMediaAttachmentProgressIcon">
             @drawable/stream_ui_rotating_indeterminate_progress_gradient
