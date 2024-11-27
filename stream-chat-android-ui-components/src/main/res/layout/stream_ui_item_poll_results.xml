@@ -26,6 +26,7 @@
     >
 
     <TextView
+        android:id="@+id/pollResults"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="@style/StreamUiTextAppearance.Headline"
