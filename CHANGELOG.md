@@ -48,6 +48,7 @@
 - Fix wrong timestamp used for the initial loading of pinned messages in `PinnedMessageListController`. [#5483](https://github.com/GetStream/stream-chat-android/pull/5483)
 
 ### ⬆️ Improved
+- Improve performance of opening a thread or message in a thread via `MessageListController`. [#5489](https://github.com/GetStream/stream-chat-android/pull/5489)
 
 ### ✅ Added
 

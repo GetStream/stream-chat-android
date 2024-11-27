@@ -146,8 +146,8 @@ import io.getstream.chat.android.ui.common.state.messages.Flag as FlagMessage
  * @param clipboardHandler [ClipboardHandler] used to copy messages.
  * @param threadLoadOrderOlderToNewer Determines the order in which the thread messages are loaded.
  * @param messageId The message id to which we want to scroll to when opening the message list.
- * @param parentMessageId The ID of the parent [Message] if the message we want to scroll to is in a thread. If the
- * message we want to scroll to is not in a thread, you can pass in a null value.
+ * @param parentMessageId The ID of the parent message for which we want to initially load the thread. (Must be supplied
+ * if we want to scroll to a message inside a thread).
  * @param messageLimit The limit of messages being fetched with each page od data.
  * @param chatClient The client used to communicate with the API.
  * @param clientState The current state of the SDK.
@@ -418,13 +418,20 @@ public class MessageListController(
         }
 
     /**
-     * We start observing messages and if the message list screen was started after searching for a message, it will
-     * load the message if it is not in the list and scroll to it.
+     * Starts observing the message list state.
+     * If the controller was started for a the purpose of showing a thread (parentMessageId != null), it will load the
+     * thread data initially.
+     * If the controller was started with a messageId, the given message will be highlighted(focused).
      */
     init {
         logger.i { "<init> cid: $cid, messageId: $messageId, messageLimit: $messageLimit" }
-        observeMessagesListState()
-        processMessageId()
+        scope.launch {
+            if (parentMessageId != null) {
+                enterThreadSequential(parentMessageId)
+            }
+            observeMessagesListState()
+            initialFocusMessage()
+        }
     }
 
     /**
@@ -593,30 +600,23 @@ public class MessageListController(
         disableUnreadLabelButton()
     }
 
-    private fun processMessageId() {
-        messageId
-            ?.takeUnless { it.isBlank() }
-            ?.let { messageId ->
-                logger.d { "[processMessageId] messageId: $messageId, parentMessageId: $parentMessageId" }
-                scope.launch {
-                    if (parentMessageId != null) {
-                        enterThreadSequential(parentMessageId)
+    private fun initialFocusMessage() {
+        messageId ?: return // No initial focus if no message id is provided
+        scope.launch {
+            listState
+                .onCompletion {
+                    logger.v { "[initialFocusMessage] mode: ${_mode.value}" }
+                    when {
+                        _mode.value is MessageMode.Normal -> focusChannelMessage(messageId)
+                        _mode.value is MessageMode.MessageThread && parentMessageId != null ->
+                            focusThreadMessage(
+                                threadMessageId = messageId,
+                                parentMessageId = parentMessageId,
+                            )
                     }
-                    listState
-                        .onCompletion {
-                            logger.v { "[processMessageId] mode: ${_mode.value}" }
-                            when {
-                                _mode.value is MessageMode.Normal -> focusChannelMessage(messageId)
-                                _mode.value is MessageMode.MessageThread && parentMessageId != null ->
-                                    focusThreadMessage(
-                                        threadMessageId = messageId,
-                                        parentMessageId = parentMessageId,
-                                    )
-                            }
-                        }
-                        .first { it.messageItems.isNotEmpty() }
                 }
-            }
+                .first { it.messageItems.isNotEmpty() }
+        }
     }
 
     private fun List<Message>.focusUnreadMessage(lastReadMessageId: String) {
