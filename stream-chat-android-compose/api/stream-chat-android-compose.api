@@ -9,34 +9,8 @@ public final class io/getstream/chat/android/compose/handlers/ClipboardHandlerIm
 	public fun copyMessage (Lio/getstream/chat/android/models/Message;)V
 }
 
-public final class io/getstream/chat/android/compose/handlers/DownloadPermissionHandler : io/getstream/chat/android/compose/handlers/PermissionHandler {
-	public static final field $stable I
-	public static final field Companion Lio/getstream/chat/android/compose/handlers/DownloadPermissionHandler$Companion;
-	public static final field PayloadAttachment Ljava/lang/String;
-	public fun <init> (Lcom/google/accompanist/permissions/PermissionState;Landroid/content/Context;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)V
-	public synthetic fun <init> (Lcom/google/accompanist/permissions/PermissionState;Landroid/content/Context;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun ObservePermissionChanges (Landroidx/compose/runtime/Composer;I)V
-	public fun canHandle (Ljava/lang/String;)Z
-	public fun canHandle (Ljava/util/List;)Z
-	public fun onHandleRequest (Ljava/util/Map;)V
-}
-
-public final class io/getstream/chat/android/compose/handlers/DownloadPermissionHandler$Companion {
-}
-
 public final class io/getstream/chat/android/compose/handlers/LoadMoreHandlerKt {
 	public static final fun LoadMoreHandler (Landroidx/compose/foundation/lazy/LazyListState;ILkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
-}
-
-public abstract interface class io/getstream/chat/android/compose/handlers/PermissionHandler {
-	public abstract fun canHandle (Ljava/lang/String;)Z
-	public abstract fun canHandle (Ljava/util/List;)Z
-	public abstract fun onHandleRequest (Ljava/util/Map;)V
-}
-
-public final class io/getstream/chat/android/compose/handlers/PermissionHandler$DefaultImpls {
-	public static fun canHandle (Lio/getstream/chat/android/compose/handlers/PermissionHandler;Ljava/util/List;)Z
-	public static synthetic fun onHandleRequest$default (Lio/getstream/chat/android/compose/handlers/PermissionHandler;Ljava/util/Map;ILjava/lang/Object;)V
 }
 
 public final class io/getstream/chat/android/compose/state/DateFormatType : java/lang/Enum {
