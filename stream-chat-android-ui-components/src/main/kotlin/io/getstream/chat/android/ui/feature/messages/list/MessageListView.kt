@@ -543,7 +543,12 @@ public class MessageListView : ConstraintLayout {
                     context.getString(R.string.stream_ui_message_list_download_started),
                     Toast.LENGTH_SHORT,
                 ).show()
-                ChatClient.instance().downloadAttachment(context, attachment)
+                ChatClient.instance().downloadAttachment(
+                    context,
+                    attachment,
+                    ChatUI.downloadAttachmentUriGenerator::generateDownloadUri,
+                    ChatUI.downloadRequestInterceptor::intercept,
+                )
             }
             return@OnAttachmentDownloadClickListener true
         }

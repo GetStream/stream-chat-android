@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.attachments.preview
 
+import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -608,7 +609,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
     ) {
         val (writePermissionState, downloadPayload) = attachmentDownloadState()
         val context = LocalContext.current
-
+        val downloadAttachmentUriGenerator = ChatTheme.streamDownloadAttachmentUriGenerator
+        val downloadRequestInterceptor = ChatTheme.streamDownloadRequestInterceptor
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -628,6 +630,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                                 writePermissionState = writePermissionState,
                                 downloadPayload = downloadPayload,
                                 attachments = attachments,
+                                generateDownloadUri = downloadAttachmentUriGenerator::generateDownloadUri,
+                                interceptRequest = downloadRequestInterceptor::intercept,
                             )
                         }
                     },
@@ -667,6 +671,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
      * @param downloadPayload The attachment to be downloaded.
      */
     @OptIn(ExperimentalPermissionsApi::class)
+    @Suppress("LongParameterList")
     private fun handleMediaAction(
         context: Context,
         mediaGalleryPreviewAction: MediaGalleryPreviewAction,
@@ -674,6 +679,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         attachments: List<Attachment>,
         writePermissionState: PermissionState,
         downloadPayload: MutableState<Attachment?>,
+        generateDownloadUri: (Attachment) -> Uri,
+        interceptRequest: DownloadManager.Request.() -> Unit,
     ) {
         val message = mediaGalleryPreviewAction.message
 
@@ -705,6 +712,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     payload = attachments[currentPage],
                     permissionState = writePermissionState,
                     downloadPayload = downloadPayload,
+                    generateDownloadUri = generateDownloadUri,
+                    interceptRequest = interceptRequest,
                 )
             }
         }
