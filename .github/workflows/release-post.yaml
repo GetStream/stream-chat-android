@@ -11,19 +11,15 @@ jobs:
     name: Sync main with release
     runs-on: ubuntu-22.04
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
-    steps: 
+    steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
         with:
           ref: main
           persist-credentials: false
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3.6.0
-        with:
-          distribution: adopt
-          java-version: 17
+      - uses: ./.github/actions/setup-java
       - name: Sync main
-        run: | 
+        run: |
           git fetch origin release
           git merge --ff-only origin/release
       - name: Push changes
@@ -42,11 +38,7 @@ jobs:
           ref: main
           fetch-depth: 0
           persist-credentials: false
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3.6.0
-        with:
-          distribution: adopt
-          java-version: 17
+      - uses: ./.github/actions/setup-java
       - name: Update changelog
         run: ./gradlew changelog-add-model-section
       - name: Commit CHANGELOG.md and merge to develop

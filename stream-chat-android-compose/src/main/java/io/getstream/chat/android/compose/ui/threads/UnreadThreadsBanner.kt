@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.threads
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -50,7 +51,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param onClick Action invoked when the user clicks on the banner.
  */
 @Composable
-internal fun UnreadThreadsBanner(
+public fun UnreadThreadsBanner(
     unreadThreads: Int,
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
@@ -102,10 +103,16 @@ internal fun UnreadThreadsBanner(
 private fun UnreadThreadsBannerPreview() {
     ChatTheme {
         Surface {
-            UnreadThreadsBanner(
-                unreadThreads = 17,
-                modifier = Modifier.padding(8.dp),
-            )
+            Column {
+                UnreadThreadsBanner(
+                    unreadThreads = 17,
+                    modifier = Modifier.padding(8.dp),
+                )
+                UnreadThreadsBanner(
+                    unreadThreads = 1,
+                    modifier = Modifier.padding(8.dp),
+                )
+            }
         }
     }
 }

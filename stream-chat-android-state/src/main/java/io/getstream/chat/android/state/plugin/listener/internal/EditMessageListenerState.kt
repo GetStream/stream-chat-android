@@ -43,10 +43,11 @@ internal class EditMessageListenerState(
      */
     override suspend fun onMessageEditRequest(message: Message) {
         val isOnline = clientState.isNetworkAvailable
-        val messagesToEdit = message.updateMessageOnlineState(isOnline)
+        val messageToEdit = message.updateMessageOnlineState(isOnline)
 
-        logic.channelFromMessage(messagesToEdit)?.stateLogic()?.upsertMessage(messagesToEdit)
-        logic.threadFromMessage(messagesToEdit)?.stateLogic()?.upsertMessage(messagesToEdit)
+        logic.channelFromMessage(messageToEdit)?.stateLogic()?.upsertMessage(messageToEdit)
+        logic.threads().upsertMessage(messageToEdit)
+        logic.threadFromMessage(messageToEdit)?.stateLogic()?.upsertMessage(messageToEdit)
     }
 
     /**
@@ -62,6 +63,7 @@ internal class EditMessageListenerState(
         }
 
         logic.channelFromMessage(parsedMessage)?.stateLogic()?.upsertMessage(parsedMessage)
+        logic.threads().upsertMessage(parsedMessage)
         logic.threadFromMessage(parsedMessage)?.stateLogic()?.upsertMessage(parsedMessage)
     }
 }

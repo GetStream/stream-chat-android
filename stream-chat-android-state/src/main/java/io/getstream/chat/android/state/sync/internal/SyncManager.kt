@@ -641,6 +641,7 @@ internal class SyncManager(
                 logger.d { "[removeMessage] message.id: ${message.id}" }
                 repos.deleteChannelMessage(message)
                 logicRegistry.channelFromMessage(message)?.deleteMessage(message)
+                logicRegistry.threads().deleteMessage(message)
                 logicRegistry.threadFromMessage(message)?.deleteMessage(message)
                 logger.v { "[removeMessage] completed: ${message.id}" }
                 Result.Success(Unit)

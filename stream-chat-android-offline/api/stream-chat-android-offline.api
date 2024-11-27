@@ -26,6 +26,8 @@ public final class io/getstream/chat/android/offline/repository/database/interna
 	public fun reactionDao ()Lio/getstream/chat/android/offline/repository/domain/reaction/internal/ReactionDao;
 	public fun replyMessageDao ()Lio/getstream/chat/android/offline/repository/domain/message/internal/ReplyMessageDao;
 	public fun syncStateDao ()Lio/getstream/chat/android/offline/repository/domain/syncState/internal/SyncStateDao;
+	public fun threadDao ()Lio/getstream/chat/android/offline/repository/domain/threads/internal/ThreadDao;
+	public fun threadOrderDao ()Lio/getstream/chat/android/offline/repository/domain/threads/internal/ThreadOrderDao;
 	public fun userDao ()Lio/getstream/chat/android/offline/repository/domain/user/internal/UserDao;
 }
 
@@ -147,6 +149,25 @@ public final class io/getstream/chat/android/offline/repository/domain/syncState
 	public static fun getRequiredConverters ()Ljava/util/List;
 	public fun insert (Lio/getstream/chat/android/offline/repository/domain/syncState/internal/SyncStateEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun select (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class io/getstream/chat/android/offline/repository/domain/threads/internal/ThreadDao_Impl : io/getstream/chat/android/offline/repository/domain/threads/internal/ThreadDao {
+	public fun <init> (Landroidx/room/RoomDatabase;)V
+	public fun deleteAll (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteThreads (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun getRequiredConverters ()Ljava/util/List;
+	public fun insertThread (Lio/getstream/chat/android/offline/repository/domain/threads/internal/ThreadEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun insertThreads (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectThread (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectThreads (Ljava/util/Collection;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class io/getstream/chat/android/offline/repository/domain/threads/internal/ThreadOrderDao_Impl : io/getstream/chat/android/offline/repository/domain/threads/internal/ThreadOrderDao {
+	public fun <init> (Landroidx/room/RoomDatabase;)V
+	public fun deleteAll (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun getRequiredConverters ()Ljava/util/List;
+	public fun insertThreadOrder (Lio/getstream/chat/android/offline/repository/domain/threads/internal/ThreadOrderEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectThreadOrder (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class io/getstream/chat/android/offline/repository/domain/user/internal/UserDao_Impl : io/getstream/chat/android/offline/repository/domain/user/internal/UserDao {

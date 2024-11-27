@@ -22,9 +22,9 @@ import io.getstream.chat.android.randomString
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.state.plugin.logic.querythreads.internal.QueryThreadsLogic
 import io.getstream.result.Error
 import io.getstream.result.Result
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -35,14 +35,15 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class SendMessageListenerStateTest {
 
     private val channelLogic: ChannelLogic = mock()
+    private val threadsLogic: QueryThreadsLogic = mock()
     private val threadLogic: ThreadLogic = mock()
     private val logicRegistry: LogicRegistry = mock {
         on(it.channelFromMessage(any())) doReturn channelLogic
         on(it.threadFromMessage(any())) doReturn threadLogic
+        on(it.threads()) doReturn threadsLogic
         on(it.getMessageById(any())) doReturn null
     }
 
@@ -60,6 +61,11 @@ internal class SendMessageListenerStateTest {
         )
 
         verify(channelLogic).upsertMessage(
+            argThat { message ->
+                message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
+            },
+        )
+        verify(threadsLogic).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
             },
@@ -87,6 +93,11 @@ internal class SendMessageListenerStateTest {
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
             },
         )
+        verify(threadsLogic).upsertMessage(
+            argThat { message ->
+                message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
+            },
+        )
         verify(threadLogic).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
@@ -108,6 +119,11 @@ internal class SendMessageListenerStateTest {
         )
 
         verify(channelLogic, never()).upsertMessage(
+            argThat { message ->
+                message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
+            },
+        )
+        verify(threadsLogic, never()).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
             },

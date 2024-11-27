@@ -29,6 +29,7 @@ import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
@@ -43,6 +44,7 @@ public class RepositoryFacade private constructor(
     private val configsRepository: ChannelConfigRepository,
     private val channelsRepository: ChannelRepository,
     private val queryChannelsRepository: QueryChannelsRepository,
+    private val threadsRepository: ThreadsRepository,
     private val messageRepository: MessageRepository,
     private val reactionsRepository: ReactionRepository,
     private val syncStateRepository: SyncStateRepository,
@@ -54,6 +56,7 @@ public class RepositoryFacade private constructor(
     MessageRepository by messageRepository,
     ChannelConfigRepository by configsRepository,
     QueryChannelsRepository by queryChannelsRepository,
+    ThreadsRepository by threadsRepository,
     SyncStateRepository by syncStateRepository {
 
     private val logger by taggedLogger("Chat:RepositoryFacade")
@@ -109,11 +112,13 @@ public class RepositoryFacade private constructor(
     override suspend fun insertMessage(message: Message) {
         insertUsers(message.users())
         messageRepository.insertMessage(message)
+        threadsRepository.upsertMessageInThread(message)
     }
 
     override suspend fun insertMessages(messages: List<Message>) {
         insertUsers(messages.flatMap(Message::users))
         messageRepository.insertMessages(messages)
+        threadsRepository.upsertMessagesInThread(messages)
     }
 
     /**
@@ -171,6 +176,7 @@ public class RepositoryFacade private constructor(
     }
 
     override suspend fun deleteChannel(cid: String) {
+        threadsRepository.deleteChannelThreads(cid)
         channelsRepository.deleteChannel(cid)
         messageRepository.deleteChannelMessages(cid)
     }
@@ -185,6 +191,17 @@ public class RepositoryFacade private constructor(
         messageRepository.evictMessages()
     }
 
+    override suspend fun insertThreads(threads: List<Thread>) {
+        val parentMessages = threads.map(Thread::parentMessage)
+        val replyMessages = threads.flatMap(Thread::latestReplies)
+        val messages = parentMessages + replyMessages
+        val threadUsers = threads.mapNotNull(Thread::createdBy)
+        val users = threadUsers + messages.flatMap(Message::users)
+        insertUsers(users)
+        messageRepository.insertMessages(messages)
+        threadsRepository.insertThreads(threads)
+    }
+
     public suspend fun storeStateForChannel(channel: Channel) {
         storeStateForChannels(listOf(channel))
     }
@@ -194,6 +211,7 @@ public class RepositoryFacade private constructor(
         channelsRepository.clear()
         reactionsRepository.clear()
         messageRepository.clear()
+        threadsRepository.clear()
         configsRepository.clear()
         queryChannelsRepository.clear()
         syncStateRepository.clear()
@@ -225,12 +243,15 @@ public class RepositoryFacade private constructor(
 
             val messageRepository = factory.createMessageRepository(getUser)
             val getMessage: suspend (messageId: String) -> Message? = messageRepository::selectMessage
+            val channelRepository = factory.createChannelRepository(getUser, getMessage)
+            val getChannel: suspend (cid: String) -> Channel? = channelRepository::selectChannel
 
             return RepositoryFacade(
                 userRepository = userRepository,
                 configsRepository = factory.createChannelConfigRepository(),
-                channelsRepository = factory.createChannelRepository(getUser, getMessage),
+                channelsRepository = channelRepository,
                 queryChannelsRepository = factory.createQueryChannelsRepository(),
+                threadsRepository = factory.createThreadsRepository(getUser, getMessage, getChannel),
                 messageRepository = messageRepository,
                 reactionsRepository = factory.createReactionRepository(getUser),
                 syncStateRepository = factory.createSyncStateRepository(),

@@ -3,6 +3,94 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-client
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-offline
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-state
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+- Fix wrong timestamp used for the initial loading of pinned messages in `PinnedMessageListController`. [#5483](https://github.com/GetStream/stream-chat-android/pull/5483)
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-compose
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-markdown-transformer
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+# November 21th, 2024 - 6.6.0
+## Common changes for all artifacts
+### ⬆️ Improved
 - Update dependency versions:
   - Android JUnit5 Gradle Plugin 1.11.2.0
   - AndroidX Activity 1.9.3
@@ -51,50 +139,11 @@
   - Turbine 1.2.0
   - Work 2.9.1
 
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-client
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
+- Add support for Threads. [#5481](https://github.com/GetStream/stream-chat-android/pull/5481)
 
 ## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Add `MessageListController.flagUser()` and `MessageListController.unflagUser()` methods for flagging/un-flagging users. [#5478](https://github.com/GetStream/stream-chat-android/pull/5478)
 - Add `MessageListController.ErrorEvent`s - `FlagUserError` and `UnflagUserError` representing errors which occurred during the execution of the corresponding operations. [#5478](https://github.com/GetStream/stream-chat-android/pull/5478)
@@ -102,47 +151,21 @@
 ### ⚠️ Changed
 - 🚨 Breaking change: The `MessagePositionHandler.handleMessagePosition` function now includes a new parameter, `isBeforeDateSeparator`, to handle message positioning more precisely within a group of messages. [#5466](https://github.com/GetStream/stream-chat-android/pull/5466)
 
-### ❌ Removed
-
 ## stream-chat-android-ui-components
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Add `MessageListViewModel.flagUser()` and `MessageListViewModel.unflagUser()` methods for flagging/un-flagging users. [#5478](https://github.com/GetStream/stream-chat-android/pull/5478)
 - Add edge-to-edge support for apps targeting Android 15. [#5469](https://github.com/GetStream/stream-chat-android/pull/5469)
 - Add styles for polls. [#5479](https://github.com/GetStream/stream-chat-android/pull/5479)
 
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-compose
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Add `MessageListViewModel.flagUser()` and `MessageListViewModel.unflagUser()` methods for flagging/un-flagging users. [#5478](https://github.com/GetStream/stream-chat-android/pull/5478)
 - Add edge-to-edge support for apps targeting Android 15. [#5469](https://github.com/GetStream/stream-chat-android/pull/5469)
+- Add `ThreadList` component for showing the list of threads for the user. [#5455](https://github.com/GetStream/stream-chat-android/pull/5455)
 
 ### ⚠️ Changed
 - 🚨 Breaking change: Replace usage of `RippleTheme` with `StreamRippleConfiguration` for customizing ripples via `ChatTheme`. [#5475](https://github.com/GetStream/stream-chat-android/pull/5475)
 - Expanded `MessageTheme` to allow customizing the message components. [#5466](https://github.com/GetStream/stream-chat-android/pull/5466)
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # November 06th, 2024 - 6.5.3
 ## stream-chat-android-client

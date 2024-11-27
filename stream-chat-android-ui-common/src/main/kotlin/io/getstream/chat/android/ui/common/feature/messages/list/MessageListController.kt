@@ -1621,22 +1621,36 @@ public class MessageListController(
         }
         this.lastSeenMessageId = messageId
 
-        cid.cidToTypeAndId().let { (channelType, channelId) ->
-            if (isInThread) {
-                // TODO sort out thread unreads when
-                //  https://github.com/GetStream/stream-chat-android/pull/4122 has been merged in
-                // chatClient.markThreadRead(channelType, channelId, mode.parentMessage.id)
-            } else {
-                chatClient.markRead(channelType, channelId).enqueue(
-                    onError = { error ->
-                        logger.e {
-                            "Could not mark cid: $channelId as read. Error message: ${error.message}. " +
-                                "Cause: ${error.extractCause()}"
-                        }
-                    },
-                )
-            }
+        if (isInThread) {
+            markThreadAsRead()
+        } else {
+            markChannelAsRead()
         }
+    }
+
+    private fun markChannelAsRead() {
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        chatClient.markRead(channelType, channelId).enqueue(
+            onError = { error ->
+                logger.e {
+                    "Could not mark cid: $channelId as read. Error message: ${error.message}. " +
+                        "Cause: ${error.extractCause()}"
+                }
+            },
+        )
+    }
+
+    private fun markThreadAsRead() {
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        val threadId = (_mode.value as? MessageMode.MessageThread)?.parentMessage?.id ?: return
+        chatClient.markThreadRead(channelType, channelId, threadId).enqueue(
+            onError = { error ->
+                logger.e {
+                    "Could not mark thread with id: $threadId as read. Error message: ${error.message}. " +
+                        "Cause: ${error.extractCause()}"
+                }
+            },
+        )
     }
 
     /**
@@ -1677,7 +1691,16 @@ public class MessageListController(
      */
     public fun markUnread(message: Message, onResult: (Result<Unit>) -> Unit = {}) {
         cid.cidToTypeAndId().let { (channelType, channelId) ->
-            chatClient.markUnread(channelType, channelId, message.id).enqueue { response ->
+            val call = when (val mode = mode.value) {
+                is MessageMode.Normal -> {
+                    chatClient.markUnread(channelType, channelId, messageId = message.id)
+                }
+
+                is MessageMode.MessageThread -> {
+                    chatClient.markThreadUnread(channelType, channelId, mode.parentMessage.id, messageId = message.id)
+                }
+            }
+            call.enqueue { response ->
                 onResult(response)
                 if (response is Result.Failure) {
                     onActionResult(response.value) {

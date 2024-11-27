@@ -24,10 +24,10 @@ import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.state.plugin.logic.querythreads.internal.QueryThreadsLogic
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.result.Error
 import io.getstream.result.Result
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -38,13 +38,13 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class DeleteMessageListenerStateTest {
 
     private val channelStateLogic: ChannelStateLogic = mock()
     private val channelLogic: ChannelLogic = mock {
         on(it.stateLogic()) doReturn channelStateLogic
     }
+    private val threadsLogic: QueryThreadsLogic = mock()
 
     private val clientState: ClientState = mock {
         on(it.user) doReturn MutableStateFlow(randomUser())
@@ -54,6 +54,7 @@ internal class DeleteMessageListenerStateTest {
         on(it.channel(any(), any())) doReturn channelLogic
         on(it.channelFromMessageId(any())) doReturn channelLogic
         on(it.channelFromMessage(any())) doReturn channelLogic
+        on(it.threads()) doReturn threadsLogic
     }
 
     private val deleteMessageListenerState: DeleteMessageListenerState =
@@ -68,10 +69,17 @@ internal class DeleteMessageListenerStateTest {
 
         whenever(clientState.isNetworkAvailable) doReturn true
         whenever(channelLogic.getMessage(any())) doReturn testMessage
+        whenever(threadsLogic.getMessage(any())) doReturn testMessage
 
         deleteMessageListenerState.onMessageDeleteRequest(testMessage.id)
 
         verify(channelLogic).upsertMessage(
+            argThat { message ->
+                // The same ID, but not the status was correctly updated
+                message.id == testMessage.id && message.syncStatus == SyncStatus.IN_PROGRESS
+            },
+        )
+        verify(threadsLogic).upsertMessage(
             argThat { message ->
                 // The same ID, but not the status was correctly updated
                 message.id == testMessage.id && message.syncStatus == SyncStatus.IN_PROGRESS
@@ -88,10 +96,17 @@ internal class DeleteMessageListenerStateTest {
 
         whenever(clientState.isNetworkAvailable) doReturn false
         whenever(channelLogic.getMessage(any())) doReturn testMessage
+        whenever(threadsLogic.getMessage(any())) doReturn testMessage
 
         deleteMessageListenerState.onMessageDeleteRequest(testMessage.id)
 
         verify(channelLogic).upsertMessage(
+            argThat { message ->
+                // The same ID, but not the status was correctly updated
+                message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
+            },
+        )
+        verify(threadsLogic).upsertMessage(
             argThat { message ->
                 // The same ID, but not the status was correctly updated
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
@@ -108,10 +123,17 @@ internal class DeleteMessageListenerStateTest {
 
         whenever(clientState.isNetworkAvailable) doReturn true
         whenever(channelLogic.getMessage(any())) doReturn testMessage
+        whenever(threadsLogic.getMessage(any())) doReturn testMessage
 
         deleteMessageListenerState.onMessageDeleteResult(testMessage.id, Result.Success(testMessage))
 
         verify(channelLogic).upsertMessage(
+            argThat { message ->
+                // The same ID, but not the status was correctly updated
+                message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
+            },
+        )
+        verify(threadsLogic).upsertMessage(
             argThat { message ->
                 // The same ID, but not the status was correctly updated
                 message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
@@ -128,10 +150,17 @@ internal class DeleteMessageListenerStateTest {
 
         whenever(clientState.isNetworkAvailable) doReturn true
         whenever(channelLogic.getMessage(any())) doReturn testMessage
+        whenever(threadsLogic.getMessage(any())) doReturn testMessage
 
         deleteMessageListenerState.onMessageDeleteResult(testMessage.id, Result.Failure(Error.GenericError("")))
 
         verify(channelLogic).upsertMessage(
+            argThat { message ->
+                // The same ID, but not the status was correctly updated
+                message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
+            },
+        )
+        verify(threadsLogic).upsertMessage(
             argThat { message ->
                 // The same ID, but not the status was correctly updated
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
