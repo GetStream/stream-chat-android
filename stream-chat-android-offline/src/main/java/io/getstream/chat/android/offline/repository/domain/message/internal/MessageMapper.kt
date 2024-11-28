@@ -78,6 +78,7 @@ internal suspend fun MessageEntity.toModel(
         skipEnrichUrl = skipEnrichUrl,
         skipPushNotification = skipPushNotification,
         moderationDetails = moderationDetails?.toModel(),
+        moderation = moderation?.toDomain(),
         messageTextUpdatedAt = messageTextUpdatedAt,
         poll = pollId?.let { getPoll(it) },
     )
@@ -120,6 +121,7 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
         skipPushNotification = skipPushNotification,
         skipEnrichUrl = skipEnrichUrl,
         moderationDetails = moderationDetails?.toEntity(),
+        moderation = moderation?.toEntity(),
         messageTextUpdatedAt = messageTextUpdatedAt,
         pollId = poll?.id,
     ),
