@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.feature.threads.list.internal
+package io.getstream.chat.android.ui.feature.threads.list.adapter
 
 import io.getstream.chat.android.models.Thread
 
 /**
  * Class representing the different types of items that can be rendered in the
- * by the [ThreadListAdapter].
+ * by the [io.getstream.chat.android.ui.feature.threads.list.adapter.internal.ThreadListAdapter].
  */
 public sealed interface ThreadListItem {
 
