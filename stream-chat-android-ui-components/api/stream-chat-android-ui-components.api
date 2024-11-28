@@ -3773,6 +3773,7 @@ public final class io/getstream/chat/android/ui/feature/threads/list/ThreadListV
 	public final fun setLoadMoreListener (Lio/getstream/chat/android/ui/feature/threads/list/ThreadListView$LoadMoreListener;)V
 	public final fun setThreadClickListener (Lio/getstream/chat/android/ui/feature/threads/list/ThreadListView$ThreadClickListener;)V
 	public final fun setUnreadThreadsBannerClickListener (Lio/getstream/chat/android/ui/feature/threads/list/ThreadListView$UnreadThreadsBannerClickListener;)V
+	public final fun setViewHolderFactory (Lio/getstream/chat/android/ui/feature/threads/list/adapter/ThreadListItemViewHolderFactory;)V
 	public final fun showLoading ()V
 	public final fun showThreads (Ljava/util/List;Z)V
 	public final fun showUnreadThreadsBanner (I)V
@@ -3841,28 +3842,50 @@ public final class io/getstream/chat/android/ui/feature/threads/list/ThreadListV
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract interface class io/getstream/chat/android/ui/feature/threads/list/internal/ThreadListItem {
+public abstract interface class io/getstream/chat/android/ui/feature/threads/list/adapter/ThreadListItem {
 	public abstract fun getStableId ()J
 }
 
-public final class io/getstream/chat/android/ui/feature/threads/list/internal/ThreadListItem$LoadingMoreItem : io/getstream/chat/android/ui/feature/threads/list/internal/ThreadListItem {
-	public static final field INSTANCE Lio/getstream/chat/android/ui/feature/threads/list/internal/ThreadListItem$LoadingMoreItem;
+public final class io/getstream/chat/android/ui/feature/threads/list/adapter/ThreadListItem$LoadingMoreItem : io/getstream/chat/android/ui/feature/threads/list/adapter/ThreadListItem {
+	public static final field INSTANCE Lio/getstream/chat/android/ui/feature/threads/list/adapter/ThreadListItem$LoadingMoreItem;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getStableId ()J
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/feature/threads/list/internal/ThreadListItem$ThreadItem : io/getstream/chat/android/ui/feature/threads/list/internal/ThreadListItem {
+public final class io/getstream/chat/android/ui/feature/threads/list/adapter/ThreadListItem$ThreadItem : io/getstream/chat/android/ui/feature/threads/list/adapter/ThreadListItem {
 	public fun <init> (Lio/getstream/chat/android/models/Thread;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/Thread;
-	public final fun copy (Lio/getstream/chat/android/models/Thread;)Lio/getstream/chat/android/ui/feature/threads/list/internal/ThreadListItem$ThreadItem;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/feature/threads/list/internal/ThreadListItem$ThreadItem;Lio/getstream/chat/android/models/Thread;ILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/threads/list/internal/ThreadListItem$ThreadItem;
+	public final fun copy (Lio/getstream/chat/android/models/Thread;)Lio/getstream/chat/android/ui/feature/threads/list/adapter/ThreadListItem$ThreadItem;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/feature/threads/list/adapter/ThreadListItem$ThreadItem;Lio/getstream/chat/android/models/Thread;ILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/threads/list/adapter/ThreadListItem$ThreadItem;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getStableId ()J
 	public final fun getThread ()Lio/getstream/chat/android/models/Thread;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public class io/getstream/chat/android/ui/feature/threads/list/adapter/ThreadListItemViewHolderFactory {
+	public fun <init> ()V
+	protected fun createLoadingMoreViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/threads/list/adapter/viewholder/BaseThreadListItemViewHolder;
+	protected fun createThreadItemViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/threads/list/adapter/viewholder/BaseThreadListItemViewHolder;
+	public fun createViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/feature/threads/list/adapter/viewholder/BaseThreadListItemViewHolder;
+	protected final fun getClickListener ()Lio/getstream/chat/android/ui/feature/threads/list/ThreadListView$ThreadClickListener;
+	public fun getItemViewType (Lio/getstream/chat/android/ui/feature/threads/list/adapter/ThreadListItem;)I
+	public fun getItemViewType (Lio/getstream/chat/android/ui/feature/threads/list/adapter/viewholder/BaseThreadListItemViewHolder;)I
+	protected final fun getStyle ()Lio/getstream/chat/android/ui/feature/threads/list/ThreadListViewStyle;
+}
+
+public final class io/getstream/chat/android/ui/feature/threads/list/adapter/ThreadListItemViewType {
+	public static final field INSTANCE Lio/getstream/chat/android/ui/feature/threads/list/adapter/ThreadListItemViewType;
+	public static final field ITEM_LOADING_MORE I
+	public static final field ITEM_THREAD I
+}
+
+public abstract class io/getstream/chat/android/ui/feature/threads/list/adapter/viewholder/BaseThreadListItemViewHolder : androidx/recyclerview/widget/RecyclerView$ViewHolder {
+	public fun <init> (Landroid/view/View;)V
+	public abstract fun bind (Lio/getstream/chat/android/ui/feature/threads/list/adapter/ThreadListItem;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/font/ChatFonts {

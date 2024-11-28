@@ -25,8 +25,9 @@ import androidx.core.view.updatePadding
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiThreadListViewBinding
-import io.getstream.chat.android.ui.feature.threads.list.internal.ThreadListAdapter
-import io.getstream.chat.android.ui.feature.threads.list.internal.ThreadListItem
+import io.getstream.chat.android.ui.feature.threads.list.adapter.ThreadListItem
+import io.getstream.chat.android.ui.feature.threads.list.adapter.ThreadListItemViewHolderFactory
+import io.getstream.chat.android.ui.feature.threads.list.adapter.internal.ThreadListAdapter
 import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
@@ -40,7 +41,9 @@ public class ThreadListView : ConstraintLayout {
 
     private val binding = StreamUiThreadListViewBinding.inflate(streamThemeInflater, this)
     private lateinit var style: ThreadListViewStyle
+    private lateinit var viewHolderFactory: ThreadListItemViewHolderFactory
     private lateinit var adapter: ThreadListAdapter
+    private var clickListener: ThreadClickListener? = null
     private val scrollListener = EndlessScrollListener(LOAD_MORE_THRESHOLD) {
         loadMoreListener?.onLoadMore()
     }
@@ -63,10 +66,7 @@ public class ThreadListView : ConstraintLayout {
 
     private fun init(attrs: AttributeSet?) {
         style = ThreadListViewStyle(context, attrs)
-        adapter = ThreadListAdapter(style)
 
-        binding.threadListRecyclerView.setHasFixedSize(true)
-        binding.threadListRecyclerView.adapter = adapter
         binding.threadListRecyclerView.addOnScrollListener(scrollListener)
 
         setBackgroundColor(style.backgroundColor)
@@ -81,7 +81,7 @@ public class ThreadListView : ConstraintLayout {
      * @param isLoadingMore Indicator if the loading more view should be shown.
      */
     public fun showThreads(threads: List<Thread>, isLoadingMore: Boolean) {
-        val isCurrentlyEmpty = adapter.itemCount == 0
+        val isCurrentlyEmpty = requireAdapter().itemCount == 0
         val hasThreads = threads.isNotEmpty()
 
         binding.threadListRecyclerView.isVisible = hasThreads
@@ -90,7 +90,7 @@ public class ThreadListView : ConstraintLayout {
 
         val threadItems = threads.map(ThreadListItem::ThreadItem)
         val loadingMoreItems = if (isLoadingMore) listOf(ThreadListItem.LoadingMoreItem) else emptyList()
-        adapter.submitList(threadItems + loadingMoreItems)
+        requireAdapter().submitList(threadItems + loadingMoreItems)
 
         scrollListener.enablePagination()
 
@@ -104,7 +104,7 @@ public class ThreadListView : ConstraintLayout {
      * Shows the loading state of the thread list.
      */
     public fun showLoading() {
-        adapter.submitList(emptyList()) // clear current list
+        requireAdapter().submitList(emptyList()) // clear current list
         binding.threadListRecyclerView.isVisible = false
         binding.emptyContainer.isVisible = false
         binding.progressBar.isVisible = true
@@ -128,6 +128,21 @@ public class ThreadListView : ConstraintLayout {
     }
 
     /**
+     * Sets the [ThreadListItemViewHolderFactory] used to create the thread list view holders.
+     * Use if you want completely custom views for the thread list items.
+     * Make sure to call this before setting/updating the data in the thread list view.
+     *
+     * @param factory The [ThreadListItemViewHolderFactory] to be used for creating the item view holders.
+     * @throws IllegalStateException if called when a [factory] was already set.
+     */
+    public fun setViewHolderFactory(factory: ThreadListItemViewHolderFactory) {
+        check(::adapter.isInitialized.not()) {
+            "Adapter was already initialized, please set ChannelListItemViewHolderFactory first"
+        }
+        viewHolderFactory = factory
+    }
+
+    /**
      * Sets the listener for clicks on the unread threads banner.
      *
      * @param listener The [UnreadThreadsBannerClickListener] to be invoked when the user clicks on the unread threads
@@ -145,7 +160,7 @@ public class ThreadListView : ConstraintLayout {
      * @param listener The [ThreadClickListener] to be invoked when the user clicks on a thread.
      */
     public fun setThreadClickListener(listener: ThreadClickListener) {
-        adapter.setThreadClickListener(listener)
+        this.clickListener = listener
     }
 
     /**
@@ -155,6 +170,28 @@ public class ThreadListView : ConstraintLayout {
      */
     public fun setLoadMoreListener(listener: LoadMoreListener) {
         this.loadMoreListener = listener
+    }
+
+    /**
+     * Ensures the [adapter] is initialized before accessing it.
+     * Useful for cases where a custom [viewHolderFactory] is provided.
+     */
+    private fun requireAdapter(): ThreadListAdapter {
+        if (::adapter.isInitialized.not()) {
+            initAdapter()
+        }
+        return adapter
+    }
+
+    private fun initAdapter() {
+        // Ensure the viewHolderFactory is initialized
+        if (::viewHolderFactory.isInitialized.not()) {
+            viewHolderFactory = ThreadListItemViewHolderFactory()
+        }
+        viewHolderFactory.setStyle(style)
+        viewHolderFactory.setThreadClickListener(clickListener)
+        adapter = ThreadListAdapter(style, viewHolderFactory)
+        binding.threadListRecyclerView.adapter = adapter
     }
 
     private fun applyEmptyStateStyle(style: ThreadListViewStyle) {
