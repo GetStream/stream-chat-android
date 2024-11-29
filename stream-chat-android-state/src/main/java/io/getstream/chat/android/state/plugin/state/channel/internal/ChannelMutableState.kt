@@ -237,26 +237,22 @@ internal class ChannelMutableState(
 
     override fun toChannel(): Channel {
         // recreate a channel object from the various observables.
-        val channelData = channelData.value
-
-        val messages = sortedMessages.value
-        val pinnedMessages = sortedPinnedMessages.value
-        val cachedMessages = cachedLatestMessages.value.values.toList()
-        val members = members.value
-        val watchers = watchers.value
-        val reads = rawReads.value.values.toList()
-        val watcherCount = watcherCount.value
-        val insideSearch = insideSearch.value
-
-        val channel = channelData
-            .toChannel(messages, cachedMessages, members, reads, watchers, watcherCount, insideSearch)
-        return channel.copy(
-            config = channelConfig.value,
-            hidden = hidden.value,
-            isInsideSearch = insideSearch,
-            cachedLatestMessages = cachedLatestMessages.value.values.toList(),
-            pinnedMessages = pinnedMessages,
-        ).syncUnreadCountWithReads()
+        return channelData.value
+            .toChannel(
+                messages = sortedMessages.value,
+                cachedLatestMessages = cachedLatestMessages.value.values.toList(),
+                members = members.value,
+                reads = rawReads.value.values.toList(),
+                watchers = watchers.value,
+                watcherCount = watcherCount.value,
+                insideSearch = insideSearch.value,
+                channelLastMessageAt = lastSentMessageDate.value,
+            )
+            .copy(
+                config = channelConfig.value,
+                hidden = hidden.value,
+                pinnedMessages = sortedPinnedMessages.value,
+            ).syncUnreadCountWithReads()
     }
 
     /**
