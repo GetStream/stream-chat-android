@@ -161,8 +161,6 @@ internal class EventDtoAdapter(
 
         val map: Map<String, Any?> = mapAdapter.fromJson(reader)!!.filterValues { it != null }
 
-        println("JcLog: Event type: ${map["type"]} - ${map["channel_last_message_at"]}")
-
         val adapter = when (val type = map["type"] as? String) {
             EventType.HEALTH_CHECK -> when {
                 map.containsKey("me") -> connectedEventAdapter
