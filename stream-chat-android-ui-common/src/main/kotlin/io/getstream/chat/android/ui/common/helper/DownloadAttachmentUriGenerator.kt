@@ -34,7 +34,10 @@ public fun interface DownloadAttachmentUriGenerator {
     public fun generateDownloadUri(attachment: Attachment): Uri
 }
 
-// @InternalStreamChatApi
+/**
+ * Default implementation of [DownloadAttachmentUriGenerator] that generates a download URI based on the asset URL
+ * or image URL of the attachment.
+ */
 public object DefaultDownloadAttachmentUriGenerator : DownloadAttachmentUriGenerator {
     override fun generateDownloadUri(attachment: Attachment): Uri =
         Uri.parse(attachment.assetUrl ?: attachment.imageUrl)
