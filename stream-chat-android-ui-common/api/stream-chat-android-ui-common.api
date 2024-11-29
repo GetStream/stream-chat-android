@@ -444,6 +444,12 @@ public final class io/getstream/chat/android/ui/common/helper/DateFormatter$Comp
 	public static synthetic fun from$default (Lio/getstream/chat/android/ui/common/helper/DateFormatter$Companion;Landroid/content/Context;Ljava/util/Locale;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/helper/DateFormatter;
 }
 
+public final class io/getstream/chat/android/ui/common/helper/DefaultDownloadAttachmentUriGenerator : io/getstream/chat/android/ui/common/helper/DownloadAttachmentUriGenerator {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/helper/DefaultDownloadAttachmentUriGenerator;
+	public fun generateDownloadUri (Lio/getstream/chat/android/models/Attachment;)Landroid/net/Uri;
+}
+
 public final class io/getstream/chat/android/ui/common/helper/DefaultImageAssetTransformer : io/getstream/chat/android/ui/common/helper/ImageAssetTransformer {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/common/helper/DefaultImageAssetTransformer;
@@ -454,6 +460,14 @@ public final class io/getstream/chat/android/ui/common/helper/DefaultImageHeader
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/common/helper/DefaultImageHeadersProvider;
 	public fun getImageRequestHeaders (Ljava/lang/String;)Ljava/util/Map;
+}
+
+public abstract interface class io/getstream/chat/android/ui/common/helper/DownloadAttachmentUriGenerator {
+	public abstract fun generateDownloadUri (Lio/getstream/chat/android/models/Attachment;)Landroid/net/Uri;
+}
+
+public abstract interface class io/getstream/chat/android/ui/common/helper/DownloadRequestInterceptor {
+	public abstract fun intercept (Landroid/app/DownloadManager$Request;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/common/helper/ImageAssetTransformer {
