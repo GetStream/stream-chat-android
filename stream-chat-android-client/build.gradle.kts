@@ -46,6 +46,14 @@ android {
         buildConfig = true
     }
 
+    lint {
+        xmlReport = false
+    }
+
+    testOptions.unitTests {
+        isReturnDefaultValues = true
+    }
+
     resourcePrefix = "stream_"
 }
 
