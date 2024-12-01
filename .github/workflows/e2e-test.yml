@@ -1,0 +1,79 @@
+name: E2E Tests
+
+on:
+  pull_request:
+
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
+
+jobs:
+  build-compose-apks:
+    name: Build
+    uses: ./.github/workflows/e2e-build.yml
+    with:
+      app: compose
+
+  run-compose-tests:
+    name: Test compose
+    runs-on: ubuntu-24.04
+    needs: build-compose-apks
+    strategy:
+      matrix:
+        include:
+          - batch: 0
+          - batch: 1
+    env:
+      ANDROID_API_LEVEL: 34
+    steps:
+      - name: Connect Bot
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/download-artifact@v4.1.8
+        continue-on-error: true
+        with:
+          name: apks
+      - uses: ./.github/actions/setup-java
+      - uses: ./.github/actions/enable-kvm
+      - uses: ./.github/actions/setup-ruby
+      - uses: ./.github/actions/allure-launch
+        with:
+          allure-token: ${{ secrets.ALLURE_TOKEN }}
+      - name: Run tests
+        uses: reactivecircus/android-emulator-runner@v2
+        timeout-minutes: 45
+        with:
+          api-level: ${{ env.ANDROID_API_LEVEL }}
+          disable-animations: true
+          profile: pixel
+          arch : x86_64
+          emulator-options: ${{ vars.EMULATOR_OPTIONS }}
+          script: bundle exec fastlane run_e2e_test batch:${{ matrix.batch }} batch_count:${{ strategy.job-total }}
+      - name: Allure TestOps Upload
+        if: success() || failure()
+        run: bundle exec fastlane allure_upload
+        env:
+          ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
+          LAUNCH_ID: ${{ env.LAUNCH_ID }}
+      - name: Allure TestOps Launch Removal
+        if: cancelled()
+        run: bundle exec fastlane allure_launch_removal
+        env:
+          ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
+          LAUNCH_ID: ${{ env.LAUNCH_ID }}
+      - name: Upload test results
+        uses: actions/upload-artifact@v4.4.3
+        if: failure()
+        with:
+          name: test_report
+          path: |
+            ./**/build/reports/androidTests/*
+            fastlane/stream-chat-test-mock-server/logs/*

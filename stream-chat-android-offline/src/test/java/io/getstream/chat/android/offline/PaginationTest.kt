@@ -158,9 +158,13 @@ internal class PaginationTest {
             },
             // last_updated is a computed field based on max(createdAt, lastMessageAt)
             listOf(
-                randomChannel(type = "c", createdAt = null, lastMessageAt = calendar(2020, 10, 2)),
-                randomChannel(type = "a", createdAt = calendar(2020, 10, 4), lastMessageAt = null),
-                randomChannel(type = "b", createdAt = calendar(2020, 10, 1), lastMessageAt = calendar(2020, 10, 3)),
+                randomChannel(type = "c", createdAt = null, channelLastMessageAt = calendar(2020, 10, 2)),
+                randomChannel(type = "a", createdAt = calendar(2020, 10, 4), channelLastMessageAt = null),
+                randomChannel(
+                    type = "b",
+                    createdAt = calendar(2020, 10, 1),
+                    channelLastMessageAt = calendar(2020, 10, 3),
+                ),
             ).let {
                 Arguments.of(
                     it,
@@ -186,9 +190,9 @@ internal class PaginationTest {
             },
             // last_message_at should map to channel.lastMessageAt
             listOf(
-                randomChannel(type = "c", lastMessageAt = calendar(2020, 10, 2)),
-                randomChannel(type = "a", lastMessageAt = calendar(2020, 10, 4)),
-                randomChannel(type = "b", lastMessageAt = calendar(2020, 10, 3)),
+                randomChannel(type = "c", channelLastMessageAt = calendar(2020, 10, 2)),
+                randomChannel(type = "a", channelLastMessageAt = calendar(2020, 10, 4)),
+                randomChannel(type = "b", channelLastMessageAt = calendar(2020, 10, 3)),
             ).let {
                 Arguments.of(
                     it,

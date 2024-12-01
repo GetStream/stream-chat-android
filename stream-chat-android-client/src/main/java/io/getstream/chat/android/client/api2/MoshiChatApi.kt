@@ -786,7 +786,7 @@ constructor(
     }
 
     private fun flattenChannel(response: ChannelResponse): Channel {
-        return response.channel.toDomain(currentUserIdProvider()).let { channel ->
+        return response.channel.toDomain(currentUserIdProvider(), null).let { channel ->
             channel.copy(
                 watcherCount = response.watcher_count,
                 read = response.read.map {

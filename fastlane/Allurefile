@@ -9,8 +9,9 @@ allure_results_path = 'allure-results'
 desc 'Upload test results to Allure TestOps'
 lane :allure_upload do |options|
   remove_duplicated_allure_results
+  options[:launch_id] ||= ENV.fetch('LAUNCH_ID', nil)
   allure_args = "-e #{allure_url} --project-id #{allure_project_id} --launch-id #{options[:launch_id]}"
-  sh("./allurectl launch reopen #{options[:launch_id]} || true") # to prevent allure from uploading results to a closed launch
+  sh("./allurectl launch reopen #{options[:launch_id]} -e #{allure_url} || true") # to prevent allure from uploading results to a closed launch
   sh("env BRANCH_NAME='#{current_branch}' ./allurectl upload #{allure_args} #{allure_results_path} || true")
   UI.success("Check out test results in Allure TestOps: #{allure_url}/launch/#{options[:launch_id]} 🎉")
 end
@@ -30,6 +31,7 @@ end
 
 desc 'Remove launch on Allure TestOps'
 lane :allure_launch_removal do |options|
+  options[:launch_id] ||= ENV.fetch('LAUNCH_ID', nil)
   allure_api(url: allure_api_url, path: "launch/#{options[:launch_id]}", http_method: 'DELETE')
 end
 

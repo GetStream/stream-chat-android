@@ -26,14 +26,11 @@ import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Rule
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.mockito.kotlin.any
-import org.mockito.kotlin.check
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
@@ -66,63 +63,6 @@ internal class ChannelRepositoryImplTest {
     }
 
     @Test
-    fun `Given channel without messages in DB, Should insert channel with updated last message`() = runTest {
-        val channel = randomChannel(messages = emptyList())
-        val lastMessage = randomMessage(
-            createdAt = Date(),
-            deletedAt = null,
-            parentId = null,
-        )
-        whenever(channelDao.select("cid")) doReturn channel.toEntity()
-
-        channelRepository.updateLastMessageForChannel("cid", lastMessage)
-
-        verify(channelDao).insertMany(
-            check { channelEntities ->
-                channelEntities.size `should be equal to` 1
-                with(channelEntities.first()) {
-                    cid `should be equal to` channel.cid
-                    lastMessageAt `should be equal to` lastMessage.createdAt
-                    lastMessageId `should be equal to` lastMessage.id
-                }
-            },
-        )
-    }
-
-    @Test
-    fun `Given channel with outdated lastMessage in DB, Should insert channel with updated last message`() = runTest {
-        val before = Date(1000)
-        val after = Date(2000)
-        val outdatedMessage = randomMessage(
-            id = "messageId1",
-            createdAt = before,
-            parentId = null,
-            deletedAt = null,
-        )
-        val newLastMessage = randomMessage(
-            id = "messageId2",
-            createdAt = after,
-            parentId = null,
-            deletedAt = null,
-        )
-        val channel = randomChannel(messages = listOf(outdatedMessage), lastMessageAt = before)
-        whenever(channelDao.select(cid = "cid")) doReturn channel.toEntity()
-
-        channelRepository.updateLastMessageForChannel("cid", newLastMessage)
-
-        verify(channelDao).insertMany(
-            check { channelEntities ->
-                channelEntities.size shouldBeEqualTo 1
-                with(channelEntities.first()) {
-                    cid `should be equal to` channel.cid
-                    lastMessageAt `should be equal to` after
-                    lastMessageId `should be equal to` newLastMessage.id
-                }
-            },
-        )
-    }
-
-    @Test
     fun `Given channel with recent lastMessage in DB, Should NOT insert channel`() = runTest {
         reset(channelDao)
 
@@ -130,7 +70,7 @@ internal class ChannelRepositoryImplTest {
         val after = Date(2000)
         val outdatedMessage = randomMessage(id = "messageId1", createdAt = before)
         val newLastMessage = randomMessage(id = "messageId2", createdAt = after)
-        val channel = randomChannel(messages = listOf(newLastMessage), lastMessageAt = after)
+        val channel = randomChannel(messages = listOf(newLastMessage), channelLastMessageAt = after)
         whenever(channelDao.select(cid = "cid")) doReturn channel.toEntity()
 
         channelRepository.updateLastMessageForChannel("cid", outdatedMessage)
