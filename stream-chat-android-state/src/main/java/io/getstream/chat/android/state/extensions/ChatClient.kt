@@ -256,28 +256,37 @@ public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<U
 /**
  * Downloads the selected attachment to the "Download" folder in the public external storage directory.
  *
+ * @param context The context used to access the [DownloadManager].
  * @param attachment The attachment to download.
+ * @param generateDownloadUri The function that generates the download URI for the attachment.
+ * @param interceptRequest The function that intercepts the [DownloadManager.Request] before it's enqueued.
  *
  * @return Executable async [Call] downloading attachment.
  */
 @CheckResult
-public fun ChatClient.downloadAttachment(context: Context, attachment: Attachment): Call<Unit> {
+public fun ChatClient.downloadAttachment(
+    context: Context,
+    attachment: Attachment,
+    generateDownloadUri: (Attachment) -> Uri,
+    interceptRequest: DownloadManager.Request.() -> Unit,
+): Call<Unit> {
     return CoroutineCall(inheritScope { Job(it) }) {
         val logger by taggedLogger("Chat:DownloadAttachment")
 
         try {
             val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-            val url = attachment.assetUrl ?: attachment.imageUrl
+            val uri = generateDownloadUri(attachment)
             val subPath = attachment.name ?: attachment.title ?: attachment.parseAttachmentNameFromUrl()
                 ?: createAttachmentFallbackName()
 
-            logger.d { "Downloading attachment. Name: $subPath, Url: $url" }
+            logger.d { "Downloading attachment. Name: $subPath, Uri: $uri" }
 
             downloadManager.enqueue(
-                DownloadManager.Request(Uri.parse(url))
+                DownloadManager.Request(uri)
                     .setTitle(subPath)
                     .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, subPath)
-                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED),
+                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                    .apply(interceptRequest),
             )
             Result.Success(Unit)
         } catch (exception: Exception) {

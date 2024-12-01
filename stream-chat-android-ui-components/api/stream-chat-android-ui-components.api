@@ -8,6 +8,8 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final fun getCurrentUserProvider ()Lio/getstream/chat/android/ui/helper/CurrentUserProvider;
 	public static final fun getDateFormatter ()Lio/getstream/chat/android/ui/common/helper/DateFormatter;
 	public static final fun getDecoratorProviderFactory ()Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/DecoratorProviderFactory;
+	public static final fun getDownloadAttachmentUriGenerator ()Lio/getstream/chat/android/ui/common/helper/DownloadAttachmentUriGenerator;
+	public static final fun getDownloadRequestInterceptor ()Lio/getstream/chat/android/ui/common/helper/DownloadRequestInterceptor;
 	public static final fun getFonts ()Lio/getstream/chat/android/ui/font/ChatFonts;
 	public static final fun getImageAssetTransformer ()Lio/getstream/chat/android/ui/common/helper/ImageAssetTransformer;
 	public static final fun getImageHeadersProvider ()Lio/getstream/chat/android/ui/common/helper/ImageHeadersProvider;
@@ -30,6 +32,8 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final fun setCurrentUserProvider (Lio/getstream/chat/android/ui/helper/CurrentUserProvider;)V
 	public static final fun setDateFormatter (Lio/getstream/chat/android/ui/common/helper/DateFormatter;)V
 	public static final fun setDecoratorProviderFactory (Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/DecoratorProviderFactory;)V
+	public static final fun setDownloadAttachmentUriGenerator (Lio/getstream/chat/android/ui/common/helper/DownloadAttachmentUriGenerator;)V
+	public static final fun setDownloadRequestInterceptor (Lio/getstream/chat/android/ui/common/helper/DownloadRequestInterceptor;)V
 	public static final fun setFonts (Lio/getstream/chat/android/ui/font/ChatFonts;)V
 	public static final fun setImageAssetTransformer (Lio/getstream/chat/android/ui/common/helper/ImageAssetTransformer;)V
 	public static final fun setImageHeadersProvider (Lio/getstream/chat/android/ui/common/helper/ImageHeadersProvider;)V
@@ -3062,6 +3066,31 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/vi
 	public final fun setMessage (Lio/getstream/chat/android/models/Message;ZLio/getstream/chat/android/ui/feature/messages/list/MessageReplyStyle;)V
 }
 
+public final class io/getstream/chat/android/ui/feature/messages/list/adapter/view/PollViewStyle : io/getstream/chat/android/ui/helper/ViewStyle {
+	public fun <init> (Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;)V
+	public final fun component1 ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun component2 ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun component3 ()Landroid/graphics/drawable/Drawable;
+	public final fun component4 ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun component5 ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun component6 ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun component7 ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun component8 ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun copy (Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/view/PollViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/feature/messages/list/adapter/view/PollViewStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;ILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/view/PollViewStyle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getPollCloseTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun getPollOptionCheckDrawable ()Landroid/graphics/drawable/Drawable;
+	public final fun getPollOptionTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun getPollOptionVotesTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun getPollResultsTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun getPollShowAllOptionsTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun getPollSubtitleTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun getPollTitleTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/feature/messages/list/adapter/view/internal/GiphyMediaAttachmentView : androidx/constraintlayout/widget/ConstraintLayout {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
@@ -3881,6 +3910,7 @@ public final class io/getstream/chat/android/ui/helper/TransformStyle {
 	public static final fun getMessageListStyleTransformer ()Lio/getstream/chat/android/ui/helper/StyleTransformer;
 	public static final fun getMessageReplyStyleTransformer ()Lio/getstream/chat/android/ui/helper/StyleTransformer;
 	public static final fun getPinnedMessageListViewStyleTransformer ()Lio/getstream/chat/android/ui/helper/StyleTransformer;
+	public static final fun getPollViewStyleTransformer ()Lio/getstream/chat/android/ui/helper/StyleTransformer;
 	public static final fun getScrollButtonStyleTransformer ()Lio/getstream/chat/android/ui/helper/StyleTransformer;
 	public static final fun getSearchInputViewStyleTransformer ()Lio/getstream/chat/android/ui/helper/StyleTransformer;
 	public static final fun getSearchResultListViewStyleTransformer ()Lio/getstream/chat/android/ui/helper/StyleTransformer;
@@ -3910,6 +3940,7 @@ public final class io/getstream/chat/android/ui/helper/TransformStyle {
 	public static final fun setMessageListStyleTransformer (Lio/getstream/chat/android/ui/helper/StyleTransformer;)V
 	public static final fun setMessageReplyStyleTransformer (Lio/getstream/chat/android/ui/helper/StyleTransformer;)V
 	public static final fun setPinnedMessageListViewStyleTransformer (Lio/getstream/chat/android/ui/helper/StyleTransformer;)V
+	public static final fun setPollViewStyleTransformer (Lio/getstream/chat/android/ui/helper/StyleTransformer;)V
 	public static final fun setScrollButtonStyleTransformer (Lio/getstream/chat/android/ui/helper/StyleTransformer;)V
 	public static final fun setSearchInputViewStyleTransformer (Lio/getstream/chat/android/ui/helper/StyleTransformer;)V
 	public static final fun setSearchResultListViewStyleTransformer (Lio/getstream/chat/android/ui/helper/StyleTransformer;)V

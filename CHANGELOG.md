@@ -1,3 +1,100 @@
+# UNRELEASED CHANGELOG
+## Common changes for all artifacts
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-client
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-offline
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-state
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+- Fix wrong timestamp used for the initial loading of pinned messages in `PinnedMessageListController`. [#5483](https://github.com/GetStream/stream-chat-android/pull/5483)
+- Add `DownloadAttachmentUriGenerator` to generate download URIs for attachments. [#5490](https://github.com/GetStream/stream-chat-android/pull/5490)
+- Add `DownloadRequestInterceptor` to intercept download requests. [#5490](https://github.com/GetStream/stream-chat-android/pull/5490)
+
+### ⬆️ Improved
+- Improve performance of opening a thread or message in a thread via `MessageListController`. [#5489](https://github.com/GetStream/stream-chat-android/pull/5489)
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+- Add `ChatUI.downloadAttachmentUriGenerator` property to generate download URIs for attachments. [#5490](https://github.com/GetStream/stream-chat-android/pull/5490)
+- Add `ChatUI.downloadRequestInterceptor` property to intercept download requests. [#5490](https://github.com/GetStream/stream-chat-android/pull/5490)
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-compose
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+- Add `ChatTheme.downloadAttachmentUriGenerator` property to generate download URIs for attachments. [#5490](https://github.com/GetStream/stream-chat-android/pull/5490)
+- Add `ChatTheme.downloadRequestInterceptor` property to intercept download requests. [#5490](https://github.com/GetStream/stream-chat-android/pull/5490)
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-markdown-transformer
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
 # November 21th, 2024 - 6.6.0
 ## Common changes for all artifacts
 ### ⬆️ Improved
@@ -65,6 +162,7 @@
 ### ✅ Added
 - Add `MessageListViewModel.flagUser()` and `MessageListViewModel.unflagUser()` methods for flagging/un-flagging users. [#5478](https://github.com/GetStream/stream-chat-android/pull/5478)
 - Add edge-to-edge support for apps targeting Android 15. [#5469](https://github.com/GetStream/stream-chat-android/pull/5469)
+- Add styles for polls. [#5479](https://github.com/GetStream/stream-chat-android/pull/5479)
 
 ## stream-chat-android-compose
 ### ✅ Added

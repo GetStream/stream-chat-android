@@ -17,7 +17,9 @@
 package io.getstream.chat.android.compose.util
 
 import android.Manifest
+import android.app.DownloadManager
 import android.content.Context
+import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import androidx.compose.runtime.Composable
@@ -35,6 +37,7 @@ import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.state.extensions.downloadAttachment
 import io.getstream.chat.android.ui.common.utils.extensions.onPermissionRequested
@@ -54,11 +57,18 @@ internal fun attachmentDownloadState(): Pair<PermissionState, MutableState<Attac
     val downloadPayload = remember { mutableStateOf<Attachment?>(null) }
 
     val context = LocalContext.current
+    val downloadAttachmentUriGenerator = ChatTheme.streamDownloadAttachmentUriGenerator
+    val downloadRequestInterceptor = ChatTheme.streamDownloadRequestInterceptor
 
     LaunchedEffect(writePermissionState.status.isGranted) {
         if (writePermissionState.status.isGranted) {
             downloadPayload.value?.let {
-                onDownloadPermissionGranted(context, it)
+                onDownloadPermissionGranted(
+                    context,
+                    it,
+                    downloadAttachmentUriGenerator::generateDownloadUri,
+                    downloadRequestInterceptor::intercept,
+                )
                 downloadPayload.value = null
             }
         }
@@ -68,16 +78,24 @@ internal fun attachmentDownloadState(): Pair<PermissionState, MutableState<Attac
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
+@Suppress("LongParameterList")
 internal fun onDownloadHandleRequest(
     context: Context,
     payload: Attachment,
     permissionState: PermissionState,
     downloadPayload: MutableState<Attachment?>,
+    generateDownloadUri: (Attachment) -> Uri,
+    interceptRequest: DownloadManager.Request.() -> Unit,
 ) {
     if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && !Environment.isExternalStorageLegacy()) ||
         permissionState.status.isGranted
     ) {
-        onDownloadPermissionGranted(context, payload)
+        onDownloadPermissionGranted(
+            context,
+            payload,
+            generateDownloadUri,
+            interceptRequest,
+        )
         downloadPayload.value = null
     } else {
         downloadPayload.value = payload
@@ -86,11 +104,21 @@ internal fun onDownloadHandleRequest(
     }
 }
 
-internal fun onDownloadPermissionGranted(context: Context, payload: Attachment) {
+internal fun onDownloadPermissionGranted(
+    context: Context,
+    payload: Attachment,
+    generateDownloadUri: (Attachment) -> Uri,
+    interceptRequest: DownloadManager.Request.() -> Unit,
+) {
     payload.let {
         ChatClient
             .instance()
-            .downloadAttachment(context, it)
+            .downloadAttachment(
+                context,
+                it,
+                generateDownloadUri,
+                interceptRequest,
+            )
             .enqueue()
     }
 }

@@ -120,8 +120,8 @@ public data class ChannelData(
         watchers: List<User>,
         watcherCount: Int,
         insideSearch: Boolean,
+        channelLastMessageAt: Date?,
     ): Channel {
-        val messagesList = if (insideSearch) cachedLatestMessages else messages
         return Channel(
             type = type,
             id = id,
@@ -133,11 +133,7 @@ public data class ChannelData(
             deletedAt = deletedAt,
             extraData = extraData,
             cooldown = cooldown,
-            lastMessageAt = messagesList
-                .filterNot { it.shadowed }
-                .filterNot { it.parentId != null && !it.showInChannel }
-                .lastOrNull()
-                ?.let { it.createdAt ?: it.createdLocallyAt },
+            channelLastMessageAt = channelLastMessageAt,
             createdBy = createdBy,
             messages = messages,
             members = members,

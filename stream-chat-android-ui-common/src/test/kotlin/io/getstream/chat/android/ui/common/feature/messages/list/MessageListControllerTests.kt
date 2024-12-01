@@ -752,6 +752,7 @@ internal class MessageListControllerTests {
                 watchers,
                 watcherCount,
                 insideSearch,
+                null,
             )
             return channel.copy(
                 config = channelConfig.value,

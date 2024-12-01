@@ -28,7 +28,6 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
-import io.getstream.chat.android.client.events.MessageDeletedEvent
 import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
@@ -57,11 +56,13 @@ import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomString
 import io.getstream.result.Result
 import java.util.Calendar
 import java.util.Date
 import java.util.UUID
+import io.getstream.chat.android.client.events.MessageDeletedEvent as MessageDeletedEvent1
 
 @Suppress("LargeClass")
 public class TestDataHelper {
@@ -285,17 +286,18 @@ public class TestDataHelper {
         val createdAt = Date()
 
         NewMessageEvent(
-            EventType.MESSAGE_NEW,
-            createdAt,
-            streamFormatter.format(createdAt),
-            user1,
-            channel1.cid,
-            channel1.type,
-            channel1.id,
-            message1,
-            1,
-            0,
-            0,
+            type = EventType.MESSAGE_NEW,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            user = user1,
+            cid = channel1.cid,
+            channelType = channel1.type,
+            channelId = channel1.id,
+            message = message1,
+            watcherCount = 1,
+            totalUnreadCount = 0,
+            unreadChannels = 0,
+            channelLastMessageAt = randomDate(),
         )
     }
 
@@ -303,34 +305,36 @@ public class TestDataHelper {
         val createdAt = Date()
 
         NewMessageEvent(
-            EventType.MESSAGE_NEW,
-            createdAt,
-            streamFormatter.format(createdAt),
-            user1,
-            channel1.cid,
-            channel1.type,
-            channel1.id,
-            message2Older,
-            1,
-            0,
-            0,
+            type = EventType.MESSAGE_NEW,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            user = user1,
+            cid = channel1.cid,
+            channelType = channel1.type,
+            channelId = channel1.id,
+            message = message2Older,
+            watcherCount = 1,
+            totalUnreadCount = 0,
+            unreadChannels = 0,
+            channelLastMessageAt = randomDate(),
         )
     }
     public val newMessageFromUser2: NewMessageEvent by lazy {
         val createdAt = Date()
 
         NewMessageEvent(
-            EventType.MESSAGE_NEW,
-            createdAt,
-            streamFormatter.format(createdAt),
-            user2,
-            channel1.cid,
-            channel1.type,
-            channel1.id,
-            messageFromUser2,
-            1,
-            0,
-            0,
+            type = EventType.MESSAGE_NEW,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            user = user2,
+            cid = channel1.cid,
+            channelType = channel1.type,
+            channelId = channel1.id,
+            message = messageFromUser2,
+            watcherCount = 1,
+            totalUnreadCount = 0,
+            unreadChannels = 0,
+            channelLastMessageAt = randomDate(),
         )
     }
 
@@ -338,16 +342,17 @@ public class TestDataHelper {
         val createdAt = Date()
 
         NotificationMessageNewEvent(
-            EventType.NOTIFICATION_MESSAGE_NEW,
-            createdAt,
-            streamFormatter.format(createdAt),
-            channel1.cid,
-            channel1.type,
-            channel1.id,
-            channel1,
-            message1WithoutChannelAndCid,
-            0,
-            0,
+            type = EventType.NOTIFICATION_MESSAGE_NEW,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            cid = channel1.cid,
+            channelType = channel1.type,
+            channelId = channel1.id,
+            channel = channel1,
+            message = message1WithoutChannelAndCid,
+            totalUnreadCount = 0,
+            unreadChannels = 0,
+            channelLastMessageAt = randomDate(),
         )
     }
 
@@ -355,21 +360,22 @@ public class TestDataHelper {
         val createdAt = Date()
 
         MessageUpdatedEvent(
-            EventType.MESSAGE_UPDATED,
-            createdAt,
-            streamFormatter.format(createdAt),
-            user1,
-            channel1.cid,
-            channel1.type,
-            channel1.id,
-            message1Updated,
+            type = EventType.MESSAGE_UPDATED,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            user = user1,
+            cid = channel1.cid,
+            channelType = channel1.type,
+            channelId = channel1.id,
+            message = message1Updated,
+            channelLastMessageAt = randomDate(),
         )
     }
 
-    public val messageDeletedEvent: MessageDeletedEvent by lazy {
+    public val messageDeletedEvent: MessageDeletedEvent1 by lazy {
         val createdAt = Date()
 
-        MessageDeletedEvent(
+        MessageDeletedEvent1(
             type = EventType.MESSAGE_DELETED,
             createdAt = createdAt,
             rawCreatedAt = streamFormatter.format(createdAt),
@@ -379,13 +385,14 @@ public class TestDataHelper {
             channelId = channel1.id,
             message = message1Deleted,
             hardDelete = false,
+            channelLastMessageAt = randomDate(),
         )
     }
 
-    public val messageHardDeletedEvent: MessageDeletedEvent by lazy {
+    public val messageHardDeletedEvent: MessageDeletedEvent1 by lazy {
         val createdAt = Date()
 
-        MessageDeletedEvent(
+        MessageDeletedEvent1(
             type = EventType.MESSAGE_DELETED,
             createdAt = Date(),
             rawCreatedAt = streamFormatter.format(createdAt),
@@ -395,6 +402,7 @@ public class TestDataHelper {
             channelId = channel1.id,
             message = message1Deleted,
             hardDelete = true,
+            channelLastMessageAt = randomDate(),
         )
     }
 
@@ -402,44 +410,47 @@ public class TestDataHelper {
         val createdAt = Date()
 
         UserStartWatchingEvent(
-            EventType.USER_WATCHING_START,
-            createdAt,
-            streamFormatter.format(createdAt),
-            channel1.cid,
-            1,
-            channel1.type,
-            channel1.id,
-            user1,
+            type = EventType.USER_WATCHING_START,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            cid = channel1.cid,
+            watcherCount = 1,
+            channelType = channel1.type,
+            channelId = channel1.id,
+            user = user1,
+            channelLastMessageAt = randomDate(),
         )
     }
     public val reactionEvent: ReactionNewEvent by lazy {
         val createdAt = Date()
 
         ReactionNewEvent(
-            EventType.REACTION_NEW,
-            createdAt,
-            streamFormatter.format(createdAt),
-            user1,
-            channel1.cid,
-            channel1.type,
-            channel1.id,
-            reactionMessage1,
-            reaction1,
+            type = EventType.REACTION_NEW,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            user = user1,
+            cid = channel1.cid,
+            channelType = channel1.type,
+            channelId = channel1.id,
+            message = reactionMessage1,
+            reaction = reaction1,
+            channelLastMessageAt = randomDate(),
         )
     }
     public val reactionEvent2: ReactionNewEvent by lazy {
         val createdAt = Date()
 
         ReactionNewEvent(
-            EventType.REACTION_NEW,
-            createdAt,
-            streamFormatter.format(createdAt),
-            user2,
-            channel1.cid,
-            channel1.type,
-            channel1.id,
-            reactionMessage2,
-            reaction2,
+            type = EventType.REACTION_NEW,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            user = user2,
+            cid = channel1.cid,
+            channelType = channel1.type,
+            channelId = channel1.id,
+            message = reactionMessage2,
+            reaction = reaction2,
+            channelLastMessageAt = randomDate(),
         )
     }
 
@@ -447,28 +458,30 @@ public class TestDataHelper {
         val createdAt = Date()
 
         ChannelUpdatedEvent(
-            EventType.CHANNEL_UPDATED,
-            createdAt,
-            streamFormatter.format(createdAt),
-            channel1Updated.cid,
-            channel1Updated.type,
-            channel1Updated.id,
-            null,
-            channel1Updated,
+            type = EventType.CHANNEL_UPDATED,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            cid = channel1Updated.cid,
+            channelType = channel1Updated.type,
+            channelId = channel1Updated.id,
+            channel = channel1Updated,
+            channelLastMessageAt = randomDate(),
+            message = null,
         )
     }
     public val channelUpdatedEvent2: ChannelUpdatedEvent by lazy {
         val createdAt = Date()
 
         ChannelUpdatedEvent(
-            EventType.CHANNEL_UPDATED,
-            createdAt,
-            streamFormatter.format(createdAt),
-            channel5.cid,
-            channel5.type,
-            channel5.id,
-            null,
-            channel5,
+            type = EventType.CHANNEL_UPDATED,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            cid = channel5.cid,
+            channelType = channel5.type,
+            channelId = channel5.id,
+            channel = channel5,
+            channelLastMessageAt = randomDate(),
+            message = null,
         )
     }
 
@@ -476,28 +489,30 @@ public class TestDataHelper {
         val createdAt = Date()
 
         TypingStartEvent(
-            EventType.TYPING_START,
-            createdAt,
-            streamFormatter.format(createdAt),
-            user1,
-            channel1.cid,
-            channel1.type,
-            channel1.id,
-            parentMessageId,
+            type = EventType.TYPING_START,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            user = user1,
+            cid = channel1.cid,
+            channelType = channel1.type,
+            channelId = channel1.id,
+            channelLastMessageAt = randomDate(),
+            parentId = parentMessageId,
         )
     }
     public val user3TypingStartedOld: TypingStartEvent by lazy {
         val createdAt = getOldDate()
 
         TypingStartEvent(
-            EventType.TYPING_START,
-            createdAt,
-            streamFormatter.format(createdAt),
-            user3,
-            channel1.cid,
-            channel1.type,
-            channel1.id,
-            parentMessageId,
+            type = EventType.TYPING_START,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            user = user3,
+            cid = channel1.cid,
+            channelType = channel1.type,
+            channelId = channel1.id,
+            channelLastMessageAt = randomDate(),
+            parentId = parentMessageId,
         )
     }
 
@@ -505,27 +520,29 @@ public class TestDataHelper {
         val createdAt = Date()
 
         ChannelHiddenEvent(
-            EventType.CHANNEL_HIDDEN,
-            createdAt,
-            streamFormatter.format(createdAt),
-            channel2.cid,
-            channel2.type,
-            channel2.id,
-            user1,
-            false,
+            type = EventType.CHANNEL_HIDDEN,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            cid = channel2.cid,
+            channelType = channel2.type,
+            channelId = channel2.id,
+            user = user1,
+            channelLastMessageAt = randomDate(),
+            clearHistory = false,
         )
     }
     public val channelVisibleEvent: ChannelVisibleEvent by lazy {
         val createdAt = Date()
 
         ChannelVisibleEvent(
-            EventType.CHANNEL_VISIBLE,
-            createdAt,
-            streamFormatter.format(createdAt),
-            channel2.cid,
-            channel2.type,
-            channel2.id,
-            user1,
+            type = EventType.CHANNEL_VISIBLE,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            cid = channel2.cid,
+            channelType = channel2.type,
+            channelId = channel2.id,
+            user = user1,
+            channelLastMessageAt = randomDate(),
         )
     }
 
@@ -533,41 +550,44 @@ public class TestDataHelper {
         val createdAt = Date()
 
         TypingStartEvent(
-            EventType.TYPING_START,
-            createdAt,
-            streamFormatter.format(createdAt),
-            user2,
-            channel2.cid,
-            channel2.type,
-            channel2.id,
-            parentMessageId,
+            type = EventType.TYPING_START,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            user = user2,
+            cid = channel2.cid,
+            channelType = channel2.type,
+            channelId = channel2.id,
+            channelLastMessageAt = randomDate(),
+            parentId = parentMessageId,
         )
     }
     public val user1TypingStop: TypingStopEvent by lazy {
         val createdAt = Date()
 
         TypingStopEvent(
-            EventType.TYPING_STOP,
-            createdAt,
-            streamFormatter.format(createdAt),
-            user1,
-            channel2.cid,
-            channel2.type,
-            channel2.id,
-            parentMessageId,
+            type = EventType.TYPING_STOP,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            user = user1,
+            cid = channel2.cid,
+            channelType = channel2.type,
+            channelId = channel2.id,
+            channelLastMessageAt = randomDate(),
+            parentId = parentMessageId,
         )
     }
     public val readEvent: MessageReadEvent by lazy {
         val createdAt = Date()
 
         MessageReadEvent(
-            EventType.MESSAGE_READ,
-            createdAt,
-            streamFormatter.format(createdAt),
-            user1,
-            channel1.cid,
-            channel1.type,
-            channel1.id,
+            type = EventType.MESSAGE_READ,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            user = user1,
+            cid = channel1.cid,
+            channelType = channel1.type,
+            channelId = channel1.id,
+            channelLastMessageAt = randomDate(),
         )
     }
 
@@ -575,10 +595,10 @@ public class TestDataHelper {
         val createdAt = Date()
 
         NotificationMutesUpdatedEvent(
-            EventType.NOTIFICATION_MUTES_UPDATED,
-            Date(),
-            streamFormatter.format(createdAt),
-            me1,
+            type = EventType.NOTIFICATION_MUTES_UPDATED,
+            createdAt = Date(),
+            rawCreatedAt = streamFormatter.format(createdAt),
+            me = me1,
         )
     }
 
@@ -586,28 +606,30 @@ public class TestDataHelper {
         val createdAt = Date()
 
         ChannelUserBannedEvent(
-            EventType.USER_BANNED,
-            createdAt,
-            streamFormatter.format(createdAt),
-            channel2.cid,
-            channel2.type,
-            channel2.id,
-            user1,
-            null,
-            false,
+            type = EventType.USER_BANNED,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            cid = channel2.cid,
+            channelType = channel2.type,
+            channelId = channel2.id,
+            user = user1,
+            channelLastMessageAt = randomDate(),
+            expiration = null,
+            shadow = false,
         )
     }
     public val user1Unbanned: ChannelUserUnbannedEvent by lazy {
         val createdAt = Date()
 
         ChannelUserUnbannedEvent(
-            EventType.USER_UNBANNED,
-            createdAt,
-            streamFormatter.format(createdAt),
-            user1,
-            channel2.cid,
-            channel2.type,
-            channel2.id,
+            type = EventType.USER_UNBANNED,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            user = user1,
+            cid = channel2.cid,
+            channelType = channel2.type,
+            channelId = channel2.id,
+            channelLastMessageAt = randomDate(),
         )
     }
 
@@ -615,42 +637,45 @@ public class TestDataHelper {
         val createdAt = Date()
 
         NotificationMarkReadEvent(
-            EventType.NOTIFICATION_MARK_READ,
-            createdAt,
-            streamFormatter.format(createdAt),
-            user1,
-            channel2.cid,
-            channel2.type,
-            channel2.id,
-            0,
-            0,
+            type = EventType.NOTIFICATION_MARK_READ,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            user = user1,
+            cid = channel2.cid,
+            channelType = channel2.type,
+            channelId = channel2.id,
+            totalUnreadCount = 0,
+            unreadChannels = 0,
+            channelLastMessageAt = randomDate(),
         )
     }
     public val user1Read: MessageReadEvent by lazy {
         val createdAt = Date()
 
         MessageReadEvent(
-            EventType.MESSAGE_READ,
-            createdAt,
-            streamFormatter.format(createdAt),
-            user1,
-            channel2.cid,
-            channel2.type,
-            channel2.id,
+            type = EventType.MESSAGE_READ,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            user = user1,
+            cid = channel2.cid,
+            channelType = channel2.type,
+            channelId = channel2.id,
+            channelLastMessageAt = randomDate(),
         )
     }
     public val memberAddedToChannelEvent: MemberAddedEvent by lazy {
         val createdAt = Date()
 
         MemberAddedEvent(
-            EventType.MEMBER_ADDED,
-            createdAt,
-            streamFormatter.format(createdAt),
-            user1,
-            channel1WithNewMember.cid,
-            channel1WithNewMember.type,
-            channel1WithNewMember.id,
-            member2,
+            type = EventType.MEMBER_ADDED,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            user = user1,
+            cid = channel1WithNewMember.cid,
+            channelType = channel1WithNewMember.type,
+            channelId = channel1WithNewMember.id,
+            member = member2,
+            channelLastMessageAt = randomDate(),
         )
     }
 
@@ -659,14 +684,15 @@ public class TestDataHelper {
         val createdAt = Date()
 
         MemberRemovedEvent(
-            EventType.MEMBER_REMOVED,
-            createdAt,
-            streamFormatter.format(createdAt),
-            member2.user,
-            channel1.cid,
-            channel1.type,
-            channel1.id,
-            member1,
+            type = EventType.MEMBER_REMOVED,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            user = member2.user,
+            cid = channel1.cid,
+            channelType = channel1.type,
+            channelId = channel1.id,
+            member = member1,
+            channelLastMessageAt = randomDate(),
         )
     }
 
@@ -674,15 +700,16 @@ public class TestDataHelper {
         val createdAt = Date()
 
         NotificationRemovedFromChannelEvent(
-            EventType.NOTIFICATION_REMOVED_FROM_CHANNEL,
-            createdAt,
-            streamFormatter.format(createdAt),
-            user1,
-            channel1.cid,
-            channel1.type,
-            channel1.id,
-            channel1,
-            member1,
+            type = EventType.NOTIFICATION_REMOVED_FROM_CHANNEL,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            channelLastMessageAt = randomDate(),
+            cid = channel1.cid,
+            channelType = channel1.type,
+            channelId = channel1.id,
+            channel = channel1,
+            member = member1,
+            user = user1,
         )
     }
 
@@ -691,32 +718,34 @@ public class TestDataHelper {
         val createdAt = Date()
 
         NotificationAddedToChannelEvent(
-            EventType.NOTIFICATION_ADDED_TO_CHANNEL,
-            createdAt,
-            streamFormatter.format(createdAt),
-            channel1.cid,
-            channel1.type,
-            channel1.id,
-            channel1,
-            member1,
-            0,
-            0,
+            type = EventType.NOTIFICATION_ADDED_TO_CHANNEL,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            cid = channel1.cid,
+            channelType = channel1.type,
+            channelId = channel1.id,
+            channel = channel1,
+            member = member1,
+            totalUnreadCount = 0,
+            unreadChannels = 0,
+            channelLastMessageAt = randomDate(),
         )
     }
     public val notificationAddedToChannel2Event: NotificationAddedToChannelEvent by lazy {
         val createdAt = Date()
 
         NotificationAddedToChannelEvent(
-            EventType.NOTIFICATION_ADDED_TO_CHANNEL,
-            createdAt,
-            streamFormatter.format(createdAt),
-            channel2.cid,
-            channel2.type,
-            channel2.id,
-            channel2,
-            member2,
-            0,
-            0,
+            type = EventType.NOTIFICATION_ADDED_TO_CHANNEL,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            cid = channel2.cid,
+            channelType = channel2.type,
+            channelId = channel2.id,
+            channel = channel2,
+            member = member2,
+            totalUnreadCount = 0,
+            unreadChannels = 0,
+            channelLastMessageAt = randomDate(),
         )
     }
 
@@ -725,16 +754,17 @@ public class TestDataHelper {
         val createdAt = Date()
 
         NotificationAddedToChannelEvent(
-            EventType.NOTIFICATION_ADDED_TO_CHANNEL,
-            createdAt,
-            streamFormatter.format(createdAt),
-            channel3.cid,
-            channel3.type,
-            channel3.id,
-            channel3,
-            member3,
-            0,
-            0,
+            type = EventType.NOTIFICATION_ADDED_TO_CHANNEL,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            cid = channel3.cid,
+            channelType = channel3.type,
+            channelId = channel3.id,
+            channel = channel3,
+            member = member3,
+            totalUnreadCount = 0,
+            unreadChannels = 0,
+            channelLastMessageAt = randomDate(),
         )
     }
     public val user1UpdatedEvent: UserUpdatedEvent by lazy {
@@ -749,42 +779,45 @@ public class TestDataHelper {
         val createdAt = Date()
 
         ChannelTruncatedEvent(
-            EventType.CHANNEL_TRUNCATED,
-            createdAt,
-            streamFormatter.format(createdAt),
-            channel1.cid,
-            channel1.type,
-            channel1.id,
-            user1,
-            null,
-            channel1,
+            type = EventType.CHANNEL_TRUNCATED,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            cid = channel1.cid,
+            channelType = channel1.type,
+            channelId = channel1.id,
+            channel = channel1,
+            channelLastMessageAt = randomDate(),
+            user = user1,
+            message = null,
         )
     }
     public val notificationChannelTruncated: NotificationChannelTruncatedEvent by lazy {
         val createdAt = Date()
 
         NotificationChannelTruncatedEvent(
-            EventType.NOTIFICATION_CHANNEL_TRUNCATED,
-            createdAt,
-            streamFormatter.format(createdAt),
-            channel1.cid,
-            channel1.type,
-            channel1.id,
-            channel1,
+            type = EventType.NOTIFICATION_CHANNEL_TRUNCATED,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            cid = channel1.cid,
+            channelType = channel1.type,
+            channelId = channel1.id,
+            channel = channel1,
+            channelLastMessageAt = randomDate(),
         )
     }
     public val channelDeletedEvent: ChannelDeletedEvent by lazy {
         val createdAt = Date()
 
         ChannelDeletedEvent(
-            EventType.CHANNEL_DELETED,
-            createdAt,
-            streamFormatter.format(createdAt),
-            channel1.cid,
-            channel1.type,
-            channel1.id,
-            channel1,
-            null,
+            type = EventType.CHANNEL_DELETED,
+            createdAt = createdAt,
+            rawCreatedAt = streamFormatter.format(createdAt),
+            cid = channel1.cid,
+            channelType = channel1.type,
+            channelId = channel1.id,
+            channel = channel1,
+            channelLastMessageAt = randomDate(),
+            user = null,
         )
     }
 }

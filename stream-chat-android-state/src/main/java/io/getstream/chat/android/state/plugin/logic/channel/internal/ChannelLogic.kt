@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.events.ChannelUserBannedEvent
 import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.ConnectionErrorEvent
@@ -521,154 +522,125 @@ internal class ChannelLogic(
         val currentUserId = getCurrentUserId()
         logger.d { "[handleEvent] cid: $cid, currentUserId: $currentUserId, event: $event" }
         when (event) {
-            is NewMessageEvent -> {
-                upsertEventMessage(event.message)
-                channelStateLogic.updateCurrentUserRead(event.createdAt, event.message)
-                channelStateLogic.takeUnless { event.message.shadowed }?.toggleHidden(false)
+            is CidEvent -> {
+                channelStateLogic.setLastSentMessageDate(event.channelLastMessageAt)
+                when (event) {
+                    is NewMessageEvent -> {
+                        upsertEventMessage(event.message)
+                        channelStateLogic.updateCurrentUserRead(event.createdAt, event.message)
+                        channelStateLogic.takeUnless { event.message.shadowed }?.toggleHidden(false)
+                    }
+                    is MessageUpdatedEvent -> {
+                        event.message.copy(
+                            replyTo = event.message.replyMessageId
+                                ?.let { mutableState.getMessageById(it) }
+                                ?: event.message.replyTo,
+                        ).let(::upsertEventMessage)
+                        channelStateLogic.toggleHidden(false)
+                    }
+                    is MessageDeletedEvent -> {
+                        if (event.hardDelete) {
+                            deleteMessage(event.message)
+                        } else {
+                            upsertEventMessage(event.message)
+                        }
+                        channelStateLogic.toggleHidden(false)
+                    }
+                    is NotificationMessageNewEvent -> {
+                        if (!mutableState.insideSearch.value) {
+                            upsertEventMessage(event.message)
+                        }
+                        channelStateLogic.updateCurrentUserRead(event.createdAt, event.message)
+                        channelStateLogic.toggleHidden(false)
+                    }
+                    is NotificationThreadMessageNewEvent -> upsertEventMessage(event.message)
+                    is ReactionNewEvent -> upsertEventMessage(event.message)
+                    is ReactionUpdateEvent -> upsertEventMessage(event.message)
+                    is ReactionDeletedEvent -> upsertEventMessage(event.message)
+                    is MemberRemovedEvent -> {
+                        if (event.user.id == currentUserId) {
+                            logger.i { "[handleEvent] skip MemberRemovedEvent for currentUser" }
+                            return
+                        }
+                        channelStateLogic.deleteMember(event.member)
+                    }
+                    is NotificationRemovedFromChannelEvent -> {
+                        channelStateLogic.setMembers(event.channel.members, event.channel.memberCount)
+                        channelStateLogic.setWatchers(event.channel.watchers, event.channel.watcherCount)
+                    }
+                    is MemberAddedEvent -> channelStateLogic.addMember(event.member)
+                    is MemberUpdatedEvent -> {
+                        channelStateLogic.upsertMember(event.member)
+                        channelStateLogic.updateMembership(event.member)
+                    }
+                    is NotificationAddedToChannelEvent -> channelStateLogic.upsertMembers(event.channel.members)
+                    is UserStartWatchingEvent -> channelStateLogic.upsertWatcher(event)
+                    is UserStopWatchingEvent -> channelStateLogic.deleteWatcher(event)
+                    is ChannelUpdatedEvent -> channelStateLogic.updateChannelData(event)
+                    is ChannelUpdatedByUserEvent -> channelStateLogic.updateChannelData(event)
+                    is ChannelHiddenEvent -> {
+                        channelStateLogic.toggleHidden(true)
+                        if (event.clearHistory) {
+                            removeMessagesBefore(event.createdAt)
+                        }
+                    }
+                    is ChannelVisibleEvent -> channelStateLogic.toggleHidden(false)
+                    is ChannelDeletedEvent -> {
+                        removeMessagesBefore(event.createdAt)
+                        channelStateLogic.deleteChannel(event.createdAt)
+                    }
+                    is ChannelTruncatedEvent -> removeMessagesBefore(event.createdAt, event.message)
+                    is NotificationChannelTruncatedEvent -> removeMessagesBefore(event.createdAt)
+                    is TypingStopEvent -> channelStateLogic.setTyping(event.user.id, null)
+                    is TypingStartEvent -> channelStateLogic.setTyping(event.user.id, event)
+                    is MessageReadEvent -> channelStateLogic.updateRead(event.toChannelUserRead())
+                    is NotificationMarkReadEvent -> channelStateLogic.updateRead(event.toChannelUserRead())
+                    is NotificationMarkUnreadEvent -> channelStateLogic.updateRead(event.toChannelUserRead())
+                    is NotificationInviteAcceptedEvent -> {
+                        channelStateLogic.addMember(event.member)
+                        channelStateLogic.updateChannelData(event)
+                    }
+                    is NotificationInviteRejectedEvent -> {
+                        channelStateLogic.deleteMember(event.member)
+                        channelStateLogic.updateChannelData(event)
+                    }
+                    is ChannelUserBannedEvent -> {
+                        channelStateLogic.updateMemberBanned(
+                            memberUserId = event.user.id,
+                            banned = true,
+                            banExpires = event.expiration,
+                            shadow = event.shadow,
+                        )
+                    }
+                    is ChannelUserUnbannedEvent -> {
+                        channelStateLogic.updateMemberBanned(
+                            memberUserId = event.user.id,
+                            banned = false,
+                            banExpires = null,
+                            shadow = false,
+                        )
+                    }
+                    is PollClosedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
+                    is PollDeletedEvent -> channelStateLogic.upsertPoll(event.poll)
+                    is PollUpdatedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
+                    is VoteCastedEvent ->
+                        channelStateLogic.upsertPoll(event.processPoll(currentUserId, channelStateLogic::getPoll))
+                    is VoteChangedEvent ->
+                        channelStateLogic.upsertPoll(event.processPoll(currentUserId, channelStateLogic::getPoll))
+                    is VoteRemovedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
+                    is AnswerCastedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
+                    is NotificationChannelDeletedEvent,
+                    is NotificationInvitedEvent,
+                    -> Unit // Ignore these events
+                }
             }
-            is MessageUpdatedEvent -> {
-                event.message.copy(
-                    replyTo = event.message.replyMessageId
-                        ?.let { mutableState.getMessageById(it) }
-                        ?: event.message.replyTo,
-                ).let(::upsertEventMessage)
 
-                channelStateLogic.toggleHidden(false)
-            }
-            is MessageDeletedEvent -> {
-                if (event.hardDelete) {
-                    deleteMessage(event.message)
-                } else {
-                    upsertEventMessage(event.message)
-                }
-                channelStateLogic.toggleHidden(false)
-            }
-            is NotificationMessageNewEvent -> {
-                if (!mutableState.insideSearch.value) {
-                    upsertEventMessage(event.message)
-                }
-                channelStateLogic.updateCurrentUserRead(event.createdAt, event.message)
-                channelStateLogic.toggleHidden(false)
-            }
-            is NotificationThreadMessageNewEvent -> {
-                upsertEventMessage(event.message)
-            }
-            is ReactionNewEvent -> {
-                upsertEventMessage(event.message)
-            }
-            is ReactionUpdateEvent -> {
-                upsertEventMessage(event.message)
-            }
-            is ReactionDeletedEvent -> {
-                upsertEventMessage(event.message)
-            }
-            is MemberRemovedEvent -> {
-                if (event.user.id == currentUserId) {
-                    logger.i { "[handleEvent] skip MemberRemovedEvent for currentUser" }
-                    return
-                }
-                channelStateLogic.deleteMember(event.member)
-            }
-            is NotificationRemovedFromChannelEvent -> {
-                channelStateLogic.setMembers(event.channel.members, event.channel.memberCount)
-                channelStateLogic.setWatchers(event.channel.watchers, event.channel.watcherCount)
-            }
-            is MemberAddedEvent -> {
-                channelStateLogic.addMember(event.member)
-            }
-            is MemberUpdatedEvent -> {
-                channelStateLogic.upsertMember(event.member)
-                channelStateLogic.updateMembership(event.member)
-            }
-            is NotificationAddedToChannelEvent -> {
-                channelStateLogic.upsertMembers(event.channel.members)
-            }
-            is UserPresenceChangedEvent -> {
-                upsertUserPresence(event.user)
-            }
-            is UserUpdatedEvent -> {
-                upsertUser(event.user)
-            }
-            is UserStartWatchingEvent -> {
-                channelStateLogic.upsertWatcher(event)
-            }
-            is UserStopWatchingEvent -> {
-                channelStateLogic.deleteWatcher(event)
-            }
-            is ChannelUpdatedEvent -> {
-                channelStateLogic.updateChannelData(event)
-            }
-            is ChannelUpdatedByUserEvent -> {
-                channelStateLogic.updateChannelData(event)
-            }
-            is ChannelHiddenEvent -> {
-                channelStateLogic.toggleHidden(true)
-                if (event.clearHistory) {
-                    removeMessagesBefore(event.createdAt)
-                }
-            }
-            is ChannelVisibleEvent -> {
-                channelStateLogic.toggleHidden(false)
-            }
-            is ChannelDeletedEvent -> {
-                removeMessagesBefore(event.createdAt)
-                channelStateLogic.deleteChannel(event.createdAt)
-            }
-            is ChannelTruncatedEvent -> {
-                removeMessagesBefore(event.createdAt, event.message)
-            }
-            is NotificationChannelTruncatedEvent -> {
-                removeMessagesBefore(event.createdAt)
-            }
-            is TypingStopEvent -> {
-                channelStateLogic.setTyping(event.user.id, null)
-            }
-            is TypingStartEvent -> {
-                channelStateLogic.setTyping(event.user.id, event)
-            }
-            is MessageReadEvent -> {
-                channelStateLogic.updateRead(event.toChannelUserRead())
-            }
-            is NotificationMarkReadEvent -> {
-                channelStateLogic.updateRead(event.toChannelUserRead())
-            }
-            is MarkAllReadEvent -> {
-                channelStateLogic.updateRead(event.toChannelUserRead())
-            }
-            is NotificationMarkUnreadEvent -> {
-                channelStateLogic.updateRead(event.toChannelUserRead())
-            }
-            is NotificationInviteAcceptedEvent -> {
-                channelStateLogic.addMember(event.member)
-                channelStateLogic.updateChannelData(event)
-            }
-            is NotificationInviteRejectedEvent -> {
-                channelStateLogic.deleteMember(event.member)
-                channelStateLogic.updateChannelData(event)
-            }
-            is NotificationChannelMutesUpdatedEvent -> {
-                event.me.channelMutes.any { mute ->
-                    mute.channel?.cid == mutableState.cid
-                }.let(channelStateLogic::updateMute)
-            }
-            is ChannelUserBannedEvent -> {
-                channelStateLogic.updateMemberBanned(
-                    memberUserId = event.user.id,
-                    banned = true,
-                    banExpires = event.expiration,
-                    shadow = event.shadow,
-                )
-            }
-            is ChannelUserUnbannedEvent -> {
-                channelStateLogic.updateMemberBanned(
-                    memberUserId = event.user.id,
-                    banned = false,
-                    banExpires = null,
-                    shadow = false,
-                )
-            }
-            is NotificationChannelDeletedEvent,
-            is NotificationInvitedEvent,
+            is UserPresenceChangedEvent -> upsertUserPresence(event.user)
+            is UserUpdatedEvent -> upsertUser(event.user)
+            is MarkAllReadEvent -> channelStateLogic.updateRead(event.toChannelUserRead())
+            is NotificationChannelMutesUpdatedEvent -> event.me.channelMutes.any { mute ->
+                mute.channel?.cid == mutableState.cid
+            }.let(channelStateLogic::updateMute)
             is ConnectedEvent,
             is ConnectionErrorEvent,
             is ConnectingEvent,
@@ -681,15 +653,6 @@ internal class ChannelLogic(
             is UnknownEvent,
             is UserDeletedEvent,
             -> Unit // Ignore these events
-            is PollClosedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
-            is PollDeletedEvent -> channelStateLogic.upsertPoll(event.poll)
-            is PollUpdatedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
-            is VoteCastedEvent ->
-                channelStateLogic.upsertPoll(event.processPoll(currentUserId, channelStateLogic::getPoll))
-            is VoteChangedEvent ->
-                channelStateLogic.upsertPoll(event.processPoll(currentUserId, channelStateLogic::getPoll))
-            is VoteRemovedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
-            is AnswerCastedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
         }
     }
 

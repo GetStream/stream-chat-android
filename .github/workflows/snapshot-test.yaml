@@ -1,0 +1,54 @@
+name: Snapshot Tests
+
+on:
+  # pull_request: # FIXME: https://github.com/pedrovgs/Shot/issues/326
+
+  workflow_dispatch:
+    inputs:
+      record:
+        description: 'Should Snapshots be recorded on CI?'
+        type: boolean
+        required: false
+        default: false
+
+jobs:
+  run_snapshot_tests:
+    name: Run
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4.2.2
+      - uses: ./.github/actions/setup-java
+      - uses: ./.github/actions/setup-ruby
+      - uses: ./.github/actions/gradle-cache
+        with:
+          key-prefix: gradle-test
+
+      - name: Snapshot tests
+        uses: reactivecircus/android-emulator-runner@v2
+        timeout-minutes: 60
+        with:
+          api-level: 27
+          disable-animations: true
+          profile: pixel
+          arch : x86_64
+          emulator-options: ${{ vars.EMULATOR_OPTIONS }}
+          script: bundle exec fastlane run_snapshot_test record:${{ github.event.inputs.record }}
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4.4.3
+        continue-on-error: true
+        with:
+          name: report
+          path: ./**/build/reports/*
+
+      - name: Create Pull Request
+        if: ${{ github.event.inputs.record == 'true' }}
+        uses: peter-evans/create-pull-request@v4
+        with:
+          commit-message: "Update screenshots"
+          title: "Update screenshots"
+          delete-branch: true
+          reviewers: GetStream/android-developers-ui
+          branch: update-screenshots

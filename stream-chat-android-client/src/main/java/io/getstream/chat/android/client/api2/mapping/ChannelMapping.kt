@@ -21,8 +21,12 @@ import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserId
+import java.util.Date
 
-internal fun DownstreamChannelDto.toDomain(currentUserId: UserId?): Channel =
+internal fun DownstreamChannelDto.toDomain(
+    currentUserId: UserId?,
+    eventChatLastMessageAt: Date?,
+): Channel =
     Channel(
         id = id,
         type = type,
@@ -30,7 +34,7 @@ internal fun DownstreamChannelDto.toDomain(currentUserId: UserId?): Channel =
         image = image ?: "",
         watcherCount = watcher_count,
         frozen = frozen,
-        lastMessageAt = last_message_at,
+        channelLastMessageAt = eventChatLastMessageAt ?: last_message_at,
         createdAt = created_at,
         deletedAt = deleted_at,
         updatedAt = updated_at,
