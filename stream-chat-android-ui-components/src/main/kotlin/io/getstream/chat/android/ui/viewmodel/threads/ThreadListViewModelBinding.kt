@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:JvmName("ThreadListViewModelBinding")
+
 package io.getstream.chat.android.ui.viewmodel.threads
 
 import androidx.lifecycle.LifecycleOwner
@@ -26,6 +28,7 @@ import io.getstream.chat.android.ui.feature.threads.list.ThreadListView
  * This function sets listeners on the view and ViewModel. Call this method
  * before setting any additional listeners on these objects yourself.
  */
+@JvmName("bind")
 public fun ThreadListViewModel.bindView(view: ThreadListView, lifecycleOwner: LifecycleOwner) {
     state.observe(lifecycleOwner) { state ->
         when {
