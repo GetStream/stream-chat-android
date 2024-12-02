@@ -116,7 +116,6 @@ internal object ChannelDtoTestData {
           "members": [
            {
             "user": ${UserDtoTestData.downstreamJson},
-            "role": "owner",
             "created_at": "2020-06-10T11:04:31.0Z",
             "updated_at": "2020-06-10T11:04:31.588Z",
             "invited": true,
@@ -147,7 +146,6 @@ internal object ChannelDtoTestData {
           "own_capabilities": ["connect-events", "pin-message"],
           "membership": {
             "user": ${UserDtoTestData.downstreamJson},
-            "role": "owner",
             "created_at": "2020-06-10T11:04:31.0Z",
             "updated_at": "2020-06-10T11:04:31.588Z",
             "invited": true,
@@ -188,6 +186,7 @@ internal object ChannelDtoTestData {
                 notifications_muted = false,
                 status = "member",
                 ban_expires = Date(1615218151355),
+                extraData = emptyMap(),
             ),
         ),
         watchers = listOf(UserDtoTestData.downstreamUser),
@@ -218,6 +217,7 @@ internal object ChannelDtoTestData {
             notifications_muted = false,
             status = "member",
             ban_expires = null,
+            extraData = emptyMap(),
         ),
         extraData = mapOf("draft" to true),
     )
@@ -373,6 +373,7 @@ internal object ChannelDtoTestData {
                 notifications_muted = false,
                 status = "member",
                 ban_expires = Date(1615218151355),
+                extraData = emptyMap(),
             ),
         ),
         watchers = listOf(UserDtoTestData.upstreamUser),
