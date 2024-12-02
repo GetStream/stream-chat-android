@@ -16,8 +16,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Add `ChatClient::partialUpdateMember` for updating `Members` in the scope of a `Channel`. [#5497](https://github.com/GetStream/stream-chat-android/pull/5497)
-- Add `ChannelClient::partialUpdateMember` for updating `Members` in the scope of a `Channel`. [#5497](https://github.com/GetStream/stream-chat-android/pull/5497)
+- Add `ChatClient::partialUpdateMember` for updating a `Member` in the scope of a `Channel`. [#5497](https://github.com/GetStream/stream-chat-android/pull/5497)
+- Add `ChannelClient::partialUpdateMember` for updating a `Member` in the scope of a `Channel`. [#5497](https://github.com/GetStream/stream-chat-android/pull/5497)
 
 ### ⚠️ Changed
 
