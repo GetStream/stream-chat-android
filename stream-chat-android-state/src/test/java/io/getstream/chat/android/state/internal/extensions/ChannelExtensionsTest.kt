@@ -79,9 +79,9 @@ internal class ChannelExtensionsTest {
 
     @Test
     fun `When apply pagination Should sort correctly descending`() {
-        val firstChannel = randomChannel(lastMessageAt = Date(1000))
-        val secondChannel = randomChannel(lastMessageAt = Date(3000))
-        val thirdChannel = randomChannel(lastMessageAt = Date(2000))
+        val firstChannel = randomChannel(channelLastMessageAt = Date(1000))
+        val secondChannel = randomChannel(channelLastMessageAt = Date(3000))
+        val thirdChannel = randomChannel(channelLastMessageAt = Date(2000))
         val sort = QuerySortByField.descByName<Channel>("lastMessageAt")
         val queryPaginationRequest = QueryChannelsPaginationRequest(
             sort = sort,
@@ -103,9 +103,9 @@ internal class ChannelExtensionsTest {
 
     @Test
     fun `When apply pagination Should sort correctly ascending`() {
-        val firstChannel = randomChannel(lastMessageAt = Date(1000))
-        val secondChannel = randomChannel(lastMessageAt = Date(3000))
-        val thirdChannel = randomChannel(lastMessageAt = Date(2000))
+        val firstChannel = randomChannel(channelLastMessageAt = Date(1000))
+        val secondChannel = randomChannel(channelLastMessageAt = Date(3000))
+        val thirdChannel = randomChannel(channelLastMessageAt = Date(2000))
         val sort = QuerySortByField.ascByName<Channel>("lastMessageAt")
         val queryPaginationRequest = QueryChannelsPaginationRequest(
             sort = sort,

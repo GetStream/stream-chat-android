@@ -309,7 +309,7 @@ internal fun RowScope.DefaultChannelItemTrailingContent(
                     )
                 }
 
-                Timestamp(date = channel.lastUpdated)
+                Timestamp(date = channel.lastMessageAt)
             }
         }
     }

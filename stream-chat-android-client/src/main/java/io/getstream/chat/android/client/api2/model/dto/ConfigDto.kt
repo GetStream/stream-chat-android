@@ -35,6 +35,7 @@ internal data class ConfigDto(
     val url_enrichment: Boolean,
     val custom_events: Boolean,
     val push_notifications: Boolean,
+    val skip_last_msg_update_for_system_msgs: Boolean?,
     val polls: Boolean,
     val message_retention: String,
     val max_message_length: Int,

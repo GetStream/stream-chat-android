@@ -8,6 +8,8 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final fun getCurrentUserProvider ()Lio/getstream/chat/android/ui/helper/CurrentUserProvider;
 	public static final fun getDateFormatter ()Lio/getstream/chat/android/ui/common/helper/DateFormatter;
 	public static final fun getDecoratorProviderFactory ()Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/DecoratorProviderFactory;
+	public static final fun getDownloadAttachmentUriGenerator ()Lio/getstream/chat/android/ui/common/helper/DownloadAttachmentUriGenerator;
+	public static final fun getDownloadRequestInterceptor ()Lio/getstream/chat/android/ui/common/helper/DownloadRequestInterceptor;
 	public static final fun getFonts ()Lio/getstream/chat/android/ui/font/ChatFonts;
 	public static final fun getImageAssetTransformer ()Lio/getstream/chat/android/ui/common/helper/ImageAssetTransformer;
 	public static final fun getImageHeadersProvider ()Lio/getstream/chat/android/ui/common/helper/ImageHeadersProvider;
@@ -30,6 +32,8 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final fun setCurrentUserProvider (Lio/getstream/chat/android/ui/helper/CurrentUserProvider;)V
 	public static final fun setDateFormatter (Lio/getstream/chat/android/ui/common/helper/DateFormatter;)V
 	public static final fun setDecoratorProviderFactory (Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/DecoratorProviderFactory;)V
+	public static final fun setDownloadAttachmentUriGenerator (Lio/getstream/chat/android/ui/common/helper/DownloadAttachmentUriGenerator;)V
+	public static final fun setDownloadRequestInterceptor (Lio/getstream/chat/android/ui/common/helper/DownloadRequestInterceptor;)V
 	public static final fun setFonts (Lio/getstream/chat/android/ui/font/ChatFonts;)V
 	public static final fun setImageAssetTransformer (Lio/getstream/chat/android/ui/common/helper/ImageAssetTransformer;)V
 	public static final fun setImageHeadersProvider (Lio/getstream/chat/android/ui/common/helper/ImageHeadersProvider;)V

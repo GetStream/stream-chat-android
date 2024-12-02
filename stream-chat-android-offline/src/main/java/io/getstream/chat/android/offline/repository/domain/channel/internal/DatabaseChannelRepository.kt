@@ -20,7 +20,6 @@ import android.util.LruCache
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.utils.message.isPinned
-import io.getstream.chat.android.core.utils.date.maxOf
 import io.getstream.chat.android.core.utils.date.minOf
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
@@ -230,16 +229,7 @@ internal class DatabaseChannelRepository(
      */
     override suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message) {
         selectChannel(cid)?.let {
-            insertChannel(
-                it.copy(
-                    messages = listOf(lastMessage),
-                    lastMessageAt = it.lastMessageAt
-                        .takeIf { lastMessage.parentId != null && !lastMessage.showInChannel }
-                        ?: lastMessage.createdAt
-                        ?: lastMessage.createdLocallyAt
-                        ?: Date(0),
-                ),
-            )
+            insertChannel(it.copy(messages = listOf(lastMessage)))
         }
     }
 
@@ -254,14 +244,6 @@ internal class DatabaseChannelRepository(
         val read = (read + cachedChannel.read).distinctBy { it.getUserId() }
         return copy(
             messages = messages,
-            lastMessageAt = maxOf(
-                lastMessageAt,
-                cachedChannel.lastMessageAt,
-                messages
-                    .filterNot { it.parentId != null && !it.showInChannel }
-                    .lastOrNull()
-                    ?.let { it.createdAt ?: it.createdLocallyAt ?: Date(0) },
-            ),
             hiddenMessagesBefore = hideMessagesBefore,
             members = members,
             read = read,

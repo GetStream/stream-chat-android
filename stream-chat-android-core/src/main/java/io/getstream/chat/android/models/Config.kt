@@ -87,6 +87,11 @@ public data class Config(
     val pushNotificationsEnabled: Boolean = true,
 
     /**
+     * Determines if the last message update should be skipped for system messages. Disabled by default.
+     */
+    val skipLastMsgUpdateForSystemMsgs: Boolean = false,
+
+    /**
      * Determines if polls are enabled. Disabled by default.
      */
     val pollsEnabled: Boolean = false,

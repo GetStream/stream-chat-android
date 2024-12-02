@@ -28,7 +28,6 @@ class StartupActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        println("JcLog: baseUri: ${intent.getStringExtra("BASE_URL")}")
         ChatHelper.initializeSdk(applicationContext, PredefinedUserCredentials.API_KEY, intent.getStringExtra("BASE_URL"))
         startActivity(UserLoginActivity.createIntent(this@StartupActivity))
         finish()
