@@ -5058,15 +5058,15 @@ public final class io/getstream/chat/android/ui/viewmodel/search/SearchViewModel
 	public static final fun bind (Lio/getstream/chat/android/ui/viewmodel/search/SearchViewModel;Lio/getstream/chat/android/ui/feature/search/list/SearchResultListView;Landroidx/lifecycle/LifecycleOwner;)V
 }
 
-public final class io/getstream/chat/android/ui/viewmodel/threads/ThreadListViewBindingKt {
-	public static final fun bindView (Lio/getstream/chat/android/ui/viewmodel/threads/ThreadListViewModel;Lio/getstream/chat/android/ui/feature/threads/list/ThreadListView;Landroidx/lifecycle/LifecycleOwner;)V
-}
-
 public final class io/getstream/chat/android/ui/viewmodel/threads/ThreadListViewModel : androidx/lifecycle/ViewModel {
 	public fun <init> (Lio/getstream/chat/android/ui/common/feature/threads/ThreadListController;)V
 	public final fun getState ()Landroidx/lifecycle/LiveData;
 	public final fun load ()V
 	public final fun loadNextPage ()V
+}
+
+public final class io/getstream/chat/android/ui/viewmodel/threads/ThreadListViewModelBinding {
+	public static final fun bind (Lio/getstream/chat/android/ui/viewmodel/threads/ThreadListViewModel;Lio/getstream/chat/android/ui/feature/threads/list/ThreadListView;Landroidx/lifecycle/LifecycleOwner;)V
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/threads/ThreadsViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
