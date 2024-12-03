@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.chat.android.ui.databinding.StreamUiSearchResultListViewBinding
 import io.getstream.chat.android.ui.feature.search.internal.SearchResultListAdapter
 import io.getstream.chat.android.ui.font.setTextStyle
@@ -86,7 +87,7 @@ public class SearchResultListView : ViewFlipper {
     /**
      * Shows the list of search results.
      */
-    public fun showMessages(query: String, messages: List<Message>) {
+    public fun showMessages(query: String, messages: List<MessageResult>) {
         val isEmpty = messages.isEmpty()
 
         displayedChild = if (isEmpty) Flipper.EMPTY else Flipper.RESULTS
