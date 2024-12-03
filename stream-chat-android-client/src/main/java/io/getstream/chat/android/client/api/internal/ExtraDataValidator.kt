@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.CustomObject
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.result.Error
@@ -86,6 +87,18 @@ internal class ExtraDataValidator(
             .withExtraDataValidation(set)
     }
 
+    override fun partialUpdateMember(
+        channelType: String,
+        channelId: String,
+        userId: String,
+        set: Map<String, Any>,
+        unset: List<String>,
+    ): Call<Member> {
+        return delegate
+            .partialUpdateMember(channelType, channelId, userId, set, unset)
+            .withExtraDataValidation(set)
+    }
+
     private fun <T : CustomObject> Call<List<T>>.withExtraDataValidation(
         objects: List<T>,
     ): Call<List<T>> {
@@ -144,6 +157,7 @@ internal class ExtraDataValidator(
             is Channel -> extraData.keys.filter(reservedInChannelPredicate)
             is Message -> extraData.keys.filter(reservedInChannelPredicate)
             is User -> extraData.keys.filter(reservedInChannelPredicate)
+            is Member -> extraData.keys.filter(reservedInMemberPredicate)
             else -> emptyList()
         }
     }
@@ -153,6 +167,7 @@ internal class ExtraDataValidator(
             Channel::class -> keys.filter(reservedInChannelPredicate)
             Message::class -> keys.filter(reservedInMessagePredicate)
             User::class -> keys.filter(reservedInUserPredicate)
+            Member::class -> keys.filter(reservedInMemberPredicate)
             else -> emptyList()
         }
     }
@@ -166,6 +181,7 @@ internal class ExtraDataValidator(
             is Channel -> "channel"
             is Message -> "message"
             is User -> "user"
+            is Member -> "member"
             else -> ""
         }
     }
@@ -210,8 +226,24 @@ internal class ExtraDataValidator(
             "updated_at",
         )
 
+        private val reservedInMember = setOf(
+            "user",
+            "created_at",
+            "updated_at",
+            "invited",
+            "invite_accepted_at",
+            "invite_rejected_at",
+            "shadow_banned",
+            "banned",
+            "channel_role",
+            "notifications_muted",
+            "status",
+            "ban_expires",
+        )
+
         private val reservedInChannelPredicate: (String) -> Boolean = reservedInChannel::contains
         private val reservedInMessagePredicate: (String) -> Boolean = reservedInMessage::contains
         private val reservedInUserPredicate: (String) -> Boolean = reservedInUser::contains
+        private val reservedInMemberPredicate: (String) -> Boolean = reservedInMember::contains
     }
 }

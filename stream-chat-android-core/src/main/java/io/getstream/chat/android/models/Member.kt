@@ -81,7 +81,11 @@ public data class Member(
      * The date the ban expires.
      */
     val banExpires: Date? = null,
-) : UserEntity, ComparableFieldProvider {
+    /**
+     * A map of custom fields for the member.
+     */
+    override val extraData: Map<String, Any> = emptyMap(),
+) : UserEntity, CustomObject, ComparableFieldProvider {
 
     override fun getComparableField(fieldName: String): Comparable<*>? {
         return when (fieldName) {

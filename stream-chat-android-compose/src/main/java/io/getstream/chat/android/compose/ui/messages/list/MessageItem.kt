@@ -67,11 +67,10 @@ import io.getstream.chat.android.compose.ui.components.messages.MessageContent
 import io.getstream.chat.android.compose.ui.components.messages.MessageFooter
 import io.getstream.chat.android.compose.ui.components.messages.MessageHeaderLabel
 import io.getstream.chat.android.compose.ui.components.messages.MessageReactions
-import io.getstream.chat.android.compose.ui.components.messages.MessageText
 import io.getstream.chat.android.compose.ui.components.messages.OwnedMessageVisibilityContent
 import io.getstream.chat.android.compose.ui.components.messages.PollMessageContent
-import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.UploadingFooter
+import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
@@ -686,25 +685,21 @@ private fun getMessageBubbleColor(message: Message, ownsMessage: Boolean): Color
 internal fun DefaultMessageTextContent(
     message: Message,
     currentUser: User?,
+    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     onLongItemClick: (Message) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
     onUserMentionClick: (User) -> Unit = {},
     onLinkClick: ((Message, String) -> Unit)? = null,
 ) {
-    val quotedMessage = message.replyTo
-
     Column {
-        if (quotedMessage != null) {
-            QuotedMessage(
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                message = quotedMessage,
-                currentUser = currentUser,
-                replyMessage = message,
-                onLongItemClick = { onLongItemClick(message) },
-                onQuotedMessageClick = onQuotedMessageClick,
-            )
-        }
-        MessageText(
+        messageContentFactory.QuotedMessageContent(
+            message = message,
+            currentUser = currentUser,
+            onLongItemClick = onLongItemClick,
+            onQuotedMessageClick = onQuotedMessageClick,
+        )
+
+        messageContentFactory.MessageTextContent(
             message = message,
             currentUser = currentUser,
             onLongItemClick = onLongItemClick,

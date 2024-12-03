@@ -372,6 +372,15 @@ internal interface ChatApi {
     ): Call<Channel>
 
     @CheckResult
+    fun partialUpdateMember(
+        channelType: String,
+        channelId: String,
+        userId: String,
+        set: Map<String, Any>,
+        unset: List<String>,
+    ): Call<Member>
+
+    @CheckResult
     fun queryMembers(
         channelType: String,
         channelId: String,

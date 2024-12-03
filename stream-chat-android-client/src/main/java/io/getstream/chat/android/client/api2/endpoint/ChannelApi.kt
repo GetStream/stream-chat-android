@@ -35,6 +35,8 @@ import io.getstream.chat.android.client.api2.model.requests.TruncateChannelReque
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
+import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialRequest
+import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.CompletableResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
@@ -134,6 +136,14 @@ internal interface ChannelApi {
         @Path("id") channelId: String,
         @Body body: InviteMembersRequest,
     ): RetrofitCall<ChannelResponse>
+
+    @PATCH("/channels/{type}/{id}/member/{user_id}")
+    fun partialUpdateMember(
+        @Path("type") channelType: String,
+        @Path("id") channelId: String,
+        @Path("user_id") userId: String,
+        @Body body: UpdateMemberPartialRequest,
+    ): RetrofitCall<UpdateMemberPartialResponse>
 
     @POST("/channels/{type}/{id}/event")
     fun sendEvent(

@@ -2351,6 +2351,34 @@ internal constructor(
     }
 
     /**
+     * Updates specific fields of member data, retaining the custom data fields which were set previously.
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param userId The ID of the member to be updated.
+     * @param set The key-value data to be updated in the member data.
+     * @param unset The list of keys to be removed from the member data.
+     *
+     * @return Executable async [Call] responsible for updating member data.
+     */
+    @CheckResult
+    public fun partialUpdateMember(
+        channelType: String,
+        channelId: String,
+        userId: String,
+        set: Map<String, Any> = emptyMap(),
+        unset: List<String> = emptyList(),
+    ): Call<Member> {
+        return api.partialUpdateMember(
+            channelType = channelType,
+            channelId = channelId,
+            userId = userId,
+            set = set,
+            unset = unset,
+        )
+    }
+
+    /**
      * Enables slow mode for the channel. When slow mode is enabled, users can only send a message every
      * [cooldownTimeInSeconds] time interval. The [cooldownTimeInSeconds] is specified in seconds, and should be
      * between 1-[MAX_COOLDOWN_TIME_SECONDS].

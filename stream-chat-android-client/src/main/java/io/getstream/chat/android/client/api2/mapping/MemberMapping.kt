@@ -35,6 +35,7 @@ internal fun DownstreamMemberDto.toDomain(currentUserId: UserId?): Member =
         notificationsMuted = notifications_muted,
         status = status,
         banExpires = ban_expires,
+        extraData = extraData,
     )
 
 internal fun Member.toDto(): UpstreamMemberDto =
@@ -51,4 +52,5 @@ internal fun Member.toDto(): UpstreamMemberDto =
         notifications_muted = notificationsMuted,
         status = status,
         ban_expires = banExpires,
+        extraData = extraData,
     )

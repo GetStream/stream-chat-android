@@ -16,6 +16,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `ChatClient::partialUpdateMember` for updating a `Member` in the scope of a `Channel`. [#5497](https://github.com/GetStream/stream-chat-android/pull/5497)
+- Add `ChannelClient::partialUpdateMember` for updating a `Member` in the scope of a `Channel`. [#5497](https://github.com/GetStream/stream-chat-android/pull/5497)
 
 ### ⚠️ Changed
 
@@ -79,6 +81,7 @@
 ### ✅ Added
 - Add `ChatTheme.downloadAttachmentUriGenerator` property to generate download URIs for attachments. [#5490](https://github.com/GetStream/stream-chat-android/pull/5490)
 - Add `ChatTheme.downloadRequestInterceptor` property to intercept download requests. [#5490](https://github.com/GetStream/stream-chat-android/pull/5490)
+- Add `MessageContentFactory` class for customizing message contents. [#5498](https://github.com/GetStream/stream-chat-android/pull/5498)
 
 ### ⚠️ Changed
 

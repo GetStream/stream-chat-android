@@ -59,4 +59,7 @@ internal data class MemberEntity(
 
     /** The date the ban expires. */
     var banExpires: Date? = null,
+
+    /** Map of custom fields for the member. */
+    val extraData: Map<String, Any> = emptyMap(),
 )

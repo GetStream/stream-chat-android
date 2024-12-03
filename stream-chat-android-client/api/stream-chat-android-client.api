@@ -108,6 +108,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun muteUser (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun muteUser (Ljava/lang/String;Ljava/lang/Integer;)Lio/getstream/result/call/Call;
 	public static synthetic fun muteUser$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public final fun partialUpdateMember (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/List;)Lio/getstream/result/call/Call;
+	public static synthetic fun partialUpdateMember$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun partialUpdateMessage (Ljava/lang/String;Ljava/util/Map;Ljava/util/List;)Lio/getstream/result/call/Call;
 	public static synthetic fun partialUpdateMessage$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/util/Map;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun partialUpdateThread (Ljava/lang/String;Ljava/util/Map;Ljava/util/List;)Lio/getstream/result/call/Call;
@@ -670,6 +672,8 @@ public final class io/getstream/chat/android/client/channel/ChannelClient {
 	public final fun muteUser (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun muteUser (Ljava/lang/String;Ljava/lang/Integer;)Lio/getstream/result/call/Call;
 	public static synthetic fun muteUser$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public final fun partialUpdateMember (Ljava/lang/String;Ljava/util/Map;Ljava/util/List;)Lio/getstream/result/call/Call;
+	public static synthetic fun partialUpdateMember$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/lang/String;Ljava/util/Map;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun pinMessage (Lio/getstream/chat/android/models/Message;I)Lio/getstream/result/call/Call;
 	public final fun pinMessage (Lio/getstream/chat/android/models/Message;Ljava/util/Date;)Lio/getstream/result/call/Call;
 	public final fun query (Lio/getstream/chat/android/client/api/models/QueryChannelRequest;)Lio/getstream/result/call/Call;

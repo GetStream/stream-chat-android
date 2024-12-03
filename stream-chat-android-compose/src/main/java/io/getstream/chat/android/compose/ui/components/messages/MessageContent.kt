@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
+import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageTextContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Message
@@ -44,6 +45,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
  * @param onGiphyActionClick Handler for Giphy actions.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onLinkClick Handler for clicking on a link in the message.
+ * @param messageContentFactory Factory for creating message content.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  * @param giphyEphemeralContent Composable that represents the default Giphy message content.
  * @param deletedMessageContent Composable that represents the default content of a deleted message.
@@ -60,21 +62,23 @@ public fun MessageContent(
     onQuotedMessageClick: (Message) -> Unit = {},
     onUserMentionClick: (User) -> Unit = {},
     onLinkClick: ((Message, String) -> Unit)? = null,
+    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     giphyEphemeralContent: @Composable () -> Unit = {
-        DefaultMessageGiphyContent(
+        messageContentFactory.MessageGiphyContent(
             message = message,
             onGiphyActionClick = onGiphyActionClick,
         )
     },
     deletedMessageContent: @Composable () -> Unit = {
-        DefaultMessageDeletedContent(modifier = modifier)
+        messageContentFactory.MessageDeletedContent(modifier = modifier)
     },
     regularMessageContent: @Composable () -> Unit = {
         DefaultMessageContent(
             message = message,
             currentUser = currentUser,
             onLongItemClick = onLongItemClick,
+            messageContentFactory = messageContentFactory,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onQuotedMessageClick = onQuotedMessageClick,
             onLinkClick = onLinkClick,
@@ -135,6 +139,7 @@ internal fun DefaultMessageDeletedContent(
  * @param message The message to show.
  * @param onLongItemClick Handler when the item is long clicked.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
+ * @param messageContentFactory Factory for creating message content.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onLinkClick Handler for clicking on a link in the message.
  */
@@ -143,6 +148,7 @@ internal fun DefaultMessageContent(
     message: Message,
     currentUser: User?,
     onLongItemClick: (Message) -> Unit,
+    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit,
     onUserMentionClick: (User) -> Unit = {},
@@ -159,6 +165,7 @@ internal fun DefaultMessageContent(
             DefaultMessageTextContent(
                 message = message,
                 currentUser = currentUser,
+                messageContentFactory = messageContentFactory,
                 onLongItemClick = onLongItemClick,
                 onQuotedMessageClick = onQuotedMessageClick,
                 onLinkClick = onLinkClick,

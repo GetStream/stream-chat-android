@@ -32,6 +32,7 @@ internal fun Member.toEntity(): MemberEntity = MemberEntity(
     notificationsMuted = notificationsMuted,
     status = status,
     banExpires = banExpires,
+    extraData = extraData,
 )
 
 internal suspend fun MemberEntity.toModel(getUser: suspend (userId: String) -> User): Member = Member(
@@ -47,4 +48,5 @@ internal suspend fun MemberEntity.toModel(getUser: suspend (userId: String) -> U
     notificationsMuted = notificationsMuted,
     status = status,
     banExpires = banExpires,
+    extraData = extraData,
 )

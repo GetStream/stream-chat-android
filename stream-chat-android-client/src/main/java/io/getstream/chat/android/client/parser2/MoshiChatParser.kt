@@ -32,6 +32,7 @@ import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.adapters.AttachmentDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DateAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamChannelDtoAdapter
+import io.getstream.chat.android.client.parser2.adapters.DownstreamMemberDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamMessageDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamModerationDetailsDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DownstreamReactionDtoAdapter
@@ -39,6 +40,7 @@ import io.getstream.chat.android.client.parser2.adapters.DownstreamUserDtoAdapte
 import io.getstream.chat.android.client.parser2.adapters.EventAdapterFactory
 import io.getstream.chat.android.client.parser2.adapters.ExactDateAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamChannelDtoAdapter
+import io.getstream.chat.android.client.parser2.adapters.UpstreamMemberDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamMessageDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamReactionDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamUserDtoAdapter
@@ -67,6 +69,8 @@ internal class MoshiChatParser(
             .add(UpstreamReactionDtoAdapter)
             .add(DownstreamUserDtoAdapter)
             .add(UpstreamUserDtoAdapter)
+            .add(DownstreamMemberDtoAdapter)
+            .add(UpstreamMemberDtoAdapter)
             .add(FlagRequestAdapterFactory)
             .build()
     }
