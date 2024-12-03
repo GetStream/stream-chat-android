@@ -21,6 +21,9 @@ import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.events.AIIndicatorClearEvent
+import io.getstream.chat.android.client.events.AIIndicatorStopEvent
+import io.getstream.chat.android.client.events.AIIndicatorUpdatedEvent
 import io.getstream.chat.android.client.events.AnswerCastedEvent
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
@@ -629,6 +632,9 @@ internal class ChannelLogic(
                         channelStateLogic.upsertPoll(event.processPoll(currentUserId, channelStateLogic::getPoll))
                     is VoteRemovedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
                     is AnswerCastedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
+                    is AIIndicatorUpdatedEvent,
+                    is AIIndicatorClearEvent,
+                    is AIIndicatorStopEvent,
                     is NotificationChannelDeletedEvent,
                     is NotificationInvitedEvent,
                     -> Unit // Ignore these events
