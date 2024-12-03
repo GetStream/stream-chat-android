@@ -151,6 +151,7 @@ internal object EventArguments {
 
     private val member = Member(
         user,
+        channelRole = "channel_member",
         createdAt = date,
         updatedAt = date,
     )
