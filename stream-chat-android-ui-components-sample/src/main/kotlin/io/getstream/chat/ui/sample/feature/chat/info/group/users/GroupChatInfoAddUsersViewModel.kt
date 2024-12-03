@@ -23,10 +23,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.AddMembersRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.watchChannelAsState
@@ -85,7 +87,11 @@ class GroupChatInfoAddUsersViewModel(
     private fun addMember(user: User) {
         viewModelScope.launch {
             val message = Message(text = "${user.name} was added to this channel")
-            when (channelClient.addMembers(listOf(user.id), message).await()) {
+            val request = AddMembersRequest(
+                members = listOf(MemberData(user.id)),
+                systemMessage = message,
+            )
+            when (channelClient.addMembers(request).await()) {
                 is Result.Success -> _userAddedState.value = true
                 is Result.Failure -> _errorEvents.postValue(Event(ErrorEvent.AddMemberError))
             }

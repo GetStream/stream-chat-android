@@ -109,6 +109,7 @@ import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.GuestUser
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
@@ -746,7 +747,7 @@ constructor(
     override fun addMembers(
         channelType: String,
         channelId: String,
-        members: List<String>,
+        members: List<MemberData>,
         systemMessage: Message?,
         hideHistory: Boolean?,
         skipPush: Boolean?,
@@ -754,7 +755,12 @@ constructor(
         return channelApi.addMembers(
             channelType = channelType,
             channelId = channelId,
-            body = AddMembersRequest(members, systemMessage?.toDto(), hideHistory, skipPush),
+            body = AddMembersRequest(
+                add_members = members.map(MemberData::toDto),
+                message = systemMessage?.toDto(),
+                hide_history = hideHistory,
+                skip_push = skipPush,
+            ),
         ).map(this::flattenChannel)
     }
 

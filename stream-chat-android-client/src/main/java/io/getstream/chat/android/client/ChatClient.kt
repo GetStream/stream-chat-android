@@ -29,6 +29,8 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
+import io.getstream.chat.android.client.api.models.AddMembersRequest
+import io.getstream.chat.android.client.api.models.CreateChannelRequest
 import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -58,6 +60,7 @@ import io.getstream.chat.android.client.api.models.identifier.SendReactionIdenti
 import io.getstream.chat.android.client.api.models.identifier.ShuffleGiphyIdentifier
 import io.getstream.chat.android.client.api.models.identifier.UpdateMessageIdentifier
 import io.getstream.chat.android.client.api.models.identifier.getNewerRepliesIdentifier
+import io.getstream.chat.android.client.api2.mapping.toDto
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
@@ -162,6 +165,7 @@ import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.GuestUser
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
@@ -2637,13 +2641,37 @@ internal constructor(
         hideHistory: Boolean? = null,
         skipPush: Boolean? = null,
     ): Call<Channel> {
+        val request = AddMembersRequest(
+            members = memberIds.map(::MemberData),
+            systemMessage = systemMessage,
+            hideHistory = hideHistory,
+            skipPush = skipPush,
+        )
+        return addMembers(channelType, channelId, request)
+    }
+
+    /**
+     * Adds members to a given channel.
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param request The [AddMembersRequest] holding data about the members to be added.
+     *
+     * @return Executable async [Call] responsible for adding the members.
+     */
+    @CheckResult
+    public fun addMembers(
+        channelType: String,
+        channelId: String,
+        request: AddMembersRequest,
+    ): Call<Channel> {
         return api.addMembers(
-            channelType,
-            channelId,
-            memberIds,
-            systemMessage,
-            hideHistory,
-            skipPush,
+            channelType = channelType,
+            channelId = channelId,
+            members = request.members,
+            systemMessage = request.systemMessage,
+            hideHistory = request.hideHistory,
+            skipPush = request.skipPush,
         )
     }
 
@@ -3008,14 +3036,46 @@ internal constructor(
         memberIds: List<String>,
         extraData: Map<String, Any>,
     ): Call<Channel> {
-        val currentUser = getCurrentUser()
+        val request = CreateChannelRequest(
+            members = memberIds.map(::MemberData),
+            extraData = extraData,
+        )
+        return createChannel(channelType, channelId, request)
+    }
 
-        val request = QueryChannelRequest()
-            .withData(extraData + mapOf(QueryChannelRequest.KEY_MEMBERS to memberIds))
+    /**
+     * Creates the channel.
+     * You can either create an id-based channel by passing not blank [channelId] or
+     * member-based (distinct) channel by leaving [channelId] empty.
+     * Use [CreateChannelRequest.members] list to create a channel together with members. Make sure the list is not
+     * empty in case of creating member-based channel!
+     * Extra channel's information, for example name, can be passed in the [CreateChannelRequest.extraData] map.
+     *
+     * The call will be retried accordingly to [retryPolicy].
+     *
+     * @see [Plugin]
+     * @see [RetryPolicy]
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param request The [CreateChannelRequest] holding the data required for creating a channel.
+     *
+     * @return Executable async [Call] responsible for creating the channel.
+     */
+    @CheckResult
+    public fun createChannel(
+        channelType: String,
+        channelId: String,
+        request: CreateChannelRequest,
+    ): Call<Channel> {
+        val currentUser = getCurrentUser()
+        val members = request.members.map(MemberData::toDto)
+        val queryChannelRequest = QueryChannelRequest()
+            .withData(request.extraData + mapOf(QueryChannelRequest.KEY_MEMBERS to members))
         return queryChannelInternal(
             channelType = channelType,
             channelId = channelId,
-            request = request,
+            request = queryChannelRequest,
         )
             .retry(scope = userScope, retryPolicy = retryPolicy)
             .doOnStart(userScope) {
@@ -3024,8 +3084,7 @@ internal constructor(
                     plugin.onCreateChannelRequest(
                         channelType = channelType,
                         channelId = channelId,
-                        memberIds = memberIds,
-                        extraData = extraData,
+                        request = request,
                         currentUser = currentUser!!,
                     )
                 }
@@ -3036,7 +3095,7 @@ internal constructor(
                     plugin.onCreateChannelResult(
                         channelType = channelType,
                         channelId = channelId,
-                        memberIds = memberIds,
+                        memberIds = request.memberIds,
                         result = result,
                     )
                 }
@@ -3045,17 +3104,17 @@ internal constructor(
                 errorHandlers = errorHandlers,
                 channelType = channelType,
                 channelId = channelId,
-                memberIds = memberIds,
-                extraData = extraData,
+                memberIds = request.memberIds,
+                extraData = request.extraData,
             )
             .precondition(plugins) {
                 onCreateChannelPrecondition(
                     currentUser = currentUser,
                     channelId = channelId,
-                    memberIds = memberIds,
+                    memberIds = request.memberIds,
                 )
             }
-            .share(userScope) { QueryChannelIdentifier(channelType, channelId, request) }
+            .share(userScope) { QueryChannelIdentifier(channelType, channelId, queryChannelRequest) }
     }
 
     /**

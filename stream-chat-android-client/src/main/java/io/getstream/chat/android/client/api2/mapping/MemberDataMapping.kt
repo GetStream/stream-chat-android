@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.requests
+package io.getstream.chat.android.client.api2.mapping
 
-import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDataDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
+import io.getstream.chat.android.models.MemberData
 
-@JsonClass(generateAdapter = true)
-internal data class AddMembersRequest(
-    val add_members: List<UpstreamMemberDataDto>,
-    val message: UpstreamMessageDto?,
-    val hide_history: Boolean?,
-    val skip_push: Boolean?,
+/**
+ * Maps the domain [MemberData] to a network [UpstreamMemberDataDto]
+ */
+internal fun MemberData.toDto(): UpstreamMemberDataDto = UpstreamMemberDataDto(
+    user_id = userId,
+    extraData = extraData,
 )
