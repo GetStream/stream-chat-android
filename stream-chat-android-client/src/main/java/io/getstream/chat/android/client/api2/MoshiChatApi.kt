@@ -78,6 +78,7 @@ import io.getstream.chat.android.client.api2.model.requests.UnblockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
+import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
@@ -783,6 +784,23 @@ constructor(
             channelId = channelId,
             body = InviteMembersRequest(members, systemMessage?.toDto(), skipPush),
         ).map(this::flattenChannel)
+    }
+
+    override fun partialUpdateMember(
+        channelType: String,
+        channelId: String,
+        userId: String,
+        set: Map<String, Any>,
+        unset: List<String>,
+    ): Call<Member> {
+        return channelApi.partialUpdateMember(
+            channelType = channelType,
+            channelId = channelId,
+            userId = userId,
+            body = UpdateMemberPartialRequest(set, unset),
+        ).map { response ->
+            response.channel_member.toDomain(currentUserIdProvider())
+        }
     }
 
     private fun flattenChannel(response: ChannelResponse): Channel {
