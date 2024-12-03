@@ -104,11 +104,13 @@ public final class io/getstream/chat/android/compose/state/channels/list/ItemSta
 
 public final class io/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState : io/getstream/chat/android/compose/state/channels/list/ItemState {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/models/Message;)V
+	public fun <init> (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Channel;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/Message;
-	public final fun copy (Lio/getstream/chat/android/models/Message;)Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;Lio/getstream/chat/android/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;
+	public final fun component2 ()Lio/getstream/chat/android/models/Channel;
+	public final fun copy (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Channel;ILjava/lang/Object;)Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChannel ()Lio/getstream/chat/android/models/Channel;
 	public fun getKey ()Ljava/lang/String;
 	public final fun getMessage ()Lio/getstream/chat/android/models/Message;
 	public fun hashCode ()I
