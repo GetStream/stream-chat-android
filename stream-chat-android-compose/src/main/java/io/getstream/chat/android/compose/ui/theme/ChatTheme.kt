@@ -56,8 +56,11 @@ import io.getstream.chat.android.compose.ui.util.ReactionIconFactory
 import io.getstream.chat.android.compose.ui.util.SearchResultNameFormatter
 import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoaderFactory
 import io.getstream.chat.android.ui.common.helper.DateFormatter
+import io.getstream.chat.android.ui.common.helper.DefaultDownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DefaultImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.DefaultImageHeadersProvider
+import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
+import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.ui.common.helper.TimeProvider
@@ -135,6 +138,14 @@ private val LocalSearchResultNameFormatter = compositionLocalOf<SearchResultName
 }
 private val LocalStreamImageHeadersProvider = compositionLocalOf<ImageHeadersProvider> {
     error("No ImageHeadersProvider provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+private val LocalStreamDownloadAttachmentUriGenerator = compositionLocalOf<DownloadAttachmentUriGenerator> {
+    error(
+        "No DownloadAttachmentUriGenerator provided! Make sure to wrap all usages of Stream components in a ChatTheme.",
+    )
+}
+private val LocalStreamDownloadRequestInterceptor = compositionLocalOf<DownloadRequestInterceptor> {
+    error("No DownloadRequestInterceptor provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 private val LocalStreamImageAssetTransformer = compositionLocalOf<ImageAssetTransformer> {
     error("No ImageAssetTransformer provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
@@ -235,6 +246,9 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param imageLoaderFactory A factory that creates new Coil [ImageLoader] instances.
  * @param imageAssetTransformer [ImageAssetTransformer] Used to transform image assets.
  * @param imageHeadersProvider [ImageHeadersProvider] Used to provide headers for image requests.
+ * @param downloadAttachmentUriGenerator [DownloadAttachmentUriGenerator] Used to generate download URIs for
+ * attachments.
+ * @param downloadRequestInterceptor [DownloadRequestInterceptor] Used to intercept download requests.
  * @param messageAlignmentProvider [MessageAlignmentProvider] Used to provide message alignment for the given message.
  * @param messageOptionsTheme [MessageOptionsTheme] Theme for the message option list in the selected message menu.
  * For theming the reaction option list in the same menu, use [reactionOptionsTheme].
@@ -289,6 +303,8 @@ public fun ChatTheme(
     searchResultNameFormatter: SearchResultNameFormatter = SearchResultNameFormatter.defaultFormatter(),
     imageLoaderFactory: StreamCoilImageLoaderFactory = StreamCoilImageLoaderFactory.defaultFactory(),
     imageHeadersProvider: ImageHeadersProvider = DefaultImageHeadersProvider,
+    downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator = DefaultDownloadAttachmentUriGenerator,
+    downloadRequestInterceptor: DownloadRequestInterceptor = DownloadRequestInterceptor { },
     imageAssetTransformer: ImageAssetTransformer = DefaultImageAssetTransformer,
     messageAlignmentProvider: MessageAlignmentProvider = MessageAlignmentProvider.defaultMessageAlignmentProvider(),
     messageOptionsTheme: MessageOptionsTheme = MessageOptionsTheme.defaultTheme(),
@@ -383,6 +399,8 @@ public fun ChatTheme(
         LocalAttachmentPickerTheme provides attachmentPickerTheme,
         LocalStreamImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current.applicationContext),
         LocalStreamImageHeadersProvider provides imageHeadersProvider,
+        LocalStreamDownloadAttachmentUriGenerator provides downloadAttachmentUriGenerator,
+        LocalStreamDownloadRequestInterceptor provides downloadRequestInterceptor,
         LocalStreamImageAssetTransformer provides imageAssetTransformer,
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
         LocalMessageOptionsTheme provides messageOptionsTheme,
@@ -678,6 +696,16 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalStreamImageHeadersProvider.current
+
+    public val streamDownloadAttachmentUriGenerator: DownloadAttachmentUriGenerator
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalStreamDownloadAttachmentUriGenerator.current
+
+    public val streamDownloadRequestInterceptor: DownloadRequestInterceptor
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalStreamDownloadRequestInterceptor.current
 
     /**
      * Retrieves the current [ImageAssetTransformer] at the call site's position in the hierarchy.

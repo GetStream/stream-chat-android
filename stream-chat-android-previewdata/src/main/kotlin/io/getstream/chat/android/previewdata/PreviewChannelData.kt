@@ -85,6 +85,6 @@ public object PreviewChannelData {
             PreviewMessageData.message1,
             PreviewMessageData.message2,
         ),
-        lastMessageAt = Date(),
+        channelLastMessageAt = Date(),
     )
 }

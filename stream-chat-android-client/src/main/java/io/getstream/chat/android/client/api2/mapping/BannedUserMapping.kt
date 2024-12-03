@@ -24,7 +24,7 @@ internal fun BannedUserResponse.toDomain(currentUserId: UserId?): BannedUser {
     return BannedUser(
         user = user.toDomain(currentUserId),
         bannedBy = banned_by?.toDomain(currentUserId),
-        channel = channel?.toDomain(currentUserId),
+        channel = channel?.toDomain(currentUserId, null),
         createdAt = created_at,
         expires = expires,
         shadow = shadow,

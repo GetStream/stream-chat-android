@@ -23,7 +23,7 @@ import io.getstream.chat.android.models.UserId
 internal fun DownstreamChannelMuteDto.toDomain(currentUserId: UserId?): ChannelMute =
     ChannelMute(
         user = user?.toDomain(currentUserId),
-        channel = channel?.toDomain(currentUserId),
+        channel = channel?.toDomain(currentUserId, null),
         createdAt = created_at,
         updatedAt = updated_at,
         expires = expires,

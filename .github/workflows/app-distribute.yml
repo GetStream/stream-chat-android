@@ -61,4 +61,4 @@ jobs:
           appId: ${{secrets.FIREBASE_COMPOSE_SAMPLE_APP_ID}}
           serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
           groups: stream-testers
-          file: stream-chat-android-compose-sample/build/outputs/apk/release/stream-chat-android-compose-sample-release.apk
+          file: stream-chat-android-compose-sample/build/outputs/apk/demo/release/stream-chat-android-compose-sample-demo-release.apk
