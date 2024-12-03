@@ -207,9 +207,9 @@ internal fun ChatEventDto.toDomain(currentUserId: UserId?): ChatEvent {
         is VoteChangedEventDto -> toDomain(currentUserId)
         is AnswerCastedEventDto -> toDomain(currentUserId)
         is VoteRemovedEventDto -> toDomain(currentUserId)
-        is AIIndicatorUpdatedEventDto -> toDomain()
-        is AIIndicatorClearEventDto -> toDomain()
-        is AIIndicatorStopEventDto -> toDomain()
+        is AIIndicatorUpdatedEventDto -> toDomain(currentUserId)
+        is AIIndicatorClearEventDto -> toDomain(currentUserId)
+        is AIIndicatorStopEventDto -> toDomain(currentUserId)
     }
 }
 
@@ -924,13 +924,14 @@ private fun VoteRemovedEventDto.toDomain(currentUserId: UserId?): VoteRemovedEve
     )
 }
 
-private fun AIIndicatorUpdatedEventDto.toDomain(): AIIndicatorUpdatedEvent {
+private fun AIIndicatorUpdatedEventDto.toDomain(currentUserId: UserId?): AIIndicatorUpdatedEvent {
     val (channelType, channelId) = cid.cidToTypeAndId()
     return AIIndicatorUpdatedEvent(
         type = type,
         createdAt = created_at.date,
         rawCreatedAt = created_at.rawDate,
         cid = cid,
+        user = user.toDomain(currentUserId),
         channelType = channelType,
         channelId = channelId,
         channelLastMessageAt = channel_last_message_at,
@@ -940,12 +941,13 @@ private fun AIIndicatorUpdatedEventDto.toDomain(): AIIndicatorUpdatedEvent {
     )
 }
 
-private fun AIIndicatorClearEventDto.toDomain(): AIIndicatorClearEvent {
+private fun AIIndicatorClearEventDto.toDomain(currentUserId: UserId?): AIIndicatorClearEvent {
     val (channelType, channelId) = cid.cidToTypeAndId()
     return AIIndicatorClearEvent(
         type = type,
         createdAt = created_at.date,
         rawCreatedAt = created_at.rawDate,
+        user = user.toDomain(currentUserId),
         cid = cid,
         channelType = channelType,
         channelId = channelId,
@@ -953,13 +955,14 @@ private fun AIIndicatorClearEventDto.toDomain(): AIIndicatorClearEvent {
     )
 }
 
-private fun AIIndicatorStopEventDto.toDomain(): AIIndicatorStopEvent {
+private fun AIIndicatorStopEventDto.toDomain(currentUserId: UserId?): AIIndicatorStopEvent {
     val (channelType, channelId) = cid.cidToTypeAndId()
     return AIIndicatorStopEvent(
         type = type,
         createdAt = created_at.date,
         rawCreatedAt = created_at.rawDate,
         cid = cid,
+        user = user.toDomain(currentUserId),
         channelType = channelType,
         channelId = channelId,
         channelLastMessageAt = channel_last_message_at,

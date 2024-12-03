@@ -587,6 +587,7 @@ internal data class AIIndicatorUpdatedEventDto(
     val type: String,
     val aiState: String,
     val cid: String,
+    val user: DownstreamUserDto,
     val created_at: ExactDate,
     val messageId: String,
     val aiMessage: String,
@@ -597,6 +598,7 @@ internal data class AIIndicatorUpdatedEventDto(
 internal data class AIIndicatorClearEventDto(
     val type: String,
     val cid: String,
+    val user: DownstreamUserDto,
     val created_at: ExactDate,
     val channel_last_message_at: Date?,
 ) : ChatEventDto()
@@ -605,6 +607,7 @@ internal data class AIIndicatorClearEventDto(
 internal data class AIIndicatorStopEventDto(
     val type: String,
     val cid: String,
+    val user: DownstreamUserDto,
     val created_at: ExactDate,
     val channel_last_message_at: Date?,
 ) : ChatEventDto()

@@ -841,6 +841,7 @@ public data class AIIndicatorUpdatedEvent(
     override val type: String,
     override val createdAt: Date,
     override val rawCreatedAt: String?,
+    override val user: User,
     override val cid: String,
     override val channelType: String,
     override val channelId: String,
@@ -848,7 +849,7 @@ public data class AIIndicatorUpdatedEvent(
     val aiState: String,
     val messageId: String,
     val aiMessage: String,
-) : CidEvent()
+) : CidEvent(), UserEvent
 
 /**
  * Triggered when an ai indicator is cleared.
@@ -857,11 +858,12 @@ public data class AIIndicatorClearEvent(
     override val type: String,
     override val createdAt: Date,
     override val rawCreatedAt: String?,
+    override val user: User,
     override val cid: String,
     override val channelType: String,
     override val channelId: String,
     override val channelLastMessageAt: Date?,
-) : CidEvent()
+) : CidEvent(), UserEvent
 
 /**
  * Triggered when an ai indicator is stopped.
@@ -870,11 +872,12 @@ public data class AIIndicatorStopEvent(
     override val type: String,
     override val createdAt: Date,
     override val rawCreatedAt: String?,
+    override val user: User,
     override val cid: String,
     override val channelType: String,
     override val channelId: String,
     override val channelLastMessageAt: Date?,
-) : CidEvent()
+) : CidEvent(), UserEvent
 
 /**
  * Triggered when a user gets connected to the WS
