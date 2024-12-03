@@ -67,6 +67,7 @@ public fun SearchResultItem(
     leadingContent: @Composable RowScope.(ItemState.SearchResultItemState) -> Unit = {
         DefaultSearchResultItemLeadingContent(
             searchResultItemState = it,
+            currentUser = currentUser,
         )
     },
     centerContent: @Composable RowScope.(ItemState.SearchResultItemState) -> Unit = {
@@ -107,22 +108,33 @@ public fun SearchResultItem(
  * the message.
  *
  * @param searchResultItemState The state of the search result item.
+ * @param currentUser The currently logged in user.
  */
 @Composable
 internal fun DefaultSearchResultItemLeadingContent(
     searchResultItemState: ItemState.SearchResultItemState,
+    currentUser: User?,
 ) {
-    UserAvatar(
-        user = searchResultItemState.message.user,
-        modifier = Modifier
-            .padding(
-                start = ChatTheme.dimens.channelItemHorizontalPadding,
-                end = 4.dp,
-                top = ChatTheme.dimens.channelItemVerticalPadding,
-                bottom = ChatTheme.dimens.channelItemVerticalPadding,
+    (
+        searchResultItemState
+            .channel
+            ?.takeIf { it.members.size == 2 }
+            ?.let { it.members.firstOrNull { it.getUserId() != currentUser?.id }?.user }
+            ?: searchResultItemState.message.user
+        )
+        .let { user ->
+            UserAvatar(
+                user = user,
+                modifier = Modifier
+                    .padding(
+                        start = ChatTheme.dimens.channelItemHorizontalPadding,
+                        end = 4.dp,
+                        top = ChatTheme.dimens.channelItemVerticalPadding,
+                        bottom = ChatTheme.dimens.channelItemVerticalPadding,
+                    )
+                    .size(ChatTheme.dimens.channelAvatarSize),
             )
-            .size(ChatTheme.dimens.channelAvatarSize),
-    )
+        }
 }
 
 /**
