@@ -44,7 +44,6 @@ import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListIte
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.SwipeViewHolder
 import io.getstream.chat.android.ui.font.setTextStyle
-import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.getLastMessage
 import io.getstream.chat.android.ui.utils.extensions.isMuted
@@ -291,7 +290,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
             message = lastMessage,
             currentUser = ChatUI.currentUserProvider.getCurrentUser(),
         )
-        lastMessageTimeLabel.text = ChatUI.dateFormatter.formatDate(lastMessage.getCreatedAtOrThrow())
+        lastMessageTimeLabel.text = ChatUI.dateFormatter.formatDate(channel.lastMessageAt)
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureUnreadCountBadge() {

@@ -626,6 +626,22 @@ public class ChannelClient internal constructor(
     }
 
     /**
+     * Updates specific fields of custom data for a given member.
+     *
+     * @param userId The user id of the member to update.
+     * @param set The key-value data to be updated in the member data.
+     * @param unset The list of keys to be removed from the member data.
+     */
+    @CheckResult
+    public fun partialUpdateMember(
+        userId: String,
+        set: Map<String, Any> = emptyMap(),
+        unset: List<String> = emptyList(),
+    ): Call<Member> {
+        return client.partialUpdateMember(channelType, channelId, userId, set, unset)
+    }
+
+    /**
      * Enables slow mode for the channel. When slow mode is enabled, users can only send a message every
      * [cooldownTimeInSeconds] time interval. The [cooldownTimeInSeconds] is specified in seconds, and should be
      * between 1-120.

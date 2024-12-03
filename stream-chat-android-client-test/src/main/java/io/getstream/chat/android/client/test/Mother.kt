@@ -67,6 +67,7 @@ public fun randomChannelVisibleEvent(
     channelType: String = randomString(),
     channelId: String = randomString(),
     user: User = randomUser(),
+
 ): ChannelVisibleEvent = ChannelVisibleEvent(
     type = EventType.CHANNEL_VISIBLE,
     createdAt = createdAt,
@@ -75,6 +76,7 @@ public fun randomChannelVisibleEvent(
     channelType = channelType,
     channelId = channelId,
     user = user,
+    channelLastMessageAt = randomDate(),
 )
 
 public fun randomUserStartWatchingEvent(
@@ -93,6 +95,7 @@ public fun randomUserStartWatchingEvent(
     channelType = channelType,
     channelId = channelId,
     user = user,
+    channelLastMessageAt = randomDate(),
 )
 
 public fun randomChannelDeletedEvent(
@@ -113,6 +116,7 @@ public fun randomChannelDeletedEvent(
         channelType = channelType,
         channelId = channelId,
         channel = channel,
+        channelLastMessageAt = randomDate(),
     )
 }
 
@@ -136,6 +140,7 @@ public fun randomNotificationChannelDeletedEvent(
         channel = channel,
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
+        channelLastMessageAt = randomDate(),
     )
 }
 
@@ -159,6 +164,7 @@ public fun randomReactionNewEvent(
         channelId = channelId,
         message = message,
         reaction = reaction,
+        channelLastMessageAt = randomDate(),
     )
 }
 
@@ -178,6 +184,7 @@ public fun randomMessageReadEvent(
         cid = cid,
         channelType = channelType,
         channelId = channelId,
+        channelLastMessageAt = randomDate(),
     )
 }
 
@@ -201,6 +208,7 @@ public fun randomNotificationMarkReadEvent(
         channelId = channelId,
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
+        channelLastMessageAt = randomDate(),
     )
 }
 
@@ -222,6 +230,7 @@ public fun randomTypingStopEvent(
         channelType = channelType,
         channelId = channelId,
         parentId = parentId,
+        channelLastMessageAt = randomDate(),
     )
 }
 
@@ -243,6 +252,7 @@ public fun randomTypingStartEvent(
         channelType = channelType,
         channelId = channelId,
         parentId = parentId,
+        channelLastMessageAt = randomDate(),
     )
 }
 
@@ -264,6 +274,7 @@ public fun randomMemberAddedEvent(
         channelType = channelType,
         channelId = channelId,
         member = member,
+        channelLastMessageAt = randomDate(),
     )
 }
 
@@ -289,6 +300,7 @@ public fun randomNotificationAddedToChannelEvent(
         member = member,
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
+        channelLastMessageAt = randomDate(),
     )
 }
 
@@ -314,6 +326,7 @@ public fun randomNotificationMessageNewEvent(
         message = message,
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
+        channelLastMessageAt = randomDate(),
     )
 }
 
@@ -334,6 +347,7 @@ public fun randomMessageUpdateEvent(
     channelType = channelType,
     channelId = channelId,
     message = message,
+    channelLastMessageAt = randomDate(),
 )
 
 public fun randomChannelUpdatedEvent(
@@ -353,6 +367,7 @@ public fun randomChannelUpdatedEvent(
         channelId = channelId,
         message = message,
         channel = channel,
+        channelLastMessageAt = randomDate(),
     )
 }
 
@@ -375,6 +390,7 @@ public fun randomChannelUpdatedByUserEvent(
         message = message,
         channel = channel,
         user = user,
+        channelLastMessageAt = randomDate(),
     )
 }
 
@@ -401,6 +417,7 @@ public fun randomNewMessageEvent(
         watcherCount = watcherCount,
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
+        channelLastMessageAt = randomDate(),
     )
 }
 
@@ -428,6 +445,7 @@ public fun randomNotificationAddedToChannelEvent(
         member = member,
         totalUnreadCount = randomInt(),
         unreadChannels = randomInt(),
+        channelLastMessageAt = randomDate(),
     )
 }
 
@@ -448,6 +466,7 @@ public fun randomNotificationRemovedFromChannelEvent(
         channelId = randomString(),
         channel = channel,
         member = member,
+        channelLastMessageAt = randomDate(),
     )
 }
 
@@ -468,6 +487,7 @@ public fun randomNotificationMessageNewEvent(
         message = randomMessage(),
         totalUnreadCount = randomInt(),
         unreadChannels = randomInt(),
+        channelLastMessageAt = randomDate(),
     )
 }
 
@@ -483,6 +503,7 @@ public fun randomMemberAddedEvent(cid: String = randomString()): MemberAddedEven
         channelType = randomString(),
         channelId = randomString(),
         member = randomMember(),
+        channelLastMessageAt = randomDate(),
     )
 }
 
@@ -498,6 +519,7 @@ public fun randomMemberRemovedEvent(cid: String = randomString(), member: Member
         channelType = randomString(),
         channelId = randomString(),
         member = member,
+        channelLastMessageAt = randomDate(),
     )
 }
 
@@ -519,5 +541,6 @@ public fun randomChannelUserBannedEvent(
         channelId = id,
         expiration = banExpires,
         shadow = shadow,
+        channelLastMessageAt = randomDate(),
     )
 }

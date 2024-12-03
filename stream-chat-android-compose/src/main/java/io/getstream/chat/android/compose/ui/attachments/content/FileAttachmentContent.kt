@@ -207,7 +207,8 @@ private fun RowScope.FileAttachmentDownloadIcon(attachment: Attachment) {
 
     val (writePermissionState, downloadPayload) = attachmentDownloadState()
     val context = LocalContext.current
-
+    val downloadAttachmentUriGenerator = ChatTheme.streamDownloadAttachmentUriGenerator
+    val downloadRequestInterceptor = ChatTheme.streamDownloadRequestInterceptor
     Icon(
         modifier = Modifier
             .align(Alignment.Top)
@@ -222,6 +223,8 @@ private fun RowScope.FileAttachmentDownloadIcon(attachment: Attachment) {
                     payload = attachment,
                     permissionState = writePermissionState,
                     downloadPayload = downloadPayload,
+                    generateDownloadUri = downloadAttachmentUriGenerator::generateDownloadUri,
+                    interceptRequest = downloadRequestInterceptor::intercept,
                 )
             },
         painter = painterResource(id = R.drawable.stream_compose_ic_file_download),

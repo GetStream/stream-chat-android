@@ -18,7 +18,10 @@ package io.getstream.chat.android.ui
 
 import android.content.Context
 import io.getstream.chat.android.ui.common.helper.DateFormatter
+import io.getstream.chat.android.ui.common.helper.DefaultDownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DefaultVideoHeadersProvider
+import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
+import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.ui.common.helper.VideoHeadersProvider
@@ -71,6 +74,18 @@ public object ChatUI {
      */
     @JvmStatic
     public var imageAssetTransformer: ImageAssetTransformer by StreamImageLoader.instance()::imageAssetTransformer
+
+    /**
+     * Generates a download URI for the given attachment.
+     */
+    @JvmStatic
+    public var downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator = DefaultDownloadAttachmentUriGenerator
+
+    /**
+     * Intercepts and modifies the download request before it is enqueued.
+     */
+    @JvmStatic
+    public var downloadRequestInterceptor: DownloadRequestInterceptor = DownloadRequestInterceptor { }
 
     /**
      * Provides HTTP headers for image loading requests.

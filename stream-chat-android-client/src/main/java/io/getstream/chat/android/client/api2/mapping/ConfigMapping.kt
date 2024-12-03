@@ -36,6 +36,7 @@ internal fun ConfigDto.toDomain(): Config =
         urlEnrichmentEnabled = url_enrichment,
         customEventsEnabled = custom_events,
         pushNotificationsEnabled = push_notifications,
+        skipLastMsgUpdateForSystemMsgs = skip_last_msg_update_for_system_msgs ?: false,
         pollsEnabled = polls,
         messageRetention = message_retention,
         maxMessageLength = max_message_length,

@@ -52,27 +52,29 @@ internal class ChannelClientSubscribeTest {
 
         val NON_CHANNEL_EVENT = ConnectedEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, User(), "")
         val CHANNEL_EVENT = ChannelUpdatedEvent(
-            EventType.CHANNEL_UPDATED,
-            createdAt,
-            rawCreatedAt,
-            CID,
-            CHANNEL_TYPE,
-            CHANNEL_ID,
-            null,
-            Channel(),
+            type = EventType.CHANNEL_UPDATED,
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt,
+            cid = CID,
+            channelType = CHANNEL_TYPE,
+            channelId = CHANNEL_ID,
+            channel = Channel(),
+            channelLastMessageAt = Date(),
+            message = null,
         )
         val OTHER_CHANNEL_EVENT = NewMessageEvent(
-            EventType.MESSAGE_NEW,
-            createdAt,
-            rawCreatedAt,
-            User(),
-            OTHER_CID,
-            OTHER_CHANNEL_TYPE,
-            OTHER_CHANNEL_ID,
-            Message(),
-            0,
-            0,
-            0,
+            type = EventType.MESSAGE_NEW,
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt,
+            user = User(),
+            cid = OTHER_CID,
+            channelType = OTHER_CHANNEL_TYPE,
+            channelId = OTHER_CHANNEL_ID,
+            message = Message(),
+            watcherCount = 0,
+            totalUnreadCount = 0,
+            unreadChannels = 0,
+            channelLastMessageAt = Date(),
         )
     }
 
