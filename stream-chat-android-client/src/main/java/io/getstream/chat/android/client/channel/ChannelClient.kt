@@ -961,4 +961,42 @@ public class ChannelClient internal constructor(
 
     @CheckResult
     public fun unpinMessage(message: Message): Call<Message> = client.unpinMessage(message)
+
+    /**
+     * Pins the channel for the user.
+     *
+     * @param userId The user id to pin the channel for.
+     *
+     * @return Executable async [Call] responsible for pinning the channel.
+     */
+    @CheckResult
+    public fun pin(userId: String): Call<Member> = client.pinChannel(userId, channelType, channelId)
+
+    /**
+     * Unpins the channel for the user.
+     *
+     * @param userId The user id to unpin the channel for.
+     *
+     * @return Executable async [Call] responsible for unpinning the channel.
+     */
+    @CheckResult
+    public fun unpin(userId: String): Call<Member> = client.unpinChannel(userId, channelType, channelId)
+
+    /**
+     * Archives the channel for the user.
+     *
+     * @param userId The user id to archive the channel for.
+     *
+     * @return Executable async [Call] responsible for archiving the channel.
+     */
+    public fun archive(userId: String): Call<Member> = client.archiveChannel(userId, channelType, channelId)
+
+    /**
+     * Un-archives the channel for the user.
+     *
+     * @param userId The user id to unarchive the channel for.
+     *
+     * @return Executable async [Call] responsible for un-archiving the channel.
+     */
+    public fun unarchive(userId: String): Call<Member> = client.unarchiveChannel(userId, channelType, channelId)
 }

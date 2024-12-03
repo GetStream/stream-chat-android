@@ -349,6 +349,7 @@ public class ChannelListViewModel(
                     canLoadMore = result.value.messages.size >= limit,
                 )
             }
+
             is io.getstream.result.Result.Failure -> {
                 logger.e { "[searchMessages] #$src; failed: ${result.value}" }
                 currentState.copy(
@@ -595,6 +596,52 @@ public class ChannelListViewModel(
         dismissChannelAction()
 
         chatClient.muteChannel(channel.type, channel.id).enqueue()
+    }
+
+    /**
+     * Pins a channel.
+     *
+     * @param channel The channel to pin.
+     */
+    public fun pinChannel(channel: Channel) {
+        dismissChannelAction()
+        user.value?.let { user ->
+            chatClient.pinChannel(user.id, channel.type, channel.id).enqueue()
+        }
+    }
+
+    /**
+     * Unpins a channel.
+     *
+     * @param channel The channel to unpin.
+     */
+    public fun unpinChannel(channel: Channel) {
+        dismissChannelAction()
+        user.value?.let { user ->
+            chatClient.unpinChannel(user.id, channel.type, channel.id).enqueue()
+        }
+    }
+
+    public fun archiveChannel(channel: Channel) {
+        dismissChannelAction()
+        user.value?.let { user ->
+            chatClient.archiveChannel(
+                user.id,
+                channel.type,
+                channel.id,
+            ).enqueue()
+        }
+    }
+
+    public fun unarchiveChannel(channel: Channel) {
+        dismissChannelAction()
+        user.value?.let { user ->
+            chatClient.unarchiveChannel(
+                user.id,
+                channel.type,
+                channel.id,
+            ).enqueue()
+        }
     }
 
     /**

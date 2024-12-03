@@ -3409,6 +3409,7 @@ public final class io/getstream/chat/android/compose/viewmodel/channels/ChannelL
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/querysort/QuerySorter;Lio/getstream/chat/android/models/FilterObject;IIILio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;J)V
 	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/querysort/QuerySorter;Lio/getstream/chat/android/models/FilterObject;IIILio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;JILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun archiveChannel (Lio/getstream/chat/android/models/Channel;)V
 	public final fun deleteConversation (Lio/getstream/chat/android/models/Channel;)V
 	public final fun dismissChannelAction ()V
 	public final fun getActiveChannelAction ()Lio/getstream/chat/android/ui/common/state/channels/actions/ChannelAction;
@@ -3423,13 +3424,16 @@ public final class io/getstream/chat/android/compose/viewmodel/channels/ChannelL
 	public final fun loadMore ()V
 	public final fun muteChannel (Lio/getstream/chat/android/models/Channel;)V
 	public final fun performChannelAction (Lio/getstream/chat/android/ui/common/state/channels/actions/ChannelAction;)V
+	public final fun pinChannel (Lio/getstream/chat/android/models/Channel;)V
 	public final fun refresh ()V
 	public final fun selectChannel (Lio/getstream/chat/android/models/Channel;)V
 	public final fun setFilters (Lio/getstream/chat/android/models/FilterObject;)V
 	public final fun setQuerySort (Lio/getstream/chat/android/models/querysort/QuerySorter;)V
 	public final fun setSearchQuery (Lio/getstream/chat/android/compose/state/channels/list/SearchQuery;)V
 	public final fun setSearchQuery (Ljava/lang/String;)V
+	public final fun unarchiveChannel (Lio/getstream/chat/android/models/Channel;)V
 	public final fun unmuteChannel (Lio/getstream/chat/android/models/Channel;)V
+	public final fun unpinChannel (Lio/getstream/chat/android/models/Channel;)V
 }
 
 public final class io/getstream/chat/android/compose/viewmodel/channels/ChannelViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {

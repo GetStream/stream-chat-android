@@ -125,7 +125,9 @@ internal object ChannelDtoTestData {
             "channel_role": "member",
             "notifications_muted": false,
             "status": "member",
-            "ban_expires" : "2021-03-08T15:42:31.355Z"
+            "ban_expires" : "2021-03-08T15:42:31.355Z",
+            "pinned_at": "2020-06-10T11:04:31.588Z",
+            "archived_at": "2020-06-10T11:04:31.588Z"
            }
           ],
           "watchers": [${UserDtoTestData.downstreamJson}],
@@ -186,6 +188,8 @@ internal object ChannelDtoTestData {
                 notifications_muted = false,
                 status = "member",
                 ban_expires = Date(1615218151355),
+                pinned_at = Date(1591787071588),
+                archived_at = Date(1591787071588),
                 extraData = emptyMap(),
             ),
         ),
@@ -217,6 +221,8 @@ internal object ChannelDtoTestData {
             notifications_muted = false,
             status = "member",
             ban_expires = null,
+            pinned_at = null,
+            archived_at = null,
             extraData = emptyMap(),
         ),
         extraData = mapOf("draft" to true),
@@ -326,7 +332,9 @@ internal object ChannelDtoTestData {
             "channel_role": "member",
             "notifications_muted": false,
             "status": "member",
-            "ban_expires" : "2021-03-08T15:42:31.355Z"
+            "ban_expires" : "2021-03-08T15:42:31.355Z",
+            "pinned_at": "2020-06-10T11:04:31.588Z",
+            "archived_at": "2020-06-10T11:04:31.588Z"
            }
           ],
           "watchers": [${UserDtoTestData.upstreamJson}],
@@ -373,6 +381,8 @@ internal object ChannelDtoTestData {
                 notifications_muted = false,
                 status = "member",
                 ban_expires = Date(1615218151355),
+                pinned_at = Date(1591787071588),
+                archived_at = Date(1591787071588),
                 extraData = emptyMap(),
             ),
         ),

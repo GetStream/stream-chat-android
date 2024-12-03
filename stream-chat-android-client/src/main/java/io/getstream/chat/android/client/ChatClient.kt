@@ -1945,6 +1945,102 @@ internal constructor(
     }
 
     /**
+     * Pin the channel for the user.
+     *
+     * @param userId The user ID.
+     * @param channelType The channel type.
+     * @param channelId The channel ID.
+     *
+     * @return Executable async [Call] responsible for pinning the channel.
+     */
+    public fun pinChannel(
+        userId: String,
+        channelType: String,
+        channelId: String,
+    ): Call<Member> {
+        logger.d { "[pinChannel] userId: $userId, channelType: $channelType, channelId: $channelId" }
+        val set = mutableMapOf<String, Any>()
+        set["pinned"] = true
+        return partialUpdateMember(
+            channelType = channelType,
+            channelId = channelId,
+            userId = userId,
+            set = set,
+        )
+    }
+
+    /**
+     * Unpin the channel for the user.
+     *
+     * @param userId The user ID.
+     * @param channelType The channel type.
+     * @param channelId The channel ID.
+     *
+     * @return Executable async [Call] responsible for unpinning the channel.
+     */
+    public fun unpinChannel(
+        userId: String,
+        channelType: String,
+        channelId: String,
+    ): Call<Member> {
+        logger.d { "[unpinChannel] userId: $userId, channelType: $channelType, channelId: $channelId" }
+        return partialUpdateMember(
+            channelType = channelType,
+            channelId = channelId,
+            userId = userId,
+            unset = listOf("pinned"),
+        )
+    }
+
+    /**
+     * Archive the channel for the user.
+     *
+     * @param userId The user ID.
+     * @param channelType The channel type.
+     * @param channelId The channel ID.
+     *
+     * @return Executable async [Call] responsible for archiving the channel.
+     */
+    public fun archiveChannel(
+        userId: String,
+        channelType: String,
+        channelId: String,
+    ): Call<Member> {
+        logger.d { "[archiveChannel] userId: $userId, channelType: $channelType, channelId: $channelId" }
+        val set = mutableMapOf<String, Any>()
+        set["archived"] = true
+        return partialUpdateMember(
+            channelType = channelType,
+            channelId = channelId,
+            userId = userId,
+            set = set,
+        )
+    }
+
+    /**
+     * Unarchive the channel for the user.
+     *
+     * @param userId The user ID.
+     * @param channelType The channel type.
+     * @param channelId The channel ID.
+     *
+     * @return Executable async [Call] responsible for un-archiving the channel.
+     */
+    public fun unarchiveChannel(
+        userId: String,
+        channelType: String,
+        channelId: String,
+    ): Call<Member> {
+        logger.d { "[unarchiveChannel] userId: $userId, channelType: $channelType, channelId: $channelId" }
+        return partialUpdateMember(
+            channelType = channelType,
+            channelId = channelId,
+            userId = userId,
+            unset = listOf("archived"),
+        )
+    }
+
+    /**
      * Pins the message.
      *
      * @param message The message object containing the ID of the message to be pinned.
