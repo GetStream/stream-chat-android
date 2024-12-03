@@ -16,12 +16,14 @@
 
 package io.getstream.chat.android.compose.ui.util
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.compose.state.channels.list.ItemState
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
 
 /**
@@ -30,12 +32,16 @@ import io.getstream.chat.android.models.User
 public fun interface SearchResultNameFormatter {
 
     /**
-     * Generates a title text for the given message.
+     * Generates a title text for the given search result item.
      *
-     * @param message The message whose data is used to generate the preview text.
-     * @return The formatted text representation for the given message.
+     * @param searchResultItem The search result item whose data is used to generate the preview text.
+     * @param currentUser The currently logged in user.
      */
-    public fun formatMessageTitle(message: Message, currentUser: User?): AnnotatedString
+    @Composable
+    public fun formatMessageTitle(
+        searchResultItem: ItemState.SearchResultItemState,
+        currentUser: User?,
+    ): AnnotatedString
 
     public companion object {
         /**
@@ -52,19 +58,31 @@ public fun interface SearchResultNameFormatter {
 }
 
 private object DefaultSearchResultNameFormatter : SearchResultNameFormatter {
-    override fun formatMessageTitle(message: Message, currentUser: User?): AnnotatedString =
+    @Composable
+    override fun formatMessageTitle(
+        searchResultItem: ItemState.SearchResultItemState,
+        currentUser: User?,
+    ): AnnotatedString =
         buildAnnotatedString {
-            withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                append(message.user.name)
-            }
-            message.channelInfo
-                ?.takeIf { it.memberCount > 2 }
-                ?.name
-                ?.let {
-                    append(" in ")
-                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append(it)
-                    }
+            if (searchResultItem.channel?.isOneToOne(currentUser) == true) {
+                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append(searchResultItem.channel.getOtherUsers(currentUser).firstOrNull()?.name)
                 }
+            } else {
+                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append(searchResultItem.message.user.name)
+                }
+                (
+                    searchResultItem.channel
+                        ?.let { ChatTheme.channelNameFormatter.formatChannelName(it, currentUser) }
+                        ?: searchResultItem.message.channelInfo?.name
+                    )
+                    ?.let { channelName ->
+                        append(" in ")
+                        withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append(channelName)
+                        }
+                    }
+            }
         }
 }

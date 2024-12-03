@@ -145,7 +145,7 @@ internal fun RowScope.DefaultSearchResultItemCenterContent(
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            text = ChatTheme.searchResultNameFormatter.formatMessageTitle(searchResultItemState.message, currentUser),
+            text = ChatTheme.searchResultNameFormatter.formatMessageTitle(searchResultItemState, currentUser),
             style = ChatTheme.typography.bodyBold,
             fontSize = 16.sp,
             maxLines = 1,
