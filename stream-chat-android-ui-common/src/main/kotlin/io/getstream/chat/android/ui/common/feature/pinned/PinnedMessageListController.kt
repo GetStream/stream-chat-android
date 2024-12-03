@@ -23,6 +23,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.chat.android.ui.common.state.pinned.PinnedMessageListState
 import io.getstream.log.TaggedLogger
 import io.getstream.log.taggedLogger
@@ -97,7 +98,7 @@ public class PinnedMessageListController(
             _state.update { current ->
                 current.copy(
                     isLoading = true,
-                    results = current.results + Message(),
+                    results = current.results + MessageResult(Message(), null),
                 )
             }
             loadPinnedMessages()
@@ -118,7 +119,14 @@ public class PinnedMessageListController(
                 logger.d { "Loaded ${messages.size} pinned messages" }
                 _state.update { current ->
                     current.copy(
-                        results = (current.results + messages).filter { it.id.isNotEmpty() },
+                        results = (
+                            current.results + messages.map { message ->
+                                MessageResult(
+                                    message,
+                                    null,
+                                )
+                            }
+                            ).filter { it.message.id.isNotEmpty() },
                         isLoading = false,
                         canLoadMore = messages.size == QUERY_LIMIT,
                         nextDate = messages.lastOrNull()?.pinnedAt ?: nextDate,

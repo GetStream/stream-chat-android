@@ -17,20 +17,18 @@
 package io.getstream.chat.android.ui.feature.pinned.list.internal
 
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.common.extensions.internal.context
+import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.chat.android.ui.databinding.StreamUiItemMentionListBinding
 import io.getstream.chat.android.ui.databinding.StreamUiPinnedMessageListLoadingMoreViewBinding
+import io.getstream.chat.android.ui.feature.internal.MessageResultDiffCallback
 import io.getstream.chat.android.ui.feature.messages.preview.MessagePreviewStyle
 import io.getstream.chat.android.ui.feature.pinned.list.PinnedMessageListView.PinnedMessageSelectedListener
-import io.getstream.chat.android.ui.utils.extensions.asMention
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
-internal class PinnedMessageListAdapter : ListAdapter<Message, RecyclerView.ViewHolder>(MessageDiffCallback) {
+internal class PinnedMessageListAdapter : ListAdapter<MessageResult, RecyclerView.ViewHolder>(MessageResultDiffCallback) {
 
     private var pinnedMessageSelectedListener: PinnedMessageSelectedListener? = null
 
@@ -60,7 +58,7 @@ internal class PinnedMessageListAdapter : ListAdapter<Message, RecyclerView.View
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (getItem(position).id.isNotEmpty()) {
+        return if (getItem(position).message.id.isNotEmpty()) {
             ITEM_MESSAGE
         } else {
             ITEM_LOADING_MORE
@@ -77,7 +75,7 @@ internal class PinnedMessageListAdapter : ListAdapter<Message, RecyclerView.View
     }
 
     inner class PinnedMessageLoadingMoreView(
-        private val binding: StreamUiPinnedMessageListLoadingMoreViewBinding,
+        binding: StreamUiPinnedMessageListLoadingMoreViewBinding,
     ) : RecyclerView.ViewHolder(binding.root)
 
     inner class MessagePreviewViewHolder(
@@ -92,24 +90,9 @@ internal class PinnedMessageListAdapter : ListAdapter<Message, RecyclerView.View
             }
         }
 
-        internal fun bind(message: Message) {
-            this.message = message
-            binding.root.setMessage(message, ChatUI.currentUserProvider.getCurrentUser()?.asMention(context))
-        }
-    }
-
-    private object MessageDiffCallback : DiffUtil.ItemCallback<Message>() {
-        override fun areItemsTheSame(oldItem: Message, newItem: Message): Boolean {
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(oldItem: Message, newItem: Message): Boolean {
-            // Comparing only properties used by the ViewHolder
-            return oldItem.id == newItem.id &&
-                oldItem.createdAt == newItem.createdAt &&
-                oldItem.createdLocallyAt == newItem.createdLocallyAt &&
-                oldItem.text == newItem.text &&
-                oldItem.user == newItem.user
+        internal fun bind(messageResult: MessageResult) {
+            this.message = messageResult.message
+            binding.root.renderMessageResult(messageResult)
         }
     }
 }

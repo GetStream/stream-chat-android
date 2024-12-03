@@ -108,7 +108,7 @@ public fun PinnedMessageList(
         state.results.isEmpty() && state.isLoading -> loadingContent()
         state.results.isEmpty() && !state.isLoading -> emptyContent()
         else -> PinnedMessages(
-            messages = state.results,
+            messages = state.results.map { it.message },
             modifier = modifier,
             itemContent = itemContent,
             itemDivider = itemDivider,

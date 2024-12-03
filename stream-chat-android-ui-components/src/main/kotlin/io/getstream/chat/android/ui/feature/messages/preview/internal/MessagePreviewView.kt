@@ -25,9 +25,12 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.singletonList
+import io.getstream.chat.android.ui.common.model.MessageResult
+import io.getstream.chat.android.ui.common.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.databinding.StreamUiMessagePreviewItemBinding
 import io.getstream.chat.android.ui.feature.messages.preview.MessagePreviewStyle
 import io.getstream.chat.android.ui.font.setTextStyle
+import io.getstream.chat.android.ui.utils.extensions.asMention
 import io.getstream.chat.android.ui.utils.extensions.bold
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.getAttachmentsText
@@ -70,25 +73,52 @@ internal class MessagePreviewView : FrameLayout {
         }
     }
 
-    fun setMessage(message: Message, currentUserMention: String? = null) {
-        binding.userAvatarView.setUser(message.user)
-        binding.senderNameLabel.text = formatChannelName(message)
-        binding.messageLabel.text = formatMessagePreview(message, currentUserMention)
+    fun renderMessageResult(messageResult: MessageResult) {
+        renderMessage(messageResult.message)
+        renderChannel(messageResult)
+    }
+
+    private fun renderDate(message: Message) {
         binding.messageTimeLabel.text = ChatUI.dateFormatter.formatDate(message.createdAt ?: message.createdLocallyAt)
     }
 
-    private fun formatChannelName(message: Message): CharSequence {
-        val channel = message.channelInfo
-        return if (channel?.name != null && channel.memberCount > 2) {
-            Html.fromHtml(
-                context.getString(
-                    R.string.stream_ui_message_preview_sender,
-                    message.user.name,
-                    channel.name,
-                ),
-            )
+    private fun renderMessage(message: Message) {
+        renderDate(message)
+        binding.messageLabel.text = formatMessagePreview(
+            message,
+            ChatUI.currentUserProvider.getCurrentUser()?.asMention(context),
+        )
+    }
+
+    private fun renderChannel(messageResult: MessageResult) {
+        val isDirectMessaging = messageResult.channel?.isDirectMessaging() == true
+        val currentUser = ChatUI.currentUserProvider.getCurrentUser()
+        binding.userAvatarView.setUser(
+            messageResult
+                .channel
+                ?.takeIf { isDirectMessaging }
+                ?.let { it.members.firstOrNull { it.getUserId() != currentUser?.id }?.user }
+                ?: messageResult.message.user,
+        )
+
+        binding.senderNameLabel.text = if (isDirectMessaging) {
+            messageResult.channel?.members?.first { it.getUserId() != currentUser?.id }?.user?.name?.bold()
         } else {
-            message.user.name.bold()
+            (
+                messageResult.channel
+                    ?.let { ChatUI.channelNameFormatter.formatChannelName(it, currentUser) }
+                    ?: messageResult.message.channelInfo?.name
+                )
+                ?.let {
+                    Html.fromHtml(
+                        context.getString(
+                            R.string.stream_ui_message_preview_sender,
+                            messageResult.message.user.name,
+                            it,
+                        ),
+                    )
+                }
+                ?: messageResult.message.user.name.bold()
         }
     }
 
