@@ -69,6 +69,9 @@ public object EventType {
     public const val POLL_VOTE_REMOVED: String = "poll.vote_removed"
     public const val POLL_CLOSED: String = "poll.closed"
     public const val CONNECTION_ERROR: String = "connection.error"
+    public const val AI_TYPING_INDICATOR_UPDATED: String = "ai_indicator.update"
+    public const val AI_TYPING_INDICATOR_CLEAR: String = "ai_indicator.clear"
+    public const val AI_TYPING_INDICATOR_STOP: String = "ai_indicator.stop"
 
     /**
      * Local
