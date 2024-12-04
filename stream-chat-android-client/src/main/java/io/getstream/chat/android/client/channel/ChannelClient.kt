@@ -26,6 +26,9 @@ import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
+import io.getstream.chat.android.client.events.AIIndicatorClearEvent
+import io.getstream.chat.android.client.events.AIIndicatorStopEvent
+import io.getstream.chat.android.client.events.AIIndicatorUpdatedEvent
 import io.getstream.chat.android.client.events.AnswerCastedEvent
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
@@ -281,6 +284,9 @@ public class ChannelClient internal constructor(
             is VoteRemovedEvent -> event.cid == cid
             is AnswerCastedEvent -> event.cid == cid
             is UnknownEvent -> event.rawData["cid"] == cid
+            is AIIndicatorUpdatedEvent -> event.cid == cid
+            is AIIndicatorClearEvent -> event.cid == cid
+            is AIIndicatorStopEvent -> event.cid == cid
             is HealthEvent,
             is NotificationChannelMutesUpdatedEvent,
             is NotificationMutesUpdatedEvent,
