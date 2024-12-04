@@ -218,6 +218,9 @@ private val LocalComposerLinkPreviewEnabled = compositionLocalOf<Boolean> {
 private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
     error("No StreamMediaRecorder provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+private val LocalKeyboardBehaviour = compositionLocalOf<StreamKeyboardBehaviour> {
+    error("No KeyboardBehaviour provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
 
 /**
  * Our theme that provides all the important properties for styling to the user.
@@ -265,8 +268,10 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param messageComposerTheme Theme of the message composer.
  * @param attachmentPickerTheme Theme of the attachment picker.
  * @param streamMediaRecorder Used for recording audio messages.
+ * @param keyboardBehaviour Configuration for different keyboard behaviours.
  * @param content The content shown within the theme wrapper.
  */
+@Suppress("LongMethod")
 @Composable
 public fun ChatTheme(
     isInDarkMode: Boolean = isSystemInDarkTheme(),
@@ -363,6 +368,7 @@ public fun ChatTheme(
         otherMessageTheme = otherMessageTheme,
     ),
     streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(LocalContext.current),
+    keyboardBehaviour: StreamKeyboardBehaviour = StreamKeyboardBehaviour.defaultBehaviour(),
     content: @Composable () -> Unit,
 ) {
     LaunchedEffect(Unit) {
@@ -412,6 +418,7 @@ public fun ChatTheme(
         LocalStreamMediaRecorder provides streamMediaRecorder,
         LocalAutoTranslationEnabled provides autoTranslationEnabled,
         LocalComposerLinkPreviewEnabled provides isComposerLinkPreviewEnabled,
+        LocalKeyboardBehaviour provides keyboardBehaviour,
     ) {
         if (allowUIAutomationTest) {
             Box(
@@ -738,4 +745,12 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalStreamMediaRecorder.current
+
+    /**
+     * Retrieves the current [StreamKeyboardBehaviour] at the call site's position in the hierarchy.
+     */
+    public val keyboardBehaviour: StreamKeyboardBehaviour
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalKeyboardBehaviour.current
 }
