@@ -219,7 +219,7 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
     error("No StreamMediaRecorder provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 private val LocalKeyboardBehaviour = compositionLocalOf<StreamKeyboardBehaviour> {
-    error("No KeyboardBehaviour provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+    error("No StreamKeyboardBehaviour provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 
 /**
