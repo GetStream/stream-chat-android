@@ -848,7 +848,6 @@ public data class AIIndicatorUpdatedEvent(
     override val channelLastMessageAt: Date?,
     val aiState: String,
     val messageId: String,
-    val aiMessage: String,
 ) : CidEvent(), UserEvent
 
 /**
