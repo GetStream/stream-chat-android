@@ -62,6 +62,7 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryP
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
+import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
 import io.getstream.chat.android.compose.ui.components.moderatedmessage.ModeratedMessageDialog
 import io.getstream.chat.android.compose.ui.components.poll.PollAnswersDialog
 import io.getstream.chat.android.compose.ui.components.poll.PollMoreOptionsDialog
@@ -137,6 +138,7 @@ import io.getstream.chat.android.ui.common.state.messages.updateMessage
 public fun MessagesScreen(
     viewModelFactory: MessagesViewModelFactory,
     showHeader: Boolean = true,
+    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     reactionSorting: ReactionSorting = ReactionSortingByFirstReactionAt,
     onBackPressed: () -> Unit = {},
     onHeaderTitleClick: (channel: Channel) -> Unit = {},
@@ -230,6 +232,7 @@ public fun MessagesScreen(
                     .background(ChatTheme.colors.appBackground)
                     .padding(it),
                 viewModel = listViewModel,
+                messageContentFactory = messageContentFactory,
                 reactionSorting = reactionSorting,
                 messagesLazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),
                 threadMessagesStart = threadMessagesStart,
@@ -635,7 +638,6 @@ private fun BoxScope.MessagesScreenReactionsPicker(
  * perform actions.
  */
 @Suppress("LongMethod")
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 public fun BoxScope.AttachmentsPickerMenu(
     listViewModel: MessageListViewModel,
