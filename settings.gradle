@@ -25,6 +25,50 @@ include (
 		':stream-chat-android-ai-assistant',
 )
 
+dependencyResolutionManagement {
+	repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+	repositories {
+		// fetch plugins from google maven (https://maven.google.com)
+		google() {
+			content {
+				includeGroupByRegex("androidx\\..*")
+				includeGroupByRegex("com\\.android(\\..*|)")
+				includeGroupByRegex("com\\.google\\.android\\..*")
+				includeGroupByRegex("com\\.google\\.firebase(\\..*|)")
+				includeGroupByRegex("com\\.google\\.gms(\\..*|)")
+				includeGroupByRegex("com\\.google\\.mlkit")
+				includeGroupByRegex("com\\.google\\.oboe")
+				includeGroupByRegex("com\\.google\\.prefab")
+				includeGroupByRegex("com\\.google\\.testing\\.platform")
+			}
+			mavenContent {
+				releasesOnly()
+			}
+		}
+
+		maven {
+			url "https://jitpack.io"
+			content {
+				includeModule("com.github.jeziellago", "compose-markdown")
+				includeModule("com.github.jeziellago", "Markwon")
+			}
+		}
+
+		maven {
+			url 'https://developer.huawei.com/repo/'
+			content {
+				includeGroup("com.huawei.agconnect")
+				includeGroup("com.huawei.android.hms")
+				includeGroup("com.huawei.hms")
+				includeGroup("com.huawei.hmf")
+			}
+		}
+
+		// Fallback for the rest of the dependencies
+		mavenCentral()
+	}
+}
+
 buildCache {
 	local {
 		enabled = !System.getenv().containsKey("CI")
