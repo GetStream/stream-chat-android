@@ -935,9 +935,8 @@ private fun AIIndicatorUpdatedEventDto.toDomain(currentUserId: UserId?): AIIndic
         channelType = channelType,
         channelId = channelId,
         channelLastMessageAt = channel_last_message_at,
-        aiState = aiState,
-        aiMessage = aiMessage,
-        messageId = messageId,
+        aiState = ai_state,
+        messageId = message_id,
     )
 }
 
