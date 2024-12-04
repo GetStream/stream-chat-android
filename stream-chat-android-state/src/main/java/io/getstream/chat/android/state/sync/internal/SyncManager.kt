@@ -18,6 +18,7 @@ package io.getstream.chat.android.state.sync.internal
 
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.CreateChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.errors.isPermanent
@@ -41,11 +42,11 @@ import io.getstream.chat.android.core.internal.coroutines.Tube
 import io.getstream.chat.android.core.utils.date.diff
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.TimeDuration
-import io.getstream.chat.android.models.UserEntity
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.log.taggedLogger
@@ -456,11 +457,16 @@ internal class SyncManager(
                 Result.Success(Unit)
             } else {
                 logger.v { "[retryChannels] sending channel($cid)" }
+                val request = CreateChannelRequest(
+                    members = channel.members.map { member ->
+                        MemberData(member.getUserId(), extraData = member.extraData)
+                    },
+                    extraData = channel.extraData,
+                )
                 chatClient.createChannel(
                     channel.type,
                     channel.id,
-                    channel.members.map(UserEntity::getUserId),
-                    channel.extraData,
+                    request,
                 ).await()
             }
             logger.v { "[retryChannels] result($cid).isSuccess: ${result is Result.Success}" }

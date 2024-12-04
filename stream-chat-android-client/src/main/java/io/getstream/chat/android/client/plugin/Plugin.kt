@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.plugin
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.CreateChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
@@ -327,11 +328,28 @@ public interface Plugin :
         channelId: String,
     ): Result<Unit> = Result.Success(Unit)
 
+    @Deprecated(
+        "Use CreateChannelListener.onCreateChannelRequest(channelType, channelId, request, currentUser) instead",
+        replaceWith = ReplaceWith(
+            "onCreateChannelRequest(String, String, CreateChannelRequest, User)",
+            "io.getstream.chat.android.client.plugin.listeners.CreateChannelListener",
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     override suspend fun onCreateChannelRequest(
         channelType: String,
         channelId: String,
         memberIds: List<String>,
         extraData: Map<String, Any>,
+        currentUser: User,
+    ) {
+        /* No-Op */
+    }
+
+    override suspend fun onCreateChannelRequest(
+        channelType: String,
+        channelId: String,
+        request: CreateChannelRequest,
         currentUser: User,
     ) {
         /* No-Op */
