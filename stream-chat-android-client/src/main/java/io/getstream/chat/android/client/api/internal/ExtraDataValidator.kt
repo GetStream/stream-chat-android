@@ -255,15 +255,16 @@ internal class ExtraDataValidator(
         )
 
         private val reservedInMember = setOf(
+            "user_id",
             "user",
             "created_at",
             "updated_at",
+            "deleted_at",
             "invited",
             "invite_accepted_at",
             "invite_rejected_at",
             "shadow_banned",
             "banned",
-            "channel_role",
             "notifications_muted",
             "status",
             "ban_expires",
