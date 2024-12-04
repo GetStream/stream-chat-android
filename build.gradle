@@ -106,6 +106,13 @@ allprojects {
 
         // Fallback for the rest of the dependencies
         mavenCentral()
+
+        maven {
+            url "https://jitpack.io"
+            content {
+                includeModule("com.github.jeziellago", "compose-markdown")
+            }
+        }
     }
 }
 
