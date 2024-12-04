@@ -1,6 +1,8 @@
 $dokka.format:html-v1
 $dokka.linkExtension:html
 
+module:stream-chat-android-ai-assistant
+io.getstream.chat.android.ai.assistant
 module:stream-chat-android-client
 io.getstream.chat.android.client
 io.getstream.chat.android.client.api
@@ -82,6 +84,7 @@ io.getstream.chat.android.compose.ui.components.channels
 io.getstream.chat.android.compose.ui.components.composer
 io.getstream.chat.android.compose.ui.components.messageoptions
 io.getstream.chat.android.compose.ui.components.messages
+io.getstream.chat.android.compose.ui.components.messages.factory
 io.getstream.chat.android.compose.ui.components.moderatedmessage
 io.getstream.chat.android.compose.ui.components.poll
 io.getstream.chat.android.compose.ui.components.reactionoptions
