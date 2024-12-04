@@ -1,49 +1,8 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# December 04th, 2024 - 6.7.0
 ## stream-chat-android-client
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Add `ChatClient::partialUpdateMember` for updating a `Member` in the scope of a `Channel`. [#5497](https://github.com/GetStream/stream-chat-android/pull/5497)
 - Add `ChannelClient::partialUpdateMember` for updating a `Member` in the scope of a `Channel`. [#5497](https://github.com/GetStream/stream-chat-android/pull/5497)
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
@@ -54,49 +13,16 @@
 ### ⬆️ Improved
 - Improve performance of opening a thread or message in a thread via `MessageListController`. [#5489](https://github.com/GetStream/stream-chat-android/pull/5489)
 
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-components
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Add `ChatUI.downloadAttachmentUriGenerator` property to generate download URIs for attachments. [#5490](https://github.com/GetStream/stream-chat-android/pull/5490)
 - Add `ChatUI.downloadRequestInterceptor` property to intercept download requests. [#5490](https://github.com/GetStream/stream-chat-android/pull/5490)
 
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-compose
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Add `ChatTheme.downloadAttachmentUriGenerator` property to generate download URIs for attachments. [#5490](https://github.com/GetStream/stream-chat-android/pull/5490)
 - Add `ChatTheme.downloadRequestInterceptor` property to intercept download requests. [#5490](https://github.com/GetStream/stream-chat-android/pull/5490)
 - Add `MessageContentFactory` class for customizing message contents. [#5498](https://github.com/GetStream/stream-chat-android/pull/5498)
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # November 21th, 2024 - 6.6.0
 ## Common changes for all artifacts
