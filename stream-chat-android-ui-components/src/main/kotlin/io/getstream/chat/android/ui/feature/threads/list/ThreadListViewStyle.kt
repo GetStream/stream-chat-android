@@ -31,6 +31,7 @@ import io.getstream.chat.android.ui.helper.ViewStyle
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
+import io.getstream.chat.android.ui.utils.extensions.use
 
 /**
  * Class holding the customizable styling parameters for [ThreadListView].
