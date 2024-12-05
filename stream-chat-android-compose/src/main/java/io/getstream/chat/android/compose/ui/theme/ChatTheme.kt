@@ -18,6 +18,7 @@
 
 package io.getstream.chat.android.compose.ui.theme
 
+import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.ExperimentalMaterialApi
@@ -40,6 +41,7 @@ import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
+import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactories
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
 import io.getstream.chat.android.compose.ui.util.DefaultPollSwitchItemFactory
@@ -85,6 +87,9 @@ private val LocalShapes = compositionLocalOf<StreamShapes> {
 }
 private val LocalAttachmentFactories = compositionLocalOf<List<AttachmentFactory>> {
     error("No attachment factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+private val LocalMessageContentFactory = compositionLocalOf<MessageContentFactory> {
+    error("No message content factory provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 private val LocalUseDefaultSystemMediaPicker = compositionLocalOf<Boolean> {
     error("No attachment factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
@@ -213,6 +218,9 @@ private val LocalComposerLinkPreviewEnabled = compositionLocalOf<Boolean> {
 private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
     error("No StreamMediaRecorder provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+private val LocalKeyboardBehaviour = compositionLocalOf<StreamKeyboardBehaviour> {
+    error("No StreamKeyboardBehaviour provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
 
 /**
  * Our theme that provides all the important properties for styling to the user.
@@ -260,8 +268,10 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param messageComposerTheme Theme of the message composer.
  * @param attachmentPickerTheme Theme of the attachment picker.
  * @param streamMediaRecorder Used for recording audio messages.
+ * @param keyboardBehaviour Configuration for different keyboard behaviours.
  * @param content The content shown within the theme wrapper.
  */
+@Suppress("LongMethod")
 @Composable
 public fun ChatTheme(
     isInDarkMode: Boolean = isSystemInDarkTheme(),
@@ -277,6 +287,7 @@ public fun ChatTheme(
         lightTheme = !isInDarkMode,
     ),
     attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories(),
+    messageContentFactory: MessageContentFactory = MessageContentFactory(),
     attachmentPreviewHandlers: List<AttachmentPreviewHandler> =
         AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
     quotedAttachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultQuotedFactories(),
@@ -357,6 +368,7 @@ public fun ChatTheme(
         otherMessageTheme = otherMessageTheme,
     ),
     streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(LocalContext.current),
+    keyboardBehaviour: StreamKeyboardBehaviour = StreamKeyboardBehaviour.defaultBehaviour(),
     content: @Composable () -> Unit,
 ) {
     LaunchedEffect(Unit) {
@@ -373,6 +385,7 @@ public fun ChatTheme(
         LocalAttachmentFactories provides attachmentFactories,
         LocalAttachmentPreviewHandlers provides attachmentPreviewHandlers,
         LocalQuotedAttachmentFactories provides quotedAttachmentFactories,
+        LocalMessageContentFactory provides messageContentFactory,
         LocalReactionIconFactory provides reactionIconFactory,
         LocalMessagePreviewIconFactory provides messagePreviewIconFactory,
         LocalReactionOptionsTheme provides reactionOptionsTheme,
@@ -405,6 +418,7 @@ public fun ChatTheme(
         LocalStreamMediaRecorder provides streamMediaRecorder,
         LocalAutoTranslationEnabled provides autoTranslationEnabled,
         LocalComposerLinkPreviewEnabled provides isComposerLinkPreviewEnabled,
+        LocalKeyboardBehaviour provides keyboardBehaviour,
     ) {
         if (allowUIAutomationTest) {
             Box(
@@ -483,6 +497,14 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalQuotedAttachmentFactories.current
+
+    /**
+     * Retrieves the current list of quoted [MessageContentFactory] at the call site's position in the hierarchy.
+     */
+    public val messageContentFactory: MessageContentFactory
+        @Composable
+        @RequiresPermission.Read
+        get() = LocalMessageContentFactory.current
 
     /**
      * Retrieves the current reaction icon factory at the call site's position in the hierarchy.
@@ -723,4 +745,12 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalStreamMediaRecorder.current
+
+    /**
+     * Retrieves the current [StreamKeyboardBehaviour] at the call site's position in the hierarchy.
+     */
+    public val keyboardBehaviour: StreamKeyboardBehaviour
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalKeyboardBehaviour.current
 }

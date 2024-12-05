@@ -18,6 +18,9 @@
 
 package io.getstream.chat.android.client.api2.mapping
 
+import io.getstream.chat.android.client.api2.model.dto.AIIndicatorClearEventDto
+import io.getstream.chat.android.client.api2.model.dto.AIIndicatorStopEventDto
+import io.getstream.chat.android.client.api2.model.dto.AIIndicatorUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.AnswerCastedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelHiddenEventDto
@@ -75,6 +78,9 @@ import io.getstream.chat.android.client.api2.model.dto.UserUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteCastedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteChangedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteRemovedEventDto
+import io.getstream.chat.android.client.events.AIIndicatorClearEvent
+import io.getstream.chat.android.client.events.AIIndicatorStopEvent
+import io.getstream.chat.android.client.events.AIIndicatorUpdatedEvent
 import io.getstream.chat.android.client.events.AnswerCastedEvent
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
@@ -201,6 +207,9 @@ internal fun ChatEventDto.toDomain(currentUserId: UserId?): ChatEvent {
         is VoteChangedEventDto -> toDomain(currentUserId)
         is AnswerCastedEventDto -> toDomain(currentUserId)
         is VoteRemovedEventDto -> toDomain(currentUserId)
+        is AIIndicatorUpdatedEventDto -> toDomain(currentUserId)
+        is AIIndicatorClearEventDto -> toDomain(currentUserId)
+        is AIIndicatorStopEventDto -> toDomain(currentUserId)
     }
 }
 
@@ -911,6 +920,50 @@ private fun VoteRemovedEventDto.toDomain(currentUserId: UserId?): VoteRemovedEve
         channelId = channelId,
         poll = newPoll,
         removedVote = removedVote,
+        channelLastMessageAt = channel_last_message_at,
+    )
+}
+
+private fun AIIndicatorUpdatedEventDto.toDomain(currentUserId: UserId?): AIIndicatorUpdatedEvent {
+    val (channelType, channelId) = cid.cidToTypeAndId()
+    return AIIndicatorUpdatedEvent(
+        type = type,
+        createdAt = created_at.date,
+        rawCreatedAt = created_at.rawDate,
+        cid = cid,
+        user = user.toDomain(currentUserId),
+        channelType = channelType,
+        channelId = channelId,
+        channelLastMessageAt = channel_last_message_at,
+        aiState = ai_state,
+        messageId = message_id,
+    )
+}
+
+private fun AIIndicatorClearEventDto.toDomain(currentUserId: UserId?): AIIndicatorClearEvent {
+    val (channelType, channelId) = cid.cidToTypeAndId()
+    return AIIndicatorClearEvent(
+        type = type,
+        createdAt = created_at.date,
+        rawCreatedAt = created_at.rawDate,
+        user = user.toDomain(currentUserId),
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        channelLastMessageAt = channel_last_message_at,
+    )
+}
+
+private fun AIIndicatorStopEventDto.toDomain(currentUserId: UserId?): AIIndicatorStopEvent {
+    val (channelType, channelId) = cid.cidToTypeAndId()
+    return AIIndicatorStopEvent(
+        type = type,
+        createdAt = created_at.date,
+        rawCreatedAt = created_at.rawDate,
+        cid = cid,
+        user = user.toDomain(currentUserId),
+        channelType = channelType,
+        channelId = channelId,
         channelLastMessageAt = channel_last_message_at,
     )
 }

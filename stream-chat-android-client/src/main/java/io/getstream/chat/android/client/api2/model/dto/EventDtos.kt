@@ -583,6 +583,35 @@ internal data class VoteRemovedEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
+internal data class AIIndicatorUpdatedEventDto(
+    val type: String,
+    val ai_state: String,
+    val cid: String,
+    val user: DownstreamUserDto,
+    val created_at: ExactDate,
+    val message_id: String,
+    val channel_last_message_at: Date?,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
+internal data class AIIndicatorClearEventDto(
+    val type: String,
+    val cid: String,
+    val user: DownstreamUserDto,
+    val created_at: ExactDate,
+    val channel_last_message_at: Date?,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
+internal data class AIIndicatorStopEventDto(
+    val type: String,
+    val cid: String,
+    val user: DownstreamUserDto,
+    val created_at: ExactDate,
+    val channel_last_message_at: Date?,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
 internal data class ConnectedEventDto(
     val type: String,
     val created_at: ExactDate,
