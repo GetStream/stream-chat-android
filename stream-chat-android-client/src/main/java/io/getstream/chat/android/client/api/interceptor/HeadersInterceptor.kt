@@ -57,13 +57,14 @@ internal class HeadersInterceptor(
             }.getOrNull() ?: "versionCodeNotFound"
 
             val applicationInfo = context.applicationInfo
-            val stringId = applicationInfo.labelRes
-            val appName =
+            val appName = if (applicationInfo != null) {
+                val stringId = applicationInfo.labelRes
                 if (stringId == 0) {
-                    applicationInfo.nonLocalizedLabel.toString()
+                    applicationInfo.nonLocalizedLabel?.toString() ?: "UnknownApp"
                 } else {
-                    context.getString(stringId)
+                    context.getString(stringId) ?: "UnknownApp"
                 }
+            } else { "UnknownApp" }
 
             val manufacturer = Build.MANUFACTURER
             val model = Build.MODEL
