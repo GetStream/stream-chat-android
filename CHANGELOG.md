@@ -71,6 +71,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- The `StreamAttachmentFactories.defaultFactories()` method now accepts a `skipTypes` parameter to skip specific factory types. [#5494](https://github.com/GetStream/stream-chat-android/pull/5494)
 
 ### ⚠️ Changed
 
