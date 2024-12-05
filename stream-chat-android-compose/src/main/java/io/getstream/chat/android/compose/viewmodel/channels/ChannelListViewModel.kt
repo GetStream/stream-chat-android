@@ -256,12 +256,19 @@ public class ChannelListViewModel(
         logger.d { "[observeSearchMessages] query: '$query'" }
         searchMessageState.filterNotNull().collectLatest {
             logger.v { "[observeSearchMessages] state: ${it.stringify()}" }
+            val channels = chatClient.repositoryFacade.selectChannels(it.messages.map { message -> message.cid })
             channelsState = channelsState.copy(
                 searchQuery = searchQuery.value,
                 isLoading = it.isLoading,
                 isLoadingMore = it.isLoadingMore,
                 endOfChannels = !it.canLoadMore,
-                channelItems = it.messages.map(ItemState::SearchResultItemState),
+                channelItems = it.messages.map {
+                    val channel = channels.firstOrNull { channel -> channel.cid == it.cid }
+                    ItemState.SearchResultItemState(
+                        message = it,
+                        channel = channel,
+                    )
+                },
             )
         }
     }.onFailure {
