@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.ui.sample.feature.mentions
+package io.getstream.chat.ui.sample.feature.threads
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -24,26 +24,27 @@ import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
-import io.getstream.chat.android.ui.viewmodel.mentions.MentionListViewModel
-import io.getstream.chat.android.ui.viewmodel.mentions.bindView
+import io.getstream.chat.android.ui.viewmodel.threads.ThreadListViewModel
+import io.getstream.chat.android.ui.viewmodel.threads.ThreadsViewModelFactory
+import io.getstream.chat.android.ui.viewmodel.threads.bindView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
-import io.getstream.chat.ui.sample.databinding.FragmentMentionsBinding
+import io.getstream.chat.ui.sample.databinding.FragmentThreadsBinding
 import io.getstream.chat.ui.sample.feature.home.HomeFragmentDirections
 
-class MentionsFragment : Fragment() {
+/**
+ * Fragment displaying the list of threads for the currently logged in user.
+ */
+class ThreadsFragment : Fragment() {
 
-    private val viewModel: MentionListViewModel by viewModels()
+    private var _binding: FragmentThreadsBinding? = null
+    private val binding: FragmentThreadsBinding
+        get() = _binding!!
 
-    private var _binding: FragmentMentionsBinding? = null
-    private val binding get() = _binding!!
+    private val viewModel: ThreadListViewModel by viewModels { ThreadsViewModelFactory() }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        _binding = FragmentMentionsBinding.inflate(inflater, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        _binding = FragmentThreadsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -53,15 +54,21 @@ class MentionsFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        viewModel.bindView(binding.mentionsListView, viewLifecycleOwner)
-        binding.mentionsListView.setMentionSelectedListener { message ->
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.bindView(binding.threadListView, viewLifecycleOwner)
+        binding.threadListView.setThreadClickListener { thread ->
             requireActivity().findNavController(R.id.hostFragmentContainer)
-                .navigateSafely(HomeFragmentDirections.actionOpenChat(message.cid, message.id, message.parentId))
+                .navigateSafely(
+                    HomeFragmentDirections.actionOpenChat(
+                        cid = thread.parentMessage.cid,
+                        parentMessageId = thread.parentMessageId,
+                    ),
+                )
         }
-        setupOnClickListeners()
+        setupBackHandler()
     }
 
-    private fun setupOnClickListeners() {
+    private fun setupBackHandler() {
         activity?.apply {
             onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
                 finish()
