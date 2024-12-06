@@ -73,7 +73,7 @@ class HomeViewModel(
     val events: LiveData<Event<UiEvent>> = _events
 
     init {
-        _state.postValue(initialState)
+        setState { initialState }
 
         _state.addSource(globalState.totalUnreadCount.asLiveData()) { count ->
             setState { copy(totalUnreadCount = count) }
