@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageModerationAction
+import io.getstream.chat.android.models.ModerationAction
 import io.getstream.chat.android.models.User
 
 /**
@@ -43,4 +44,5 @@ public fun Message.isMine(currentUser: User?): Boolean = currentUser?.id == user
     level = DeprecationLevel.WARNING,
 )
 public fun Message.isModerationFailed(currentUser: User?): Boolean = isMine(currentUser) &&
-    (type == Message.TYPE_ERROR && moderationDetails?.action == MessageModerationAction.bounce)
+    type == Message.TYPE_ERROR &&
+    (moderationDetails?.action == MessageModerationAction.bounce || moderation?.action == ModerationAction.bounce)
