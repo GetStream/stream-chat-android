@@ -24,15 +24,12 @@ import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.extensions.internal.context
-import io.getstream.chat.android.ui.common.extensions.internal.singletonList
 import io.getstream.chat.android.ui.databinding.StreamUiItemThreadListBinding
 import io.getstream.chat.android.ui.feature.threads.list.ThreadListView
 import io.getstream.chat.android.ui.feature.threads.list.ThreadListViewStyle
 import io.getstream.chat.android.ui.feature.threads.list.adapter.ThreadListItem
 import io.getstream.chat.android.ui.feature.threads.list.adapter.viewholder.BaseThreadListItemViewHolder
 import io.getstream.chat.android.ui.font.setTextStyle
-import io.getstream.chat.android.ui.utils.extensions.asMention
 import io.getstream.chat.android.ui.utils.extensions.bold
 import io.getstream.chat.android.ui.utils.extensions.getAttachmentsText
 import io.getstream.chat.android.ui.utils.extensions.getTranslatedText
@@ -70,9 +67,9 @@ internal class ThreadItemViewHolder(
         this.thread = item.thread
         val currentUser = ChatUI.currentUserProvider.getCurrentUser()
         bindThreadTitle(currentUser)
-        bindReplyTo(currentUser)
+        bindReplyTo()
         bindUnreadCountBadge(currentUser)
-        bindLatestReply(currentUser)
+        bindLatestReply()
     }
 
     private fun applyStyle(style: ThreadListViewStyle) {
@@ -94,9 +91,9 @@ internal class ThreadItemViewHolder(
         binding.threadTitleTextView.text = title
     }
 
-    private fun bindReplyTo(currentUser: User?) {
+    private fun bindReplyTo() {
         val prefix = binding.root.context.getString(R.string.stream_ui_thread_list_replied_to)
-        val parentMessageText = formatMessage(thread.parentMessage, currentUser?.asMention(context))
+        val parentMessageText = formatMessage(thread.parentMessage)
         val replyToText = "$prefix$parentMessageText"
         binding.replyToTextView.text = replyToText
     }
@@ -115,7 +112,7 @@ internal class ThreadItemViewHolder(
         }
     }
 
-    private fun bindLatestReply(currentUser: User?) {
+    private fun bindLatestReply() {
         val latestReply = thread.latestReplies.lastOrNull()
         if (latestReply != null) {
             // User avatar
@@ -123,8 +120,7 @@ internal class ThreadItemViewHolder(
             // Sender name
             binding.latestReplyMessageView.binding.senderNameLabel.text = latestReply.user.name.bold()
             // Reply text
-            binding.latestReplyMessageView.binding.messageLabel.text =
-                formatMessage(latestReply, currentUser?.asMention(context))
+            binding.latestReplyMessageView.binding.messageLabel.text = formatMessage(latestReply)
             // Timestamp
             binding.latestReplyMessageView.binding.messageTimeLabel.text =
                 ChatUI.dateFormatter.formatDate(latestReply.createdAt ?: latestReply.createdLocallyAt)
@@ -135,18 +131,10 @@ internal class ThreadItemViewHolder(
         }
     }
 
-    private fun formatMessage(message: Message, currentUserMention: String?): CharSequence {
+    private fun formatMessage(message: Message): CharSequence {
         val attachmentsText = message.getAttachmentsText()
         val displayedText = message.getTranslatedText()
-        val previewText = displayedText.trim().let {
-            if (currentUserMention != null) {
-                // bold mentions of the current user
-                it.bold(currentUserMention.singletonList(), ignoreCase = true)
-            } else {
-                it
-            }
-        }
-
+        val previewText = displayedText.trim()
         return listOf(previewText, attachmentsText)
             .filterNot { it.isNullOrEmpty() }
             .joinTo(SpannableStringBuilder(), " ")
