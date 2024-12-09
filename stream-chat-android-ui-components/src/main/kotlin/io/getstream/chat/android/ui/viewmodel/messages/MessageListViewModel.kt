@@ -392,11 +392,11 @@ public class MessageListViewModel(
      */
     private fun onBackButtonPressed() {
         mode.value?.run {
-            when (this) {
-                is MessageMode.Normal -> {
+            when {
+                this is MessageMode.Normal || messageListController.isStartedForThread -> {
                     stateMerger.postValue(State.NavigateUp)
                 }
-                is MessageMode.MessageThread -> {
+                this is MessageMode.MessageThread -> {
                     onNormalModeEntered()
                 }
             }

@@ -107,6 +107,12 @@ public class MessageListViewModel(
     public val messageActions: Set<MessageAction> by messageListController.messageActions.asState(viewModelScope)
 
     /**
+     * Gives us information if the [MessageListViewModel] was started for the purpose of showing a thread.
+     */
+    public val isStartedForThread: Boolean
+        get() = messageListController.isStartedForThread
+
+    /**
      * Gives us information if we're currently in the [Thread] message mode.
      */
     public val isInThread: Boolean

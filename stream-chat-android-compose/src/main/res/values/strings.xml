@@ -237,7 +237,7 @@
     <string name="stream_compose_view_answers">View Comments</string>
 
     <!--  Threads  -->
-    <string name="stream_compose_thread_list_empty_title">No threads here yet...</string>
+    <string name="stream_compose_thread_list_empty_title">No threads here yet…</string>
     <plurals name="stream_compose_thread_list_new_threads">
         <item quantity="one">%d new thread</item>
         <item quantity="other">%d new threads</item>
