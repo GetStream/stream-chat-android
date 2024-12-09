@@ -1945,6 +1945,49 @@ internal constructor(
     }
 
     /**
+     * Pin the channel for the current user.
+     *
+     * @param channelType The channel type.
+     * @param channelId The channel ID.
+     *
+     * @return Executable async [Call] responsible for pinning the channel.
+     */
+    public fun pinChannel(
+        channelType: String,
+        channelId: String,
+    ): Call<Member> {
+        logger.d { "[pinChannel] channelType: $channelType, channelId: $channelId" }
+        val set = mapOf("pinned" to true)
+        return partialUpdateMember(
+            channelType = channelType,
+            channelId = channelId,
+            userId = getCurrentUser()?.id ?: "",
+            set = set,
+        )
+    }
+
+    /**
+     * Unpin the channel for the current user.
+     *
+     * @param channelType The channel type.
+     * @param channelId The channel ID.
+     *
+     * @return Executable async [Call] responsible for unpinning the channel.
+     */
+    public fun unpinChannel(
+        channelType: String,
+        channelId: String,
+    ): Call<Member> {
+        logger.d { "[unpinChannel] channelType: $channelType, channelId: $channelId" }
+        return partialUpdateMember(
+            channelType = channelType,
+            channelId = channelId,
+            userId = getCurrentUser()?.id ?: "",
+            unset = listOf("pinned"),
+        )
+    }
+
+    /**
      * Pins the message.
      *
      * @param message The message object containing the ID of the message to be pinned.
