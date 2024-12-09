@@ -259,6 +259,11 @@ public class MessageListController(
     public val mode: StateFlow<MessageMode> = _mode
 
     /**
+     * Gives us information if the [MessageListController] was started for the purpose of showing a thread.
+     */
+    public val isStartedForThread: Boolean = parentMessageId != null
+
+    /**
      * Gives us information if we're currently in the [MessageMode.MessageThread] mode.
      */
     public val isInThread: Boolean

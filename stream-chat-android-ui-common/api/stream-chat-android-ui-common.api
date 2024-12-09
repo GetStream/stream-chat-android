@@ -172,6 +172,7 @@ public final class io/getstream/chat/android/ui/common/feature/messages/list/Mes
 	public final fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun isInThread ()Z
 	public final fun isInsideSearch ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun isStartedForThread ()Z
 	public final fun loadMessageById (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun loadMessageById$default (Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 	public final fun loadNewerMessages (Ljava/lang/String;I)V

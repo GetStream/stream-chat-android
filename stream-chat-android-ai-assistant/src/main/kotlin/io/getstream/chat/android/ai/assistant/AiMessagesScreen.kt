@@ -161,6 +161,7 @@ public fun AiMessagesScreen(
     val backAction: BackAction =
         remember(listViewModel, composerViewModel, attachmentsPickerViewModel) {
             {
+                val isStartedForThread = listViewModel.isStartedForThread
                 val isInThread = listViewModel.isInThread
                 val isShowingOverlay = listViewModel.isShowingOverlay
 
@@ -171,6 +172,7 @@ public fun AiMessagesScreen(
                     )
 
                     isShowingOverlay -> listViewModel.selectMessage(null)
+                    isStartedForThread -> onBackPressed()
                     isInThread -> {
                         listViewModel.leaveThread()
                         composerViewModel.leaveThread()
