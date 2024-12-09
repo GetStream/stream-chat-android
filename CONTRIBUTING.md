@@ -33,15 +33,15 @@ If you haven't already, make sure to read our [README](https://github.com/GetStr
 - `stream-chat-android-ui-common`: Common UI-related code and utility functions.
 - `stream-chat-android-state`: Module that contains common state-related API and functionality, such as syncing and persisting state and various messages.
 
-- `stream-chat-android-compose-sample`: The main sample app featuring the Compose SDK. 
+- `stream-chat-android-compose-sample`: The main sample app featuring the Compose SDK.
 - `stream-chat-android-compose`: Our Compose SDK that features channels and messages components, as well as other utilities.
-- `stream-chat-android-ui-components-sample`: The main sample app featuring the XML (UI Components) SDK. 
+- `stream-chat-android-ui-components-sample`: The main sample app featuring the XML (UI Components) SDK.
 - `stream-chat-android-ui-components`: Our XML (UI Components) SDK that features channels and messages components, as well as other utilities.
 
 - `CHANGELOG.md` : List of changes made in each version of the SDK.
 - `DEPRECATIONS.md`: List of deprecated code in our SDK and its deprecation process timeline.
 
-These provide corresponding artifacts on [Maven Central](https://search.maven.org/search?q=g:io.getstream) that you can plug into your projects. There are several other modules and files available in the repository and we've outlined them in our [README](https://github.com/GetStream/stream-chat-android), so be sure to check them out.
+These provide corresponding artifacts on [Maven Central](https://search.maven.org/search?q=g:io.getstream) that you can plug into your projects. There are several other modules and files available in the repository and we've outlined them in our [README](https://github.com/GetStream/stream-chat-android/blob/main/README.md), so be sure to check them out.
 
 ### Local Setup
 
@@ -70,7 +70,7 @@ Additionally, as we're fully open source, we have two main projects that we use 
 * [Android UI Team Planning](https://github.com/orgs/GetStream/projects/6/views/1): Project for any work **within the UI scope** of the SDK.
   * This includes providing new user-facing functionality, new UI components, improving the design, exposing more customization, building new features that the user can interface with and more.
 * [Android Core Team Planning](https://github.com/orgs/GetStream/projects/7/views/1): Project for any work **within the Core scope** of the SDK.
-  * This includes any low-level-client features and functionality, as well as improvements to our persistence and networking layers. 
+  * This includes any low-level-client features and functionality, as well as improvements to our persistence and networking layers.
 
 To quickly narrow down the number of tickets on Github, try filtering based on the label that best suites the bug or a part of our SDK.
 
@@ -130,7 +130,7 @@ Add any other context or screenshots about the feature request here.
 
 Thank you for taking the time to submit a patch and contribute to our codebase. You rock!
 
-If this is your first time opening a PR for a Stream repo, please read our [pull request template](https://github.com/GetStream/stream-chat-android/blob/main/.github/pull_request_template.md). It contains valuable information about each part of our PR process. 
+If this is your first time opening a PR for a Stream repo, please read our [pull request template](https://github.com/GetStream/stream-chat-android/blob/main/.github/pull_request_template.md). It contains valuable information about each part of our PR process.
 
 It's also important to note that **before we merge** your pull request, please don't forget to [sign Stream's CLA (Contributor License Agreement](https://docs.google.com/forms/d/e/1FAIpQLScFKsKkAJI7mhCr7K9rEIOpqIDThrWxuvxnwUq2XkHyG154vQ/viewform). 📝
 

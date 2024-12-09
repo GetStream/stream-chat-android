@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
+import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.Message
@@ -84,6 +85,7 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 public fun MessageContainer(
     messageListItemState: MessageListItemState,
     reactionSorting: ReactionSorting,
+    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     onLongItemClick: (Message) -> Unit = {},
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
@@ -115,6 +117,7 @@ public fun MessageContainer(
     messageItemContent: @Composable (MessageItemState) -> Unit = {
         DefaultMessageItem(
             messageItem = it,
+            messageContentFactory = messageContentFactory,
             reactionSorting = reactionSorting,
             onLongItemClick = onLongItemClick,
             onReactionsClick = onReactionsClick,
@@ -286,6 +289,7 @@ internal fun DefaultSystemMessageContent(systemMessageState: SystemMessageItemSt
 internal fun DefaultMessageItem(
     messageItem: MessageItemState,
     reactionSorting: ReactionSorting,
+    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     onLongItemClick: (Message) -> Unit,
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit,
@@ -305,6 +309,7 @@ internal fun DefaultMessageItem(
 ) {
     MessageItem(
         messageItem = messageItem,
+        messageContentFactory = messageContentFactory,
         reactionSorting = reactionSorting,
         onLongItemClick = onLongItemClick,
         onReactionsClick = onReactionsClick,

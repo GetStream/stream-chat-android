@@ -22,6 +22,9 @@ import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.rawType
+import io.getstream.chat.android.client.api2.model.dto.AIIndicatorClearEventDto
+import io.getstream.chat.android.client.api2.model.dto.AIIndicatorStopEventDto
+import io.getstream.chat.android.client.api2.model.dto.AIIndicatorUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.AnswerCastedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelHiddenEventDto
@@ -151,6 +154,9 @@ internal class EventDtoAdapter(
     private val voteChangedEventAdapter = moshi.adapter(VoteChangedEventDto::class.java)
     private val answerCastedEventAdapter = moshi.adapter(AnswerCastedEventDto::class.java)
     private val voteRemovedEventAdapter = moshi.adapter(VoteRemovedEventDto::class.java)
+    private val aiTypingIndicatorUpdatedEventAdapter = moshi.adapter(AIIndicatorUpdatedEventDto::class.java)
+    private val aiTypingIndicatorClearEventAdapter = moshi.adapter(AIIndicatorClearEventDto::class.java)
+    private val aiTypingIndicatorStopEventAdapter = moshi.adapter(AIIndicatorStopEventDto::class.java)
 
     @Suppress("LongMethod", "ComplexMethod", "ReturnCount")
     override fun fromJson(reader: JsonReader): ChatEventDto? {
@@ -231,6 +237,9 @@ internal class EventDtoAdapter(
                 else -> voteChangedEventAdapter
             }
             EventType.POLL_VOTE_REMOVED -> voteRemovedEventAdapter
+            EventType.AI_TYPING_INDICATOR_UPDATED -> aiTypingIndicatorUpdatedEventAdapter
+            EventType.AI_TYPING_INDICATOR_CLEAR -> aiTypingIndicatorClearEventAdapter
+            EventType.AI_TYPING_INDICATOR_STOP -> aiTypingIndicatorStopEventAdapter
             else -> // Custom case, early return
                 return UnknownEventDto(
                     type = type ?: EventType.UNKNOWN,

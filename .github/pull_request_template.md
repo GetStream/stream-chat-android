@@ -58,7 +58,6 @@ Provide the patch code here
 - [ ] I have signed the [Stream CLA](https://docs.google.com/forms/d/e/1FAIpQLScFKsKkAJI7mhCr7K9rEIOpqIDThrWxuvxnwUq2XkHyG154vQ/viewform) (required)
 - [ ] Assigned a person / code owner group (required)
 - [ ] Thread with the PR link started in a respective Slack channel (#android-chat-core or #android-chat-ui) (required)
-- [ ] PR targets the `develop` branch
 - [ ] PR is linked to the GitHub issue it resolves
 
 #### Code & documentation

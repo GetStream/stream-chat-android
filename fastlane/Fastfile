@@ -139,7 +139,7 @@ private_lane :install do |options|
   when :test_orchestrator
     v = '1.5.1'
     output = 'apks/orchestrator.apk'
-    url = "https://dl.google.com/dl/android/maven2/androidx/test//orchestrator/#{v}/orchestrator-#{v}.apk"
+    url = "https://dl.google.com/dl/android/maven2/androidx/test/orchestrator/#{v}/orchestrator-#{v}.apk"
   when :test_services
     v = '1.5.0'
     output = 'apks/test-services.apk'

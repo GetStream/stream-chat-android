@@ -789,6 +789,9 @@ public final class io/getstream/chat/android/models/EqualsFilterObject : io/gets
 }
 
 public final class io/getstream/chat/android/models/EventType {
+	public static final field AI_TYPING_INDICATOR_CLEAR Ljava/lang/String;
+	public static final field AI_TYPING_INDICATOR_STOP Ljava/lang/String;
+	public static final field AI_TYPING_INDICATOR_UPDATED Ljava/lang/String;
 	public static final field CHANNEL_DELETED Ljava/lang/String;
 	public static final field CHANNEL_HIDDEN Ljava/lang/String;
 	public static final field CHANNEL_TRUNCATED Ljava/lang/String;

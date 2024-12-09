@@ -16,8 +16,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Add `ChatClient::partialUpdateMember` for updating a `Member` in the scope of a `Channel`. [#5497](https://github.com/GetStream/stream-chat-android/pull/5497)
-- Add `ChannelClient::partialUpdateMember` for updating a `Member` in the scope of a `Channel`. [#5497](https://github.com/GetStream/stream-chat-android/pull/5497)
 
 ### ⚠️ Changed
 
@@ -47,12 +45,8 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
-- Fix wrong timestamp used for the initial loading of pinned messages in `PinnedMessageListController`. [#5483](https://github.com/GetStream/stream-chat-android/pull/5483)
-- Add `DownloadAttachmentUriGenerator` to generate download URIs for attachments. [#5490](https://github.com/GetStream/stream-chat-android/pull/5490)
-- Add `DownloadRequestInterceptor` to intercept download requests. [#5490](https://github.com/GetStream/stream-chat-android/pull/5490)
 
 ### ⬆️ Improved
-- Improve performance of opening a thread or message in a thread via `MessageListController`. [#5489](https://github.com/GetStream/stream-chat-android/pull/5489)
 
 ### ✅ Added
 
@@ -66,8 +60,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Add `ChatUI.downloadAttachmentUriGenerator` property to generate download URIs for attachments. [#5490](https://github.com/GetStream/stream-chat-android/pull/5490)
-- Add `ChatUI.downloadRequestInterceptor` property to intercept download requests. [#5490](https://github.com/GetStream/stream-chat-android/pull/5490)
 
 ### ⚠️ Changed
 
@@ -75,13 +67,13 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix keyboard not closing when opening the attachments picker from `MessagesScreen`. [#5506](https://github.com/GetStream/stream-chat-android/pull/5506)
 
 ### ⬆️ Improved
 
 ### ✅ Added
-- Add `ChatTheme.downloadAttachmentUriGenerator` property to generate download URIs for attachments. [#5490](https://github.com/GetStream/stream-chat-android/pull/5490)
-- Add `ChatTheme.downloadRequestInterceptor` property to intercept download requests. [#5490](https://github.com/GetStream/stream-chat-android/pull/5490)
-- Add `MessageContentFactory` class for customizing message contents. [#5498](https://github.com/GetStream/stream-chat-android/pull/5498)
+- The `StreamAttachmentFactories.defaultFactories()` method now accepts a `skipTypes` parameter to skip specific factory types. [#5494](https://github.com/GetStream/stream-chat-android/pull/5494)
+- Add `ChatTheme.keyboardBehaviour` property to customize different keyboard behaviours. [#5506](https://github.com/GetStream/stream-chat-android/pull/5506)
 
 ### ⚠️ Changed
 
@@ -97,6 +89,32 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# December 04th, 2024 - 6.7.0
+## stream-chat-android-client
+### ✅ Added
+- Add `ChatClient::partialUpdateMember` for updating a `Member` in the scope of a `Channel`. [#5497](https://github.com/GetStream/stream-chat-android/pull/5497)
+- Add `ChannelClient::partialUpdateMember` for updating a `Member` in the scope of a `Channel`. [#5497](https://github.com/GetStream/stream-chat-android/pull/5497)
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+- Fix wrong timestamp used for the initial loading of pinned messages in `PinnedMessageListController`. [#5483](https://github.com/GetStream/stream-chat-android/pull/5483)
+- Add `DownloadAttachmentUriGenerator` to generate download URIs for attachments. [#5490](https://github.com/GetStream/stream-chat-android/pull/5490)
+- Add `DownloadRequestInterceptor` to intercept download requests. [#5490](https://github.com/GetStream/stream-chat-android/pull/5490)
+
+### ⬆️ Improved
+- Improve performance of opening a thread or message in a thread via `MessageListController`. [#5489](https://github.com/GetStream/stream-chat-android/pull/5489)
+
+## stream-chat-android-ui-components
+### ✅ Added
+- Add `ChatUI.downloadAttachmentUriGenerator` property to generate download URIs for attachments. [#5490](https://github.com/GetStream/stream-chat-android/pull/5490)
+- Add `ChatUI.downloadRequestInterceptor` property to intercept download requests. [#5490](https://github.com/GetStream/stream-chat-android/pull/5490)
+
+## stream-chat-android-compose
+### ✅ Added
+- Add `ChatTheme.downloadAttachmentUriGenerator` property to generate download URIs for attachments. [#5490](https://github.com/GetStream/stream-chat-android/pull/5490)
+- Add `ChatTheme.downloadRequestInterceptor` property to intercept download requests. [#5490](https://github.com/GetStream/stream-chat-android/pull/5490)
+- Add `MessageContentFactory` class for customizing message contents. [#5498](https://github.com/GetStream/stream-chat-android/pull/5498)
 
 # November 21th, 2024 - 6.6.0
 ## Common changes for all artifacts

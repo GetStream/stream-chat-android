@@ -64,12 +64,9 @@ import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionIte
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.components.messages.MessageBubble
 import io.getstream.chat.android.compose.ui.components.messages.MessageContent
-import io.getstream.chat.android.compose.ui.components.messages.MessageFooter
 import io.getstream.chat.android.compose.ui.components.messages.MessageHeaderLabel
 import io.getstream.chat.android.compose.ui.components.messages.MessageReactions
-import io.getstream.chat.android.compose.ui.components.messages.OwnedMessageVisibilityContent
 import io.getstream.chat.android.compose.ui.components.messages.PollMessageContent
-import io.getstream.chat.android.compose.ui.components.messages.UploadingFooter
 import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
@@ -135,6 +132,7 @@ public fun MessageItem(
     reactionSorting: ReactionSorting,
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
+    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
@@ -167,6 +165,7 @@ public fun MessageItem(
         DefaultMessageItemCenterContent(
             messageItem = it,
             onLongItemClick = onLongItemClick,
+            messageContentFactory = messageContentFactory,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onGiphyActionClick = onGiphyActionClick,
             onQuotedMessageClick = onQuotedMessageClick,
@@ -182,7 +181,7 @@ public fun MessageItem(
         )
     },
     footerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
-        DefaultMessageItemFooterContent(messageItem = it)
+        DefaultMessageItemFooterContent(messageItem = it, messageContentFactory = messageContentFactory)
     },
     trailingContent: @Composable RowScope.(MessageItemState) -> Unit = {
         DefaultMessageItemTrailingContent(messageItem = it)
@@ -384,23 +383,22 @@ internal fun DefaultMessageItemHeaderContent(
 @Composable
 internal fun ColumnScope.DefaultMessageItemFooterContent(
     messageItem: MessageItemState,
+    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
 ) {
     val message = messageItem.message
     when {
         message.isUploading() -> {
-            UploadingFooter(
+            messageContentFactory.UploadingFooterContent(
                 modifier = Modifier.align(End),
-                message = message,
+                messageItem = messageItem,
             )
         }
 
         message.isDeleted() && messageItem.deletedMessageVisibility == DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
-            OwnedMessageVisibilityContent(message = message)
+            messageContentFactory.OwnedMessageVisibilityContent(messageItem = messageItem)
         }
 
-        else -> {
-            MessageFooter(messageItem = messageItem)
-        }
+        else -> messageContentFactory.MessageFooterContent(messageItem = messageItem)
     }
 
     val position = messageItem.groupPosition
@@ -447,6 +445,7 @@ internal fun DefaultMessageItemTrailingContent(
 public fun DefaultMessageItemCenterContent(
     modifier: Modifier = Modifier,
     messageItem: MessageItemState,
+    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
@@ -494,6 +493,7 @@ public fun DefaultMessageItemCenterContent(
         RegularMessageContent(
             modifier = finalModifier,
             messageItem = messageItem,
+            messageContentFactory = messageContentFactory,
             onLongItemClick = onLongItemClick,
             onGiphyActionClick = onGiphyActionClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
@@ -572,6 +572,7 @@ public fun EmojiMessageContent(
 public fun RegularMessageContent(
     messageItem: MessageItemState,
     modifier: Modifier = Modifier,
+    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
@@ -598,6 +599,7 @@ public fun RegularMessageContent(
                 MessageContent(
                     message = message,
                     currentUser = messageItem.currentUser,
+                    messageContentFactory = messageContentFactory,
                     onLongItemClick = onLongItemClick,
                     onGiphyActionClick = onGiphyActionClick,
                     onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
@@ -616,6 +618,7 @@ public fun RegularMessageContent(
                 content = {
                     MessageContent(
                         message = message,
+                        messageContentFactory = messageContentFactory,
                         currentUser = messageItem.currentUser,
                         onLongItemClick = onLongItemClick,
                         onGiphyActionClick = onGiphyActionClick,

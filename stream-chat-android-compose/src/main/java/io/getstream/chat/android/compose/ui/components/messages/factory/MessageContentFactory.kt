@@ -23,11 +23,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageDeletedContent
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageGiphyContent
+import io.getstream.chat.android.compose.ui.components.messages.MessageFooter
 import io.getstream.chat.android.compose.ui.components.messages.MessageText
 import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
+import io.getstream.chat.android.compose.ui.components.messages.UploadingFooter
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
+import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 
 /**
  * Factory for creating message contents that are used to represent the chat message items.
@@ -99,5 +102,38 @@ public open class MessageContentFactory {
                 onQuotedMessageClick = onQuotedMessageClick,
             )
         }
+    }
+
+    @Composable
+    public open fun UploadingFooterContent(
+        modifier: Modifier,
+        messageItem: MessageItemState,
+    ) {
+        val message = messageItem.message
+        UploadingFooter(
+            modifier = modifier,
+            message = message,
+        )
+    }
+
+    /**
+     * Represents the default message visibility content.
+     */
+    @Composable
+    public open fun OwnedMessageVisibilityContent(
+        messageItem: MessageItemState,
+    ) {
+        val message = messageItem.message
+        io.getstream.chat.android.compose.ui.components.messages.OwnedMessageVisibilityContent(message = message)
+    }
+
+    /**
+     * Represents the default message footer.
+     */
+    @Composable
+    public open fun MessageFooterContent(
+        messageItem: MessageItemState,
+    ) {
+        MessageFooter(messageItem = messageItem)
     }
 }

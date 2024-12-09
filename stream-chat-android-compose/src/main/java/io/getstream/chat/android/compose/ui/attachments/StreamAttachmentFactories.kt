@@ -79,6 +79,7 @@ public object StreamAttachmentFactories {
      * @param onMediaContentItemClick Lambda called when a image or video attachment content item gets clicked.
      * @param onFileContentItemClick Lambda called when a file attachment content item gets clicked.
      * @param showFileSize Lambda called to determine if the file size should be shown for a given attachment.
+     * @param skipTypes A list of [AttachmentFactory.Type] that should be skipped from the default factories.
      *
      * @return A [List] of various [AttachmentFactory] instances that provide different attachments support.
      */
@@ -108,6 +109,7 @@ public object StreamAttachmentFactories {
             previewHandlers: List<AttachmentPreviewHandler>,
             attachment: Attachment,
         ) -> Unit = ::onFileAttachmentContentItemClick,
+        skipTypes: List<AttachmentFactory.Type> = emptyList(),
     ): List<AttachmentFactory> = listOf(
         UploadAttachmentFactory(
             onContentItemClick = onUploadContentItemClick,
@@ -138,7 +140,7 @@ public object StreamAttachmentFactories {
             onContentItemClick = onFileContentItemClick,
         ),
         UnsupportedAttachmentFactory,
-    )
+    ).filterNot { skipTypes.contains(it.type) }
 
     /**
      * Default quoted attachment factories we provide, which can transform image, file and link attachments.

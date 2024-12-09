@@ -31,6 +31,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
+import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
@@ -91,6 +92,7 @@ public fun MessageList(
     reactionSorting: ReactionSorting = ReactionSortingByFirstReactionAt,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
+    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     messagesLazyListState: MessagesLazyListState =
         rememberMessageListState(parentMessageId = viewModel.currentMessagesState.parentMessageId),
     threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
@@ -168,6 +170,7 @@ public fun MessageList(
         DefaultMessageContainer(
             messageListItemState = messageListItem,
             reactionSorting = reactionSorting,
+            messageContentFactory = messageContentFactory,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onCastVote = onCastVote,
             onRemoveVote = onRemoveVote,
@@ -190,6 +193,7 @@ public fun MessageList(
     MessageList(
         reactionSorting = reactionSorting,
         modifier = modifier,
+        messageContentFactory = messageContentFactory,
         contentPadding = contentPadding,
         currentState = viewModel.currentMessagesState,
         messagesLazyListState = messagesLazyListState,
@@ -238,6 +242,7 @@ public fun MessageList(
 internal fun DefaultMessageContainer(
     messageListItemState: MessageListItemState,
     reactionSorting: ReactionSorting,
+    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onThreadClick: (Message) -> Unit,
     onLongItemClick: (Message) -> Unit,
@@ -257,6 +262,7 @@ internal fun DefaultMessageContainer(
 ) {
     MessageContainer(
         messageListItemState = messageListItemState,
+        messageContentFactory = messageContentFactory,
         reactionSorting = reactionSorting,
         onLongItemClick = onLongItemClick,
         onReactionsClick = onReactionsClick,
@@ -348,6 +354,7 @@ public fun MessageList(
     reactionSorting: ReactionSorting,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
+    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     messagesLazyListState: MessagesLazyListState =
         rememberMessageListState(parentMessageId = currentState.parentMessageId),
     onMessagesPageStartReached: () -> Unit = {},
@@ -388,6 +395,7 @@ public fun MessageList(
         DefaultMessageContainer(
             messageListItemState = it,
             reactionSorting = reactionSorting,
+            messageContentFactory = messageContentFactory,
             onPollUpdated = onPollUpdated,
             onCastVote = onCastVote,
             onRemoveVote = onRemoveVote,
