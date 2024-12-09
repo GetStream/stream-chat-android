@@ -73,14 +73,46 @@ buildscript {
         classpath Dependencies.spotlessGradlePlugin
         classpath Dependencies.ksp
         classpath Dependencies.detektPlugin
+        classpath Dependencies.sonarQubePlugin
     }
 }
 
 subprojects {
-    if (it.name != 'stream-chat-android-docs'
-            && it.buildFile.exists()) {
+    if (it.name != 'stream-chat-android-docs' && it.buildFile.exists()) {
         apply from: "${rootDir}/spotless/spotless.gradle"
     }
+
+    if (it.buildFile.exists()
+            && !(it.name in [
+                'stream-chat-android-docs',
+                'stream-chat-android-e2e-test',
+                'stream-chat-android-ui-uitests',
+                'stream-chat-android-ui-guides',
+                'stream-chat-android-ui-components-sample',
+                'stream-chat-android-compose-sample',
+                'stream-chat-android-benchmark',
+                'stream-chat-android-pushprovider-firebase'
+            ])
+    ) {
+        apply plugin: "org.sonarqube"
+
+        def testResultsPath = "${project.projectDir}/build/test-results"
+        def testReportPath = file("${testResultsPath}/test").exists()
+                ? "${testResultsPath}/test"
+                : "${testResultsPath}/testDebugUnitTest"
+
+        sonarqube {
+            properties {
+                property("sonar.host.url", "https://sonarcloud.io")
+                property("sonar.login", System.getenv("SONAR_TOKEN"))
+                property("sonar.organization", "getstream")
+                property("sonar.projectKey", "GetStream_stream-chat-android")
+                property("sonar.projectName", "stream-chat-android")
+                property("sonar.junit.reportPaths", testReportPath)
+            }
+        }
+    }
+
     apply plugin: "io.gitlab.arturbosch.detekt"
 }
 

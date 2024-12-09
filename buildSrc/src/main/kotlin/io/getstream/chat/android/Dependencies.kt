@@ -79,6 +79,7 @@ object Versions {
     internal const val SHIMMER = "0.5.0"
     internal const val SHIMMER_COMPOSE = "1.3.1"
     internal const val SHOT = "6.1.0"
+    internal const val SONARQUBE_PLUGIN = "6.0.1.5171"
     internal const val SPOTLESS = "6.20.0"
     internal const val STREAM_LOG = "1.3.1"
     internal const val STREAM_PUSH = "1.1.9"
@@ -252,6 +253,7 @@ object Dependencies {
     const val allureKotlinCommons = "io.qameta.allure:allure-kotlin-commons:${Versions.ALLURE_KOTLIN}"
     const val allureKotlinJunit = "io.qameta.allure:allure-kotlin-junit4:${Versions.ALLURE_KOTLIN}"
     const val allureKotlinAndroid = "io.qameta.allure:allure-kotlin-android:${Versions.ALLURE_KOTLIN}"
+    const val sonarQubePlugin = "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:${Versions.SONARQUBE_PLUGIN}"
 
     @JvmStatic
     fun isNonStable(version: String): Boolean = isStable(version).not()
