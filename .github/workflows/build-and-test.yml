@@ -46,6 +46,11 @@ jobs:
         with:
           name: testDebugUnitTest
           path: ./**/build/reports/tests/testDebugUnitTest
+      - uses: ./.github/actions/setup-ruby
+      - name: Sonar
+        run: bundle exec fastlane run_sonar_analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   size_check_xml:
     name: Size Check XML
