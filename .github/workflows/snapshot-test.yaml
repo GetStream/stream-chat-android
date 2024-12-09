@@ -11,6 +11,10 @@ on:
         required: false
         default: false
 
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
+
 jobs:
   run_snapshot_tests:
     name: Run

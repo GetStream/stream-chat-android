@@ -11,6 +11,7 @@ apply plugin: "com.github.ben-manes.versions"
 apply plugin: 'io.github.gradle-nexus.publish-plugin'
 apply plugin: 'binary-compatibility-validator'
 apply plugin: 'org.jetbrains.dokka'
+apply from: "${rootDir}/sonar.gradle"
 apply from: "${rootDir}/scripts/sample-app-versioner.gradle"
 apply plugin: UnitTestsPlugin
 apply plugin: ReleasePlugin
@@ -73,15 +74,16 @@ buildscript {
         classpath Dependencies.spotlessGradlePlugin
         classpath Dependencies.ksp
         classpath Dependencies.detektPlugin
+        classpath Dependencies.sonarQubePlugin
     }
 }
 
 subprojects {
-    if (it.name != 'stream-chat-android-docs'
-            && it.buildFile.exists()) {
+    if (it.name != 'stream-chat-android-docs' && it.buildFile.exists()) {
         apply from: "${rootDir}/spotless/spotless.gradle"
     }
     apply plugin: "io.gitlab.arturbosch.detekt"
+    apply from: "${rootDir}/coverage.gradle"
 }
 
 versionPrint {

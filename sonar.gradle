@@ -1,0 +1,15 @@
+apply plugin: "org.sonarqube"
+
+sonarqube {
+    properties {
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.token", "${System.getenv("SONAR_TOKEN")}")
+        property("sonar.organization", "getstream")
+        property("sonar.projectKey", "GetStream_stream-chat-android")
+        property("sonar.projectName", "stream-chat-android")
+        property "sonar.java.coveragePlugin", "jacoco"
+        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.java.binaries", "${rootDir}/**/build/tmp/kotlin-classes/debug,${rootDir}/**/build/classes/kotlin/main"
+        property "sonar.coverage.exclusions", "**/test/**,**/androidTest/**,**/R.class,**/R2.class,**/R\$*.class,**/BuildConfig.*,**/Manifest*.*,**/*Test*.*"
+    }
+}
