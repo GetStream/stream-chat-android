@@ -68,10 +68,13 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix keyboard not closing when opening the attachments picker from `MessagesScreen`. [#5506](https://github.com/GetStream/stream-chat-android/pull/5506)
 
 ### ⬆️ Improved
 
 ### ✅ Added
+- The `StreamAttachmentFactories.defaultFactories()` method now accepts a `skipTypes` parameter to skip specific factory types. [#5494](https://github.com/GetStream/stream-chat-android/pull/5494)
+- Add `ChatTheme.keyboardBehaviour` property to customize different keyboard behaviours. [#5506](https://github.com/GetStream/stream-chat-android/pull/5506)
 
 ### ⚠️ Changed
 

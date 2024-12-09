@@ -18,7 +18,6 @@ package io.getstream.chat.android.compose.ui.messages
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.AnimationConstants
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
@@ -43,6 +42,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -443,7 +444,6 @@ public fun BoxScope.MessageMenus(
  * displayed as a link attachment. False by default.
  */
 @Suppress("LongMethod")
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun BoxScope.MessagesScreenMenus(
     listViewModel: MessageListViewModel,
@@ -578,7 +578,6 @@ private fun BoxScope.MessagesScreenMenus(
  * @param skipEnrichUrl If the message should skip enriching the URL. If URL is not enriched, it will not be
  * displayed as a link attachment. False by default.
  */
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun BoxScope.MessagesScreenReactionsPicker(
     listViewModel: MessageListViewModel,
@@ -645,6 +644,15 @@ public fun BoxScope.AttachmentsPickerMenu(
     composerViewModel: MessageComposerViewModel,
 ) {
     val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
+
+    // Ensure keyboard is closed when the attachments picker is shown (if instructed by ChatTheme)
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val shouldCloseKeyboard = ChatTheme.keyboardBehaviour.closeKeyboardOnAttachmentPickerOpen
+    LaunchedEffect(isShowingAttachments) {
+        if (shouldCloseKeyboard && isShowingAttachments) {
+            keyboardController?.hide()
+        }
+    }
 
     AnimatedVisibility(
         visible = isShowingAttachments,
