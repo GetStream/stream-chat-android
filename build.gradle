@@ -78,6 +78,16 @@ buildscript {
 }
 
 subprojects {
+    if (it.plugins.hasPlugin("com.android.application") || it.plugins.hasPlugin("com.android.library")) {
+        it.android {
+            buildTypes {
+                debug {
+                    testCoverageEnabled = true
+                }
+            }
+        }
+    }
+
     if (it.name != 'stream-chat-android-docs' && it.buildFile.exists()) {
         apply from: "${rootDir}/spotless/spotless.gradle"
     }
