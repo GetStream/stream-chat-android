@@ -983,4 +983,20 @@ public class ChannelClient internal constructor(
      */
     @CheckResult
     public fun unpin(): Call<Member> = client.unpinChannel(channelType, channelId)
+
+    /**
+     * Archives the channel for the current user.
+     *
+     * @return Executable async [Call] responsible for archiving the channel.
+     */
+    @CheckResult
+    public fun archive(): Call<Member> = client.archiveChannel(channelType, channelId)
+
+    /**
+     * Un-archives the channel for the current user.
+     *
+     * @return Executable async [Call] responsible for un-archiving the channel.
+     */
+    @CheckResult
+    public fun unarchive(): Call<Member> = client.unarchiveChannel(channelType, channelId)
 }

@@ -15,6 +15,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public static synthetic fun addMembers$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;Ljava/lang/Boolean;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun addSocketListener (Lio/getstream/chat/android/client/socket/SocketListener;)V
 	public final fun appSettings ()Lio/getstream/result/call/Call;
+	public final fun archiveChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun banUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lio/getstream/result/call/Call;
 	public final fun blockUser (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun castPollAnswer (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
@@ -117,6 +118,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public static synthetic fun partialUpdateThread$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/util/Map;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun partialUpdateUser (Ljava/lang/String;Ljava/util/Map;Ljava/util/List;)Lio/getstream/result/call/Call;
 	public static synthetic fun partialUpdateUser$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/util/Map;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public final fun pinChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun pinMessage (Lio/getstream/chat/android/models/Message;I)Lio/getstream/result/call/Call;
 	public final fun pinMessage (Lio/getstream/chat/android/models/Message;Ljava/util/Date;)Lio/getstream/result/call/Call;
 	public static synthetic fun pinMessage$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/Message;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/result/call/Call;
@@ -191,6 +193,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun translate (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun truncateChannel (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;)Lio/getstream/result/call/Call;
 	public static synthetic fun truncateChannel$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;ILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public final fun unarchiveChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun unbanUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun unblockUser (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun unflagMessage (Ljava/lang/String;)Lio/getstream/result/call/Call;
@@ -198,6 +201,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun unmuteChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun unmuteCurrentUser ()Lio/getstream/result/call/Call;
 	public final fun unmuteUser (Ljava/lang/String;)Lio/getstream/result/call/Call;
+	public final fun unpinChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun unpinMessage (Lio/getstream/chat/android/models/Message;)Lio/getstream/result/call/Call;
 	public final fun updateChannel (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Ljava/util/Map;)Lio/getstream/result/call/Call;
 	public static synthetic fun updateChannel$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/result/call/Call;
@@ -631,6 +635,7 @@ public final class io/getstream/chat/android/client/channel/ChannelClient {
 	public final fun acceptInvite (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun addMembers (Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;Ljava/lang/Boolean;)Lio/getstream/result/call/Call;
 	public static synthetic fun addMembers$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;Ljava/lang/Boolean;ILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public final fun archive ()Lio/getstream/result/call/Call;
 	public final fun banUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lio/getstream/result/call/Call;
 	public final fun create (Ljava/util/List;Ljava/util/Map;)Lio/getstream/result/call/Call;
 	public final fun delete ()Lio/getstream/result/call/Call;
@@ -675,6 +680,7 @@ public final class io/getstream/chat/android/client/channel/ChannelClient {
 	public static synthetic fun muteUser$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun partialUpdateMember (Ljava/lang/String;Ljava/util/Map;Ljava/util/List;)Lio/getstream/result/call/Call;
 	public static synthetic fun partialUpdateMember$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/lang/String;Ljava/util/Map;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public final fun pin ()Lio/getstream/result/call/Call;
 	public final fun pinMessage (Lio/getstream/chat/android/models/Message;I)Lio/getstream/result/call/Call;
 	public final fun pinMessage (Lio/getstream/chat/android/models/Message;Ljava/util/Date;)Lio/getstream/result/call/Call;
 	public final fun query (Lio/getstream/chat/android/client/api/models/QueryChannelRequest;)Lio/getstream/result/call/Call;
@@ -724,10 +730,12 @@ public final class io/getstream/chat/android/client/channel/ChannelClient {
 	public final fun truncate ()Lio/getstream/result/call/Call;
 	public final fun truncate (Lio/getstream/chat/android/models/Message;)Lio/getstream/result/call/Call;
 	public static synthetic fun truncate$default (Lio/getstream/chat/android/client/channel/ChannelClient;Lio/getstream/chat/android/models/Message;ILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public final fun unarchive ()Lio/getstream/result/call/Call;
 	public final fun unbanUser (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun unmute ()Lio/getstream/result/call/Call;
 	public final fun unmuteCurrentUser ()Lio/getstream/result/call/Call;
 	public final fun unmuteUser (Ljava/lang/String;)Lio/getstream/result/call/Call;
+	public final fun unpin ()Lio/getstream/result/call/Call;
 	public final fun unpinMessage (Lio/getstream/chat/android/models/Message;)Lio/getstream/result/call/Call;
 	public final fun update (Lio/getstream/chat/android/models/Message;Ljava/util/Map;)Lio/getstream/result/call/Call;
 	public static synthetic fun update$default (Lio/getstream/chat/android/client/channel/ChannelClient;Lio/getstream/chat/android/models/Message;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/result/call/Call;
