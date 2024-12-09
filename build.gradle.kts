@@ -30,6 +30,7 @@ plugins {
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.shot) apply false
     alias(libs.plugins.androidx.navigation) apply false
+    alias(libs.plugins.sonarqube) apply false
     id("io.getstream.chat.UnitTestsPlugin")
     id("io.getstream.chat.ReleasePlugin")
     id("io.getstream.chat.ChangelogReleaseSectionPlugin")
@@ -45,6 +46,7 @@ plugins {
 }
 
 apply(from = "${rootDir}/scripts/sample-app-versioner.gradle")
+apply(from = "${rootDir}/sonar.gradle")
 
 subprojects {
     if (name != "stream-chat-android-docs"
@@ -52,6 +54,7 @@ subprojects {
         apply(from = "${rootDir}/spotless/spotless.gradle")
     }
     apply(plugin = "io.gitlab.arturbosch.detekt")
+    apply(from = "${rootDir}/coverage.gradle")
 }
 
 tasks.withType<DependencyUpdatesTask> {

@@ -34,6 +34,12 @@ lane :stop_mock_server do
   Net::HTTP.get_response(URI("http://localhost:#{mock_server_driver_port}/stop")) rescue nil
 end
 
+lane :run_sonar_analysis do |options|
+  next unless is_check_required(sources: sources_matrix[:unit], force_check: @force_check)
+
+  Dir.chdir('..') { sh('./gradlew sonar') }
+end
+
 lane :run_snapshot_test do |options|
   next unless is_check_required(sources: sources_matrix[:ui], force_check: @force_check)
 
@@ -128,6 +134,7 @@ end
 
 private_lane :sources_matrix do
   {
+    unit: ['stream-chat-android-client/', 'stream-chat-android-client-test/', 'stream-chat-android-compose/', 'stream-chat-android-core/', 'stream-chat-android-markdown-transformer/', 'stream-chat-android-offline/', 'stream-chat-android-state/', 'stream-chat-android-ui-common/', 'stream-chat-android-ui-components/', 'stream-chat-android-ui-utils/'],
     ui: ['stream-chat-android-ui', '.github/workflows/snapshot-test'],
     e2e: ['buildSrc', 'stream-chat-android', '.github/workflows/e2e-test'],
     ruby: ['fastlane', 'Gemfile', 'Gemfile.lock']
