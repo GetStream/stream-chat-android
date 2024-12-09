@@ -4232,6 +4232,8 @@ public final class io/getstream/chat/android/ui/viewmodel/channels/ChannelListVi
 
 public final class io/getstream/chat/android/ui/viewmodel/mentions/MentionListViewModel : androidx/lifecycle/ViewModel {
 	public fun <init> ()V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getErrorEvents ()Landroidx/lifecycle/LiveData;
 	public final fun getState ()Landroidx/lifecycle/LiveData;
 	public final fun loadMore ()V
@@ -4904,6 +4906,8 @@ public final class io/getstream/chat/android/ui/viewmodel/pinned/PinnedMessageLi
 
 public final class io/getstream/chat/android/ui/viewmodel/search/SearchViewModel : androidx/lifecycle/ViewModel {
 	public fun <init> ()V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getErrorEvents ()Landroidx/lifecycle/LiveData;
 	public final fun getState ()Landroidx/lifecycle/LiveData;
 	public final fun loadMore ()V
