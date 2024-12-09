@@ -30,7 +30,6 @@ android {
             consumerProguardFiles 'consumer-proguard-rules.pro'
         }
         debug {
-            testCoverageEnabled false
             consumerProguardFiles 'consumer-proguard-rules.pro'
         }
     }
