@@ -555,13 +555,17 @@ public class MessageListController(
                     }
             }
             .onFirst { channelUserRead ->
-                val unreadMessages = (channelState.value?.messages?.value ?: emptyList())
-                    .fold(emptyList<Message>()) { acc, message ->
-                        when {
-                            channelUserRead.lastReadMessageId == message.id -> emptyList()
-                            else -> acc + message
+                val unreadMessages = if (channelUserRead.unreadMessages == 0) {
+                    emptyList()
+                } else {
+                    (channelState.value?.messages?.value ?: emptyList())
+                        .fold(emptyList<Message>()) { acc, message ->
+                            when {
+                                channelUserRead.lastReadMessageId == message.id -> emptyList()
+                                else -> acc + message
+                            }
                         }
-                    }
+                }
                 unreadLabelState.value = channelUserRead.lastReadMessageId
                     ?.takeUnless { unreadMessages.isEmpty() }
                     ?.takeUnless { unreadMessages.lastOrNull()?.id == it }

@@ -698,31 +698,43 @@ internal class EventHandlerSequential(
 
                 // get the channel, update reads, write the channel
                 is MessageReadEvent -> {
-                    batch.getCurrentChannel(event.cid)
-                        ?.updateReads(event.toChannelUserRead())
-                        ?.let(batch::addChannel)
-                    // Update corresponding thread if event was received for marking a thread as read
-                    event.thread?.let { threadInfo ->
-                        threadFromPendingUpdateOrRepo(batch, threadInfo.parentMessageId)
-                            ?.markAsReadByUser(threadInfo, event.user, event.createdAt)
+                    val thread = event.thread
+                    if (thread != null) {
+                        // Update corresponding thread if event was received for marking a thread as read
+                        threadFromPendingUpdateOrRepo(batch, thread.parentMessageId)
+                            ?.markAsReadByUser(thread, event.user, event.createdAt)
                             ?.let(batch::addThread)
+                    } else {
+                        batch.getCurrentChannel(event.cid)
+                            ?.updateReads(event.toChannelUserRead())
+                            ?.let(batch::addChannel)
                     }
                 }
 
                 is NotificationMarkReadEvent -> {
-                    batch.getCurrentChannel(event.cid)
-                        ?.updateReads(event.toChannelUserRead())
-                        ?.let(batch::addChannel)
+                    val thread = event.thread
+                    if (thread != null) {
+                        // Update corresponding thread if event was received for marking a thread as read
+                        threadFromPendingUpdateOrRepo(batch, thread.parentMessageId)
+                            ?.markAsReadByUser(thread, event.user, event.createdAt)
+                            ?.let(batch::addThread)
+                    } else {
+                        batch.getCurrentChannel(event.cid)
+                            ?.updateReads(event.toChannelUserRead())
+                            ?.let(batch::addChannel)
+                    }
                 }
                 is NotificationMarkUnreadEvent -> {
-                    batch.getCurrentChannel(event.cid)
-                        ?.updateReads(event.toChannelUserRead())
-                        ?.let(batch::addChannel)
-                    // Update corresponding thread if event was received for marking a thread as unread
-                    event.threadId?.let { threadId ->
+                    val threadId = event.threadId
+                    if (threadId != null) {
+                        // Update corresponding thread if event was received for marking a thread as unread
                         threadFromPendingUpdateOrRepo(batch, threadId)
                             ?.markAsUnreadByUser(event.user, event.createdAt)
                             ?.let(batch::addThread)
+                    } else {
+                        batch.getCurrentChannel(event.cid)
+                            ?.updateReads(event.toChannelUserRead())
+                            ?.let(batch::addChannel)
                     }
                 }
                 is GlobalUserBannedEvent -> {

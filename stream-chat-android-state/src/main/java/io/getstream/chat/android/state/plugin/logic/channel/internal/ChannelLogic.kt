@@ -596,9 +596,24 @@ internal class ChannelLogic(
                     is NotificationChannelTruncatedEvent -> removeMessagesBefore(event.createdAt)
                     is TypingStopEvent -> channelStateLogic.setTyping(event.user.id, null)
                     is TypingStartEvent -> channelStateLogic.setTyping(event.user.id, event)
-                    is MessageReadEvent -> channelStateLogic.updateRead(event.toChannelUserRead())
-                    is NotificationMarkReadEvent -> channelStateLogic.updateRead(event.toChannelUserRead())
-                    is NotificationMarkUnreadEvent -> channelStateLogic.updateRead(event.toChannelUserRead())
+                    is MessageReadEvent -> {
+                        // Update reads only if the event is not related to a thread
+                        if (event.thread == null) {
+                            channelStateLogic.updateRead(event.toChannelUserRead())
+                        }
+                    }
+                    is NotificationMarkReadEvent -> {
+                        // Update reads only if the event is not related to a thread
+                        if (event.threadId == null) {
+                            channelStateLogic.updateRead(event.toChannelUserRead())
+                        }
+                    }
+                    is NotificationMarkUnreadEvent -> {
+                        // Update reads only if the event is not related to a thread
+                        if (event.threadId == null) {
+                            channelStateLogic.updateRead(event.toChannelUserRead())
+                        }
+                    }
                     is NotificationInviteAcceptedEvent -> {
                         channelStateLogic.addMember(event.member)
                         channelStateLogic.updateChannelData(event)
