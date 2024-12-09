@@ -28,7 +28,8 @@ import io.getstream.chat.android.ui.feature.messages.preview.MessagePreviewStyle
 import io.getstream.chat.android.ui.feature.pinned.list.PinnedMessageListView.PinnedMessageSelectedListener
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
-internal class PinnedMessageListAdapter : ListAdapter<MessageResult, RecyclerView.ViewHolder>(MessageResultDiffCallback) {
+internal class PinnedMessageListAdapter :
+    ListAdapter<MessageResult, RecyclerView.ViewHolder>(MessageResultDiffCallback) {
 
     private var pinnedMessageSelectedListener: PinnedMessageSelectedListener? = null
 
