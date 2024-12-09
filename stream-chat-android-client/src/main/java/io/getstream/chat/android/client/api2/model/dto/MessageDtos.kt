@@ -94,7 +94,8 @@ internal data class DownstreamMessageDto(
     val type: String,
     val updated_at: Date,
     val user: DownstreamUserDto,
-    val moderation_details: DownstreamModerationDetailsDto? = null,
+    val moderation_details: DownstreamModerationDetailsDto? = null, // Used for Moderation V1
+    val moderation: DownstreamModerationDto? = null, // Used for Moderation V2
     val poll: DownstreamPollDto? = null,
 
     val extraData: Map<String, Any>,

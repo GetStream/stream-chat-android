@@ -5,6 +5,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add support for moderation V2. Add `moderation` field in `Message` model to support the new version of moderation. [#5493](https://github.com/GetStream/stream-chat-android/pull/5493)
 
 ### ⚠️ Changed
 
