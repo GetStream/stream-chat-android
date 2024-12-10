@@ -236,7 +236,13 @@ public fun defaultMessageOptionsState(
             MessageOptionItemState(
                 title = if (selectedMessage.pinned) R.string.stream_compose_unpin_message else R.string.stream_compose_pin_message,
                 action = Pin(selectedMessage),
-                iconPainter = painterResource(id = if (selectedMessage.pinned) R.drawable.stream_compose_ic_unpin else R.drawable.stream_compose_ic_pin),
+                iconPainter = painterResource(
+                    id = if (selectedMessage.pinned) {
+                        R.drawable.stream_compose_ic_unpin
+                    } else {
+                        R.drawable.stream_compose_ic_pin
+                    },
+                ),
                 iconColor = ChatTheme.colors.textLowEmphasis,
                 titleColor = ChatTheme.colors.textHighEmphasis,
             )

@@ -146,15 +146,15 @@ public fun buildDefaultChannelOptionsState(
         buildMuteOption(
             canMuteChannel = optionVisibility.isMuteChannelVisible && canMuteChannel,
             isMuted = isMuted,
-            selectedChannel = selectedChannel
+            selectedChannel = selectedChannel,
         ),
         buildPinOption(
             canPinChannel = optionVisibility.isPinChannelVisible,
-            selectedChannel = selectedChannel
+            selectedChannel = selectedChannel,
         ),
         buildArchiveOption(
             canArchiveChannel = optionVisibility.isArchiveChannelVisible,
-            selectedChannel = selectedChannel
+            selectedChannel = selectedChannel,
         ),
         if (optionVisibility.isDeleteChannelVisible && canDeleteChannel) {
             ChannelOptionState(
@@ -191,13 +191,13 @@ private fun buildPinOption(
     false -> Triple(
         R.string.stream_compose_selected_channel_menu_pin_channel,
         R.drawable.stream_compose_ic_pin,
-        PinChannel(selectedChannel)
+        PinChannel(selectedChannel),
     ).also { println("JcLog: wasn't pinned at: ${selectedChannel.membership?.pinnedAt}") }
 
     true -> Triple(
         R.string.stream_compose_selected_channel_menu_unpin_channel,
         R.drawable.stream_compose_ic_unpin,
-        UnpinChannel(selectedChannel)
+        UnpinChannel(selectedChannel),
     ).also { println("JcLog: was pinned at: ${selectedChannel.membership?.pinnedAt}") }
 
     null -> null
@@ -225,13 +225,13 @@ private fun buildArchiveOption(
     false -> Triple(
         R.string.stream_compose_selected_channel_menu_archive_channel,
         R.drawable.stream_compose_ic_archive,
-        ArchiveChannel(selectedChannel)
+        ArchiveChannel(selectedChannel),
     )
 
     true -> Triple(
         R.string.stream_compose_selected_channel_menu_unarchive_channel,
         R.drawable.stream_compose_ic_unarchive,
-        UnarchiveChannel(selectedChannel)
+        UnarchiveChannel(selectedChannel),
     )
 
     null -> null

@@ -60,10 +60,14 @@ import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.state.channels.actions.ArchiveChannel
 import io.getstream.chat.android.ui.common.state.channels.actions.DeleteConversation
 import io.getstream.chat.android.ui.common.state.channels.actions.LeaveGroup
 import io.getstream.chat.android.ui.common.state.channels.actions.MuteChannel
+import io.getstream.chat.android.ui.common.state.channels.actions.PinChannel
+import io.getstream.chat.android.ui.common.state.channels.actions.UnarchiveChannel
 import io.getstream.chat.android.ui.common.state.channels.actions.UnmuteChannel
+import io.getstream.chat.android.ui.common.state.channels.actions.UnpinChannel
 import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
 
 /**
@@ -211,6 +215,10 @@ public fun ChannelsScreen(
                             is ViewInfo -> onViewChannelInfoAction(action.channel)
                             is MuteChannel -> listViewModel.muteChannel(action.channel)
                             is UnmuteChannel -> listViewModel.unmuteChannel(action.channel)
+                            is PinChannel -> listViewModel.pinChannel(action.channel)
+                            is UnpinChannel -> listViewModel.unpinChannel(action.channel)
+                            is ArchiveChannel -> listViewModel.archiveChannel(action.channel)
+                            is UnarchiveChannel -> listViewModel.unarchiveChannel(action.channel)
                             else -> listViewModel.performChannelAction(action)
                         }
                     }
