@@ -112,15 +112,20 @@ public fun buildDefaultChannelOptionsState(
     val canDeleteChannel = ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)
     val canMuteChannel = ownCapabilities.contains(ChannelCapabilities.MUTE_CHANNEL)
 
+    val optionVisibility = ChatTheme.channelOptionsTheme.optionVisibility
     return listOfNotNull(
-        ChannelOptionState(
-            title = stringResource(id = R.string.stream_compose_selected_channel_menu_view_info),
-            titleColor = ChatTheme.colors.textHighEmphasis,
-            iconPainter = painterResource(id = R.drawable.stream_compose_ic_person),
-            iconColor = ChatTheme.colors.textLowEmphasis,
-            action = ViewInfo(selectedChannel),
-        ),
-        if (canLeaveChannel) {
+        if (optionVisibility.isViewInfoVisible) {
+            ChannelOptionState(
+                title = stringResource(id = R.string.stream_compose_selected_channel_menu_view_info),
+                titleColor = ChatTheme.colors.textHighEmphasis,
+                iconPainter = painterResource(id = R.drawable.stream_compose_ic_person),
+                iconColor = ChatTheme.colors.textLowEmphasis,
+                action = ViewInfo(selectedChannel),
+            )
+        } else {
+            null
+        },
+        if (optionVisibility.isLeaveChannelVisible && canLeaveChannel) {
             ChannelOptionState(
                 title = stringResource(id = R.string.stream_compose_selected_channel_menu_leave_group),
                 titleColor = ChatTheme.colors.textHighEmphasis,
@@ -131,8 +136,12 @@ public fun buildDefaultChannelOptionsState(
         } else {
             null
         },
-        buildMuteOption(canMuteChannel, isMuted, selectedChannel),
-        if (canDeleteChannel) {
+        buildMuteOption(
+            canMuteChannel = optionVisibility.isMuteChannelVisible && canMuteChannel,
+            isMuted = isMuted,
+            selectedChannel = selectedChannel
+        ),
+        if (optionVisibility.isDeleteChannelVisible && canDeleteChannel) {
             ChannelOptionState(
                 title = stringResource(id = R.string.stream_compose_selected_channel_menu_delete_conversation),
                 titleColor = ChatTheme.colors.errorAccent,
