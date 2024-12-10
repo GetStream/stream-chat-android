@@ -44,7 +44,7 @@ class ChannelListTest : ComposeScreenshotTest() {
                             messages = listOf(
                                 TestData.message1(),
                             ),
-                            lastMessageAt = TestData.date1(),
+                            channelLastMessageAt = TestData.date1(),
                         ),
                         typingUsers = emptyList(),
                     ),
@@ -57,7 +57,7 @@ class ChannelListTest : ComposeScreenshotTest() {
                             messages = listOf(
                                 TestData.message2(),
                             ),
-                            lastMessageAt = TestData.date2(),
+                            channelLastMessageAt = TestData.date2(),
                         ),
                         typingUsers = emptyList(),
                     ),
@@ -70,7 +70,7 @@ class ChannelListTest : ComposeScreenshotTest() {
                             messages = listOf(
                                 TestData.message3(),
                             ),
-                            lastMessageAt = TestData.date3(),
+                            channelLastMessageAt = TestData.date3(),
                         ),
                         typingUsers = emptyList(),
                     ),
@@ -83,7 +83,7 @@ class ChannelListTest : ComposeScreenshotTest() {
                             messages = listOf(
                                 TestData.message4(),
                             ),
-                            lastMessageAt = TestData.date4(),
+                            channelLastMessageAt = TestData.date4(),
                         ),
                         typingUsers = emptyList(),
                     ),
@@ -123,7 +123,7 @@ class ChannelListTest : ComposeScreenshotTest() {
                             messages = listOf(
                                 TestData.message1(),
                             ),
-                            lastMessageAt = TestData.date1(),
+                            channelLastMessageAt = TestData.date1(),
                         ),
                         typingUsers = emptyList(),
                     ),
@@ -136,7 +136,7 @@ class ChannelListTest : ComposeScreenshotTest() {
                             messages = listOf(
                                 TestData.message2(),
                             ),
-                            lastMessageAt = TestData.date2(),
+                            channelLastMessageAt = TestData.date2(),
                         ),
                         typingUsers = emptyList(),
                     ),
@@ -149,7 +149,7 @@ class ChannelListTest : ComposeScreenshotTest() {
                             messages = listOf(
                                 TestData.message3(),
                             ),
-                            lastMessageAt = TestData.date3(),
+                            channelLastMessageAt = TestData.date3(),
                         ),
                         typingUsers = emptyList(),
                     ),
@@ -162,7 +162,7 @@ class ChannelListTest : ComposeScreenshotTest() {
                             messages = listOf(
                                 TestData.message4(),
                             ),
-                            lastMessageAt = TestData.date4(),
+                            channelLastMessageAt = TestData.date4(),
                         ),
                         typingUsers = emptyList(),
                     ),

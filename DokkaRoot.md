@@ -11,15 +11,15 @@
 
 ### 🔗 Quick Links
 
-* [Register](https://getstream.io/chat/trial/): Create an account and get an API key for Stream Chat 
+* [Register](https://getstream.io/chat/trial/): Create an account and get an API key for Stream Chat
 > Small teams and individuals can also apply for a [Maker Account](https://getstream.io/maker-account/) that allows you to use Startup Plan for free.
 
 #### Tutorials
 * [Chat Tutorial](https://getstream.io/tutorials/android-chat/#kotlin): Learn the basics of the SDK by by building a simple messaging app (Kotlin or Java)
 
 #### Sample Apps
-* [UI Components sample app](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-ui-components-sample): Full messaging app with threads, reactions, optimistic UI updates and offline storage
-* [Compose UI Components sample app](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-compose-sample): Messaging sample app built with Jetpack Compose!
+* [UI Components sample app](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components-sample): Full messaging app with threads, reactions, optimistic UI updates and offline storage
+* [Compose UI Components sample app](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose-sample): Messaging sample app built with Jetpack Compose!
 * [Android Samples Repo](https://github.com/GetStream/Android-Samples): This repository contains sample projects, guides, tutorials, and links to helpful resources to help you get started with Android Stream SDK.
 
 #### Documentation
@@ -137,7 +137,7 @@ During development, you might want to see the SDK logs to investigate a specific
 
 To enable logging information, you can change the default log level when constructing the client.
 
-```kotlin 
+```kotlin
 val client = ChatClient.Builder(apiKey, applicationContext)
     // Change log level
     .logLevel(ChatLogLevel.ALL)
