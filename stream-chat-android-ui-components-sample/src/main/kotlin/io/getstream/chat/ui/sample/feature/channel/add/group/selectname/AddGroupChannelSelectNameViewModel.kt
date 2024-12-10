@@ -21,7 +21,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.CreateChannelRequest
+import io.getstream.chat.android.models.CreateChannelRequest
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.User
 import io.getstream.result.Result

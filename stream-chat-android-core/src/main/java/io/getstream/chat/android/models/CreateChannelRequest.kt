@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api.models
-
-import io.getstream.chat.android.models.MemberData
+package io.getstream.chat.android.models
 
 /**
  * Model holding data for creating a channel.

@@ -20,8 +20,6 @@ import androidx.annotation.CheckResult
 import androidx.lifecycle.LifecycleOwner
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.ChatEventListener
-import io.getstream.chat.android.client.api.models.AddMembersRequest
-import io.getstream.chat.android.client.api.models.CreateChannelRequest
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
@@ -89,10 +87,12 @@ import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.models.AddMembersRequest
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.CreateChannelRequest
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters

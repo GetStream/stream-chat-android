@@ -17,8 +17,8 @@
 package io.getstream.chat.android.client.plugin.listeners
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.CreateChannelRequest
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.CreateChannelRequest
 import io.getstream.chat.android.models.User
 import io.getstream.result.Result
 

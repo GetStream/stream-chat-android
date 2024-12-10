@@ -29,8 +29,6 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
-import io.getstream.chat.android.client.api.models.AddMembersRequest
-import io.getstream.chat.android.client.api.models.CreateChannelRequest
 import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
@@ -150,6 +148,7 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.AddMembersRequest
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
@@ -157,6 +156,7 @@ import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionData
 import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.CreateChannelRequest
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.FilterObject

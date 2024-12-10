@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.plugin
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.CreateChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
@@ -45,6 +44,7 @@ import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.CreateChannelRequest
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message

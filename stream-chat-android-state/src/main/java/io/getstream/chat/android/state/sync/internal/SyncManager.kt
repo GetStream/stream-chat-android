@@ -18,7 +18,6 @@ package io.getstream.chat.android.state.sync.internal
 
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.CreateChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.errors.isPermanent
@@ -41,6 +40,7 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.Tube
 import io.getstream.chat.android.core.utils.date.diff
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.CreateChannelRequest
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message

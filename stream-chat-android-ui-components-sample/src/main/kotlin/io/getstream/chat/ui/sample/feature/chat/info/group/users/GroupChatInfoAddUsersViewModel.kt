@@ -23,9 +23,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.AddMembersRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.models.AddMembersRequest
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
