@@ -30,6 +30,7 @@ public data class MessageListItemPayloadDiff(
     val mentions: Boolean,
     val footer: Boolean,
     val poll: Boolean,
+    val threadMode: Boolean,
 ) {
     public operator fun plus(other: MessageListItemPayloadDiff): MessageListItemPayloadDiff {
         return MessageListItemPayloadDiff(
@@ -46,6 +47,7 @@ public data class MessageListItemPayloadDiff(
             mentions = mentions || other.mentions,
             footer = footer || other.footer,
             poll = poll || other.poll,
+            threadMode = threadMode || other.threadMode,
         )
     }
 
@@ -66,6 +68,7 @@ public data class MessageListItemPayloadDiff(
             mentions = false,
             footer = false,
             poll = false,
+            threadMode = false,
         )
 
         public val FULL: MessageListItemPayloadDiff = MessageListItemPayloadDiff(
@@ -82,6 +85,7 @@ public data class MessageListItemPayloadDiff(
             mentions = true,
             footer = true,
             poll = true,
+            threadMode = true,
         )
     }
 }
