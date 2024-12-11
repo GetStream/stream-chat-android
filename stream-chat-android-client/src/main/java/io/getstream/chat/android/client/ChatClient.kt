@@ -3821,6 +3821,7 @@ internal constructor(
                 )
         }
 
+        @JvmStatic
         public val isInitialized: Boolean
             get() = instance != null
 
