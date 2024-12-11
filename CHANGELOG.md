@@ -7,6 +7,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- 🚨 Breaking change: ViewModels related with "searching messages" feature provide a `List<MessageResult>` instead of a `List<Message>`. [#5500](https://github.com/GetStream/stream-chat-android/pull/5500)
 
 ### ❌ Removed
 
@@ -75,8 +76,10 @@
 - The `StreamAttachmentFactories.defaultFactories()` method now accepts a `skipTypes` parameter to skip specific factory types. [#5494](https://github.com/GetStream/stream-chat-android/pull/5494)
 - Add `ChatTheme.keyboardBehaviour` property to customize different keyboard behaviours. [#5506](https://github.com/GetStream/stream-chat-android/pull/5506)
 - Add `MessageOptionItemVisibility.isBlockUserVisible` property to show/hide the block user option. [#5512](https://github.com/GetStream/stream-chat-android/pull/5512)
+- Add `SearchResultItemState.channel` property containing the cached info of the channel where the message was sent. [#5500](https://github.com/GetStream/stream-chat-android/pull/5500)
 
 ### ⚠️ Changed
+- 🚨 Breaking change: The `SearchResultNameFormatter.formatMessageTitle` method receives a `SearchResultItemState` instead of a `Message`. [#5500](https://github.com/GetStream/stream-chat-android/pull/5500)
 
 ### ❌ Removed
 
