@@ -558,6 +558,20 @@ public final class io/getstream/chat/android/ui/common/images/resizing/StreamCdn
 	public final fun defaultStreamCdnImageResizing ()Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;
 }
 
+public final class io/getstream/chat/android/ui/common/model/MessageResult {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Channel;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/Message;
+	public final fun component2 ()Lio/getstream/chat/android/models/Channel;
+	public final fun copy (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/ui/common/model/MessageResult;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/model/MessageResult;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Channel;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/model/MessageResult;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChannel ()Lio/getstream/chat/android/models/Channel;
+	public final fun getMessage ()Lio/getstream/chat/android/models/Message;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/common/notifications/StreamCoilUserIconBuilder : io/getstream/chat/android/client/notifications/handler/UserIconBuilder {
 	public static final field $stable I
 	public fun <init> (Landroid/content/Context;)V
