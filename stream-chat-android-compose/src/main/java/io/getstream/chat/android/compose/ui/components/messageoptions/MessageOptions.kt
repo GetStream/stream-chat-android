@@ -243,7 +243,7 @@ public fun defaultMessageOptionsState(
         } else {
             null
         },
-        if (!isOwnMessage) {
+        if (visibility.isBlockUserVisible && !isOwnMessage) {
             MessageOptionItemState(
                 title = R.string.stream_compose_block_user,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_clear),
