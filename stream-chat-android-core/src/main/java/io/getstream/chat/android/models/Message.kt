@@ -224,9 +224,14 @@ public data class Message(
     val skipEnrichUrl: Boolean = false,
 
     /**
-     * Contains moderation details of the message.
+     * Contains moderation details of the message. (used by moderation v1)
      */
     val moderationDetails: MessageModerationDetails? = null,
+
+    /**
+     * Contains moderation details of the message. (used by moderation v2)
+     */
+    val moderation: Moderation? = null,
 
     /**
      * Date when the message text was updated
@@ -333,6 +338,7 @@ public data class Message(
         append(", skipPushNotification=").append(skipPushNotification)
         append(", skipEnrichUrl=").append(skipEnrichUrl)
         if (moderationDetails != null) append(", moderationDetails=").append(moderationDetails)
+        if (moderation != null) append(", moderation=").append(moderation)
         if (poll != null) append(", poll=").append(poll)
         if (extraData.isNotEmpty()) append(", extraData=").append(extraData)
         append(")")
@@ -384,6 +390,7 @@ public data class Message(
         private var skipPushNotification: Boolean = false
         private var skipEnrichUrl: Boolean = false
         private var moderationDetails: MessageModerationDetails? = null
+        private var moderation: Moderation? = null
         private var messageTextUpdatedAt: Date? = null
         private var poll: Poll? = null
 
@@ -428,6 +435,7 @@ public data class Message(
             skipPushNotification = message.skipPushNotification
             skipEnrichUrl = message.skipEnrichUrl
             moderationDetails = message.moderationDetails
+            moderation = message.moderation
             messageTextUpdatedAt = message.messageTextUpdatedAt
             poll = message.poll
         }
@@ -497,6 +505,7 @@ public data class Message(
         public fun withModerationDetails(moderationDetails: MessageModerationDetails): Builder = apply {
             this.moderationDetails = moderationDetails
         }
+        public fun withModeration(moderation: Moderation): Builder = apply { this.moderation = moderation }
         public fun withMessageTextUpdatedAt(messageTextUpdatedAt: Date?): Builder = apply {
             this.messageTextUpdatedAt = messageTextUpdatedAt
         }
@@ -545,6 +554,7 @@ public data class Message(
                 skipPushNotification = skipPushNotification,
                 skipEnrichUrl = skipEnrichUrl,
                 moderationDetails = moderationDetails,
+                moderation = moderation,
                 messageTextUpdatedAt = messageTextUpdatedAt,
                 poll = poll,
             )
