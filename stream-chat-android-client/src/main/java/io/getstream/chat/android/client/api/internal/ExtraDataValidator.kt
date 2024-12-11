@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api.ErrorCall
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.CustomObject
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.result.Error
@@ -87,6 +88,20 @@ internal class ExtraDataValidator(
             .withExtraDataValidation(set)
     }
 
+    override fun addMembers(
+        channelType: String,
+        channelId: String,
+        members: List<MemberData>,
+        systemMessage: Message?,
+        hideHistory: Boolean?,
+        skipPush: Boolean?,
+    ): Call<Channel> {
+        return delegate
+            .addMembers(channelType, channelId, members, systemMessage, hideHistory, skipPush)
+            .withExtraDataValidation(systemMessage)
+            .validateMembersExtraData(members)
+    }
+
     override fun partialUpdateMember(
         channelType: String,
         channelId: String,
@@ -127,6 +142,14 @@ internal class ExtraDataValidator(
         }
     }
 
+    private fun Call<Channel>.validateMembersExtraData(members: List<MemberData>): Call<Channel> {
+        val (obj, reserved) = members.findReserved()
+        return when (obj == null || reserved == null) {
+            true -> this
+            else -> ErrorCall(scope, Error.GenericError(message = obj.composeErrorMessage(reserved)))
+        }
+    }
+
     private inline fun <reified T : CustomObject> Call<T>.withExtraDataValidation(
         extraData: Map<String, Any>,
     ): Call<T> {
@@ -158,6 +181,7 @@ internal class ExtraDataValidator(
             is Message -> extraData.keys.filter(reservedInChannelPredicate)
             is User -> extraData.keys.filter(reservedInChannelPredicate)
             is Member -> extraData.keys.filter(reservedInMemberPredicate)
+            is MemberData -> extraData.keys.filter(reservedInMemberPredicate)
             else -> emptyList()
         }
     }
@@ -168,6 +192,7 @@ internal class ExtraDataValidator(
             Message::class -> keys.filter(reservedInMessagePredicate)
             User::class -> keys.filter(reservedInUserPredicate)
             Member::class -> keys.filter(reservedInMemberPredicate)
+            MemberData::class -> keys.filter(reservedInMemberPredicate)
             else -> emptyList()
         }
     }
@@ -182,6 +207,7 @@ internal class ExtraDataValidator(
             is Message -> "message"
             is User -> "user"
             is Member -> "member"
+            is MemberData -> "member"
             else -> ""
         }
     }
@@ -191,6 +217,8 @@ internal class ExtraDataValidator(
             is Channel -> id
             is Message -> id
             is User -> id
+            is Member -> getUserId()
+            is MemberData -> userId
             else -> ""
         }
     }
@@ -227,15 +255,16 @@ internal class ExtraDataValidator(
         )
 
         private val reservedInMember = setOf(
+            "user_id",
             "user",
             "created_at",
             "updated_at",
+            "deleted_at",
             "invited",
             "invite_accepted_at",
             "invite_rejected_at",
             "shadow_banned",
             "banned",
-            "channel_role",
             "notifications_muted",
             "status",
             "ban_expires",

@@ -101,7 +101,7 @@ public data class Member(
             "channel_role", "channelRole" -> channelRole
             "notifications_muted", "notificationsMuted" -> notificationsMuted
             "status" -> status
-            else -> null
+            else -> extraData[fieldName] as? Comparable<*>
         }
     }
 }

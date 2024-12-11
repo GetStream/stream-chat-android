@@ -16,8 +16,14 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `CreateChannelListener::onCreateChannelRequest(String, String, CreateChannelRequest, User)` for performing actions before launching a request for creating a channel. [#5502](https://github.com/GetStream/stream-chat-android/pull/5502)
+- Add `ChatClient::createChannel(String, String, CreateChannelRequest)` for creating a channel with custom data for its members. [#5502](https://github.com/GetStream/stream-chat-android/pull/5502)
+- Add `ChannelClient::createChannel(CreateChannelRequest)` for creating a channel with custom data for its members. [#5502](https://github.com/GetStream/stream-chat-android/pull/5502)
+- Add `ChatClient::addMembers(String, String, AddMembersRequest)` for adding members with custom data to a channel. [#5502](https://github.com/GetStream/stream-chat-android/pull/5502)
+- Add `ChannelClient::addMembers(AddMembersRequest)` for adding members with custom data to a channel. [#5502](https://github.com/GetStream/stream-chat-android/pull/5502)
 
 ### ⚠️ Changed
+- Deprecate `CreateChannelListener::onCreateChannelRequest(String, String, List<String>, Map<String, Any>, User)` in favor of the new `CreateChannelListener::onCreateChannelRequest(String, String, CreateChannelRequest, User)`. [#5502](https://github.com/GetStream/stream-chat-android/pull/5502)
 
 ### ❌ Removed
 

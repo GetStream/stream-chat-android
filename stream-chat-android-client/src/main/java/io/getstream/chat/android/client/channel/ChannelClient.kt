@@ -87,10 +87,12 @@ import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.models.AddMembersRequest
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.CreateChannelRequest
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
@@ -152,6 +154,23 @@ public class ChannelClient internal constructor(
             channelId = channelId,
             memberIds = memberIds,
             extraData = extraData,
+        )
+    }
+
+    /**
+     * Creates the id-based channel.
+     * @see [ChatClient.createChannel]
+     *
+     * @param request The [CreateChannelRequest] holding the data required for creating a channel.
+     *
+     * @return Executable async [Call] responsible for creating the channel.
+     */
+    @CheckResult
+    public fun create(request: CreateChannelRequest): Call<Channel> {
+        return client.createChannel(
+            channelType = channelType,
+            channelId = channelId,
+            request = request,
         )
     }
 
@@ -695,6 +714,23 @@ public class ChannelClient internal constructor(
             systemMessage = systemMessage,
             hideHistory = hideHistory,
             skipPush = skipPush,
+        )
+    }
+
+    /**
+     * Adds members with extra data to a given channel.
+     * @see [ChatClient.addMembers]
+     *
+     * @param request The [AddMembersRequest] holding data about the members to be added.
+     *
+     * @return Executable async [Call] responsible for adding the members.
+     */
+    @CheckResult
+    public fun addMembers(request: AddMembersRequest): Call<Channel> {
+        return client.addMembers(
+            channelType = channelType,
+            channelId = channelId,
+            request = request,
         )
     }
 
