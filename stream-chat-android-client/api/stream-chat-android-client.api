@@ -92,6 +92,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public static final fun instance ()Lio/getstream/chat/android/client/ChatClient;
 	public final fun inviteMembers (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;)Lio/getstream/result/call/Call;
 	public static synthetic fun inviteMembers$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;ILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public static final fun isInitialized ()Z
 	public final fun isSocketConnected ()Z
 	public final fun keystroke (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public static synthetic fun keystroke$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/result/call/Call;

@@ -228,6 +228,11 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        if (ChatClient.isInitialized.not()) {
+            finish()
+            return
+        }
+
         uiState = savedInstanceState?.getParcelable(
             KeyMediaGalleryPreviewActivityState,
         ) ?: intent?.getParcelableExtra(KeyMediaGalleryPreviewActivityState)
