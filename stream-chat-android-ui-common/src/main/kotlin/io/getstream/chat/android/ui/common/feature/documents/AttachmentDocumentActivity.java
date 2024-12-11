@@ -47,6 +47,11 @@ public class AttachmentDocumentActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!ChatClient.isInitialized()) {
+            finish();
+            return;
+        }
+
         setContentView(R.layout.stream_activity_attachment_document);
         rootView = findViewById(R.id.rootView);
         webView = findViewById(R.id.webView);

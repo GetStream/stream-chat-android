@@ -34,6 +34,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
@@ -116,6 +117,11 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (ChatClient.isInitialized.not()) {
+            finish()
+            return
+        }
 
         binding = StreamUiActivityAttachmentGalleryBinding.inflate(streamThemeInflater)
         setContentView(binding.root)
