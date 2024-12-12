@@ -3,6 +3,20 @@ apply plugin: 'jacoco'
 def isCore = (name == 'stream-chat-android-core')
 def testTask = isCore ? "test" : "testDebugUnitTest"
 def jacocoResults = "${buildDir}/reports/jacoco/report.xml"
+def ignoredModules = [
+        'stream-chat-android-ai-assistant',
+        'stream-chat-android-previewdata',
+        'stream-chat-android-docs',
+        'stream-chat-android-benchmark',
+        'stream-chat-android-compose-sample',
+        'stream-chat-android-e2e-test',
+        'stream-chat-android-test',
+        'stream-chat-android-ui-guides',
+        'stream-chat-android-ui-components-sample',
+        'stream-chat-android-pushprovider-firebase',
+        'stream-chat-android-client-test',
+        'stream-chat-android-ui-uitests'
+]
 
 if (hasProperty('android')) {
     android {
@@ -26,7 +40,6 @@ afterEvaluate {
         dependsOn testTask
 
         reports {
-            html.required.set(false)
             xml.required.set(true)
             xml.outputLocation.set(file(jacocoResults))
         }
@@ -46,6 +59,9 @@ afterEvaluate {
                 '**/Manifest*.*',
                 '**/*Test*.*'
         ]
+        ignoredModules.each {
+            excludeFilter << "**/${it}/**"
+        }
 
         def sources = isCore ? sourceSets.main.java.srcDirs : android.sourceSets.main.java.srcDirs
         sourceDirectories.setFrom(files(sources))
@@ -62,20 +78,6 @@ afterEvaluate {
     }
 }
 
-def ignoredModules = [
-        'stream-chat-android-docs',
-        'stream-chat-android-benchmark',
-        'stream-chat-android-compose-sample',
-        'stream-chat-android-e2e-test',
-        'stream-chat-android-previewdata',
-        'stream-chat-android-test',
-        'stream-chat-android-ui-guides',
-        'stream-chat-android-ui-components-sample',
-        'stream-chat-android-pushprovider-firebase',
-        'stream-chat-android-ai-assistant',
-        'stream-chat-android-client-test',
-        'stream-chat-android-ui-uitests'
-]
 if (!ignoredModules.contains(name)) {
     apply plugin: "org.sonarqube"
 
