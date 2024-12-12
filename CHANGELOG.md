@@ -44,6 +44,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- The `ChannelState` is updated with new members after querying member with `ChatClient::queryMembers`. [#5517](https://github.com/GetStream/stream-chat-android/pull/5517)  
 
 ### ✅ Added
 
