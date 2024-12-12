@@ -376,12 +376,11 @@ internal constructor(
             )
     }
 
-    @PublishedApi
     @InternalStreamChatApi
     @StreamHandsOff(
         "This method is used to avoid race-condition between plugin initialization and dependency resolution.",
     )
-    internal fun awaitInitializationState(timeoutMilliseconds: Long): InitializationState? {
+    public fun awaitInitializationState(timeoutMilliseconds: Long): InitializationState? {
         var initState: InitializationState? = clientState.initializationState.value
         var spendTime = 0L
         inheritScope { Job(it) }.launch {
