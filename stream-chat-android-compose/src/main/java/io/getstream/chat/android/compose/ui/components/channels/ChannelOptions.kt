@@ -192,13 +192,13 @@ private fun buildPinOption(
         R.string.stream_compose_selected_channel_menu_pin_channel,
         R.drawable.stream_compose_ic_pin,
         PinChannel(selectedChannel),
-    ).also { println("JcLog: wasn't pinned at: ${selectedChannel.membership?.pinnedAt}") }
+    )
 
     true -> Triple(
         R.string.stream_compose_selected_channel_menu_unpin_channel,
         R.drawable.stream_compose_ic_unpin,
         UnpinChannel(selectedChannel),
-    ).also { println("JcLog: was pinned at: ${selectedChannel.membership?.pinnedAt}") }
+    )
 
     null -> null
 }?.let {
