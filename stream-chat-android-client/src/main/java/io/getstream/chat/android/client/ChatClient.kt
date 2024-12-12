@@ -355,7 +355,15 @@ internal constructor(
     @Suppress("ThrowsCount")
     internal inline fun <reified P : DependencyResolver, reified T : Any> resolvePluginDependency(): T {
         StreamLog.v(TAG) { "[resolvePluginDependency] P: ${P::class.simpleName}, T: ${T::class.simpleName}" }
-        val initState = clientState.initializationState.value
+        var initState: InitializationState? = clientState.initializationState.value
+        inheritScope { Job(it) }.launch {
+          initState = withTimeoutOrNull(10000) {
+                clientState.initializationState.first { it == InitializationState.COMPLETE }
+            }
+        }
+        while (initState == InitializationState.INITIALIZING) {
+            java.lang.Thread.sleep(100)
+        }
         if (initState != InitializationState.COMPLETE) {
             StreamLog.e(TAG) { "[resolvePluginDependency] failed (initializationState is not COMPLETE): $initState " }
             throw IllegalStateException("ChatClient::connectUser() must be called before resolving any dependency")
