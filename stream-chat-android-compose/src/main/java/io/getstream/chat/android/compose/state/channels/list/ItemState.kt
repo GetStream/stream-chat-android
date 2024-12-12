@@ -45,9 +45,12 @@ public sealed class ItemState {
      * Represents each search result item we show in the list of channels.
      *
      * @param message The message to show.
+     * @param channel The channel where the message was sent.
+     * It can be null if the channel was not found on the local cache.
      */
     public data class SearchResultItemState(
         val message: Message,
+        val channel: Channel?,
     ) : ItemState() {
         override val key: String = message.id
     }

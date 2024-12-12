@@ -21,6 +21,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.chat.android.test.callFrom
+import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.call.Call
@@ -80,6 +81,7 @@ internal class PinnedMessageListControllerTest {
         // given
         val pinnedMessages = generatePinnedMessages(count = 1)
         val returnValue = callFrom { pinnedMessages }
+        val expectedResult = pinnedMessages.map { MessageResult(it, null) }
         val controller = PinnedMessageListController(cid, mockChannelClient(returnValue))
         // when
         val loadingState = controller.state.value
@@ -93,7 +95,7 @@ internal class PinnedMessageListControllerTest {
         // verify loaded state
         loadedState.canLoadMore `should be equal to` false
         loadedState.isLoading `should be equal to` false
-        loadedState.results `should be equal to` pinnedMessages
+        loadedState.results `should be equal to` expectedResult
     }
 
     @Test
@@ -101,6 +103,7 @@ internal class PinnedMessageListControllerTest {
         // given
         val pinnedMessages = generatePinnedMessages(count = 30)
         val returnValue = callFrom { pinnedMessages }
+        val expectedResult = pinnedMessages.map { MessageResult(it, null) }
         val controller = PinnedMessageListController(cid, mockChannelClient(returnValue))
         // when
         val loadingState = controller.state.value
@@ -114,7 +117,7 @@ internal class PinnedMessageListControllerTest {
         // verify loaded state
         loadedState.canLoadMore `should be equal to` true
         loadedState.isLoading `should be equal to` false
-        loadedState.results `should be equal to` pinnedMessages
+        loadedState.results `should be equal to` expectedResult
     }
 
     @Test
@@ -122,6 +125,7 @@ internal class PinnedMessageListControllerTest {
         // given
         val pinnedMessages = generatePinnedMessages(count = 1)
         val returnValue = callFrom { pinnedMessages }
+        val expectedResult = pinnedMessages.map { MessageResult(it, null) }
         val channelClient = mockChannelClient(returnValue)
         val controller = PinnedMessageListController(cid, channelClient)
         // when
@@ -132,7 +136,7 @@ internal class PinnedMessageListControllerTest {
         // verify loaded state
         loadedState.canLoadMore `should be equal to` false
         loadedState.isLoading `should be equal to` false
-        loadedState.results `should be equal to` pinnedMessages
+        loadedState.results `should be equal to` expectedResult
         // verify channelClient.getPinnedMessages was called only twice
         verify(channelClient, times(1)).getPinnedMessages(any(), any(), any())
     }

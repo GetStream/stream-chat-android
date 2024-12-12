@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.chat.android.ui.databinding.StreamUiPinnedMessageListViewBinding
 import io.getstream.chat.android.ui.feature.pinned.list.internal.PinnedMessageListAdapter
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
@@ -90,12 +91,12 @@ public class PinnedMessageListView : ViewFlipper {
         )
     }
 
-    public fun showMessages(messages: List<Message>) {
-        val isEmpty = messages.isEmpty()
+    public fun showMessages(messageResults: List<MessageResult>) {
+        val isEmpty = messageResults.isEmpty()
 
         displayedChild = if (isEmpty) Flipper.EMPTY else Flipper.RESULTS
 
-        adapter.submitList(messages)
+        adapter.submitList(messageResults)
         scrollListener.enablePagination()
     }
 
