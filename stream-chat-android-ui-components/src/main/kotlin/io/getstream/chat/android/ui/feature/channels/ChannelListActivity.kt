@@ -23,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentContainerBinding
 
@@ -35,6 +36,11 @@ public open class ChannelListActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (ChatClient.isInitialized.not()) {
+            finish()
+            return
+        }
         binding = StreamUiFragmentContainerBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setupEdgeToEdge()

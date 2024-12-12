@@ -156,6 +156,9 @@ private val LocalMessageAlignmentProvider = compositionLocalOf<MessageAlignmentP
 private val LocalMessageOptionsTheme = compositionLocalOf<MessageOptionsTheme> {
     error("No MessageOptionsTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+private val LocalChannelOptionsTheme = compositionLocalOf<ChannelOptionsTheme> {
+    error("No ChannelOptionsTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
 private val LocalMessageOptionsUserReactionAlignment = compositionLocalOf<MessageOptionsUserReactionAlignment> {
     error(
         "No LocalMessageOptionsUserReactionAlignment provided! Make sure to wrap all usages of Stream components " +
@@ -313,6 +316,7 @@ public fun ChatTheme(
     imageAssetTransformer: ImageAssetTransformer = DefaultImageAssetTransformer,
     messageAlignmentProvider: MessageAlignmentProvider = MessageAlignmentProvider.defaultMessageAlignmentProvider(),
     messageOptionsTheme: MessageOptionsTheme = MessageOptionsTheme.defaultTheme(),
+    channelOptionsTheme: ChannelOptionsTheme = ChannelOptionsTheme.defaultTheme(),
     messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment = MessageOptionsUserReactionAlignment.END,
     attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory> =
         if (useDefaultSystemMediaPicker) {
@@ -410,6 +414,7 @@ public fun ChatTheme(
         LocalStreamImageAssetTransformer provides imageAssetTransformer,
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
         LocalMessageOptionsTheme provides messageOptionsTheme,
+        LocalChannelOptionsTheme provides channelOptionsTheme,
         LocalMessageOptionsUserReactionAlignment provides messageOptionsUserReactionAlignment,
         LocalAttachmentsPickerTabFactories provides attachmentsPickerTabFactories,
         LocalVideoThumbnailsEnabled provides videoThumbnailsEnabled,
@@ -609,6 +614,14 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalMessageOptionsTheme.current
+
+    /**
+     * Retrieves the current [ChannelOptionsTheme] at the call site's position in the hierarchy.
+     */
+    public val channelOptionsTheme: ChannelOptionsTheme
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalChannelOptionsTheme.current
 
     /**
      * Retrieves the current [MessageOptionsUserReactionAlignment] at the call site's position in the hierarchy.
