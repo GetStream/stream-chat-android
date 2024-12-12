@@ -78,6 +78,7 @@
 - Fix keyboard not closing when opening the attachments picker from `MessagesScreen`. [#5506](https://github.com/GetStream/stream-chat-android/pull/5506)
 
 ### ⬆️ Improved
+- Add support for partial media access in `AttachmentsPickerImagesTabFactory` and `AttachmentsPickerFilesTabFactory` for Android 14+. [#5518](https://github.com/GetStream/stream-chat-android/pull/5518)
 
 ### ✅ Added
 - The `StreamAttachmentFactories.defaultFactories()` method now accepts a `skipTypes` parameter to skip specific factory types. [#5494](https://github.com/GetStream/stream-chat-android/pull/5494)
