@@ -555,28 +555,30 @@ public class MessageListController(
                     }
             }
             .onFirst { channelUserRead ->
-                val unreadMessages = if (channelUserRead.unreadMessages == 0) {
-                    emptyList()
+                // Don't show the label if no unread messages in the channel, or the controller is started for a thread
+                val unreadLabel = if (isStartedForThread || channelUserRead.unreadMessages == 0) {
+                    null
                 } else {
-                    (channelState.value?.messages?.value ?: emptyList())
+                    val unreadMessages = (channelState.value?.messages?.value ?: emptyList())
                         .fold(emptyList<Message>()) { acc, message ->
                             when {
                                 channelUserRead.lastReadMessageId == message.id -> emptyList()
                                 else -> acc + message
                             }
                         }
+                    channelUserRead.lastReadMessageId
+                        ?.takeUnless { unreadMessages.isEmpty() }
+                        ?.takeUnless { unreadMessages.lastOrNull()?.id == it }
+                        ?.let { lastReadMessageId ->
+                            UnreadLabel(
+                                unreadCount = channelUserRead.unreadMessages,
+                                lastReadMessageId = lastReadMessageId,
+                                buttonVisibility = shouldShowButton &&
+                                    unreadMessages.any { !it.isDeleted() },
+                            )
+                        }
                 }
-                unreadLabelState.value = channelUserRead.lastReadMessageId
-                    ?.takeUnless { unreadMessages.isEmpty() }
-                    ?.takeUnless { unreadMessages.lastOrNull()?.id == it }
-                    ?.let { lastReadMessageId ->
-                        UnreadLabel(
-                            unreadCount = channelUserRead.unreadMessages,
-                            lastReadMessageId = lastReadMessageId,
-                            buttonVisibility = shouldShowButton &&
-                                unreadMessages.any { !it.isDeleted() },
-                        )
-                    }
+                unreadLabelState.value = unreadLabel
             }.launchIn(scope)
     }
 
