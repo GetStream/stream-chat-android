@@ -5,6 +5,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `Channel.membership.pinnedAt` property notifiying if/when a channel was pinned by the current user. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
+- Add `Channel.membership.archiveAt` property notifiying if/when a channel was archived by the current user. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
 
 ### ⚠️ Changed
 
@@ -16,6 +18,10 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `ChatClient.pinChannel` and `ChannelClient.unpinChannel` methods to pin/unpin a channel. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
+- Add `ChatClient.archiveChannel` and `ChannelClient.unarchiveChannel` methods to archive/unarchive a channel. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
+- Add `ChannelClient.pinChannel` and `ChannelClient.unpinChannel` methods to pin/unpin a channel. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
+- Add `ChannelClient.archiveChannel` and `ChannelClient.unarchiveChannel` methods to archive/unarchive a channel. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
 
 ### ⚠️ Changed
 
@@ -75,6 +81,7 @@
 - The `StreamAttachmentFactories.defaultFactories()` method now accepts a `skipTypes` parameter to skip specific factory types. [#5494](https://github.com/GetStream/stream-chat-android/pull/5494)
 - Add `ChatTheme.keyboardBehaviour` property to customize different keyboard behaviours. [#5506](https://github.com/GetStream/stream-chat-android/pull/5506)
 - Add `MessageOptionItemVisibility.isBlockUserVisible` property to show/hide the block user option. [#5512](https://github.com/GetStream/stream-chat-android/pull/5512)
+- Add `ChatTheme.channelOptionsTheme` property to customize the channel options. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513) 
 
 ### ⚠️ Changed
 

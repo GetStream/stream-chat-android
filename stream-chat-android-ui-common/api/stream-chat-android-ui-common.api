@@ -564,6 +564,18 @@ public final class io/getstream/chat/android/ui/common/notifications/StreamCoilU
 	public fun buildIcon (Lio/getstream/chat/android/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
+public final class io/getstream/chat/android/ui/common/state/channels/actions/ArchiveChannel : io/getstream/chat/android/ui/common/state/channels/actions/ChannelAction {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/models/Channel;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/Channel;
+	public final fun copy (Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/ui/common/state/channels/actions/ArchiveChannel;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channels/actions/ArchiveChannel;Lio/getstream/chat/android/models/Channel;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channels/actions/ArchiveChannel;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChannel ()Lio/getstream/chat/android/models/Channel;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/common/state/channels/actions/Cancel : io/getstream/chat/android/ui/common/state/channels/actions/ChannelAction {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channels/actions/Cancel;
@@ -612,12 +624,48 @@ public final class io/getstream/chat/android/ui/common/state/channels/actions/Mu
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/ui/common/state/channels/actions/PinChannel : io/getstream/chat/android/ui/common/state/channels/actions/ChannelAction {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/models/Channel;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/Channel;
+	public final fun copy (Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/ui/common/state/channels/actions/PinChannel;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channels/actions/PinChannel;Lio/getstream/chat/android/models/Channel;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channels/actions/PinChannel;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChannel ()Lio/getstream/chat/android/models/Channel;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/channels/actions/UnarchiveChannel : io/getstream/chat/android/ui/common/state/channels/actions/ChannelAction {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/models/Channel;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/Channel;
+	public final fun copy (Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/ui/common/state/channels/actions/UnarchiveChannel;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channels/actions/UnarchiveChannel;Lio/getstream/chat/android/models/Channel;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channels/actions/UnarchiveChannel;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChannel ()Lio/getstream/chat/android/models/Channel;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/common/state/channels/actions/UnmuteChannel : io/getstream/chat/android/ui/common/state/channels/actions/ChannelAction {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/models/Channel;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/Channel;
 	public final fun copy (Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/ui/common/state/channels/actions/UnmuteChannel;
 	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channels/actions/UnmuteChannel;Lio/getstream/chat/android/models/Channel;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channels/actions/UnmuteChannel;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChannel ()Lio/getstream/chat/android/models/Channel;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/channels/actions/UnpinChannel : io/getstream/chat/android/ui/common/state/channels/actions/ChannelAction {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/models/Channel;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/Channel;
+	public final fun copy (Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/ui/common/state/channels/actions/UnpinChannel;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channels/actions/UnpinChannel;Lio/getstream/chat/android/models/Channel;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channels/actions/UnpinChannel;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getChannel ()Lio/getstream/chat/android/models/Channel;
 	public fun hashCode ()I

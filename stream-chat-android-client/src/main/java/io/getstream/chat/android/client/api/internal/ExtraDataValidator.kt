@@ -239,6 +239,8 @@ internal class ExtraDataValidator(
             "notifications_muted",
             "status",
             "ban_expires",
+            "pinned_at",
+            "archived_at",
         )
 
         private val reservedInChannelPredicate: (String) -> Boolean = reservedInChannel::contains

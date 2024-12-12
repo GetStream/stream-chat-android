@@ -598,6 +598,42 @@ public class ChannelListViewModel(
     }
 
     /**
+     * Pins a channel.
+     *
+     * @param channel The channel to pin.
+     */
+    public fun pinChannel(channel: Channel) {
+        dismissChannelAction()
+        chatClient.pinChannel(channel.type, channel.id).enqueue()
+    }
+
+    /**
+     * Unpins a channel.
+     *
+     * @param channel The channel to unpin.
+     */
+    public fun unpinChannel(channel: Channel) {
+        dismissChannelAction()
+        chatClient.unpinChannel(channel.type, channel.id).enqueue()
+    }
+
+    public fun archiveChannel(channel: Channel) {
+        dismissChannelAction()
+        chatClient.archiveChannel(
+            channel.type,
+            channel.id,
+        ).enqueue()
+    }
+
+    public fun unarchiveChannel(channel: Channel) {
+        dismissChannelAction()
+        chatClient.unarchiveChannel(
+            channel.type,
+            channel.id,
+        ).enqueue()
+    }
+
+    /**
      * Unmutes a channel.
      *
      * @param channel The channel to unmute.
