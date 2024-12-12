@@ -150,6 +150,7 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
@@ -359,7 +360,7 @@ internal constructor(
     @Suppress("ThrowsCount")
     internal inline fun <reified P : DependencyResolver, reified T : Any> resolvePluginDependency(): T {
         StreamLog.v(TAG) { "[resolvePluginDependency] P: ${P::class.simpleName}, T: ${T::class.simpleName}" }
-        val initState = clientState.initializationState.value
+        val initState = awaitInitializationState(RESOLVE_DEPENDENCY_TIMEOUT)
         if (initState != InitializationState.COMPLETE) {
             StreamLog.e(TAG) { "[resolvePluginDependency] failed (initializationState is not COMPLETE): $initState " }
             throw IllegalStateException("ChatClient::connectUser() must be called before resolving any dependency")
@@ -373,6 +374,26 @@ internal constructor(
             ?: throw IllegalStateException(
                 "Dependency '${T::class.qualifiedName}' was not resolved by plugin '${P::class.qualifiedName}'",
             )
+    }
+
+    @PublishedApi
+    @InternalStreamChatApi
+    @StreamHandsOff(
+        "This method is used to avoid race-condition between plugin initialization and dependency resolution.",
+    )
+    internal fun awaitInitializationState(timeoutMilliseconds: Long): InitializationState? {
+        var initState: InitializationState? = clientState.initializationState.value
+        var spendTime = 0L
+        inheritScope { Job(it) }.launch {
+            initState = withTimeoutOrNull(timeoutMilliseconds) {
+                clientState.initializationState.first { it == InitializationState.COMPLETE }
+            }
+        }
+        while (initState == InitializationState.INITIALIZING && spendTime < timeoutMilliseconds) {
+            java.lang.Thread.sleep(INITIALIZATION_DELAY)
+            spendTime += INITIALIZATION_DELAY
+        }
+        return initState
     }
 
     /**
@@ -3947,6 +3968,7 @@ internal constructor(
         private const val MESSAGE_ACTION_SHUFFLE = "shuffle"
         private val THIRTY_DAYS_IN_MILLISECONDS = 30.days.inWholeMilliseconds
         private const val INITIALIZATION_DELAY = 100L
+        public const val RESOLVE_DEPENDENCY_TIMEOUT: Long = 10_000L
 
         private const val ARG_TYPING_PARENT_ID = "parent_id"
 
