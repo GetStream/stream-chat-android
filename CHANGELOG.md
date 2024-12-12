@@ -7,8 +7,10 @@
 ### ✅ Added
 - Add `Channel.membership.pinnedAt` property notifiying if/when a channel was pinned by the current user. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
 - Add `Channel.membership.archiveAt` property notifiying if/when a channel was archived by the current user. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
+- Add support for moderation V2. Add `moderation` field in `Message` model to support the new version of moderation. [#5493](https://github.com/GetStream/stream-chat-android/pull/5493)
 
 ### ⚠️ Changed
+- 🚨 Breaking change: ViewModels related with "searching messages" feature provide a `List<MessageResult>` instead of a `List<Message>`. [#5500](https://github.com/GetStream/stream-chat-android/pull/5500)
 
 ### ❌ Removed
 
@@ -83,8 +85,10 @@
 - Add `ChatTheme.keyboardBehaviour` property to customize different keyboard behaviours. [#5506](https://github.com/GetStream/stream-chat-android/pull/5506)
 - Add `MessageOptionItemVisibility.isBlockUserVisible` property to show/hide the block user option. [#5512](https://github.com/GetStream/stream-chat-android/pull/5512)
 - Add `ChatTheme.channelOptionsTheme` property to customize the channel options. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513) 
+- Add `SearchResultItemState.channel` property containing the cached info of the channel where the message was sent. [#5500](https://github.com/GetStream/stream-chat-android/pull/5500)
 
 ### ⚠️ Changed
+- 🚨 Breaking change: The `SearchResultNameFormatter.formatMessageTitle` method receives a `SearchResultItemState` instead of a `Message`. [#5500](https://github.com/GetStream/stream-chat-android/pull/5500)
 
 ### ❌ Removed
 

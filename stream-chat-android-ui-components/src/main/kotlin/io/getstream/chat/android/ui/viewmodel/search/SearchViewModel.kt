@@ -24,6 +24,7 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.utils.Event
+import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -35,7 +36,9 @@ import kotlinx.coroutines.launch
 /**
  * ViewModel responsible for searching for messages that match a particular search query.
  */
-public class SearchViewModel : ViewModel() {
+public class SearchViewModel(
+    private val chatClient: ChatClient = ChatClient.instance(),
+) : ViewModel() {
 
     private val _state: MutableLiveData<State> = MutableLiveData(State())
 
@@ -133,11 +136,17 @@ public class SearchViewModel : ViewModel() {
     /**
      * Notifies the UI about the search results and enables the pagination.
      */
-    private fun handleSearchMessageSuccess(messages: List<Message>) {
+    private suspend fun handleSearchMessageSuccess(messages: List<Message>) {
         logger.d { "Found messages: ${messages.size}" }
         val currentState = _state.value!!
+        val channels = chatClient.repositoryFacade.selectChannels(messages.map { it.cid })
         _state.value = currentState.copy(
-            results = currentState.results + messages,
+            results = currentState.results + messages.map {
+                MessageResult(
+                    message = it,
+                    channel = channels.firstOrNull { channel -> channel.cid == it.cid },
+                )
+            },
             isLoading = false,
             isLoadingMore = false,
             canLoadMore = messages.size == QUERY_LIMIT,
@@ -165,9 +174,9 @@ public class SearchViewModel : ViewModel() {
      */
     private suspend fun searchMessages(query: String, offset: Int): Result<List<Message>> {
         logger.d { "Searching for \"$query\" with offset: $offset" }
-        val currentUser = requireNotNull(ChatClient.instance().clientState.user.value)
+        val currentUser = requireNotNull(chatClient.clientState.user.value)
         // TODO: use the pagination based on "limit" nad "next" params here
-        return ChatClient.instance()
+        return chatClient
             .searchMessages(
                 channelFilter = Filters.`in`("members", listOf(currentUser.id)),
                 messageFilter = Filters.autocomplete("text", query),
@@ -190,7 +199,7 @@ public class SearchViewModel : ViewModel() {
     public data class State(
         val query: String = "",
         val canLoadMore: Boolean = true,
-        val results: List<Message> = emptyList(),
+        val results: List<MessageResult> = emptyList(),
         val isLoading: Boolean = false,
         val isLoadingMore: Boolean = false,
     )

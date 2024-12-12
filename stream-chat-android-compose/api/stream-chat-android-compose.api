@@ -104,11 +104,13 @@ public final class io/getstream/chat/android/compose/state/channels/list/ItemSta
 
 public final class io/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState : io/getstream/chat/android/compose/state/channels/list/ItemState {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/models/Message;)V
+	public fun <init> (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Channel;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/Message;
-	public final fun copy (Lio/getstream/chat/android/models/Message;)Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;Lio/getstream/chat/android/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;
+	public final fun component2 ()Lio/getstream/chat/android/models/Channel;
+	public final fun copy (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Channel;ILjava/lang/Object;)Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChannel ()Lio/getstream/chat/android/models/Channel;
 	public fun getKey ()Ljava/lang/String;
 	public final fun getMessage ()Lio/getstream/chat/android/models/Message;
 	public fun hashCode ()I
@@ -743,10 +745,8 @@ public final class io/getstream/chat/android/compose/ui/channels/list/Composable
 public final class io/getstream/chat/android/compose/ui/channels/list/ComposableSingletons$SearchResultItemKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/channels/list/ComposableSingletons$SearchResultItemKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function4;
-	public static field lambda-2 Lkotlin/jvm/functions/Function4;
 	public fun <init> ()V
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
-	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
 }
 
 public final class io/getstream/chat/android/compose/ui/channels/list/SearchResultItemKt {
@@ -3420,7 +3420,7 @@ public final class io/getstream/chat/android/compose/ui/util/ReactionIconFactory
 
 public abstract interface class io/getstream/chat/android/compose/ui/util/SearchResultNameFormatter {
 	public static final field Companion Lio/getstream/chat/android/compose/ui/util/SearchResultNameFormatter$Companion;
-	public abstract fun formatMessageTitle (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;)Landroidx/compose/ui/text/AnnotatedString;
+	public abstract fun formatMessageTitle (Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)Landroidx/compose/ui/text/AnnotatedString;
 }
 
 public final class io/getstream/chat/android/compose/ui/util/SearchResultNameFormatter$Companion {

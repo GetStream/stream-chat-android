@@ -25,6 +25,7 @@ import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageModerationAction
 import io.getstream.chat.android.models.MessageType
+import io.getstream.chat.android.models.ModerationAction
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import java.util.UUID
@@ -175,7 +176,8 @@ public fun Message.isMine(currentUserId: String?): Boolean = currentUserId == us
  * @return If the message has moderation bounce action.
  */
 @InternalStreamChatApi
-public fun Message.isModerationBounce(): Boolean = moderationDetails?.action == MessageModerationAction.bounce
+public fun Message.isModerationBounce(): Boolean =
+    moderationDetails?.action == MessageModerationAction.bounce || moderation?.action == ModerationAction.bounce
 
 /**
  * @return If the message has moderation block action.
@@ -187,7 +189,8 @@ public fun Message.isModerationBlock(): Boolean = moderationDetails?.action == M
  * @return If the message has moderation flag action.
  */
 @InternalStreamChatApi
-public fun Message.isModerationFlag(): Boolean = moderationDetails?.action == MessageModerationAction.flag
+public fun Message.isModerationFlag(): Boolean =
+    moderationDetails?.action == MessageModerationAction.flag || moderation?.action == ModerationAction.flag
 
 /**
  * @return if the message failed at moderation or not.
