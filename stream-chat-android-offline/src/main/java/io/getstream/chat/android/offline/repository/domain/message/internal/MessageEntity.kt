@@ -123,8 +123,10 @@ internal data class MessageInnerEntity(
      */
     var skipEnrichUrl: Boolean = false,
 
-    /** Contains moderation details of the message **/
+    /** Contains moderation details of the message (used by moderation V1) **/
     val moderationDetails: ModerationDetailsEntity? = null,
+    /** Contains moderation details of the message (used by moderation V2) **/
+    val moderation: ModerationEntity? = null,
     /** When the message text was updated */
     val messageTextUpdatedAt: Date? = null,
     /** The ID of the poll **/

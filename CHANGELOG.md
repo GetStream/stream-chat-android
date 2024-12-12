@@ -7,6 +7,7 @@
 ### ✅ Added
 - Add `Channel.membership.pinnedAt` property notifiying if/when a channel was pinned by the current user. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
 - Add `Channel.membership.archiveAt` property notifiying if/when a channel was archived by the current user. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
+- Add support for moderation V2. Add `moderation` field in `Message` model to support the new version of moderation. [#5493](https://github.com/GetStream/stream-chat-android/pull/5493)
 
 ### ⚠️ Changed
 
