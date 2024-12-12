@@ -10,7 +10,9 @@ fun List<String>.selectedUnitTestCommand(rootProject: Project): String {
 
     return filterUnitTestableModules(rootProject)
         .filter { (testableModule, _) -> modulesWithTest.contains(testableModule) }
-        .generateGradleCommand { (module, testType) -> "$module:${testType.testCommand}" }
+        .generateGradleCommand { (module, testType) ->
+            "$module:${testType.testCommand} $module:${TestType.JACOCO_TEST_COVERAGE.testCommand}"
+        }
 }
 
 private fun List<String>.filterModulesWithTests(): List<String> {
@@ -24,7 +26,7 @@ private fun List<String>.filterUnitTestableModules(rootProject: Project): List<P
         .filter { project -> project.hasUnitTest() && this.contains(project.name) }
         .map { project ->
             val testType = when {
-                project.tasks.any { task -> task.name == "testDebugUnitTest" } -> {
+                project.tasks.any { task -> task.name == TestType.ANDROID_LIBRARY_TEST.testCommand } -> {
                     TestType.ANDROID_LIBRARY_TEST
                 }
 
@@ -38,5 +40,5 @@ private fun List<String>.filterUnitTestableModules(rootProject: Project): List<P
 }
 
 private fun Project.hasUnitTest(): Boolean = this.tasks.any { task ->
-    task.name == "testDebugUnitTest" || task.name == "test"
+    task.name == TestType.ANDROID_LIBRARY_TEST.testCommand || task.name == TestType.JAVA_LIBRARY_TEST.testCommand
 }
