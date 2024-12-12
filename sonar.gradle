@@ -1,5 +1,33 @@
 apply plugin: "org.sonarqube"
 
+def ignoredModules = [
+        'stream-chat-android-ai-assistant',
+        'stream-chat-android-previewdata',
+        'stream-chat-android-docs',
+        'stream-chat-android-benchmark',
+        'stream-chat-android-compose-sample',
+        'stream-chat-android-e2e-test',
+        'stream-chat-android-test',
+        'stream-chat-android-ui-guides',
+        'stream-chat-android-ui-components-sample',
+        'stream-chat-android-pushprovider-firebase',
+        'stream-chat-android-client-test',
+        'stream-chat-android-ui-uitests'
+]
+def excludeFilter = [
+        '**/test/**',
+        '**/androidTest/**',
+        '**/R.class',
+        '**/R2.class',
+        '**/R$*.class',
+        '**/BuildConfig.*',
+        '**/Manifest*.*',
+        '**/*Test*.*'
+]
+ignoredModules.each {
+    excludeFilter << "**/${it}/**"
+}
+
 sonarqube {
     properties {
         property("sonar.host.url", "https://sonarcloud.io")
@@ -10,6 +38,6 @@ sonarqube {
         property "sonar.java.coveragePlugin", "jacoco"
         property "sonar.sourceEncoding", "UTF-8"
         property "sonar.java.binaries", "${rootDir}/**/build/tmp/kotlin-classes/debug,${rootDir}/**/build/classes/kotlin/main"
-        property "sonar.coverage.exclusions", "**/test/**,**/androidTest/**,**/R.class,**/R2.class,**/R\$*.class,**/BuildConfig.*,**/Manifest*.*,**/*Test*.*"
+        property "sonar.coverage.exclusions", excludeFilter
     }
 }
