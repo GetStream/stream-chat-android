@@ -12,7 +12,7 @@ This module contains reusable UI components built in Jetpack Compose, which you 
 
 ## Setup
 
-To start using this library in your project, see [Dependencies](https://getstream.io/chat/docs/sdk/android/basics/dependencies/), and then [Getting Started](https://getstream.io/chat/docs/sdk/android/basics/getting-started/).
+To start using this library in your project, see [Dependencies](https://getstream.io/chat/docs/sdk/android/basics/dependencies/), and then [Getting Started](https://getstream.io/chat/docs/sdk/android/client/overview/).
 
 ## Sample app
 
