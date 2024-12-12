@@ -183,6 +183,7 @@ public fun MessagesScreen(
     val isImeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
     val backAction: BackAction = remember(listViewModel, composerViewModel, attachmentsPickerViewModel) {
         {
+            val isStartedForThread = listViewModel.isStartedForThread
             val isInThread = listViewModel.isInThread
             val isShowingOverlay = listViewModel.isShowingOverlay
 
@@ -193,6 +194,7 @@ public fun MessagesScreen(
                 )
 
                 isShowingOverlay -> listViewModel.selectMessage(null)
+                isStartedForThread -> onBackPressed()
                 isInThread -> {
                     listViewModel.leaveThread()
                     composerViewModel.leaveThread()

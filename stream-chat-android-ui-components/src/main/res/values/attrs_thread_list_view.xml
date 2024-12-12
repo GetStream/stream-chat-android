@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<resources>
+    <declare-styleable name="ThreadListView">
+        <!-- General -->
+        <attr name="streamUiThreadListBackground" format="color|reference" />
+
+        <!-- Empty state -->
+        <attr name="streamUiThreadListEmptyStateDrawable" format="reference" />
+        <attr name="streamUiThreadListEmptyStateText" format="string|reference" />
+        <attr name="streamUiThreadListEmptyStateTextColor" format="color|reference" />
+        <attr name="streamUiThreadListEmptyStateTextSize" format="dimension" />
+        <attr name="streamUiThreadListEmptyStateTextFontAssets" format="string" />
+        <attr name="streamUiThreadListEmptyStateTextFont" format="reference" />
+        <attr name="streamUiThreadListEmptyStateTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <!-- Results -->
+        <!-- Thread icon -->
+        <attr name="streamUiThreadListThreadIconDrawable" format="reference" />
+        <!-- Thread title -->
+        <attr name="streamUiThreadListThreadTitleTextColor" format="color|reference" />
+        <attr name="streamUiThreadListThreadTitleTextSize" format="dimension" />
+        <attr name="streamUiThreadListThreadTitleTextFontAssets" format="string" />
+        <attr name="streamUiThreadListThreadTitleTextFont" format="reference" />
+        <attr name="streamUiThreadListThreadTitleTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <!-- Thread reply to -->
+        <attr name="streamUiThreadListThreadReplyToTextColor" format="color|reference" />
+        <attr name="streamUiThreadListThreadReplyToTextSize" format="dimension" />
+        <attr name="streamUiThreadListThreadReplyToTextFontAssets" format="string" />
+        <attr name="streamUiThreadListThreadReplyToTextFont" format="reference" />
+        <attr name="streamUiThreadListThreadReplyToTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <!-- Thread latest reply -->
+        <!-- Sender -->
+        <attr name="streamUiThreadListThreadLatestReplySenderTextColor" format="color|reference" />
+        <attr name="streamUiThreadListThreadLatestReplySenderTextSize" format="dimension" />
+        <attr name="streamUiThreadListThreadLatestReplySenderTextFontAssets" format="string" />
+        <attr name="streamUiThreadListThreadLatestReplySenderTextFont" format="reference" />
+        <attr name="streamUiThreadListThreadLatestReplySenderTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <!-- Message -->
+        <attr name="streamUiThreadListThreadLatestReplyMessageTextColor" format="color|reference" />
+        <attr name="streamUiThreadListThreadLatestReplyMessageTextSize" format="dimension" />
+        <attr name="streamUiThreadListThreadLatestReplyMessageTextFontAssets" format="string" />
+        <attr name="streamUiThreadListThreadLatestReplyMessageTextFont" format="reference" />
+        <attr name="streamUiThreadListThreadLatestReplyMessageTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <!-- Time -->
+        <attr name="streamUiThreadListThreadLatestReplyTimeTextColor" format="color|reference" />
+        <attr name="streamUiThreadListThreadLatestReplyTimeTextSize" format="dimension" />
+        <attr name="streamUiThreadListThreadLatestReplyTimeTextFontAssets" format="string" />
+        <attr name="streamUiThreadListThreadLatestReplyTimeTextFont" format="reference" />
+        <attr name="streamUiThreadListThreadLatestReplyTimeTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <!-- Unread count badge -->
+        <attr name="streamUiThreadListThreadUnreadCountBadgeTextColor" format="color|reference" />
+        <attr name="streamUiThreadListThreadUnreadCountBadgeTextSize" format="dimension" />
+        <attr name="streamUiThreadListThreadUnreadCountBadgeTextFontAssets" format="string" />
+        <attr name="streamUiThreadListThreadUnreadCountBadgeTextFont" format="reference" />
+        <attr name="streamUiThreadListThreadUnreadCountBadgeTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <attr name="streamUiThreadListThreadUnreadCountBadgeBackground" format="reference" />
+
+        <!-- Unread threads banner -->
+        <attr name="streamUiThreadListUnreadThreadsBannerTextColor" format="color|reference" />
+        <attr name="streamUiThreadListUnreadThreadsBannerTextSize" format="dimension" />
+        <attr name="streamUiThreadListUnreadThreadsBannerTextFontAssets" format="string" />
+        <attr name="streamUiThreadListUnreadThreadsBannerTextFont" format="reference" />
+        <attr name="streamUiThreadListUnreadThreadsBannerTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+        <attr name="streamUiThreadListUnreadThreadsBannerIcon" format="reference" />
+        <attr name="streamUiThreadListUnreadThreadsBannerBackground" format="reference" />
+        <attr name="streamUiThreadListUnreadThreadsBannerPaddingLeft" format="dimension" />
+        <attr name="streamUiThreadListUnreadThreadsBannerPaddingTop" format="dimension" />
+        <attr name="streamUiThreadListUnreadThreadsBannerPaddingRight" format="dimension" />
+        <attr name="streamUiThreadListUnreadThreadsBannerPaddingBottom" format="dimension" />
+        <attr name="streamUiThreadListUnreadThreadsBannerMarginLeft" format="dimension" />
+        <attr name="streamUiThreadListUnreadThreadsBannerMarginTop" format="dimension" />
+        <attr name="streamUiThreadListUnreadThreadsBannerMarginRight" format="dimension" />
+        <attr name="streamUiThreadListUnreadThreadsBannerMarginBottom" format="dimension" />
+    </declare-styleable>
+</resources>

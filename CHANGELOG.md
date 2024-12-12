@@ -66,6 +66,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `ThreadListView` component for showing the list of threads for the user. [#5491](https://github.com/GetStream/stream-chat-android/pull/5491)
 
 ### ⚠️ Changed
 
