@@ -17,11 +17,13 @@
 package io.getstream.chat.android.compose.ui.util
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
@@ -78,7 +80,7 @@ private object DefaultSearchResultNameFormatter : SearchResultNameFormatter {
                         ?: searchResultItem.message.channelInfo?.name
                     )
                     ?.let { channelName ->
-                        append(" in ")
+                        append(stringResource(R.string.stream_compose_in))
                         withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
                             append(channelName)
                         }
