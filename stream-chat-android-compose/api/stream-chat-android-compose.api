@@ -857,7 +857,7 @@ public final class io/getstream/chat/android/compose/ui/components/attachments/f
 }
 
 public final class io/getstream/chat/android/compose/ui/components/attachments/images/ImagesPickerKt {
-	public static final fun ImagesPicker (Ljava/util/List;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun ImagesPicker (Ljava/util/List;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function3;ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/audio/ComposableSingletons$PlaybackTimerKt {
@@ -1630,6 +1630,13 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/fac
 
 public final class io/getstream/chat/android/compose/ui/messages/attachments/factory/ComposableSingletons$MissingPermissionContentKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/attachments/factory/ComposableSingletons$MissingPermissionContentKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function3;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
+}
+
+public final class io/getstream/chat/android/compose/ui/messages/attachments/factory/ComposableSingletons$NoStorageAccessContentKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/attachments/factory/ComposableSingletons$NoStorageAccessContentKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function3;
 	public fun <init> ()V
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;

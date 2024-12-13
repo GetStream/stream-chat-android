@@ -16,24 +16,33 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
-import android.Manifest
-import android.os.Build
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.SnackbarHostState
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
@@ -44,6 +53,7 @@ import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
 import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
+import io.getstream.chat.android.uiutils.util.openSystemSettings
 
 /**
  * Holds the information required to add support for "files" tab in the attachment picker.
@@ -85,7 +95,6 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
      * @param onAttachmentItemSelected Handler when the item selection state changes.
      * @param onAttachmentsSubmitted Handler to submit the selected attachments to the message composer.
      */
-    @OptIn(ExperimentalPermissionsApi::class)
     @Composable
     override fun PickerTabContent(
         onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
@@ -94,36 +103,38 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
         onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     ) {
-        var storagePermissionRequested by rememberSaveable { mutableStateOf(false) }
-        val storagePermissionState = rememberMultiplePermissionsState(
-            permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                listOf(
-                    Manifest.permission.READ_MEDIA_IMAGES,
-                    Manifest.permission.READ_MEDIA_VIDEO,
-                    Manifest.permission.READ_MEDIA_AUDIO,
-                )
-            } else {
-                listOf(
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                )
-            },
-        ) {
-            storagePermissionRequested = true
-        }
-
         val context = LocalContext.current
+        val lifecycleOwner = LocalLifecycleOwner.current
         val storageHelper: StorageHelperWrapper = remember {
             StorageHelperWrapper(context, StorageHelper(), AttachmentFilter())
         }
+        var showPermanentlyDeniedSnackBar by remember { mutableStateOf(false) }
+        val permissionLauncher =
+            rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
+                if (isPermanentlyDenied(context, result)) {
+                    showPermanentlyDeniedSnackBar = true
+                }
+            }
+        val filesAccess by filesAccessAsState(context, lifecycleOwner) { value ->
+            if (value != FilesAccess.DENIED) {
+                onAttachmentsChanged(
+                    storageHelper.getFiles().map { AttachmentPickerItemState(it, false) },
+                )
+            }
+        }
 
-        when (storagePermissionState.allPermissionsGranted) {
-            true -> {
+        // Content
+        FilesAccessContent(
+            filesAccess = filesAccess,
+            onRequestFilesAccess = { permissionLauncher.launch(filesPermissions()) },
+            onRequestVisualMediaAccess = { permissionLauncher.launch(visualMediaPermissions()) },
+            onRequestAudioAccess = { permissionLauncher.launch(audioPermissions()) },
+            filePicker = {
                 FilesPicker(
                     files = attachments,
                     onItemSelected = onAttachmentItemSelected,
                     onBrowseFilesResult = { uris ->
                         val attachments = storageHelper.getAttachmentsMetadataFromUris(uris)
-
                         // Check if some of the files were filtered out due to upload config
                         if (uris.size != attachments.size) {
                             Toast.makeText(
@@ -136,28 +147,129 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
                         onAttachmentsSubmitted(attachments)
                     },
                 )
-            }
+            },
+        )
 
-            else -> {
-                val revokedPermissionState = storagePermissionState.revokedPermissions.first()
-                MissingPermissionContent(revokedPermissionState)
+        // Access permanently denied snackbar
+        val snackBarHostState = remember { SnackbarHostState() }
+        PermissionPermanentlyDeniedSnackBar(snackBarHostState) {
+            context.openSystemSettings()
+        }
+        val snackbarMessage = stringResource(id = R.string.stream_ui_message_composer_permission_setting_message)
+        val snackbarAction = stringResource(id = R.string.stream_ui_message_composer_permissions_setting_button)
+        LaunchedEffect(showPermanentlyDeniedSnackBar) {
+            if (showPermanentlyDeniedSnackBar) {
+                snackBarHostState.showSnackbar(snackbarMessage, snackbarAction)
+                showPermanentlyDeniedSnackBar = false
             }
         }
+    }
 
-        val hasPermission = storagePermissionState.allPermissionsGranted
+    @Composable
+    private fun FilesAccessContent(
+        filesAccess: FilesAccess,
+        filePicker: @Composable () -> Unit,
+        onRequestFilesAccess: () -> Unit,
+        onRequestVisualMediaAccess: () -> Unit,
+        onRequestAudioAccess: () -> Unit,
+    ) {
+        when (filesAccess) {
+            FilesAccess.DENIED -> {
+                NoStorageAccessContent(onRequestAccessClick = onRequestFilesAccess)
+            }
 
-        LaunchedEffect(storagePermissionState.allPermissionsGranted) {
-            if (storagePermissionState.allPermissionsGranted) {
-                onAttachmentsChanged(
-                    storageHelper.getFiles().map { AttachmentPickerItemState(it, false) },
-                )
+            FilesAccess.PARTIAL_VISUAL -> {
+                Column {
+                    GrantAudioAccessButton(onClick = onRequestAudioAccess)
+                    AllowMoreVisualMediaButton(onClick = onRequestVisualMediaAccess)
+                    filePicker()
+                }
+            }
+
+            FilesAccess.FULL_VISUAL -> {
+                Column {
+                    GrantAudioAccessButton(onClick = onRequestAudioAccess)
+                    filePicker()
+                }
+            }
+
+            FilesAccess.AUDIO -> {
+                Column {
+                    GrantVisualMediaAccessButton(onClick = onRequestVisualMediaAccess)
+                    filePicker()
+                }
+            }
+
+            FilesAccess.AUDIO_AND_PARTIAL_VISUAL -> {
+                Column {
+                    AllowMoreVisualMediaButton(onClick = onRequestVisualMediaAccess)
+                    filePicker()
+                }
+            }
+
+            FilesAccess.AUDIO_AND_FULL_VISUAL -> {
+                filePicker()
             }
         }
+    }
 
-        LaunchedEffect(Unit) {
-            if (!hasPermission && !storagePermissionRequested) {
-                storagePermissionState.launchMultiplePermissionRequest()
-            }
+    @Composable
+    private fun GrantVisualMediaAccessButton(onClick: () -> Unit) {
+        RequestAdditionalAccessButton(
+            textId = R.string.stream_ui_message_composer_permissions_files_allow_visual_media_access,
+            contentDescriptionId = R.string.stream_ui_message_composer_permissions_files_allow_visual_media_access,
+            onClick = onClick,
+        )
+    }
+
+    @Composable
+    private fun AllowMoreVisualMediaButton(onClick: () -> Unit) {
+        RequestAdditionalAccessButton(
+            textId = R.string.stream_ui_message_composer_permissions_files_allow_more_visual_media,
+            contentDescriptionId = R.string.stream_ui_message_composer_permissions_files_allow_more_visual_media,
+            onClick = onClick,
+        )
+    }
+
+    @Composable
+    private fun GrantAudioAccessButton(onClick: () -> Unit) {
+        RequestAdditionalAccessButton(
+            textId = R.string.stream_ui_message_composer_permissions_files_allow_audio_access,
+            contentDescriptionId = R.string.stream_ui_message_composer_permissions_files_allow_audio_access,
+            onClick = onClick,
+        )
+    }
+
+    @Composable
+    private fun RequestAdditionalAccessButton(
+        @StringRes textId: Int,
+        @StringRes contentDescriptionId: Int,
+        onClick: () -> Unit,
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .weight(1f),
+                text = stringResource(id = textId),
+                style = ChatTheme.typography.bodyBold,
+                color = ChatTheme.colors.textHighEmphasis,
+            )
+
+            IconButton(
+                content = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.stream_compose_ic_more_files),
+                        contentDescription = stringResource(id = contentDescriptionId),
+                        tint = ChatTheme.colors.primaryAccent,
+                    )
+                },
+                onClick = onClick,
+            )
         }
     }
 }
