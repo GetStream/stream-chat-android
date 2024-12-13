@@ -40,6 +40,7 @@ import io.getstream.chat.android.client.parser2.adapters.DownstreamUserDtoAdapte
 import io.getstream.chat.android.client.parser2.adapters.EventAdapterFactory
 import io.getstream.chat.android.client.parser2.adapters.ExactDateAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamChannelDtoAdapter
+import io.getstream.chat.android.client.parser2.adapters.UpstreamMemberDataDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamMemberDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamMessageDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.UpstreamReactionDtoAdapter
@@ -71,6 +72,7 @@ internal class MoshiChatParser(
             .add(UpstreamUserDtoAdapter)
             .add(DownstreamMemberDtoAdapter)
             .add(UpstreamMemberDtoAdapter)
+            .add(UpstreamMemberDataDtoAdapter)
             .add(FlagRequestAdapterFactory)
             .build()
     }
@@ -116,21 +118,18 @@ internal class MoshiChatParser(
 
     private val socketErrorResponseAdapter = moshi.adapter(SocketErrorResponse::class.java)
 
-    @Suppress("UNCHECKED_CAST")
     private fun parseSocketError(raw: String): SocketErrorMessage {
         return socketErrorResponseAdapter.fromJson(raw)!!.toDomain()
     }
 
     private val errorResponseAdapter = moshi.adapter(SocketErrorResponse.ErrorResponse::class.java)
 
-    @Suppress("UNCHECKED_CAST")
     private fun parseErrorResponse(raw: String): ErrorResponse {
         return errorResponseAdapter.fromJson(raw)!!.toDomain()
     }
 
     private val chatEventDtoAdapter = moshi.adapter(ChatEventDto::class.java)
 
-    @Suppress("UNCHECKED_CAST")
     private fun parseAndProcessEvent(raw: String): ChatEvent {
         val event = chatEventDtoAdapter.fromJson(raw)!!.toDomain(currentUserIdProvider())
         return event.enrichIfNeeded()

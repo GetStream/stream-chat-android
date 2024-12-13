@@ -17,15 +17,16 @@
 package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomUser
 import io.getstream.result.Error
 import io.getstream.result.Result
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
@@ -35,7 +36,6 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class CreateChannelTests {
 
     @Test
@@ -52,13 +52,16 @@ internal class CreateChannelTests {
 
             val channelType = "channelType"
             val channelId = "channelId"
+            val params = CreateChannelParams(
+                members = members.map { MemberData(it.getUserId(), extraData = it.extraData) },
+                extraData = emptyMap(),
+            )
             val currentUser = randomUser()
 
             sut.onCreateChannelRequest(
                 channelType = channelType,
                 channelId = channelId,
-                memberIds = members.map(Member::getUserId),
-                extraData = emptyMap(),
+                params = params,
                 currentUser = currentUser,
             )
 
@@ -87,13 +90,16 @@ internal class CreateChannelTests {
 
             val channelType = "channelType"
             val channelId = "channelId"
+            val params = CreateChannelParams(
+                members = members.map { MemberData(it.getUserId(), extraData = it.extraData) },
+                extraData = emptyMap(),
+            )
             val currentUser = randomUser()
 
             sut.onCreateChannelRequest(
                 channelType = channelType,
                 channelId = channelId,
-                memberIds = members.map(Member::getUserId),
-                extraData = emptyMap(),
+                params = params,
                 currentUser = currentUser,
             )
 

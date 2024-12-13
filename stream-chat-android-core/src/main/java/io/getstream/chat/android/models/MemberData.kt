@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.requests
+package io.getstream.chat.android.models
 
-import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDataDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
-
-@JsonClass(generateAdapter = true)
-internal data class AddMembersRequest(
-    val add_members: List<UpstreamMemberDataDto>,
-    val message: UpstreamMessageDto?,
-    val hide_history: Boolean?,
-    val skip_push: Boolean?,
-)
+/**
+ * Model holding data about a member.
+ *
+ * @param userId The user id of the member.
+ * @param extraData Custom extra data for the member.
+ */
+public data class MemberData(
+    public val userId: String,
+    override val extraData: Map<String, Any> = emptyMap(),
+) : CustomObject

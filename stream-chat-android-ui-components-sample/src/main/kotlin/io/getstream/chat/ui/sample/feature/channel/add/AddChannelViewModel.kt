@@ -23,8 +23,10 @@ import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.channel.ChannelClient
+import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.ui.sample.common.CHANNEL_ARG_DRAFT
@@ -131,11 +133,14 @@ class AddChannelViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             val currentUserId =
                 chatClient.clientState.user.value?.id ?: error("User must be set before create new channel!")
+            val params = CreateChannelParams(
+                members = (members.map(User::id) + currentUserId).map(::MemberData),
+                extraData = mapOf(CHANNEL_ARG_DRAFT to true),
+            )
             val result = chatClient.createChannel(
                 channelType = CHANNEL_MESSAGING_TYPE,
                 channelId = "",
-                memberIds = members.map(User::id) + currentUserId,
-                extraData = mapOf(CHANNEL_ARG_DRAFT to true),
+                params = params,
             ).await()
             if (result is Result.Success) {
                 val cid = result.value.cid

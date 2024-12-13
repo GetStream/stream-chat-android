@@ -37,6 +37,7 @@ import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.GuestUser
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
@@ -347,7 +348,7 @@ internal interface ChatApi {
     fun addMembers(
         channelType: String,
         channelId: String,
-        members: List<String>,
+        members: List<MemberData>,
         systemMessage: Message?,
         hideHistory: Boolean?,
         skipPush: Boolean?,

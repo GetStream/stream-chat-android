@@ -21,6 +21,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.query.CreateChannelParams
+import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.User
 import io.getstream.result.Result
 import kotlinx.coroutines.Dispatchers
@@ -46,12 +48,15 @@ class AddGroupChannelSelectNameViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.Main) {
             val currentUserId =
                 ChatClient.instance().clientState.user.value?.id ?: error("User must be set before create new channel!")
+            val params = CreateChannelParams(
+                members = (members.map(User::id) + currentUserId).map(::MemberData),
+                extraData = mapOf(EXTRA_DATA_CHANNEL_NAME to name),
+            )
             val result = ChatClient.instance()
                 .createChannel(
                     channelType = CHANNEL_TYPE_MESSAGING,
                     channelId = UUID.randomUUID().toString(),
-                    memberIds = members.map(User::id) + currentUserId,
-                    extraData = mapOf(EXTRA_DATA_CHANNEL_NAME to name),
+                    params = params,
                 ).await()
             when (result) {
                 is Result.Success -> _state.value = State.NavigateToChannel(result.value.cid)
