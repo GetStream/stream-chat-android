@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
+import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
 import io.getstream.chat.android.client.plugin.listeners.QueryThreadsListener
 import io.getstream.chat.android.client.plugin.listeners.SendAttachmentListener
 import io.getstream.chat.android.client.plugin.listeners.SendGiphyListener
@@ -53,6 +54,7 @@ import io.getstream.chat.android.state.plugin.listener.internal.HideChannelListe
 import io.getstream.chat.android.state.plugin.listener.internal.MarkAllReadListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.QueryChannelListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.QueryChannelsListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.QueryMembersListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.QueryThreadsListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.SendAttachmentListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.SendGiphyListenerState
@@ -96,6 +98,7 @@ public class StatePlugin internal constructor(
     private val queryingChannelsFree: MutableStateFlow<Boolean>,
     private val statePluginConfig: StatePluginConfig,
 ) : Plugin,
+    QueryMembersListener by QueryMembersListenerState(logic),
     QueryChannelsListener by QueryChannelsListenerState(logic, queryingChannelsFree),
     QueryChannelListener by QueryChannelListenerState(logic),
     ThreadQueryListener by ThreadQueryListenerState(logic, repositoryFacade),
