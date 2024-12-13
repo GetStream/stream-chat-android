@@ -112,7 +112,7 @@ public data class Member(
             "status" -> status
             "pinned_at", "pinnedAt" -> pinnedAt
             "archived_at", "archivedAt" -> archivedAt
-            else -> null
+            else -> extraData[fieldName] as? Comparable<*>
         }
     }
 }

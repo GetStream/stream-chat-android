@@ -43,6 +43,7 @@ import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
+import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Member
@@ -327,11 +328,28 @@ public interface Plugin :
         channelId: String,
     ): Result<Unit> = Result.Success(Unit)
 
+    @Deprecated(
+        "Use CreateChannelListener.onCreateChannelRequest(channelType, channelId, request, currentUser) instead",
+        replaceWith = ReplaceWith(
+            "onCreateChannelRequest(String, String, CreateChannelParams, User)",
+            "io.getstream.chat.android.client.plugin.listeners.CreateChannelListener",
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     override suspend fun onCreateChannelRequest(
         channelType: String,
         channelId: String,
         memberIds: List<String>,
         extraData: Map<String, Any>,
+        currentUser: User,
+    ) {
+        /* No-Op */
+    }
+
+    override suspend fun onCreateChannelRequest(
+        channelType: String,
+        channelId: String,
+        params: CreateChannelParams,
         currentUser: User,
     ) {
         /* No-Op */

@@ -83,6 +83,8 @@ import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.events.VoteCastedEvent
 import io.getstream.chat.android.client.events.VoteChangedEvent
 import io.getstream.chat.android.client.events.VoteRemovedEvent
+import io.getstream.chat.android.client.query.AddMembersParams
+import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -152,6 +154,23 @@ public class ChannelClient internal constructor(
             channelId = channelId,
             memberIds = memberIds,
             extraData = extraData,
+        )
+    }
+
+    /**
+     * Creates the id-based channel.
+     * @see [ChatClient.createChannel]
+     *
+     * @param params The [CreateChannelParams] holding the data required for creating a channel.
+     *
+     * @return Executable async [Call] responsible for creating the channel.
+     */
+    @CheckResult
+    public fun create(params: CreateChannelParams): Call<Channel> {
+        return client.createChannel(
+            channelType = channelType,
+            channelId = channelId,
+            params = params,
         )
     }
 
@@ -695,6 +714,23 @@ public class ChannelClient internal constructor(
             systemMessage = systemMessage,
             hideHistory = hideHistory,
             skipPush = skipPush,
+        )
+    }
+
+    /**
+     * Adds members with extra data to a given channel.
+     * @see [ChatClient.addMembers]
+     *
+     * @param params The [AddMembersParams] holding data about the members to be added.
+     *
+     * @return Executable async [Call] responsible for adding the members.
+     */
+    @CheckResult
+    public fun addMembers(params: AddMembersParams): Call<Channel> {
+        return client.addMembers(
+            channelType = channelType,
+            channelId = channelId,
+            params = params,
         )
     }
 
