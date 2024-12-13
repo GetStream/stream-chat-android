@@ -30,6 +30,10 @@
     <!-- Selected Channel Menu -->
     <string name="stream_compose_selected_channel_menu_view_info">View info</string>
     <string name="stream_compose_selected_channel_menu_leave_group">Leave group</string>
+    <string name="stream_compose_selected_channel_menu_pin_channel">Pin Channel</string>
+    <string name="stream_compose_selected_channel_menu_unpin_channel">Unpin Channel</string>
+    <string name="stream_compose_selected_channel_menu_archive_channel">Archive Channel</string>
+    <string name="stream_compose_selected_channel_menu_unarchive_channel">Unarchive Channel</string>
     <string name="stream_compose_selected_channel_menu_leave_group_confirmation_title">Leave group</string>
     <string name="stream_compose_selected_channel_menu_leave_group_confirmation_message">Do you want to leave the %1$s group?</string>
     <string name="stream_compose_selected_channel_menu_mute_channel">Mute channel</string>
@@ -238,6 +242,7 @@
 
     <!--  Threads  -->
     <string name="stream_compose_thread_list_empty_title">No threads here yet...</string>
+    <string name="stream_compose_in">" in "</string>
     <plurals name="stream_compose_thread_list_new_threads">
         <item quantity="one">%d new thread</item>
         <item quantity="other">%d new threads</item>

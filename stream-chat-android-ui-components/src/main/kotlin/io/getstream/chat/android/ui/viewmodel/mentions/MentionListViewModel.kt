@@ -22,8 +22,8 @@ import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Filters
-import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.utils.Event
+import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.log.taggedLogger
 import io.getstream.result.Result
 import kotlinx.coroutines.CoroutineScope
@@ -31,11 +31,13 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
-public class MentionListViewModel : ViewModel() {
+public class MentionListViewModel(
+    private val chatClient: ChatClient = ChatClient.instance(),
+) : ViewModel() {
 
     public data class State(
         val canLoadMore: Boolean,
-        val results: List<Message>,
+        val results: List<MessageResult>,
         val isLoading: Boolean,
     )
 
@@ -97,7 +99,7 @@ public class MentionListViewModel : ViewModel() {
 
     private suspend fun fetchServerResults() {
         val currentState = _state.value!!
-        val currentUser = requireNotNull(ChatClient.instance().clientState.user.value)
+        val currentUser = requireNotNull(chatClient.clientState.user.value)
         val channelFilter = Filters.`in`("members", listOf(currentUser.id))
         val messageFilter = Filters.contains("mentioned_users.id", currentUser.id)
 
@@ -105,7 +107,7 @@ public class MentionListViewModel : ViewModel() {
             "Getting mentions (offset: ${currentState.results.size}, limit: $QUERY_LIMIT, user ID: ${currentUser.id})"
         }
 
-        val result = ChatClient.instance()
+        val result = chatClient
             .searchMessages(
                 channelFilter = channelFilter,
                 messageFilter = messageFilter,
@@ -117,9 +119,15 @@ public class MentionListViewModel : ViewModel() {
         when (result) {
             is Result.Success -> {
                 val messages = result.value.messages
+                val channels = chatClient.repositoryFacade.selectChannels(messages.map { it.cid })
                 logger.d { "Got ${messages.size} messages" }
                 _state.value = currentState.copy(
-                    results = currentState.results + messages,
+                    results = currentState.results + messages.map { message ->
+                        MessageResult(
+                            message = message,
+                            channel = channels.firstOrNull { it.cid == message.cid },
+                        )
+                    },
                     isLoading = false,
                     canLoadMore = messages.size == QUERY_LIMIT,
                 )

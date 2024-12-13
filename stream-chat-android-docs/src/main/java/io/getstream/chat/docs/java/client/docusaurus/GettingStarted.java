@@ -14,7 +14,7 @@ import io.getstream.chat.android.state.plugin.config.StatePluginConfig;
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory;
 
 /**
- * @see <a href="https://getstream.io/chat/docs/sdk/android/basics/getting-started/#getting-started">Getting Started</a>
+ * @see <a href="https://getstream.io/chat/docs/sdk/android/client/overview/">Getting Started</a>
  */
 public class GettingStarted {
 

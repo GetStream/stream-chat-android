@@ -56,6 +56,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.isVisible
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
@@ -71,7 +72,7 @@ public class MediaPreviewActivity : AppCompatActivity() {
         val url = intent.getStringExtra(KEY_URL)
         val title = intent.getStringExtra(KEY_TITLE) ?: ""
 
-        if (url.isNullOrEmpty()) {
+        if (url.isNullOrEmpty() || ChatClient.isInitialized.not()) {
             finish()
             return
         }

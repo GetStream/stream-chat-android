@@ -5,8 +5,12 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `Channel.membership.pinnedAt` property notifiying if/when a channel was pinned by the current user. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
+- Add `Channel.membership.archiveAt` property notifiying if/when a channel was archived by the current user. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
+- Add support for moderation V2. Add `moderation` field in `Message` model to support the new version of moderation. [#5493](https://github.com/GetStream/stream-chat-android/pull/5493)
 
 ### ⚠️ Changed
+- 🚨 Breaking change: ViewModels related with "searching messages" feature provide a `List<MessageResult>` instead of a `List<Message>`. [#5500](https://github.com/GetStream/stream-chat-android/pull/5500)
 
 ### ❌ Removed
 
@@ -16,6 +20,10 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `ChatClient.pinChannel` and `ChannelClient.unpinChannel` methods to pin/unpin a channel. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
+- Add `ChatClient.archiveChannel` and `ChannelClient.unarchiveChannel` methods to archive/unarchive a channel. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
+- Add `ChannelClient.pinChannel` and `ChannelClient.unpinChannel` methods to pin/unpin a channel. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
+- Add `ChannelClient.archiveChannel` and `ChannelClient.unarchiveChannel` methods to archive/unarchive a channel. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
 - Add `CreateChannelListener::onCreateChannelRequest(String, String, CreateChannelRequest, User)` for performing actions before launching a request for creating a channel. [#5502](https://github.com/GetStream/stream-chat-android/pull/5502)
 - Add `ChatClient::createChannel(String, String, CreateChannelRequest)` for creating a channel with custom data for its members. [#5502](https://github.com/GetStream/stream-chat-android/pull/5502)
 - Add `ChannelClient::createChannel(CreateChannelRequest)` for creating a channel with custom data for its members. [#5502](https://github.com/GetStream/stream-chat-android/pull/5502)
@@ -76,12 +84,17 @@
 - Fix keyboard not closing when opening the attachments picker from `MessagesScreen`. [#5506](https://github.com/GetStream/stream-chat-android/pull/5506)
 
 ### ⬆️ Improved
+- Add support for partial media access in `AttachmentsPickerImagesTabFactory` and `AttachmentsPickerFilesTabFactory` for Android 14+. [#5518](https://github.com/GetStream/stream-chat-android/pull/5518)
 
 ### ✅ Added
 - The `StreamAttachmentFactories.defaultFactories()` method now accepts a `skipTypes` parameter to skip specific factory types. [#5494](https://github.com/GetStream/stream-chat-android/pull/5494)
 - Add `ChatTheme.keyboardBehaviour` property to customize different keyboard behaviours. [#5506](https://github.com/GetStream/stream-chat-android/pull/5506)
+- Add `MessageOptionItemVisibility.isBlockUserVisible` property to show/hide the block user option. [#5512](https://github.com/GetStream/stream-chat-android/pull/5512)
+- Add `ChatTheme.channelOptionsTheme` property to customize the channel options. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513) 
+- Add `SearchResultItemState.channel` property containing the cached info of the channel where the message was sent. [#5500](https://github.com/GetStream/stream-chat-android/pull/5500)
 
 ### ⚠️ Changed
+- 🚨 Breaking change: The `SearchResultNameFormatter.formatMessageTitle` method receives a `SearchResultItemState` instead of a `Message`. [#5500](https://github.com/GetStream/stream-chat-android/pull/5500)
 
 ### ❌ Removed
 

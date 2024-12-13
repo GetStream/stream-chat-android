@@ -69,6 +69,8 @@ internal object MemberDtoTestData {
         notifications_muted = null,
         status = null,
         ban_expires = null,
+        pinned_at = null,
+        archived_at = null,
         extraData = mapOf("is_premium" to true),
     )
 
@@ -85,6 +87,8 @@ internal object MemberDtoTestData {
         notifications_muted = null,
         status = null,
         ban_expires = null,
+        pinned_at = null,
+        archived_at = null,
         extraData = emptyMap(),
     )
 
@@ -101,6 +105,8 @@ internal object MemberDtoTestData {
         notifications_muted = null,
         status = null,
         ban_expires = null,
+        pinned_at = null,
+        archived_at = null,
         extraData = mapOf("is_premium" to true),
     )
 
@@ -117,6 +123,8 @@ internal object MemberDtoTestData {
         notifications_muted = null,
         status = null,
         ban_expires = null,
+        pinned_at = null,
+        archived_at = null,
         extraData = emptyMap(),
     )
 }

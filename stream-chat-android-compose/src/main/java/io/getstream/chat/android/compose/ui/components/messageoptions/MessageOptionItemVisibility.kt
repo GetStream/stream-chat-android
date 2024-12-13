@@ -30,6 +30,7 @@ import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedM
  * @param isFlagMessageVisible Visibility of the flag message option.
  * @param isPinMessageVisible Visibility of the pin message to chat option.
  * @param isDeleteMessageVisible Visibility of the delete message option.
+ * @param isBlockUserVisible Visibility of the block user option.
  *
  * @see [SelectedMessageMenu]
  * @see [MessageOptions]
@@ -45,4 +46,5 @@ public data class MessageOptionItemVisibility(
     val isFlagMessageVisible: Boolean = true,
     val isPinMessageVisible: Boolean = true,
     val isDeleteMessageVisible: Boolean = true,
+    val isBlockUserVisible: Boolean = true,
 )
