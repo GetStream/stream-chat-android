@@ -402,6 +402,7 @@ internal class MessageComposerViewModelTest {
             whenever(clientState.user) doReturn MutableStateFlow(currentUser)
             whenever(chatClient.clientState) doReturn clientState
             whenever(clientState.initializationState) doReturn MutableStateFlow(InitializationState.COMPLETE)
+            whenever(chatClient.awaitInitializationState(any())) doReturn InitializationState.COMPLETE
         }
 
         fun givenChannelQuery(channel: Channel = Channel()) = apply {

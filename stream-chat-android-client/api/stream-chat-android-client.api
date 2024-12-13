@@ -9,6 +9,7 @@ public final class io/getstream/chat/android/client/BuildConfig {
 public final class io/getstream/chat/android/client/ChatClient {
 	public static final field Companion Lio/getstream/chat/android/client/ChatClient$Companion;
 	public static final field DEFAULT_SORT Lio/getstream/chat/android/models/querysort/QuerySorter;
+	public static final field RESOLVE_DEPENDENCY_TIMEOUT J
 	public final fun acceptInvite (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun addDevice (Lio/getstream/chat/android/models/Device;)Lio/getstream/result/call/Call;
 	public final fun addMembers (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/query/AddMembersParams;)Lio/getstream/result/call/Call;

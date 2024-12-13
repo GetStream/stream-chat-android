@@ -3,6 +3,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Internal "Resolve Dependency" process improvements. [#5514](https://github.com/GetStream/stream-chat-android/pull/5514)
 
 ### ✅ Added
 - Add `Channel.membership.pinnedAt` property notifiying if/when a channel was pinned by the current user. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
