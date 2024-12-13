@@ -45,6 +45,12 @@ import kotlin.math.log10
  */
 public class DefaultStreamMediaRecorder(
     private val context: Context,
+    private val audioSource: Int = MediaRecorder.AudioSource.MIC,
+    private val outputFormat: Int = MediaRecorder.OutputFormat.MPEG_4,
+    private val audioEncoder: Int = MediaRecorder.AudioEncoder.AAC,
+    private val audioSamplingRate: Int = SAMPLING_RATE_16KHZ,
+    private val audioEncodingBitRate: Int = ENCODING_BIT_RATE_32KBPS,
+    private val audioChannels : Int = CHANNELS,
 ) : StreamMediaRecorder {
 
     /**
@@ -170,12 +176,12 @@ public class DefaultStreamMediaRecorder(
         } else {
             MediaRecorder(context)
         }.apply {
-            setAudioSource(MediaRecorder.AudioSource.MIC)
-            setOutputFormat(MediaRecorder.OutputFormat.MPEG_4) // MP4/M4A container format - widely supported and efficient
-            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-            setAudioEncodingBitRate(ENCODING_BIT_RATE_32KBPS)
-            setAudioSamplingRate(SAMPLING_RATE_16KHZ)
-            setAudioChannels(CHANNELS)
+            setAudioSource(audioSource)
+            setOutputFormat(outputFormat)
+            setAudioEncoder(audioEncoder)
+            setAudioEncodingBitRate(audioEncodingBitRate)
+            setAudioSamplingRate(audioSamplingRate)
+            setAudioChannels(audioChannels)
             setOutputFile(recordingFile.path)
             prepare()
             mediaRecorderState = MediaRecorderState.PREPARED
