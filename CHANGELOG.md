@@ -63,6 +63,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Exposed expose audio recording params in `DefaultStreamMediaRecorder` to allow customization. [#5520](https://github.com/GetStream/stream-chat-android/pull/5520)
 
 ### ✅ Added
 
