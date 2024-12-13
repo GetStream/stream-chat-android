@@ -28,6 +28,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentBinding
@@ -45,6 +46,11 @@ public class AttachmentActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        if (ChatClient.isInitialized.not()) {
+            finish()
+            return
+        }
 
         binding = StreamUiActivityAttachmentBinding.inflate(streamThemeInflater)
         setContentView(binding.root)

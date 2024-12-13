@@ -53,6 +53,26 @@ public data class UnmuteChannel(override val channel: Channel) : ChannelAction()
 public data class DeleteConversation(override val channel: Channel) : ChannelAction()
 
 /**
+ * Shows a dialog to pin the channel.
+ */
+public data class PinChannel(override val channel: Channel) : ChannelAction()
+
+/**
+ * Shows a dialog to unpin the channel.
+ */
+public data class UnpinChannel(override val channel: Channel) : ChannelAction()
+
+/**
+ * Shows a dialog to archive the channel.
+ */
+public data class ArchiveChannel(override val channel: Channel) : ChannelAction()
+
+/**
+ * Shows a dialog to unarchive the channel.
+ */
+public data class UnarchiveChannel(override val channel: Channel) : ChannelAction()
+
+/**
  * Dismisses the actions.
  */
 public object Cancel : ChannelAction() {

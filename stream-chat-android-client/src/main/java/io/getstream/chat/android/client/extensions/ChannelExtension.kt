@@ -27,6 +27,20 @@ import io.getstream.chat.android.models.User
 public fun Channel.isAnonymousChannel(): Boolean = id.isAnonymousChannelId()
 
 /**
+ * Checks if the channel is pinned or not for the current user.
+ *
+ * @return True if the channel is pinned for the current user.
+ */
+public fun Channel.isPinned(): Boolean = membership?.pinnedAt != null
+
+/**
+ * Checks if the channel is archived or not for the current user.
+ *
+ * @return True if the channel is archived for the current user.
+ */
+public fun Channel.isArchive(): Boolean = membership?.archivedAt != null
+
+/**
  * Checks if [Channel] is muted for [user].
  *
  * @return True if the channel is muted for [user].

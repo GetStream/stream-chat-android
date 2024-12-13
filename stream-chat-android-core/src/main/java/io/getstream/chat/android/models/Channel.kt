@@ -153,6 +153,8 @@ public data class Channel(
             "last_updated", "lastUpdated" -> lastUpdated
             "unread_count", "unreadCount" -> unreadCount
             "has_unread", "hasUnread" -> hasUnread
+            "pinned_at", "pinnedAt" -> membership?.pinnedAt
+            "archived_at", "archivedAt" -> membership?.archivedAt
             else -> extraData[fieldName] as? Comparable<*>
         }
     }

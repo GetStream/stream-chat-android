@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.chat.android.ui.databinding.StreamUiMentionListViewBinding
 import io.getstream.chat.android.ui.feature.mentions.list.internal.MentionListAdapter
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
@@ -85,7 +86,7 @@ public class MentionListView : ViewFlipper {
         }
     }
 
-    public fun showMessages(messages: List<Message>) {
+    public fun showMessages(messages: List<MessageResult>) {
         val isEmpty = messages.isEmpty()
 
         displayedChild = if (isEmpty) Flipper.EMPTY else Flipper.RESULTS

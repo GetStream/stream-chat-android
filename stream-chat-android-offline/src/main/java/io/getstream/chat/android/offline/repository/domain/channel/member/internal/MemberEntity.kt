@@ -60,6 +60,12 @@ internal data class MemberEntity(
     /** The date the ban expires. */
     var banExpires: Date? = null,
 
+    /** The date when the member pinned the channel. */
+    val pinnedAt: Date? = null,
+
+    /** The date when the member archived the channel. */
+    val archivedAt: Date? = null,
+
     /** Map of custom fields for the member. */
     val extraData: Map<String, Any> = emptyMap(),
 )

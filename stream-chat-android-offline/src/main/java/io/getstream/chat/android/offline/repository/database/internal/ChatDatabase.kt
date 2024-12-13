@@ -29,6 +29,7 @@ import io.getstream.chat.android.offline.repository.database.converter.internal.
 import io.getstream.chat.android.offline.repository.database.converter.internal.ListConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.MapConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.MemberConverter
+import io.getstream.chat.android.offline.repository.database.converter.internal.ModerationConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.ModerationDetailsConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.OptionConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.PrivacySettingsConverter
@@ -81,7 +82,7 @@ import io.getstream.chat.android.offline.repository.domain.user.internal.UserEnt
         ThreadEntity::class,
         ThreadOrderEntity::class,
     ],
-    version = 80,
+    version = 82,
     exportSchema = false,
 )
 @TypeConverters(
@@ -96,6 +97,7 @@ import io.getstream.chat.android.offline.repository.domain.user.internal.UserEnt
     DateConverter::class,
     MemberConverter::class,
     ModerationDetailsConverter::class,
+    ModerationConverter::class,
     ReactionGroupConverter::class,
     PrivacySettingsConverter::class,
     OptionConverter::class,

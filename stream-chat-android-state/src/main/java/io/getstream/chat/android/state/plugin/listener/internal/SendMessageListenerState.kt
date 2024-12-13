@@ -57,8 +57,8 @@ internal class SendMessageListenerState(private val logic: LogicRegistry) : Send
         if (logic.getMessageById(message.id)?.syncStatus == SyncStatus.COMPLETED) return
 
         when (result) {
-            is Result.Success -> handleSendMessageSuccess(cid, logic, result.value)
-            is Result.Failure -> handleSendMessageFailure(logic, message, result.value)
+            is Result.Success -> handleSendMessageSuccess(cid, result.value)
+            is Result.Failure -> handleSendMessageFailure(message, result.value)
         }
     }
 
@@ -70,16 +70,11 @@ internal class SendMessageListenerState(private val logic: LogicRegistry) : Send
      */
     private fun handleSendMessageSuccess(
         cid: String,
-        logic: LogicRegistry,
         processedMessage: Message,
     ) {
         processedMessage.enrichWithCid(cid)
             .copy(syncStatus = SyncStatus.COMPLETED)
-            .also { message ->
-                logic.channelFromMessage(message)?.upsertMessage(message)
-                logic.threads().upsertMessage(message)
-                logic.threadFromMessage(message)?.upsertMessage(message)
-            }
+            .also(::updateState)
     }
 
     /**
@@ -91,7 +86,6 @@ internal class SendMessageListenerState(private val logic: LogicRegistry) : Send
      * @return [Message] Updated message.
      */
     private fun handleSendMessageFailure(
-        logic: LogicRegistry,
         message: Message,
         error: Error,
     ) {
@@ -104,11 +98,7 @@ internal class SendMessageListenerState(private val logic: LogicRegistry) : Send
                 SyncStatus.SYNC_NEEDED
             },
             updatedLocallyAt = Date(),
-        ).also {
-            logic.channelFromMessage(it)?.upsertMessage(it)
-            logic.threads().upsertMessage(message)
-            logic.threadFromMessage(it)?.upsertMessage(it)
-        }
+        ).also(::updateState)
     }
 
     /**
@@ -128,5 +118,19 @@ internal class SendMessageListenerState(private val logic: LogicRegistry) : Send
         if (result is Result.Success) {
             logic.channelFromMessage(message)?.setLastSentMessageDate(result.value.createdAt)
         }
+    }
+
+    /**
+     * Updates the local state with the new [Message] via the [LogicRegistry].
+     *
+     * @param message The [Message] to upsert in the state.
+     */
+    private fun updateState(message: Message) {
+        logic.channelFromMessage(message)?.upsertMessage(message)
+        logic.threads().upsertMessage(message)
+        logic.threadFromMessage(message)?.upsertMessage(message)
+        // Update the flows for currently running queries to ensure the (new) message is properly reflected in
+        // the channel list
+        logic.getActiveQueryChannelsLogic().forEach { query -> query.refreshChannelState(message.cid) }
     }
 }

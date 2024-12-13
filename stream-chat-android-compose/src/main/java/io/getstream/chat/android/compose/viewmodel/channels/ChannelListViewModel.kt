@@ -256,12 +256,19 @@ public class ChannelListViewModel(
         logger.d { "[observeSearchMessages] query: '$query'" }
         searchMessageState.filterNotNull().collectLatest {
             logger.v { "[observeSearchMessages] state: ${it.stringify()}" }
+            val channels = chatClient.repositoryFacade.selectChannels(it.messages.map { message -> message.cid })
             channelsState = channelsState.copy(
                 searchQuery = searchQuery.value,
                 isLoading = it.isLoading,
                 isLoadingMore = it.isLoadingMore,
                 endOfChannels = !it.canLoadMore,
-                channelItems = it.messages.map(ItemState::SearchResultItemState),
+                channelItems = it.messages.map {
+                    val channel = channels.firstOrNull { channel -> channel.cid == it.cid }
+                    ItemState.SearchResultItemState(
+                        message = it,
+                        channel = channel,
+                    )
+                },
             )
         }
     }.onFailure {
@@ -595,6 +602,42 @@ public class ChannelListViewModel(
         dismissChannelAction()
 
         chatClient.muteChannel(channel.type, channel.id).enqueue()
+    }
+
+    /**
+     * Pins a channel.
+     *
+     * @param channel The channel to pin.
+     */
+    public fun pinChannel(channel: Channel) {
+        dismissChannelAction()
+        chatClient.pinChannel(channel.type, channel.id).enqueue()
+    }
+
+    /**
+     * Unpins a channel.
+     *
+     * @param channel The channel to unpin.
+     */
+    public fun unpinChannel(channel: Channel) {
+        dismissChannelAction()
+        chatClient.unpinChannel(channel.type, channel.id).enqueue()
+    }
+
+    public fun archiveChannel(channel: Channel) {
+        dismissChannelAction()
+        chatClient.archiveChannel(
+            channel.type,
+            channel.id,
+        ).enqueue()
+    }
+
+    public fun unarchiveChannel(channel: Channel) {
+        dismissChannelAction()
+        chatClient.unarchiveChannel(
+            channel.type,
+            channel.id,
+        ).enqueue()
     }
 
     /**

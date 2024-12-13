@@ -82,6 +82,15 @@ public data class Member(
      */
     val banExpires: Date? = null,
     /**
+     * The date when this channel was pinned.
+     */
+    val pinnedAt: Date? = null,
+
+    /**
+     * The date when this channel was archived.
+     */
+    val archivedAt: Date? = null,
+    /**
      * A map of custom fields for the member.
      */
     override val extraData: Map<String, Any> = emptyMap(),
@@ -101,7 +110,9 @@ public data class Member(
             "channel_role", "channelRole" -> channelRole
             "notifications_muted", "notificationsMuted" -> notificationsMuted
             "status" -> status
-            else -> null
+            "pinned_at", "pinnedAt" -> pinnedAt
+            "archived_at", "archivedAt" -> archivedAt
+            else -> extraData[fieldName] as? Comparable<*>
         }
     }
 }

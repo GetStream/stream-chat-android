@@ -21,10 +21,13 @@ import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
+import io.getstream.chat.android.client.events.MemberUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
+import io.getstream.chat.android.client.extensions.internal.updateMember
+import io.getstream.chat.android.client.extensions.internal.updateMembership
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
@@ -61,6 +64,7 @@ public open class DefaultChatEventHandler(
             is NewMessageEvent -> handleNewMessageEvent(event, cachedChannel)
             is MemberRemovedEvent -> removeIfCurrentUserLeftChannel(event.cid, event.member)
             is MemberAddedEvent -> addIfCurrentUserJoinedChannel(cachedChannel, event.member)
+            is MemberUpdatedEvent -> addIfMembershipUpdated(cachedChannel, event.member)
             else -> super.handleCidEvent(event, filter, cachedChannel)
         }
     }
@@ -99,6 +103,17 @@ public open class DefaultChatEventHandler(
             EventHandlingResult.Skip
         } else {
             addIfChannelIsAbsent(cachedChannel)
+        }
+    }
+
+    private fun addIfMembershipUpdated(channel: Channel?, member: Member): EventHandlingResult {
+        return if (channel?.membership?.getUserId() == member.getUserId()) {
+            EventHandlingResult.Add(
+                channel.updateMembership(member)
+                    .updateMember(member),
+            )
+        } else {
+            EventHandlingResult.Skip
         }
     }
 

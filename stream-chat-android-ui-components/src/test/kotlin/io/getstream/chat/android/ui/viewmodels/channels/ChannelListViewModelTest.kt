@@ -264,6 +264,7 @@ internal class ChannelListViewModelTest {
             whenever(clientState.user) doReturn MutableStateFlow(currentUser)
             whenever(clientState.initializationState) doReturn MutableStateFlow(InitializationState.COMPLETE)
             whenever(chatClient.getCurrentUser()) doReturn currentUser
+            whenever(chatClient.awaitInitializationState(any())) doReturn InitializationState.COMPLETE
         }
 
         fun givenChannelMutes(channelMutes: List<ChannelMute> = emptyList()) = apply {

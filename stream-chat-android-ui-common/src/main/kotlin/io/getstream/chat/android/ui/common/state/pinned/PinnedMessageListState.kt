@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.ui.common.state.pinned
 
-import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.model.MessageResult
 import java.util.Date
 
 /**
@@ -29,7 +29,7 @@ import java.util.Date
  */
 public data class PinnedMessageListState(
     val canLoadMore: Boolean,
-    val results: List<Message>,
+    val results: List<MessageResult>,
     val isLoading: Boolean,
     val nextDate: Date,
 )

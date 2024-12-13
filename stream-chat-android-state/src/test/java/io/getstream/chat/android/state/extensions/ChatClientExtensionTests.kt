@@ -46,6 +46,7 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -136,6 +137,7 @@ internal class ChatClientExtensionTests {
                 userFlow.value = null
                 Unit.asCall()
             }
+            on(it.awaitInitializationState(any())) doReturn InitializationState.COMPLETE
         }
     }
 

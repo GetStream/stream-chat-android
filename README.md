@@ -68,7 +68,7 @@ The best place to start is the [Compose Chat Messaging Tutorial](https://getstre
 
 ## 🛠️ Installation and Getting Started 🚀
 
-See the [Dependencies](https://getstream.io/chat/docs/sdk/android/basics/dependencies/) and [Getting Started](https://getstream.io/chat/docs/sdk/android/basics/getting-started/) pages of the documentation.
+See the [Dependencies](https://getstream.io/chat/docs/sdk/android/basics/dependencies/) and [Getting Started](https://getstream.io/chat/docs/sdk/android/client/overview/) pages of the documentation.
 
 ## 🔮 Sample Apps
 

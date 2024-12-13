@@ -83,6 +83,8 @@ import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.events.VoteCastedEvent
 import io.getstream.chat.android.client.events.VoteChangedEvent
 import io.getstream.chat.android.client.events.VoteRemovedEvent
+import io.getstream.chat.android.client.query.AddMembersParams
+import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -152,6 +154,23 @@ public class ChannelClient internal constructor(
             channelId = channelId,
             memberIds = memberIds,
             extraData = extraData,
+        )
+    }
+
+    /**
+     * Creates the id-based channel.
+     * @see [ChatClient.createChannel]
+     *
+     * @param params The [CreateChannelParams] holding the data required for creating a channel.
+     *
+     * @return Executable async [Call] responsible for creating the channel.
+     */
+    @CheckResult
+    public fun create(params: CreateChannelParams): Call<Channel> {
+        return client.createChannel(
+            channelType = channelType,
+            channelId = channelId,
+            params = params,
         )
     }
 
@@ -699,6 +718,23 @@ public class ChannelClient internal constructor(
     }
 
     /**
+     * Adds members with extra data to a given channel.
+     * @see [ChatClient.addMembers]
+     *
+     * @param params The [AddMembersParams] holding data about the members to be added.
+     *
+     * @return Executable async [Call] responsible for adding the members.
+     */
+    @CheckResult
+    public fun addMembers(params: AddMembersParams): Call<Channel> {
+        return client.addMembers(
+            channelType = channelType,
+            channelId = channelId,
+            params = params,
+        )
+    }
+
+    /**
      * Removes members from a given channel.
      *
      * @see [ChatClient.removeMembers]
@@ -967,4 +1003,36 @@ public class ChannelClient internal constructor(
 
     @CheckResult
     public fun unpinMessage(message: Message): Call<Message> = client.unpinMessage(message)
+
+    /**
+     * Pins the channel for the current user.
+     *
+     * @return Executable async [Call] responsible for pinning the channel.
+     */
+    @CheckResult
+    public fun pin(): Call<Member> = client.pinChannel(channelType, channelId)
+
+    /**
+     * Unpins the channel for the current user.
+     *
+     * @return Executable async [Call] responsible for unpinning the channel.
+     */
+    @CheckResult
+    public fun unpin(): Call<Member> = client.unpinChannel(channelType, channelId)
+
+    /**
+     * Archives the channel for the current user.
+     *
+     * @return Executable async [Call] responsible for archiving the channel.
+     */
+    @CheckResult
+    public fun archive(): Call<Member> = client.archiveChannel(channelType, channelId)
+
+    /**
+     * Un-archives the channel for the current user.
+     *
+     * @return Executable async [Call] responsible for un-archiving the channel.
+     */
+    @CheckResult
+    public fun unarchive(): Call<Member> = client.unarchiveChannel(channelType, channelId)
 }

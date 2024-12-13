@@ -259,6 +259,11 @@ public class MessageListController(
     public val mode: StateFlow<MessageMode> = _mode
 
     /**
+     * Gives us information if the [MessageListController] was started for the purpose of showing a thread.
+     */
+    public val isStartedForThread: Boolean = parentMessageId != null
+
+    /**
      * Gives us information if we're currently in the [MessageMode.MessageThread] mode.
      */
     public val isInThread: Boolean
@@ -550,24 +555,30 @@ public class MessageListController(
                     }
             }
             .onFirst { channelUserRead ->
-                val unreadMessages = (channelState.value?.messages?.value ?: emptyList())
-                    .fold(emptyList<Message>()) { acc, message ->
-                        when {
-                            channelUserRead.lastReadMessageId == message.id -> emptyList()
-                            else -> acc + message
+                // Don't show the label if no unread messages in the channel, or the controller is started for a thread
+                val unreadLabel = if (isStartedForThread || channelUserRead.unreadMessages == 0) {
+                    null
+                } else {
+                    val unreadMessages = (channelState.value?.messages?.value ?: emptyList())
+                        .fold(emptyList<Message>()) { acc, message ->
+                            when {
+                                channelUserRead.lastReadMessageId == message.id -> emptyList()
+                                else -> acc + message
+                            }
                         }
-                    }
-                unreadLabelState.value = channelUserRead.lastReadMessageId
-                    ?.takeUnless { unreadMessages.isEmpty() }
-                    ?.takeUnless { unreadMessages.lastOrNull()?.id == it }
-                    ?.let { lastReadMessageId ->
-                        UnreadLabel(
-                            unreadCount = channelUserRead.unreadMessages,
-                            lastReadMessageId = lastReadMessageId,
-                            buttonVisibility = shouldShowButton &&
-                                unreadMessages.any { !it.isDeleted() },
-                        )
-                    }
+                    channelUserRead.lastReadMessageId
+                        ?.takeUnless { unreadMessages.isEmpty() }
+                        ?.takeUnless { unreadMessages.lastOrNull()?.id == it }
+                        ?.let { lastReadMessageId ->
+                            UnreadLabel(
+                                unreadCount = channelUserRead.unreadMessages,
+                                lastReadMessageId = lastReadMessageId,
+                                buttonVisibility = shouldShowButton &&
+                                    unreadMessages.any { !it.isDeleted() },
+                            )
+                        }
+                }
+                unreadLabelState.value = unreadLabel
             }.launchIn(scope)
     }
 

@@ -42,7 +42,8 @@ internal data class UpstreamMemberDto(
     val notifications_muted: Boolean?,
     val status: String?,
     val ban_expires: Date?,
-
+    val pinned_at: Date?,
+    val archived_at: Date?,
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
 
@@ -68,6 +69,7 @@ internal data class DownstreamMemberDto(
     val notifications_muted: Boolean?,
     val status: String?,
     val ban_expires: Date?,
-
+    val pinned_at: Date?,
+    val archived_at: Date?,
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
