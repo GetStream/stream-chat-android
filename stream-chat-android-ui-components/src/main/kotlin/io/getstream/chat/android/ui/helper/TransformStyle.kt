@@ -44,6 +44,7 @@ import io.getstream.chat.android.ui.feature.messages.list.reactions.view.ViewRea
 import io.getstream.chat.android.ui.feature.pinned.list.PinnedMessageListViewStyle
 import io.getstream.chat.android.ui.feature.search.SearchInputViewStyle
 import io.getstream.chat.android.ui.feature.search.list.SearchResultListViewStyle
+import io.getstream.chat.android.ui.feature.threads.list.ThreadListViewStyle
 import io.getstream.chat.android.ui.widgets.avatar.AvatarStyle
 import io.getstream.chat.android.ui.widgets.typing.TypingIndicatorViewStyle
 
@@ -141,6 +142,9 @@ public object TransformStyle {
 
     @JvmStatic
     public var audioRecordPlayerViewStyle: StyleTransformer<AudioRecordPlayerViewStyle> = noopTransformer()
+
+    @JvmStatic
+    public var threadListViewStyle: StyleTransformer<ThreadListViewStyle> = noopTransformer()
 
     private fun <T> noopTransformer() = StyleTransformer<T> { it }
 }

@@ -147,7 +147,7 @@ class ChannelListFragment : Fragment() {
 
         binding.searchResultListView.setSearchResultSelectedListener { message ->
             requireActivity().findNavController(R.id.hostFragmentContainer)
-                .navigateSafely(HomeFragmentDirections.actionOpenChat(message.cid, message.id))
+                .navigateSafely(HomeFragmentDirections.actionOpenChat(message.cid, message.id, message.parentId))
         }
     }
 

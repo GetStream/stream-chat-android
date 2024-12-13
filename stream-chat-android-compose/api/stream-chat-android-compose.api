@@ -3670,6 +3670,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public final fun isOnline ()Lkotlinx/coroutines/flow/Flow;
 	public final fun isShowingOverlay ()Z
 	public final fun isShowingPollOptionDetails ()Z
+	public final fun isStartedForThread ()Z
 	public final fun leaveThread ()V
 	public final fun loadNewerMessages (Ljava/lang/String;I)V
 	public static synthetic fun loadNewerMessages$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Ljava/lang/String;IILjava/lang/Object;)V
