@@ -632,7 +632,8 @@ public fun RegularMessageContent(
             Icon(
                 modifier = Modifier
                     .size(24.dp)
-                    .align(BottomEnd),
+                    .align(BottomEnd)
+                    .testTag("Stream_MessageFailedIcon"),
                 painter = painterResource(id = R.drawable.stream_compose_ic_error),
                 contentDescription = null,
                 tint = ChatTheme.colors.errorAccent,
