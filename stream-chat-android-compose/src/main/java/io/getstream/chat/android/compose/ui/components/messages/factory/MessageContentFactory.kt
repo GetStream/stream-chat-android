@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageDeletedContent
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageGiphyContent
@@ -59,7 +60,7 @@ public open class MessageContentFactory {
     public open fun MessageDeletedContent(
         modifier: Modifier,
     ) {
-        DefaultMessageDeletedContent(modifier = modifier)
+        DefaultMessageDeletedContent(modifier = modifier.testTag("Stream_MessageDeleted"))
     }
 
     /**

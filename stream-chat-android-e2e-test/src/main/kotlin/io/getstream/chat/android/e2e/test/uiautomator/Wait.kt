@@ -43,3 +43,16 @@ public fun BySelector.waitToDisappear(timeOutMillis: Long = defaultTimeout): ByS
     device.wait(Until.gone(this), timeOutMillis)
     return this
 }
+
+public fun UiObject2.waitForText(
+    expectedText: String,
+    mustBeEqual: Boolean = true,
+    timeOutMillis: Long = defaultTimeout,
+): UiObject2 {
+    val endTime = System.currentTimeMillis() + timeOutMillis
+    var textPresent = false
+    while (!textPresent && System.currentTimeMillis() < endTime) {
+        textPresent = if (mustBeEqual) text == expectedText else text.contains(expectedText)
+    }
+    return this
+}

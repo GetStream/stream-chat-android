@@ -26,6 +26,7 @@ import okhttp3.ResponseBody
 public var mockServerUrl: String? = null
 private const val driverUrl: String = "http://10.0.2.2:4567"
 private val okHttp: OkHttpClient = OkHttpClient()
+public const val forbiddenWord: String = "wth"
 
 public class MockServer {
 

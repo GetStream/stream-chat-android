@@ -25,6 +25,10 @@ import okhttp3.RequestBody.Companion.toRequestBody
 
 public class ParticipantRobot {
 
+    public companion object {
+        public const val name: String = "Han Solo"
+    }
+
     public fun startTyping(): ParticipantRobot {
         mockServer.postRequest("participant/typing/start")
         return this
@@ -56,80 +60,83 @@ public class ParticipantRobot {
     }
 
     public fun sendMessage(text: String): ParticipantRobot {
-        mockServer.postRequest("/participant/message", text.toRequestBody("text".toMediaTypeOrNull()))
+        mockServer.postRequest("participant/message", text.toRequestBody("text".toMediaTypeOrNull()))
         return this
     }
 
     public fun sendMessageInThread(text: String, alsoSendInChannel: Boolean = false): ParticipantRobot {
         mockServer.postRequest(
-            "/participant/message?thread=true&thread_and_channel=$alsoSendInChannel",
+            "participant/message?thread=true&thread_and_channel=$alsoSendInChannel",
             text.toRequestBody("text".toMediaTypeOrNull()),
         )
         return this
     }
 
     public fun editMessage(text: String): ParticipantRobot {
-        mockServer.postRequest("/participant/message?action=edit")
+        mockServer.postRequest(
+            "participant/message?action=edit",
+            text.toRequestBody("text".toMediaTypeOrNull()),
+        )
         return this
     }
 
     public fun deleteMessage(hard: Boolean = false): ParticipantRobot {
-        mockServer.postRequest("/participant/message?action=delete&hard_delete=$hard")
+        mockServer.postRequest("participant/message?action=delete&hard_delete=$hard")
         return this
     }
 
     public fun quoteMessage(text: String): ParticipantRobot {
-        val endpoint = "/participant/message?quote=true"
+        val endpoint = "participant/message?quote=true"
         mockServer.postRequest(endpoint, text.toRequestBody("text".toMediaTypeOrNull()))
         return this
     }
 
     public fun quoteMessageInThread(text: String, alsoSendInChannel: Boolean = false): ParticipantRobot {
         mockServer.postRequest(
-            "/participant/message?quote=true&thread=true&thread_and_channel=$alsoSendInChannel",
+            "participant/message?quote=true&thread=true&thread_and_channel=$alsoSendInChannel",
             text.toRequestBody("text".toMediaTypeOrNull()),
         )
         return this
     }
 
     public fun sendGiphy(): ParticipantRobot {
-        mockServer.postRequest("/participant/message?giphy=true")
+        mockServer.postRequest("participant/message?giphy=true")
         return this
     }
 
     public fun sendGiphyInThread(): ParticipantRobot {
-        mockServer.postRequest("/participant/message?giphy=true&thread=true")
+        mockServer.postRequest("participant/message?giphy=true&thread=true")
         return this
     }
 
     public fun quoteMessageWithGiphy(): ParticipantRobot {
-        mockServer.postRequest("/participant/message?giphy=true&quote=true")
+        mockServer.postRequest("participant/message?giphy=true&quote=true")
         return this
     }
 
     public fun quoteMessageWithGiphyInThread(alsoSendInChannel: Boolean = false): ParticipantRobot {
-        val endpoint = "/participant/message?giphy=true&quote=true&thread=true&thread_and_channel=$alsoSendInChannel"
+        val endpoint = "participant/message?giphy=true&quote=true&thread=true&thread_and_channel=$alsoSendInChannel"
         mockServer.postRequest(endpoint)
         return this
     }
 
     public fun pinMesage(): ParticipantRobot {
-        mockServer.postRequest("/participant/message?action=pin")
+        mockServer.postRequest("participant/message?action=pin")
         return this
     }
 
     public fun unpinMesage(): ParticipantRobot {
-        mockServer.postRequest("/participant/message?action=unpin")
+        mockServer.postRequest("participant/message?action=unpin")
         return this
     }
 
     public fun uploadAttachment(type: AttachmentType, count: Int = 1): ParticipantRobot {
-        mockServer.postRequest("/participant/message?$type=$count")
+        mockServer.postRequest("participant/message?$type=$count")
         return this
     }
 
     public fun quoteMessageWithAttachment(type: AttachmentType, count: Int = 1): ParticipantRobot {
-        mockServer.postRequest("/participant/message?quote=true&$type=$count")
+        mockServer.postRequest("participant/message?quote=true&$type=$count")
         return this
     }
 
@@ -138,7 +145,7 @@ public class ParticipantRobot {
         count: Int = 1,
         alsoSendInChannel: Boolean = false,
     ): ParticipantRobot {
-        val endpoint = "/participant/message?$type=$count&thread=true&thread_and_channel=$alsoSendInChannel"
+        val endpoint = "participant/message?$type=$count&thread=true&thread_and_channel=$alsoSendInChannel"
         mockServer.postRequest(endpoint)
         return this
     }
@@ -148,18 +155,18 @@ public class ParticipantRobot {
         count: Int = 1,
         alsoSendInChannel: Boolean = false,
     ): ParticipantRobot {
-        val endpoint = "/participant/message?quote=true&$type=$count&thread=true&thread_and_channel=$alsoSendInChannel"
+        val endpoint = "participant/message?quote=true&$type=$count&thread=true&thread_and_channel=$alsoSendInChannel"
         mockServer.postRequest(endpoint)
         return this
     }
 
     public fun addReaction(type: ReactionType): ParticipantRobot {
-        mockServer.postRequest("/participant/reaction?type=${type.reaction}")
+        mockServer.postRequest("participant/reaction?type=${type.reaction}")
         return this
     }
 
     public fun deleteReaction(type: String): ParticipantRobot {
-        mockServer.postRequest("/participant/reaction?type=$type&delete=true")
+        mockServer.postRequest("participant/reaction?type=$type&delete=true")
         return this
     }
 }

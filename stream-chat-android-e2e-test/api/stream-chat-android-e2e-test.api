@@ -1,4 +1,8 @@
 public final class io/getstream/chat/android/compose/uiautomator/ActionsKt {
+	public static final fun disableInternetConnection (Landroidx/test/uiautomator/UiDevice;)V
+	public static final fun enableInternetConnection (Landroidx/test/uiautomator/UiDevice;)V
+	public static final fun goToBackground (Landroidx/test/uiautomator/UiDevice;)V
+	public static final fun goToForeground (Landroidx/test/uiautomator/UiDevice;)V
 	public static final fun longPress (Landroidx/test/uiautomator/UiObject2;I)V
 	public static synthetic fun longPress$default (Landroidx/test/uiautomator/UiObject2;IILjava/lang/Object;)V
 	public static final fun startApp (Landroidx/test/uiautomator/UiDevice;)V
@@ -7,6 +11,7 @@ public final class io/getstream/chat/android/compose/uiautomator/ActionsKt {
 	public static synthetic fun swipeDown$default (Landroidx/test/uiautomator/UiDevice;IIILjava/lang/Object;)V
 	public static final fun swipeUp (Landroidx/test/uiautomator/UiDevice;II)V
 	public static synthetic fun swipeUp$default (Landroidx/test/uiautomator/UiDevice;IIILjava/lang/Object;)V
+	public static final fun tapOnScreenCenter (Landroidx/test/uiautomator/UiDevice;)V
 	public static final fun typeText (Landroidx/test/uiautomator/UiObject2;Ljava/lang/String;)Landroidx/test/uiautomator/UiObject2;
 }
 
@@ -25,9 +30,9 @@ public final class io/getstream/chat/android/compose/uiautomator/BaseKt {
 }
 
 public final class io/getstream/chat/android/compose/uiautomator/ElementKt {
-	public static final fun exists (Landroidx/test/uiautomator/BySelector;)Z
 	public static final fun isChecked (Landroidx/test/uiautomator/BySelector;)Z
 	public static final fun isDisplayed (Landroidx/test/uiautomator/BySelector;)Z
+	public static final fun isDisplayed (Landroidx/test/uiautomator/UiObject2;)Z
 	public static final fun isEnabled (Landroidx/test/uiautomator/BySelector;)Z
 	public static final fun scrollDownUntilDisplayed (Landroidx/test/uiautomator/BySelector;I)Landroidx/test/uiautomator/UiObject2;
 	public static synthetic fun scrollDownUntilDisplayed$default (Landroidx/test/uiautomator/BySelector;IILjava/lang/Object;)Landroidx/test/uiautomator/UiObject2;
@@ -45,7 +50,9 @@ public final class io/getstream/chat/android/compose/uiautomator/FindByKt {
 
 public final class io/getstream/chat/android/compose/uiautomator/MathKt {
 	public static final fun bottomPoint (Landroid/graphics/Rect;)Landroid/graphics/Point;
+	public static final fun getHeight (Landroidx/test/uiautomator/UiObject2;)I
 	public static final fun getSeconds (I)J
+	public static final fun getWidth (Landroidx/test/uiautomator/UiObject2;)I
 	public static final fun leftPoint (Landroid/graphics/Rect;)Landroid/graphics/Point;
 	public static final fun toSeconds (J)I
 }
@@ -60,6 +67,8 @@ public final class io/getstream/chat/android/compose/uiautomator/WaitKt {
 	public static synthetic fun sleep$default (JILjava/lang/Object;)V
 	public static final fun wait (Landroidx/test/uiautomator/BySelector;J)Landroidx/test/uiautomator/BySelector;
 	public static synthetic fun wait$default (Landroidx/test/uiautomator/BySelector;JILjava/lang/Object;)Landroidx/test/uiautomator/BySelector;
+	public static final fun waitForText (Landroidx/test/uiautomator/UiObject2;Ljava/lang/String;ZJ)Landroidx/test/uiautomator/UiObject2;
+	public static synthetic fun waitForText$default (Landroidx/test/uiautomator/UiObject2;Ljava/lang/String;ZJILjava/lang/Object;)Landroidx/test/uiautomator/UiObject2;
 	public static final fun waitToAppear (Landroidx/test/uiautomator/BySelector;IJ)Landroidx/test/uiautomator/UiObject2;
 	public static final fun waitToAppear (Landroidx/test/uiautomator/BySelector;J)Landroidx/test/uiautomator/UiObject2;
 	public static synthetic fun waitToAppear$default (Landroidx/test/uiautomator/BySelector;IJILjava/lang/Object;)Landroidx/test/uiautomator/UiObject2;
@@ -83,6 +92,15 @@ public final class io/getstream/chat/android/e2e/test/mockserver/AttachmentType 
 	public static fun values ()[Lio/getstream/chat/android/e2e/test/mockserver/AttachmentType;
 }
 
+public final class io/getstream/chat/android/e2e/test/mockserver/MessageReadStatus : java/lang/Enum {
+	public static final field PENDING Lio/getstream/chat/android/e2e/test/mockserver/MessageReadStatus;
+	public static final field READ Lio/getstream/chat/android/e2e/test/mockserver/MessageReadStatus;
+	public static final field SENT Lio/getstream/chat/android/e2e/test/mockserver/MessageReadStatus;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/e2e/test/mockserver/MessageReadStatus;
+	public static fun values ()[Lio/getstream/chat/android/e2e/test/mockserver/MessageReadStatus;
+}
+
 public final class io/getstream/chat/android/e2e/test/mockserver/MockServer {
 	public fun <init> ()V
 	public final fun getRequest (Ljava/lang/String;)Lokhttp3/ResponseBody;
@@ -93,6 +111,7 @@ public final class io/getstream/chat/android/e2e/test/mockserver/MockServer {
 }
 
 public final class io/getstream/chat/android/e2e/test/mockserver/MockServerKt {
+	public static final field forbiddenWord Ljava/lang/String;
 	public static final fun getMockServerUrl ()Ljava/lang/String;
 	public static final fun setMockServerUrl (Ljava/lang/String;)V
 }
@@ -109,7 +128,15 @@ public final class io/getstream/chat/android/e2e/test/mockserver/ReactionType : 
 	public static fun values ()[Lio/getstream/chat/android/e2e/test/mockserver/ReactionType;
 }
 
+public final class io/getstream/chat/android/e2e/test/robots/BackendRobot {
+	public fun <init> ()V
+	public final fun generateChannels (III)Lio/getstream/chat/android/e2e/test/robots/BackendRobot;
+	public static synthetic fun generateChannels$default (Lio/getstream/chat/android/e2e/test/robots/BackendRobot;IIIILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/BackendRobot;
+}
+
 public final class io/getstream/chat/android/e2e/test/robots/ParticipantRobot {
+	public static final field Companion Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot$Companion;
+	public static final field name Ljava/lang/String;
 	public fun <init> ()V
 	public final fun addReaction (Lio/getstream/chat/android/e2e/test/mockserver/ReactionType;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
 	public final fun deleteMessage (Z)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
@@ -145,6 +172,9 @@ public final class io/getstream/chat/android/e2e/test/robots/ParticipantRobot {
 	public static synthetic fun uploadAttachment$default (Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;Lio/getstream/chat/android/e2e/test/mockserver/AttachmentType;IILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
 	public final fun uploadAttachmentInThread (Lio/getstream/chat/android/e2e/test/mockserver/AttachmentType;IZ)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
 	public static synthetic fun uploadAttachmentInThread$default (Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;Lio/getstream/chat/android/e2e/test/mockserver/AttachmentType;IZILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
+}
+
+public final class io/getstream/chat/android/e2e/test/robots/ParticipantRobot$Companion {
 }
 
 public abstract interface annotation class io/getstream/chat/android/e2e/test/rules/Retry : java/lang/annotation/Annotation {
