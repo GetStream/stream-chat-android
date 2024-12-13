@@ -73,10 +73,13 @@ class HomeViewModel(
     val events: LiveData<Event<UiEvent>> = _events
 
     init {
-        _state.postValue(initialState)
+        setState { initialState }
 
         _state.addSource(globalState.totalUnreadCount.asLiveData()) { count ->
             setState { copy(totalUnreadCount = count) }
+        }
+        _state.addSource(globalState.unreadThreadsCount.asLiveData()) { count ->
+            setState { copy(unreadThreadsCount = count) }
         }
         _state.addSource(clientState.user.asLiveData()) { user ->
             setState { copy(user = user ?: User()) }
@@ -119,11 +122,13 @@ class HomeViewModel(
      * @param user The currently logged in user.
      * @param totalUnreadCount The total unread messages count for the current user.
      * @param mentionsUnreadCount The number of unread mentions by the current user.
+     * @param unreadThreadsCount The number of unread threads by the current user.
      */
     data class UiState(
         val user: User = User(),
         val totalUnreadCount: Int = 0,
         val mentionsUnreadCount: Int = 0,
+        val unreadThreadsCount: Int = 0,
     )
 
     /**
