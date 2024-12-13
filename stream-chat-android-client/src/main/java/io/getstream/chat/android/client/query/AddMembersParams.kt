@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.models
+package io.getstream.chat.android.client.query
+
+import io.getstream.chat.android.models.MemberData
+import io.getstream.chat.android.models.Message
 
 /**
  * Model holding data required for adding members to a channel.
@@ -24,7 +27,7 @@ package io.getstream.chat.android.models
  * @param skipPush If true, skips sending push notifications.
  * @param systemMessage The system message that will be shown in the channel.
  */
-public data class AddMembersRequest(
+public data class AddMembersParams(
     val members: List<MemberData>,
     val systemMessage: Message? = null,
     val hideHistory: Boolean? = null,

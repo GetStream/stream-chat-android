@@ -20,10 +20,10 @@ import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
+import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.channel.generateChannelIdIfNeeded
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.CreateChannelRequest
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.SyncStatus
@@ -62,7 +62,7 @@ internal class CreateChannelListenerDatabase(
     @Deprecated(
         "Use CreateChannelListener.onCreateChannelRequest(channelType, channelId, request, currentUser) instead",
         replaceWith = ReplaceWith(
-            "onCreateChannelRequest(String, String, CreateChannelRequest, User)",
+            "onCreateChannelRequest(String, String, CreateChannelParams, User)",
             "io.getstream.chat.android.client.plugin.listeners.CreateChannelListener",
         ),
         level = DeprecationLevel.WARNING,
@@ -77,7 +77,7 @@ internal class CreateChannelListenerDatabase(
         onCreateChannelRequest(
             channelType = channelType,
             channelId = channelId,
-            request = CreateChannelRequest(
+            params = CreateChannelParams(
                 members = memberIds.map(::MemberData),
                 extraData = extraData,
             ),
@@ -92,26 +92,26 @@ internal class CreateChannelListenerDatabase(
      *
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
-     * @param request The model holding the required data for creating a channel (member data and custom data).
+     * @param params The model holding the required data for creating a channel (member data and custom data).
      * @param currentUser The currently logged in user.
      */
     override suspend fun onCreateChannelRequest(
         channelType: String,
         channelId: String,
-        request: CreateChannelRequest,
+        params: CreateChannelParams,
         currentUser: User,
     ) {
-        val generatedChannelId = generateChannelIdIfNeeded(channelId, request.memberIds)
+        val generatedChannelId = generateChannelIdIfNeeded(channelId, params.memberIds)
         val channel = Channel(
             id = generatedChannelId,
             type = channelType,
-            members = getMembers(request),
-            extraData = request.extraData.toMutableMap(),
+            members = getMembers(params),
+            extraData = params.extraData.toMutableMap(),
             createdAt = Date(),
             createdBy = currentUser,
             syncStatus = if (clientState.isOnline) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED,
-            name = request.extraData["name"] as? String ?: "",
-            image = request.extraData["image"] as? String ?: "",
+            name = params.extraData["name"] as? String ?: "",
+            image = params.extraData["image"] as? String ?: "",
         )
 
         channelRepository.insertChannel(channel)
@@ -124,8 +124,8 @@ internal class CreateChannelListenerDatabase(
      *
      * @return The list of members.
      */
-    private suspend fun getMembers(request: CreateChannelRequest): List<Member> {
-        val membersMap = request.members.associateBy { it.userId }
+    private suspend fun getMembers(params: CreateChannelParams): List<Member> {
+        val membersMap = params.members.associateBy { it.userId }
         val cachedUsers = userRepository.selectUsers(membersMap.keys.toList())
         val missingUserIds = membersMap.keys.minus(cachedUsers.map(User::id).toSet())
         val cachedMembers = cachedUsers.map { user ->

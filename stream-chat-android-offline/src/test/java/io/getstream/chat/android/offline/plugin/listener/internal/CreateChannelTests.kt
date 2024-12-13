@@ -17,8 +17,8 @@
 package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.models.CreateChannelRequest
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.SyncStatus
@@ -52,7 +52,7 @@ internal class CreateChannelTests {
 
             val channelType = "channelType"
             val channelId = "channelId"
-            val request = CreateChannelRequest(
+            val params = CreateChannelParams(
                 members = members.map { MemberData(it.getUserId(), extraData = it.extraData) },
                 extraData = emptyMap(),
             )
@@ -61,7 +61,7 @@ internal class CreateChannelTests {
             sut.onCreateChannelRequest(
                 channelType = channelType,
                 channelId = channelId,
-                request = request,
+                params = params,
                 currentUser = currentUser,
             )
 
@@ -90,7 +90,7 @@ internal class CreateChannelTests {
 
             val channelType = "channelType"
             val channelId = "channelId"
-            val request = CreateChannelRequest(
+            val params = CreateChannelParams(
                 members = members.map { MemberData(it.getUserId(), extraData = it.extraData) },
                 extraData = emptyMap(),
             )
@@ -99,7 +99,7 @@ internal class CreateChannelTests {
             sut.onCreateChannelRequest(
                 channelType = channelType,
                 channelId = channelId,
-                request = request,
+                params = params,
                 currentUser = currentUser,
             )
 

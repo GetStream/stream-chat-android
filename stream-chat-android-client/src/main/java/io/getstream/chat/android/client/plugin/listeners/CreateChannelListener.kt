@@ -17,8 +17,8 @@
 package io.getstream.chat.android.client.plugin.listeners
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.CreateChannelRequest
 import io.getstream.chat.android.models.User
 import io.getstream.result.Result
 
@@ -39,7 +39,7 @@ public interface CreateChannelListener {
     @Deprecated(
         "Use CreateChannelListener.onCreateChannelRequest(channelType, channelId, request, currentUser) instead",
         replaceWith = ReplaceWith(
-            "onCreateChannelRequest(String, String, CreateChannelRequest, User)",
+            "onCreateChannelRequest(String, String, CreateChannelParams, User)",
             "io.getstream.chat.android.client.plugin.listeners.CreateChannelListener",
         ),
         level = DeprecationLevel.WARNING,
@@ -57,13 +57,13 @@ public interface CreateChannelListener {
      *
      * @param channelType The channel type. ie messaging.
      * @param channelId The channel id. ie 123.
-     * @param request The request holding the required data for creating a channel.
+     * @param params The request holding the required data for creating a channel.
      * @param currentUser The currently logged in user.
      */
     public suspend fun onCreateChannelRequest(
         channelType: String,
         channelId: String,
-        request: CreateChannelRequest,
+        params: CreateChannelParams,
         currentUser: User,
     )
 

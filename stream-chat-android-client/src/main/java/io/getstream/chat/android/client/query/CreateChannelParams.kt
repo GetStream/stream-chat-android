@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.models
+package io.getstream.chat.android.client.query
+
+import io.getstream.chat.android.models.MemberData
 
 /**
  * Model holding data for creating a channel.
@@ -22,7 +24,7 @@ package io.getstream.chat.android.models
  * @param members The list of the members with extra data to be added to the channel.
  * @param extraData Map of key-value pairs that let you store extra data.
  */
-public data class CreateChannelRequest(
+public data class CreateChannelParams(
     val members: List<MemberData>,
     val extraData: Map<String, Any>,
 ) {

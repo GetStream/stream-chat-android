@@ -32,6 +32,7 @@ import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.removeMyReaction
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.sync.SyncState
 import io.getstream.chat.android.client.sync.stringify
@@ -40,7 +41,6 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.Tube
 import io.getstream.chat.android.core.utils.date.diff
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.models.CreateChannelRequest
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
@@ -457,7 +457,7 @@ internal class SyncManager(
                 Result.Success(Unit)
             } else {
                 logger.v { "[retryChannels] sending channel($cid)" }
-                val request = CreateChannelRequest(
+                val params = CreateChannelParams(
                     members = channel.members.map { member ->
                         MemberData(member.getUserId(), extraData = member.extraData)
                     },
@@ -466,7 +466,7 @@ internal class SyncManager(
                 chatClient.createChannel(
                     channel.type,
                     channel.id,
-                    request,
+                    params,
                 ).await()
             }
             logger.v { "[retryChannels] result($cid).isSuccess: ${result is Result.Success}" }
