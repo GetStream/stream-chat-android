@@ -23,7 +23,6 @@ import android.os.Build
 import androidx.core.net.toUri
 import io.getstream.chat.android.client.extensions.EXTRA_DURATION
 import io.getstream.chat.android.client.extensions.EXTRA_WAVEFORM_DATA
-import io.getstream.chat.android.client.extensions.duration
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
@@ -172,10 +171,11 @@ public class DefaultStreamMediaRecorder(
             MediaRecorder(context)
         }.apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
-            // TODO - consult with the SDK teams to see the best
-            // TODO - format for this
-            setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS)
+            setOutputFormat(MediaRecorder.OutputFormat.MPEG_4) // MP4/M4A container format - widely supported and efficient
             setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+            setAudioEncodingBitRate(ENCODING_BIT_RATE_32KBPS)
+            setAudioSamplingRate(SAMPLING_RATE_16KHZ)
+            setAudioChannels(CHANNELS)
             setOutputFile(recordingFile.path)
             prepare()
             mediaRecorderState = MediaRecorderState.PREPARED
@@ -514,5 +514,23 @@ public class DefaultStreamMediaRecorder(
         onCurrentRecordingDurationChanged: StreamMediaRecorder.OnCurrentRecordingDurationChanged,
     ) {
         this.onCurrentRecordingDurationChangedListener = onCurrentRecordingDurationChanged
+    }
+
+    private companion object {
+        // 1 channel - optimal for voice recording
+        private const val CHANNELS = 1
+
+        // 16 kHz - standard for voice recording, provides good clarity while keeping file size small
+        private const val SAMPLING_RATE_16KHZ = 16000
+
+        // 32 kbps - optimal for voice recording
+        private const val ENCODING_BIT_RATE_32KBPS = 32000
+
+        // 44.1 kHz - standard for music recording, provides good clarity while keeping file size small
+        private const val SAMPLING_RATE_44100HZ = 44100
+
+        // 128 kbps - standard bitrate for music recording at 44.1 kHz
+        private const val ENCODING_BIT_RATE_128KBPS = 128000
+
     }
 }
