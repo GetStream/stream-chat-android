@@ -79,6 +79,7 @@
 
 ### ✅ Added
 - Add `ThreadListView` component for showing the list of threads for the user. [#5491](https://github.com/GetStream/stream-chat-android/pull/5491)
+- Hide messages with moderated pictures. [#5525](https://github.com/GetStream/stream-chat-android/pull/5525)
 
 ### ⚠️ Changed
 
@@ -98,6 +99,7 @@
 - Add `MessageOptionItemVisibility.isBlockUserVisible` property to show/hide the block user option. [#5512](https://github.com/GetStream/stream-chat-android/pull/5512)
 - Add `ChatTheme.channelOptionsTheme` property to customize the channel options. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513) 
 - Add `SearchResultItemState.channel` property containing the cached info of the channel where the message was sent. [#5500](https://github.com/GetStream/stream-chat-android/pull/5500)
+- Hide messages with moderated pictures. [#5525](https://github.com/GetStream/stream-chat-android/pull/5525)
 
 ### ⚠️ Changed
 - 🚨 Breaking change: The `SearchResultNameFormatter.formatMessageTitle` method receives a `SearchResultItemState` instead of a `Message`. [#5500](https://github.com/GetStream/stream-chat-android/pull/5500)
