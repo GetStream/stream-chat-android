@@ -10,7 +10,6 @@ def ignoredModules = [
         'stream-chat-android-test',
         'stream-chat-android-ui-guides',
         'stream-chat-android-ui-components-sample',
-        'stream-chat-android-pushprovider-firebase',
         'stream-chat-android-client-test',
         'stream-chat-android-ui-uitests'
 ]
