@@ -30,6 +30,8 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.contract.internal.SelectFilesContract
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
 import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
+import io.getstream.chat.android.ui.common.permissions.FilesAccess
+import io.getstream.chat.android.ui.common.permissions.resolveFilesAccessState
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentFileBinding
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
@@ -94,8 +96,12 @@ internal class FileAttachmentFragment : Fragment() {
         if (::style.isInitialized) {
             setupViews()
             setupResultListener()
-            checkPermissions()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkPermissions()
     }
 
     override fun onDestroyView() {
@@ -128,7 +134,9 @@ internal class FileAttachmentFragment : Fragment() {
             grantPermissionsInclude.grantPermissionsTextView.text = style.allowAccessToFilesButtonText
             grantPermissionsInclude.grantPermissionsTextView.setTextStyle(style.allowAccessButtonTextStyle)
             grantPermissionsInclude.grantPermissionsTextView.setOnClickListener {
-                checkPermissions()
+                permissionChecker.checkFilesPermissions(binding.root) {
+                    checkPermissions()
+                }
             }
             recentFilesRecyclerView.adapter = fileAttachmentsAdapter
             fileManagerImageView.setImageDrawable(style.fileManagerIconDrawable)
@@ -137,19 +145,80 @@ internal class FileAttachmentFragment : Fragment() {
             fileManagerImageView.setOnClickListener {
                 activityResultLauncher?.launch(Unit)
             }
+            // Audio access label
+            audioAccessTextView.text = style.allowAccessToAudioText
+            audioAccessTextView.setTextStyle(style.allowAccessToAudioTextStyle)
+            audioAccessImageView.setImageDrawable(style.allowAccessToAudioIconDrawable)
+            audioAccessImageView.setOnClickListener {
+                permissionChecker.checkAudioPermissions(binding.root) {
+                    checkPermissions()
+                }
+            }
+            // Visual media access label
+            visualMediaAccessTextView.setTextStyle(style.allowAccessToVisualMediaTextStyle)
+            visualMediaAccessImageView.setImageDrawable(style.allowAccessToVisualMediaIconDrawable)
+            visualMediaAccessImageView.setOnClickListener {
+                permissionChecker.checkVisualMediaPermissions(binding.root) {
+                    checkPermissions()
+                }
+            }
         }
     }
 
     private fun checkPermissions() {
-        if (!permissionChecker.isGrantedFilePermissions(requireContext())) {
-            permissionChecker.checkFilePermissions(
-                binding.root,
-                onPermissionDenied = ::onPermissionDenied,
-                onPermissionGranted = ::onPermissionGranted,
-            )
-            return
+        val filesAccess = resolveFilesAccessState(requireContext())
+        handleFilesAccessState(filesAccess)
+    }
+
+    private fun handleFilesAccessState(access: FilesAccess) {
+        when (access) {
+            FilesAccess.DENIED -> {
+                showGrantPermissionsContainer(show = true)
+                showRequestAudioAccessLabel(show = false)
+                showRequestVisualMediaAccessLabel(show = false)
+            }
+
+            else -> {
+                val hasAudio = access == FilesAccess.AUDIO_AND_FULL_VISUAL ||
+                    access == FilesAccess.AUDIO_AND_PARTIAL_VISUAL ||
+                    access == FilesAccess.AUDIO
+                val hasFullVisual = access == FilesAccess.AUDIO_AND_FULL_VISUAL ||
+                    access == FilesAccess.FULL_VISUAL
+                val hasPartialVisual = access == FilesAccess.AUDIO_AND_PARTIAL_VISUAL ||
+                    access == FilesAccess.PARTIAL_VISUAL
+
+                showGrantPermissionsContainer(show = false)
+                showRequestAudioAccessLabel(show = !hasAudio)
+                showRequestVisualMediaAccessLabel(show = !hasFullVisual, hasPartialAccess = hasPartialVisual)
+                populateAttachments()
+            }
         }
-        onPermissionGranted()
+    }
+
+    private fun showRequestAudioAccessLabel(show: Boolean) {
+        _binding?.run {
+            audioAccessTextView.isVisible = show
+            audioAccessImageView.isVisible = show
+        }
+    }
+
+    private fun showRequestVisualMediaAccessLabel(show: Boolean, hasPartialAccess: Boolean = false) {
+        _binding?.run {
+            val text = if (hasPartialAccess) {
+                style.allowAccessToMoreVisualMediaText
+            } else {
+                style.allowAccessToVisualMediaText
+            }
+            visualMediaAccessTextView.text = text
+            visualMediaAccessTextView.isVisible = show
+            visualMediaAccessImageView.isVisible = show
+        }
+    }
+
+    private fun showGrantPermissionsContainer(show: Boolean) {
+        _binding?.run {
+            grantPermissionsInclude.grantPermissionsContainer.isVisible = show
+        }
     }
 
     private fun setupResultListener() {
@@ -180,19 +249,6 @@ internal class FileAttachmentFragment : Fragment() {
      */
     fun setAttachmentsPickerTabListener(attachmentsPickerTabListener: AttachmentsPickerTabListener) {
         this.attachmentsPickerTabListener = attachmentsPickerTabListener
-    }
-
-    private fun onPermissionGranted() {
-        _binding?.run {
-            grantPermissionsInclude.grantPermissionsContainer.isVisible = false
-            populateAttachments()
-        }
-    }
-
-    private fun onPermissionDenied() {
-        _binding?.run {
-            grantPermissionsInclude.grantPermissionsContainer.isVisible = true
-        }
     }
 
     private fun populateAttachments() {

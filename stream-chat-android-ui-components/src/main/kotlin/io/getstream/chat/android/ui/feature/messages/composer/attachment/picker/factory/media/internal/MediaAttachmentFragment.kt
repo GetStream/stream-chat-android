@@ -28,6 +28,8 @@ import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
 import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
+import io.getstream.chat.android.ui.common.permissions.VisualMediaAccess
+import io.getstream.chat.android.ui.common.permissions.resolveVisualMediaAccessState
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentMediaBinding
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
@@ -61,7 +63,7 @@ internal class MediaAttachmentFragment : Fragment() {
     private lateinit var style: AttachmentsPickerDialogStyle
 
     private val mediaAttachmentsAdapter: MediaAttachmentAdapter by lazy {
-        MediaAttachmentAdapter(style = style, ::updateMediaAttachment)
+        MediaAttachmentAdapter(style = style, ::updateMediaAttachment, ::requestPermissions)
     }
 
     private var selectedAttachments: Set<AttachmentMetaData> = emptySet()
@@ -85,8 +87,12 @@ internal class MediaAttachmentFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         if (::style.isInitialized) {
             setupViews()
-            checkPermissions()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkPermissions()
     }
 
     override fun onDestroyView() {
@@ -126,27 +132,42 @@ internal class MediaAttachmentFragment : Fragment() {
             grantPermissionsTextView.text = style.allowAccessToMediaButtonText
             grantPermissionsTextView.setTextStyle(style.allowAccessButtonTextStyle)
             grantPermissionsTextView.setOnClickListener {
-                checkPermissions()
+                requestPermissions()
             }
         }
     }
 
     private fun checkPermissions() {
-        if (!permissionChecker.isGrantedMediaPermissions(requireContext())) {
-            permissionChecker.checkMediaPermissions(
-                binding.root,
-                onPermissionDenied = ::onPermissionDenied,
-                onPermissionGranted = ::onPermissionGranted,
-            )
-            return
+        val visualMediaAccess = resolveVisualMediaAccessState(requireContext())
+        handleVisualMediaAccessState(visualMediaAccess)
+    }
+
+    private fun requestPermissions() {
+        permissionChecker.checkVisualMediaPermissions(binding.root) { _ ->
+            val visualMediaAccess = resolveVisualMediaAccessState(requireContext())
+            handleVisualMediaAccessState(visualMediaAccess)
         }
-        onPermissionGranted()
+    }
+
+    private fun handleVisualMediaAccessState(access: VisualMediaAccess) {
+        when (access) {
+            VisualMediaAccess.FULL -> onPermissionGranted()
+            VisualMediaAccess.PARTIAL -> onPermissionPartiallyGranted()
+            VisualMediaAccess.DENIED -> onPermissionDenied()
+        }
     }
 
     private fun onPermissionGranted() {
         _binding?.run {
             grantPermissionsInclude.grantPermissionsContainer.isVisible = false
-            populateAttachments()
+            populateAttachments(allowAddMore = false)
+        }
+    }
+
+    private fun onPermissionPartiallyGranted() {
+        _binding?.run {
+            grantPermissionsInclude.grantPermissionsContainer.isVisible = false
+            populateAttachments(allowAddMore = true)
         }
     }
 
@@ -169,7 +190,7 @@ internal class MediaAttachmentFragment : Fragment() {
         attachmentsPickerTabListener?.onSelectedAttachmentsChanged(selectedAttachments.toList())
     }
 
-    private fun populateAttachments() {
+    private fun populateAttachments(allowAddMore: Boolean) {
         lifecycleScope.launch(DispatcherProvider.Main) {
             binding.progressBar.isVisible = true
 
@@ -183,7 +204,13 @@ internal class MediaAttachmentFragment : Fragment() {
                 binding.emptyPlaceholderTextView.text = style.mediaAttachmentNoMediaText
                 binding.emptyPlaceholderTextView.isVisible = true
             } else {
-                mediaAttachmentsAdapter.setAttachments(filteredAttachments)
+                val attachmentItems = filteredAttachments.map(MediaAttachmentListItem::MediaAttachmentItem)
+                val items = if (allowAddMore) {
+                    listOf(MediaAttachmentListItem.AddMoreItem) + attachmentItems
+                } else {
+                    attachmentItems
+                }
+                mediaAttachmentsAdapter.setItems(items)
             }
             binding.progressBar.isVisible = false
         }
