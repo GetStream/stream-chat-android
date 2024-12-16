@@ -1839,7 +1839,8 @@ public abstract interface class io/getstream/chat/android/ui/common/utils/typing
 
 public final class io/getstream/sdk/chat/audio/recording/DefaultStreamMediaRecorder : io/getstream/sdk/chat/audio/recording/StreamMediaRecorder {
 	public static final field $stable I
-	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;IIIIII)V
+	public synthetic fun <init> (Landroid/content/Context;IIIIIIILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun deleteRecording (Ljava/io/File;)Lio/getstream/result/Result;
 	public fun release ()V
 	public fun setOnCurrentRecordingDurationChangedListener (Lio/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnCurrentRecordingDurationChanged;)V
