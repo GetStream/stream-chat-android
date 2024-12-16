@@ -86,6 +86,7 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fix keyboard not closing when opening the attachments picker from `MessagesScreen`. [#5506](https://github.com/GetStream/stream-chat-android/pull/5506)
+- The `ChatTheme.downloadAttachmentUriGenerator` and `ChatTheme.downloadRequestInterceptor` properties are forwarded within the `MediaGalleryPreviewActivity` to be used when downloading attachments. [#5522](https://github.com/GetStream/stream-chat-android/pull/5522)
 
 ### ⬆️ Improved
 - Add support for partial media access in `AttachmentsPickerImagesTabFactory` and `AttachmentsPickerFilesTabFactory` for Android 14+. [#5518](https://github.com/GetStream/stream-chat-android/pull/5518)

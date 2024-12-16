@@ -163,6 +163,9 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.streamcdn.image.StreamCdnCropImageMode
 import io.getstream.chat.android.models.streamcdn.image.StreamCdnResizeImageMode
+import io.getstream.chat.android.ui.common.helper.DefaultDownloadAttachmentUriGenerator
+import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
+import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
@@ -260,6 +263,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             ChatTheme(
                 videoThumbnailsEnabled = videoThumbnailsEnabled,
                 streamCdnImageResizing = streamCdnImageResizing,
+                downloadAttachmentUriGenerator = downloadAttachmentUriGenerator,
+                downloadRequestInterceptor = downloadRequestInterceptor,
             ) {
                 SetupEdgeToEdge()
 
@@ -1805,26 +1810,44 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         private const val DefaultZoomScale: Float = 1f
 
         /**
+         * Used to generate download URIs for attachments.
+         */
+        private var downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator =
+            DefaultDownloadAttachmentUriGenerator
+
+        /**
+         * Used to intercept download requests.
+         */
+        private var downloadRequestInterceptor: DownloadRequestInterceptor = DownloadRequestInterceptor { }
+
+        /**
          * Used to build an [Intent] to start the [MediaGalleryPreviewActivity] with the required data.
          *
          * @param context The context to start the activity with.
          * @param message The [Message] containing the attachments.
          * @param attachmentPosition The initial position of the clicked media attachment.
          * @param videoThumbnailsEnabled Whether video thumbnails will be displayed in previews or not.
+         * @param downloadAttachmentUriGenerator Used to generate download URIs for attachments.
+         * @param downloadRequestInterceptor Used to intercept download requests.
          * @param streamCdnImageResizing Sets the Stream CDN hosted image resizing strategy. Turned off by default.
          * Please note that only Stream CDN hosted images containing original width (ow) and original height (oh)
          * parameters are able to be resized.
          * @param skipEnrichUrl If set to true will skip enriching URLs when you update the message
          * by deleting an attachment contained within it. Set to false by default.
          */
+        @Suppress("LongParameterList")
         public fun getIntent(
             context: Context,
             message: Message,
             attachmentPosition: Int,
             videoThumbnailsEnabled: Boolean,
+            downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
+            downloadRequestInterceptor: DownloadRequestInterceptor,
             streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing(),
             skipEnrichUrl: Boolean = false,
         ): Intent {
+            this.downloadAttachmentUriGenerator = downloadAttachmentUriGenerator
+            this.downloadRequestInterceptor = downloadRequestInterceptor
             return Intent(context, MediaGalleryPreviewActivity::class.java).apply {
                 val mediaGalleryPreviewActivityState = message.toMediaGalleryPreviewActivityState()
 
