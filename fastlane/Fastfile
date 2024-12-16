@@ -35,7 +35,7 @@ lane :stop_mock_server do
 end
 
 lane :run_sonar_analysis do |options|
-  next unless is_check_required(sources: sources_matrix[:unit], force_check: @force_check)
+  next unless is_check_required(sources: sources_matrix[:sonar], force_check: @force_check)
 
   Dir.chdir('..') { sh('./gradlew sonar') }
 end
