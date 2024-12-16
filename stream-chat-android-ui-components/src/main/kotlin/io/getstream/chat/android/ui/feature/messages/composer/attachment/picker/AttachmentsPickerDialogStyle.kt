@@ -45,6 +45,13 @@ import io.getstream.chat.android.ui.helper.ViewStyle
  * @param fileAttachmentsTabIconDrawable The icon for the file attachments tab.
  * @param allowAccessToFilesButtonText The text to request required permissions on the file attachments tab.
  * @param allowAccessToFilesIconDrawable The icon above the permissions text on the file attachments tab.
+ * @param allowAccessToAudioText The text to request audio access on the file attachments tab.
+ * @param allowAccessToAudioTextStyle The text style for the audio permissions text on the file attachments tab.
+ * @param allowAccessToAudioIconDrawable The icon for the audio access label on the file attachments tab.
+ * @param allowAccessToVisualMediaText The text to request visual media access on the file attachments tab.
+ * @param allowAccessToMoreVisualMediaText The text to request more (partial) visual media on the file attachments tab.
+ * @param allowAccessToVisualMediaTextStyle The text style for the visual media access text on the file attachments tab.
+ * @param allowAccessToVisualMediaIconDrawable The icon for the visual media access label on the file attachments tab.
  * @param recentFilesText The text above the file list on the file attachments tab.
  * @param recentFilesTextStyle The text style of the recent files text on the file attachments tab.
  * @param fileManagerIconDrawable The icon for a button to pick files from file manager.
@@ -85,6 +92,13 @@ public data class AttachmentsPickerDialogStyle(
     val fileAttachmentsTabIconDrawable: Drawable,
     val allowAccessToFilesButtonText: String,
     val allowAccessToFilesIconDrawable: Drawable,
+    val allowAccessToAudioText: String,
+    val allowAccessToAudioTextStyle: TextStyle,
+    val allowAccessToAudioIconDrawable: Drawable,
+    val allowAccessToVisualMediaText: String,
+    val allowAccessToMoreVisualMediaText: String,
+    val allowAccessToVisualMediaTextStyle: TextStyle,
+    val allowAccessToVisualMediaIconDrawable: Drawable,
     val recentFilesText: String,
     val recentFilesTextStyle: TextStyle,
     val fileManagerIconDrawable: Drawable,

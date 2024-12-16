@@ -52,6 +52,8 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
 import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
+import io.getstream.chat.android.ui.common.permissions.FilesAccess
+import io.getstream.chat.android.ui.common.permissions.Permissions
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.uiutils.util.openSystemSettings
 
@@ -111,7 +113,7 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
         var showPermanentlyDeniedSnackBar by remember { mutableStateOf(false) }
         val permissionLauncher =
             rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
-                if (isPermanentlyDenied(context, result)) {
+                if (Permissions.isPermanentlyDenied(context, result)) {
                     showPermanentlyDeniedSnackBar = true
                 }
             }
@@ -126,9 +128,9 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
         // Content
         FilesAccessContent(
             filesAccess = filesAccess,
-            onRequestFilesAccess = { permissionLauncher.launch(filesPermissions()) },
-            onRequestVisualMediaAccess = { permissionLauncher.launch(visualMediaPermissions()) },
-            onRequestAudioAccess = { permissionLauncher.launch(audioPermissions()) },
+            onRequestFilesAccess = { permissionLauncher.launch(Permissions.filesPermissions()) },
+            onRequestVisualMediaAccess = { permissionLauncher.launch(Permissions.visualMediaPermissions()) },
+            onRequestAudioAccess = { permissionLauncher.launch(Permissions.audioPermissions()) },
             filePicker = {
                 FilesPicker(
                     files = attachments,

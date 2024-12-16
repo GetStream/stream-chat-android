@@ -43,6 +43,8 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
 import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
+import io.getstream.chat.android.ui.common.permissions.Permissions
+import io.getstream.chat.android.ui.common.permissions.VisualMediaAccess
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.uiutils.util.openSystemSettings
 
@@ -94,7 +96,7 @@ public class AttachmentsPickerImagesTabFactory : AttachmentsPickerTabFactory {
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
         onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     ) {
-        val permissions = visualMediaPermissions()
+        val permissions = Permissions.visualMediaPermissions()
         val context = LocalContext.current
         val lifecycleOwner = LocalLifecycleOwner.current
         val storageHelper: StorageHelperWrapper =
@@ -111,7 +113,7 @@ public class AttachmentsPickerImagesTabFactory : AttachmentsPickerTabFactory {
 
         val permissionLauncher =
             rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
-                if (isPermanentlyDenied(context, result)) {
+                if (Permissions.isPermanentlyDenied(context, result)) {
                     showPermanentlyDeniedSnackBar = true
                 }
             }

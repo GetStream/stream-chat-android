@@ -1228,6 +1228,64 @@ public data class MessageComposerViewStyle(
                 R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToFilesIconDrawable,
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_file)!!
 
+            val allowAccessToAudioText = a.getText(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToAudioText,
+            )?.toString() ?: context.getString(R.string.stream_ui_message_composer_files_allow_audio_access)
+
+            val allowAccessToAudioTextStyle = TextStyle.Builder(a)
+                .size(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToAudioTextSize,
+                    context.getDimension(R.dimen.stream_ui_text_large),
+                )
+                .color(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToAudioTextColor,
+                    context.getColorCompat(R.color.stream_ui_black),
+                )
+                .font(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToAudioTextFontAssets,
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToAudioTextFont,
+                )
+                .style(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToAudioTextStyle,
+                    Typeface.BOLD,
+                )
+                .build()
+
+            val allowAccessToAudioIconDrawable = a.getDrawable(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToAudioIconDrawable,
+            ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_file_manager)!!
+
+            val allowAccessToVisualMediaText = a.getText(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToVisualMediaText,
+            )?.toString() ?: context.getString(R.string.stream_ui_message_composer_files_allow_visual_media_access)
+
+            val allowAccessToMoreVisualMediaText = a.getText(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToMoreVisualMediaText,
+            )?.toString() ?: context.getString(R.string.stream_ui_message_composer_files_allow_more_visual_media)
+
+            val allowAccessToVisualMediaTextStyle = TextStyle.Builder(a)
+                .size(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToVisualMediaTextSize,
+                    context.getDimension(R.dimen.stream_ui_text_large),
+                )
+                .color(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToVisualMediaTextColor,
+                    context.getColorCompat(R.color.stream_ui_black),
+                )
+                .font(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToVisualMediaTextFontAssets,
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToVisualMediaTextFont,
+                )
+                .style(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToVisualMediaTextStyle,
+                    Typeface.BOLD,
+                )
+                .build()
+
+            val allowAccessToVisualMediaIconDrawable = a.getDrawable(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToVisualMediaIconDrawable,
+            ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_file_manager)!!
+
             val recentFilesText = a.getText(
                 R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerRecentFilesText,
             )?.toString() ?: context.getString(R.string.stream_ui_message_composer_recent_files)
@@ -1391,6 +1449,13 @@ public data class MessageComposerViewStyle(
                 fileAttachmentsTabIconDrawable = fileAttachmentsTabIconDrawable,
                 allowAccessToFilesButtonText = allowAccessToFilesButtonText,
                 allowAccessToFilesIconDrawable = allowAccessToFilesIconDrawable,
+                allowAccessToAudioText = allowAccessToAudioText,
+                allowAccessToAudioTextStyle = allowAccessToAudioTextStyle,
+                allowAccessToAudioIconDrawable = allowAccessToAudioIconDrawable,
+                allowAccessToVisualMediaText = allowAccessToVisualMediaText,
+                allowAccessToMoreVisualMediaText = allowAccessToMoreVisualMediaText,
+                allowAccessToVisualMediaTextStyle = allowAccessToVisualMediaTextStyle,
+                allowAccessToVisualMediaIconDrawable = allowAccessToVisualMediaIconDrawable,
                 recentFilesText = recentFilesText,
                 recentFilesTextStyle = recentFilesTextStyle,
                 fileManagerIconDrawable = fileManagerIconDrawable,

@@ -29,6 +29,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.permissionx.guolindev.PermissionX
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.common.R
+import io.getstream.chat.android.ui.common.permissions.Permissions
 import io.getstream.chat.android.ui.utils.extensions.activity
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.uiutils.util.openSystemSettings
@@ -37,46 +38,6 @@ private const val SNACKBAR_ELEVATION_IN_DP = 20
 
 @InternalStreamChatApi
 public class PermissionChecker {
-
-    public fun isGrantedMediaPermissions(context: Context): Boolean {
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
-            isAllPermissionsGranted(
-                context,
-                when (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    true -> listOf(
-                        Manifest.permission.READ_MEDIA_IMAGES,
-                        Manifest.permission.READ_MEDIA_VIDEO,
-                    )
-
-                    else -> listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-                },
-            )
-    }
-
-    public fun isGrantedFilePermissions(context: Context): Boolean {
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
-            isAllPermissionsGranted(
-                context,
-                when (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    true -> listOf(
-                        Manifest.permission.READ_MEDIA_IMAGES,
-                        Manifest.permission.READ_MEDIA_VIDEO,
-                        Manifest.permission.READ_MEDIA_AUDIO,
-                    )
-
-                    else -> listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-                },
-            )
-    }
-
-    private fun isAllPermissionsGranted(context: Context, permissions: List<String>): Boolean {
-        return permissions.all { permission ->
-            ContextCompat.checkSelfPermission(
-                context,
-                permission,
-            ) == PackageManager.PERMISSION_GRANTED
-        }
-    }
 
     public fun isGrantedCameraPermissions(context: Context): Boolean =
         Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
@@ -98,62 +59,78 @@ public class PermissionChecker {
     public fun isNeededToRequestForCameraPermissions(context: Context): Boolean =
         isPermissionContainedOnManifest(context, Manifest.permission.CAMERA) && !isGrantedCameraPermissions(context)
 
-    public fun checkMediaPermissions(
+    /**
+     * Requests the correct visual media permissions (image/video) based on the device's API level.
+     *
+     * @param view The view used to obtain context.
+     * @param onPermissionResult Action invoked when the permission request is completed.
+     */
+    public fun checkVisualMediaPermissions(
         view: View,
-        onPermissionDenied: () -> Unit = { },
-        onPermissionGranted: () -> Unit,
+        onPermissionResult: (Map<String, Boolean>) -> Unit,
     ) {
         checkStoragePermissions(
-            view,
-            when (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                true -> listOf(
-                    Manifest.permission.READ_MEDIA_IMAGES,
-                    Manifest.permission.READ_MEDIA_VIDEO,
-                )
-
-                else -> listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-            },
-            onPermissionDenied,
-            onPermissionGranted,
+            view = view,
+            permissions = Permissions.visualMediaPermissions(),
+            onPermissionResult = onPermissionResult,
         )
     }
 
-    public fun checkFilePermissions(
+    /**
+     * Requests the correct audio media permissions based on the device's API level.
+     *
+     * @param view The view used to obtain context.
+     * @param onPermissionResult Action invoked when the permission request is completed.
+     */
+    public fun checkAudioPermissions(
         view: View,
-        onPermissionDenied: () -> Unit = { },
-        onPermissionGranted: () -> Unit,
+        onPermissionResult: (Map<String, Boolean>) -> Unit,
     ) {
         checkStoragePermissions(
-            view,
-            when (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                true -> listOf(
-                    Manifest.permission.READ_MEDIA_IMAGES,
-                    Manifest.permission.READ_MEDIA_VIDEO,
-                    Manifest.permission.READ_MEDIA_AUDIO,
-                )
+            view = view,
+            permissions = Permissions.audioPermissions(),
+            onPermissionResult = onPermissionResult,
+        )
+    }
 
-                else -> listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-            },
-            onPermissionDenied,
-            onPermissionGranted,
+    /**
+     * Requests the correct files permissions (image/video/audio) based on the device's API level.
+     *
+     * @param view The view used to obtain context.
+     * @param onPermissionResult Action invoked when the permission request is completed.
+     */
+    public fun checkFilesPermissions(
+        view: View,
+        onPermissionResult: (Map<String, Boolean>) -> Unit,
+    ) {
+        checkStoragePermissions(
+            view = view,
+            permissions = Permissions.filesPermissions(),
+            onPermissionResult = onPermissionResult,
         )
     }
 
     private fun checkStoragePermissions(
         view: View,
-        permissions: List<String>,
-        onPermissionDenied: () -> Unit = { },
-        onPermissionGranted: () -> Unit,
+        permissions: Array<String>,
+        onPermissionResult: (Map<String, Boolean>) -> Unit,
     ) {
-        checkPermissions(
-            view,
-            view.context.getString(R.string.stream_ui_message_composer_permission_storage_title),
-            view.context.getString(R.string.stream_ui_message_composer_permission_storage_message),
-            view.context.getString(R.string.stream_ui_message_composer_permission_setting_message),
-            permissions,
-            onPermissionDenied,
-            onPermissionGranted,
-        )
+        val activity = view.activity ?: return
+        PermissionX.init(activity)
+            .permissions(permissions.asList())
+            .onExplainRequestReason { _, _ ->
+                val title = view.context.getString(R.string.stream_ui_message_composer_permission_storage_title)
+                val message = view.context.getString(R.string.stream_ui_message_composer_permission_storage_message)
+                showPermissionRationaleDialog(view.context, title, message)
+            }
+            .onForwardToSettings { _, _ ->
+                val message = view.context.getString(R.string.stream_ui_message_composer_permission_setting_message)
+                showPermissionDeniedSnackbar(view, message)
+            }
+            .request { _, granted, denied ->
+                val result = granted.associateWith { true } + denied.associateWith { false }
+                onPermissionResult(result)
+            }
     }
 
     /**

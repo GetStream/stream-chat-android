@@ -1560,6 +1560,37 @@
         <item name="streamUiMessageComposerAttachmentsPickerAllowAccessToFilesIconDrawable">
             @drawable/stream_ui_attachment_permission_file
         </item>
+        <item name="streamUiMessageComposerAttachmentsPickerAllowAccessToAudioText">
+            @string/stream_ui_message_composer_files_allow_audio_access
+        </item>
+        <item name="streamUiMessageComposerAttachmentsPickerAllowAccessToAudioTextSize">
+            @dimen/stream_ui_text_large
+        </item>
+        <item name="streamUiMessageComposerAttachmentsPickerAllowAccessToAudioTextColor">
+            @color/stream_ui_black
+        </item>
+        <item name="streamUiMessageComposerAttachmentsPickerAllowAccessToAudioTextStyle">bold</item>
+        <item name="streamUiMessageComposerAttachmentsPickerAllowAccessToAudioIconDrawable">
+            @drawable/stream_ui_ic_file_manager
+        </item>
+        <item name="streamUiMessageComposerAttachmentsPickerAllowAccessToVisualMediaText">
+            @string/stream_ui_message_composer_files_allow_visual_media_access
+        </item>
+        <item name="streamUiMessageComposerAttachmentsPickerAllowAccessToMoreVisualMediaText">
+            @string/stream_ui_message_composer_files_allow_more_visual_media
+        </item>
+        <item name="streamUiMessageComposerAttachmentsPickerAllowAccessToVisualMediaTextSize">
+            @dimen/stream_ui_text_large
+        </item>
+        <item name="streamUiMessageComposerAttachmentsPickerAllowAccessToVisualMediaTextColor">
+            @color/stream_ui_black
+        </item>
+        <item name="streamUiMessageComposerAttachmentsPickerAllowAccessToVisualMediaTextStyle">
+            bold
+        </item>
+        <item name="streamUiMessageComposerAttachmentsPickerAllowAccessToVisualMediaIconDrawable">
+            @drawable/stream_ui_ic_file_manager
+        </item>
         <item name="streamUiMessageComposerAttachmentsPickerRecentFilesText">
             @string/stream_ui_message_composer_recent_files
         </item>

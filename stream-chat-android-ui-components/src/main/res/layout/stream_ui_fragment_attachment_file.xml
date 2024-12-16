@@ -20,7 +20,62 @@
     android:id="@+id/dialogContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingTop="@dimen/stream_ui_spacing_small"
     >
+
+    <TextView
+        android:id="@+id/audioAccessTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/stream_ui_spacing_medium"
+        android:paddingTop="12dp"
+        android:paddingBottom="8dp"
+        android:text="@string/stream_ui_message_composer_files_allow_audio_access"
+        android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"
+        android:textDirection="locale"
+        app:layout_constraintEnd_toStartOf="@id/audioAccessImageView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <ImageView
+        android:id="@+id/audioAccessImageView"
+        android:layout_width="@dimen/stream_ui_attachment_dialog_button_size"
+        android:layout_height="@dimen/stream_ui_attachment_dialog_button_size"
+        android:scaleType="center"
+        android:src="@drawable/stream_ui_ic_file_manager"
+        app:layout_constraintBottom_toBottomOf="@id/audioAccessTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/audioAccessTextView"
+        tools:ignore="ContentDescription"
+        />
+
+    <TextView
+        android:id="@+id/visualMediaAccessTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/stream_ui_spacing_medium"
+        android:paddingTop="12dp"
+        android:paddingBottom="8dp"
+        android:text="@string/stream_ui_message_composer_files_allow_visual_media_access"
+        android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"
+        android:textDirection="locale"
+        app:layout_constraintEnd_toStartOf="@id/visualMediaAccessImageView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/audioAccessTextView"
+        />
+
+    <ImageView
+        android:id="@+id/visualMediaAccessImageView"
+        android:layout_width="@dimen/stream_ui_attachment_dialog_button_size"
+        android:layout_height="@dimen/stream_ui_attachment_dialog_button_size"
+        android:scaleType="center"
+        android:src="@drawable/stream_ui_ic_file_manager"
+        app:layout_constraintBottom_toBottomOf="@id/visualMediaAccessTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/visualMediaAccessTextView"
+        tools:ignore="ContentDescription"
+        />
 
     <TextView
         android:id="@+id/recentFilesTextView"
@@ -34,7 +89,7 @@
         android:textDirection="locale"
         app:layout_constraintBottom_toTopOf="@id/recentFilesRecyclerView"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/visualMediaAccessTextView"
         />
 
     <ImageView
@@ -43,8 +98,9 @@
         android:layout_height="@dimen/stream_ui_attachment_dialog_button_size"
         android:scaleType="center"
         android:src="@drawable/stream_ui_ic_file_manager"
+        app:layout_constraintBottom_toBottomOf="@id/recentFilesTextView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="@id/recentFilesTextView"
         tools:ignore="ContentDescription"
         />
 
