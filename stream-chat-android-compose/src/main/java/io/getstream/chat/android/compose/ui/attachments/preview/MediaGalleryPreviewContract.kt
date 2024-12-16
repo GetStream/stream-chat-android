@@ -21,6 +21,8 @@ import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
+import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 
 /**
@@ -41,6 +43,8 @@ public class MediaGalleryPreviewContract :
             context,
             message = input.message,
             attachmentPosition = input.initialPosition,
+            downloadAttachmentUriGenerator = input.downloadAttachmentUriGenerator,
+            downloadRequestInterceptor = input.downloadRequestInterceptor,
             videoThumbnailsEnabled = input.videoThumbnailsEnabled,
             streamCdnImageResizing = input.streamCdnImageResizing,
             skipEnrichUrl = input.skipEnrichUrl,
@@ -61,6 +65,8 @@ public class MediaGalleryPreviewContract :
      *
      * @param message The message containing the attachments.
      * @param initialPosition The initial position of the media gallery, based on the clicked item.
+     * @param downloadAttachmentUriGenerator The URI generator for downloading attachments.
+     * @param downloadRequestInterceptor The request interceptor for downloading attachments.
      * @param videoThumbnailsEnabled Whether video thumbnails will be displayed in previews or not.
      * @param skipEnrichUrl If set to true will skip enriching URLs when you update the message
      * by deleting an attachment contained within it. Set to false by default.
@@ -69,6 +75,8 @@ public class MediaGalleryPreviewContract :
         public val message: Message,
         public val initialPosition: Int = 0,
         public val videoThumbnailsEnabled: Boolean,
+        public val downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
+        public val downloadRequestInterceptor: DownloadRequestInterceptor,
         public val streamCdnImageResizing: StreamCdnImageResizing,
         public val skipEnrichUrl: Boolean = false,
     )
