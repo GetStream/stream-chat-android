@@ -99,6 +99,15 @@ public data class SystemMessageItemState(
 ) : HasMessageListItemState()
 
 /**
+ * Represents a moderated message inside the message list.
+ *
+ * @param message The [Message] that was moderated.
+ */
+public data class ModeratedMessageItemState(
+    public override val message: Message,
+) : HasMessageListItemState()
+
+/**
  * Represents a typing indicator item inside a message list.
  *
  * @param typingUsers The list of the [User]s currently typing a message.
@@ -139,6 +148,7 @@ public fun MessageListItemState.stringify(): String = when (this) {
     is DateSeparatorItemState -> "DateSeparatorItemState(date: $date)"
     is ThreadDateSeparatorItemState -> "ThreadDateSeparatorItemState(date: $date, replyCount: $replyCount)"
     is SystemMessageItemState -> "SystemMessageItemState(message.text: ${message.text})"
+    is ModeratedMessageItemState -> "ModeratedMessageItemState(message.text: ${message.text})"
     is TypingItemState -> "TypingItemState(typingUsers.size: ${typingUsers.size})"
     is UnreadSeparatorItemState -> "UnreadSeparatorItemState(unreadCount: $unreadCount)"
     is StartOfTheChannelItemState -> "StartOfTheChannelItemState(channel.name: ${channel.name})"
