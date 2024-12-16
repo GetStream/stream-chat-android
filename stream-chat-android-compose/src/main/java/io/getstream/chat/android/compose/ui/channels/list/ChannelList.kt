@@ -221,9 +221,18 @@ public fun ChannelList(
 ) {
     val (isLoading, _, _, channels, searchQuery) = channelsState
 
-    when {
-        isLoading -> loadingContent()
-        !isLoading && channels.isNotEmpty() -> Channels(
+    if (channels.isEmpty()) {
+        if (isLoading) {
+            loadingContent()
+        } else {
+            if (searchQuery.query.isBlank()) {
+                emptyContent()
+            } else {
+                emptySearchContent(searchQuery.query)
+            }
+        }
+    } else {
+        Channels(
             modifier = modifier,
             contentPadding = contentPadding,
             channelsState = channelsState,
@@ -240,8 +249,6 @@ public fun ChannelList(
             },
             divider = divider,
         )
-        searchQuery.query.isNotBlank() -> emptySearchContent(searchQuery.query)
-        else -> emptyContent()
     }
 }
 
