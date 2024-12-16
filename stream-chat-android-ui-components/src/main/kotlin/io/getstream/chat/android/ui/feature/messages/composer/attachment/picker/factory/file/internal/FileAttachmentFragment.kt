@@ -101,7 +101,9 @@ internal class FileAttachmentFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        checkPermissions()
+        if (::style.isInitialized) {
+            checkPermissions()
+        }
     }
 
     override fun onDestroyView() {
