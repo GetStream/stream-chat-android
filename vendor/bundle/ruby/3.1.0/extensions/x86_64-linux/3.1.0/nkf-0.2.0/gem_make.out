@@ -1,0 +1,15 @@
+current directory: /home/runner/work/stream-chat-android/stream-chat-android/vendor/bundle/ruby/3.1.0/gems/nkf-0.2.0/ext/nkf
+/opt/hostedtoolcache/Ruby/3.1.6/x64/bin/ruby -I /opt/hostedtoolcache/Ruby/3.1.6/x64/lib/ruby/3.1.0 extconf.rb
+creating Makefile
+
+current directory: /home/runner/work/stream-chat-android/stream-chat-android/vendor/bundle/ruby/3.1.0/gems/nkf-0.2.0/ext/nkf
+make DESTDIR\= sitearchdir\=./.gem.20241209-1885-bscl94 sitelibdir\=./.gem.20241209-1885-bscl94 clean
+
+current directory: /home/runner/work/stream-chat-android/stream-chat-android/vendor/bundle/ruby/3.1.0/gems/nkf-0.2.0/ext/nkf
+make DESTDIR\= sitearchdir\=./.gem.20241209-1885-bscl94 sitelibdir\=./.gem.20241209-1885-bscl94
+compiling nkf.c
+linking shared-object nkf.so
+
+current directory: /home/runner/work/stream-chat-android/stream-chat-android/vendor/bundle/ruby/3.1.0/gems/nkf-0.2.0/ext/nkf
+make DESTDIR\= sitearchdir\=./.gem.20241209-1885-bscl94 sitelibdir\=./.gem.20241209-1885-bscl94 install
+/usr/bin/install -c -m 0755 nkf.so ./.gem.20241209-1885-bscl94

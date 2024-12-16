@@ -1,0 +1,16 @@
+sudo: false
+language: ruby
+rvm:
+- 2.4.1
+before_install: gem install bundler
+install: bundle install --path vendor/bundle
+script:
+- bundle exec rake test
+deploy:
+  provider: rubygems
+  api_key:
+    secure: Vho/xQFDDoY8XLsxx+nlFoxGAbsEjfr/WhvaNpCFxAnhMQPX/takbxOCPF7YcYZzNhzgPiLMOsAgMTHZRykGoIF3Jsd45mheZ8Jdpr/sstWpORDQQong84zYvJJ2Zo7ZsP35S22Xc8i8LU/zegCoQjEs9Rn6sf6sw4nw8k3i4/AjapYinCkMvBav3Gj678zzGm+4LYQ/XAFzT5mxYiy1SEHgQq7xLA4xAcdFXTOdP4gdyQ8P8bvk7AuVk3BOOjMAULD/l+dlCaCBubeC2/EtvyzEeV/nV5EwjLbLc3OdRXe4OLMbYXCpUPf/H76VoFHmIyHfU03jD5lcKcQhIt9+ezK3OM4nz36huaJ8ICUA+fO8IlbSDweU2WswuSqCN6+YyUhjfKQzPR4xkmjPzKeFklUqf8MMWcQWuKK5ILMJ7kOqq5wgFzQ+tEY5BZSB68VYBZlEdqz+ePT6mm/YaixJFPmJTjlbEC4g7uvpkgfiTxy5fPC8KA+9yIEE316jdAWES0Bap1LuOrEmsl8/ohXsEsUixG8vKb7qz6xV3NoRkODr7ouYB8UUVM113bbhUvmTvnZy5BPO5FT9nsGwUOFFf2SuS1FKK2BdO2yaVOxBycgj99PTmqQkQn8k2czzBlfShakCyFnqEvZYEBdBCUeDm7mqOQDUgQSRNHisU0TFakY=
+  gem: rubocop-require_tools
+  on:
+    branch: master
+    repo: milch/rubocop-require_tools

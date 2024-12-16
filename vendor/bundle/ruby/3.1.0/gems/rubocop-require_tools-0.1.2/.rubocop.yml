@@ -1,0 +1,39 @@
+AllCops:
+  Exclude:
+    - spec/**/*
+    - vendor/**/*
+  TargetRubyVersion: "2.1" # 2.0 doesn't work because rubocop dropped it
+
+Style/RedundantSelf:
+  Enabled: false
+
+Metrics/ClassLength:
+  Max: 500
+
+# We're not living in the 90's anymore, people can deal with long lines
+Metrics/LineLength:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/BlockLength:
+  Enabled: false
+
+Metrics/CyclomaticComplexity:
+  Enabled: false
+
+Style/ClassCheck:
+  Enabled: false
+
+Security/MarshalLoad:
+  Enabled: false
+
+Style/RedundantReturn:
+  Enabled: false
+
+Style/RescueModifier:
+  Enabled: false
