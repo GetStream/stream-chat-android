@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
@@ -49,6 +50,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.EmptyThreadPlaceh
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
+import io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.StartOfTheChannelItemState
 import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparatorItemState
@@ -114,6 +116,9 @@ public fun MessageContainer(
     systemMessageContent: @Composable (SystemMessageItemState) -> Unit = {
         DefaultSystemMessageContent(systemMessageState = it)
     },
+    moderatedMessageContent: @Composable (ModeratedMessageItemState) -> Unit = {
+        DefaultMessageModeratedContent(moderatedMessageItemState = it)
+    },
     messageItemContent: @Composable (MessageItemState) -> Unit = {
         DefaultMessageItem(
             messageItem = it,
@@ -147,6 +152,7 @@ public fun MessageContainer(
         is DateSeparatorItemState -> dateSeparatorContent(messageListItemState)
         is ThreadDateSeparatorItemState -> threadSeparatorContent(messageListItemState)
         is SystemMessageItemState -> systemMessageContent(messageListItemState)
+        is ModeratedMessageItemState -> moderatedMessageContent(messageListItemState)
         is MessageItemState -> messageItemContent(messageListItemState)
         is TypingItemState -> typingIndicatorContent(messageListItemState)
         is EmptyThreadPlaceholderItemState -> emptyThreadPlaceholderItemContent(messageListItemState)
@@ -261,6 +267,24 @@ internal fun DefaultSystemMessageContent(systemMessageState: SystemMessageItemSt
             .fillMaxWidth()
             .padding(vertical = 12.dp, horizontal = 16.dp),
         text = systemMessageState.message.text,
+        color = ChatTheme.colors.textLowEmphasis,
+        style = ChatTheme.typography.footnoteBold,
+        textAlign = TextAlign.Center,
+    )
+}
+
+/**
+ * The default Moderated message content.
+ *
+ * @param moderatedMessageItemState The moderated message item.
+ */
+@Composable
+internal fun DefaultMessageModeratedContent(moderatedMessageItemState: ModeratedMessageItemState) {
+    Text(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 12.dp, horizontal = 16.dp),
+        text = stringResource(id = R.string.stream_compose_message_moderated),
         color = ChatTheme.colors.textLowEmphasis,
         style = ChatTheme.typography.footnoteBold,
         textAlign = TextAlign.Center,

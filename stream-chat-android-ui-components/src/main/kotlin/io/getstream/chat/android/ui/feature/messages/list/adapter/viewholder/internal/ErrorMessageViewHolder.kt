@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal
 
 import android.view.ViewGroup
+import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemErrorMessageBinding
 import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.BaseMessageItemViewHolder
@@ -40,6 +41,8 @@ internal class ErrorMessageViewHolder(
         if (!diff.syncStatus) return
 
         val displayedText = data.message.getTranslatedText()
+            .takeUnless { it.isNullOrBlank() }
+            ?: context.getString(R.string.stream_ui_message_list_error_blocked_by_moderation)
         binding.messageTextView.text = displayedText
         binding.messageTextView.setTextStyle(style.textStyleErrorMessage)
     }

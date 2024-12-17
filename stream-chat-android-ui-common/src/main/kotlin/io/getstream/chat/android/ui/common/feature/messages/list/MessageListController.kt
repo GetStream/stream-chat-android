@@ -87,6 +87,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
+import io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MyOwn
 import io.getstream.chat.android.ui.common.state.messages.list.NewMessageState
 import io.getstream.chat.android.ui.common.state.messages.list.Other
@@ -889,8 +890,10 @@ public class MessageListController(
                 ?.takeUnless { message.isDeleted() }
                 ?.let { unreadLabelAdded = groupedMessages.add(UnreadSeparatorItemState(it.unreadCount)) }
 
-            if (message.isSystem() || (message.isError() && !message.isModerationBounce())) {
+            if (message.isSystem()) {
                 groupedMessages.add(SystemMessageItemState(message = message))
+            } else if (message.isError() && !message.isModerationBounce()) {
+                groupedMessages.add(ModeratedMessageItemState(message = message))
             } else {
                 val isMessageRead = message.createdAt
                     ?.let { lastRead != null && it <= lastRead }
@@ -2441,18 +2444,5 @@ public class MessageListController(
          * Meaning [ChannelUserRead] for this member has no relationship with the [ChatClient.markRead] invocation.
          */
         internal const val MEMBERSHIP_AND_LAST_READ_THRESHOLD_MS = 100L
-    }
-}
-
-private fun MessageListItemState.stringify(): String {
-    return when (this) {
-        is DateSeparatorItemState -> "DateSeparator"
-        is EmptyThreadPlaceholderItemState -> "EmptyThreadPlaceholder"
-        is MessageItemState -> message.text
-        is SystemMessageItemState -> message.text
-        is ThreadDateSeparatorItemState -> "ThreadDateSeparator"
-        is TypingItemState -> "Typing"
-        is UnreadSeparatorItemState -> "UnreadSeparator"
-        is StartOfTheChannelItemState -> "StartOfTheChannelItemState"
     }
 }

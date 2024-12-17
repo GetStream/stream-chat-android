@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.utils.extensions
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.EmptyThreadPlaceholderItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
+import io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.StartOfTheChannelItemState
 import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparatorItemState
@@ -37,6 +38,7 @@ public fun MessageListItemCommon.toUiMessageListItem(): MessageListItem {
     return when (this) {
         is DateSeparatorItemState -> MessageListItem.DateSeparatorItem(date = date)
         is SystemMessageItemState -> MessageListItem.MessageItem(message = message)
+        is ModeratedMessageItemState -> MessageListItem.MessageItem(message = message)
         is ThreadDateSeparatorItemState -> MessageListItem.ThreadSeparatorItem(date = date, messageCount = replyCount)
         is TypingItemState -> MessageListItem.TypingItem(users = typingUsers)
         is MessageItemState -> MessageListItem.MessageItem(

@@ -148,6 +148,7 @@
     <string name="stream_compose_thread_subtitle">with %1$s</string>
     <string name="stream_compose_reply_to_message">Reply to message</string>
     <string name="stream_compose_message_deleted">Message deleted</string>
+    <string name="stream_compose_message_moderated">Message was blocked by moderation policies</string>
     <string name="stream_compose_only_visible_to_you">Only visible to you</string>
     <string name="stream_compose_download">Download</string>
     <string name="stream_compose_share">Share</string>
