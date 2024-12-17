@@ -183,4 +183,70 @@ class ChannelListTest : ComposeScreenshotTest() {
             currentUser = TestData.user1(),
         )
     }
+
+    @Test
+    fun channelListWithContentAndLoadingState() = runScreenshotTest {
+        ChannelList(
+            modifier = Modifier.fillMaxSize(),
+            channelsState = ChannelsState(
+                isLoading = true,
+                isLoadingMore = false,
+                channelItems = listOf(
+                    ChannelItemState(
+                        channel = TestData.channel1().copy(
+                            members = listOf(
+                                TestData.member1(),
+                                TestData.member2(),
+                            ),
+                            messages = listOf(
+                                TestData.message1(),
+                            ),
+                            channelLastMessageAt = TestData.date1(),
+                        ),
+                        typingUsers = emptyList(),
+                    ),
+                    ChannelItemState(
+                        channel = TestData.channel2().copy(
+                            members = listOf(
+                                TestData.member1(),
+                                TestData.member3(),
+                            ),
+                            messages = listOf(
+                                TestData.message2(),
+                            ),
+                            channelLastMessageAt = TestData.date2(),
+                        ),
+                        typingUsers = emptyList(),
+                    ),
+                    ChannelItemState(
+                        channel = TestData.channel3().copy(
+                            members = listOf(
+                                TestData.member1(),
+                                TestData.member4(),
+                            ),
+                            messages = listOf(
+                                TestData.message3(),
+                            ),
+                            channelLastMessageAt = TestData.date3(),
+                        ),
+                        typingUsers = emptyList(),
+                    ),
+                    ChannelItemState(
+                        channel = TestData.channel4().copy(
+                            members = listOf(
+                                TestData.member1(),
+                                TestData.member5(),
+                            ),
+                            messages = listOf(
+                                TestData.message4(),
+                            ),
+                            channelLastMessageAt = TestData.date4(),
+                        ),
+                        typingUsers = emptyList(),
+                    ),
+                ),
+            ),
+            currentUser = TestData.user1(),
+        )
+    }
 }
