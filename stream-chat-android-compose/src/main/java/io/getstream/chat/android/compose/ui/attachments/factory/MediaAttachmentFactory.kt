@@ -41,6 +41,8 @@ import io.getstream.chat.android.compose.ui.attachments.content.onMediaAttachmen
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract.Input
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
+import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 
 /**
@@ -64,6 +66,8 @@ public class MediaAttachmentFactory(
         message: Message,
         attachmentPosition: Int,
         videoThumbnailsEnabled: Boolean,
+        downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
+        downloadRequestInterceptor: DownloadRequestInterceptor,
         streamCdnImageResizing: StreamCdnImageResizing,
         skipEnrichUrl: Boolean,
     ) -> Unit = ::onMediaAttachmentContentItemClick,

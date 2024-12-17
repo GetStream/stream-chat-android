@@ -35,6 +35,10 @@
     <string name="stream_ui_message_composer_recent_files">Recent Files</string>
     <string name="stream_ui_message_composer_no_files">There is no photo or video.</string>
     <string name="stream_ui_message_composer_file_not_supported">File type is not supported</string>
+    <string name="stream_ui_message_composer_visual_media_access_add_more">Add more</string>
+    <string name="stream_ui_message_composer_files_allow_audio_access">Allow access to audio files</string>
+    <string name="stream_ui_message_composer_files_allow_visual_media_access">Allow access to visual media</string>
+    <string name="stream_ui_message_composer_files_allow_more_visual_media">Allow access to more visual media</string>
 
     <!-- Validation Errors -->
     <string name="stream_ui_message_composer_error_message_length">Max message length (%d) exceeded.</string>

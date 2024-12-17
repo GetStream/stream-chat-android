@@ -357,6 +357,32 @@
         <attr name="streamUiMessageComposerAttachmentsPickerFileAttachmentsTabIconDrawable" format="reference" />
         <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToFilesButtonText" format="string" />
         <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToFilesIconDrawable" format="reference" />
+
+        <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToAudioText" format="string" />
+        <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToAudioTextSize" format="dimension" />
+        <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToAudioTextColor" format="reference|color" />
+        <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToAudioTextFontAssets" format="string" />
+        <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToAudioTextFont" format="string" />
+        <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToAudioTextStyle" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
+        </attr>
+        <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToAudioIconDrawable" format="reference" />
+
+        <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToVisualMediaText" format="string" />
+        <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToMoreVisualMediaText" format="string" />
+        <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToVisualMediaTextSize" format="dimension" />
+        <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToVisualMediaTextColor" format="reference|color" />
+        <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToVisualMediaTextFontAssets" format="string" />
+        <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToVisualMediaTextFont" format="string" />
+        <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToVisualMediaTextStyle" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
+        </attr>
+        <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToVisualMediaIconDrawable" format="reference" />
+
         <attr name="streamUiMessageComposerAttachmentsPickerRecentFilesText" format="string" />
 
         <attr name="streamUiMessageComposerAttachmentsPickerRecentFilesTextSize" format="dimension" />

@@ -80,6 +80,8 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
+import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
@@ -111,6 +113,8 @@ public fun MediaAttachmentContent(
         message: Message,
         attachmentPosition: Int,
         videoThumbnailsEnabled: Boolean,
+        downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
+        downloadRequestInterceptor: DownloadRequestInterceptor,
         streamCdnImageResizing: StreamCdnImageResizing,
         skipEnrichUrl: Boolean,
     ) -> Unit = ::onMediaAttachmentContentItemClick,
@@ -182,6 +186,7 @@ public fun MediaAttachmentContent(
  * @param overlayContent Represents the content overlaid above attachment previews.
  * Usually used to display a play button over video previews.
  */
+@Suppress("LongParameterList")
 @Composable
 internal fun SingleMediaAttachment(
     attachment: Attachment,
@@ -194,6 +199,8 @@ internal fun SingleMediaAttachment(
         message: Message,
         attachmentPosition: Int,
         videoThumbnailsEnabled: Boolean,
+        downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
+        downloadRequestInterceptor: DownloadRequestInterceptor,
         streamCdnImageResizing: StreamCdnImageResizing,
         skipEnrichUrl: Boolean,
     ) -> Unit,
@@ -276,6 +283,8 @@ internal fun RowScope.MultipleMediaAttachments(
         message: Message,
         attachmentPosition: Int,
         videoThumbnailsEnabled: Boolean,
+        downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
+        downloadRequestInterceptor: DownloadRequestInterceptor,
         streamCdnImageResizing: StreamCdnImageResizing,
         skipEnrichUrl: Boolean,
     ) -> Unit,
@@ -392,6 +401,8 @@ internal fun MediaAttachmentContentItem(
         message: Message,
         attachmentPosition: Int,
         videoThumbnailsEnabled: Boolean,
+        downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
+        downloadRequestInterceptor: DownloadRequestInterceptor,
         streamCdnImageResizing: StreamCdnImageResizing,
         skipEnrichUrl: Boolean,
     ) -> Unit,
@@ -445,6 +456,9 @@ internal fun MediaAttachmentContentItem(
     val areVideosEnabled = ChatTheme.videoThumbnailsEnabled
     val streamCdnImageResizing = ChatTheme.streamCdnImageResizing
 
+    val downloadAttachmentUriGenerator = ChatTheme.streamDownloadAttachmentUriGenerator
+    val downloadRequestInterceptor = ChatTheme.streamDownloadRequestInterceptor
+
     Box(
         modifier = modifier
             .background(Color.Black)
@@ -460,6 +474,8 @@ internal fun MediaAttachmentContentItem(
                             message,
                             attachmentPosition,
                             areVideosEnabled,
+                            downloadAttachmentUriGenerator,
+                            downloadRequestInterceptor,
                             streamCdnImageResizing,
                             skipEnrichUrl,
                         )
@@ -596,11 +612,14 @@ private const val EqualDimensionsRatio = 1f
  * a link attachment. Used when updating the message from the gallery by doing actions
  * such as deleting an attachment.
  */
+@Suppress("LongParameterList")
 internal fun onMediaAttachmentContentItemClick(
     mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>,
     message: Message,
     attachmentPosition: Int,
     videoThumbnailsEnabled: Boolean,
+    downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
+    downloadRequestInterceptor: DownloadRequestInterceptor,
     streamCdnImageResizing: StreamCdnImageResizing,
     skipEnrichUrl: Boolean,
 ) {
@@ -609,6 +628,8 @@ internal fun onMediaAttachmentContentItemClick(
             message = message,
             initialPosition = attachmentPosition,
             videoThumbnailsEnabled = videoThumbnailsEnabled,
+            downloadAttachmentUriGenerator = downloadAttachmentUriGenerator,
+            downloadRequestInterceptor = downloadRequestInterceptor,
             streamCdnImageResizing = streamCdnImageResizing,
             skipEnrichUrl = skipEnrichUrl,
         ),

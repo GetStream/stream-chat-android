@@ -25,6 +25,7 @@ import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
+import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentMediaAddMoreBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemAttachmentMediaBinding
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.font.setTextStyle
@@ -33,48 +34,103 @@ import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.utils.load
 import io.getstream.chat.android.ui.utils.loadVideoThumbnail
 
+/**
+ * A [RecyclerView.Adapter] implementation for rendering [MediaAttachmentListItem]s.
+ *
+ * @param style The style for the attachments picker dialog.
+ * @param onAttachmentSelected The action to be invoked when an attachment is selected.
+ * @param onAddMoreClick The action to be invoked when the "add more" button is clicked.
+ */
 internal class MediaAttachmentAdapter(
     private val style: AttachmentsPickerDialogStyle,
     private val onAttachmentSelected: (attachmentMetaData: AttachmentMetaData) -> Unit,
-) : RecyclerView.Adapter<MediaAttachmentAdapter.MediaAttachmentViewHolder>() {
+    private val onAddMoreClick: () -> Unit,
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val attachments: MutableList<AttachmentMetaData> = mutableListOf()
+    private val attachments: MutableList<MediaAttachmentListItem> = mutableListOf()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaAttachmentViewHolder {
-        return StreamUiItemAttachmentMediaBinding
-            .inflate(parent.streamThemeInflater, parent, false)
-            .let { MediaAttachmentViewHolder(it, onAttachmentSelected, style) }
+    override fun getItemViewType(position: Int): Int {
+        return when (attachments[position]) {
+            is MediaAttachmentListItem.AddMoreItem -> VIEW_TYPE_ADD_MORE
+            is MediaAttachmentListItem.MediaAttachmentItem -> VIEW_TYPE_MEDIA_ATTACHMENT
+        }
     }
 
-    override fun onBindViewHolder(holder: MediaAttachmentViewHolder, position: Int) {
-        holder.bind(attachments[position])
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == VIEW_TYPE_MEDIA_ATTACHMENT) {
+            StreamUiItemAttachmentMediaBinding
+                .inflate(parent.streamThemeInflater, parent, false)
+                .let { MediaAttachmentViewHolder(it, onAttachmentSelected, style) }
+        } else {
+            // No other possible item types
+            StreamUiItemAttachmentMediaAddMoreBinding
+                .inflate(parent.streamThemeInflater, parent, false)
+                .let { AddMoreViewHolder(it, onAddMoreClick) }
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val item = attachments[position]
+        if (item is MediaAttachmentListItem.MediaAttachmentItem && holder is MediaAttachmentViewHolder) {
+            holder.bind(item.attachment)
+        }
     }
 
     override fun getItemCount(): Int = attachments.size
 
-    fun setAttachments(attachments: List<AttachmentMetaData>) {
+    /**
+     * Sets the list of [MediaAttachmentListItem]s to be displayed.
+     */
+    fun setItems(attachments: List<MediaAttachmentListItem>) {
         this.attachments.clear()
         this.attachments.addAll(attachments)
         notifyDataSetChanged()
     }
 
+    /**
+     * Marks the given [AttachmentMetaData] as selected.
+     */
     fun selectAttachment(attachment: AttachmentMetaData) = toggleAttachmentSelection(attachment, true)
 
+    /**
+     * Marks the given [AttachmentMetaData] as not selected.
+     */
     fun deselectAttachment(attachment: AttachmentMetaData) = toggleAttachmentSelection(attachment, false)
 
+    /**
+     * Clears the list of attachments.
+     */
     fun clearAttachments() {
         attachments.clear()
         notifyDataSetChanged()
     }
 
     private fun toggleAttachmentSelection(attachment: AttachmentMetaData, isSelected: Boolean) {
-        val index = attachments.indexOf(attachment)
+        val index = attachments.indexOfFirst {
+            it is MediaAttachmentListItem.MediaAttachmentItem && it.attachment == attachment
+        }
         if (index != -1) {
-            attachments[index].isSelected = isSelected
+            (attachments[index] as MediaAttachmentListItem.MediaAttachmentItem).attachment.isSelected = isSelected
             notifyItemChanged(index)
         }
     }
 
+    /**
+     * A [RecyclerView.ViewHolder] implementation for rendering the "add more" button.
+     */
+    class AddMoreViewHolder(
+        binding: StreamUiItemAttachmentMediaAddMoreBinding,
+        private val onClick: () -> Unit,
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        init {
+            binding.root.setOnClickListener { onClick() }
+        }
+    }
+
+    /**
+     * A [RecyclerView.ViewHolder] implementation for rendering a media attachment.
+     */
     class MediaAttachmentViewHolder(
         private val binding: StreamUiItemAttachmentMediaBinding,
         private val onAttachmentSelected: (attachmentMetaData: AttachmentMetaData) -> Unit,
@@ -134,5 +190,10 @@ internal class MediaAttachmentAdapter(
                 binding.videoLengthTextView.text = ""
             }
         }
+    }
+
+    companion object {
+        private const val VIEW_TYPE_ADD_MORE = 0
+        private const val VIEW_TYPE_MEDIA_ATTACHMENT = 1
     }
 }

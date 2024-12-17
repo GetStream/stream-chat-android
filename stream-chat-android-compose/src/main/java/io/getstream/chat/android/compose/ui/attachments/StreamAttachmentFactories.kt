@@ -42,6 +42,8 @@ import io.getstream.chat.android.compose.ui.theme.StreamDimens
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
+import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.utils.GiphyInfoType
 import io.getstream.chat.android.ui.common.utils.GiphySizingMode
@@ -101,6 +103,8 @@ public object StreamAttachmentFactories {
             message: Message,
             attachmentPosition: Int,
             videoThumbnailsEnabled: Boolean,
+            downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
+            downloadRequestInterceptor: DownloadRequestInterceptor,
             streamCdnImageResizing: StreamCdnImageResizing,
             skipEnrichUrl: Boolean,
         ) -> Unit = ::onMediaAttachmentContentItemClick,
