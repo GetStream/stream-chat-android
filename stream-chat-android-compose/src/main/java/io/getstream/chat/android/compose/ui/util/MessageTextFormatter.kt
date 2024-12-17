@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.util
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -68,9 +69,17 @@ public fun interface MessageTextFormatter {
                 else -> StreamColors.defaultColors()
             },
             textStyle: (isMine: Boolean) -> TextStyle = defaultTextStyle(isInDarkMode, typography, colors),
+            mentionColor: (isMine: Boolean) -> Color = defaultMentionColor(isInDarkMode, typography, colors),
             builder: AnnotatedMessageTextBuilder? = null,
         ): MessageTextFormatter {
-            return DefaultMessageTextFormatter(autoTranslationEnabled, typography, colors, textStyle, builder)
+            return DefaultMessageTextFormatter(
+                autoTranslationEnabled = autoTranslationEnabled,
+                typography = typography,
+                colors = colors,
+                textStyle = textStyle,
+                mentionColor = mentionColor,
+                builder = builder,
+            )
         }
 
         /**
@@ -111,7 +120,16 @@ public fun interface MessageTextFormatter {
             builder: AnnotatedMessageTextBuilder? = null,
         ): MessageTextFormatter {
             val textStyle = defaultTextStyle(ownMessageTheme, otherMessageTheme)
-            return defaultFormatter(autoTranslationEnabled, isInDarkMode, typography, colors, textStyle, builder)
+            val mentionColor = defaultMentionColor(ownMessageTheme, otherMessageTheme)
+            return defaultFormatter(
+                autoTranslationEnabled = autoTranslationEnabled,
+                isInDarkMode = isInDarkMode,
+                typography = typography,
+                colors = colors,
+                textStyle = textStyle,
+                mentionColor = mentionColor,
+                builder = builder,
+            )
         }
 
         @Composable
@@ -186,6 +204,7 @@ private class DefaultMessageTextFormatter(
     private val typography: StreamTypography,
     private val colors: StreamColors,
     private val textStyle: (isMine: Boolean) -> TextStyle,
+    private val mentionColor: (isMine: Boolean) -> Color,
     private val builder: AnnotatedMessageTextBuilder? = null,
 ) : MessageTextFormatter {
 
@@ -198,12 +217,13 @@ private class DefaultMessageTextFormatter(
         }
         val mentionedUserNames = message.mentionedUsers.map { it.name.ifEmpty { it.id } }
         val textColor = textStyle(message.isMine(currentUser)).color
+        val mentionColor = mentionColor(message.isMine(currentUser))
         return buildAnnotatedMessageText(
             text = displayedText,
             textColor = textColor,
             textFontStyle = typography.body.fontStyle,
             linkColor = colors.primaryAccent,
-            mentionsColor = colors.primaryAccent,
+            mentionsColor = mentionColor,
             mentionedUserNames = mentionedUserNames,
             builder = {
                 builder?.invoke(this, message, currentUser)

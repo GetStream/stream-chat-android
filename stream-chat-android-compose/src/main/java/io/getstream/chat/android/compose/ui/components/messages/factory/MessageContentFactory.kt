@@ -78,6 +78,7 @@ public open class MessageContentFactory {
             currentUser = currentUser,
             onLongItemClick = onLongItemClick,
             onLinkClick = onLinkClick,
+            onUserMentionClick = onUserMentionClick,
         )
     }
 
