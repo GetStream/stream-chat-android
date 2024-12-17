@@ -18,6 +18,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageTheme
 import io.getstream.chat.android.compose.ui.theme.StreamColors
 import io.getstream.chat.android.compose.ui.theme.StreamShapes
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
@@ -307,7 +308,13 @@ private object ChatThemeQuotedMessageTextFormatterDefaultSnippet : ChatThemeCust
         colors: StreamColors,
     ): QuotedMessageTextFormatter {
         return QuotedMessageTextFormatter.defaultFormatter(
-            autoTranslationEnabled, LocalContext.current, isInDarkMode, typography, colors
+            autoTranslationEnabled = autoTranslationEnabled,
+            context = LocalContext.current,
+            isInDarkMode = isInDarkMode,
+            typography = typography,
+            colors = colors,
+            ownMessageTheme = MessageTheme.defaultOwnTheme(),
+            otherMessageTheme = MessageTheme.defaultOtherTheme(),
         ) { message, replyMessage, currentUser ->
             addStyle(
                 SpanStyle(
@@ -346,11 +353,13 @@ private object ChatThemeQuotedMessageTextFormatterCompositeSnippet : ChatThemeCu
     ): QuotedMessageTextFormatter {
         return QuotedMessageTextFormatter.composite(
             QuotedMessageTextFormatter.defaultFormatter(
-                autoTranslationEnabled,
-                LocalContext.current,
-                isInDarkMode,
-                typography,
-                colors
+                autoTranslationEnabled = autoTranslationEnabled,
+                context = LocalContext.current,
+                isInDarkMode = isInDarkMode,
+                typography = typography,
+                colors = colors,
+                ownMessageTheme = MessageTheme.defaultOwnTheme(),
+                otherMessageTheme = MessageTheme.defaultOtherTheme(),
             ),
             blueLettersQuotedMessageTextFormatter()
         )

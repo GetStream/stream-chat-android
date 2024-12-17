@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.util
 import android.content.Context
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -62,6 +63,7 @@ public fun interface QuotedMessageTextFormatter {
          * @param typography The typography to use for styling.
          * @param colors The colors to use for styling.
          * @param textStyle The text style to use for styling.
+         * @param mentionColor The color to use for mentions.
          * @param builder The builder to use for customizing the text.
          * @return The default implementation of [QuotedMessageTextFormatter].
          *
@@ -79,6 +81,7 @@ public fun interface QuotedMessageTextFormatter {
             },
             shapes: StreamShapes = StreamShapes.defaultShapes(),
             textStyle: (isMine: Boolean) -> TextStyle = defaultTextStyle(isInDarkMode, typography, colors, shapes),
+            mentionColor: (isMine: Boolean) -> Color = defaultMentionColor(isInDarkMode, typography, colors, shapes),
             builder: AnnotatedQuotedMessageTextBuilder? = null,
         ): QuotedMessageTextFormatter {
             return DefaultQuotedMessageTextFormatter(
@@ -87,6 +90,7 @@ public fun interface QuotedMessageTextFormatter {
                 typography,
                 colors,
                 textStyle,
+                mentionColor,
                 builder,
             )
         }
@@ -122,6 +126,7 @@ public fun interface QuotedMessageTextFormatter {
             builder: AnnotatedQuotedMessageTextBuilder? = null,
         ): QuotedMessageTextFormatter {
             val textStyle = defaultTextStyle(ownMessageTheme, otherMessageTheme)
+            val mentionColor = defaultMentionColor(ownMessageTheme, otherMessageTheme)
             return defaultFormatter(
                 autoTranslationEnabled,
                 context,
@@ -130,6 +135,7 @@ public fun interface QuotedMessageTextFormatter {
                 colors,
                 shapes,
                 textStyle,
+                mentionColor,
                 builder,
             )
         }
@@ -204,6 +210,7 @@ private class DefaultQuotedMessageTextFormatter(
     private val typography: StreamTypography,
     private val colors: StreamColors,
     private val textStyle: (isMine: Boolean) -> TextStyle,
+    private val mentionColor: (isMine: Boolean) -> Color,
     private val builder: AnnotatedQuotedMessageTextBuilder? = null,
 ) : QuotedMessageTextFormatter {
 
@@ -236,13 +243,15 @@ private class DefaultQuotedMessageTextFormatter(
             "quotedMessageText is null. Cannot display invalid message title."
         }
 
-        val textColor = textStyle(replyMessage?.isMine(currentUser) != false).color
+        val isMine = replyMessage?.isMine(currentUser) != false
+        val textColor = textStyle(isMine).color
+        val mentionColor = mentionColor(isMine)
         return buildAnnotatedMessageText(
             text = quotedMessageText,
             textColor = textColor,
             textFontStyle = typography.body.fontStyle,
             linkColor = colors.primaryAccent,
-            mentionsColor = colors.primaryAccent,
+            mentionsColor = mentionColor,
             builder = {
                 builder?.invoke(this, message, replyMessage, currentUser)
             },
