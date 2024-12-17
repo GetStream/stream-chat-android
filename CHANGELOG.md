@@ -98,6 +98,7 @@
 - Add `MessageOptionItemVisibility.isBlockUserVisible` property to show/hide the block user option. [#5512](https://github.com/GetStream/stream-chat-android/pull/5512)
 - Add `ChatTheme.channelOptionsTheme` property to customize the channel options. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513) 
 - Add `SearchResultItemState.channel` property containing the cached info of the channel where the message was sent. [#5500](https://github.com/GetStream/stream-chat-android/pull/5500)
+- Add `MessageTheme.mentionColor` property for customizing the mentions color in messages. [#5528](https://github.com/GetStream/stream-chat-android/pull/5528)
 
 ### ⚠️ Changed
 - 🚨 Breaking change: The `SearchResultNameFormatter.formatMessageTitle` method receives a `SearchResultItemState` instead of a `Message`. [#5500](https://github.com/GetStream/stream-chat-android/pull/5500)
