@@ -11,6 +11,7 @@ apply plugin: "com.github.ben-manes.versions"
 apply plugin: 'io.github.gradle-nexus.publish-plugin'
 apply plugin: 'binary-compatibility-validator'
 apply plugin: 'org.jetbrains.dokka'
+apply from: "${rootDir}/scripts/sonar.gradle"
 apply from: "${rootDir}/scripts/sample-app-versioner.gradle"
 apply plugin: UnitTestsPlugin
 apply plugin: ReleasePlugin
@@ -73,15 +74,21 @@ buildscript {
         classpath Dependencies.spotlessGradlePlugin
         classpath Dependencies.ksp
         classpath Dependencies.detektPlugin
+        classpath Dependencies.sonarQubePlugin
+
+        // Workaround for integrate sonarqube plugin with AGP
+        // It looks like will be fixed after AGP 8.9.0-alpha04 is released
+        // https://issuetracker.google.com/issues/380600747?pli=1
+        classpath("org.bouncycastle:bcutil-jdk18on:1.79")
     }
 }
 
 subprojects {
-    if (it.name != 'stream-chat-android-docs'
-            && it.buildFile.exists()) {
+    if (it.name != 'stream-chat-android-docs' && it.buildFile.exists()) {
         apply from: "${rootDir}/spotless/spotless.gradle"
     }
     apply plugin: "io.gitlab.arturbosch.detekt"
+    apply from: "${rootDir}/scripts/coverage.gradle"
 }
 
 versionPrint {
