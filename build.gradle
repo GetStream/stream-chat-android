@@ -75,6 +75,8 @@ buildscript {
         classpath Dependencies.ksp
         classpath Dependencies.detektPlugin
         classpath Dependencies.sonarQubePlugin
+
+        classpath("org.bouncycastle:bcutil-jdk18on:1.79")
     }
 }
 
