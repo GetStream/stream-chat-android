@@ -1,0 +1,61 @@
+if (!rootProject.ext.sonar.ignoreModules.contains(name)) {
+    apply plugin: 'jacoco'
+    apply plugin: "org.sonarqube"
+
+    def isCore = (name == 'stream-chat-android-core')
+    def testTask = isCore ? "test" : "testDebugUnitTest"
+    def jacocoResults = "${buildDir}/reports/jacoco/report.xml"
+
+    if (hasProperty('android')) {
+        android {
+            buildTypes {
+                debug {
+                    testCoverageEnabled = true
+                    enableUnitTestCoverage = true
+                    enableAndroidTestCoverage true
+                }
+            }
+        }
+    }
+
+    afterEvaluate {
+        tasks.withType(Test).configureEach {
+            jacoco.includeNoLocationClasses = true
+            jacoco.excludes = ['jdk.internal.*']
+        }
+
+        tasks.register("testCoverage", JacocoReport) {
+            dependsOn testTask
+
+            reports {
+                xml.required.set(true)
+                xml.outputLocation.set(file(jacocoResults))
+            }
+
+            executionData.setFrom(fileTree(dir: buildDir, includes: [
+                    "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
+                    "jacoco/test.exec"
+            ]))
+
+            def sources = isCore ? sourceSets.main.java.srcDirs : android.sourceSets.main.java.srcDirs
+            sourceDirectories.setFrom(files(sources))
+            classDirectories.setFrom(files([
+                    fileTree(
+                            dir: "${buildDir}/tmp/kotlin-classes/debug",
+                            excludes: rootProject.ext.sonar.excludeFilter
+                    ),
+                    fileTree(
+                            dir: "${buildDir}/classes/kotlin/main",
+                            excludes: rootProject.ext.sonar.excludeFilter
+                    )
+            ]))
+        }
+    }
+
+    sonarqube {
+        properties {
+            property "sonar.junit.reportPaths", "${buildDir}/test-results/${testTask}"
+            property "sonar.coverage.jacoco.xmlReportPaths", jacocoResults
+        }
+    }
+}
