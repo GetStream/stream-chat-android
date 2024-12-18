@@ -1,0 +1,117 @@
+name: SDK size checks
+
+on:
+  pull_request:
+
+env:
+  MODULES: "stream-chat-android-client stream-chat-android-offline stream-chat-android-ui-components stream-chat-android-compose"
+  METRICS_FILE: "metrics/size.json"
+  MAX_TOLERANCE: 500
+  FINE_TOLERANCE: 250
+
+jobs:
+  compare-sdk-sizes:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - uses: ./.github/actions/setup-java
+      - uses: ./.github/actions/gradle-cache
+        with:
+          key-prefix: gradle-build
+
+      - name: Assemble SDKs
+        run: |
+          for module in $MODULES; do
+            modules+=" :$module:assembleDebug"
+          done
+          ./gradlew $modules
+
+      - name: Get current SDK sizes
+        run: |
+          # Reads current SDK sizes from the metrics file
+          # and define to a variable using a compact JSON format
+          # so it can be exported for the next job step
+          CURRENT_SDK_SIZES=$(jq -c .debug $METRICS_FILE)
+          echo "CURRENT_SDK_SIZES=$CURRENT_SDK_SIZES" >> $GITHUB_ENV
+
+      - name: Calculate PR branch SDK sizes
+        run: |
+          echo '{}' > pr_sdk_sizes.json
+
+          # Calculate sizes from the .aar files and save them into a temporary JSON file
+          # so it can be exported for the next job step
+          for module in $MODULES; do
+            size=$(du -k $module/build/outputs/aar/*debug.aar | awk '{print $1}')
+            jq -c --arg sdk "$module" --arg size "$size" '. + {($sdk): ($size | tonumber)}' pr_sdk_sizes.json > temp.json && mv temp.json pr_sdk_sizes.json
+          done
+
+          echo "PR_SDK_SIZES=$(cat pr_sdk_sizes.json)" >> $GITHUB_ENV
+
+      - name: Post comment on PR
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const maxTolerance = process.env.MAX_TOLERANCE
+            const fineTolerance = process.env.FINE_TOLERANCE
+            const currentSdkSizes = process.env.CURRENT_SDK_SIZES ? JSON.parse(process.env.CURRENT_SDK_SIZES) : {};
+            const prSdkSizes = JSON.parse(process.env.PR_SDK_SIZES);
+            const commentHeader = '## SDK Size Comparison';
+
+            // Prepare the comparison table
+
+            let commentBody = `
+            ${commentHeader}
+
+            | SDK | Before | After | Difference | Status |
+            |-|-|-|-|-|
+            `;
+            
+            Object.keys(prSdkSizes).forEach(sdk => {
+              const currentSize = currentSdkSizes[sdk] || 0;
+              const prSize = prSdkSizes[sdk];
+              const diff = prSize - currentSize;
+
+              let status;
+              if (diff < 0) {
+                status = "🚀";
+              } else if (diff >= maxTolerance) {
+                status = "🔴";
+              } else if (diff >= fineTolerance) {
+                status = "🟡";
+              } else {
+                status = "🟢";
+              }
+
+              commentBody += `| ${sdk} | ${currentSize} KB | ${prSize} KB | ${diff} KB | ${status} |\n`;
+            });            
+
+            // Post or update the PR comment
+
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+            });
+
+            const comment = comments.find(c => c.body.includes(commentHeader));
+
+            if (comment) {
+              // Update the existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: comment.id,
+                body: commentBody,
+              });
+            } else {
+              // Create a new comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body: commentBody,
+              });
+            }
