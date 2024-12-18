@@ -11,7 +11,7 @@ apply plugin: "com.github.ben-manes.versions"
 apply plugin: 'io.github.gradle-nexus.publish-plugin'
 apply plugin: 'binary-compatibility-validator'
 apply plugin: 'org.jetbrains.dokka'
-apply from: "${rootDir}/sonar.gradle"
+apply from: "${rootDir}/scripts/sonar.gradle"
 apply from: "${rootDir}/scripts/sample-app-versioner.gradle"
 apply plugin: UnitTestsPlugin
 apply plugin: ReleasePlugin
@@ -83,7 +83,7 @@ subprojects {
         apply from: "${rootDir}/spotless/spotless.gradle"
     }
     apply plugin: "io.gitlab.arturbosch.detekt"
-    apply from: "${rootDir}/coverage.gradle"
+    apply from: "${rootDir}/scripts/coverage.gradle"
 }
 
 versionPrint {
