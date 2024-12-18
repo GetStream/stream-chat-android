@@ -23,14 +23,17 @@ import io.getstream.chat.android.compose.pages.MessageListPage
 import io.getstream.chat.android.compose.pages.MessageListPage.Composer
 import io.getstream.chat.android.compose.pages.MessageListPage.MessageList
 import io.getstream.chat.android.compose.pages.MessageListPage.MessageList.Message
+import io.getstream.chat.android.compose.pages.MessageListPage.MessageList.Message.ContextMenu
 import io.getstream.chat.android.compose.pages.ThreadPage
 import io.getstream.chat.android.compose.uiautomator.defaultTimeout
 import io.getstream.chat.android.compose.uiautomator.device
 import io.getstream.chat.android.compose.uiautomator.findObject
 import io.getstream.chat.android.compose.uiautomator.findObjects
+import io.getstream.chat.android.compose.uiautomator.isDisplayed
 import io.getstream.chat.android.compose.uiautomator.longPress
 import io.getstream.chat.android.compose.uiautomator.swipeDown
 import io.getstream.chat.android.compose.uiautomator.swipeUp
+import io.getstream.chat.android.compose.uiautomator.tapOnScreenCenter
 import io.getstream.chat.android.compose.uiautomator.typeText
 import io.getstream.chat.android.compose.uiautomator.wait
 import io.getstream.chat.android.compose.uiautomator.waitToAppear
@@ -87,14 +90,20 @@ class UserRobot {
 
     fun deleteMessage(messageCellIndex: Int = 0, hard: Boolean = false): UserRobot {
         openContextMenu(messageCellIndex)
-        Message.ContextMenu.delete.waitToAppear().click()
+        ContextMenu.delete.waitToAppear().click()
         return this
     }
 
     fun editMessage(newText: String, messageCellIndex: Int = 0): UserRobot {
         openContextMenu(messageCellIndex)
-        Message.ContextMenu.edit.waitToAppear().click()
+        ContextMenu.edit.waitToAppear().click()
         sendMessage(newText)
+        return this
+    }
+
+    fun resendMessage(messageCellIndex: Int = 0): UserRobot {
+        openContextMenu(messageCellIndex)
+        ContextMenu.resend.waitToAppear().click()
         return this
     }
 
@@ -121,7 +130,7 @@ class UserRobot {
 
     fun quoteMessage(text: String, messageCellIndex: Int = 0): UserRobot {
         openContextMenu(messageCellIndex)
-        Message.ContextMenu.reply.waitToAppear().click()
+        ContextMenu.reply.waitToAppear().click()
         sendMessage(text)
         return this
     }
@@ -129,7 +138,7 @@ class UserRobot {
     fun openThread(messageCellIndex: Int = 0, usingContextMenu: Boolean = true): UserRobot {
         if (usingContextMenu) {
             openContextMenu(messageCellIndex)
-            Message.ContextMenu.threadReply.waitToAppear().click()
+            ContextMenu.threadReply.waitToAppear().click()
         } else {
             Message.threadRepliesLabel.waitToAppear().click()
         }
@@ -176,22 +185,22 @@ class UserRobot {
         return this
     }
 
-    fun scrollChannelListDown(times: Int = 1): UserRobot {
+    fun scrollChannelListDown(times: Int = 3): UserRobot {
         device.swipeUp(times)
         return this
     }
 
-    fun scrollChannelListUp(times: Int = 1): UserRobot {
+    fun scrollChannelListUp(times: Int = 3): UserRobot {
         device.swipeDown(times)
         return this
     }
 
-    fun scrollMessageListDown(times: Int = 1): UserRobot {
+    fun scrollMessageListDown(times: Int = 3): UserRobot {
         scrollChannelListDown(times) // Reusing the channel list scroll
         return this
     }
 
-    fun scrollMessageListUp(times: Int = 1): UserRobot {
+    fun scrollMessageListUp(times: Int = 3): UserRobot {
         scrollChannelListUp(times) // Reusing the channel list scroll
         return this
     }
@@ -203,6 +212,11 @@ class UserRobot {
 
     fun openComposerCommands(): UserRobot {
         Composer.commandsButton.waitToAppear().click()
+        return this
+    }
+
+    fun openAttachmentsMenu(): UserRobot {
+        Composer.attachmentsButton.waitToAppear().click()
         return this
     }
 
@@ -272,5 +286,13 @@ class UserRobot {
             Composer.sendButton.waitToAppear().click()
         }
         return this
+    }
+
+    fun tapOnMessageList() {
+        if (MessageList.messageList.isDisplayed()) {
+            MessageList.messageList.waitToAppear().click()
+        } else {
+            device.tapOnScreenCenter()
+        }
     }
 }

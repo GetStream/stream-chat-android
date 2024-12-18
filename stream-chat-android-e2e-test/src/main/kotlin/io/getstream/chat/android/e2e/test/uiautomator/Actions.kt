@@ -17,15 +17,17 @@
 package io.getstream.chat.android.compose.uiautomator
 
 import android.content.Intent
+import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
+import androidx.test.uiautomator.UiSelector
+import androidx.test.uiautomator.Until
 import io.getstream.chat.android.e2e.test.mockserver.mockServerUrl
 
 public fun UiDevice.startApp() {
     val intent = testContext.packageManager.getLaunchIntentForPackage(packageName)
     intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
     intent?.putExtra("BASE_URL", mockServerUrl)
-    val a = mockServerUrl
     testContext.startActivity(intent)
 }
 
@@ -70,4 +72,29 @@ public fun UiDevice.swipeUp(steps: Int = 10, times: Int = 1) {
             steps,
         )
     }
+}
+
+public fun UiDevice.tapOnScreenCenter() {
+    device.click(device.displayWidth / 2, device.displayHeight / 2)
+}
+
+public fun UiDevice.goToBackground() {
+    device.pressHome()
+    sleep(1000)
+}
+
+public fun UiDevice.goToForeground() {
+    device.pressRecentApps()
+    sleep(500)
+    device.tapOnScreenCenter()
+}
+
+public fun UiDevice.enableInternetConnection() {
+    executeShellCommand("svc data enable")
+    executeShellCommand("svc wifi enable")
+}
+
+public fun UiDevice.disableInternetConnection() {
+    executeShellCommand("svc data disable")
+    executeShellCommand("svc wifi disable")
 }
