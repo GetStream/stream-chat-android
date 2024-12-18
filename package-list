@@ -175,7 +175,9 @@ io.getstream.chat.android.ui.common.helper.internal
 io.getstream.chat.android.ui.common.images
 io.getstream.chat.android.ui.common.images.internal
 io.getstream.chat.android.ui.common.images.resizing
+io.getstream.chat.android.ui.common.model
 io.getstream.chat.android.ui.common.notifications
+io.getstream.chat.android.ui.common.permissions
 io.getstream.chat.android.ui.common.state.channels.actions
 io.getstream.chat.android.ui.common.state.messages
 io.getstream.chat.android.ui.common.state.messages.composer
@@ -236,6 +238,9 @@ io.getstream.chat.android.ui.feature.messages.preview
 io.getstream.chat.android.ui.feature.pinned.list
 io.getstream.chat.android.ui.feature.search
 io.getstream.chat.android.ui.feature.search.list
+io.getstream.chat.android.ui.feature.threads.list
+io.getstream.chat.android.ui.feature.threads.list.adapter
+io.getstream.chat.android.ui.feature.threads.list.adapter.viewholder
 io.getstream.chat.android.ui.font
 io.getstream.chat.android.ui.helper
 io.getstream.chat.android.ui.helper.transformer
@@ -250,6 +255,7 @@ io.getstream.chat.android.ui.viewmodel.mentions
 io.getstream.chat.android.ui.viewmodel.messages
 io.getstream.chat.android.ui.viewmodel.pinned
 io.getstream.chat.android.ui.viewmodel.search
+io.getstream.chat.android.ui.viewmodel.threads
 io.getstream.chat.android.ui.viewmodel.typing
 io.getstream.chat.android.ui.widgets
 io.getstream.chat.android.ui.widgets.avatar
