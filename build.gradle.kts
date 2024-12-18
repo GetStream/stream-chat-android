@@ -45,6 +45,16 @@ plugins {
     alias(libs.plugins.dokka)
 }
 
+buildscript {
+    dependencies {
+        // TODO: Remove this workaround after AGP 8.9.0 is released
+        // Workaround for integrate sonarqube plugin with AGP
+        // It looks like will be fixed after AGP 8.9.0-alpha04 is released
+        // https://issuetracker.google.com/issues/380600747?pli=1
+        classpath("org.bouncycastle:bcutil-jdk18on:1.79")
+    }
+}
+
 apply(from = "${rootDir}/scripts/sample-app-versioner.gradle")
 apply(from = "${rootDir}/scripts/sonar.gradle")
 
