@@ -1,7 +1,5 @@
-# UNRELEASED CHANGELOG
+# December 18th, 2024 - 6.8.0
 ## Common changes for all artifacts
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - Internal "Resolve Dependency" process improvements. [#5514](https://github.com/GetStream/stream-chat-android/pull/5514)
 
@@ -13,13 +11,7 @@
 ### ⚠️ Changed
 - 🚨 Breaking change: ViewModels related with "searching messages" feature provide a `List<MessageResult>` instead of a `List<Message>`. [#5500](https://github.com/GetStream/stream-chat-android/pull/5500)
 
-### ❌ Removed
-
 ## stream-chat-android-client
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Add `ChatClient.pinChannel` and `ChannelClient.unpinChannel` methods to pin/unpin a channel. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
 - Add `ChatClient.archiveChannel` and `ChannelClient.unarchiveChannel` methods to archive/unarchive a channel. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
@@ -34,56 +26,21 @@
 ### ⚠️ Changed
 - Deprecate `CreateChannelListener::onCreateChannelRequest(String, String, List<String>, Map<String, Any>, User)` in favor of the new `CreateChannelListener::onCreateChannelRequest(String, String, CreateChannelParams, User)`. [#5502](https://github.com/GetStream/stream-chat-android/pull/5502)
 
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-state
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - The `ChannelState` is updated with new members after querying member with `ChatClient::queryMembers`. [#5517](https://github.com/GetStream/stream-chat-android/pull/5517)  
 
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-common
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - Exposed expose audio recording params in `DefaultStreamMediaRecorder` to allow customization. [#5520](https://github.com/GetStream/stream-chat-android/pull/5520)
 
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-components
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - Add support for partial media access in `MediaAttachmentFragment` and `FileAttachmentFragment` for Android 14+. [#5524](https://github.com/GetStream/stream-chat-android/pull/5524)
 
 ### ✅ Added
 - Add `ThreadListView` component for showing the list of threads for the user. [#5491](https://github.com/GetStream/stream-chat-android/pull/5491)
 - Hide messages with moderated pictures. [#5525](https://github.com/GetStream/stream-chat-android/pull/5525)
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -104,19 +61,6 @@
 
 ### ⚠️ Changed
 - 🚨 Breaking change: The `SearchResultNameFormatter.formatMessageTitle` method receives a `SearchResultItemState` instead of a `Message`. [#5500](https://github.com/GetStream/stream-chat-android/pull/5500)
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # December 04th, 2024 - 6.7.0
 ## stream-chat-android-client
