@@ -25,7 +25,7 @@ jobs:
           # Reads the develop SDK sizes from JSON file 
           # and define to a variable using a compact JSON format
           # so it can be exported for the next job step
-          DEVELOP_SDK_SIZES=$(jq -c .develop stream-chat-android.json)
+          DEVELOP_SDK_SIZES=$(jq -c .debug stream-chat-android.json)
           echo "DEVELOP_SDK_SIZES=$DEVELOP_SDK_SIZES" >> $GITHUB_ENV
 
       - name: Assemble SDKs
@@ -43,7 +43,7 @@ jobs:
           # so it can be exported for the next job step
           for sdk in $SDKS; do
             size=$(du -k $sdk/build/outputs/aar/*.aar | awk '{print $1}')
-            jq -c --arg sdk "$sdk" --arg size "$size" '. + {($sdk): ($size | tonumber)}' pr_sdk_sizes.json
+            jq -c --arg sdk "$sdk" --arg size "$size" '. + {($sdk): ($size | tonumber)}' pr_sdk_sizes.json > pr_sdk_sizes.json
           done
 
           echo "PR_SDK_SIZES=$(cat pr_sdk_sizes.json)" >> $GITHUB_ENV
