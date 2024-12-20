@@ -12,12 +12,15 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fix `ChatClient::queryBlockedMembers` not working. [#5532](https://github.com/GetStream/stream-chat-android/pull/5532)
+- Fix `ChatClient::blockUser` and `ChatClient::unblockUser` response parsing. [#5532](https://github.com/GetStream/stream-chat-android/pull/5532)
 
 ### ⬆️ Improved
 
 ### ✅ Added
 
 ### ⚠️ Changed
+- 🚨 Breaking change: Change `ChatClient::unblockUser` return type from `Call<BlockUser>` to `Call<Unit>` as we no longer get information about the unblocked user. [#5532](https://github.com/GetStream/stream-chat-android/pull/5532)
 
 ### ❌ Removed
 

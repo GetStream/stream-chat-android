@@ -17,9 +17,18 @@
 package io.getstream.chat.android.client.api2.model.response
 
 import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserBlockDto
+import java.util.Date
 
+/**
+ * Model representing the response from blocking a user.
+ *
+ * @param blocked_by_user_id The ID of the user who blocked the other user.
+ * @param blocked_user_id The ID of the user who was blocked.
+ * @param created_at The date when the block was created.
+ */
 @JsonClass(generateAdapter = true)
 internal data class BlockUserResponse(
-    val block: DownstreamUserBlockDto,
+    val blocked_by_user_id: String,
+    val blocked_user_id: String,
+    val created_at: Date,
 )

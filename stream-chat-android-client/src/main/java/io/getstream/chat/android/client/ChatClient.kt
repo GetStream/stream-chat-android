@@ -2670,7 +2670,7 @@ internal constructor(
      * @param userId the user ID of the user that will be unblocked.
      */
     @CheckResult
-    public fun unblockUser(userId: String): Call<UserBlock> {
+    public fun unblockUser(userId: String): Call<Unit> {
         return api.unblockUser(userId)
     }
 

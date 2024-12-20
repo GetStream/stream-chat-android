@@ -51,7 +51,7 @@ internal interface UserApi {
     @POST("/users/unblock")
     fun unblockUser(@Body body: UnblockUserRequest): RetrofitCall<UnblockUserResponse>
 
-    @GET
+    @GET("/users/block")
     fun queryBlockedUsers(): RetrofitCall<QueryBlockedUsersResponse>
 
     @PATCH("/users")
