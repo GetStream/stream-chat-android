@@ -88,7 +88,7 @@ internal data class PartialUpdateUserDto(
 
 @JsonClass(generateAdapter = true)
 internal data class DownstreamUserBlockDto(
-    val blocked_by_user_id: String,
+    val user_id: String,
     val blocked_user_id: String,
     val created_at: Date,
 )
