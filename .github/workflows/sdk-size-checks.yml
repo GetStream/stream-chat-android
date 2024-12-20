@@ -4,7 +4,7 @@ on:
   pull_request:
 
 env:
-  SDKS: "stream-chat-android-client stream-chat-android-offline stream-chat-android-ui-components stream-chat-android-compose"
+  MODULES: "stream-chat-android-client stream-chat-android-offline stream-chat-android-ui-components stream-chat-android-compose"
   MAX_TOLERANCE: 500
   FINE_TOLERANCE: 250
 
@@ -20,6 +20,13 @@ jobs:
         with:
           key-prefix: gradle-build
 
+      - name: Assemble SDKs
+        run: |
+          for module in $MODULES; do
+            modules+=" :$module:assembleDebug"
+          done
+          ./gradlew $modules
+
       - name: Get develop SDK sizes
         run: |
           # Reads the develop SDK sizes from JSON file 
@@ -28,22 +35,15 @@ jobs:
           DEVELOP_SDK_SIZES=$(jq -c .debug stream-chat-android.json)
           echo "DEVELOP_SDK_SIZES=$DEVELOP_SDK_SIZES" >> $GITHUB_ENV
 
-      - name: Assemble SDKs
-        run: |
-          for sdk in $SDKS; do
-            modules+=" :$sdk:assembleDebug"
-          done
-          ./gradlew $modules
-
       - name: Calculate PR branch SDK sizes
         run: |
           echo '{}' > pr_sdk_sizes.json
 
           # Calculate sizes from the .aar files and save them into a temporary JSON file
           # so it can be exported for the next job step
-          for sdk in $SDKS; do
-            size=$(du -k $sdk/build/outputs/aar/*.aar | awk '{print $1}')
-            jq -c --arg sdk "$sdk" --arg size "$size" '. + {($sdk): ($size | tonumber)}' pr_sdk_sizes.json > temp.json && mv temp.json pr_sdk_sizes.json
+          for module in $MODULES; do
+            size=$(du -k $module/build/outputs/aar/*.aar | awk '{print $1}')
+            jq -c --arg sdk "$module" --arg size "$size" '. + {($sdk): ($size | tonumber)}' pr_sdk_sizes.json > temp.json && mv temp.json pr_sdk_sizes.json
           done
 
           echo "PR_SDK_SIZES=$(cat pr_sdk_sizes.json)" >> $GITHUB_ENV
