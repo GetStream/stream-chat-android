@@ -70,7 +70,8 @@ jobs:
         run: |
           for module in $MODULES; do
             size=$(jq --arg module "$module" ".release.\"$module\"" $METRICS_FILE)
-            badgeUrl="https://img.shields.io/badge/${module//-/--}-$size%20KB-lightgreen"
+            sizeInMb=$(echo "scale=2; $size / 1024" | bc)
+            badgeUrl="https://img.shields.io/badge/${module//-/--}-$sizeInMb%20MB-lightgreen"
             sed -i "s|!\[$module\](.*)|![$module](${badgeUrl})|" README.md
           done
 

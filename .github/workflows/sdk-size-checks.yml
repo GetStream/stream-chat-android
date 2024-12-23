@@ -72,19 +72,20 @@ jobs:
               const currentSize = currentSdkSizes[sdk] || 0;
               const prSize = prSdkSizes[sdk];
               const diff = prSize - currentSize;
+              const currentSizeInMb = (currentSize / 1024).toFixed(2)
+              const prSizeInMb = (prSize / 1024).toFixed(2)
+              const diffInMb = (diff / 1024).toFixed(2)
 
-              let status;
+              let status = "🟢";
               if (diff < 0) {
                 status = "🚀";
               } else if (diff >= maxTolerance) {
                 status = "🔴";
               } else if (diff >= fineTolerance) {
                 status = "🟡";
-              } else {
-                status = "🟢";
               }
 
-              commentBody += `| ${sdk} | ${currentSize} KB | ${prSize} KB | ${diff} KB | ${status} |\n`;
+              commentBody += `| ${sdk} | ${currentSizeInMb} MB | ${prSizeInMb} MB | ${diffInMb} MB | ${status} |\n`;
             });            
 
             // Post or update the PR comment
