@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.errorhandler.factory.ErrorHandlerFactory
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.Plugin
+import io.getstream.chat.android.client.plugin.listeners.BlockUserListener
 import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
@@ -28,6 +29,7 @@ import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.plugin.listeners.FetchCurrentUserListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
+import io.getstream.chat.android.client.plugin.listeners.QueryBlockedUsersListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
@@ -39,11 +41,13 @@ import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
+import io.getstream.chat.android.client.plugin.listeners.UnblockUserListener
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.event.handler.internal.EventHandler
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
+import io.getstream.chat.android.state.plugin.listener.internal.BlockUserListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.ChannelMarkReadListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.DeleteChannelListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.DeleteMessageListenerState
@@ -52,6 +56,7 @@ import io.getstream.chat.android.state.plugin.listener.internal.EditMessageListe
 import io.getstream.chat.android.state.plugin.listener.internal.FetchCurrentUserListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.HideChannelListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.MarkAllReadListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.QueryBlockedUsersListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.QueryChannelListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.QueryChannelsListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.QueryMembersListenerState
@@ -63,6 +68,7 @@ import io.getstream.chat.android.state.plugin.listener.internal.SendReactionList
 import io.getstream.chat.android.state.plugin.listener.internal.ShuffleGiphyListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.ThreadQueryListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.TypingEventListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.UnblockUserListenerState
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
@@ -116,7 +122,10 @@ public class StatePlugin internal constructor(
     TypingEventListener by TypingEventListenerState(stateRegistry),
     SendAttachmentListener by SendAttachmentListenerState(logic),
     FetchCurrentUserListener by FetchCurrentUserListenerState(clientState, globalState),
-    QueryThreadsListener by QueryThreadsListenerState(logic) {
+    QueryThreadsListener by QueryThreadsListenerState(logic),
+    BlockUserListener by BlockUserListenerState(globalState),
+    UnblockUserListener by UnblockUserListenerState(globalState),
+    QueryBlockedUsersListener by QueryBlockedUsersListenerState(globalState) {
 
     private val lazyErrorHandler: ErrorHandler by lazy { errorHandlerFactory.create() }
     override fun getErrorHandler(): ErrorHandler = lazyErrorHandler

@@ -92,6 +92,7 @@
 
     <!-- Selected Message Menu -->
     <string name="stream_compose_block_user">Block user</string>
+    <string name="stream_compose_unblock_user">Unblock user</string>
     <string name="stream_compose_resend_message">Resend</string>
     <string name="stream_compose_reply">Reply</string>
     <string name="stream_compose_thread_reply">Thread reply</string>

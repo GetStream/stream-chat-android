@@ -62,6 +62,7 @@ internal fun DownstreamUserDto.toDomain(currentUserId: UserId?): User =
         mutes = mutes.orEmpty().map { it.toDomain(currentUserId) },
         teams = teams,
         channelMutes = channel_mutes.orEmpty().map { it.toDomain(currentUserId) },
+        blockedUserIds = blocked_user_ids.orEmpty(),
         extraData = extraData.toMutableMap(),
     )
 

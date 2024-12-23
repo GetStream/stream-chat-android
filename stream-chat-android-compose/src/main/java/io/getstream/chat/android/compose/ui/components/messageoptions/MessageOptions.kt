@@ -51,6 +51,7 @@ import io.getstream.chat.android.ui.common.state.messages.Pin
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.Resend
 import io.getstream.chat.android.ui.common.state.messages.ThreadReply
+import io.getstream.chat.android.ui.common.state.messages.UnblockUser
 import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**
@@ -250,10 +251,21 @@ public fun defaultMessageOptionsState(
             null
         },
         if (visibility.isBlockUserVisible && !isOwnMessage) {
+            val isSenderBlocked = currentUser?.blockedUserIds?.contains(selectedMessageUserId) == true
+            val title = if (isSenderBlocked) {
+                R.string.stream_compose_unblock_user
+            } else {
+                R.string.stream_compose_block_user
+            }
+            val action = if (isSenderBlocked) {
+                UnblockUser(selectedMessage)
+            } else {
+                BlockUser(selectedMessage)
+            }
             MessageOptionItemState(
-                title = R.string.stream_compose_block_user,
+                title = title,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_clear),
-                action = BlockUser(selectedMessage),
+                action = action,
                 iconColor = ChatTheme.colors.textLowEmphasis,
                 titleColor = ChatTheme.colors.textHighEmphasis,
             )

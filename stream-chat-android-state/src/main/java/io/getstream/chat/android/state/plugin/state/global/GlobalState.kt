@@ -55,6 +55,11 @@ public interface GlobalState {
     public val channelMutes: StateFlow<List<ChannelMute>>
 
     /**
+     * List of users that you've blocked.
+     */
+    public val blockedUserIds: StateFlow<List<String>>
+
+    /**
      * if the current user is banned or not.
      */
     public val banned: StateFlow<Boolean>

@@ -109,6 +109,9 @@ public fun MessageListViewModel.bindView(
             ),
         )
     }
+    view.setMessageUserUnblockHandler {
+        onEvent(MessageListViewModel.Event.UnblockUser(it.user.id))
+    }
 
     ownCapabilities.observe(lifecycleOwner) {
         view.setOwnCapabilities(it)

@@ -74,6 +74,7 @@ internal object UserDtoTestData {
             mutes = emptyList(),
             teams = emptyList(),
             channel_mutes = emptyList(),
+            blocked_user_ids = null,
             extraData = emptyMap(),
         )
 
@@ -122,6 +123,7 @@ internal object UserDtoTestData {
             mutes = emptyList(),
             teams = emptyList(),
             channel_mutes = emptyList(),
+            blocked_user_ids = null,
             extraData = emptyMap(),
         )
 
@@ -206,6 +208,7 @@ internal object UserDtoTestData {
             ),
             teams = listOf("team1", "team2"),
             channel_mutes = emptyList(),
+            blocked_user_ids = null,
             extraData = emptyMap(),
         )
 

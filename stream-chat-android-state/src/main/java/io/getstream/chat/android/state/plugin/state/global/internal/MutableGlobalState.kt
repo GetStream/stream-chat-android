@@ -35,6 +35,7 @@ internal class MutableGlobalState : GlobalState {
     private var _banned: MutableStateFlow<Boolean>? = MutableStateFlow(false)
     private var _mutedUsers: MutableStateFlow<List<Mute>>? = MutableStateFlow(emptyList())
     private var _channelMutes: MutableStateFlow<List<ChannelMute>>? = MutableStateFlow(emptyList())
+    private var _blockedUsersIds: MutableStateFlow<List<String>>? = MutableStateFlow(emptyList())
     private var _typingChannels: MutableStateFlow<Map<String, TypingEvent>>? = MutableStateFlow(emptyMap())
 
     override val totalUnreadCount: StateFlow<Int> = _totalUnreadCount!!
@@ -42,6 +43,7 @@ internal class MutableGlobalState : GlobalState {
     override val unreadThreadsCount: StateFlow<Int> = _unreadThreadsCount!!
     override val muted: StateFlow<List<Mute>> = _mutedUsers!!
     override val channelMutes: StateFlow<List<ChannelMute>> = _channelMutes!!
+    override val blockedUserIds: StateFlow<List<String>> = _blockedUsersIds!!
     override val banned: StateFlow<Boolean> = _banned!!
     override val typingChannels: StateFlow<Map<String, TypingEvent>> = _typingChannels!!
 
@@ -54,6 +56,7 @@ internal class MutableGlobalState : GlobalState {
         _unreadThreadsCount = null
         _mutedUsers = null
         _channelMutes = null
+        _blockedUsersIds = null
         _banned = null
         _typingChannels = null
     }
@@ -76,6 +79,15 @@ internal class MutableGlobalState : GlobalState {
 
     fun setChannelMutes(channelMutes: List<ChannelMute>) {
         _channelMutes?.value = channelMutes
+    }
+
+    /**
+     * Updates the current list of blocked users.
+     *
+     * @param blockedUserIds The new list of block user ids.
+     */
+    fun setBlockedUserIds(blockedUserIds: List<String>) {
+        _blockedUsersIds?.value = blockedUserIds
     }
 
     fun setMutedUsers(mutedUsers: List<Mute>) {
