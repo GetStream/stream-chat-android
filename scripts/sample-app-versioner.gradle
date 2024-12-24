@@ -12,7 +12,6 @@ def isCI = System.getenv('CI')
 ext["sampleAppVersionCode"] = 1
 ext["sampleAppVersionName"] = Configuration.versionName
 if (isCI && gitIsAvailable()) {
-    apply plugin: 'com.pascalwelsch.gitversioner'
     gitVersioner {
         def branches = ['develop', 'main', 'release']
         baseBranch branchName in branches ? branchName : branches[0]

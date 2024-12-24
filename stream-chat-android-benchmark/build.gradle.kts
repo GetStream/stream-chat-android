@@ -1,10 +1,9 @@
 import io.getstream.chat.android.Configuration
-import io.getstream.chat.android.Dependencies
 
 plugins {
-    id("com.android.test")
-    id("org.jetbrains.kotlin.android")
-    id("androidx.baselineprofile")
+    alias(libs.plugins.android.test)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.androidx.baseline.profile)
 }
 
 apply {
@@ -61,9 +60,9 @@ baselineProfile {
 }
 
 dependencies {
-    implementation(Dependencies.androidxTestRunner)
-    implementation(Dependencies.baseProfile)
-    implementation(Dependencies.macroBenchmark)
-    implementation(Dependencies.androidxUiAutomator)
-    detektPlugins(Dependencies.detektFormatting)
+    implementation(libs.androidx.test.runner)
+    implementation(libs.androidx.profileinstaller)
+    implementation(libs.androidx.benchmark.macro.junit4)
+    implementation(libs.androidx.test.uiautomator)
+    detektPlugins(libs.detekt.formatting)
 }

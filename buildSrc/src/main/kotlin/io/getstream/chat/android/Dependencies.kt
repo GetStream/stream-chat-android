@@ -92,8 +92,7 @@ object Versions {
 
 object Dependencies {
     const val androidGradlePlugin = "com.android.tools.build:gradle:${Versions.ANDROID_GRADLE_PLUGIN}"
-    const val androidJunit5GradlePlugin =
-        "de.mannodermaus.gradle.plugins:android-junit5:${Versions.ANDROID_JUNIT5_GRADLE_PLUGIN}"
+    const val androidJunit5GradlePlugin = "de.mannodermaus.gradle.plugins:android-junit5:${Versions.ANDROID_JUNIT5_GRADLE_PLUGIN}"
     const val androidLegacySupport = "androidx.legacy:legacy-support-v4:${Versions.ANDROID_LEGACY_SUPPORT}"
     const val androidxActivityKtx = "androidx.activity:activity-ktx:${Versions.ANDROIDX_ACTIVITY_KTX}"
     const val androidxAnnotations = "androidx.annotation:annotation:${Versions.ANDROIDX_ANNOTATIONS}"
@@ -103,8 +102,7 @@ object Dependencies {
     const val androidxFragmentKtx = "androidx.fragment:fragment-ktx:${Versions.ANDROIDX_FRAGMENT}"
     const val androidxLifecycleProcess = "androidx.lifecycle:lifecycle-process:${Versions.ANDROIDX_LIFECYCLE}"
     const val androidxLifecycleLiveDataKtx = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.ANDROIDX_LIFECYCLE}"
-    const val androidxLifecycleViewModelKtx =
-        "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.ANDROIDX_LIFECYCLE}"
+    const val androidxLifecycleViewModelKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.ANDROIDX_LIFECYCLE}"
     const val androidxPreferences = "androidx.preference:preference:${Versions.ANDROIDX_PREFERENCES}"
     const val androidxRecyclerview = "androidx.recyclerview:recyclerview:${Versions.ANDROIDX_RECYCLERVIEW}"
     const val androidxStartup = "androidx.startup:startup-runtime:${Versions.ANDROIDX_STARTUP}"
@@ -119,8 +117,7 @@ object Dependencies {
     const val androidxTestJunitKtx = "androidx.test.ext:junit-ktx:${Versions.ANDROIDX_TEST_JUNIT}"
     const val androidxViewPager2 = "androidx.viewpager2:viewpager2:${Versions.ANDROIDX_VIEW_PAGER_2}"
     const val baseProfile = "androidx.profileinstaller:profileinstaller:${Versions.BASE_PROFILE}"
-    const val baselineProfilePlugin =
-        "androidx.benchmark:benchmark-baseline-profile-gradle-plugin:${Versions.MACRO_BENCHMARK}"
+    const val baselineProfilePlugin = "androidx.benchmark:benchmark-baseline-profile-gradle-plugin:${Versions.MACRO_BENCHMARK}"
     const val coil = "io.coil-kt:coil:${Versions.COIL}"
     const val coilGif = "io.coil-kt:coil-gif:${Versions.COIL}"
     const val coilVideo = "io.coil-kt:coil-video:${Versions.COIL}"
@@ -136,11 +133,9 @@ object Dependencies {
     const val composeMaterial = "androidx.compose.material:material:${Versions.ANDROIDX_COMPOSE}"
     const val composeMaterial3 = "androidx.compose.material3:material3:${Versions.ANDROIDX_COMPOSE_MATERIAL3}"
     const val composeMaterialIcons = "androidx.compose.material:material-icons-core:${Versions.ANDROIDX_COMPOSE}"
-    const val composeAccompanistPermissions =
-        "com.google.accompanist:accompanist-permissions:${Versions.COMPOSE_ACCOMPANIST}"
+    const val composeAccompanistPermissions = "com.google.accompanist:accompanist-permissions:${Versions.COMPOSE_ACCOMPANIST}"
     const val composeAccompanistPager = "com.google.accompanist:accompanist-pager:${Versions.COMPOSE_ACCOMPANIST}"
-    const val composeAccompanistSystemUiController =
-        "com.google.accompanist:accompanist-systemuicontroller:${Versions.COMPOSE_ACCOMPANIST}"
+    const val composeAccompanistSystemUiController = "com.google.accompanist:accompanist-systemuicontroller:${Versions.COMPOSE_ACCOMPANIST}"
     const val composeActivity = "androidx.activity:activity-compose:${Versions.ANDROIDX_ACTIVITY_COMPOSE}"
     const val composeViewModel = "androidx.lifecycle:lifecycle-viewmodel-compose:${Versions.ANDROIDX_LIFECYCLE}"
     const val composeStableMarker = "com.github.skydoves:compose-stable-marker:${Versions.COMPOSE_STABLE_MARKER}"
@@ -163,8 +158,7 @@ object Dependencies {
     const val fragmentTest = "androidx.fragment:fragment-testing:${Versions.ANDROIDX_FRAGMENT}"
     const val firebaseAnalytics = "com.google.firebase:firebase-analytics-ktx:${Versions.FIREBASE_ANALYTICS}"
     const val firebaseCrashlytics = "com.google.firebase:firebase-crashlytics:${Versions.FIREBASE_CRASHLYTICS}"
-    const val firebaseCrashlyticsPlugin =
-        "com.google.firebase:firebase-crashlytics-gradle:${Versions.FIREBASE_CRASHLYTICS_PLUGIN}"
+    const val firebaseCrashlyticsPlugin = "com.google.firebase:firebase-crashlytics-gradle:${Versions.FIREBASE_CRASHLYTICS_PLUGIN}"
     const val firebaseMessaging = "com.google.firebase:firebase-messaging:${Versions.FIREBASE_MESSAGING}"
     const val flipper = "com.facebook.flipper:flipper:${Versions.FLIPPER}"
     const val flipperNetwork = "com.facebook.flipper:flipper-network-plugin:${Versions.FLIPPER}"
@@ -181,11 +175,9 @@ object Dependencies {
     const val junitJupiterParams = "org.junit.jupiter:junit-jupiter-params:${Versions.JUNIT5}"
     const val junitJupiterEngine = "org.junit.jupiter:junit-jupiter-engine:${Versions.JUNIT5}"
     const val junitVintageEngine = "org.junit.vintage:junit-vintage-engine:${Versions.JUNIT5}"
-    const val keyboardVisibilityEvent =
-        "net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:${Versions.KEYBOARD_VISIBILITY_EVENT}"
+    const val keyboardVisibilityEvent = "net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:${Versions.KEYBOARD_VISIBILITY_EVENT}"
     const val kluent = "org.amshove.kluent:kluent:${Versions.KLUENT}"
-    const val kotlinBinaryValidator =
-        "org.jetbrains.kotlinx:binary-compatibility-validator:${Versions.KOTLIN_BINARY_VALIDATOR}"
+    const val kotlinBinaryValidator = "org.jetbrains.kotlinx:binary-compatibility-validator:${Versions.KOTLIN_BINARY_VALIDATOR}"
     const val kotlinGradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.KOTLIN}"
     const val kotlinReflect = "org.jetbrains.kotlin:kotlin-reflect:${Versions.KOTLIN}"
     const val ksp = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:${Versions.KSP}"
@@ -203,8 +195,7 @@ object Dependencies {
     const val moshiKotlin = "com.squareup.moshi:moshi-kotlin:${Versions.MOSHI}"
     const val moshiAdapters = "com.squareup.moshi:moshi-adapters:${Versions.MOSHI}"
     const val navigationFragmentKTX = "androidx.navigation:navigation-fragment-ktx:${Versions.ANDROIDX_NAVIGATION}"
-    const val navigationSafeArgsGradlePlugin =
-        "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.ANDROIDX_NAVIGATION}"
+    const val navigationSafeArgsGradlePlugin = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.ANDROIDX_NAVIGATION}"
     const val navigationRuntimeKTX = "androidx.navigation:navigation-runtime-ktx:${Versions.ANDROIDX_NAVIGATION}"
     const val navigationTest = "androidx.navigation:navigation-testing:${Versions.ANDROIDX_NAVIGATION}"
     const val navigationUIKTX = "androidx.navigation:navigation-ui-ktx:${Versions.ANDROIDX_NAVIGATION}"
@@ -233,16 +224,14 @@ object Dependencies {
     const val streamLogAndroidFile = "io.getstream:stream-log-android-file:${Versions.STREAM_LOG}"
     const val streamPush = "io.getstream:stream-android-push:${Versions.STREAM_PUSH}"
     const val streamPushPermissions = "io.getstream:stream-android-push-permissions:${Versions.STREAM_PUSH}"
-    const val streamPushPermissionsSnackbar =
-        "io.getstream:stream-android-push-permissions-snackbar:${Versions.STREAM_PUSH}"
+    const val streamPushPermissionsSnackbar = "io.getstream:stream-android-push-permissions-snackbar:${Versions.STREAM_PUSH}"
     const val streamPushDelegate = "io.getstream:stream-android-push-delegate:${Versions.STREAM_PUSH}"
     const val streamPushFirebase = "io.getstream:stream-android-push-firebase:${Versions.STREAM_PUSH}"
     const val streamPushHuawei = "io.getstream:stream-android-push-huawei:${Versions.STREAM_PUSH}"
     const val streamPushXiaomi = "io.getstream:stream-android-push-xiaomi:${Versions.STREAM_PUSH}"
     const val streamResult = "io.getstream:stream-result:${Versions.STREAM_RESULT}"
     const val streamResultCall = "io.getstream:stream-result-call:${Versions.STREAM_RESULT}"
-    const val testParameterInjector =
-        "com.google.testparameterinjector:test-parameter-injector:${Versions.TEST_PARAMETER_INJECTOR}"
+    const val testParameterInjector = "com.google.testparameterinjector:test-parameter-injector:${Versions.TEST_PARAMETER_INJECTOR}"
     const val threeTenBp = "org.threeten:threetenbp:${Versions.THREETENBP}"
     const val timber = "com.jakewharton.timber:timber:${Versions.TIMBER}"
     const val turbine = "app.cash.turbine:turbine:${Versions.TURBINE}"
