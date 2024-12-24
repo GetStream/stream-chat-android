@@ -12,7 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
-- Fix `ChatClient::queryBlockedMembers` not working. [#5532](https://github.com/GetStream/stream-chat-android/pull/5532)
+- Fix `ChatClient::queryBlockedUsers` not working. [#5532](https://github.com/GetStream/stream-chat-android/pull/5532)
 - Fix `ChatClient::blockUser` and `ChatClient::unblockUser` response parsing. [#5532](https://github.com/GetStream/stream-chat-android/pull/5532)
 
 ### ⬆️ Improved
@@ -78,6 +78,7 @@
 
 ### ✅ Added
 - Add "Unblock user" message menu option shown for messages from blocked users. [#5533](https://github.com/GetStream/stream-chat-android/pull/5533)
+- Add `ComposerActionsTheme` property to `MessageComposerTheme` for customizing the default action icons in the `MessageComposer`. [#5535](https://github.com/GetStream/stream-chat-android/pull/5535)
 
 ### ⚠️ Changed
 
