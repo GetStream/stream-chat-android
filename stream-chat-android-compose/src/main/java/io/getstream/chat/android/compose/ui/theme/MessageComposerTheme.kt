@@ -38,6 +38,7 @@ import io.getstream.chat.android.compose.ui.theme.messages.composer.attachments.
  * @param attachmentCancelIcon The theming for the cancel icon used in the message composer.
  * @param linkPreview The theming for the link preview in the message composer.
  * @param inputField The theming for the input field in the message composer.
+ * @param actionsTheme The theming for the different composer actions.
  * @param audioRecording The theming for the audio recording in the message composer.
  * @param attachmentsPreview The theming for the attachments preview in the message composer.
  */
@@ -45,6 +46,7 @@ public data class MessageComposerTheme(
     val attachmentCancelIcon: ComposerCancelIconStyle,
     val linkPreview: ComposerLinkPreviewTheme,
     val inputField: ComposerInputFieldTheme,
+    val actionsTheme: ComposerActionsTheme,
     val audioRecording: AudioRecordingTheme,
     val attachmentsPreview: AttachmentsPreviewTheme,
 ) {
@@ -70,6 +72,7 @@ public data class MessageComposerTheme(
                 attachmentCancelIcon = ComposerCancelIconStyle.defaultStyle(colors),
                 linkPreview = ComposerLinkPreviewTheme.defaultTheme(typography, colors),
                 inputField = ComposerInputFieldTheme.defaultTheme(typography, shapes, colors),
+                actionsTheme = ComposerActionsTheme.defaultTheme(colors),
                 audioRecording = AudioRecordingTheme.defaultTheme(isInDarkMode, typography, colors),
                 attachmentsPreview = AttachmentsPreviewTheme.defaultTheme(isInDarkMode, typography, colors),
             )
@@ -209,6 +212,65 @@ public data class ComposerInputFieldTheme(
                     textDirection = TextDirection.Content,
                 ),
                 cursorBrushColor = colors.primaryAccent,
+            )
+        }
+    }
+}
+
+/**
+ * Defines the theming options for the different composer actions.
+ *
+ * @param attachmentsButton The style for the attachments button.
+ * @param commandsButton The style for the commands button.
+ * @param sendButton The style for the send button.
+ */
+public data class ComposerActionsTheme(
+    val attachmentsButton: IconContainerStyle,
+    val commandsButton: IconContainerStyle,
+    val sendButton: IconContainerStyle,
+) {
+
+    public companion object {
+
+        /**
+         * Builds the default composer actions theme.
+         * @param colors The colors to use for the theming.
+         *
+         * @return A [ComposerActionsTheme] instance holding the default theming.
+         */
+        @Composable
+        public fun defaultTheme(colors: StreamColors): ComposerActionsTheme {
+            val attachmentsButton = IconContainerStyle(
+                size = ComponentSize(width = 32.dp, height = 32.dp),
+                padding = ComponentPadding(4.dp),
+                icon = IconStyle(
+                    painter = painterResource(id = R.drawable.stream_compose_ic_add),
+                    tint = colors.textLowEmphasis,
+                    size = ComponentSize(width = 24.dp, height = 24.dp),
+                ),
+            )
+            val commandsButton = IconContainerStyle(
+                size = ComponentSize(width = 32.dp, height = 32.dp),
+                padding = ComponentPadding(4.dp),
+                icon = IconStyle(
+                    painter = painterResource(id = R.drawable.stream_compose_ic_command),
+                    tint = colors.textLowEmphasis,
+                    size = ComponentSize(width = 24.dp, height = 24.dp),
+                ),
+            )
+            val sendButton = IconContainerStyle(
+                size = ComponentSize(width = 48.dp, height = 48.dp),
+                padding = ComponentPadding(12.dp),
+                icon = IconStyle(
+                    painter = painterResource(id = R.drawable.stream_compose_ic_send),
+                    tint = colors.textLowEmphasis,
+                    size = ComponentSize(width = 24.dp, height = 24.dp),
+                ),
+            )
+            return ComposerActionsTheme(
+                attachmentsButton = attachmentsButton,
+                commandsButton = commandsButton,
+                sendButton = sendButton,
             )
         }
     }
