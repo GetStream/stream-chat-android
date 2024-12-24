@@ -84,6 +84,7 @@ public fun randomUser(
     mutes: List<Mute> = mutableListOf(),
     teams: List<String> = listOf(),
     channelMutes: List<ChannelMute> = emptyList(),
+    blockedUserIds: List<String> = emptyList(),
     extraData: MutableMap<String, Any> = mutableMapOf(),
 ): User = User(
     id = id,
@@ -104,6 +105,7 @@ public fun randomUser(
     mutes = mutes,
     teams = teams,
     channelMutes = channelMutes,
+    blockedUserIds = blockedUserIds,
     extraData = extraData,
 )
 

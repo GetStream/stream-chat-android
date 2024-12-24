@@ -67,6 +67,7 @@ import io.getstream.chat.android.ui.common.state.messages.React
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.Resend
 import io.getstream.chat.android.ui.common.state.messages.ThreadReply
+import io.getstream.chat.android.ui.common.state.messages.UnblockUser
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageOption
@@ -211,6 +212,9 @@ public class MessageListView : ConstraintLayout {
     private var messageUserBlockHandler = MessageUserBlockHandler {
         throw IllegalStateException("onMessageFlagHandler must be set.")
     }
+    private var messageUserUnblockHandler = MessageUserUnblockHandler {
+        throw IllegalStateException("onMessageFlagHandler must be set.")
+    }
     private var flagMessageResultHandler = FlagMessageResultHandler {
         // no-op
     }
@@ -309,6 +313,7 @@ public class MessageListView : ConstraintLayout {
             is MessageListController.ErrorEvent.MuteUserError -> R.string.stream_ui_message_list_error_mute_user
             is MessageListController.ErrorEvent.UnmuteUserError -> R.string.stream_ui_message_list_error_unmute_user
             is MessageListController.ErrorEvent.BlockUserError -> R.string.stream_ui_message_list_error_block_user
+            is MessageListController.ErrorEvent.UnblockUserError -> R.string.stream_ui_message_list_error_unblock_user
             is MessageListController.ErrorEvent.FlagUserError -> R.string.stream_ui_message_list_error_flag_user
             is MessageListController.ErrorEvent.UnflagUserError -> R.string.stream_ui_message_list_error_unflag_user
             is MessageListController.ErrorEvent.FlagMessageError -> R.string.stream_ui_message_list_error_flag_message
@@ -1935,6 +1940,15 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
+     * Set a handler for the user unblock action.
+     *
+     * @param messageUserUnblockHandler the handler
+     */
+    public fun setMessageUserUnblockHandler(messageUserUnblockHandler: MessageUserUnblockHandler) {
+        this.messageUserUnblockHandler = messageUserUnblockHandler
+    }
+
+    /**
      * Sets the handler used to handle when the message is going to be unpinned.
      *
      * @param messageUnpinHandler The handler to use.
@@ -2190,6 +2204,9 @@ public class MessageListView : ConstraintLayout {
 
             is BlockUser -> {
                 messageUserBlockHandler.onUserBlocked(message)
+            }
+            is UnblockUser -> {
+                messageUserUnblockHandler.onUserUnblocked(message)
             }
         }
     }
@@ -2461,6 +2478,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface MessageUserBlockHandler {
         public fun onUserBlocked(message: Message)
+    }
+
+    public fun interface MessageUserUnblockHandler {
+        public fun onUserUnblocked(message: Message)
     }
 
     public fun interface MessagePinHandler {

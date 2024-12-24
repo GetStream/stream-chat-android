@@ -74,6 +74,7 @@ import io.getstream.chat.android.ui.common.state.messages.React
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.Resend
 import io.getstream.chat.android.ui.common.state.messages.ThreadReply
+import io.getstream.chat.android.ui.common.state.messages.UnblockUser
 import io.getstream.chat.android.ui.common.state.messages.list.CancelGiphy
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
@@ -1522,6 +1523,7 @@ public class MessageListController(
             }
 
             is BlockUser -> blockUser(messageAction.message.user.id)
+            is UnblockUser -> unblockUser(messageAction.message.user.id)
             is Copy -> copyMessage(messageAction.message)
             is React -> reactToMessage(messageAction.reaction, messageAction.message)
             is Pin -> updateMessagePin(messageAction.message)
@@ -2390,6 +2392,13 @@ public class MessageListController(
          * @param streamError Contains the original [Throwable] along with a message.
          */
         public data class BlockUserError(override val streamError: Error) : ErrorEvent(streamError)
+
+        /**
+         * When an error occurs while unblocking a user.
+         *
+         * @param streamError Contains the original [Throwable] along with a message.
+         */
+        public data class UnblockUserError(override val streamError: Error) : ErrorEvent(streamError)
 
         /**
          * Error occurring during the operation of flagging a user.

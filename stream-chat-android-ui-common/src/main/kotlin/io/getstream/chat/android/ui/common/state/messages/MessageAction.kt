@@ -104,6 +104,11 @@ public data class Flag(
 public data class BlockUser(override val message: Message) : MessageAction()
 
 /**
+ * Unblock the sender of the message.
+ */
+public data class UnblockUser(override val message: Message) : MessageAction()
+
+/**
  * User-customizable action, with any number of extra properties.
  *
  * @param extraProperties Map of key-value pairs that let you store extra data for this action.
@@ -127,5 +132,6 @@ public fun MessageAction.updateMessage(message: Message): MessageAction {
         is Flag -> copy(message = message)
         is CustomAction -> copy(message = message)
         is BlockUser -> copy(message = message)
+        is UnblockUser -> copy(message = message)
     }
 }

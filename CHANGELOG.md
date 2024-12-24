@@ -18,6 +18,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `ClientState::user::blockedUserIds` exposing the list of the current user's blocked users. [#5533](https://github.com/GetStream/stream-chat-android/pull/5533)
 
 ### ⚠️ Changed
 - 🚨 Breaking change: Change `ChatClient::unblockUser` return type from `Call<BlockUser>` to `Call<Unit>` as we no longer get information about the unblocked user. [#5532](https://github.com/GetStream/stream-chat-android/pull/5532)
@@ -41,6 +42,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `GlobalState::blockedUserIds` exposing the list of the current user's blocked users. [#5533](https://github.com/GetStream/stream-chat-android/pull/5533)
 
 ### ⚠️ Changed
 
@@ -63,6 +65,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add "Unblock user" message menu option shown for messages from blocked users. [#5533](https://github.com/GetStream/stream-chat-android/pull/5533)
 
 ### ⚠️ Changed
 
@@ -74,6 +77,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add "Unblock user" message menu option shown for messages from blocked users. [#5533](https://github.com/GetStream/stream-chat-android/pull/5533)
 
 ### ⚠️ Changed
 

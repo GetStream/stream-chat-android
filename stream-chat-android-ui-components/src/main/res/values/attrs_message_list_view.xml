@@ -427,7 +427,8 @@
         <attr name="streamUiThreadReplyOptionIcon" format="reference" />
         <attr name="streamUiMessageOptionBackgroundColor" format="color" />
         <attr name="streamUiBlockUserOptionEnabled" format="boolean" />
-        <attr name="streamUiBlockUserOptionIcon" format="boolean" />
+        <attr name="streamUiBlockUserOptionIcon" format="reference" />
+        <attr name="streamUiUnblockUserOptionIcon" format="reference" />
 
         <attr name="streamUiMessageOptionsTextSize" format="dimension|reference" />
         <attr name="streamUiMessageOptionsTextColor" format="color|reference" />

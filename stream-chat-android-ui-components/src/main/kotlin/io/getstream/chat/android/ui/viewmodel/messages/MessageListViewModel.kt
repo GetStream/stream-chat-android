@@ -293,6 +293,7 @@ public class MessageListViewModel(
                 false -> messageListController.disableUnreadLabelButton()
             }
             is Event.BlockUser -> messageListController.blockUser(event.userId)
+            is Event.UnblockUser -> messageListController.unblockUser(event.userId)
             is Event.PollOptionUpdated -> messageListController.updatePollOption(
                 message = event.message,
                 poll = event.poll,
@@ -755,6 +756,13 @@ public class MessageListViewModel(
          * @param userId the id of the user that is blocked.
          */
         public data class BlockUser(val userId: String) : Event()
+
+        /**
+         * Unblock a user.
+         *
+         * @param userId the id of the user that is unblocked.
+         */
+        public data class UnblockUser(val userId: String) : Event()
 
         /**
          * When the user updates a poll option.

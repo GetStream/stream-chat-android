@@ -34,6 +34,7 @@ import io.getstream.chat.android.ui.common.state.messages.Pin
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.Resend
 import io.getstream.chat.android.ui.common.state.messages.ThreadReply
+import io.getstream.chat.android.ui.common.state.messages.UnblockUser
 import io.getstream.chat.android.ui.feature.messages.list.MessageListViewStyle
 import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
 import io.getstream.chat.android.uiutils.extension.hasLink
@@ -204,10 +205,26 @@ public open class DefaultMessageOptionItemsFactory(
                 null
             },
             if (style.blockUserEnabled && !isOwnMessage) {
+                val isSenderBlocked = currentUser?.blockedUserIds?.contains(selectedMessageUserId) == true
+                val text = if (isSenderBlocked) {
+                    R.string.stream_ui_message_list_unblock_user
+                } else {
+                    R.string.stream_ui_message_list_block_user
+                }
+                val icon = if (isSenderBlocked) {
+                    style.unblockUserIcon
+                } else {
+                    style.blockUserIcon
+                }
+                val action = if (isSenderBlocked) {
+                    UnblockUser(selectedMessage)
+                } else {
+                    BlockUser(selectedMessage)
+                }
                 MessageOptionItem(
-                    optionText = context.getString(R.string.stream_ui_message_list_block_user),
-                    optionIcon = context.getDrawableCompat(style.blockUserIcon)!!,
-                    messageAction = BlockUser(selectedMessage),
+                    optionText = context.getString(text),
+                    optionIcon = context.getDrawableCompat(icon)!!,
+                    messageAction = action,
                 )
             } else {
                 null

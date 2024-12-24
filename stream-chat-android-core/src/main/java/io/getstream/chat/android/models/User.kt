@@ -43,6 +43,7 @@ import java.util.Date
  * @param mutes A list of users muted by the current user.
  * @param teams List of teams user is a part of.
  * @param channelMutes A list of channels muted by the current user.
+ * @param blockedUserIds A list of user ids blocked by the current user.
  * @param extraData A map of custom fields for the user.
  * @param deactivatedAt Date/time of deactivation.
  */
@@ -67,6 +68,7 @@ public data class User(
     val mutes: List<Mute> = listOf(),
     val teams: List<String> = listOf(),
     val channelMutes: List<ChannelMute> = emptyList(),
+    val blockedUserIds: List<String> = emptyList(),
     override val extraData: Map<String, Any> = mapOf(),
     val deactivatedAt: Date? = null,
 ) : CustomObject, ComparableFieldProvider {
@@ -136,6 +138,7 @@ public data class User(
         private var mutes: List<Mute> = listOf()
         private var teams: List<String> = listOf()
         private var channelMutes: List<ChannelMute> = emptyList()
+        private var blockedUserIds: List<String> = emptyList()
         private var extraData: Map<String, Any> = mutableMapOf()
         private var deactivatedAt: Date? = null
 
@@ -159,6 +162,7 @@ public data class User(
             mutes = user.mutes
             teams = user.teams
             channelMutes = user.channelMutes
+            blockedUserIds = user.blockedUserIds
             extraData = user.extraData
             deactivatedAt = user.deactivatedAt
         }
@@ -186,6 +190,9 @@ public data class User(
         public fun withChannelMutes(channelMutes: List<ChannelMute>): Builder = apply {
             this.channelMutes = channelMutes
         }
+        public fun withBlockedUserIds(blockedUserIds: List<String>): Builder = apply {
+            this.blockedUserIds = blockedUserIds
+        }
         public fun withExtraData(extraData: Map<String, Any>): Builder = apply { this.extraData = extraData }
         public fun withDeactivatedAt(deactivatedAt: Date?): Builder = apply { this.deactivatedAt = deactivatedAt }
 
@@ -210,6 +217,7 @@ public data class User(
                 mutes = mutes,
                 teams = teams,
                 channelMutes = channelMutes,
+                blockedUserIds = blockedUserIds,
                 extraData = extraData.toMutableMap(),
                 deactivatedAt = deactivatedAt,
             )

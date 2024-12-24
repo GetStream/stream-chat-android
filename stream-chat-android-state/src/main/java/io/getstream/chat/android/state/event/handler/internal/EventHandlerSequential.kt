@@ -288,6 +288,7 @@ internal class EventHandlerSequential(
         var totalUnreadCount = mutableGlobalState.totalUnreadCount.value
         var channelUnreadCount = mutableGlobalState.channelUnreadCount.value
         var unreadThreadsCount = mutableGlobalState.unreadThreadsCount.value
+        var blockedUserIds = mutableGlobalState.blockedUserIds.value
 
         val modifyValuesFromEvent = { event: HasUnreadCounts ->
             totalUnreadCount = event.totalUnreadCount
@@ -299,6 +300,7 @@ internal class EventHandlerSequential(
             totalUnreadCount = user.totalUnreadCount
             channelUnreadCount = user.unreadChannels
             unreadThreadsCount = user.unreadThreads
+            blockedUserIds = user.blockedUserIds
         }
 
         val modifyUnreadThreadsCount = { newValue: Int? ->
@@ -367,6 +369,7 @@ internal class EventHandlerSequential(
         mutableGlobalState.setTotalUnreadCount(totalUnreadCount)
         mutableGlobalState.setChannelUnreadCount(channelUnreadCount)
         mutableGlobalState.setUnreadThreadsCount(unreadThreadsCount)
+        mutableGlobalState.setBlockedUserIds(blockedUserIds)
         logger.v { "[updateGlobalState] completed batchId: ${batchEvent.id}" }
     }
 

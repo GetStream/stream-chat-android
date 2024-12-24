@@ -65,6 +65,9 @@ import io.getstream.chat.android.ui.utils.extensions.use
  * @property pinMessageEnabled Enables/disables pin message feature. Disabled by default.
  * @property deleteIcon Icon for delete message option. Default value is [R.drawable.stream_ui_ic_delete].
  * @property deleteMessageEnabled Enables/disables delete message feature. Enabled by default.
+ * @property blockUserIcon Icon for block user option. Default value is [R.drawable.stream_ui_ic_clear].
+ * @property unblockUserIcon Icon for unblock user option. Default value is [R.drawable.stream_ui_ic_clear].
+ * @property blockUserEnabled Enables/disables block user feature. Enabled by default.
  * @property copyTextEnabled Enables/disables copy text feature. Enabled by default.
  * @property retryMessageEnabled Enables/disables retry failed message feature. Enabled by default.
  * @property deleteConfirmationEnabled Enables/disables showing confirmation dialog before deleting message. Enabled by default.
@@ -125,6 +128,7 @@ public data class MessageListViewStyle(
     val deleteIcon: Int,
     val deleteMessageEnabled: Boolean,
     val blockUserIcon: Int,
+    val unblockUserIcon: Int,
     val blockUserEnabled: Boolean,
     val copyTextEnabled: Boolean,
     val markAsUnreadEnabled: Boolean,
@@ -599,10 +603,15 @@ public data class MessageListViewStyle(
                     R.styleable.MessageListView_streamUiBlockUserOptionIcon,
                     R.drawable.stream_ui_ic_clear,
                 )
+                val userUnblockIcon = attributes.getResourceId(
+                    R.styleable.MessageListView_streamUiUnblockUserOptionIcon,
+                    R.drawable.stream_ui_ic_clear,
+                )
 
                 return MessageListViewStyle(
                     blockUserEnabled = userBlockEnabled,
                     blockUserIcon = userBlockIcon,
+                    unblockUserIcon = userUnblockIcon,
                     scrollButtonViewStyle = scrollButtonViewStyle,
                     scrollButtonBehaviour = scrollButtonBehaviour,
                     scrollButtonBottomMargin = scrollButtonMarginBottom,
