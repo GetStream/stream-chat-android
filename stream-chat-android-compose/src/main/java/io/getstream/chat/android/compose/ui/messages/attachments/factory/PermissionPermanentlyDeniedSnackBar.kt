@@ -19,12 +19,12 @@ package io.getstream.chat.android.compose.ui.messages.attachments.factory
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Snackbar
-import androidx.compose.material.SnackbarHost
-import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,12 +54,12 @@ internal fun PermissionPermanentlyDeniedSnackBar(
         Snackbar(
             content = {
                 Text(
-                    text = data.message,
+                    text = data.visuals.message,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
                 )
             },
-            action = data.actionLabel?.let {
+            action = data.visuals.actionLabel?.let {
                 {
                     TextButton(
                         colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.primaryAccent),

@@ -21,9 +21,9 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
-import androidx.compose.material.ripple
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -39,7 +39,8 @@ import io.getstream.chat.android.ui.common.state.messages.Reply
 
 /**
  * Shows the options "header" for the message input component. This is based on the currently active
- * message action - [io.getstream.chat.android.common.state.Reply] or [io.getstream.chat.android.common.state.Edit].
+ * message action - [io.getstream.chat.android.ui.common.state.messages.Reply] or
+ * [io.getstream.chat.android.ui.common.state.messages.Edit].
  *
  * @param modifier Modifier for styling.
  * @param activeAction Currently active [MessageAction].

@@ -39,11 +39,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -53,7 +55,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.isVisible
 import io.getstream.chat.android.client.ChatClient
@@ -120,7 +121,7 @@ public class MediaPreviewActivity : AppCompatActivity() {
 
         Scaffold(
             modifier = modifier,
-            backgroundColor = Color.Black,
+            containerColor = Color.Black,
             topBar = { MediaPreviewToolbar(title, onBackPressed) },
             content = { MediaPreviewContent(url, onBackPressed, onPlaybackError) },
         )
@@ -140,14 +141,14 @@ public class MediaPreviewActivity : AppCompatActivity() {
      * @param title The name of the file for playback.
      * @param onBackPressed Handler for back press action.
      */
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun MediaPreviewToolbar(
         title: String,
         onBackPressed: () -> Unit = {},
     ) {
         TopAppBar(
-            backgroundColor = Color.Black,
-            elevation = 0.dp,
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Black),
             navigationIcon = {
                 IconButton(
                     modifier = Modifier.mirrorRtl(LocalLayoutDirection.current),

@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalAnimationApi::class)
-
 package io.getstream.chat.android.compose.ui.components.poll
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -41,8 +38,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.Text
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -62,7 +59,6 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
-import io.getstream.chat.android.previewdata.PreviewPollData
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 
 /**

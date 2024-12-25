@@ -30,12 +30,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Checkbox
-import androidx.compose.material.CheckboxDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
-import androidx.compose.material.ripple
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -136,7 +136,8 @@ internal fun DefaultFilesPickerItem(
                     checkedColor = ChatTheme.colors.primaryAccent,
                     uncheckedColor = ChatTheme.colors.disabled,
                     checkmarkColor = Color.White,
-                    disabledColor = ChatTheme.colors.disabled,
+                    disabledCheckedColor = ChatTheme.colors.disabled,
+                    disabledUncheckedColor = ChatTheme.colors.disabled,
                     disabledIndeterminateColor = ChatTheme.colors.disabled,
                 ),
             )

@@ -28,9 +28,9 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
-import androidx.compose.material.ripple
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -161,8 +161,7 @@ internal fun DefaultChannelItemLeadingContent(
  * Represents the center portion of [ChannelItem], that shows the channel display name
  * and the last message text preview.
  *
- * @param channel The channel to show the info for.
- * @param isMuted If the channel is muted for the current user.
+ * @param channelItemState The channel to show the info for.
  * @param currentUser The currently logged in user, used for data handling.
  */
 @Composable

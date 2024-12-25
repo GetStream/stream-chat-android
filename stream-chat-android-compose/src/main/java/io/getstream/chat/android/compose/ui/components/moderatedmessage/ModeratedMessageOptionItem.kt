@@ -17,8 +17,8 @@
 package io.getstream.chat.android.compose.ui.components.moderatedmessage
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.material.Divider
-import androidx.compose.material.Text
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,7 +38,7 @@ public fun ModeratedMessageOptionItem(
     option: ModeratedMessageOption,
     modifier: Modifier = Modifier,
 ) {
-    Divider(color = ChatTheme.colors.borders)
+    HorizontalDivider(color = ChatTheme.colors.borders)
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center,
