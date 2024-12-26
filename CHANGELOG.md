@@ -80,6 +80,7 @@
 - Add "Unblock user" message menu option shown for messages from blocked users. [#5533](https://github.com/GetStream/stream-chat-android/pull/5533)
 
 ### ⚠️ Changed
+- Replace usage of `material` with `material3` components. [#5537](https://github.com/GetStream/stream-chat-android/pull/5537)
 
 ### ❌ Removed
 
