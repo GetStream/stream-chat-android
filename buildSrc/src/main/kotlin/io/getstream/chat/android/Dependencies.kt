@@ -133,7 +133,6 @@ object Dependencies {
     const val composeUiTestManifest = "androidx.compose.ui:ui-test-manifest:${Versions.ANDROIDX_COMPOSE}"
     const val composeUiTooling = "androidx.compose.ui:ui-tooling:${Versions.ANDROIDX_COMPOSE}"
     const val composeFoundation = "androidx.compose.foundation:foundation:${Versions.ANDROIDX_COMPOSE}"
-    const val composeMaterial = "androidx.compose.material:material:${Versions.ANDROIDX_COMPOSE}"
     const val composeMaterial3 = "androidx.compose.material3:material3:${Versions.ANDROIDX_COMPOSE_MATERIAL3}"
     const val composeMaterialIcons = "androidx.compose.material:material-icons-core:${Versions.ANDROIDX_COMPOSE}"
     const val composeAccompanistPermissions =
