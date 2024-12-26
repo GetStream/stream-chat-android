@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,7 +56,7 @@ private object CustomizingImageAndVideoPreviewsSnippet {
                             .widthIn(10.dp)
                             .padding(2.dp)
                             .background(
-                                color = Color(red = 256, blue = 256, green = 256, alpha = 220),
+                                color = Color(red = 255, blue = 255, green = 255, alpha = 220),
                                 shape = RoundedCornerShape(8.dp)
                             )
                             .fillMaxWidth(0.3f)
@@ -72,7 +72,7 @@ private object CustomizingImageAndVideoPreviewsSnippet {
                         modifier = Modifier
                             .padding(2.dp)
                             .background(
-                                color = Color(red = 256, blue = 256, green = 256, alpha = 220),
+                                color = Color(red = 255, blue = 255, green = 255, alpha = 220),
                                 shape = RoundedCornerShape(8.dp)
                             )
                             .fillMaxWidth(0.35f)
