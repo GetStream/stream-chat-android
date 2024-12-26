@@ -45,6 +45,7 @@ public class StreamRippleConfiguration(
             draggedAlpha = 0.16f,
             hoveredAlpha = 0.08f,
         )
+
         // Note: Values taken from material:RippleDefaults to keep it backwards compatible
         private val LightThemeLowContrastRippleAlpha = RippleAlpha(
             pressedAlpha = 0.12f,
@@ -52,6 +53,7 @@ public class StreamRippleConfiguration(
             draggedAlpha = 0.08f,
             hoveredAlpha = 0.04f,
         )
+
         // Note: Values taken from material:RippleDefaults to keep it backwards compatible
         private val DarkThemeRippleAlpha = RippleAlpha(
             pressedAlpha = 0.10f,
