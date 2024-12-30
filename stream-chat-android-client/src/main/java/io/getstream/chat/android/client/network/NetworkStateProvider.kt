@@ -23,6 +23,9 @@ import android.net.NetworkRequest
 import android.os.Build
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -30,22 +33,29 @@ internal class NetworkStateProvider(
     private val scope: CoroutineScope,
     private val connectivityManager: ConnectivityManager,
 ) {
-
     private val logger by taggedLogger("Chat:NetworkStateProvider")
     private val lock: Any = Any()
     private val callback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
-            notifyListenersIfNetworkStateChanged()
+            // Note: It is not safe to call getNetworkCapabilities(Network) here, as the ConnectivityManager state might
+            // not be updated yet (see NetworkCallback#onAvailable(Network) documentation).
+            // Therefore, we introduce a delay before notifying listeners, to ensure the ConnectivityManager is updated.
+            notifyListenersIfNetworkStateChangedAsync()
         }
 
         override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
-            notifyListenersIfNetworkStateChanged()
+            notifyListenersIfNetworkStateChangedAsync()
         }
 
         override fun onLost(network: Network) {
-            notifyListenersIfNetworkStateChanged()
+            // Note: It is not safe to call getNetworkCapabilities(Network) here, as the ConnectivityManager state might
+            // not be updated yet (see NetworkCallback#onLost(Network) documentation).
+            // Therefore, we introduce a delay before notifying listeners, to ensure the ConnectivityManager is updated.
+            notifyListenersIfNetworkStateChangedAsync()
         }
     }
+
+    private var notifyListenersJob: Job? = null
 
     @Volatile
     private var isConnected: Boolean = isConnected()
@@ -54,6 +64,16 @@ internal class NetworkStateProvider(
     private var listeners: Set<NetworkStateListener> = setOf()
 
     private val isRegistered: AtomicBoolean = AtomicBoolean(false)
+
+    private fun notifyListenersIfNetworkStateChangedAsync() {
+        notifyListenersJob?.cancel()
+        notifyListenersJob = scope.launch {
+            // Introduce delay before calling isConnected(), to ensure the ConnectivityManager state is updated.
+            delay(NOTIFY_LISTENERS_DELAY_MS)
+            if (!isActive) return@launch
+            notifyListenersIfNetworkStateChanged()
+        }
+    }
 
     private fun notifyListenersIfNetworkStateChanged() {
         val isNowConnected = isConnected()
@@ -109,6 +129,9 @@ internal class NetworkStateProvider(
             listeners = (listeners - listener).also {
                 if (it.isEmpty() && isRegistered.compareAndSet(true, false)) {
                     connectivityManager.unregisterNetworkCallback(callback)
+
+                    notifyListenersJob?.cancel()
+                    notifyListenersJob = null
                 }
             }
         }
@@ -118,5 +141,9 @@ internal class NetworkStateProvider(
         suspend fun onConnected()
 
         suspend fun onDisconnected()
+    }
+
+    private companion object {
+        private const val NOTIFY_LISTENERS_DELAY_MS = 100L
     }
 }
