@@ -24,7 +24,7 @@ jobs:
       - name: Assemble SDKs
         run: |
           for module in $MODULES; do
-            modules+=" :metrics:$module-metrics-baseline:assemble :metrics:$module-metrics-stream:assemble"
+            modules+=" :metrics:$module-metrics-baseline:assembleRelease :metrics:$module-metrics-stream:assembleRelease"
           done
           ./gradlew $modules
 
@@ -33,7 +33,7 @@ jobs:
           # Reads current SDK sizes from the metrics file
           # and define to a variable using a compact JSON format
           # so it can be exported for the next job step
-          CURRENT_SDK_SIZES=$(jq -c .debug $METRICS_FILE)
+          CURRENT_SDK_SIZES=$(jq -c .release $METRICS_FILE)
           echo "CURRENT_SDK_SIZES=$CURRENT_SDK_SIZES" >> $GITHUB_ENV
 
       - name: Calculate PR branch SDK sizes
@@ -43,8 +43,8 @@ jobs:
           # Calculate sizes from the .apk files and save them into a temporary JSON file
           # so it can be exported for the next job step
           for module in $MODULES; do
-            baselineFile="metrics/$module-metrics-baseline/build/outputs/apk/debug/$module-metrics-baseline-debug.apk"
-            streamFile="metrics/$module-metrics-stream/build/outputs/apk/debug/$module-metrics-stream-debug.apk"
+            baselineFile="metrics/$module-metrics-baseline/build/outputs/apk/release/$module-metrics-baseline-release.apk"
+            streamFile="metrics/$module-metrics-stream/build/outputs/apk/release/$module-metrics-stream-release.apk"
 
             baselineSize=$(du -k "$baselineFile" | awk '{print $1}')
             streamSize=$(du -k "$streamFile" | awk '{print $1}')
@@ -63,7 +63,7 @@ jobs:
             const fineTolerance = process.env.FINE_TOLERANCE
             const currentSdkSizes = process.env.CURRENT_SDK_SIZES ? JSON.parse(process.env.CURRENT_SDK_SIZES) : {};
             const prSdkSizes = JSON.parse(process.env.PR_SDK_SIZES);
-            const commentHeader = '## SDK Size Comparison * 📏';
+            const commentHeader = '## SDK Size Comparison 📏';
 
             // Prepare the comparison table
 
@@ -94,8 +94,6 @@ jobs:
               commentBody += `| ${sdk} | ${currentSizeInMb} MB | ${prSizeInMb} MB | ${diffInMb} MB | ${status} |\n`;
             });
             
-            commentBody += `\* Based on debug builds\n`;
-
             // Post or update the PR comment
 
             // Find existing comment
