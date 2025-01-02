@@ -78,7 +78,7 @@ jobs:
             sed -i "s|!\[$module\](.*)|![$module](${badgeUrl})|" README.md
           done
 
-      - name: Commit and Push JSON
+      - name: Commit sizes
         run: |
           git fetch origin $BRANCH_NAME
           git checkout $BRANCH_NAME
@@ -89,4 +89,8 @@ jobs:
           git add $METRICS_FILE README.md
           git commit -m "Update SDK sizes" || echo "No changes to commit"
 
-          git push origin HEAD:$BRANCH_NAME
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
+          branch: ${{ env.BRANCH_NAME }}
