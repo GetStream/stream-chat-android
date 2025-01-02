@@ -1,15 +1,16 @@
 name: SDK size updates
 
 on:
-  push:
-    branches:
-      - develop
+  pull-request:
+#  push:
+#    branches:
+#      - develop
 
   workflow_dispatch:
 
-concurrency:
-  group: ${{ github.ref }}
-  cancel-in-progress: true
+#concurrency:
+#  group: ${{ github.ref }}
+#  cancel-in-progress: true
 
 env:
   METRICS_PROJECT: "stream-chat-android-metrics"
