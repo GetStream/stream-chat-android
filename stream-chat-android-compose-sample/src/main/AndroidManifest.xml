@@ -55,7 +55,7 @@
             android:windowSoftInputMode="adjustResize"
             />
         <activity
-            android:name=".ui.ChannelsActivity"
+            android:name=".feature.channel.list.ChannelsActivity"
             android:exported="false"
             />
         <activity
@@ -65,13 +65,26 @@
             />
         <activity
             android:name=".ui.channel.ChannelInfoActivity"
-            android:exported="false" />
+            android:exported="false"
+            />
         <activity
             android:name=".ui.channel.GroupChannelInfoActivity"
-            android:exported="false" />
+            android:exported="false"
+            />
         <activity
             android:name=".ui.pinned.PinnedMessagesActivity"
-            android:exported="false" />
+            android:exported="false"
+            />
+        <activity
+            android:name=".feature.channel.add.AddChannelActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            />
+        <activity
+            android:name=".feature.channel.add.group.AddGroupChannelActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            />
     </application>
 
 </manifest>

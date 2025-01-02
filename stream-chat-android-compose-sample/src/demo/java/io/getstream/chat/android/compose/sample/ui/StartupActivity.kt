@@ -25,6 +25,7 @@ import androidx.lifecycle.lifecycleScope
 import io.getstream.chat.android.compose.sample.BuildConfig
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
+import io.getstream.chat.android.compose.sample.feature.channel.list.ChannelsActivity
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
 import kotlinx.coroutines.launch
 

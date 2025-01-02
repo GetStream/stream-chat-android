@@ -46,6 +46,30 @@
     <string name="channel_group_info_member">Member</string>
     <string name="channel_group_info_moderator">Moderator</string>
 
+    <!--  Add channel  -->
+    <string name="add_channel_title">New Chat</string>
+    <string name="add_channel_to">TO: </string>
+    <string name="add_channel_type_name">Type a name</string>
+    <string name="add_channel_create_group">Create a group</string>
+    <string name="add_channel_others">Others</string>
+    <string name="add_channel_no_matches">No user matches these keywords…</string>
+    <string name="add_channel_error_load_users">Failed to load users</string>
+    <string name="add_channel_error_create_draft_channel">Failed to create draft channel</string>
+    <string name="add_channel_error_create_channel">Failed to create channel</string>
+    <!-- Add group channel -->
+    <string name="add_group_channel_members_title">Add group members</string>
+    <string name="add_group_channel_search">Search: </string>
+    <string name="add_group_channel_name_title">Name of Group Chat</string>
+    <string name="add_group_channel_name_label">NAME</string>
+    <string name="add_group_channel_name_placeholder">Choose a group chat name</string>
+    <string name="add_group_channel_members_empty">Please select at least one member to add to the channel</string>
+    <plurals name="add_group_channel_members_count">
+        <item quantity="one">%d member</item>
+        <item quantity="other">%d members</item>
+    </plurals>
+    <string name="add_group_channel_error_load_users">Failed to load users</string>
+    <string name="add_group_channel_error_create_channel">Failed to create group channel</string>
+
     <!--  App Bottom Bar  -->
     <string name="app_bottom_bar_chats">Chats</string>
     <string name="app_bottom_bar_threads">Threads</string>

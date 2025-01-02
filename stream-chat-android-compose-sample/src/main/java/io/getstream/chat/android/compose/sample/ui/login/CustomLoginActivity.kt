@@ -56,7 +56,7 @@ import io.getstream.chat.android.client.BuildConfig
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.data.UserCredentials
-import io.getstream.chat.android.compose.sample.ui.ChannelsActivity
+import io.getstream.chat.android.compose.sample.feature.channel.list.ChannelsActivity
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
 import io.getstream.result.Error
