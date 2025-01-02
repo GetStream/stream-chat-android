@@ -68,14 +68,6 @@ include (
 		":stream-chat-android-benchmark",
 		":stream-chat-android-ai-assistant",
 		":metrics:stream-chat-android-metrics",
-		":metrics:stream-chat-android-client-metrics-baseline",
-		":metrics:stream-chat-android-client-metrics-stream",
-		":metrics:stream-chat-android-offline-metrics-baseline",
-		":metrics:stream-chat-android-offline-metrics-stream",
-		":metrics:stream-chat-android-ui-components-metrics-baseline",
-		":metrics:stream-chat-android-ui-components-metrics-stream",
-		":metrics:stream-chat-android-compose-metrics-baseline",
-		":metrics:stream-chat-android-compose-metrics-stream",
 )
 
 dependencyResolutionManagement {
