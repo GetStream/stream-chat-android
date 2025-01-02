@@ -4,6 +4,7 @@ on:
   pull_request:
 
 env:
+  METRICS_PROJECT: "stream-chat-android-metrics"
   MODULES: "stream-chat-android-client stream-chat-android-offline stream-chat-android-ui-components stream-chat-android-compose"
   METRICS_FILE: "metrics/size.json"
   MAX_TOLERANCE: 500
@@ -22,7 +23,7 @@ jobs:
           key-prefix: gradle-build
 
       - name: Assemble release for metrics
-        run: ./gradlew :metrics:stream-chat-android-metrics:assembleRelease
+        run: ./gradlew :metrics:$METRICS_PROJECT:assembleRelease
 
       - name: Get current SDK sizes
         run: |
@@ -39,8 +40,8 @@ jobs:
           # Calculate sizes from the .apk files and save them into a temporary JSON file
           # so it can be exported for the next job step
           for module in $MODULES; do
-            baselineFile="metrics/stream-chat-android-metrics/build/outputs/apk/$module-baseline/release/stream-chat-android-metrics-$module-baseline-release.apk"
-            streamFile="metrics/stream-chat-android-metrics/build/outputs/apk/$module-stream/release/stream-chat-android-metrics-$module-stream-release.apk"
+            baselineFile="metrics/$METRICS_PROJECT/build/outputs/apk/$module-baseline/release/$METRICS_PROJECT-$module-baseline-release.apk"
+            streamFile="metrics/$METRICS_PROJECT/build/outputs/apk/$module-stream/release/$METRICS_PROJECT-$module-stream-release.apk"
 
             baselineSize=$(du -k "$baselineFile" | awk '{print $1}')
             streamSize=$(du -k "$streamFile" | awk '{print $1}')

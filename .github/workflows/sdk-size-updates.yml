@@ -1,17 +1,19 @@
 name: SDK size updates
 
 on:
-  push:
-    branches:
-      - develop
+  pull_request:
+#  push:
+#    branches:
+#      - develop
 
   workflow_dispatch:
 
-concurrency:
-  group: ${{ github.ref }}
-  cancel-in-progress: true
+#concurrency:
+#  group: ${{ github.ref }}
+#  cancel-in-progress: true
 
 env:
+  METRICS_PROJECT: "stream-chat-android-metrics"
   MODULES: "stream-chat-android-client stream-chat-android-offline stream-chat-android-ui-components stream-chat-android-compose"
   VARIANTS: "debug release"
   METRICS_FILE: "metrics/size.json"
@@ -29,12 +31,8 @@ jobs:
         with:
           key-prefix: gradle-build
 
-      - name: Assemble SDKs
-        run: |
-          for module in $MODULES; do
-            modules+=" :metrics:$module-metrics-baseline:assemble :metrics:$module-metrics-stream:assemble"
-          done
-          ./gradlew $modules
+      - name: Assemble release and debug for metrics
+        run: ./gradlew :metrics:$METRICS_PROJECT:assemble
 
       - name: Update size metrics
         run: |
@@ -44,8 +42,8 @@ jobs:
           # Calculate sizes
           for module in $MODULES; do
             for variant in $VARIANTS; do
-              baselineFile="metrics/$module-metrics-baseline/build/outputs/apk/$variant/$module-metrics-baseline-$variant.apk"
-              streamFile="metrics/$module-metrics-stream/build/outputs/apk/$variant/$module-metrics-stream-$variant.apk"
+              baselineFile="metrics/$METRICS_PROJECT/build/outputs/apk/$module-baseline/$variant/$METRICS_PROJECT-$module-baseline-$variant.apk"
+              streamFile="metrics/$METRICS_PROJECT/build/outputs/apk/$module-stream/$variant/$METRICS_PROJECT-$module-stream-$variant.apk"
 
               # Ensure files exist
               if [[ -f "$baselineFile" && -f "$streamFile" ]]; then
