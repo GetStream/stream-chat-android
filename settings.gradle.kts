@@ -67,6 +67,7 @@ include (
 		":stream-chat-android-ui-uitests",
 		":stream-chat-android-benchmark",
 		":stream-chat-android-ai-assistant",
+		":metrics:stream-chat-android-metrics",
 		":metrics:stream-chat-android-client-metrics-baseline",
 		":metrics:stream-chat-android-client-metrics-stream",
 		":metrics:stream-chat-android-offline-metrics-baseline",

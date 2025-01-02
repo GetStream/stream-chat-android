@@ -95,6 +95,7 @@ apiValidation {
             "stream-chat-android-test",
             "stream-chat-android-compose-sample",
             "stream-chat-android-ui-guides",
+            "stream-chat-android-metrics",
             "stream-chat-android-client-metrics-baseline",
             "stream-chat-android-client-metrics-stream",
             "stream-chat-android-offline-metrics-baseline",
