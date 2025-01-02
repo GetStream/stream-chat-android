@@ -21,6 +21,8 @@
 
 </div>
 
+> **Note:** The SDK sizes reflect the maximum possible addition if none of their internal dependencies are already in your app. In most cases, the actual impact will be smaller.
+
 This is the official Android SDK for [Stream Chat](https://getstream.io/chat/sdk/android/), a service for building chat and messaging applications. This library includes both a low-level chat SDK and a set of reusable UI components. Most users start with the UI components, and fall back to the lower level API when they want to customize things.
 
 We're proud to say that we're the first Android Chat SDK that supports Jetpack Compose! We [released](https://github.com/GetStream/stream-chat-android/releases/tag/4.15.0) our Compose UI Components one day after the official Jetpack Compose 1.0 release and our team members have been working hard on it since then.
