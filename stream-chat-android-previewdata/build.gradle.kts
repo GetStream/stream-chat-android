@@ -1,9 +1,8 @@
 import io.getstream.chat.android.Configuration
-import io.getstream.chat.android.Dependencies
 
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
 }
 
 rootProject.extra.apply {
@@ -35,5 +34,5 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 dependencies {
     api(project(":stream-chat-android-client"))
 
-    detektPlugins(Dependencies.detektFormatting)
+    detektPlugins(libs.detekt.formatting)
 }
