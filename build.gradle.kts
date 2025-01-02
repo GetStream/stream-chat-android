@@ -95,6 +95,14 @@ apiValidation {
             "stream-chat-android-test",
             "stream-chat-android-compose-sample",
             "stream-chat-android-ui-guides",
+            "stream-chat-android-client-metrics-baseline",
+            "stream-chat-android-client-metrics-stream",
+            "stream-chat-android-offline-metrics-baseline",
+            "stream-chat-android-offline-metrics-stream",
+            "stream-chat-android-ui-components-metrics-baseline",
+            "stream-chat-android-ui-components-metrics-stream",
+            "stream-chat-android-compose-metrics-baseline",
+            "stream-chat-android-compose-metrics-stream",
     )
 
     nonPublicMarkers += listOf(

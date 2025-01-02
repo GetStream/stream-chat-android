@@ -1,5 +1,3 @@
-import io.getstream.chat.android.Dependencies
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -17,10 +15,10 @@ android {
 }
 
 dependencies {
-    detektPlugins(Dependencies.detektFormatting)
+    detektPlugins(libs.detekt.formatting)
 
-    implementation(Dependencies.coroutinesCore)
-    implementation(Dependencies.androidxAppCompat)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.androidx.appcompat)
 
     implementation(project(":stream-chat-android-client"))
 }

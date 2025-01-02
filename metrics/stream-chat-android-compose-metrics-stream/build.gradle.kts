@@ -1,5 +1,3 @@
-import io.getstream.chat.android.Dependencies
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -19,19 +17,19 @@ android {
 }
 
 dependencies {
-    detektPlugins(Dependencies.detektFormatting)
+    detektPlugins(libs.detekt.formatting)
 
-    implementation(Dependencies.composeUi)
-    implementation(Dependencies.composeUiTooling)
-    implementation(Dependencies.composeFoundation)
-    implementation(Dependencies.composeMaterial)
-    implementation(Dependencies.composeMaterialIcons)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.tooling)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.compose.material.icons.core)
 
-    implementation(Dependencies.composeActivity)
-    implementation(Dependencies.composeAndroidLifecycle)
-    implementation(Dependencies.composeViewModel)
-    implementation(Dependencies.composeAccompanistPermissions)
-    implementation(Dependencies.composeAccompanistPager)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.google.accompanist.permissions)
+    implementation(libs.google.accompanist.pager)
 
     implementation(project(":stream-chat-android-compose"))
 }
