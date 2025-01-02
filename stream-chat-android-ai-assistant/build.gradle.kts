@@ -1,10 +1,10 @@
 import io.getstream.chat.android.Configuration
-import io.getstream.chat.android.Dependencies
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.plugin.compose")
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
 }
 
 rootProject.extra.apply {
@@ -25,7 +25,7 @@ android {
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+tasks.withType<KotlinCompile> {
     compilerOptions.freeCompilerArgs.addAll(
         listOf(
             "-Xexplicit-api=strict",
@@ -42,15 +42,14 @@ composeCompiler {
 dependencies {
     api(project(":stream-chat-android-compose"))
 
-    implementation(Dependencies.composeUi)
-    implementation(Dependencies.composeUiTooling)
-    implementation(Dependencies.composeFoundation)
-    implementation(Dependencies.composeMaterial3)
-    implementation(Dependencies.composeActivity)
-    implementation(Dependencies.composeViewModel)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.tooling)
+    implementation(libs.androidx.compose.foundation)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.shimmer.compose)
+    implementation(libs.compose.markdown)
 
-    implementation(Dependencies.shimmerCompose)
-    implementation(Dependencies.composeMarkdown)
-
-    detektPlugins(Dependencies.detektFormatting)
+    detektPlugins(libs.detekt.formatting)
 }
