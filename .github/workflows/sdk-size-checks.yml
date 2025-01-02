@@ -21,12 +21,8 @@ jobs:
         with:
           key-prefix: gradle-build
 
-      - name: Assemble SDKs
-        run: |
-          for module in $MODULES; do
-            modules+=" :metrics:$module-metrics-baseline:assembleRelease :metrics:$module-metrics-stream:assembleRelease"
-          done
-          ./gradlew $modules
+      - name: Assemble release for metrics
+        run: ./gradlew :metrics:stream-chat-android-metrics:assembleRelease
 
       - name: Get current SDK sizes
         run: |
@@ -43,8 +39,8 @@ jobs:
           # Calculate sizes from the .apk files and save them into a temporary JSON file
           # so it can be exported for the next job step
           for module in $MODULES; do
-            baselineFile="metrics/$module-metrics-baseline/build/outputs/apk/release/$module-metrics-baseline-release.apk"
-            streamFile="metrics/$module-metrics-stream/build/outputs/apk/release/$module-metrics-stream-release.apk"
+            baselineFile="metrics/stream-chat-android-metrics/build/outputs/apk/$module-baseline/release/stream-chat-android-metrics-$module-baseline-release.apk"
+            streamFile="metrics/stream-chat-android-metrics/build/outputs/apk/$module-stream/release/stream-chat-android-metrics-$module-stream-release.apk"
 
             baselineSize=$(du -k "$baselineFile" | awk '{print $1}')
             streamSize=$(du -k "$streamFile" | awk '{print $1}')
