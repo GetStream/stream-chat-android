@@ -1,16 +1,15 @@
 name: SDK size updates
 
 on:
-  pull_request:
-#  push:
-#    branches:
-#      - develop
+  push:
+    branches:
+      - develop
 
   workflow_dispatch:
 
-#concurrency:
-#  group: ${{ github.ref }}
-#  cancel-in-progress: true
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   METRICS_PROJECT: "stream-chat-android-metrics"
@@ -78,7 +77,7 @@ jobs:
             sed -i "s|!\[$module\](.*)|![$module](${badgeUrl})|" README.md
           done
 
-      - name: Commit sizes
+      - name: Commit changes
         run: |
           git fetch origin $BRANCH_NAME
           git checkout $BRANCH_NAME
