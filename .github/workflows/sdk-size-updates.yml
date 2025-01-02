@@ -1,16 +1,15 @@
 name: SDK size updates
 
 on:
-  pull_request:
-#  push:
-#    branches:
-#      - develop
+  push:
+    branches:
+      - develop
 
   workflow_dispatch:
 
-#concurrency:
-#  group: ${{ github.ref }}
-#  cancel-in-progress: true
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   METRICS_PROJECT: "stream-chat-android-metrics"
@@ -84,12 +83,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"         
 
-          # Add and commit updated metrics file
-          git add $METRICS_FILE
-          git commit -m "Update SDK size metrics" || echo "No metrics changes to commit"
-          
-          # Add and commit updated README file
-          git add README.md
-          git commit -m "Update SDK size badges" || echo "No README changes to commit"
+          git add $METRICS_FILE README.md
+          git commit -m "Update SDK sizes" || echo "No changes to commit"
 
           git push origin HEAD:$BRANCH_NAME
