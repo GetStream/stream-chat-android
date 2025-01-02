@@ -16,28 +16,28 @@ android {
     flavorDimensions += "sdk"
 
     productFlavors {
-        create("clientBaseline") {
+        create("stream-chat-android-client-baseline") {
             dimension = "sdk"
         }
-        create("clientStream") {
+        create("stream-chat-android-client-stream") {
             dimension = "sdk"
         }
-        create("offlineBaseline") {
+        create("stream-chat-android-offline-baseline") {
             dimension = "sdk"
         }
-        create("offlineStream") {
+        create("stream-chat-android-offline-stream") {
             dimension = "sdk"
         }
-        create("composeBaseline") {
+        create("stream-chat-android-compose-baseline") {
             dimension = "sdk"
         }
-        create("composeStream") {
+        create("stream-chat-android-compose-stream") {
             dimension = "sdk"
         }
-        create("uiComponentsBaseline") {
+        create("stream-chat-android-ui-components-baseline") {
             dimension = "sdk"
         }
-        create("uiComponentsStream") {
+        create("stream-chat-android-ui-components-stream") {
             dimension = "sdk"
         }
     }
@@ -48,7 +48,7 @@ afterEvaluate {
         val flavorName = flavor.name
         // For compose flavors, we apply the compose plugin,
         // set up build features and add common compose dependencies.
-        if (flavorName.startsWith("compose")) {
+        if (flavorName.contains("compose")) {
             val composePlugin = libs.plugins.kotlin.compose.get()
             plugins.apply(composePlugin.pluginId)
             android.buildFeatures.compose = true
@@ -68,11 +68,11 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.androidx.appcompat)
 
-    "clientStreamImplementation"(project(":stream-chat-android-client"))
+    "stream-chat-android-client-streamImplementation"(project(":stream-chat-android-client"))
 
-    "offlineStreamImplementation"(project(":stream-chat-android-offline"))
+    "stream-chat-android-offline-streamImplementation"(project(":stream-chat-android-offline"))
 
-    "uiComponentsStreamImplementation"(project(":stream-chat-android-ui-components"))
+    "stream-chat-android-ui-components-streamImplementation"(project(":stream-chat-android-ui-components"))
 
-    "composeStreamImplementation"(project(":stream-chat-android-compose"))
+    "stream-chat-android-compose-streamImplementation"(project(":stream-chat-android-compose"))
 }
