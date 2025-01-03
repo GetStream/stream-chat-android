@@ -3,6 +3,10 @@ name: SDK size checks
 on:
   pull_request:
 
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   METRICS_PROJECT: "stream-chat-android-metrics"
   MODULES: "stream-chat-android-client stream-chat-android-offline stream-chat-android-ui-components stream-chat-android-compose"
