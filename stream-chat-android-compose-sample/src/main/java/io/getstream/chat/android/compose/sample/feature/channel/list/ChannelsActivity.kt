@@ -50,7 +50,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
-import io.getstream.chat.android.compose.sample.feature.channel.CHANNEL_ARG_DRAFT
+import io.getstream.chat.android.compose.sample.feature.channel.ChannelConstants.CHANNEL_ARG_DRAFT
 import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelActivity
 import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
 import io.getstream.chat.android.compose.sample.ui.MessagesActivity

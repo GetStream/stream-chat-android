@@ -19,7 +19,7 @@ package io.getstream.chat.android.compose.sample.feature.channel.add
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.query.CreateChannelParams
-import io.getstream.chat.android.compose.sample.feature.channel.CHANNEL_ARG_DRAFT
+import io.getstream.chat.android.compose.sample.feature.channel.ChannelConstants.CHANNEL_ARG_DRAFT
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.User
 import io.getstream.result.Error

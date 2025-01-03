@@ -19,12 +19,18 @@ package io.getstream.chat.android.compose.sample.feature.channel
 import io.getstream.chat.android.models.Channel
 
 /**
- * Argument key for the "draft" extra data in the context of a channel.
+ * Constants related to channels for the app.
  */
-const val CHANNEL_ARG_DRAFT = "draft"
+object ChannelConstants {
+
+    /**
+     * Argument key for the "draft" extra data in the context of a channel.
+     */
+    const val CHANNEL_ARG_DRAFT = "draft"
+}
 
 /**
  * Checks if the channel is a draft channel.
  */
 val Channel.isDraft: Boolean
-    get() = getExtraValue(CHANNEL_ARG_DRAFT, false)
+    get() = getExtraValue(ChannelConstants.CHANNEL_ARG_DRAFT, false)
