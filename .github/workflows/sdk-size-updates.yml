@@ -86,7 +86,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"         
 
           git add $METRICS_FILE README.md
-          git commit -m "Update SDK sizes" || echo "No changes to commit"
+          git commit -m "[skip ci] Update SDK sizes" || echo "No changes to commit"
 
       - name: Push changes
         uses: ad-m/github-push-action@master
