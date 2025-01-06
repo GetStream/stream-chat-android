@@ -981,18 +981,22 @@ public class MessageListController(
     ): List<Message> {
         val currentUser = user.value
 
-        return messages.filter {
-            val shouldNotShowIfDeleted = when (deletedMessageVisibility) {
+        return messages.filter { message ->
+            val isDeleted = message.isDeleted()
+            val showIfDeleted = when (deletedMessageVisibility) {
                 DeletedMessageVisibility.ALWAYS_VISIBLE -> true
-                DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
-                    !(it.isDeleted() && it.user.id != currentUser?.id)
-                }
-
-                DeletedMessageVisibility.ALWAYS_HIDDEN -> !it.isDeleted()
+                DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> message.user.id == currentUser?.id
+                DeletedMessageVisibility.ALWAYS_HIDDEN -> false
             }
-            val isSystemMessage = it.isSystem() || it.isError()
+            val isSystemMessage = message.isSystem() || message.isError()
 
-            shouldNotShowIfDeleted || (isSystemMessage && showSystemMessages)
+            if (isDeleted) {
+                showIfDeleted
+            } else if (isSystemMessage) {
+                showSystemMessages
+            } else {
+                true
+            }
         }
     }
 
