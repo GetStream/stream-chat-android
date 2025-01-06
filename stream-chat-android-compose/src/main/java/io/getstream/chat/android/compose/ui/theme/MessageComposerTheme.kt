@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
@@ -224,6 +225,7 @@ public data class ComposerInputFieldTheme(
  * @param commandsButton The style for the commands button.
  * @param sendButton The style for the send button.
  */
+@Immutable
 public data class ComposerActionsTheme(
     val attachmentsButton: IconContainerStyle,
     val commandsButton: IconContainerStyle,
