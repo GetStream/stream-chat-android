@@ -30,11 +30,14 @@ internal class NetworkStateProvider(
     private val scope: CoroutineScope,
     private val connectivityManager: ConnectivityManager,
 ) {
-
     private val logger by taggedLogger("Chat:NetworkStateProvider")
     private val lock: Any = Any()
+
+    private val availableNetworks: MutableSet<Network> = mutableSetOf()
+
     private val callback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
+            availableNetworks.add(network)
             notifyListenersIfNetworkStateChanged()
         }
 
@@ -43,7 +46,12 @@ internal class NetworkStateProvider(
         }
 
         override fun onLost(network: Network) {
+            availableNetworks.remove(network)
             notifyListenersIfNetworkStateChanged()
+            if (availableNetworks.isEmpty()) {
+                // No available networks, notify listeners about disconnection
+                listeners.onDisconnected()
+            }
         }
     }
 

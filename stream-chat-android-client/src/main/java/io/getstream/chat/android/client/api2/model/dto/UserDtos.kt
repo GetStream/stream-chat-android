@@ -75,6 +75,7 @@ internal data class DownstreamUserDto(
     val mutes: List<DownstreamMuteDto>?,
     val teams: List<String> = emptyList(),
     val channel_mutes: List<DownstreamChannelMuteDto>?,
+    val blocked_user_ids: List<String>?,
 
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
@@ -88,7 +89,7 @@ internal data class PartialUpdateUserDto(
 
 @JsonClass(generateAdapter = true)
 internal data class DownstreamUserBlockDto(
-    val blocked_by_user_id: String,
+    val user_id: String,
     val blocked_user_id: String,
     val created_at: Date,
 )

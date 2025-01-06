@@ -222,26 +222,28 @@ public fun ChannelList(
     val (isLoading, _, _, channels, searchQuery) = channelsState
 
     when {
+        channels.isNotEmpty() -> {
+            Channels(
+                modifier = modifier,
+                contentPadding = contentPadding,
+                channelsState = channelsState,
+                lazyListState = lazyListState,
+                onLastItemReached = onLastItemReached,
+                helperContent = helperContent,
+                loadingMoreContent = loadingMoreContent,
+                itemContent = { itemState ->
+                    WrapperItemContent(
+                        itemState = itemState,
+                        channelContent = channelContent,
+                        searchResultContent = searchResultContent,
+                    )
+                },
+                divider = divider,
+            )
+        }
         isLoading -> loadingContent()
-        !isLoading && channels.isNotEmpty() -> Channels(
-            modifier = modifier,
-            contentPadding = contentPadding,
-            channelsState = channelsState,
-            lazyListState = lazyListState,
-            onLastItemReached = onLastItemReached,
-            helperContent = helperContent,
-            loadingMoreContent = loadingMoreContent,
-            itemContent = { itemState ->
-                WrapperItemContent(
-                    itemState = itemState,
-                    channelContent = channelContent,
-                    searchResultContent = searchResultContent,
-                )
-            },
-            divider = divider,
-        )
-        searchQuery.query.isNotBlank() -> emptySearchContent(searchQuery.query)
-        else -> emptyContent()
+        searchQuery.query.isBlank() -> emptyContent()
+        else -> emptySearchContent(searchQuery.query)
     }
 }
 

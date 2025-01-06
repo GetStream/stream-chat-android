@@ -1,0 +1,95 @@
+name: SDK size updates
+
+on:
+  push:
+    branches:
+      - develop
+
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+env:
+  METRICS_PROJECT: "stream-chat-android-metrics"
+  MODULES: "stream-chat-android-client stream-chat-android-offline stream-chat-android-ui-components stream-chat-android-compose"
+  VARIANTS: "debug release"
+  METRICS_FILE: "metrics/size.json"
+  BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+
+jobs:
+  update-sdk-sizes:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+      - uses: ./.github/actions/setup-java
+      - uses: ./.github/actions/gradle-cache
+        with:
+          key-prefix: gradle-build
+
+      - name: Assemble release and debug for metrics
+        run: ./gradlew :metrics:$METRICS_PROJECT:assemble
+
+      - name: Update size metrics
+        run: |
+          # Create temporary JSON file
+          echo '{}' > metrics.json
+
+          # Calculate sizes
+          for module in $MODULES; do
+            for variant in $VARIANTS; do
+              baselineFile="metrics/$METRICS_PROJECT/build/outputs/apk/$module-baseline/$variant/$METRICS_PROJECT-$module-baseline-$variant.apk"
+              streamFile="metrics/$METRICS_PROJECT/build/outputs/apk/$module-stream/$variant/$METRICS_PROJECT-$module-stream-$variant.apk"
+
+              # Ensure files exist
+              if [[ -f "$baselineFile" && -f "$streamFile" ]]; then
+                baselineSize=$(du -k "$baselineFile" | awk '{print $1}')
+                streamSize=$(du -k "$streamFile" | awk '{print $1}')
+                size=$((streamSize - baselineSize))
+              else
+                echo "Warning: $baselineFile or $streamFile not found. Setting size to 0."
+                size=0
+              fi
+          
+              # Update JSON
+              jq --arg module "$module" --arg variant "$variant" --argjson size "$size" \
+                ".\"$variant\".\"$module\" = $size" metrics.json > temp.json && mv temp.json metrics.json
+            done
+          done
+
+          # Validate Generated JSON
+          jq . metrics.json
+          
+          # Move temporary JSON file to the final file
+          mv metrics.json $METRICS_FILE
+
+      - name: Update size badges
+        run: |
+          for module in $MODULES; do
+            size=$(jq --arg module "$module" ".release.\"$module\"" $METRICS_FILE)
+            sizeInMb=$(echo "scale=2; $size / 1024" | bc)
+            badgeUrl="https://img.shields.io/badge/${module//-/--}-$sizeInMb%20MB-lightgreen"
+            sed -i "s|!\[$module\](.*)|![$module](${badgeUrl})|" README.md
+          done
+
+      - name: Commit changes
+        run: |
+          git fetch origin $BRANCH_NAME
+          git checkout $BRANCH_NAME
+          
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"         
+
+          git add $METRICS_FILE README.md
+          git commit -m "[skip ci] Update SDK sizes" || echo "No changes to commit"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
+          branch: ${{ env.BRANCH_NAME }}

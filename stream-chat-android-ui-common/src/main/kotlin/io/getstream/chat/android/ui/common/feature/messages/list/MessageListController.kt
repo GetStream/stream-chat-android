@@ -74,6 +74,7 @@ import io.getstream.chat.android.ui.common.state.messages.React
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.Resend
 import io.getstream.chat.android.ui.common.state.messages.ThreadReply
+import io.getstream.chat.android.ui.common.state.messages.UnblockUser
 import io.getstream.chat.android.ui.common.state.messages.list.CancelGiphy
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
@@ -87,6 +88,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
+import io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MyOwn
 import io.getstream.chat.android.ui.common.state.messages.list.NewMessageState
 import io.getstream.chat.android.ui.common.state.messages.list.Other
@@ -889,8 +891,10 @@ public class MessageListController(
                 ?.takeUnless { message.isDeleted() }
                 ?.let { unreadLabelAdded = groupedMessages.add(UnreadSeparatorItemState(it.unreadCount)) }
 
-            if (message.isSystem() || (message.isError() && !message.isModerationBounce())) {
+            if (message.isSystem()) {
                 groupedMessages.add(SystemMessageItemState(message = message))
+            } else if (message.isError() && !message.isModerationBounce()) {
+                groupedMessages.add(ModeratedMessageItemState(message = message))
             } else {
                 val isMessageRead = message.createdAt
                     ?.let { lastRead != null && it <= lastRead }
@@ -1519,6 +1523,7 @@ public class MessageListController(
             }
 
             is BlockUser -> blockUser(messageAction.message.user.id)
+            is UnblockUser -> unblockUser(messageAction.message.user.id)
             is Copy -> copyMessage(messageAction.message)
             is React -> reactToMessage(messageAction.reaction, messageAction.message)
             is Pin -> updateMessagePin(messageAction.message)
@@ -2389,6 +2394,13 @@ public class MessageListController(
         public data class BlockUserError(override val streamError: Error) : ErrorEvent(streamError)
 
         /**
+         * When an error occurs while unblocking a user.
+         *
+         * @param streamError Contains the original [Throwable] along with a message.
+         */
+        public data class UnblockUserError(override val streamError: Error) : ErrorEvent(streamError)
+
+        /**
          * Error occurring during the operation of flagging a user.
          *
          * @param streamError Contains the original [Throwable] along with a message.
@@ -2441,18 +2453,5 @@ public class MessageListController(
          * Meaning [ChannelUserRead] for this member has no relationship with the [ChatClient.markRead] invocation.
          */
         internal const val MEMBERSHIP_AND_LAST_READ_THRESHOLD_MS = 100L
-    }
-}
-
-private fun MessageListItemState.stringify(): String {
-    return when (this) {
-        is DateSeparatorItemState -> "DateSeparator"
-        is EmptyThreadPlaceholderItemState -> "EmptyThreadPlaceholder"
-        is MessageItemState -> message.text
-        is SystemMessageItemState -> message.text
-        is ThreadDateSeparatorItemState -> "ThreadDateSeparator"
-        is TypingItemState -> "Typing"
-        is UnreadSeparatorItemState -> "UnreadSeparator"
-        is StartOfTheChannelItemState -> "StartOfTheChannelItemState"
     }
 }

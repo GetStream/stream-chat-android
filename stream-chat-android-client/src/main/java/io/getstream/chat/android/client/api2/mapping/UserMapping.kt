@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserBlockDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
+import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
@@ -61,13 +62,20 @@ internal fun DownstreamUserDto.toDomain(currentUserId: UserId?): User =
         mutes = mutes.orEmpty().map { it.toDomain(currentUserId) },
         teams = teams,
         channelMutes = channel_mutes.orEmpty().map { it.toDomain(currentUserId) },
+        blockedUserIds = blocked_user_ids.orEmpty(),
         extraData = extraData.toMutableMap(),
     )
 
 internal fun DownstreamUserBlockDto.toDomain(): UserBlock = UserBlock(
-    blockedBy = blocked_by_user_id,
+    blockedBy = user_id,
     userId = blocked_user_id,
     blockedAt = created_at,
 )
 
 internal fun List<DownstreamUserBlockDto>.toDomain(): List<UserBlock> = map { it.toDomain() }
+
+internal fun BlockUserResponse.toDomain(): UserBlock = UserBlock(
+    blockedBy = blocked_by_user_id,
+    userId = blocked_user_id,
+    blockedAt = created_at,
+)

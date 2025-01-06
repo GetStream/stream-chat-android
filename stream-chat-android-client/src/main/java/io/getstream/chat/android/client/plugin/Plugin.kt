@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.plugin.listeners.BlockUserListener
 import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteChannelListener
@@ -32,6 +33,7 @@ import io.getstream.chat.android.client.plugin.listeners.FetchCurrentUserListene
 import io.getstream.chat.android.client.plugin.listeners.GetMessageListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
+import io.getstream.chat.android.client.plugin.listeners.QueryBlockedUsersListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
@@ -43,6 +45,7 @@ import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
+import io.getstream.chat.android.client.plugin.listeners.UnblockUserListener
 import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
@@ -51,6 +54,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.UserBlock
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.result.Result
 import java.util.Date
@@ -81,7 +85,10 @@ public interface Plugin :
     DeleteChannelListener,
     GetMessageListener,
     FetchCurrentUserListener,
-    QueryThreadsListener {
+    QueryThreadsListener,
+    BlockUserListener,
+    UnblockUserListener,
+    QueryBlockedUsersListener {
 
     public fun getErrorHandler(): ErrorHandler? = null
 
@@ -420,6 +427,18 @@ public interface Plugin :
     }
 
     override suspend fun onQueryThreadsResult(result: Result<QueryThreadsResult>, request: QueryThreadsRequest) {
+        /* No-Op */
+    }
+
+    override fun onBlockUserResult(result: Result<UserBlock>) {
+        /* No-Op */
+    }
+
+    override fun onUnblockUserResult(userId: String, result: Result<Unit>) {
+        /* No-Op */
+    }
+
+    override fun onQueryBlockedUsersResult(result: Result<List<UserBlock>>) {
         /* No-Op */
     }
 }

@@ -223,7 +223,7 @@ internal interface ChatApi {
     fun blockUser(userId: String): Call<UserBlock>
 
     @CheckResult
-    fun unblockUser(userId: String): Call<UserBlock>
+    fun unblockUser(userId: String): Call<Unit>
 
     @CheckResult
     fun queryBlockedUsers(): Call<List<UserBlock>>

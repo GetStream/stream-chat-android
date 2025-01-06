@@ -500,6 +500,9 @@
         <item name="streamUiPinOptionIcon">@drawable/stream_ui_ic_pin</item>
         <item name="streamUiUnpinOptionIcon">@drawable/stream_ui_ic_unpin</item>
         <item name="streamUiPinMessageEnabled">false</item>
+        <item name="streamUiBlockUserOptionEnabled">true</item>
+        <item name="streamUiBlockUserOptionIcon">@drawable/stream_ui_ic_clear</item>
+        <item name="streamUiUnblockUserOptionIcon">@drawable/stream_ui_ic_clear</item>
         <item name="streamUiDeleteOptionIcon">@drawable/stream_ui_ic_delete</item>
         <item name="streamUiDeleteConfirmationEnabled">true</item>
         <item name="streamUiDeleteMessageEnabled">true</item>

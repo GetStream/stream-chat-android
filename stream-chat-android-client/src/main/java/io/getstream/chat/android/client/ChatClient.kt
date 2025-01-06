@@ -2661,7 +2661,18 @@ internal constructor(
      */
     @CheckResult
     public fun blockUser(userId: String): Call<UserBlock> {
-        return api.blockUser(userId)
+        return api.blockUser(userId).doOnResult(userScope) { result ->
+            plugins.forEach { it.onBlockUserResult(result) }
+            if (result is Result.Success) {
+                // Note: Update local user state manually as we don't get WS events for blocked users updates
+                val currentUser = mutableClientState.user.value ?: return@doOnResult
+                if (!currentUser.blockedUserIds.contains(userId)) {
+                    val updatedCurrentUser = currentUser.copy(blockedUserIds = currentUser.blockedUserIds + userId)
+                    userStateService.onUserUpdated(updatedCurrentUser)
+                    mutableClientState.setUser(updatedCurrentUser)
+                }
+            }
+        }
     }
 
     /**
@@ -2670,8 +2681,19 @@ internal constructor(
      * @param userId the user ID of the user that will be unblocked.
      */
     @CheckResult
-    public fun unblockUser(userId: String): Call<UserBlock> {
-        return api.unblockUser(userId)
+    public fun unblockUser(userId: String): Call<Unit> {
+        return api.unblockUser(userId).doOnResult(userScope) { result ->
+            plugins.forEach { it.onUnblockUserResult(userId, result) }
+            if (result is Result.Success) {
+                // Note: Update local user state manually as we don't get WS events for blocked users updates
+                val currentUser = mutableClientState.user.value ?: return@doOnResult
+                if (currentUser.blockedUserIds.contains(userId)) {
+                    val updatedCurrentUser = currentUser.copy(blockedUserIds = currentUser.blockedUserIds - userId)
+                    userStateService.onUserUpdated(updatedCurrentUser)
+                    mutableClientState.setUser(updatedCurrentUser)
+                }
+            }
+        }
     }
 
     /**
@@ -2679,7 +2701,9 @@ internal constructor(
      */
     @CheckResult
     public fun queryBlockedUsers(): Call<List<UserBlock>> {
-        return api.queryBlockedUsers()
+        return api.queryBlockedUsers().doOnResult(userScope) { result ->
+            plugins.forEach { it.onQueryBlockedUsersResult(result) }
+        }
     }
 
     /**

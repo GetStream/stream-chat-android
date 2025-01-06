@@ -2220,6 +2220,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/MessageLis
 	public final fun setMessageRetryListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$MessageRetryListener;)V
 	public final fun setMessageUnpinHandler (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$MessageUnpinHandler;)V
 	public final fun setMessageUserBlockHandler (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$MessageUserBlockHandler;)V
+	public final fun setMessageUserUnblockHandler (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$MessageUserUnblockHandler;)V
 	public final fun setMessageViewHolderFactory (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemViewHolderFactory;)V
 	public final fun setModeratedMessageHandler (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$ModeratedMessageOptionHandler;)V
 	public final fun setModeratedMessageLongClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$ModeratedMessageLongClickListener;)V
@@ -2388,6 +2389,10 @@ public abstract interface class io/getstream/chat/android/ui/feature/messages/li
 	public abstract fun onUserBlocked (Lio/getstream/chat/android/models/Message;)V
 }
 
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$MessageUserUnblockHandler {
+	public abstract fun onUserUnblocked (Lio/getstream/chat/android/models/Message;)V
+}
+
 public final class io/getstream/chat/android/ui/feature/messages/list/MessageListView$MessagesStart : java/lang/Enum {
 	public static final field BOTTOM Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$MessagesStart;
 	public static final field TOP Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$MessagesStart;
@@ -2534,7 +2539,7 @@ public abstract interface class io/getstream/chat/android/ui/feature/messages/li
 
 public final class io/getstream/chat/android/ui/feature/messages/list/MessageListViewStyle : io/getstream/chat/android/ui/helper/ViewStyle {
 	public static final field Companion Lio/getstream/chat/android/ui/feature/messages/list/MessageListViewStyle$Companion;
-	public fun <init> (Lio/getstream/chat/android/ui/feature/messages/list/ScrollButtonViewStyle;Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$NewMessagesBehaviour;Lio/getstream/chat/android/ui/feature/messages/list/MessageListItemStyle;Lio/getstream/chat/android/ui/feature/messages/list/GiphyViewHolderStyle;Lio/getstream/chat/android/ui/feature/messages/list/MessageViewStyle;Lio/getstream/chat/android/ui/feature/messages/list/MessageReplyStyle;Lio/getstream/chat/android/ui/feature/messages/list/UnreadLabelButtonStyle;ZIIZIZIIIZIIZIIZIZIZZZZZZLio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;IILio/getstream/chat/android/ui/font/TextStyle;ILio/getstream/chat/android/ui/font/TextStyle;IIIIIIZIIIIIIIIIIIIZZ)V
+	public fun <init> (Lio/getstream/chat/android/ui/feature/messages/list/ScrollButtonViewStyle;Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$NewMessagesBehaviour;Lio/getstream/chat/android/ui/feature/messages/list/MessageListItemStyle;Lio/getstream/chat/android/ui/feature/messages/list/GiphyViewHolderStyle;Lio/getstream/chat/android/ui/feature/messages/list/MessageViewStyle;Lio/getstream/chat/android/ui/feature/messages/list/MessageReplyStyle;Lio/getstream/chat/android/ui/feature/messages/list/UnreadLabelButtonStyle;ZIIZIZIIIZIIZIIZIZIIZZZZZZLio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;IILio/getstream/chat/android/ui/font/TextStyle;ILio/getstream/chat/android/ui/font/TextStyle;IIIIIIZIIIIIIIIIIIIZZ)V
 	public final fun component1 ()Lio/getstream/chat/android/ui/feature/messages/list/ScrollButtonViewStyle;
 	public final fun component10 ()I
 	public final fun component11 ()Z
@@ -2554,29 +2559,29 @@ public final class io/getstream/chat/android/ui/feature/messages/list/MessageLis
 	public final fun component24 ()I
 	public final fun component25 ()Z
 	public final fun component26 ()I
-	public final fun component27 ()Z
+	public final fun component27 ()I
 	public final fun component28 ()Z
 	public final fun component29 ()Z
 	public final fun component3 ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListItemStyle;
 	public final fun component30 ()Z
 	public final fun component31 ()Z
 	public final fun component32 ()Z
-	public final fun component33 ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun component33 ()Z
 	public final fun component34 ()Lio/getstream/chat/android/ui/font/TextStyle;
-	public final fun component35 ()I
+	public final fun component35 ()Lio/getstream/chat/android/ui/font/TextStyle;
 	public final fun component36 ()I
-	public final fun component37 ()Lio/getstream/chat/android/ui/font/TextStyle;
-	public final fun component38 ()I
-	public final fun component39 ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun component37 ()I
+	public final fun component38 ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun component39 ()I
 	public final fun component4 ()Lio/getstream/chat/android/ui/feature/messages/list/GiphyViewHolderStyle;
-	public final fun component40 ()I
+	public final fun component40 ()Lio/getstream/chat/android/ui/font/TextStyle;
 	public final fun component41 ()I
 	public final fun component42 ()I
 	public final fun component43 ()I
 	public final fun component44 ()I
 	public final fun component45 ()I
-	public final fun component46 ()Z
-	public final fun component47 ()I
+	public final fun component46 ()I
+	public final fun component47 ()Z
 	public final fun component48 ()I
 	public final fun component49 ()I
 	public final fun component5 ()Lio/getstream/chat/android/ui/feature/messages/list/MessageViewStyle;
@@ -2589,14 +2594,15 @@ public final class io/getstream/chat/android/ui/feature/messages/list/MessageLis
 	public final fun component56 ()I
 	public final fun component57 ()I
 	public final fun component58 ()I
-	public final fun component59 ()Z
+	public final fun component59 ()I
 	public final fun component6 ()Lio/getstream/chat/android/ui/feature/messages/list/MessageReplyStyle;
 	public final fun component60 ()Z
+	public final fun component61 ()Z
 	public final fun component7 ()Lio/getstream/chat/android/ui/feature/messages/list/UnreadLabelButtonStyle;
 	public final fun component8 ()Z
 	public final fun component9 ()I
-	public final fun copy (Lio/getstream/chat/android/ui/feature/messages/list/ScrollButtonViewStyle;Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$NewMessagesBehaviour;Lio/getstream/chat/android/ui/feature/messages/list/MessageListItemStyle;Lio/getstream/chat/android/ui/feature/messages/list/GiphyViewHolderStyle;Lio/getstream/chat/android/ui/feature/messages/list/MessageViewStyle;Lio/getstream/chat/android/ui/feature/messages/list/MessageReplyStyle;Lio/getstream/chat/android/ui/feature/messages/list/UnreadLabelButtonStyle;ZIIZIZIIIZIIZIIZIZIZZZZZZLio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;IILio/getstream/chat/android/ui/font/TextStyle;ILio/getstream/chat/android/ui/font/TextStyle;IIIIIIZIIIIIIIIIIIIZZ)Lio/getstream/chat/android/ui/feature/messages/list/MessageListViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/feature/messages/list/MessageListViewStyle;Lio/getstream/chat/android/ui/feature/messages/list/ScrollButtonViewStyle;Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$NewMessagesBehaviour;Lio/getstream/chat/android/ui/feature/messages/list/MessageListItemStyle;Lio/getstream/chat/android/ui/feature/messages/list/GiphyViewHolderStyle;Lio/getstream/chat/android/ui/feature/messages/list/MessageViewStyle;Lio/getstream/chat/android/ui/feature/messages/list/MessageReplyStyle;Lio/getstream/chat/android/ui/feature/messages/list/UnreadLabelButtonStyle;ZIIZIZIIIZIIZIIZIZIZZZZZZLio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;IILio/getstream/chat/android/ui/font/TextStyle;ILio/getstream/chat/android/ui/font/TextStyle;IIIIIIZIIIIIIIIIIIIZZIILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/messages/list/MessageListViewStyle;
+	public final fun copy (Lio/getstream/chat/android/ui/feature/messages/list/ScrollButtonViewStyle;Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$NewMessagesBehaviour;Lio/getstream/chat/android/ui/feature/messages/list/MessageListItemStyle;Lio/getstream/chat/android/ui/feature/messages/list/GiphyViewHolderStyle;Lio/getstream/chat/android/ui/feature/messages/list/MessageViewStyle;Lio/getstream/chat/android/ui/feature/messages/list/MessageReplyStyle;Lio/getstream/chat/android/ui/feature/messages/list/UnreadLabelButtonStyle;ZIIZIZIIIZIIZIIZIZIIZZZZZZLio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;IILio/getstream/chat/android/ui/font/TextStyle;ILio/getstream/chat/android/ui/font/TextStyle;IIIIIIZIIIIIIIIIIIIZZ)Lio/getstream/chat/android/ui/feature/messages/list/MessageListViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/feature/messages/list/MessageListViewStyle;Lio/getstream/chat/android/ui/feature/messages/list/ScrollButtonViewStyle;Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$NewMessagesBehaviour;Lio/getstream/chat/android/ui/feature/messages/list/MessageListItemStyle;Lio/getstream/chat/android/ui/feature/messages/list/GiphyViewHolderStyle;Lio/getstream/chat/android/ui/feature/messages/list/MessageViewStyle;Lio/getstream/chat/android/ui/feature/messages/list/MessageReplyStyle;Lio/getstream/chat/android/ui/feature/messages/list/UnreadLabelButtonStyle;ZIIZIZIIIZIIZIIZIZIIZZZZZZLio/getstream/chat/android/ui/font/TextStyle;Lio/getstream/chat/android/ui/font/TextStyle;IILio/getstream/chat/android/ui/font/TextStyle;ILio/getstream/chat/android/ui/font/TextStyle;IIIIIIZIIIIIIIIIIIIZZIILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/messages/list/MessageListViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAudioRecordPlayerViewStyle ()Lio/getstream/chat/android/ui/feature/messages/list/MessageViewStyle;
 	public final fun getBackgroundColor ()I
@@ -2653,6 +2659,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/MessageLis
 	public final fun getThreadMessagesStart ()I
 	public final fun getThreadReplyIcon ()I
 	public final fun getThreadsEnabled ()Z
+	public final fun getUnblockUserIcon ()I
 	public final fun getUnpinIcon ()I
 	public final fun getUnreadLabelButtonStyle ()Lio/getstream/chat/android/ui/feature/messages/list/UnreadLabelButtonStyle;
 	public final fun getUserReactionsBackgroundColor ()I
@@ -4908,6 +4915,17 @@ public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListVi
 	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$UnbanUser;Lio/getstream/chat/android/models/User;ILjava/lang/Object;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$UnbanUser;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getUser ()Lio/getstream/chat/android/models/User;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$UnblockUser : io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event {
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$UnblockUser;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$UnblockUser;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$UnblockUser;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getUserId ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

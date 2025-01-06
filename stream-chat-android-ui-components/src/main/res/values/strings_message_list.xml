@@ -58,6 +58,7 @@
     <string name="stream_ui_message_list_mute_user">Mute User</string>
     <string name="stream_ui_message_list_unmute_user">Unmute User</string>
     <string name="stream_ui_message_list_block_user">Block user</string>
+    <string name="stream_ui_message_list_unblock_user">Unblock user</string>
     <string name="stream_ui_message_list_delete_message">Delete Message</string>
     <plurals name="stream_ui_message_list_message_reactions">
         <item quantity="one">%d Message Reaction</item>
@@ -88,6 +89,7 @@
     <string name="stream_ui_message_list_error_mute_user">Failed to mute user</string>
     <string name="stream_ui_message_list_error_unmute_user">Failed to unmute user</string>
     <string name="stream_ui_message_list_error_block_user">Failed to block user</string>
+    <string name="stream_ui_message_list_error_unblock_user">Failed to unblock user</string>
     <string name="stream_ui_message_list_error_flag_user">Failed to flag user</string>
     <string name="stream_ui_message_list_error_unflag_user">Failed to un-flag user</string>
     <string name="stream_ui_message_list_error_flag_message">Failed to flag message</string>
@@ -99,6 +101,7 @@
     <string name="stream_ui_message_list_error_close_poll">Failed to close a poll</string>
     <string name="stream_ui_message_list_error_cast_vote">Failed to cast a vote</string>
     <string name="stream_ui_message_list_error_remove_vote">Failed to remove a vote</string>
+    <string name="stream_ui_message_list_error_blocked_by_moderation">Message was blocked by moderation policies</string>
 
     <!-- Poll -->
     <string name="stream_ui_poll_show_all_options">Show All Options</string>

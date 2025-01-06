@@ -355,6 +355,18 @@ public final class io/getstream/chat/android/ui/common/feature/messages/list/Mes
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/ui/common/feature/messages/list/MessageListController$ErrorEvent$UnblockUserError : io/getstream/chat/android/ui/common/feature/messages/list/MessageListController$ErrorEvent {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/result/Error;)V
+	public final fun component1 ()Lio/getstream/result/Error;
+	public final fun copy (Lio/getstream/result/Error;)Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController$ErrorEvent$UnblockUserError;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController$ErrorEvent$UnblockUserError;Lio/getstream/result/Error;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController$ErrorEvent$UnblockUserError;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getStreamError ()Lio/getstream/result/Error;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/common/feature/messages/list/MessageListController$ErrorEvent$UnflagUserError : io/getstream/chat/android/ui/common/feature/messages/list/MessageListController$ErrorEvent {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/result/Error;)V
@@ -949,6 +961,18 @@ public final class io/getstream/chat/android/ui/common/state/messages/ThreadRepl
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/ui/common/state/messages/UnblockUser : io/getstream/chat/android/ui/common/state/messages/MessageAction {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/models/Message;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/Message;
+	public final fun copy (Lio/getstream/chat/android/models/Message;)Lio/getstream/chat/android/ui/common/state/messages/UnblockUser;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/UnblockUser;Lio/getstream/chat/android/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/UnblockUser;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getMessage ()Lio/getstream/chat/android/models/Message;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/common/state/messages/composer/AttachmentMetaData {
 	public static final field $stable I
 	public fun <init> ()V
@@ -1451,6 +1475,18 @@ public final class io/getstream/chat/android/ui/common/state/messages/list/Messa
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/common/state/messages/list/MessagePosition;
 	public static fun values ()[Lio/getstream/chat/android/ui/common/state/messages/list/MessagePosition;
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/list/ModeratedMessageItemState : io/getstream/chat/android/ui/common/state/messages/list/HasMessageListItemState {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/models/Message;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/Message;
+	public final fun copy (Lio/getstream/chat/android/models/Message;)Lio/getstream/chat/android/ui/common/state/messages/list/ModeratedMessageItemState;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/list/ModeratedMessageItemState;Lio/getstream/chat/android/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/list/ModeratedMessageItemState;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getMessage ()Lio/getstream/chat/android/models/Message;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public abstract class io/getstream/chat/android/ui/common/state/messages/list/ModeratedMessageOption {

@@ -3,36 +3,26 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Internal "Resolve Dependency" process improvements. [#5514](https://github.com/GetStream/stream-chat-android/pull/5514)
 
 ### ✅ Added
-- Add `Channel.membership.pinnedAt` property notifiying if/when a channel was pinned by the current user. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
-- Add `Channel.membership.archiveAt` property notifiying if/when a channel was archived by the current user. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
-- Add support for moderation V2. Add `moderation` field in `Message` model to support the new version of moderation. [#5493](https://github.com/GetStream/stream-chat-android/pull/5493)
 
 ### ⚠️ Changed
-- 🚨 Breaking change: ViewModels related with "searching messages" feature provide a `List<MessageResult>` instead of a `List<Message>`. [#5500](https://github.com/GetStream/stream-chat-android/pull/5500)
 
 ### ❌ Removed
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fix `ChatClient::queryBlockedMembers` not working. [#5532](https://github.com/GetStream/stream-chat-android/pull/5532)
+- Fix `ChatClient::blockUser` and `ChatClient::unblockUser` response parsing. [#5532](https://github.com/GetStream/stream-chat-android/pull/5532)
+- Fix rare bug where the `ConnectivityState` is not updated to `Offline` after disconnecting the device from network. [#5538](https://github.com/GetStream/stream-chat-android/pull/5538)
 
 ### ⬆️ Improved
 
 ### ✅ Added
-- Add `ChatClient.pinChannel` and `ChannelClient.unpinChannel` methods to pin/unpin a channel. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
-- Add `ChatClient.archiveChannel` and `ChannelClient.unarchiveChannel` methods to archive/unarchive a channel. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
-- Add `ChannelClient.pinChannel` and `ChannelClient.unpinChannel` methods to pin/unpin a channel. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
-- Add `ChannelClient.archiveChannel` and `ChannelClient.unarchiveChannel` methods to archive/unarchive a channel. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
-- Add `CreateChannelListener::onCreateChannelRequest(String, String, CreateChannelParams, User)` for performing actions before launching a request for creating a channel. [#5502](https://github.com/GetStream/stream-chat-android/pull/5502)
-- Add `ChatClient::createChannel(String, String, CreateChannelParams)` for creating a channel with custom data for its members. [#5502](https://github.com/GetStream/stream-chat-android/pull/5502)
-- Add `ChannelClient::createChannel(CreateChannelParams)` for creating a channel with custom data for its members. [#5502](https://github.com/GetStream/stream-chat-android/pull/5502)
-- Add `ChatClient::addMembers(String, String, AddMembersParams)` for adding members with custom data to a channel. [#5502](https://github.com/GetStream/stream-chat-android/pull/5502)
-- Add `ChannelClient::addMembers(AddMembersParams)` for adding members with custom data to a channel. [#5502](https://github.com/GetStream/stream-chat-android/pull/5502)
+- Add `ClientState::user::blockedUserIds` exposing the list of the current user's blocked users. [#5533](https://github.com/GetStream/stream-chat-android/pull/5533)
 
 ### ⚠️ Changed
-- Deprecate `CreateChannelListener::onCreateChannelRequest(String, String, List<String>, Map<String, Any>, User)` in favor of the new `CreateChannelListener::onCreateChannelRequest(String, String, CreateChannelParams, User)`. [#5502](https://github.com/GetStream/stream-chat-android/pull/5502)
+- 🚨 Breaking change: Change `ChatClient::unblockUser` return type from `Call<BlockUser>` to `Call<Unit>` as we no longer get information about the unblocked user. [#5532](https://github.com/GetStream/stream-chat-android/pull/5532)
 
 ### ❌ Removed
 
@@ -51,9 +41,9 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- The `ChannelState` is updated with new members after querying member with `ChatClient::queryMembers`. [#5517](https://github.com/GetStream/stream-chat-android/pull/5517)  
 
 ### ✅ Added
+- Add `GlobalState::blockedUserIds` exposing the list of the current user's blocked users. [#5533](https://github.com/GetStream/stream-chat-android/pull/5533)
 
 ### ⚠️ Changed
 
@@ -63,7 +53,6 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Exposed expose audio recording params in `DefaultStreamMediaRecorder` to allow customization. [#5520](https://github.com/GetStream/stream-chat-android/pull/5520)
 
 ### ✅ Added
 
@@ -75,14 +64,80 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Add support for partial media access in `MediaAttachmentFragment` and `FileAttachmentFragment` for Android 14+. [#5524](https://github.com/GetStream/stream-chat-android/pull/5524)
 
 ### ✅ Added
-- Add `ThreadListView` component for showing the list of threads for the user. [#5491](https://github.com/GetStream/stream-chat-android/pull/5491)
+- Add "Unblock user" message menu option shown for messages from blocked users. [#5533](https://github.com/GetStream/stream-chat-android/pull/5533)
 
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+## stream-chat-android-compose
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+- Add "Unblock user" message menu option shown for messages from blocked users. [#5533](https://github.com/GetStream/stream-chat-android/pull/5533)
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-markdown-transformer
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+# December 18th, 2024 - 6.8.0
+## Common changes for all artifacts
+### ⬆️ Improved
+- Internal "Resolve Dependency" process improvements. [#5514](https://github.com/GetStream/stream-chat-android/pull/5514)
+
+### ✅ Added
+- Add `Channel.membership.pinnedAt` property notifiying if/when a channel was pinned by the current user. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
+- Add `Channel.membership.archiveAt` property notifiying if/when a channel was archived by the current user. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
+- Add support for moderation V2. Add `moderation` field in `Message` model to support the new version of moderation. [#5493](https://github.com/GetStream/stream-chat-android/pull/5493)
+
+### ⚠️ Changed
+- 🚨 Breaking change: ViewModels related with "searching messages" feature provide a `List<MessageResult>` instead of a `List<Message>`. [#5500](https://github.com/GetStream/stream-chat-android/pull/5500)
+
+## stream-chat-android-client
+### ✅ Added
+- Add `ChatClient.pinChannel` and `ChannelClient.unpinChannel` methods to pin/unpin a channel. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
+- Add `ChatClient.archiveChannel` and `ChannelClient.unarchiveChannel` methods to archive/unarchive a channel. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
+- Add `ChannelClient.pinChannel` and `ChannelClient.unpinChannel` methods to pin/unpin a channel. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
+- Add `ChannelClient.archiveChannel` and `ChannelClient.unarchiveChannel` methods to archive/unarchive a channel. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513)
+- Add `CreateChannelListener::onCreateChannelRequest(String, String, CreateChannelParams, User)` for performing actions before launching a request for creating a channel. [#5502](https://github.com/GetStream/stream-chat-android/pull/5502)
+- Add `ChatClient::createChannel(String, String, CreateChannelParams)` for creating a channel with custom data for its members. [#5502](https://github.com/GetStream/stream-chat-android/pull/5502)
+- Add `ChannelClient::createChannel(CreateChannelParams)` for creating a channel with custom data for its members. [#5502](https://github.com/GetStream/stream-chat-android/pull/5502)
+- Add `ChatClient::addMembers(String, String, AddMembersParams)` for adding members with custom data to a channel. [#5502](https://github.com/GetStream/stream-chat-android/pull/5502)
+- Add `ChannelClient::addMembers(AddMembersParams)` for adding members with custom data to a channel. [#5502](https://github.com/GetStream/stream-chat-android/pull/5502)
+
+### ⚠️ Changed
+- Deprecate `CreateChannelListener::onCreateChannelRequest(String, String, List<String>, Map<String, Any>, User)` in favor of the new `CreateChannelListener::onCreateChannelRequest(String, String, CreateChannelParams, User)`. [#5502](https://github.com/GetStream/stream-chat-android/pull/5502)
+
+## stream-chat-android-state
+### ⬆️ Improved
+- The `ChannelState` is updated with new members after querying member with `ChatClient::queryMembers`. [#5517](https://github.com/GetStream/stream-chat-android/pull/5517)  
+
+## stream-chat-android-ui-common
+### ⬆️ Improved
+- Exposed expose audio recording params in `DefaultStreamMediaRecorder` to allow customization. [#5520](https://github.com/GetStream/stream-chat-android/pull/5520)
+
+## stream-chat-android-ui-components
+### ⬆️ Improved
+- Add support for partial media access in `MediaAttachmentFragment` and `FileAttachmentFragment` for Android 14+. [#5524](https://github.com/GetStream/stream-chat-android/pull/5524)
+
+### ✅ Added
+- Add `ThreadListView` component for showing the list of threads for the user. [#5491](https://github.com/GetStream/stream-chat-android/pull/5491)
+- Hide messages with moderated pictures. [#5525](https://github.com/GetStream/stream-chat-android/pull/5525)
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -98,22 +153,11 @@
 - Add `MessageOptionItemVisibility.isBlockUserVisible` property to show/hide the block user option. [#5512](https://github.com/GetStream/stream-chat-android/pull/5512)
 - Add `ChatTheme.channelOptionsTheme` property to customize the channel options. [#5513](https://github.com/GetStream/stream-chat-android/pull/5513) 
 - Add `SearchResultItemState.channel` property containing the cached info of the channel where the message was sent. [#5500](https://github.com/GetStream/stream-chat-android/pull/5500)
+- Hide messages with moderated pictures. [#5525](https://github.com/GetStream/stream-chat-android/pull/5525)
+- Add `MessageTheme.mentionColor` property for customizing the mentions color in messages. [#5528](https://github.com/GetStream/stream-chat-android/pull/5528)
 
 ### ⚠️ Changed
 - 🚨 Breaking change: The `SearchResultNameFormatter.formatMessageTitle` method receives a `SearchResultItemState` instead of a `Message`. [#5500](https://github.com/GetStream/stream-chat-android/pull/5500)
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # December 04th, 2024 - 6.7.0
 ## stream-chat-android-client

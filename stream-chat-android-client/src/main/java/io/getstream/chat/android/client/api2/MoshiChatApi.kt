@@ -881,7 +881,7 @@ constructor(
         return userApi.blockUser(
             body = BlockUserRequest(userId),
         ).map { response ->
-            response.block.toDomain()
+            response.toDomain()
         }
     }
 
@@ -891,12 +891,8 @@ constructor(
         }
     }
 
-    override fun unblockUser(userId: String): Call<UserBlock> {
-        return userApi.unblockUser(
-            body = UnblockUserRequest(userId),
-        ).map {
-            it.block.toDomain()
-        }
+    override fun unblockUser(userId: String): Call<Unit> {
+        return userApi.unblockUser(body = UnblockUserRequest(userId)).toUnitCall()
     }
 
     override fun partialUpdateUser(id: String, set: Map<String, Any>, unset: List<String>): Call<User> {
