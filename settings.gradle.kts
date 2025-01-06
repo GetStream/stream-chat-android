@@ -67,6 +67,7 @@ include (
 		":stream-chat-android-ui-uitests",
 		":stream-chat-android-benchmark",
 		":stream-chat-android-ai-assistant",
+		":metrics:stream-chat-android-metrics",
 )
 
 dependencyResolutionManagement {
