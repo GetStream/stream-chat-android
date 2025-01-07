@@ -12,7 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
-- Fix `ChatClient::queryBlockedUsers` not working. [#5532](https://github.com/GetStream/stream-chat-android/pull/5532)
+- Fix `ChatClient::queryBlockedMembers` not working. [#5532](https://github.com/GetStream/stream-chat-android/pull/5532)
 - Fix `ChatClient::blockUser` and `ChatClient::unblockUser` response parsing. [#5532](https://github.com/GetStream/stream-chat-android/pull/5532)
 - Fix rare bug where the `ConnectivityState` is not updated to `Offline` after disconnecting the device from network. [#5538](https://github.com/GetStream/stream-chat-android/pull/5538)
 
