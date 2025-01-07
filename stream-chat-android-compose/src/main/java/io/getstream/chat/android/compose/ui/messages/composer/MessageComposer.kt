@@ -73,6 +73,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.AboveAnchorPopupPositionProvider
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.ui.util.padding
+import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities

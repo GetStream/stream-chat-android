@@ -244,7 +244,7 @@ public data class ComposerActionsTheme(
         public fun defaultTheme(colors: StreamColors): ComposerActionsTheme {
             val attachmentsButton = IconContainerStyle(
                 size = ComponentSize(width = 32.dp, height = 32.dp),
-                padding = ComponentPadding(4.dp),
+                padding = ComponentPadding(0.dp),
                 icon = IconStyle(
                     painter = painterResource(id = R.drawable.stream_compose_ic_add),
                     tint = colors.textLowEmphasis,
@@ -253,7 +253,7 @@ public data class ComposerActionsTheme(
             )
             val commandsButton = IconContainerStyle(
                 size = ComponentSize(width = 32.dp, height = 32.dp),
-                padding = ComponentPadding(4.dp),
+                padding = ComponentPadding(0.dp),
                 icon = IconStyle(
                     painter = painterResource(id = R.drawable.stream_compose_ic_command),
                     tint = colors.textLowEmphasis,
@@ -262,7 +262,7 @@ public data class ComposerActionsTheme(
             )
             val sendButton = IconContainerStyle(
                 size = ComponentSize(width = 48.dp, height = 48.dp),
-                padding = ComponentPadding(12.dp),
+                padding = ComponentPadding(0.dp),
                 icon = IconStyle(
                     painter = painterResource(id = R.drawable.stream_compose_ic_send),
                     tint = colors.textLowEmphasis,
