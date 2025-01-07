@@ -30,15 +30,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material.TopAppBar
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -169,6 +171,7 @@ class CustomLoginActivity : AppCompatActivity() {
         )
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun CustomLoginToolbar(onClick: () -> Unit) {
         TopAppBar(
@@ -186,8 +189,7 @@ class CustomLoginActivity : AppCompatActivity() {
                     )
                 }
             },
-            backgroundColor = Color.White,
-            elevation = 0.dp,
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White),
         )
     }
 
@@ -206,9 +208,11 @@ class CustomLoginActivity : AppCompatActivity() {
             onValueChange = { onValueChange(it) },
             singleLine = true,
             label = { Text(hint) },
-            colors = TextFieldDefaults.textFieldColors(
-                textColor = ChatTheme.colors.textHighEmphasis,
-                backgroundColor = ChatTheme.colors.inputBackground,
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = ChatTheme.colors.textHighEmphasis,
+                unfocusedTextColor = ChatTheme.colors.textHighEmphasis,
+                focusedContainerColor = ChatTheme.colors.inputBackground,
+                unfocusedContainerColor = ChatTheme.colors.inputBackground,
                 cursorColor = ChatTheme.colors.primaryAccent,
                 focusedIndicatorColor = ChatTheme.colors.primaryAccent,
                 focusedLabelColor = ChatTheme.colors.primaryAccent,
@@ -229,8 +233,8 @@ class CustomLoginActivity : AppCompatActivity() {
             enabled = enabled,
             shape = RoundedCornerShape(8.dp),
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = ChatTheme.colors.primaryAccent,
-                disabledBackgroundColor = ChatTheme.colors.disabled,
+                containerColor = ChatTheme.colors.primaryAccent,
+                disabledContainerColor = ChatTheme.colors.disabled,
             ),
             onClick = onClick,
         ) {

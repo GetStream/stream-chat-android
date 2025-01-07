@@ -32,9 +32,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -210,7 +210,7 @@ private fun ComposerLinkCancelIcon(
  * Handles clicks on link attachment content.
  *
  * @param context Context needed to start the Activity.
- * @param url The url of the link attachment being clicked.
+ * @param preview The preview of the link attachment being clicked.
  */
 private fun onLinkPreviewClick(context: Context, preview: LinkPreview) {
     val previewUrl = preview.attachment.titleLink ?: preview.attachment.ogUrl

@@ -31,11 +31,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Icon
-import androidx.compose.material.LinearProgressIndicator
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -46,6 +47,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -318,7 +320,12 @@ private fun NewOptionDialog(
     val newOption = remember { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
     AlertDialog(
-        title = { Text(text = stringResource(R.string.stream_compose_suggest_an_option)) },
+        title = {
+            Text(
+                text = stringResource(R.string.stream_compose_suggest_an_option),
+                color = ChatTheme.colors.textHighEmphasis,
+            )
+        },
         text = {
             InputField(
                 value = newOption.value,
@@ -340,6 +347,10 @@ private fun NewOptionDialog(
         confirmButton = {
             TextButton(
                 enabled = newOption.value.isNotBlank(),
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = ChatTheme.colors.primaryAccent,
+                    disabledContentColor = ChatTheme.colors.primaryAccent.copy(alpha = 0.5f),
+                ),
                 onClick = {
                     onNewOption.invoke(newOption.value)
                     onDismiss.invoke()
@@ -350,11 +361,13 @@ private fun NewOptionDialog(
         },
         dismissButton = {
             TextButton(
+                colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.primaryAccent),
                 onClick = { onDismiss.invoke() },
             ) {
                 Text(stringResource(R.string.stream_compose_dismiss))
             }
         },
+        containerColor = ChatTheme.colors.barsBackground,
     )
 }
 
@@ -425,12 +438,6 @@ private fun PollOptionItem(
             }
         }
 
-        val progress = if (voteCount == 0 || totalVoteCount == 0) {
-            0f
-        } else {
-            voteCount / totalVoteCount.toFloat()
-        }
-
         LinearProgressIndicator(
             modifier = Modifier
                 .fillMaxWidth()
@@ -443,13 +450,22 @@ private fun PollOptionItem(
                 )
                 .clip(RoundedCornerShape(4.dp))
                 .height(4.dp),
-            progress = progress,
+            progress = {
+                if (voteCount == 0 || totalVoteCount == 0) {
+                    0f
+                } else {
+                    voteCount / totalVoteCount.toFloat()
+                }
+            },
             color = if (isVotedByMine) {
                 ChatTheme.colors.infoAccent
             } else {
                 ChatTheme.colors.primaryAccent
             },
-            backgroundColor = ChatTheme.colors.inputBackground,
+            trackColor = ChatTheme.colors.inputBackground,
+            gapSize = 0.dp,
+            strokeCap = StrokeCap.Square,
+            drawStopIndicator = { /* Don't draw the stop indicator */ },
         )
     }
 }

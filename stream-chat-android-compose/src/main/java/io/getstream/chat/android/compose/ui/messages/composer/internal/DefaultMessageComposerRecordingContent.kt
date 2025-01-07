@@ -35,12 +35,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.Card
-import androidx.compose.material.IconButton
-import androidx.compose.material.TextButton
-import androidx.compose.material.ripple
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -260,9 +261,9 @@ internal fun DefaultHoldToRecordPopup(
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .padding(theme.containerPadding),
-            elevation = theme.containerElevation,
+            elevation = CardDefaults.cardElevation(defaultElevation = theme.containerElevation),
             shape = theme.containerShape,
-            backgroundColor = theme.containerColor,
+            colors = CardDefaults.cardColors(containerColor = theme.containerColor),
         ) {
             Box(
                 modifier = Modifier
@@ -303,9 +304,9 @@ internal fun DefaultAudioRecordPermissionRationale(
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .padding(theme.containerPadding),
-            elevation = theme.containerElevation,
+            elevation = CardDefaults.cardElevation(defaultElevation = theme.containerElevation),
             shape = theme.containerShape,
-            backgroundColor = theme.containerColor,
+            colors = CardDefaults.cardColors(containerColor = theme.containerColor),
         ) {
             Row(
                 modifier = Modifier
@@ -641,7 +642,7 @@ private fun RecordingFloatingIcon(
             .size(style.size)
             .padding(style.padding),
         shape = style.backgroundShape,
-        backgroundColor = style.backgroundColor,
+        colors = CardDefaults.cardColors(containerColor = style.backgroundColor),
     ) {
         Box(
             contentAlignment = Alignment.Center,

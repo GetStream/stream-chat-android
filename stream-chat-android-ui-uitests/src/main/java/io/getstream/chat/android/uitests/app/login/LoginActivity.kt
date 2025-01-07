@@ -36,10 +36,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Text
-import androidx.compose.material.ripple
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -128,7 +128,7 @@ class LoginActivity : AppCompatActivity() {
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            SdkType.values().forEach { type ->
+            SdkType.entries.forEach { type ->
                 Row(
                     modifier = Modifier.padding(all = 8.dp),
                 ) {
@@ -138,7 +138,7 @@ class LoginActivity : AppCompatActivity() {
                         modifier = Modifier.semantics { contentDescription = type.value },
                         colors = ButtonDefaults.outlinedButtonColors(
                             contentColor = if (isSdkSelected) Color.White else Color.Blue,
-                            backgroundColor = if (isSdkSelected) Color.Blue else Color.White,
+                            containerColor = if (isSdkSelected) Color.Blue else Color.White,
                         ),
                         onClick = {
                             onSdkTypeClick(type)

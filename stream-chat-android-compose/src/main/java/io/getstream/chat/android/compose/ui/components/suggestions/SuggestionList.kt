@@ -19,7 +19,8 @@ package io.getstream.chat.android.compose.ui.components.suggestions
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Card
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
@@ -47,9 +48,9 @@ public fun SuggestionList(
     Popup(popupPositionProvider = AboveAnchorPopupPositionProvider()) {
         Card(
             modifier = modifier,
-            elevation = ChatTheme.dimens.suggestionListElevation,
+            elevation = CardDefaults.cardElevation(defaultElevation = ChatTheme.dimens.suggestionListElevation),
             shape = shape,
-            backgroundColor = ChatTheme.colors.barsBackground,
+            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.barsBackground),
         ) {
             Column(Modifier.padding(contentPadding)) {
                 headerContent()

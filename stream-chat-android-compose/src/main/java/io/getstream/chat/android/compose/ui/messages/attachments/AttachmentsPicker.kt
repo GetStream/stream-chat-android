@@ -29,10 +29,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Surface
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -64,7 +65,6 @@ import io.getstream.chat.android.models.Channel
  * tabs based on the [tabFactories] parameter. Out of the box we provide factories for images,
  * files and media capture tabs.
  *
- * @param channel The channel where the attachments picker is being used.
  * @param attachmentsPickerViewModel ViewModel that loads the images or files and persists which
  * items have been selected.
  * @param onAttachmentPickerAction A lambda that will be invoked when an action is happened.
@@ -109,13 +109,13 @@ public fun AttachmentsPicker(
                 onClick = {},
                 interactionSource = remember { MutableInteractionSource() },
             ),
-            elevation = 4.dp,
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
             shape = if (selectedAttachmentsPickerMode?.isFullContent == true) {
                 RoundedCornerShape(0.dp)
             } else {
                 shape
             },
-            backgroundColor = ChatTheme.attachmentPickerTheme.backgroundSecondary,
+            colors = CardDefaults.cardColors(containerColor = ChatTheme.attachmentPickerTheme.backgroundSecondary),
         ) {
             Column {
                 if (selectedAttachmentsPickerMode == null || selectedAttachmentsPickerMode?.isFullContent == false) {

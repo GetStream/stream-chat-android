@@ -35,7 +35,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -72,14 +71,16 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.rememberScaffoldState
-import androidx.compose.material.ripple
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -310,7 +311,6 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
      * the user clicked on.
      */
     @Suppress("MagicNumber", "LongMethod")
-    @OptIn(ExperimentalAnimationApi::class)
     @Composable
     private fun MediaGalleryPreviewContentWrapper(
         message: Message,
@@ -325,9 +325,9 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         val startingPosition =
             if (initialAttachmentPosition !in filteredAttachments.indices) 0 else initialAttachmentPosition
 
-        val scaffoldState = rememberScaffoldState()
         val pagerState = rememberPagerState(initialPage = startingPosition)
         val coroutineScope = rememberCoroutineScope()
+        val snackbarHostState = remember { SnackbarHostState() }
 
         Box(
             modifier = Modifier
@@ -337,7 +337,6 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         ) {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
-                scaffoldState = scaffoldState,
                 topBar = { MediaGalleryPreviewTopBar(message) },
                 content = { contentPadding ->
                     if (message.id.isNotEmpty()) {
@@ -349,12 +348,19 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                             ) {
                                 MediaPreviewContent(pagerState, filteredAttachments) {
                                     coroutineScope.launch {
-                                        scaffoldState.snackbarHostState.showSnackbar(
+                                        snackbarHostState.showSnackbar(
                                             message = getString(R.string.stream_ui_message_list_video_display_error),
+                                            duration = SnackbarDuration.Short,
                                         )
                                     }
                                 }
                             }
+                            SnackbarHost(
+                                hostState = snackbarHostState,
+                                modifier = Modifier
+                                    .align(Alignment.BottomCenter)
+                                    .padding(bottom = contentPadding.calculateBottomPadding()),
+                            )
                         }
 
                         val promptedAttachment = mediaGalleryPreviewViewModel.promptedAttachment
@@ -436,7 +442,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
-            elevation = 4.dp,
+            shadowElevation = 4.dp,
             color = ChatTheme.colors.barsBackground,
         ) {
             Row(
@@ -578,7 +584,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     .wrapContentHeight()
                     .align(Alignment.TopEnd),
                 shape = RoundedCornerShape(16.dp),
-                elevation = 4.dp,
+                shadowElevation = 4.dp,
                 color = ChatTheme.colors.barsBackground,
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
@@ -1153,7 +1159,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp),
-            elevation = 4.dp,
+            shadowElevation = 4.dp,
             color = ChatTheme.colors.barsBackground,
         ) {
             Box(
@@ -1500,7 +1506,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                         onClick = {},
                     ),
                 shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-                elevation = 4.dp,
+                shadowElevation = 4.dp,
                 color = ChatTheme.colors.barsBackground,
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {

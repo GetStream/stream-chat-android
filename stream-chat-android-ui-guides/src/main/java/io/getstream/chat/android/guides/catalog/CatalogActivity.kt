@@ -30,11 +30,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
-import androidx.compose.material.ripple
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -186,8 +187,8 @@ class CatalogActivity : AppCompatActivity() {
                     indication = ripple(),
                     interactionSource = remember { MutableInteractionSource() },
                 ),
-            elevation = 4.dp,
-            backgroundColor = ChatTheme.colors.inputBackground,
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.inputBackground),
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),
