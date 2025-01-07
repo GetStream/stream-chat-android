@@ -51,6 +51,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fix `MessageListController` not respecting the `showSystemMessages` property when set to `false`. [#5546](https://github.com/GetStream/stream-chat-android/pull/5546)
 
 ### ⬆️ Improved
 
