@@ -30,6 +30,7 @@ plugins {
     alias(libs.plugins.detekt) apply false
     alias(libs.plugins.shot) apply false
     alias(libs.plugins.androidx.navigation) apply false
+    alias(libs.plugins.sonarqube) apply false
     id("io.getstream.chat.UnitTestsPlugin")
     id("io.getstream.chat.ReleasePlugin")
     id("io.getstream.chat.ChangelogReleaseSectionPlugin")
@@ -44,7 +45,18 @@ plugins {
     alias(libs.plugins.dokka)
 }
 
+buildscript {
+    dependencies {
+        // TODO: Remove this workaround after AGP 8.9.0 is released
+        // Workaround for integrate sonarqube plugin with AGP
+        // It looks like will be fixed after AGP 8.9.0-alpha04 is released
+        // https://issuetracker.google.com/issues/380600747?pli=1
+        classpath("org.bouncycastle:bcutil-jdk18on:1.79")
+    }
+}
+
 apply(from = "${rootDir}/scripts/sample-app-versioner.gradle")
+apply(from = "${rootDir}/scripts/sonar.gradle")
 
 subprojects {
     if (name != "stream-chat-android-docs"
@@ -52,6 +64,7 @@ subprojects {
         apply(from = "${rootDir}/spotless/spotless.gradle")
     }
     apply(plugin = "io.gitlab.arturbosch.detekt")
+    apply(from = "${rootDir}/scripts/coverage.gradle")
 }
 
 tasks.withType<DependencyUpdatesTask> {

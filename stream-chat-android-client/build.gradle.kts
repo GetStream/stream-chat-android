@@ -37,7 +37,6 @@ android {
             consumerProguardFiles("consumer-proguard-rules.pro")
         }
         getByName("debug") {
-            enableUnitTestCoverage = false
             consumerProguardFiles("consumer-proguard-rules.pro")
         }
     }
