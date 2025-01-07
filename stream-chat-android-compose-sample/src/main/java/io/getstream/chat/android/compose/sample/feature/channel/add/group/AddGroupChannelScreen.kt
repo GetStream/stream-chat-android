@@ -35,15 +35,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -133,19 +134,11 @@ fun AddGroupChannelScreen(
     ) { padding ->
         when (state.step) {
             AddGroupChannelViewModel.AddGroupChannelStep.SELECT_USERS -> {
-                SearchUserResultsContent(
-                    padding = padding,
-                    state = state.searchUsersState,
-                    onUserClick = onUserClick,
-                    onEndReached = onEndReached,
-                )
+                SearchUserResultsContent(padding, state.searchUsersState, onUserClick, onEndReached)
             }
 
             AddGroupChannelViewModel.AddGroupChannelStep.ENTER_NAME -> {
-                EnterNameContent(
-                    selectedUsers = state.searchUsersState.selectedUsers,
-                    onRemoveUserClick = onUserClick,
-                )
+                EnterNameContent(padding, state.searchUsersState.selectedUsers, onUserClick)
             }
         }
     }
@@ -192,7 +185,7 @@ private fun SelectUsersToolbar(
                 onRemoveClick = onUserClick,
             )
         }
-        Divider(color = ChatTheme.colors.borders, thickness = 1.dp)
+        HorizontalDivider(color = ChatTheme.colors.borders, thickness = 1.dp)
     }
 }
 
@@ -222,7 +215,7 @@ private fun EnterNameToolbar(
             channelName = channelName,
             onChannelNameChanged = onChannelNameChanged,
         )
-        Divider(color = ChatTheme.colors.borders, thickness = 1.dp)
+        HorizontalDivider(color = ChatTheme.colors.borders, thickness = 1.dp)
     }
 }
 
@@ -234,13 +227,15 @@ private fun EnterNameToolbar(
  */
 @Composable
 private fun EnterNameContent(
+    padding: PaddingValues,
     selectedUsers: List<User>,
     onRemoveUserClick: (User) -> Unit,
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(ChatTheme.colors.appBackground),
+            .background(ChatTheme.colors.appBackground)
+            .padding(padding),
     ) {
         val text = if (selectedUsers.isEmpty()) {
             stringResource(id = R.string.add_group_channel_members_empty)
@@ -260,7 +255,7 @@ private fun EnterNameContent(
                     user = user,
                     onRemoveClick = { onRemoveUserClick(user) },
                 )
-                Divider(color = ChatTheme.colors.borders, thickness = 1.dp)
+                HorizontalDivider(color = ChatTheme.colors.borders, thickness = 1.dp)
             }
         }
     }
@@ -274,7 +269,8 @@ private fun EnterNameContent(
 @Composable
 private fun NextFab(onClick: () -> Unit) {
     FloatingActionButton(
-        backgroundColor = ChatTheme.colors.primaryAccent,
+        shape = CircleShape,
+        containerColor = ChatTheme.colors.primaryAccent,
         onClick = onClick,
     ) {
         Icon(
@@ -293,7 +289,8 @@ private fun NextFab(onClick: () -> Unit) {
 @Composable
 private fun AddGroupChannelFab(onClick: () -> Unit) {
     FloatingActionButton(
-        backgroundColor = ChatTheme.colors.primaryAccent,
+        shape = CircleShape,
+        containerColor = ChatTheme.colors.primaryAccent,
         onClick = onClick,
     ) {
         Icon(
@@ -320,13 +317,15 @@ private fun ChannelNameTextField(
         value = channelName,
         singleLine = true,
         maxLines = 1,
-        colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = ChatTheme.colors.barsBackground,
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = ChatTheme.colors.barsBackground,
+            unfocusedContainerColor = ChatTheme.colors.barsBackground,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
+            focusedTextColor = ChatTheme.colors.textHighEmphasis,
+            unfocusedTextColor = ChatTheme.colors.textHighEmphasis,
             cursorColor = ChatTheme.colors.primaryAccent,
-            textColor = ChatTheme.colors.textHighEmphasis,
         ),
         onValueChange = onChannelNameChanged,
         placeholder = {

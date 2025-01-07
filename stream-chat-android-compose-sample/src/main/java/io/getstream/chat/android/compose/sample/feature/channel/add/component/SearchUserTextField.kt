@@ -17,9 +17,9 @@
 package io.getstream.chat.android.compose.sample.feature.channel.add.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,13 +46,15 @@ fun SearchUserTextField(
         value = query,
         singleLine = true,
         maxLines = 1,
-        colors = TextFieldDefaults.textFieldColors(
-            backgroundColor = ChatTheme.colors.barsBackground,
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = ChatTheme.colors.barsBackground,
+            unfocusedContainerColor = ChatTheme.colors.barsBackground,
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent,
+            focusedTextColor = ChatTheme.colors.textHighEmphasis,
+            unfocusedTextColor = ChatTheme.colors.textHighEmphasis,
             cursorColor = ChatTheme.colors.primaryAccent,
-            textColor = ChatTheme.colors.textHighEmphasis,
         ),
         onValueChange = onQueryChanged,
         placeholder = {

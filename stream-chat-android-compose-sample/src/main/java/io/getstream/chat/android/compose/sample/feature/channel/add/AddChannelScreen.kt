@@ -32,15 +32,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Chip
-import androidx.compose.material.ChipDefaults
-import androidx.compose.material.Divider
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.ripple
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SuggestionChip
+import androidx.compose.material3.SuggestionChipDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -197,10 +196,10 @@ private fun AddChannelToolbar(
                 )
             }
         }
-        Divider(color = ChatTheme.colors.borders, thickness = 1.dp)
+        HorizontalDivider(color = ChatTheme.colors.borders, thickness = 1.dp)
         if (!hasSelectedUsers) {
             CreateGroupSection(onClick = onCreateGroupClick)
-            Divider(color = ChatTheme.colors.borders, thickness = 1.dp)
+            HorizontalDivider(color = ChatTheme.colors.borders, thickness = 1.dp)
         }
     }
 }
@@ -274,29 +273,30 @@ private fun SelectedUsersList(
  * @param user The selected user.
  * @param onClick Action to be invoked when the chip is clicked.
  */
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun SelectedUserChip(
     user: User,
     onClick: () -> Unit,
 ) {
-    Chip(
+    SuggestionChip(
         modifier = Modifier.height(32.dp),
-        colors = ChipDefaults.chipColors(backgroundColor = ChatTheme.colors.appBackground),
+        colors = SuggestionChipDefaults.suggestionChipColors(containerColor = ChatTheme.colors.appBackground),
         shape = RoundedCornerShape(16.dp),
-        leadingIcon = {
+        icon = {
             UserAvatar(
                 modifier = Modifier.size(24.dp),
                 textStyle = ChatTheme.typography.title3Bold.copy(fontSize = 12.sp),
                 user = user,
             )
         },
+        border = null,
         onClick = onClick,
-    ) {
-        Text(
-            text = user.name,
-            fontSize = 12.sp,
-            color = ChatTheme.colors.textHighEmphasis,
-        )
-    }
+        label = {
+            Text(
+                text = user.name,
+                fontSize = 12.sp,
+                color = ChatTheme.colors.textHighEmphasis,
+            )
+        },
+    )
 }
