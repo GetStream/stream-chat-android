@@ -80,6 +80,7 @@
 
 ### ✅ Added
 - Add "Unblock user" message menu option shown for messages from blocked users. [#5533](https://github.com/GetStream/stream-chat-android/pull/5533)
+- Add `ComposerActionsTheme` property to `MessageComposerTheme` for customizing the default action icons in the `MessageComposer`. [#5535](https://github.com/GetStream/stream-chat-android/pull/5535)
 
 ### ⚠️ Changed
 - Replace usage of `material` with `material3` components. [#5537](https://github.com/GetStream/stream-chat-android/pull/5537)
