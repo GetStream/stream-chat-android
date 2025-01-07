@@ -26,12 +26,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.IconButton
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,6 +41,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -312,8 +313,9 @@ internal fun PlaybackToggleButton(
     onClick: () -> Unit = {},
 ) {
     Card(
-        elevation = 1.dp,
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
         shape = CircleShape,
+        colors = CardDefaults.cardColors(containerColor = Color.White),
     ) {
         IconButton(
             onClick = onClick,
@@ -335,7 +337,6 @@ internal fun PlaybackToggleButton(
  * Represents the speed button.
  */
 @Composable
-@OptIn(ExperimentalMaterialApi::class)
 private fun SpeedButton(
     speed: Float,
     style: TextContainerStyle,
@@ -343,11 +344,11 @@ private fun SpeedButton(
 ) {
     Card(
         onClick = onClick,
-        elevation = 1.dp,
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
         shape = CircleShape,
         modifier = Modifier
             .size(style.size),
-        backgroundColor = style.backgroundColor,
+        colors = CardDefaults.cardColors(containerColor = style.backgroundColor),
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),

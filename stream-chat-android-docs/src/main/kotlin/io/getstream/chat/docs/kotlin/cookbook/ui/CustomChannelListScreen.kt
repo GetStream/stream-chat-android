@@ -16,8 +16,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
-import androidx.compose.material.Text
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -74,7 +74,7 @@ private fun CustomChannelList(channels: List<Channel>, onChannelClick: (String) 
             CustomChannelListItem(channel = item, onChannelClick = onChannelClick)
             if (index < channels.lastIndex) {
                 Spacer(modifier = Modifier.height(7.dp))
-                Divider(color = Color(0xFFEEEEEE), thickness = 1.dp)
+                HorizontalDivider(color = Color(0xFFEEEEEE), thickness = 1.dp)
             }
         }
     }

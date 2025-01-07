@@ -62,7 +62,6 @@ import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlin.coroutines.cancellation.CancellationException
-import kotlin.coroutines.coroutineContext
 
 /**
  * A state store that represents all the information required to query, filter, show and react to
@@ -686,7 +685,7 @@ public class ChannelListViewModel(
     }
 
     /**
-     * Creates a list of [ChannelItemState] that represents channel items we show in the list of channels.
+     * Creates a list of [ItemState.ChannelItemState] that represents channel items we show in the list of channels.
      *
      * @param channels The channels to show.
      * @param channelMutes The list of channels muted for the current user.

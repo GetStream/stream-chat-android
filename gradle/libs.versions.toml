@@ -98,7 +98,6 @@ androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "a
 androidx-benchmark-macro-junit4 = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "macroBenchmark"}
 androidx-compose-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "androidxComposeConstraintLayout"}
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "androidxCompose"}
-androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "androidxCompose"}
 androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "androidxComposeMaterial3"}
 androidx-compose-material-icons-core = { module = "androidx.compose.material:material-icons-core", version.ref = "androidxCompose"}
 androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "androidxCompose"}

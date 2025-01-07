@@ -22,10 +22,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,7 +42,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param unreadCount The count of unread messages.
  * @param onClick The handler that's triggered when the user taps on the action.
  */
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun MessagesScrollingOption(
     unreadCount: Int,
@@ -62,7 +60,7 @@ internal fun MessagesScrollingOption(
                 .size(48.dp)
                 .testTag("Stream_ScrollToBottomButton"),
             shape = CircleShape,
-            elevation = 4.dp,
+            shadowElevation = 4.dp,
             color = ChatTheme.colors.barsBackground,
         ) {
             Icon(

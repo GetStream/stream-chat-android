@@ -62,7 +62,6 @@ import kotlin.random.Random
  * @param adjustBarWidthToLimit Whether to adjust the bar width to fit the visible bar limit.
  * @param progress The current progress of the waveform.
  * @param isThumbVisible Whether to display the thumb.
- * @param isTouchable Whether the waveform is touchable.
  * @param onDragStart Callback when the user starts dragging the thumb.
  * @param onDragStop Callback when the user stops dragging the thumb.
  */

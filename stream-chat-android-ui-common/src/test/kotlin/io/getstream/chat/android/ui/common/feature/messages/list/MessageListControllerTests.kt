@@ -52,6 +52,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.list.Other
+import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -608,6 +609,32 @@ internal class MessageListControllerTests {
         controller.messageListState.value.newMessageState `should be equal to` Other(newMessage.createdAt?.time)
     }
 
+    @Test
+    fun `When showSystemMessages is true, Then system messages should be shown`() = runTest {
+        val messages = listOf(randomMessage(user = user1, type = MessageType.SYSTEM, deletedAt = null))
+        val messagesState = MutableStateFlow(messages)
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelState(messagesState = messagesState)
+            .get(dateSeparatorHandler = { _, _ -> false }, showSystemMessages = true)
+
+        val expectedMessageItems = messages.map(::SystemMessageItemState)
+        controller.messageListState.value.messageItems `should be equal to` expectedMessageItems
+    }
+
+    @Test
+    fun `When showSystemMessages is false, Then system messages should be hidden`() = runTest {
+        val messages = listOf(randomMessage(user = user1, type = MessageType.SYSTEM, deletedAt = null))
+        val messagesState = MutableStateFlow(messages)
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelState(messagesState = messagesState)
+            .get(dateSeparatorHandler = { _, _ -> false }, showSystemMessages = false)
+
+        val expectedMessageItems = emptyList<MessageItemState>()
+        controller.messageListState.value.messageItems `should be equal to` expectedMessageItems
+    }
+
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val cid: String = CID,
@@ -693,6 +720,7 @@ internal class MessageListControllerTests {
         fun get(
             dateSeparatorHandler: DateSeparatorHandler = DateSeparatorHandler.getDefaultDateSeparatorHandler(),
             deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
+            showSystemMessages: Boolean = true,
         ): MessageListController {
             return MessageListController(
                 cid = cid,
@@ -700,6 +728,7 @@ internal class MessageListControllerTests {
                 clipboardHandler = mock(),
                 dateSeparatorHandler = dateSeparatorHandler,
                 deletedMessageVisibility = deletedMessageVisibility,
+                showSystemMessages = showSystemMessages,
                 threadLoadOrderOlderToNewer = false,
                 channelState = MutableStateFlow(channelState),
             )

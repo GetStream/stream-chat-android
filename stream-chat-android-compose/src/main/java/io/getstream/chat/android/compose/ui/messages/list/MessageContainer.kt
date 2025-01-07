@@ -22,8 +22,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -300,7 +300,6 @@ internal fun DefaultMessageModeratedContent(moderatedMessageItemState: Moderated
  * @param onThreadClick Handler when the user clicks on the message thread.
  * @param onCastVote Handler for casting a vote on an option.
  * @param onRemoveVote Handler for removing a vote on an option.
- * @param onMoreOption Handler for seeing more options.
  * @param onClosePoll Handler for closing a poll.
  * @param onGiphyActionClick Handler when the user selects a Giphy action.
  * @param onQuotedMessageClick Handler for quoted message click action.

@@ -38,8 +38,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Text
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -257,6 +258,7 @@ internal fun AddAnswerDialog(
                         false -> R.string.stream_compose_edit_answer
                     },
                 ),
+                color = ChatTheme.colors.textHighEmphasis,
             )
         },
         text = {
@@ -280,6 +282,10 @@ internal fun AddAnswerDialog(
         confirmButton = {
             TextButton(
                 enabled = newOption.value.isNotBlank(),
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = ChatTheme.colors.primaryAccent,
+                    disabledContentColor = ChatTheme.colors.primaryAccent.copy(alpha = 0.5f),
+                ),
                 onClick = {
                     onNewAnswer.invoke(newOption.value)
                     onDismiss.invoke()
@@ -290,10 +296,12 @@ internal fun AddAnswerDialog(
         },
         dismissButton = {
             TextButton(
+                colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.primaryAccent),
                 onClick = { onDismiss.invoke() },
             ) {
                 Text(stringResource(R.string.stream_compose_dismiss))
             }
         },
+        containerColor = ChatTheme.colors.barsBackground,
     )
 }

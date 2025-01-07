@@ -51,6 +51,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fix `MessageListController` not respecting the `showSystemMessages` property when set to `false`. [#5546](https://github.com/GetStream/stream-chat-android/pull/5546)
 
 ### ⬆️ Improved
 
@@ -82,6 +83,7 @@
 - Add `ComposerActionsTheme` property to `MessageComposerTheme` for customizing the default action icons in the `MessageComposer`. [#5535](https://github.com/GetStream/stream-chat-android/pull/5535)
 
 ### ⚠️ Changed
+- Replace usage of `material` with `material3` components. [#5537](https://github.com/GetStream/stream-chat-android/pull/5537)
 
 ### ❌ Removed
 

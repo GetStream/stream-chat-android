@@ -16,12 +16,12 @@
 
 package io.getstream.chat.android.compose.ui.theme
 
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.RippleConfiguration
-import androidx.compose.material.RippleDefaults
 import androidx.compose.material.ripple.RippleAlpha
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.RippleConfiguration
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 
 /**
  * Configuration for customizing the ripple effect on the composable components.
@@ -36,6 +36,32 @@ public class StreamRippleConfiguration(
 
     public companion object {
 
+        private const val LUMINANCE_THRESHOLD = 0.5
+
+        // Note: Values taken from material:RippleDefaults to keep it backwards compatible
+        private val LightThemeHighContrastRippleAlpha = RippleAlpha(
+            pressedAlpha = 0.24f,
+            focusedAlpha = 0.24f,
+            draggedAlpha = 0.16f,
+            hoveredAlpha = 0.08f,
+        )
+
+        // Note: Values taken from material:RippleDefaults to keep it backwards compatible
+        private val LightThemeLowContrastRippleAlpha = RippleAlpha(
+            pressedAlpha = 0.12f,
+            focusedAlpha = 0.12f,
+            draggedAlpha = 0.08f,
+            hoveredAlpha = 0.04f,
+        )
+
+        // Note: Values taken from material:RippleDefaults to keep it backwards compatible
+        private val DarkThemeRippleAlpha = RippleAlpha(
+            pressedAlpha = 0.10f,
+            focusedAlpha = 0.12f,
+            draggedAlpha = 0.08f,
+            hoveredAlpha = 0.04f,
+        )
+
         /**
          * Creates the default [StreamRippleConfiguration].
          *
@@ -45,9 +71,33 @@ public class StreamRippleConfiguration(
         @Composable
         public fun defaultRippleConfiguration(contentColor: Color, lightTheme: Boolean): StreamRippleConfiguration =
             StreamRippleConfiguration(
-                color = RippleDefaults.rippleColor(contentColor, lightTheme),
-                rippleAlpha = RippleDefaults.rippleAlpha(contentColor, lightTheme),
+                color = rippleColor(contentColor, lightTheme),
+                rippleAlpha = rippleAlpha(contentColor, lightTheme),
             )
+
+        private fun rippleColor(contentColor: Color, lightTheme: Boolean): Color {
+            val contentLuminance = contentColor.luminance()
+            return if (!lightTheme && contentLuminance < LUMINANCE_THRESHOLD) {
+                Color.White
+            } else {
+                contentColor
+            }
+        }
+
+        private fun rippleAlpha(contentColor: Color, lightTheme: Boolean): RippleAlpha {
+            return when {
+                lightTheme -> {
+                    if (contentColor.luminance() > LUMINANCE_THRESHOLD) {
+                        LightThemeHighContrastRippleAlpha
+                    } else {
+                        LightThemeLowContrastRippleAlpha
+                    }
+                }
+                else -> {
+                    DarkThemeRippleAlpha
+                }
+            }
+        }
     }
 }
 
@@ -55,6 +105,6 @@ public class StreamRippleConfiguration(
  * Maps a [StreamRippleConfiguration] to the android [RippleConfiguration].
  * Used to hide the internal implementation of the ripple configuration, and not expose it outside of [ChatTheme].
  */
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 internal fun StreamRippleConfiguration.toRippleConfiguration(): RippleConfiguration =
     RippleConfiguration(color = color, rippleAlpha = rippleAlpha)
