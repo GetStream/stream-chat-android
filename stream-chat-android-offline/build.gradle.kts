@@ -54,9 +54,6 @@ android {
                 "proguard-rules.pro",
             )
         }
-        debug {
-            enableUnitTestCoverage = false
-        }
     }
 }
 
