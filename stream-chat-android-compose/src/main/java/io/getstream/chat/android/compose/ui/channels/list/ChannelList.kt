@@ -72,7 +72,7 @@ import io.getstream.chat.android.previewdata.PreviewUserData
  * @param helperContent Composable that represents the helper content. Empty by default, but can be used to implement
  * scroll to top button.
  * @param loadingMoreContent: Composable that represents the loading more content, when we're loading the next page.
- * @param itemContent Composable that allows the user to completely customize the item UI.
+ * @param channelContent Composable that allows the user to completely customize the item UI.
  * It shows [ChannelItem] if left unchanged, with the actions provided by [onChannelClick] and
  * [onChannelLongClick].
  * @param divider Composable that allows the user to define an item divider.

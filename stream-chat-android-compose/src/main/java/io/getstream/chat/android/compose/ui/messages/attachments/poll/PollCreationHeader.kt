@@ -26,9 +26,9 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Icon
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -78,7 +78,7 @@ public fun PollCreationHeader(
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
-        elevation = elevation,
+        shadowElevation = elevation,
         color = color,
         shape = shape,
     ) {

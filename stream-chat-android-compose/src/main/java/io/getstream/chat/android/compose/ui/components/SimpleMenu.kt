@@ -24,7 +24,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Card
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -69,7 +70,7 @@ public fun SimpleMenu(
                     interactionSource = remember { MutableInteractionSource() },
                 ),
             shape = shape,
-            backgroundColor = ChatTheme.colors.barsBackground,
+            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.barsBackground),
         ) {
             Column {
                 headerContent()

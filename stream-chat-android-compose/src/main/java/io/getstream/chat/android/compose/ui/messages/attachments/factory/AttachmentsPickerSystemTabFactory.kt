@@ -40,9 +40,10 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -421,8 +422,8 @@ private fun RoundedIconButton(
     ) {
         Card(
             shape = CircleShape,
-            elevation = 4.dp,
-            backgroundColor = ChatTheme.colors.barsBackground,
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.barsBackground),
             modifier = Modifier
                 .clip(CircleShape)
                 .size(72.dp)

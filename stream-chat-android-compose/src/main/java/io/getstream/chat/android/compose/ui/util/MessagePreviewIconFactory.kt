@@ -17,7 +17,7 @@
 package io.getstream.chat.android.compose.ui.util
 
 import androidx.compose.foundation.text.InlineTextContent
-import androidx.compose.material.Icon
+import androidx.compose.material3.Icon
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign

@@ -32,11 +32,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -126,11 +126,12 @@ class PinnedMessagesActivity : BaseConnectedActivity() {
                 .fillMaxWidth()
                 .height(60.dp)
                 .background(ChatTheme.colors.barsBackground),
-            elevation = 2.dp,
+            shadowElevation = 2.dp,
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(ChatTheme.colors.barsBackground)
                     .padding(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
