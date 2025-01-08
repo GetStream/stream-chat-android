@@ -59,7 +59,7 @@ import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.data.PredefinedUserCredentials
 import io.getstream.chat.android.compose.sample.data.UserCredentials
-import io.getstream.chat.android.compose.sample.ui.ChannelsActivity
+import io.getstream.chat.android.compose.sample.feature.channel.list.ChannelsActivity
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import kotlinx.coroutines.launch

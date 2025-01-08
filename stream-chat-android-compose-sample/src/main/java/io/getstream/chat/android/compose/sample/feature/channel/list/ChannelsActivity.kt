@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.sample.ui
+package io.getstream.chat.android.compose.sample.feature.channel.list
 
 import android.content.Context
 import android.content.Intent
@@ -50,6 +50,10 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
+import io.getstream.chat.android.compose.sample.feature.channel.ChannelConstants.CHANNEL_ARG_DRAFT
+import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelActivity
+import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
+import io.getstream.chat.android.compose.sample.ui.MessagesActivity
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBar
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBarOption
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
@@ -69,6 +73,7 @@ import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFact
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadListViewModel
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadsViewModelFactory
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
@@ -79,10 +84,17 @@ import kotlinx.coroutines.launch
 class ChannelsActivity : BaseConnectedActivity() {
 
     private val listViewModelFactory by lazy {
+        val chatClient = ChatClient.instance()
+        val currentUserId = chatClient.getCurrentUser()?.id ?: ""
         ChannelViewModelFactory(
-            ChatClient.instance(),
-            QuerySortByField.descByName("last_updated"),
-            null,
+            chatClient = chatClient,
+            querySort = QuerySortByField.descByName("last_updated"),
+            filters = Filters.and(
+                Filters.eq("type", "messaging"),
+                Filters.`in`("members", listOf(currentUserId)),
+                Filters.or(Filters.notExists(CHANNEL_ARG_DRAFT), Filters.eq(CHANNEL_ARG_DRAFT, false)),
+            ),
+            chatEventHandlerFactory = CustomChatEventHandlerFactory(),
         )
     }
     private val threadsViewModelFactory by lazy { ThreadsViewModelFactory() }
@@ -147,9 +159,7 @@ class ChannelsActivity : BaseConnectedActivity() {
                     openUserLogin()
                 }
             },
-            onHeaderActionClick = {
-                listViewModel.refresh()
-            },
+            onHeaderActionClick = ::openAddChannel,
         )
 
 //                MyCustomUiSimplified()
@@ -321,6 +331,10 @@ class ChannelsActivity : BaseConnectedActivity() {
                 parentMessageId = thread.parentMessageId,
             ),
         )
+    }
+
+    private fun openAddChannel() {
+        startActivity(Intent(this, AddChannelActivity::class.java))
     }
 
     private fun openUserLogin() {
