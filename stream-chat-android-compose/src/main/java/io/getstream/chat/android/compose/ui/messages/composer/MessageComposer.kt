@@ -19,13 +19,14 @@ package io.getstream.chat.android.compose.ui.messages.composer
 import android.Manifest
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
@@ -46,12 +47,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Bottom
+import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -71,6 +72,8 @@ import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMe
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.AboveAnchorPopupPositionProvider
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
+import io.getstream.chat.android.compose.ui.util.padding
+import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -518,54 +521,21 @@ internal fun DefaultComposerIntegrations(
     if (canSendMessage && !isRecording) {
         Row(
             modifier = Modifier
-                .height(44.dp)
+                .heightIn(min = ComposerActionContainerMinHeight)
                 .padding(horizontal = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (canSendAttachments) {
-                IconButton(
+                DefaultAttachmentsButton(
                     enabled = isAttachmentsButtonEnabled,
-                    modifier = Modifier
-                        .size(32.dp)
-                        .padding(4.dp)
-                        .testTag("Stream_ComposerAttachmentsButton"),
-                    content = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.stream_compose_ic_add),
-                            contentDescription = stringResource(id = R.string.stream_compose_attachments),
-                            tint = if (isAttachmentsButtonEnabled) {
-                                ChatTheme.colors.textLowEmphasis
-                            } else {
-                                ChatTheme.colors.disabled
-                            },
-                        )
-                    },
                     onClick = onAttachmentsClick,
                 )
             }
 
-            val commandsButtonTint = if (hasCommandSuggestions && isCommandsButtonEnabled) {
-                ChatTheme.colors.primaryAccent
-            } else if (isCommandsButtonEnabled) {
-                ChatTheme.colors.textLowEmphasis
-            } else {
-                ChatTheme.colors.disabled
-            }
-
             AnimatedVisibility(visible = messageInputState.hasCommands) {
-                IconButton(
-                    modifier = Modifier
-                        .size(32.dp)
-                        .padding(4.dp)
-                        .testTag("Stream_ComposerCommandsButton"),
+                DefaultCommandsButton(
+                    hasCommandSuggestions = hasCommandSuggestions,
                     enabled = isCommandsButtonEnabled,
-                    content = {
-                        Icon(
-                            painter = painterResource(id = R.drawable.stream_compose_ic_command),
-                            contentDescription = null,
-                            tint = commandsButtonTint,
-                        )
-                    },
                     onClick = onCommandsClick,
                 )
             }
@@ -654,13 +624,11 @@ internal fun DefaultMessageComposerTrailingContent(
 
     val isSendButtonEnabled = ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
     val isInputValid by lazy { (value.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty() }
-    val sendButtonDescription = stringResource(id = R.string.stream_compose_cd_send_button)
 
     if (coolDownTime > 0 && !isInEditMode) {
         CoolDownIndicator(coolDownTime = coolDownTime)
     } else {
         val isRecording = messageComposerState.recording !is RecordingState.Idle
-        val layoutDirection = LocalLayoutDirection.current
 
         val sendEnabled = isSendButtonEnabled && isInputValid
         val sendVisible = when {
@@ -670,25 +638,20 @@ internal fun DefaultMessageComposerTrailingContent(
             else -> true
         }
         if (sendVisible) {
-            IconButton(
-                modifier = Modifier
-                    .semantics { contentDescription = sendButtonDescription }
-                    .testTag("Stream_ComposerSendButton"),
-                enabled = sendEnabled,
-                content = {
-                    Icon(
-                        modifier = Modifier.mirrorRtl(layoutDirection = layoutDirection),
-                        painter = painterResource(id = R.drawable.stream_compose_ic_send),
-                        contentDescription = stringResource(id = R.string.stream_compose_send_message),
-                        tint = if (isInputValid) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis,
-                    )
-                },
-                onClick = {
-                    if (isInputValid) {
-                        onSendMessage(value, attachments)
-                    }
-                },
-            )
+            Box(
+                modifier = Modifier.heightIn(min = ComposerActionContainerMinHeight),
+                contentAlignment = Center,
+            ) {
+                DefaultSendButton(
+                    enabled = sendEnabled,
+                    isInputValid = isInputValid,
+                    onClick = {
+                        if (isInputValid) {
+                            onSendMessage(value, attachments)
+                        }
+                    },
+                )
+            }
         }
 
         val recordVisible = when {
@@ -703,6 +666,105 @@ internal fun DefaultMessageComposerTrailingContent(
             )
         }
     }
+}
+
+/**
+ * Default implementation of the "Attachments" button.
+ */
+@Composable
+private fun DefaultAttachmentsButton(
+    enabled: Boolean,
+    onClick: () -> Unit,
+) {
+    val attachmentsButtonStyle = ChatTheme.messageComposerTheme.actionsTheme.attachmentsButton
+    IconButton(
+        enabled = enabled,
+        modifier = Modifier
+            .size(attachmentsButtonStyle.size)
+            .padding(attachmentsButtonStyle.padding)
+            .testTag("Stream_ComposerAttachmentsButton"),
+        content = {
+            Icon(
+                modifier = Modifier.size(attachmentsButtonStyle.icon.size),
+                painter = attachmentsButtonStyle.icon.painter,
+                contentDescription = stringResource(id = R.string.stream_compose_attachments),
+                tint = if (enabled) {
+                    attachmentsButtonStyle.icon.tint
+                } else {
+                    ChatTheme.colors.disabled
+                },
+            )
+        },
+        onClick = onClick,
+    )
+}
+
+/**
+ * Default implementation of the "Commands" button.
+ */
+@Composable
+private fun DefaultCommandsButton(
+    hasCommandSuggestions: Boolean,
+    enabled: Boolean,
+    onClick: () -> Unit,
+) {
+    val commandsButtonStyle = ChatTheme.messageComposerTheme.actionsTheme.commandsButton
+    val tint = if (hasCommandSuggestions && enabled) {
+        ChatTheme.colors.primaryAccent
+    } else if (enabled) {
+        commandsButtonStyle.icon.tint
+    } else {
+        ChatTheme.colors.disabled
+    }
+    IconButton(
+        modifier = Modifier
+            .size(commandsButtonStyle.size)
+            .padding(commandsButtonStyle.padding)
+            .testTag("Stream_ComposerCommandsButton"),
+        enabled = enabled,
+        content = {
+            Icon(
+                modifier = Modifier.size(commandsButtonStyle.icon.size),
+                painter = commandsButtonStyle.icon.painter,
+                contentDescription = null,
+                tint = tint,
+            )
+        },
+        onClick = onClick,
+    )
+}
+
+/**
+ * Default implementation of the "Send" button.
+ */
+@Composable
+private fun DefaultSendButton(
+    enabled: Boolean,
+    isInputValid: Boolean,
+    onClick: () -> Unit,
+) {
+    val layoutDirection = LocalLayoutDirection.current
+    val sendButtonDescription = stringResource(id = R.string.stream_compose_cd_send_button)
+    val sendButtonStyle = ChatTheme.messageComposerTheme.actionsTheme.sendButton
+    IconButton(
+        modifier = Modifier
+            .size(sendButtonStyle.size)
+            .padding(sendButtonStyle.padding)
+            .semantics { contentDescription = sendButtonDescription }
+            .testTag("Stream_ComposerSendButton"),
+        enabled = enabled,
+        content = {
+            Icon(
+                modifier = Modifier
+                    .size(sendButtonStyle.icon.size)
+                    .mirrorRtl(layoutDirection = layoutDirection),
+                painter = sendButtonStyle.icon.painter,
+                contentDescription = stringResource(id = R.string.stream_compose_send_message),
+                tint = if (isInputValid) ChatTheme.colors.primaryAccent else sendButtonStyle.icon.tint,
+            )
+        },
+        onClick = onClick,
+    )
 }
 
 /**
@@ -778,5 +840,11 @@ private fun SnackbarPopup(snackbarHostState: SnackbarHostState) {
         SnackbarHost(hostState = snackbarHostState)
     }
 }
+
+/**
+ * Defines the minimum height for the MessageComposer action containers.
+ * Used to ensure that container before the composer has the same min height as the container after the composer.
+ */
+private val ComposerActionContainerMinHeight = 44.dp
 
 private fun Offset.toRestrictedCoordinates(): Pair<Float, Float> = x.coerceAtMost(0f) to y.coerceAtMost(0f)

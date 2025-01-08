@@ -7,6 +7,8 @@ env:
   BUILD_CACHE_AWS_BUCKET: ${{ secrets.BUILD_CACHE_AWS_BUCKET }}
   BUILD_CACHE_AWS_ACCESS_KEY_ID: ${{ secrets.BUILD_CACHE_AWS_ACCESS_KEY_ID }}
   BUILD_CACHE_AWS_SECRET_KEY: ${{ secrets.BUILD_CACHE_AWS_SECRET_KEY }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
 
 concurrency:
   group: ${{ github.head_ref }}
@@ -73,6 +75,11 @@ jobs:
         with:
           name: testDebugUnitTest
           path: ./**/build/reports/tests/testDebugUnitTest
+      - uses: ./.github/actions/setup-ruby
+      - name: Sonar
+        run: bundle exec fastlane run_sonar_analysis
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   rubocop:
     name: Rubocop
