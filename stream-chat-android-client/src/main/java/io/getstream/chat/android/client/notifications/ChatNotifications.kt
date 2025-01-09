@@ -72,10 +72,14 @@ internal class ChatNotificationsImpl constructor(
         permissionManager
             .takeIf { notificationConfig.requestPermissionOnAppLaunch() }
             ?.start()
-        notificationConfig.pushDeviceGenerators.firstOrNull { it.isValidForThisDevice(context) }
+        notificationConfig.pushDeviceGenerators.firstOrNull { it.isValidForThisDevice() }
             ?.let {
                 it.onPushDeviceGeneratorSelected()
-                it.asyncGeneratePushDevice { setDevice(it.toDevice()) }
+                scope.launch {
+                    it.generatePushDevice { pushDevice ->
+                        setDevice(pushDevice.toDevice())
+                    }
+                }
             }
     }
 

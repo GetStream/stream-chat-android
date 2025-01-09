@@ -25,15 +25,18 @@ import io.getstream.chat.android.client.PayloadValidator
 import io.getstream.chat.android.client.notifications.parser.StreamPayloadParser
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.PushMessage
+
 private typealias DevicePushProvider = io.getstream.chat.android.models.PushProvider
 
 /**
  * Internal class that handle PN stuff.
  * It is declared in our Android Manifest and is used by reflection.
  *
+ * IMPORTANT: Don't remove the context argument even though it is not used. This class is instantiated via reflection,
+ * and it expects a constructor with single Context parameter.
  */
 @Suppress("Unused")
-internal class ChatPushDelegate(context: Context) : PushDelegate(context) {
+internal class ChatPushDelegate(context: Context) : PushDelegate() {
 
     private val expectedKeys = hashSetOf(KEY_CHANNEL_ID, KEY_MESSAGE_ID, KEY_CHANNEL_TYPE, KEY_GETSTREAM)
 

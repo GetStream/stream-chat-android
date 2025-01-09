@@ -31,5 +31,5 @@ public fun Context.isPermissionDeclared(permission: String): Boolean {
     return packageManager
         .getPackageInfo(packageName, PackageManager.GET_PERMISSIONS)
         .requestedPermissions
-        .contains(permission)
+        ?.contains(permission) == true
 }
