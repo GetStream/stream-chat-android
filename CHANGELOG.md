@@ -1,22 +1,9 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# January 09th, 2025 - 6.9.0
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fix `ChatClient::queryBlockedUsers` not working. [#5532](https://github.com/GetStream/stream-chat-android/pull/5532)
 - Fix `ChatClient::blockUser` and `ChatClient::unblockUser` response parsing. [#5532](https://github.com/GetStream/stream-chat-android/pull/5532)
 - Fix rare bug where the `ConnectivityState` is not updated to `Offline` after disconnecting the device from network. [#5538](https://github.com/GetStream/stream-chat-android/pull/5538)
-
-### ⬆️ Improved
 
 ### ✅ Added
 - Add `ClientState::user::blockedUserIds` exposing the list of the current user's blocked users. [#5533](https://github.com/GetStream/stream-chat-android/pull/5533)
@@ -24,79 +11,25 @@
 ### ⚠️ Changed
 - 🚨 Breaking change: Change `ChatClient::unblockUser` return type from `Call<BlockUser>` to `Call<Unit>` as we no longer get information about the unblocked user. [#5532](https://github.com/GetStream/stream-chat-android/pull/5532)
 
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Add `GlobalState::blockedUserIds` exposing the list of the current user's blocked users. [#5533](https://github.com/GetStream/stream-chat-android/pull/5533)
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
 - Fix `MessageListController` not respecting the `showSystemMessages` property when set to `false`. [#5546](https://github.com/GetStream/stream-chat-android/pull/5546)
 
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-components
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Add "Unblock user" message menu option shown for messages from blocked users. [#5533](https://github.com/GetStream/stream-chat-android/pull/5533)
 
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-compose
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Add "Unblock user" message menu option shown for messages from blocked users. [#5533](https://github.com/GetStream/stream-chat-android/pull/5533)
 - Add `ComposerActionsTheme` property to `MessageComposerTheme` for customizing the default action icons in the `MessageComposer`. [#5535](https://github.com/GetStream/stream-chat-android/pull/5535)
 
 ### ⚠️ Changed
 - Replace usage of `material` with `material3` components. [#5537](https://github.com/GetStream/stream-chat-android/pull/5537)
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # December 18th, 2024 - 6.8.0
 ## Common changes for all artifacts
