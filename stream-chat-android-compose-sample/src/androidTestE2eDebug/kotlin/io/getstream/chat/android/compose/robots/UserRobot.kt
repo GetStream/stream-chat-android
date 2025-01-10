@@ -58,6 +58,11 @@ class UserRobot {
         return this
     }
 
+    fun waitForChannelListToLoad(): UserRobot {
+        ChannelListPage.ChannelList.channels.wait()
+        return this
+    }
+
     fun openChannel(channelCellIndex: Int = 0): UserRobot {
         ChannelListPage.ChannelList.channels.wait().findObjects()[channelCellIndex].click()
         return this

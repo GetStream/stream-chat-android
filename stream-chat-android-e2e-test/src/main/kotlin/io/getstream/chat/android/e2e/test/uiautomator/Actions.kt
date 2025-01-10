@@ -20,6 +20,7 @@ import android.content.Intent
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
 import io.getstream.chat.android.e2e.test.mockserver.mockServerUrl
+import java.io.ByteArrayOutputStream
 
 public fun UiDevice.startApp() {
     val intent = testContext.packageManager.getLaunchIntentForPackage(packageName)
@@ -94,4 +95,10 @@ public fun UiDevice.enableInternetConnection() {
 public fun UiDevice.disableInternetConnection() {
     executeShellCommand("svc data disable")
     executeShellCommand("svc wifi disable")
+}
+
+public fun UiDevice.dumpWindowHierarchy() {
+    val outputStream = ByteArrayOutputStream()
+    device.dumpWindowHierarchy(outputStream)
+    println(outputStream.toString("UTF-8"))
 }

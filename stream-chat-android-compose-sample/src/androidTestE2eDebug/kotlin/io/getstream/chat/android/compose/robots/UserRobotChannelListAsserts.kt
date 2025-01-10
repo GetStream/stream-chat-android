@@ -17,12 +17,17 @@
 package io.getstream.chat.android.compose.robots
 
 import io.getstream.chat.android.compose.pages.ChannelListPage.ChannelList.Channel
+import io.getstream.chat.android.compose.pages.MessageListPage.MessageList.Message
+import io.getstream.chat.android.compose.uiautomator.device
+import io.getstream.chat.android.compose.uiautomator.findObjects
 import io.getstream.chat.android.compose.uiautomator.isDisplayed
 import io.getstream.chat.android.compose.uiautomator.wait
 import io.getstream.chat.android.compose.uiautomator.waitToAppear
+import io.getstream.chat.android.compose.uiautomator.waitToDisappear
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import java.io.ByteArrayOutputStream
 
 fun UserRobot.assertChannelAvatar(): UserRobot {
     assertTrue(Channel.avatar.isDisplayed())
@@ -36,13 +41,22 @@ fun UserRobot.assertMessageInChannelPreview(text: String, fromCurrentUser: Boole
     return this
 }
 
-fun UserRobot.assertMessageDeliveryStatus(shouldBeVisible: Boolean, shouldBeRead: Boolean = false): UserRobot {
-    if (shouldBeVisible) {
+fun UserRobot.assertMessageDeliveryStatus(isDisplayed: Boolean, shouldBeRead: Boolean = false): UserRobot {
+    if (isDisplayed) {
         val readStatus = if (shouldBeRead) Channel.readStatusIsRead else Channel.readStatusIsSent
         assertTrue(readStatus.wait().isDisplayed())
     } else {
         assertFalse(Channel.readStatusIsRead.isDisplayed())
         assertFalse(Channel.readStatusIsSent.isDisplayed())
+    }
+    return this
+}
+
+fun UserRobot.assertMessagePreviewTimestamp(isDisplayed: Boolean = true): UserRobot {
+    if (isDisplayed) {
+        assertTrue(Channel.timestamp.waitToAppear().isDisplayed())
+    } else {
+        assertFalse(Channel.timestamp.waitToDisappear().isDisplayed())
     }
     return this
 }
