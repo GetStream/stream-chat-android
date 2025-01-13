@@ -22,8 +22,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.AboveAnchorPopupPositionProvider
@@ -37,6 +40,7 @@ import io.getstream.chat.android.compose.ui.util.AboveAnchorPopupPositionProvide
  * @param headerContent The content shown at the top of a suggestion list popup.
  * @param centerContent The content shown inside the suggestion list popup.
  */
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 public fun SuggestionList(
     modifier: Modifier = Modifier,
@@ -47,7 +51,7 @@ public fun SuggestionList(
 ) {
     Popup(popupPositionProvider = AboveAnchorPopupPositionProvider()) {
         Card(
-            modifier = modifier,
+            modifier = modifier.semantics { testTagsAsResourceId = true },
             elevation = CardDefaults.cardElevation(defaultElevation = ChatTheme.dimens.suggestionListElevation),
             shape = shape,
             colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.barsBackground),

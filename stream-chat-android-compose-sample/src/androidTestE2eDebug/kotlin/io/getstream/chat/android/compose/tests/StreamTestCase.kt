@@ -25,6 +25,7 @@ import io.getstream.chat.android.compose.uiautomator.device
 import io.getstream.chat.android.compose.uiautomator.grantPermission
 import io.getstream.chat.android.compose.uiautomator.mockServer
 import io.getstream.chat.android.compose.uiautomator.startApp
+import io.getstream.chat.android.e2e.test.robots.BackendRobot
 import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
 import io.getstream.chat.android.e2e.test.rules.RetryRule
 import io.qameta.allure.android.rules.LogcatRule
@@ -38,6 +39,7 @@ import org.junit.rules.TestName
 open class StreamTestCase {
 
     val userRobot = UserRobot()
+    val backendRobot = BackendRobot()
     val participantRobot = ParticipantRobot()
 
     @get:Rule
