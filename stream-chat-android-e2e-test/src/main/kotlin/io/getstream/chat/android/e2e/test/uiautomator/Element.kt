@@ -20,7 +20,7 @@ import androidx.test.uiautomator.BySelector
 import androidx.test.uiautomator.UiObject2
 
 public fun UiObject2.isDisplayed(): Boolean {
-    return this.isFocusable
+    return this.visibleCenter.y > 0
 }
 
 public fun BySelector.isDisplayed(): Boolean {
