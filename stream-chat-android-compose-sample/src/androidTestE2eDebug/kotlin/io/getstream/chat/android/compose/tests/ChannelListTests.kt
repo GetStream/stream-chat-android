@@ -23,11 +23,8 @@ import io.getstream.chat.android.compose.robots.assertMessagePreviewTimestamp
 import io.getstream.chat.android.compose.uiautomator.device
 import io.getstream.chat.android.compose.uiautomator.disableInternetConnection
 import io.getstream.chat.android.compose.uiautomator.enableInternetConnection
-import io.getstream.chat.android.e2e.test.mockserver.AttachmentType
-import io.getstream.chat.android.e2e.test.mockserver.forbiddenWord
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
-import okhttp3.internal.wait
 import org.junit.Ignore
 import org.junit.Test
 
