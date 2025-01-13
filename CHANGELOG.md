@@ -60,6 +60,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `AttachmentsPickerDialogStyle::saveAttachmentsOnDismiss` flag for configuring whether the selected attachments should be saved when the dialog is dismissed. [#5554](https://github.com/GetStream/stream-chat-android/pull/5554)
 
 ### ⚠️ Changed
 
@@ -72,6 +73,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `AttachmentsPickerTheme::saveAttachmentsOnDismiss` flag for configuring whether the selected attachments should be saved when the dialog is dismissed. [#5554](https://github.com/GetStream/stream-chat-android/pull/5554)
 
 ### ⚠️ Changed
 
