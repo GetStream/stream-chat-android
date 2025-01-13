@@ -73,6 +73,7 @@ open class MessageListPage {
     class MessageList {
 
         companion object {
+            val messageList = By.res("Stream_MessageList")
             val messages = By.res("Stream_MessageCell")
             val dateSeparator = By.res("Stream_MessageDateSeparator")
             val unreadMessagesBadge = By.res("Stream_UnreadMessagesBadge")
@@ -90,6 +91,7 @@ open class MessageListPage {
                 val readStatusIsRead = By.res("Stream_MessageReadStatus_isRead")
                 val readStatusIsPending = By.res("Stream_MessageReadStatus_isPending")
                 val readStatusIsSent = By.res("Stream_MessageReadStatus_isSent")
+                val failedIcon = By.res("Stream_MessageFailedIcon")
                 val readCount = By.res("Stream_MessageReadCount")
                 val timestamp = By.res("Stream_Timestamp")
                 val reactions = By.res("Stream_MessageReaction")
@@ -98,6 +100,7 @@ open class MessageListPage {
                 val threadRepliesLabel = By.res("Stream_ThreadRepliesLabel")
                 val threadParticipantAvatar = By.res("Stream_ThreadParticipantAvatar")
                 val editedLabel = By.res("Stream_MessageEditedLabel")
+                val deletedMessage = By.res("Stream_MessageDeleted")
                 val messageHeaderLabel = By.res("Stream_MessageHeaderLabel") // e.g.: Pinned by you
                 val image = By.res("Stream_MediaContent")
                 val video = By.res("Stream_PlayButton")
@@ -145,6 +148,7 @@ open class MessageListPage {
 
                 companion object {
                     val reply = By.res("Stream_ContextMenu_Reply")
+                    val resend = By.res("Stream_ContextMenu_Resend")
                     val threadReply = By.res("Stream_ContextMenu_Thread reply")
                     val markAsUnread = By.res("Stream_ContextMenu_Mark as Unread")
                     val copy = By.res("Stream_ContextMenu_Copy Message")
@@ -154,6 +158,7 @@ open class MessageListPage {
                     val unpin = By.res("Stream_ContextMenu_Unpin from this Chat")
                     val block = By.res("Stream_ContextMenu_Block user")
                     val delete = By.res("Stream_ContextMenu_Delete Message")
+                    val ok = By.text("OK")
                 }
             }
         }

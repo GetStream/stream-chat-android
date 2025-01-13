@@ -16,21 +16,237 @@
 
 package io.getstream.chat.android.compose.robots
 
+import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.pages.MessageListPage
+import io.getstream.chat.android.compose.pages.MessageListPage.Composer
 import io.getstream.chat.android.compose.pages.MessageListPage.MessageList.Message
-import io.getstream.chat.android.compose.uiautomator.exists
+import io.getstream.chat.android.compose.pages.ThreadPage
+import io.getstream.chat.android.compose.uiautomator.appContext
+import io.getstream.chat.android.compose.uiautomator.findObject
+import io.getstream.chat.android.compose.uiautomator.findObjects
+import io.getstream.chat.android.compose.uiautomator.height
+import io.getstream.chat.android.compose.uiautomator.isDisplayed
+import io.getstream.chat.android.compose.uiautomator.wait
+import io.getstream.chat.android.compose.uiautomator.waitForText
 import io.getstream.chat.android.compose.uiautomator.waitToAppear
+import io.getstream.chat.android.compose.uiautomator.waitToDisappear
+import io.getstream.chat.android.e2e.test.mockserver.MessageReadStatus
+import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 
-fun UserRobot.assertMessage(text: String): UserRobot {
-    assertEquals(text, Message.text.waitToAppear().text)
-    assertTrue(Message.timestamp.exists())
+fun UserRobot.assertMessage(text: String, isDisplayed: Boolean = true): UserRobot {
+    if (isDisplayed) {
+        assertEquals(text, Message.text.waitToAppear().waitForText(text).text)
+        assertTrue(Message.text.isDisplayed())
+        assertTrue(Message.timestamp.isDisplayed())
+    } else {
+        MessageListPage.MessageList.messages.findObjects().forEach {
+            assertTrue(it.text != text)
+        }
+    }
     return this
 }
 
 fun UserRobot.assertMessageAuthor(isCurrentUser: Boolean): UserRobot {
-    assertNotEquals(isCurrentUser, Message.authorName.exists())
-    assertNotEquals(isCurrentUser, Message.avatar.exists())
+    assertNotEquals(isCurrentUser, Message.authorName.isDisplayed())
+    assertNotEquals(isCurrentUser, Message.avatar.isDisplayed())
+    return this
+}
+
+fun UserRobot.assertMessageTimestamps(count: Int): UserRobot {
+    assertEquals(count, Message.timestamp.findObjects().size)
+    return this
+}
+
+fun UserRobot.assertMessageReadStatus(status: MessageReadStatus): UserRobot {
+    when (status) {
+        MessageReadStatus.READ -> assertTrue(Message.readStatusIsRead.wait().isDisplayed())
+        MessageReadStatus.PENDING -> assertTrue(Message.readStatusIsPending.wait().isDisplayed())
+        MessageReadStatus.SENT -> assertTrue(Message.readStatusIsSent.wait().isDisplayed())
+    }
+    return this
+}
+
+fun UserRobot.assertMessageFailedIcon(isDisplayed: Boolean): UserRobot {
+    if (isDisplayed) {
+        assertTrue(Message.failedIcon.wait().isDisplayed())
+    } else {
+        assertFalse(Message.failedIcon.waitToDisappear().isDisplayed())
+    }
+    return this
+}
+
+fun UserRobot.assertEditedMessage(text: String): UserRobot {
+    assertMessage(text)
+    assertEquals(
+        appContext.getString(R.string.stream_compose_message_list_footnote_edited),
+        Message.editedLabel.waitToAppear().text,
+    )
+    return this
+}
+
+fun UserRobot.assertDeletedMessage(text: String, hard: Boolean = false): UserRobot {
+    if (hard) {
+        assertFalse(Message.deletedMessage.isDisplayed())
+    } else {
+        Message.deletedMessage.waitToAppear()
+        assertTrue(Message.deletedMessage.isDisplayed())
+        assertTrue(Message.timestamp.isDisplayed())
+    }
+    assertMessage(text, isDisplayed = false)
+    return this
+}
+
+fun UserRobot.assertMessageSizeChangesAfterEditing(linesCountShouldBeIncreased: Boolean): UserRobot {
+    val cellHeight = MessageListPage.MessageList.messages.waitToAppear(withIndex = 0).height
+    val messageText = Message.text.findObject().text
+    val newLine = "new line"
+    val newText = if (linesCountShouldBeIncreased) "ok\n${messageText}\n$newLine" else newLine
+
+    editMessage(newText)
+    assertMessage(newText)
+
+    val updatedCellHeight = MessageListPage.MessageList.messages.findObjects().first().height
+    if (linesCountShouldBeIncreased) {
+        assertTrue(cellHeight < updatedCellHeight)
+    } else {
+        assertTrue(cellHeight > updatedCellHeight)
+    }
+    return this
+}
+
+fun UserRobot.assertComposerSize(isChangeable: Boolean): UserRobot {
+    val composer = Composer.inputField
+    val initialComposerHeight: Int
+    if (isChangeable) {
+        initialComposerHeight = composer.findObject().height
+        val text = "1\n2\n3"
+        typeText(text)
+        assertTrue(initialComposerHeight != composer.findObject().height)
+    } else {
+        val text = "1\n2\n3\n4\n5\n6"
+        typeText(text)
+        initialComposerHeight = composer.findObject().height
+        typeText("${text}\n7")
+        assertEquals(initialComposerHeight, composer.findObject().height)
+    }
+    return this
+}
+
+fun UserRobot.assertTypingIndicator(isDisplayed: Boolean): UserRobot {
+    if (isDisplayed) {
+        assertEquals(
+            appContext.resources.getQuantityString(
+                R.plurals.stream_compose_message_list_header_typing_users,
+                1,
+                ParticipantRobot.name,
+            ),
+            MessageListPage.MessageList.typingIndicator.waitToAppear().text,
+        )
+    } else {
+        assertFalse(MessageListPage.MessageList.typingIndicator.waitToDisappear().isDisplayed())
+    }
+    return this
+}
+
+fun UserRobot.assertAttachmentsMenu(isDisplayed: Boolean): UserRobot {
+    if (isDisplayed) {
+        assertTrue(MessageListPage.AttachmentPicker.view.waitToAppear().isDisplayed())
+    } else {
+        assertFalse(MessageListPage.AttachmentPicker.view.waitToDisappear().isDisplayed())
+    }
+    return this
+}
+
+fun UserRobot.assertComposerCommandsMenu(isDisplayed: Boolean): UserRobot {
+    if (isDisplayed) {
+        assertTrue(Composer.suggestionList.waitToAppear().isDisplayed())
+        assertTrue(Composer.suggestionListTitle.isDisplayed())
+    } else {
+        assertFalse(Composer.suggestionList.waitToDisappear().isDisplayed())
+        assertFalse(Composer.suggestionListTitle.isDisplayed())
+    }
+    return this
+}
+
+fun UserRobot.assertComposerMentionsMenu(isDisplayed: Boolean): UserRobot {
+    if (isDisplayed) {
+        assertTrue(Composer.participantMentionSuggestion.waitToAppear().isDisplayed())
+    } else {
+        assertFalse(Composer.participantMentionSuggestion.waitToDisappear().isDisplayed())
+    }
+    return this
+}
+
+fun UserRobot.assertMentionWasApplied(): UserRobot {
+    val additionalSpace = " "
+    val userName = ParticipantRobot.name
+    val expectedText = "@${userName}$additionalSpace"
+    val actualText = Composer.inputField.findObject().waitForText(expectedText).text
+    assertEquals(expectedText, actualText)
+    return this
+}
+
+fun UserRobot.assertScrollToBottomButton(isDisplayed: Boolean): UserRobot {
+    if (isDisplayed) {
+        assertTrue(MessageListPage.MessageList.scrollToBottomButton.waitToAppear().isDisplayed())
+    } else {
+        assertFalse(MessageListPage.MessageList.scrollToBottomButton.waitToDisappear().isDisplayed())
+    }
+    return this
+}
+
+fun UserRobot.assertLinkPreview(): UserRobot {
+    assertTrue(Message.linkAttachmentPreview.waitToAppear().isClickable)
+    assertTrue(Message.linkAttachmentTitle.findObject().text.isNotEmpty())
+    assertTrue(Message.linkAttachmentDescription.findObject().text.isNotEmpty())
+    return this
+}
+
+fun UserRobot.assertThreadIsOpen(): UserRobot {
+    assertTrue(ThreadPage.ThreadList.alsoSendToChannelCheckbox.waitToAppear().isDisplayed())
+    return this
+}
+
+fun UserRobot.assertThreadMessage(text: String): UserRobot {
+    assertThreadIsOpen()
+    assertMessage(text)
+    return this
+}
+
+fun UserRobot.assertThreadReplyLabelOnParentMessage(): UserRobot {
+    assertEquals(
+        Message.threadRepliesLabel.waitToAppear().text,
+        appContext.getString(R.string.stream_compose_message_list_thread_footnote_thread_reply),
+    )
+    assertTrue(Message.threadParticipantAvatar.isDisplayed())
+    return this
+}
+
+fun UserRobot.assertThreadReplyLabelOnThreadMessage(): UserRobot {
+    assertEquals(
+        Message.threadRepliesLabel.waitToAppear().text,
+        appContext.getString(R.string.stream_compose_thread_reply),
+    )
+    assertTrue(Message.threadParticipantAvatar.isDisplayed())
+    return this
+}
+
+fun UserRobot.assertAlsoInTheChannelLabelInChannel(): UserRobot {
+    assertEquals(
+        Message.messageHeaderLabel.waitToAppear().text,
+        appContext.getString(R.string.stream_compose_replied_to_thread),
+    )
+    return this
+}
+
+fun UserRobot.assertAlsoInTheChannelLabelInThread(): UserRobot {
+    assertEquals(
+        Message.messageHeaderLabel.waitToAppear().text,
+        appContext.getString(R.string.stream_compose_also_sent_to_channel),
+    )
     return this
 }

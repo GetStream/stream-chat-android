@@ -284,7 +284,9 @@ internal fun DefaultMessageModeratedContent(moderatedMessageItemState: Moderated
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 12.dp, horizontal = 16.dp),
-        text = stringResource(id = R.string.stream_compose_message_moderated),
+        text = moderatedMessageItemState.message.text
+            .takeUnless { it.isBlank() }
+            ?: stringResource(id = R.string.stream_compose_message_moderated),
         color = ChatTheme.colors.textLowEmphasis,
         style = ChatTheme.typography.footnoteBold,
         textAlign = TextAlign.Center,

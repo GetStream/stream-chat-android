@@ -29,3 +29,9 @@ public enum class ReactionType(public val reaction: String) {
     SAD("sad"),
     LIKE("like"),
 }
+
+public enum class MessageReadStatus {
+    READ,
+    PENDING,
+    SENT,
+}
