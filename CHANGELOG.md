@@ -67,6 +67,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix error messages text being overridden by the default error message. [#5551](https://github.com/GetStream/stream-chat-android/pull/5551)
 
 ### ⬆️ Improved
 
