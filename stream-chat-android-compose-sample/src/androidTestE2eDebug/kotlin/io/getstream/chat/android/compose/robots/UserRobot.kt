@@ -121,7 +121,7 @@ class UserRobot {
 
     fun addReaction(type: ReactionType, messageCellIndex: Int = 0): UserRobot {
         openContextMenu(messageCellIndex)
-        Message.Reactions.reaction(type).waitToAppear().click()
+        ContextMenu.ReactionsView.reaction(type).waitToAppear().click()
         return this
     }
 
@@ -129,7 +129,7 @@ class UserRobot {
         if (usingContextMenu) {
             addReaction(type, messageCellIndex)
         } else {
-            Message.reactions.waitToAppear().click()
+            Message.Reactions.reactions.waitToAppear().click()
             Message.Reactions.reaction(type).waitToAppear().click()
         }
         return this

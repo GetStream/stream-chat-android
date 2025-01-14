@@ -94,7 +94,6 @@ open class MessageListPage {
                 val failedIcon = By.res("Stream_MessageFailedIcon")
                 val readCount = By.res("Stream_MessageReadCount")
                 val timestamp = By.res("Stream_Timestamp")
-                val reactions = By.res("Stream_MessageReaction")
                 val quotedMessage = By.res("Stream_QuotedMessage")
                 val quotedMessageAvatar = By.res("Stream_QuotedMessageAuthorAvatar")
                 val threadRepliesLabel = By.res("Stream_ThreadRepliesLabel")
@@ -117,11 +116,12 @@ open class MessageListPage {
             class Reactions {
 
                 companion object {
-                    private val like = By.res("Stream_Reaction_${ReactionType.LIKE.reaction}")
-                    private val love = By.res("Stream_Reaction_${ReactionType.LOVE.reaction}")
-                    private val lol = By.res("Stream_Reaction_${ReactionType.LOL.reaction}")
-                    private val wow = By.res("Stream_Reaction_${ReactionType.WOW.reaction}")
-                    private val sad = By.res("Stream_Reaction_${ReactionType.SAD.reaction}")
+                    val reactions = By.res("Stream_MessageReaction")
+                    private val like = By.res("Stream_MessageReaction_${ReactionType.LIKE.reaction}")
+                    private val love = By.res("Stream_MessageReaction_${ReactionType.LOVE.reaction}")
+                    private val lol = By.res("Stream_MessageReaction_${ReactionType.LOL.reaction}")
+                    private val wow = By.res("Stream_MessageReaction_${ReactionType.WOW.reaction}")
+                    private val sad = By.res("Stream_MessageReaction_${ReactionType.SAD.reaction}")
 
                     fun reaction(type: ReactionType): BySelector {
                         return when (type) {
@@ -159,6 +159,27 @@ open class MessageListPage {
                     val block = By.res("Stream_ContextMenu_Block user")
                     val delete = By.res("Stream_ContextMenu_Delete Message")
                     val ok = By.text("OK")
+                }
+
+                class ReactionsView {
+
+                    companion object {
+                        private val like = By.res("Stream_Reaction_${ReactionType.LIKE.reaction}")
+                        private val love = By.res("Stream_Reaction_${ReactionType.LOVE.reaction}")
+                        private val lol = By.res("Stream_Reaction_${ReactionType.LOL.reaction}")
+                        private val wow = By.res("Stream_Reaction_${ReactionType.WOW.reaction}")
+                        private val sad = By.res("Stream_Reaction_${ReactionType.SAD.reaction}")
+
+                        fun reaction(type: ReactionType): BySelector {
+                            return when (type) {
+                                ReactionType.LIKE -> like
+                                ReactionType.LOVE -> love
+                                ReactionType.LOL -> lol
+                                ReactionType.SAD -> sad
+                                ReactionType.WOW -> wow
+                            }
+                        }
+                    }
                 }
             }
         }
