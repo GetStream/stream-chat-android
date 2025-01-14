@@ -37,7 +37,7 @@ patchVersion=$(extract_version_components "patchVersion")
 versionName=$(extract_version_components "versionName")
 
 # Automatically increment the patch version
-let "patchVersion+=1"
+patchVersion=$((patchVersion+1))
 
 # Combine into a new version string
 extracted_version="$majorVersion.$minorVersion.$patchVersion"
@@ -91,7 +91,7 @@ update_version_in_file "minorVersion" "$input_minorVersion"
 update_version_in_file "patchVersion" "$input_patchVersion"
 update_version_in_file "versionName" "\"$version_name\""
 
-echo "Version updated to: \033[33m$version_name\033[0m"
+echo -e "Version updated to: \033[33m$version_name\033[0m"
 
 # Move back to the root of the project to be able to run ./gradlew
 # Change to the script's directory
@@ -107,7 +107,12 @@ startPattern="signing {"
 # Pattern that marks the end of the block to remove
 endPattern="}"
 # sed to remove the block from the startPattern to the endPattern, inclusive
-sed -i '' "/$startPattern/,/$endPattern/d" "$gradleFilePath"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  sed -i '' "/$startPattern/,/$endPattern/d" "$gradleFilePath"
+else
+  sed -i "/$startPattern/,/$endPattern/d" "$gradleFilePath"
+fi
+
 # Move back to root
 cd ..
 # Define the modules to release locally
@@ -135,7 +140,7 @@ restore_modified_fields() {
   cd ..
   cd "$script_dir" || exit
   cd "$configuration_dir" || exit
-  let patchVersion-=1
+  patchVersion=$((patchVersion-1))
   update_version_in_file "majorVersion" "$majorVersion"
   update_version_in_file "minorVersion" "$minorVersion"
   update_version_in_file "patchVersion" "$patchVersion"
@@ -165,9 +170,9 @@ for module in "${modules[@]}"; do
 
   ./gradlew "${module}":publishToMavenLocal -x test > /dev/null
   if [ $? -ne 0 ]; then
-    echo "\033[31mPublishing $module failed.\033[0m"
+    echo -e "\033[31mPublishing $module failed.\033[0m"
     restore_modified_fields
-    echo "\033[41m\033[97mBUILD FAILED\033[0m\033[31m: One or more modules failed to publish.\033[0m"
+    echo -e "\033[41m\033[97mBUILD FAILED\033[0m\033[31m: One or more modules failed to publish.\033[0m"
     exit 1
   fi
 done
@@ -182,7 +187,7 @@ elapsed_time=$(format_time $elapsed_seconds)
 
 echo "Gradle usage:"
 for module in "${modules[@]}"; do
-  echo '\033[33mimplementation\033[0m\033[37m(\033[0m"\033[32mio.getstream:'"$module"':'"$version_name"'\033[0m\033[37m")\033[0m'
+  echo -e '\033[33mimplementation\033[0m\033[37m(\033[0m"\033[32mio.getstream:'"$module"':'"$version_name"'\033[0m\033[37m")\033[0m'
 done
 echo "Elapsed time: $elapsed_time"
-echo "\033[42m\033[97mBUILD SUCCESS\033[0m\033[32m: All modules published successfully.\033[0m"
+echo -e "\033[42m\033[97mBUILD SUCCESS\033[0m\033[32m: All modules published successfully.\033[0m"
