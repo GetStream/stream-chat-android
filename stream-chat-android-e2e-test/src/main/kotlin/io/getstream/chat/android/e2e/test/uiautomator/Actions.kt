@@ -32,6 +32,10 @@ public fun UiDevice.stopApp() {
     executeShellCommand("pm clear $packageName")
 }
 
+public fun UiDevice.typeText(text: String) {
+    executeShellCommand("input text '$text'")
+}
+
 public fun UiObject2.typeText(text: String): UiObject2 {
     this.text = text
     return this

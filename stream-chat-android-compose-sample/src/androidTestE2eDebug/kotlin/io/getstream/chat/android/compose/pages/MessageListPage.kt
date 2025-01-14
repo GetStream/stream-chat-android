@@ -79,6 +79,7 @@ open class MessageListPage {
             val unreadMessagesBadge = By.res("Stream_UnreadMessagesBadge")
             val typingIndicator = By.res("Stream_MessageListTypingIndicator")
             val scrollToBottomButton = By.res("Stream_ScrollToBottomButton")
+            val systemMessage = By.res("Stream_SystemMessage")
         }
 
         class Message {
