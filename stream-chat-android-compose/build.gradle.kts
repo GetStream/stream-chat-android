@@ -24,6 +24,7 @@ apply(from = "$rootDir/scripts/detekt-compose.gradle")
 android {
     namespace = "io.getstream.chat.android.compose"
     defaultConfig {
+        vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
