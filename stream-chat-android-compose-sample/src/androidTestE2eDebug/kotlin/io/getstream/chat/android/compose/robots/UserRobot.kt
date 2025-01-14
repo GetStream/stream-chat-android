@@ -243,7 +243,9 @@ class UserRobot {
         if (useComposerCommand) {
             openComposerCommands()
             Composer.giphyButton.waitToAppear().click()
-            sendMessage(giphyMessageText)
+            Composer.inputField.findObject().click()
+            device.typeText(giphyMessageText)
+            Composer.sendButton.findObject().click()
         } else {
             sendMessage("/giphy $giphyMessageText")
         }
