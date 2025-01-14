@@ -234,6 +234,7 @@ public fun randomChannel(
     team: String = randomString(),
     hidden: Boolean? = randomBoolean(),
     hiddenMessagesBefore: Date? = randomDate(),
+    ownCapabilities: Set<String> = setOf(),
     extraData: Map<String, Any> = emptyMap(),
 ): Channel = Channel(
     id = id,
@@ -257,6 +258,7 @@ public fun randomChannel(
     team = team,
     hidden = hidden,
     hiddenMessagesBefore = hiddenMessagesBefore,
+    ownCapabilities = ownCapabilities,
     extraData = extraData,
 )
 

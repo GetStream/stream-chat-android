@@ -17,10 +17,12 @@
 package io.getstream.chat.android.client.test
 
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
+import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelUserBannedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
+import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
 import io.getstream.chat.android.client.events.MessageReadEvent
@@ -28,7 +30,9 @@ import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
+import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
+import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
@@ -48,6 +52,7 @@ import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDate
@@ -67,6 +72,7 @@ public fun randomChannelVisibleEvent(
     channelType: String = randomString(),
     channelId: String = randomString(),
     user: User = randomUser(),
+    channelLastMessageAt: Date = randomDate(),
 
 ): ChannelVisibleEvent = ChannelVisibleEvent(
     type = EventType.CHANNEL_VISIBLE,
@@ -76,7 +82,7 @@ public fun randomChannelVisibleEvent(
     channelType = channelType,
     channelId = channelId,
     user = user,
-    channelLastMessageAt = randomDate(),
+    channelLastMessageAt = channelLastMessageAt,
 )
 
 public fun randomUserStartWatchingEvent(
@@ -86,6 +92,7 @@ public fun randomUserStartWatchingEvent(
     channelType: String = randomString(),
     channelId: String = randomString(),
     user: User = randomUser(),
+    channelLastMessageAt: Date = randomDate(),
 ): UserStartWatchingEvent = UserStartWatchingEvent(
     type = EventType.USER_WATCHING_START,
     createdAt = createdAt,
@@ -95,33 +102,50 @@ public fun randomUserStartWatchingEvent(
     channelType = channelType,
     channelId = channelId,
     user = user,
-    channelLastMessageAt = randomDate(),
+    channelLastMessageAt = channelLastMessageAt,
+)
+
+public fun randomChannelHiddenEvent(
+    createdAt: Date = randomDate(),
+    cid: String = randomCID(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    user: User = randomUser(),
+    channelLastMessageAt: Date = randomDate(),
+    clearHistory: Boolean = randomBoolean(),
+): ChannelHiddenEvent = ChannelHiddenEvent(
+    type = EventType.CHANNEL_HIDDEN,
+    createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
+    cid = cid,
+    channelType = channelType,
+    channelId = channelId,
+    user = user,
+    channelLastMessageAt = channelLastMessageAt,
+    clearHistory = clearHistory,
 )
 
 public fun randomChannelDeletedEvent(
-    type: String = randomString(),
     createdAt: Date = Date(),
     user: User = randomUser(),
     cid: String = randomString(),
     channelType: String = randomString(),
     channelId: String = randomString(),
     channel: Channel = randomChannel(),
-): ChannelDeletedEvent {
-    return ChannelDeletedEvent(
-        type = type,
-        createdAt = createdAt,
-        rawCreatedAt = streamFormatter.format(createdAt),
-        user = user,
-        cid = cid,
-        channelType = channelType,
-        channelId = channelId,
-        channel = channel,
-        channelLastMessageAt = randomDate(),
-    )
-}
+    channelLastMessageAt: Date = randomDate(),
+): ChannelDeletedEvent = ChannelDeletedEvent(
+    type = EventType.CHANNEL_DELETED,
+    createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
+    user = user,
+    cid = cid,
+    channelType = channelType,
+    channelId = channelId,
+    channel = channel,
+    channelLastMessageAt = channelLastMessageAt,
+)
 
 public fun randomNotificationChannelDeletedEvent(
-    type: String = randomString(),
     createdAt: Date = Date(),
     cid: String = randomString(),
     channelType: String = randomString(),
@@ -129,9 +153,10 @@ public fun randomNotificationChannelDeletedEvent(
     channel: Channel = randomChannel(),
     totalUnreadCount: Int = randomInt(),
     unreadChannels: Int = randomInt(),
+    channelLastMessageAt: Date = randomDate(),
 ): NotificationChannelDeletedEvent {
     return NotificationChannelDeletedEvent(
-        type = type,
+        type = EventType.NOTIFICATION_CHANNEL_DELETED,
         createdAt = createdAt,
         rawCreatedAt = streamFormatter.format(createdAt),
         cid = cid,
@@ -140,12 +165,11 @@ public fun randomNotificationChannelDeletedEvent(
         channel = channel,
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
-        channelLastMessageAt = randomDate(),
+        channelLastMessageAt = channelLastMessageAt,
     )
 }
 
 public fun randomReactionNewEvent(
-    type: String = randomString(),
     createdAt: Date = Date(),
     user: User = randomUser(),
     cid: String = randomString(),
@@ -153,9 +177,10 @@ public fun randomReactionNewEvent(
     channelId: String = randomString(),
     message: Message = randomMessage(),
     reaction: Reaction = randomReaction(),
+    channelLastMessageAt: Date = randomDate(),
 ): ReactionNewEvent {
     return ReactionNewEvent(
-        type = type,
+        type = EventType.REACTION_NEW,
         createdAt = createdAt,
         rawCreatedAt = streamFormatter.format(createdAt),
         user = user,
@@ -164,32 +189,31 @@ public fun randomReactionNewEvent(
         channelId = channelId,
         message = message,
         reaction = reaction,
-        channelLastMessageAt = randomDate(),
+        channelLastMessageAt = channelLastMessageAt,
     )
 }
 
 public fun randomMessageReadEvent(
-    type: String = randomString(),
     createdAt: Date = Date(),
     user: User = randomUser(),
     cid: String = randomString(),
     channelType: String = randomString(),
     channelId: String = randomString(),
+    channelLastMessageAt: Date = randomDate(),
 ): MessageReadEvent {
     return MessageReadEvent(
-        type = type,
+        type = EventType.MESSAGE_READ,
         createdAt = createdAt,
         rawCreatedAt = streamFormatter.format(createdAt),
         user = user,
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        channelLastMessageAt = randomDate(),
+        channelLastMessageAt = channelLastMessageAt,
     )
 }
 
 public fun randomNotificationMarkReadEvent(
-    type: String = randomString(),
     createdAt: Date = Date(),
     user: User = randomUser(),
     cid: String = randomString(),
@@ -197,32 +221,72 @@ public fun randomNotificationMarkReadEvent(
     channelId: String = randomString(),
     totalUnreadCount: Int = randomInt(),
     unreadChannels: Int = randomInt(),
-): NotificationMarkReadEvent {
-    return NotificationMarkReadEvent(
-        type = type,
-        createdAt = createdAt,
-        rawCreatedAt = streamFormatter.format(createdAt),
-        user = user,
-        cid = cid,
-        channelType = channelType,
-        channelId = channelId,
-        totalUnreadCount = totalUnreadCount,
-        unreadChannels = unreadChannels,
-        channelLastMessageAt = randomDate(),
-    )
-}
+    channelLastMessageAt: Date = randomDate(),
+    threadId: String? = randomString(),
+    unreadThreads: Int? = randomInt(),
+    unreadThreadMessages: Int? = randomInt(),
+): NotificationMarkReadEvent = NotificationMarkReadEvent(
+    type = EventType.NOTIFICATION_MARK_READ,
+    createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
+    user = user,
+    cid = cid,
+    channelType = channelType,
+    channelId = channelId,
+    totalUnreadCount = totalUnreadCount,
+    unreadChannels = unreadChannels,
+    channelLastMessageAt = channelLastMessageAt,
+    threadId = threadId,
+    unreadThreads = unreadThreads,
+    unreadThreadMessages = unreadThreadMessages,
+)
+public fun randomNotificationMarkUnreadEvent(
+    createdAt: Date = Date(),
+    user: User = randomUser(),
+    cid: String = randomString(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    totalUnreadCount: Int = randomInt(),
+    unreadChannels: Int = randomInt(),
+    channelLastMessageAt: Date = randomDate(),
+    firstUnreadMessageId: String = randomString(),
+    lastReadMessageAt: Date = randomDate(),
+    lastReadMessageId: String? = randomString(),
+    unreadMessages: Int = randomInt(),
+    threadId: String? = randomString(),
+    unreadThreads: Int = randomInt(),
+    unreadThreadMessages: Int = randomInt(),
+): NotificationMarkUnreadEvent = NotificationMarkUnreadEvent(
+    type = EventType.NOTIFICATION_MARK_UNREAD,
+    createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
+    user = user,
+    cid = cid,
+    channelType = channelType,
+    channelId = channelId,
+    totalUnreadCount = totalUnreadCount,
+    unreadChannels = unreadChannels,
+    channelLastMessageAt = channelLastMessageAt,
+    threadId = threadId,
+    unreadThreads = unreadThreads,
+    unreadThreadMessages = unreadThreadMessages,
+    firstUnreadMessageId = firstUnreadMessageId,
+    unreadMessages = unreadMessages,
+    lastReadMessageAt = lastReadMessageAt,
+    lastReadMessageId = lastReadMessageId,
+)
 
 public fun randomTypingStopEvent(
-    type: String = randomString(),
     createdAt: Date = Date(),
     user: User = randomUser(),
     cid: String = randomString(),
     channelType: String = randomString(),
     channelId: String = randomString(),
     parentId: String? = randomString(),
+    channelLastMessageAt: Date = randomDate(),
 ): TypingStopEvent {
     return TypingStopEvent(
-        type = type,
+        type = EventType.TYPING_STOP,
         createdAt = createdAt,
         rawCreatedAt = streamFormatter.format(createdAt),
         user = user,
@@ -230,21 +294,21 @@ public fun randomTypingStopEvent(
         channelType = channelType,
         channelId = channelId,
         parentId = parentId,
-        channelLastMessageAt = randomDate(),
+        channelLastMessageAt = channelLastMessageAt,
     )
 }
 
 public fun randomTypingStartEvent(
-    type: String = randomString(),
     createdAt: Date = Date(),
     user: User = randomUser(),
     cid: String = randomString(),
     channelType: String = randomString(),
     channelId: String = randomString(),
     parentId: String? = randomString(),
+    channelLastMessageAt: Date = randomDate(),
 ): TypingStartEvent {
     return TypingStartEvent(
-        type = type,
+        type = EventType.TYPING_START,
         createdAt = createdAt,
         rawCreatedAt = streamFormatter.format(createdAt),
         user = user,
@@ -252,21 +316,21 @@ public fun randomTypingStartEvent(
         channelType = channelType,
         channelId = channelId,
         parentId = parentId,
-        channelLastMessageAt = randomDate(),
+        channelLastMessageAt = channelLastMessageAt,
     )
 }
 
 public fun randomMemberAddedEvent(
-    type: String = randomString(),
     createdAt: Date = Date(),
     user: User = randomUser(),
     cid: String = randomString(),
     channelType: String = randomString(),
     channelId: String = randomString(),
     member: Member = randomMember(),
+    channelLastMessageAt: Date = randomDate(),
 ): MemberAddedEvent {
     return MemberAddedEvent(
-        type = type,
+        type = EventType.MEMBER_ADDED,
         createdAt = createdAt,
         rawCreatedAt = streamFormatter.format(createdAt),
         user = user,
@@ -274,12 +338,11 @@ public fun randomMemberAddedEvent(
         channelType = channelType,
         channelId = channelId,
         member = member,
-        channelLastMessageAt = randomDate(),
+        channelLastMessageAt = channelLastMessageAt,
     )
 }
 
 public fun randomNotificationAddedToChannelEvent(
-    type: String = randomString(),
     createdAt: Date = Date(),
     cid: String = randomString(),
     channelType: String = randomString(),
@@ -288,9 +351,10 @@ public fun randomNotificationAddedToChannelEvent(
     member: Member = randomMember(),
     totalUnreadCount: Int = randomInt(),
     unreadChannels: Int = randomInt(),
+    channelLastMessageAt: Date = randomDate(),
 ): NotificationAddedToChannelEvent {
     return NotificationAddedToChannelEvent(
-        type = type,
+        type = EventType.NOTIFICATION_ADDED_TO_CHANNEL,
         createdAt = createdAt,
         rawCreatedAt = streamFormatter.format(createdAt),
         cid = cid,
@@ -300,12 +364,11 @@ public fun randomNotificationAddedToChannelEvent(
         member = member,
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
-        channelLastMessageAt = randomDate(),
+        channelLastMessageAt = channelLastMessageAt,
     )
 }
 
 public fun randomNotificationMessageNewEvent(
-    type: String = randomString(),
     createdAt: Date = Date(),
     cid: String = randomString(),
     channelType: String = randomString(),
@@ -314,32 +377,31 @@ public fun randomNotificationMessageNewEvent(
     message: Message = randomMessage(),
     totalUnreadCount: Int = randomInt(),
     unreadChannels: Int = randomInt(),
-): NotificationMessageNewEvent {
-    return NotificationMessageNewEvent(
-        type = type,
-        createdAt = createdAt,
-        rawCreatedAt = streamFormatter.format(createdAt),
-        cid = cid,
-        channelType = channelType,
-        channelId = channelId,
-        channel = channel,
-        message = message,
-        totalUnreadCount = totalUnreadCount,
-        unreadChannels = unreadChannels,
-        channelLastMessageAt = randomDate(),
-    )
-}
+    channelLastMessageAt: Date = randomDate(),
+): NotificationMessageNewEvent = NotificationMessageNewEvent(
+    type = EventType.NOTIFICATION_MESSAGE_NEW,
+    createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
+    cid = cid,
+    channelType = channelType,
+    channelId = channelId,
+    channel = channel,
+    message = message,
+    totalUnreadCount = totalUnreadCount,
+    unreadChannels = unreadChannels,
+    channelLastMessageAt = channelLastMessageAt,
+)
 
 public fun randomMessageUpdateEvent(
-    type: String = randomString(),
     createdAt: Date = Date(),
     user: User = randomUser(),
     cid: String = randomString(),
     channelType: String = randomString(),
     channelId: String = randomString(),
     message: Message = randomMessage(),
+    channelLastMessageAt: Date = randomDate(),
 ): MessageUpdatedEvent = MessageUpdatedEvent(
-    type = type,
+    type = EventType.MEMBER_UPDATED,
     createdAt = createdAt,
     rawCreatedAt = streamFormatter.format(createdAt),
     user = user,
@@ -347,7 +409,7 @@ public fun randomMessageUpdateEvent(
     channelType = channelType,
     channelId = channelId,
     message = message,
-    channelLastMessageAt = randomDate(),
+    channelLastMessageAt = channelLastMessageAt,
 )
 
 public fun randomChannelUpdatedEvent(
@@ -357,6 +419,7 @@ public fun randomChannelUpdatedEvent(
     channelId: String = randomString(),
     message: Message = randomMessage(),
     channel: Channel = randomChannel(),
+    channelLastMessageAt: Date = randomDate(),
 ): ChannelUpdatedEvent {
     return ChannelUpdatedEvent(
         type = EventType.CHANNEL_UPDATED,
@@ -367,7 +430,7 @@ public fun randomChannelUpdatedEvent(
         channelId = channelId,
         message = message,
         channel = channel,
-        channelLastMessageAt = randomDate(),
+        channelLastMessageAt = channelLastMessageAt,
     )
 }
 
@@ -379,6 +442,7 @@ public fun randomChannelUpdatedByUserEvent(
     message: Message = randomMessage(),
     channel: Channel = randomChannel(),
     user: User = randomUser(),
+    channelLastMessageAt: Date = randomDate(),
 ): ChannelUpdatedByUserEvent {
     return ChannelUpdatedByUserEvent(
         type = EventType.CHANNEL_UPDATED,
@@ -390,7 +454,7 @@ public fun randomChannelUpdatedByUserEvent(
         message = message,
         channel = channel,
         user = user,
-        channelLastMessageAt = randomDate(),
+        channelLastMessageAt = channelLastMessageAt,
     )
 }
 
@@ -404,6 +468,7 @@ public fun randomNewMessageEvent(
     watcherCount: Int = randomInt(),
     totalUnreadCount: Int = randomInt(),
     unreadChannels: Int = randomInt(),
+    channelLastMessageAt: Date = randomDate(),
 ): NewMessageEvent {
     return NewMessageEvent(
         type = EventType.MESSAGE_NEW,
@@ -417,37 +482,51 @@ public fun randomNewMessageEvent(
         watcherCount = watcherCount,
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
-        channelLastMessageAt = randomDate(),
+        channelLastMessageAt = channelLastMessageAt,
     )
 }
+
+public fun randomNotificationChannelTruncatedEvent(
+    createdAt: Date = randomDate(),
+    cid: String = randomString(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    channel: Channel = randomChannel(),
+    totalUnreadCount: Int = randomInt(),
+    unreadChannels: Int = randomInt(),
+    channelLastMessageAt: Date = randomDate(),
+): NotificationChannelTruncatedEvent = NotificationChannelTruncatedEvent(
+    type = EventType.NOTIFICATION_CHANNEL_TRUNCATED,
+    createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
+    cid = cid,
+    channelType = channelType,
+    channelId = channelId,
+    channel = channel,
+    totalUnreadCount = totalUnreadCount,
+    unreadChannels = unreadChannels,
+    channelLastMessageAt = channelLastMessageAt,
+)
+
+public fun randomMarkAllReadEvent(
+    createdAt: Date = randomDate(),
+    user: User = randomUser(),
+    totalUnreadCount: Int = randomInt(),
+    unreadChannels: Int = randomInt(),
+): MarkAllReadEvent = MarkAllReadEvent(
+    type = EventType.NOTIFICATION_MARK_READ,
+    createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
+    user = user,
+    totalUnreadCount = totalUnreadCount,
+    unreadChannels = unreadChannels,
+)
 
 public fun randomQueryChannelsSpec(
     filter: FilterObject = NeutralFilterObject,
     sort: QuerySorter<Channel> = QuerySortByField(),
     cids: Set<String> = emptySet(),
 ): QueryChannelsSpec = QueryChannelsSpec(filter, sort).apply { this.cids = cids }
-
-public fun randomNotificationAddedToChannelEvent(
-    cid: String = randomString(),
-    channel: Channel = randomChannel(),
-    member: Member = randomMember(),
-): NotificationAddedToChannelEvent {
-    val createdAt = Date()
-
-    return NotificationAddedToChannelEvent(
-        type = randomString(),
-        createdAt = createdAt,
-        rawCreatedAt = streamFormatter.format(createdAt),
-        cid = cid,
-        channelType = randomString(),
-        channelId = randomString(),
-        channel = channel,
-        member = member,
-        totalUnreadCount = randomInt(),
-        unreadChannels = randomInt(),
-        channelLastMessageAt = randomDate(),
-    )
-}
 
 public fun randomNotificationRemovedFromChannelEvent(
     cid: String = randomString(),
@@ -470,58 +549,25 @@ public fun randomNotificationRemovedFromChannelEvent(
     )
 }
 
-public fun randomNotificationMessageNewEvent(
+public fun randomMemberRemovedEvent(
+    createdAt: Date = Date(),
     cid: String = randomString(),
-    channel: Channel = randomChannel(),
-): NotificationMessageNewEvent {
-    val createdAt = Date()
-
-    return NotificationMessageNewEvent(
-        type = randomString(),
-        createdAt = createdAt,
-        rawCreatedAt = streamFormatter.format(createdAt),
-        cid = cid,
-        channelType = randomString(),
-        channelId = randomString(),
-        channel = channel,
-        message = randomMessage(),
-        totalUnreadCount = randomInt(),
-        unreadChannels = randomInt(),
-        channelLastMessageAt = randomDate(),
-    )
-}
-
-public fun randomMemberAddedEvent(cid: String = randomString()): MemberAddedEvent {
-    val createdAt = Date()
-
-    return MemberAddedEvent(
-        type = randomString(),
-        createdAt = createdAt,
-        rawCreatedAt = streamFormatter.format(createdAt),
-        user = randomUser(),
-        cid = cid,
-        channelType = randomString(),
-        channelId = randomString(),
-        member = randomMember(),
-        channelLastMessageAt = randomDate(),
-    )
-}
-
-public fun randomMemberRemovedEvent(cid: String = randomString(), member: Member = randomMember()): MemberRemovedEvent {
-    val createdAt = Date()
-
-    return MemberRemovedEvent(
-        type = randomString(),
-        createdAt = createdAt,
-        rawCreatedAt = streamFormatter.format(createdAt),
-        user = randomUser(),
-        cid = cid,
-        channelType = randomString(),
-        channelId = randomString(),
-        member = member,
-        channelLastMessageAt = randomDate(),
-    )
-}
+    member: Member = randomMember(),
+    user: User = randomUser(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    channelLastMessageAt: Date = randomDate(),
+): MemberRemovedEvent = MemberRemovedEvent(
+    type = EventType.MEMBER_REMOVED,
+    createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
+    user = user,
+    cid = cid,
+    channelType = channelType,
+    channelId = channelId,
+    member = member,
+    channelLastMessageAt = channelLastMessageAt,
+)
 
 public fun randomChannelUserBannedEvent(
     cid: String = randomCID(),
@@ -529,10 +575,11 @@ public fun randomChannelUserBannedEvent(
     createdAt: Date = Date(),
     banExpires: Date? = null,
     shadow: Boolean = false,
+    channelLastMessageAt: Date = randomDate(),
 ): ChannelUserBannedEvent {
     val (type, id) = cid.cidToTypeAndId()
     return ChannelUserBannedEvent(
-        type = randomString(),
+        type = EventType.USER_BANNED,
         createdAt = createdAt,
         rawCreatedAt = streamFormatter.format(createdAt),
         user = user,
@@ -541,6 +588,7 @@ public fun randomChannelUserBannedEvent(
         channelId = id,
         expiration = banExpires,
         shadow = shadow,
-        channelLastMessageAt = randomDate(),
+        channelLastMessageAt = channelLastMessageAt,
     )
 }
+

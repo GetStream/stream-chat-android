@@ -304,7 +304,7 @@ internal class EventHandlerSequential(
                 is NotificationChannelDeletedEvent -> it.takeUnless {
                     it.unreadChannels == 0 && hasReadEventsCapability(it.cid)
                 }
-                is NotificationChannelTruncatedEvent -> it.takeUnless { hasReadEventsCapability(it.cid) }
+                is NotificationChannelTruncatedEvent -> it.takeIf { hasReadEventsCapability(it.cid) }
                 is NotificationMarkReadEvent -> it
                 is NotificationMarkUnreadEvent -> it
                 is NotificationMessageNewEvent -> it.takeUnless { it.unreadChannels == 0 }
