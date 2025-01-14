@@ -31,6 +31,7 @@ import io.getstream.chat.android.compose.uiautomator.waitForText
 import io.getstream.chat.android.compose.uiautomator.waitToAppear
 import io.getstream.chat.android.compose.uiautomator.waitToDisappear
 import io.getstream.chat.android.e2e.test.mockserver.MessageReadStatus
+import io.getstream.chat.android.e2e.test.mockserver.ReactionType
 import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -248,5 +249,14 @@ fun UserRobot.assertAlsoInTheChannelLabelInThread(): UserRobot {
         Message.messageHeaderLabel.waitToAppear().text,
         appContext.getString(R.string.stream_compose_also_sent_to_channel),
     )
+    return this
+}
+
+fun UserRobot.assertReaction(type: ReactionType, isDisplayed: Boolean): UserRobot {
+    if (isDisplayed) {
+        assertTrue(Message.Reactions.reaction(type).waitToAppear().isDisplayed())
+    } else {
+        assertFalse(Message.Reactions.reaction(type).waitToDisappear().isDisplayed())
+    }
     return this
 }

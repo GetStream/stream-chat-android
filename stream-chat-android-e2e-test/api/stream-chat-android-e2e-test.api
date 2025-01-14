@@ -141,7 +141,7 @@ public final class io/getstream/chat/android/e2e/test/robots/ParticipantRobot {
 	public final fun addReaction (Lio/getstream/chat/android/e2e/test/mockserver/ReactionType;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
 	public final fun deleteMessage (Z)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
 	public static synthetic fun deleteMessage$default (Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;ZILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
-	public final fun deleteReaction (Ljava/lang/String;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
+	public final fun deleteReaction (Lio/getstream/chat/android/e2e/test/mockserver/ReactionType;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
 	public final fun editMessage (Ljava/lang/String;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
 	public final fun pinMesage ()Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
 	public final fun quoteMessage (Ljava/lang/String;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
