@@ -32,6 +32,7 @@ import io.getstream.chat.android.compose.uiautomator.waitForText
 import io.getstream.chat.android.compose.uiautomator.waitToAppear
 import io.getstream.chat.android.compose.uiautomator.waitToDisappear
 import io.getstream.chat.android.e2e.test.mockserver.MessageReadStatus
+import io.getstream.chat.android.e2e.test.mockserver.ReactionType
 import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -285,5 +286,14 @@ fun UserRobot.assertSystemMessage(text: String, isDisplayed: Boolean = true): Us
 
 fun UserRobot.assertInvalidCommandMessage(text: String, isDisplayed: Boolean = true): UserRobot {
     assertSystemMessage("Sorry, command $text doesn't exist. Try posting your message without the starting /")
+    return this
+}
+
+fun UserRobot.assertReaction(type: ReactionType, isDisplayed: Boolean): UserRobot {
+    if (isDisplayed) {
+        assertTrue(Message.Reactions.reaction(type).waitToAppear().isDisplayed())
+    } else {
+        assertFalse(Message.Reactions.reaction(type).waitToDisappear().isDisplayed())
+    }
     return this
 }

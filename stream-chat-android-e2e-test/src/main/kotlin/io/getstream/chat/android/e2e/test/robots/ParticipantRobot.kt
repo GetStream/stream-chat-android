@@ -165,8 +165,8 @@ public class ParticipantRobot {
         return this
     }
 
-    public fun deleteReaction(type: String): ParticipantRobot {
-        mockServer.postRequest("participant/reaction?type=$type&delete=true")
+    public fun deleteReaction(type: ReactionType): ParticipantRobot {
+        mockServer.postRequest("participant/reaction?type=${type.reaction}&delete=true")
         return this
     }
 }
