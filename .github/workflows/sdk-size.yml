@@ -10,3 +10,5 @@ jobs:
     with:
       metricsProject: "stream-chat-android-metrics"
       modules: "stream-chat-android-client stream-chat-android-offline stream-chat-android-ui-components stream-chat-android-compose"
+    secrets:
+      token: ${{ secrets.GITHUB_TOKEN }}
