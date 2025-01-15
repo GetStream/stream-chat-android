@@ -109,7 +109,7 @@ class GiphyTests : StreamTestCase() {
         }
         step("AND the previous message has timestamp and delivery status shown") {
             userRobot
-                .assertMessageDeliveryStatus(shouldBeVisible = true)
+                .assertMessageDeliveryStatus(isDisplayed = true)
                 .assertMessageTimestamps(count = 1)
         }
     }
