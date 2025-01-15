@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.robots
 
+import androidx.test.uiautomator.By
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.pages.MessageListPage
 import io.getstream.chat.android.compose.pages.MessageListPage.Composer
@@ -31,6 +32,7 @@ import io.getstream.chat.android.compose.uiautomator.waitForText
 import io.getstream.chat.android.compose.uiautomator.waitToAppear
 import io.getstream.chat.android.compose.uiautomator.waitToDisappear
 import io.getstream.chat.android.e2e.test.mockserver.MessageReadStatus
+import io.getstream.chat.android.e2e.test.mockserver.ReactionType
 import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -248,5 +250,50 @@ fun UserRobot.assertAlsoInTheChannelLabelInThread(): UserRobot {
         Message.messageHeaderLabel.waitToAppear().text,
         appContext.getString(R.string.stream_compose_also_sent_to_channel),
     )
+    return this
+}
+
+fun UserRobot.assertGiphyImage(isDisplayed: Boolean = true): UserRobot {
+    if (isDisplayed) {
+        assertTrue(Message.giphy.waitToAppear().isDisplayed())
+    } else {
+        assertFalse(Message.giphy.waitToDisappear().isDisplayed())
+    }
+    return this
+}
+
+fun UserRobot.assertGiphyButtons(areDisplayed: Boolean = true): UserRobot {
+    if (areDisplayed) {
+        assertTrue(Message.GiphyButtons.send.waitToAppear().isDisplayed())
+        assertTrue(Message.GiphyButtons.cancel.findObject().isDisplayed())
+        assertTrue(Message.GiphyButtons.shuffle.findObject().isDisplayed())
+    } else {
+        assertFalse(Message.GiphyButtons.send.waitToDisappear().isDisplayed())
+        assertTrue(Message.GiphyButtons.cancel.findObjects().isEmpty())
+        assertTrue(Message.GiphyButtons.shuffle.findObjects().isEmpty())
+    }
+    return this
+}
+
+fun UserRobot.assertSystemMessage(text: String, isDisplayed: Boolean = true): UserRobot {
+    if (isDisplayed) {
+        By.text(text).waitToAppear().isDisplayed()
+    } else {
+        By.text(text).waitToDisappear().isDisplayed()
+    }
+    return this
+}
+
+fun UserRobot.assertInvalidCommandMessage(text: String, isDisplayed: Boolean = true): UserRobot {
+    assertSystemMessage("Sorry, command $text doesn't exist. Try posting your message without the starting /")
+    return this
+}
+
+fun UserRobot.assertReaction(type: ReactionType, isDisplayed: Boolean): UserRobot {
+    if (isDisplayed) {
+        assertTrue(Message.Reactions.reaction(type).waitToAppear().isDisplayed())
+    } else {
+        assertFalse(Message.Reactions.reaction(type).waitToDisappear().isDisplayed())
+    }
     return this
 }
