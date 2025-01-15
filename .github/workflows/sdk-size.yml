@@ -1,0 +1,12 @@
+name: SDK size
+
+on:
+  pull_request:
+
+jobs:
+  sdk-size:
+    name: Update and compare SDK sizes
+    uses: GetStream/actions_workflows/.github/workflows/android-sdk-size.yml@main
+    with:
+      metricsProject: "stream-chat-android-metrics"
+      modules: "stream-chat-android-client stream-chat-android-offline stream-chat-android-ui-components stream-chat-android-compose"
