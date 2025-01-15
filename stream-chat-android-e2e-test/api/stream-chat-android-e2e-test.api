@@ -1,5 +1,6 @@
 public final class io/getstream/chat/android/compose/uiautomator/ActionsKt {
 	public static final fun disableInternetConnection (Landroidx/test/uiautomator/UiDevice;)V
+	public static final fun dumpWindowHierarchy (Landroidx/test/uiautomator/UiDevice;)V
 	public static final fun enableInternetConnection (Landroidx/test/uiautomator/UiDevice;)V
 	public static final fun goToBackground (Landroidx/test/uiautomator/UiDevice;)V
 	public static final fun goToForeground (Landroidx/test/uiautomator/UiDevice;)V

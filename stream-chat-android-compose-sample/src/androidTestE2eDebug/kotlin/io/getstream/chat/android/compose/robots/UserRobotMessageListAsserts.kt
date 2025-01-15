@@ -131,6 +131,7 @@ fun UserRobot.assertComposerSize(isChangeable: Boolean): UserRobot {
     } else {
         val text = "1\n2\n3\n4\n5\n6"
         typeText(text)
+        sleep(500)
         initialComposerHeight = composer.findObject().height
         typeText("${text}\n7")
         assertEquals(initialComposerHeight, composer.findObject().height)
