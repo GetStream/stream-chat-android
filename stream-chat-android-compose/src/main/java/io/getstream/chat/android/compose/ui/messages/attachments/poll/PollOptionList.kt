@@ -136,7 +136,7 @@ public fun PollOptionList(
                     PollOptionInput(
                         modifier = Modifier.weight(1f),
                         value = item.title,
-                        description = stringResource(id = R.string.stream_compose_poll_option_placeholder),
+                        description = stringResource(id = R.string.stream_compose_poll_option_hint),
                         innerPadding = if (item.pollOptionError == null) {
                             PaddingValues(horizontal = 16.dp, vertical = 18.dp)
                         } else {

@@ -23,7 +23,7 @@
         android:id="@+id/option"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:hint="@string/stream_ui_poll_add_an_option_placeholder"
+        android:hint="@string/stream_ui_poll_add_an_option_hint"
         android:layout_marginTop="@dimen/stream_ui_spacing_small"
         android:padding="@dimen/stream_ui_spacing_small"
         android:gravity="center_vertical"
