@@ -207,6 +207,7 @@
     <string name="stream_compose_poll_questions_description" translatable="false">Ask a question</string>
     <string name="stream_compose_poll_option_title" translatable="false">Options</string>
     <string name="stream_compose_poll_option_description" translatable="false">Add an option</string>
+    <string name="stream_compose_poll_option_placeholder" translatable="false">Add an option</string>
     <string name="stream_compose_poll_option_error_duplicated" translatable="false">This is already an option</string>
     <string name="stream_compose_poll_option_error_exceed" translatable="false">Type a number under %d</string>
     <string name="stream_compose_poll_option_discard_dialog_title" translatable="false">Discard poll</string>
