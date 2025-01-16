@@ -57,9 +57,7 @@ class MessageListTests : StreamTestCase() {
     @Test
     fun test_messageListUpdates_whenParticipantSendsMessage() {
         step("GIVEN user opens a channel") {
-            userRobot
-                .login()
-                .openChannel()
+            userRobot.login().openChannel()
         }
         step("WHEN participant sends a message") {
             participantRobot.sendMessage(sampleText)
@@ -75,9 +73,7 @@ class MessageListTests : StreamTestCase() {
     @Test
     fun test_messageListUpdates_whenUserSendsMessage() {
         step("GIVEN user opens a channel") {
-            userRobot
-                .login()
-                .openChannel()
+            userRobot.login().openChannel()
         }
         step("WHEN user sends a message") {
             userRobot.sendMessage(sampleText)
@@ -257,10 +253,8 @@ class MessageListTests : StreamTestCase() {
     @Test
     fun test_typingIndicator() {
         step("GIVEN user opens the channel") {
-            userRobot
-                .login()
-                .openChannel()
-                .sendMessage(sampleText)
+            backendRobot.generateChannels(channelsCount = 1, messagesCount = 1)
+            userRobot.login().openChannel()
         }
         step("WHEN participant starts typing") {
             participantRobot.startTyping()

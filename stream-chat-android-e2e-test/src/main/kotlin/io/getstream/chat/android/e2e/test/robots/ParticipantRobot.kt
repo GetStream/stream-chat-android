@@ -99,12 +99,12 @@ public class ParticipantRobot {
         return this
     }
 
-    public fun sendGiphy(): ParticipantRobot {
+    public fun uploadGiphy(): ParticipantRobot {
         mockServer.postRequest("participant/message?giphy=true")
         return this
     }
 
-    public fun sendGiphyInThread(): ParticipantRobot {
+    public fun uploadGiphyInThread(): ParticipantRobot {
         mockServer.postRequest("participant/message?giphy=true&thread=true")
         return this
     }
@@ -165,8 +165,8 @@ public class ParticipantRobot {
         return this
     }
 
-    public fun deleteReaction(type: String): ParticipantRobot {
-        mockServer.postRequest("participant/reaction?type=$type&delete=true")
+    public fun deleteReaction(type: ReactionType): ParticipantRobot {
+        mockServer.postRequest("participant/reaction?type=${type.reaction}&delete=true")
         return this
     }
 }
