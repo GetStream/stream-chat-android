@@ -1750,14 +1750,16 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/pol
 
 public final class io/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchInput {
 	public static final field $stable I
-	public synthetic fun <init> (Ljava/lang/Object;Ljava/lang/Object;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (Ljava/lang/Object;Ljava/lang/Object;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/lang/Object;Ljava/lang/String;Ljava/lang/Object;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/lang/Object;Ljava/lang/String;Ljava/lang/Object;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/Object;
-	public final fun component2 ()Ljava/lang/Object;
-	public final fun component3-PjHm6EE ()I
-	public final fun copy-GLO5gmY (Ljava/lang/Object;Ljava/lang/Object;I)Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchInput;
-	public static synthetic fun copy-GLO5gmY$default (Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchInput;Ljava/lang/Object;Ljava/lang/Object;IILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchInput;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/Object;
+	public final fun component4-PjHm6EE ()I
+	public final fun copy-YyDlPXQ (Ljava/lang/Object;Ljava/lang/String;Ljava/lang/Object;I)Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchInput;
+	public static synthetic fun copy-YyDlPXQ$default (Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchInput;Ljava/lang/Object;Ljava/lang/String;Ljava/lang/Object;IILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchInput;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDescription ()Ljava/lang/String;
 	public final fun getKeyboardType-PjHm6EE ()I
 	public final fun getMaxValue ()Ljava/lang/Object;
 	public final fun getValue ()Ljava/lang/Object;

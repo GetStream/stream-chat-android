@@ -181,6 +181,7 @@ public fun PollSwitchList(
                                 .fillMaxWidth()
                                 .weight(1f),
                             value = switchInput.value.toString(),
+                            description = switchInput.description,
                             shape = RoundedCornerShape(0.dp),
                             keyboardOptions = KeyboardOptions(keyboardType = switchInput.keyboardType),
                             onValueChange = { newValue ->

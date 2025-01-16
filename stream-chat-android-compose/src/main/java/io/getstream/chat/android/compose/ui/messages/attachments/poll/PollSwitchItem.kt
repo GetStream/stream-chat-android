@@ -41,11 +41,13 @@ public data class PollSwitchItem(
  * The input information that will be used to create a poll switch item.
  *
  * @property value The default value of the switch.
+ * @property description The description of the input in the switch (shown as hint/contentDescription).
  * @property maxValue The maximum vale of the switch. Normally, you can use the limit of the decimal format of the [value].
  * @property keyboardType The type of the input of the switch and decide the keyboard type of the input.
  */
 public data class PollSwitchInput(
     public var value: Any,
+    public val description: String = "",
     public val maxValue: Any? = null,
     public val keyboardType: KeyboardType = KeyboardType.Text,
 )
