@@ -60,7 +60,12 @@ public class DefaultPollSwitchItemFactory(
         listOf(
             PollSwitchItem(
                 title = context.getString(R.string.stream_compose_poll_option_switch_multiple_answers),
-                pollSwitchInput = PollSwitchInput(keyboardType = KeyboardType.Decimal, maxValue = 2, value = 0),
+                pollSwitchInput = PollSwitchInput(
+                    value = 0,
+                    description = context.getString(R.string.stream_compose_poll_option_max_number_of_answers_hint),
+                    maxValue = 2,
+                    keyboardType = KeyboardType.Decimal,
+                ),
                 key = "maxVotesAllowed",
                 enabled = false,
             ),
