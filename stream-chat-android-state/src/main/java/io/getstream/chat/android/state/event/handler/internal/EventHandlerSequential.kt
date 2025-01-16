@@ -308,7 +308,7 @@ internal class EventHandlerSequential(
                 is NotificationMarkReadEvent -> it
                 is NotificationMarkUnreadEvent -> it
                 is NotificationMessageNewEvent -> it.takeUnless { it.unreadChannels == 0 }
-            }?.let{ event: HasUnreadCounts ->
+            }?.let { event: HasUnreadCounts ->
                 totalUnreadCount = event.totalUnreadCount
                 channelUnreadCount = event.unreadChannels
             }

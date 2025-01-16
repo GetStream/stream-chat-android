@@ -591,4 +591,3 @@ public fun randomChannelUserBannedEvent(
         channelLastMessageAt = channelLastMessageAt,
     )
 }
-
