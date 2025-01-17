@@ -30,4 +30,14 @@ public class BackendRobot {
         mockServer.postRequest("mock?channels=$channelsCount&messages=$messagesCount&replies=$repliesCount")
         return this
     }
+
+    public fun failNewMessages(): BackendRobot {
+        mockServer.postRequest("fail_messages")
+        return this
+    }
+
+    public fun freezeNewMessages(): BackendRobot {
+        mockServer.postRequest("freeze_messages")
+        return this
+    }
 }
