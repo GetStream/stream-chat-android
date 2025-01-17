@@ -56,6 +56,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix poll attachment picker not hidden if disabled in the dashboard. [#5562](https://github.com/GetStream/stream-chat-android/pull/5562)
 
 ### ⬆️ Improved
 
@@ -69,6 +70,8 @@
 ### 🐞 Fixed
 - Fix error messages text being overridden by the default error message. [#5551](https://github.com/GetStream/stream-chat-android/pull/5551)
 - Fix wrong hints in the poll creation dialog input fields. [#5561](https://github.com/GetStream/stream-chat-android/pull/5561)
+- Fix poll attachment picker not hidden if disabled in the dashboard. [#5562](https://github.com/GetStream/stream-chat-android/pull/5562)
+
 
 ### ⬆️ Improved
 
