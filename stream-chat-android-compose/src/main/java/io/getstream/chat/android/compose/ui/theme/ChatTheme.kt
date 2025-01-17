@@ -85,6 +85,9 @@ private val LocalTypography = compositionLocalOf<StreamTypography> {
 private val LocalShapes = compositionLocalOf<StreamShapes> {
     error("No shapes provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+private val LocalComponentFactory = compositionLocalOf<ChatComponentFactory> {
+    error("No ComponentFactory provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
 private val LocalAttachmentFactories = compositionLocalOf<List<AttachmentFactory>> {
     error("No attachment factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -237,6 +240,7 @@ private val LocalKeyboardBehaviour = compositionLocalOf<StreamKeyboardBehaviour>
  * @param typography The set of typography styles we provide, wrapped in [StreamTypography].
  * @param shapes The set of shapes we provide, wrapped in [StreamShapes].
  * @param rippleConfiguration Defines the appearance for ripples.
+ * @param componentFactory Provide to customize the stateless components that are used throughout the UI
  * @param attachmentFactories Attachment factories that we provide.
  * @param attachmentPreviewHandlers Attachment preview handlers we provide.
  * @param quotedAttachmentFactories Quoted attachment factories that we provide.
@@ -289,6 +293,7 @@ public fun ChatTheme(
         contentColor = LocalContentColor.current,
         lightTheme = !isInDarkMode,
     ),
+    componentFactory: ChatComponentFactory = ChatComponentFactory(),
     attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories(),
     messageContentFactory: MessageContentFactory = MessageContentFactory(),
     attachmentPreviewHandlers: List<AttachmentPreviewHandler> =
@@ -386,6 +391,7 @@ public fun ChatTheme(
         LocalShapes provides shapes,
         LocalRippleConfiguration provides rippleConfiguration.toRippleConfiguration(),
         LocalUseDefaultSystemMediaPicker provides useDefaultSystemMediaPicker,
+        LocalComponentFactory provides componentFactory,
         LocalAttachmentFactories provides attachmentFactories,
         LocalAttachmentPreviewHandlers provides attachmentPreviewHandlers,
         LocalQuotedAttachmentFactories provides quotedAttachmentFactories,
@@ -478,6 +484,14 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalUseDefaultSystemMediaPicker.current
+
+    /**
+     * Retrieves the current [ChatComponentFactory] at the call site's position in the hierarchy.
+     */
+    public val componentFactory: ChatComponentFactory
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalComponentFactory.current
 
     /**
      * Retrieves the current list of [AttachmentFactory] at the call site's position in the hierarchy.
