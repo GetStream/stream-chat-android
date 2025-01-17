@@ -35,5 +35,5 @@ public enum class MessageDeliveryStatus {
     PENDING,
     SENT,
     FAILED,
-    NIL // is used when there should be no delivery status icon
+    NIL, // is used when there should be no delivery status icon
 }
