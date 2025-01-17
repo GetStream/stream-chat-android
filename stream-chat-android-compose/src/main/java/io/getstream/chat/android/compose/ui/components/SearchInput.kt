@@ -64,8 +64,14 @@ public fun SearchInput(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     onSearchStarted: () -> Unit = {},
-    leadingIcon: @Composable RowScope.() -> Unit = { DefaultSearchLeadingIcon() },
-    label: @Composable () -> Unit = { DefaultSearchLabel() },
+    leadingIcon: @Composable RowScope.() -> Unit = {
+        with(ChatTheme.componentFactory.searchInput) {
+            LeadingIcon()
+        }
+    },
+    label: @Composable () -> Unit = {
+        ChatTheme.componentFactory.searchInput.Label()
+    },
 ) {
     var isFocused by remember { mutableStateOf(false) }
 

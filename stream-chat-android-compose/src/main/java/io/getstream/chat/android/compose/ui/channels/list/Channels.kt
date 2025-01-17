@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -59,9 +60,9 @@ public fun Channels(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
     helperContent: @Composable BoxScope.() -> Unit = {},
-    loadingMoreContent: @Composable () -> Unit = { DefaultChannelsLoadingMoreIndicator() },
-    itemContent: @Composable (ItemState) -> Unit,
-    divider: @Composable () -> Unit,
+    loadingMoreContent: @Composable LazyItemScope.() -> Unit = { DefaultChannelsLoadingMoreIndicator() },
+    itemContent: @Composable LazyItemScope.(ItemState) -> Unit,
+    divider: @Composable LazyItemScope.() -> Unit,
 ) {
     val (_, isLoadingMore, endOfChannels, channelItems) = channelsState
 
