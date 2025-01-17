@@ -54,6 +54,7 @@ import io.getstream.chat.android.compose.ui.messages.attachments.factory.Attachm
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerBack
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactoryFilter
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
@@ -85,7 +86,10 @@ public fun AttachmentsPicker(
     tabFactories: List<AttachmentsPickerTabFactory> = ChatTheme.attachmentsPickerTabFactories,
     shape: Shape = ChatTheme.shapes.bottomSheet,
 ) {
-    val defaultTabIndex = tabFactories
+    // Cross-validate requested tabFactories with the allowed ones from BE
+    val filter = AttachmentsPickerTabFactoryFilter()
+    val allowedFactories = filter.filterAllowedFactories(tabFactories, attachmentsPickerViewModel.channel)
+    val defaultTabIndex = allowedFactories
         .indexOfFirst { it.isPickerTabEnabled(attachmentsPickerViewModel.channel) }
         .takeIf { it >= 0 }
         ?: 0
@@ -121,7 +125,7 @@ public fun AttachmentsPicker(
                 if (selectedAttachmentsPickerMode == null || selectedAttachmentsPickerMode?.isFullContent == false) {
                     AttachmentPickerOptions(
                         hasPickedAttachments = attachmentsPickerViewModel.hasPickedAttachments,
-                        tabFactories = tabFactories,
+                        tabFactories = allowedFactories,
                         tabIndex = selectedTabIndex,
                         channel = attachmentsPickerViewModel.channel,
                         onTabClick = { index, attachmentPickerMode ->
@@ -146,7 +150,7 @@ public fun AttachmentsPicker(
                     color = ChatTheme.attachmentPickerTheme.backgroundPrimary,
                 ) {
                     AnimatedContent(targetState = selectedTabIndex, label = "") {
-                        tabFactories.getOrNull(it)
+                        allowedFactories.getOrNull(it)
                             ?.PickerTabContent(
                                 onAttachmentPickerAction = { pickerAction ->
                                     when (pickerAction) {

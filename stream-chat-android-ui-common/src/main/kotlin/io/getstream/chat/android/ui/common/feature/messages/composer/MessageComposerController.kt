@@ -359,7 +359,10 @@ public class MessageComposerController(
             .onEach {
                 messageValidator.maxMessageLength = it.maxMessageLength
                 commands = it.commands
-                state.value = state.value.copy(hasCommands = commands.isNotEmpty())
+                state.value = state.value.copy(
+                    hasCommands = commands.isNotEmpty(),
+                    pollsEnabled = it.pollsEnabled,
+                )
             }.launchIn(scope)
 
         channelState
