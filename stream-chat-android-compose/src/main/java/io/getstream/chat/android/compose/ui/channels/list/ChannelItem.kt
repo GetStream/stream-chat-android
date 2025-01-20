@@ -46,6 +46,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.currentUserUnreadCount
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channels.list.ItemState
@@ -371,6 +372,8 @@ private fun ChannelItemPreview(
     isMuted: Boolean = false,
     currentUser: User? = null,
 ) {
+    ChatClient.Builder(apiKey = "apiKey", appContext = LocalContext.current).build()
+
     ChatTheme {
         ChannelItem(
             channelItem = ItemState.ChannelItemState(

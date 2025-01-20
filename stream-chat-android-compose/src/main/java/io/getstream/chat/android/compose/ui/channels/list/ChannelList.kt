@@ -30,6 +30,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -372,6 +373,8 @@ public fun DefaultChannelItemDivider() {
 @Preview(showBackground = true, name = "ChannelList Preview (Content state)")
 @Composable
 private fun ChannelListForContentStatePreview() {
+    ChatClient.Builder(apiKey = "apiKey", appContext = LocalContext.current).build()
+
     ChannelListPreview(
         ChannelsState(
             isLoading = false,
