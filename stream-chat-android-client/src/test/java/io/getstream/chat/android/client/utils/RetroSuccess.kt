@@ -16,9 +16,14 @@
 
 package io.getstream.chat.android.client.utils
 
+import io.getstream.chat.android.client.api2.mapping.DomainMapping
+import io.getstream.chat.android.client.api2.mapping.DtoMapping
+import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.chat.android.models.NoOpChannelTransformer
+import io.getstream.chat.android.models.NoOpMessageTransformer
 import kotlinx.coroutines.CoroutineScope
 import okhttp3.Request
 import okio.Timeout
@@ -31,7 +36,18 @@ internal class RetroSuccess<T : Any>(val result: T) : Call<T> {
     fun toRetrofitCall(): RetrofitCall<T> {
         return RetrofitCall(
             call = this,
-            parser = MoshiChatParser { "" },
+            parser = MoshiChatParser(
+                EventMapping(
+                    DomainMapping(
+                        { "" },
+                        NoOpChannelTransformer,
+                        NoOpMessageTransformer,
+                    )
+                ),
+                DtoMapping(
+                    NoOpMessageTransformer
+                ),
+            ),
             CoroutineScope(DispatcherProvider.IO),
         )
     }

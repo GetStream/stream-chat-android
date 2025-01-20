@@ -20,6 +20,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.errorhandler.factory.ErrorHandlerFactory
@@ -43,6 +44,7 @@ import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.InitializationState
+import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCall
@@ -133,6 +135,7 @@ internal class ChatClientTest {
         client = ChatClient(
             config = config,
             api = api,
+            dtoMapping = DtoMapping(NoOpMessageTransformer),
             notifications = mock(),
             tokenManager = tokenManager,
             userCredentialStorage = mock(),

@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client
 
+import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.scope.ClientTestScope
@@ -23,6 +24,7 @@ import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.InitializationState
+import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -159,6 +161,7 @@ public class DependencyResolverTest {
         suspend fun get(): ChatClient = ChatClient(
             config = mock(),
             api = mock(),
+            dtoMapping = DtoMapping(NoOpMessageTransformer),
             notifications = mock(),
             tokenManager = mock(),
             userCredentialStorage = mock(),

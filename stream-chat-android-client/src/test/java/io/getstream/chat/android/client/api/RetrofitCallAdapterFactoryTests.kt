@@ -16,8 +16,13 @@
 
 package io.getstream.chat.android.client.api
 
+import io.getstream.chat.android.client.api2.mapping.DomainMapping
+import io.getstream.chat.android.client.api2.mapping.DtoMapping
+import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.parser2.MoshiChatParser
+import io.getstream.chat.android.models.NoOpChannelTransformer
+import io.getstream.chat.android.models.NoOpMessageTransformer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import okhttp3.mockwebserver.MockWebServer
@@ -42,7 +47,21 @@ internal class RetrofitCallAdapterFactoryTests {
     val server = MockWebServer()
 
     private val factory: CallAdapter.Factory =
-        RetrofitCallAdapterFactory.create(MoshiChatParser { "" }, CoroutineScope(Dispatchers.IO))
+        RetrofitCallAdapterFactory.create(
+            MoshiChatParser(
+                EventMapping(
+                    DomainMapping(
+                        { "" },
+                        NoOpChannelTransformer,
+                        NoOpMessageTransformer,
+                    )
+                ),
+                DtoMapping(
+                    NoOpMessageTransformer
+                ),
+            ),
+            CoroutineScope(Dispatchers.IO),
+        )
     private lateinit var retrofit: Retrofit
 
     @Before

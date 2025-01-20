@@ -18,6 +18,7 @@ package io.getstream.chat.android.client
 
 import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.api.ChatApi
+import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
@@ -34,6 +35,7 @@ import io.getstream.chat.android.models.ConnectionData
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.GuestUser
 import io.getstream.chat.android.models.InitializationState
+import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -105,6 +107,7 @@ internal class ConnectUserTest {
         client = ChatClient(
             config = mock(),
             api = chatApi,
+            dtoMapping = DtoMapping(NoOpMessageTransformer),
             notifications = mock(),
             tokenManager = mock(),
             userCredentialStorage = mock(),

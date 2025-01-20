@@ -18,7 +18,12 @@ package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.MockChatClientBuilder
+import io.getstream.chat.android.client.api2.mapping.DomainMapping
+import io.getstream.chat.android.client.api2.mapping.DtoMapping
+import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.models.NoOpChannelTransformer
+import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.randomUser
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.params.ParameterizedTest
@@ -29,7 +34,18 @@ import org.mockito.kotlin.whenever
 
 internal class MoshiChatParserTest {
 
-    private val parser = MoshiChatParser { "" }
+    private val parser = MoshiChatParser(
+        EventMapping(
+            DomainMapping(
+                { "" },
+                NoOpChannelTransformer,
+                NoOpMessageTransformer,
+            )
+        ),
+        DtoMapping(
+            NoOpMessageTransformer
+        ),
+    )
     private val chatClient: ChatClient = MockChatClientBuilder {
         mock<ChatClient>().also {
             whenever(it.getCurrentUser()) doReturn randomUser()

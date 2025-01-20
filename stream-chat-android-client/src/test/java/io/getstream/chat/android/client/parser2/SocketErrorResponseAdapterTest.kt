@@ -16,14 +16,30 @@
 
 package io.getstream.chat.android.client.parser2
 
+import io.getstream.chat.android.client.api2.mapping.DomainMapping
+import io.getstream.chat.android.client.api2.mapping.DtoMapping
+import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
 import io.getstream.chat.android.client.parser2.testdata.SocketErrorResponseTestData
+import io.getstream.chat.android.models.NoOpChannelTransformer
+import io.getstream.chat.android.models.NoOpMessageTransformer
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 
 internal class SocketErrorResponseAdapterTest {
 
-    private val parser = MoshiChatParser { "" }
+    private val parser = MoshiChatParser(
+        EventMapping(
+            DomainMapping(
+                { "" },
+                NoOpChannelTransformer,
+                NoOpMessageTransformer,
+            )
+        ),
+        DtoMapping(
+            NoOpMessageTransformer
+        ),
+    )
 
     @Test
     fun `Deserialize JSON socket error response`() {

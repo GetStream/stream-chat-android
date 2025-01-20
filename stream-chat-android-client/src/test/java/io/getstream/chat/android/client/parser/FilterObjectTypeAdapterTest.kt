@@ -16,10 +16,15 @@
 
 package io.getstream.chat.android.client.parser
 
+import io.getstream.chat.android.client.api2.mapping.DomainMapping
+import io.getstream.chat.android.client.api2.mapping.DtoMapping
+import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.NeutralFilterObject
+import io.getstream.chat.android.models.NoOpChannelTransformer
+import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomInt
@@ -31,7 +36,18 @@ import org.junit.jupiter.params.provider.MethodSource
 
 internal class FilterObjectTypeAdapterTest {
 
-    private val filterObjectAdapter = MoshiChatParser { "" }
+    private val filterObjectAdapter = MoshiChatParser(
+        EventMapping(
+            DomainMapping(
+                { "" },
+                NoOpChannelTransformer,
+                NoOpMessageTransformer,
+            )
+        ),
+        DtoMapping(
+            NoOpMessageTransformer
+        ),
+    )
 
     /** [writeArguments] */
     @ParameterizedTest
