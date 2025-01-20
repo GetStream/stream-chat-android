@@ -69,6 +69,7 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fix error messages text being overridden by the default error message. [#5551](https://github.com/GetStream/stream-chat-android/pull/5551)
+- Fix wrong hints in the poll creation dialog input fields. [#5561](https://github.com/GetStream/stream-chat-android/pull/5561)
 
 ### ⬆️ Improved
 

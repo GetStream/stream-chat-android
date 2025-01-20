@@ -96,6 +96,7 @@ internal class PollUITest : BaseComposeTest() {
                         title = stringResource(id = R.string.stream_compose_poll_option_switch_multiple_answers),
                         pollSwitchInput = PollSwitchInput(
                             keyboardType = KeyboardType.Decimal,
+                            description = stringResource(id = R.string.stream_compose_poll_option_max_number_of_answers_hint),
                             maxValue = 10,
                             value = 11,
                         ),
