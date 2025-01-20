@@ -967,14 +967,14 @@ constructor(
         return userApi.unblockUser(body = UnblockUserRequest(userId)).toUnitCall()
     }
 
-    override fun partialUpdateUser(id: String, set: Map<String, Any>, unset: List<String>): Call<User> {
+    override fun partialUpdateUser(id: String, set: Map<String, Any>, unset: List<String>): Call<List<User>> {
         return userApi.partialUpdateUsers(
             connectionId = connectionId,
             body = PartialUpdateUsersRequest(
                 listOf(PartialUpdateUserDto(id = id, set = set, unset = unset)),
             ),
         ).mapDomain { response ->
-            response.users[id]!!.toDomain()
+            response.users.values.map { it.toDomain() }
         }
     }
 

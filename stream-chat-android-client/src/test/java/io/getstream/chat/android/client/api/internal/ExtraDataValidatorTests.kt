@@ -162,15 +162,15 @@ internal class ExtraDataValidatorTests {
             "created_at" to "another-date",
         )
         val unset = emptyList<String>()
-        whenever(chatApi.partialUpdateUser(userId, set, unset)) doReturn user.asCall()
+        whenever(chatApi.partialUpdateUser(userId, set, unset)) doReturn listOf(user).asCall()
 
         /* When */
-        val result: Result<User> = validator.partialUpdateUser(userId, set, unset).await()
+        val result: Result<List<User>> = validator.partialUpdateUser(userId, set, unset).await()
 
         /* Then */
         result.shouldBeInstanceOf(Result.Failure::class)
-        (result as Result.Failure).value.message?.contains("updated_at") `should be equal to` true
-        result.value.message?.contains("created_at") `should be equal to` true
+        (result as Result.Failure).value.message.contains("updated_at") `should be equal to` true
+        result.value.message.contains("created_at") `should be equal to` true
         println(result.value.message)
     }
 }

@@ -2735,6 +2735,12 @@ internal constructor(
             set = set,
             unset = unset,
         )
+            .flatMap { users ->
+                when (val user = users.firstOrNull { it.id == id }) {
+                    null -> ErrorCall(userScope, Error.GenericError("User with id $id not found"))
+                    else -> CoroutineCall(userScope) { Result.Success(user) }
+                }
+            }
     }
 
     /**
