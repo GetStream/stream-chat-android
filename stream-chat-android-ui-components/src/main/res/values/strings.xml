@@ -18,7 +18,8 @@
     <string name="stream_ui_poll_question_label">Question</string>
     <string name="stream_ui_poll_ask_a_question_hint">Ask a question</string>
     <string name="stream_ui_poll_options_label">Options</string>
-    <string name="stream_ui_poll_add_an_option_label">Add an Option</string>
+    <string name="stream_ui_poll_add_an_option_label">Add an option</string>
+    <string name="stream_ui_poll_add_an_option_hint">Add an option</string>
     <string name="stream_ui_poll_multiple_answers_label">Multiple answers</string>
     <string name="stream_ui_poll_max_number_of_answers_hint">Max number of answers</string>
     <string name="stream_ui_poll_anonymous_poll_label">Anonymous poll</string>

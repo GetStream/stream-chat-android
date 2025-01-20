@@ -58,6 +58,11 @@ class UserRobot {
         return this
     }
 
+    fun waitForChannelListToLoad(): UserRobot {
+        ChannelListPage.ChannelList.channels.wait()
+        return this
+    }
+
     fun openChannel(channelCellIndex: Int = 0): UserRobot {
         ChannelListPage.ChannelList.channels.wait().findObjects()[channelCellIndex].click()
         return this
@@ -116,7 +121,7 @@ class UserRobot {
 
     fun addReaction(type: ReactionType, messageCellIndex: Int = 0): UserRobot {
         openContextMenu(messageCellIndex)
-        Message.Reactions.reaction(type).waitToAppear().click()
+        ContextMenu.ReactionsView.reaction(type).waitToAppear().click()
         return this
     }
 
@@ -124,7 +129,7 @@ class UserRobot {
         if (usingContextMenu) {
             addReaction(type, messageCellIndex)
         } else {
-            Message.reactions.waitToAppear().click()
+            Message.Reactions.reactions.waitToAppear().click()
             Message.Reactions.reaction(type).waitToAppear().click()
         }
         return this
@@ -238,7 +243,9 @@ class UserRobot {
         if (useComposerCommand) {
             openComposerCommands()
             Composer.giphyButton.waitToAppear().click()
-            sendMessage(giphyMessageText)
+            Composer.inputField.findObject().click()
+            device.typeText(giphyMessageText)
+            Composer.sendButton.findObject().click()
         } else {
             sendMessage("/giphy $giphyMessageText")
         }
