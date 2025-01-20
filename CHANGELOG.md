@@ -72,6 +72,7 @@
 
 ### ⬆️ Improved
 - Create snapshot tests for channels stateless components. [#5570](https://github.com/GetStream/stream-chat-android/pull/5570)
+- Introduce `ChatComponentFactory` for easier channel components customization. Initially supporting channel stateless components. [#5565](https://github.com/GetStream/stream-chat-android/pull/5565)
 
 ### ✅ Added
 
