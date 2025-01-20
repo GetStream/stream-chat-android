@@ -37,11 +37,11 @@ import io.getstream.chat.android.client.api2.endpoint.PollsApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.endpoint.VideoCallApi
+import io.getstream.chat.android.client.api2.mapping.DomainMapping
+import io.getstream.chat.android.client.api2.mapping.DtoMapping
+import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.mapping.toDomain
-import io.getstream.chat.android.client.api2.mapping.toDto
-import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
@@ -85,11 +85,11 @@ import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
 import io.getstream.chat.android.client.api2.model.requests.UpstreamVoteDto
 import io.getstream.chat.android.client.api2.model.requests.VideoCallCreateRequest
 import io.getstream.chat.android.client.api2.model.requests.VideoCallTokenRequest
-import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.CreateVideoCallResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
 import io.getstream.chat.android.client.api2.model.response.VideoCallTokenResponse
+import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
@@ -98,7 +98,6 @@ import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.uploader.FileTransformer
 import io.getstream.chat.android.client.uploader.FileUploader
-import io.getstream.chat.android.client.utils.ApiModelTransformers
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.Attachment
@@ -123,7 +122,6 @@ import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
-import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.VideoCallInfo
 import io.getstream.chat.android.models.VideoCallToken
 import io.getstream.chat.android.models.Vote
@@ -147,8 +145,9 @@ import io.getstream.chat.android.client.api.models.SendActionRequest as DomainSe
 internal class MoshiChatApi
 @Suppress("LongParameterList")
 constructor(
-    val currentUserIdProvider: () -> UserId?,
-    private val apiModelTransformers: ApiModelTransformers,
+    private val domainMapping: DomainMapping,
+    private val eventMapping: EventMapping,
+    private val dtoMapping: DtoMapping,
     private val fileUploader: FileUploader,
     private val fileTransformer: FileTransformer,
     private val userApi: UserApi,
@@ -208,28 +207,23 @@ constructor(
         this._connectionId.value = ""
     }
 
-    override fun appSettings(): Call<AppSettings> {
-        return configApi.getAppSettings().map(AppSettingsResponse::toDomain)
-    }
+    override fun appSettings(): Call<AppSettings> =
+        configApi.getAppSettings().mapDomain { it.toDomain() }
 
     override fun sendMessage(
         channelType: String,
         channelId: String,
         message: Message,
-    ): Call<Message> {
-        return messageApi.sendMessage(
-            channelType = channelType,
-            channelId = channelId,
-            message = SendMessageRequest(
-                message = message.toDto(apiModelTransformers.sendMessageTransformer),
-                skip_push = message.skipPushNotification,
-                skip_enrich_url = message.skipEnrichUrl,
-            ),
-        ).map { response -> response.message.toDomain(
-            currentUserId = currentUserIdProvider(),
-            channelTransformer = apiModelTransformers.receiveChannelTransformer,
-            messageTransformer = apiModelTransformers.receiveMessageTransformer,
-        ) }
+    ): Call<Message> = messageApi.sendMessage(
+        channelType = channelType,
+        channelId = channelId,
+        message = SendMessageRequest(
+            message = with(dtoMapping) { message.toDto() },
+            skip_push = message.skipPushNotification,
+            skip_enrich_url = message.skipEnrichUrl,
+        ),
+    ).mapDomain { response ->
+        response.message.toDomain()
     }
 
     override fun updateMessage(
@@ -238,14 +232,12 @@ constructor(
         return messageApi.updateMessage(
             messageId = message.id,
             message = UpdateMessageRequest(
-                message = message.toDto(apiModelTransformers.sendMessageTransformer),
+                message = with(dtoMapping) { message.toDto() },
                 skip_enrich_url = message.skipEnrichUrl,
             ),
-        ).map { response -> response.message.toDomain(
-            currentUserIdProvider(),
-            channelTransformer = apiModelTransformers.receiveChannelTransformer,
-            apiModelTransformers.receiveMessageTransformer,
-        ) }
+        ).mapDomain { response ->
+            response.message.toDomain()
+        }
     }
 
     override fun partialUpdateMessage(
@@ -261,22 +253,16 @@ constructor(
                 unset = unset,
                 skip_enrich_url = skipEnrichUrl,
             ),
-        ).map { response -> response.message.toDomain(
-            currentUserIdProvider(),
-            channelTransformer = apiModelTransformers.receiveChannelTransformer,
-            apiModelTransformers.receiveMessageTransformer,
-        ) }
+        ).mapDomain { response ->
+                response.message.toDomain()
+        }
     }
 
     override fun getMessage(messageId: String): Call<Message> {
         return messageApi.getMessage(
             messageId = messageId,
-        ).map { response ->
-            response.message.toDomain(
-                currentUserIdProvider(),
-                channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                apiModelTransformers.receiveMessageTransformer,
-            )
+        ).mapDomain { response ->
+            response.message.toDomain()
         }
     }
 
@@ -284,11 +270,9 @@ constructor(
         return messageApi.deleteMessage(
             messageId = messageId,
             hard = if (hard) true else null,
-        ).map { response -> response.message.toDomain(
-            currentUserIdProvider(),
-            channelTransformer = apiModelTransformers.receiveChannelTransformer,
-            apiModelTransformers.receiveMessageTransformer,
-        ) }
+        ).mapDomain { response ->
+            response.message.toDomain()
+        }
     }
 
     override fun getReactions(
@@ -300,13 +284,9 @@ constructor(
             messageId = messageId,
             offset = offset,
             limit = limit,
-        ).map { response ->
+        ).mapDomain { response ->
             response.reactions.map {
-                it.toDomain(
-                    currentUserId = currentUserIdProvider(),
-                    channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                    messageTransformer = apiModelTransformers.receiveMessageTransformer,
-                )
+                it.toDomain()
             }
         }
     }
@@ -315,15 +295,11 @@ constructor(
         return messageApi.sendReaction(
             messageId = reaction.messageId,
             request = ReactionRequest(
-                reaction = reaction.toDto(),
+                reaction = with(dtoMapping) { reaction.toDto() },
                 enforce_unique = enforceUnique,
             ),
-        ).map { response ->
-            response.reaction.toDomain(
-                currentUserId = currentUserIdProvider(),
-                channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                messageTransformer = apiModelTransformers.receiveMessageTransformer,
-            )
+        ).mapDomain { response ->
+            response.reaction.toDomain()
         }
     }
 
@@ -334,11 +310,9 @@ constructor(
         return messageApi.deleteReaction(
             messageId = messageId,
             reactionType = reactionType,
-        ).map { response -> response.message.toDomain(
-            currentUserId = currentUserIdProvider(),
-            channelTransformer = apiModelTransformers.receiveChannelTransformer,
-            messageTransformer = apiModelTransformers.receiveMessageTransformer,
-        ) }
+        ).mapDomain { response ->
+            response.message.toDomain()
+        }
     }
 
     override fun addDevice(device: Device): Call<Unit> {
@@ -356,7 +330,9 @@ constructor(
     }
 
     override fun getDevices(): Call<List<Device>> {
-        return deviceApi.getDevices().map { response -> response.devices.map(DeviceDto::toDomain) }
+        return deviceApi.getDevices().mapDomain { response ->
+            response.devices.map { it.toDomain() }
+        }
     }
 
     override fun muteCurrentUser(): Call<Mute> {
@@ -380,12 +356,8 @@ constructor(
                 user_id = this.userId,
                 timeout = timeout,
             ),
-        ).map { response ->
-            response.mute.toDomain(
-                currentUserId = currentUserIdProvider(),
-                channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                messageTransformer = apiModelTransformers.receiveMessageTransformer,
-            )
+        ).mapDomain { response ->
+            response.mute.toDomain()
         }
     }
 
@@ -535,22 +507,14 @@ constructor(
         unflag(mutableMapOf("target_message_id" to messageId))
 
     private fun flag(body: FlagRequest): Call<Flag> {
-        return moderationApi.flag(body = body).map { response ->
-            response.flag.toDomain(
-                currentUserId = currentUserIdProvider(),
-                channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                messageTransformer = apiModelTransformers.receiveMessageTransformer,
-            )
+        return moderationApi.flag(body = body).mapDomain { response ->
+                response.flag.toDomain()
         }
     }
 
     private fun unflag(body: Map<String, String>): Call<Flag> {
-        return moderationApi.unflag(body = body).map { response ->
-            response.flag.toDomain(
-                currentUserId = currentUserIdProvider(),
-                channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                messageTransformer = apiModelTransformers.receiveMessageTransformer,
-            )
+        return moderationApi.unflag(body = body).mapDomain { response ->
+                response.flag.toDomain()
         }
     }
 
@@ -609,14 +573,10 @@ constructor(
                 created_at_before = createdAtBefore,
                 created_at_before_or_equal = createdAtBeforeOrEqual,
             ),
-        ).map { response ->
-            response.bans.map {
-                it.toDomain(
-                    currentUserId = currentUserIdProvider(),
-                    channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                    messageTransformer = apiModelTransformers.receiveMessageTransformer,
-                )
-            }
+        ).mapDomain { response ->
+                response.bans.map {
+                    it.toDomain()
+                }
         }
     }
 
@@ -675,14 +635,10 @@ constructor(
                 sort = sort,
                 pagination = pagination,
             ),
-        ).map { response ->
-            response.messages.map {
-                it.toDomain(
-                    currentUserId = currentUserIdProvider(),
-                    channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                    messageTransformer = apiModelTransformers.receiveMessageTransformer,
-                )
-            }
+        ).mapDomain { response ->
+                response.messages.map {
+                    it.toDomain()
+                }
         }
     }
 
@@ -695,7 +651,12 @@ constructor(
         return channelApi.updateChannel(
             channelType = channelType,
             channelId = channelId,
-            body = UpdateChannelRequest(extraData, updateMessage?.toDto(apiModelTransformers.sendMessageTransformer)),
+            body = with(dtoMapping) {
+                UpdateChannelRequest(
+                    extraData,
+                    updateMessage?.toDto()
+                )
+            },
         ).map(this::flattenChannel)
     }
 
@@ -743,7 +704,7 @@ constructor(
         return channelApi.truncateChannel(
             channelType = channelType,
             channelId = channelId,
-            body = TruncateChannelRequest(message = systemMessage?.toDto(apiModelTransformers.sendMessageTransformer)),
+            body = with(dtoMapping) { TruncateChannelRequest(message = systemMessage?.toDto()) },
         ).map(this::flattenChannel)
     }
 
@@ -829,12 +790,14 @@ constructor(
         return channelApi.addMembers(
             channelType = channelType,
             channelId = channelId,
-            body = AddMembersRequest(
-                add_members = members.map(MemberData::toDto),
-                message = systemMessage?.toDto(apiModelTransformers.sendMessageTransformer),
-                hide_history = hideHistory,
-                skip_push = skipPush,
-            ),
+            body = with(dtoMapping) {
+                AddMembersRequest(
+                    add_members = members.map { it.toDto() },
+                    message = systemMessage?.toDto(),
+                    hide_history = hideHistory,
+                    skip_push = skipPush,
+                )
+            },
         ).map(this::flattenChannel)
     }
 
@@ -848,11 +811,13 @@ constructor(
         return channelApi.removeMembers(
             channelType = channelType,
             channelId = channelId,
-            body = RemoveMembersRequest(
-                members,
-                systemMessage?.toDto(apiModelTransformers.sendMessageTransformer),
-                skipPush,
-            ),
+            body = with(dtoMapping) {
+                RemoveMembersRequest(
+                    members,
+                    systemMessage?.toDto(),
+                    skipPush,
+                )
+            },
         ).map(this::flattenChannel)
     }
 
@@ -866,11 +831,13 @@ constructor(
         return channelApi.inviteMembers(
             channelType = channelType,
             channelId = channelId,
-            body = InviteMembersRequest(
-                members,
-                systemMessage?.toDto(apiModelTransformers.sendMessageTransformer),
-                skipPush,
-            ),
+            body = with(dtoMapping) {
+                InviteMembersRequest(
+                    members,
+                    systemMessage?.toDto(),
+                    skipPush,
+                )
+            },
         ).map(this::flattenChannel)
     }
 
@@ -886,62 +853,32 @@ constructor(
             channelId = channelId,
             userId = userId,
             body = UpdateMemberPartialRequest(set, unset),
-        ).map { response ->
-            response.channel_member.toDomain(
-                currentUserId = currentUserIdProvider(),
-                channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                messageTransformer = apiModelTransformers.receiveMessageTransformer,
-            )
+        ).mapDomain { response ->
+            response.channel_member.toDomain()
         }
     }
 
-    private fun flattenChannel(response: ChannelResponse): Channel {
+    private fun flattenChannel(response: ChannelResponse): Channel = with(domainMapping) {
         return response.channel.toDomain(
-            currentUserId = currentUserIdProvider(),
             eventChatLastMessageAt = null,
-            channelTransformer = apiModelTransformers.receiveChannelTransformer,
-            messageTransformer = apiModelTransformers.receiveMessageTransformer,
         ).let { channel ->
             channel.copy(
                 watcherCount = response.watcher_count,
                 read = response.read.map {
                     it.toDomain(
-                        currentUserId = currentUserIdProvider(),
                         lastReceivedEventDate = channel.lastMessageAt ?: it.last_read,
-                        channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                        messageTransformer = apiModelTransformers.receiveMessageTransformer,
                     )
                 },
-                members = response.members.map { it.toDomain(
-                    currentUserId = currentUserIdProvider(),
-                    channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                    messageTransformer = apiModelTransformers.receiveMessageTransformer,
-                ) },
-                membership = response.membership?.toDomain(
-                    currentUserId = currentUserIdProvider(),
-                    channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                    messageTransformer = apiModelTransformers.receiveMessageTransformer,
-                ),
+                members = response.members.map { it.toDomain() },
+                membership = response.membership?.toDomain(),
                 messages = response.messages.map {
-                    it.toDomain(
-                        currentUserId = currentUserIdProvider(),
-                        channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                        messageTransformer = apiModelTransformers.receiveMessageTransformer,
-                    ).enrichWithCid(channel.cid)
+                    it.toDomain().enrichWithCid(channel.cid)
                 },
                 pinnedMessages = response.pinned_messages.map {
-                    it.toDomain(
-                        currentUserId = currentUserIdProvider(),
-                        channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                        messageTransformer = apiModelTransformers.receiveMessageTransformer,
-                    ).enrichWithCid(channel.cid)
+                    it.toDomain().enrichWithCid(channel.cid)
                 },
                 watchers = response.watchers.map {
-                    it.toDomain(
-                        currentUserId = currentUserIdProvider(),
-                        channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                        messageTransformer = apiModelTransformers.receiveMessageTransformer,
-                    )
+                    it.toDomain()
                 },
                 hidden = response.hidden,
                 hiddenMessagesBefore = response.hide_messages_before,
@@ -957,27 +894,18 @@ constructor(
         parentId = parentId,
         limit = limit,
         lastId = lastId,
-    ).map { response ->
-        response.messages.map {
-            it.toDomain(
-                currentUserId = currentUserIdProvider(),
-                channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                messageTransformer = apiModelTransformers.receiveMessageTransformer,
-            )
-        }
+    ).mapDomain { response -> response.messages.map {
+        it.toDomain()
+    }
     }
 
     override fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
         return messageApi.getReplies(
             messageId = messageId,
             limit = limit,
-        ).map { response ->
+        ).mapDomain { response ->
             response.messages.map {
-                it.toDomain(
-                    currentUserId = currentUserIdProvider(),
-                    channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                    messageTransformer = apiModelTransformers.receiveMessageTransformer,
-                )
+                it.toDomain()
             }
         }
     }
@@ -987,13 +915,9 @@ constructor(
             messageId = messageId,
             limit = limit,
             firstId = firstId,
-        ).map { response ->
+        ).mapDomain { response ->
             response.messages.map {
-                it.toDomain(
-                    currentUserId = currentUserIdProvider(),
-                    channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                    messageTransformer = apiModelTransformers.receiveMessageTransformer,
-                )
+                it.toDomain()
             }
         }
     }
@@ -1007,27 +931,20 @@ constructor(
                 type = request.type,
                 form_data = request.formData,
             ),
-        ).map { response ->
-            response.message.toDomain(
-                currentUserId = currentUserIdProvider(),
-                channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                messageTransformer = apiModelTransformers.receiveMessageTransformer,
-            )
+        ).mapDomain { response ->
+            response.message.toDomain()
         }
     }
 
     override fun updateUsers(users: List<User>): Call<List<User>> {
-        val map: Map<String, UpstreamUserDto> = users.associateBy({ it.id }, User::toDto)
         return userApi.updateUsers(
             connectionId = connectionId,
-            body = UpdateUsersRequest(map),
-        ).map { response ->
+            body = with(dtoMapping) {
+                UpdateUsersRequest(users.associateBy({ it.id }, { it.toDto() }))
+            },
+        ).mapDomain { response ->
             response.users.values.map {
-                it.toDomain(
-                    currentUserId = currentUserIdProvider(),
-                    channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                    messageTransformer = apiModelTransformers.receiveMessageTransformer,
-                )
+                it.toDomain()
             }
         }
     }
@@ -1035,16 +952,15 @@ constructor(
     override fun blockUser(userId: String): Call<UserBlock> {
         return userApi.blockUser(
             body = BlockUserRequest(userId),
-        ).map { response ->
+        ).mapDomain { response ->
             response.toDomain()
         }
     }
 
-    override fun queryBlockedUsers(): Call<List<UserBlock>> {
-        return userApi.queryBlockedUsers().map {
+    override fun queryBlockedUsers(): Call<List<UserBlock>> =
+        userApi.queryBlockedUsers().mapDomain {
             it.blocks.toDomain()
         }
-    }
 
     override fun unblockUser(userId: String): Call<Unit> {
         return userApi.unblockUser(body = UnblockUserRequest(userId)).toUnitCall()
@@ -1056,25 +972,17 @@ constructor(
             body = PartialUpdateUsersRequest(
                 listOf(PartialUpdateUserDto(id = id, set = set, unset = unset)),
             ),
-        ).map { response ->
-            response.users[id]!!.toDomain(
-                currentUserId = currentUserIdProvider(),
-                channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                messageTransformer = apiModelTransformers.receiveMessageTransformer,
-            )
+        ).mapDomain { response ->
+            response.users[id]!!.toDomain()
         }
     }
 
     override fun getGuestUser(userId: String, userName: String): Call<GuestUser> {
         return guestApi.getGuestUser(
             body = GuestUserRequest.create(userId, userName),
-        ).map { response ->
+        ).mapDomain { response ->
             GuestUser(
-                response.user.toDomain(
-                    currentUserId = currentUserIdProvider(),
-                    channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                    messageTransformer = apiModelTransformers.receiveMessageTransformer,
-                ),
+                response.user.toDomain(),
                 response.access_token
             )
         }
@@ -1084,18 +992,13 @@ constructor(
         return messageApi.translate(
             messageId = messageId,
             request = TranslateMessageRequest(language),
-        ).map { response ->
-            response.message.toDomain(
-                currentUserId = currentUserIdProvider(),
-                channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                messageTransformer = apiModelTransformers.receiveMessageTransformer,
-            )
+        ).mapDomain { response ->
+            response.message.toDomain()
         }
     }
 
-    override fun og(url: String): Call<Attachment> {
-        return ogApi.get(url).map { it.toDomain() }
-    }
+    override fun og(url: String): Call<Attachment> =
+        ogApi.get(url).mapDomain { it.toDomain() }
 
     override fun searchMessages(request: SearchMessagesRequest): Call<List<Message>> {
         val newRequest = io.getstream.chat.android.client.api2.model.requests.SearchMessagesRequest(
@@ -1107,13 +1010,9 @@ constructor(
             sort = request.sort,
         )
         return generalApi.searchMessages(newRequest)
-            .map { response ->
+            .mapDomain { response ->
                 response.results.map { resp ->
-                    resp.message.toDomain(
-                        currentUserId = currentUserIdProvider(),
-                        channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                        messageTransformer = apiModelTransformers.receiveMessageTransformer,
-                    )
+                    resp.message.toDomain()
                         .let { message ->
                             (message.cid.takeUnless(CharSequence::isBlank) ?: message.channelInfo?.cid)
                                 ?.let(message::enrichWithCid)
@@ -1140,26 +1039,22 @@ constructor(
             sort = sort?.toDto(),
         )
         return generalApi.searchMessages(newRequest)
-            .map { response ->
-                val results = response.results
+            .mapDomain { response ->
+                    val results = response.results
 
-                val messages = results.map { resp ->
-                    resp.message.toDomain(
-                        currentUserId = currentUserIdProvider(),
-                        channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                        messageTransformer = apiModelTransformers.receiveMessageTransformer,
-                    ).let { message ->
-                        (message.cid.takeUnless(CharSequence::isBlank) ?: message.channelInfo?.cid)
-                            ?.let(message::enrichWithCid)
-                            ?: message
+                    val messages = results.map { resp ->
+                        resp.message.toDomain().let { message ->
+                            (message.cid.takeUnless(CharSequence::isBlank) ?: message.channelInfo?.cid)
+                                ?.let(message::enrichWithCid)
+                                ?: message
+                        }
                     }
-                }
-                SearchMessagesResult(
-                    messages = messages,
-                    next = response.next,
-                    previous = response.previous,
-                    resultsWarning = response.resultsWarning?.toDomain(),
-                )
+                    SearchMessagesResult(
+                        messages = messages,
+                        next = response.next,
+                        previous = response.previous,
+                        resultsWarning = response.resultsWarning?.toDomain(),
+                    )
             }
     }
 
@@ -1241,13 +1136,9 @@ constructor(
             userApi.queryUsers(
                 connectionId,
                 request,
-            ).map { response ->
+            ).mapDomain { response ->
                 response.users.map {
-                    it.toDomain(
-                        currentUserId = currentUserIdProvider(),
-                        channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                        messageTransformer = apiModelTransformers.receiveMessageTransformer,
-                    )
+                    it.toDomain()
                 }
             }
         }
@@ -1268,22 +1159,24 @@ constructor(
         sort: QuerySorter<Member>,
         members: List<Member>,
     ): Call<List<Member>> {
-        val request = io.getstream.chat.android.client.api2.model.requests.QueryMembersRequest(
-            type = channelType,
-            id = channelId,
-            filter_conditions = filter.toMap(),
-            offset = offset,
-            limit = limit,
-            sort = sort.toDto(),
-            members = members.map(Member::toDto),
-        )
+        val request = with(dtoMapping) {
+            io.getstream.chat.android.client.api2.model.requests.QueryMembersRequest(
+                type = channelType,
+                id = channelId,
+                filter_conditions = filter.toMap(),
+                offset = offset,
+                limit = limit,
+                sort = sort.toDto(),
+                members = members.map { it.toDto() },
+            )
+        }
 
         return generalApi.queryMembers(request)
-            .map { response -> response.members.map { it.toDomain(
-                currentUserId = currentUserIdProvider(),
-                channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                messageTransformer = apiModelTransformers.receiveMessageTransformer,
-            ) } }
+            .mapDomain { response ->
+                response.members.map {
+                    it.toDomain()
+                }
+            }
     }
 
     override fun createVideoCall(
@@ -1308,7 +1201,7 @@ constructor(
         channelType: String,
         channelId: String,
         extraData: Map<Any, Any>,
-    ): Call<ChatEvent> {
+    ): Call<ChatEvent> = with(eventMapping) {
         val map = mutableMapOf<Any, Any>("type" to eventType)
         map.putAll(extraData)
 
@@ -1317,25 +1210,17 @@ constructor(
             channelId = channelId,
             request = SendEventRequest(map),
         ).map { response ->
-            response.event.toDomain(
-                currentUserId = currentUserIdProvider(),
-                channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                messageTransformer = apiModelTransformers.receiveMessageTransformer,
-            )
+            response.event.toDomain()
         }
     }
 
-    override fun getSyncHistory(channelIds: List<String>, lastSyncAt: String): Call<List<ChatEvent>> {
+    override fun getSyncHistory(channelIds: List<String>, lastSyncAt: String): Call<List<ChatEvent>> = with(eventMapping) {
         return generalApi.getSyncHistory(
             body = SyncHistoryRequest(channelIds, lastSyncAt),
             connectionId = connectionId,
         ).map { response ->
             response.events.map {
-                it.toDomain(
-                    currentUserId = currentUserIdProvider(),
-                    channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                    messageTransformer = apiModelTransformers.receiveMessageTransformer,
-                )
+                it.toDomain()
             }
         }
     }
@@ -1355,30 +1240,26 @@ constructor(
         val lazyQueryThreads = {
             threadsApi.queryThreads(
                 connectionId,
-                io.getstream.chat.android.client.api2.model.requests.QueryThreadsRequest(
-                    watch = query.watch,
-                    limit = query.limit,
-                    member_limit = query.memberLimit,
-                    next = query.next,
-                    participant_limit = query.participantLimit,
-                    prev = query.prev,
-                    reply_limit = query.replyLimit,
-                    user = query.user?.toDto(),
-                    user_id = query.userId,
-                ),
-            ).map { response ->
-                QueryThreadsResult(
-                    threads = response.threads.map {
-                        it.toDomain(
-                            currentUserId = currentUserIdProvider(),
-                            channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                            messageTransformer = apiModelTransformers.receiveMessageTransformer
-                        )
-                    },
-                    prev = response.prev,
-                    next = response.next,
-                )
-            }
+                with(dtoMapping) {
+                    io.getstream.chat.android.client.api2.model.requests.QueryThreadsRequest(
+                        watch = query.watch,
+                        limit = query.limit,
+                        member_limit = query.memberLimit,
+                        next = query.next,
+                        participant_limit = query.participantLimit,
+                        prev = query.prev,
+                        reply_limit = query.replyLimit,
+                        user = query.user?.toDto(),
+                        user_id = query.userId,
+                    )
+                },
+            ).mapDomain { response ->
+                    QueryThreadsResult(
+                        threads = response.threads.map { it.toDomain() },
+                        prev = response.prev,
+                        next = response.next,
+                    )
+                }
         }
         return if (connectionId.isBlank() && query.watch) {
             logger.i { "[queryThreads] postponing because an active connection is required" }
@@ -1400,12 +1281,8 @@ constructor(
                 messageId,
                 connectionId,
                 options.toMap(),
-            ).map { response ->
-                response.thread.toDomain(
-                    currentUserId = currentUserIdProvider(),
-                    channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                    messageTransformer = apiModelTransformers.receiveMessageTransformer,
-                )
+            ).mapDomain { response ->
+                    response.thread.toDomain()
             }
         }
         return if (connectionId.isBlank() && options.watch) {
@@ -1430,12 +1307,8 @@ constructor(
                 set = set,
                 unset = unset,
             ),
-        ).map { response ->
-            response.thread.toDomain(
-                currentUserId = currentUserIdProvider(),
-                channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                messageTransformer = apiModelTransformers.receiveMessageTransformer,
-            )
+        ).mapDomain { response ->
+                response.thread.toDomain()
         }
     }
 
@@ -1463,49 +1336,33 @@ constructor(
         messageId: String,
         pollId: String,
         vote: UpstreamVoteDto,
-    ): Call<Vote> {
-        return pollsApi.castPollVote(
+    ): Call<Vote> =
+        pollsApi.castPollVote(
             messageId,
             pollId,
             PollVoteRequest(vote),
-        ).map { it.vote.toDomain(
-            currentUserId = currentUserIdProvider(),
-            channelTransformer = apiModelTransformers.receiveChannelTransformer,
-            messageTransformer = apiModelTransformers.receiveMessageTransformer,
-        ) }
-    }
+        ).mapDomain { it.vote.toDomain() }
 
-    override fun removePollVote(messageId: String, pollId: String, voteId: String): Call<Vote> {
-        return pollsApi.removePollVote(
+    override fun removePollVote(messageId: String, pollId: String, voteId: String): Call<Vote> =
+        pollsApi.removePollVote(
             messageId,
             pollId,
             voteId,
-        ).map { it.vote.toDomain(
-            currentUserId = currentUserIdProvider(),
-            channelTransformer = apiModelTransformers.receiveChannelTransformer,
-            messageTransformer = apiModelTransformers.receiveMessageTransformer,
-        ) }
-    }
+        ).mapDomain { it.vote.toDomain() }
 
-    override fun closePoll(pollId: String): Call<Poll> {
-        return pollsApi.updatePoll(
+    override fun closePoll(pollId: String): Call<Poll> =
+        pollsApi.updatePoll(
             pollId,
             PollUpdateRequest(
                 set = mapOf("is_closed" to true),
             ),
-        ).map { it.poll.toDomain(
-            currentUserId = currentUserIdProvider(),
-            channelTransformer = apiModelTransformers.receiveChannelTransformer,
-            messageTransformer = apiModelTransformers.receiveMessageTransformer,
-        ) }
-    }
+        ).mapDomain { it.poll.toDomain() }
 
-    override fun suggestPollOption(pollId: String, option: String): Call<Option> {
-        return pollsApi.suggestPollOption(
+    override fun suggestPollOption(pollId: String, option: String): Call<Option> =
+        pollsApi.suggestPollOption(
             pollId,
             SuggestPollOptionRequest(option),
-        ).map { it.poll_option.toDomain() }
-    }
+        ).mapDomain { it.poll_option.toDomain() }
 
     override fun createPoll(pollConfig: PollConfig): Call<Poll> {
         return pollsApi.createPoll(
@@ -1522,11 +1379,7 @@ constructor(
                 allow_user_suggested_options = pollConfig.allowUserSuggestedOptions,
                 allow_answers = pollConfig.allowAnswers,
             ),
-        ).map { it.poll.toDomain(
-            currentUserId = currentUserIdProvider(),
-            channelTransformer = apiModelTransformers.receiveChannelTransformer,
-            messageTransformer = apiModelTransformers.receiveMessageTransformer,
-        ) }
+        ).mapDomain { it.poll.toDomain() }
     }
 
     override fun warmUp() {
@@ -1536,4 +1389,7 @@ constructor(
     private fun <T : Any> postponeCall(call: () -> Call<T>): Call<T> {
         return callPostponeHelper.postponeCall(call)
     }
+
+    private fun <T: Any, R: Any> RetrofitCall<T>.mapDomain(transform: DomainMapping.(T) -> R): Call<R> =
+        map { domainMapping.transform(it) }
 }

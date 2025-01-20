@@ -20,8 +20,9 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api2.FlagRequestAdapterFactory
 import io.getstream.chat.android.client.api2.MoshiUrlQueryPayloadFactory
+import io.getstream.chat.android.client.api2.mapping.DtoMapping
+import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.mapping.toDomain
-import io.getstream.chat.android.client.api2.mapping.toDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
@@ -47,16 +48,12 @@ import io.getstream.chat.android.client.parser2.adapters.UpstreamReactionDtoAdap
 import io.getstream.chat.android.client.parser2.adapters.UpstreamUserDtoAdapter
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
-import io.getstream.chat.android.models.ChannelTransformer
-import io.getstream.chat.android.models.MessageTransformer
-import io.getstream.chat.android.models.UserId
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
 internal class MoshiChatParser(
-    val currentUserIdProvider: () -> UserId?,
-    val channelTransformer: ChannelTransformer,
-    val messageTransformer: MessageTransformer,
+    private val eventMapping: EventMapping,
+    private val dtoMapping: DtoMapping,
 ) : ChatParser {
 
     private val moshi: Moshi by lazy {
@@ -106,7 +103,7 @@ internal class MoshiChatParser(
     private val upstreamConnectedEventAdapter = moshi.adapter(UpstreamConnectedEventDto::class.java)
 
     private fun serializeConnectedEvent(connectedEvent: ConnectedEvent): String {
-        val eventDto = connectedEvent.toDto()
+        val eventDto = with(dtoMapping) { connectedEvent.toDto() }
         return upstreamConnectedEventAdapter.toJson(eventDto)
     }
 
@@ -134,12 +131,8 @@ internal class MoshiChatParser(
 
     private val chatEventDtoAdapter = moshi.adapter(ChatEventDto::class.java)
 
-    private fun parseAndProcessEvent(raw: String): ChatEvent {
-        val event = chatEventDtoAdapter.fromJson(raw)!!.toDomain(
-            currentUserIdProvider(),
-            channelTransformer,
-            messageTransformer,
-        )
+    private fun parseAndProcessEvent(raw: String): ChatEvent = with(eventMapping) {
+        val event = chatEventDtoAdapter.fromJson(raw)!!.toDomain()
         return event.enrichIfNeeded()
     }
 }

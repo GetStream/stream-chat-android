@@ -58,7 +58,7 @@ import io.getstream.chat.android.client.api.models.identifier.SendReactionIdenti
 import io.getstream.chat.android.client.api.models.identifier.ShuffleGiphyIdentifier
 import io.getstream.chat.android.client.api.models.identifier.UpdateMessageIdentifier
 import io.getstream.chat.android.client.api.models.identifier.getNewerRepliesIdentifier
-import io.getstream.chat.android.client.api2.mapping.toDto
+import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
@@ -237,6 +237,7 @@ public class ChatClient
 internal constructor(
     public val config: ChatClientConfig,
     private val api: ChatApi,
+    private val dtoMapping: DtoMapping,
     private val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val userCredentialStorage: UserCredentialStorage,
@@ -3200,7 +3201,7 @@ internal constructor(
         params: CreateChannelParams,
     ): Call<Channel> {
         val currentUser = getCurrentUser()
-        val members = params.members.map(MemberData::toDto)
+        val members = with(dtoMapping) { params.members.map { it.toDto() } }
         val queryChannelRequest = QueryChannelRequest()
             .withData(params.extraData + mapOf(QueryChannelRequest.KEY_MEMBERS to members))
         return queryChannelInternal(
@@ -3897,6 +3898,7 @@ internal constructor(
             return ChatClient(
                 config,
                 module.api(),
+                module.dtoMapping,
                 module.notifications(),
                 tokenManager,
                 userCredentialStorage = userCredentialStorage ?: SharedPreferencesCredentialStorage(appContext),

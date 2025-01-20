@@ -51,6 +51,9 @@ import io.getstream.chat.android.client.api2.endpoint.PollsApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.endpoint.VideoCallApi
+import io.getstream.chat.android.client.api2.mapping.DomainMapping
+import io.getstream.chat.android.client.api2.mapping.DtoMapping
+import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.debugger.ChatClientDebugger
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -100,11 +103,20 @@ constructor(
     private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it },
 ) {
 
+    private val domainMapping by lazy {
+        DomainMapping(
+            currentUserIdProvider,
+            apiModelTransformers.receiveChannelTransformer,
+            apiModelTransformers.receiveMessageTransformer,
+        )
+    }
+    internal val dtoMapping by lazy { DtoMapping(apiModelTransformers.sendMessageTransformer) }
+    private val eventMapping by lazy { EventMapping(domainMapping) }
+
     private val moshiParser: ChatParser by lazy {
         MoshiChatParser(
-            currentUserIdProvider = currentUserIdProvider,
-            channelTransformer = apiModelTransformers.receiveChannelTransformer,
-            messageTransformer = apiModelTransformers.receiveMessageTransformer,
+            eventMapping = eventMapping,
+            dtoMapping = dtoMapping,
         )
     }
     private val socketFactory: SocketFactory by lazy { SocketFactory(moshiParser, tokenManager) }
@@ -244,8 +256,9 @@ constructor(
 
     @Suppress("RemoveExplicitTypeArguments")
     private fun buildApi(chatConfig: ChatClientConfig): ChatApi = MoshiChatApi(
-        currentUserIdProvider,
-        apiModelTransformers,
+        domainMapping = domainMapping,
+        eventMapping = eventMapping,
+        dtoMapping = dtoMapping,
         fileUploader ?: defaultFileUploader,
         fileTransformer = fileTransformer,
         buildRetrofitApi<UserApi>(),
