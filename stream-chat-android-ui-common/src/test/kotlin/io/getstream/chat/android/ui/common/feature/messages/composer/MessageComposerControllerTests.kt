@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.ChannelData
+import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
@@ -74,6 +75,23 @@ internal class MessageComposerControllerTests {
         invalidUrls.forEach { url ->
             pattern.matches(url) `should be equal to` false
         }
+    }
+
+    @Test
+    fun `test hasCommands is read from channelConfig`() = runTest {
+        // given
+        val commands = listOf(Command("giphy", "Add GIF", "giphy", set = "giphy"))
+        val config = Config(commands = commands)
+        val configFlow = MutableStateFlow(config)
+        // when
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenChannelState(configState = configFlow)
+            .get()
+        // then
+        controller.state.value.hasCommands `should be` true
     }
 
     @Test
