@@ -24,7 +24,6 @@ import androidx.compose.ui.focus.focusRequester
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.SnapshotTest
-import io.getstream.chat.android.compose.ui.components.SearchInput
 import org.junit.Rule
 import org.junit.Test
 
