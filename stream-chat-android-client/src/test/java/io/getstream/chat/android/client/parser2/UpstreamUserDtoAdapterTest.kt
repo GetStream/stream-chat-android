@@ -35,10 +35,10 @@ internal class UpstreamUserDtoAdapterTest {
                 { "" },
                 NoOpChannelTransformer,
                 NoOpMessageTransformer,
-            )
+            ),
         ),
         DtoMapping(
-            NoOpMessageTransformer
+            NoOpMessageTransformer,
         ),
     )
 

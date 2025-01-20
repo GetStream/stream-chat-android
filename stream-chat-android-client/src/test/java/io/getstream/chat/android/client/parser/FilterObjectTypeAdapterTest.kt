@@ -42,10 +42,10 @@ internal class FilterObjectTypeAdapterTest {
                 { "" },
                 NoOpChannelTransformer,
                 NoOpMessageTransformer,
-            )
+            ),
         ),
         DtoMapping(
-            NoOpMessageTransformer
+            NoOpMessageTransformer,
         ),
     )
 

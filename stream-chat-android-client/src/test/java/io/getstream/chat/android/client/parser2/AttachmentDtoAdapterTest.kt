@@ -34,10 +34,10 @@ internal class AttachmentDtoAdapterTest {
                 { "" },
                 NoOpChannelTransformer,
                 NoOpMessageTransformer,
-            )
+            ),
         ),
         DtoMapping(
-            NoOpMessageTransformer
+            NoOpMessageTransformer,
         ),
     )
 

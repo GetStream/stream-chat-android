@@ -38,10 +38,10 @@ internal class DownstreamReactionDtoAdapterTest {
                 { "" },
                 NoOpChannelTransformer,
                 NoOpMessageTransformer,
-            )
+            ),
         ),
         DtoMapping(
-            NoOpMessageTransformer
+            NoOpMessageTransformer,
         ),
     )
 

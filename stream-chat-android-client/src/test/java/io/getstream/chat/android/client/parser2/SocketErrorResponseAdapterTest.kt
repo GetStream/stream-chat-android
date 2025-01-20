@@ -34,10 +34,10 @@ internal class SocketErrorResponseAdapterTest {
                 { "" },
                 NoOpChannelTransformer,
                 NoOpMessageTransformer,
-            )
+            ),
         ),
         DtoMapping(
-            NoOpMessageTransformer
+            NoOpMessageTransformer,
         ),
     )
 

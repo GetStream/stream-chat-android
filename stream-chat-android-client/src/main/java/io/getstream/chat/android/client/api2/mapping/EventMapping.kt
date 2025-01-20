@@ -138,6 +138,7 @@ import io.getstream.chat.android.client.events.VoteChangedEvent
 import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 
+@Suppress("LargeClass")
 internal class EventMapping(
     private val domainMapping: DomainMapping,
 ) {
@@ -148,7 +149,7 @@ internal class EventMapping(
      * The actual transformation is delegated to the specific transformation methods for each event type.
      * The specific transformation methods are defined below.
      */
-    @Suppress("ComplexMethod")
+    @Suppress("LongMethod")
     internal fun ChatEventDto.toDomain(): ChatEvent {
         return when (this) {
             is NewMessageEventDto -> toDomain()
@@ -496,34 +497,36 @@ internal class EventMapping(
     /**
      * Transforms [NotificationChannelMutesUpdatedEventDto] to [NotificationChannelMutesUpdatedEvent].
      */
-    private fun NotificationChannelMutesUpdatedEventDto.toDomain(): NotificationChannelMutesUpdatedEvent = with(domainMapping) {
-        NotificationChannelMutesUpdatedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            me = me.toDomain(),
-        )
-    }
+    private fun NotificationChannelMutesUpdatedEventDto.toDomain(): NotificationChannelMutesUpdatedEvent =
+        with(domainMapping) {
+            NotificationChannelMutesUpdatedEvent(
+                type = type,
+                createdAt = created_at.date,
+                rawCreatedAt = created_at.rawDate,
+                me = me.toDomain(),
+            )
+        }
 
     /**
      * Transforms [NotificationChannelTruncatedEventDto] to [NotificationChannelTruncatedEvent].
      */
-    private fun NotificationChannelTruncatedEventDto.toDomain(): NotificationChannelTruncatedEvent = with(domainMapping) {
-        NotificationChannelTruncatedEvent(
-            type = type,
-            createdAt = created_at.date,
-            rawCreatedAt = created_at.rawDate,
-            cid = cid,
-            channelType = channel_type,
-            channelId = channel_id,
-            channel = channel.toDomain(
-                eventChatLastMessageAt = channel_last_message_at,
-            ),
-            totalUnreadCount = total_unread_count,
-            unreadChannels = unread_channels,
-            channelLastMessageAt = channel_last_message_at,
-        )
-    }
+    private fun NotificationChannelTruncatedEventDto.toDomain(): NotificationChannelTruncatedEvent =
+        with(domainMapping) {
+            NotificationChannelTruncatedEvent(
+                type = type,
+                createdAt = created_at.date,
+                rawCreatedAt = created_at.rawDate,
+                cid = cid,
+                channelType = channel_type,
+                channelId = channel_id,
+                channel = channel.toDomain(
+                    eventChatLastMessageAt = channel_last_message_at,
+                ),
+                totalUnreadCount = total_unread_count,
+                unreadChannels = unread_channels,
+                channelLastMessageAt = channel_last_message_at,
+            )
+        }
 
     /**
      * Transforms [NotificationInviteAcceptedEventDto] to [NotificationInviteAcceptedEvent].
@@ -683,7 +686,7 @@ internal class EventMapping(
                 unreadThreadMessages = unread_thread_messages,
                 channelLastMessageAt = channel_last_message_at,
             )
-    }
+        }
 
     /**
      * Transforms [NotificationMutesUpdatedEventDto] to [NotificationMutesUpdatedEvent].
@@ -716,7 +719,7 @@ internal class EventMapping(
                 member = member.toDomain(),
                 channelLastMessageAt = channel_last_message_at,
             )
-    }
+        }
 
     /**
      * Transforms [PollClosedEventDto] to [PollClosedEvent].

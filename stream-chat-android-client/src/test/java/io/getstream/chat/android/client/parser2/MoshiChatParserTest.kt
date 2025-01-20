@@ -40,10 +40,10 @@ internal class MoshiChatParserTest {
                 { "" },
                 NoOpChannelTransformer,
                 NoOpMessageTransformer,
-            )
+            ),
         ),
         DtoMapping(
-            NoOpMessageTransformer
+            NoOpMessageTransformer,
         ),
     )
     private val chatClient: ChatClient = MockChatClientBuilder {

@@ -72,10 +72,10 @@ internal class SocketFactoryTest {
                     { "" },
                     NoOpChannelTransformer,
                     NoOpMessageTransformer,
-                )
+                ),
             ),
             DtoMapping(
-                NoOpMessageTransformer
+                NoOpMessageTransformer,
             ),
         )
         private val endpoint = "https://${randomString().lowercase(Locale.getDefault())}/"

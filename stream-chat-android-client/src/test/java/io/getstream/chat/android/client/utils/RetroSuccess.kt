@@ -42,10 +42,10 @@ internal class RetroSuccess<T : Any>(val result: T) : Call<T> {
                         { "" },
                         NoOpChannelTransformer,
                         NoOpMessageTransformer,
-                    )
+                    ),
                 ),
                 DtoMapping(
-                    NoOpMessageTransformer
+                    NoOpMessageTransformer,
                 ),
             ),
             CoroutineScope(DispatcherProvider.IO),

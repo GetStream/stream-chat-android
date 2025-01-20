@@ -601,6 +601,10 @@ public final class io/getstream/chat/android/models/ChannelMute {
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface class io/getstream/chat/android/models/ChannelTransformer {
+	public abstract fun transform (Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/models/Channel;
+}
+
 public final class io/getstream/chat/android/models/ChannelUserRead : io/getstream/chat/android/models/UserEntity {
 	public fun <init> (Lio/getstream/chat/android/models/User;Ljava/util/Date;ILjava/util/Date;Ljava/lang/String;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/User;
@@ -1292,6 +1296,10 @@ public final class io/getstream/chat/android/models/MessageModerationDetails {
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface class io/getstream/chat/android/models/MessageTransformer {
+	public abstract fun transform (Lio/getstream/chat/android/models/Message;)Lio/getstream/chat/android/models/Message;
+}
+
 public final class io/getstream/chat/android/models/MessageType {
 	public static final field EPHEMERAL Ljava/lang/String;
 	public static final field ERROR Ljava/lang/String;
@@ -1400,6 +1408,16 @@ public final class io/getstream/chat/android/models/Mute {
 
 public final class io/getstream/chat/android/models/NeutralFilterObject : io/getstream/chat/android/models/FilterObject {
 	public static final field INSTANCE Lio/getstream/chat/android/models/NeutralFilterObject;
+}
+
+public final class io/getstream/chat/android/models/NoOpChannelTransformer : io/getstream/chat/android/models/ChannelTransformer {
+	public static final field INSTANCE Lio/getstream/chat/android/models/NoOpChannelTransformer;
+	public fun transform (Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/models/Channel;
+}
+
+public final class io/getstream/chat/android/models/NoOpMessageTransformer : io/getstream/chat/android/models/MessageTransformer {
+	public static final field INSTANCE Lio/getstream/chat/android/models/NoOpMessageTransformer;
+	public fun transform (Lio/getstream/chat/android/models/Message;)Lio/getstream/chat/android/models/Message;
 }
 
 public final class io/getstream/chat/android/models/NorFilterObject : io/getstream/chat/android/models/FilterObject {

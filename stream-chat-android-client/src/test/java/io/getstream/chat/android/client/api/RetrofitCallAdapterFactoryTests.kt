@@ -54,10 +54,10 @@ internal class RetrofitCallAdapterFactoryTests {
                         { "" },
                         NoOpChannelTransformer,
                         NoOpMessageTransformer,
-                    )
+                    ),
                 ),
                 DtoMapping(
-                    NoOpMessageTransformer
+                    NoOpMessageTransformer,
                 ),
             ),
             CoroutineScope(Dispatchers.IO),

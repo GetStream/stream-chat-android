@@ -254,7 +254,7 @@ constructor(
                 skip_enrich_url = skipEnrichUrl,
             ),
         ).mapDomain { response ->
-                response.message.toDomain()
+            response.message.toDomain()
         }
     }
 
@@ -508,13 +508,13 @@ constructor(
 
     private fun flag(body: FlagRequest): Call<Flag> {
         return moderationApi.flag(body = body).mapDomain { response ->
-                response.flag.toDomain()
+            response.flag.toDomain()
         }
     }
 
     private fun unflag(body: Map<String, String>): Call<Flag> {
         return moderationApi.unflag(body = body).mapDomain { response ->
-                response.flag.toDomain()
+            response.flag.toDomain()
         }
     }
 
@@ -574,9 +574,9 @@ constructor(
                 created_at_before_or_equal = createdAtBeforeOrEqual,
             ),
         ).mapDomain { response ->
-                response.bans.map {
-                    it.toDomain()
-                }
+            response.bans.map {
+                it.toDomain()
+            }
         }
     }
 
@@ -636,9 +636,9 @@ constructor(
                 pagination = pagination,
             ),
         ).mapDomain { response ->
-                response.messages.map {
-                    it.toDomain()
-                }
+            response.messages.map {
+                it.toDomain()
+            }
         }
     }
 
@@ -654,7 +654,7 @@ constructor(
             body = with(dtoMapping) {
                 UpdateChannelRequest(
                     extraData,
-                    updateMessage?.toDto()
+                    updateMessage?.toDto(),
                 )
             },
         ).map(this::flattenChannel)
@@ -894,9 +894,10 @@ constructor(
         parentId = parentId,
         limit = limit,
         lastId = lastId,
-    ).mapDomain { response -> response.messages.map {
-        it.toDomain()
-    }
+    ).mapDomain { response ->
+        response.messages.map {
+            it.toDomain()
+        }
     }
 
     override fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
@@ -983,7 +984,7 @@ constructor(
         ).mapDomain { response ->
             GuestUser(
                 response.user.toDomain(),
-                response.access_token
+                response.access_token,
             )
         }
     }
@@ -1040,21 +1041,21 @@ constructor(
         )
         return generalApi.searchMessages(newRequest)
             .mapDomain { response ->
-                    val results = response.results
+                val results = response.results
 
-                    val messages = results.map { resp ->
-                        resp.message.toDomain().let { message ->
-                            (message.cid.takeUnless(CharSequence::isBlank) ?: message.channelInfo?.cid)
-                                ?.let(message::enrichWithCid)
-                                ?: message
-                        }
+                val messages = results.map { resp ->
+                    resp.message.toDomain().let { message ->
+                        (message.cid.takeUnless(CharSequence::isBlank) ?: message.channelInfo?.cid)
+                            ?.let(message::enrichWithCid)
+                            ?: message
                     }
-                    SearchMessagesResult(
-                        messages = messages,
-                        next = response.next,
-                        previous = response.previous,
-                        resultsWarning = response.resultsWarning?.toDomain(),
-                    )
+                }
+                SearchMessagesResult(
+                    messages = messages,
+                    next = response.next,
+                    previous = response.previous,
+                    resultsWarning = response.resultsWarning?.toDomain(),
+                )
             }
     }
 
@@ -1214,16 +1215,17 @@ constructor(
         }
     }
 
-    override fun getSyncHistory(channelIds: List<String>, lastSyncAt: String): Call<List<ChatEvent>> = with(eventMapping) {
-        return generalApi.getSyncHistory(
-            body = SyncHistoryRequest(channelIds, lastSyncAt),
-            connectionId = connectionId,
-        ).map { response ->
-            response.events.map {
-                it.toDomain()
+    override fun getSyncHistory(channelIds: List<String>, lastSyncAt: String): Call<List<ChatEvent>> =
+        with(eventMapping) {
+            return generalApi.getSyncHistory(
+                body = SyncHistoryRequest(channelIds, lastSyncAt),
+                connectionId = connectionId,
+            ).map { response ->
+                response.events.map {
+                    it.toDomain()
+                }
             }
         }
-    }
 
     override fun downloadFile(fileUrl: String): Call<ResponseBody> {
         return fileDownloadApi.downloadFile(fileUrl)
@@ -1254,12 +1256,12 @@ constructor(
                     )
                 },
             ).mapDomain { response ->
-                    QueryThreadsResult(
-                        threads = response.threads.map { it.toDomain() },
-                        prev = response.prev,
-                        next = response.next,
-                    )
-                }
+                QueryThreadsResult(
+                    threads = response.threads.map { it.toDomain() },
+                    prev = response.prev,
+                    next = response.next,
+                )
+            }
         }
         return if (connectionId.isBlank() && query.watch) {
             logger.i { "[queryThreads] postponing because an active connection is required" }
@@ -1282,7 +1284,7 @@ constructor(
                 connectionId,
                 options.toMap(),
             ).mapDomain { response ->
-                    response.thread.toDomain()
+                response.thread.toDomain()
             }
         }
         return if (connectionId.isBlank() && options.watch) {
@@ -1308,7 +1310,7 @@ constructor(
                 unset = unset,
             ),
         ).mapDomain { response ->
-                response.thread.toDomain()
+            response.thread.toDomain()
         }
     }
 
@@ -1390,6 +1392,6 @@ constructor(
         return callPostponeHelper.postponeCall(call)
     }
 
-    private fun <T: Any, R: Any> RetrofitCall<T>.mapDomain(transform: DomainMapping.(T) -> R): Call<R> =
+    private fun <T : Any, R : Any> RetrofitCall<T>.mapDomain(transform: DomainMapping.(T) -> R): Call<R> =
         map { domainMapping.transform(it) }
 }

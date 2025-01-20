@@ -54,10 +54,10 @@ internal class RetroError<T : Any>(
                         { "" },
                         NoOpChannelTransformer,
                         NoOpMessageTransformer,
-                    )
+                    ),
                 ),
                 DtoMapping(
-                    NoOpMessageTransformer
+                    NoOpMessageTransformer,
                 ),
             ),
             CoroutineScope(DispatcherProvider.IO),
