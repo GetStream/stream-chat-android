@@ -47,12 +47,16 @@ import io.getstream.chat.android.client.parser2.adapters.UpstreamReactionDtoAdap
 import io.getstream.chat.android.client.parser2.adapters.UpstreamUserDtoAdapter
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
+import io.getstream.chat.android.models.ChannelTransformer
+import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.UserId
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
 internal class MoshiChatParser(
     val currentUserIdProvider: () -> UserId?,
+    val channelTransformer: ChannelTransformer,
+    val messageTransformer: MessageTransformer,
 ) : ChatParser {
 
     private val moshi: Moshi by lazy {
@@ -131,7 +135,11 @@ internal class MoshiChatParser(
     private val chatEventDtoAdapter = moshi.adapter(ChatEventDto::class.java)
 
     private fun parseAndProcessEvent(raw: String): ChatEvent {
-        val event = chatEventDtoAdapter.fromJson(raw)!!.toDomain(currentUserIdProvider())
+        val event = chatEventDtoAdapter.fromJson(raw)!!.toDomain(
+            currentUserIdProvider(),
+            channelTransformer,
+            messageTransformer,
+        )
         return event.enrichIfNeeded()
     }
 }

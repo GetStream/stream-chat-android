@@ -19,41 +19,105 @@ package io.getstream.chat.android.client.api2.mapping
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
+import io.getstream.chat.android.models.ChannelTransformer
+import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
 import io.getstream.chat.android.models.ThreadParticipant
 import io.getstream.chat.android.models.UserId
 
-internal fun DownstreamThreadDto.toDomain(currentUserId: UserId?): Thread =
+/**
+ * Transforms [DownstreamThreadDto] into [Thread]
+ *
+ * @param currentUserId the current user id.
+ * @param channelTransformer the channel transformer to transform the channel.
+ * @param messageTransformer the message transformer to transform the channel's messages.
+ */
+internal fun DownstreamThreadDto.toDomain(
+    currentUserId: UserId?,
+    channelTransformer: ChannelTransformer,
+    messageTransformer: MessageTransformer,
+): Thread =
     Thread(
         activeParticipantCount = active_participant_count ?: 0,
         cid = channel_cid,
-        channel = channel?.toDomain(currentUserId, null),
+        channel = channel?.toDomain(
+            currentUserId = currentUserId,
+            eventChatLastMessageAt = null,
+            channelTransformer = channelTransformer,
+            messageTransformer = messageTransformer,
+        ),
         parentMessageId = parent_message_id,
-        parentMessage = parent_message.toDomain(currentUserId),
+        parentMessage = parent_message.toDomain(
+            currentUserId = currentUserId,
+            channelTransformer = channelTransformer,
+            messageTransformer = messageTransformer,
+        ),
         createdByUserId = created_by_user_id,
-        createdBy = created_by?.toDomain(currentUserId),
+        createdBy = created_by?.toDomain(
+            currentUserId = currentUserId,
+            channelTransformer = channelTransformer,
+            messageTransformer = messageTransformer,
+        ),
         participantCount = participant_count,
-        threadParticipants = thread_participants.orEmpty().map { it.toDomain(currentUserId) },
+        threadParticipants = thread_participants.orEmpty().map {
+            it.toDomain(
+                currentUserId = currentUserId,
+                channelTransformer = channelTransformer,
+                messageTransformer = messageTransformer,
+            )
+        },
         lastMessageAt = last_message_at,
         createdAt = created_at,
         updatedAt = updated_at,
         deletedAt = deleted_at,
         title = title,
-        latestReplies = latest_replies.map { it.toDomain(currentUserId) },
-        read = read.orEmpty().map { it.toDomain(currentUserId, last_message_at) },
+        latestReplies = latest_replies.map {
+            it.toDomain(
+                currentUserId = currentUserId,
+                channelTransformer = channelTransformer,
+                messageTransformer = messageTransformer,
+            )
+        },
+        read = read.orEmpty().map {
+            it.toDomain(
+                currentUserId = currentUserId,
+                lastReceivedEventDate = last_message_at,
+                channelTransformer = channelTransformer,
+                messageTransformer = messageTransformer,
+            )
+        },
     )
 
-internal fun DownstreamThreadInfoDto.toDomain(currentUserId: UserId?): ThreadInfo =
+/**
+ * Transforms [DownstreamThreadInfoDto] into [ThreadInfo]
+ *
+ * @param currentUserId the current user id.
+ * @param channelTransformer the channel transformer to transform the channel.
+ * @param messageTransformer the message transformer to transform the channel's messages.
+ */
+internal fun DownstreamThreadInfoDto.toDomain(
+    currentUserId: UserId?,
+    channelTransformer: ChannelTransformer,
+    messageTransformer: MessageTransformer,
+): ThreadInfo =
     ThreadInfo(
         activeParticipantCount = active_participant_count ?: 0,
         cid = channel_cid,
         createdAt = created_at,
-        createdBy = created_by?.toDomain(currentUserId),
+        createdBy = created_by?.toDomain(
+            currentUserId = currentUserId,
+            channelTransformer = channelTransformer,
+            messageTransformer = messageTransformer,
+        ),
         createdByUserId = created_by_user_id,
         deletedAt = deleted_at,
         lastMessageAt = last_message_at,
-        parentMessage = parent_message?.toDomain(currentUserId),
+        parentMessage = parent_message?.toDomain(
+            currentUserId = currentUserId,
+            channelTransformer = channelTransformer,
+            messageTransformer = messageTransformer,
+        ),
         parentMessageId = parent_message_id,
         participantCount = participant_count ?: 0,
         replyCount = reply_count ?: 0,
@@ -61,6 +125,21 @@ internal fun DownstreamThreadInfoDto.toDomain(currentUserId: UserId?): ThreadInf
         updatedAt = updated_at,
     )
 
-internal fun DownstreamThreadParticipantDto.toDomain(currentUserId: UserId?): ThreadParticipant = ThreadParticipant(
-    user = user.toDomain(currentUserId),
+/**
+ * Transforms [DownstreamThreadParticipantDto] into [ThreadParticipant]
+ *
+ * @param currentUserId the current user id.
+ * @param channelTransformer the channel transformer to transform the channel.
+ * @param messageTransformer the message transformer to transform the channel's messages.
+ */
+internal fun DownstreamThreadParticipantDto.toDomain(
+    currentUserId: UserId?,
+    channelTransformer: ChannelTransformer,
+    messageTransformer: MessageTransformer,
+): ThreadParticipant = ThreadParticipant(
+    user = user.toDomain(
+        currentUserId = currentUserId,
+        channelTransformer = channelTransformer,
+        messageTransformer = messageTransformer,
+    ),
 )

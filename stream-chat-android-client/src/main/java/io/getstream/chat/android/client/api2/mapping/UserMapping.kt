@@ -21,7 +21,9 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamUserBlockDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
+import io.getstream.chat.android.models.ChannelTransformer
 import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
 import io.getstream.chat.android.models.UserId
@@ -41,7 +43,11 @@ internal fun User.toDto(): UpstreamUserDto =
         extraData = extraData,
     )
 
-internal fun DownstreamUserDto.toDomain(currentUserId: UserId?): User =
+internal fun DownstreamUserDto.toDomain(
+    currentUserId: UserId?,
+    channelTransformer: ChannelTransformer,
+    messageTransformer: MessageTransformer,
+): User =
     User(
         id = id,
         name = name ?: "",
@@ -59,9 +65,21 @@ internal fun DownstreamUserDto.toDomain(currentUserId: UserId?): User =
         totalUnreadCount = total_unread_count,
         unreadChannels = unread_channels,
         unreadThreads = unread_threads,
-        mutes = mutes.orEmpty().map { it.toDomain(currentUserId) },
+        mutes = mutes.orEmpty().map {
+            it.toDomain(
+                currentUserId = currentUserId,
+                channelTransformer = channelTransformer,
+                messageTransformer = messageTransformer,
+            )
+        },
         teams = teams,
-        channelMutes = channel_mutes.orEmpty().map { it.toDomain(currentUserId) },
+        channelMutes = channel_mutes.orEmpty().map {
+            it.toDomain(
+                currentUserId = currentUserId,
+                channelTransformer = channelTransformer,
+                messageTransformer = messageTransformer,
+            )
+        },
         blockedUserIds = blocked_user_ids.orEmpty(),
         extraData = extraData.toMutableMap(),
     )

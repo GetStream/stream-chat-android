@@ -19,6 +19,8 @@ package io.getstream.chat.android.client.api2.mapping
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamReactionDto
+import io.getstream.chat.android.models.ChannelTransformer
+import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.ReactionGroup
 import io.getstream.chat.android.models.UserId
@@ -35,14 +37,29 @@ internal fun Reaction.toDto(): UpstreamReactionDto =
         extraData = extraData,
     )
 
-internal fun DownstreamReactionDto.toDomain(currentUserId: UserId?): Reaction =
+/**
+ * Transforms [DownstreamReactionDto] to [Reaction].
+ *
+ * @param currentUserId the current user id.
+ * @param channelTransformer the channel transformer to transform the channel.
+ * @param messageTransformer the message transformer to transform the channel's messages.
+ */
+internal fun DownstreamReactionDto.toDomain(
+    currentUserId: UserId?,
+    channelTransformer: ChannelTransformer,
+    messageTransformer: MessageTransformer,
+): Reaction =
     Reaction(
         createdAt = created_at,
         messageId = message_id,
         score = score,
         type = type,
         updatedAt = updated_at,
-        user = user?.toDomain(currentUserId),
+        user = user?.toDomain(
+            currentUserId = currentUserId,
+            channelTransformer = channelTransformer,
+            messageTransformer = messageTransformer,
+        ),
         userId = user_id,
         extraData = extraData.toMutableMap(),
     )

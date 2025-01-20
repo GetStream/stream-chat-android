@@ -18,12 +18,29 @@ package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDto
+import io.getstream.chat.android.models.ChannelTransformer
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.UserId
 
-internal fun DownstreamMemberDto.toDomain(currentUserId: UserId?): Member =
+/**
+ * Transforms [DownstreamMemberDto] to [Member].
+ *
+ * @param currentUserId the current user id.
+ * @param channelTransformer the channel transformer to transform the channel.
+ * @param messageTransformer the message transformer to transform the channel's messages.
+ */
+internal fun DownstreamMemberDto.toDomain(
+    currentUserId: UserId?,
+    channelTransformer: ChannelTransformer,
+    messageTransformer: MessageTransformer,
+): Member =
     Member(
-        user = user.toDomain(currentUserId),
+        user = user.toDomain(
+            currentUserId = currentUserId,
+            channelTransformer = channelTransformer,
+            messageTransformer = messageTransformer,
+        ),
         createdAt = created_at,
         updatedAt = updated_at,
         isInvited = invited,

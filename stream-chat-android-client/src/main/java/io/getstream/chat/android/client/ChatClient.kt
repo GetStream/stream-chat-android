@@ -140,6 +140,7 @@ import io.getstream.chat.android.client.user.CredentialConfig
 import io.getstream.chat.android.client.user.CurrentUserFetcher
 import io.getstream.chat.android.client.user.storage.SharedPreferencesCredentialStorage
 import io.getstream.chat.android.client.user.storage.UserCredentialStorage
+import io.getstream.chat.android.client.utils.ApiModelTransformers
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
@@ -3591,6 +3592,7 @@ internal constructor(
         private var repositoryFactoryProvider: RepositoryFactory.Provider? = null
         private var uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.CONNECTED
         private var fileTransformer: FileTransformer = NoOpFileTransformer
+        private var apiModelTransformers: ApiModelTransformers = ApiModelTransformers()
 
         /**
          * Sets the log level to be used by the client.
@@ -3665,6 +3667,13 @@ internal constructor(
          */
         public fun fileTransformer(fileTransformer: FileTransformer): Builder = apply {
             this.fileTransformer = fileTransformer
+        }
+
+        /**
+         * Sets a custom [ApiModelTransformers] implementation that will be used by the client to transform models.
+         */
+        public fun withApiModelTransformer(apiModelTransformers: ApiModelTransformers): Builder = apply {
+            this.apiModelTransformers = apiModelTransformers
         }
 
         /**
@@ -3861,6 +3870,7 @@ internal constructor(
                         context = appContext,
                         notificationConfig = notificationConfig,
                     ),
+                    apiModelTransformers = apiModelTransformers,
                     fileTransformer = fileTransformer,
                     uploader = fileUploader,
                     tokenManager = tokenManager,

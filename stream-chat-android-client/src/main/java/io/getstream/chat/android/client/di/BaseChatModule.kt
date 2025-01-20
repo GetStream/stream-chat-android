@@ -74,6 +74,7 @@ import io.getstream.chat.android.client.uploader.FileTransformer
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamFileUploader
 import io.getstream.chat.android.client.user.CurrentUserFetcher
+import io.getstream.chat.android.client.utils.ApiModelTransformers
 import io.getstream.chat.android.models.UserId
 import io.getstream.log.StreamLog
 import okhttp3.OkHttpClient
@@ -89,6 +90,7 @@ constructor(
     private val userScope: UserScope,
     private val config: ChatClientConfig,
     private val notificationsHandler: NotificationHandler,
+    private val apiModelTransformers: ApiModelTransformers,
     private val fileTransformer: FileTransformer,
     private val fileUploader: FileUploader? = null,
     private val tokenManager: TokenManager = TokenManagerImpl(),
@@ -98,7 +100,13 @@ constructor(
     private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it },
 ) {
 
-    private val moshiParser: ChatParser by lazy { MoshiChatParser(currentUserIdProvider) }
+    private val moshiParser: ChatParser by lazy {
+        MoshiChatParser(
+            currentUserIdProvider = currentUserIdProvider,
+            channelTransformer = apiModelTransformers.receiveChannelTransformer,
+            messageTransformer = apiModelTransformers.receiveMessageTransformer,
+        )
+    }
     private val socketFactory: SocketFactory by lazy { SocketFactory(moshiParser, tokenManager) }
 
     private val defaultNotifications by lazy { buildNotification(notificationsHandler, config.notificationConfig) }
@@ -237,6 +245,7 @@ constructor(
     @Suppress("RemoveExplicitTypeArguments")
     private fun buildApi(chatConfig: ChatClientConfig): ChatApi = MoshiChatApi(
         currentUserIdProvider,
+        apiModelTransformers,
         fileUploader ?: defaultFileUploader,
         fileTransformer = fileTransformer,
         buildRetrofitApi<UserApi>(),

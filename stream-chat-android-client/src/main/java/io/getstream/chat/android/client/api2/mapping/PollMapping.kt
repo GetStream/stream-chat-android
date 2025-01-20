@@ -20,6 +20,8 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamOptionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamVoteDto
 import io.getstream.chat.android.models.Answer
+import io.getstream.chat.android.models.ChannelTransformer
+import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.UserId
@@ -29,26 +31,52 @@ import io.getstream.chat.android.models.VotingVisibility
 /**
  * Transforms DownstreamPollDto to Poll
  *
+ * @param currentUserId the current user id.
+ * @param channelTransformer the channel transformer to transform the channel.
+ * @param messageTransformer the message transformer to transform the channel's messages.
+ *
  * @return Poll
  */
-internal fun DownstreamPollDto.toDomain(currentUserId: UserId?): Poll {
+internal fun DownstreamPollDto.toDomain(
+    currentUserId: UserId?,
+    channelTransformer: ChannelTransformer,
+    messageTransformer: MessageTransformer,
+): Poll {
     val ownUserId = currentUserId ?: own_votes.firstOrNull()?.user?.id
     val votes = latest_votes_by_option
         ?.values
         ?.flatten()
         ?.filter { it.is_answer != true }
-        ?.map { it.toDomain(currentUserId) } ?: emptyList()
+        ?.map {
+            it.toDomain(
+                currentUserId = currentUserId,
+                channelTransformer = channelTransformer,
+                messageTransformer = messageTransformer,
+            )
+        } ?: emptyList()
     val ownVotes = (
         own_votes
             .filter { it.is_answer != true }
-            .map { it.toDomain(currentUserId) } +
+            .map {
+                it.toDomain(
+                    currentUserId = currentUserId,
+                    channelTransformer = channelTransformer,
+                    messageTransformer = messageTransformer,
+                )
+            } +
             votes.filter { it.user?.id == ownUserId }
         )
         .associateBy { it.id }
         .values
         .toList()
 
-    val answer = latest_answers?.map { it.toAnswerDomain(currentUserId) } ?: emptyList()
+    val answer = latest_answers?.map {
+        it.toAnswerDomain(
+            currentUserId = currentUserId,
+            channelTransformer = channelTransformer,
+            messageTransformer = messageTransformer,
+        )
+    } ?: emptyList()
 
     return Poll(
         id = id,
@@ -83,29 +111,53 @@ internal fun DownstreamOptionDto.toDomain(): Option = Option(
 /**
  * Transforms DownstreamVoteDto to Vote
  *
+ * @param currentUserId the current user id.
+ * @param channelTransformer the channel transformer to transform the channel.
+ * @param messageTransformer the message transformer to transform the channel's messages.
+ *
  * @return Vote
  */
-internal fun DownstreamVoteDto.toDomain(currentUserId: UserId?): Vote = Vote(
+internal fun DownstreamVoteDto.toDomain(
+    currentUserId: UserId?,
+    channelTransformer: ChannelTransformer,
+    messageTransformer: MessageTransformer,
+): Vote = Vote(
     id = id,
     pollId = poll_id,
     optionId = option_id,
     createdAt = created_at,
     updatedAt = updated_at,
-    user = user?.toDomain(currentUserId),
+    user = user?.toDomain(
+        currentUserId = currentUserId,
+        channelTransformer = channelTransformer,
+        messageTransformer = messageTransformer,
+    ),
 )
 
 /**
  * Transforms DownstreamVoteDto to Answer
  *
+ * @param currentUserId the current user id.
+ * @param channelTransformer the channel transformer to transform the channel.
+ * @param messageTransformer the message transformer to transform the channel's messages.
+ *
  * @return Answer
  */
-internal fun DownstreamVoteDto.toAnswerDomain(currentUserId: UserId?): Answer = Answer(
+internal fun DownstreamVoteDto.toAnswerDomain(
+    currentUserId: UserId?,
+    channelTransformer: ChannelTransformer,
+    messageTransformer: MessageTransformer,
+): Answer = Answer(
     id = id,
     pollId = poll_id,
     text = answer_text ?: "",
     createdAt = created_at,
     updatedAt = updated_at,
-    user = user?.toDomain(currentUserId),
+    user = user?.toDomain(
+        currentUserId = currentUserId,
+        channelTransformer = channelTransformer,
+        messageTransformer = messageTransformer,
+    ),
 )
 
 /**

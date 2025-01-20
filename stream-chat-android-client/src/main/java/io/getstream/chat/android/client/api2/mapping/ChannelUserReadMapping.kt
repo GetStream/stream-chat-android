@@ -17,16 +17,28 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
+import io.getstream.chat.android.models.ChannelTransformer
 import io.getstream.chat.android.models.ChannelUserRead
+import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.UserId
 import java.util.Date
 
+/**
+ * Transform [DownstreamChannelUserRead] to [ChannelUserRead].
+ *
+ * @param currentUserId the current user id.
+ * @param lastReceivedEventDate the last received event date.
+ * @param channelTransformer the channel transformer to transform the channel.
+ * @param messageTransformer the message transformer to transform the channel's messages.
+ */
 internal fun DownstreamChannelUserRead.toDomain(
     currentUserId: UserId?,
     lastReceivedEventDate: Date,
+    channelTransformer: ChannelTransformer,
+    messageTransformer: MessageTransformer,
 ): ChannelUserRead =
     ChannelUserRead(
-        user = user.toDomain(currentUserId),
+        user = user.toDomain(currentUserId, channelTransformer, messageTransformer),
         lastReceivedEventDate = lastReceivedEventDate,
         lastRead = last_read,
         unreadMessages = unread_messages,
