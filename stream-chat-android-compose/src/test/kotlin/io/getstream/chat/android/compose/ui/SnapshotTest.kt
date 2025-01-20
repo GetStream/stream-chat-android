@@ -29,18 +29,20 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import org.junit.Rule
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 
-internal abstract class BaseComposeTest {
+internal interface SnapshotTest {
 
-    abstract fun basePaparazzi(): Paparazzi
+    @get:Rule
+    val paparazzi: Paparazzi
 
     fun snapshot(
         isInDarkMode: Boolean = false,
         composable: @Composable () -> Unit,
     ) {
-        basePaparazzi().snapshot {
+        paparazzi.snapshot {
             CompositionLocalProvider(
                 LocalInspectionMode provides true,
             ) {
@@ -59,7 +61,7 @@ internal abstract class BaseComposeTest {
     }
 
     fun snapshotWithDarkMode(composable: @Composable () -> Unit) {
-        basePaparazzi().snapshot {
+        paparazzi.snapshot {
             CompositionLocalProvider(
                 LocalInspectionMode provides true,
             ) {
@@ -89,7 +91,7 @@ internal abstract class BaseComposeTest {
     }
 
     fun snapshotWithDarkModeRow(composable: @Composable () -> Unit) {
-        basePaparazzi().snapshot {
+        paparazzi.snapshot {
             CompositionLocalProvider(
                 LocalInspectionMode provides true,
             ) {
