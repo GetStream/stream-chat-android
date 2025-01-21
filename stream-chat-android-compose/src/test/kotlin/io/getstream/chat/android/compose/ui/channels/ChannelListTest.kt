@@ -71,8 +71,14 @@ internal class ChannelListTest : SnapshotTest {
                         ItemState.ChannelItemState(channel = PreviewChannelData.channelWithOneUser),
                         ItemState.ChannelItemState(channel = PreviewChannelData.channelWithOnlineUser),
                         ItemState.ChannelItemState(channel = PreviewChannelData.channelWithFewMembers),
-                        ItemState.ChannelItemState(channel = PreviewChannelData.channelWithManyMembers),
-                        ItemState.ChannelItemState(channel = PreviewChannelData.channelWithMessages),
+                        ItemState.ChannelItemState(
+                            channel = PreviewChannelData.channelWithManyMembers,
+                            typingUsers = listOf(PreviewUserData.user2),
+                        ),
+                        ItemState.ChannelItemState(
+                            channel = PreviewChannelData.channelWithMessages,
+                            isMuted = true,
+                        ),
                     ),
                 ),
             )
