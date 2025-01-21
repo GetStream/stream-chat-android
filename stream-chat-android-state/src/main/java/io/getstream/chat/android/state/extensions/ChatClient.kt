@@ -62,6 +62,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -220,13 +222,17 @@ private fun <T> ChatClient.getStateOrNull(
     coroutineScope: CoroutineScope,
     producer: suspend () -> T,
 ): StateFlow<T?> {
-    return clientState.initializationState.combine(clientState.user) { initializationState, user ->
-        if (initializationState == InitializationState.COMPLETE && user != null) {
-            producer()
-        } else {
-            null
+    return clientState.initializationState.combine(clientState.user.map { it?.id }) { initializationState, userId ->
+        userId to (initializationState == InitializationState.COMPLETE)
+    }.distinctUntilChanged()
+        .mapLatest {
+            val (userId, initializationReady) = it
+            when {
+                userId == null || !initializationReady -> null
+                else -> producer()
+            }
         }
-    }.distinctUntilChanged().stateIn(coroutineScope, SharingStarted.Eagerly, null)
+        .stateIn(coroutineScope, SharingStarted.Eagerly, null)
 }
 
 /**

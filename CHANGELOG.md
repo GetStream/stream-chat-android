@@ -45,6 +45,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Avoid multiple queries within on states when user's properties are updated. [#5572](https://github.com/GetStream/stream-chat-android/pull/5572)
 
 ### ⬆️ Improved
 
