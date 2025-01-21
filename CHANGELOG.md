@@ -34,6 +34,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+-. Fix how Unread Counters are updated when events are received. [#5550](https://github.com/GetStream/stream-chat-android/pull/5550)
 
 ### ⬆️ Improved
 
