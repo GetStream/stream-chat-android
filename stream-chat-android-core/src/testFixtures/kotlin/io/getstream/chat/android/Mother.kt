@@ -65,6 +65,20 @@ public fun randomFile(extension: String = randomString(3)): File {
     return File("${randomString()}.$extension")
 }
 
+public fun randomMute(
+    user: User = randomUser(),
+    target: User = randomUser(),
+    createdAt: Date = randomDate(),
+    updatedAt: Date = randomDate(),
+    expires: Date? = randomDateOrNull(),
+): Mute = Mute(
+    user = user,
+    target = target,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    expires = expires,
+)
+
 public fun randomUser(
     id: String = randomString(),
     name: String = randomString(),
@@ -210,6 +224,20 @@ public fun randomMessage(
     pinnedBy = pinnedBy,
     threadParticipants = threadParticipants,
     messageTextUpdatedAt = messageTextUpdatedAt,
+)
+
+public fun randomChannelMute(
+    user: User? = randomUser(),
+    channel: Channel? = randomChannel(),
+    createdAt: Date = randomDate(),
+    updatedAt: Date = randomDate(),
+    expires: Date? = randomDateOrNull(),
+): ChannelMute = ChannelMute(
+    user = user,
+    channel = channel,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    expires = expires,
 )
 
 public fun randomChannel(

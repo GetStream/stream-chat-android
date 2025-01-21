@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelUserBannedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
+import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
@@ -30,10 +31,12 @@ import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationAddedToChannelEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
+import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
+import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
@@ -65,6 +68,38 @@ import io.getstream.chat.android.randomUser
 import java.util.Date
 
 private val streamFormatter = StreamDateFormatter()
+
+public fun randomConnectedEvent(
+    createdAt: Date = randomDate(),
+    me: User = randomUser(),
+    connectionId: String = randomString(),
+): ConnectedEvent = ConnectedEvent(
+    type = EventType.HEALTH_CHECK,
+    createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
+    me = me,
+    connectionId = connectionId,
+)
+
+public fun randomNotificationChannelMutesUpdatedEvent(
+    createdAt: Date = randomDate(),
+    me: User = randomUser(),
+): NotificationChannelMutesUpdatedEvent = NotificationChannelMutesUpdatedEvent(
+    type = EventType.NOTIFICATION_CHANNEL_MUTES_UPDATED,
+    createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
+    me = me,
+)
+
+public fun randomNotificationMutesUpdatedEvent(
+    createdAt: Date = randomDate(),
+    me: User = randomUser(),
+): NotificationMutesUpdatedEvent = NotificationMutesUpdatedEvent(
+    type = EventType.NOTIFICATION_MUTES_UPDATED,
+    createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
+    me = me,
+)
 
 public fun randomChannelVisibleEvent(
     createdAt: Date = randomDate(),

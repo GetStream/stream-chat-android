@@ -18,21 +18,32 @@ package io.getstream.chat.android.state.event.handler.internal
 
 import io.getstream.chat.android.client.ChatEventListener
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.test.randomConnectedEvent
 import io.getstream.chat.android.client.test.randomMarkAllReadEvent
 import io.getstream.chat.android.client.test.randomNewMessageEvent
 import io.getstream.chat.android.client.test.randomNotificationAddedToChannelEvent
 import io.getstream.chat.android.client.test.randomNotificationChannelDeletedEvent
+import io.getstream.chat.android.client.test.randomNotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.test.randomNotificationChannelTruncatedEvent
 import io.getstream.chat.android.client.test.randomNotificationMarkReadEvent
 import io.getstream.chat.android.client.test.randomNotificationMarkUnreadEvent
 import io.getstream.chat.android.client.test.randomNotificationMessageNewEvent
+import io.getstream.chat.android.client.test.randomNotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.models.ChannelMute
+import io.getstream.chat.android.models.Mute
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.positiveRandomInt
+import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomChannelMute
+import io.getstream.chat.android.randomMute
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
@@ -77,8 +88,38 @@ internal class EventHandlerSequentialTest {
         mutableGlobalState.channelUnreadCount.value `should be equal to` expectedChannelUnreadCount
     }
 
+    @ParameterizedTest
+    @MethodSource("hasOwnUserArguments")
+    internal fun `GlobalState should be updated with info from 'me' user`(
+        events: List<ChatEvent>,
+        prepareFixture: Fixture.() -> Unit,
+        expectedBanned: Boolean,
+        expectedMutedUsers: List<Mute>,
+        expectedChannelMutes: List<ChannelMute>,
+        expectedBlockedUserIds: List<String>,
+    ) = runTest {
+        val mutableGlobalState = MutableGlobalState().apply {
+            setBanned(false)
+            setMutedUsers(emptyList())
+            setChannelMutes(emptyList())
+            setBlockedUserIds(emptyList())
+        }
+
+        val handler = Fixture()
+            .withMutableGlobalState(mutableGlobalState)
+            .apply(prepareFixture)
+            .get(this)
+
+        handler.handleEvents(*events.toTypedArray())
+
+        mutableGlobalState.banned.value `should be equal to` expectedBanned
+        mutableGlobalState.muted.value `should be equal to` expectedMutedUsers
+        mutableGlobalState.channelMutes.value `should be equal to` expectedChannelMutes
+        mutableGlobalState.blockedUserIds.value `should be equal to` expectedBlockedUserIds
+    }
+
     internal class Fixture {
-        private val currentUser = randomUser()
+        private var currentUser = randomUser()
         private val subscribeForEvents: (ChatEventListener<ChatEvent>) -> Disposable =
             { _ -> EventHandlerSequential.EMPTY_DISPOSABLE }
         private val logicRegistry: LogicRegistry = mock()
@@ -97,6 +138,10 @@ internal class EventHandlerSequentialTest {
                     selectChannels(listOf(cid))
                 } doReturn listOf(randomChannel(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS)))
             }
+        }
+
+        fun withCurrentUser(user: User) = apply {
+            currentUser = user
         }
 
         fun withMutableGlobalState(mutableGlobalState: MutableGlobalState) = apply {
@@ -127,6 +172,10 @@ internal class EventHandlerSequentialTest {
             withReadEventsCapability(randomCid)
         }
         private val neutralPrepareFixture: Fixture.() -> Unit = { }
+        private val currentUser = randomUser()
+        private val prepareFixtureWithCurrentUser: Fixture.() -> Unit = {
+            withCurrentUser(currentUser)
+        }
 
         @JvmStatic
         fun unreadCountArguments() = unreadArgumentMarkAllReadEvent() +
@@ -137,6 +186,42 @@ internal class EventHandlerSequentialTest {
             unreadArgumentNotificationMarkReadEvent() +
             unreadArgumentNotificationMarkUnreadEvent() +
             unreadArgumentNotificationMessageNewEvent()
+
+        @JvmStatic
+        fun hasOwnUserArguments() = randomUser(
+            currentUser.id,
+            banned = randomBoolean(),
+            mutes = listOf(randomMute()),
+            channelMutes = listOf(randomChannelMute()),
+            blockedUserIds = listOf(randomString()),
+        ).let { me ->
+            listOf(
+                Arguments.of(
+                    listOf(randomConnectedEvent(me = me)),
+                    prepareFixtureWithCurrentUser,
+                    me.banned,
+                    me.mutes,
+                    me.channelMutes,
+                    me.blockedUserIds,
+                ),
+                Arguments.of(
+                    listOf(randomNotificationChannelMutesUpdatedEvent(me = me)),
+                    prepareFixtureWithCurrentUser,
+                    me.banned,
+                    me.mutes,
+                    me.channelMutes,
+                    me.blockedUserIds,
+                ),
+                Arguments.of(
+                    listOf(randomNotificationMutesUpdatedEvent(me = me)),
+                    prepareFixtureWithCurrentUser,
+                    me.banned,
+                    me.mutes,
+                    me.channelMutes,
+                    me.blockedUserIds,
+                ),
+            )
+        }
 
         private fun unreadArgumentNotificationAddedToChannelEvent() = listOf(
             Arguments.of(
