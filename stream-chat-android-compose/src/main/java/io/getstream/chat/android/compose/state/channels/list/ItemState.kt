@@ -50,7 +50,7 @@ public sealed class ItemState {
      */
     public data class SearchResultItemState(
         val message: Message,
-        val channel: Channel?,
+        val channel: Channel? = null,
     ) : ItemState() {
         override val key: String = message.id
     }

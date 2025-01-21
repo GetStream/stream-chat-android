@@ -22,9 +22,11 @@ import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
+import io.getstream.chat.android.compose.state.channels.list.SearchQuery
 import io.getstream.chat.android.compose.ui.SnapshotTest
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.previewdata.PreviewChannelData
+import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import org.junit.Rule
 import org.junit.Test
@@ -94,6 +96,40 @@ internal class ChannelListTest : SnapshotTest {
                         ItemState.ChannelItemState(channel = PreviewChannelData.channelWithManyMembers),
                         ItemState.ChannelItemState(channel = PreviewChannelData.channelWithMessages),
                     ),
+                ),
+            )
+        }
+    }
+
+    @Test
+    fun `search results`() {
+        snapshot {
+            ChannelList(
+                modifier = Modifier.fillMaxSize(),
+                currentUser = PreviewUserData.user1,
+                channelsState = ChannelsState(
+                    isLoading = false,
+                    channelItems = listOf(
+                        ItemState.SearchResultItemState(
+                            message = PreviewMessageData.message1,
+                            channel = PreviewChannelData.channelWithImage
+                        ),
+                        ItemState.SearchResultItemState(message = PreviewMessageData.message2),
+                    ),
+                ),
+            )
+        }
+    }
+
+    @Test
+    fun `empty search results`() {
+        snapshot {
+            ChannelList(
+                modifier = Modifier.fillMaxSize(),
+                currentUser = PreviewUserData.user1,
+                channelsState = ChannelsState(
+                    isLoading = false,
+                    searchQuery = SearchQuery.Channels("query")
                 ),
             )
         }
