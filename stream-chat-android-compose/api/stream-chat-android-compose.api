@@ -105,6 +105,7 @@ public final class io/getstream/chat/android/compose/state/channels/list/ItemSta
 public final class io/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState : io/getstream/chat/android/compose/state/channels/list/ItemState {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Channel;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Channel;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/Message;
 	public final fun component2 ()Lio/getstream/chat/android/models/Channel;
 	public final fun copy (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;

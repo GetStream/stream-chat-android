@@ -118,7 +118,7 @@ internal class ChannelListTest : SnapshotTest {
                     channelItems = listOf(
                         ItemState.SearchResultItemState(
                             message = PreviewMessageData.message1,
-                            channel = PreviewChannelData.channelWithImage
+                            channel = PreviewChannelData.channelWithImage,
                         ),
                         ItemState.SearchResultItemState(message = PreviewMessageData.message2),
                     ),
@@ -135,7 +135,7 @@ internal class ChannelListTest : SnapshotTest {
                 currentUser = PreviewUserData.user1,
                 channelsState = ChannelsState(
                     isLoading = false,
-                    searchQuery = SearchQuery.Channels("query")
+                    searchQuery = SearchQuery.Channels("query"),
                 ),
             )
         }
