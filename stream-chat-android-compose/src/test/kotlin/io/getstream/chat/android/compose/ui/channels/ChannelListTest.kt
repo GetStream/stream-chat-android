@@ -76,4 +76,26 @@ internal class ChannelListTest : SnapshotTest {
             )
         }
     }
+
+    @Test
+    fun `loading more channels`() {
+        snapshot {
+            ChannelList(
+                modifier = Modifier.fillMaxSize(),
+                currentUser = PreviewUserData.user1,
+                channelsState = ChannelsState(
+                    isLoading = false,
+                    isLoadingMore = true,
+                    channelItems = listOf(
+                        ItemState.ChannelItemState(channel = PreviewChannelData.channelWithImage),
+                        ItemState.ChannelItemState(channel = PreviewChannelData.channelWithOneUser),
+                        ItemState.ChannelItemState(channel = PreviewChannelData.channelWithOnlineUser),
+                        ItemState.ChannelItemState(channel = PreviewChannelData.channelWithFewMembers),
+                        ItemState.ChannelItemState(channel = PreviewChannelData.channelWithManyMembers),
+                        ItemState.ChannelItemState(channel = PreviewChannelData.channelWithMessages),
+                    ),
+                ),
+            )
+        }
+    }
 }
