@@ -30,7 +30,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,6 +41,7 @@ import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.EmptyContent
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
@@ -373,8 +373,6 @@ public fun DefaultChannelItemDivider() {
 @Preview(showBackground = true, name = "ChannelList Preview (Content state)")
 @Composable
 private fun ChannelListForContentStatePreview() {
-    ChatClient.Builder(apiKey = "apiKey", appContext = LocalContext.current).build()
-
     ChannelListPreview(
         ChannelsState(
             isLoading = false,
@@ -442,7 +440,7 @@ private fun ChannelListForLoadingStatePreview() {
  */
 @Composable
 private fun ChannelListPreview(channelsState: ChannelsState) {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelList(
             modifier = Modifier.fillMaxSize(),
             channelsState = channelsState,
