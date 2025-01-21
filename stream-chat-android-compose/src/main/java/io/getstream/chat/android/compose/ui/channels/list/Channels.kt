@@ -35,6 +35,7 @@ import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.LoadingFooter
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
  * Builds a list of [ChannelItem] elements, based on [channelsState] and action handlers that it receives.
@@ -60,7 +61,11 @@ public fun Channels(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
     helperContent: @Composable BoxScope.() -> Unit = {},
-    loadingMoreContent: @Composable LazyItemScope.() -> Unit = { DefaultChannelsLoadingMoreIndicator() },
+    loadingMoreContent: @Composable LazyItemScope.() -> Unit = {
+        with(ChatTheme.componentFactory.channelList) {
+            LoadingMoreContent()
+        }
+    },
     itemContent: @Composable LazyItemScope.(ItemState) -> Unit,
     divider: @Composable LazyItemScope.() -> Unit,
 ) {
