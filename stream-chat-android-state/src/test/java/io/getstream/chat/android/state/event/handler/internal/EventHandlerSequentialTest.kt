@@ -18,7 +18,6 @@ package io.getstream.chat.android.state.event.handler.internal
 
 import io.getstream.chat.android.client.ChatEventListener
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomConnectedEvent
