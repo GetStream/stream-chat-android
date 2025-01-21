@@ -1420,6 +1420,11 @@ public final class io/getstream/chat/android/models/NoOpMessageTransformer : io/
 	public fun transform (Lio/getstream/chat/android/models/Message;)Lio/getstream/chat/android/models/Message;
 }
 
+public final class io/getstream/chat/android/models/NoOpUserTransformer : io/getstream/chat/android/models/UserTransformer {
+	public static final field INSTANCE Lio/getstream/chat/android/models/NoOpUserTransformer;
+	public fun transform (Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/models/User;
+}
+
 public final class io/getstream/chat/android/models/NorFilterObject : io/getstream/chat/android/models/FilterObject {
 	public final fun component1 ()Ljava/util/Set;
 	public final fun copy (Ljava/util/Set;)Lio/getstream/chat/android/models/NorFilterObject;
@@ -2042,6 +2047,10 @@ public abstract interface class io/getstream/chat/android/models/UserEntity {
 
 public final class io/getstream/chat/android/models/UserEntity$DefaultImpls {
 	public static fun getUserId (Lio/getstream/chat/android/models/UserEntity;)Ljava/lang/String;
+}
+
+public abstract interface class io/getstream/chat/android/models/UserTransformer {
+	public abstract fun transform (Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/models/User;
 }
 
 public final class io/getstream/chat/android/models/VideoCallInfo {
