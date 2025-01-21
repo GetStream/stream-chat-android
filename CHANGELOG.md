@@ -71,6 +71,7 @@
 - Fix wrong hints in the poll creation dialog input fields. [#5561](https://github.com/GetStream/stream-chat-android/pull/5561)
 
 ### ⬆️ Improved
+- Create snapshot tests for channels stateless components. [#5570](https://github.com/GetStream/stream-chat-android/pull/5570)
 
 ### ✅ Added
 

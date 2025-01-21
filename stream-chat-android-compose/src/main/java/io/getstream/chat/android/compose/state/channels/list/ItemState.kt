@@ -36,7 +36,7 @@ public sealed class ItemState {
     public data class ChannelItemState(
         val channel: Channel,
         val isMuted: Boolean = false,
-        val typingUsers: List<User>,
+        val typingUsers: List<User> = emptyList(),
     ) : ItemState() {
         override val key: String = channel.cid
     }

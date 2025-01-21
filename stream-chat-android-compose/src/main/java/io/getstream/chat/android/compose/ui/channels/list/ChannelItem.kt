@@ -54,6 +54,7 @@ import io.getstream.chat.android.compose.ui.components.TypingIndicator
 import io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getLastMessage
 import io.getstream.chat.android.models.Channel
@@ -371,7 +372,7 @@ private fun ChannelItemPreview(
     isMuted: Boolean = false,
     currentUser: User? = null,
 ) {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelItem(
             channelItem = ItemState.ChannelItemState(
                 channel = channel,

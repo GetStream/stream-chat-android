@@ -45,7 +45,7 @@ public object PreviewChannelData {
 
     public val channelWithOnlineUser: Channel = Channel(
         type = "channelType",
-        id = "channelId2",
+        id = "channelId3",
         members = listOf(
             Member(user = PreviewUserData.user1),
             Member(user = PreviewUserData.user2.copy(online = true)),
@@ -54,7 +54,7 @@ public object PreviewChannelData {
 
     public val channelWithFewMembers: Channel = Channel(
         type = "channelType",
-        id = "channelId3",
+        id = "channelId4",
         members = listOf(
             Member(user = PreviewUserData.user1),
             Member(user = PreviewUserData.user2),
@@ -64,7 +64,7 @@ public object PreviewChannelData {
 
     public val channelWithManyMembers: Channel = Channel(
         type = "channelType",
-        id = "channelId4",
+        id = "channelId5",
         members = listOf(
             Member(user = PreviewUserData.user1),
             Member(user = PreviewUserData.user2),
@@ -76,7 +76,7 @@ public object PreviewChannelData {
 
     public val channelWithMessages: Channel = Channel(
         type = "channelType",
-        id = "channelId5",
+        id = "channelId6",
         members = listOf(
             Member(user = PreviewUserData.user1),
             Member(user = PreviewUserData.user2),

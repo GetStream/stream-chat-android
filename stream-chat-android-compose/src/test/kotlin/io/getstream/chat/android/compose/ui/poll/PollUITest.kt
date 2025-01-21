@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.BaseComposeTest
+import io.getstream.chat.android.compose.ui.SnapshotTest
 import io.getstream.chat.android.compose.ui.components.poll.PollDialogHeader
 import io.getstream.chat.android.compose.ui.components.poll.PollMoreOptionsTitle
 import io.getstream.chat.android.compose.ui.components.poll.PollViewResultTitle
@@ -51,12 +51,10 @@ import io.getstream.chat.android.previewdata.PreviewPollData
 import org.junit.Rule
 import org.junit.Test
 
-internal class PollUITest : BaseComposeTest() {
+internal class PollUITest : SnapshotTest {
 
     @get:Rule
-    val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_4A)
-
-    override fun basePaparazzi(): Paparazzi = paparazzi
+    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_4A)
 
     @Test
     fun `snapshot PollCreationHeader composable`() {
