@@ -27,18 +27,7 @@ import org.junit.jupiter.api.Test
 
 internal class UpstreamMemberDtoAdapterTest {
 
-    private val parser = MoshiChatParser(
-        EventMapping(
-            DomainMapping(
-                { "" },
-                NoOpChannelTransformer,
-                NoOpMessageTransformer,
-            ),
-        ),
-        DtoMapping(
-            NoOpMessageTransformer,
-        ),
-    )
+    private val parser = ParserFactory.createMoshiChatParser()
 
     @Test
     fun `Serialize JSON member with custom data`() {

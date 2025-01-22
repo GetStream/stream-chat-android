@@ -28,24 +28,14 @@ import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.down
 import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.downstreamMessageWithoutExtraData
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
+import io.getstream.chat.android.models.NoOpUserTransformer
 import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Test
 
 internal class DownstreamMessageDtoAdapterTest {
-    private val parser = MoshiChatParser(
-        EventMapping(
-            DomainMapping(
-                { "" },
-                NoOpChannelTransformer,
-                NoOpMessageTransformer,
-            ),
-        ),
-        DtoMapping(
-            NoOpMessageTransformer,
-        ),
-    )
+    private val parser = ParserFactory.createMoshiChatParser()
 
     @Test
     fun `Deserialize JSON message with custom fields`() {

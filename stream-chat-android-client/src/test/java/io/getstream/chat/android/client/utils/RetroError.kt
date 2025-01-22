@@ -16,14 +16,9 @@
 
 package io.getstream.chat.android.client.utils
 
-import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.api2.mapping.DtoMapping
-import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.call.RetrofitCall
-import io.getstream.chat.android.client.parser2.MoshiChatParser
+import io.getstream.chat.android.client.parser2.ParserFactory
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.chat.android.models.NoOpChannelTransformer
-import io.getstream.chat.android.models.NoOpMessageTransformer
 import kotlinx.coroutines.CoroutineScope
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
@@ -48,18 +43,7 @@ internal class RetroError<T : Any>(
     fun toRetrofitCall(): RetrofitCall<T> {
         return RetrofitCall(
             call = this,
-            parser = MoshiChatParser(
-                EventMapping(
-                    DomainMapping(
-                        { "" },
-                        NoOpChannelTransformer,
-                        NoOpMessageTransformer,
-                    ),
-                ),
-                DtoMapping(
-                    NoOpMessageTransformer,
-                ),
-            ),
+            parser = ParserFactory.createMoshiChatParser(),
             CoroutineScope(DispatcherProvider.IO),
         )
     }

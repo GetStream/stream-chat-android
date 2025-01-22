@@ -34,18 +34,7 @@ import org.mockito.kotlin.whenever
 
 internal class MoshiChatParserTest {
 
-    private val parser = MoshiChatParser(
-        EventMapping(
-            DomainMapping(
-                { "" },
-                NoOpChannelTransformer,
-                NoOpMessageTransformer,
-            ),
-        ),
-        DtoMapping(
-            NoOpMessageTransformer,
-        ),
-    )
+    private val parser = ParserFactory.createMoshiChatParser()
     private val chatClient: ChatClient = MockChatClientBuilder {
         mock<ChatClient>().also {
             whenever(it.getCurrentUser()) doReturn randomUser()

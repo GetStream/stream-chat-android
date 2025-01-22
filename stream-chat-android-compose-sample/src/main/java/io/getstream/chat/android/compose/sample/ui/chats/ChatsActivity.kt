@@ -58,6 +58,7 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.state.extensions.globalState
+import io.getstream.chat.android.state.extensions.watchChannelAsState
 import kotlinx.coroutines.launch
 
 class ChatsActivity : BaseConnectedActivity() {

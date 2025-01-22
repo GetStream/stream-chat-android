@@ -20,6 +20,8 @@ import io.getstream.chat.android.models.ChannelTransformer
 import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
+import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.models.UserTransformer
 
 /**
  * A class that holds the transformers used to transform the API models.
@@ -27,9 +29,13 @@ import io.getstream.chat.android.models.NoOpMessageTransformer
  * @param sendMessageTransformer The transformer used to transform the message before sending it to the API.
  * @param receiveMessageTransformer The transformer used to transform the message received from the API.
  * @param receiveChannelTransformer The transformer used to transform the channel received from the API.
+ * @param sendUserTransformers The transformer used to transform the user before sending it to the API.
+ * @param receiveUserTransformer The transformer used to transform the user received from the API.
  */
 public class ApiModelTransformers(
     public val sendMessageTransformer: MessageTransformer = NoOpMessageTransformer,
     public val receiveMessageTransformer: MessageTransformer = NoOpMessageTransformer,
     public val receiveChannelTransformer: ChannelTransformer = NoOpChannelTransformer,
+    public val sendUserTransformers: UserTransformer = NoOpUserTransformer,
+    public val receiveUserTransformer: UserTransformer = NoOpUserTransformer,
 )

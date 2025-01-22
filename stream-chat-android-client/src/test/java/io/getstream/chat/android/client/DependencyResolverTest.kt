@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.NoOpMessageTransformer
+import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -161,7 +162,7 @@ public class DependencyResolverTest {
         suspend fun get(): ChatClient = ChatClient(
             config = mock(),
             api = mock(),
-            dtoMapping = DtoMapping(NoOpMessageTransformer),
+            dtoMapping = DtoMapping(NoOpMessageTransformer, NoOpUserTransformer),
             notifications = mock(),
             tokenManager = mock(),
             userCredentialStorage = mock(),

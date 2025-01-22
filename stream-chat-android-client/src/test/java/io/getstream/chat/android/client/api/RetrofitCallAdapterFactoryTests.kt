@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
+import io.getstream.chat.android.models.NoOpUserTransformer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import okhttp3.mockwebserver.MockWebServer
@@ -54,10 +55,12 @@ internal class RetrofitCallAdapterFactoryTests {
                         { "" },
                         NoOpChannelTransformer,
                         NoOpMessageTransformer,
+                        NoOpUserTransformer,
                     ),
                 ),
                 DtoMapping(
                     NoOpMessageTransformer,
+                    NoOpUserTransformer,
                 ),
             ),
             CoroutineScope(Dispatchers.IO),

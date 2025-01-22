@@ -36,6 +36,7 @@ import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.NoOpMessageTransformer
+import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -111,7 +112,7 @@ internal class MockClientBuilder(
         client = ChatClient(
             config,
             api = api,
-            dtoMapping = DtoMapping(NoOpMessageTransformer),
+            dtoMapping = DtoMapping(NoOpMessageTransformer, NoOpUserTransformer),
             notifications = notificationsManager,
             tokenManager = FakeTokenManager(token),
             userCredentialStorage = mock(),

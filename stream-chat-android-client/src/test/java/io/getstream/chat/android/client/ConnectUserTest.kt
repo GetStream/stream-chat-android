@@ -36,6 +36,7 @@ import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.GuestUser
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.NoOpMessageTransformer
+import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -107,7 +108,7 @@ internal class ConnectUserTest {
         client = ChatClient(
             config = mock(),
             api = chatApi,
-            dtoMapping = DtoMapping(NoOpMessageTransformer),
+            dtoMapping = DtoMapping(NoOpMessageTransformer, NoOpUserTransformer),
             notifications = mock(),
             tokenManager = mock(),
             userCredentialStorage = mock(),

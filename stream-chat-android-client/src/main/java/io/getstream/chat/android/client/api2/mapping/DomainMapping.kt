@@ -89,6 +89,7 @@ import io.getstream.chat.android.models.ThreadParticipant
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
 import io.getstream.chat.android.models.UserId
+import io.getstream.chat.android.models.UserTransformer
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
 import java.util.Date
@@ -98,6 +99,7 @@ internal class DomainMapping(
     val currentUserIdProvider: () -> UserId?,
     private val channelTransformer: ChannelTransformer,
     private val messageTransformer: MessageTransformer,
+    private val userTransformer: UserTransformer,
 ) {
 
     internal fun AppSettingsResponse.toDomain(): AppSettings = AppSettings(app.toDomain())
@@ -244,7 +246,7 @@ internal class DomainMapping(
             channelMutes = channel_mutes.orEmpty().map { it.toDomain() },
             blockedUserIds = blocked_user_ids.orEmpty(),
             extraData = extraData.toMutableMap(),
-        )
+        ).let(userTransformer::transform)
 
     /**
      * Transforms [DownstreamReactionDto] to [Reaction].

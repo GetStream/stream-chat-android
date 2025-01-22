@@ -108,9 +108,15 @@ constructor(
             currentUserIdProvider,
             apiModelTransformers.receiveChannelTransformer,
             apiModelTransformers.receiveMessageTransformer,
+            apiModelTransformers.receiveUserTransformer,
         )
     }
-    internal val dtoMapping by lazy { DtoMapping(apiModelTransformers.sendMessageTransformer) }
+    internal val dtoMapping by lazy {
+        DtoMapping(
+            apiModelTransformers.sendMessageTransformer,
+            apiModelTransformers.sendUserTransformers,
+        )
+    }
     private val eventMapping by lazy { EventMapping(domainMapping) }
 
     private val moshiParser: ChatParser by lazy {

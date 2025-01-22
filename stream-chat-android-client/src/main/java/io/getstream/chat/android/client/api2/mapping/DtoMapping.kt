@@ -41,9 +41,11 @@ import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.UserTransformer
 
 internal class DtoMapping(
     private val messageTransformer: MessageTransformer,
+    private val userTransformer: UserTransformer,
 ) {
 
     /**
@@ -166,19 +168,22 @@ internal class DtoMapping(
     )
 
     internal fun User.toDto(): UpstreamUserDto =
-        UpstreamUserDto(
-            banned = isBanned,
-            id = id,
-            name = name,
-            image = image,
-            invisible = isInvisible,
-            privacy_settings = privacySettings?.toDto(),
-            language = language,
-            role = role,
-            devices = devices.map { it.toDto() },
-            teams = teams,
-            extraData = extraData,
-        )
+        userTransformer.transform(this)
+            .run {
+                UpstreamUserDto(
+                    banned = isBanned,
+                    id = id,
+                    name = name,
+                    image = image,
+                    invisible = isInvisible,
+                    privacy_settings = privacySettings?.toDto(),
+                    language = language,
+                    role = role,
+                    devices = devices.map { it.toDto() },
+                    teams = teams,
+                    extraData = extraData,
+                )
+            }
 
     internal fun ConnectedEvent.toDto(): UpstreamConnectedEventDto = UpstreamConnectedEventDto(
         type = this.type,
