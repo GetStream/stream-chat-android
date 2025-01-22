@@ -26,7 +26,7 @@
     <application>
 
         <provider
-            android:name="io.getstream.android.push.delegate.PushDelegateProvider"
+            android:name="io.getstream.android.push.delegate.AndroidPushDelegateProvider"
             android:authorities="${applicationId}.io.getstream.android.push"
             android:exported="false"
             tools:node="merge"
