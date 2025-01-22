@@ -87,7 +87,7 @@ public fun AttachmentsPicker(
     shape: Shape = ChatTheme.shapes.bottomSheet,
 ) {
     // Cross-validate requested tabFactories with the allowed ones from BE
-    val filter = AttachmentsPickerTabFactoryFilter()
+    val filter = remember { AttachmentsPickerTabFactoryFilter() }
     val allowedFactories = filter.filterAllowedFactories(tabFactories, attachmentsPickerViewModel.channel)
     val defaultTabIndex = allowedFactories
         .indexOfFirst { it.isPickerTabEnabled(attachmentsPickerViewModel.channel) }

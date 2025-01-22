@@ -185,6 +185,7 @@ class MessagesActivity : BaseConnectedActivity() {
                 optionVisibility = MessageOptionItemVisibility(),
             ),
             ownMessageTheme = ownMessageTheme,
+            useDefaultSystemMediaPicker = true,
         ) {
             SetupContent()
         }

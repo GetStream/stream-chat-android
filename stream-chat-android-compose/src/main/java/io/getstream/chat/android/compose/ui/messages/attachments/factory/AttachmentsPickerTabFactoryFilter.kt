@@ -34,7 +34,16 @@ internal class AttachmentsPickerTabFactoryFilter {
         factories: List<AttachmentsPickerTabFactory>,
         channel: Channel,
     ): List<AttachmentsPickerTabFactory> {
-        return factories.filter { isAllowed(it, channel) }
+        return factories
+            .filter { factory ->
+                isAllowed(factory, channel)
+            }
+            .map { factory ->
+                when (factory) {
+                    is AttachmentsPickerSystemTabFactory -> adjustSystemFactory(factory, channel)
+                    else -> factory
+                }
+            }
     }
 
     private fun isAllowed(factory: AttachmentsPickerTabFactory, channel: Channel): Boolean {
@@ -42,5 +51,20 @@ internal class AttachmentsPickerTabFactoryFilter {
             is Poll -> channel.config.pollsEnabled
             else -> true
         }
+    }
+
+    private fun adjustSystemFactory(
+        factory: AttachmentsPickerSystemTabFactory,
+        channel: Channel,
+    ): AttachmentsPickerSystemTabFactory {
+        // Adjust pollEnabled based on the channel config
+        val pollsAllowed = channel.config.pollsEnabled
+        return AttachmentsPickerSystemTabFactory(
+            filesAllowed = factory.filesAllowed,
+            mediaAllowed = factory.mediaAllowed,
+            captureImageAllowed = factory.captureImageAllowed,
+            captureVideoAllowed = factory.captureVideoAllowed,
+            pollAllowed = pollsAllowed && factory.pollAllowed,
+        )
     }
 }

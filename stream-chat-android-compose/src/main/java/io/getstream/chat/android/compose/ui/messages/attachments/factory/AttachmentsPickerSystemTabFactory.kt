@@ -69,9 +69,9 @@ import com.google.accompanist.permissions.shouldShowRationale
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
-import io.getstream.chat.android.compose.state.messages.attachments.Files
 import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
 import io.getstream.chat.android.compose.state.messages.attachments.Poll
+import io.getstream.chat.android.compose.state.messages.attachments.System
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
@@ -91,11 +91,11 @@ import java.io.File
  * @param pollAllowed If the option to create a poll is included in the attachments picker.
  */
 public class AttachmentsPickerSystemTabFactory(
-    private val filesAllowed: Boolean,
-    private val mediaAllowed: Boolean,
-    private val captureImageAllowed: Boolean,
-    private val captureVideoAllowed: Boolean,
-    private val pollAllowed: Boolean,
+    public val filesAllowed: Boolean,
+    public val mediaAllowed: Boolean,
+    public val captureImageAllowed: Boolean,
+    public val captureVideoAllowed: Boolean,
+    public val pollAllowed: Boolean,
 ) : AttachmentsPickerTabFactory {
 
     /**
@@ -129,7 +129,7 @@ public class AttachmentsPickerSystemTabFactory(
      * The attachment picker mode that this factory handles.
      */
     override val attachmentsPickerMode: AttachmentsPickerMode
-        get() = Files
+        get() = System
 
     /**
      * Emits a file icon for this tab.
