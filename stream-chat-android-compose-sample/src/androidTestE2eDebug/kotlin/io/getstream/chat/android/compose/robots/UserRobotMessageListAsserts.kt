@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.robots
 
+import android.annotation.SuppressLint
 import androidx.test.uiautomator.By
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.pages.MessageListPage
@@ -125,6 +126,17 @@ fun UserRobot.assertDeletedMessage(text: String, hard: Boolean = false): UserRob
         assertTrue(Message.timestamp.isDisplayed())
     }
     assertMessage(text, isDisplayed = false)
+    return this
+}
+
+fun UserRobot.assertQuotedMessage(text: String, quote: String = "", isDisplayed: Boolean = true): UserRobot {
+    if (isDisplayed) {
+        assertEquals(quote, Message.quotedMessage.waitToAppear().text)
+        assertTrue(Message.quotedMessageAvatar.isDisplayed())
+    } else {
+        assertFalse(Message.quotedMessage.waitToDisappear().isDisplayed())
+    }
+    assertMessage(text, isDisplayed = isDisplayed)
     return this
 }
 
@@ -313,7 +325,10 @@ fun UserRobot.assertSystemMessage(text: String, isDisplayed: Boolean = true): Us
 }
 
 fun UserRobot.assertInvalidCommandMessage(text: String, isDisplayed: Boolean = true): UserRobot {
-    assertSystemMessage("Sorry, command $text doesn't exist. Try posting your message without the starting /")
+    assertSystemMessage(
+        text = "Sorry, command $text doesn't exist. Try posting your message without the starting /",
+        isDisplayed = isDisplayed,
+    )
     return this
 }
 
@@ -323,5 +338,40 @@ fun UserRobot.assertReaction(type: ReactionType, isDisplayed: Boolean): UserRobo
     } else {
         assertFalse(Message.Reactions.reaction(type).waitToDisappear().isDisplayed())
     }
+    return this
+}
+
+@SuppressLint("ResourceType")
+fun UserRobot.assertThreadReplyLabel(replies: Int, inThread: Boolean = false): UserRobot {
+    if (inThread) {
+        val expectedResult = appContext.resources.getQuantityString(
+            R.plurals.stream_compose_message_list_thread_separator,
+            replies,
+            replies,
+        )
+        assertEquals(
+            expectedResult,
+            ThreadPage.ThreadList.repliesCountLabel.waitToAppear().waitForText(expectedResult).text,
+        )
+    } else {
+        val expectedResult = if (replies == 1) {
+            appContext.getString(R.string.stream_compose_message_list_thread_footnote_thread_reply)
+        } else {
+            appContext.getString(R.string.stream_compose_message_list_thread_footnote_thread_replies, replies)
+        }
+        assertEquals(expectedResult, Message.threadRepliesLabel.waitToAppear().text)
+    }
+    return this
+}
+
+fun UserRobot.assertThreadReplyLabelAvatars(count: Int): UserRobot {
+    Message.threadParticipantAvatar.waitToAppear()
+    assertEquals(count, Message.threadParticipantAvatar.findObjects().size)
+    return this
+}
+
+fun UserRobot.assertMessages(text: String, count: Int): UserRobot {
+    val actualCount = Message.text.findObjects().count { it.text == text }
+    assertEquals(count, actualCount)
     return this
 }

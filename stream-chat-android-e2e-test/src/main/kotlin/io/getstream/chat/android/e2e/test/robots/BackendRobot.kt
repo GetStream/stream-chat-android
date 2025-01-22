@@ -25,9 +25,20 @@ public class BackendRobot {
         channelsCount: Int,
         messagesCount: Int = 0,
         repliesCount: Int = 0,
+        messagesText: String? = null,
+        repliesText: String? = null,
     ): BackendRobot {
         sleep(2000)
-        mockServer.postRequest("mock?channels=$channelsCount&messages=$messagesCount&replies=$repliesCount")
+        val messagesTextQueryParam = if (messagesText != null) "messages_text=$messagesText&" else ""
+        val repliesTextQueryParam = if (repliesText != null) "replies_text=$repliesText&" else ""
+        mockServer.postRequest(
+            "mock?" +
+                messagesTextQueryParam +
+                repliesTextQueryParam +
+                "channels=$channelsCount&" +
+                "messages=$messagesCount&" +
+                "replies=$repliesCount",
+        )
         return this
     }
 

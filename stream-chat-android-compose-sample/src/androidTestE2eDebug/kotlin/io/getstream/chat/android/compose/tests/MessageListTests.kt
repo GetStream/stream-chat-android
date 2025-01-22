@@ -751,6 +751,53 @@ class MessageListTests : StreamTestCase() {
         }
     }
 
+    @AllureId("6784")
+    @Ignore("https://linear.app/stream/issue/AND-273")
+    @Test
+    fun test_threadIsNotLocked_afterParentMessageDeletedByUser() {
+        step("GIVEN user opens the channel") {
+            backendRobot.generateChannels(channelsCount = 1, messagesCount = 1)
+            userRobot.login().openChannel()
+        }
+        step("AND participant adds a message in thread") {
+            participantRobot.sendMessageInThread(sampleText)
+        }
+        step("WHEN user deletes a parent message") {
+            userRobot.deleteMessage()
+        }
+        step("THEN thread is not locked") {
+            userRobot
+                .openThread(usingContextMenu = false)
+                .assertMessage(sampleText)
+        }
+    }
+
+    @AllureId("6785")
+    @Ignore("https://linear.app/stream/issue/AND-273")
+    @Test
+    fun test_threadIsNotLocked_afterParentMessageDeletedByParticipant() {
+        step("GIVEN user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        step("AND participant sends a message") {
+            participantRobot.sendMessage(sampleText)
+        }
+        step("AND user sends a message in thread") {
+            userRobot
+                .openThread()
+                .sendMessage(sampleText)
+                .tapOnBackButton()
+        }
+        step("WHEN participant deletes a parent message") {
+            participantRobot.deleteMessage()
+        }
+        step("THEN thread is not locked") {
+            userRobot
+                .openThread(usingContextMenu = false)
+                .assertMessage(sampleText)
+        }
+    }
+
     // MARK: - Message grouping
 
     @AllureId("5803")

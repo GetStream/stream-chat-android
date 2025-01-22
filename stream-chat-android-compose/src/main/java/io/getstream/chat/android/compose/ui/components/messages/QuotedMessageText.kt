@@ -21,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.isFewEmoji
@@ -67,7 +68,8 @@ public fun QuotedMessageText(
                 horizontal = horizontalPadding,
                 vertical = verticalPadding,
             )
-            .clipToBounds(),
+            .clipToBounds()
+            .testTag("Stream_QuotedMessage"),
         text = styledText,
         style = style,
         maxLines = quoteMaxLines,

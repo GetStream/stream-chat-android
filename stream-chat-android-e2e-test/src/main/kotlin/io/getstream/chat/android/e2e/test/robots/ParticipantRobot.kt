@@ -85,15 +85,20 @@ public class ParticipantRobot {
         return this
     }
 
-    public fun quoteMessage(text: String): ParticipantRobot {
-        val endpoint = "participant/message?quote=true"
-        mockServer.postRequest(endpoint, text.toRequestBody("text".toMediaTypeOrNull()))
+    public fun quoteMessage(text: String, last: Boolean = true): ParticipantRobot {
+        val quote = if (last) "quote_last=true" else "quote_first=true"
+        mockServer.postRequest("participant/message?$quote", text.toRequestBody("text".toMediaTypeOrNull()))
         return this
     }
 
-    public fun quoteMessageInThread(text: String, alsoSendInChannel: Boolean = false): ParticipantRobot {
+    public fun quoteMessageInThread(
+        text: String,
+        alsoSendInChannel: Boolean = false,
+        last: Boolean = true,
+    ): ParticipantRobot {
+        val quote = if (last) "quote_last=true" else "quote_first=true"
         mockServer.postRequest(
-            "participant/message?quote=true&thread=true&thread_and_channel=$alsoSendInChannel",
+            "participant/message?$quote&thread=true&thread_and_channel=$alsoSendInChannel",
             text.toRequestBody("text".toMediaTypeOrNull()),
         )
         return this
@@ -109,13 +114,18 @@ public class ParticipantRobot {
         return this
     }
 
-    public fun quoteMessageWithGiphy(): ParticipantRobot {
-        mockServer.postRequest("participant/message?giphy=true&quote=true")
+    public fun quoteMessageWithGiphy(last: Boolean = true): ParticipantRobot {
+        val quote = if (last) "quote_last=true" else "quote_first=true"
+        mockServer.postRequest("participant/message?giphy=true&$quote")
         return this
     }
 
-    public fun quoteMessageWithGiphyInThread(alsoSendInChannel: Boolean = false): ParticipantRobot {
-        val endpoint = "participant/message?giphy=true&quote=true&thread=true&thread_and_channel=$alsoSendInChannel"
+    public fun quoteMessageWithGiphyInThread(
+        alsoSendInChannel: Boolean = false,
+        last: Boolean = true,
+    ): ParticipantRobot {
+        val quote = if (last) "quote_last=true" else "quote_first=true"
+        val endpoint = "participant/message?giphy=true&$quote&thread=true&thread_and_channel=$alsoSendInChannel"
         mockServer.postRequest(endpoint)
         return this
     }
@@ -135,8 +145,13 @@ public class ParticipantRobot {
         return this
     }
 
-    public fun quoteMessageWithAttachment(type: AttachmentType, count: Int = 1): ParticipantRobot {
-        mockServer.postRequest("participant/message?quote=true&$type=$count")
+    public fun quoteMessageWithAttachment(
+        type: AttachmentType,
+        count: Int = 1,
+        last: Boolean = true,
+    ): ParticipantRobot {
+        val quote = if (last) "quote_last=true" else "quote_first=true"
+        mockServer.postRequest("participant/message?$quote&$type=$count")
         return this
     }
 
@@ -154,8 +169,10 @@ public class ParticipantRobot {
         type: AttachmentType,
         count: Int = 1,
         alsoSendInChannel: Boolean = false,
+        last: Boolean = true,
     ): ParticipantRobot {
-        val endpoint = "participant/message?quote=true&$type=$count&thread=true&thread_and_channel=$alsoSendInChannel"
+        val quote = if (last) "quote_last=true" else "quote_first=true"
+        val endpoint = "participant/message?$quote&$type=$count&thread=true&thread_and_channel=$alsoSendInChannel"
         mockServer.postRequest(endpoint)
         return this
     }
