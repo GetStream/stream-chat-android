@@ -286,7 +286,7 @@ internal fun RowScope.DefaultChannelItemTrailingContent(
                 .align(Alignment.Bottom),
             horizontalAlignment = Alignment.End,
         ) {
-            val unreadCount = channel.currentUserUnreadCount
+            val unreadCount = channel.currentUserUnreadCount()
 
             if (unreadCount > 0) {
                 UnreadCountIndicator(

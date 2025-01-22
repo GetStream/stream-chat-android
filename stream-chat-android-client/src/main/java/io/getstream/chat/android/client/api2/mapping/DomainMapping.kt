@@ -152,7 +152,7 @@ internal class DomainMapping(
             ownCapabilities = own_capabilities.toSet(),
             membership = membership?.toDomain(),
             extraData = extraData.toMutableMap(),
-        ).syncUnreadCountWithReads()
+        ).syncUnreadCountWithReads(currentUserIdProvider())
             .let(channelTransformer::transform)
 
     /**

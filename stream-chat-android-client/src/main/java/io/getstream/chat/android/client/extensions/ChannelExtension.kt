@@ -23,6 +23,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.UserId
 
 public fun Channel.isAnonymousChannel(): Boolean = id.isAnonymousChannelId()
 
@@ -92,15 +93,11 @@ public fun Channel.countUnreadMentionsForUser(user: User): Int {
     return messagesToCheck.count { message -> message.containsUserMention(user) }
 }
 
-/**
- * Returns the number of unread messages in the channel for the current user.
- *
- * @return The number of unread messages in the channel for the current user.
- */
-public val Channel.currentUserUnreadCount: Int
-    get() = ChatClient.instance().getCurrentUser()?.let { currentUser ->
-        read.firstOrNull { it.user.id == currentUser.id }?.unreadMessages
-    } ?: 0
+public fun Channel.currentUserUnreadCount(
+    currentUserId: UserId? = ChatClient.instance().getCurrentUser()?.id,
+): Int = read.firstOrNull { it.user.id == currentUserId }?.unreadMessages ?: 0
 
-public fun Channel.syncUnreadCountWithReads(): Channel =
-    copy(unreadCount = currentUserUnreadCount)
+public fun Channel.syncUnreadCountWithReads(
+    currentUserId: UserId? = ChatClient.instance().getCurrentUser()?.id,
+): Channel =
+    copy(unreadCount = currentUserUnreadCount(currentUserId))

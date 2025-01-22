@@ -882,7 +882,7 @@ constructor(
                 },
                 hidden = response.hidden,
                 hiddenMessagesBefore = response.hide_messages_before,
-            ).syncUnreadCountWithReads()
+            ).syncUnreadCountWithReads(domainMapping.currentUserIdProvider())
         }
     }
 
