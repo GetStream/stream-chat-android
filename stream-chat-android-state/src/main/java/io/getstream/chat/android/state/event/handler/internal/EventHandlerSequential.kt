@@ -688,7 +688,7 @@ internal class EventHandlerSequential(
                 // get the channel, update reads, write the channel
                 is MessageReadEvent -> {
                     batch.getCurrentChannel(event.cid)
-                        ?.updateReads(event.toChannelUserRead())
+                        ?.updateReads(event.toChannelUserRead(), currentUserId)
                         ?.let(batch::addChannel)
                     // Update corresponding thread if event was received for marking a thread as read
                     event.thread?.let { threadInfo ->
@@ -700,12 +700,12 @@ internal class EventHandlerSequential(
 
                 is NotificationMarkReadEvent -> {
                     batch.getCurrentChannel(event.cid)
-                        ?.updateReads(event.toChannelUserRead())
+                        ?.updateReads(event.toChannelUserRead(), currentUserId)
                         ?.let(batch::addChannel)
                 }
                 is NotificationMarkUnreadEvent -> {
                     batch.getCurrentChannel(event.cid)
-                        ?.updateReads(event.toChannelUserRead())
+                        ?.updateReads(event.toChannelUserRead(), currentUserId)
                         ?.let(batch::addChannel)
                     // Update corresponding thread if event was received for marking a thread as unread
                     event.threadId?.let { threadId ->

@@ -23,6 +23,10 @@ import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.down
 import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.downstreamMessage
 import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.downstreamMessageWithChannelInfo
 import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.downstreamMessageWithoutExtraData
+import io.getstream.chat.android.client.utils.ApiModelTransformers
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageTransformer
+import io.getstream.chat.android.randomMessage
 import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldThrow
@@ -54,5 +58,28 @@ internal class DownstreamMessageDtoAdapterTest {
         invoking {
             parser.toJson(downstreamMessage)
         }.shouldThrow(RuntimeException::class)
+    }
+
+    @Test
+    fun `Deserialize JSON Message should be transform by MessageTransformer`() {
+        val transformedMessage = randomMessage()
+        var jsonParsedMessage: Message? = null
+        val messageTransformer = object : MessageTransformer {
+            override fun transform(message: Message): Message {
+                jsonParsedMessage = message
+                return transformedMessage
+            }
+        }
+
+        val parser = ParserFactory.createMoshiChatParser(
+            apiModelTransformers = ApiModelTransformers(
+                receiveMessageTransformer = messageTransformer,
+            )
+        )
+
+        val result = parser.fromJson(downstreamJson, DownstreamMessageDto::class.java)
+
+        jsonParsedMessage shouldBeEqualTo downstreamMessage
+        result shouldBeEqualTo transformedMessage
     }
 }

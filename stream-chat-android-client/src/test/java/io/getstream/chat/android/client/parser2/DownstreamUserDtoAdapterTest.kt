@@ -16,13 +16,21 @@
 
 package io.getstream.chat.android.client.parser2
 
+import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
+import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData
+import io.getstream.chat.android.client.parser2.testdata.MessageDtoTestData.downstreamMessage
 import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData.downstreamJson
 import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData.downstreamJsonWithoutExtraData
 import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData.downstreamJsonWithoutImageAndName
 import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData.downstreamUser
 import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData.downstreamUserWithoutExtraData
 import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData.downstreamUserWithoutImageAndName
+import io.getstream.chat.android.client.utils.ApiModelTransformers
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageTransformer
+import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomUser
 import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldThrow
@@ -55,4 +63,29 @@ internal class DownstreamUserDtoAdapterTest {
             parser.toJson(downstreamUser)
         }.shouldThrow(RuntimeException::class)
     }
+
+
+
+    // @Test
+    // fun `Deserialize JSON Message should be transform by MessageTransformer`() {
+    //     val transformedUser = randomUser()
+    //     var jsonParsedMessage: Message? = null
+    //     val messageTransformer = object : MessageTransformer {
+    //         override fun transform(message: Message): Message {
+    //             jsonParsedMessage = message
+    //             return transformedMessage
+    //         }
+    //     }
+    //
+    //     val parser = ParserFactory.createMoshiChatParser(
+    //         apiModelTransformers = ApiModelTransformers(
+    //             receiveMessageTransformer = messageTransformer,
+    //         )
+    //     )
+    //
+    //     val result = parser.fromJson(MessageDtoTestData.downstreamJson, DownstreamMessageDto::class.java)
+    //
+    //     jsonParsedMessage shouldBeEqualTo downstreamMessage
+    //     result shouldBeEqualTo transformedMessage
+    // }
 }
