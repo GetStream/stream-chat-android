@@ -2502,12 +2502,12 @@ public final class io/getstream/chat/android/client/extensions/AttachmentExtensi
 
 public final class io/getstream/chat/android/client/extensions/ChannelExtensionKt {
 	public static final fun countUnreadMentionsForUser (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;)I
-	public static final fun getCurrentUserUnreadCount (Lio/getstream/chat/android/models/Channel;)I
 	public static final fun isAnonymousChannel (Lio/getstream/chat/android/models/Channel;)Z
 	public static final fun isArchive (Lio/getstream/chat/android/models/Channel;)Z
 	public static final fun isMutedFor (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;)Z
 	public static final fun isPinned (Lio/getstream/chat/android/models/Channel;)Z
-	public static final fun syncUnreadCountWithReads (Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/models/Channel;
+	public static final fun syncUnreadCountWithReads (Lio/getstream/chat/android/models/Channel;Ljava/lang/String;)Lio/getstream/chat/android/models/Channel;
+	public static synthetic fun syncUnreadCountWithReads$default (Lio/getstream/chat/android/models/Channel;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/models/Channel;
 }
 
 public final class io/getstream/chat/android/client/extensions/FlowExtensions {
