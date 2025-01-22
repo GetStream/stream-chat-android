@@ -3,6 +3,10 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Update compileSdk to 35 (#5573)[https://github.com/GetStream/stream-chat-android/pull/5573]
+- Update dependency versions:
+  - AndroidX Ktx 1.15.0 (#5573)[https://github.com/GetStream/stream-chat-android/pull/5573]
+  - Stream Push 1.3.0 (#5573)[https://github.com/GetStream/stream-chat-android/pull/5573]
 
 ### ✅ Added
 
