@@ -16,14 +16,8 @@
 
 package io.getstream.chat.android.client.parser2
 
-import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.api2.mapping.DtoMapping
-import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.parser2.testdata.AttachmentDtoTestData
-import io.getstream.chat.android.models.NoOpChannelTransformer
-import io.getstream.chat.android.models.NoOpMessageTransformer
-import io.getstream.chat.android.models.NoOpUserTransformer
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 

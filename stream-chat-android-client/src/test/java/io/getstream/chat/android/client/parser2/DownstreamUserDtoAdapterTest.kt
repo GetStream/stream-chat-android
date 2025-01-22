@@ -16,9 +16,6 @@
 
 package io.getstream.chat.android.client.parser2
 
-import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.api2.mapping.DtoMapping
-import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData.downstreamJson
 import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData.downstreamJsonWithoutExtraData
@@ -26,8 +23,6 @@ import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData.downstr
 import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData.downstreamUser
 import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData.downstreamUserWithoutExtraData
 import io.getstream.chat.android.client.parser2.testdata.UserDtoTestData.downstreamUserWithoutImageAndName
-import io.getstream.chat.android.models.NoOpChannelTransformer
-import io.getstream.chat.android.models.NoOpMessageTransformer
 import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldThrow

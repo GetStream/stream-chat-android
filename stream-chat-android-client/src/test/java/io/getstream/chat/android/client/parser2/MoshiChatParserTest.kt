@@ -18,12 +18,7 @@ package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.MockChatClientBuilder
-import io.getstream.chat.android.client.api2.mapping.DomainMapping
-import io.getstream.chat.android.client.api2.mapping.DtoMapping
-import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.models.NoOpChannelTransformer
-import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.randomUser
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.params.ParameterizedTest

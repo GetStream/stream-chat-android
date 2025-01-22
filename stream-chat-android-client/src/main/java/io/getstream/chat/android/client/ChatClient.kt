@@ -1202,7 +1202,6 @@ internal constructor(
         vararg eventTypes: String,
         listener: ChatEventListener<ChatEvent>,
     ): Disposable {
-
         val filter = { event: ChatEvent ->
             event.type in eventTypes
         }
