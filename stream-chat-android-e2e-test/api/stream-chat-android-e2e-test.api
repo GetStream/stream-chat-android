@@ -94,13 +94,15 @@ public final class io/getstream/chat/android/e2e/test/mockserver/AttachmentType 
 	public static fun values ()[Lio/getstream/chat/android/e2e/test/mockserver/AttachmentType;
 }
 
-public final class io/getstream/chat/android/e2e/test/mockserver/MessageReadStatus : java/lang/Enum {
-	public static final field PENDING Lio/getstream/chat/android/e2e/test/mockserver/MessageReadStatus;
-	public static final field READ Lio/getstream/chat/android/e2e/test/mockserver/MessageReadStatus;
-	public static final field SENT Lio/getstream/chat/android/e2e/test/mockserver/MessageReadStatus;
+public final class io/getstream/chat/android/e2e/test/mockserver/MessageDeliveryStatus : java/lang/Enum {
+	public static final field FAILED Lio/getstream/chat/android/e2e/test/mockserver/MessageDeliveryStatus;
+	public static final field NIL Lio/getstream/chat/android/e2e/test/mockserver/MessageDeliveryStatus;
+	public static final field PENDING Lio/getstream/chat/android/e2e/test/mockserver/MessageDeliveryStatus;
+	public static final field READ Lio/getstream/chat/android/e2e/test/mockserver/MessageDeliveryStatus;
+	public static final field SENT Lio/getstream/chat/android/e2e/test/mockserver/MessageDeliveryStatus;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/e2e/test/mockserver/MessageReadStatus;
-	public static fun values ()[Lio/getstream/chat/android/e2e/test/mockserver/MessageReadStatus;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/e2e/test/mockserver/MessageDeliveryStatus;
+	public static fun values ()[Lio/getstream/chat/android/e2e/test/mockserver/MessageDeliveryStatus;
 }
 
 public final class io/getstream/chat/android/e2e/test/mockserver/MockServer {
@@ -132,6 +134,8 @@ public final class io/getstream/chat/android/e2e/test/mockserver/ReactionType : 
 
 public final class io/getstream/chat/android/e2e/test/robots/BackendRobot {
 	public fun <init> ()V
+	public final fun failNewMessages ()Lio/getstream/chat/android/e2e/test/robots/BackendRobot;
+	public final fun freezeNewMessages ()Lio/getstream/chat/android/e2e/test/robots/BackendRobot;
 	public final fun generateChannels (III)Lio/getstream/chat/android/e2e/test/robots/BackendRobot;
 	public static synthetic fun generateChannels$default (Lio/getstream/chat/android/e2e/test/robots/BackendRobot;IIIILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/BackendRobot;
 }
