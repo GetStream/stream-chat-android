@@ -214,7 +214,7 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [AIIndicatorClearEventDto] to [AIIndicatorClearEvent].
+     * Transforms [ChannelDeletedEventDto] to [ChannelDeletedEvent].
      */
     private fun ChannelDeletedEventDto.toDomain(): ChannelDeletedEvent = with(domainMapping) {
         ChannelDeletedEvent(
@@ -233,7 +233,7 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [AIIndicatorClearEventDto] to [AIIndicatorClearEvent].
+     * Transforms [ChannelHiddenEventDto] to [ChannelHiddenEvent].
      */
     private fun ChannelHiddenEventDto.toDomain(): ChannelHiddenEvent = with(domainMapping) {
         ChannelHiddenEvent(
@@ -289,7 +289,7 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [ChannelUserBannedEventDto] to [ChannelUserBannedEvent].
+     * Transforms [ChannelUpdatedByUserEventDto] to [ChannelUpdatedByUserEvent].
      */
     private fun ChannelUpdatedByUserEventDto.toDomain(): ChannelUpdatedByUserEvent = with(domainMapping) {
         ChannelUpdatedByUserEvent(
@@ -309,7 +309,7 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [ChannelUserBannedEventDto] to [ChannelUserBannedEvent].
+     * Transforms [ChannelVisibleEventDto] to [ChannelVisibleEvent].
      */
     private fun ChannelVisibleEventDto.toDomain(): ChannelVisibleEvent = with(domainMapping) {
         ChannelVisibleEvent(
@@ -334,7 +334,7 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [MarkAllReadEventDto] to [MarkAllReadEvent].
+     * Transforms [MemberAddedEventDto] to [MemberAddedEvent].
      */
     private fun MemberAddedEventDto.toDomain(): MemberAddedEvent = with(domainMapping) {
         MemberAddedEvent(
@@ -454,7 +454,7 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [NotificationMessageNewEventDto] to [NotificationMessageNewEvent].
+     * Transforms [NotificationAddedToChannelEventDto] to [NotificationAddedToChannelEvent].
      */
     private fun NotificationAddedToChannelEventDto.toDomain(): NotificationAddedToChannelEvent = with(domainMapping) {
         NotificationAddedToChannelEvent(
@@ -722,7 +722,7 @@ internal class EventMapping(
         }
 
     /**
-     * Transforms [PollClosedEventDto] to [PollClosedEvent].
+     * Transforms [ReactionDeletedEventDto] to [ReactionDeletedEvent].
      */
     private fun ReactionDeletedEventDto.toDomain(): ReactionDeletedEvent = with(domainMapping) {
         ReactionDeletedEvent(
@@ -956,7 +956,7 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [PollCreatedEventDto] to [PollCreatedEvent].
+     * Transforms [PollDeletedEventDto] to [PollDeletedEvent].
      */
     private fun PollDeletedEventDto.toDomain(): PollDeletedEvent = with(domainMapping) {
         val newPoll = poll.toDomain()
@@ -974,7 +974,7 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [PollDeletedEventDto] to [PollDeletedEvent].
+     * Transforms [PollUpdatedEventDto] to [PollUpdatedEvent].
      */
     private fun PollUpdatedEventDto.toDomain(): PollUpdatedEvent = with(domainMapping) {
         val newPoll = poll.toDomain()
@@ -1125,7 +1125,7 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [AIIndicatorStopEvent] to [AIIndicatorStopEvent].
+     * Transforms [AIIndicatorStopEventDto] to [AIIndicatorStopEvent].
      */
     private fun AIIndicatorStopEventDto.toDomain(): AIIndicatorStopEvent = with(domainMapping) {
         val (channelType, channelId) = cid.cidToTypeAndId()
@@ -1142,7 +1142,7 @@ internal class EventMapping(
     }
 
     /**
-     * Transforms [CconnectedEventDto] to [ConnectedEvent].
+     * Transforms [ConnectedEventDto] to [ConnectedEvent].
      */
     private fun ConnectedEventDto.toDomain(): ConnectedEvent = with(domainMapping) {
         ConnectedEvent(
