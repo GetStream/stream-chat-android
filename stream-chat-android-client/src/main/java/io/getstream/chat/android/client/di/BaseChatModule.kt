@@ -106,15 +106,15 @@ constructor(
     private val domainMapping by lazy {
         DomainMapping(
             currentUserIdProvider,
-            apiModelTransformers.receiveChannelTransformer,
-            apiModelTransformers.receiveMessageTransformer,
-            apiModelTransformers.receiveUserTransformer,
+            apiModelTransformers.incomingChannelTransformer,
+            apiModelTransformers.incomingMessageTransformer,
+            apiModelTransformers.incomingUserTransformer,
         )
     }
     internal val dtoMapping by lazy {
         DtoMapping(
-            apiModelTransformers.sendMessageTransformer,
-            apiModelTransformers.sendUserTransformers,
+            apiModelTransformers.outgoingMessageTransformer,
+            apiModelTransformers.outgoingUserTransformers,
         )
     }
     private val eventMapping by lazy { EventMapping(domainMapping) }

@@ -29,14 +29,14 @@ internal object ParserFactory {
         eventMapping = EventMapping(
             DomainMapping(
                 currentUserIdProvider = currentUserIdProvider,
-                channelTransformer = apiModelTransformers.receiveChannelTransformer,
-                messageTransformer = apiModelTransformers.receiveMessageTransformer,
-                userTransformer = apiModelTransformers.receiveUserTransformer,
+                channelTransformer = apiModelTransformers.incomingChannelTransformer,
+                messageTransformer = apiModelTransformers.incomingMessageTransformer,
+                userTransformer = apiModelTransformers.incomingUserTransformer,
             ),
         ),
         dtoMapping = DtoMapping(
-            messageTransformer = apiModelTransformers.sendMessageTransformer,
-            userTransformer = apiModelTransformers.sendUserTransformers,
+            messageTransformer = apiModelTransformers.outgoingMessageTransformer,
+            userTransformer = apiModelTransformers.outgoingUserTransformers,
         ),
     )
 }

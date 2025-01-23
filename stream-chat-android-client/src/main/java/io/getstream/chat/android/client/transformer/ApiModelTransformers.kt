@@ -26,16 +26,16 @@ import io.getstream.chat.android.models.UserTransformer
 /**
  * A class that holds the transformers used to transform the API models.
  *
- * @param sendMessageTransformer The transformer used to transform the message before sending it to the API.
- * @param receiveMessageTransformer The transformer used to transform the message received from the API.
- * @param receiveChannelTransformer The transformer used to transform the channel received from the API.
- * @param sendUserTransformers The transformer used to transform the user before sending it to the API.
- * @param receiveUserTransformer The transformer used to transform the user received from the API.
+ * @param outgoingMessageTransformer The transformer used to transform the message before sending it to the API.
+ * @param incomingMessageTransformer The transformer used to transform the message received from the API.
+ * @param incomingChannelTransformer The transformer used to transform the channel received from the API.
+ * @param outgoingUserTransformers The transformer used to transform the user before sending it to the API.
+ * @param incomingUserTransformer The transformer used to transform the user received from the API.
  */
 public class ApiModelTransformers(
-    public val sendMessageTransformer: MessageTransformer = NoOpMessageTransformer,
-    public val receiveMessageTransformer: MessageTransformer = NoOpMessageTransformer,
-    public val receiveChannelTransformer: ChannelTransformer = NoOpChannelTransformer,
-    public val sendUserTransformers: UserTransformer = NoOpUserTransformer,
-    public val receiveUserTransformer: UserTransformer = NoOpUserTransformer,
+    public val outgoingMessageTransformer: MessageTransformer = NoOpMessageTransformer,
+    public val incomingMessageTransformer: MessageTransformer = NoOpMessageTransformer,
+    public val incomingChannelTransformer: ChannelTransformer = NoOpChannelTransformer,
+    public val outgoingUserTransformers: UserTransformer = NoOpUserTransformer,
+    public val incomingUserTransformer: UserTransformer = NoOpUserTransformer,
 )
