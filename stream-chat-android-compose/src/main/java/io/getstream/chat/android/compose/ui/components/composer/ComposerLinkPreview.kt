@@ -46,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import com.skydoves.landscapist.ImageOptions
 import io.getstream.chat.android.compose.R
@@ -137,7 +138,8 @@ private fun ComposerLinkImagePreview(attachment: Attachment) {
             modifier = Modifier
                 .height(theme.imageSize.height)
                 .width(theme.imageSize.width)
-                .clip(theme.imageShape),
+                .clip(theme.imageShape)
+                .testTag("Stream_LinkPreviewImage"),
             imageOptions = ImageOptions(contentScale = ContentScale.Crop),
         )
     }
@@ -166,6 +168,7 @@ private fun ComposerLinkTitle(title: String?) {
     title ?: return
     val textStyle = ChatTheme.messageComposerTheme.linkPreview.title
     Text(
+        modifier = Modifier.testTag("Stream_LinkPreviewTitle"),
         text = title,
         style = textStyle.style,
         color = textStyle.color,
@@ -179,6 +182,7 @@ private fun ComposerLinkDescription(description: String?) {
     description ?: return
     val textStyle = ChatTheme.messageComposerTheme.linkPreview.subtitle
     Text(
+        modifier = Modifier.testTag("Stream_LinkPreviewDescription"),
         text = description,
         style = textStyle.style,
         color = textStyle.color,
@@ -198,7 +202,8 @@ private fun ComposerLinkCancelIcon(
                 .background(
                     shape = theme.cancelIcon.backgroundShape,
                     color = theme.cancelIcon.backgroundColor,
-                ),
+                )
+                .testTag("Stream_AttachmentCancelIcon"),
             painter = theme.cancelIcon.painter,
             contentDescription = stringResource(id = R.string.stream_compose_cancel),
             tint = theme.cancelIcon.tint,

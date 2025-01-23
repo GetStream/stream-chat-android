@@ -141,7 +141,7 @@ public class ParticipantRobot {
     }
 
     public fun uploadAttachment(type: AttachmentType, count: Int = 1): ParticipantRobot {
-        mockServer.postRequest("participant/message?$type=$count")
+        mockServer.postRequest("participant/message?${type.attachment}=$count")
         return this
     }
 
@@ -151,7 +151,7 @@ public class ParticipantRobot {
         last: Boolean = true,
     ): ParticipantRobot {
         val quote = if (last) "quote_last=true" else "quote_first=true"
-        mockServer.postRequest("participant/message?$quote&$type=$count")
+        mockServer.postRequest("participant/message?$quote&${type.attachment}=$count")
         return this
     }
 
@@ -160,7 +160,7 @@ public class ParticipantRobot {
         count: Int = 1,
         alsoSendInChannel: Boolean = false,
     ): ParticipantRobot {
-        val endpoint = "participant/message?$type=$count&thread=true&thread_and_channel=$alsoSendInChannel"
+        val endpoint = "participant/message?${type.attachment}=$count&thread=true&thread_and_channel=$alsoSendInChannel"
         mockServer.postRequest(endpoint)
         return this
     }
@@ -172,7 +172,8 @@ public class ParticipantRobot {
         last: Boolean = true,
     ): ParticipantRobot {
         val quote = if (last) "quote_last=true" else "quote_first=true"
-        val endpoint = "participant/message?$quote&$type=$count&thread=true&thread_and_channel=$alsoSendInChannel"
+        val endpoint = "participant/message?" +
+            "$quote&${type.attachment}=$count&thread=true&thread_and_channel=$alsoSendInChannel"
         mockServer.postRequest(endpoint)
         return this
     }

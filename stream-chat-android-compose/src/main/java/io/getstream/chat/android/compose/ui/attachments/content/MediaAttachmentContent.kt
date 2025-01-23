@@ -294,7 +294,8 @@ internal fun RowScope.MultipleMediaAttachments(
         modifier = Modifier
             .weight(1f, fill = false)
             .width(ChatTheme.dimens.attachmentsContentGroupPreviewWidth / 2)
-            .height(ChatTheme.dimens.attachmentsContentGroupPreviewHeight),
+            .height(ChatTheme.dimens.attachmentsContentGroupPreviewHeight)
+            .testTag("Stream_MultipleMediaAttachmentsColumn"),
         verticalArrangement = Arrangement.spacedBy(gridSpacing),
     ) {
         for (attachmentIndex in 0 until maximumNumberOfPreviewedItems step 2) {
@@ -459,11 +460,13 @@ internal fun MediaAttachmentContentItem(
     val downloadAttachmentUriGenerator = ChatTheme.streamDownloadAttachmentUriGenerator
     val downloadRequestInterceptor = ChatTheme.streamDownloadRequestInterceptor
 
+    val testTag = if (isVideo) "Video" else "Image"
+
     Box(
         modifier = modifier
             .background(Color.Black)
             .fillMaxWidth()
-            .testTag("Stream_MediaContent")
+            .testTag("Stream_MediaContent_$testTag")
             .combinedClickable(
                 interactionSource = MutableInteractionSource(),
                 indication = ripple(),

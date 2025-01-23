@@ -56,3 +56,14 @@ public fun UiObject2.waitForText(
     }
     return this
 }
+
+public fun BySelector.waitForCount(count: Int, timeOutMillis: Long = defaultTimeout): List<UiObject2> {
+    val endTime = System.currentTimeMillis() + timeOutMillis
+    var elements: List<UiObject2> = emptyList()
+    var success = false
+    while (!success && System.currentTimeMillis() < endTime) {
+        elements = findObjects()
+        success = elements.size == count
+    }
+    return elements
+}

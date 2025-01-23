@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.skydoves.landscapist.ImageOptions
 import io.getstream.chat.android.compose.ui.attachments.factory.DefaultPreviewItemOverlayContent
@@ -61,7 +62,9 @@ public fun MediaAttachmentPreviewContent(
     },
 ) {
     LazyRow(
-        modifier = modifier.clip(ChatTheme.shapes.attachment),
+        modifier = modifier
+            .clip(ChatTheme.shapes.attachment)
+            .testTag("Stream_MediaAttachmentPreviewContent"),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
     ) {
@@ -94,7 +97,8 @@ private fun MediaAttachmentPreviewItem(
     Box(
         modifier = Modifier
             .size(MediaAttachmentPreviewItemSize.dp)
-            .clip(RoundedCornerShape(16.dp)),
+            .clip(RoundedCornerShape(16.dp))
+            .testTag("Stream_MediaAttachmentPreviewItem"),
         contentAlignment = Alignment.Center,
     ) {
         StreamImage(
@@ -108,7 +112,8 @@ private fun MediaAttachmentPreviewItem(
         CancelIcon(
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(4.dp),
+                .padding(4.dp)
+                .testTag("Stream_AttachmentCancelIcon"),
             onClick = { onAttachmentRemoved(mediaAttachment) },
         )
     }
