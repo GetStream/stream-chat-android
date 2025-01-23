@@ -3,6 +3,10 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Update compileSdk to 35 (#5573)[https://github.com/GetStream/stream-chat-android/pull/5573]
+- Update dependency versions:
+  - AndroidX Ktx 1.15.0 (#5573)[https://github.com/GetStream/stream-chat-android/pull/5573]
+  - Stream Push 1.3.0 (#5573)[https://github.com/GetStream/stream-chat-android/pull/5573]
 
 ### ✅ Added
 
@@ -34,6 +38,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+-. Fix how Unread Counters are updated when events are received. [#5550](https://github.com/GetStream/stream-chat-android/pull/5550)
 
 ### ⬆️ Improved
 
@@ -45,6 +50,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Avoid multiple queries within on states when user's properties are updated. [#5572](https://github.com/GetStream/stream-chat-android/pull/5572)
 
 ### ⬆️ Improved
 
@@ -72,6 +78,7 @@
 - Fix wrong hints in the poll creation dialog input fields. [#5561](https://github.com/GetStream/stream-chat-android/pull/5561)
 
 ### ⬆️ Improved
+- Create snapshot tests for channels stateless components. [#5570](https://github.com/GetStream/stream-chat-android/pull/5570)
 
 ### ✅ Added
 - Add `AttachmentsPickerTheme::saveAttachmentsOnDismiss` flag for configuring whether the selected attachments should be saved when the dialog is dismissed. [#5554](https://github.com/GetStream/stream-chat-android/pull/5554)

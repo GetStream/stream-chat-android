@@ -31,7 +31,7 @@ import io.getstream.chat.android.compose.uiautomator.wait
 import io.getstream.chat.android.compose.uiautomator.waitForText
 import io.getstream.chat.android.compose.uiautomator.waitToAppear
 import io.getstream.chat.android.compose.uiautomator.waitToDisappear
-import io.getstream.chat.android.e2e.test.mockserver.MessageReadStatus
+import io.getstream.chat.android.e2e.test.mockserver.MessageDeliveryStatus
 import io.getstream.chat.android.e2e.test.mockserver.ReactionType
 import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
 import org.junit.Assert.assertEquals
@@ -63,20 +63,46 @@ fun UserRobot.assertMessageTimestamps(count: Int): UserRobot {
     return this
 }
 
-fun UserRobot.assertMessageReadStatus(status: MessageReadStatus): UserRobot {
+fun UserRobot.assertMessageDeliveryStatus(status: MessageDeliveryStatus, count: Int? = null): UserRobot {
     when (status) {
-        MessageReadStatus.READ -> assertTrue(Message.readStatusIsRead.wait().isDisplayed())
-        MessageReadStatus.PENDING -> assertTrue(Message.readStatusIsPending.wait().isDisplayed())
-        MessageReadStatus.SENT -> assertTrue(Message.readStatusIsSent.wait().isDisplayed())
+        MessageDeliveryStatus.READ -> {
+            assertTrue(Message.deliveryStatusIsRead.wait().isDisplayed())
+            if (count != null) {
+                assertEquals(count, Message.deliveryStatusIsRead.findObjects().size)
+            }
+        }
+        MessageDeliveryStatus.PENDING -> {
+            assertTrue(Message.deliveryStatusIsPending.wait().isDisplayed())
+            if (count != null) {
+                assertEquals(count, Message.deliveryStatusIsPending.findObjects().size)
+            }
+        }
+        MessageDeliveryStatus.SENT -> {
+            assertTrue(Message.deliveryStatusIsSent.wait().isDisplayed())
+            if (count != null) {
+                assertEquals(count, Message.deliveryStatusIsSent.findObjects().size)
+            }
+        }
+        MessageDeliveryStatus.FAILED -> {
+            assertTrue(Message.deliveryStatusIsFailed.wait().isDisplayed())
+            if (count != null) {
+                assertEquals(count, Message.deliveryStatusIsFailed.findObjects().size)
+            }
+        }
+        MessageDeliveryStatus.NIL -> {
+            assertFalse(Message.deliveryStatusIsRead.waitToDisappear().isDisplayed())
+            assertFalse(Message.deliveryStatusIsPending.waitToDisappear().isDisplayed())
+            assertFalse(Message.deliveryStatusIsSent.waitToDisappear().isDisplayed())
+        }
     }
     return this
 }
 
 fun UserRobot.assertMessageFailedIcon(isDisplayed: Boolean): UserRobot {
     if (isDisplayed) {
-        assertTrue(Message.failedIcon.wait().isDisplayed())
+        assertTrue(Message.deliveryStatusIsFailed.wait().isDisplayed())
     } else {
-        assertFalse(Message.failedIcon.waitToDisappear().isDisplayed())
+        assertFalse(Message.deliveryStatusIsFailed.waitToDisappear().isDisplayed())
     }
     return this
 }
@@ -124,9 +150,10 @@ fun UserRobot.assertComposerSize(isChangeable: Boolean): UserRobot {
     val composer = Composer.inputField
     val initialComposerHeight: Int
     if (isChangeable) {
-        initialComposerHeight = composer.findObject().height
+        initialComposerHeight = composer.waitToAppear().height
         val text = "1\n2\n3"
         typeText(text)
+        sleep(500)
         assertTrue(initialComposerHeight != composer.findObject().height)
     } else {
         val text = "1\n2\n3\n4\n5\n6"

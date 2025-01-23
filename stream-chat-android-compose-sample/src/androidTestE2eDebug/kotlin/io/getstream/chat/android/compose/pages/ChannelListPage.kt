@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.pages
 
 import androidx.test.uiautomator.By
+import io.getstream.chat.android.compose.pages.MessageListPage.MessageList.Message
 
 class ChannelListPage {
 
@@ -43,9 +44,10 @@ class ChannelListPage {
                 val initialsAvatar = By.res("Stream_InitialsAvatar")
                 val name = By.res("Stream_ChannelName")
                 val messagePreview = By.res("Stream_MessagePreview")
-                val readStatusIsRead = By.res("Stream_MessageReadStatus_isRead")
-                val readStatusIsPending = By.res("Stream_MessageReadStatus_isPending")
-                val readStatusIsSent = By.res("Stream_MessageReadStatus_isSent")
+                val deliveryStatusIsRead = Message.deliveryStatusIsRead
+                val deliveryStatusIsPending = Message.deliveryStatusIsPending
+                val deliveryStatusIsSent = Message.deliveryStatusIsSent
+                val deliveryStatusIsFailed = Message.deliveryStatusIsFailed
                 val readCount = By.res("Stream_MessageReadCount")
                 val unreadCountIndicator = By.res("Stream_UnreadCountIndicator")
                 val timestamp = By.res("Stream_Timestamp")

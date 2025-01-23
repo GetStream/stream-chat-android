@@ -30,8 +30,10 @@ public enum class ReactionType(public val reaction: String) {
     LIKE("like"),
 }
 
-public enum class MessageReadStatus {
+public enum class MessageDeliveryStatus {
     READ,
     PENDING,
     SENT,
+    FAILED,
+    NIL, // is used when there should be no delivery status icon
 }

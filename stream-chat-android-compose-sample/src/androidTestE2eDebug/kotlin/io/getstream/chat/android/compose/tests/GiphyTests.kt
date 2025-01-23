@@ -23,6 +23,7 @@ import io.getstream.chat.android.compose.robots.assertMessageDeliveryStatus
 import io.getstream.chat.android.compose.robots.assertMessageInChannelPreview
 import io.getstream.chat.android.compose.robots.assertMessageTimestamps
 import io.getstream.chat.android.compose.robots.assertSystemMessage
+import io.getstream.chat.android.e2e.test.mockserver.MessageDeliveryStatus
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
 import org.junit.Ignore
@@ -109,7 +110,7 @@ class GiphyTests : StreamTestCase() {
         }
         step("AND the previous message has timestamp and delivery status shown") {
             userRobot
-                .assertMessageDeliveryStatus(isDisplayed = true)
+                .assertMessageDeliveryStatus(MessageDeliveryStatus.SENT)
                 .assertMessageTimestamps(count = 1)
         }
     }
@@ -144,7 +145,7 @@ class GiphyTests : StreamTestCase() {
         }
         step("THEN delivery status is hidden for ephemeral messages") {
             userRobot
-                .assertMessageDeliveryStatus(false)
+                .assertMessageDeliveryStatus(MessageDeliveryStatus.NIL)
                 .assertSystemMessage("Only visible to you")
         }
     }

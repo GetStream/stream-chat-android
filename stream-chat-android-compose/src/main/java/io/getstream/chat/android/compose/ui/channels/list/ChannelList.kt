@@ -41,6 +41,7 @@ import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.EmptyContent
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
@@ -439,7 +440,7 @@ private fun ChannelListForLoadingStatePreview() {
  */
 @Composable
 private fun ChannelListPreview(channelsState: ChannelsState) {
-    ChatTheme {
+    ChatPreviewTheme {
         ChannelList(
             modifier = Modifier.fillMaxSize(),
             channelsState = channelsState,

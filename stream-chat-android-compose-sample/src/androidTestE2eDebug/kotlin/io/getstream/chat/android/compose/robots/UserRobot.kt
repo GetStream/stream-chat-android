@@ -192,11 +192,11 @@ class UserRobot {
 
     fun moveToChannelListFromMessageList(): UserRobot {
         tapOnBackButton()
-        ChannelListPage.Header.searchField.waitToAppear()
+        waitForChannelListToLoad()
         return this
     }
 
-    fun moveToChannelListFromThreadList(): UserRobot {
+    fun moveToChannelListFromThread(): UserRobot {
         tapOnBackButton()
         ThreadPage.ThreadList.alsoSendToChannelCheckbox.waitToDisappear()
         moveToChannelListFromMessageList()

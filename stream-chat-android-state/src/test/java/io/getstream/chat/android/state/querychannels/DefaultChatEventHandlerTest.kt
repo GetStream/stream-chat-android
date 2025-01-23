@@ -50,7 +50,10 @@ internal class DefaultChatEventHandlerTest {
         }
         val eventHandler =
             DefaultChatEventHandler(MutableStateFlow(mapOf(channel.cid to channel)), clientState)
-        val event = randomMemberRemovedEvent(channel.cid, member)
+        val event = randomMemberRemovedEvent(
+            cid = channel.cid,
+            member = member,
+        )
 
         val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = null)
 
@@ -64,7 +67,7 @@ internal class DefaultChatEventHandlerTest {
             whenever(it.user) doReturn MutableStateFlow(randomUser())
         }
         val eventHandler = DefaultChatEventHandler(MutableStateFlow(mapOf(channel.cid to channel)), clientState)
-        val event = randomMemberRemovedEvent(channel.cid)
+        val event = randomMemberRemovedEvent(cid = channel.cid)
 
         val result = eventHandler.handleChatEvent(event = event, filter = Filters.neutral(), cachedChannel = null)
 
