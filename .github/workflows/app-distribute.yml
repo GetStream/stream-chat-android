@@ -23,7 +23,7 @@ jobs:
       - name: Assemble
         run: bash ./gradlew :stream-chat-android-ui-components-sample:assembleDemoRelease --stacktrace
       - name: Upload APK
-        uses: actions/upload-artifact@v3.1.0
+        uses: actions/upload-artifact@v4.4.3
         with:
           name: stream-chat-android-ui-components-sample-release
           path: stream-chat-android-ui-components-sample/build/outputs/apk/demo/release/
@@ -51,7 +51,7 @@ jobs:
       - name: Assemble
         run: bash ./gradlew :stream-chat-android-compose-sample:assembleRelease --stacktrace
       - name: Upload APK
-        uses: actions/upload-artifact@v3.1.0
+        uses: actions/upload-artifact@v4.4.3
         with:
           name: stream-chat-android-compose-sample-release
           path: stream-chat-android-compose-sample/build/outputs/apk/release/
