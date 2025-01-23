@@ -23,6 +23,7 @@ import io.getstream.chat.android.compose.robots.assertMessagePreviewTimestamp
 import io.getstream.chat.android.compose.uiautomator.device
 import io.getstream.chat.android.compose.uiautomator.disableInternetConnection
 import io.getstream.chat.android.compose.uiautomator.enableInternetConnection
+import io.getstream.chat.android.e2e.test.mockserver.MessageDeliveryStatus
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
 import org.junit.Ignore
@@ -47,7 +48,7 @@ class ChannelListTests : StreamTestCase() {
         step("THEN user observes the new message in preview") {
             userRobot
                 .assertMessageInChannelPreview(sampleText, false)
-                .assertMessageDeliveryStatus(isDisplayed = false)
+                .assertMessageDeliveryStatus(MessageDeliveryStatus.NIL)
                 .assertChannelAvatar()
         }
     }
@@ -67,14 +68,14 @@ class ChannelListTests : StreamTestCase() {
         step("THEN user observes the new message in preview") {
             userRobot
                 .assertMessageInChannelPreview(sampleText, true)
-                .assertMessageDeliveryStatus(isDisplayed = true, shouldBeRead = false)
+                .assertMessageDeliveryStatus(MessageDeliveryStatus.SENT)
                 .assertChannelAvatar()
         }
         step("WHEN participant reads the message") {
             participantRobot.readMessage()
         }
         step("THEN user observes the new message in preview") {
-            userRobot.assertMessageDeliveryStatus(isDisplayed = true, shouldBeRead = true)
+            userRobot.assertMessageDeliveryStatus(MessageDeliveryStatus.READ)
         }
     }
 
@@ -232,7 +233,7 @@ class ChannelListTests : StreamTestCase() {
             userRobot.openThread().sendMessageInThread(threadReply, alsoSendInChannel = true)
         }
         step("WHEN user goes back to the channel list") {
-            userRobot.moveToChannelListFromThreadList()
+            userRobot.moveToChannelListFromThread()
         }
         step("THEN the channel preview shows the thread message preview") {
             userRobot.assertMessageInChannelPreview(threadReply, fromCurrentUser = true)

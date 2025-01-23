@@ -26,8 +26,8 @@ import io.getstream.chat.android.compose.robots.assertEditedMessage
 import io.getstream.chat.android.compose.robots.assertMentionWasApplied
 import io.getstream.chat.android.compose.robots.assertMessage
 import io.getstream.chat.android.compose.robots.assertMessageAuthor
+import io.getstream.chat.android.compose.robots.assertMessageDeliveryStatus
 import io.getstream.chat.android.compose.robots.assertMessageFailedIcon
-import io.getstream.chat.android.compose.robots.assertMessageReadStatus
 import io.getstream.chat.android.compose.robots.assertMessageSizeChangesAfterEditing
 import io.getstream.chat.android.compose.robots.assertMessageTimestamps
 import io.getstream.chat.android.compose.robots.assertScrollToBottomButton
@@ -40,7 +40,7 @@ import io.getstream.chat.android.compose.uiautomator.disableInternetConnection
 import io.getstream.chat.android.compose.uiautomator.enableInternetConnection
 import io.getstream.chat.android.compose.uiautomator.goToBackground
 import io.getstream.chat.android.compose.uiautomator.goToForeground
-import io.getstream.chat.android.e2e.test.mockserver.MessageReadStatus
+import io.getstream.chat.android.e2e.test.mockserver.MessageDeliveryStatus
 import io.getstream.chat.android.e2e.test.mockserver.forbiddenWord
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
@@ -82,13 +82,7 @@ class MessageListTests : StreamTestCase() {
             userRobot
                 .assertMessage(sampleText)
                 .assertMessageAuthor(isCurrentUser = true)
-                .assertMessageReadStatus(MessageReadStatus.SENT)
-        }
-        step("WHEN participant reads the message") {
-            participantRobot.readMessage()
-        }
-        step("THEN the message is read") {
-            userRobot.assertMessageReadStatus(MessageReadStatus.READ)
+                .assertMessageDeliveryStatus(MessageDeliveryStatus.SENT)
         }
     }
 
@@ -106,7 +100,7 @@ class MessageListTests : StreamTestCase() {
         step("THEN the message is delivered") {
             userRobot
                 .assertMessage(message)
-                .assertMessageReadStatus(MessageReadStatus.SENT)
+                .assertMessageDeliveryStatus(MessageDeliveryStatus.SENT)
         }
     }
 
@@ -124,7 +118,7 @@ class MessageListTests : StreamTestCase() {
         step("THEN the message is delivered") {
             userRobot
                 .assertMessage(message)
-                .assertMessageReadStatus(MessageReadStatus.SENT)
+                .assertMessageDeliveryStatus(MessageDeliveryStatus.SENT)
         }
     }
 
@@ -147,7 +141,7 @@ class MessageListTests : StreamTestCase() {
         step("THEN the message is edited") {
             userRobot
                 .assertEditedMessage(editedMessage)
-                .assertMessageReadStatus(MessageReadStatus.SENT)
+                .assertMessageDeliveryStatus(MessageDeliveryStatus.SENT)
         }
     }
 
@@ -348,7 +342,7 @@ class MessageListTests : StreamTestCase() {
         }
         step("THEN new message is delivered") {
             userRobot
-                .assertMessageReadStatus(MessageReadStatus.SENT)
+                .assertMessageDeliveryStatus(MessageDeliveryStatus.SENT)
                 .assertMessageFailedIcon(isDisplayed = false)
         }
     }

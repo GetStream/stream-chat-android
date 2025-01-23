@@ -155,7 +155,12 @@ class Push {
          */
         fun configureFirebaseNotifications(context: Context) {
             val notificationConfig = NotificationConfig(
-                pushDeviceGenerators = listOf(FirebasePushDeviceGenerator(providerName = "providerName")),
+                pushDeviceGenerators = listOf(
+                    FirebasePushDeviceGenerator(
+                        context = context,
+                        providerName = "providerName"
+                    )
+                ),
             )
             ChatClient.Builder("apiKey", context)
                 .notifications(notificationConfig)

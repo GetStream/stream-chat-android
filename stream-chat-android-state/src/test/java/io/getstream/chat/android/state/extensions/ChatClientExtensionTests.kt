@@ -50,6 +50,8 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import java.util.concurrent.atomic.AtomicInteger
 
 internal class ChatClientExtensionTests {
@@ -187,5 +189,29 @@ internal class ChatClientExtensionTests {
 
         channelStateFlow.value shouldBeEqualTo null
         channelStateEmissions.get() shouldBeEqualTo 3
+    }
+
+    @Test
+    fun `watchChannelAsState shouldn't queryChannel twice when the user is the same with but some properties has changed`() = runTest {
+        userFlow.value = randomUser(id = "jc")
+        initializationStateFlow.value = InitializationState.COMPLETE
+        val localScope = testCoroutines.scope + Job()
+        localScope.launch {
+            chatClient.watchChannelAsState(channel.cid, MESSAGE_LIMIT).collect { }
+        }
+        userFlow.value = randomUser(id = "jc")
+        verify(chatClient, times(1)).queryChannel(any(), any(), any(), any())
+    }
+
+    @Test
+    fun `watchChannelAsState should queryChannel again when the user is a different one`() = runTest {
+        userFlow.value = randomUser(id = "jc")
+        initializationStateFlow.value = InitializationState.COMPLETE
+        val localScope = testCoroutines.scope + Job()
+        localScope.launch {
+            chatClient.watchChannelAsState(channel.cid, MESSAGE_LIMIT).collect { }
+        }
+        userFlow.value = randomUser(id = "123")
+        verify(chatClient, times(2)).queryChannel(any(), any(), any(), any())
     }
 }

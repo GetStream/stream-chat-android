@@ -30,6 +30,7 @@ import com.permissionx.guolindev.PermissionX
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.common.R
 import io.getstream.chat.android.ui.common.permissions.Permissions
+import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
 import io.getstream.chat.android.ui.utils.extensions.activity
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.uiutils.util.openSystemSettings
@@ -57,7 +58,7 @@ public class PermissionChecker {
      * False in another case
      */
     public fun isNeededToRequestForCameraPermissions(context: Context): Boolean =
-        isPermissionContainedOnManifest(context, Manifest.permission.CAMERA) && !isGrantedCameraPermissions(context)
+        context.isPermissionDeclared(Manifest.permission.CAMERA) && !isGrantedCameraPermissions(context)
 
     /**
      * Requests the correct visual media permissions (image/video) based on the device's API level.
@@ -196,20 +197,6 @@ public class PermissionChecker {
             onPermissionGranted,
         )
     }
-
-    /**
-     * Check if the [permission] was declared on the App Manifest
-     *
-     * @param context of the current Application
-     * @param permission name to be checked
-     *
-     * @return True if the permission is present on the App Manifest
-     */
-    private fun isPermissionContainedOnManifest(context: Context, permission: String): Boolean =
-        context.packageManager
-            .getPackageInfo(context.packageName, PackageManager.GET_PERMISSIONS)
-            .requestedPermissions
-            .contains(permission)
 
     @Suppress("LongParameterList")
     private fun checkPermissions(

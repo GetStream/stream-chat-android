@@ -55,7 +55,10 @@ class ChatInitializer(
         val notificationConfig =
             NotificationConfig(
                 pushDeviceGenerators = listOf(
-                    FirebasePushDeviceGenerator(providerName = "Firebase"),
+                    FirebasePushDeviceGenerator(
+                        context = context,
+                        providerName = "Firebase",
+                    ),
                     HuaweiPushDeviceGenerator(
                         context = context,
                         appId = ApplicationConfigurator.HUAWEI_APP_ID,

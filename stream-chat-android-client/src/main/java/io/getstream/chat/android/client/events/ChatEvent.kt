@@ -97,6 +97,7 @@ public sealed interface HasWatcherCount {
  * - message.new
  * - notification.message_new
  * - notification.mark_read
+ * - notification.mark_unread
  * - notification.added_to_channel
  * - notification.channel_deleted
  * - notification.channel_truncated
@@ -113,8 +114,8 @@ public sealed interface HasUnreadCounts {
  * - notification.thread_message_new
  */
 public sealed interface HasUnreadThreadCounts {
-    public val unreadThreads: Int
-    public val unreadThreadMessages: Int
+    public val unreadThreads: Int?
+    public val unreadThreadMessages: Int?
 }
 
 /**
@@ -449,9 +450,9 @@ public data class NotificationMarkReadEvent(
     override val channelLastMessageAt: Date?,
     val threadId: String? = null,
     val thread: ThreadInfo? = null,
-    val unreadThreads: Int? = null,
-    val unreadThreadMessages: Int? = null,
-) : CidEvent(), UserEvent, HasUnreadCounts
+    override val unreadThreads: Int? = null,
+    override val unreadThreadMessages: Int? = null,
+) : CidEvent(), UserEvent, HasUnreadCounts, HasUnreadThreadCounts
 
 /**
  * Triggered when the the user mark as unread a conversation from a particular message
@@ -472,8 +473,9 @@ public data class NotificationMarkUnreadEvent(
     val lastReadMessageAt: Date,
     val lastReadMessageId: String?,
     val threadId: String? = null,
-    val unreadThreads: Int = 0,
-) : CidEvent(), UserEvent, HasUnreadCounts
+    override val unreadThreads: Int = 0,
+    override val unreadThreadMessages: Int? = null,
+) : CidEvent(), UserEvent, HasUnreadCounts, HasUnreadThreadCounts
 
 /**
  * Triggered when the total count of unread messages (across all channels the user is a member) changes
