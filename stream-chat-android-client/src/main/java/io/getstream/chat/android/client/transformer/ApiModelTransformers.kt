@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.utils
+package io.getstream.chat.android.client.transformer
 
 import io.getstream.chat.android.models.ChannelTransformer
 import io.getstream.chat.android.models.MessageTransformer

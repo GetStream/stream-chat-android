@@ -27,7 +27,7 @@ import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.uploader.FileTransformer
 import io.getstream.chat.android.client.uploader.FileUploader
-import io.getstream.chat.android.client.utils.ApiModelTransformers
+import io.getstream.chat.android.client.transformer.ApiModelTransformers
 import okhttp3.OkHttpClient
 
 /**
