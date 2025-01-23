@@ -1,7 +1,5 @@
-# UNRELEASED CHANGELOG
+# January 23th, 2025 - 6.10.0
 ## Common changes for all artifacts
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - Update compileSdk to 35 [#5573](https://github.com/GetStream/stream-chat-android/pull/5573)
 - Update dependency versions:
@@ -11,70 +9,21 @@
   - Kotlin 2.0.21 [#5580](https://github.com/GetStream/stream-chat-android/pull/5580)
   - Gradle Wrapper 8.10.2 [#5580](https://github.com/GetStream/stream-chat-android/pull/5580)
 
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-client
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Introduced `ApiModelTransformers` to allow custom transformations of API models. [#5568](https://github.com/GetStream/stream-chat-android/pull/5568)
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-state
 ### 🐞 Fixed
 -. Fix how Unread Counters are updated when events are received. [#5550](https://github.com/GetStream/stream-chat-android/pull/5550)
 
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
 - Avoid multiple queries within on states when user's properties are updated. [#5572](https://github.com/GetStream/stream-chat-android/pull/5572)
 
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-components
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Add `AttachmentsPickerDialogStyle::saveAttachmentsOnDismiss` flag for configuring whether the selected attachments should be saved when the dialog is dismissed. [#5554](https://github.com/GetStream/stream-chat-android/pull/5554)
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -86,21 +35,6 @@
 
 ### ✅ Added
 - Add `AttachmentsPickerTheme::saveAttachmentsOnDismiss` flag for configuring whether the selected attachments should be saved when the dialog is dismissed. [#5554](https://github.com/GetStream/stream-chat-android/pull/5554)
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # January 09th, 2025 - 6.9.0
 ## stream-chat-android-client
