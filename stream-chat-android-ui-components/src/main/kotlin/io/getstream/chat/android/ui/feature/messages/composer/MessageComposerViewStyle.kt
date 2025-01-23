@@ -1096,6 +1096,11 @@ public data class MessageComposerViewStyle(
             context: Context,
             a: TypedArray,
         ): AttachmentsPickerDialogStyle {
+            val saveAttachmentsOnDismiss = a.getBoolean(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerSaveAttachmentsOnDismiss,
+                false,
+            )
+
             val attachmentsPickerBackgroundColor = a.getColor(
                 R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerBackgroundColor,
                 context.getColorCompat(R.color.stream_ui_white_smoke),
@@ -1428,6 +1433,7 @@ public data class MessageComposerViewStyle(
 
             return AttachmentsPickerDialogStyle(
                 useDefaultSystemMediaPicker = useDefaultSystemMediaPicker,
+                saveAttachmentsOnDismiss = saveAttachmentsOnDismiss,
                 attachmentsPickerBackgroundColor = attachmentsPickerBackgroundColor,
                 allowAccessButtonTextStyle = allowAccessButtonTextStyle,
                 submitAttachmentsButtonIconDrawable = submitAttachmentsButtonIconDrawable,

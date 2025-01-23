@@ -27,12 +27,14 @@ import androidx.compose.ui.graphics.Color
  * @param backgroundOverlay The overlay background color.
  * @param backgroundSecondary The secondary background color.
  * @param backgroundPrimary The primary background color.
+ * @param saveAttachmentsOnDismiss If the selected attachments should be saved when the picker is dismissed.
  */
 @Immutable
 public data class AttachmentPickerTheme(
     val backgroundOverlay: Color,
     val backgroundSecondary: Color,
     val backgroundPrimary: Color,
+    val saveAttachmentsOnDismiss: Boolean,
 ) {
 
     public companion object {
@@ -53,6 +55,7 @@ public data class AttachmentPickerTheme(
                 backgroundOverlay = colors.overlay,
                 backgroundSecondary = colors.inputBackground,
                 backgroundPrimary = colors.barsBackground,
+                saveAttachmentsOnDismiss = false,
             )
         }
     }

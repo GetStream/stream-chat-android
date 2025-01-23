@@ -1503,6 +1503,7 @@
             @drawable/stream_ui_cooldown_badge_background
         </item>
 
+        <item name="streamUiMessageComposerAttachmentsPickerSaveAttachmentsOnDismiss">false</item>
         <item name="streamUiMessageComposerAttachmentsPickerBackgroundColor">
             @color/stream_ui_white_smoke
         </item>
