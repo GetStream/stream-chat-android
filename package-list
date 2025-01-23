@@ -44,6 +44,7 @@ io.getstream.chat.android.client.setup.state
 io.getstream.chat.android.client.socket
 io.getstream.chat.android.client.sync
 io.getstream.chat.android.client.token
+io.getstream.chat.android.client.transformer
 io.getstream.chat.android.client.uploader
 io.getstream.chat.android.client.user
 io.getstream.chat.android.client.user.storage
@@ -75,6 +76,7 @@ io.getstream.chat.android.compose.ui.channels
 io.getstream.chat.android.compose.ui.channels.header
 io.getstream.chat.android.compose.ui.channels.info
 io.getstream.chat.android.compose.ui.channels.list
+io.getstream.chat.android.compose.ui.chats
 io.getstream.chat.android.compose.ui.components
 io.getstream.chat.android.compose.ui.components.attachments.files
 io.getstream.chat.android.compose.ui.components.attachments.images
