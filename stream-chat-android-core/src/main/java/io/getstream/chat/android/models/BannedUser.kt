@@ -19,6 +19,17 @@ package io.getstream.chat.android.models
 import androidx.compose.runtime.Immutable
 import java.util.Date
 
+/**
+ * Model holding data related to a banned user.
+ *
+ * @param user The banned user.
+ * @param bannedBy The user who banned the user.
+ * @param channel The channel where the user was banned.
+ * @param createdAt The date when the user was banned.
+ * @param expires The date when the ban expires.
+ * @param shadow If the ban is shadow.
+ * @param reason The reason for the ban.
+ */
 @Immutable
 public data class BannedUser(
     val user: User,

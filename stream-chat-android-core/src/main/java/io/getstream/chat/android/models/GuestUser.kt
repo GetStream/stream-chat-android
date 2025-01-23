@@ -18,5 +18,11 @@ package io.getstream.chat.android.models
 
 import androidx.compose.runtime.Immutable
 
+/**
+ * Model holding data about a guest user.
+ *
+ * @param user The guest [User].
+ * @param token The token of the guest user.
+ */
 @Immutable
 public data class GuestUser(val user: User, val token: String)

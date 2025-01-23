@@ -28,6 +28,9 @@ public data class AppSettings(
     val app: App,
 ) {
     public companion object {
+        /**
+         * Default file size limit in bytes.
+         */
         public const val DEFAULT_SIZE_LIMIT_IN_BYTES: Long = 100 * 1024 * 1024
     }
 }
@@ -50,9 +53,10 @@ public data class App(
  * The configuration of file upload.
  *
  * @param allowedFileExtensions Allowed file extensions.
- * @param allowedFileExtensions Allowed mime types.
+ * @param allowedMimeTypes Allowed mime types.
  * @param blockedFileExtensions Blocked mime types.
  * @param blockedMimeTypes Blocked mime types.
+ * @param sizeLimitInBytes The size limit of the file in bytes.
  */
 @Immutable
 public data class FileUploadConfig(

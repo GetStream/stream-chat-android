@@ -18,6 +18,16 @@ package io.getstream.chat.android.models
 
 import androidx.compose.runtime.Immutable
 
+/**
+ * Model holding data for a push message.
+ *
+ * @param messageId The id of the message.
+ * @param channelId The id of the channel.
+ * @param channelType The type of the channel.
+ * @param getstream Custom 'Stream' data.
+ * @param extraData Custom extra (not pre-reserved) data.
+ * @param metadata Notification metadata.
+ */
 @Immutable
 public data class PushMessage(
     val messageId: String,

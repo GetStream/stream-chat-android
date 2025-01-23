@@ -18,5 +18,11 @@ package io.getstream.chat.android.models
 
 import androidx.compose.runtime.Immutable
 
+/**
+ * Model representing a typing event.
+ *
+ * @param channelId The ID of the channel where the typing event occurred.
+ * @param users The users who are currently typing in the channel.
+ */
 @Immutable
 public data class TypingEvent(val channelId: String, val users: List<User>)

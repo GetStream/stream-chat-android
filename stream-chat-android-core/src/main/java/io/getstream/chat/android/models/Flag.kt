@@ -19,6 +19,20 @@ package io.getstream.chat.android.models
 import androidx.compose.runtime.Immutable
 import java.util.Date
 
+/**
+ * Model holding data about a user flag.
+ *
+ * @param user The user who created the flag.
+ * @param targetUser The user who was flagged.
+ * @param targetMessageId The ID of the message that was flagged.
+ * @param reviewedBy The user who reviewed the flag.
+ * @param createdByAutomod True if the flag was created by the automod.
+ * @param createdAt The date when the flag was created.
+ * @param updatedAt The date when the flag was last updated.
+ * @param reviewedAt The date when the flag was reviewed.
+ * @param approvedAt The date when the flag was approved.
+ * @param rejectedAt The date when the flag was rejected.
+ */
 @Immutable
 public data class Flag(
     val user: User,

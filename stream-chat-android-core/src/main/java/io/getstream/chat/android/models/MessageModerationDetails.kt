@@ -20,6 +20,10 @@ import androidx.compose.runtime.Immutable
 
 /**
  * Describes the details of a message which was moderated.
+ *
+ * @param originalText The original text of the moderated message.
+ * @param action The moderation action that was performed on the message.
+ * @param errorMsg The error message that was returned by the moderation service.
  */
 @Immutable
 public data class MessageModerationDetails(
@@ -30,6 +34,8 @@ public data class MessageModerationDetails(
 
 /**
  * The type of moderation performed to a message.
+ *
+ * @property rawValue The raw value of the moderation action.
  */
 @Immutable
 public data class MessageModerationAction(

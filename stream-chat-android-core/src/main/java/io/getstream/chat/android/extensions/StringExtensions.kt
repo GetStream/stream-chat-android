@@ -29,6 +29,10 @@ internal fun String.snakeToLowerCamelCase(): String {
     }
 }
 
+/**
+ * Converts string written in lower camel case to a getter method name.
+ * For example string "createdAtSomeTime" is converted to "getCreatedAtSomeTime".
+ */
 internal fun String.lowerCamelCaseToGetter(): String = "get${this[0].uppercase()}${this.substring(1)}"
 
 /**

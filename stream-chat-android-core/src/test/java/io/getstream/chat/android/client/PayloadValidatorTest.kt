@@ -152,15 +152,6 @@ internal class PayloadValidatorTest {
             Arguments.of(
                 mapOf(
                     "version" to "v1",
-                    "channel_id" to randomString(),
-                    "message_id" to randomString(),
-                    "channel_type" to randomString(),
-                ),
-                true,
-            ),
-            Arguments.of(
-                mapOf(
-                    "version" to "v1",
                     "channel_id" to null,
                     "message_id" to randomString(),
                     "channel_type" to randomString(),
@@ -184,6 +175,42 @@ internal class PayloadValidatorTest {
                     "channel_type" to null,
                 ),
                 false,
+            ),
+            Arguments.of(
+                mapOf(
+                    "version" to "v1",
+                    "channel_id" to "",
+                    "message_id" to randomString(),
+                    "channel_type" to randomString(),
+                ),
+                false,
+            ),
+            Arguments.of(
+                mapOf(
+                    "version" to "v1",
+                    "channel_id" to randomString(),
+                    "message_id" to "",
+                    "channel_type" to randomString(),
+                ),
+                false,
+            ),
+            Arguments.of(
+                mapOf(
+                    "version" to "v1",
+                    "channel_id" to randomString(),
+                    "message_id" to randomString(),
+                    "channel_type" to "",
+                ),
+                false,
+            ),
+            Arguments.of(
+                mapOf(
+                    "version" to "v1",
+                    "channel_id" to randomString(),
+                    "message_id" to randomString(),
+                    "channel_type" to randomString(),
+                ),
+                true,
             ),
         )
 
@@ -240,16 +267,6 @@ internal class PayloadValidatorTest {
                 mapOf(
                     "version" to "v2",
                     "type" to "message.new",
-                    "channel_id" to randomString(),
-                    "message_id" to randomString(),
-                    "channel_type" to randomString(),
-                ),
-                true,
-            ),
-            Arguments.of(
-                mapOf(
-                    "version" to "v2",
-                    "type" to "message.new",
                     "channel_id" to null,
                     "message_id" to randomString(),
                     "channel_type" to randomString(),
@@ -275,6 +292,46 @@ internal class PayloadValidatorTest {
                     "channel_type" to null,
                 ),
                 false,
+            ),
+            Arguments.of(
+                mapOf(
+                    "version" to "v2",
+                    "type" to "message.new",
+                    "channel_id" to "",
+                    "message_id" to randomString(),
+                    "channel_type" to randomString(),
+                ),
+                false,
+            ),
+            Arguments.of(
+                mapOf(
+                    "version" to "v2",
+                    "type" to "message.new",
+                    "channel_id" to randomString(),
+                    "message_id" to "",
+                    "channel_type" to randomString(),
+                ),
+                false,
+            ),
+            Arguments.of(
+                mapOf(
+                    "version" to "v2",
+                    "type" to "message.new",
+                    "channel_id" to randomString(),
+                    "message_id" to randomString(),
+                    "channel_type" to "",
+                ),
+                false,
+            ),
+            Arguments.of(
+                mapOf(
+                    "version" to "v2",
+                    "type" to "message.new",
+                    "channel_id" to randomString(),
+                    "message_id" to randomString(),
+                    "channel_type" to randomString(),
+                ),
+                true,
             ),
         )
     }

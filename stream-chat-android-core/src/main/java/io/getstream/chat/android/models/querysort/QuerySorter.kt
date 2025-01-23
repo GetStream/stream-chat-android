@@ -34,6 +34,9 @@ public interface QuerySorter<T : Any> {
      */
     public val comparator: Comparator<in T>
 
+    /**
+     * Converts the sorter to a DTO.
+     */
     public fun toDto(): List<Map<String, Any>>
 
     public companion object {
