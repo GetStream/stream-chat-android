@@ -132,6 +132,7 @@ import io.getstream.chat.android.client.token.ConstantTokenProvider
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.token.TokenManagerImpl
 import io.getstream.chat.android.client.token.TokenProvider
+import io.getstream.chat.android.client.transformer.ApiModelTransformers
 import io.getstream.chat.android.client.uploader.FileTransformer
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.NoOpFileTransformer
@@ -140,7 +141,6 @@ import io.getstream.chat.android.client.user.CredentialConfig
 import io.getstream.chat.android.client.user.CurrentUserFetcher
 import io.getstream.chat.android.client.user.storage.SharedPreferencesCredentialStorage
 import io.getstream.chat.android.client.user.storage.UserCredentialStorage
-import io.getstream.chat.android.client.transformer.ApiModelTransformers
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService

@@ -73,11 +73,11 @@ import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.token.TokenManagerImpl
+import io.getstream.chat.android.client.transformer.ApiModelTransformers
 import io.getstream.chat.android.client.uploader.FileTransformer
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamFileUploader
 import io.getstream.chat.android.client.user.CurrentUserFetcher
-import io.getstream.chat.android.client.transformer.ApiModelTransformers
 import io.getstream.chat.android.models.UserId
 import io.getstream.log.StreamLog
 import okhttp3.OkHttpClient

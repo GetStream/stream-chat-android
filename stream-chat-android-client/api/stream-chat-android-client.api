@@ -235,7 +235,7 @@ public final class io/getstream/chat/android/client/ChatClient$Builder : io/gets
 	public final fun okHttpClient (Lokhttp3/OkHttpClient;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun retryPolicy (Lio/getstream/result/call/retry/RetryPolicy;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun uploadAttachmentsNetworkType (Lio/getstream/chat/android/models/UploadAttachmentsNetworkType;)Lio/getstream/chat/android/client/ChatClient$Builder;
-	public final fun withApiModelTransformer (Lio/getstream/chat/android/client/utils/ApiModelTransformers;)Lio/getstream/chat/android/client/ChatClient$Builder;
+	public final fun withApiModelTransformer (Lio/getstream/chat/android/client/transformer/ApiModelTransformers;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun withPlugins ([Lio/getstream/chat/android/client/plugin/factory/PluginFactory;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun withRepositoryFactoryProvider (Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory$Provider;)Lio/getstream/chat/android/client/ChatClient$Builder;
 }
@@ -3166,6 +3166,17 @@ public abstract interface class io/getstream/chat/android/client/token/TokenProv
 	public abstract fun loadToken ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/client/transformer/ApiModelTransformers {
+	public fun <init> ()V
+	public fun <init> (Lio/getstream/chat/android/models/MessageTransformer;Lio/getstream/chat/android/models/MessageTransformer;Lio/getstream/chat/android/models/ChannelTransformer;Lio/getstream/chat/android/models/UserTransformer;Lio/getstream/chat/android/models/UserTransformer;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/MessageTransformer;Lio/getstream/chat/android/models/MessageTransformer;Lio/getstream/chat/android/models/ChannelTransformer;Lio/getstream/chat/android/models/UserTransformer;Lio/getstream/chat/android/models/UserTransformer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getIncomingChannelTransformer ()Lio/getstream/chat/android/models/ChannelTransformer;
+	public final fun getIncomingMessageTransformer ()Lio/getstream/chat/android/models/MessageTransformer;
+	public final fun getIncomingUserTransformer ()Lio/getstream/chat/android/models/UserTransformer;
+	public final fun getOutgoingMessageTransformer ()Lio/getstream/chat/android/models/MessageTransformer;
+	public final fun getOutgoingUserTransformers ()Lio/getstream/chat/android/models/UserTransformer;
+}
+
 public abstract interface class io/getstream/chat/android/client/uploader/FileTransformer {
 	public abstract fun transform (Ljava/io/File;)Ljava/io/File;
 }
@@ -3201,17 +3212,6 @@ public abstract interface class io/getstream/chat/android/client/user/storage/Us
 	public abstract fun clear ()V
 	public abstract fun get ()Lio/getstream/chat/android/client/user/CredentialConfig;
 	public abstract fun put (Lio/getstream/chat/android/client/user/CredentialConfig;)V
-}
-
-public final class io/getstream/chat/android/client/utils/ApiModelTransformers {
-	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/models/MessageTransformer;Lio/getstream/chat/android/models/MessageTransformer;Lio/getstream/chat/android/models/ChannelTransformer;Lio/getstream/chat/android/models/UserTransformer;Lio/getstream/chat/android/models/UserTransformer;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/models/MessageTransformer;Lio/getstream/chat/android/models/MessageTransformer;Lio/getstream/chat/android/models/ChannelTransformer;Lio/getstream/chat/android/models/UserTransformer;Lio/getstream/chat/android/models/UserTransformer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getReceiveChannelTransformer ()Lio/getstream/chat/android/models/ChannelTransformer;
-	public final fun getReceiveMessageTransformer ()Lio/getstream/chat/android/models/MessageTransformer;
-	public final fun getReceiveUserTransformer ()Lio/getstream/chat/android/models/UserTransformer;
-	public final fun getSendMessageTransformer ()Lio/getstream/chat/android/models/MessageTransformer;
-	public final fun getSendUserTransformers ()Lio/getstream/chat/android/models/UserTransformer;
 }
 
 public abstract interface class io/getstream/chat/android/client/utils/ProgressCallback {
