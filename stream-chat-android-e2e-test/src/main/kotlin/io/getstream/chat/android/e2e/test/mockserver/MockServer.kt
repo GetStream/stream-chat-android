@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.e2e.test.mockserver
 
+import io.getstream.chat.android.compose.uiautomator.device
+import io.getstream.chat.android.compose.uiautomator.enableInternetConnection
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -68,6 +70,7 @@ public class MockServer {
         try {
             return okHttp.newCall(request).execute()
         } catch (e: Exception) {
+            device.enableInternetConnection()
             fail(e.message)
         }
         return Response.Builder().build()
