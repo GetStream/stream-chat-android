@@ -93,10 +93,23 @@ public fun Channel.countUnreadMentionsForUser(user: User): Int {
     return messagesToCheck.count { message -> message.containsUserMention(user) }
 }
 
+/**
+ * Returns the number of unread messages in the channel for the current user.
+ *
+ * @return The number of unread messages in the channel for the current user.
+ */
 public fun Channel.currentUserUnreadCount(
     currentUserId: UserId? = ChatClient.instance().getCurrentUser()?.id,
 ): Int = read.firstOrNull { it.user.id == currentUserId }?.unreadMessages ?: 0
 
+/**
+ * Synchronizes the unread count of the channel with the read state of the current user.
+ *
+ * @param currentUserId The ID of the current user. If not provided, the ID of the current user will be taken
+ * from the ChatClient if it is available.
+ *
+ * @return A new instance of the channel with the unread count synchronized with the read state of the current user.
+ */
 public fun Channel.syncUnreadCountWithReads(
     currentUserId: UserId? = ChatClient.instance().getCurrentUser()?.id,
 ): Channel =
