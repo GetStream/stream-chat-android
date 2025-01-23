@@ -16,6 +16,24 @@
 
 package io.getstream.chat.android.client
 
+import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
+import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
+import io.getstream.chat.android.client.api2.model.dto.CommandDto
+import io.getstream.chat.android.client.api2.model.dto.ConfigDto
+import io.getstream.chat.android.client.api2.model.dto.DeviceDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelMuteDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
+import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
+import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -31,6 +49,8 @@ import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomDate
+import io.getstream.chat.android.randomDateOrNull
+import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import org.mockito.kotlin.doReturn
@@ -100,4 +120,234 @@ internal object Mother {
     ): ConnectedEvent {
         return ConnectedEvent(type, createdAt, streamDateFormatter.format(createdAt), me, connectionId)
     }
+
+    fun randomDownstreamMessageDto(
+        attachments: List<AttachmentDto> = emptyList(),
+        channel: ChannelInfoDto? = null,
+        cid: String = randomString(),
+        command: String? = randomString(),
+        created_at: Date = randomDate(),
+        deleted_at: Date? = randomDateOrNull(),
+        html: String = randomString(),
+        i18n: Map<String, String> = emptyMap(),
+        id: String = randomString(),
+        latest_reactions: List<DownstreamReactionDto> = emptyList(),
+        mentioned_users: List<DownstreamUserDto> = emptyList(),
+        own_reactions: List<DownstreamReactionDto> = emptyList(),
+        parent_id: String? = randomString(),
+        pin_expires: Date? = randomDateOrNull(),
+        pinned: Boolean = randomBoolean(),
+        pinned_at: Date? = randomDateOrNull(),
+        message_text_updated_at: Date? = randomDateOrNull(),
+        pinned_by: DownstreamUserDto? = null,
+        quoted_message: DownstreamMessageDto? = null,
+        quoted_message_id: String? = randomString(),
+        reaction_counts: Map<String, Int>? = emptyMap(),
+        reaction_scores: Map<String, Int>? = emptyMap(),
+        reaction_groups: Map<String, DownstreamReactionGroupDto>? = emptyMap(),
+        reply_count: Int = randomInt(),
+        deleted_reply_count: Int = randomInt(),
+        shadowed: Boolean = randomBoolean(),
+        show_in_channel: Boolean = randomBoolean(),
+        silent: Boolean = randomBoolean(),
+        text: String = randomString(),
+        thread_participants: List<DownstreamUserDto> = emptyList(),
+        type: String = randomString(),
+        updated_at: Date = randomDate(),
+        user: DownstreamUserDto = randomDownstreamUserDto(),
+        moderation_details: DownstreamModerationDetailsDto? = null,
+        moderation: DownstreamModerationDto? = null,
+        poll: DownstreamPollDto? = null,
+        extraData: Map<String, Any> = emptyMap(),
+    ): DownstreamMessageDto {
+        return DownstreamMessageDto(
+            attachments = attachments,
+            channel = channel,
+            cid = cid,
+            command = command,
+            created_at = created_at,
+            deleted_at = deleted_at,
+            html = html,
+            i18n = i18n,
+            id = id,
+            latest_reactions = latest_reactions,
+            mentioned_users = mentioned_users,
+            own_reactions = own_reactions,
+            parent_id = parent_id,
+            pin_expires = pin_expires,
+            pinned = pinned,
+            pinned_at = pinned_at,
+            message_text_updated_at = message_text_updated_at,
+            pinned_by = pinned_by,
+            quoted_message = quoted_message,
+            quoted_message_id = quoted_message_id,
+            reaction_counts = reaction_counts,
+            reaction_scores = reaction_scores,
+            reaction_groups = reaction_groups,
+            reply_count = reply_count,
+            deleted_reply_count = deleted_reply_count,
+            shadowed = shadowed,
+            show_in_channel = show_in_channel,
+            silent = silent,
+            text = text,
+            thread_participants = thread_participants,
+            type = type,
+            updated_at = updated_at,
+            user = user,
+            moderation_details = moderation_details,
+            moderation = moderation,
+            poll = poll,
+            extraData = extraData,
+        )
+    }
+
+    fun randomDownstreamUserDto(
+        id: String = randomString(),
+        name: String? = randomString(),
+        image: String? = randomString(),
+        role: String = randomString(),
+        invisible: Boolean? = false,
+        privacy_settings: PrivacySettingsDto? = null,
+        language: String? = randomString(),
+        banned: Boolean = randomBoolean(),
+        devices: List<DeviceDto>? = emptyList(),
+        online: Boolean = randomBoolean(),
+        created_at: Date? = randomDateOrNull(),
+        deactivated_at: Date? = randomDateOrNull(),
+        updated_at: Date? = randomDateOrNull(),
+        last_active: Date? = randomDateOrNull(),
+        total_unread_count: Int = randomInt(),
+        unread_channels: Int = randomInt(),
+        unread_count: Int = randomInt(),
+        unread_threads: Int = randomInt(),
+        mutes: List<DownstreamMuteDto>? = emptyList(),
+        teams: List<String> = emptyList(),
+        channel_mutes: List<DownstreamChannelMuteDto>? = emptyList(),
+        blocked_user_ids: List<String>? = emptyList(),
+        extraData: Map<String, Any> = emptyMap(),
+    ): DownstreamUserDto = DownstreamUserDto(
+        id = id,
+        name = name,
+        image = image,
+        role = role,
+        invisible = invisible,
+        privacy_settings = privacy_settings,
+        language = language,
+        banned = banned,
+        devices = devices,
+        online = online,
+        created_at = created_at,
+        deactivated_at = deactivated_at,
+        updated_at = updated_at,
+        last_active = last_active,
+        total_unread_count = total_unread_count,
+        unread_channels = unread_channels,
+        unread_count = unread_count,
+        unread_threads = unread_threads,
+        mutes = mutes,
+        teams = teams,
+        channel_mutes = channel_mutes,
+        blocked_user_ids = blocked_user_ids,
+        extraData = extraData,
+    )
+
+    fun randomDownstreamChannelDto(
+        cid: String = randomString(),
+        id: String = randomString(),
+        type: String = randomString(),
+        name: String? = randomString(),
+        image: String? = randomString(),
+        watcher_count: Int = randomInt(),
+        frozen: Boolean = randomBoolean(),
+        last_message_at: Date? = randomDateOrNull(),
+        created_at: Date? = randomDateOrNull(),
+        deleted_at: Date? = randomDateOrNull(),
+        updated_at: Date? = randomDateOrNull(),
+        member_count: Int = randomInt(),
+        messages: List<DownstreamMessageDto> = emptyList(),
+        members: List<DownstreamMemberDto> = emptyList(),
+        watchers: List<DownstreamUserDto> = emptyList(),
+        read: List<DownstreamChannelUserRead> = emptyList(),
+        config: ConfigDto = randomConfigDto(),
+        created_by: DownstreamUserDto? = randomDownstreamUserDto(),
+        team: String = randomString(),
+        cooldown: Int = randomInt(),
+        pinned_messages: List<DownstreamMessageDto> = emptyList(),
+        own_capabilities: List<String> = emptyList(),
+        membership: DownstreamMemberDto? = null,
+        extraData: Map<String, Any> = emptyMap(),
+    ): DownstreamChannelDto = DownstreamChannelDto(
+        cid = cid,
+        id = id,
+        type = type,
+        name = name,
+        image = image,
+        watcher_count = watcher_count,
+        frozen = frozen,
+        last_message_at = last_message_at,
+        created_at = created_at,
+        deleted_at = deleted_at,
+        updated_at = updated_at,
+        member_count = member_count,
+        messages = messages,
+        members = members,
+        watchers = watchers,
+        read = read,
+        config = config,
+        created_by = created_by,
+        team = team,
+        cooldown = cooldown,
+        pinned_messages = pinned_messages,
+        own_capabilities = own_capabilities,
+        membership = membership,
+        extraData = extraData,
+    )
+
+    fun randomConfigDto(
+        created_at: Date? = randomDateOrNull(),
+        updated_at: Date? = randomDateOrNull(),
+        name: String? = randomString(),
+        typing_events: Boolean = randomBoolean(),
+        read_events: Boolean = randomBoolean(),
+        connect_events: Boolean = randomBoolean(),
+        search: Boolean = randomBoolean(),
+        reactions: Boolean = randomBoolean(),
+        replies: Boolean = randomBoolean(),
+        mutes: Boolean = randomBoolean(),
+        uploads: Boolean = randomBoolean(),
+        url_enrichment: Boolean = randomBoolean(),
+        custom_events: Boolean = randomBoolean(),
+        push_notifications: Boolean = randomBoolean(),
+        skip_last_msg_update_for_system_msgs: Boolean? = randomBoolean(),
+        polls: Boolean = randomBoolean(),
+        message_retention: String = randomString(),
+        max_message_length: Int = randomInt(),
+        automod: String = randomString(),
+        automod_behavior: String = randomString(),
+        blocklist_behavior: String? = randomString(),
+        commands: List<CommandDto> = emptyList(),
+    ): ConfigDto = ConfigDto(
+        created_at = created_at,
+        updated_at = updated_at,
+        name = name,
+        typing_events = typing_events,
+        read_events = read_events,
+        connect_events = connect_events,
+        search = search,
+        reactions = reactions,
+        replies = replies,
+        mutes = mutes,
+        uploads = uploads,
+        url_enrichment = url_enrichment,
+        custom_events = custom_events,
+        push_notifications = push_notifications,
+        skip_last_msg_update_for_system_msgs = skip_last_msg_update_for_system_msgs,
+        polls = polls,
+        message_retention = message_retention,
+        max_message_length = max_message_length,
+        automod = automod,
+        automod_behavior = automod_behavior,
+        blocklist_behavior = blocklist_behavior,
+        commands = commands,
+    )
 }

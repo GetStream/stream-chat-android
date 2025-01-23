@@ -25,6 +25,7 @@ import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.UserId
 import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
 import java.util.Date
@@ -82,7 +83,7 @@ public fun Channel.updateLastMessage(
     return this.copy(
         messages = newMessages,
         read = newReads,
-    ).syncUnreadCountWithReads()
+    ).syncUnreadCountWithReads(currentUserId)
 }
 
 /**
@@ -195,7 +196,7 @@ public fun Channel.removeMembership(currentUserId: String?): Channel =
     copy(membership = membership.takeUnless { it?.user?.id == currentUserId })
 
 @InternalStreamChatApi
-public fun Channel.updateReads(newRead: ChannelUserRead): Channel {
+public fun Channel.updateReads(newRead: ChannelUserRead, currentUserId: UserId): Channel {
     val oldRead = read.firstOrNull { it.user.id == newRead.user.id }
     return copy(
         read = if (oldRead != null) {
@@ -203,7 +204,7 @@ public fun Channel.updateReads(newRead: ChannelUserRead): Channel {
         } else {
             read + newRead
         },
-    ).syncUnreadCountWithReads()
+    ).syncUnreadCountWithReads(currentUserId)
 }
 
 @InternalStreamChatApi

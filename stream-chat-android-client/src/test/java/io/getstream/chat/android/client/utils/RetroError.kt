@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.utils
 
 import io.getstream.chat.android.client.call.RetrofitCall
-import io.getstream.chat.android.client.parser2.MoshiChatParser
+import io.getstream.chat.android.client.parser2.ParserFactory
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
 import okhttp3.MediaType
@@ -43,7 +43,7 @@ internal class RetroError<T : Any>(
     fun toRetrofitCall(): RetrofitCall<T> {
         return RetrofitCall(
             call = this,
-            parser = MoshiChatParser { "" },
+            parser = ParserFactory.createMoshiChatParser(),
             CoroutineScope(DispatcherProvider.IO),
         )
     }

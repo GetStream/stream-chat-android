@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.notifications.handler.NotificationHandle
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.token.TokenManager
+import io.getstream.chat.android.client.transformer.ApiModelTransformers
 import io.getstream.chat.android.client.uploader.FileTransformer
 import io.getstream.chat.android.client.uploader.FileUploader
 import okhttp3.OkHttpClient
@@ -37,6 +38,7 @@ internal class ChatModule(
     userScope: UserScope,
     config: ChatClientConfig,
     notificationsHandler: NotificationHandler,
+    apiModelTransformers: ApiModelTransformers,
     fileTransformer: FileTransformer,
     uploader: FileUploader?,
     tokenManager: TokenManager,
@@ -49,6 +51,7 @@ internal class ChatModule(
     userScope,
     config,
     notificationsHandler,
+    apiModelTransformers,
     fileTransformer,
     uploader,
     tokenManager,

@@ -235,6 +235,7 @@ public final class io/getstream/chat/android/client/ChatClient$Builder : io/gets
 	public final fun okHttpClient (Lokhttp3/OkHttpClient;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun retryPolicy (Lio/getstream/result/call/retry/RetryPolicy;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun uploadAttachmentsNetworkType (Lio/getstream/chat/android/models/UploadAttachmentsNetworkType;)Lio/getstream/chat/android/client/ChatClient$Builder;
+	public final fun withApiModelTransformer (Lio/getstream/chat/android/client/transformer/ApiModelTransformers;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun withPlugins ([Lio/getstream/chat/android/client/plugin/factory/PluginFactory;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun withRepositoryFactoryProvider (Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory$Provider;)Lio/getstream/chat/android/client/ChatClient$Builder;
 }
@@ -2501,12 +2502,14 @@ public final class io/getstream/chat/android/client/extensions/AttachmentExtensi
 
 public final class io/getstream/chat/android/client/extensions/ChannelExtensionKt {
 	public static final fun countUnreadMentionsForUser (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;)I
-	public static final fun getCurrentUserUnreadCount (Lio/getstream/chat/android/models/Channel;)I
+	public static final fun currentUserUnreadCount (Lio/getstream/chat/android/models/Channel;Ljava/lang/String;)I
+	public static synthetic fun currentUserUnreadCount$default (Lio/getstream/chat/android/models/Channel;Ljava/lang/String;ILjava/lang/Object;)I
 	public static final fun isAnonymousChannel (Lio/getstream/chat/android/models/Channel;)Z
 	public static final fun isArchive (Lio/getstream/chat/android/models/Channel;)Z
 	public static final fun isMutedFor (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;)Z
 	public static final fun isPinned (Lio/getstream/chat/android/models/Channel;)Z
-	public static final fun syncUnreadCountWithReads (Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/models/Channel;
+	public static final fun syncUnreadCountWithReads (Lio/getstream/chat/android/models/Channel;Ljava/lang/String;)Lio/getstream/chat/android/models/Channel;
+	public static synthetic fun syncUnreadCountWithReads$default (Lio/getstream/chat/android/models/Channel;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/models/Channel;
 }
 
 public final class io/getstream/chat/android/client/extensions/FlowExtensions {
@@ -3161,6 +3164,17 @@ public final class io/getstream/chat/android/client/sync/SyncState {
 
 public abstract interface class io/getstream/chat/android/client/token/TokenProvider {
 	public abstract fun loadToken ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/transformer/ApiModelTransformers {
+	public fun <init> ()V
+	public fun <init> (Lio/getstream/chat/android/models/MessageTransformer;Lio/getstream/chat/android/models/MessageTransformer;Lio/getstream/chat/android/models/ChannelTransformer;Lio/getstream/chat/android/models/UserTransformer;Lio/getstream/chat/android/models/UserTransformer;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/MessageTransformer;Lio/getstream/chat/android/models/MessageTransformer;Lio/getstream/chat/android/models/ChannelTransformer;Lio/getstream/chat/android/models/UserTransformer;Lio/getstream/chat/android/models/UserTransformer;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getIncomingChannelTransformer ()Lio/getstream/chat/android/models/ChannelTransformer;
+	public final fun getIncomingMessageTransformer ()Lio/getstream/chat/android/models/MessageTransformer;
+	public final fun getIncomingUserTransformer ()Lio/getstream/chat/android/models/UserTransformer;
+	public final fun getOutgoingMessageTransformer ()Lio/getstream/chat/android/models/MessageTransformer;
+	public final fun getOutgoingUserTransformers ()Lio/getstream/chat/android/models/UserTransformer;
 }
 
 public abstract interface class io/getstream/chat/android/client/uploader/FileTransformer {

@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test
 
 internal class SocketErrorResponseAdapterTest {
 
-    private val parser = MoshiChatParser { "" }
+    private val parser = ParserFactory.createMoshiChatParser()
 
     @Test
     fun `Deserialize JSON socket error response`() {

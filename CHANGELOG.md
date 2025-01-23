@@ -20,6 +20,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Introduced `ApiModelTransformers` to allow custom transformations of API models. (#5568)[https://github.com/GetStream/stream-chat-android/pull/5568]
 
 ### ⚠️ Changed
 

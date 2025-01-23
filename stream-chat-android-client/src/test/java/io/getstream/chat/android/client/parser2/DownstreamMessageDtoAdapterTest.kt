@@ -29,7 +29,7 @@ import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Test
 
 internal class DownstreamMessageDtoAdapterTest {
-    private val parser = MoshiChatParser { "" }
+    private val parser = ParserFactory.createMoshiChatParser()
 
     @Test
     fun `Deserialize JSON message with custom fields`() {

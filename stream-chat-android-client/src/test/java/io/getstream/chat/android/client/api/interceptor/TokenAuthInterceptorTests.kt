@@ -21,7 +21,7 @@ import io.getstream.chat.android.client.api.FakeResponse
 import io.getstream.chat.android.client.api.FakeResponse.Body
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatRequestError
-import io.getstream.chat.android.client.parser2.MoshiChatParser
+import io.getstream.chat.android.client.parser2.ParserFactory
 import io.getstream.chat.android.client.token.CacheableTokenProvider
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.token.FakeTokenProvider
@@ -34,7 +34,7 @@ import org.junit.Test
 internal class TokenAuthInterceptorTests {
 
     val token = "token"
-    val parser = MoshiChatParser { "" }
+    val parser = ParserFactory.createMoshiChatParser()
 
     @Test
     fun undefinedToken() {

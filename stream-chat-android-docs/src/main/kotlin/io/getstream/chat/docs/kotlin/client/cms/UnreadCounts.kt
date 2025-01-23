@@ -117,7 +117,7 @@ class UnreadCounts(val client: ChatClient, val channelClient: ChannelClient) {
                 when (result) {
                     is Result.Success -> {
                         // Unread count for current user
-                        val unreadCount = result.value.currentUserUnreadCount
+                        val unreadCount = result.value.currentUserUnreadCount()
                     }
                     is Result.Failure -> {
                         // Handler error

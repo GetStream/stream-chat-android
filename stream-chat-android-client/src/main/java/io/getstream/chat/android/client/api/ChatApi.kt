@@ -233,7 +233,7 @@ internal interface ChatApi {
         id: String,
         set: Map<String, Any>,
         unset: List<String>,
-    ): Call<User>
+    ): Call<List<User>>
 
     fun queryChannel(
         channelType: String,

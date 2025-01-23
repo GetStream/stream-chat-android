@@ -294,7 +294,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureUnreadCountBadge() {
-        val count = channel.currentUserUnreadCount
+        val count = channel.currentUserUnreadCount()
 
         val haveUnreadMessages = count > 0
         unreadCountBadge.isVisible = haveUnreadMessages
