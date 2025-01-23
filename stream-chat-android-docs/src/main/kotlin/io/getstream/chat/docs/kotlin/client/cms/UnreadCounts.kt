@@ -10,6 +10,7 @@ import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.extensions.countUnreadMentionsForUser
 import io.getstream.chat.android.client.extensions.currentUserUnreadCount
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.User
 import io.getstream.result.Result
@@ -105,6 +106,7 @@ class UnreadCounts(val client: ChatClient, val channelClient: ChannelClient) {
             }
         }
 
+        @OptIn(InternalStreamChatApi::class)
         fun unreadMessagesPerChannel() {
             // Get channel
             val queryChannelRequest = QueryChannelRequest().withState()

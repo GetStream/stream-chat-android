@@ -21,31 +21,61 @@ package io.getstream.chat.android.models
  */
 public sealed class FilterObject
 
+@ConsistentCopyVisibility
 public data class AndFilterObject internal constructor(val filterObjects: Set<FilterObject>) : FilterObject()
+
+@ConsistentCopyVisibility
 public data class OrFilterObject internal constructor(val filterObjects: Set<FilterObject>) : FilterObject()
+
+@ConsistentCopyVisibility
 public data class NorFilterObject internal constructor(val filterObjects: Set<FilterObject>) : FilterObject()
+
+@ConsistentCopyVisibility
 public data class ContainsFilterObject internal constructor(
     val fieldName: String,
     val value: Any,
 ) : FilterObject()
+
+@ConsistentCopyVisibility
 public data class AutocompleteFilterObject internal constructor(
     val fieldName: String,
     val value: String,
 ) : FilterObject()
+
+@ConsistentCopyVisibility
 public data class ExistsFilterObject internal constructor(val fieldName: String) : FilterObject()
+
+@ConsistentCopyVisibility
 public data class NotExistsFilterObject internal constructor(val fieldName: String) : FilterObject()
+
+@ConsistentCopyVisibility
 public data class EqualsFilterObject internal constructor(val fieldName: String, val value: Any) : FilterObject()
+
+@ConsistentCopyVisibility
 public data class NotEqualsFilterObject internal constructor(val fieldName: String, val value: Any) : FilterObject()
+
+@ConsistentCopyVisibility
 public data class GreaterThanFilterObject internal constructor(val fieldName: String, val value: Any) : FilterObject()
+
+@ConsistentCopyVisibility
 public data class GreaterThanOrEqualsFilterObject internal constructor(
     val fieldName: String,
     val value: Any,
 ) : FilterObject()
+
+@ConsistentCopyVisibility
 public data class LessThanFilterObject internal constructor(val fieldName: String, val value: Any) : FilterObject()
+
+@ConsistentCopyVisibility
 public data class LessThanOrEqualsFilterObject internal constructor(
     val fieldName: String,
     val value: Any,
 ) : FilterObject()
+
+@ConsistentCopyVisibility
 public data class InFilterObject internal constructor(val fieldName: String, val values: Set<Any>) : FilterObject()
+
+@ConsistentCopyVisibility
 public data class DistinctFilterObject internal constructor(val memberIds: Set<String>) : FilterObject()
+
 public object NeutralFilterObject : FilterObject()
