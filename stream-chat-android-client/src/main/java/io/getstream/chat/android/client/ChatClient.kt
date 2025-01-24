@@ -96,6 +96,7 @@ import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.extensions.extractBaseUrl
 import io.getstream.chat.android.client.extensions.internal.isLaterThanDays
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.client.helpers.AppSettingManager
@@ -3582,7 +3583,7 @@ internal constructor(
 
         private var forceInsecureConnection = false
         private var baseUrl: String = "chat.stream-io-api.com"
-        private var cdnUrl: String = baseUrl
+        private var cdnUrl: String? = null
         private var logLevel = ChatLogLevel.NOTHING
         private var warmUp: Boolean = true
         private var loggerHandler: ChatLoggerHandler? = null
@@ -3737,19 +3738,15 @@ internal constructor(
          *
          * @param value The base URL to use.
          */
-        public fun baseUrl(value: String): Builder {
-            var baseUrl = value
-            if (baseUrl.startsWith("https://")) {
-                baseUrl = baseUrl.split("https://").toTypedArray()[1]
-            }
-            if (baseUrl.startsWith("http://")) {
-                baseUrl = baseUrl.split("http://").toTypedArray()[1]
-            }
-            if (baseUrl.endsWith("/")) {
-                baseUrl = baseUrl.substring(0, baseUrl.length - 1)
-            }
-            this.baseUrl = baseUrl
-            return this
+        public fun baseUrl(value: String): Builder = apply {
+            baseUrl = value.extractBaseUrl()
+        }
+
+        /**
+         * Sets the CDN URL to be used by the client.
+         */
+        public fun cdnUrl(value: String): Builder = apply {
+            cdnUrl = value.extractBaseUrl()
         }
 
         /**
@@ -3847,7 +3844,7 @@ internal constructor(
             val config = ChatClientConfig(
                 apiKey = apiKey,
                 httpUrl = "$httpProtocol://$baseUrl/",
-                cdnHttpUrl = "$httpProtocol://$cdnUrl/",
+                cdnHttpUrl = "$httpProtocol://${cdnUrl ?: baseUrl}/",
                 wssUrl = "$wsProtocol://$baseUrl/",
                 warmUp = warmUp,
                 loggerConfig = ChatLoggerConfigImpl(logLevel, loggerHandler),
