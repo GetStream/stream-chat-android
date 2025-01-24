@@ -49,7 +49,7 @@ internal class ChannelsTest : SnapshotTest {
                         ItemState.ChannelItemState(channel = PreviewChannelData.channelWithImage),
                         ItemState.ChannelItemState(channel = PreviewChannelData.channelWithOneUser),
                         ItemState.ChannelItemState(channel = PreviewChannelData.channelWithOnlineUser),
-                    )
+                    ),
                 ),
                 lazyListState = rememberLazyListState(),
                 itemContent = { itemState ->
@@ -60,14 +60,14 @@ internal class ChannelsTest : SnapshotTest {
                                 channelItem = channelItem,
                                 currentUser = PreviewUserData.user1,
                                 onChannelClick = {},
-                                onChannelLongClick = {}
+                                onChannelLongClick = {},
                             )
                         },
                         searchResultContent = { searchResultItem ->
                             SearchResultItem(
                                 searchResultItemState = searchResultItem,
                                 currentUser = PreviewUserData.user1,
-                                onSearchResultClick = {}
+                                onSearchResultClick = {},
                             )
                         },
                     )
