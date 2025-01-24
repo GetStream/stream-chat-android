@@ -86,24 +86,24 @@ public fun ChannelItem(
     onChannelLongClick: (Channel) -> Unit,
     modifier: Modifier = Modifier,
     leadingContent: @Composable RowScope.(ItemState.ChannelItemState) -> Unit = {
-        with(ChatTheme.componentFactory.channelList) {
-            ChannelItemLeadingContent(
+        with(ChatTheme.componentFactory.channelItem) {
+            LeadingContent(
                 channelItem = channelItem,
                 currentUser = currentUser,
             )
         }
     },
     centerContent: @Composable RowScope.(ItemState.ChannelItemState) -> Unit = {
-        with(ChatTheme.componentFactory.channelList) {
-            ChannelItemCenterContent(
+        with(ChatTheme.componentFactory.channelItem) {
+            CenterContent(
                 channelItem = channelItem,
                 currentUser = currentUser,
             )
         }
     },
     trailingContent: @Composable RowScope.(ItemState.ChannelItemState) -> Unit = {
-        with(ChatTheme.componentFactory.channelList) {
-            ChannelItemTrailingContent(
+        with(ChatTheme.componentFactory.channelItem) {
+            TrailingContent(
                 channelItem = channelItem,
                 currentUser = currentUser,
             )

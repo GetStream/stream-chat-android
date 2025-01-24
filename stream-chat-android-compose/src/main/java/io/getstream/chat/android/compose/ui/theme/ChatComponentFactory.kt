@@ -98,11 +98,13 @@ import io.getstream.chat.android.models.User
  *
  * @param channelListHeader The default UI elements for the header of the channel list component.
  * @param channelList The default UI elements for the channel list component.
+ * @param channelItem The default UI elements for the channel item component.
  * @param searchInput The default UI elements for the search input component.
  */
 public open class ChatComponentFactory(
     public val channelListHeader: ChannelListHeader = ChannelListHeader(),
     public val channelList: ChannelList = ChannelList(),
+    public val channelItem: ChannelItem = ChannelItem(),
     public val searchInput: SearchInput = SearchInput(),
 ) {
 
@@ -196,51 +198,6 @@ public open class ChatComponentFactory(
         }
 
         /**
-         * The default leading content for the channel item.
-         * Usually the avatar that holds an image of the channel or its members.
-         */
-        @Composable
-        public open fun RowScope.ChannelItemLeadingContent(
-            channelItem: ItemState.ChannelItemState,
-            currentUser: User?,
-        ) {
-            DefaultChannelItemLeadingContent(
-                channelItem = channelItem,
-                currentUser = currentUser,
-            )
-        }
-
-        /**
-         * The default center content for the channel item.
-         * Usually the name of the channel and the last message.
-         */
-        @Composable
-        public open fun RowScope.ChannelItemCenterContent(
-            channelItem: ItemState.ChannelItemState,
-            currentUser: User?,
-        ) {
-            DefaultChannelItemCenterContent(
-                channelItemState = channelItem,
-                currentUser = currentUser,
-            )
-        }
-
-        /**
-         * The default trailing content for the channel item.
-         * Usually the last message and the number of unread messages.
-         */
-        @Composable
-        public open fun RowScope.ChannelItemTrailingContent(
-            channelItem: ItemState.ChannelItemState,
-            currentUser: User?,
-        ) {
-            DefaultChannelItemTrailingContent(
-                channel = channelItem.channel,
-                currentUser = currentUser,
-            )
-        }
-
-        /**
          * The default search result item content.
          */
         @Composable
@@ -271,8 +228,7 @@ public open class ChatComponentFactory(
         }
 
         /**
-         * The default helper content rendered at the top of the channel list.
-         * It's empty by default and can be used to implement a scroll to top feature.
+         * The default helper content. It's empty by default and can be used to implement a scroll to top feature.
          */
         @Composable
         public open fun BoxScope.HelperContent() {
@@ -292,6 +248,57 @@ public open class ChatComponentFactory(
         @Composable
         public open fun LazyItemScope.DividerItem() {
             DefaultChannelItemDivider()
+        }
+    }
+
+    /**
+     * The default UI elements for the channel item component.
+     */
+    public open class ChannelItem {
+
+        /**
+         * The default leading content.
+         * Usually the avatar that holds an image of the channel or its members.
+         */
+        @Composable
+        public open fun RowScope.LeadingContent(
+            channelItem: ItemState.ChannelItemState,
+            currentUser: User?,
+        ) {
+            DefaultChannelItemLeadingContent(
+                channelItem = channelItem,
+                currentUser = currentUser,
+            )
+        }
+
+        /**
+         * The default center content.
+         * Usually the name of the channel and the last message.
+         */
+        @Composable
+        public open fun RowScope.CenterContent(
+            channelItem: ItemState.ChannelItemState,
+            currentUser: User?,
+        ) {
+            DefaultChannelItemCenterContent(
+                channelItemState = channelItem,
+                currentUser = currentUser,
+            )
+        }
+
+        /**
+         * The default trailing content.
+         * Usually the last message and the number of unread messages.
+         */
+        @Composable
+        public open fun RowScope.TrailingContent(
+            channelItem: ItemState.ChannelItemState,
+            currentUser: User?,
+        ) {
+            DefaultChannelItemTrailingContent(
+                channel = channelItem.channel,
+                currentUser = currentUser,
+            )
         }
     }
 

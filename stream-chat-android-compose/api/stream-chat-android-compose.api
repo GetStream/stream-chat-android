@@ -2083,20 +2083,26 @@ public final class io/getstream/chat/android/compose/ui/theme/ChannelOptionsThem
 public class io/getstream/chat/android/compose/ui/theme/ChatComponentFactory {
 	public static final field $stable I
 	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$ChannelListHeader;Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$ChannelList;Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$SearchInput;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$ChannelListHeader;Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$ChannelList;Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$SearchInput;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$ChannelListHeader;Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$ChannelList;Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$ChannelItem;Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$SearchInput;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$ChannelListHeader;Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$ChannelList;Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$ChannelItem;Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$SearchInput;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getChannelItem ()Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$ChannelItem;
 	public final fun getChannelList ()Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$ChannelList;
 	public final fun getChannelListHeader ()Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$ChannelListHeader;
 	public final fun getSearchInput ()Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$SearchInput;
 }
 
+public class io/getstream/chat/android/compose/ui/theme/ChatComponentFactory$ChannelItem {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun CenterContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
+	public fun LeadingContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
+	public fun TrailingContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
+}
+
 public class io/getstream/chat/android/compose/ui/theme/ChatComponentFactory$ChannelList {
 	public static final field $stable I
 	public fun <init> ()V
-	public fun ChannelItemCenterContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
 	public fun ChannelItemContent (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
-	public fun ChannelItemLeadingContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
-	public fun ChannelItemTrailingContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
 	public fun DividerItem (Landroidx/compose/foundation/lazy/LazyItemScope;Landroidx/compose/runtime/Composer;I)V
 	public fun EmptyContent (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
 	public fun EmptySearchContent (Landroidx/compose/ui/Modifier;Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
