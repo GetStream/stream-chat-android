@@ -60,14 +60,22 @@ public fun Channels(
     onLastItemReached: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
-    helperContent: @Composable BoxScope.() -> Unit = {},
+    helperContent: @Composable BoxScope.() -> Unit = {
+        with(ChatTheme.componentFactory.channelList) {
+            HelperContent()
+        }
+    },
     loadingMoreContent: @Composable LazyItemScope.() -> Unit = {
         with(ChatTheme.componentFactory.channelList) {
-            LoadingMoreContent()
+            LoadingMoreItemContent()
         }
     },
     itemContent: @Composable LazyItemScope.(ItemState) -> Unit,
-    divider: @Composable LazyItemScope.() -> Unit,
+    divider: @Composable LazyItemScope.() -> Unit = {
+        with(ChatTheme.componentFactory.channelList) {
+            DividerItem()
+        }
+    },
 ) {
     val (_, isLoadingMore, endOfChannels, channelItems) = channelsState
 
