@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.compose.sample.ui.component
 
-import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyItemScope
@@ -31,11 +31,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.state.channels.list.ItemState
+import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
+import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
+import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
+import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 
 class CustomChatComponentFactory : ChatComponentFactory(
     channelListHeader = object : ChannelListHeader() {
@@ -93,18 +102,6 @@ class CustomChatComponentFactory : ChatComponentFactory(
         }
     },
     channelList = object : ChannelList() {
-        @Composable
-        override fun LazyItemScope.ChannelItemContent(
-            channelItem: ItemState.ChannelItemState,
-            currentUser: User?,
-            onChannelClick: (Channel) -> Unit,
-            onChannelLongClick: (Channel) -> Unit,
-        ) {
-            Text(
-                text = channelItem.channel.name,
-                color = ChatTheme.colors.textHighEmphasis,
-            )
-        }
 
         @Composable
         override fun LoadingIndicator(modifier: Modifier) {
@@ -113,13 +110,45 @@ class CustomChatComponentFactory : ChatComponentFactory(
                 color = ChatTheme.colors.textHighEmphasis,
             )
         }
+    },
+    channelItem = object : ChannelItem() {
 
         @Composable
-        override fun BoxScope.HelperContent() {
-            Text(
-                text = "Helper content",
-                color = ChatTheme.colors.textLowEmphasis,
+        override fun RowScope.LeadingContent(
+            channelItem: ItemState.ChannelItemState,
+            currentUser: User?,
+        ) {
+            Image(
+                imageVector = Icons.Rounded.Face,
+                contentDescription = null,
             )
+        }
+    },
+    messageList = object : MessageList() {
+
+        @Composable
+        override fun LazyItemScope.MessageItemContent(
+            messageItem: MessageItemState,
+            reactionSorting: ReactionSorting,
+            messageContentFactory: MessageContentFactory,
+            onPollUpdated: (Message, Poll) -> Unit,
+            onCastVote: (Message, Poll, Option) -> Unit,
+            onRemoveVote: (Message, Poll, Vote) -> Unit,
+            selectPoll: (Message, Poll, PollSelectionType) -> Unit,
+            onClosePoll: (String) -> Unit,
+            onAddPollOption: (Poll, String) -> Unit,
+            onLongItemClick: (Message) -> Unit,
+            onThreadClick: (Message) -> Unit,
+            onReactionsClick: (Message) -> Unit,
+            onGiphyActionClick: (GiphyAction) -> Unit,
+            onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit,
+            onQuotedMessageClick: (Message) -> Unit,
+            onUserAvatarClick: ((User) -> Unit)?,
+            onMessageLinkClick: ((Message, String) -> Unit)?,
+            onUserMentionClick: (User) -> Unit,
+            onAddAnswer: (Message, Poll, String) -> Unit,
+        ) {
+            Text(text = messageItem.message.text)
         }
     },
 )

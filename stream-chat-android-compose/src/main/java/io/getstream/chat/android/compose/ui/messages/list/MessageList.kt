@@ -20,6 +20,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -156,38 +157,50 @@ public fun MessageList(
     },
     onMessagesPageEndReached: (String) -> Unit = { viewModel.onBottomEndRegionReached(it) },
     onScrollToBottomClicked: (() -> Unit) -> Unit = { viewModel.scrollToBottom(scrollToBottom = it) },
-    loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
-    emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
-    helperContent: @Composable BoxScope.() -> Unit = {
-        DefaultMessagesHelperContent(
-            messagesState = viewModel.currentMessagesState,
-            messagesLazyListState = messagesLazyListState,
-            scrollToBottom = onScrollToBottomClicked,
-        )
+    loadingContent: @Composable () -> Unit = {
+        ChatTheme.componentFactory.messageList.LoadingIndicator(modifier)
     },
-    loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
-    itemContent: @Composable (MessageListItemState) -> Unit = { messageListItem ->
-        DefaultMessageContainer(
-            messageListItemState = messageListItem,
-            reactionSorting = reactionSorting,
-            messageContentFactory = messageContentFactory,
-            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-            onCastVote = onCastVote,
-            onRemoveVote = onRemoveVote,
-            selectPoll = selectPoll,
-            onPollUpdated = onPollUpdated,
-            onClosePoll = onClosePoll,
-            onAddPollOption = onAddPollOption,
-            onThreadClick = onThreadClick,
-            onLongItemClick = onLongItemClick,
-            onReactionsClick = onReactionsClick,
-            onGiphyActionClick = onGiphyActionClick,
-            onQuotedMessageClick = onQuotedMessageClick,
-            onUserAvatarClick = onUserAvatarClick,
-            onLinkClick = onMessageLinkClick,
-            onUserMentionClick = onUserMentionClick,
-            onAddAnswer = onAddAnswer,
-        )
+    emptyContent: @Composable () -> Unit = {
+        ChatTheme.componentFactory.messageList.EmptyContent(modifier)
+    },
+    helperContent: @Composable BoxScope.() -> Unit = {
+        with(ChatTheme.componentFactory.messageList) {
+            HelperContent(
+                messageListState = viewModel.currentMessagesState,
+                messagesLazyListState = messagesLazyListState,
+                onScrollToBottomClick = onScrollToBottomClicked,
+            )
+        }
+    },
+    loadingMoreContent: @Composable LazyItemScope.() -> Unit = {
+        with(ChatTheme.componentFactory.messageList) {
+            LoadingMoreItemContent()
+        }
+    },
+    itemContent: @Composable LazyItemScope.(MessageListItemState) -> Unit = { messageListItem ->
+        with(ChatTheme.componentFactory.messageList) {
+            MessageItemContainer(
+                messageListItem = messageListItem,
+                reactionSorting = reactionSorting,
+                messageContentFactory = messageContentFactory,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                onCastVote = onCastVote,
+                onRemoveVote = onRemoveVote,
+                selectPoll = selectPoll,
+                onPollUpdated = onPollUpdated,
+                onClosePoll = onClosePoll,
+                onAddPollOption = onAddPollOption,
+                onThreadClick = onThreadClick,
+                onLongItemClick = onLongItemClick,
+                onReactionsClick = onReactionsClick,
+                onGiphyActionClick = onGiphyActionClick,
+                onQuotedMessageClick = onQuotedMessageClick,
+                onUserAvatarClick = onUserAvatarClick,
+                onMessageLinkClick = onMessageLinkClick,
+                onUserMentionClick = onUserMentionClick,
+                onAddAnswer = onAddAnswer,
+            )
+        }
     },
 ) {
     MessageList(
@@ -239,7 +252,7 @@ public fun MessageList(
  */
 @Suppress("LongParameterList")
 @Composable
-internal fun DefaultMessageContainer(
+internal fun LazyItemScope.DefaultMessageContainer(
     messageListItemState: MessageListItemState,
     reactionSorting: ReactionSorting,
     messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
@@ -378,41 +391,53 @@ public fun MessageList(
     onUserAvatarClick: ((User) -> Unit)? = null,
     onMessageLinkClick: ((Message, String) -> Unit)? = null,
     onUserMentionClick: (User) -> Unit = { _ -> },
-    loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
-    emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
-    helperContent: @Composable BoxScope.() -> Unit = {
-        DefaultMessagesHelperContent(
-            messagesState = currentState,
-            messagesLazyListState = messagesLazyListState,
-            scrollToBottom = onScrollToBottom,
-        )
+    loadingContent: @Composable () -> Unit = {
+        ChatTheme.componentFactory.messageList.LoadingIndicator(modifier)
     },
-    loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
+    emptyContent: @Composable () -> Unit = {
+        ChatTheme.componentFactory.messageList.EmptyContent(modifier)
+    },
+    helperContent: @Composable BoxScope.() -> Unit = {
+        with(ChatTheme.componentFactory.messageList) {
+            HelperContent(
+                messageListState = currentState,
+                messagesLazyListState = messagesLazyListState,
+                onScrollToBottomClick = onScrollToBottom,
+            )
+        }
+    },
+    loadingMoreContent: @Composable LazyItemScope.() -> Unit = {
+        with(ChatTheme.componentFactory.messageList) {
+            LoadingMoreItemContent()
+        }
+    },
     itemModifier: (index: Int, item: MessageListItemState) -> Modifier = { _, _ ->
         Modifier
     },
-    itemContent: @Composable (MessageListItemState) -> Unit = {
-        DefaultMessageContainer(
-            messageListItemState = it,
-            reactionSorting = reactionSorting,
-            messageContentFactory = messageContentFactory,
-            onPollUpdated = onPollUpdated,
-            onCastVote = onCastVote,
-            onRemoveVote = onRemoveVote,
-            selectPoll = selectPoll,
-            onClosePoll = onClosePoll,
-            onAddPollOption = onAddPollOption,
-            onLongItemClick = onLongItemClick,
-            onThreadClick = onThreadClick,
-            onReactionsClick = onReactionsClick,
-            onGiphyActionClick = onGiphyActionClick,
-            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-            onQuotedMessageClick = onQuotedMessageClick,
-            onUserAvatarClick = onUserAvatarClick,
-            onLinkClick = onMessageLinkClick,
-            onUserMentionClick = onUserMentionClick,
-            onAddAnswer = onAddAnswer,
-        )
+    itemContent: @Composable LazyItemScope.(MessageListItemState) -> Unit = { messageListItemState ->
+        with(ChatTheme.componentFactory.messageList) {
+            MessageItemContainer(
+                messageListItem = messageListItemState,
+                reactionSorting = reactionSorting,
+                messageContentFactory = messageContentFactory,
+                onPollUpdated = onPollUpdated,
+                onCastVote = onCastVote,
+                onRemoveVote = onRemoveVote,
+                selectPoll = selectPoll,
+                onClosePoll = onClosePoll,
+                onAddPollOption = onAddPollOption,
+                onLongItemClick = onLongItemClick,
+                onThreadClick = onThreadClick,
+                onReactionsClick = onReactionsClick,
+                onGiphyActionClick = onGiphyActionClick,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                onQuotedMessageClick = onQuotedMessageClick,
+                onUserAvatarClick = onUserAvatarClick,
+                onMessageLinkClick = onMessageLinkClick,
+                onUserMentionClick = onUserMentionClick,
+                onAddAnswer = onAddAnswer,
+            )
+        }
     },
 ) {
     val isLoading = currentState.isLoading

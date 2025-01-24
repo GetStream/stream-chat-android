@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.state.channels.list.ItemState
+import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelHeaderLeadingContent
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderCenterContent
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderTrailingContent
@@ -37,10 +38,40 @@ import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelsLoading
 import io.getstream.chat.android.compose.ui.channels.list.DefaultSearchResultItem
 import io.getstream.chat.android.compose.ui.components.DefaultSearchLabel
 import io.getstream.chat.android.compose.ui.components.DefaultSearchLeadingIcon
+import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
+import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageContainer
+import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageDateSeparatorContent
+import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageItem
+import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageListEmptyContent
+import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageListLoadingIndicator
+import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageModeratedContent
+import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageThreadSeparatorContent
+import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageUnreadSeparatorContent
+import io.getstream.chat.android.compose.ui.messages.list.DefaultMessagesHelperContent
+import io.getstream.chat.android.compose.ui.messages.list.DefaultMessagesLoadingMoreIndicator
+import io.getstream.chat.android.compose.ui.messages.list.DefaultSystemMessageContent
+import io.getstream.chat.android.compose.ui.messages.list.MessagesLazyListState
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
+import io.getstream.chat.android.ui.common.state.messages.list.EmptyThreadPlaceholderItemState
+import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
+import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
+import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
+import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
+import io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageItemState
+import io.getstream.chat.android.ui.common.state.messages.list.StartOfTheChannelItemState
+import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItemState
+import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparatorItemState
+import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
+import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
+import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 
 /**
  * Factory for creating stateless components that are used by default throughout the Chat UI.
@@ -100,12 +131,14 @@ import io.getstream.chat.android.models.User
  * @param channelList The default UI elements for the channel list component.
  * @param channelItem The default UI elements for the channel item component.
  * @param searchInput The default UI elements for the search input component.
+ * @param messageList The default UI elements for the message list component.
  */
 public open class ChatComponentFactory(
     public val channelListHeader: ChannelListHeader = ChannelListHeader(),
     public val channelList: ChannelList = ChannelList(),
     public val channelItem: ChannelItem = ChannelItem(),
     public val searchInput: SearchInput = SearchInput(),
+    public val messageList: MessageList = MessageList(),
 ) {
 
     /**
@@ -221,10 +254,10 @@ public open class ChatComponentFactory(
             modifier: Modifier,
             searchQuery: String,
         ) {
-            DefaultChannelSearchEmptyContent(
-                modifier = modifier,
-                searchQuery = searchQuery,
-            )
+            // DefaultChannelSearchEmptyContent(
+            //     modifier = modifier,
+            //     searchQuery = searchQuery,
+            // )
         }
 
         /**
@@ -321,6 +354,220 @@ public open class ChatComponentFactory(
         @Composable
         public open fun Label() {
             DefaultSearchLabel()
+        }
+    }
+
+    /**
+     * The default UI elements for the message list component.
+     */
+    public open class MessageList {
+
+        /**
+         * The default loading indicator, when the initial message list is loading.
+         */
+        @Composable
+        public open fun LoadingIndicator(modifier: Modifier) {
+            DefaultMessageListLoadingIndicator(
+                modifier = modifier,
+            )
+        }
+
+        /**
+         * The default empty content, when the message list is empty.
+         */
+        @Composable
+        public open fun EmptyContent(modifier: Modifier) {
+            DefaultMessageListEmptyContent(
+                modifier = modifier,
+            )
+        }
+
+        /**
+         * The default helper content.
+         * It shows the scroll to bottom button when the user scrolls up and it's away from the bottom.
+         */
+        @Composable
+        public open fun BoxScope.HelperContent(
+            messageListState: MessageListState,
+            messagesLazyListState: MessagesLazyListState,
+            onScrollToBottomClick: (() -> Unit) -> Unit,
+        ) {
+            DefaultMessagesHelperContent(
+                messagesState = messageListState,
+                messagesLazyListState = messagesLazyListState,
+                scrollToBottom = onScrollToBottomClick,
+            )
+        }
+
+        /**
+         * The default message item container, which renders each [MessageListItemState]'s subtype.
+         */
+        @Suppress("LongParameterList")
+        @Composable
+        public open fun LazyItemScope.MessageItemContainer(
+            messageListItem: MessageListItemState,
+            reactionSorting: ReactionSorting,
+            messageContentFactory: MessageContentFactory,
+            onPollUpdated: (Message, Poll) -> Unit,
+            onCastVote: (Message, Poll, Option) -> Unit,
+            onRemoveVote: (Message, Poll, Vote) -> Unit,
+            selectPoll: (Message, Poll, PollSelectionType) -> Unit,
+            onClosePoll: (String) -> Unit,
+            onAddPollOption: (Poll, String) -> Unit,
+            onLongItemClick: (Message) -> Unit,
+            onThreadClick: (Message) -> Unit,
+            onReactionsClick: (Message) -> Unit,
+            onGiphyActionClick: (GiphyAction) -> Unit,
+            onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit,
+            onQuotedMessageClick: (Message) -> Unit,
+            onUserAvatarClick: ((User) -> Unit)?,
+            onMessageLinkClick: ((Message, String) -> Unit)?,
+            onUserMentionClick: (User) -> Unit,
+            onAddAnswer: (Message, Poll, String) -> Unit,
+        ) {
+            DefaultMessageContainer(
+                messageListItemState = messageListItem,
+                reactionSorting = reactionSorting,
+                messageContentFactory = messageContentFactory,
+                onPollUpdated = onPollUpdated,
+                onCastVote = onCastVote,
+                onRemoveVote = onRemoveVote,
+                selectPoll = selectPoll,
+                onClosePoll = onClosePoll,
+                onAddPollOption = onAddPollOption,
+                onLongItemClick = onLongItemClick,
+                onThreadClick = onThreadClick,
+                onReactionsClick = onReactionsClick,
+                onGiphyActionClick = onGiphyActionClick,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                onQuotedMessageClick = onQuotedMessageClick,
+                onUserAvatarClick = onUserAvatarClick,
+                onLinkClick = onMessageLinkClick,
+                onUserMentionClick = onUserMentionClick,
+                onAddAnswer = onAddAnswer,
+            )
+        }
+
+        /**
+         * The default loading more item, when the next page of messages is loading.
+         */
+        @Composable
+        public open fun LazyItemScope.LoadingMoreItemContent() {
+            DefaultMessagesLoadingMoreIndicator()
+        }
+
+        /**
+         * The default date separator item content.
+         */
+        @Composable
+        public open fun LazyItemScope.DateSeparatorItemContent(dateSeparatorItem: DateSeparatorItemState) {
+            DefaultMessageDateSeparatorContent(dateSeparator = dateSeparatorItem)
+        }
+
+        /**
+         * The default unread separator item content.
+         */
+        @Composable
+        public open fun LazyItemScope.UnreadSeparatorItemContent(unreadSeparatorItem: UnreadSeparatorItemState) {
+            DefaultMessageUnreadSeparatorContent(unreadSeparatorItemState = unreadSeparatorItem)
+        }
+
+        /**
+         * The default thread date separator item content.
+         */
+        @Composable
+        public open fun LazyItemScope.ThreadDateSeparatorItemContent(
+            threadDateSeparatorItem: ThreadDateSeparatorItemState,
+        ) {
+            DefaultMessageThreadSeparatorContent(threadSeparator = threadDateSeparatorItem)
+        }
+
+        /**
+         * The default system message content.
+         */
+        @Composable
+        public open fun LazyItemScope.SystemMessageItemContent(systemMessageItem: SystemMessageItemState) {
+            DefaultSystemMessageContent(systemMessageState = systemMessageItem)
+        }
+
+        /**
+         * The default moderated message content.
+         */
+        @Composable
+        public open fun LazyItemScope.ModeratedMessageItemContent(moderatedMessageItem: ModeratedMessageItemState) {
+            DefaultMessageModeratedContent(moderatedMessageItemState = moderatedMessageItem)
+        }
+
+        /**
+         * The default typing indicator content.
+         */
+        @Composable
+        public open fun LazyItemScope.TypingIndicatorItemContent(typingItem: TypingItemState) {
+        }
+
+        /**
+         * The default empty thread placeholder item content.
+         */
+        @Composable
+        public open fun LazyItemScope.EmptyThreadPlaceholderItemContent(
+            emptyThreadPlaceholderItem: EmptyThreadPlaceholderItemState,
+        ) {
+        }
+
+        /**
+         * The default start of the channel item content.
+         */
+        @Composable
+        public open fun LazyItemScope.StartOfTheChannelItemContent(startOfTheChannelItem: StartOfTheChannelItemState) {
+        }
+
+        /**
+         * The default item content of a regular message.
+         */
+        @Suppress("LongParameterList")
+        @Composable
+        public open fun LazyItemScope.MessageItemContent(
+            messageItem: MessageItemState,
+            reactionSorting: ReactionSorting,
+            messageContentFactory: MessageContentFactory,
+            onPollUpdated: (Message, Poll) -> Unit,
+            onCastVote: (Message, Poll, Option) -> Unit,
+            onRemoveVote: (Message, Poll, Vote) -> Unit,
+            selectPoll: (Message, Poll, PollSelectionType) -> Unit,
+            onClosePoll: (String) -> Unit,
+            onAddPollOption: (Poll, String) -> Unit,
+            onLongItemClick: (Message) -> Unit,
+            onThreadClick: (Message) -> Unit,
+            onReactionsClick: (Message) -> Unit,
+            onGiphyActionClick: (GiphyAction) -> Unit,
+            onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit,
+            onQuotedMessageClick: (Message) -> Unit,
+            onUserAvatarClick: ((User) -> Unit)?,
+            onMessageLinkClick: ((Message, String) -> Unit)?,
+            onUserMentionClick: (User) -> Unit,
+            onAddAnswer: (Message, Poll, String) -> Unit,
+        ) {
+            DefaultMessageItem(
+                messageItem = messageItem,
+                reactionSorting = reactionSorting,
+                messageContentFactory = messageContentFactory,
+                onPollUpdated = onPollUpdated,
+                onCastVote = onCastVote,
+                onRemoveVote = onRemoveVote,
+                selectPoll = selectPoll,
+                onClosePoll = onClosePoll,
+                onAddPollOption = onAddPollOption,
+                onLongItemClick = onLongItemClick,
+                onThreadClick = onThreadClick,
+                onReactionsClick = onReactionsClick,
+                onGiphyActionClick = onGiphyActionClick,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                onQuotedMessageClick = onQuotedMessageClick,
+                onUserAvatarClick = { onUserAvatarClick?.invoke(messageItem.message.user) },
+                onLinkClick = onMessageLinkClick,
+                onUserMentionClick = onUserMentionClick,
+                onAddAnswer = onAddAnswer,
+            )
         }
     }
 }
