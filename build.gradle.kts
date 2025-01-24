@@ -1,10 +1,10 @@
+import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import io.getstream.chat.android.Dependencies
-import io.getstream.chat.android.command.changelog.task.ChangelogReleaseSectionTask
 import io.getstream.chat.android.command.changelog.task.ChangelogAddModelSectionTask
+import io.getstream.chat.android.command.changelog.task.ChangelogReleaseSectionTask
 import io.getstream.chat.android.command.release.task.ReleaseTask
 import io.getstream.chat.android.command.unittest.task.UnitTestsTask
 import io.getstream.chat.android.command.version.task.VersionPrintTask
-import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 
 plugins {
     alias(libs.plugins.android.application) apply false
@@ -58,19 +58,6 @@ subprojects {
     }
     apply(plugin = "io.gitlab.arturbosch.detekt")
     apply(from = "${rootDir}/scripts/coverage.gradle")
-
-    configurations.all {
-        resolutionStrategy.eachDependency {
-            // Force all Kotlin dependencies to use version 2.0.10 to avoid conflicts introduced by Paparazzi 1.3.5,
-            // which pulls in Kotlin 2.0.21. The 'kotlin-build-tools-impl' dependency is excluded from this rule
-            // because it must match the Kotlin Gradle Plugin (KGP) version to prevent Build Tools API errors.
-            // Once the project is migrated to Kotlin 2.0.21, this rule can be removed.
-            if (requested.group == "org.jetbrains.kotlin" && requested.name != "kotlin-build-tools-impl") {
-                useVersion(libs.versions.kotlin.get())
-                because("Ensure consistent Kotlin version across dependencies while avoiding conflicts with Build Tools API.")
-            }
-        }
-    }
 }
 
 tasks.withType<DependencyUpdatesTask> {
