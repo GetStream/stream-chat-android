@@ -94,7 +94,7 @@ class CustomChatComponentFactory : ChatComponentFactory(
     },
     channelList = object : ChannelList() {
         @Composable
-        override fun LazyItemScope.ChannelContent(
+        override fun LazyItemScope.ChannelItemContent(
             channelItem: ItemState.ChannelItemState,
             currentUser: User?,
             onChannelClick: (Channel) -> Unit,
@@ -107,7 +107,7 @@ class CustomChatComponentFactory : ChatComponentFactory(
         }
 
         @Composable
-        override fun LoadingContent(modifier: Modifier) {
+        override fun LoadingIndicator(modifier: Modifier) {
             Text(
                 text = "Loading...",
                 color = ChatTheme.colors.textHighEmphasis,

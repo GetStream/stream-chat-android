@@ -158,10 +158,10 @@ public open class ChatComponentFactory(
     public open class ChannelList {
 
         /**
-         * The default loading content, when the initial channel list is loading.
+         * The default loading indicator, when the initial channel list is loading.
          */
         @Composable
-        public open fun LoadingContent(modifier: Modifier) {
+        public open fun LoadingIndicator(modifier: Modifier) {
             DefaultChannelListLoadingIndicator(
                 modifier = modifier,
             )
@@ -181,7 +181,7 @@ public open class ChatComponentFactory(
          * The default channel item content.
          */
         @Composable
-        public open fun LazyItemScope.ChannelContent(
+        public open fun LazyItemScope.ChannelItemContent(
             channelItem: ItemState.ChannelItemState,
             currentUser: User?,
             onChannelClick: (Channel) -> Unit,
@@ -241,10 +241,10 @@ public open class ChatComponentFactory(
         }
 
         /**
-         * The default search result content.
+         * The default search result item content.
          */
         @Composable
-        public open fun LazyItemScope.SearchResultContent(
+        public open fun LazyItemScope.SearchResultItemContent(
             searchResultItem: ItemState.SearchResultItemState,
             currentUser: User?,
             onSearchResultClick: (Message) -> Unit,
@@ -279,10 +279,10 @@ public open class ChatComponentFactory(
         }
 
         /**
-         * The default loading more content, when the next page of channels is loading.
+         * The default loading more item, when the next page of channels is loading.
          */
         @Composable
-        public open fun LazyItemScope.LoadingMoreContent() {
+        public open fun LazyItemScope.LoadingMoreItemContent() {
             DefaultChannelsLoadingMoreIndicator()
         }
 
@@ -290,7 +290,7 @@ public open class ChatComponentFactory(
          * The default divider between channel items.
          */
         @Composable
-        public open fun LazyItemScope.Divider() {
+        public open fun LazyItemScope.DividerItem() {
             DefaultChannelItemDivider()
         }
     }
