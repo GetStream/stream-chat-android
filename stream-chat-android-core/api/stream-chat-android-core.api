@@ -115,8 +115,6 @@ public final class io/getstream/chat/android/models/AgoraChannel {
 
 public final class io/getstream/chat/android/models/AndFilterObject : io/getstream/chat/android/models/FilterObject {
 	public final fun component1 ()Ljava/util/Set;
-	public final fun copy (Ljava/util/Set;)Lio/getstream/chat/android/models/AndFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/AndFilterObject;Ljava/util/Set;ILjava/lang/Object;)Lio/getstream/chat/android/models/AndFilterObject;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFilterObjects ()Ljava/util/Set;
 	public fun hashCode ()I
@@ -308,8 +306,6 @@ public final class io/getstream/chat/android/models/AttachmentType {
 public final class io/getstream/chat/android/models/AutocompleteFilterObject : io/getstream/chat/android/models/FilterObject {
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/models/AutocompleteFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/AutocompleteFilterObject;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/models/AutocompleteFilterObject;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFieldName ()Ljava/lang/String;
 	public final fun getValue ()Ljava/lang/String;
@@ -601,6 +597,10 @@ public final class io/getstream/chat/android/models/ChannelMute {
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface class io/getstream/chat/android/models/ChannelTransformer {
+	public abstract fun transform (Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/models/Channel;
+}
+
 public final class io/getstream/chat/android/models/ChannelUserRead : io/getstream/chat/android/models/UserEntity {
 	public fun <init> (Lio/getstream/chat/android/models/User;Ljava/util/Date;ILjava/util/Date;Ljava/lang/String;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/User;
@@ -733,8 +733,6 @@ public final class io/getstream/chat/android/models/ConnectionState$Offline : io
 public final class io/getstream/chat/android/models/ContainsFilterObject : io/getstream/chat/android/models/FilterObject {
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/Object;
-	public final fun copy (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/models/ContainsFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/ContainsFilterObject;Ljava/lang/String;Ljava/lang/Object;ILjava/lang/Object;)Lio/getstream/chat/android/models/ContainsFilterObject;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFieldName ()Ljava/lang/String;
 	public final fun getValue ()Ljava/lang/Object;
@@ -768,8 +766,6 @@ public final class io/getstream/chat/android/models/Device {
 
 public final class io/getstream/chat/android/models/DistinctFilterObject : io/getstream/chat/android/models/FilterObject {
 	public final fun component1 ()Ljava/util/Set;
-	public final fun copy (Ljava/util/Set;)Lio/getstream/chat/android/models/DistinctFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/DistinctFilterObject;Ljava/util/Set;ILjava/lang/Object;)Lio/getstream/chat/android/models/DistinctFilterObject;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getMemberIds ()Ljava/util/Set;
 	public fun hashCode ()I
@@ -779,8 +775,6 @@ public final class io/getstream/chat/android/models/DistinctFilterObject : io/ge
 public final class io/getstream/chat/android/models/EqualsFilterObject : io/getstream/chat/android/models/FilterObject {
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/Object;
-	public final fun copy (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/models/EqualsFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/EqualsFilterObject;Ljava/lang/String;Ljava/lang/Object;ILjava/lang/Object;)Lio/getstream/chat/android/models/EqualsFilterObject;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFieldName ()Ljava/lang/String;
 	public final fun getValue ()Ljava/lang/Object;
@@ -845,8 +839,6 @@ public final class io/getstream/chat/android/models/EventType {
 
 public final class io/getstream/chat/android/models/ExistsFilterObject : io/getstream/chat/android/models/FilterObject {
 	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/models/ExistsFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/ExistsFilterObject;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/models/ExistsFilterObject;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFieldName ()Ljava/lang/String;
 	public fun hashCode ()I
@@ -929,8 +921,6 @@ public final class io/getstream/chat/android/models/Flag {
 public final class io/getstream/chat/android/models/GreaterThanFilterObject : io/getstream/chat/android/models/FilterObject {
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/Object;
-	public final fun copy (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/models/GreaterThanFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/GreaterThanFilterObject;Ljava/lang/String;Ljava/lang/Object;ILjava/lang/Object;)Lio/getstream/chat/android/models/GreaterThanFilterObject;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFieldName ()Ljava/lang/String;
 	public final fun getValue ()Ljava/lang/Object;
@@ -941,8 +931,6 @@ public final class io/getstream/chat/android/models/GreaterThanFilterObject : io
 public final class io/getstream/chat/android/models/GreaterThanOrEqualsFilterObject : io/getstream/chat/android/models/FilterObject {
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/Object;
-	public final fun copy (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/models/GreaterThanOrEqualsFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/GreaterThanOrEqualsFilterObject;Ljava/lang/String;Ljava/lang/Object;ILjava/lang/Object;)Lio/getstream/chat/android/models/GreaterThanOrEqualsFilterObject;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFieldName ()Ljava/lang/String;
 	public final fun getValue ()Ljava/lang/Object;
@@ -979,8 +967,6 @@ public final class io/getstream/chat/android/models/HMSRoom {
 public final class io/getstream/chat/android/models/InFilterObject : io/getstream/chat/android/models/FilterObject {
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/util/Set;
-	public final fun copy (Ljava/lang/String;Ljava/util/Set;)Lio/getstream/chat/android/models/InFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/InFilterObject;Ljava/lang/String;Ljava/util/Set;ILjava/lang/Object;)Lio/getstream/chat/android/models/InFilterObject;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFieldName ()Ljava/lang/String;
 	public final fun getValues ()Ljava/util/Set;
@@ -1000,8 +986,6 @@ public final class io/getstream/chat/android/models/InitializationState : java/l
 public final class io/getstream/chat/android/models/LessThanFilterObject : io/getstream/chat/android/models/FilterObject {
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/Object;
-	public final fun copy (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/models/LessThanFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/LessThanFilterObject;Ljava/lang/String;Ljava/lang/Object;ILjava/lang/Object;)Lio/getstream/chat/android/models/LessThanFilterObject;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFieldName ()Ljava/lang/String;
 	public final fun getValue ()Ljava/lang/Object;
@@ -1012,8 +996,6 @@ public final class io/getstream/chat/android/models/LessThanFilterObject : io/ge
 public final class io/getstream/chat/android/models/LessThanOrEqualsFilterObject : io/getstream/chat/android/models/FilterObject {
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/Object;
-	public final fun copy (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/models/LessThanOrEqualsFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/LessThanOrEqualsFilterObject;Ljava/lang/String;Ljava/lang/Object;ILjava/lang/Object;)Lio/getstream/chat/android/models/LessThanOrEqualsFilterObject;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFieldName ()Ljava/lang/String;
 	public final fun getValue ()Ljava/lang/Object;
@@ -1292,6 +1274,10 @@ public final class io/getstream/chat/android/models/MessageModerationDetails {
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface class io/getstream/chat/android/models/MessageTransformer {
+	public abstract fun transform (Lio/getstream/chat/android/models/Message;)Lio/getstream/chat/android/models/Message;
+}
+
 public final class io/getstream/chat/android/models/MessageType {
 	public static final field EPHEMERAL Ljava/lang/String;
 	public static final field ERROR Ljava/lang/String;
@@ -1402,10 +1388,23 @@ public final class io/getstream/chat/android/models/NeutralFilterObject : io/get
 	public static final field INSTANCE Lio/getstream/chat/android/models/NeutralFilterObject;
 }
 
+public final class io/getstream/chat/android/models/NoOpChannelTransformer : io/getstream/chat/android/models/ChannelTransformer {
+	public static final field INSTANCE Lio/getstream/chat/android/models/NoOpChannelTransformer;
+	public fun transform (Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/models/Channel;
+}
+
+public final class io/getstream/chat/android/models/NoOpMessageTransformer : io/getstream/chat/android/models/MessageTransformer {
+	public static final field INSTANCE Lio/getstream/chat/android/models/NoOpMessageTransformer;
+	public fun transform (Lio/getstream/chat/android/models/Message;)Lio/getstream/chat/android/models/Message;
+}
+
+public final class io/getstream/chat/android/models/NoOpUserTransformer : io/getstream/chat/android/models/UserTransformer {
+	public static final field INSTANCE Lio/getstream/chat/android/models/NoOpUserTransformer;
+	public fun transform (Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/models/User;
+}
+
 public final class io/getstream/chat/android/models/NorFilterObject : io/getstream/chat/android/models/FilterObject {
 	public final fun component1 ()Ljava/util/Set;
-	public final fun copy (Ljava/util/Set;)Lio/getstream/chat/android/models/NorFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/NorFilterObject;Ljava/util/Set;ILjava/lang/Object;)Lio/getstream/chat/android/models/NorFilterObject;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFilterObjects ()Ljava/util/Set;
 	public fun hashCode ()I
@@ -1415,8 +1414,6 @@ public final class io/getstream/chat/android/models/NorFilterObject : io/getstre
 public final class io/getstream/chat/android/models/NotEqualsFilterObject : io/getstream/chat/android/models/FilterObject {
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/Object;
-	public final fun copy (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/models/NotEqualsFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/NotEqualsFilterObject;Ljava/lang/String;Ljava/lang/Object;ILjava/lang/Object;)Lio/getstream/chat/android/models/NotEqualsFilterObject;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFieldName ()Ljava/lang/String;
 	public final fun getValue ()Ljava/lang/Object;
@@ -1426,8 +1423,6 @@ public final class io/getstream/chat/android/models/NotEqualsFilterObject : io/g
 
 public final class io/getstream/chat/android/models/NotExistsFilterObject : io/getstream/chat/android/models/FilterObject {
 	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/models/NotExistsFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/NotExistsFilterObject;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/models/NotExistsFilterObject;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFieldName ()Ljava/lang/String;
 	public fun hashCode ()I
@@ -1449,8 +1444,6 @@ public final class io/getstream/chat/android/models/Option {
 
 public final class io/getstream/chat/android/models/OrFilterObject : io/getstream/chat/android/models/FilterObject {
 	public final fun component1 ()Ljava/util/Set;
-	public final fun copy (Ljava/util/Set;)Lio/getstream/chat/android/models/OrFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/OrFilterObject;Ljava/util/Set;ILjava/lang/Object;)Lio/getstream/chat/android/models/OrFilterObject;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFilterObjects ()Ljava/util/Set;
 	public fun hashCode ()I
@@ -2024,6 +2017,10 @@ public abstract interface class io/getstream/chat/android/models/UserEntity {
 
 public final class io/getstream/chat/android/models/UserEntity$DefaultImpls {
 	public static fun getUserId (Lio/getstream/chat/android/models/UserEntity;)Ljava/lang/String;
+}
+
+public abstract interface class io/getstream/chat/android/models/UserTransformer {
+	public abstract fun transform (Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/models/User;
 }
 
 public final class io/getstream/chat/android/models/VideoCallInfo {

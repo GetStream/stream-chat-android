@@ -45,7 +45,6 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
-- Avoid multiple queries within on states when user's properties are updated. [#5572](https://github.com/GetStream/stream-chat-android/pull/5572)
 
 ### ⬆️ Improved
 
@@ -69,13 +68,9 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Fix error messages text being overridden by the default error message. [#5551](https://github.com/GetStream/stream-chat-android/pull/5551)
-- Fix wrong hints in the poll creation dialog input fields. [#5561](https://github.com/GetStream/stream-chat-android/pull/5561)
 - Fix poll attachment picker not hidden if disabled in the dashboard. [#5562](https://github.com/GetStream/stream-chat-android/pull/5562)
 
-
 ### ⬆️ Improved
-- Create snapshot tests for channels stateless components. [#5570](https://github.com/GetStream/stream-chat-android/pull/5570)
 
 ### ✅ Added
 
@@ -93,6 +88,44 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# January 23th, 2025 - 6.10.0
+## Common changes for all artifacts
+### ⬆️ Improved
+- Update compileSdk to 35 [#5573](https://github.com/GetStream/stream-chat-android/pull/5573)
+- Update dependency versions:
+  - AndroidX Ktx 1.15.0 [#5573](https://github.com/GetStream/stream-chat-android/pull/5573)
+  - Stream Push 1.3.0 [#5573](https://github.com/GetStream/stream-chat-android/pull/5573)
+  - Android Gradle Plugin 8.8.0 [#5580](https://github.com/GetStream/stream-chat-android/pull/5580)
+  - Kotlin 2.0.21 [#5580](https://github.com/GetStream/stream-chat-android/pull/5580)
+  - Gradle Wrapper 8.10.2 [#5580](https://github.com/GetStream/stream-chat-android/pull/5580)
+
+## stream-chat-android-client
+### ✅ Added
+- Introduced `ApiModelTransformers` to allow custom transformations of API models. [#5568](https://github.com/GetStream/stream-chat-android/pull/5568)
+
+## stream-chat-android-state
+### 🐞 Fixed
+-. Fix how Unread Counters are updated when events are received. [#5550](https://github.com/GetStream/stream-chat-android/pull/5550)
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+- Avoid multiple queries within on states when user's properties are updated. [#5572](https://github.com/GetStream/stream-chat-android/pull/5572)
+
+## stream-chat-android-ui-components
+### ✅ Added
+- Add `AttachmentsPickerDialogStyle::saveAttachmentsOnDismiss` flag for configuring whether the selected attachments should be saved when the dialog is dismissed. [#5554](https://github.com/GetStream/stream-chat-android/pull/5554)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fix error messages text being overridden by the default error message. [#5551](https://github.com/GetStream/stream-chat-android/pull/5551)
+- Fix wrong hints in the poll creation dialog input fields. [#5561](https://github.com/GetStream/stream-chat-android/pull/5561)
+
+### ⬆️ Improved
+- Create snapshot tests for channels stateless components. [#5570](https://github.com/GetStream/stream-chat-android/pull/5570)
+
+### ✅ Added
+- Add `AttachmentsPickerTheme::saveAttachmentsOnDismiss` flag for configuring whether the selected attachments should be saved when the dialog is dismissed. [#5554](https://github.com/GetStream/stream-chat-android/pull/5554)
 
 # January 09th, 2025 - 6.9.0
 ## stream-chat-android-client
@@ -966,12 +999,12 @@ Added `actionsProvider` lambda parameter to `NotificationHandlerFactory::createN
 
 ### ⬆️ Improved
 - Performance fixes:
-  - Faster ISO Date parser (5070)[https://github.com/GetStream/stream-chat-android/pull/5070]
+  - Faster ISO Date parser [5070](https://github.com/GetStream/stream-chat-android/pull/5070)
   - Preload KClass classes for parsing [5074](https://github.com/GetStream/stream-chat-android/pull/5074)
   - Faster asynchronous `ChannelMutableState` creation [5076](https://github.com/GetStream/stream-chat-android/pull/5076)
-  - Delay reflection in `NotificationHandlerFactory` (5078)[https://github.com/GetStream/stream-chat-android/pull/5078]
-  - Faster `SocketListener` callback delivery (5082)[https://github.com/GetStream/stream-chat-android/pull/5082]
-  - Use `DerivedStateFlow` instead of `stateIn` (5083[https://github.com/GetStream/stream-chat-android/pull/5083]
+  - Delay reflection in `NotificationHandlerFactory` [5078](https://github.com/GetStream/stream-chat-android/pull/5078)
+  - Faster `SocketListener` callback delivery [5082](https://github.com/GetStream/stream-chat-android/pull/5082)
+  - Use `DerivedStateFlow` instead of `stateIn` [5083](https://github.com/GetStream/stream-chat-android/pull/5083)
 
 ### ✅ Added
 - Added `SocketListener.deliverOnMainthread`. This allows you to disabled the default delivery on Main thread in case you are already handling it asynchronously in your code. `SocketListener` with `deliverOnMainthread` set to `false` will deliver the events a bit faster because there is no overhead of thread switching.
@@ -1431,10 +1464,10 @@ If you want to learn more about these changes and our decisions, check out our [
 
 ## Common changes for all artifacts
 ### ⬆️ Improved
-- Updated Kotlin version to `1.7.20`. (#4247)[https://github.com/GetStream/stream-chat-android/pull/4247]
+- Updated Kotlin version to `1.7.20`. [#4247](https://github.com/GetStream/stream-chat-android/pull/4247)
 
 ### ⚠️ Changed
-- Separated `state` and `offline` modules. (#4214)[https://github.com/GetStream/stream-chat-android/pull/4214]
+- Separated `state` and `offline` modules. [#4214](https://github.com/GetStream/stream-chat-android/pull/4214)
 - Moved `ClientState.user` to `GlobalState.user` because the state module is the one that correctly updates the user in the SDK. [#4333](https://github.com/GetStream/stream-chat-android/pull/4333)
 - 🚨 Breaking change: Converted `Result` class into sealed class with two implementations: `Result.Success` and `Result.Failure`. [#4356](https://github.com/GetStream/stream-chat-android/pull/4356)
 - 🚨 Breaking change: Converted `ChatError` class into sealed class with three implementations: `Error.Generic`, `Error.Throwable` and `Error.Network`. [#4368](https://github.com/GetStream/stream-chat-android/pull/4368)
@@ -1483,7 +1516,7 @@ If you want to learn more about these changes and our decisions, check out our [
 
 ## stream-chat-android-ui-common
 ### ⬆️ Improved
-- Updated Compose compiler version to `1.3.2`. (#4247)[https://github.com/GetStream/stream-chat-android/pull/4247]
+- Updated Compose compiler version to `1.3.2`. [#4247](https://github.com/GetStream/stream-chat-android/pull/4247)
 
 ### ✅ Added
 - Added `MessageListController` which generalizes message list state and actions, exposing them to each SDK's ViewModel. [#4157](https://github.com/GetStream/stream-chat-android/pull/4157/files)

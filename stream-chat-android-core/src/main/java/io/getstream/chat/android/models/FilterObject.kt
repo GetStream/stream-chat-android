@@ -20,7 +20,6 @@ package io.getstream.chat.android.models
  * Filter object that specifies requests for backend queries.
  */
 public sealed class FilterObject
-
 public data class AndFilterObject internal constructor(val filterObjects: Set<FilterObject>) : FilterObject()
 public data class OrFilterObject internal constructor(val filterObjects: Set<FilterObject>) : FilterObject()
 public data class NorFilterObject internal constructor(val filterObjects: Set<FilterObject>) : FilterObject()

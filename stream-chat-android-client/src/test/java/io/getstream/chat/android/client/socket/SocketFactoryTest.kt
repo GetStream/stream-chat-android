@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.parser.ChatParser
-import io.getstream.chat.android.client.parser2.MoshiChatParser
+import io.getstream.chat.android.client.parser2.ParserFactory
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomString
@@ -61,7 +61,7 @@ internal class SocketFactoryTest {
     }
 
     companion object {
-        private val chatParser: ChatParser = MoshiChatParser { "" }
+        private val chatParser: ChatParser = ParserFactory.createMoshiChatParser()
         private val endpoint = "https://${randomString().lowercase(Locale.getDefault())}/"
         private val apiKey = randomString()
         private val token = randomString()

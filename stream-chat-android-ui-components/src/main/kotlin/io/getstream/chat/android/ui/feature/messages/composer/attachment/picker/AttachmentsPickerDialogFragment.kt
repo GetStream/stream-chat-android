@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.feature.messages.composer.attachment.picker
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -95,6 +96,13 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
         } else {
             dismiss()
         }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        if (style.saveAttachmentsOnDismiss) {
+            attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments)
+        }
+        super.onDismiss(dialog)
     }
 
     /**

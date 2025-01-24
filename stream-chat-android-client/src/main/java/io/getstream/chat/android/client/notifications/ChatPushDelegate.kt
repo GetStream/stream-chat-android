@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.notifications
 
-import android.content.Context
 import io.getstream.android.push.PushDevice
 import io.getstream.android.push.PushProvider
 import io.getstream.android.push.delegate.PushDelegate
@@ -30,10 +29,9 @@ private typealias DevicePushProvider = io.getstream.chat.android.models.PushProv
 /**
  * Internal class that handle PN stuff.
  * It is declared in our Android Manifest and is used by reflection.
- *
  */
 @Suppress("Unused")
-internal class ChatPushDelegate(context: Context) : PushDelegate(context) {
+internal class ChatPushDelegate : PushDelegate() {
 
     private val expectedKeys = hashSetOf(KEY_CHANNEL_ID, KEY_MESSAGE_ID, KEY_CHANNEL_TYPE, KEY_GETSTREAM)
 

@@ -58,7 +58,7 @@ import io.getstream.chat.android.client.api.models.identifier.SendReactionIdenti
 import io.getstream.chat.android.client.api.models.identifier.ShuffleGiphyIdentifier
 import io.getstream.chat.android.client.api.models.identifier.UpdateMessageIdentifier
 import io.getstream.chat.android.client.api.models.identifier.getNewerRepliesIdentifier
-import io.getstream.chat.android.client.api2.mapping.toDto
+import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
@@ -132,6 +132,7 @@ import io.getstream.chat.android.client.token.ConstantTokenProvider
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.token.TokenManagerImpl
 import io.getstream.chat.android.client.token.TokenProvider
+import io.getstream.chat.android.client.transformer.ApiModelTransformers
 import io.getstream.chat.android.client.uploader.FileTransformer
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.NoOpFileTransformer
@@ -236,6 +237,7 @@ public class ChatClient
 internal constructor(
     public val config: ChatClientConfig,
     private val api: ChatApi,
+    private val dtoMapping: DtoMapping,
     private val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val userCredentialStorage: UserCredentialStorage,
@@ -2733,6 +2735,12 @@ internal constructor(
             set = set,
             unset = unset,
         )
+            .flatMap { users ->
+                when (val user = users.firstOrNull { it.id == id }) {
+                    null -> ErrorCall(userScope, Error.GenericError("User with id $id not found"))
+                    else -> CoroutineCall(userScope) { Result.Success(user) }
+                }
+            }
     }
 
     /**
@@ -3199,7 +3207,7 @@ internal constructor(
         params: CreateChannelParams,
     ): Call<Channel> {
         val currentUser = getCurrentUser()
-        val members = params.members.map(MemberData::toDto)
+        val members = with(dtoMapping) { params.members.map { it.toDto() } }
         val queryChannelRequest = QueryChannelRequest()
             .withData(params.extraData + mapOf(QueryChannelRequest.KEY_MEMBERS to members))
         return queryChannelInternal(
@@ -3591,6 +3599,7 @@ internal constructor(
         private var repositoryFactoryProvider: RepositoryFactory.Provider? = null
         private var uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.CONNECTED
         private var fileTransformer: FileTransformer = NoOpFileTransformer
+        private var apiModelTransformers: ApiModelTransformers = ApiModelTransformers()
 
         /**
          * Sets the log level to be used by the client.
@@ -3665,6 +3674,13 @@ internal constructor(
          */
         public fun fileTransformer(fileTransformer: FileTransformer): Builder = apply {
             this.fileTransformer = fileTransformer
+        }
+
+        /**
+         * Sets a custom [ApiModelTransformers] implementation that will be used by the client to transform models.
+         */
+        public fun withApiModelTransformer(apiModelTransformers: ApiModelTransformers): Builder = apply {
+            this.apiModelTransformers = apiModelTransformers
         }
 
         /**
@@ -3861,6 +3877,7 @@ internal constructor(
                         context = appContext,
                         notificationConfig = notificationConfig,
                     ),
+                    apiModelTransformers = apiModelTransformers,
                     fileTransformer = fileTransformer,
                     uploader = fileUploader,
                     tokenManager = tokenManager,
@@ -3887,6 +3904,7 @@ internal constructor(
             return ChatClient(
                 config,
                 module.api(),
+                module.dtoMapping,
                 module.notifications(),
                 tokenManager,
                 userCredentialStorage = userCredentialStorage ?: SharedPreferencesCredentialStorage(appContext),

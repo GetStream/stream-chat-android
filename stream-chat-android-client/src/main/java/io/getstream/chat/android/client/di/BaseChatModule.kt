@@ -51,6 +51,9 @@ import io.getstream.chat.android.client.api2.endpoint.PollsApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.endpoint.VideoCallApi
+import io.getstream.chat.android.client.api2.mapping.DomainMapping
+import io.getstream.chat.android.client.api2.mapping.DtoMapping
+import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.debugger.ChatClientDebugger
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -70,6 +73,7 @@ import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.token.TokenManagerImpl
+import io.getstream.chat.android.client.transformer.ApiModelTransformers
 import io.getstream.chat.android.client.uploader.FileTransformer
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamFileUploader
@@ -89,6 +93,7 @@ constructor(
     private val userScope: UserScope,
     private val config: ChatClientConfig,
     private val notificationsHandler: NotificationHandler,
+    private val apiModelTransformers: ApiModelTransformers,
     private val fileTransformer: FileTransformer,
     private val fileUploader: FileUploader? = null,
     private val tokenManager: TokenManager = TokenManagerImpl(),
@@ -98,7 +103,28 @@ constructor(
     private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it },
 ) {
 
-    private val moshiParser: ChatParser by lazy { MoshiChatParser(currentUserIdProvider) }
+    private val domainMapping by lazy {
+        DomainMapping(
+            currentUserIdProvider,
+            apiModelTransformers.incomingChannelTransformer,
+            apiModelTransformers.incomingMessageTransformer,
+            apiModelTransformers.incomingUserTransformer,
+        )
+    }
+    internal val dtoMapping by lazy {
+        DtoMapping(
+            apiModelTransformers.outgoingMessageTransformer,
+            apiModelTransformers.outgoingUserTransformers,
+        )
+    }
+    private val eventMapping by lazy { EventMapping(domainMapping) }
+
+    private val moshiParser: ChatParser by lazy {
+        MoshiChatParser(
+            eventMapping = eventMapping,
+            dtoMapping = dtoMapping,
+        )
+    }
     private val socketFactory: SocketFactory by lazy { SocketFactory(moshiParser, tokenManager) }
 
     private val defaultNotifications by lazy { buildNotification(notificationsHandler, config.notificationConfig) }
@@ -236,7 +262,9 @@ constructor(
 
     @Suppress("RemoveExplicitTypeArguments")
     private fun buildApi(chatConfig: ChatClientConfig): ChatApi = MoshiChatApi(
-        currentUserIdProvider,
+        domainMapping = domainMapping,
+        eventMapping = eventMapping,
+        dtoMapping = dtoMapping,
         fileUploader ?: defaultFileUploader,
         fileTransformer = fileTransformer,
         buildRetrofitApi<UserApi>(),

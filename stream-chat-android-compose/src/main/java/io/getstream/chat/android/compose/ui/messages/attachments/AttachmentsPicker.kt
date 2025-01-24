@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -86,6 +87,14 @@ public fun AttachmentsPicker(
     tabFactories: List<AttachmentsPickerTabFactory> = ChatTheme.attachmentsPickerTabFactories,
     shape: Shape = ChatTheme.shapes.bottomSheet,
 ) {
+    val saveAttachmentsOnDismiss = ChatTheme.attachmentPickerTheme.saveAttachmentsOnDismiss
+    val dismissAction = {
+        if (saveAttachmentsOnDismiss) {
+            onAttachmentsSelected(attachmentsPickerViewModel.getSelectedAttachments())
+        }
+        onDismiss()
+    }
+    BackHandler(onBack = dismissAction)
     // Cross-validate requested tabFactories with the allowed ones from BE
     val filter = remember { AttachmentsPickerTabFactoryFilter() }
     val allowedFactories = filter.filterAllowedFactories(tabFactories, attachmentsPickerViewModel.channel)
@@ -102,7 +111,7 @@ public fun AttachmentsPicker(
             .safeDrawingPadding()
             .fillMaxSize()
             .clickable(
-                onClick = onDismiss,
+                onClick = dismissAction,
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
             ),
@@ -154,7 +163,7 @@ public fun AttachmentsPicker(
                             ?.PickerTabContent(
                                 onAttachmentPickerAction = { pickerAction ->
                                     when (pickerAction) {
-                                        AttachmentPickerBack -> onDismiss.invoke()
+                                        AttachmentPickerBack -> dismissAction()
                                         is AttachmentPickerPollCreation -> onAttachmentPickerAction.invoke(pickerAction)
                                     }
                                 },

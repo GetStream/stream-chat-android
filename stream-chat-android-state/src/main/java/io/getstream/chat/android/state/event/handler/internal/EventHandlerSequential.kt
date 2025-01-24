@@ -36,6 +36,7 @@ import io.getstream.chat.android.client.events.HasMessage
 import io.getstream.chat.android.client.events.HasOwnUser
 import io.getstream.chat.android.client.events.HasPoll
 import io.getstream.chat.android.client.events.HasUnreadCounts
+import io.getstream.chat.android.client.events.HasUnreadThreadCounts
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
@@ -290,76 +291,61 @@ internal class EventHandlerSequential(
         var unreadThreadsCount = mutableGlobalState.unreadThreadsCount.value
         var blockedUserIds = mutableGlobalState.blockedUserIds.value
 
-        val modifyValuesFromEvent = { event: HasUnreadCounts ->
-            totalUnreadCount = event.totalUnreadCount
-            channelUnreadCount = event.unreadChannels
-        }
-
-        val modifyValuesFromUser = { user: User ->
-            me = user
-            totalUnreadCount = user.totalUnreadCount
-            channelUnreadCount = user.unreadChannels
-            unreadThreadsCount = user.unreadThreads
-            blockedUserIds = user.blockedUserIds
-        }
-
-        val modifyUnreadThreadsCount = { newValue: Int? ->
-            unreadThreadsCount = newValue ?: unreadThreadsCount
-        }
-
         val hasReadEventsCapability = parameterizedLazy<String, Boolean> { cid ->
             // can we somehow get rid of repos usage here?
             repos.hasReadEventsCapability(cid)
         }
 
-        batchEvent.sortedEvents.forEach { event: ChatEvent ->
-            // connection events are never send on the recovery endpoint, so handle them 1 by 1
-            when (event) {
-                is ConnectedEvent -> if (batchEvent.isFromSocketConnection && event.me.id == currentUserId) {
-                    modifyValuesFromUser(event.me)
+        val modifyValuesFromEvent: suspend (HasUnreadCounts) -> Unit = {
+            when (it) {
+                is MarkAllReadEvent -> it
+                is NewMessageEvent -> it.takeIf { hasReadEventsCapability(it.cid) }
+                is NotificationAddedToChannelEvent -> it.takeUnless { it.unreadChannels == 0 }
+                is NotificationChannelDeletedEvent -> it.takeUnless {
+                    it.unreadChannels == 0 && hasReadEventsCapability(it.cid)
                 }
-                is NotificationMutesUpdatedEvent -> if (event.me.id == currentUserId) {
-                    modifyValuesFromUser(event.me)
-                }
-                is NotificationChannelMutesUpdatedEvent -> if (event.me.id == currentUserId) {
-                    modifyValuesFromUser(event.me)
-                }
-                is UserUpdatedEvent -> if (event.user.id == currentUserId) {
-                    modifyValuesFromUser(me?.mergePartially(event.user) ?: event.user)
-                }
-                is MarkAllReadEvent -> {
-                    modifyValuesFromEvent(event)
-                }
-                is NotificationMessageNewEvent -> if (batchEvent.isFromSocketConnection) {
-                    if (hasReadEventsCapability(event.cid)) {
-                        modifyValuesFromEvent(event)
-                    }
-                }
-                is NotificationThreadMessageNewEvent -> if (batchEvent.isFromSocketConnection) {
-                    if (hasReadEventsCapability(event.cid)) {
-                        modifyUnreadThreadsCount(event.unreadThreads)
-                    }
-                }
-                is NotificationMarkReadEvent -> if (batchEvent.isFromSocketConnection) {
-                    if (hasReadEventsCapability(event.cid)) {
-                        modifyValuesFromEvent(event)
-                        modifyUnreadThreadsCount(event.unreadThreads)
-                    }
-                }
-                is NotificationMarkUnreadEvent -> if (batchEvent.isFromSocketConnection) {
-                    if (hasReadEventsCapability(event.cid)) {
-                        modifyValuesFromEvent(event)
-                        modifyUnreadThreadsCount(event.unreadThreads)
-                    }
-                }
-                is NewMessageEvent -> if (batchEvent.isFromSocketConnection) {
-                    if (hasReadEventsCapability(event.cid)) {
-                        modifyValuesFromEvent(event)
-                    }
-                }
-                else -> Unit
+                is NotificationChannelTruncatedEvent -> it.takeIf { hasReadEventsCapability(it.cid) }
+                is NotificationMarkReadEvent -> it
+                is NotificationMarkUnreadEvent -> it
+                is NotificationMessageNewEvent -> it.takeUnless { it.unreadChannels == 0 }
+            }?.let { event: HasUnreadCounts ->
+                totalUnreadCount = event.totalUnreadCount
+                channelUnreadCount = event.unreadChannels
             }
         }
+
+        val modifyValuesFromUser = { user: User ->
+            user.takeUnless { it.id != currentUserId }
+                ?.let {
+                    me = it
+                    totalUnreadCount = it.totalUnreadCount
+                    channelUnreadCount = it.unreadChannels
+                    unreadThreadsCount = it.unreadThreads
+                    blockedUserIds = it.blockedUserIds
+                }
+        }
+
+        val modifyUnreadThreadsCount: suspend (HasUnreadThreadCounts) -> Unit = {
+            when (it) {
+                is NotificationThreadMessageNewEvent -> it.takeIf { hasReadEventsCapability(it.cid) }
+                is NotificationMarkReadEvent -> it
+                is NotificationMarkUnreadEvent -> it
+            }?.let {
+                unreadThreadsCount = it.unreadThreads ?: unreadThreadsCount
+            }
+        }
+
+        batchEvent
+            .takeUnless { it.isFromHistorySync }
+            ?.sortedEvents
+            ?.forEach { event: ChatEvent ->
+                (event as? HasUnreadCounts)?.let { modifyValuesFromEvent(it) }
+                (event as? HasOwnUser)?.let { modifyValuesFromUser(it.me) }
+                (event as? HasUnreadThreadCounts)?.let { modifyUnreadThreadsCount(it) }
+                (event as? UserUpdatedEvent)
+                    ?.takeIf { it.user.id == currentUserId }
+                    ?.let { modifyValuesFromUser(me?.mergePartially(it.user) ?: it.user) }
+            }
 
         me?.let {
             mutableGlobalState.setBanned(it.isBanned)
@@ -702,7 +688,7 @@ internal class EventHandlerSequential(
                 // get the channel, update reads, write the channel
                 is MessageReadEvent -> {
                     batch.getCurrentChannel(event.cid)
-                        ?.updateReads(event.toChannelUserRead())
+                        ?.updateReads(event.toChannelUserRead(), currentUserId)
                         ?.let(batch::addChannel)
                     // Update corresponding thread if event was received for marking a thread as read
                     event.thread?.let { threadInfo ->
@@ -714,12 +700,12 @@ internal class EventHandlerSequential(
 
                 is NotificationMarkReadEvent -> {
                     batch.getCurrentChannel(event.cid)
-                        ?.updateReads(event.toChannelUserRead())
+                        ?.updateReads(event.toChannelUserRead(), currentUserId)
                         ?.let(batch::addChannel)
                 }
                 is NotificationMarkUnreadEvent -> {
                     batch.getCurrentChannel(event.cid)
-                        ?.updateReads(event.toChannelUserRead())
+                        ?.updateReads(event.toChannelUserRead(), currentUserId)
                         ?.let(batch::addChannel)
                     // Update corresponding thread if event was received for marking a thread as unread
                     event.threadId?.let { threadId ->

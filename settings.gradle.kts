@@ -115,7 +115,6 @@ dependencyResolutionManagement {
 buildCache {
 	local {
 		isEnabled = !System.getenv().containsKey("CI")
-		removeUnusedEntriesAfterDays = 7
 	}
 	val localProperties = Properties()
 	val file = File("local.properties")

@@ -30,6 +30,7 @@ tasks.withType<KotlinCompile>().configureEach {
         freeCompilerArgs.addAll(
             listOf(
                 "-progressive",
+                "-Xconsistent-data-class-copy-visibility",
                 "-Xexplicit-api=strict",
                 "-opt-in=kotlin.RequiresOptIn",
                 "-opt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi",

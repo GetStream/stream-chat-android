@@ -18,6 +18,7 @@ package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api2.MoshiChatApi
+import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.attachment.AttachmentsSender
 import io.getstream.chat.android.client.audio.StreamMediaPlayer
 import io.getstream.chat.android.client.clientstate.UserStateService
@@ -34,6 +35,8 @@ import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.models.EventType
+import io.getstream.chat.android.models.NoOpMessageTransformer
+import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -109,6 +112,7 @@ internal class MockClientBuilder(
         client = ChatClient(
             config,
             api = api,
+            dtoMapping = DtoMapping(NoOpMessageTransformer, NoOpUserTransformer),
             notifications = notificationsManager,
             tokenManager = FakeTokenManager(token),
             userCredentialStorage = mock(),
