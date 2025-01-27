@@ -401,17 +401,34 @@ internal fun ColumnScope.DefaultMessageItemFooterContent(
     val message = messageItem.message
     when {
         message.isUploading() -> {
-            messageContentFactory.UploadingFooterContent(
-                modifier = Modifier.align(End),
-                messageItem = messageItem,
-            )
+            if (messageContentFactory == MessageContentFactory.Deprecated) {
+                ChatTheme.componentFactory.messageFooter.UploadingContent(
+                    modifier = Modifier.align(End),
+                    messageItem = messageItem,
+                )
+            } else {
+                messageContentFactory.UploadingFooterContent(
+                    modifier = Modifier.align(End),
+                    messageItem = messageItem,
+                )
+            }
         }
 
         message.isDeleted() && messageItem.deletedMessageVisibility == DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
-            messageContentFactory.OwnedMessageVisibilityContent(messageItem = messageItem)
+            if (messageContentFactory == MessageContentFactory.Deprecated) {
+                ChatTheme.componentFactory.messageFooter.OnlyVisibleToYouContent(
+                    messageItem = messageItem,
+                )
+            } else {
+                messageContentFactory.OwnedMessageVisibilityContent(messageItem = messageItem)
+            }
         }
 
-        else -> messageContentFactory.MessageFooterContent(messageItem = messageItem)
+        else -> if (messageContentFactory == MessageContentFactory.Deprecated) {
+            ChatTheme.componentFactory.messageFooter.FooterContent(messageItem = messageItem)
+        } else {
+            messageContentFactory.MessageFooterContent(messageItem = messageItem)
+        }
     }
 
     val position = messageItem.groupPosition
