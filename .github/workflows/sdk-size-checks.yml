@@ -14,10 +14,6 @@ env:
   MAX_TOLERANCE: 500
   FINE_TOLERANCE: 250
 
-permissions:
-  contents: read
-  pull-requests: write
-
 jobs:
   compare-sdk-sizes:
     runs-on: ubuntu-latest
