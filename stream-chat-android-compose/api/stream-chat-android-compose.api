@@ -1239,6 +1239,7 @@ public final class io/getstream/chat/android/compose/ui/components/messages/Uplo
 
 public class io/getstream/chat/android/compose/ui/components/messages/factory/MessageContentFactory {
 	public static final field $stable I
+	public static final field Companion Lio/getstream/chat/android/compose/ui/components/messages/factory/MessageContentFactory$Companion;
 	public fun <init> ()V
 	public fun MessageDeletedContent (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
 	public fun MessageFooterContent (Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Landroidx/compose/runtime/Composer;I)V
@@ -1247,6 +1248,10 @@ public class io/getstream/chat/android/compose/ui/components/messages/factory/Me
 	public fun OwnedMessageVisibilityContent (Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Landroidx/compose/runtime/Composer;I)V
 	public fun QuotedMessageContent (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
 	public fun UploadingFooterContent (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Landroidx/compose/runtime/Composer;I)V
+}
+
+public final class io/getstream/chat/android/compose/ui/components/messages/factory/MessageContentFactory$Companion {
+	public final fun getDeprecated ()Lio/getstream/chat/android/compose/ui/components/messages/factory/MessageContentFactory;
 }
 
 public final class io/getstream/chat/android/compose/ui/components/moderatedmessage/ComposableSingletons$ModeratedMessageDialogKt {
@@ -1903,13 +1908,6 @@ public final class io/getstream/chat/android/compose/ui/messages/list/Composable
 	public final fun getLambda-8$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
 }
 
-public final class io/getstream/chat/android/compose/ui/messages/list/ComposableSingletons$MessageItemKt {
-	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/list/ComposableSingletons$MessageItemKt;
-	public static field lambda-1 Lkotlin/jvm/functions/Function4;
-	public fun <init> ()V
-	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
-}
-
 public final class io/getstream/chat/android/compose/ui/messages/list/ComposableSingletons$MessageListKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/list/ComposableSingletons$MessageListKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function3;
@@ -2080,71 +2078,96 @@ public final class io/getstream/chat/android/compose/ui/theme/ChannelOptionsThem
 	public static synthetic fun defaultTheme$default (Lio/getstream/chat/android/compose/ui/theme/ChannelOptionsTheme$Companion;Lio/getstream/chat/android/compose/ui/components/channels/ChannelOptionItemVisibility;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/ChannelOptionsTheme;
 }
 
-public class io/getstream/chat/android/compose/ui/theme/ChatComponentFactory {
-	public static final field $stable I
-	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$ChannelListHeader;Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$ChannelList;Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$ChannelItem;Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$SearchInput;Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$MessageList;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$ChannelListHeader;Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$ChannelList;Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$ChannelItem;Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$SearchInput;Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$MessageList;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getChannelItem ()Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$ChannelItem;
-	public final fun getChannelList ()Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$ChannelList;
-	public final fun getChannelListHeader ()Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$ChannelListHeader;
-	public final fun getMessageList ()Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$MessageList;
-	public final fun getSearchInput ()Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory$SearchInput;
+public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatComponentFactory {
+	public abstract fun ChannelItemCenterContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun ChannelItemLeadingContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun ChannelItemTrailingContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun ChannelListDividerItem (Landroidx/compose/foundation/lazy/LazyItemScope;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun ChannelListEmptyContent (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun ChannelListEmptySearchContent (Landroidx/compose/ui/Modifier;Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun ChannelListHeaderCenterContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/models/ConnectionState;Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun ChannelListHeaderLeadingContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun ChannelListHeaderTrailingContent (Landroidx/compose/foundation/layout/RowScope;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun ChannelListHelperContent (Landroidx/compose/foundation/layout/BoxScope;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun ChannelListItemContent (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun ChannelListLoadingIndicator (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun ChannelListLoadingMoreItemContent (Landroidx/compose/foundation/lazy/LazyItemScope;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun ChannelListSearchResultItemContent (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun MessageDeletedContent (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun MessageFooterContent (Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun MessageFooterOnlyVisibleToYouContent (Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun MessageFooterUploadingContent (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun MessageGiphyContent (Lio/getstream/chat/android/models/Message;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun MessageItemCenterContent (Landroidx/compose/foundation/layout/ColumnScope;Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+	public abstract fun MessageItemFooterContent (Landroidx/compose/foundation/layout/ColumnScope;Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun MessageItemHeaderContent (Landroidx/compose/foundation/layout/ColumnScope;Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Lio/getstream/chat/android/models/ReactionSorting;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun MessageItemLeadingContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun MessageItemTrailingContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun MessageListDateSeparatorItemContent (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/DateSeparatorItemState;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun MessageListEmptyContent (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun MessageListEmptyThreadPlaceholderItemContent (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/EmptyThreadPlaceholderItemState;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun MessageListHelperContent (Landroidx/compose/foundation/layout/BoxScope;Lio/getstream/chat/android/ui/common/state/messages/list/MessageListState;Lio/getstream/chat/android/compose/ui/messages/list/MessagesLazyListState;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun MessageListItemContainer (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/MessageListItemState;Lio/getstream/chat/android/models/ReactionSorting;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public abstract fun MessageListItemContent (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Lio/getstream/chat/android/models/ReactionSorting;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public abstract fun MessageListLoadingIndicator (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun MessageListLoadingMoreItemContent (Landroidx/compose/foundation/lazy/LazyItemScope;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun MessageListModeratedItemContent (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/ModeratedMessageItemState;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun MessageListStartOfTheChannelItemContent (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/StartOfTheChannelItemState;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun MessageListSystemItemContent (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/SystemMessageItemState;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun MessageListThreadDateSeparatorItemContent (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/ThreadDateSeparatorItemState;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun MessageListTypingIndicatorItemContent (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/TypingItemState;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun MessageListUnreadSeparatorItemContent (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/UnreadSeparatorItemState;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun MessageQuotedContent (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun MessageRegularContent (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun MessageTextContent (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun SearchInputLabel (Landroidx/compose/runtime/Composer;I)V
+	public abstract fun SearchInputLeadingIcon (Landroidx/compose/foundation/layout/RowScope;Landroidx/compose/runtime/Composer;I)V
 }
 
-public class io/getstream/chat/android/compose/ui/theme/ChatComponentFactory$ChannelItem {
-	public static final field $stable I
-	public fun <init> ()V
-	public fun CenterContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
-	public fun LeadingContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
-	public fun TrailingContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
-}
-
-public class io/getstream/chat/android/compose/ui/theme/ChatComponentFactory$ChannelList {
-	public static final field $stable I
-	public fun <init> ()V
-	public fun ChannelItemContent (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
-	public fun DividerItem (Landroidx/compose/foundation/lazy/LazyItemScope;Landroidx/compose/runtime/Composer;I)V
-	public fun EmptyContent (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
-	public fun EmptySearchContent (Landroidx/compose/ui/Modifier;Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
-	public fun HelperContent (Landroidx/compose/foundation/layout/BoxScope;Landroidx/compose/runtime/Composer;I)V
-	public fun LoadingIndicator (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
-	public fun LoadingMoreItemContent (Landroidx/compose/foundation/lazy/LazyItemScope;Landroidx/compose/runtime/Composer;I)V
-	public fun SearchResultItemContent (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
-}
-
-public class io/getstream/chat/android/compose/ui/theme/ChatComponentFactory$ChannelListHeader {
-	public static final field $stable I
-	public fun <init> ()V
-	public fun CenterContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/models/ConnectionState;Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
-	public fun LeadingContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
-	public fun TrailingContent (Landroidx/compose/foundation/layout/RowScope;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
-}
-
-public class io/getstream/chat/android/compose/ui/theme/ChatComponentFactory$MessageList {
-	public static final field $stable I
-	public fun <init> ()V
-	public fun DateSeparatorItemContent (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/DateSeparatorItemState;Landroidx/compose/runtime/Composer;I)V
-	public fun EmptyContent (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
-	public fun EmptyThreadPlaceholderItemContent (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/EmptyThreadPlaceholderItemState;Landroidx/compose/runtime/Composer;I)V
-	public fun HelperContent (Landroidx/compose/foundation/layout/BoxScope;Lio/getstream/chat/android/ui/common/state/messages/list/MessageListState;Lio/getstream/chat/android/compose/ui/messages/list/MessagesLazyListState;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
-	public fun LoadingIndicator (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
-	public fun LoadingMoreItemContent (Landroidx/compose/foundation/lazy/LazyItemScope;Landroidx/compose/runtime/Composer;I)V
-	public fun MessageItemContainer (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/MessageListItemState;Lio/getstream/chat/android/models/ReactionSorting;Lio/getstream/chat/android/compose/ui/components/messages/factory/MessageContentFactory;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
-	public fun MessageItemContent (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Lio/getstream/chat/android/models/ReactionSorting;Lio/getstream/chat/android/compose/ui/components/messages/factory/MessageContentFactory;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
-	public fun ModeratedMessageItemContent (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/ModeratedMessageItemState;Landroidx/compose/runtime/Composer;I)V
-	public fun StartOfTheChannelItemContent (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/StartOfTheChannelItemState;Landroidx/compose/runtime/Composer;I)V
-	public fun SystemMessageItemContent (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/SystemMessageItemState;Landroidx/compose/runtime/Composer;I)V
-	public fun ThreadDateSeparatorItemContent (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/ThreadDateSeparatorItemState;Landroidx/compose/runtime/Composer;I)V
-	public fun TypingIndicatorItemContent (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/TypingItemState;Landroidx/compose/runtime/Composer;I)V
-	public fun UnreadSeparatorItemContent (Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/UnreadSeparatorItemState;Landroidx/compose/runtime/Composer;I)V
-}
-
-public class io/getstream/chat/android/compose/ui/theme/ChatComponentFactory$SearchInput {
-	public static final field $stable I
-	public fun <init> ()V
-	public fun Label (Landroidx/compose/runtime/Composer;I)V
-	public fun LeadingIcon (Landroidx/compose/foundation/layout/RowScope;Landroidx/compose/runtime/Composer;I)V
+public final class io/getstream/chat/android/compose/ui/theme/ChatComponentFactory$DefaultImpls {
+	public static fun ChannelItemCenterContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
+	public static fun ChannelItemLeadingContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
+	public static fun ChannelItemTrailingContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
+	public static fun ChannelListDividerItem (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/lazy/LazyItemScope;Landroidx/compose/runtime/Composer;I)V
+	public static fun ChannelListEmptyContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
+	public static fun ChannelListEmptySearchContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/ui/Modifier;Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
+	public static fun ChannelListHeaderCenterContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/models/ConnectionState;Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
+	public static fun ChannelListHeaderLeadingContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+	public static fun ChannelListHeaderTrailingContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/RowScope;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
+	public static fun ChannelListHelperContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/BoxScope;Landroidx/compose/runtime/Composer;I)V
+	public static fun ChannelListItemContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+	public static fun ChannelListLoadingIndicator (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
+	public static fun ChannelListLoadingMoreItemContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/lazy/LazyItemScope;Landroidx/compose/runtime/Composer;I)V
+	public static fun ChannelListSearchResultItemContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+	public static fun MessageDeletedContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
+	public static fun MessageFooterContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Landroidx/compose/runtime/Composer;I)V
+	public static fun MessageFooterOnlyVisibleToYouContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Landroidx/compose/runtime/Composer;I)V
+	public static fun MessageFooterUploadingContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Landroidx/compose/runtime/Composer;I)V
+	public static fun MessageGiphyContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/models/Message;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+	public static fun MessageItemCenterContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/ColumnScope;Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+	public static fun MessageItemFooterContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/ColumnScope;Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Landroidx/compose/runtime/Composer;I)V
+	public static fun MessageItemHeaderContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/ColumnScope;Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Lio/getstream/chat/android/models/ReactionSorting;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+	public static fun MessageItemLeadingContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
+	public static fun MessageItemTrailingContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Landroidx/compose/runtime/Composer;I)V
+	public static fun MessageListDateSeparatorItemContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/DateSeparatorItemState;Landroidx/compose/runtime/Composer;I)V
+	public static fun MessageListEmptyContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
+	public static fun MessageListEmptyThreadPlaceholderItemContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/EmptyThreadPlaceholderItemState;Landroidx/compose/runtime/Composer;I)V
+	public static fun MessageListHelperContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/BoxScope;Lio/getstream/chat/android/ui/common/state/messages/list/MessageListState;Lio/getstream/chat/android/compose/ui/messages/list/MessagesLazyListState;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+	public static fun MessageListItemContainer (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/MessageListItemState;Lio/getstream/chat/android/models/ReactionSorting;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static fun MessageListItemContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Lio/getstream/chat/android/models/ReactionSorting;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static fun MessageListLoadingIndicator (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
+	public static fun MessageListLoadingMoreItemContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/lazy/LazyItemScope;Landroidx/compose/runtime/Composer;I)V
+	public static fun MessageListModeratedItemContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/ModeratedMessageItemState;Landroidx/compose/runtime/Composer;I)V
+	public static fun MessageListStartOfTheChannelItemContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/StartOfTheChannelItemState;Landroidx/compose/runtime/Composer;I)V
+	public static fun MessageListSystemItemContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/SystemMessageItemState;Landroidx/compose/runtime/Composer;I)V
+	public static fun MessageListThreadDateSeparatorItemContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/ThreadDateSeparatorItemState;Landroidx/compose/runtime/Composer;I)V
+	public static fun MessageListTypingIndicatorItemContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/TypingItemState;Landroidx/compose/runtime/Composer;I)V
+	public static fun MessageListUnreadSeparatorItemContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/lazy/LazyItemScope;Lio/getstream/chat/android/ui/common/state/messages/list/UnreadSeparatorItemState;Landroidx/compose/runtime/Composer;I)V
+	public static fun MessageQuotedContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+	public static fun MessageRegularContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V
+	public static fun MessageTextContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+	public static fun SearchInputLabel (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/runtime/Composer;I)V
+	public static fun SearchInputLeadingIcon (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/RowScope;Landroidx/compose/runtime/Composer;I)V
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/ChatTheme {
