@@ -18,5 +18,11 @@ package io.getstream.chat.android.models
 
 import androidx.compose.runtime.Immutable
 
+/**
+ * Model holding data about the SDK connection.
+ *
+ * @param user The connected [User].
+ * @param connectionId The ID of the connection.
+ */
 @Immutable
 public data class ConnectionData(val user: User, val connectionId: String)

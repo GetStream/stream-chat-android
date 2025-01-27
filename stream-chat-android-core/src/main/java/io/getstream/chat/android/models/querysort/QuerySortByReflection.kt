@@ -67,7 +67,6 @@ public open class QuerySortByReflection<T : Any> : BaseQuerySort<T>() {
             }
         }
 
-    @Suppress("UNCHECKED_CAST")
     private fun String.comparator(sortDirection: SortDirection): Comparator<T> =
         Comparator { o1, o2 ->
             compare(

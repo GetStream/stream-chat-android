@@ -18,6 +18,13 @@ package io.getstream.chat.android.models.querysort.internal
 
 import io.getstream.chat.android.models.querysort.SortDirection
 
+/**
+ * Defines a sorting specification for collections of elements of type [T].
+ *
+ * @param T The type of elements to be sorted.
+ * @param sortAttribute The attribute to be used for sorting.
+ * @param sortDirection The direction of sorting.
+ */
 public data class SortSpecification<T>(
     val sortAttribute: SortAttribute<T>,
     val sortDirection: SortDirection,

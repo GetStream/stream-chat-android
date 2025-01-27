@@ -301,6 +301,11 @@ public data class Channel(
     }
 }
 
+/**
+ * Updates the given [Channel] with data from another [Channel] object.
+ *
+ * @param that The [Channel] to take the new data from.
+ */
 @InternalStreamChatApi
 public fun Channel.mergeChannelFromEvent(that: Channel): Channel {
     return copy(

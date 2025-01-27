@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -34,6 +35,7 @@ import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.LoadingFooter
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
  * Builds a list of [ChannelItem] elements, based on [channelsState] and action handlers that it receives.
@@ -58,10 +60,22 @@ public fun Channels(
     onLastItemReached: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
-    helperContent: @Composable BoxScope.() -> Unit = {},
-    loadingMoreContent: @Composable () -> Unit = { DefaultChannelsLoadingMoreIndicator() },
-    itemContent: @Composable (ItemState) -> Unit,
-    divider: @Composable () -> Unit,
+    helperContent: @Composable BoxScope.() -> Unit = {
+        with(ChatTheme.componentFactory.channelList) {
+            HelperContent()
+        }
+    },
+    loadingMoreContent: @Composable LazyItemScope.() -> Unit = {
+        with(ChatTheme.componentFactory.channelList) {
+            LoadingMoreItemContent()
+        }
+    },
+    itemContent: @Composable LazyItemScope.(ItemState) -> Unit,
+    divider: @Composable LazyItemScope.() -> Unit = {
+        with(ChatTheme.componentFactory.channelList) {
+            DividerItem()
+        }
+    },
 ) {
     val (_, isLoadingMore, endOfChannels, channelItems) = channelsState
 
