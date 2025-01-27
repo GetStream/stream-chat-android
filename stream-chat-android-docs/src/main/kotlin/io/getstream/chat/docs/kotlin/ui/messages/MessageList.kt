@@ -205,6 +205,16 @@ class MessageListViewSnippets : Fragment() {
                         0,
                     ).toString()
                 }
+
+                override fun formatRelativeDate(date: Date): String {
+                    // Provide a way to format Relative Date
+                    return DateUtils.getRelativeTimeSpanString(
+                        date.time,
+                        System.currentTimeMillis(),
+                        DateUtils.DAY_IN_MILLIS,
+                        DateUtils.FORMAT_ABBREV_RELATIVE,
+                    ).toString()
+                }
             }
         )
     }
