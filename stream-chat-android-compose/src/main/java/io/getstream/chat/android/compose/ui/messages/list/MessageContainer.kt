@@ -88,7 +88,7 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 public fun LazyItemScope.MessageContainer(
     messageListItemState: MessageListItemState,
     reactionSorting: ReactionSorting,
-    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
+    messageContentFactory: MessageContentFactory = MessageContentFactory.Deprecated,
     onLongItemClick: (Message) -> Unit = {},
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
@@ -136,7 +136,6 @@ public fun LazyItemScope.MessageContainer(
         with(ChatTheme.componentFactory.messageList) {
             MessageItemContent(
                 messageItem = messageItem,
-                messageContentFactory = messageContentFactory,
                 reactionSorting = reactionSorting,
                 onLongItemClick = onLongItemClick,
                 onReactionsClick = onReactionsClick,
@@ -343,7 +342,7 @@ internal fun DefaultMessageModeratedContent(moderatedMessageItemState: Moderated
 internal fun DefaultMessageItem(
     messageItem: MessageItemState,
     reactionSorting: ReactionSorting,
-    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
+    messageContentFactory: MessageContentFactory = MessageContentFactory.Deprecated,
     onLongItemClick: (Message) -> Unit,
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit,

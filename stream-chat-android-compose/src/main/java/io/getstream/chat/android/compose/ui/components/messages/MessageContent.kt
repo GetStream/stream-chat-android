@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.utils.message.isDeleted
@@ -62,16 +63,31 @@ public fun MessageContent(
     onQuotedMessageClick: (Message) -> Unit = {},
     onUserMentionClick: (User) -> Unit = {},
     onLinkClick: ((Message, String) -> Unit)? = null,
-    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
+    messageContentFactory: MessageContentFactory = MessageContentFactory.Deprecated,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     giphyEphemeralContent: @Composable () -> Unit = {
-        messageContentFactory.MessageGiphyContent(
-            message = message,
-            onGiphyActionClick = onGiphyActionClick,
-        )
+        if (messageContentFactory == MessageContentFactory.Deprecated) {
+            ChatTheme.componentFactory.messageContent.GiphyContent(
+                message = message,
+                onGiphyActionClick = onGiphyActionClick,
+            )
+        } else {
+            messageContentFactory.MessageGiphyContent(
+                message = message,
+                onGiphyActionClick = onGiphyActionClick,
+            )
+        }
     },
     deletedMessageContent: @Composable () -> Unit = {
-        messageContentFactory.MessageDeletedContent(modifier = modifier)
+        if (messageContentFactory == MessageContentFactory.Deprecated) {
+            ChatTheme.componentFactory.messageContent.DeletedContent(
+                modifier = modifier,
+            )
+        } else {
+            messageContentFactory.MessageDeletedContent(
+                modifier = modifier,
+            )
+        }
     },
     regularMessageContent: @Composable () -> Unit = {
         DefaultMessageContent(
@@ -121,6 +137,7 @@ internal fun DefaultMessageDeletedContent(
 ) {
     Text(
         modifier = modifier
+            .testTag("Stream_MessageDeleted")
             .padding(
                 start = 12.dp,
                 end = 12.dp,
@@ -148,7 +165,7 @@ internal fun DefaultMessageContent(
     message: Message,
     currentUser: User?,
     onLongItemClick: (Message) -> Unit,
-    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
+    messageContentFactory: MessageContentFactory,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit,
     onUserMentionClick: (User) -> Unit = {},

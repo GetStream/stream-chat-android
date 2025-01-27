@@ -17,10 +17,13 @@
 package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelHeaderLeadingContent
@@ -38,10 +41,25 @@ import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelsLoading
 import io.getstream.chat.android.compose.ui.channels.list.DefaultSearchResultItem
 import io.getstream.chat.android.compose.ui.components.DefaultSearchLabel
 import io.getstream.chat.android.compose.ui.components.DefaultSearchLeadingIcon
+import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
+import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageContent
+import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageDeletedContent
+import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageGiphyContent
+import io.getstream.chat.android.compose.ui.components.messages.MessageFooter
+import io.getstream.chat.android.compose.ui.components.messages.MessageText
+import io.getstream.chat.android.compose.ui.components.messages.MessageThreadFooter
+import io.getstream.chat.android.compose.ui.components.messages.OwnedMessageVisibilityContent
+import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
+import io.getstream.chat.android.compose.ui.components.messages.UploadingFooter
 import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageContainer
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageDateSeparatorContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageItem
+import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageItemCenterContent
+import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageItemFooterContent
+import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageItemHeaderContent
+import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageItemLeadingContent
+import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageItemTrailingContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageListEmptyContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageListLoadingIndicator
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageModeratedContent
@@ -132,6 +150,9 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
  * @param channelItem The default UI elements for the channel item component.
  * @param searchInput The default UI elements for the search input component.
  * @param messageList The default UI elements for the message list component.
+ * @param messageItem The default UI elements for the message item component.
+ * @param messageContent The default UI elements for the message content component.
+ * @param messageFooter The default UI elements for the message footer component.
  */
 public open class ChatComponentFactory(
     public val channelListHeader: ChannelListHeader = ChannelListHeader(),
@@ -139,6 +160,9 @@ public open class ChatComponentFactory(
     public val channelItem: ChannelItem = ChannelItem(),
     public val searchInput: SearchInput = SearchInput(),
     public val messageList: MessageList = MessageList(),
+    public val messageItem: MessageItem = MessageItem(),
+    public val messageContent: MessageContent = MessageContent(),
+    public val messageFooter: MessageFooter = MessageFooter(),
 ) {
 
     /**
@@ -148,6 +172,7 @@ public open class ChatComponentFactory(
 
         /**
          * The default leading content.
+         * Usually the avatar of the current user if it's available.
          */
         @Composable
         public open fun RowScope.LeadingContent(
@@ -162,6 +187,9 @@ public open class ChatComponentFactory(
 
         /**
          * The default center content.
+         * Usually shows the [title] if [connectionState] is [ConnectionState.Connected],
+         * a `Disconnected` text if [connectionState] is offline,
+         * or [NetworkLoadingIndicator] otherwise.
          */
         @Composable
         public open fun RowScope.CenterContent(
@@ -176,6 +204,7 @@ public open class ChatComponentFactory(
 
         /**
          * The default trailing content.
+         * Usually an action button.
          */
         @Composable
         public open fun RowScope.TrailingContent(
@@ -254,10 +283,10 @@ public open class ChatComponentFactory(
             modifier: Modifier,
             searchQuery: String,
         ) {
-            // DefaultChannelSearchEmptyContent(
-            //     modifier = modifier,
-            //     searchQuery = searchQuery,
-            // )
+            DefaultChannelSearchEmptyContent(
+                modifier = modifier,
+                searchQuery = searchQuery,
+            )
         }
 
         /**
@@ -407,7 +436,6 @@ public open class ChatComponentFactory(
         public open fun LazyItemScope.MessageItemContainer(
             messageListItem: MessageListItemState,
             reactionSorting: ReactionSorting,
-            messageContentFactory: MessageContentFactory,
             onPollUpdated: (Message, Poll) -> Unit,
             onCastVote: (Message, Poll, Option) -> Unit,
             onRemoveVote: (Message, Poll, Vote) -> Unit,
@@ -428,7 +456,7 @@ public open class ChatComponentFactory(
             DefaultMessageContainer(
                 messageListItemState = messageListItem,
                 reactionSorting = reactionSorting,
-                messageContentFactory = messageContentFactory,
+                messageContentFactory = MessageContentFactory.Deprecated,
                 onPollUpdated = onPollUpdated,
                 onCastVote = onCastVote,
                 onRemoveVote = onRemoveVote,
@@ -529,7 +557,6 @@ public open class ChatComponentFactory(
         public open fun LazyItemScope.MessageItemContent(
             messageItem: MessageItemState,
             reactionSorting: ReactionSorting,
-            messageContentFactory: MessageContentFactory,
             onPollUpdated: (Message, Poll) -> Unit,
             onCastVote: (Message, Poll, Option) -> Unit,
             onRemoveVote: (Message, Poll, Vote) -> Unit,
@@ -550,7 +577,7 @@ public open class ChatComponentFactory(
             DefaultMessageItem(
                 messageItem = messageItem,
                 reactionSorting = reactionSorting,
-                messageContentFactory = messageContentFactory,
+                messageContentFactory = MessageContentFactory.Deprecated,
                 onPollUpdated = onPollUpdated,
                 onCastVote = onCastVote,
                 onRemoveVote = onRemoveVote,
@@ -568,6 +595,256 @@ public open class ChatComponentFactory(
                 onUserMentionClick = onUserMentionClick,
                 onAddAnswer = onAddAnswer,
             )
+        }
+    }
+
+    /**
+     * The default UI elements for the message item component.
+     */
+    public open class MessageItem : MessageContentFactory() {
+
+        /**
+         * The default header content.
+         * Usually shown if the message is pinned and a list of reactions for the message.
+         */
+        @Composable
+        public open fun ColumnScope.HeaderContent(
+            messageItem: MessageItemState,
+            reactionSorting: ReactionSorting,
+            onReactionsClick: (Message) -> Unit,
+        ) {
+            DefaultMessageItemHeaderContent(
+                messageItem = messageItem,
+                reactionSorting = reactionSorting,
+                onReactionsClick = onReactionsClick,
+            )
+        }
+
+        /**
+         * The default footer content.
+         * Usually showing some of the following UI elements: upload status, thread participants, message timestamp.
+         */
+        @Composable
+        public open fun ColumnScope.FooterContent(
+            messageItem: MessageItemState,
+        ) {
+            DefaultMessageItemFooterContent(
+                messageItem = messageItem,
+                messageContentFactory = MessageContentFactory.Deprecated,
+            )
+        }
+
+        /**
+         * The default leading content.
+         * Usually the avatar of the user if the message doesn't belong to the current user.
+         */
+        @Composable
+        public open fun RowScope.LeadingContent(
+            messageItem: MessageItemState,
+            onUserAvatarClick: (() -> Unit)?,
+        ) {
+            DefaultMessageItemLeadingContent(
+                messageItem = messageItem,
+                onUserAvatarClick = onUserAvatarClick,
+            )
+        }
+
+        /**
+         * The default center content.
+         * Usually a message bubble with attachments or emoji stickers if the message contains only emoji.
+         */
+        @Suppress("LongParameterList")
+        @Composable
+        public open fun ColumnScope.CenterContent(
+            messageItem: MessageItemState,
+            onLongItemClick: (Message) -> Unit,
+            onPollUpdated: (Message, Poll) -> Unit,
+            onCastVote: (Message, Poll, Option) -> Unit,
+            onRemoveVote: (Message, Poll, Vote) -> Unit,
+            selectPoll: (Message, Poll, PollSelectionType) -> Unit,
+            onAddAnswer: (message: Message, poll: Poll, answer: String) -> Unit,
+            onClosePoll: (String) -> Unit,
+            onAddPollOption: (poll: Poll, option: String) -> Unit,
+            onGiphyActionClick: (GiphyAction) -> Unit,
+            onQuotedMessageClick: (Message) -> Unit,
+            onLinkClick: ((Message, String) -> Unit)?,
+            onUserMentionClick: (User) -> Unit,
+            onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit,
+        ) {
+            DefaultMessageItemCenterContent(
+                messageItem = messageItem,
+                messageContentFactory = MessageContentFactory.Deprecated,
+                onLongItemClick = onLongItemClick,
+                onGiphyActionClick = onGiphyActionClick,
+                onQuotedMessageClick = onQuotedMessageClick,
+                onLinkClick = onLinkClick,
+                onUserMentionClick = onUserMentionClick,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                onPollUpdated = onPollUpdated,
+                onCastVote = onCastVote,
+                onRemoveVote = onRemoveVote,
+                selectPoll = selectPoll,
+                onAddAnswer = onAddAnswer,
+                onClosePoll = onClosePoll,
+                onAddPollOption = onAddPollOption,
+            )
+        }
+
+        /**
+         * The default trailing content.
+         * Usually an extra spacing at the end of the message item if the author is the current user.
+         */
+        @Composable
+        public open fun RowScope.TrailingContent(
+            messageItem: MessageItemState,
+        ) {
+            DefaultMessageItemTrailingContent(messageItem = messageItem)
+        }
+    }
+
+    /**
+     * The default UI elements for the message content component.
+     */
+    public open class MessageContent {
+
+        /**
+         * The default Giphy message content.
+         */
+        @Composable
+        public open fun GiphyContent(
+            message: Message,
+            onGiphyActionClick: (GiphyAction) -> Unit,
+        ) {
+            DefaultMessageGiphyContent(
+                message = message,
+                onGiphyActionClick = onGiphyActionClick,
+            )
+        }
+
+        /**
+         * The default content of a deleted message.
+         */
+        @Composable
+        public open fun DeletedContent(
+            modifier: Modifier,
+        ) {
+            DefaultMessageDeletedContent(modifier = modifier)
+        }
+
+        /**
+         * The default content of a regular message that can contain attachments and text.
+         */
+        @Suppress("LongParameterList")
+        @Composable
+        public open fun RegularContent(
+            message: Message,
+            currentUser: User?,
+            onLongItemClick: (Message) -> Unit,
+            onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit,
+            onQuotedMessageClick: (Message) -> Unit,
+            onUserMentionClick: (User) -> Unit,
+            onLinkClick: ((Message, String) -> Unit)?,
+        ) {
+            DefaultMessageContent(
+                message = message,
+                currentUser = currentUser,
+                onLongItemClick = onLongItemClick,
+                messageContentFactory = MessageContentFactory.Deprecated,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                onQuotedMessageClick = onQuotedMessageClick,
+                onUserMentionClick = onUserMentionClick,
+                onLinkClick = onLinkClick,
+            )
+        }
+
+        /**
+         * The default text content.
+         * Usually with extra styling and padding for the chat bubble.
+         */
+        @Composable
+        public open fun TextContent(
+            message: Message,
+            currentUser: User?,
+            onLongItemClick: (Message) -> Unit,
+            onLinkClick: ((Message, String) -> Unit)?,
+            onUserMentionClick: (User) -> Unit,
+        ) {
+            MessageText(
+                message = message,
+                currentUser = currentUser,
+                onLongItemClick = onLongItemClick,
+                onLinkClick = onLinkClick,
+                onUserMentionClick = onUserMentionClick,
+            )
+        }
+
+        /**
+         * The default quoted message content.
+         * Usually shows only the sender avatar, text and a single attachment preview.
+         */
+        @Composable
+        public open fun QuotedContent(
+            message: Message,
+            currentUser: User?,
+            onLongItemClick: (Message) -> Unit,
+            onQuotedMessageClick: (Message) -> Unit,
+        ) {
+            val quotedMessage = message.replyTo
+            if (quotedMessage != null) {
+                QuotedMessage(
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    message = quotedMessage,
+                    currentUser = currentUser,
+                    replyMessage = message,
+                    onLongItemClick = { onLongItemClick(message) },
+                    onQuotedMessageClick = onQuotedMessageClick,
+                )
+            }
+        }
+    }
+
+    /**
+     * The default UI elements for the message footer component.
+     */
+    public open class MessageFooter {
+
+        /**
+         * The default uploading content.
+         * Usually shows how many items have been uploaded and the total number of items.
+         */
+        @Composable
+        public open fun UploadingContent(
+            modifier: Modifier,
+            messageItem: MessageItemState,
+        ) {
+            UploadingFooter(
+                modifier = modifier,
+                message = messageItem.message,
+            )
+        }
+
+        /**
+         * The default content for only visible to you message.
+         */
+        @Composable
+        public open fun OnlyVisibleToYouContent(
+            messageItem: MessageItemState,
+        ) {
+            OwnedMessageVisibilityContent(
+                message = messageItem.message,
+            )
+        }
+
+        /**
+         * The default footer content.
+         * Usually contains either [MessageThreadFooter] or the default footer,
+         * which holds the sender name and the timestamp.
+         */
+        @Composable
+        public open fun FooterContent(
+            messageItem: MessageItemState,
+        ) {
+            MessageFooter(messageItem = messageItem)
         }
     }
 }

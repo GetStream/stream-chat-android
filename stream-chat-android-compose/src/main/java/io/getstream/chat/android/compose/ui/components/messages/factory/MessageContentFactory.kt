@@ -18,9 +18,7 @@ package io.getstream.chat.android.compose.ui.components.messages.factory
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageDeletedContent
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageGiphyContent
@@ -36,8 +34,16 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 /**
  * Factory for creating message contents that are used to represent the chat message items.
  */
-@Stable
+@Deprecated(
+    message = "This class is deprecated and will be removed in the future. " +
+        "Please use ChatComponentFactory and provide it to the ChatTheme instead.",
+    level = DeprecationLevel.WARNING,
+)
 public open class MessageContentFactory {
+
+    public companion object {
+        public val Deprecated: MessageContentFactory = MessageContentFactory()
+    }
 
     /**
      * Represents the default Giphy message content.
@@ -60,7 +66,7 @@ public open class MessageContentFactory {
     public open fun MessageDeletedContent(
         modifier: Modifier,
     ) {
-        DefaultMessageDeletedContent(modifier = modifier.testTag("Stream_MessageDeleted"))
+        DefaultMessageDeletedContent(modifier = modifier)
     }
 
     /**

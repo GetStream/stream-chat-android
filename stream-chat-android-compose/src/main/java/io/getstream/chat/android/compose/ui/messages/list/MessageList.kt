@@ -93,7 +93,7 @@ public fun MessageList(
     reactionSorting: ReactionSorting = ReactionSortingByFirstReactionAt,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
-    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
+    messageContentFactory: MessageContentFactory = MessageContentFactory.Deprecated,
     messagesLazyListState: MessagesLazyListState =
         rememberMessageListState(parentMessageId = viewModel.currentMessagesState.parentMessageId),
     threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
@@ -182,7 +182,6 @@ public fun MessageList(
             MessageItemContainer(
                 messageListItem = messageListItem,
                 reactionSorting = reactionSorting,
-                messageContentFactory = messageContentFactory,
                 onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                 onCastVote = onCastVote,
                 onRemoveVote = onRemoveVote,
@@ -255,7 +254,7 @@ public fun MessageList(
 internal fun LazyItemScope.DefaultMessageContainer(
     messageListItemState: MessageListItemState,
     reactionSorting: ReactionSorting,
-    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
+    messageContentFactory: MessageContentFactory,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onThreadClick: (Message) -> Unit,
     onLongItemClick: (Message) -> Unit,
@@ -367,7 +366,7 @@ public fun MessageList(
     reactionSorting: ReactionSorting,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
-    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
+    messageContentFactory: MessageContentFactory = MessageContentFactory.Deprecated,
     messagesLazyListState: MessagesLazyListState =
         rememberMessageListState(parentMessageId = currentState.parentMessageId),
     onMessagesPageStartReached: () -> Unit = {},
@@ -419,7 +418,6 @@ public fun MessageList(
             MessageItemContainer(
                 messageListItem = messageListItemState,
                 reactionSorting = reactionSorting,
-                messageContentFactory = messageContentFactory,
                 onPollUpdated = onPollUpdated,
                 onCastVote = onCastVote,
                 onRemoveVote = onRemoveVote,
