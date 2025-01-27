@@ -1,6 +1,6 @@
 package io.getstream.chat.android.command.unittest.task
 
-import io.getstream.chat.android.command.unittest.filter.selectedUnitTestCommand
+import io.getstream.chat.android.command.unittest.filter.getUnitTestCommand
 import io.getstream.chat.android.command.unittest.plugin.UnitTestsCommandExtension
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
@@ -15,9 +15,7 @@ open class UnitTestsTask : DefaultTask() {
     @ExperimentalStdlibApi
     @TaskAction
     private fun command() {
-        val modules = project.subprojects.map { project -> project.name }
-
-        val command = modules.selectedUnitTestCommand(project)
+        val command = getUnitTestCommand(rootProject = project)
         File(project.rootDir, config.outputPath)
             .also { it.parentFile.mkdirs() }
             .writeText(command)
