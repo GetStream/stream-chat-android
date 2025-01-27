@@ -16,10 +16,10 @@
 
 package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl
 
-import android.text.format.DateUtils
 import android.view.ViewGroup
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.databinding.StreamUiItemDateDividerBinding
 import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
@@ -47,14 +47,7 @@ public class DateDividerViewHolder internal constructor(
     override fun bindData(data: MessageListItem.DateSeparatorItem, diff: MessageListItemPayloadDiff) {
         super.bindData(data, diff)
 
-        binding.dateLabel.text =
-            DateUtils.getRelativeTimeSpanString(
-                data.date.time,
-                System.currentTimeMillis(),
-                DateUtils.DAY_IN_MILLIS,
-                DateUtils.FORMAT_ABBREV_RELATIVE,
-            )
-
+        binding.dateLabel.text = ChatUI.dateFormatter.formatRelativeDate(data.date)
         binding.dateLabel.setTextStyle(style.textStyleDateSeparator)
         binding.dateLabel.background = ShapeAppearanceModel.Builder().setAllCornerSizes(DEFAULT_CORNER_RADIUS).build()
             .let(::MaterialShapeDrawable).apply { setTint(style.dateSeparatorBackgroundColor) }
