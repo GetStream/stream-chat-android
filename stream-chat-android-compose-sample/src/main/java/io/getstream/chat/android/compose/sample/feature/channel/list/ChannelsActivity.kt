@@ -56,6 +56,7 @@ import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
 import io.getstream.chat.android.compose.sample.ui.MessagesActivity
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBar
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBarOption
+import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponentFactory
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
@@ -66,6 +67,8 @@ import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.SearchInput
+import io.getstream.chat.android.compose.ui.components.channels.ChannelOptionItemVisibility
+import io.getstream.chat.android.compose.ui.theme.ChannelOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.threads.ThreadList
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
@@ -122,6 +125,12 @@ class ChannelsActivity : BaseConnectedActivity() {
                 dateFormatter = ChatApp.dateFormatter,
                 autoTranslationEnabled = ChatApp.autoTranslationEnabled,
                 allowUIAutomationTest = true,
+                componentFactory = CustomChatComponentFactory(),
+                channelOptionsTheme = ChannelOptionsTheme.defaultTheme(
+                    optionVisibility = ChannelOptionItemVisibility(
+                        isPinChannelVisible = true,
+                    ),
+                ),
             ) {
                 Scaffold(
                     bottomBar = {
