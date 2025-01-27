@@ -59,10 +59,20 @@ public class QuerySortByField<T : ComparableFieldProvider> : BaseQuerySort<T>() 
         return this
     }
 
+    /**
+     * Adds a field to [QuerySortByField] using the name of field in the direction ASC.
+     *
+     * @param fieldName The name of the field.
+     */
     public fun asc(fieldName: String): QuerySortByField<T> {
         return add(SortSpecification(SortAttribute.FieldNameSortAttribute(fieldName), SortDirection.ASC))
     }
 
+    /**
+     * Adds a field to [QuerySortByField] using the name of field in the direction DESC.
+     *
+     * @param fieldName The name of the field.
+     */
     public fun desc(fieldName: String): QuerySortByField<T> {
         return add(SortSpecification(SortAttribute.FieldNameSortAttribute(fieldName), SortDirection.DESC))
     }

@@ -18,6 +18,12 @@ package io.getstream.chat.android.models.querysort.internal
 
 import io.getstream.chat.android.models.querysort.QuerySorter
 
+/**
+ * Composite comparator that combines multiple comparators into one.
+ *
+ * @param T The type of elements to be compared.
+ * @param comparators The list of comparators to be combined.
+ */
 internal class CompositeComparator<T>(private val comparators: List<Comparator<T>>) : Comparator<T> {
     override fun compare(o1: T, o2: T): Int =
         comparators.fold(QuerySorter.EQUAL_ON_COMPARISON) { currentComparisonValue, comparator ->

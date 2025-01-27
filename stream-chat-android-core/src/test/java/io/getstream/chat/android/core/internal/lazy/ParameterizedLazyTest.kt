@@ -31,7 +31,7 @@ internal class ParameterizedLazyTest {
             counter.incrementAndGet()
             "test$it"
         }
-        val loadStringForNumber = ParameterizedLazy(initializer)
+        val loadStringForNumber = parameterizedLazy(initializer)
         val string1a = loadStringForNumber(1)
         val string1b = loadStringForNumber(1)
         val string2a = loadStringForNumber(2)

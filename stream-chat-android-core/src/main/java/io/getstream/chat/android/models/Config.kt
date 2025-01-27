@@ -19,6 +19,9 @@ package io.getstream.chat.android.models
 import androidx.compose.runtime.Immutable
 import java.util.Date
 
+/**
+ * Model representing the configuration of a channel.
+ */
 @Immutable
 public data class Config(
 
@@ -82,8 +85,14 @@ public data class Config(
      */
     val urlEnrichmentEnabled: Boolean = true,
 
+    /**
+     * Determines if custom events are enabled. Disabled by default.
+     */
     val customEventsEnabled: Boolean = false,
 
+    /**
+     * Determines if push notifications are enabled. Enabled by default.
+     */
     val pushNotificationsEnabled: Boolean = true,
 
     /**
@@ -111,8 +120,14 @@ public data class Config(
      */
     val automod: String = "disabled",
 
+    /**
+     * Represents the automod behaviour.
+     */
     val automodBehavior: String = "",
 
+    /**
+     * Represents the blocklist behaviour.
+     */
     val blocklistBehavior: String = "",
 
     /**

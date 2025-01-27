@@ -16,9 +16,19 @@
 
 package io.getstream.chat.android.models
 
+/**
+ * Marks a given object as an object which contains custom data (extraData).
+ */
 public sealed interface CustomObject {
+
+    /**
+     * The custom key-value data associated with this object.
+     */
     public val extraData: Map<String, Any>
 
+    /**
+     * Returns the value associated with the given [key], or [default] if the key is not present in the [extraData].
+     */
     @Suppress("UNCHECKED_CAST")
     public fun <T> getExtraValue(key: String, default: T): T {
         return if (extraData.containsKey(key)) {

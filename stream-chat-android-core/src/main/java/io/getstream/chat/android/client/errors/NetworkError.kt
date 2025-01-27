@@ -21,11 +21,17 @@ import io.getstream.result.Error
 
 private const val HTTP_BAD_REQUEST = 400
 
+/**
+ * Checks if the [Error.NetworkError] was caused by a bad request (HTTP 400).
+ */
 @InternalStreamChatApi
 public fun Error.NetworkError.isStatusBadRequest(): Boolean {
     return statusCode == HTTP_BAD_REQUEST
 }
 
+/**
+ * Checks if the [Error.NetworkError] was caused by a server error code: [VALIDATION_ERROR_ERROR_CODE].
+ */
 @InternalStreamChatApi
 public fun Error.NetworkError.isValidationError(): Boolean {
     return serverErrorCode == ChatErrorCode.VALIDATION_ERROR.code

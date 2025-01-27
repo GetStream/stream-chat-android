@@ -51,7 +51,16 @@ public enum class PushProvider(public val key: String) {
     ;
 
     public companion object {
+
+        /**
+         * Creates [PushProvider] instance from the provided [key].
+         * Supported keys:
+         * - "firebase" for [FIREBASE]
+         * - "huawei" for [HUAWEI]
+         * - "xiaomi" for [XIAOMI]
+         * - any other key for [UNKNOWN]
+         */
         public fun fromKey(key: String): PushProvider =
-            values().firstOrNull { it.key == key } ?: UNKNOWN
+            entries.firstOrNull { it.key == key } ?: UNKNOWN
     }
 }
