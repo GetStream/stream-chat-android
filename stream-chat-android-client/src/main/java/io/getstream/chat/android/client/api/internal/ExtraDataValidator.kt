@@ -83,9 +83,9 @@ internal class ExtraDataValidator(
             .withExtraDataValidation(users)
     }
 
-    override fun partialUpdateUser(id: String, set: Map<String, Any>, unset: List<String>): Call<User> {
+    override fun partialUpdateUser(id: String, set: Map<String, Any>, unset: List<String>): Call<List<User>> {
         return delegate.partialUpdateUser(id, set, unset)
-            .withExtraDataValidation(set)
+            .withExtraDataValidationOnList(set)
     }
 
     override fun addMembers(
@@ -153,6 +153,21 @@ internal class ExtraDataValidator(
     private inline fun <reified T : CustomObject> Call<T>.withExtraDataValidation(
         extraData: Map<String, Any>,
     ): Call<T> {
+        val reserved = extraData.findReserved<T>()
+        return when (reserved.isEmpty()) {
+            true -> this
+            else -> ErrorCall(
+                scope,
+                Error.GenericError(
+                    message = "'extraData' contains reserved keys: ${reserved.joinToString()}",
+                ),
+            )
+        }
+    }
+
+    private inline fun <reified T : CustomObject> Call<List<T>>.withExtraDataValidationOnList(
+        extraData: Map<String, Any>,
+    ): Call<List<T>> {
         val reserved = extraData.findReserved<T>()
         return when (reserved.isEmpty()) {
             true -> this

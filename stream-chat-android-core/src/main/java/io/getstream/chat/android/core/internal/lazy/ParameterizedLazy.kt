@@ -20,6 +20,12 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
+/**
+ * A [lazy] delegate which takes a parameter and provides a value based on it.
+ * The value is calculated only once and stored in a map.
+ *
+ * @param initializer A function that creates a new value based on the parameter.
+ */
 @InternalStreamChatApi
 public class ParameterizedLazy<T, R>(
     private val initializer: suspend (T) -> R,
@@ -41,6 +47,9 @@ public class ParameterizedLazy<T, R>(
     }
 }
 
+/**
+ * Creates a [ParameterizedLazy] delegate from the provided [initializer] function.
+ */
 @InternalStreamChatApi
 public fun <T, R> parameterizedLazy(initializer: suspend (T) -> R): ParameterizedLazy<T, R> = ParameterizedLazy(
     initializer,

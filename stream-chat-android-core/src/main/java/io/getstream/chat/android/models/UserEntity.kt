@@ -16,10 +16,19 @@
 
 package io.getstream.chat.android.models
 
+/**
+ * Marks a class as a user entity.
+ */
 public sealed interface UserEntity {
 
+    /**
+     * The user entity.
+     */
     public val user: User
 
+    /**
+     * Returns the user ID.
+     */
     public fun getUserId(): String {
         return user.id
     }

@@ -31,7 +31,7 @@ internal class ChannelListHeaderTest : SnapshotTest {
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_4A)
 
     @Test
-    fun `titled, connected with no user`() {
+    fun `titled, connected, no user`() {
         snapshot {
             ChannelListHeader(
                 title = "title",
@@ -41,7 +41,7 @@ internal class ChannelListHeaderTest : SnapshotTest {
     }
 
     @Test
-    fun `titled, connected with user`() {
+    fun `titled, connected, with user`() {
         snapshot {
             ChannelListHeader(
                 title = "title",
@@ -52,10 +52,28 @@ internal class ChannelListHeaderTest : SnapshotTest {
     }
 
     @Test
-    fun `untitled, connected with no user`() {
+    fun `untitled, connected, no user`() {
         snapshot {
             ChannelListHeader(
                 connectionState = ConnectionState.Connected,
+            )
+        }
+    }
+
+    @Test
+    fun `untitled, offline, no user`() {
+        snapshot {
+            ChannelListHeader(
+                connectionState = ConnectionState.Offline,
+            )
+        }
+    }
+
+    @Test
+    fun `untitled, connecting, no user`() {
+        snapshot {
+            ChannelListHeader(
+                connectionState = ConnectionState.Connecting,
             )
         }
     }

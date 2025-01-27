@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.StreamLifecycleObserver
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
@@ -35,6 +36,8 @@ import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.user.CurrentUserFetcher
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
+import io.getstream.chat.android.models.NoOpMessageTransformer
+import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
@@ -105,6 +108,7 @@ internal open class BaseChatClientTest {
         chatClient = ChatClient(
             config = config,
             api = api,
+            dtoMapping = DtoMapping(NoOpMessageTransformer, NoOpUserTransformer),
             notifications = mock(),
             tokenManager = tokenManager,
             userCredentialStorage = mock(),

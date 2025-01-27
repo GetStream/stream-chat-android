@@ -30,6 +30,7 @@ tasks.withType<KotlinCompile>().configureEach {
         freeCompilerArgs.addAll(
             listOf(
                 "-progressive",
+                "-Xconsistent-data-class-copy-visibility",
                 "-Xexplicit-api=strict",
                 "-opt-in=kotlin.RequiresOptIn",
                 "-opt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi",
@@ -54,6 +55,7 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)
     testImplementation(libs.kluent)
+    testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.mockito)
     testImplementation(libs.mockito.kotlin)
     testRuntimeOnly(libs.junit.jupiter.engine)

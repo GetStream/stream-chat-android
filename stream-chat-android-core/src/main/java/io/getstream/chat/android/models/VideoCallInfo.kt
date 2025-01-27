@@ -26,6 +26,7 @@ import androidx.compose.runtime.Immutable
  * @property type The call type.
  * @property agoraChannel The available channel info of Agora.
  * @property hmsRoom The available room info of HMS.
+ * @property videoCallToken The token info of the video call.
  */
 @Immutable
 public data class VideoCallInfo(

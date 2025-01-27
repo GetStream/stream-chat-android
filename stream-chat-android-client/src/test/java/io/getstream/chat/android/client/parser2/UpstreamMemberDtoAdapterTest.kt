@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test
 
 internal class UpstreamMemberDtoAdapterTest {
 
-    private val parser = MoshiChatParser { "" }
+    private val parser = ParserFactory.createMoshiChatParser()
 
     @Test
     fun `Serialize JSON member with custom data`() {

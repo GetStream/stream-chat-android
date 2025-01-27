@@ -28,6 +28,7 @@ import io.getstream.log.StreamLog
 
 private val snakeRegex = "_[a-zA-Z]".toRegex()
 private val camelRegex = "(?<=[a-zA-Z])[A-Z]".toRegex()
+private val baseUrlRegex = "^(?:https?://)?(.*?)/*$".toRegex()
 
 /**
  * Converts string written in snake case to String in camel case with the first symbol in lower case.
@@ -211,3 +212,12 @@ private fun Uri.Builder.appendValueAsQueryParameterIfNotNull(key: String, value:
         this
     }
 }
+
+/**
+ * Extracts the base URL from a string.
+ * For example, "https://domain.lan/" will return "domain.lan".
+ *
+ * @return The base URL.
+ */
+internal fun String.extractBaseUrl(): String =
+    baseUrlRegex.matchEntire(this)?.groupValues?.get(1) ?: this

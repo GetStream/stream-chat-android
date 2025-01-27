@@ -38,6 +38,7 @@ import java.util.Date
  * @property createdAt The creation date of the poll.
  * @property updatedAt The last update date of the poll.
  * @property closed If set to true, the poll is closed and no more votes can be cast.
+ * @property answers The list of poll answers.
  */
 @Immutable
 public data class Poll(
@@ -68,6 +69,16 @@ public data class Poll(
     public fun getVotes(option: Option): List<Vote> = votes.filter { it.optionId == option.id }
 }
 
+/**
+ * The Answer object represents an answer in a poll.
+ *
+ * @property id The unique identifier of the answer.
+ * @property pollId The unique identifier of the poll.
+ * @property text The text of the answer.
+ * @property createdAt The creation date of the answer.
+ * @property updatedAt The last update date of the answer.
+ * @property user The user who sent the answer.
+ */
 @Immutable
 public data class Answer(
     val id: String,

@@ -16,6 +16,9 @@
 
 package io.getstream.chat.android.core
 
+/**
+ * Marks APIs that are experimental and might be changed or removed in the future.
+ */
 @RequiresOptIn(
     message = "These APIs are experimental. They might still contain bugs or be changed in the future.",
     level = RequiresOptIn.Level.WARNING,

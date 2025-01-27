@@ -69,7 +69,6 @@ import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
 import io.getstream.chat.android.client.api2.model.dto.TypingStartEventDto
 import io.getstream.chat.android.client.api2.model.dto.TypingStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
-import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserPresenceChangedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserStartWatchingEventDto
@@ -138,887 +137,1068 @@ import io.getstream.chat.android.client.events.VoteCastedEvent
 import io.getstream.chat.android.client.events.VoteChangedEvent
 import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.models.UserId
 
-internal fun ConnectedEvent.toDto(): UpstreamConnectedEventDto {
-    return UpstreamConnectedEventDto(
-        type = this.type,
-        created_at = createdAt,
-        me = me.toDto(),
-        connection_id = connectionId,
-    )
-}
+@Suppress("LargeClass")
+internal class EventMapping(
+    private val domainMapping: DomainMapping,
+) {
 
-@Suppress("ComplexMethod")
-internal fun ChatEventDto.toDomain(currentUserId: UserId?): ChatEvent {
-    return when (this) {
-        is NewMessageEventDto -> toDomain(currentUserId)
-        is ChannelDeletedEventDto -> toDomain(currentUserId)
-        is ChannelHiddenEventDto -> toDomain(currentUserId)
-        is ChannelTruncatedEventDto -> toDomain(currentUserId)
-        is ChannelUpdatedByUserEventDto -> toDomain(currentUserId)
-        is ChannelUpdatedEventDto -> toDomain(currentUserId)
-        is ChannelUserBannedEventDto -> toDomain(currentUserId)
-        is ChannelUserUnbannedEventDto -> toDomain(currentUserId)
-        is ChannelVisibleEventDto -> toDomain(currentUserId)
-        is ConnectedEventDto -> toDomain(currentUserId)
-        is ConnectionErrorEventDto -> toDomain()
-        is ConnectingEventDto -> toDomain()
-        is DisconnectedEventDto -> toDomain()
-        is ErrorEventDto -> toDomain()
-        is GlobalUserBannedEventDto -> toDomain(currentUserId)
-        is GlobalUserUnbannedEventDto -> toDomain(currentUserId)
-        is HealthEventDto -> toDomain()
-        is MarkAllReadEventDto -> toDomain(currentUserId)
-        is MemberAddedEventDto -> toDomain(currentUserId)
-        is MemberRemovedEventDto -> toDomain(currentUserId)
-        is MemberUpdatedEventDto -> toDomain(currentUserId)
-        is MessageDeletedEventDto -> toDomain(currentUserId)
-        is MessageReadEventDto -> toDomain(currentUserId)
-        is MessageUpdatedEventDto -> toDomain(currentUserId)
-        is NotificationAddedToChannelEventDto -> toDomain(currentUserId)
-        is NotificationChannelDeletedEventDto -> toDomain(currentUserId)
-        is NotificationChannelMutesUpdatedEventDto -> toDomain(currentUserId)
-        is NotificationChannelTruncatedEventDto -> toDomain(currentUserId)
-        is NotificationInviteAcceptedEventDto -> toDomain(currentUserId)
-        is NotificationInviteRejectedEventDto -> toDomain(currentUserId)
-        is NotificationInvitedEventDto -> toDomain(currentUserId)
-        is NotificationMarkReadEventDto -> toDomain(currentUserId)
-        is NotificationMarkUnreadEventDto -> toDomain(currentUserId)
-        is NotificationMessageNewEventDto -> toDomain(currentUserId)
-        is NotificationThreadMessageNewEventDto -> toDomain(currentUserId)
-        is NotificationMutesUpdatedEventDto -> toDomain(currentUserId)
-        is NotificationRemovedFromChannelEventDto -> toDomain(currentUserId)
-        is ReactionDeletedEventDto -> toDomain(currentUserId)
-        is ReactionNewEventDto -> toDomain(currentUserId)
-        is ReactionUpdateEventDto -> toDomain(currentUserId)
-        is TypingStartEventDto -> toDomain(currentUserId)
-        is TypingStopEventDto -> toDomain(currentUserId)
-        is UnknownEventDto -> toDomain(currentUserId)
-        is UserDeletedEventDto -> toDomain(currentUserId)
-        is UserPresenceChangedEventDto -> toDomain(currentUserId)
-        is UserStartWatchingEventDto -> toDomain(currentUserId)
-        is UserStopWatchingEventDto -> toDomain(currentUserId)
-        is UserUpdatedEventDto -> toDomain(currentUserId)
-        is PollClosedEventDto -> toDomain(currentUserId)
-        is PollDeletedEventDto -> toDomain(currentUserId)
-        is PollUpdatedEventDto -> toDomain(currentUserId)
-        is VoteCastedEventDto -> toDomain(currentUserId)
-        is VoteChangedEventDto -> toDomain(currentUserId)
-        is AnswerCastedEventDto -> toDomain(currentUserId)
-        is VoteRemovedEventDto -> toDomain(currentUserId)
-        is AIIndicatorUpdatedEventDto -> toDomain(currentUserId)
-        is AIIndicatorClearEventDto -> toDomain(currentUserId)
-        is AIIndicatorStopEventDto -> toDomain(currentUserId)
+    /**
+     * Transforms [ChatEventDto] to [ChatEvent].
+     * This is a generic transformation method that can be used to transform any [ChatEventDto] to [ChatEvent].
+     * The actual transformation is delegated to the specific transformation methods for each event type.
+     * The specific transformation methods are defined below.
+     */
+    @Suppress("LongMethod")
+    internal fun ChatEventDto.toDomain(): ChatEvent {
+        return when (this) {
+            is NewMessageEventDto -> toDomain()
+            is ChannelDeletedEventDto -> toDomain()
+            is ChannelHiddenEventDto -> toDomain()
+            is ChannelTruncatedEventDto -> toDomain()
+            is ChannelUpdatedByUserEventDto -> toDomain()
+            is ChannelUpdatedEventDto -> toDomain()
+            is ChannelUserBannedEventDto -> toDomain()
+            is ChannelUserUnbannedEventDto -> toDomain()
+            is ChannelVisibleEventDto -> toDomain()
+            is ConnectedEventDto -> toDomain()
+            is ConnectionErrorEventDto -> toDomain()
+            is ConnectingEventDto -> toDomain()
+            is DisconnectedEventDto -> toDomain()
+            is ErrorEventDto -> toDomain()
+            is GlobalUserBannedEventDto -> toDomain()
+            is GlobalUserUnbannedEventDto -> toDomain()
+            is HealthEventDto -> toDomain()
+            is MarkAllReadEventDto -> toDomain()
+            is MemberAddedEventDto -> toDomain()
+            is MemberRemovedEventDto -> toDomain()
+            is MemberUpdatedEventDto -> toDomain()
+            is MessageDeletedEventDto -> toDomain()
+            is MessageReadEventDto -> toDomain()
+            is MessageUpdatedEventDto -> toDomain()
+            is NotificationAddedToChannelEventDto -> toDomain()
+            is NotificationChannelDeletedEventDto -> toDomain()
+            is NotificationChannelMutesUpdatedEventDto -> toDomain()
+            is NotificationChannelTruncatedEventDto -> toDomain()
+            is NotificationInviteAcceptedEventDto -> toDomain()
+            is NotificationInviteRejectedEventDto -> toDomain()
+            is NotificationInvitedEventDto -> toDomain()
+            is NotificationMarkReadEventDto -> toDomain()
+            is NotificationMarkUnreadEventDto -> toDomain()
+            is NotificationMessageNewEventDto -> toDomain()
+            is NotificationThreadMessageNewEventDto -> toDomain()
+            is NotificationMutesUpdatedEventDto -> toDomain()
+            is NotificationRemovedFromChannelEventDto -> toDomain()
+            is ReactionDeletedEventDto -> toDomain()
+            is ReactionNewEventDto -> toDomain()
+            is ReactionUpdateEventDto -> toDomain()
+            is TypingStartEventDto -> toDomain()
+            is TypingStopEventDto -> toDomain()
+            is UnknownEventDto -> toDomain()
+            is UserDeletedEventDto -> toDomain()
+            is UserPresenceChangedEventDto -> toDomain()
+            is UserStartWatchingEventDto -> toDomain()
+            is UserStopWatchingEventDto -> toDomain()
+            is UserUpdatedEventDto -> toDomain()
+            is PollClosedEventDto -> toDomain()
+            is PollDeletedEventDto -> toDomain()
+            is PollUpdatedEventDto -> toDomain()
+            is VoteCastedEventDto -> toDomain()
+            is VoteChangedEventDto -> toDomain()
+            is AnswerCastedEventDto -> toDomain()
+            is VoteRemovedEventDto -> toDomain()
+            is AIIndicatorUpdatedEventDto -> toDomain()
+            is AIIndicatorClearEventDto -> toDomain()
+            is AIIndicatorStopEventDto -> toDomain()
+        }
     }
-}
 
-private fun ChannelDeletedEventDto.toDomain(currentUserId: UserId?): ChannelDeletedEvent {
-    return ChannelDeletedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        channel = channel.toDomain(currentUserId, channel_last_message_at),
-        user = user?.toDomain(currentUserId),
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
+    /**
+     * Transforms [ChannelDeletedEventDto] to [ChannelDeletedEvent].
+     */
+    private fun ChannelDeletedEventDto.toDomain(): ChannelDeletedEvent = with(domainMapping) {
+        ChannelDeletedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            channel = channel.toDomain(
+                eventChatLastMessageAt = channel_last_message_at,
+            ),
+            user = user?.toDomain(),
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
 
-private fun ChannelHiddenEventDto.toDomain(currentUserId: UserId?): ChannelHiddenEvent {
-    return ChannelHiddenEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        user = user.toDomain(currentUserId),
-        clearHistory = clear_history,
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
+    /**
+     * Transforms [ChannelHiddenEventDto] to [ChannelHiddenEvent].
+     */
+    private fun ChannelHiddenEventDto.toDomain(): ChannelHiddenEvent = with(domainMapping) {
+        ChannelHiddenEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            user = user.toDomain(),
+            clearHistory = clear_history,
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
 
-private fun ChannelTruncatedEventDto.toDomain(currentUserId: UserId?): ChannelTruncatedEvent {
-    return ChannelTruncatedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        user = user?.toDomain(currentUserId),
-        message = message?.toDomain(currentUserId),
-        channel = channel.toDomain(currentUserId, channel_last_message_at),
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
+    /**
+     * Transforms [ChannelTruncatedEventDto] to [ChannelTruncatedEvent].
+     */
+    private fun ChannelTruncatedEventDto.toDomain(): ChannelTruncatedEvent = with(domainMapping) {
+        ChannelTruncatedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            user = user?.toDomain(),
+            message = message?.toDomain(),
+            channel = channel.toDomain(
+                eventChatLastMessageAt = channel_last_message_at,
+            ),
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
 
-private fun ChannelUpdatedEventDto.toDomain(currentUserId: UserId?): ChannelUpdatedEvent {
-    return ChannelUpdatedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        message = message?.toDomain(currentUserId),
-        channel = channel.toDomain(currentUserId, channel_last_message_at),
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
+    /**
+     * Transforms [ChannelUpdatedEventDto] to [ChannelUpdatedEvent].
+     */
+    private fun ChannelUpdatedEventDto.toDomain(): ChannelUpdatedEvent = with(domainMapping) {
+        ChannelUpdatedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            message = message?.toDomain(),
+            channel = channel.toDomain(
+                eventChatLastMessageAt = channel_last_message_at,
+            ),
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
 
-private fun ChannelUpdatedByUserEventDto.toDomain(currentUserId: UserId?): ChannelUpdatedByUserEvent {
-    return ChannelUpdatedByUserEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        user = user.toDomain(currentUserId),
-        message = message?.toDomain(currentUserId),
-        channel = channel.toDomain(currentUserId, channel_last_message_at),
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
+    /**
+     * Transforms [ChannelUpdatedByUserEventDto] to [ChannelUpdatedByUserEvent].
+     */
+    private fun ChannelUpdatedByUserEventDto.toDomain(): ChannelUpdatedByUserEvent = with(domainMapping) {
+        ChannelUpdatedByUserEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            user = user.toDomain(),
+            message = message?.toDomain(),
+            channel = channel.toDomain(
+                eventChatLastMessageAt = channel_last_message_at,
+            ),
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
 
-private fun ChannelVisibleEventDto.toDomain(currentUserId: UserId?): ChannelVisibleEvent {
-    return ChannelVisibleEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        user = user.toDomain(currentUserId),
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
+    /**
+     * Transforms [ChannelVisibleEventDto] to [ChannelVisibleEvent].
+     */
+    private fun ChannelVisibleEventDto.toDomain(): ChannelVisibleEvent = with(domainMapping) {
+        ChannelVisibleEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            user = user.toDomain(),
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
 
-private fun HealthEventDto.toDomain(): HealthEvent {
-    return HealthEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        connectionId = connection_id,
-    )
-}
+    private fun HealthEventDto.toDomain(): HealthEvent {
+        return HealthEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            connectionId = connection_id,
+        )
+    }
 
-private fun MemberAddedEventDto.toDomain(currentUserId: UserId?): MemberAddedEvent {
-    return MemberAddedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        user = user.toDomain(currentUserId),
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        member = member.toDomain(currentUserId),
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
+    /**
+     * Transforms [MemberAddedEventDto] to [MemberAddedEvent].
+     */
+    private fun MemberAddedEventDto.toDomain(): MemberAddedEvent = with(domainMapping) {
+        MemberAddedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            user = user.toDomain(),
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            member = member.toDomain(),
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
 
-private fun MemberRemovedEventDto.toDomain(currentUserId: UserId?): MemberRemovedEvent {
-    return MemberRemovedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        user = user.toDomain(currentUserId),
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        member = member.toDomain(currentUserId),
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
+    /**
+     * Transforms [MemberRemovedEventDto] to [MemberRemovedEvent].
+     */
+    private fun MemberRemovedEventDto.toDomain(): MemberRemovedEvent = with(domainMapping) {
+        MemberRemovedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            user = user.toDomain(),
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            member = member.toDomain(),
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
 
-private fun MemberUpdatedEventDto.toDomain(currentUserId: UserId?): MemberUpdatedEvent {
-    return MemberUpdatedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        user = user.toDomain(currentUserId),
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        member = member.toDomain(currentUserId),
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
+    private fun MemberUpdatedEventDto.toDomain(): MemberUpdatedEvent = with(domainMapping) {
+        MemberUpdatedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            user = user.toDomain(),
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            member = member.toDomain(),
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
 
-private fun MessageDeletedEventDto.toDomain(currentUserId: UserId?): MessageDeletedEvent {
-    // TODO review createdAt and deletedAt fields here
-    return MessageDeletedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        user = user?.toDomain(currentUserId),
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        message = message.toDomain(currentUserId),
-        hardDelete = hard_delete ?: false,
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
+    /**
+     * Transforms [MessageDeletedEventDto] to [MessageDeletedEvent].
+     */
+    private fun MessageDeletedEventDto.toDomain(): MessageDeletedEvent = with(domainMapping) {
+        MessageDeletedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            user = user?.toDomain(),
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            message = message.toDomain(),
+            hardDelete = hard_delete ?: false,
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
 
-private fun MessageReadEventDto.toDomain(currentUserId: UserId?): MessageReadEvent {
-    return MessageReadEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        user = user.toDomain(currentUserId),
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        thread = thread?.toDomain(currentUserId),
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
+    /**
+     * Transforms [MessageReadEventDto] to [MessageReadEvent].
+     */
+    private fun MessageReadEventDto.toDomain(): MessageReadEvent = with(domainMapping) {
+        MessageReadEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            user = user.toDomain(),
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            thread = thread?.toDomain(),
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
 
-private fun MessageUpdatedEventDto.toDomain(currentUserId: UserId?): MessageUpdatedEvent {
-    return MessageUpdatedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        user = user.toDomain(currentUserId),
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        message = message.toDomain(currentUserId),
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
+    /**
+     * Transforms [MessageUpdatedEventDto] to [MessageUpdatedEvent].
+     */
+    private fun MessageUpdatedEventDto.toDomain(): MessageUpdatedEvent = with(domainMapping) {
+        MessageUpdatedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            user = user.toDomain(),
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            message = message.toDomain(),
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
 
-private fun NewMessageEventDto.toDomain(currentUserId: UserId?): NewMessageEvent {
-    return NewMessageEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        user = user.toDomain(currentUserId),
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        message = message.toDomain(currentUserId),
-        watcherCount = watcher_count,
-        totalUnreadCount = total_unread_count,
-        unreadChannels = unread_channels,
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
+    /**
+     * Transforms [NewMessageEventDto] to [NewMessageEvent].
+     */
+    private fun NewMessageEventDto.toDomain(): NewMessageEvent = with(domainMapping) {
+        NewMessageEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            user = user.toDomain(),
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            message = message.toDomain(),
+            watcherCount = watcher_count,
+            totalUnreadCount = total_unread_count,
+            unreadChannels = unread_channels,
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
 
-private fun NotificationAddedToChannelEventDto.toDomain(currentUserId: UserId?): NotificationAddedToChannelEvent {
-    return NotificationAddedToChannelEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        channel = channel.toDomain(currentUserId, channel_last_message_at),
-        member = member.toDomain(currentUserId),
-        totalUnreadCount = total_unread_count,
-        unreadChannels = unread_channels,
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
+    /**
+     * Transforms [NotificationAddedToChannelEventDto] to [NotificationAddedToChannelEvent].
+     */
+    private fun NotificationAddedToChannelEventDto.toDomain(): NotificationAddedToChannelEvent = with(domainMapping) {
+        NotificationAddedToChannelEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            channel = channel.toDomain(
+                eventChatLastMessageAt = channel_last_message_at,
+            ),
+            member = member.toDomain(),
+            totalUnreadCount = total_unread_count,
+            unreadChannels = unread_channels,
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
 
-private fun NotificationChannelDeletedEventDto.toDomain(currentUserId: UserId?): NotificationChannelDeletedEvent {
-    return NotificationChannelDeletedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        channel = channel.toDomain(currentUserId, channel_last_message_at),
-        totalUnreadCount = total_unread_count,
-        unreadChannels = unread_channels,
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
+    /**
+     * Transforms [NotificationChannelDeletedEventDto] to [NotificationChannelDeletedEvent].
+     */
+    private fun NotificationChannelDeletedEventDto.toDomain(): NotificationChannelDeletedEvent = with(domainMapping) {
+        NotificationChannelDeletedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            channel = channel.toDomain(
+                eventChatLastMessageAt = channel_last_message_at,
+            ),
+            totalUnreadCount = total_unread_count,
+            unreadChannels = unread_channels,
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
 
-private fun NotificationChannelMutesUpdatedEventDto.toDomain(
-    currentUserId: UserId?,
-): NotificationChannelMutesUpdatedEvent {
-    return NotificationChannelMutesUpdatedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        me = me.toDomain(currentUserId),
-    )
-}
-
-private fun NotificationChannelTruncatedEventDto.toDomain(currentUserId: UserId?): NotificationChannelTruncatedEvent {
-    return NotificationChannelTruncatedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        channel = channel.toDomain(currentUserId, channel_last_message_at),
-        totalUnreadCount = total_unread_count,
-        unreadChannels = unread_channels,
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
-
-private fun NotificationInviteAcceptedEventDto.toDomain(currentUserId: UserId?): NotificationInviteAcceptedEvent {
-    return NotificationInviteAcceptedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        user = user.toDomain(currentUserId),
-        member = member.toDomain(currentUserId),
-        channel = channel.toDomain(currentUserId, channel_last_message_at),
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
-
-private fun NotificationInviteRejectedEventDto.toDomain(currentUserId: UserId?): NotificationInviteRejectedEvent {
-    return NotificationInviteRejectedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        user = user.toDomain(currentUserId),
-        member = member.toDomain(currentUserId),
-        channel = channel.toDomain(currentUserId, channel_last_message_at),
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
-
-private fun NotificationInvitedEventDto.toDomain(currentUserId: UserId?): NotificationInvitedEvent {
-    return NotificationInvitedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        user = user.toDomain(currentUserId),
-        member = member.toDomain(currentUserId),
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
-
-private fun NotificationMarkReadEventDto.toDomain(currentUserId: UserId?): NotificationMarkReadEvent {
-    return NotificationMarkReadEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        user = user.toDomain(currentUserId),
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        totalUnreadCount = total_unread_count,
-        unreadChannels = unread_channels,
-        threadId = thread_id,
-        thread = thread?.toDomain(currentUserId),
-        unreadThreads = unread_threads,
-        unreadThreadMessages = unread_thread_messages,
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
-
-private fun NotificationMarkUnreadEventDto.toDomain(currentUserId: UserId?): NotificationMarkUnreadEvent {
-    return NotificationMarkUnreadEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        user = user.toDomain(currentUserId),
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        totalUnreadCount = total_unread_count,
-        unreadChannels = unread_channels,
-        firstUnreadMessageId = first_unread_message_id,
-        lastReadMessageId = last_read_message_id,
-        lastReadMessageAt = last_read_at.date,
-        unreadMessages = unread_messages,
-        threadId = thread_id,
-        unreadThreads = unread_threads,
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
-
-private fun MarkAllReadEventDto.toDomain(currentUserId: UserId?): MarkAllReadEvent {
-    return MarkAllReadEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        user = user.toDomain(currentUserId),
-        totalUnreadCount = total_unread_count,
-        unreadChannels = unread_channels,
-    )
-}
-
-private fun NotificationMessageNewEventDto.toDomain(currentUserId: UserId?): NotificationMessageNewEvent {
-    return NotificationMessageNewEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        channel = channel.toDomain(currentUserId, channel_last_message_at),
-        message = message.toDomain(currentUserId),
-        totalUnreadCount = total_unread_count,
-        unreadChannels = unread_channels,
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
-
-private fun NotificationThreadMessageNewEventDto.toDomain(currentUserId: UserId?): NotificationThreadMessageNewEvent {
-    return NotificationThreadMessageNewEvent(
-        type = type,
-        cid = cid,
-        channelId = channel_id,
-        channelType = channel_type,
-        message = message.toDomain(currentUserId),
-        channel = channel.toDomain(currentUserId, channel_last_message_at),
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        unreadThreads = unread_threads,
-        unreadThreadMessages = unread_thread_messages,
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
-
-private fun NotificationMutesUpdatedEventDto.toDomain(currentUserId: UserId?): NotificationMutesUpdatedEvent {
-    return NotificationMutesUpdatedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        me = me.toDomain(currentUserId),
-    )
-}
-
-private fun NotificationRemovedFromChannelEventDto.toDomain(
-    currentUserId: UserId?,
-): NotificationRemovedFromChannelEvent {
-    return NotificationRemovedFromChannelEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        user = user?.toDomain(currentUserId),
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        channel = channel.toDomain(currentUserId, channel_last_message_at),
-        member = member.toDomain(currentUserId),
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
-
-private fun ReactionDeletedEventDto.toDomain(currentUserId: UserId?): ReactionDeletedEvent {
-    return ReactionDeletedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        user = user.toDomain(currentUserId),
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        message = message.toDomain(currentUserId),
-        reaction = reaction.toDomain(currentUserId),
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
-
-private fun ReactionNewEventDto.toDomain(currentUserId: UserId?): ReactionNewEvent {
-    return ReactionNewEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        user = user.toDomain(currentUserId),
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        message = message.toDomain(currentUserId),
-        reaction = reaction.toDomain(currentUserId),
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
-
-private fun ReactionUpdateEventDto.toDomain(currentUserId: UserId?): ReactionUpdateEvent {
-    return ReactionUpdateEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        user = user.toDomain(currentUserId),
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        message = message.toDomain(currentUserId),
-        reaction = reaction.toDomain(currentUserId),
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
-
-private fun TypingStartEventDto.toDomain(currentUserId: UserId?): TypingStartEvent {
-    return TypingStartEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        user = user.toDomain(currentUserId),
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        parentId = parent_id,
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
-
-private fun TypingStopEventDto.toDomain(currentUserId: UserId?): TypingStopEvent {
-    return TypingStopEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        user = user.toDomain(currentUserId),
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        parentId = parent_id,
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
-
-private fun ChannelUserBannedEventDto.toDomain(currentUserId: UserId?): ChannelUserBannedEvent {
-    return ChannelUserBannedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        user = user.toDomain(currentUserId),
-        expiration = expiration,
-        shadow = shadow ?: false,
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
-
-private fun GlobalUserBannedEventDto.toDomain(currentUserId: UserId?): GlobalUserBannedEvent {
-    return GlobalUserBannedEvent(
-        type = type,
-        user = user.toDomain(currentUserId),
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-    )
-}
-
-private fun UserDeletedEventDto.toDomain(currentUserId: UserId?): UserDeletedEvent {
-    return UserDeletedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        user = user.toDomain(currentUserId),
-    )
-}
-
-private fun UserPresenceChangedEventDto.toDomain(currentUserId: UserId?): UserPresenceChangedEvent {
-    return UserPresenceChangedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        user = user.toDomain(currentUserId),
-    )
-}
-
-private fun UserStartWatchingEventDto.toDomain(currentUserId: UserId?): UserStartWatchingEvent {
-    return UserStartWatchingEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        cid = cid,
-        watcherCount = watcher_count,
-        channelType = channel_type,
-        channelId = channel_id,
-        user = user.toDomain(currentUserId),
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
-
-private fun UserStopWatchingEventDto.toDomain(currentUserId: UserId?): UserStopWatchingEvent {
-    return UserStopWatchingEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        cid = cid,
-        watcherCount = watcher_count,
-        channelType = channel_type,
-        channelId = channel_id,
-        user = user.toDomain(currentUserId),
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
-
-private fun ChannelUserUnbannedEventDto.toDomain(currentUserId: UserId?): ChannelUserUnbannedEvent {
-    return ChannelUserUnbannedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        user = user.toDomain(currentUserId),
-        cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
-
-private fun GlobalUserUnbannedEventDto.toDomain(currentUserId: UserId?): GlobalUserUnbannedEvent {
-    return GlobalUserUnbannedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        user = user.toDomain(currentUserId),
-    )
-}
-
-private fun UserUpdatedEventDto.toDomain(currentUserId: UserId?): UserUpdatedEvent {
-    return UserUpdatedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        user = user.toDomain(currentUserId),
-    )
-}
-
-private fun PollClosedEventDto.toDomain(currentUserId: UserId?): PollClosedEvent {
-    val newPoll = poll.toDomain(currentUserId)
-    val (channelType, channelId) = cid.cidToTypeAndId()
-    return PollClosedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        cid = cid,
-        channelType = channelType,
-        channelId = channelId,
-        poll = newPoll,
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
-
-private fun PollDeletedEventDto.toDomain(currentUserId: UserId?): PollDeletedEvent {
-    val newPoll = poll.toDomain(currentUserId)
-    val (channelType, channelId) = cid.cidToTypeAndId()
-    return PollDeletedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        cid = cid,
-        channelType = channelType,
-        channelId = channelId,
-        poll = newPoll,
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
-
-private fun PollUpdatedEventDto.toDomain(currentUserId: UserId?): PollUpdatedEvent {
-    val newPoll = poll.toDomain(currentUserId)
-    val (channelType, channelId) = cid.cidToTypeAndId()
-    return PollUpdatedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        cid = cid,
-        channelType = channelType,
-        channelId = channelId,
-        poll = newPoll,
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
-
-private fun VoteCastedEventDto.toDomain(currentUserId: UserId?): VoteCastedEvent {
-    val pollVote = poll_vote.toDomain(currentUserId)
-    val (channelType, channelId) = cid.cidToTypeAndId()
-    val newPoll = poll.toDomain(currentUserId)
-        .let { poll ->
-            pollVote.takeIf { it.user?.id == currentUserId }
-                ?.let {
-                    poll.copy(
-                        votes = (poll.votes.associateBy { it.id } + (it.id to it)).values.toList(),
-                        ownVotes = (poll.ownVotes.associateBy { it.id } + (it.id to it)).values.toList(),
-                    )
-                } ?: poll
+    /**
+     * Transforms [NotificationChannelMutesUpdatedEventDto] to [NotificationChannelMutesUpdatedEvent].
+     */
+    private fun NotificationChannelMutesUpdatedEventDto.toDomain(): NotificationChannelMutesUpdatedEvent =
+        with(domainMapping) {
+            NotificationChannelMutesUpdatedEvent(
+                type = type,
+                createdAt = created_at.date,
+                rawCreatedAt = created_at.rawDate,
+                me = me.toDomain(),
+            )
         }
-    return VoteCastedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        cid = cid,
-        channelType = channelType,
-        channelId = channelId,
-        poll = newPoll,
-        newVote = pollVote,
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
 
-private fun AnswerCastedEventDto.toDomain(currentUserId: UserId?): AnswerCastedEvent {
-    val newAnswer = poll_vote.toAnswerDomain(currentUserId)
-    val (channelType, channelId) = cid.cidToTypeAndId()
-    return AnswerCastedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        cid = cid,
-        channelType = channelType,
-        channelId = channelId,
-        poll = poll.toDomain(currentUserId),
-        newAnswer = newAnswer,
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
-
-private fun VoteChangedEventDto.toDomain(currentUserId: UserId?): VoteChangedEvent {
-    val pollVote = poll_vote.toDomain(currentUserId)
-    val (channelType, channelId) = cid.cidToTypeAndId()
-    val newPoll = poll.toDomain(currentUserId)
-        .let { poll ->
-            pollVote.takeIf { it.user?.id == currentUserId }
-                ?.let {
-                    poll.copy(
-                        votes = (poll.votes.associateBy { it.id } + (it.id to it)).values.toList(),
-                        ownVotes = (poll.ownVotes.associateBy { it.id } + (it.id to it)).values.toList(),
-                    )
-                } ?: poll
+    /**
+     * Transforms [NotificationChannelTruncatedEventDto] to [NotificationChannelTruncatedEvent].
+     */
+    private fun NotificationChannelTruncatedEventDto.toDomain(): NotificationChannelTruncatedEvent =
+        with(domainMapping) {
+            NotificationChannelTruncatedEvent(
+                type = type,
+                createdAt = created_at.date,
+                rawCreatedAt = created_at.rawDate,
+                cid = cid,
+                channelType = channel_type,
+                channelId = channel_id,
+                channel = channel.toDomain(
+                    eventChatLastMessageAt = channel_last_message_at,
+                ),
+                totalUnreadCount = total_unread_count,
+                unreadChannels = unread_channels,
+                channelLastMessageAt = channel_last_message_at,
+            )
         }
-    return VoteChangedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        cid = cid,
-        channelType = channelType,
-        channelId = channelId,
-        poll = newPoll,
-        newVote = pollVote,
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
 
-private fun VoteRemovedEventDto.toDomain(currentUserId: UserId?): VoteRemovedEvent {
-    val removedVote = poll_vote.toDomain(currentUserId)
-    val (channelType, channelId) = cid.cidToTypeAndId()
-    val newPoll = poll.toDomain(currentUserId)
-    return VoteRemovedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        cid = cid,
-        channelType = channelType,
-        channelId = channelId,
-        poll = newPoll,
-        removedVote = removedVote,
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
+    /**
+     * Transforms [NotificationInviteAcceptedEventDto] to [NotificationInviteAcceptedEvent].
+     */
+    private fun NotificationInviteAcceptedEventDto.toDomain(): NotificationInviteAcceptedEvent = with(domainMapping) {
+        NotificationInviteAcceptedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            user = user.toDomain(),
+            member = member.toDomain(),
+            channel = channel.toDomain(
+                eventChatLastMessageAt = channel_last_message_at,
+            ),
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
 
-private fun AIIndicatorUpdatedEventDto.toDomain(currentUserId: UserId?): AIIndicatorUpdatedEvent {
-    val (channelType, channelId) = cid.cidToTypeAndId()
-    return AIIndicatorUpdatedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        cid = cid,
-        user = user.toDomain(currentUserId),
-        channelType = channelType,
-        channelId = channelId,
-        channelLastMessageAt = channel_last_message_at,
-        aiState = ai_state,
-        messageId = message_id,
-    )
-}
+    /**
+     * Transforms [NotificationInviteRejectedEventDto] to [NotificationInviteRejectedEvent].
+     */
+    private fun NotificationInviteRejectedEventDto.toDomain(): NotificationInviteRejectedEvent = with(domainMapping) {
+        NotificationInviteRejectedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            user = user.toDomain(),
+            member = member.toDomain(),
+            channel = channel.toDomain(
+                eventChatLastMessageAt = channel_last_message_at,
+            ),
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
 
-private fun AIIndicatorClearEventDto.toDomain(currentUserId: UserId?): AIIndicatorClearEvent {
-    val (channelType, channelId) = cid.cidToTypeAndId()
-    return AIIndicatorClearEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        user = user.toDomain(currentUserId),
-        cid = cid,
-        channelType = channelType,
-        channelId = channelId,
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
+    /**
+     * Transforms [NotificationInvitedEventDto] to [NotificationInvitedEvent].
+     */
+    private fun NotificationInvitedEventDto.toDomain(): NotificationInvitedEvent = with(domainMapping) {
+        NotificationInvitedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            user = user.toDomain(),
+            member = member.toDomain(),
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
 
-private fun AIIndicatorStopEventDto.toDomain(currentUserId: UserId?): AIIndicatorStopEvent {
-    val (channelType, channelId) = cid.cidToTypeAndId()
-    return AIIndicatorStopEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        cid = cid,
-        user = user.toDomain(currentUserId),
-        channelType = channelType,
-        channelId = channelId,
-        channelLastMessageAt = channel_last_message_at,
-    )
-}
+    /**
+     * Transforms [NotificationMarkReadEventDto] to [NotificationMarkReadEvent].
+     */
+    private fun NotificationMarkReadEventDto.toDomain(): NotificationMarkReadEvent = with(domainMapping) {
+        NotificationMarkReadEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            user = user.toDomain(),
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            totalUnreadCount = total_unread_count,
+            unreadChannels = unread_channels,
+            threadId = thread_id,
+            thread = thread?.toDomain(),
+            unreadThreads = unread_threads,
+            unreadThreadMessages = unread_thread_messages,
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
 
-private fun ConnectedEventDto.toDomain(currentUserId: UserId?): ConnectedEvent {
-    return ConnectedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        me = me.toDomain(currentUserId),
-        connectionId = connection_id,
-    )
-}
+    /**
+     * Transforms [NotificationMarkUnreadEventDto] to [NotificationMarkUnreadEvent].
+     */
+    private fun NotificationMarkUnreadEventDto.toDomain(): NotificationMarkUnreadEvent = with(domainMapping) {
+        NotificationMarkUnreadEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            user = user.toDomain(),
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            totalUnreadCount = total_unread_count,
+            unreadChannels = unread_channels,
+            firstUnreadMessageId = first_unread_message_id,
+            lastReadMessageId = last_read_message_id,
+            lastReadMessageAt = last_read_at.date,
+            unreadMessages = unread_messages,
+            threadId = thread_id,
+            unreadThreads = unread_threads,
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
 
-private fun ConnectionErrorEventDto.toDomain(): ConnectionErrorEvent {
-    return ConnectionErrorEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        connectionId = connection_id,
-        error = error.toDomain(),
-    )
-}
+    /**
+     * Transforms [MarkAllReadEventDto] to [MarkAllReadEvent].
+     */
+    private fun MarkAllReadEventDto.toDomain(): MarkAllReadEvent = with(domainMapping) {
+        MarkAllReadEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            user = user.toDomain(),
+            totalUnreadCount = total_unread_count,
+            unreadChannels = unread_channels,
+        )
+    }
 
-private fun ConnectingEventDto.toDomain(): ConnectingEvent {
-    return ConnectingEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-    )
-}
+    /**
+     * Transforms [NotificationMessageNewEventDto] to [NotificationMessageNewEvent].
+     */
+    private fun NotificationMessageNewEventDto.toDomain(): NotificationMessageNewEvent = with(domainMapping) {
+        NotificationMessageNewEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            channel = channel.toDomain(
+                eventChatLastMessageAt = channel_last_message_at,
+            ),
+            message = message.toDomain(),
+            totalUnreadCount = total_unread_count,
+            unreadChannels = unread_channels,
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
 
-private fun DisconnectedEventDto.toDomain(): DisconnectedEvent {
-    return DisconnectedEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-    )
-}
+    /**
+     * Transforms [NotificationThreadMessageNewEventDto] to [NotificationThreadMessageNewEvent].
+     */
+    private fun NotificationThreadMessageNewEventDto.toDomain(): NotificationThreadMessageNewEvent =
+        with(domainMapping) {
+            NotificationThreadMessageNewEvent(
+                type = type,
+                cid = cid,
+                channelId = channel_id,
+                channelType = channel_type,
+                message = message.toDomain(),
+                channel = channel.toDomain(
+                    eventChatLastMessageAt = channel_last_message_at,
+                ),
+                createdAt = created_at.date,
+                rawCreatedAt = created_at.rawDate,
+                unreadThreads = unread_threads,
+                unreadThreadMessages = unread_thread_messages,
+                channelLastMessageAt = channel_last_message_at,
+            )
+        }
 
-private fun ErrorEventDto.toDomain(): ErrorEvent {
-    return ErrorEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        error = error,
-    )
-}
+    /**
+     * Transforms [NotificationMutesUpdatedEventDto] to [NotificationMutesUpdatedEvent].
+     */
+    private fun NotificationMutesUpdatedEventDto.toDomain(): NotificationMutesUpdatedEvent = with(domainMapping) {
+        NotificationMutesUpdatedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            me = me.toDomain(),
+        )
+    }
 
-private fun UnknownEventDto.toDomain(currentUserId: UserId?): UnknownEvent {
-    return UnknownEvent(
-        type = type,
-        createdAt = created_at.date,
-        rawCreatedAt = created_at.rawDate,
-        user = user?.toDomain(currentUserId),
-        rawData = rawData,
-    )
+    /**
+     * Transforms [NotificationRemovedFromChannelEventDto] to [NotificationRemovedFromChannelEvent].
+     */
+    private fun NotificationRemovedFromChannelEventDto.toDomain(): NotificationRemovedFromChannelEvent =
+        with(domainMapping) {
+            NotificationRemovedFromChannelEvent(
+                type = type,
+                createdAt = created_at.date,
+                rawCreatedAt = created_at.rawDate,
+                user = user?.toDomain(),
+                cid = cid,
+                channelType = channel_type,
+                channelId = channel_id,
+                channel = channel.toDomain(
+                    eventChatLastMessageAt = channel_last_message_at,
+                ),
+                member = member.toDomain(),
+                channelLastMessageAt = channel_last_message_at,
+            )
+        }
+
+    /**
+     * Transforms [ReactionDeletedEventDto] to [ReactionDeletedEvent].
+     */
+    private fun ReactionDeletedEventDto.toDomain(): ReactionDeletedEvent = with(domainMapping) {
+        ReactionDeletedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            user = user.toDomain(),
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            message = message.toDomain(),
+            reaction = reaction.toDomain(),
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
+
+    /**
+     * Transforms [ReactionNewEventDto] to [ReactionNewEvent].
+     */
+    private fun ReactionNewEventDto.toDomain(): ReactionNewEvent = with(domainMapping) {
+        ReactionNewEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            user = user.toDomain(),
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            message = message.toDomain(),
+            reaction = reaction.toDomain(),
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
+
+    /**
+     * Transforms [ReactionUpdateEventDto] to [ReactionUpdateEvent].
+     */
+    private fun ReactionUpdateEventDto.toDomain(): ReactionUpdateEvent = with(domainMapping) {
+        ReactionUpdateEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            user = user.toDomain(),
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            message = message.toDomain(),
+            reaction = reaction.toDomain(),
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
+
+    /**
+     * Transforms [TypingStartEventDto] to [TypingStartEvent].
+     */
+    private fun TypingStartEventDto.toDomain(): TypingStartEvent = with(domainMapping) {
+        TypingStartEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            user = user.toDomain(),
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            parentId = parent_id,
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
+
+    /**
+     * Transforms [TypingStopEventDto] to [TypingStopEvent].
+     */
+    private fun TypingStopEventDto.toDomain(): TypingStopEvent = with(domainMapping) {
+        TypingStopEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            user = user.toDomain(),
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            parentId = parent_id,
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
+
+    /**
+     * Transforms [ChannelUserBannedEventDto] to [ChannelUserBannedEvent].
+     */
+    private fun ChannelUserBannedEventDto.toDomain(): ChannelUserBannedEvent = with(domainMapping) {
+        ChannelUserBannedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            user = user.toDomain(),
+            expiration = expiration,
+            shadow = shadow ?: false,
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
+
+    /**
+     * Transforms [GlobalUserBannedEventDto] to [GlobalUserBannedEvent].
+     */
+    private fun GlobalUserBannedEventDto.toDomain(): GlobalUserBannedEvent = with(domainMapping) {
+        GlobalUserBannedEvent(
+            type = type,
+            user = user.toDomain(),
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+        )
+    }
+
+    /**
+     * Transforms [UserDeletedEventDto] to [UserDeletedEvent].
+     */
+    private fun UserDeletedEventDto.toDomain(): UserDeletedEvent = with(domainMapping) {
+        UserDeletedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            user = user.toDomain(),
+        )
+    }
+
+    /**
+     * Transforms [UserPresenceChangedEventDto] to [UserPresenceChangedEvent].
+     */
+    private fun UserPresenceChangedEventDto.toDomain(): UserPresenceChangedEvent = with(domainMapping) {
+        UserPresenceChangedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            user = user.toDomain(),
+        )
+    }
+
+    /**
+     * Transforms [UserStartWatchingEventDto] to [UserStartWatchingEvent].
+     */
+    private fun UserStartWatchingEventDto.toDomain(): UserStartWatchingEvent = with(domainMapping) {
+        UserStartWatchingEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            watcherCount = watcher_count,
+            channelType = channel_type,
+            channelId = channel_id,
+            user = user.toDomain(),
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
+
+    /**
+     * Transforms [UserStopWatchingEventDto] to [UserStopWatchingEvent].
+     */
+    private fun UserStopWatchingEventDto.toDomain(): UserStopWatchingEvent = with(domainMapping) {
+        UserStopWatchingEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            watcherCount = watcher_count,
+            channelType = channel_type,
+            channelId = channel_id,
+            user = user.toDomain(),
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
+
+    /**
+     * Transforms [ChannelUserUnbannedEventDto] to [ChannelUserUnbannedEvent].
+     */
+    private fun ChannelUserUnbannedEventDto.toDomain(): ChannelUserUnbannedEvent = with(domainMapping) {
+        ChannelUserUnbannedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            user = user.toDomain(),
+            cid = cid,
+            channelType = channel_type,
+            channelId = channel_id,
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
+
+    /**
+     * Transforms [GlobalUserUnbannedEventDto] to [GlobalUserUnbannedEvent].
+     */
+    private fun GlobalUserUnbannedEventDto.toDomain(): GlobalUserUnbannedEvent = with(domainMapping) {
+        GlobalUserUnbannedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            user = user.toDomain(),
+        )
+    }
+
+    /**
+     * Transforms [UserUpdatedEventDto] to [UserUpdatedEvent].
+     */
+    private fun UserUpdatedEventDto.toDomain(): UserUpdatedEvent = with(domainMapping) {
+        UserUpdatedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            user = user.toDomain(),
+        )
+    }
+
+    /**
+     * Transforms [PollClosedEventDto] to [PollClosedEvent].
+     */
+    private fun PollClosedEventDto.toDomain(): PollClosedEvent = with(domainMapping) {
+        val newPoll = poll.toDomain()
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return PollClosedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            poll = newPoll,
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
+
+    /**
+     * Transforms [PollDeletedEventDto] to [PollDeletedEvent].
+     */
+    private fun PollDeletedEventDto.toDomain(): PollDeletedEvent = with(domainMapping) {
+        val newPoll = poll.toDomain()
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return PollDeletedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            poll = newPoll,
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
+
+    /**
+     * Transforms [PollUpdatedEventDto] to [PollUpdatedEvent].
+     */
+    private fun PollUpdatedEventDto.toDomain(): PollUpdatedEvent = with(domainMapping) {
+        val newPoll = poll.toDomain()
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return PollUpdatedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            poll = newPoll,
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
+
+    /**
+     * Transforms [VoteCastedEventDto] to [VoteCastedEvent].
+     */
+    private fun VoteCastedEventDto.toDomain(): VoteCastedEvent = with(domainMapping) {
+        val pollVote = poll_vote.toDomain()
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        val newPoll = poll.toDomain()
+            .let { poll ->
+                pollVote.takeIf { it.user?.id == currentUserIdProvider() }
+                    ?.let {
+                        poll.copy(
+                            votes = (poll.votes.associateBy { it.id } + (it.id to it)).values.toList(),
+                            ownVotes = (poll.ownVotes.associateBy { it.id } + (it.id to it)).values.toList(),
+                        )
+                    } ?: poll
+            }
+        return VoteCastedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            poll = newPoll,
+            newVote = pollVote,
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
+
+    /**
+     * Transforms [AnswerCastedEventDto] to [AnswerCastedEvent].
+     */
+    private fun AnswerCastedEventDto.toDomain(): AnswerCastedEvent = with(domainMapping) {
+        val newAnswer = poll_vote.toAnswerDomain()
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return AnswerCastedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            poll = poll.toDomain(),
+            newAnswer = newAnswer,
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
+
+    /**
+     * Transforms [VoteChangedEventDto] to [VoteChangedEvent].
+     */
+    private fun VoteChangedEventDto.toDomain(): VoteChangedEvent = with(domainMapping) {
+        val pollVote = poll_vote.toDomain()
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        val newPoll = poll.toDomain()
+            .let { poll ->
+                pollVote.takeIf { it.user?.id == currentUserIdProvider() }
+                    ?.let {
+                        poll.copy(
+                            votes = (poll.votes.associateBy { it.id } + (it.id to it)).values.toList(),
+                            ownVotes = (poll.ownVotes.associateBy { it.id } + (it.id to it)).values.toList(),
+                        )
+                    } ?: poll
+            }
+        return VoteChangedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            poll = newPoll,
+            newVote = pollVote,
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
+
+    /**
+     * Transforms [VoteRemovedEventDto] to [VoteRemovedEvent].
+     */
+    private fun VoteRemovedEventDto.toDomain(): VoteRemovedEvent = with(domainMapping) {
+        val removedVote = poll_vote.toDomain()
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        val newPoll = poll.toDomain()
+        return VoteRemovedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            poll = newPoll,
+            removedVote = removedVote,
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
+
+    /**
+     * Transforms [AIIndicatorUpdatedEventDto] to [AIIndicatorUpdatedEvent].
+     */
+    private fun AIIndicatorUpdatedEventDto.toDomain(): AIIndicatorUpdatedEvent = with(domainMapping) {
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return AIIndicatorUpdatedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            user = user.toDomain(),
+            channelType = channelType,
+            channelId = channelId,
+            channelLastMessageAt = channel_last_message_at,
+            aiState = ai_state,
+            messageId = message_id,
+        )
+    }
+
+    /**
+     * Transforms [AIIndicatorClearEventDto] to [AIIndicatorClearEvent].
+     */
+    private fun AIIndicatorClearEventDto.toDomain(): AIIndicatorClearEvent = with(domainMapping) {
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return AIIndicatorClearEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            user = user.toDomain(),
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
+
+    /**
+     * Transforms [AIIndicatorStopEventDto] to [AIIndicatorStopEvent].
+     */
+    private fun AIIndicatorStopEventDto.toDomain(): AIIndicatorStopEvent = with(domainMapping) {
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return AIIndicatorStopEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            user = user.toDomain(),
+            channelType = channelType,
+            channelId = channelId,
+            channelLastMessageAt = channel_last_message_at,
+        )
+    }
+
+    /**
+     * Transforms [ConnectedEventDto] to [ConnectedEvent].
+     */
+    private fun ConnectedEventDto.toDomain(): ConnectedEvent = with(domainMapping) {
+        ConnectedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            me = me.toDomain(),
+            connectionId = connection_id,
+        )
+    }
+
+    private fun ConnectionErrorEventDto.toDomain(): ConnectionErrorEvent {
+        return ConnectionErrorEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            connectionId = connection_id,
+            error = error.toDomain(),
+        )
+    }
+
+    private fun ConnectingEventDto.toDomain(): ConnectingEvent {
+        return ConnectingEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+        )
+    }
+
+    private fun DisconnectedEventDto.toDomain(): DisconnectedEvent {
+        return DisconnectedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+        )
+    }
+
+    private fun ErrorEventDto.toDomain(): ErrorEvent {
+        return ErrorEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            error = error,
+        )
+    }
+
+    /**
+     * Transforms [UnknownEventDto] to [UnknownEvent].
+     */
+    private fun UnknownEventDto.toDomain(): UnknownEvent = with(domainMapping) {
+        UnknownEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            user = user?.toDomain(),
+            rawData = rawData,
+        )
+    }
 }

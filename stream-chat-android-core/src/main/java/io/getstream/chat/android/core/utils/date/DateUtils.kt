@@ -44,23 +44,26 @@ public fun max(dateA: Date?, dateB: Date?): Date? = when (dateA after dateB) {
     else -> dateB
 }
 
+/**
+ * Returns the minimum of two dates.
+ */
 @InternalStreamChatApi
 public fun min(dateA: Date?, dateB: Date?): Date? = when (dateA after dateB) {
     true -> dateB
     else -> dateA
 }
 
+/**
+ * Returns the maximum of the given dates.
+ */
 @InternalStreamChatApi
 public fun maxOf(vararg dates: Date?): Date? = dates.reduceOrNull { acc, date -> max(acc, date) }
 
-@InternalStreamChatApi
-public fun minOf(vararg dates: Date?): Date? = dates.reduceOrNull { acc, date -> min(acc, date) }
-
 /**
- * Check if current date has difference with [other] no more that [offset].
+ * Returns the minimum of the given dates.
  */
 @InternalStreamChatApi
-public fun Date.inOffsetWith(other: Date, offset: Long): Boolean = (time + offset) >= other.time
+public fun minOf(vararg dates: Date?): Date? = dates.reduceOrNull { acc, date -> min(acc, date) }
 
 /**
  * Returns difference between [this] date and the [otherTime] in [TimeDuration].
