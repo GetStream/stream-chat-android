@@ -16,6 +16,7 @@ env:
   BUILD_CACHE_AWS_SECRET_KEY: ${{ secrets.BUILD_CACHE_AWS_SECRET_KEY }}
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
+  HELLO_JC: "Hello Jc"
 
 jobs:
   build-compose-apks:
@@ -23,6 +24,8 @@ jobs:
     uses: ./.github/workflows/e2e-build.yml
     with:
       app: compose
+    secrets: inherit
+
 
   run-compose-tests:
     name: Test compose

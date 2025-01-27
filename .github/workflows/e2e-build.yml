@@ -18,6 +18,7 @@ jobs:
     name: ${{ inputs.app }} apks
     runs-on: ubuntu-24.04
     steps:
+      - run: echo $HELLO_JC
       - uses: actions/checkout@v4.2.2
       - uses: ./.github/actions/setup-java
       - uses: ./.github/actions/enable-kvm
