@@ -26,7 +26,7 @@ jobs:
         with:
           key-prefix: gradle-test
       - name: Build apks
-        run: bundle exec fastlane build_e2e_test
+        run: ./gradlew :stream-chat-android-compose-sample:assembleE2eDebugAndroidTest :stream-chat-android-compose-sample:assembleE2eDebug --scan
         timeout-minutes: 30
       - name: Upload apks
         uses: actions/upload-artifact@v4.4.3
