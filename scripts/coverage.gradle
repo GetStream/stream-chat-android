@@ -3,7 +3,8 @@ if (!rootProject.ext.sonar.ignoreModules.contains(name)) {
     apply plugin: "org.sonarqube"
 
     def isCore = (name == 'stream-chat-android-core')
-    def testTask = isCore ? "test" : "testDebugUnitTest"
+    def isCompose = (name == 'stream-chat-android-compose')
+    def testTask = isCore ? "test" : isCompose ? "verifyPaparazziDebug" : "testDebugUnitTest"
     def jacocoResults = "${buildDir}/reports/jacoco/report.xml"
 
     if (hasProperty('android')) {
