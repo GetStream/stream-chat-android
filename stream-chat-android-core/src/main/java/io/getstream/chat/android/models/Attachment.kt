@@ -44,6 +44,7 @@ import java.io.File
  * @param text The page description.
  * @param type The type of the attachment. e.g "file", "image, "audio".
  * @param image The image attachment.
+ * @param name The attachment name.
  * @param fallback Alternative description in the case of an image attachment
  * (img alt in HTML).
  * @param originalHeight The original height of the attachment.

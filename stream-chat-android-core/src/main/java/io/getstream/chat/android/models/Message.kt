@@ -20,6 +20,9 @@ import androidx.compose.runtime.Immutable
 import io.getstream.chat.android.models.querysort.ComparableFieldProvider
 import java.util.Date
 
+/**
+ * Model holding data about a message.
+ */
 @Immutable
 public data class Message(
     /**
@@ -170,6 +173,9 @@ public data class Message(
      */
     val showInChannel: Boolean = false,
 
+    /**
+     * Contains information about the channel where the message was sent.
+     */
     val channelInfo: ChannelInfo? = null,
 
     /**
@@ -244,8 +250,19 @@ public data class Message(
     val poll: Poll? = null,
 ) : CustomObject, ComparableFieldProvider {
     public companion object {
+        /**
+         * Represents a 'regular' message.
+         */
         public const val TYPE_REGULAR: String = "regular"
+
+        /**
+         * Represents an 'ephemeral' message.
+         */
         public const val TYPE_EPHEMERAL: String = "ephemeral"
+
+        /**
+         * Represents an 'error' message.
+         */
         public const val TYPE_ERROR: String = "error"
     }
 
@@ -274,8 +291,17 @@ public data class Message(
             else -> extraData[fieldName] as? Comparable<*>
         }
 
+    /**
+     * Retrieves the translated text message for the given []language].
+     *
+     * @param language The language code for the translation.
+     * @return The translated text message, or empty if the translation is not available.
+     */
     public fun getTranslation(language: String): String = i18n.get("${language}_text", "")
 
+    /**
+     * Retrieves the original language of the message.
+     */
     public val originalLanguage: String
         get() = i18n.get("language", "")
 

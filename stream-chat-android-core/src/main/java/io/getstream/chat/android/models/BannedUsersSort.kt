@@ -20,6 +20,11 @@ import androidx.compose.runtime.Immutable
 import io.getstream.chat.android.models.querysort.ComparableFieldProvider
 import java.util.Date
 
+/**
+ * Sorter for banned users which takes into consideration the [Date] when the user was banned.
+ *
+ * @param createdAt The date when the user was banned.
+ */
 @Immutable
 public data class BannedUsersSort(val createdAt: Date) : ComparableFieldProvider {
 

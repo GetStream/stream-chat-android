@@ -16,6 +16,12 @@
 
 package io.getstream.chat.android.extensions
 
+/**
+ * Limits the integer value to the given range.
+ *
+ * @param min The minimum value.
+ * @param max The maximum value.
+ */
 public fun Int.limitTo(min: Int, max: Int): Int {
     return when {
         this < min -> min

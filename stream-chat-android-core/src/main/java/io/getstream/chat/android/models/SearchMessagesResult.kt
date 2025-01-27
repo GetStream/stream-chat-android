@@ -18,6 +18,9 @@ package io.getstream.chat.android.models
 
 import androidx.compose.runtime.Immutable
 
+/**
+ * Model representing a result of messages search operation.
+ */
 @Immutable
 public data class SearchMessagesResult(
     /**

@@ -19,6 +19,21 @@ package io.getstream.chat.android.models
 import androidx.compose.runtime.Immutable
 import java.util.Date
 
+/**
+ * Model representing a message reaction.
+ *
+ * @param messageId The id of the message.
+ * @param type The type of the reaction.
+ * @param score The score(count) of the reaction, used if you want to allow users to clap/like etc multiple times.
+ * @param user The user who sent the reaction.
+ * @param userId The id of the user who sent the reaction.
+ * @param createdAt The date when the reaction was created.
+ * @param createdLocallyAt The date when the reaction was created locally.
+ * @param updatedAt The date when the reaction was updated.
+ * @param deletedAt The date when the reaction was deleted.
+ * @param syncStatus The synchronization status of the reaction.
+ * @param enforceUnique If true, only one reaction of this type is allowed per user.
+ */
 @Immutable
 public data class Reaction(
     val messageId: String = "",
@@ -35,6 +50,9 @@ public data class Reaction(
     val enforceUnique: Boolean = false,
 ) : CustomObject {
 
+    /**
+     * The unique identifier of the reaction.
+     */
     val id: String
         get() = messageId + type + score + fetchUserId()
 

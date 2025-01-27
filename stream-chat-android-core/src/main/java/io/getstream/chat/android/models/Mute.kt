@@ -19,6 +19,15 @@ package io.getstream.chat.android.models
 import androidx.compose.runtime.Immutable
 import java.util.Date
 
+/**
+ * Model holding data about a user mute.
+ *
+ * @param user The user who muted the target user.
+ * @param target The muted user.
+ * @param createdAt The date when the mute was created.
+ * @param updatedAt The date when the mute was last updated.
+ * @param expires The date when the mute expires.
+ */
 @Immutable
 public data class Mute(
     val user: User?,
