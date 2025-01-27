@@ -58,6 +58,12 @@ public object PreviewUserData {
         image = "https://ca.slack-edge.com/T02RM6X6B-U02HU1XR9LM-626fb91c334e-128",
     )
 
+    public val user7: User = User(
+        id = "andremion",
+        name = "André Mion",
+        image = "https://ca.slack-edge.com/T02RM6X6B-U083JCB6ZEY-2da235988b74-512",
+    )
+
     /**
      * Users with specific properties.
      */

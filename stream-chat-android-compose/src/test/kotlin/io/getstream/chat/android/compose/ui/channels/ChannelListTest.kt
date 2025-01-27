@@ -38,7 +38,7 @@ internal class ChannelListTest : SnapshotTest {
 
     @Test
     fun `empty channels`() {
-        snapshot {
+        snapshotWithDarkMode {
             ChannelList(
                 modifier = Modifier.fillMaxSize(),
                 currentUser = PreviewUserData.user1,
@@ -49,7 +49,7 @@ internal class ChannelListTest : SnapshotTest {
 
     @Test
     fun `loading channels`() {
-        snapshot {
+        snapshotWithDarkMode {
             ChannelList(
                 modifier = Modifier.fillMaxSize(),
                 currentUser = PreviewUserData.user1,
@@ -60,7 +60,7 @@ internal class ChannelListTest : SnapshotTest {
 
     @Test
     fun `loaded channels`() {
-        snapshot {
+        snapshotWithDarkMode {
             ChannelList(
                 modifier = Modifier.fillMaxSize(),
                 currentUser = PreviewUserData.user1,
@@ -87,7 +87,7 @@ internal class ChannelListTest : SnapshotTest {
 
     @Test
     fun `loading more channels`() {
-        snapshot {
+        snapshotWithDarkMode {
             ChannelList(
                 modifier = Modifier.fillMaxSize(),
                 currentUser = PreviewUserData.user1,
@@ -109,7 +109,7 @@ internal class ChannelListTest : SnapshotTest {
 
     @Test
     fun `search results`() {
-        snapshot {
+        snapshotWithDarkMode {
             ChannelList(
                 modifier = Modifier.fillMaxSize(),
                 currentUser = PreviewUserData.user1,
@@ -129,7 +129,7 @@ internal class ChannelListTest : SnapshotTest {
 
     @Test
     fun `empty search results`() {
-        snapshot {
+        snapshotWithDarkMode {
             ChannelList(
                 modifier = Modifier.fillMaxSize(),
                 currentUser = PreviewUserData.user1,

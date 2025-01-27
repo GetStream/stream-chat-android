@@ -30,11 +30,11 @@ import org.junit.Test
 internal class SearchInputTest : SnapshotTest {
 
     @get:Rule
-    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_4A)
+    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
     fun `unfocused empty query`() {
-        snapshot {
+        snapshotWithDarkMode {
             SearchInput(
                 query = "",
                 onValueChange = { },
@@ -44,7 +44,7 @@ internal class SearchInputTest : SnapshotTest {
 
     @Test
     fun `focused empty query`() {
-        snapshot {
+        snapshotWithDarkMode {
             val focusRequester = remember { FocusRequester() }
 
             LaunchedEffect(Unit) {
@@ -61,7 +61,7 @@ internal class SearchInputTest : SnapshotTest {
 
     @Test
     fun `focused filled query`() {
-        snapshot {
+        snapshotWithDarkMode {
             val focusRequester = remember { FocusRequester() }
 
             LaunchedEffect(Unit) {

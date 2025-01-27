@@ -8,6 +8,12 @@ public final class io/getstream/chat/android/previewdata/PreviewChannelData {
 	public final fun getChannelWithOnlineUser ()Lio/getstream/chat/android/models/Channel;
 }
 
+public final class io/getstream/chat/android/previewdata/PreviewChannelUserRead {
+	public static final field INSTANCE Lio/getstream/chat/android/previewdata/PreviewChannelUserRead;
+	public final fun getChannelUserRead1 ()Lio/getstream/chat/android/models/ChannelUserRead;
+	public final fun getChannelUserRead2 ()Lio/getstream/chat/android/models/ChannelUserRead;
+}
+
 public final class io/getstream/chat/android/previewdata/PreviewMembersData {
 	public static final field INSTANCE Lio/getstream/chat/android/previewdata/PreviewMembersData;
 	public final fun getManyMembers ()Ljava/util/List;
@@ -22,7 +28,12 @@ public final class io/getstream/chat/android/previewdata/PreviewMessageData {
 	public static final field INSTANCE Lio/getstream/chat/android/previewdata/PreviewMessageData;
 	public final fun getMessage1 ()Lio/getstream/chat/android/models/Message;
 	public final fun getMessage2 ()Lio/getstream/chat/android/models/Message;
+	public final fun getMessage3 ()Lio/getstream/chat/android/models/Message;
+	public final fun getMessage4 ()Lio/getstream/chat/android/models/Message;
+	public final fun getMessage5 ()Lio/getstream/chat/android/models/Message;
+	public final fun getMessageDeleted ()Lio/getstream/chat/android/models/Message;
 	public final fun getMessageWithError ()Lio/getstream/chat/android/models/Message;
+	public final fun getMessageWithMention ()Lio/getstream/chat/android/models/Message;
 	public final fun getMessageWithOwnReaction ()Lio/getstream/chat/android/models/Message;
 	public final fun getMessageWithPoll ()Lio/getstream/chat/android/models/Message;
 }
@@ -48,6 +59,7 @@ public final class io/getstream/chat/android/previewdata/PreviewUserData {
 	public final fun getUser3 ()Lio/getstream/chat/android/models/User;
 	public final fun getUser4 ()Lio/getstream/chat/android/models/User;
 	public final fun getUser5 ()Lio/getstream/chat/android/models/User;
+	public final fun getUser7 ()Lio/getstream/chat/android/models/User;
 	public final fun getUserWithImage ()Lio/getstream/chat/android/models/User;
 	public final fun getUserWithOnlineStatus ()Lio/getstream/chat/android/models/User;
 	public final fun getUserWithoutImage ()Lio/getstream/chat/android/models/User;

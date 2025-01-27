@@ -41,9 +41,7 @@ internal interface SnapshotTest : ComposeTest {
             CompositionLocalProvider(
                 LocalInspectionMode provides true,
             ) {
-                ChatTheme(
-                    isInDarkMode = isInDarkMode,
-                ) {
+                ChatTheme(isInDarkMode = isInDarkMode) {
                     Box(modifier = Modifier.background(ChatTheme.colors.appBackground)) {
                         composable.invoke()
                     }
@@ -58,17 +56,21 @@ internal interface SnapshotTest : ComposeTest {
                 LocalInspectionMode provides true,
             ) {
                 Column {
-                    ChatTheme(
-                        isInDarkMode = true,
-                    ) {
-                        Box(modifier = Modifier.background(ChatTheme.colors.appBackground)) {
+                    ChatTheme(isInDarkMode = true) {
+                        Box(
+                            modifier = Modifier
+                                .weight(.5f)
+                                .background(ChatTheme.colors.appBackground),
+                        ) {
                             composable.invoke()
                         }
                     }
-                    ChatTheme(
-                        isInDarkMode = false,
-                    ) {
-                        Box(modifier = Modifier.background(ChatTheme.colors.appBackground)) {
+                    ChatTheme(isInDarkMode = false) {
+                        Box(
+                            modifier = Modifier
+                                .weight(.5f)
+                                .background(ChatTheme.colors.appBackground),
+                        ) {
                             composable.invoke()
                         }
                     }
@@ -84,12 +86,20 @@ internal interface SnapshotTest : ComposeTest {
             ) {
                 Row {
                     ChatTheme(isInDarkMode = true) {
-                        Box(modifier = Modifier.background(ChatTheme.colors.appBackground)) {
+                        Box(
+                            modifier = Modifier
+                                .weight(.5f)
+                                .background(ChatTheme.colors.appBackground),
+                        ) {
                             composable.invoke()
                         }
                     }
                     ChatTheme(isInDarkMode = false) {
-                        Box(modifier = Modifier.background(ChatTheme.colors.appBackground)) {
+                        Box(
+                            modifier = Modifier
+                                .weight(.5f)
+                                .background(ChatTheme.colors.appBackground),
+                        ) {
                             composable.invoke()
                         }
                     }
