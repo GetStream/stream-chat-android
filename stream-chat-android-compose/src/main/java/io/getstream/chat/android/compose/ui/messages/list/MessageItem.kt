@@ -113,17 +113,11 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
  * @param onUserAvatarClick Handler when users avatar is clicked.
  * @param onLinkClick Handler for clicking on a link in the message.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
- * @param leadingContent The content shown at the start of a message list item. By default, we provide
- * [DefaultMessageItemLeadingContent], which shows a user avatar if the message doesn't belong to the
- * current user.
- * @param headerContent The content shown at the top of a message list item. By default, we provide
- * [DefaultMessageItemHeaderContent], which shows a list of reactions for the message.
- *  @param centerContent The content shown at the center of a message list item. By default, we provide
- * [DefaultMessageItemCenterContent], which shows the message bubble with text and attachments.
- * @param footerContent The content shown at the bottom of a message list item. By default, we provide
- * [DefaultMessageItemFooterContent], which shows the information like thread participants, upload status, etc.
- * @param trailingContent The content shown at the end of a message list item. By default, we provide
- * [DefaultMessageItemTrailingContent], which adds an extra spacing to the end of the message list item.
+ * @param leadingContent The content shown at the start of a message list item.
+ * @param headerContent The content shown at the top of a message list item.
+ * @param centerContent The content shown at the center of a message list item.
+ * @param footerContent The content shown at the bottom of a message list item.
+ * @param trailingContent The content shown at the end of a message list item.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -149,42 +143,75 @@ public fun MessageItem(
     onUserMentionClick: (User) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     leadingContent: @Composable RowScope.(MessageItemState) -> Unit = {
-        DefaultMessageItemLeadingContent(
-            messageItem = it,
-            onUserAvatarClick = onUserAvatarClick,
-        )
+        with(ChatTheme.componentFactory) {
+            MessageItemLeadingContent(
+                messageItem = messageItem,
+                onUserAvatarClick = onUserAvatarClick,
+            )
+        }
     },
     headerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
-        DefaultMessageItemHeaderContent(
-            messageItem = it,
-            reactionSorting = reactionSorting,
-            onReactionsClick = onReactionsClick,
-        )
+        with(ChatTheme.componentFactory) {
+            MessageItemHeaderContent(
+                messageItem = messageItem,
+                reactionSorting = reactionSorting,
+                onReactionsClick = onReactionsClick,
+            )
+        }
     },
     centerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
-        DefaultMessageItemCenterContent(
-            messageItem = it,
-            onLongItemClick = onLongItemClick,
-            messageContentFactory = messageContentFactory,
-            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-            onGiphyActionClick = onGiphyActionClick,
-            onQuotedMessageClick = onQuotedMessageClick,
-            onLinkClick = onLinkClick,
-            onUserMentionClick = onUserMentionClick,
-            onPollUpdated = onPollUpdated,
-            onCastVote = onCastVote,
-            onRemoveVote = onRemoveVote,
-            selectPoll = selectPoll,
-            onAddAnswer = onAddAnswer,
-            onClosePoll = onClosePoll,
-            onAddPollOption = onAddPollOption,
-        )
+        if (messageContentFactory == MessageContentFactory.Deprecated) {
+            with(ChatTheme.componentFactory) {
+                MessageItemCenterContent(
+                    messageItem = messageItem,
+                    onLongItemClick = onLongItemClick,
+                    onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                    onGiphyActionClick = onGiphyActionClick,
+                    onQuotedMessageClick = onQuotedMessageClick,
+                    onLinkClick = onLinkClick,
+                    onUserMentionClick = onUserMentionClick,
+                    onPollUpdated = onPollUpdated,
+                    onCastVote = onCastVote,
+                    onRemoveVote = onRemoveVote,
+                    selectPoll = selectPoll,
+                    onAddAnswer = onAddAnswer,
+                    onClosePoll = onClosePoll,
+                    onAddPollOption = onAddPollOption,
+                )
+            }
+        } else {
+            DefaultMessageItemCenterContent(
+                messageItem = messageItem,
+                onLongItemClick = onLongItemClick,
+                messageContentFactory = messageContentFactory,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                onGiphyActionClick = onGiphyActionClick,
+                onQuotedMessageClick = onQuotedMessageClick,
+                onLinkClick = onLinkClick,
+                onUserMentionClick = onUserMentionClick,
+                onPollUpdated = onPollUpdated,
+                onCastVote = onCastVote,
+                onRemoveVote = onRemoveVote,
+                selectPoll = selectPoll,
+                onAddAnswer = onAddAnswer,
+                onClosePoll = onClosePoll,
+                onAddPollOption = onAddPollOption,
+            )
+        }
     },
     footerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
-        DefaultMessageItemFooterContent(messageItem = it, messageContentFactory = messageContentFactory)
+        with(ChatTheme.componentFactory) {
+            MessageItemFooterContent(
+                messageItem = messageItem,
+            )
+        }
     },
     trailingContent: @Composable RowScope.(MessageItemState) -> Unit = {
-        DefaultMessageItemTrailingContent(messageItem = it)
+        with(ChatTheme.componentFactory) {
+            MessageItemTrailingContent(
+                messageItem = messageItem,
+            )
+        }
     },
 ) {
     val message = messageItem.message
@@ -383,22 +410,39 @@ internal fun DefaultMessageItemHeaderContent(
 @Composable
 internal fun ColumnScope.DefaultMessageItemFooterContent(
     messageItem: MessageItemState,
-    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
+    messageContentFactory: MessageContentFactory,
 ) {
     val message = messageItem.message
     when {
         message.isUploading() -> {
-            messageContentFactory.UploadingFooterContent(
-                modifier = Modifier.align(End),
-                messageItem = messageItem,
-            )
+            if (messageContentFactory == MessageContentFactory.Deprecated) {
+                ChatTheme.componentFactory.MessageFooterUploadingContent(
+                    modifier = Modifier.align(End),
+                    messageItem = messageItem,
+                )
+            } else {
+                messageContentFactory.UploadingFooterContent(
+                    modifier = Modifier.align(End),
+                    messageItem = messageItem,
+                )
+            }
         }
 
         message.isDeleted() && messageItem.deletedMessageVisibility == DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
-            messageContentFactory.OwnedMessageVisibilityContent(messageItem = messageItem)
+            if (messageContentFactory == MessageContentFactory.Deprecated) {
+                ChatTheme.componentFactory.MessageFooterOnlyVisibleToYouContent(
+                    messageItem = messageItem,
+                )
+            } else {
+                messageContentFactory.OwnedMessageVisibilityContent(messageItem = messageItem)
+            }
         }
 
-        else -> messageContentFactory.MessageFooterContent(messageItem = messageItem)
+        else -> if (messageContentFactory == MessageContentFactory.Deprecated) {
+            ChatTheme.componentFactory.MessageFooterContent(messageItem = messageItem)
+        } else {
+            messageContentFactory.MessageFooterContent(messageItem = messageItem)
+        }
     }
 
     val position = messageItem.groupPosition
@@ -689,27 +733,44 @@ private fun getMessageBubbleColor(message: Message, ownsMessage: Boolean): Color
 internal fun DefaultMessageTextContent(
     message: Message,
     currentUser: User?,
-    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
+    messageContentFactory: MessageContentFactory,
     onLongItemClick: (Message) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
     onUserMentionClick: (User) -> Unit = {},
     onLinkClick: ((Message, String) -> Unit)? = null,
 ) {
     Column {
-        messageContentFactory.QuotedMessageContent(
-            message = message,
-            currentUser = currentUser,
-            onLongItemClick = onLongItemClick,
-            onQuotedMessageClick = onQuotedMessageClick,
-        )
+        if (messageContentFactory == MessageContentFactory.Deprecated) {
+            ChatTheme.componentFactory.MessageQuotedContent(
+                message = message,
+                currentUser = currentUser,
+                onLongItemClick = onLongItemClick,
+                onQuotedMessageClick = onQuotedMessageClick,
+            )
 
-        messageContentFactory.MessageTextContent(
-            message = message,
-            currentUser = currentUser,
-            onLongItemClick = onLongItemClick,
-            onLinkClick = onLinkClick,
-            onUserMentionClick = onUserMentionClick,
-        )
+            ChatTheme.componentFactory.MessageTextContent(
+                message = message,
+                currentUser = currentUser,
+                onLongItemClick = onLongItemClick,
+                onLinkClick = onLinkClick,
+                onUserMentionClick = onUserMentionClick,
+            )
+        } else {
+            messageContentFactory.QuotedMessageContent(
+                message = message,
+                currentUser = currentUser,
+                onLongItemClick = onLongItemClick,
+                onQuotedMessageClick = onQuotedMessageClick,
+            )
+
+            messageContentFactory.MessageTextContent(
+                message = message,
+                currentUser = currentUser,
+                onLongItemClick = onLongItemClick,
+                onLinkClick = onLinkClick,
+                onUserMentionClick = onUserMentionClick,
+            )
+        }
     }
 }
 
