@@ -77,6 +77,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- 🚨 Breaking change: Change `@Composable public fun MessageContainer` function to `@Composable public fun LazyItemScope.MessageContainer` so we can use functions scoped to a list item. [#5593](https://github.com/GetStream/stream-chat-android/pull/5593)
 
 ### ❌ Removed
 
