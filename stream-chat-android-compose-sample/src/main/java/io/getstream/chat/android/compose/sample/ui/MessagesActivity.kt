@@ -58,14 +58,10 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
-import io.getstream.chat.android.compose.sample.BuildConfig
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoActivity
-import io.getstream.chat.android.compose.sample.ui.component.MembersList
-import io.getstream.chat.android.compose.sample.vm.MembersViewModel
-import io.getstream.chat.android.compose.sample.vm.MembersViewModelFactory
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptionItemVisibility
@@ -118,18 +114,10 @@ class MessagesActivity : BaseConnectedActivity() {
         )
     }
 
-    private val membersFactory by lazy {
-        MembersViewModelFactory(
-            cid = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)),
-        )
-    }
-
     private val listViewModel by viewModels<MessageListViewModel>(factoryProducer = { factory })
 
     private val attachmentsPickerViewModel by viewModels<AttachmentsPickerViewModel>(factoryProducer = { factory })
     private val composerViewModel by viewModels<MessageComposerViewModel>(factoryProducer = { factory })
-
-    private val membersViewModel by viewModels<MembersViewModel>(factoryProducer = { membersFactory })
 
     private val channelInfoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         val channelDeleted = it.data?.getBooleanExtra(ChannelInfoActivity.KEY_CHANNEL_DELETED, false) == true
@@ -193,9 +181,6 @@ class MessagesActivity : BaseConnectedActivity() {
     @Composable
     private fun SetupContent() {
         Column {
-            if (BuildConfig.DEBUG) {
-                MembersList(viewModel = membersViewModel)
-            }
             MessagesScreen(
                 viewModelFactory = factory,
                 reactionSorting = ReactionSortingByLastReactionAt,
