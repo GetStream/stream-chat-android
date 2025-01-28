@@ -61,19 +61,19 @@ public fun Channels(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
     helperContent: @Composable BoxScope.() -> Unit = {
-        with(ChatTheme.componentFactory.channelList) {
-            HelperContent()
+        with(ChatTheme.componentFactory) {
+            ChannelListHelperContent()
         }
     },
     loadingMoreContent: @Composable LazyItemScope.() -> Unit = {
-        with(ChatTheme.componentFactory.channelList) {
-            LoadingMoreItemContent()
+        with(ChatTheme.componentFactory) {
+            ChannelListLoadingMoreItemContent()
         }
     },
     itemContent: @Composable LazyItemScope.(ItemState) -> Unit,
     divider: @Composable LazyItemScope.() -> Unit = {
-        with(ChatTheme.componentFactory.channelList) {
-            DividerItem()
+        with(ChatTheme.componentFactory) {
+            ChannelListDividerItem()
         }
     },
 ) {

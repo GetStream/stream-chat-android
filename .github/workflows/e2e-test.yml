@@ -23,6 +23,7 @@ jobs:
     uses: ./.github/workflows/e2e-build.yml
     with:
       app: compose
+    secrets: inherit
 
   run-compose-tests:
     name: Test compose
