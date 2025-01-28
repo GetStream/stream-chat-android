@@ -139,7 +139,7 @@ import io.getstream.chat.android.ui.common.state.messages.updateMessage
 public fun MessagesScreen(
     viewModelFactory: MessagesViewModelFactory,
     showHeader: Boolean = true,
-    messageContentFactory: MessageContentFactory = MessageContentFactory.Deprecated,
+    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     reactionSorting: ReactionSorting = ReactionSortingByFirstReactionAt,
     onBackPressed: () -> Unit = {},
     onHeaderTitleClick: (channel: Channel) -> Unit = {},

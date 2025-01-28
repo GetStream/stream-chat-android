@@ -113,16 +113,11 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
  * @param onUserAvatarClick Handler when users avatar is clicked.
  * @param onLinkClick Handler for clicking on a link in the message.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
- * @param leadingContent The content shown at the start of a message list item. By default, we use
- * [ChatComponentFactory.MessageItem.LeadingContent].
- * @param headerContent The content shown at the top of a message list item. By default, we use
- * [ChatComponentFactory.MessageItem.HeaderContent].
- * @param centerContent The content shown at the center of a message list item. By default, we use
- * [ChatComponentFactory.MessageItem.CenterContent].
- * @param footerContent The content shown at the bottom of a message list item. By default, we use
- * [ChatComponentFactory.MessageItem.FooterContent].
- * @param trailingContent The content shown at the end of a message list item. By default, we use
- * [ChatComponentFactory.MessageItem.TrailingContent].
+ * @param leadingContent The content shown at the start of a message list item.
+ * @param headerContent The content shown at the top of a message list item.
+ * @param centerContent The content shown at the center of a message list item.
+ * @param footerContent The content shown at the bottom of a message list item.
+ * @param trailingContent The content shown at the end of a message list item.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -131,7 +126,7 @@ public fun MessageItem(
     reactionSorting: ReactionSorting,
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
-    messageContentFactory: MessageContentFactory = MessageContentFactory.Deprecated,
+    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
@@ -165,10 +160,11 @@ public fun MessageItem(
         }
     },
     centerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageItemCenterContent(
+        if (messageContentFactory == MessageContentFactory.Deprecated) {
+            DefaultMessageItemCenterContent(
                 messageItem = messageItem,
                 onLongItemClick = onLongItemClick,
+                messageContentFactory = messageContentFactory,
                 onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                 onGiphyActionClick = onGiphyActionClick,
                 onQuotedMessageClick = onQuotedMessageClick,
@@ -182,6 +178,25 @@ public fun MessageItem(
                 onClosePoll = onClosePoll,
                 onAddPollOption = onAddPollOption,
             )
+        } else {
+            with(ChatTheme.componentFactory) {
+                MessageItemCenterContent(
+                    messageItem = messageItem,
+                    onLongItemClick = onLongItemClick,
+                    onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                    onGiphyActionClick = onGiphyActionClick,
+                    onQuotedMessageClick = onQuotedMessageClick,
+                    onLinkClick = onLinkClick,
+                    onUserMentionClick = onUserMentionClick,
+                    onPollUpdated = onPollUpdated,
+                    onCastVote = onCastVote,
+                    onRemoveVote = onRemoveVote,
+                    selectPoll = selectPoll,
+                    onAddAnswer = onAddAnswer,
+                    onClosePoll = onClosePoll,
+                    onAddPollOption = onAddPollOption,
+                )
+            }
         }
     },
     footerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
@@ -474,7 +489,7 @@ internal fun DefaultMessageItemTrailingContent(
 public fun DefaultMessageItemCenterContent(
     modifier: Modifier = Modifier,
     messageItem: MessageItemState,
-    messageContentFactory: MessageContentFactory = MessageContentFactory.Deprecated,
+    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
@@ -601,7 +616,7 @@ public fun EmojiMessageContent(
 public fun RegularMessageContent(
     messageItem: MessageItemState,
     modifier: Modifier = Modifier,
-    messageContentFactory: MessageContentFactory = MessageContentFactory.Deprecated,
+    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},

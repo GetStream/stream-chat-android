@@ -63,7 +63,7 @@ public fun MessageContent(
     onQuotedMessageClick: (Message) -> Unit = {},
     onUserMentionClick: (User) -> Unit = {},
     onLinkClick: ((Message, String) -> Unit)? = null,
-    messageContentFactory: MessageContentFactory = MessageContentFactory.Deprecated,
+    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     giphyEphemeralContent: @Composable () -> Unit = {
         if (messageContentFactory == MessageContentFactory.Deprecated) {

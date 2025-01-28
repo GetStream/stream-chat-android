@@ -295,7 +295,7 @@ public fun ChatTheme(
     ),
     componentFactory: ChatComponentFactory = DefaultChatComponentFactory(),
     attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories(),
-    messageContentFactory: MessageContentFactory = MessageContentFactory(),
+    messageContentFactory: MessageContentFactory = MessageContentFactory.Deprecated,
     attachmentPreviewHandlers: List<AttachmentPreviewHandler> =
         AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
     quotedAttachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultQuotedFactories(),

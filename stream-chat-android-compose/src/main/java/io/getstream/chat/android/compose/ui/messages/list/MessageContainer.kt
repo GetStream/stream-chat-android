@@ -88,7 +88,7 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 public fun LazyItemScope.MessageContainer(
     messageListItemState: MessageListItemState,
     reactionSorting: ReactionSorting,
-    messageContentFactory: MessageContentFactory = MessageContentFactory.Deprecated,
+    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     onLongItemClick: (Message) -> Unit = {},
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
@@ -133,9 +133,10 @@ public fun LazyItemScope.MessageContainer(
         }
     },
     messageItemContent: @Composable LazyItemScope.(MessageItemState) -> Unit = { messageItem ->
-        with(ChatTheme.componentFactory) {
-            MessageListItemContent(
+        if (messageContentFactory == MessageContentFactory.Deprecated) {
+            DefaultMessageItem(
                 messageItem = messageItem,
+                messageContentFactory = messageContentFactory,
                 reactionSorting = reactionSorting,
                 onLongItemClick = onLongItemClick,
                 onReactionsClick = onReactionsClick,
@@ -149,11 +150,34 @@ public fun LazyItemScope.MessageContainer(
                 onGiphyActionClick = onGiphyActionClick,
                 onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                 onQuotedMessageClick = onQuotedMessageClick,
-                onUserAvatarClick = onUserAvatarClick,
-                onMessageLinkClick = onLinkClick,
+                onUserAvatarClick = { onUserAvatarClick?.invoke(messageItem.message.user) },
+                onLinkClick = onLinkClick,
                 onUserMentionClick = onUserMentionClick,
                 onAddAnswer = onAddAnswer,
             )
+        } else {
+            with(ChatTheme.componentFactory) {
+                MessageListItemContent(
+                    messageItem = messageItem,
+                    reactionSorting = reactionSorting,
+                    onLongItemClick = onLongItemClick,
+                    onReactionsClick = onReactionsClick,
+                    onThreadClick = onThreadClick,
+                    onPollUpdated = onPollUpdated,
+                    onCastVote = onCastVote,
+                    onRemoveVote = onRemoveVote,
+                    selectPoll = selectPoll,
+                    onClosePoll = onClosePoll,
+                    onAddPollOption = onAddPollOption,
+                    onGiphyActionClick = onGiphyActionClick,
+                    onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                    onQuotedMessageClick = onQuotedMessageClick,
+                    onUserAvatarClick = onUserAvatarClick,
+                    onMessageLinkClick = onLinkClick,
+                    onUserMentionClick = onUserMentionClick,
+                    onAddAnswer = onAddAnswer,
+                )
+            }
         }
     },
     typingIndicatorContent: @Composable LazyItemScope.(TypingItemState) -> Unit = { typingItem ->
@@ -342,7 +366,7 @@ internal fun DefaultMessageModeratedContent(moderatedMessageItemState: Moderated
 internal fun DefaultMessageItem(
     messageItem: MessageItemState,
     reactionSorting: ReactionSorting,
-    messageContentFactory: MessageContentFactory = MessageContentFactory.Deprecated,
+    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     onLongItemClick: (Message) -> Unit,
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit,

@@ -93,7 +93,7 @@ public fun MessageList(
     reactionSorting: ReactionSorting = ReactionSortingByFirstReactionAt,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
-    messageContentFactory: MessageContentFactory = MessageContentFactory.Deprecated,
+    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     messagesLazyListState: MessagesLazyListState =
         rememberMessageListState(parentMessageId = viewModel.currentMessagesState.parentMessageId),
     threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
@@ -366,7 +366,7 @@ public fun MessageList(
     reactionSorting: ReactionSorting,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
-    messageContentFactory: MessageContentFactory = MessageContentFactory.Deprecated,
+    messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     messagesLazyListState: MessagesLazyListState =
         rememberMessageListState(parentMessageId = currentState.parentMessageId),
     onMessagesPageStartReached: () -> Unit = {},
@@ -413,28 +413,52 @@ public fun MessageList(
     itemModifier: (index: Int, item: MessageListItemState) -> Modifier = { _, _ ->
         Modifier
     },
-    itemContent: @Composable LazyItemScope.(MessageListItemState) -> Unit = { messageListItemState ->
-        with(ChatTheme.componentFactory) {
-            MessageListItemContainer(
-                messageListItem = messageListItemState,
+    itemContent: @Composable LazyItemScope.(MessageListItemState) -> Unit = { messageListItem ->
+        if (messageContentFactory == MessageContentFactory.Deprecated) {
+            DefaultMessageContainer(
+                messageListItemState = messageListItem,
                 reactionSorting = reactionSorting,
-                onPollUpdated = onPollUpdated,
+                messageContentFactory = messageContentFactory,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                 onCastVote = onCastVote,
                 onRemoveVote = onRemoveVote,
                 selectPoll = selectPoll,
+                onPollUpdated = onPollUpdated,
                 onClosePoll = onClosePoll,
                 onAddPollOption = onAddPollOption,
-                onLongItemClick = onLongItemClick,
                 onThreadClick = onThreadClick,
+                onLongItemClick = onLongItemClick,
                 onReactionsClick = onReactionsClick,
                 onGiphyActionClick = onGiphyActionClick,
-                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                 onQuotedMessageClick = onQuotedMessageClick,
                 onUserAvatarClick = onUserAvatarClick,
-                onMessageLinkClick = onMessageLinkClick,
+                onLinkClick = onMessageLinkClick,
                 onUserMentionClick = onUserMentionClick,
                 onAddAnswer = onAddAnswer,
             )
+        } else {
+            with(ChatTheme.componentFactory) {
+                MessageListItemContainer(
+                    messageListItem = messageListItem,
+                    reactionSorting = reactionSorting,
+                    onPollUpdated = onPollUpdated,
+                    onCastVote = onCastVote,
+                    onRemoveVote = onRemoveVote,
+                    selectPoll = selectPoll,
+                    onClosePoll = onClosePoll,
+                    onAddPollOption = onAddPollOption,
+                    onLongItemClick = onLongItemClick,
+                    onThreadClick = onThreadClick,
+                    onReactionsClick = onReactionsClick,
+                    onGiphyActionClick = onGiphyActionClick,
+                    onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                    onQuotedMessageClick = onQuotedMessageClick,
+                    onUserAvatarClick = onUserAvatarClick,
+                    onMessageLinkClick = onMessageLinkClick,
+                    onUserMentionClick = onUserMentionClick,
+                    onAddAnswer = onAddAnswer,
+                )
+            }
         }
     },
 ) {
