@@ -161,24 +161,6 @@ public fun MessageItem(
     },
     centerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
         if (messageContentFactory == MessageContentFactory.Deprecated) {
-            DefaultMessageItemCenterContent(
-                messageItem = messageItem,
-                onLongItemClick = onLongItemClick,
-                messageContentFactory = messageContentFactory,
-                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                onGiphyActionClick = onGiphyActionClick,
-                onQuotedMessageClick = onQuotedMessageClick,
-                onLinkClick = onLinkClick,
-                onUserMentionClick = onUserMentionClick,
-                onPollUpdated = onPollUpdated,
-                onCastVote = onCastVote,
-                onRemoveVote = onRemoveVote,
-                selectPoll = selectPoll,
-                onAddAnswer = onAddAnswer,
-                onClosePoll = onClosePoll,
-                onAddPollOption = onAddPollOption,
-            )
-        } else {
             with(ChatTheme.componentFactory) {
                 MessageItemCenterContent(
                     messageItem = messageItem,
@@ -197,6 +179,24 @@ public fun MessageItem(
                     onAddPollOption = onAddPollOption,
                 )
             }
+        } else {
+            DefaultMessageItemCenterContent(
+                messageItem = messageItem,
+                onLongItemClick = onLongItemClick,
+                messageContentFactory = messageContentFactory,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                onGiphyActionClick = onGiphyActionClick,
+                onQuotedMessageClick = onQuotedMessageClick,
+                onLinkClick = onLinkClick,
+                onUserMentionClick = onUserMentionClick,
+                onPollUpdated = onPollUpdated,
+                onCastVote = onCastVote,
+                onRemoveVote = onRemoveVote,
+                selectPoll = selectPoll,
+                onAddAnswer = onAddAnswer,
+                onClosePoll = onClosePoll,
+                onAddPollOption = onAddPollOption,
+            )
         }
     },
     footerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {

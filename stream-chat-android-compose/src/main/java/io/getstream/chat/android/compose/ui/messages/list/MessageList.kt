@@ -415,28 +415,6 @@ public fun MessageList(
     },
     itemContent: @Composable LazyItemScope.(MessageListItemState) -> Unit = { messageListItem ->
         if (messageContentFactory == MessageContentFactory.Deprecated) {
-            DefaultMessageContainer(
-                messageListItemState = messageListItem,
-                reactionSorting = reactionSorting,
-                messageContentFactory = messageContentFactory,
-                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                onCastVote = onCastVote,
-                onRemoveVote = onRemoveVote,
-                selectPoll = selectPoll,
-                onPollUpdated = onPollUpdated,
-                onClosePoll = onClosePoll,
-                onAddPollOption = onAddPollOption,
-                onThreadClick = onThreadClick,
-                onLongItemClick = onLongItemClick,
-                onReactionsClick = onReactionsClick,
-                onGiphyActionClick = onGiphyActionClick,
-                onQuotedMessageClick = onQuotedMessageClick,
-                onUserAvatarClick = onUserAvatarClick,
-                onLinkClick = onMessageLinkClick,
-                onUserMentionClick = onUserMentionClick,
-                onAddAnswer = onAddAnswer,
-            )
-        } else {
             with(ChatTheme.componentFactory) {
                 MessageListItemContainer(
                     messageListItem = messageListItem,
@@ -459,6 +437,28 @@ public fun MessageList(
                     onAddAnswer = onAddAnswer,
                 )
             }
+        } else {
+            DefaultMessageContainer(
+                messageListItemState = messageListItem,
+                reactionSorting = reactionSorting,
+                messageContentFactory = messageContentFactory,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                onCastVote = onCastVote,
+                onRemoveVote = onRemoveVote,
+                selectPoll = selectPoll,
+                onPollUpdated = onPollUpdated,
+                onClosePoll = onClosePoll,
+                onAddPollOption = onAddPollOption,
+                onThreadClick = onThreadClick,
+                onLongItemClick = onLongItemClick,
+                onReactionsClick = onReactionsClick,
+                onGiphyActionClick = onGiphyActionClick,
+                onQuotedMessageClick = onQuotedMessageClick,
+                onUserAvatarClick = onUserAvatarClick,
+                onLinkClick = onMessageLinkClick,
+                onUserMentionClick = onUserMentionClick,
+                onAddAnswer = onAddAnswer,
+            )
         }
     },
 ) {

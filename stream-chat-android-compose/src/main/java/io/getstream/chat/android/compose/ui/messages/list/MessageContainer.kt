@@ -134,28 +134,6 @@ public fun LazyItemScope.MessageContainer(
     },
     messageItemContent: @Composable LazyItemScope.(MessageItemState) -> Unit = { messageItem ->
         if (messageContentFactory == MessageContentFactory.Deprecated) {
-            DefaultMessageItem(
-                messageItem = messageItem,
-                messageContentFactory = messageContentFactory,
-                reactionSorting = reactionSorting,
-                onLongItemClick = onLongItemClick,
-                onReactionsClick = onReactionsClick,
-                onThreadClick = onThreadClick,
-                onPollUpdated = onPollUpdated,
-                onCastVote = onCastVote,
-                onRemoveVote = onRemoveVote,
-                selectPoll = selectPoll,
-                onClosePoll = onClosePoll,
-                onAddPollOption = onAddPollOption,
-                onGiphyActionClick = onGiphyActionClick,
-                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                onQuotedMessageClick = onQuotedMessageClick,
-                onUserAvatarClick = { onUserAvatarClick?.invoke(messageItem.message.user) },
-                onLinkClick = onLinkClick,
-                onUserMentionClick = onUserMentionClick,
-                onAddAnswer = onAddAnswer,
-            )
-        } else {
             with(ChatTheme.componentFactory) {
                 MessageListItemContent(
                     messageItem = messageItem,
@@ -178,6 +156,28 @@ public fun LazyItemScope.MessageContainer(
                     onAddAnswer = onAddAnswer,
                 )
             }
+        } else {
+            DefaultMessageItem(
+                messageItem = messageItem,
+                messageContentFactory = messageContentFactory,
+                reactionSorting = reactionSorting,
+                onLongItemClick = onLongItemClick,
+                onReactionsClick = onReactionsClick,
+                onThreadClick = onThreadClick,
+                onPollUpdated = onPollUpdated,
+                onCastVote = onCastVote,
+                onRemoveVote = onRemoveVote,
+                selectPoll = selectPoll,
+                onClosePoll = onClosePoll,
+                onAddPollOption = onAddPollOption,
+                onGiphyActionClick = onGiphyActionClick,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                onQuotedMessageClick = onQuotedMessageClick,
+                onUserAvatarClick = { onUserAvatarClick?.invoke(messageItem.message.user) },
+                onLinkClick = onLinkClick,
+                onUserMentionClick = onUserMentionClick,
+                onAddAnswer = onAddAnswer,
+            )
         }
     },
     typingIndicatorContent: @Composable LazyItemScope.(TypingItemState) -> Unit = { typingItem ->
