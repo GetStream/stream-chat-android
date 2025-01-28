@@ -38,10 +38,6 @@ jobs:
     env:
       ANDROID_API_LEVEL: 34
     steps:
-      - name: Connect Bot
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
       - uses: actions/checkout@v4.2.2
       - uses: actions/download-artifact@v4.1.8
         continue-on-error: true
@@ -51,6 +47,7 @@ jobs:
       - uses: ./.github/actions/enable-kvm
       - uses: ./.github/actions/setup-ruby
       - uses: ./.github/actions/allure-launch
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
         with:
           allure-token: ${{ secrets.ALLURE_TOKEN }}
       - name: Run tests
@@ -64,13 +61,13 @@ jobs:
           emulator-options: ${{ vars.EMULATOR_OPTIONS }}
           script: bundle exec fastlane run_e2e_test batch:${{ matrix.batch }} batch_count:${{ strategy.job-total }}
       - name: Allure TestOps Upload
-        if: success() || failure()
+        if: ${{ success() || failure() }} && ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
         run: bundle exec fastlane allure_upload
         env:
           ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
           LAUNCH_ID: ${{ env.LAUNCH_ID }}
       - name: Allure TestOps Launch Removal
-        if: cancelled()
+        if: cancelled() && ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
         run: bundle exec fastlane allure_launch_removal
         env:
           ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
