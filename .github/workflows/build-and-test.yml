@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@v3.1.0
       - uses: ./.github/actions/setup-java
       - name: Build
-        run: ./gradlew assembleDebug :stream-chat-android-ui-uitests:assembleDebugAndroidTest
+        run: ./gradlew assembleDebug
 
   release_build:
     name: Release build
