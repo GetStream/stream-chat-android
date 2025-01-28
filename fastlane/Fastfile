@@ -26,7 +26,7 @@ lane :start_mock_server do |options|
     mock_server_repo = options[:local_server]
   else
     sh("rm -rf #{mock_server_repo}") if File.directory?(mock_server_repo)
-    sh("git clone git@github.com:#{github_repo.split('/').first}/#{mock_server_repo}.git")
+    sh("git clone https://github.com/#{github_repo.split('/').first}/#{mock_server_repo}.git")
   end
 
   Dir.chdir(mock_server_repo) do
