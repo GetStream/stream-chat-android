@@ -23,7 +23,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelHeaderLeadingContent
@@ -46,6 +51,9 @@ import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatu
 import io.getstream.chat.android.compose.ui.components.composer.ComposerLinkPreview
 import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
 import io.getstream.chat.android.compose.ui.components.composer.MessageInputOptions
+import io.getstream.chat.android.compose.ui.components.avatar.DefaultAvatar
+import io.getstream.chat.android.compose.ui.components.avatar.DefaultChannelAvatar
+import io.getstream.chat.android.compose.ui.components.avatar.DefaultUserAvatar
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageDeletedContent
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageGiphyContent
@@ -1315,5 +1323,104 @@ public interface ChatComponentFactory {
         recordingActions: AudioRecordingActions,
     ) {
         DefaultMessageComposerRecordingContent(state, recordingActions)
+    }
+
+    /**
+     * The default user avatar content.
+     * It renders the [User] avatar that's shown on the messages screen or in headers of direct messages.
+     * Based on the state of the [User], it either shows an image or their initials.
+     */
+    @Suppress("LongParameterList")
+    @Composable
+    public fun UserAvatar(
+        modifier: Modifier,
+        user: User,
+        shape: Shape,
+        textStyle: TextStyle,
+        contentDescription: String?,
+        placeholderPainter: Painter?,
+        initialsAvatarOffset: DpOffset,
+        showOnlineIndicator: Boolean,
+        onlineIndicator: @Composable BoxScope.() -> Unit,
+        onClick: (() -> Unit)?,
+    ) {
+        DefaultUserAvatar(
+            modifier = modifier,
+            user = user,
+            shape = shape,
+            textStyle = textStyle,
+            contentDescription = contentDescription,
+            placeholderPainter = placeholderPainter,
+            initialsAvatarOffset = initialsAvatarOffset,
+            showOnlineIndicator = showOnlineIndicator,
+            onlineIndicator = onlineIndicator,
+            onClick = onClick,
+        )
+    }
+
+    /**
+     * The default avatar for a channel.
+     * It renders the [Channel] avatar that's shown when browsing channels or when you open the messages screen.
+     * Based on the state of the [Channel] and the number of members, it shows different types of images.
+     */
+    @Suppress("LongParameterList")
+    @Composable
+    public fun ChannelAvatar(
+        modifier: Modifier,
+        channel: Channel,
+        currentUser: User?,
+        textStyle: TextStyle,
+        shape: Shape,
+        contentDescription: String?,
+        showOnlineIndicator: Boolean,
+        onlineIndicatorAlignment: OnlineIndicatorAlignment,
+        onlineIndicator: @Composable (BoxScope.() -> Unit),
+        groupAvatarTextStyle: TextStyle,
+        onClick: (() -> Unit)?,
+    ) {
+        DefaultChannelAvatar(
+            modifier = modifier,
+            channel = channel,
+            currentUser = currentUser,
+            textStyle = textStyle,
+            shape = shape,
+            contentDescription = contentDescription,
+            showOnlineIndicator = showOnlineIndicator,
+            onlineIndicatorAlignment = onlineIndicatorAlignment,
+            onlineIndicator = onlineIndicator,
+            groupAvatarTextStyle = groupAvatarTextStyle,
+            onClick = onClick,
+        )
+    }
+
+    /**
+     * The default avatar, which renders an image from the provided image URL.
+     * In case the image URL is empty or there is an error loading the image,
+     * it falls back to an image with initials.
+     */
+    @Suppress("LongParameterList")
+    @Composable
+    public fun Avatar(
+        modifier: Modifier,
+        imageUrl: String,
+        initials: String,
+        shape: Shape,
+        textStyle: TextStyle,
+        initialsAvatarOffset: DpOffset,
+        placeholderPainter: Painter?,
+        contentDescription: String?,
+        onClick: (() -> Unit)?,
+    ) {
+        DefaultAvatar(
+            modifier = modifier,
+            imageUrl = imageUrl,
+            initials = initials,
+            shape = shape,
+            textStyle = textStyle,
+            initialsAvatarOffset = initialsAvatarOffset,
+            placeholderPainter = placeholderPainter,
+            contentDescription = contentDescription,
+            onClick = onClick,
+        )
     }
 }

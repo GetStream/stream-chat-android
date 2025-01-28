@@ -64,6 +64,32 @@ public fun Avatar(
     initialsAvatarOffset: DpOffset = DpOffset(0.dp, 0.dp),
     onClick: (() -> Unit)? = null,
 ) {
+    ChatTheme.componentFactory.Avatar(
+        modifier = modifier,
+        imageUrl = imageUrl,
+        initials = initials,
+        shape = shape,
+        textStyle = textStyle,
+        initialsAvatarOffset = initialsAvatarOffset,
+        placeholderPainter = placeholderPainter,
+        contentDescription = contentDescription,
+        onClick = onClick,
+    )
+}
+
+@Suppress("LongParameterList")
+@Composable
+internal fun DefaultAvatar(
+    modifier: Modifier,
+    imageUrl: String,
+    initials: String,
+    shape: Shape,
+    textStyle: TextStyle,
+    initialsAvatarOffset: DpOffset,
+    placeholderPainter: Painter?,
+    contentDescription: String?,
+    onClick: (() -> Unit)?,
+) {
     if (imageUrl.isBlank()) {
         InitialsAvatar(
             modifier = modifier,
