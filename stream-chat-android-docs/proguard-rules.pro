@@ -1,0 +1,13 @@
+-dontwarn android.telephony.HwTelephonyManager
+-dontwarn com.huawei.android.os.BuildEx$VERSION
+-dontwarn com.huawei.android.telephony.ServiceStateEx
+-dontwarn com.huawei.hianalytics.process.HiAnalyticsConfig$Builder
+-dontwarn com.huawei.hianalytics.process.HiAnalyticsConfig
+-dontwarn com.huawei.hianalytics.process.HiAnalyticsInstance$Builder
+-dontwarn com.huawei.hianalytics.process.HiAnalyticsInstance
+-dontwarn com.huawei.hianalytics.process.HiAnalyticsManager
+-dontwarn com.huawei.hianalytics.util.HiAnalyticTools
+-dontwarn com.huawei.libcore.io.ExternalStorageFile
+-dontwarn com.huawei.libcore.io.ExternalStorageFileInputStream
+-dontwarn com.huawei.libcore.io.ExternalStorageFileOutputStream
+-dontwarn com.huawei.libcore.io.ExternalStorageRandomAccessFile
