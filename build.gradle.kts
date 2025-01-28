@@ -1,17 +1,10 @@
-import io.getstream.chat.android.Dependencies
-import io.getstream.chat.android.command.changelog.plugin.ChangelogReleaseSectionPlugin
-import io.getstream.chat.android.command.changelog.task.ChangelogReleaseSectionTask
-import io.getstream.chat.android.command.changelog.task.ChangelogAddModelSectionTask
-import io.getstream.chat.android.command.release.plugin.ReleasePlugin
-import io.getstream.chat.android.command.release.task.ReleaseTask
-import io.getstream.chat.android.command.unittest.plugin.UnitTestsPlugin
-import io.getstream.chat.android.command.unittest.task.UnitTestsTask
-import io.getstream.chat.android.command.version.plugin.VersionBumpPlugin
-import io.getstream.chat.android.command.version.plugin.MinorBumpPlugin
-import io.getstream.chat.android.command.version.plugin.VersionPrintPlugin
-import io.getstream.chat.android.command.version.task.VersionPrintTask
-import io.getstream.chat.android.command.changelog.plugin.ChangelogAddModelSectionPlugin
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import io.getstream.chat.android.Dependencies
+import io.getstream.chat.android.command.changelog.task.ChangelogAddModelSectionTask
+import io.getstream.chat.android.command.changelog.task.ChangelogReleaseSectionTask
+import io.getstream.chat.android.command.release.task.ReleaseTask
+import io.getstream.chat.android.command.unittest.task.UnitTestsTask
+import io.getstream.chat.android.command.version.task.VersionPrintTask
 
 plugins {
     alias(libs.plugins.android.application) apply false

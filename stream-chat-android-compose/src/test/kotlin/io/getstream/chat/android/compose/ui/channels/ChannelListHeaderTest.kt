@@ -28,11 +28,11 @@ import org.junit.Test
 internal class ChannelListHeaderTest : SnapshotTest {
 
     @get:Rule
-    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_4A)
+    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
     fun `titled, connected, no user`() {
-        snapshot {
+        snapshotWithDarkMode {
             ChannelListHeader(
                 title = "title",
                 connectionState = ConnectionState.Connected,
@@ -42,7 +42,7 @@ internal class ChannelListHeaderTest : SnapshotTest {
 
     @Test
     fun `titled, connected, with user`() {
-        snapshot {
+        snapshotWithDarkMode {
             ChannelListHeader(
                 title = "title",
                 currentUser = PreviewUserData.user1,
@@ -53,7 +53,7 @@ internal class ChannelListHeaderTest : SnapshotTest {
 
     @Test
     fun `untitled, connected, no user`() {
-        snapshot {
+        snapshotWithDarkMode {
             ChannelListHeader(
                 connectionState = ConnectionState.Connected,
             )
@@ -62,7 +62,7 @@ internal class ChannelListHeaderTest : SnapshotTest {
 
     @Test
     fun `untitled, offline, no user`() {
-        snapshot {
+        snapshotWithDarkMode {
             ChannelListHeader(
                 connectionState = ConnectionState.Offline,
             )
@@ -71,7 +71,7 @@ internal class ChannelListHeaderTest : SnapshotTest {
 
     @Test
     fun `untitled, connecting, no user`() {
-        snapshot {
+        snapshotWithDarkMode {
             ChannelListHeader(
                 connectionState = ConnectionState.Connecting,
             )
