@@ -71,6 +71,9 @@
 - Fix poll attachment picker not hidden if disabled in the dashboard. [#5562](https://github.com/GetStream/stream-chat-android/pull/5562)
 
 ### ⬆️ Improved
+- Create snapshot tests for channels stateless components. [#5570](https://github.com/GetStream/stream-chat-android/pull/5570)
+- Introduce `ChatComponentFactory` for easier channel components customization. Initially supporting channel stateless components. [#5571](https://github.com/GetStream/stream-chat-android/pull/5571)
+- Create snapshot tests for messages stateless components. [#5578](https://github.com/GetStream/stream-chat-android/pull/5578)
 
 ### ✅ Added
 

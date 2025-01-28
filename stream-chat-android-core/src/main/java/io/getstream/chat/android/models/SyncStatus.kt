@@ -24,6 +24,8 @@ private const val AWAITING_ATTACHMENTS_STATUS_CODE = 4
 
 /**
  * If the message has been sent to the servers.
+ *
+ * @param status The numeric identifier of the status.
  */
 public enum class SyncStatus(public val status: Int) {
     /**
@@ -53,7 +55,11 @@ public enum class SyncStatus(public val status: Int) {
     ;
 
     public companion object {
-        private val map = values().associateBy(SyncStatus::status)
+        private val map = entries.associateBy(SyncStatus::status)
+
+        /**
+         * Get the [SyncStatus] from the given [type].
+         */
         public fun fromInt(type: Int): SyncStatus? = map[type]
     }
 }

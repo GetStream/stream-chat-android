@@ -79,21 +79,27 @@ public fun ChannelListHeader(
     onAvatarClick: (User?) -> Unit = {},
     onHeaderActionClick: () -> Unit = {},
     leadingContent: @Composable RowScope.() -> Unit = {
-        DefaultChannelHeaderLeadingContent(
-            currentUser = currentUser,
-            onAvatarClick = onAvatarClick,
-        )
+        with(ChatTheme.componentFactory.channelListHeader) {
+            LeadingContent(
+                currentUser = currentUser,
+                onAvatarClick = onAvatarClick,
+            )
+        }
     },
     centerContent: @Composable RowScope.() -> Unit = {
-        DefaultChannelListHeaderCenterContent(
-            connectionState = connectionState,
-            title = title,
-        )
+        with(ChatTheme.componentFactory.channelListHeader) {
+            CenterContent(
+                connectionState = connectionState,
+                title = title,
+            )
+        }
     },
     trailingContent: @Composable RowScope.() -> Unit = {
-        DefaultChannelListHeaderTrailingContent(
-            onHeaderActionClick = onHeaderActionClick,
-        )
+        with(ChatTheme.componentFactory.channelListHeader) {
+            TrailingContent(
+                onHeaderActionClick = onHeaderActionClick,
+            )
+        }
     },
 ) {
     Surface(

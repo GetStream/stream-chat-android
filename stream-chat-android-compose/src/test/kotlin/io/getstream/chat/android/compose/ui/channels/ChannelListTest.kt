@@ -22,9 +22,11 @@ import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
+import io.getstream.chat.android.compose.state.channels.list.SearchQuery
 import io.getstream.chat.android.compose.ui.SnapshotTest
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.previewdata.PreviewChannelData
+import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import org.junit.Rule
 import org.junit.Test
@@ -36,7 +38,7 @@ internal class ChannelListTest : SnapshotTest {
 
     @Test
     fun `empty channels`() {
-        snapshot {
+        snapshotWithDarkMode {
             ChannelList(
                 modifier = Modifier.fillMaxSize(),
                 currentUser = PreviewUserData.user1,
@@ -47,7 +49,7 @@ internal class ChannelListTest : SnapshotTest {
 
     @Test
     fun `loading channels`() {
-        snapshot {
+        snapshotWithDarkMode {
             ChannelList(
                 modifier = Modifier.fillMaxSize(),
                 currentUser = PreviewUserData.user1,
@@ -58,7 +60,7 @@ internal class ChannelListTest : SnapshotTest {
 
     @Test
     fun `loaded channels`() {
-        snapshot {
+        snapshotWithDarkMode {
             ChannelList(
                 modifier = Modifier.fillMaxSize(),
                 currentUser = PreviewUserData.user1,
@@ -69,9 +71,71 @@ internal class ChannelListTest : SnapshotTest {
                         ItemState.ChannelItemState(channel = PreviewChannelData.channelWithOneUser),
                         ItemState.ChannelItemState(channel = PreviewChannelData.channelWithOnlineUser),
                         ItemState.ChannelItemState(channel = PreviewChannelData.channelWithFewMembers),
+                        ItemState.ChannelItemState(
+                            channel = PreviewChannelData.channelWithManyMembers,
+                            typingUsers = listOf(PreviewUserData.user2),
+                        ),
+                        ItemState.ChannelItemState(
+                            channel = PreviewChannelData.channelWithMessages,
+                            isMuted = true,
+                        ),
+                    ),
+                ),
+            )
+        }
+    }
+
+    @Test
+    fun `loading more channels`() {
+        snapshotWithDarkMode {
+            ChannelList(
+                modifier = Modifier.fillMaxSize(),
+                currentUser = PreviewUserData.user1,
+                channelsState = ChannelsState(
+                    isLoading = false,
+                    isLoadingMore = true,
+                    channelItems = listOf(
+                        ItemState.ChannelItemState(channel = PreviewChannelData.channelWithImage),
+                        ItemState.ChannelItemState(channel = PreviewChannelData.channelWithOneUser),
+                        ItemState.ChannelItemState(channel = PreviewChannelData.channelWithOnlineUser),
+                        ItemState.ChannelItemState(channel = PreviewChannelData.channelWithFewMembers),
                         ItemState.ChannelItemState(channel = PreviewChannelData.channelWithManyMembers),
                         ItemState.ChannelItemState(channel = PreviewChannelData.channelWithMessages),
                     ),
+                ),
+            )
+        }
+    }
+
+    @Test
+    fun `search results`() {
+        snapshotWithDarkMode {
+            ChannelList(
+                modifier = Modifier.fillMaxSize(),
+                currentUser = PreviewUserData.user1,
+                channelsState = ChannelsState(
+                    isLoading = false,
+                    channelItems = listOf(
+                        ItemState.SearchResultItemState(
+                            message = PreviewMessageData.message1,
+                            channel = PreviewChannelData.channelWithImage,
+                        ),
+                        ItemState.SearchResultItemState(message = PreviewMessageData.message2),
+                    ),
+                ),
+            )
+        }
+    }
+
+    @Test
+    fun `empty search results`() {
+        snapshotWithDarkMode {
+            ChannelList(
+                modifier = Modifier.fillMaxSize(),
+                currentUser = PreviewUserData.user1,
+                channelsState = ChannelsState(
+                    isLoading = false,
+                    searchQuery = SearchQuery.Channels("query"),
                 ),
             )
         }

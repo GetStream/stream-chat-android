@@ -21,6 +21,13 @@ import io.getstream.chat.android.models.querysort.QuerySorter.Companion.LESS_ON_
 import io.getstream.chat.android.models.querysort.QuerySorter.Companion.MORE_ON_COMPARISON
 import io.getstream.chat.android.models.querysort.SortDirection
 
+/**
+ * Compares two [Comparable] values based on the given [SortDirection].
+ *
+ * @param first The first value to compare.
+ * @param second The second value to compare.
+ * @param sortDirection The direction of sorting.
+ */
 internal fun compare(
     first: Comparable<Any>?,
     second: Comparable<Any>?,
