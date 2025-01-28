@@ -106,35 +106,35 @@ public fun LazyItemScope.MessageContainer(
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onUserMentionClick: (User) -> Unit = {},
     dateSeparatorContent: @Composable LazyItemScope.(DateSeparatorItemState) -> Unit = { dateSeparatorItem ->
-        with(ChatTheme.componentFactory.messageList) {
-            DateSeparatorItemContent(dateSeparatorItem = dateSeparatorItem)
+        with(ChatTheme.componentFactory) {
+            MessageListDateSeparatorItemContent(dateSeparatorItem = dateSeparatorItem)
         }
     },
     unreadSeparatorContent: @Composable LazyItemScope.(UnreadSeparatorItemState) -> Unit = { unreadSeparatorItem ->
-        with(ChatTheme.componentFactory.messageList) {
-            UnreadSeparatorItemContent(unreadSeparatorItem = unreadSeparatorItem)
+        with(ChatTheme.componentFactory) {
+            MessageListUnreadSeparatorItemContent(unreadSeparatorItem = unreadSeparatorItem)
         }
     },
     threadSeparatorContent: @Composable LazyItemScope.(
         ThreadDateSeparatorItemState,
     ) -> Unit = { threadDateSeparatorItem ->
-        with(ChatTheme.componentFactory.messageList) {
-            ThreadDateSeparatorItemContent(threadDateSeparatorItem = threadDateSeparatorItem)
+        with(ChatTheme.componentFactory) {
+            MessageListThreadDateSeparatorItemContent(threadDateSeparatorItem = threadDateSeparatorItem)
         }
     },
     systemMessageContent: @Composable LazyItemScope.(SystemMessageItemState) -> Unit = { systemMessageItem ->
-        with(ChatTheme.componentFactory.messageList) {
-            SystemMessageItemContent(systemMessageItem = systemMessageItem)
+        with(ChatTheme.componentFactory) {
+            MessageListSystemItemContent(systemMessageItem = systemMessageItem)
         }
     },
     moderatedMessageContent: @Composable LazyItemScope.(ModeratedMessageItemState) -> Unit = { moderatedMessageItem ->
-        with(ChatTheme.componentFactory.messageList) {
-            ModeratedMessageItemContent(moderatedMessageItem = moderatedMessageItem)
+        with(ChatTheme.componentFactory) {
+            MessageListModeratedItemContent(moderatedMessageItem = moderatedMessageItem)
         }
     },
     messageItemContent: @Composable LazyItemScope.(MessageItemState) -> Unit = { messageItem ->
-        with(ChatTheme.componentFactory.messageList) {
-            MessageItemContent(
+        with(ChatTheme.componentFactory) {
+            MessageListItemContent(
                 messageItem = messageItem,
                 reactionSorting = reactionSorting,
                 onLongItemClick = onLongItemClick,
@@ -157,22 +157,22 @@ public fun LazyItemScope.MessageContainer(
         }
     },
     typingIndicatorContent: @Composable LazyItemScope.(TypingItemState) -> Unit = { typingItem ->
-        with(ChatTheme.componentFactory.messageList) {
-            TypingIndicatorItemContent(typingItem = typingItem)
+        with(ChatTheme.componentFactory) {
+            MessageListTypingIndicatorItemContent(typingItem = typingItem)
         }
     },
     emptyThreadPlaceholderItemContent: @Composable LazyItemScope.(
         EmptyThreadPlaceholderItemState,
     ) -> Unit = { emptyThreadPlaceholderItem ->
-        with(ChatTheme.componentFactory.messageList) {
-            EmptyThreadPlaceholderItemContent(emptyThreadPlaceholderItem = emptyThreadPlaceholderItem)
+        with(ChatTheme.componentFactory) {
+            MessageListEmptyThreadPlaceholderItemContent(emptyThreadPlaceholderItem = emptyThreadPlaceholderItem)
         }
     },
     startOfTheChannelItemState: @Composable LazyItemScope.(
         StartOfTheChannelItemState,
     ) -> Unit = { startOfTheChannelItem ->
-        with(ChatTheme.componentFactory.messageList) {
-            StartOfTheChannelItemContent(startOfTheChannelItem = startOfTheChannelItem)
+        with(ChatTheme.componentFactory) {
+            MessageListStartOfTheChannelItemContent(startOfTheChannelItem = startOfTheChannelItem)
         }
     },
 ) {

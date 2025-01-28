@@ -293,7 +293,7 @@ public fun ChatTheme(
         contentColor = LocalContentColor.current,
         lightTheme = !isInDarkMode,
     ),
-    componentFactory: ChatComponentFactory = ChatComponentFactory(),
+    componentFactory: ChatComponentFactory = DefaultChatComponentFactory(),
     attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories(),
     messageContentFactory: MessageContentFactory = MessageContentFactory(),
     attachmentPreviewHandlers: List<AttachmentPreviewHandler> =

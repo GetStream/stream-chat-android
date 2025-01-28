@@ -95,8 +95,8 @@ public fun Messages(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     helperContent: @Composable BoxScope.() -> Unit = {
-        with(ChatTheme.componentFactory.messageList) {
-            HelperContent(
+        with(ChatTheme.componentFactory) {
+            MessageListHelperContent(
                 messageListState = messagesState,
                 messagesLazyListState = messagesLazyListState,
                 onScrollToBottomClick = onScrollToBottom,
@@ -104,8 +104,8 @@ public fun Messages(
         }
     },
     loadingMoreContent: @Composable LazyItemScope.() -> Unit = {
-        with(ChatTheme.componentFactory.messageList) {
-            LoadingMoreItemContent()
+        with(ChatTheme.componentFactory) {
+            MessageListLoadingMoreItemContent()
         }
     },
     itemModifier: (index: Int, item: MessageListItemState) -> Modifier = { _, _ -> Modifier },

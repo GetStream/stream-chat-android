@@ -158,14 +158,14 @@ public fun MessageList(
     onMessagesPageEndReached: (String) -> Unit = { viewModel.onBottomEndRegionReached(it) },
     onScrollToBottomClicked: (() -> Unit) -> Unit = { viewModel.scrollToBottom(scrollToBottom = it) },
     loadingContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.messageList.LoadingIndicator(modifier)
+        ChatTheme.componentFactory.MessageListLoadingIndicator(modifier)
     },
     emptyContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.messageList.EmptyContent(modifier)
+        ChatTheme.componentFactory.MessageListEmptyContent(modifier)
     },
     helperContent: @Composable BoxScope.() -> Unit = {
-        with(ChatTheme.componentFactory.messageList) {
-            HelperContent(
+        with(ChatTheme.componentFactory) {
+            MessageListHelperContent(
                 messageListState = viewModel.currentMessagesState,
                 messagesLazyListState = messagesLazyListState,
                 onScrollToBottomClick = onScrollToBottomClicked,
@@ -173,13 +173,13 @@ public fun MessageList(
         }
     },
     loadingMoreContent: @Composable LazyItemScope.() -> Unit = {
-        with(ChatTheme.componentFactory.messageList) {
-            LoadingMoreItemContent()
+        with(ChatTheme.componentFactory) {
+            MessageListLoadingMoreItemContent()
         }
     },
     itemContent: @Composable LazyItemScope.(MessageListItemState) -> Unit = { messageListItem ->
-        with(ChatTheme.componentFactory.messageList) {
-            MessageItemContainer(
+        with(ChatTheme.componentFactory) {
+            MessageListItemContainer(
                 messageListItem = messageListItem,
                 reactionSorting = reactionSorting,
                 onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
@@ -391,14 +391,14 @@ public fun MessageList(
     onMessageLinkClick: ((Message, String) -> Unit)? = null,
     onUserMentionClick: (User) -> Unit = { _ -> },
     loadingContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.messageList.LoadingIndicator(modifier)
+        ChatTheme.componentFactory.MessageListLoadingIndicator(modifier)
     },
     emptyContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.messageList.EmptyContent(modifier)
+        ChatTheme.componentFactory.MessageListEmptyContent(modifier)
     },
     helperContent: @Composable BoxScope.() -> Unit = {
-        with(ChatTheme.componentFactory.messageList) {
-            HelperContent(
+        with(ChatTheme.componentFactory) {
+            MessageListHelperContent(
                 messageListState = currentState,
                 messagesLazyListState = messagesLazyListState,
                 onScrollToBottomClick = onScrollToBottom,
@@ -406,16 +406,16 @@ public fun MessageList(
         }
     },
     loadingMoreContent: @Composable LazyItemScope.() -> Unit = {
-        with(ChatTheme.componentFactory.messageList) {
-            LoadingMoreItemContent()
+        with(ChatTheme.componentFactory) {
+            MessageListLoadingMoreItemContent()
         }
     },
     itemModifier: (index: Int, item: MessageListItemState) -> Modifier = { _, _ ->
         Modifier
     },
     itemContent: @Composable LazyItemScope.(MessageListItemState) -> Unit = { messageListItemState ->
-        with(ChatTheme.componentFactory.messageList) {
-            MessageItemContainer(
+        with(ChatTheme.componentFactory) {
+            MessageListItemContainer(
                 messageListItem = messageListItemState,
                 reactionSorting = reactionSorting,
                 onPollUpdated = onPollUpdated,

@@ -67,7 +67,7 @@ public fun MessageContent(
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     giphyEphemeralContent: @Composable () -> Unit = {
         if (messageContentFactory == MessageContentFactory.Deprecated) {
-            ChatTheme.componentFactory.messageContent.GiphyContent(
+            ChatTheme.componentFactory.MessageGiphyContent(
                 message = message,
                 onGiphyActionClick = onGiphyActionClick,
             )
@@ -80,7 +80,7 @@ public fun MessageContent(
     },
     deletedMessageContent: @Composable () -> Unit = {
         if (messageContentFactory == MessageContentFactory.Deprecated) {
-            ChatTheme.componentFactory.messageContent.DeletedContent(
+            ChatTheme.componentFactory.MessageDeletedContent(
                 modifier = modifier,
             )
         } else {

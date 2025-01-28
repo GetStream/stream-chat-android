@@ -68,7 +68,6 @@ import io.getstream.chat.android.compose.ui.components.messages.MessageHeaderLab
 import io.getstream.chat.android.compose.ui.components.messages.MessageReactions
 import io.getstream.chat.android.compose.ui.components.messages.PollMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
-import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
@@ -149,16 +148,16 @@ public fun MessageItem(
     onUserMentionClick: (User) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     leadingContent: @Composable RowScope.(MessageItemState) -> Unit = {
-        with(ChatTheme.componentFactory.messageItem) {
-            LeadingContent(
+        with(ChatTheme.componentFactory) {
+            MessageItemLeadingContent(
                 messageItem = messageItem,
                 onUserAvatarClick = onUserAvatarClick,
             )
         }
     },
     headerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
-        with(ChatTheme.componentFactory.messageItem) {
-            HeaderContent(
+        with(ChatTheme.componentFactory) {
+            MessageItemHeaderContent(
                 messageItem = messageItem,
                 reactionSorting = reactionSorting,
                 onReactionsClick = onReactionsClick,
@@ -166,8 +165,8 @@ public fun MessageItem(
         }
     },
     centerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
-        with(ChatTheme.componentFactory.messageItem) {
-            CenterContent(
+        with(ChatTheme.componentFactory) {
+            MessageItemCenterContent(
                 messageItem = messageItem,
                 onLongItemClick = onLongItemClick,
                 onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
@@ -186,15 +185,15 @@ public fun MessageItem(
         }
     },
     footerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
-        with(ChatTheme.componentFactory.messageItem) {
-            FooterContent(
+        with(ChatTheme.componentFactory) {
+            MessageItemFooterContent(
                 messageItem = messageItem,
             )
         }
     },
     trailingContent: @Composable RowScope.(MessageItemState) -> Unit = {
-        with(ChatTheme.componentFactory.messageItem) {
-            TrailingContent(
+        with(ChatTheme.componentFactory) {
+            MessageItemTrailingContent(
                 messageItem = messageItem,
             )
         }
@@ -402,7 +401,7 @@ internal fun ColumnScope.DefaultMessageItemFooterContent(
     when {
         message.isUploading() -> {
             if (messageContentFactory == MessageContentFactory.Deprecated) {
-                ChatTheme.componentFactory.messageFooter.UploadingContent(
+                ChatTheme.componentFactory.MessageFooterUploadingContent(
                     modifier = Modifier.align(End),
                     messageItem = messageItem,
                 )
@@ -416,7 +415,7 @@ internal fun ColumnScope.DefaultMessageItemFooterContent(
 
         message.isDeleted() && messageItem.deletedMessageVisibility == DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
             if (messageContentFactory == MessageContentFactory.Deprecated) {
-                ChatTheme.componentFactory.messageFooter.OnlyVisibleToYouContent(
+                ChatTheme.componentFactory.MessageFooterOnlyVisibleToYouContent(
                     messageItem = messageItem,
                 )
             } else {
@@ -425,7 +424,7 @@ internal fun ColumnScope.DefaultMessageItemFooterContent(
         }
 
         else -> if (messageContentFactory == MessageContentFactory.Deprecated) {
-            ChatTheme.componentFactory.messageFooter.FooterContent(messageItem = messageItem)
+            ChatTheme.componentFactory.MessageFooterContent(messageItem = messageItem)
         } else {
             messageContentFactory.MessageFooterContent(messageItem = messageItem)
         }
@@ -727,14 +726,14 @@ internal fun DefaultMessageTextContent(
 ) {
     Column {
         if (messageContentFactory == MessageContentFactory.Deprecated) {
-            ChatTheme.componentFactory.messageContent.QuotedContent(
+            ChatTheme.componentFactory.MessageQuotedContent(
                 message = message,
                 currentUser = currentUser,
                 onLongItemClick = onLongItemClick,
                 onQuotedMessageClick = onQuotedMessageClick,
             )
 
-            ChatTheme.componentFactory.messageContent.TextContent(
+            ChatTheme.componentFactory.MessageTextContent(
                 message = message,
                 currentUser = currentUser,
                 onLongItemClick = onLongItemClick,
