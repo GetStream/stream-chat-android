@@ -303,6 +303,14 @@ public final class io/getstream/chat/android/compose/state/messages/attachments/
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/compose/state/messages/attachments/System : io/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/attachments/System;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/compose/state/reactionoptions/ReactionOptionItemState {
 	public static final field $stable I
 	public fun <init> (Landroidx/compose/ui/graphics/painter/Painter;Ljava/lang/String;)V
@@ -1611,6 +1619,11 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/fac
 	public fun PickerTabContent (Lkotlin/jvm/functions/Function1;Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
 	public fun PickerTabIcon (ZZLandroidx/compose/runtime/Composer;I)V
 	public fun getAttachmentsPickerMode ()Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode;
+	public final fun getCaptureImageAllowed ()Z
+	public final fun getCaptureVideoAllowed ()Z
+	public final fun getFilesAllowed ()Z
+	public final fun getMediaAllowed ()Z
+	public final fun getPollAllowed ()Z
 	public fun isPickerTabEnabled (Lio/getstream/chat/android/models/Channel;)Z
 }
 

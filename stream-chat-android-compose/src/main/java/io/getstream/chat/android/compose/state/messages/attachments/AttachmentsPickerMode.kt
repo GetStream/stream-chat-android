@@ -44,6 +44,12 @@ public data object MediaCapture : AttachmentsPickerMode()
 public data object Poll : AttachmentsPickerMode(isFullContent = true)
 
 /**
+ * Represents the system picker mode - where the user can pick media files from the device, without the need to grant
+ * storage permissions.
+ */
+public data object System : AttachmentsPickerMode()
+
+/**
  * User-customizable picker mode, with any number of extra properties.
  *
  * @param extraProperties Map of key-value pairs that let you store extra data for this picker mode.

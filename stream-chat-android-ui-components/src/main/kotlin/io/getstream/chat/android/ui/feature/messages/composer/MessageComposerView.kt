@@ -389,7 +389,7 @@ public class MessageComposerView : ConstraintLayout {
         (binding.headerContent.children.first() as? MessageComposerContent)?.renderState(state)
 
         renderSuggestion(state)
-        arePollEnabled = state.ownCapabilities.contains(ChannelCapabilities.SEND_POLL)
+        arePollEnabled = state.pollsEnabled && state.ownCapabilities.contains(ChannelCapabilities.SEND_POLL)
         validationErrorRenderer.renderValidationErrors(state.validationErrors)
     }
 
