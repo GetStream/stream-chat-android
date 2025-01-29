@@ -191,6 +191,30 @@ internal class DefaultChatComponentFactory : ChatComponentFactory
 public interface ChatComponentFactory {
 
     /**
+     * The default header shown above the channel list.
+     * Usually contains the current user's avatar, a title or the connected status, and an action button.
+     */
+    @Suppress("LongParameterList")
+    @Composable
+    public fun ChannelListHeader(
+        modifier: Modifier,
+        title: String,
+        currentUser: User?,
+        connectionState: ConnectionState,
+        onAvatarClick: (User?) -> Unit,
+        onHeaderActionClick: () -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader(
+            modifier = modifier,
+            title = title,
+            currentUser = currentUser,
+            connectionState = connectionState,
+            onAvatarClick = onAvatarClick,
+            onHeaderActionClick = onHeaderActionClick,
+        )
+    }
+
+    /**
      * The default leading content of the channel list header.
      * Usually the avatar of the current user if it's available.
      */
