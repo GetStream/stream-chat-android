@@ -62,9 +62,7 @@ public fun MessageInput(
     maxLines: Int = DefaultMessageInputMaxLines,
     keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
     label: @Composable (MessageComposerState) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageComposerLabel(it)
-        }
+        ChatTheme.componentFactory.MessageComposerLabel(state = it)
     },
     innerLeadingContent: @Composable RowScope.() -> Unit = {},
     innerTrailingContent: @Composable RowScope.() -> Unit = {},
@@ -83,13 +81,11 @@ public fun MessageInput(
         decorationBox = { innerTextField ->
             Column {
                 if (activeAction is Reply) {
-                    with(ChatTheme.componentFactory) {
-                        MessageComposerQuotedMessage(
-                            modifier = Modifier.padding(horizontal = 4.dp),
-                            state = messageComposerState,
-                            quotedMessage = activeAction.message,
-                        )
-                    }
+                    ChatTheme.componentFactory.MessageComposerQuotedMessage(
+                        modifier = Modifier.padding(horizontal = 4.dp),
+                        state = messageComposerState,
+                        quotedMessage = activeAction.message,
+                    )
 
                     Spacer(modifier = Modifier.size(16.dp))
                 }

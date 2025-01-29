@@ -150,20 +150,16 @@ public fun MessageComposer(
         }
     },
     mentionPopupContent: @Composable (List<User>) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageComposerMentionsPopupContent(
-                mentionSuggestions = it,
-                onMentionSelected = onMentionSelected,
-            )
-        }
+        ChatTheme.componentFactory.MessageComposerMentionsPopupContent(
+            mentionSuggestions = it,
+            onMentionSelected = onMentionSelected,
+        )
     },
     commandPopupContent: @Composable (List<Command>) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageComposerCommandsPopupContent(
-                commandSuggestions = it,
-                onCommandSelected = onCommandSelected,
-            )
-        }
+        ChatTheme.componentFactory.MessageComposerCommandsPopupContent(
+            commandSuggestions = it,
+            onCommandSelected = onCommandSelected,
+        )
     },
     integrations: @Composable RowScope.(MessageComposerState) -> Unit = {
         with(ChatTheme.componentFactory) {
@@ -175,9 +171,7 @@ public fun MessageComposer(
         }
     },
     label: @Composable (MessageComposerState) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageComposerLabel(state = it)
-        }
+        ChatTheme.componentFactory.MessageComposerLabel(state = it)
     },
     input: @Composable RowScope.(MessageComposerState) -> Unit = {
         with(ChatTheme.componentFactory) {
@@ -198,16 +192,14 @@ public fun MessageComposer(
         }
     },
     trailingContent: @Composable (MessageComposerState) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageComposerTrailingContent(
-                state = it,
-                onSendClick = { input, attachments ->
-                    val message = viewModel.buildNewMessage(input, attachments)
-                    onSendMessage(message)
-                },
-                recordingActions = recordingActions,
-            )
-        }
+        ChatTheme.componentFactory.MessageComposerTrailingContent(
+            state = it,
+            onSendClick = { input, attachments ->
+                val message = viewModel.buildNewMessage(input, attachments)
+                onSendMessage(message)
+            },
+            recordingActions = recordingActions,
+        )
     },
 ) {
     val messageComposerState by viewModel.messageComposerState.collectAsState()
@@ -299,20 +291,16 @@ public fun MessageComposer(
         }
     },
     mentionPopupContent: @Composable (List<User>) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageComposerMentionsPopupContent(
-                mentionSuggestions = it,
-                onMentionSelected = onMentionSelected,
-            )
-        }
+        ChatTheme.componentFactory.MessageComposerMentionsPopupContent(
+            mentionSuggestions = it,
+            onMentionSelected = onMentionSelected,
+        )
     },
     commandPopupContent: @Composable (List<Command>) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageComposerCommandsPopupContent(
-                commandSuggestions = it,
-                onCommandSelected = onCommandSelected,
-            )
-        }
+        ChatTheme.componentFactory.MessageComposerCommandsPopupContent(
+            commandSuggestions = it,
+            onCommandSelected = onCommandSelected,
+        )
     },
     integrations: @Composable RowScope.(MessageComposerState) -> Unit = {
         with(ChatTheme.componentFactory) {
@@ -324,9 +312,7 @@ public fun MessageComposer(
         }
     },
     label: @Composable (MessageComposerState) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageComposerLabel(state = it)
-        }
+        ChatTheme.componentFactory.MessageComposerLabel(state = it)
     },
     input: @Composable RowScope.(MessageComposerState) -> Unit = {
         with(ChatTheme.componentFactory) {
@@ -347,13 +333,11 @@ public fun MessageComposer(
         }
     },
     trailingContent: @Composable (MessageComposerState) -> Unit = {
-        with(ChatTheme.componentFactory) {
-            MessageComposerTrailingContent(
-                state = it,
-                onSendClick = onSendMessage,
-                recordingActions = recordingActions,
-            )
-        }
+        ChatTheme.componentFactory.MessageComposerTrailingContent(
+            state = it,
+            onSendClick = onSendMessage,
+            recordingActions = recordingActions,
+        )
     },
 ) {
     val (_, _, activeAction, validationErrors, mentionSuggestions, commandSuggestions) = messageComposerState
@@ -428,24 +412,20 @@ public fun DefaultMessageComposerHeaderContent(
     val activeAction = messageComposerState.action
 
     if (activeAction != null) {
-        with(ChatTheme.componentFactory) {
-            MessageComposerMessageInputOptions(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp, bottom = 6.dp, start = 8.dp, end = 8.dp),
-                activeAction = activeAction,
-                onCancel = onCancelAction,
-            )
-        }
+        ChatTheme.componentFactory.MessageComposerMessageInputOptions(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp, bottom = 6.dp, start = 8.dp, end = 8.dp),
+            activeAction = activeAction,
+            onCancel = onCancelAction,
+        )
     }
     if (ChatTheme.isComposerLinkPreviewEnabled && messageComposerState.linkPreviews.isNotEmpty()) {
-        with(ChatTheme.componentFactory) {
-            MessageComposerLinkPreview(
-                modifier = Modifier,
-                linkPreview = messageComposerState.linkPreviews.first(),
-                onClick = onLinkPreviewClick,
-            )
-        }
+        ChatTheme.componentFactory.MessageComposerLinkPreview(
+            modifier = Modifier,
+            linkPreview = messageComposerState.linkPreviews.first(),
+            onClick = onLinkPreviewClick,
+        )
     }
 }
 
@@ -667,9 +647,7 @@ internal fun DefaultMessageComposerTrailingContent(
     val isInputValid by lazy { (value.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty() }
 
     if (coolDownTime > 0 && !isInEditMode) {
-        with(ChatTheme.componentFactory) {
-            MessageComposerCoolDownIndicator(modifier = Modifier, coolDownTime = coolDownTime)
-        }
+        ChatTheme.componentFactory.MessageComposerCoolDownIndicator(modifier = Modifier, coolDownTime = coolDownTime)
     } else {
         val isRecording = messageComposerState.recording !is RecordingState.Idle
 
@@ -685,17 +663,15 @@ internal fun DefaultMessageComposerTrailingContent(
                 modifier = Modifier.heightIn(min = ComposerActionContainerMinHeight),
                 contentAlignment = Center,
             ) {
-                with(ChatTheme.componentFactory) {
-                    MessageComposerSendButton(
-                        enabled = sendEnabled,
-                        isInputValid = isInputValid,
-                        onClick = {
-                            if (isInputValid) {
-                                onSendMessage(value, attachments)
-                            }
-                        },
-                    )
-                }
+                ChatTheme.componentFactory.MessageComposerSendButton(
+                    enabled = sendEnabled,
+                    isInputValid = isInputValid,
+                    onClick = {
+                        if (isInputValid) {
+                            onSendMessage(value, attachments)
+                        }
+                    },
+                )
             }
         }
 
@@ -705,12 +681,10 @@ internal fun DefaultMessageComposerTrailingContent(
             else -> true
         }
         if (recordVisible) {
-            with(ChatTheme.componentFactory) {
-                MessageComposerAudioRecordButton(
-                    state = messageComposerState.recording,
-                    recordingActions = recordingActions,
-                )
-            }
+            ChatTheme.componentFactory.MessageComposerAudioRecordButton(
+                state = messageComposerState.recording,
+                recordingActions = recordingActions,
+            )
         }
     }
 }

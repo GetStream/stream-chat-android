@@ -41,12 +41,10 @@ public fun MentionSuggestionList(
     modifier: Modifier = Modifier,
     onMentionSelected: (User) -> Unit = {},
     itemContent: @Composable (User) -> Unit = { user ->
-        with(ChatTheme.componentFactory) {
-            MessageComposerMentionSuggestionItem(
-                user = user,
-                onMentionSelected = onMentionSelected,
-            )
-        }
+        ChatTheme.componentFactory.MessageComposerMentionSuggestionItem(
+            user = user,
+            onMentionSelected = onMentionSelected,
+        )
     },
 ) {
     SuggestionList(
