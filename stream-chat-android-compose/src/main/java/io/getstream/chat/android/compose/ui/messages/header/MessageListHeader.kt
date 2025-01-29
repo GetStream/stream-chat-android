@@ -97,25 +97,33 @@ public fun MessageListHeader(
     onHeaderTitleClick: (Channel) -> Unit = {},
     onChannelAvatarClick: () -> Unit = {},
     leadingContent: @Composable RowScope.() -> Unit = {
-        DefaultMessageListHeaderLeadingContent(onBackPressed = onBackPressed)
+        with(ChatTheme.componentFactory) {
+            MessageListHeaderLeadingContent(
+                onBackPressed = onBackPressed,
+            )
+        }
     },
     centerContent: @Composable RowScope.() -> Unit = {
-        DefaultMessageListHeaderCenterContent(
-            modifier = Modifier.weight(1f),
-            channel = channel,
-            currentUser = currentUser,
-            typingUsers = typingUsers,
-            messageMode = messageMode,
-            onHeaderTitleClick = onHeaderTitleClick,
-            connectionState = connectionState,
-        )
+        with(ChatTheme.componentFactory) {
+            MessageListHeaderCenterContent(
+                modifier = Modifier.weight(1f),
+                channel = channel,
+                currentUser = currentUser,
+                typingUsers = typingUsers,
+                messageMode = messageMode,
+                onHeaderTitleClick = onHeaderTitleClick,
+                connectionState = connectionState,
+            )
+        }
     },
     trailingContent: @Composable RowScope.() -> Unit = {
-        DefaultMessageListHeaderTrailingContent(
-            channel = channel,
-            currentUser = currentUser,
-            onClick = onChannelAvatarClick,
-        )
+        with(ChatTheme.componentFactory) {
+            MessageListHeaderTrailingContent(
+                channel = channel,
+                currentUser = currentUser,
+                onClick = onChannelAvatarClick,
+            )
+        }
     },
 ) {
     Surface(
@@ -217,6 +225,7 @@ public fun DefaultMessageListHeaderCenterContent(
                     typingUsers = typingUsers,
                 )
             }
+
             is ConnectionState.Connecting -> {
                 NetworkLoadingIndicator(
                     modifier = Modifier.wrapContentHeight(),
@@ -225,6 +234,7 @@ public fun DefaultMessageListHeaderCenterContent(
                     textStyle = ChatTheme.typography.footnote,
                 )
             }
+
             is ConnectionState.Offline -> {
                 Text(
                     text = stringResource(id = R.string.stream_compose_disconnected),

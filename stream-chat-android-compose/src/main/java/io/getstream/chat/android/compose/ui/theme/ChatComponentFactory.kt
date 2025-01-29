@@ -76,6 +76,9 @@ import io.getstream.chat.android.compose.ui.messages.composer.SendButton
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultAudioRecordButton
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerRecordingContent
+import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderCenterContent
+import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderLeadingContent
+import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderTrailingContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageContainer
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageDateSeparatorContent
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageItem
@@ -104,6 +107,7 @@ import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
@@ -376,6 +380,92 @@ public interface ChatComponentFactory {
     }
 
     /**
+     * The default header of the message list.
+     * Usually a back button as a leading content,
+     * the channel title in the top center,
+     * the channel information or the connection status in the bottom center,
+     * and the channel avatar as the trailing content.
+     */
+    @Suppress("LongParameterList")
+    @Composable
+    public fun MessageListHeader(
+        modifier: Modifier,
+        channel: Channel,
+        currentUser: User?,
+        connectionState: ConnectionState,
+        typingUsers: List<User>,
+        messageMode: MessageMode,
+        onBackPressed: () -> Unit,
+        onHeaderTitleClick: (Channel) -> Unit,
+        onChannelAvatarClick: () -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.messages.header.MessageListHeader(
+            channel = channel,
+            currentUser = currentUser,
+            connectionState = connectionState,
+            modifier = modifier,
+            typingUsers = typingUsers,
+            messageMode = messageMode,
+            onBackPressed = onBackPressed,
+            onHeaderTitleClick = onHeaderTitleClick,
+            onChannelAvatarClick = onChannelAvatarClick,
+        )
+    }
+
+    /**
+     * The default leading content of the message list header, which is the back button.
+     */
+    @Composable
+    public fun RowScope.MessageListHeaderLeadingContent(
+        onBackPressed: () -> Unit,
+    ) {
+        DefaultMessageListHeaderLeadingContent(onBackPressed = onBackPressed)
+    }
+
+    /**
+     * The default center content of the message list header.
+     * Usually shows the channel title in the top and
+     * the channel information or the connection status in the bottom.
+     */
+    @Suppress("LongParameterList")
+    @Composable
+    public fun RowScope.MessageListHeaderCenterContent(
+        modifier: Modifier,
+        channel: Channel,
+        currentUser: User?,
+        typingUsers: List<User>,
+        messageMode: MessageMode,
+        onHeaderTitleClick: (Channel) -> Unit,
+        connectionState: ConnectionState,
+    ) {
+        DefaultMessageListHeaderCenterContent(
+            modifier = modifier,
+            channel = channel,
+            currentUser = currentUser,
+            typingUsers = typingUsers,
+            messageMode = messageMode,
+            onHeaderTitleClick = onHeaderTitleClick,
+            connectionState = connectionState,
+        )
+    }
+
+    /**
+     * The default trailing content of the message list header, which is the channel avatar.
+     */
+    @Composable
+    public fun RowScope.MessageListHeaderTrailingContent(
+        channel: Channel,
+        currentUser: User?,
+        onClick: () -> Unit,
+    ) {
+        DefaultMessageListHeaderTrailingContent(
+            channel = channel,
+            currentUser = currentUser,
+            onClick = onClick,
+        )
+    }
+
+    /**
      * The default loading indicator of the message list,
      * when the initial message list is loading.
      */
@@ -491,7 +581,7 @@ public interface ChatComponentFactory {
      * The default thread date separator item content of the message list.
      */
     @Composable
-    public open fun LazyItemScope.MessageListThreadDateSeparatorItemContent(
+    public fun LazyItemScope.MessageListThreadDateSeparatorItemContent(
         threadDateSeparatorItem: ThreadDateSeparatorItemState,
     ) {
         DefaultMessageThreadSeparatorContent(threadSeparator = threadDateSeparatorItem)

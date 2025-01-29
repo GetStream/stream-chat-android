@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -88,8 +87,7 @@ public fun QuotedMessage(
                 indication = null,
                 onLongClick = { onLongItemClick(message) },
                 onClick = { onQuotedMessageClick(message) },
-            )
-            .testTag("Stream_QuotedMessage"),
+            ),
         verticalAlignment = Alignment.Bottom,
     ) {
         leadingContent(message)
@@ -144,8 +142,7 @@ internal fun DefaultQuotedMessageTrailingContent(
         Avatar(
             modifier = Modifier
                 .padding(start = 2.dp)
-                .size(24.dp)
-                .testTag("Stream_QuotedMessageAuthorAvatar"),
+                .size(24.dp),
             imageUrl = message.user.image,
             initials = message.user.initials,
             textStyle = ChatTheme.typography.captionBold,
