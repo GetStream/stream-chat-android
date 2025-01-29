@@ -57,6 +57,7 @@ public fun MessageReadStatusIcon(
     val isMessageRead = readCount != 0
 
     MessageReadStatusIcon(
+        modifier = modifier,
         message = message,
         isMessageRead = isMessageRead,
         readCount = readCount,
