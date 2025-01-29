@@ -25,6 +25,9 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserId
 
+/**
+ * Checks if the channel is an anonymous channel (without name).
+ */
 public fun Channel.isAnonymousChannel(): Boolean = id.isAnonymousChannelId()
 
 /**

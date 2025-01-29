@@ -42,6 +42,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
  * @param hasCommands Whether there are any commands available.
  * @param currentUser The currently logged in user.
  * @param recording The current recording state.
+ * @param pollsEnabled Indicator if polls are enabled for the current channel.
  */
 public data class MessageComposerState @JvmOverloads constructor(
     val inputValue: String = "",
@@ -58,4 +59,5 @@ public data class MessageComposerState @JvmOverloads constructor(
     val hasCommands: Boolean = false,
     val currentUser: User? = null,
     val recording: RecordingState = RecordingState.Idle,
+    val pollsEnabled: Boolean = false,
 )

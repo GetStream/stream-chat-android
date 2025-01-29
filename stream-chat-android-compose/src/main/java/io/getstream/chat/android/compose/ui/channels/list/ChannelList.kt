@@ -97,31 +97,31 @@ public fun ChannelList(
     onChannelLongClick: (Channel) -> Unit = remember(viewModel) { { viewModel.selectChannel(it) } },
     onSearchResultClick: (Message) -> Unit = {},
     loadingContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.channelList.LoadingIndicator(modifier = modifier)
+        ChatTheme.componentFactory.ChannelListLoadingIndicator(modifier = modifier)
     },
     emptyContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.channelList.EmptyContent(modifier = modifier)
+        ChatTheme.componentFactory.ChannelListEmptyContent(modifier = modifier)
     },
     emptySearchContent: @Composable (String) -> Unit = { searchQuery ->
-        ChatTheme.componentFactory.channelList.EmptySearchContent(
+        ChatTheme.componentFactory.ChannelListEmptySearchContent(
             searchQuery = searchQuery,
             modifier = modifier,
         )
     },
     helperContent: @Composable BoxScope.() -> Unit = {
-        with(ChatTheme.componentFactory.channelList) {
-            HelperContent()
+        with(ChatTheme.componentFactory) {
+            ChannelListHelperContent()
         }
     },
     loadingMoreContent: @Composable LazyItemScope.() -> Unit = {
-        with(ChatTheme.componentFactory.channelList) {
-            LoadingMoreItemContent()
+        with(ChatTheme.componentFactory) {
+            ChannelListLoadingMoreItemContent()
         }
     },
     channelContent: @Composable LazyItemScope.(ItemState.ChannelItemState) -> Unit = { itemState ->
         val user by viewModel.user.collectAsState()
-        with(ChatTheme.componentFactory.channelList) {
-            ChannelItemContent(
+        with(ChatTheme.componentFactory) {
+            ChannelListItemContent(
                 channelItem = itemState,
                 currentUser = user,
                 onChannelClick = onChannelClick,
@@ -131,8 +131,8 @@ public fun ChannelList(
     },
     searchResultContent: @Composable LazyItemScope.(ItemState.SearchResultItemState) -> Unit = { itemState ->
         val user by viewModel.user.collectAsState()
-        with(ChatTheme.componentFactory.channelList) {
-            SearchResultItemContent(
+        with(ChatTheme.componentFactory) {
+            ChannelListSearchResultItemContent(
                 searchResultItem = itemState,
                 currentUser = user,
                 onSearchResultClick = onSearchResultClick,
@@ -140,8 +140,8 @@ public fun ChannelList(
         }
     },
     divider: @Composable LazyItemScope.() -> Unit = {
-        with(ChatTheme.componentFactory.channelList) {
-            DividerItem()
+        with(ChatTheme.componentFactory) {
+            ChannelListDividerItem()
         }
     },
 ) {
@@ -215,30 +215,30 @@ public fun ChannelList(
     onChannelLongClick: (Channel) -> Unit = {},
     onSearchResultClick: (Message) -> Unit = {},
     loadingContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.channelList.LoadingIndicator(modifier = modifier)
+        ChatTheme.componentFactory.ChannelListLoadingIndicator(modifier = modifier)
     },
     emptyContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.channelList.EmptyContent(modifier = modifier)
+        ChatTheme.componentFactory.ChannelListEmptyContent(modifier = modifier)
     },
     emptySearchContent: @Composable (String) -> Unit = { searchQuery ->
-        ChatTheme.componentFactory.channelList.EmptySearchContent(
+        ChatTheme.componentFactory.ChannelListEmptySearchContent(
             searchQuery = searchQuery,
             modifier = modifier,
         )
     },
     helperContent: @Composable BoxScope.() -> Unit = {
-        with(ChatTheme.componentFactory.channelList) {
-            HelperContent()
+        with(ChatTheme.componentFactory) {
+            ChannelListHelperContent()
         }
     },
     loadingMoreContent: @Composable LazyItemScope.() -> Unit = {
-        with(ChatTheme.componentFactory.channelList) {
-            LoadingMoreItemContent()
+        with(ChatTheme.componentFactory) {
+            ChannelListLoadingMoreItemContent()
         }
     },
     channelContent: @Composable LazyItemScope.(ItemState.ChannelItemState) -> Unit = { channelItem ->
-        with(ChatTheme.componentFactory.channelList) {
-            ChannelItemContent(
+        with(ChatTheme.componentFactory) {
+            ChannelListItemContent(
                 channelItem = channelItem,
                 currentUser = currentUser,
                 onChannelClick = onChannelClick,
@@ -247,8 +247,8 @@ public fun ChannelList(
         }
     },
     searchResultContent: @Composable LazyItemScope.(ItemState.SearchResultItemState) -> Unit = { searchResultItem ->
-        with(ChatTheme.componentFactory.channelList) {
-            SearchResultItemContent(
+        with(ChatTheme.componentFactory) {
+            ChannelListSearchResultItemContent(
                 searchResultItem = searchResultItem,
                 currentUser = currentUser,
                 onSearchResultClick = onSearchResultClick,
@@ -256,8 +256,8 @@ public fun ChannelList(
         }
     },
     divider: @Composable LazyItemScope.() -> Unit = {
-        with(ChatTheme.componentFactory.channelList) {
-            DividerItem()
+        with(ChatTheme.componentFactory) {
+            ChannelListDividerItem()
         }
     },
 ) {

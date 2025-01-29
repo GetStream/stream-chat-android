@@ -293,9 +293,9 @@ public fun ChatTheme(
         contentColor = LocalContentColor.current,
         lightTheme = !isInDarkMode,
     ),
-    componentFactory: ChatComponentFactory = ChatComponentFactory(),
+    componentFactory: ChatComponentFactory = DefaultChatComponentFactory(),
     attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories(),
-    messageContentFactory: MessageContentFactory = MessageContentFactory(),
+    messageContentFactory: MessageContentFactory = MessageContentFactory.Deprecated,
     attachmentPreviewHandlers: List<AttachmentPreviewHandler> =
         AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
     quotedAttachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultQuotedFactories(),

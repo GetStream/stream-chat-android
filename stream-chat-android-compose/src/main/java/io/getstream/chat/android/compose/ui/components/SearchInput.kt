@@ -65,12 +65,12 @@ public fun SearchInput(
     modifier: Modifier = Modifier,
     onSearchStarted: () -> Unit = {},
     leadingIcon: @Composable RowScope.() -> Unit = {
-        with(ChatTheme.componentFactory.searchInput) {
-            LeadingIcon()
+        with(ChatTheme.componentFactory) {
+            SearchInputLeadingIcon()
         }
     },
     label: @Composable () -> Unit = {
-        ChatTheme.componentFactory.searchInput.Label()
+        ChatTheme.componentFactory.SearchInputLabel()
     },
 ) {
     var isFocused by remember { mutableStateOf(false) }

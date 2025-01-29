@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
@@ -41,6 +42,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.messages.MessagesScrollingOption
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.messages.list.HasMessageListItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
@@ -93,15 +95,21 @@ public fun Messages(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     helperContent: @Composable BoxScope.() -> Unit = {
-        DefaultMessagesHelperContent(
-            messagesState = messagesState,
-            messagesLazyListState = messagesLazyListState,
-            scrollToBottom = onScrollToBottom,
-        )
+        with(ChatTheme.componentFactory) {
+            MessageListHelperContent(
+                messageListState = messagesState,
+                messagesLazyListState = messagesLazyListState,
+                onScrollToBottomClick = onScrollToBottom,
+            )
+        }
     },
-    loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
+    loadingMoreContent: @Composable LazyItemScope.() -> Unit = {
+        with(ChatTheme.componentFactory) {
+            MessageListLoadingMoreItemContent()
+        }
+    },
     itemModifier: (index: Int, item: MessageListItemState) -> Modifier = { _, _ -> Modifier },
-    itemContent: @Composable (MessageListItemState) -> Unit,
+    itemContent: @Composable LazyItemScope.(MessageListItemState) -> Unit,
 ) {
     val lazyListState = messagesLazyListState.lazyListState
     val messages = messagesState.messageItems

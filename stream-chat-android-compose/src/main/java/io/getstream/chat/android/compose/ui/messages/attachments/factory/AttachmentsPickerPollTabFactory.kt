@@ -74,7 +74,8 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
         get() = Poll
 
     override fun isPickerTabEnabled(channel: Channel): Boolean =
-        channel.ownCapabilities.contains(ChannelCapabilities.SEND_POLL)
+        channel.config.pollsEnabled &&
+            channel.ownCapabilities.contains(ChannelCapabilities.SEND_POLL)
 
     /**
      * Emits a file icon for this tab.
