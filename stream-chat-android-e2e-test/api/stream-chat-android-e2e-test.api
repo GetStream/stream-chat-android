@@ -136,8 +136,8 @@ public final class io/getstream/chat/android/e2e/test/robots/BackendRobot {
 	public fun <init> ()V
 	public final fun failNewMessages ()Lio/getstream/chat/android/e2e/test/robots/BackendRobot;
 	public final fun freezeNewMessages ()Lio/getstream/chat/android/e2e/test/robots/BackendRobot;
-	public final fun generateChannels (III)Lio/getstream/chat/android/e2e/test/robots/BackendRobot;
-	public static synthetic fun generateChannels$default (Lio/getstream/chat/android/e2e/test/robots/BackendRobot;IIIILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/BackendRobot;
+	public final fun generateChannels (IIILjava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/e2e/test/robots/BackendRobot;
+	public static synthetic fun generateChannels$default (Lio/getstream/chat/android/e2e/test/robots/BackendRobot;IIILjava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/BackendRobot;
 }
 
 public final class io/getstream/chat/android/e2e/test/robots/ParticipantRobot {
@@ -150,16 +150,18 @@ public final class io/getstream/chat/android/e2e/test/robots/ParticipantRobot {
 	public final fun deleteReaction (Lio/getstream/chat/android/e2e/test/mockserver/ReactionType;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
 	public final fun editMessage (Ljava/lang/String;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
 	public final fun pinMesage ()Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
-	public final fun quoteMessage (Ljava/lang/String;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
-	public final fun quoteMessageInThread (Ljava/lang/String;Z)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
-	public static synthetic fun quoteMessageInThread$default (Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
-	public final fun quoteMessageWithAttachment (Lio/getstream/chat/android/e2e/test/mockserver/AttachmentType;I)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
-	public static synthetic fun quoteMessageWithAttachment$default (Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;Lio/getstream/chat/android/e2e/test/mockserver/AttachmentType;IILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
-	public final fun quoteMessageWithAttachmentInThread (Lio/getstream/chat/android/e2e/test/mockserver/AttachmentType;IZ)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
-	public static synthetic fun quoteMessageWithAttachmentInThread$default (Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;Lio/getstream/chat/android/e2e/test/mockserver/AttachmentType;IZILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
-	public final fun quoteMessageWithGiphy ()Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
-	public final fun quoteMessageWithGiphyInThread (Z)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
-	public static synthetic fun quoteMessageWithGiphyInThread$default (Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;ZILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
+	public final fun quoteMessage (Ljava/lang/String;Z)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
+	public static synthetic fun quoteMessage$default (Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
+	public final fun quoteMessageInThread (Ljava/lang/String;ZZ)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
+	public static synthetic fun quoteMessageInThread$default (Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;Ljava/lang/String;ZZILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
+	public final fun quoteMessageWithAttachment (Lio/getstream/chat/android/e2e/test/mockserver/AttachmentType;IZ)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
+	public static synthetic fun quoteMessageWithAttachment$default (Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;Lio/getstream/chat/android/e2e/test/mockserver/AttachmentType;IZILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
+	public final fun quoteMessageWithAttachmentInThread (Lio/getstream/chat/android/e2e/test/mockserver/AttachmentType;IZZ)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
+	public static synthetic fun quoteMessageWithAttachmentInThread$default (Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;Lio/getstream/chat/android/e2e/test/mockserver/AttachmentType;IZZILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
+	public final fun quoteMessageWithGiphy (Z)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
+	public static synthetic fun quoteMessageWithGiphy$default (Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;ZILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
+	public final fun quoteMessageWithGiphyInThread (ZZ)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
+	public static synthetic fun quoteMessageWithGiphyInThread$default (Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;ZZILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
 	public final fun readMessage (Ljava/lang/String;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
 	public static synthetic fun readMessage$default (Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
 	public final fun sendMessage (Ljava/lang/String;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;

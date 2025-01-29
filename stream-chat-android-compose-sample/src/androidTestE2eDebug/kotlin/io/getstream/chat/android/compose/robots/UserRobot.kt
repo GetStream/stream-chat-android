@@ -63,13 +63,21 @@ class UserRobot {
         return this
     }
 
+    fun waitForMessageListToLoad(): UserRobot {
+        MessageListPage.Composer.inputField.wait()
+        return this
+    }
+
     fun openChannel(channelCellIndex: Int = 0): UserRobot {
         ChannelListPage.ChannelList.channels.wait().findObjects()[channelCellIndex].click()
         return this
     }
 
     fun openContextMenu(messageCellIndex: Int = 0): UserRobot {
-        MessageList.messages.waitToAppear(withIndex = messageCellIndex).longPress()
+        MessageList.messages.waitToAppear()
+        val messages = MessageList.messages.findObjects()
+        val message = if (messages.size < messageCellIndex + 1) messages.last() else messages[messageCellIndex]
+        message.longPress()
         return this
     }
 
@@ -204,27 +212,27 @@ class UserRobot {
     }
 
     fun scrollChannelListDown(times: Int = 3): UserRobot {
-        device.swipeUp(times)
+        device.swipeUp(times = times)
         return this
     }
 
     fun scrollChannelListUp(times: Int = 3): UserRobot {
-        device.swipeDown(times)
+        device.swipeDown(times = times)
         return this
     }
 
     fun scrollMessageListDown(times: Int = 3): UserRobot {
-        scrollChannelListDown(times) // Reusing the channel list scroll
+        scrollChannelListDown(times = times) // Reusing the channel list scroll
         return this
     }
 
     fun scrollMessageListUp(times: Int = 3): UserRobot {
-        scrollChannelListUp(times) // Reusing the channel list scroll
+        scrollChannelListUp(times = times) // Reusing the channel list scroll
         return this
     }
 
     fun swipeMessage(messageCellIndex: Int = 0): UserRobot {
-        MessageList.messages.waitToAppear(withIndex = messageCellIndex).swipe(Direction.RIGHT, 50F)
+        MessageList.messages.waitToAppear(withIndex = messageCellIndex).swipe(Direction.RIGHT, 0.5f)
         return this
     }
 

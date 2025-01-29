@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -83,6 +84,7 @@ public fun Avatar(
     }
     StreamImage(
         modifier = modifier
+            .testTag("Stream_QuotedMessageAuthorAvatar")
             .clip(shape)
             .then(clickableModifier),
         data = { imageUrl.applyStreamCdnImageResizingIfEnabled(cdnImageResizing) },
