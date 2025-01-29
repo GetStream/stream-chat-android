@@ -32,8 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
-import io.getstream.chat.android.compose.ui.messages.composer.DefaultComposerLabel
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -64,7 +62,9 @@ public fun MessageInput(
     maxLines: Int = DefaultMessageInputMaxLines,
     keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
     label: @Composable (MessageComposerState) -> Unit = {
-        DefaultComposerLabel(ownCapabilities = messageComposerState.ownCapabilities)
+        with(ChatTheme.componentFactory) {
+            MessageComposerLabel(it)
+        }
     },
     innerLeadingContent: @Composable RowScope.() -> Unit = {},
     innerTrailingContent: @Composable RowScope.() -> Unit = {},
@@ -83,14 +83,13 @@ public fun MessageInput(
         decorationBox = { innerTextField ->
             Column {
                 if (activeAction is Reply) {
-                    QuotedMessage(
-                        modifier = Modifier.padding(horizontal = 4.dp),
-                        message = activeAction.message,
-                        currentUser = messageComposerState.currentUser,
-                        replyMessage = null,
-                        onLongItemClick = {},
-                        onQuotedMessageClick = {},
-                    )
+                    with(ChatTheme.componentFactory) {
+                        MessageComposerQuotedMessage(
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                            state = messageComposerState,
+                            quotedMessage = activeAction.message,
+                        )
+                    }
 
                     Spacer(modifier = Modifier.size(16.dp))
                 }

@@ -52,10 +52,12 @@ public fun CommandSuggestionList(
     modifier: Modifier = Modifier,
     onCommandSelected: (Command) -> Unit = {},
     itemContent: @Composable (Command) -> Unit = { command ->
-        DefaultCommandSuggestionItem(
-            command = command,
-            onCommandSelected = onCommandSelected,
-        )
+        with(ChatTheme.componentFactory) {
+            MessageComposerCommandSuggestionItem(
+                command = command,
+                onCommandSelected = onCommandSelected,
+            )
+        }
     },
 ) {
     SuggestionList(

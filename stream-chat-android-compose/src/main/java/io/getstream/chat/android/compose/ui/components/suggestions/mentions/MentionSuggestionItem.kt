@@ -57,13 +57,19 @@ public fun MentionSuggestionItem(
     onMentionSelected: (User) -> Unit,
     modifier: Modifier = Modifier,
     leadingContent: @Composable RowScope.(User) -> Unit = {
-        DefaultMentionSuggestionItemLeadingContent(user = it)
+        with(ChatTheme.componentFactory) {
+            MessageComposerMentionSuggestionItemLeadingContent(user = it)
+        }
     },
     centerContent: @Composable RowScope.(User) -> Unit = {
-        DefaultMentionSuggestionItemCenterContent(user = it)
+        with(ChatTheme.componentFactory) {
+            MessageComposerMentionSuggestionItemCenterContent(user = it)
+        }
     },
     trailingContent: @Composable RowScope.(User) -> Unit = {
-        DefaultMentionSuggestionItemTrailingContent()
+        with(ChatTheme.componentFactory) {
+            MessageComposerMentionSuggestionItemTrailingContent(user = it)
+        }
     },
 ) {
     Row(
