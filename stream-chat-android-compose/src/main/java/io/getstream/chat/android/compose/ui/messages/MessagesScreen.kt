@@ -325,7 +325,7 @@ internal fun DefaultTopBarContent(
     val user by listViewModel.user.collectAsState()
     val messageMode = listViewModel.messageMode
 
-    MessageListHeader(
+    ChatTheme.componentFactory.MessageListHeader(
         modifier = Modifier
             .height(56.dp),
         channel = listViewModel.channel,

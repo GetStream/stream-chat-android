@@ -75,6 +75,7 @@
 - Introduce `ChatComponentFactory` for easier channel components customization. Initially supporting channel stateless components. [#5571](https://github.com/GetStream/stream-chat-android/pull/5571)
 - Create snapshot tests for messages stateless components. [#5578](https://github.com/GetStream/stream-chat-android/pull/5578)
 - Create message stateless component factories and refactor to have a single component factory object. [#5593](https://github.com/GetStream/stream-chat-android/pull/5593)
+- Create message list header component factories. [#5599](https://github.com/GetStream/stream-chat-android/pull/5599)
 
 ### ✅ Added
 
