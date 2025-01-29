@@ -62,17 +62,3 @@ public fun MentionSuggestionList(
         }
     }
 }
-
-/**
- * The default mention suggestion item.
- */
-@Composable
-internal fun DefaultMentionSuggestionItem(
-    user: User,
-    onMentionSelected: (User) -> Unit,
-) {
-    MentionSuggestionItem(
-        user = user,
-        onMentionSelected = onMentionSelected,
-    )
-}

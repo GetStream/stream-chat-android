@@ -61,8 +61,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
-import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionList
-import io.getstream.chat.android.compose.ui.components.suggestions.mentions.MentionSuggestionList
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.AboveAnchorPopupPositionProvider
@@ -470,40 +468,6 @@ public fun DefaultMessageComposerFooterContent(
 }
 
 /**
- * Represents the default mention suggestion list popup shown above the message composer.
- *
- * @param mentionSuggestions The list of users that can be used to autocomplete the current mention input.
- * @param onMentionSelected Handler when the user taps on a mention suggestion item.
- */
-@Composable
-internal fun DefaultMentionPopupContent(
-    mentionSuggestions: List<User>,
-    onMentionSelected: (User) -> Unit,
-) {
-    MentionSuggestionList(
-        users = mentionSuggestions,
-        onMentionSelected = { onMentionSelected(it) },
-    )
-}
-
-/**
- * Represents the default command suggestion list popup shown above the message composer.
- *
- * @param commandSuggestions The list of available commands in the channel.
- * @param onCommandSelected Handler when the user taps on a command suggestion item.
- */
-@Composable
-internal fun DefaultCommandPopupContent(
-    commandSuggestions: List<Command>,
-    onCommandSelected: (Command) -> Unit,
-) {
-    CommandSuggestionList(
-        commands = commandSuggestions,
-        onCommandSelected = { onCommandSelected(it) },
-    )
-}
-
-/**
  * Composable that represents the message composer integrations (special actions).
  *
  * Currently just shows the Attachment picker action.
@@ -693,7 +657,7 @@ internal fun DefaultMessageComposerTrailingContent(
  * Default implementation of the "Attachments" button.
  */
 @Composable
-internal fun DefaultAttachmentsButton(
+internal fun AttachmentsButton(
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
@@ -724,7 +688,7 @@ internal fun DefaultAttachmentsButton(
  * Default implementation of the "Commands" button.
  */
 @Composable
-internal fun DefaultCommandsButton(
+internal fun CommandsButton(
     hasCommandSuggestions: Boolean,
     enabled: Boolean,
     onClick: () -> Unit,
@@ -759,7 +723,7 @@ internal fun DefaultCommandsButton(
  * Default implementation of the "Send" button.
  */
 @Composable
-internal fun DefaultSendButton(
+internal fun SendButton(
     enabled: Boolean,
     isInputValid: Boolean,
     onClick: () -> Unit,

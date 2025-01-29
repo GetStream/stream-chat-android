@@ -55,24 +55,24 @@ import io.getstream.chat.android.compose.ui.components.messages.OwnedMessageVisi
 import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.UploadingFooter
 import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
-import io.getstream.chat.android.compose.ui.components.suggestions.commands.DefaultCommandSuggestionItem
+import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionItem
+import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionList
 import io.getstream.chat.android.compose.ui.components.suggestions.commands.DefaultCommandSuggestionItemCenterContent
 import io.getstream.chat.android.compose.ui.components.suggestions.commands.DefaultCommandSuggestionItemLeadingContent
-import io.getstream.chat.android.compose.ui.components.suggestions.mentions.DefaultMentionSuggestionItem
 import io.getstream.chat.android.compose.ui.components.suggestions.mentions.DefaultMentionSuggestionItemCenterContent
 import io.getstream.chat.android.compose.ui.components.suggestions.mentions.DefaultMentionSuggestionItemLeadingContent
 import io.getstream.chat.android.compose.ui.components.suggestions.mentions.DefaultMentionSuggestionItemTrailingContent
-import io.getstream.chat.android.compose.ui.messages.composer.DefaultAttachmentsButton
-import io.getstream.chat.android.compose.ui.messages.composer.DefaultCommandPopupContent
-import io.getstream.chat.android.compose.ui.messages.composer.DefaultCommandsButton
+import io.getstream.chat.android.compose.ui.components.suggestions.mentions.MentionSuggestionItem
+import io.getstream.chat.android.compose.ui.components.suggestions.mentions.MentionSuggestionList
+import io.getstream.chat.android.compose.ui.messages.composer.AttachmentsButton
+import io.getstream.chat.android.compose.ui.messages.composer.CommandsButton
 import io.getstream.chat.android.compose.ui.messages.composer.DefaultComposerInputContent
 import io.getstream.chat.android.compose.ui.messages.composer.DefaultComposerIntegrations
 import io.getstream.chat.android.compose.ui.messages.composer.DefaultComposerLabel
-import io.getstream.chat.android.compose.ui.messages.composer.DefaultMentionPopupContent
 import io.getstream.chat.android.compose.ui.messages.composer.DefaultMessageComposerFooterContent
 import io.getstream.chat.android.compose.ui.messages.composer.DefaultMessageComposerHeaderContent
 import io.getstream.chat.android.compose.ui.messages.composer.DefaultMessageComposerTrailingContent
-import io.getstream.chat.android.compose.ui.messages.composer.DefaultSendButton
+import io.getstream.chat.android.compose.ui.messages.composer.SendButton
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultAudioRecordButton
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerRecordingContent
@@ -903,7 +903,7 @@ public interface ChatComponentFactory {
         mentionSuggestions: List<User>,
         onMentionSelected: (User) -> Unit,
     ) {
-        DefaultMentionPopupContent(mentionSuggestions, onMentionSelected)
+        MentionSuggestionList(users = mentionSuggestions, onMentionSelected = onMentionSelected)
     }
 
     /**
@@ -919,7 +919,7 @@ public interface ChatComponentFactory {
         user: User,
         onMentionSelected: (User) -> Unit,
     ) {
-        DefaultMentionSuggestionItem(user, onMentionSelected)
+        MentionSuggestionItem(user = user, onMentionSelected = onMentionSelected)
     }
 
     /**
@@ -971,7 +971,7 @@ public interface ChatComponentFactory {
         commandSuggestions: List<Command>,
         onCommandSelected: (Command) -> Unit,
     ) {
-        DefaultCommandPopupContent(commandSuggestions, onCommandSelected)
+        CommandSuggestionList(commands = commandSuggestions, onCommandSelected = onCommandSelected)
     }
 
     /**
@@ -987,7 +987,7 @@ public interface ChatComponentFactory {
         command: Command,
         onCommandSelected: (Command) -> Unit,
     ) {
-        DefaultCommandSuggestionItem(command, onCommandSelected)
+        CommandSuggestionItem(command, onCommandSelected = onCommandSelected)
     }
 
     /**
@@ -1048,7 +1048,7 @@ public interface ChatComponentFactory {
         enabled: Boolean,
         onClick: () -> Unit,
     ) {
-        DefaultAttachmentsButton(enabled, onClick)
+        AttachmentsButton(enabled, onClick)
     }
 
     /**
@@ -1066,7 +1066,7 @@ public interface ChatComponentFactory {
         enabled: Boolean,
         onClick: () -> Unit,
     ) {
-        DefaultCommandsButton(hasCommandSuggestions, enabled, onClick)
+        CommandsButton(hasCommandSuggestions, enabled, onClick)
     }
 
     /**
@@ -1175,7 +1175,7 @@ public interface ChatComponentFactory {
         isInputValid: Boolean,
         onClick: () -> Unit,
     ) {
-        DefaultSendButton(enabled, isInputValid, onClick)
+        SendButton(enabled, isInputValid, onClick)
     }
 
     /**

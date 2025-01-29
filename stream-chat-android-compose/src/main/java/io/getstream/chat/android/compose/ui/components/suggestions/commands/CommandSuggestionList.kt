@@ -99,17 +99,3 @@ public fun CommandSuggestionList(
         }
     }
 }
-
-/**
- * The default command suggestion item.
- *
- * @param command The given command.
- * @param onCommandSelected Handler when the command is selected.
- */
-@Composable
-internal fun DefaultCommandSuggestionItem(
-    command: Command,
-    onCommandSelected: (Command) -> Unit,
-) {
-    CommandSuggestionItem(command = command, onCommandSelected = onCommandSelected)
-}
