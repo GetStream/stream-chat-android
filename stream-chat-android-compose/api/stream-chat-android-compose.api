@@ -1014,7 +1014,7 @@ public final class io/getstream/chat/android/compose/ui/components/channels/Comp
 
 public final class io/getstream/chat/android/compose/ui/components/channels/MessageReadStatusIconKt {
 	public static final fun MessageReadStatusIcon (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
-	public static final fun MessageReadStatusIcon (Lio/getstream/chat/android/models/Message;ZLandroidx/compose/ui/Modifier;ILandroidx/compose/runtime/Composer;II)V
+	public static final fun MessageReadStatusIcon (Lio/getstream/chat/android/models/Message;ZLandroidx/compose/ui/Modifier;ILkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/channels/UnreadCountIndicatorKt {

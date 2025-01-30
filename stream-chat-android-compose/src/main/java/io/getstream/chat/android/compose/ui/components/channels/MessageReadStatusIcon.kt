@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.components.channels
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
@@ -77,48 +78,66 @@ public fun MessageReadStatusIcon(
     isMessageRead: Boolean,
     modifier: Modifier = Modifier,
     readCount: Int = 0,
+    isReadIcon: @Composable () -> Unit = { IsReadCount(modifier = modifier, readCount = readCount) },
+    isPendingIcon: @Composable () -> Unit = { IsPendingIcon(modifier = modifier) },
+    isSentIcon: @Composable () -> Unit = { IsSentIcon(modifier = modifier) },
 ) {
     val syncStatus = message.syncStatus
-
     when {
-        isMessageRead -> {
-            Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-                if (readCount > 1 && ChatTheme.readCountEnabled) {
-                    Text(
-                        text = readCount.toString(),
-                        modifier = Modifier
-                            .padding(horizontal = 2.dp)
-                            .testTag("Stream_MessageReadCount"),
-                        style = ChatTheme.typography.footnote,
-                        color = ChatTheme.colors.textLowEmphasis,
-                    )
-                }
+        isMessageRead -> isReadIcon()
 
-                Icon(
-                    modifier = Modifier.testTag("Stream_MessageReadStatus_isRead"),
-                    painter = painterResource(id = R.drawable.stream_compose_message_seen),
-                    contentDescription = null,
-                    tint = ChatTheme.colors.primaryAccent,
-                )
-            }
-        }
-        syncStatus == SyncStatus.SYNC_NEEDED || syncStatus == SyncStatus.AWAITING_ATTACHMENTS -> {
-            Icon(
-                modifier = modifier.testTag("Stream_MessageReadStatus_isPending"),
-                painter = painterResource(id = R.drawable.stream_compose_ic_clock),
-                contentDescription = null,
-                tint = ChatTheme.colors.textLowEmphasis,
-            )
-        }
-        syncStatus == SyncStatus.COMPLETED -> {
-            Icon(
-                modifier = modifier.testTag("Stream_MessageReadStatus_isSent"),
-                painter = painterResource(id = R.drawable.stream_compose_message_sent),
-                contentDescription = null,
-                tint = ChatTheme.colors.textLowEmphasis,
-            )
-        }
+        syncStatus == SyncStatus.SYNC_NEEDED ||
+            syncStatus == SyncStatus.AWAITING_ATTACHMENTS -> isPendingIcon()
+
+        syncStatus == SyncStatus.COMPLETED -> isSentIcon()
     }
+}
+
+@Composable
+private fun IsReadCount(
+    modifier: Modifier,
+    readCount: Int,
+) {
+    Row(
+        modifier = modifier.padding(horizontal = 2.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
+    ) {
+        if (readCount > 1 && ChatTheme.readCountEnabled) {
+            Text(
+                text = readCount.toString(),
+                modifier = Modifier.testTag("Stream_MessageReadCount"),
+                style = ChatTheme.typography.footnote,
+                color = ChatTheme.colors.textLowEmphasis,
+            )
+        }
+        Icon(
+            modifier = Modifier.testTag("Stream_MessageReadStatus_isRead"),
+            painter = painterResource(id = R.drawable.stream_compose_message_seen),
+            contentDescription = null,
+            tint = ChatTheme.colors.primaryAccent,
+        )
+    }
+}
+
+@Composable
+private fun IsPendingIcon(modifier: Modifier) {
+    Icon(
+        modifier = modifier.testTag("Stream_MessageReadStatus_isPending"),
+        painter = painterResource(id = R.drawable.stream_compose_ic_clock),
+        contentDescription = null,
+        tint = ChatTheme.colors.textLowEmphasis,
+    )
+}
+
+@Composable
+private fun IsSentIcon(modifier: Modifier) {
+    Icon(
+        modifier = modifier.testTag("Stream_MessageReadStatus_isSent"),
+        painter = painterResource(id = R.drawable.stream_compose_message_sent),
+        contentDescription = null,
+        tint = ChatTheme.colors.textLowEmphasis,
+    )
 }
 
 /**
