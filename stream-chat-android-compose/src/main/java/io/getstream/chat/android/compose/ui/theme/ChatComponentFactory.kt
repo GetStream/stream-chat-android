@@ -28,7 +28,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelHeaderLeadingContent
@@ -1387,32 +1386,18 @@ public interface ChatComponentFactory {
      * It renders the [Channel] avatar that's shown when browsing channels or when you open the messages screen.
      * Based on the state of the [Channel] and the number of members, it shows different types of images.
      */
-    @Suppress("LongParameterList")
     @Composable
     public fun ChannelAvatar(
         modifier: Modifier,
         channel: Channel,
         currentUser: User?,
-        textStyle: TextStyle,
-        shape: Shape,
-        contentDescription: String?,
-        showOnlineIndicator: Boolean,
-        onlineIndicatorAlignment: OnlineIndicatorAlignment,
-        onlineIndicator: @Composable (BoxScope.() -> Unit),
-        groupAvatarTextStyle: TextStyle,
         onClick: (() -> Unit)?,
     ) {
-        DefaultChannelAvatar(
+        io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar(
             modifier = modifier,
             channel = channel,
             currentUser = currentUser,
-            textStyle = textStyle,
-            shape = shape,
-            contentDescription = contentDescription,
-            showOnlineIndicator = showOnlineIndicator,
-            onlineIndicatorAlignment = onlineIndicatorAlignment,
-            onlineIndicator = onlineIndicator,
-            groupAvatarTextStyle = groupAvatarTextStyle,
+            contentDescription = channel.name,
             onClick = onClick,
         )
     }

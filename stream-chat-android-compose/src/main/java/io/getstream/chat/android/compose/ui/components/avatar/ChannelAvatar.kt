@@ -66,36 +66,6 @@ public fun ChannelAvatar(
     contentDescription: String? = null,
     onClick: (() -> Unit)? = null,
 ) {
-    ChatTheme.componentFactory.ChannelAvatar(
-        modifier = modifier,
-        channel = channel,
-        currentUser = currentUser,
-        textStyle = textStyle,
-        shape = shape,
-        contentDescription = contentDescription,
-        showOnlineIndicator = showOnlineIndicator,
-        onlineIndicatorAlignment = onlineIndicatorAlignment,
-        onlineIndicator = onlineIndicator,
-        groupAvatarTextStyle = groupAvatarTextStyle,
-        onClick = onClick,
-    )
-}
-
-@Suppress("LongParameterList")
-@Composable
-internal fun DefaultChannelAvatar(
-    modifier: Modifier,
-    channel: Channel,
-    currentUser: User?,
-    textStyle: TextStyle,
-    shape: Shape,
-    contentDescription: String?,
-    showOnlineIndicator: Boolean,
-    onlineIndicatorAlignment: OnlineIndicatorAlignment,
-    onlineIndicator: @Composable (BoxScope.() -> Unit),
-    groupAvatarTextStyle: TextStyle,
-    onClick: (() -> Unit)?,
-) {
     val members = channel.members
     val memberCount = members.size
 
