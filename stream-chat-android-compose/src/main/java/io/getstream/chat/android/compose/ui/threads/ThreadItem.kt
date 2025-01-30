@@ -85,16 +85,20 @@ public fun ThreadItem(
     onThreadClick: (Thread) -> Unit,
     modifier: Modifier = Modifier,
     titleContent: @Composable (Channel) -> Unit = { channel ->
-        DefaultThreadTitle(channel, currentUser)
+        ChatTheme.componentFactory.ThreadListItemTitle(thread, channel, currentUser)
     },
-    replyToContent: @Composable RowScope.(parentMessage: Message) -> Unit = { parentMessage ->
-        DefaultReplyToContent(parentMessage)
+    replyToContent: @Composable RowScope.(parentMessage: Message) -> Unit = {
+        with(ChatTheme.componentFactory) {
+            ThreadListItemReplyToContent(thread)
+        }
     },
     unreadCountContent: @Composable RowScope.(unreadCount: Int) -> Unit = { unreadCount ->
-        DefaultUnreadCountContent(unreadCount)
+        with(ChatTheme.componentFactory) {
+            ThreadListItemUnreadCountContent(unreadCount)
+        }
     },
-    latestReplyContent: @Composable (reply: Message) -> Unit = { reply ->
-        DefaultLatestReplyContent(reply)
+    latestReplyContent: @Composable (reply: Message) -> Unit = {
+        ChatTheme.componentFactory.ThreadListItemLatestReplyContent(thread)
     },
 ) {
     Column(
@@ -131,7 +135,7 @@ public fun ThreadItem(
  * @param currentUser The currently logged [User], used for formatting the message in the thread preview.
  */
 @Composable
-internal fun DefaultThreadTitle(
+internal fun ThreadItemTitle(
     channel: Channel,
     currentUser: User?,
 ) {
@@ -159,7 +163,7 @@ internal fun DefaultThreadTitle(
  * @param parentMessage The parent message of the thread.
  */
 @Composable
-internal fun RowScope.DefaultReplyToContent(parentMessage: Message) {
+internal fun RowScope.ThreadItemReplyToContent(parentMessage: Message) {
     val prefix = stringResource(id = R.string.stream_compose_replied_to)
     val text = formatMessage(parentMessage)
     Text(
@@ -179,7 +183,7 @@ internal fun RowScope.DefaultReplyToContent(parentMessage: Message) {
  * @param unreadCount The number of unread thread replies.
  */
 @Composable
-internal fun RowScope.DefaultUnreadCountContent(unreadCount: Int) {
+internal fun RowScope.ThreadItemUnreadCountContent(unreadCount: Int) {
     if (unreadCount > 0) {
         UnreadCountIndicator(
             unreadCount = unreadCount,
@@ -193,7 +197,7 @@ internal fun RowScope.DefaultUnreadCountContent(unreadCount: Int) {
  * @param reply The latest reply [Message] in the thread.
  */
 @Composable
-internal fun DefaultLatestReplyContent(reply: Message) {
+internal fun ThreadItemLatestReplyContent(reply: Message) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -311,7 +315,7 @@ private fun ThreadItemPreview() {
 private fun DefaultThreadTitlePreview() {
     ChatTheme {
         Surface {
-            DefaultThreadTitle(
+            ThreadItemTitle(
                 channel = Channel(
                     id = "messaging:123",
                     type = "messaging",
@@ -328,7 +332,7 @@ private fun DefaultThreadTitlePreview() {
 private fun DefaultUnreadCountContentPreview() {
     ChatTheme {
         Row {
-            DefaultUnreadCountContent(unreadCount = 17)
+            ThreadItemUnreadCountContent(unreadCount = 17)
         }
     }
 }
@@ -343,7 +347,7 @@ private fun ThreadParentMessageContentPreview() {
                 cid = "messaging:123",
                 text = "Hey everyone, who's up for a group ride this Saturday morning?",
             )
-            DefaultReplyToContent(parentMessage)
+            ThreadItemReplyToContent(parentMessage)
         }
     }
 }
