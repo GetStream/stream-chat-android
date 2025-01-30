@@ -143,7 +143,10 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
         color = ChatTheme.colors.textLowEmphasis,
     )
 
-    ChannelMembers(membersToDisplay)
+    ChannelMembers(
+        members = membersToDisplay,
+        currentUser = currentUser,
+    )
 }
 
 /**
