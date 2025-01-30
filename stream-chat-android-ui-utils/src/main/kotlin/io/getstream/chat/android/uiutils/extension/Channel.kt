@@ -135,6 +135,8 @@ public fun Channel.getMembersStatusText(
                 memberCount,
             )
 
+            val watcherCount = watchers.count { user -> user.id != currentUser?.id }
+
             return if (watcherCount > 0) {
                 context.getString(
                     memberCountWithOnlineResId,

@@ -2267,10 +2267,11 @@ public interface ChatComponentFactory {
      * Used in the [ThreadListItem] to display the latest reply in the thread.
      *
      * @param thread The thread to display.
+     * @param currentUser The currently logged-in user.
      */
     @Composable
-    public fun ThreadListItemLatestReplyContent(thread: Thread) {
-        ThreadItemLatestReplyContent(thread)
+    public fun ThreadListItemLatestReplyContent(thread: Thread, currentUser: User?) {
+        ThreadItemLatestReplyContent(thread, currentUser)
     }
 
     /**
