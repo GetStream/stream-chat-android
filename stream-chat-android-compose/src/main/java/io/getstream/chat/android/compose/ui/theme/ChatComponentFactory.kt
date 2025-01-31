@@ -42,6 +42,7 @@ import io.getstream.chat.android.compose.ui.channels.list.DefaultSearchResultIte
 import io.getstream.chat.android.compose.ui.components.DefaultSearchLabel
 import io.getstream.chat.android.compose.ui.components.DefaultSearchLeadingIcon
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
+import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageDeletedContent
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageGiphyContent
@@ -884,6 +885,24 @@ public interface ChatComponentFactory {
         messageItem: MessageItemState,
     ) {
         MessageFooter(messageItem = messageItem)
+    }
+
+    /**
+     * The default status indicator of the message footer, weather the message is sent, pending or read.
+     */
+    @Composable
+    public fun MessageFooterStatusIndicator(
+        modifier: Modifier,
+        message: Message,
+        isMessageRead: Boolean,
+        readCount: Int,
+    ) {
+        MessageReadStatusIcon(
+            modifier = modifier,
+            message = message,
+            isMessageRead = isMessageRead,
+            readCount = readCount,
+        )
     }
 
     /**
