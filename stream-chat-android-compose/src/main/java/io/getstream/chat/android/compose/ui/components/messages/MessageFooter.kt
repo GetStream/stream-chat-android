@@ -36,7 +36,6 @@ import io.getstream.chat.android.client.utils.message.belongsToThread
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.DateFormatType
 import io.getstream.chat.android.compose.ui.components.Timestamp
-import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.core.utils.date.truncateFuture
 import io.getstream.chat.android.models.Message
@@ -95,9 +94,9 @@ public fun MessageFooter(
                         color = ChatTheme.colors.textLowEmphasis,
                     )
                 } else {
-                    MessageReadStatusIcon(
+                    ChatTheme.componentFactory.MessageFooterStatusIndicator(
                         modifier = Modifier.padding(end = 4.dp),
-                        message = messageItem.message,
+                        message = message,
                         isMessageRead = messageItem.isMessageRead,
                         readCount = messageItem.messageReadBy.size,
                     )
