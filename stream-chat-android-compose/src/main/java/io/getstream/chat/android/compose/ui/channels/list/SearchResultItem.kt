@@ -65,21 +65,19 @@ public fun SearchResultItem(
     onSearchResultClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
     leadingContent: @Composable RowScope.(ItemState.SearchResultItemState) -> Unit = {
-        DefaultSearchResultItemLeadingContent(
-            searchResultItemState = it,
-            currentUser = currentUser,
-        )
+        with(ChatTheme.componentFactory) {
+            SearchResultItemLeadingContent(it, currentUser)
+        }
     },
     centerContent: @Composable RowScope.(ItemState.SearchResultItemState) -> Unit = {
-        DefaultSearchResultItemCenterContent(
-            searchResultItemState = it,
-            currentUser = currentUser,
-        )
+        with(ChatTheme.componentFactory) {
+            SearchResultItemCenterContent(it, currentUser)
+        }
     },
     trailingContent: @Composable RowScope.(ItemState.SearchResultItemState) -> Unit = {
-        DefaultSearchResultItemTrailingContent(
-            searchResultItemState = it,
-        )
+        with(ChatTheme.componentFactory) {
+            SearchResultItemTrailingContent(it)
+        }
     },
 ) {
     Column(

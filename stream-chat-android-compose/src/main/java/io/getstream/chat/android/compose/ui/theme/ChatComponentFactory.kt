@@ -29,7 +29,7 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryP
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelHeaderLeadingContent
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderCenterContent
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderTrailingContent
-import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelItem
+import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
 import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelItemCenterContent
 import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelItemDivider
 import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelItemLeadingContent
@@ -38,10 +38,14 @@ import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelListEmpt
 import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelListLoadingIndicator
 import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelSearchEmptyContent
 import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelsLoadingMoreIndicator
-import io.getstream.chat.android.compose.ui.channels.list.DefaultSearchResultItem
+import io.getstream.chat.android.compose.ui.channels.list.DefaultSearchResultItemCenterContent
+import io.getstream.chat.android.compose.ui.channels.list.DefaultSearchResultItemLeadingContent
+import io.getstream.chat.android.compose.ui.channels.list.DefaultSearchResultItemTrailingContent
+import io.getstream.chat.android.compose.ui.channels.list.SearchResultItem
 import io.getstream.chat.android.compose.ui.components.DefaultSearchLabel
 import io.getstream.chat.android.compose.ui.components.DefaultSearchLeadingIcon
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
+import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageDeletedContent
@@ -227,41 +231,11 @@ public interface ChatComponentFactory {
         onChannelClick: (Channel) -> Unit,
         onChannelLongClick: (Channel) -> Unit,
     ) {
-        DefaultChannelItem(
+        ChannelItem(
             channelItem = channelItem,
             currentUser = currentUser,
             onChannelClick = onChannelClick,
             onChannelLongClick = onChannelLongClick,
-        )
-    }
-
-    /**
-     * The default search result item of the channel list.
-     */
-    @Composable
-    public fun LazyItemScope.ChannelListSearchResultItemContent(
-        searchResultItem: ItemState.SearchResultItemState,
-        currentUser: User?,
-        onSearchResultClick: (Message) -> Unit,
-    ) {
-        DefaultSearchResultItem(
-            searchResultItemState = searchResultItem,
-            currentUser = currentUser,
-            onSearchResultClick = onSearchResultClick,
-        )
-    }
-
-    /**
-     * The default empty search content of the channel list, when there are no matching search results.
-     */
-    @Composable
-    public fun ChannelListEmptySearchContent(
-        modifier: Modifier,
-        searchQuery: String,
-    ) {
-        DefaultChannelSearchEmptyContent(
-            modifier = modifier,
-            searchQuery = searchQuery,
         )
     }
 
@@ -335,7 +309,32 @@ public interface ChatComponentFactory {
     }
 
     /**
+     * The default search input of the channel list.
+     *
+     * @param modifier Modifier for styling.
+     * @param query Current query string.
+     * @param onSearchStarted Action invoked when the search starts.
+     * @param onValueChange Action invoked when the query value changes.
+     */
+    @Composable
+    public fun ChannelListSearchInput(
+        modifier: Modifier,
+        query: String,
+        onSearchStarted: () -> Unit,
+        onValueChange: (String) -> Unit,
+    ) {
+        SearchInput(
+            modifier = modifier,
+            query = query,
+            onSearchStarted = onSearchStarted,
+            onValueChange = onValueChange,
+        )
+    }
+
+    /**
      * The default leading icon of the search input.
+     *
+     * Used by [ChannelListSearchInput].
      */
     @Composable
     public fun RowScope.SearchInputLeadingIcon() {
@@ -344,10 +343,87 @@ public interface ChatComponentFactory {
 
     /**
      * The default label of the search input.
+     *
+     * Used by [ChannelListSearchInput].
      */
     @Composable
     public fun SearchInputLabel() {
         DefaultSearchLabel()
+    }
+
+    /**
+     * The default empty search content of the channel list, when there are no matching search results.
+     */
+    @Composable
+    public fun ChannelListEmptySearchContent(
+        modifier: Modifier,
+        searchQuery: String,
+    ) {
+        DefaultChannelSearchEmptyContent(
+            modifier = modifier,
+            searchQuery = searchQuery,
+        )
+    }
+
+    /**
+     * The default search result item of the channel list.
+     */
+    @Composable
+    public fun LazyItemScope.SearchResultItemContent(
+        searchResultItem: ItemState.SearchResultItemState,
+        currentUser: User?,
+        onSearchResultClick: (Message) -> Unit,
+    ) {
+        SearchResultItem(
+            searchResultItemState = searchResultItem,
+            currentUser = currentUser,
+            onSearchResultClick = onSearchResultClick,
+        )
+    }
+
+    /**
+     * The default leading content of a search result item. Shows the avatar of the user who sent the message.
+     *
+     * Used by [SearchResultItemContent].
+     *
+     * @param searchResultItem The search result item.
+     * @param currentUser The currently logged in user.
+     */
+    @Composable
+    public fun RowScope.SearchResultItemLeadingContent(
+        searchResultItem: ItemState.SearchResultItemState,
+        currentUser: User?,
+    ) {
+        DefaultSearchResultItemLeadingContent(searchResultItem, currentUser)
+    }
+
+    /**
+     * The default center content of a search result item. Shows information about the message and by who and where
+     * it was sent.
+     *
+     * Used by [SearchResultItemContent].
+     *
+     * @param searchResultItem The state of the search result item.
+     * @param currentUser The currently logged in user.
+     */
+    @Composable
+    public fun RowScope.SearchResultItemCenterContent(
+        searchResultItem: ItemState.SearchResultItemState,
+        currentUser: User?,
+    ) {
+        DefaultSearchResultItemCenterContent(searchResultItem, currentUser)
+    }
+
+    /**
+     * The default trailing content of a search result item. Shows the message timestamp.
+     *
+     * Used by [SearchResultItemContent].
+     *
+     * @param searchResultItem The state of the search result item.
+     */
+    @Composable
+    public fun RowScope.SearchResultItemTrailingContent(searchResultItem: ItemState.SearchResultItemState) {
+        DefaultSearchResultItemTrailingContent(searchResultItem)
     }
 
     /**

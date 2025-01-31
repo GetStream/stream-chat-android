@@ -18,7 +18,6 @@ package io.getstream.chat.android.compose.ui.channels
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.AnimationConstants
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -50,7 +49,6 @@ import io.getstream.chat.android.compose.state.channels.list.SearchQuery
 import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
 import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
-import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
@@ -84,7 +82,6 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
  * @param onViewChannelInfoAction Handler for when the user selects the [ViewInfo] option for a [Channel].
  * @param onBackPressed Handler for back press action.
  */
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 @Suppress("LongMethod")
 public fun ChannelsScreen(
@@ -146,7 +143,7 @@ public fun ChannelsScreen(
                     .background(color = ChatTheme.colors.appBackground),
             ) {
                 if (searchMode != SearchMode.None) {
-                    SearchInput(
+                    ChatTheme.componentFactory.ChannelListSearchInput(
                         modifier = Modifier
                             .testTag("Stream_SearchInput")
                             .padding(horizontal = 12.dp, vertical = 8.dp)
@@ -257,8 +254,22 @@ public fun ChannelsScreen(
     }
 }
 
+/**
+ * The types of search modes in the channel screen.
+ */
 public enum class SearchMode {
+    /**
+     * No search mode.
+     */
     None,
+
+    /**
+     * Search for channels.
+     */
     Channels,
+
+    /**
+     * Search for messages.
+     */
     Messages,
 }
