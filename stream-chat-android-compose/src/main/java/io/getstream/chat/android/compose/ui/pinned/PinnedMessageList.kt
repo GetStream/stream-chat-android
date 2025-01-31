@@ -88,19 +88,19 @@ public fun PinnedMessageList(
     currentUser: User? = ChatClient.instance().getCurrentUser(),
     onPinnedMessageClick: (Message) -> Unit = {},
     itemContent: @Composable (Message) -> Unit = {
-        DefaultPinnedMessageItem(it, currentUser, onPinnedMessageClick)
+        ChatTheme.componentFactory.PinnedMessageListItem(it, currentUser, onPinnedMessageClick)
     },
     itemDivider: @Composable (Int) -> Unit = {
-        DefaultPinnedMessageItemDivider()
+        ChatTheme.componentFactory.PinnedMessageListItemDivider()
     },
     emptyContent: @Composable () -> Unit = {
-        DefaultPinnedMessageListEmptyContent(modifier)
+        ChatTheme.componentFactory.PinnedMessageListEmptyContent(modifier)
     },
     loadingContent: @Composable () -> Unit = {
-        DefaultPinnedMessageListLoadingContent(modifier)
+        ChatTheme.componentFactory.PinnedMessageListLoadingContent(modifier)
     },
     loadingMoreContent: @Composable () -> Unit = {
-        DefaultPinnedMessageListLoadingMoreContent()
+        ChatTheme.componentFactory.PinnedMessageListLoadingMoreContent()
     },
 ) {
     val state by viewModel.state.collectAsState()
@@ -187,30 +187,10 @@ private fun PinnedMessages(
 }
 
 /**
- * The default item rendering a pinned message.
- *
- * @param message The [Message] to render.
- * @param currentUser The currently logged in [User].
- * @param onPinnedMessageClick The action invoked when the user clicks on the item.
- */
-@Composable
-internal fun DefaultPinnedMessageItem(
-    message: Message,
-    currentUser: User?,
-    onPinnedMessageClick: (Message) -> Unit,
-) {
-    PinnedMessageItem(
-        message = message,
-        currentUser = currentUser,
-        onPinnedMessageClick = onPinnedMessageClick,
-    )
-}
-
-/**
  * The default divider appended after each pinned message.
  */
 @Composable
-internal fun DefaultPinnedMessageItemDivider() {
+internal fun DefaultPinnedMessageListItemDivider() {
     Spacer(
         modifier = Modifier
             .fillMaxWidth()
@@ -297,7 +277,7 @@ private const val LoadMoreThreshold = 10
 
 @Composable
 @Preview
-private fun DefaultPinnedMessageContentPreview() {
+private fun PinnedMessageItemPreview() {
     ChatTheme {
         Surface {
             val message = Message(
@@ -309,7 +289,7 @@ private fun DefaultPinnedMessageContentPreview() {
                     name = "Test User",
                 ),
             )
-            DefaultPinnedMessageItem(
+            PinnedMessageItem(
                 message = message,
                 currentUser = null,
                 onPinnedMessageClick = {},
