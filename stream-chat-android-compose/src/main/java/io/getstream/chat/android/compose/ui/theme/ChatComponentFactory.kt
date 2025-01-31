@@ -1348,50 +1348,6 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default user avatar content.
-     * It renders the [User] avatar that's shown on the messages screen or in headers of direct messages.
-     * Based on the state of the [User], it either shows an image or their initials.
-     */
-    @Composable
-    public fun UserAvatar(
-        modifier: Modifier,
-        user: User,
-        textStyle: TextStyle,
-        showOnlineIndicator: Boolean,
-        onClick: (() -> Unit)?,
-    ) {
-        io.getstream.chat.android.compose.ui.components.avatar.UserAvatar(
-            modifier = modifier,
-            user = user,
-            textStyle = textStyle,
-            contentDescription = user.name,
-            showOnlineIndicator = showOnlineIndicator,
-            onClick = onClick,
-        )
-    }
-
-    /**
-     * The default avatar for a channel.
-     * It renders the [Channel] avatar that's shown when browsing channels or when you open the messages screen.
-     * Based on the state of the [Channel] and the number of members, it shows different types of images.
-     */
-    @Composable
-    public fun ChannelAvatar(
-        modifier: Modifier,
-        channel: Channel,
-        currentUser: User?,
-        onClick: (() -> Unit)?,
-    ) {
-        io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar(
-            modifier = modifier,
-            channel = channel,
-            currentUser = currentUser,
-            contentDescription = channel.name,
-            onClick = onClick,
-        )
-    }
-
-    /**
      * The default avatar, which renders an image from the provided image URL.
      * In case the image URL is empty or there is an error loading the image,
      * it falls back to an image with initials.
@@ -1416,6 +1372,71 @@ public interface ChatComponentFactory {
             textStyle = textStyle,
             initialsAvatarOffset = initialsAvatarOffset,
             contentDescription = contentDescription,
+            onClick = onClick,
+        )
+    }
+
+    /**
+     * The default user avatar content.
+     * It renders the [User] avatar that's shown on the messages screen or in headers of direct messages.
+     * If [showOnlineIndicator] is `true` and the user is online, it uses [Avatar] to shows an image or their initials.
+     */
+    @Composable
+    public fun UserAvatar(
+        modifier: Modifier,
+        user: User,
+        textStyle: TextStyle,
+        showOnlineIndicator: Boolean,
+        onClick: (() -> Unit)?,
+    ) {
+        io.getstream.chat.android.compose.ui.components.avatar.UserAvatar(
+            modifier = modifier,
+            user = user,
+            textStyle = textStyle,
+            contentDescription = user.name,
+            showOnlineIndicator = showOnlineIndicator,
+            onClick = onClick,
+        )
+    }
+
+    /**
+     * The default group avatar, which renders a matrix of user images or initials.
+     */
+    @Composable
+    public fun GroupAvatar(
+        modifier: Modifier,
+        users: List<User>,
+        shape: Shape,
+        textStyle: TextStyle,
+        onClick: (() -> Unit)?,
+    ) {
+        io.getstream.chat.android.compose.ui.components.avatar.GroupAvatar(
+            modifier = modifier,
+            users = users,
+            shape = shape,
+            textStyle = textStyle,
+            onClick = onClick,
+        )
+    }
+
+    /**
+     * The default avatar for a channel.
+     * It renders the [Channel] avatar that's shown when browsing channels or when you open the messages screen.
+     * Based on the state of the [Channel] and the number of members,
+     * it might use [Avatar], [UserAvatar], or [GroupAvatar] to show different types of images.
+     */
+    @Composable
+    public fun ChannelAvatar(
+        modifier: Modifier,
+        channel: Channel,
+        currentUser: User?,
+        onClick: (() -> Unit)?,
+    ) {
+        io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar(
+            modifier = modifier,
+            channel = channel,
+            currentUser = currentUser,
+            contentDescription = channel.name,
             onClick = onClick,
         )
     }

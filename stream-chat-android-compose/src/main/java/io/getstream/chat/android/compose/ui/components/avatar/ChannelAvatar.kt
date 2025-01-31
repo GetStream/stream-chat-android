@@ -122,7 +122,7 @@ public fun ChannelAvatar(
         else -> {
             val users = members.filter { it.user.id != currentUser?.id }.map { it.user }
 
-            GroupAvatar(
+            ChatTheme.componentFactory.GroupAvatar(
                 users = users,
                 modifier = modifier.testTag("Stream_ChannelAvatar"),
                 shape = shape,
