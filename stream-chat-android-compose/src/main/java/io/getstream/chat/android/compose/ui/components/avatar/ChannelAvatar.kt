@@ -91,14 +91,11 @@ public fun ChannelAvatar(
         memberCount == 1 -> {
             val user = members.first().user
 
-            UserAvatar(
+            ChatTheme.componentFactory.UserAvatar(
                 modifier = modifier.testTag("Stream_ChannelAvatar"),
                 user = user,
-                shape = shape,
-                contentDescription = user.name,
+                textStyle = ChatTheme.typography.title3Bold,
                 showOnlineIndicator = showOnlineIndicator,
-                onlineIndicatorAlignment = onlineIndicatorAlignment,
-                onlineIndicator = onlineIndicator,
                 onClick = onClick,
             )
         }
@@ -109,14 +106,11 @@ public fun ChannelAvatar(
         memberCount == 2 && members.any { it.user.id == currentUser?.id } -> {
             val user = members.first { it.user.id != currentUser?.id }.user
 
-            UserAvatar(
+            ChatTheme.componentFactory.UserAvatar(
                 modifier = modifier.testTag("Stream_ChannelAvatar"),
                 user = user,
-                shape = shape,
-                contentDescription = user.name,
+                textStyle = ChatTheme.typography.title3Bold,
                 showOnlineIndicator = showOnlineIndicator,
-                onlineIndicatorAlignment = onlineIndicatorAlignment,
-                onlineIndicator = onlineIndicator,
                 onClick = onClick,
             )
         }

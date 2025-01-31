@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
-import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -123,7 +122,7 @@ internal fun DefaultSearchResultItemLeadingContent(
             ?: searchResultItemState.message.user
         )
         .let { user ->
-            UserAvatar(
+            ChatTheme.componentFactory.UserAvatar(
                 user = user,
                 modifier = Modifier
                     .padding(
@@ -133,6 +132,9 @@ internal fun DefaultSearchResultItemLeadingContent(
                         bottom = ChatTheme.dimens.channelItemVerticalPadding,
                     )
                     .size(ChatTheme.dimens.channelAvatarSize),
+                textStyle = ChatTheme.typography.title3Bold,
+                showOnlineIndicator = true,
+                onClick = null,
             )
         }
 }

@@ -59,13 +59,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
+import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.components.composer.InputField
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
+import io.getstream.chat.android.ui.common.utils.extensions.initials
 
 @Suppress("LongMethod", "MagicNumber")
 @Composable
@@ -214,10 +215,10 @@ internal fun PollAnswersItem(
         Row(verticalAlignment = Alignment.CenterVertically) {
             val user = answer.user?.takeIf { showAvatar }
             if (user != null) {
-                UserAvatar(
+                Avatar(
                     modifier = Modifier.size(20.dp),
-                    user = user,
-                    showOnlineIndicator = false,
+                    imageUrl = user.image,
+                    initials = user.initials,
                 )
 
                 Text(

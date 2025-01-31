@@ -37,6 +37,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.extensions.internal.getAvatarPositionOffset
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewUserData
+import io.getstream.chat.android.ui.common.utils.extensions.initials
 
 /**
  * Default max number of avatars shown in the grid.
@@ -80,15 +81,16 @@ public fun GroupAvatar(
                 .fillMaxHeight(),
         ) {
             for (imageIndex in 0 until imageCount step 2) {
+                val user = avatarUsers[imageIndex]
                 if (imageIndex < imageCount) {
-                    UserAvatar(
+                    Avatar(
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxSize(),
-                        user = avatarUsers[imageIndex],
+                        imageUrl = user.image,
+                        initials = user.initials,
                         shape = RectangleShape,
                         textStyle = textStyle,
-                        showOnlineIndicator = false,
                         initialsAvatarOffset = getAvatarPositionOffset(
                             dimens = ChatTheme.dimens,
                             userPosition = imageIndex,
@@ -105,15 +107,16 @@ public fun GroupAvatar(
                 .fillMaxHeight(),
         ) {
             for (imageIndex in 1 until imageCount step 2) {
+                val user = avatarUsers[imageIndex]
                 if (imageIndex < imageCount) {
-                    UserAvatar(
+                    Avatar(
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxSize(),
-                        user = avatarUsers[imageIndex],
+                        imageUrl = user.image,
+                        initials = user.initials,
                         shape = RectangleShape,
                         textStyle = textStyle,
-                        showOnlineIndicator = false,
                         initialsAvatarOffset = getAvatarPositionOffset(
                             dimens = ChatTheme.dimens,
                             userPosition = imageIndex,

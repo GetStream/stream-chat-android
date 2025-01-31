@@ -37,9 +37,11 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.previewdata.PreviewUserReactionData
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
-import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
+import io.getstream.chat.android.compose.ui.components.avatar.Avatar
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.state.messages.list.isStartAlignment
+import io.getstream.chat.android.ui.common.utils.extensions.initials
 
 /**
  * Represent a reaction item with the user who left it.
@@ -63,10 +65,10 @@ public fun UserReactionItem(
         val alignment = if (isStartAlignment) Alignment.BottomStart else Alignment.BottomEnd
 
         Box(modifier = Modifier.width(64.dp)) {
-            UserAvatar(
-                user = user,
-                showOnlineIndicator = false,
+            Avatar(
                 modifier = Modifier.size(ChatTheme.dimens.userReactionItemAvatarSize),
+                imageUrl = user.image,
+                initials = user.initials,
             )
 
             Image(
@@ -96,10 +98,10 @@ public fun UserReactionItem(
 /**
  * Preview of the [UserReactionItem] component with a reaction left by the current user.
  */
-@Preview
+@Preview(showBackground = true)
 @Composable
 public fun CurrentUserReactionItemPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         UserReactionItem(item = PreviewUserReactionData.user1Reaction())
     }
 }
@@ -107,10 +109,10 @@ public fun CurrentUserReactionItemPreview() {
 /**
  * Preview of the [UserReactionItem] component with a reaction left by another user.
  */
-@Preview
+@Preview(showBackground = true)
 @Composable
 public fun OtherUserReactionItemPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         UserReactionItem(item = PreviewUserReactionData.user2Reaction())
     }
 }

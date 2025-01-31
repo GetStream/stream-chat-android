@@ -1353,30 +1353,20 @@ public interface ChatComponentFactory {
      * It renders the [User] avatar that's shown on the messages screen or in headers of direct messages.
      * Based on the state of the [User], it either shows an image or their initials.
      */
-    @Suppress("LongParameterList")
     @Composable
     public fun UserAvatar(
         modifier: Modifier,
         user: User,
-        shape: Shape,
         textStyle: TextStyle,
-        contentDescription: String?,
-        placeholderPainter: Painter?,
-        initialsAvatarOffset: DpOffset,
         showOnlineIndicator: Boolean,
-        onlineIndicator: @Composable BoxScope.() -> Unit,
         onClick: (() -> Unit)?,
     ) {
-        DefaultUserAvatar(
+        io.getstream.chat.android.compose.ui.components.avatar.UserAvatar(
             modifier = modifier,
             user = user,
-            shape = shape,
             textStyle = textStyle,
-            contentDescription = contentDescription,
-            placeholderPainter = placeholderPainter,
-            initialsAvatarOffset = initialsAvatarOffset,
+            contentDescription = user.name,
             showOnlineIndicator = showOnlineIndicator,
-            onlineIndicator = onlineIndicator,
             onClick = onClick,
         )
     }
@@ -1420,7 +1410,7 @@ public interface ChatComponentFactory {
         contentDescription: String?,
         onClick: (() -> Unit)?,
     ) {
-        DefaultAvatar(
+        io.getstream.chat.android.compose.ui.components.avatar.Avatar(
             modifier = modifier,
             imageUrl = imageUrl,
             initials = initials,

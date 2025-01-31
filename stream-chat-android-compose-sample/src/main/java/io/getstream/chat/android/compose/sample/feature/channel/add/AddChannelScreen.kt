@@ -57,7 +57,6 @@ import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.feature.channel.add.component.SearchUserResultsContent
 import io.getstream.chat.android.compose.sample.feature.channel.add.component.SearchUserTextField
 import io.getstream.chat.android.compose.sample.ui.component.AppToolbar
-import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -283,10 +282,12 @@ private fun SelectedUserChip(
         colors = SuggestionChipDefaults.suggestionChipColors(containerColor = ChatTheme.colors.appBackground),
         shape = RoundedCornerShape(16.dp),
         icon = {
-            UserAvatar(
+            ChatTheme.componentFactory.UserAvatar(
                 modifier = Modifier.size(24.dp),
                 textStyle = ChatTheme.typography.title3Bold.copy(fontSize = 12.sp),
                 user = user,
+                showOnlineIndicator = true,
+                onClick = null,
             )
         },
         border = null,

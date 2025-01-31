@@ -61,7 +61,7 @@ import io.getstream.chat.android.client.utils.message.isPoll
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
-import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
+import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.components.messages.MessageBubble
 import io.getstream.chat.android.compose.ui.components.messages.MessageContent
 import io.getstream.chat.android.compose.ui.components.messages.MessageHeaderLabel
@@ -84,6 +84,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
+import io.getstream.chat.android.ui.common.utils.extensions.initials
 
 /**
  * The default message container for all messages in the Conversation/Messages screen.
@@ -306,11 +307,11 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
                 messageItem.groupPosition.contains(MessagePosition.NONE)
             )
     ) {
-        UserAvatar(
+        Avatar(
             modifier = modifier.testTag("Stream_UserAvatar"),
-            user = messageItem.message.user,
+            imageUrl = messageItem.message.user.image,
+            initials = messageItem.message.user.initials,
             textStyle = ChatTheme.typography.captionBold,
-            showOnlineIndicator = false,
             onClick = onUserAvatarClick,
         )
     } else {

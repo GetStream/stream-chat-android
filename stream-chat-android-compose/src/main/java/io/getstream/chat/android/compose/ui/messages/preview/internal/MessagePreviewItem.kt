@@ -37,7 +37,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.ui.components.Timestamp
-import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -102,7 +101,7 @@ internal fun MessagePreviewItem(
  */
 @Composable
 internal fun DefaultMessagePreviewItemLeadingContent(message: Message) {
-    UserAvatar(
+    ChatTheme.componentFactory.UserAvatar(
         user = message.user,
         modifier = Modifier
             .padding(
@@ -112,6 +111,9 @@ internal fun DefaultMessagePreviewItemLeadingContent(message: Message) {
                 bottom = ChatTheme.dimens.channelItemVerticalPadding,
             )
             .size(ChatTheme.dimens.channelAvatarSize),
+        textStyle = ChatTheme.typography.title3Bold,
+        showOnlineIndicator = true,
+        onClick = null,
     )
 }
 

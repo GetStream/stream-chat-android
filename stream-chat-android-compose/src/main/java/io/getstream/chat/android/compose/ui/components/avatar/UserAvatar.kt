@@ -67,34 +67,6 @@ public fun UserAvatar(
     },
     onClick: (() -> Unit)? = null,
 ) {
-    ChatTheme.componentFactory.UserAvatar(
-        modifier = modifier,
-        user = user,
-        textStyle = textStyle,
-        shape = shape,
-        contentDescription = contentDescription,
-        placeholderPainter = placeholderPainter,
-        initialsAvatarOffset = initialsAvatarOffset,
-        showOnlineIndicator = showOnlineIndicator,
-        onlineIndicator = onlineIndicator,
-        onClick = onClick,
-    )
-}
-
-@Suppress("LongParameterList")
-@Composable
-internal fun DefaultUserAvatar(
-    modifier: Modifier,
-    user: User,
-    textStyle: TextStyle,
-    shape: Shape,
-    contentDescription: String?,
-    placeholderPainter: Painter?,
-    initialsAvatarOffset: DpOffset,
-    showOnlineIndicator: Boolean,
-    onlineIndicator: @Composable (BoxScope.() -> Unit),
-    onClick: (() -> Unit)?,
-) {
     Box(modifier = modifier) {
         Avatar(
             modifier = Modifier.fillMaxSize(),

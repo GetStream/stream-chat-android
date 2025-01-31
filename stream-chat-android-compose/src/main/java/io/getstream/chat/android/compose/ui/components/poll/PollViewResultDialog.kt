@@ -53,13 +53,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
+import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
+import io.getstream.chat.android.ui.common.utils.extensions.initials
 
 /**
  * A dialog that should be shown if a user taps the seeing result of the votes.
@@ -203,10 +204,10 @@ private fun PollVoteItem(vote: Vote) {
     ) {
         val user = vote.user
         if (user != null) {
-            UserAvatar(
+            Avatar(
                 modifier = Modifier.size(20.dp),
-                user = user,
-                showOnlineIndicator = false,
+                imageUrl = user.image,
+                initials = user.initials,
             )
 
             Text(
