@@ -101,7 +101,7 @@ public object PreviewMessageData {
 
     public val messageWithMention: Message = Message(
         id = "message-with-mention",
-        text = "@André Mion adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        text = "@André Rêgo adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         createdAt = Date(),
         type = MessageType.REGULAR,
         mentionedUsers = listOf(PreviewUserData.user7),
