@@ -52,6 +52,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.utils.message.belongsToThread
 import io.getstream.chat.android.client.utils.message.isDeleted
@@ -61,7 +62,6 @@ import io.getstream.chat.android.client.utils.message.isPoll
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
-import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.components.messages.MessageBubble
 import io.getstream.chat.android.compose.ui.components.messages.MessageContent
 import io.getstream.chat.android.compose.ui.components.messages.MessageHeaderLabel
@@ -307,11 +307,14 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
                 messageItem.groupPosition.contains(MessagePosition.NONE)
             )
     ) {
-        Avatar(
+        ChatTheme.componentFactory.Avatar(
             modifier = modifier.testTag("Stream_UserAvatar"),
             imageUrl = messageItem.message.user.image,
             initials = messageItem.message.user.initials,
+            shape = ChatTheme.shapes.avatar,
             textStyle = ChatTheme.typography.captionBold,
+            initialsAvatarOffset = DpOffset.Zero,
+            contentDescription = messageItem.message.user.name,
             onClick = onUserAvatarClick,
         )
     } else {

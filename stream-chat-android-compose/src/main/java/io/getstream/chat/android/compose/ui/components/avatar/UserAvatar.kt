@@ -68,7 +68,7 @@ public fun UserAvatar(
     onClick: (() -> Unit)? = null,
 ) {
     Box(modifier = modifier) {
-        Avatar(
+        ChatTheme.componentFactory.Avatar(
             modifier = Modifier.fillMaxSize(),
             imageUrl = user.image,
             initials = user.initials,
@@ -76,7 +76,6 @@ public fun UserAvatar(
             shape = shape,
             contentDescription = contentDescription,
             onClick = onClick,
-            placeholderPainter = placeholderPainter,
             initialsAvatarOffset = initialsAvatarOffset,
         )
 

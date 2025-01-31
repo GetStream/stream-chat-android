@@ -24,11 +24,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import io.getstream.chat.android.compose.state.messages.MessageAlignment
-import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.utils.extensions.initials
@@ -79,7 +79,7 @@ public fun ThreadParticipants(
                 index + 1
             }.toFloat()
 
-            Avatar(
+            ChatTheme.componentFactory.Avatar(
                 modifier = itemPadding
                     .zIndex(itemPosition)
                     .size(itemSize)
@@ -87,7 +87,11 @@ public fun ThreadParticipants(
                     .testTag("Stream_ThreadParticipantAvatar"),
                 imageUrl = user.image,
                 initials = user.initials,
+                shape = ChatTheme.shapes.avatar,
                 textStyle = ChatTheme.typography.captionBold.copy(fontSize = 7.sp),
+                initialsAvatarOffset = DpOffset.Zero,
+                contentDescription = user.name,
+                onClick = null,
             )
         }
     }

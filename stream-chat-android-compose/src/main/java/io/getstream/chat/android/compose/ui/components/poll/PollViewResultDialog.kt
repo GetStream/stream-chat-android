@@ -49,11 +49,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
@@ -204,10 +204,15 @@ private fun PollVoteItem(vote: Vote) {
     ) {
         val user = vote.user
         if (user != null) {
-            Avatar(
+            ChatTheme.componentFactory.Avatar(
                 modifier = Modifier.size(20.dp),
                 imageUrl = user.image,
                 initials = user.initials,
+                shape = ChatTheme.shapes.avatar,
+                textStyle = ChatTheme.typography.title3Bold,
+                initialsAvatarOffset = DpOffset.Zero,
+                contentDescription = user.name,
+                onClick = null,
             )
 
             Text(

@@ -83,7 +83,7 @@ public fun GroupAvatar(
             for (imageIndex in 0 until imageCount step 2) {
                 val user = avatarUsers[imageIndex]
                 if (imageIndex < imageCount) {
-                    Avatar(
+                    ChatTheme.componentFactory.Avatar(
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxSize(),
@@ -96,6 +96,8 @@ public fun GroupAvatar(
                             userPosition = imageIndex,
                             memberCount = imageCount,
                         ),
+                        contentDescription = null,
+                        onClick = null,
                     )
                 }
             }
@@ -109,7 +111,7 @@ public fun GroupAvatar(
             for (imageIndex in 1 until imageCount step 2) {
                 val user = avatarUsers[imageIndex]
                 if (imageIndex < imageCount) {
-                    Avatar(
+                    ChatTheme.componentFactory.Avatar(
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxSize(),
@@ -122,6 +124,8 @@ public fun GroupAvatar(
                             userPosition = imageIndex,
                             memberCount = imageCount,
                         ),
+                        contentDescription = null,
+                        onClick = null,
                     )
                 }
             }

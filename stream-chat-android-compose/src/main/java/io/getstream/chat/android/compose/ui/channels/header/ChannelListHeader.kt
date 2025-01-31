@@ -37,10 +37,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
-import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.User
@@ -138,10 +138,14 @@ internal fun DefaultChannelHeaderLeadingContent(
     val size = Modifier.size(ChatTheme.dimens.channelAvatarSize)
 
     if (currentUser != null) {
-        Avatar(
+        ChatTheme.componentFactory.Avatar(
             modifier = size.testTag("Stream_UserAvatar"),
             imageUrl = currentUser.image,
             initials = currentUser.initials,
+            shape = ChatTheme.shapes.avatar,
+            textStyle = ChatTheme.typography.title3Bold,
+            initialsAvatarOffset = DpOffset.Zero,
+            contentDescription = currentUser.name,
             onClick = { onAvatarClick(currentUser) },
         )
     } else {
@@ -174,6 +178,7 @@ internal fun RowScope.DefaultChannelListHeaderCenterContent(
                 color = ChatTheme.colors.textHighEmphasis,
             )
         }
+
         is ConnectionState.Connecting -> NetworkLoadingIndicator(modifier = Modifier.weight(1f))
         is ConnectionState.Offline -> {
             Text(

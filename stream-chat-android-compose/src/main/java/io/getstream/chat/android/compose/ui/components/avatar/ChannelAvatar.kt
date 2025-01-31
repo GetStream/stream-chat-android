@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -74,13 +75,14 @@ public fun ChannelAvatar(
          * If the channel has an image we load that as a priority.
          */
         channel.image.isNotEmpty() -> {
-            Avatar(
+            ChatTheme.componentFactory.Avatar(
                 modifier = modifier.testTag("Stream_ChannelAvatar"),
                 imageUrl = channel.image,
                 initials = channel.initials,
                 textStyle = textStyle,
                 shape = shape,
-                contentDescription = contentDescription,
+                initialsAvatarOffset = DpOffset.Zero,
+                contentDescription = contentDescription ?: channel.name,
                 onClick = onClick,
             )
         }

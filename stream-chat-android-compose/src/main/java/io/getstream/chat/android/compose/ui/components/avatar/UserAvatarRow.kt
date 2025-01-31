@@ -73,7 +73,7 @@ public fun UserAvatarRow(
         horizontalArrangement = Arrangement.spacedBy((-offset).dp),
     ) {
         users.take(maxAvatarCount).forEachIndexed { index, user ->
-            Avatar(
+            ChatTheme.componentFactory.Avatar(
                 modifier = Modifier
                     .size(size)
                     .zIndex((users.size - index).toFloat()),

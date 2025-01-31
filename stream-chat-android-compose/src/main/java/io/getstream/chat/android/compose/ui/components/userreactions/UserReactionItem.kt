@@ -33,11 +33,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.previewdata.PreviewUserReactionData
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
-import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.state.messages.list.isStartAlignment
@@ -65,10 +65,15 @@ public fun UserReactionItem(
         val alignment = if (isStartAlignment) Alignment.BottomStart else Alignment.BottomEnd
 
         Box(modifier = Modifier.width(64.dp)) {
-            Avatar(
+            ChatTheme.componentFactory.Avatar(
                 modifier = Modifier.size(ChatTheme.dimens.userReactionItemAvatarSize),
                 imageUrl = user.image,
                 initials = user.initials,
+                shape = ChatTheme.shapes.avatar,
+                textStyle = ChatTheme.typography.title3Bold,
+                initialsAvatarOffset = DpOffset.Zero,
+                contentDescription = user.name,
+                onClick = null,
             )
 
             Image(

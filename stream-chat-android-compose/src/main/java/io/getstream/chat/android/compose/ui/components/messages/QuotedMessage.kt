@@ -27,8 +27,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -111,13 +111,17 @@ internal fun DefaultQuotedMessageLeadingContent(
     currentUser: User?,
 ) {
     if (!message.isMine(currentUser)) {
-        Avatar(
+        ChatTheme.componentFactory.Avatar(
             modifier = Modifier
                 .padding(start = 2.dp)
                 .size(24.dp),
             imageUrl = message.user.image,
             initials = message.user.initials,
+            shape = ChatTheme.shapes.avatar,
             textStyle = ChatTheme.typography.captionBold,
+            initialsAvatarOffset = DpOffset.Zero,
+            contentDescription = message.user.name,
+            onClick = null,
         )
 
         Spacer(modifier = Modifier.size(8.dp))
@@ -139,13 +143,17 @@ internal fun DefaultQuotedMessageTrailingContent(
     if (message.isMine(currentUser)) {
         Spacer(modifier = Modifier.size(8.dp))
 
-        Avatar(
+        ChatTheme.componentFactory.Avatar(
             modifier = Modifier
                 .padding(start = 2.dp)
                 .size(24.dp),
             imageUrl = message.user.image,
             initials = message.user.initials,
+            shape = ChatTheme.shapes.avatar,
             textStyle = ChatTheme.typography.captionBold,
+            initialsAvatarOffset = DpOffset.Zero,
+            contentDescription = message.user.name,
+            onClick = null,
         )
     }
 }
