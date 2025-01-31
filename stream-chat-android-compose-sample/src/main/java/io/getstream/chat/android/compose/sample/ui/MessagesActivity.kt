@@ -62,7 +62,6 @@ import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoActivity
-import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponentFactory
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptionItemVisibility
@@ -151,7 +150,6 @@ class MessagesActivity : BaseConnectedActivity() {
             autoTranslationEnabled = ChatApp.autoTranslationEnabled,
             isComposerLinkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
             allowUIAutomationTest = true,
-            componentFactory = CustomChatComponentFactory(),
             messageComposerTheme = messageComposerTheme.let {
                 it.copy(
                     attachmentCancelIcon = it.attachmentCancelIcon.copy(
