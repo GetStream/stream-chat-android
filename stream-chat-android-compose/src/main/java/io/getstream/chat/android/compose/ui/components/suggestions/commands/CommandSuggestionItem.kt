@@ -57,10 +57,14 @@ public fun CommandSuggestionItem(
     modifier: Modifier = Modifier,
     onCommandSelected: (Command) -> Unit = {},
     leadingContent: @Composable RowScope.(Command) -> Unit = {
-        DefaultCommandSuggestionItemLeadingContent()
+        with(ChatTheme.componentFactory) {
+            MessageComposerCommandSuggestionItemLeadingContent(command = it)
+        }
     },
     centerContent: @Composable RowScope.(Command) -> Unit = {
-        DefaultCommandSuggestionItemCenterContent(command = it)
+        with(ChatTheme.componentFactory) {
+            MessageComposerCommandSuggestionItemCenterContent(command = it, modifier = Modifier)
+        }
     },
 ) {
     Row(
