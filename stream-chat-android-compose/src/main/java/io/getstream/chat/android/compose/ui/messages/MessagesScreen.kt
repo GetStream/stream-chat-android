@@ -74,8 +74,8 @@ import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedR
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
-import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
+import io.getstream.chat.android.compose.ui.messages.list.MessagesVerticalArrangement
 import io.getstream.chat.android.compose.ui.messages.list.ThreadMessagesStart
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
@@ -129,10 +129,12 @@ import io.getstream.chat.android.ui.common.state.messages.updateMessage
  * @param skipEnrichUrl If new messages being sent, or existing ones being updated should skip enriching the URL.
  * If URL is not enriched, it will not be displayed as a link attachment. False by default.
  * @param showAnonymousAvatar If the user avatar should be shown on comments for polls with anonymous voting visibility.
+ * @param verticalArrangement Vertical arrangement of the regular message list.
+ * Default: [MessagesVerticalArrangement.Top].
  * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
+ * Default: [ThreadMessagesStart.BOTTOM].
  * @param topBarContent custom top bar content to be displayed on top of the messages list.
  * @param bottomBarContent custom bottom bar content to be displayed at the bottom of the messages list.
- * Default: [ThreadMessagesStart.BOTTOM].
  */
 @Suppress("LongMethod")
 @Composable
@@ -151,6 +153,7 @@ public fun MessagesScreen(
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
     showAnonymousAvatar: Boolean = false,
+    verticalArrangement: MessagesVerticalArrangement = MessagesVerticalArrangement.Top,
     threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
     topBarContent: @Composable (BackAction) -> Unit = {
         DefaultTopBarContent(
@@ -238,6 +241,7 @@ public fun MessagesScreen(
                 messageContentFactory = messageContentFactory,
                 reactionSorting = reactionSorting,
                 messagesLazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),
+                verticalArrangement = verticalArrangement,
                 threadMessagesStart = threadMessagesStart,
                 onThreadClick = remember(composerViewModel, listViewModel) {
                     {

@@ -15,6 +15,7 @@ rootProject.extra.apply {
 
 apply(from = "$rootDir/scripts/publish-module.gradle")
 apply(from = "$rootDir/scripts/android.gradle")
+apply(from = "$rootDir/scripts/detekt-compose.gradle")
 
 android {
     namespace = "io.getstream.chat.android.ai.assistant"
