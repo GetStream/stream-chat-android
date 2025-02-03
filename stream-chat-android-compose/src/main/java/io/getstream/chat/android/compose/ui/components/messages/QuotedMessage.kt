@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.DpOffset
@@ -83,7 +84,7 @@ public fun QuotedMessage(
     Row(
         modifier = modifier
             .combinedClickable(
-                interactionSource = MutableInteractionSource(),
+                interactionSource = remember { MutableInteractionSource() },
                 indication = null,
                 onLongClick = { onLongItemClick(message) },
                 onClick = { onQuotedMessageClick(message) },

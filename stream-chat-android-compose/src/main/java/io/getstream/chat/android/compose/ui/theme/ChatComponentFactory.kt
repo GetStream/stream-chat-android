@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.ui.theme
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -27,7 +26,6 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.DpOffset
-import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelHeaderLeadingContent
@@ -881,24 +879,24 @@ public interface ChatComponentFactory {
      * The default quoted message content.
      * Usually shows only the sender avatar, text and a single attachment preview.
      */
+    @Suppress("LongParameterList")
     @Composable
     public fun MessageQuotedContent(
+        modifier: Modifier,
         message: Message,
         currentUser: User?,
+        replyMessage: Message,
         onLongItemClick: (Message) -> Unit,
         onQuotedMessageClick: (Message) -> Unit,
     ) {
-        val quotedMessage = message.replyTo
-        if (quotedMessage != null) {
-            QuotedMessage(
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                message = quotedMessage,
-                currentUser = currentUser,
-                replyMessage = message,
-                onLongItemClick = { onLongItemClick(message) },
-                onQuotedMessageClick = onQuotedMessageClick,
-            )
-        }
+        QuotedMessage(
+            modifier = modifier,
+            message = message,
+            currentUser = currentUser,
+            replyMessage = replyMessage,
+            onLongItemClick = onLongItemClick,
+            onQuotedMessageClick = onQuotedMessageClick,
+        )
     }
 
     /**
