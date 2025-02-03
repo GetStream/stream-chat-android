@@ -41,7 +41,7 @@ public fun MentionSuggestionList(
     modifier: Modifier = Modifier,
     onMentionSelected: (User) -> Unit = {},
     itemContent: @Composable (User) -> Unit = { user ->
-        DefaultMentionSuggestionItem(
+        ChatTheme.componentFactory.MessageComposerMentionSuggestionItem(
             user = user,
             onMentionSelected = onMentionSelected,
         )
@@ -61,18 +61,4 @@ public fun MentionSuggestionList(
             }
         }
     }
-}
-
-/**
- * The default mention suggestion item.
- */
-@Composable
-internal fun DefaultMentionSuggestionItem(
-    user: User,
-    onMentionSelected: (User) -> Unit,
-) {
-    MentionSuggestionItem(
-        user = user,
-        onMentionSelected = onMentionSelected,
-    )
 }
