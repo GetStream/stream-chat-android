@@ -996,9 +996,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun ThreadListItemLatestReplyContent(thread: Thread) {
-        thread.latestReplies.lastOrNull()?.let { reply ->
-            ThreadItemLatestReplyContent(reply)
-        }
+        ThreadItemLatestReplyContent(thread)
     }
 
     /**

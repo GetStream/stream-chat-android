@@ -194,10 +194,11 @@ internal fun RowScope.ThreadItemUnreadCountContent(unreadCount: Int) {
 /**
  * Default representation of the latest reply content in a thread.
  *
- * @param reply The latest reply [Message] in the thread.
+ * @param thread The thread to display.
  */
 @Composable
-internal fun ThreadItemLatestReplyContent(reply: Message) {
+internal fun ThreadItemLatestReplyContent(thread: Thread) {
+    val reply = thread.latestReplies.lastOrNull() ?: return
     Row(
         modifier = Modifier
             .fillMaxWidth()
