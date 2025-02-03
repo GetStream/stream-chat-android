@@ -81,6 +81,7 @@ public fun UserAvatarRow(
                 initials = user.initials,
                 shape = shape,
                 textStyle = textStyle,
+                placeholderPainter = null,
                 contentDescription = contentDescription,
                 initialsAvatarOffset = initialsAvatarOffset,
                 onClick = onClick,

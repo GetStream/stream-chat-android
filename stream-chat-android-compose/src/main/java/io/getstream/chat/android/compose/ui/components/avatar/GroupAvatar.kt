@@ -91,12 +91,13 @@ public fun GroupAvatar(
                         initials = user.initials,
                         shape = RectangleShape,
                         textStyle = textStyle,
+                        placeholderPainter = null,
+                        contentDescription = null,
                         initialsAvatarOffset = getAvatarPositionOffset(
                             dimens = ChatTheme.dimens,
                             userPosition = imageIndex,
                             memberCount = imageCount,
                         ),
-                        contentDescription = null,
                         onClick = null,
                     )
                 }
@@ -119,12 +120,13 @@ public fun GroupAvatar(
                         initials = user.initials,
                         shape = RectangleShape,
                         textStyle = textStyle,
+                        placeholderPainter = null,
+                        contentDescription = null,
                         initialsAvatarOffset = getAvatarPositionOffset(
                             dimens = ChatTheme.dimens,
                             userPosition = imageIndex,
                             memberCount = imageCount,
                         ),
-                        contentDescription = null,
                         onClick = null,
                     )
                 }

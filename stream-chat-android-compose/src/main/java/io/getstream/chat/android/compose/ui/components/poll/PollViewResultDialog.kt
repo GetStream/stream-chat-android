@@ -210,8 +210,9 @@ private fun PollVoteItem(vote: Vote) {
                 initials = user.initials,
                 shape = ChatTheme.shapes.avatar,
                 textStyle = ChatTheme.typography.title3Bold,
-                initialsAvatarOffset = DpOffset.Zero,
+                placeholderPainter = null,
                 contentDescription = user.name,
+                initialsAvatarOffset = DpOffset.Zero,
                 onClick = null,
             )
 

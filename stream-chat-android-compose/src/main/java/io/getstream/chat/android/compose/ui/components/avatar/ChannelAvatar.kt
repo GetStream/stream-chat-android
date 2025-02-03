@@ -81,8 +81,9 @@ public fun ChannelAvatar(
                 initials = channel.initials,
                 textStyle = textStyle,
                 shape = shape,
-                initialsAvatarOffset = DpOffset.Zero,
+                placeholderPainter = null,
                 contentDescription = contentDescription ?: channel.name,
+                initialsAvatarOffset = DpOffset.Zero,
                 onClick = onClick,
             )
         }

@@ -313,8 +313,9 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
             initials = messageItem.message.user.initials,
             shape = ChatTheme.shapes.avatar,
             textStyle = ChatTheme.typography.captionBold,
-            initialsAvatarOffset = DpOffset.Zero,
+            placeholderPainter = null,
             contentDescription = messageItem.message.user.name,
+            initialsAvatarOffset = DpOffset.Zero,
             onClick = onUserAvatarClick,
         )
     } else {

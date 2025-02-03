@@ -24,6 +24,7 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -1360,8 +1361,9 @@ public interface ChatComponentFactory {
         initials: String,
         shape: Shape,
         textStyle: TextStyle,
-        initialsAvatarOffset: DpOffset,
+        placeholderPainter: Painter?,
         contentDescription: String?,
+        initialsAvatarOffset: DpOffset,
         onClick: (() -> Unit)?,
     ) {
         io.getstream.chat.android.compose.ui.components.avatar.Avatar(
@@ -1370,8 +1372,9 @@ public interface ChatComponentFactory {
             initials = initials,
             shape = shape,
             textStyle = textStyle,
-            initialsAvatarOffset = initialsAvatarOffset,
+            placeholderPainter = placeholderPainter,
             contentDescription = contentDescription,
+            initialsAvatarOffset = initialsAvatarOffset,
             onClick = onClick,
         )
     }

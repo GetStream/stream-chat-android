@@ -119,8 +119,9 @@ internal fun DefaultQuotedMessageLeadingContent(
             initials = message.user.initials,
             shape = ChatTheme.shapes.avatar,
             textStyle = ChatTheme.typography.captionBold,
-            initialsAvatarOffset = DpOffset.Zero,
+            placeholderPainter = null,
             contentDescription = message.user.name,
+            initialsAvatarOffset = DpOffset.Zero,
             onClick = null,
         )
 
@@ -151,8 +152,9 @@ internal fun DefaultQuotedMessageTrailingContent(
             initials = message.user.initials,
             shape = ChatTheme.shapes.avatar,
             textStyle = ChatTheme.typography.captionBold,
-            initialsAvatarOffset = DpOffset.Zero,
+            placeholderPainter = null,
             contentDescription = message.user.name,
+            initialsAvatarOffset = DpOffset.Zero,
             onClick = null,
         )
     }
