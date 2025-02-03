@@ -2140,6 +2140,12 @@ public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatC
 	public abstract fun MessageTextContent (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun SearchInputLabel (Landroidx/compose/runtime/Composer;I)V
 	public abstract fun SearchInputLeadingIcon (Landroidx/compose/foundation/layout/RowScope;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun SelectedChannelMenuCenterContent (Landroidx/compose/foundation/layout/ColumnScope;Ljava/util/List;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun SelectedChannelMenuHeaderContent (Landroidx/compose/foundation/layout/ColumnScope;Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun SelectedMessageMenuCenterContent (Landroidx/compose/foundation/layout/ColumnScope;Ljava/util/List;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun SelectedMessageMenuHeaderContent (Landroidx/compose/foundation/layout/ColumnScope;Lio/getstream/chat/android/models/Message;Ljava/util/Set;Ljava/util/Map;ILkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun SelectedReactionsMenuCenterContent (Landroidx/compose/foundation/layout/ColumnScope;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun SelectedReactionsMenuHeaderContent (Landroidx/compose/foundation/layout/ColumnScope;Lio/getstream/chat/android/models/Message;Ljava/util/Set;Ljava/util/Map;ILkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/ChatComponentFactory$DefaultImpls {
@@ -2191,6 +2197,12 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatComponentFacto
 	public static fun MessageTextContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
 	public static fun SearchInputLabel (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/runtime/Composer;I)V
 	public static fun SearchInputLeadingIcon (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/RowScope;Landroidx/compose/runtime/Composer;I)V
+	public static fun SelectedChannelMenuCenterContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/ColumnScope;Ljava/util/List;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+	public static fun SelectedChannelMenuHeaderContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/ColumnScope;Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
+	public static fun SelectedMessageMenuCenterContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/ColumnScope;Ljava/util/List;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+	public static fun SelectedMessageMenuHeaderContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/ColumnScope;Lio/getstream/chat/android/models/Message;Ljava/util/Set;Ljava/util/Map;ILkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
+	public static fun SelectedReactionsMenuCenterContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/ColumnScope;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
+	public static fun SelectedReactionsMenuHeaderContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/ColumnScope;Lio/getstream/chat/android/models/Message;Ljava/util/Set;Ljava/util/Map;ILkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/ChatTheme {

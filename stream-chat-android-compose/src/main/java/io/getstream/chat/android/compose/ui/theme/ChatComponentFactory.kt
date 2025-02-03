@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.theme
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
@@ -24,11 +25,15 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.state.channels.list.ChannelOptionState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
+import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelHeaderLeadingContent
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderCenterContent
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderTrailingContent
+import io.getstream.chat.android.compose.ui.channels.info.DefaultSelectedChannelMenuCenterContent
+import io.getstream.chat.android.compose.ui.channels.info.DefaultSelectedChannelMenuHeaderContent
 import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelItem
 import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelItemCenterContent
 import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelItemDivider
@@ -53,6 +58,10 @@ import io.getstream.chat.android.compose.ui.components.messages.OwnedMessageVisi
 import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.UploadingFooter
 import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
+import io.getstream.chat.android.compose.ui.components.selectedmessage.DefaultSelectedMessageMenuHeaderContent
+import io.getstream.chat.android.compose.ui.components.selectedmessage.DefaultSelectedMessageOptions
+import io.getstream.chat.android.compose.ui.components.selectedmessage.DefaultSelectedReactionsCenterContent
+import io.getstream.chat.android.compose.ui.components.selectedmessage.DefaultSelectedReactionsHeaderContent
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderCenterContent
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderLeadingContent
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderTrailingContent
@@ -73,6 +82,7 @@ import io.getstream.chat.android.compose.ui.messages.list.DefaultMessagesHelperC
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessagesLoadingMoreIndicator
 import io.getstream.chat.android.compose.ui.messages.list.DefaultSystemMessageContent
 import io.getstream.chat.android.compose.ui.messages.list.MessagesLazyListState
+import io.getstream.chat.android.compose.ui.util.ReactionIcon
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
@@ -81,6 +91,8 @@ import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
+import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.EmptyThreadPlaceholderItemState
@@ -894,6 +906,108 @@ public interface ChatComponentFactory {
             message = message,
             isMessageRead = isMessageRead,
             readCount = readCount,
+        )
+    }
+
+    /**
+     * The default header content of the selected channel menu.
+     */
+    @Composable
+    public fun ColumnScope.SelectedChannelMenuHeaderContent(
+        channel: Channel,
+        currentUser: User?,
+    ) {
+        DefaultSelectedChannelMenuHeaderContent(
+            selectedChannel = channel,
+            currentUser = currentUser,
+        )
+    }
+
+    /**
+     * The default center content of the selected channel menu.
+     */
+    @Composable
+    public fun ColumnScope.SelectedChannelMenuCenterContent(
+        channelOptions: List<ChannelOptionState>,
+        onChannelOptionClick: (ChannelAction) -> Unit,
+    ) {
+        DefaultSelectedChannelMenuCenterContent(
+            channelOptions = channelOptions,
+            onChannelOptionClick = onChannelOptionClick,
+        )
+    }
+
+    /**
+     * The default header content of the selected message menu.
+     */
+    @Suppress("LongParameterList")
+    @Composable
+    public fun ColumnScope.SelectedMessageMenuHeaderContent(
+        message: Message,
+        ownCapabilities: Set<String>,
+        reactionTypes: Map<String, ReactionIcon>,
+        @DrawableRes showMoreReactionsDrawable: Int,
+        onMessageAction: (MessageAction) -> Unit,
+        onShowMoreReactionsClick: () -> Unit,
+    ) {
+        DefaultSelectedMessageMenuHeaderContent(
+            message = message,
+            ownCapabilities = ownCapabilities,
+            reactionTypes = reactionTypes,
+            showMoreReactionsDrawableRes = showMoreReactionsDrawable,
+            onMessageAction = onMessageAction,
+            showMoreReactionsIcon = onShowMoreReactionsClick,
+        )
+    }
+
+    /**
+     * The default center content of the selected message menu.
+     */
+    @Composable
+    public fun ColumnScope.SelectedMessageMenuCenterContent(
+        messageOptions: List<MessageOptionItemState>,
+        onMessageAction: (MessageAction) -> Unit,
+    ) {
+        DefaultSelectedMessageOptions(
+            messageOptions = messageOptions,
+            onMessageAction = onMessageAction,
+        )
+    }
+
+    /**
+     * The default header content of the selected reactions menu.
+     */
+    @Suppress("LongParameterList")
+    @Composable
+    public fun ColumnScope.SelectedReactionsMenuHeaderContent(
+        message: Message,
+        ownCapabilities: Set<String>,
+        reactionTypes: Map<String, ReactionIcon>,
+        @DrawableRes showMoreReactionsDrawable: Int,
+        onMessageAction: (MessageAction) -> Unit,
+        onShowMoreReactionsClick: () -> Unit,
+    ) {
+        DefaultSelectedReactionsHeaderContent(
+            message = message,
+            ownCapabilities = ownCapabilities,
+            reactionTypes = reactionTypes,
+            showMoreReactionsIcon = showMoreReactionsDrawable,
+            onMessageAction = onMessageAction,
+            onShowMoreReactionsSelected = onShowMoreReactionsClick,
+        )
+    }
+
+    /**
+     * The default center content of the selected reactions menu.
+     */
+    @Composable
+    public fun ColumnScope.SelectedReactionsMenuCenterContent(
+        message: Message,
+        currentUser: User?,
+    ) {
+        DefaultSelectedReactionsCenterContent(
+            message = message,
+            currentUser = currentUser,
         )
     }
 }

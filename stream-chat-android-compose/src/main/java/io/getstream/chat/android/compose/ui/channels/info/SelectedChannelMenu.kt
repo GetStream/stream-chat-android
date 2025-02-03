@@ -79,16 +79,20 @@ public fun SelectedChannelMenu(
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
     headerContent: @Composable ColumnScope.() -> Unit = {
-        DefaultSelectedChannelMenuHeaderContent(
-            selectedChannel = selectedChannel,
-            currentUser = currentUser,
-        )
+        with(ChatTheme.componentFactory) {
+            SelectedChannelMenuHeaderContent(
+                channel = selectedChannel,
+                currentUser = currentUser,
+            )
+        }
     },
     centerContent: @Composable ColumnScope.() -> Unit = {
-        DefaultSelectedChannelMenuCenterContent(
-            onChannelOptionClick = onChannelOptionClick,
-            channelOptions = channelOptions,
-        )
+        with(ChatTheme.componentFactory) {
+            SelectedChannelMenuCenterContent(
+                onChannelOptionClick = onChannelOptionClick,
+                channelOptions = channelOptions,
+            )
+        }
     },
 ) {
     SimpleMenu(

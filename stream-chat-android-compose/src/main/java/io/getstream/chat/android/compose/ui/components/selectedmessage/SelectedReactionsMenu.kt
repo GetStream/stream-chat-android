@@ -32,6 +32,7 @@ import io.getstream.chat.android.compose.state.userreactions.UserReactionItemSta
 import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
 import io.getstream.chat.android.compose.ui.components.userreactions.UserReactions
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
 import io.getstream.chat.android.compose.util.extensions.toSet
@@ -77,23 +78,24 @@ public fun SelectedReactionsMenu(
     @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
     onDismiss: () -> Unit = {},
     headerContent: @Composable ColumnScope.() -> Unit = {
-        val canLeaveReaction = ownCapabilities.contains(ChannelCapabilities.SEND_REACTION)
-
-        if (canLeaveReaction) {
-            DefaultSelectedReactionsHeaderContent(
+        with(ChatTheme.componentFactory) {
+            SelectedReactionsMenuHeaderContent(
                 message = message,
+                ownCapabilities = ownCapabilities,
                 reactionTypes = reactionTypes,
-                showMoreReactionsIcon = showMoreReactionsIcon,
+                showMoreReactionsDrawable = showMoreReactionsIcon,
                 onMessageAction = onMessageAction,
-                onShowMoreReactionsSelected = onShowMoreReactionsSelected,
+                onShowMoreReactionsClick = onShowMoreReactionsSelected,
             )
         }
     },
     centerContent: @Composable ColumnScope.() -> Unit = {
-        DefaultSelectedReactionsCenterContent(
-            message = message,
-            currentUser = currentUser,
-        )
+        with(ChatTheme.componentFactory) {
+            SelectedReactionsMenuCenterContent(
+                message = message,
+                currentUser = currentUser,
+            )
+        }
     },
 ) {
     SimpleMenu(
@@ -108,38 +110,36 @@ public fun SelectedReactionsMenu(
 
 /**
  * Default header content for the selected reactions menu.
- *
- * @param message The selected message.
- * @param reactionTypes Available reactions.
- * @param showMoreReactionsIcon Drawable resource used for the show more button.
- * @param onMessageAction Handler when the user selects a reaction.
- * @param onShowMoreReactionsSelected Handler that propagates clicks on the show more button.
  */
 @Composable
 internal fun DefaultSelectedReactionsHeaderContent(
     message: Message,
+    ownCapabilities: Set<String>,
     reactionTypes: Map<String, ReactionIcon>,
     @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
     onMessageAction: (MessageAction) -> Unit,
     onShowMoreReactionsSelected: () -> Unit,
 ) {
-    ReactionOptions(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 20.dp),
-        reactionTypes = reactionTypes,
-        showMoreReactionsIcon = showMoreReactionsIcon,
-        onReactionOptionSelected = {
-            onMessageAction(
-                React(
-                    reaction = Reaction(messageId = message.id, type = it.type),
-                    message = message,
-                ),
-            )
-        },
-        onShowMoreReactionsSelected = onShowMoreReactionsSelected,
-        ownReactions = message.ownReactions,
-    )
+    val canLeaveReaction = ownCapabilities.contains(ChannelCapabilities.SEND_REACTION)
+    if (canLeaveReaction) {
+        ReactionOptions(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 20.dp),
+            reactionTypes = reactionTypes,
+            showMoreReactionsIcon = showMoreReactionsIcon,
+            onReactionOptionSelected = {
+                onMessageAction(
+                    React(
+                        reaction = Reaction(messageId = message.id, type = it.type),
+                        message = message,
+                    ),
+                )
+            },
+            onShowMoreReactionsSelected = onShowMoreReactionsSelected,
+            ownReactions = message.ownReactions,
+        )
+    }
 }
 
 /**
@@ -199,7 +199,7 @@ private fun buildUserReactionItems(
 @Preview
 @Composable
 private fun OneSelectedReactionMenuPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         val message = Message(latestReactions = PreviewReactionData.oneReaction.toMutableList())
 
         SelectedReactionsMenu(
@@ -218,7 +218,7 @@ private fun OneSelectedReactionMenuPreview() {
 @Preview
 @Composable
 private fun ManySelectedReactionsMenuPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         val message = Message(latestReactions = PreviewReactionData.manyReaction.toMutableList())
 
         SelectedReactionsMenu(
