@@ -198,46 +198,48 @@ internal fun RowScope.ThreadItemUnreadCountContent(unreadCount: Int) {
  */
 @Composable
 internal fun ThreadItemLatestReplyContent(thread: Thread) {
-    val reply = thread.latestReplies.lastOrNull() ?: return
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 8.dp),
-    ) {
-        UserAvatar(
-            modifier = Modifier.size(ChatTheme.dimens.channelAvatarSize),
-            user = reply.user,
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
+    val latestReply = thread.latestReplies.lastOrNull()
+    if (latestReply != null) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp),
         ) {
-            Text(
-                text = reply.user.name,
-                style = ChatTheme.typography.bodyBold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                color = ChatTheme.colors.textHighEmphasis,
+            UserAvatar(
+                modifier = Modifier.size(ChatTheme.dimens.channelAvatarSize),
+                user = latestReply.user,
             )
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
+            Spacer(modifier = Modifier.width(8.dp))
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.Center,
             ) {
-                val text = formatMessage(reply)
                 Text(
-                    modifier = Modifier.weight(1f),
-                    text = text,
+                    text = latestReply.user.name,
+                    style = ChatTheme.typography.bodyBold,
                     maxLines = 1,
-                    fontSize = 14.sp,
                     overflow = TextOverflow.Ellipsis,
-                    style = ChatTheme.typography.body,
-                    color = ChatTheme.colors.textLowEmphasis,
+                    color = ChatTheme.colors.textHighEmphasis,
                 )
-                Timestamp(
-                    modifier = Modifier.padding(start = 8.dp),
-                    date = reply.updatedAt ?: reply.createdAt ?: reply.createdLocallyAt,
-                )
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    val text = formatMessage(latestReply)
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = text,
+                        maxLines = 1,
+                        fontSize = 14.sp,
+                        overflow = TextOverflow.Ellipsis,
+                        style = ChatTheme.typography.body,
+                        color = ChatTheme.colors.textLowEmphasis,
+                    )
+                    Timestamp(
+                        modifier = Modifier.padding(start = 8.dp),
+                        date = latestReply.updatedAt ?: latestReply.createdAt ?: latestReply.createdLocallyAt,
+                    )
+                }
             }
         }
     }
