@@ -48,9 +48,6 @@ import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatu
 import io.getstream.chat.android.compose.ui.components.composer.ComposerLinkPreview
 import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
 import io.getstream.chat.android.compose.ui.components.composer.MessageInputOptions
-import io.getstream.chat.android.compose.ui.components.avatar.DefaultAvatar
-import io.getstream.chat.android.compose.ui.components.avatar.DefaultChannelAvatar
-import io.getstream.chat.android.compose.ui.components.avatar.DefaultUserAvatar
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageDeletedContent
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageGiphyContent
