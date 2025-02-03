@@ -43,6 +43,9 @@ import io.getstream.chat.android.compose.ui.components.DefaultSearchLabel
 import io.getstream.chat.android.compose.ui.components.DefaultSearchLeadingIcon
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
+import io.getstream.chat.android.compose.ui.components.composer.ComposerLinkPreview
+import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
+import io.getstream.chat.android.compose.ui.components.composer.MessageInputOptions
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageDeletedContent
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageGiphyContent
@@ -53,6 +56,27 @@ import io.getstream.chat.android.compose.ui.components.messages.OwnedMessageVisi
 import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.UploadingFooter
 import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
+import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionItem
+import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionList
+import io.getstream.chat.android.compose.ui.components.suggestions.commands.DefaultCommandSuggestionItemCenterContent
+import io.getstream.chat.android.compose.ui.components.suggestions.commands.DefaultCommandSuggestionItemLeadingContent
+import io.getstream.chat.android.compose.ui.components.suggestions.mentions.DefaultMentionSuggestionItemCenterContent
+import io.getstream.chat.android.compose.ui.components.suggestions.mentions.DefaultMentionSuggestionItemLeadingContent
+import io.getstream.chat.android.compose.ui.components.suggestions.mentions.DefaultMentionSuggestionItemTrailingContent
+import io.getstream.chat.android.compose.ui.components.suggestions.mentions.MentionSuggestionItem
+import io.getstream.chat.android.compose.ui.components.suggestions.mentions.MentionSuggestionList
+import io.getstream.chat.android.compose.ui.messages.composer.AttachmentsButton
+import io.getstream.chat.android.compose.ui.messages.composer.CommandsButton
+import io.getstream.chat.android.compose.ui.messages.composer.DefaultComposerInputContent
+import io.getstream.chat.android.compose.ui.messages.composer.DefaultComposerIntegrations
+import io.getstream.chat.android.compose.ui.messages.composer.DefaultComposerLabel
+import io.getstream.chat.android.compose.ui.messages.composer.DefaultMessageComposerFooterContent
+import io.getstream.chat.android.compose.ui.messages.composer.DefaultMessageComposerHeaderContent
+import io.getstream.chat.android.compose.ui.messages.composer.DefaultMessageComposerTrailingContent
+import io.getstream.chat.android.compose.ui.messages.composer.SendButton
+import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
+import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultAudioRecordButton
+import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerRecordingContent
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderCenterContent
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderLeadingContent
 import io.getstream.chat.android.compose.ui.messages.header.DefaultMessageListHeaderTrailingContent
@@ -73,15 +97,21 @@ import io.getstream.chat.android.compose.ui.messages.list.DefaultMessagesHelperC
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessagesLoadingMoreIndicator
 import io.getstream.chat.android.compose.ui.messages.list.DefaultSystemMessageContent
 import io.getstream.chat.android.compose.ui.messages.list.MessagesLazyListState
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
+import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.EmptyThreadPlaceholderItemState
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
@@ -895,5 +925,395 @@ public interface ChatComponentFactory {
             isMessageRead = isMessageRead,
             readCount = readCount,
         )
+    }
+
+    /**
+     * The default header content of the message composer.
+     * Shown on top of the composer and contains additional info/context, and is shown during editing/replying to a
+     * message, or when there is a link pasted in the composer.
+     *
+     * @param state The current state of the message composer.
+     * @param onCancel The action to perform when the cancel button is clicked.
+     * @param onLinkPreviewClick The action to perform when the link preview is clicked.
+     */
+    @Composable
+    public fun ColumnScope.MessageComposerHeaderContent(
+        state: MessageComposerState,
+        onCancel: () -> Unit,
+        onLinkPreviewClick: ((LinkPreview) -> Unit)?,
+    ) {
+        DefaultMessageComposerHeaderContent(state, onCancel, onLinkPreviewClick)
+    }
+
+    /**
+     * The default options header for the message input component. It is based on the currently active
+     * message action - [io.getstream.chat.android.ui.common.state.messages.Reply] or
+     * [io.getstream.chat.android.ui.common.state.messages.Edit].
+     * It shows a heading based on the action and a cancel button to cancel the action.
+     *
+     * Used as part of [MessageComposerHeaderContent].
+     *
+     * @param modifier The modifier to apply to the composable.
+     * @param activeAction The currently active message action.
+     * @param onCancel The action to perform when the cancel button is clicked.
+     */
+    @Composable
+    public fun MessageComposerMessageInputOptions(
+        modifier: Modifier,
+        activeAction: MessageAction,
+        onCancel: () -> Unit,
+    ) {
+        MessageInputOptions(activeAction, onCancel, modifier)
+    }
+
+    /**
+     * Shows a preview of the link that the user has entered in the message composer.
+     * Shows the link image preview, the title of the link and its description.
+     *
+     * Used as part of [MessageComposerHeaderContent].
+     *
+     * @param modifier The modifier to apply to the composable.
+     * @param linkPreview The link preview to show.
+     * @param onClick The action to perform when the link preview is clicked.
+     */
+    @Composable
+    public fun MessageComposerLinkPreview(
+        modifier: Modifier,
+        linkPreview: LinkPreview,
+        onClick: ((LinkPreview) -> Unit)?,
+    ) {
+        ComposerLinkPreview(modifier, linkPreview, onClick)
+    }
+
+    /**
+     * The default footer content of the message composer.
+     * Shown during replying to a thread, and it provides the checkbox to also send the message to the channel.
+     *
+     * @param state The current state of the message composer.
+     * @param onAlsoSendToChannelSelected The action to perform when the "Also send to channel" checkbox is selected.
+     */
+    @Composable
+    public fun ColumnScope.MessageComposerFooterContent(
+        state: MessageComposerState,
+        onAlsoSendToChannelSelected: (Boolean) -> Unit,
+    ) {
+        DefaultMessageComposerFooterContent(state, onAlsoSendToChannelSelected)
+    }
+
+    /**
+     * The default mentions popup content of the message composer.
+     * Shown when the user types '@' in the composer, and there are available users that can be mentioned.
+     *
+     * @param mentionSuggestions The list of mention suggestions to show.
+     * @param onMentionSelected The action to perform when a mention is selected.
+     */
+    @Composable
+    public fun MessageComposerMentionsPopupContent(
+        mentionSuggestions: List<User>,
+        onMentionSelected: (User) -> Unit,
+    ) {
+        MentionSuggestionList(users = mentionSuggestions, onMentionSelected = onMentionSelected)
+    }
+
+    /**
+     * The default mention suggestion item of the message composer.
+     *
+     * Used in [MessageComposerMentionsPopupContent].
+     *
+     * @param user The user for which the suggestion is rendered.
+     * @param onMentionSelected The action to perform when the mention is selected.
+     */
+    @Composable
+    public fun MessageComposerMentionSuggestionItem(
+        user: User,
+        onMentionSelected: (User) -> Unit,
+    ) {
+        MentionSuggestionItem(user = user, onMentionSelected = onMentionSelected)
+    }
+
+    /**
+     * The default leading content of the mention suggestion item of the message composer.
+     *
+     * Used as part of [MessageComposerMentionSuggestionItem].
+     *
+     * @param user The user for which the leading content is rendered.
+     */
+    @Composable
+    public fun RowScope.MessageComposerMentionSuggestionItemLeadingContent(user: User) {
+        DefaultMentionSuggestionItemLeadingContent(user)
+    }
+
+    /**
+     * The default center content of the mention suggestion item of the message composer.
+     *
+     * Used as part of [MessageComposerMentionSuggestionItem].
+     *
+     * @param user The user for which the center content is rendered.
+     */
+    @Composable
+    public fun RowScope.MessageComposerMentionSuggestionItemCenterContent(user: User) {
+        DefaultMentionSuggestionItemCenterContent(user)
+    }
+
+    /**
+     * The default trailing content of the mention suggestion item of the message composer.
+     *
+     * Used as part of [MessageComposerMentionSuggestionItem].
+     *
+     * @param user The user for which the trailing content is rendered.
+     */
+    @Composable
+    public fun RowScope.MessageComposerMentionSuggestionItemTrailingContent(user: User) {
+        DefaultMentionSuggestionItemTrailingContent()
+    }
+
+    /**
+     * The default instant commands popup content of the message composer.
+     * Shown when the user types '/' in the composer, and there are available commands that can be used, or when the
+     * user click the "Commands" button.
+     *
+     * @param commandSuggestions The list of command suggestions to show.
+     * @param onCommandSelected The action to perform when a command is selected.
+     */
+    @Composable
+    public fun MessageComposerCommandsPopupContent(
+        commandSuggestions: List<Command>,
+        onCommandSelected: (Command) -> Unit,
+    ) {
+        CommandSuggestionList(commands = commandSuggestions, onCommandSelected = onCommandSelected)
+    }
+
+    /**
+     * The default command suggestion item of the message composer.
+     *
+     * Used in [MessageComposerCommandsPopupContent].
+     *
+     * @param command The command for which the suggestion is rendered.
+     * @param onCommandSelected The action to perform when the command is selected.
+     */
+    @Composable
+    public fun MessageComposerCommandSuggestionItem(
+        command: Command,
+        onCommandSelected: (Command) -> Unit,
+    ) {
+        CommandSuggestionItem(command, onCommandSelected = onCommandSelected)
+    }
+
+    /**
+     * The default leading content of the command suggestion item of the message composer.
+     *
+     * Used as part of [MessageComposerCommandSuggestionItem].
+     *
+     * @param command The command for which the leading content is rendered.
+     */
+    @Composable
+    public fun RowScope.MessageComposerCommandSuggestionItemLeadingContent(command: Command) {
+        DefaultCommandSuggestionItemLeadingContent()
+    }
+
+    /**
+     * The default center content of the command suggestion item of the message composer.
+     *
+     * Used as part of [MessageComposerCommandSuggestionItem].
+     *
+     * @param modifier The modifier to apply to the composable.
+     * @param command The command for which the center content is rendered.
+     */
+    @Composable
+    public fun RowScope.MessageComposerCommandSuggestionItemCenterContent(
+        modifier: Modifier,
+        command: Command,
+    ) {
+        DefaultCommandSuggestionItemCenterContent(command, modifier)
+    }
+
+    /**
+     * The default integrations of the message composer.
+     * Provides the "Attachments" and "Commands" buttons shown before the composer.
+     *
+     * @param state The current state of the message composer.
+     * @param onAttachmentsClick The action to perform when the "Attachments" button is clicked.
+     * @param onCommandsClick The action to perform when the "Commands" button is clicked.
+     */
+    @Composable
+    public fun RowScope.MessageComposerIntegrations(
+        state: MessageComposerState,
+        onAttachmentsClick: () -> Unit,
+        onCommandsClick: () -> Unit,
+    ) {
+        DefaultComposerIntegrations(state, onAttachmentsClick, onCommandsClick, state.ownCapabilities)
+    }
+
+    /**
+     * The default attachments button of the message composer.
+     *
+     * Used as part of [MessageComposerIntegrations].
+     *
+     * @param enabled Whether the button is enabled.
+     * @param onClick The action to perform when the button is clicked.
+     */
+    @Composable
+    public fun RowScope.MessageComposerAttachmentsButton(
+        enabled: Boolean,
+        onClick: () -> Unit,
+    ) {
+        AttachmentsButton(enabled, onClick)
+    }
+
+    /**
+     * The default commands button of the message composer.
+     *
+     * Used as part of [MessageComposerIntegrations].
+     *
+     * @param hasCommandSuggestions Whether there are command suggestions available.
+     * @param enabled Whether the button is enabled.
+     * @param onClick The action to perform when the button is clicked.
+     */
+    @Composable
+    public fun RowScope.MessageComposerCommandsButton(
+        hasCommandSuggestions: Boolean,
+        enabled: Boolean,
+        onClick: () -> Unit,
+    ) {
+        CommandsButton(hasCommandSuggestions, enabled, onClick)
+    }
+
+    /**
+     * The default label of the message composer.
+     *
+     * Used by [MessageComposerInput].
+     *
+     * @param state The current state of the message composer.
+     */
+    @Composable
+    public fun MessageComposerLabel(state: MessageComposerState) {
+        DefaultComposerLabel(state.ownCapabilities)
+    }
+
+    /**
+     * The default input content of the message composer.
+     *
+     * @param state The current state of the message composer.
+     * @param onInputChanged The action to perform when the input changes.
+     * @param onAttachmentRemoved The action to perform when an attachment is removed.
+     * @param label The label to show in the composer.
+     */
+    @Composable
+    public fun RowScope.MessageComposerInput(
+        state: MessageComposerState,
+        onInputChanged: (String) -> Unit,
+        onAttachmentRemoved: (Attachment) -> Unit,
+        label: @Composable (MessageComposerState) -> Unit,
+    ) {
+        DefaultComposerInputContent(state, onInputChanged, onAttachmentRemoved, label)
+    }
+
+    /**
+     * The default appearance of a quoted message in the message composer.
+     * Shown when the user quotes (replies to) a message in the composer.
+     *
+     * Used as part of [MessageComposerInput].
+     *
+     * @param modifier The modifier to apply to the composable.
+     * @param state The current state of the message composer.
+     * @param quotedMessage The message that is being quoted (replied to).
+     */
+    @Composable
+    public fun MessageComposerQuotedMessage(
+        modifier: Modifier,
+        state: MessageComposerState,
+        quotedMessage: Message,
+    ) {
+        QuotedMessage(
+            modifier = modifier,
+            message = quotedMessage,
+            currentUser = state.currentUser,
+            replyMessage = null,
+            onLongItemClick = {},
+            onQuotedMessageClick = {},
+        )
+    }
+
+    /**
+     * The default trailing content of the message composer. Contains the "Send" button, and "Audio record" button (if
+     * enabled).
+     *
+     * @param state The current state of the message composer.
+     * @param onSendClick The action to perform when the "Send" button is clicked. Supply the message text and
+     * attachments.
+     * @param recordingActions The actions to control the audio recording.
+     */
+    @Composable
+    public fun MessageComposerTrailingContent(
+        state: MessageComposerState,
+        onSendClick: (String, List<Attachment>) -> Unit,
+        recordingActions: AudioRecordingActions,
+    ) {
+        DefaultMessageComposerTrailingContent(state, onSendClick, recordingActions)
+    }
+
+    /**
+     * The default cooldown indicator of the message composer.
+     * Shown when the user is prevented from sending messages due to a cooldown.
+     *
+     * Used as part of [MessageComposerTrailingContent].
+     *
+     * @param modifier The modifier to apply to the composable.
+     * @param coolDownTime The remaining time until the user can send a message.
+     */
+    @Composable
+    public fun MessageComposerCoolDownIndicator(
+        modifier: Modifier,
+        coolDownTime: Int,
+    ) {
+        CoolDownIndicator(coolDownTime, modifier)
+    }
+
+    /**
+     * The default "Send" button of the message composer.
+     *
+     * Used as part of [MessageComposerTrailingContent].
+     *
+     * @param enabled Whether the button is enabled.
+     * @param isInputValid Whether the current input in the message composer is valid.
+     * @param onClick The action to perform when the button is clicked.
+     */
+    @Composable
+    public fun MessageComposerSendButton(
+        enabled: Boolean,
+        isInputValid: Boolean,
+        onClick: () -> Unit,
+    ) {
+        SendButton(enabled, isInputValid, onClick)
+    }
+
+    /**
+     * The default "Audio record (voice message)" button of the message composer.
+     *
+     * Used as part of [MessageComposerTrailingContent].
+     *
+     * @param state The current state of the recording process.
+     * @param recordingActions The actions to control the audio recording.
+     */
+    @Composable
+    public fun MessageComposerAudioRecordButton(
+        state: RecordingState,
+        recordingActions: AudioRecordingActions,
+    ) {
+        DefaultAudioRecordButton(state, recordingActions)
+    }
+
+    /**
+     * Default composable used for displaying audio recording information while audio recording is in progress.
+     *
+     * @param state The current state of the message composer.
+     * @param recordingActions The actions to control the audio recording.
+     */
+    @Composable
+    public fun RowScope.MessageComposerAudioRecordingContent(
+        state: MessageComposerState,
+        recordingActions: AudioRecordingActions,
+    ) {
+        DefaultMessageComposerRecordingContent(state, recordingActions)
     }
 }
