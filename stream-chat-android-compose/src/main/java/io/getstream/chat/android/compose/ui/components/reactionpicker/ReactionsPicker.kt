@@ -66,14 +66,21 @@ public fun ReactionsPicker(
     cells: GridCells = GridCells.Fixed(DefaultNumberOfReactions),
     onDismiss: () -> Unit = {},
     reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
-    headerContent: @Composable ColumnScope.() -> Unit = {},
+    headerContent: @Composable ColumnScope.() -> Unit = {
+        with(ChatTheme.componentFactory) {
+            MessageReactionPickerHeaderContent(Modifier, message, onMessageAction, onDismiss)
+        }
+    },
     centerContent: @Composable ColumnScope.() -> Unit = {
-        DefaultReactionsPickerCenterContent(
-            message = message,
-            onMessageAction = onMessageAction,
-            cells = cells,
-            reactionTypes = reactionTypes,
-        )
+        with(ChatTheme.componentFactory) {
+            MessageReactionPickerCenterContent(
+                modifier = Modifier,
+                message = message,
+                onMessageAction = onMessageAction,
+                onDismiss = onDismiss,
+                reactionTypes = reactionTypes,
+            )
+        }
     },
 ) {
     SimpleMenu(
@@ -84,39 +91,8 @@ public fun ReactionsPicker(
         centerContent = centerContent,
         onDismiss = onDismiss,
     )
-}
+    }
 
-/**
- * The Default center content for the [ReactionsPicker]. Shows all available reactions.
- *
- * @param message The selected message.
- * @param onMessageAction Handler that propagates click events on each item.
- * @param cells Describes the way cells are formed inside [ExtendedReactionsOptions].
- * @param reactionTypes The available reactions.
- */
-@OptIn(ExperimentalFoundationApi::class)
-@Composable
-internal fun DefaultReactionsPickerCenterContent(
-    message: Message,
-    onMessageAction: (MessageAction) -> Unit,
-    cells: GridCells = GridCells.Fixed(DefaultNumberOfReactions),
-    reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
-) {
-    ExtendedReactionsOptions(
-        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
-        reactionTypes = reactionTypes,
-        ownReactions = message.ownReactions,
-        onReactionOptionSelected = { reactionOptionItemState ->
-            onMessageAction(
-                React(
-                    reaction = Reaction(messageId = message.id, reactionOptionItemState.type),
-                    message = message,
-                ),
-            )
-        },
-        cells = cells,
-    )
-}
 
 /**
  * Preview of [ReactionsPicker] with a reaction selected.

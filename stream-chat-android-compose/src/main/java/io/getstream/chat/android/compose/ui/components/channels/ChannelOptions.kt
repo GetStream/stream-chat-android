@@ -81,21 +81,13 @@ public fun ChannelOptions(
                     .background(color = ChatTheme.colors.borders),
             )
 
-            ChannelOptionsItem(
-                title = option.title,
-                titleColor = option.titleColor,
-                leadingIcon = {
-                    Icon(
-                        modifier = Modifier
-                            .size(56.dp)
-                            .padding(16.dp),
-                        painter = option.iconPainter,
-                        tint = option.iconColor,
-                        contentDescription = null,
-                    )
-                },
-                onClick = { onChannelOptionClick(option.action) },
-            )
+            with(ChatTheme.componentFactory) {
+                ChannelOptionsItem(
+                    modifier = Modifier,
+                    option = option,
+                    onClick = { onChannelOptionClick(option.action) },
+                )
+            }
         }
     }
 }

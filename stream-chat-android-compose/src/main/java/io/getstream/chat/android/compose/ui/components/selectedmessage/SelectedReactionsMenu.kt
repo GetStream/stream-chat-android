@@ -80,20 +80,27 @@ public fun SelectedReactionsMenu(
         val canLeaveReaction = ownCapabilities.contains(ChannelCapabilities.SEND_REACTION)
 
         if (canLeaveReaction) {
-            DefaultSelectedReactionsHeaderContent(
-                message = message,
-                reactionTypes = reactionTypes,
-                showMoreReactionsIcon = showMoreReactionsIcon,
-                onMessageAction = onMessageAction,
-                onShowMoreReactionsSelected = onShowMoreReactionsSelected,
-            )
+            with(ChatTheme.componentFactory) {
+                ReactionsMenuHeaderContent(
+                    modifier = Modifier,
+                    message = message,
+                    reactionTypes = reactionTypes,
+                    onMessageAction = onMessageAction,
+                    onShowMoreReactionsSelected = onShowMoreReactionsSelected,
+                )
+            }
         }
     },
     centerContent: @Composable ColumnScope.() -> Unit = {
-        DefaultSelectedReactionsCenterContent(
-            message = message,
-            currentUser = currentUser,
-        )
+        with(ChatTheme.componentFactory) {
+            ReactionsMenuCenterContent(
+                modifier = Modifier,
+                userReactions = buildUserReactionItems(
+                    message = message,
+                    currentUser = currentUser,
+                )
+            )
+        }
     },
 ) {
     SimpleMenu(
@@ -103,65 +110,6 @@ public fun SelectedReactionsMenu(
         onDismiss = onDismiss,
         headerContent = headerContent,
         centerContent = centerContent,
-    )
-}
-
-/**
- * Default header content for the selected reactions menu.
- *
- * @param message The selected message.
- * @param reactionTypes Available reactions.
- * @param showMoreReactionsIcon Drawable resource used for the show more button.
- * @param onMessageAction Handler when the user selects a reaction.
- * @param onShowMoreReactionsSelected Handler that propagates clicks on the show more button.
- */
-@Composable
-internal fun DefaultSelectedReactionsHeaderContent(
-    message: Message,
-    reactionTypes: Map<String, ReactionIcon>,
-    @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
-    onMessageAction: (MessageAction) -> Unit,
-    onShowMoreReactionsSelected: () -> Unit,
-) {
-    ReactionOptions(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 20.dp),
-        reactionTypes = reactionTypes,
-        showMoreReactionsIcon = showMoreReactionsIcon,
-        onReactionOptionSelected = {
-            onMessageAction(
-                React(
-                    reaction = Reaction(messageId = message.id, type = it.type),
-                    message = message,
-                ),
-            )
-        },
-        onShowMoreReactionsSelected = onShowMoreReactionsSelected,
-        ownReactions = message.ownReactions,
-    )
-}
-
-/**
- * Default center content for the selected reactions menu.
- *
- * @param message The selected message.
- * @param currentUser The currently logged in user.
- */
-@Composable
-internal fun DefaultSelectedReactionsCenterContent(
-    message: Message,
-    currentUser: User?,
-) {
-    UserReactions(
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(max = ChatTheme.dimens.userReactionsMaxHeight)
-            .padding(vertical = 16.dp),
-        items = buildUserReactionItems(
-            message = message,
-            currentUser = currentUser,
-        ),
     )
 }
 
