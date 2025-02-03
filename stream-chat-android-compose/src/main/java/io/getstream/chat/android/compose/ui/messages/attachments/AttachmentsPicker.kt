@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -227,26 +228,44 @@ private fun AttachmentPickerOptions(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        IconButton(
-            enabled = hasPickedAttachments,
-            onClick = onSendAttachmentsClick,
-            content = {
-                val layoutDirection = LocalLayoutDirection.current
-
-                Icon(
-                    modifier = Modifier
-                        .weight(1f)
-                        .mirrorRtl(layoutDirection = layoutDirection)
-                        .testTag("Stream_AttachmentPickerSendButton"),
-                    painter = painterResource(id = R.drawable.stream_compose_ic_left),
-                    contentDescription = stringResource(id = R.string.stream_compose_send_attachment),
-                    tint = if (hasPickedAttachments) {
-                        ChatTheme.colors.primaryAccent
-                    } else {
-                        ChatTheme.colors.textLowEmphasis
-                    },
-                )
-            },
-        )
+        with(ChatTheme.componentFactory) {
+            AttachmentsPickerSendButton(
+                hasPickedAttachments = hasPickedAttachments,
+                onClick = onSendAttachmentsClick,
+            )
+        }
     }
+}
+
+/**
+ * The default "Send" button in the attachments picker heading.
+ *
+ * @param hasPickedAttachments Indicator if there are selected attachments.
+ * @param onClick The action to be taken when the button is clicked.
+ */
+@Composable
+internal fun RowScope.DefaultAttachmentsPickerSendButton(
+    hasPickedAttachments: Boolean,
+    onClick: () -> Unit,
+) {
+    IconButton(
+        enabled = hasPickedAttachments,
+        onClick = onClick,
+        content = {
+            val layoutDirection = LocalLayoutDirection.current
+            Icon(
+                modifier = Modifier
+                    .weight(1f)
+                    .mirrorRtl(layoutDirection = layoutDirection)
+                    .testTag("Stream_AttachmentPickerSendButton"),
+                painter = painterResource(id = R.drawable.stream_compose_ic_left),
+                contentDescription = stringResource(id = R.string.stream_compose_send_attachment),
+                tint = if (hasPickedAttachments) {
+                    ChatTheme.colors.primaryAccent
+                } else {
+                    ChatTheme.colors.textLowEmphasis
+                },
+            )
+        },
+    )
 }
