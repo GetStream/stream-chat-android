@@ -62,6 +62,7 @@ import io.getstream.chat.android.compose.sample.feature.channel.add.SearchUsersV
 import io.getstream.chat.android.compose.sample.feature.channel.add.component.SearchUserResultsContent
 import io.getstream.chat.android.compose.sample.feature.channel.add.component.SearchUserTextField
 import io.getstream.chat.android.compose.sample.ui.component.AppToolbar
+import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
 
@@ -362,13 +363,9 @@ private fun GroupChannelUserPreviewItem(
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        ChatTheme.componentFactory.UserAvatar(
+        UserAvatar(
             modifier = Modifier.size(40.dp),
             user = user,
-            textStyle = ChatTheme.typography.title3Bold,
-            showOnlineIndicator = true,
-            onlineIndicator = { },
-            onClick = null,
         )
         Text(
             modifier = Modifier
@@ -436,13 +433,9 @@ private fun SelectedUserItem(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            ChatTheme.componentFactory.UserAvatar(
+            UserAvatar(
                 modifier = Modifier.size(60.dp),
                 user = user,
-                textStyle = ChatTheme.typography.title3Bold,
-                showOnlineIndicator = true,
-                onlineIndicator = { },
-                onClick = null,
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
