@@ -741,12 +741,16 @@ internal fun DefaultMessageTextContent(
 ) {
     Column {
         if (messageContentFactory == MessageContentFactory.Deprecated) {
-            ChatTheme.componentFactory.MessageQuotedContent(
-                message = message,
-                currentUser = currentUser,
-                onLongItemClick = onLongItemClick,
-                onQuotedMessageClick = onQuotedMessageClick,
-            )
+            val quotedMessage = message.replyTo
+            if (quotedMessage != null) {
+                ChatTheme.componentFactory.MessageQuotedContent(
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    message = message,
+                    currentUser = currentUser,
+                    onLongItemClick = onLongItemClick,
+                    onQuotedMessageClick = onQuotedMessageClick,
+                )
+            }
 
             ChatTheme.componentFactory.MessageTextContent(
                 message = message,

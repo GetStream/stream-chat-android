@@ -20,11 +20,9 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.state.channels.list.ChannelOptionState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
@@ -834,22 +832,20 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun MessageQuotedContent(
+        modifier: Modifier,
         message: Message,
         currentUser: User?,
         onLongItemClick: (Message) -> Unit,
         onQuotedMessageClick: (Message) -> Unit,
     ) {
-        val quotedMessage = message.replyTo
-        if (quotedMessage != null) {
-            QuotedMessage(
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                message = quotedMessage,
-                currentUser = currentUser,
-                replyMessage = message,
-                onLongItemClick = { onLongItemClick(message) },
-                onQuotedMessageClick = onQuotedMessageClick,
-            )
-        }
+        QuotedMessage(
+            modifier = modifier,
+            message = message,
+            currentUser = currentUser,
+            replyMessage = message,
+            onLongItemClick = { onLongItemClick(message) },
+            onQuotedMessageClick = onQuotedMessageClick,
+        )
     }
 
     /**
