@@ -60,15 +60,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.composer.ComposerLinkPreview
-import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
-import io.getstream.chat.android.compose.ui.components.composer.MessageInputOptions
-import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionList
-import io.getstream.chat.android.compose.ui.components.suggestions.mentions.MentionSuggestionList
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
-import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultAudioRecordButton
-import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerRecordingContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.AboveAnchorPopupPositionProvider
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
@@ -113,7 +106,7 @@ import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
  * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
  * @param commandPopupContent Customizable composable that represents the instant command suggestions popup.
  * @param integrations A view that represents custom integrations. By default, we provide
- * [DefaultComposerIntegrations], which show Attachments & Giphy, but users can override this with
+ * [DefaultComposerIntegrations], which show Attachments & Commands, but users can override this with
  * their own integrations, which they need to hook up to their own data providers and UI.
  * @param label Customizable composable that represents the input field label (hint).
  * @param input Customizable composable that represents the input field for the composer, [MessageInput] by default.
@@ -138,59 +131,69 @@ public fun MessageComposer(
     onAlsoSendToChannelSelected: (Boolean) -> Unit = { viewModel.setAlsoSendToChannel(it) },
     recordingActions: AudioRecordingActions = AudioRecordingActions.defaultActions(viewModel),
     headerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
-        DefaultMessageComposerHeaderContent(
-            messageComposerState = it,
-            onCancelAction = onCancelAction,
-            onLinkPreviewClick = onLinkPreviewClick,
-        )
+        with(ChatTheme.componentFactory) {
+            MessageComposerHeaderContent(
+                state = it,
+                onCancel = onCancelAction,
+                onLinkPreviewClick = onLinkPreviewClick,
+            )
+        }
     },
     footerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
-        DefaultMessageComposerFooterContent(
-            messageComposerState = it,
-            onAlsoSendToChannelSelected = onAlsoSendToChannelSelected,
-        )
+        with(ChatTheme.componentFactory) {
+            MessageComposerFooterContent(
+                state = it,
+                onAlsoSendToChannelSelected = onAlsoSendToChannelSelected,
+            )
+        }
     },
     mentionPopupContent: @Composable (List<User>) -> Unit = {
-        DefaultMentionPopupContent(
+        ChatTheme.componentFactory.MessageComposerMentionsPopupContent(
             mentionSuggestions = it,
             onMentionSelected = onMentionSelected,
         )
     },
     commandPopupContent: @Composable (List<Command>) -> Unit = {
-        DefaultCommandPopupContent(
+        ChatTheme.componentFactory.MessageComposerCommandsPopupContent(
             commandSuggestions = it,
             onCommandSelected = onCommandSelected,
         )
     },
     integrations: @Composable RowScope.(MessageComposerState) -> Unit = {
-        DefaultComposerIntegrations(
-            messageInputState = it,
-            onAttachmentsClick = onAttachmentsClick,
-            onCommandsClick = onCommandsClick,
-            ownCapabilities = it.ownCapabilities,
-        )
+        with(ChatTheme.componentFactory) {
+            MessageComposerIntegrations(
+                state = it,
+                onAttachmentsClick = onAttachmentsClick,
+                onCommandsClick = onCommandsClick,
+            )
+        }
     },
-    label: @Composable (MessageComposerState) -> Unit = { DefaultComposerLabel(it.ownCapabilities) },
+    label: @Composable (MessageComposerState) -> Unit = {
+        ChatTheme.componentFactory.MessageComposerLabel(state = it)
+    },
     input: @Composable RowScope.(MessageComposerState) -> Unit = {
-        DefaultComposerInputContent(
-            messageComposerState = it,
-            onValueChange = onValueChange,
-            onAttachmentRemoved = onAttachmentRemoved,
-            label = label,
-        )
+        with(ChatTheme.componentFactory) {
+            MessageComposerInput(
+                state = it,
+                onInputChanged = onValueChange,
+                onAttachmentRemoved = onAttachmentRemoved,
+                label = label,
+            )
+        }
     },
     audioRecordingContent: @Composable RowScope.(MessageComposerState) -> Unit = {
-        DefaultMessageComposerRecordingContent(
-            messageComposerState = it,
-            recordingActions = recordingActions,
-        )
+        with(ChatTheme.componentFactory) {
+            MessageComposerAudioRecordingContent(
+                state = it,
+                recordingActions = recordingActions,
+            )
+        }
     },
     trailingContent: @Composable (MessageComposerState) -> Unit = {
-        DefaultMessageComposerTrailingContent(
-            messageComposerState = it,
-            onSendMessage = { input, attachments ->
+        ChatTheme.componentFactory.MessageComposerTrailingContent(
+            state = it,
+            onSendClick = { input, attachments ->
                 val message = viewModel.buildNewMessage(input, attachments)
-
                 onSendMessage(message)
             },
             recordingActions = recordingActions,
@@ -269,57 +272,68 @@ public fun MessageComposer(
     onAlsoSendToChannelSelected: (Boolean) -> Unit = {},
     recordingActions: AudioRecordingActions = AudioRecordingActions.None,
     headerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
-        DefaultMessageComposerHeaderContent(
-            messageComposerState = it,
-            onCancelAction = onCancelAction,
-            onLinkPreviewClick = onLinkPreviewClick,
-        )
+        with(ChatTheme.componentFactory) {
+            MessageComposerHeaderContent(
+                state = it,
+                onCancel = onCancelAction,
+                onLinkPreviewClick = onLinkPreviewClick,
+            )
+        }
     },
     footerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
-        DefaultMessageComposerFooterContent(
-            messageComposerState = it,
-            onAlsoSendToChannelSelected = onAlsoSendToChannelSelected,
-        )
+        with(ChatTheme.componentFactory) {
+            MessageComposerFooterContent(
+                state = it,
+                onAlsoSendToChannelSelected = onAlsoSendToChannelSelected,
+            )
+        }
     },
     mentionPopupContent: @Composable (List<User>) -> Unit = {
-        DefaultMentionPopupContent(
+        ChatTheme.componentFactory.MessageComposerMentionsPopupContent(
             mentionSuggestions = it,
             onMentionSelected = onMentionSelected,
         )
     },
     commandPopupContent: @Composable (List<Command>) -> Unit = {
-        DefaultCommandPopupContent(
+        ChatTheme.componentFactory.MessageComposerCommandsPopupContent(
             commandSuggestions = it,
             onCommandSelected = onCommandSelected,
         )
     },
     integrations: @Composable RowScope.(MessageComposerState) -> Unit = {
-        DefaultComposerIntegrations(
-            messageInputState = it,
-            onAttachmentsClick = onAttachmentsClick,
-            onCommandsClick = onCommandsClick,
-            ownCapabilities = messageComposerState.ownCapabilities,
-        )
+        with(ChatTheme.componentFactory) {
+            MessageComposerIntegrations(
+                state = it,
+                onAttachmentsClick = onAttachmentsClick,
+                onCommandsClick = onCommandsClick,
+            )
+        }
     },
-    label: @Composable (MessageComposerState) -> Unit = { DefaultComposerLabel(messageComposerState.ownCapabilities) },
+    label: @Composable (MessageComposerState) -> Unit = {
+        ChatTheme.componentFactory.MessageComposerLabel(state = it)
+    },
     input: @Composable RowScope.(MessageComposerState) -> Unit = {
-        DefaultComposerInputContent(
-            messageComposerState = messageComposerState,
-            onValueChange = onValueChange,
-            onAttachmentRemoved = onAttachmentRemoved,
-            label = label,
-        )
+        with(ChatTheme.componentFactory) {
+            MessageComposerInput(
+                state = it,
+                onInputChanged = onValueChange,
+                onAttachmentRemoved = onAttachmentRemoved,
+                label = label,
+            )
+        }
     },
     audioRecordingContent: @Composable RowScope.(MessageComposerState) -> Unit = {
-        DefaultMessageComposerRecordingContent(
-            messageComposerState = it,
-            recordingActions = recordingActions,
-        )
+        with(ChatTheme.componentFactory) {
+            MessageComposerAudioRecordingContent(
+                state = it,
+                recordingActions = recordingActions,
+            )
+        }
     },
     trailingContent: @Composable (MessageComposerState) -> Unit = {
-        DefaultMessageComposerTrailingContent(
-            messageComposerState = it,
-            onSendMessage = onSendMessage,
+        ChatTheme.componentFactory.MessageComposerTrailingContent(
+            state = it,
+            onSendClick = onSendMessage,
             recordingActions = recordingActions,
         )
     },
@@ -396,16 +410,17 @@ public fun DefaultMessageComposerHeaderContent(
     val activeAction = messageComposerState.action
 
     if (activeAction != null) {
-        MessageInputOptions(
+        ChatTheme.componentFactory.MessageComposerMessageInputOptions(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp, bottom = 6.dp, start = 8.dp, end = 8.dp),
             activeAction = activeAction,
-            onCancelAction = onCancelAction,
+            onCancel = onCancelAction,
         )
     }
     if (ChatTheme.isComposerLinkPreviewEnabled && messageComposerState.linkPreviews.isNotEmpty()) {
-        ComposerLinkPreview(
+        ChatTheme.componentFactory.MessageComposerLinkPreview(
+            modifier = Modifier,
             linkPreview = messageComposerState.linkPreviews.first(),
             onClick = onLinkPreviewClick,
         )
@@ -453,40 +468,6 @@ public fun DefaultMessageComposerFooterContent(
 }
 
 /**
- * Represents the default mention suggestion list popup shown above the message composer.
- *
- * @param mentionSuggestions The list of users that can be used to autocomplete the current mention input.
- * @param onMentionSelected Handler when the user taps on a mention suggestion item.
- */
-@Composable
-internal fun DefaultMentionPopupContent(
-    mentionSuggestions: List<User>,
-    onMentionSelected: (User) -> Unit,
-) {
-    MentionSuggestionList(
-        users = mentionSuggestions,
-        onMentionSelected = { onMentionSelected(it) },
-    )
-}
-
-/**
- * Represents the default command suggestion list popup shown above the message composer.
- *
- * @param commandSuggestions The list of available commands in the channel.
- * @param onCommandSelected Handler when the user taps on a command suggestion item.
- */
-@Composable
-internal fun DefaultCommandPopupContent(
-    commandSuggestions: List<Command>,
-    onCommandSelected: (Command) -> Unit,
-) {
-    CommandSuggestionList(
-        commands = commandSuggestions,
-        onCommandSelected = { onCommandSelected(it) },
-    )
-}
-
-/**
  * Composable that represents the message composer integrations (special actions).
  *
  * Currently just shows the Attachment picker action.
@@ -526,18 +507,22 @@ internal fun DefaultComposerIntegrations(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (canSendAttachments) {
-                DefaultAttachmentsButton(
-                    enabled = isAttachmentsButtonEnabled,
-                    onClick = onAttachmentsClick,
-                )
+                with(ChatTheme.componentFactory) {
+                    MessageComposerAttachmentsButton(
+                        enabled = isAttachmentsButtonEnabled,
+                        onClick = onAttachmentsClick,
+                    )
+                }
             }
 
             AnimatedVisibility(visible = messageInputState.hasCommands) {
-                DefaultCommandsButton(
-                    hasCommandSuggestions = hasCommandSuggestions,
-                    enabled = isCommandsButtonEnabled,
-                    onClick = onCommandsClick,
-                )
+                with(ChatTheme.componentFactory) {
+                    MessageComposerCommandsButton(
+                        hasCommandSuggestions = hasCommandSuggestions,
+                        enabled = isCommandsButtonEnabled,
+                        onClick = onCommandsClick,
+                    )
+                }
             }
         }
     } else {
@@ -575,7 +560,7 @@ internal fun DefaultComposerLabel(ownCapabilities: Set<String>) {
  * @param onAttachmentRemoved Handler when the user taps on the cancel/delete attachment action.
  */
 @Composable
-private fun RowScope.DefaultComposerInputContent(
+internal fun RowScope.DefaultComposerInputContent(
     messageComposerState: MessageComposerState,
     onValueChange: (String) -> Unit,
     onAttachmentRemoved: (Attachment) -> Unit,
@@ -626,7 +611,7 @@ internal fun DefaultMessageComposerTrailingContent(
     val isInputValid by lazy { (value.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty() }
 
     if (coolDownTime > 0 && !isInEditMode) {
-        CoolDownIndicator(coolDownTime = coolDownTime)
+        ChatTheme.componentFactory.MessageComposerCoolDownIndicator(modifier = Modifier, coolDownTime = coolDownTime)
     } else {
         val isRecording = messageComposerState.recording !is RecordingState.Idle
 
@@ -642,7 +627,7 @@ internal fun DefaultMessageComposerTrailingContent(
                 modifier = Modifier.heightIn(min = ComposerActionContainerMinHeight),
                 contentAlignment = Center,
             ) {
-                DefaultSendButton(
+                ChatTheme.componentFactory.MessageComposerSendButton(
                     enabled = sendEnabled,
                     isInputValid = isInputValid,
                     onClick = {
@@ -660,7 +645,7 @@ internal fun DefaultMessageComposerTrailingContent(
             else -> true
         }
         if (recordVisible) {
-            DefaultAudioRecordButton(
+            ChatTheme.componentFactory.MessageComposerAudioRecordButton(
                 state = messageComposerState.recording,
                 recordingActions = recordingActions,
             )
@@ -672,7 +657,7 @@ internal fun DefaultMessageComposerTrailingContent(
  * Default implementation of the "Attachments" button.
  */
 @Composable
-private fun DefaultAttachmentsButton(
+internal fun AttachmentsButton(
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
@@ -703,7 +688,7 @@ private fun DefaultAttachmentsButton(
  * Default implementation of the "Commands" button.
  */
 @Composable
-private fun DefaultCommandsButton(
+internal fun CommandsButton(
     hasCommandSuggestions: Boolean,
     enabled: Boolean,
     onClick: () -> Unit,
@@ -738,7 +723,7 @@ private fun DefaultCommandsButton(
  * Default implementation of the "Send" button.
  */
 @Composable
-private fun DefaultSendButton(
+internal fun SendButton(
     enabled: Boolean,
     isInputValid: Boolean,
     onClick: () -> Unit,
