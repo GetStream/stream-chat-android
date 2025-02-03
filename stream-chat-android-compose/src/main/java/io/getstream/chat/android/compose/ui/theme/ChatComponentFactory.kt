@@ -118,6 +118,7 @@ import io.getstream.chat.android.compose.ui.messages.list.DefaultMessagesLoading
 import io.getstream.chat.android.compose.ui.messages.list.DefaultSystemMessageContent
 import io.getstream.chat.android.compose.ui.messages.list.MessagesLazyListState
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
+import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
@@ -1351,8 +1352,6 @@ public interface ChatComponentFactory {
     ) {
         ReactionOptionItem(
             modifier = modifier
-                .size(24.dp)
-                .size(ChatTheme.dimens.reactionOptionItemIconSize)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = ripple(bounded = false),
@@ -1433,8 +1432,7 @@ public interface ChatComponentFactory {
     ) {
         ReactionMenuOptionItem(
             modifier = modifier
-                .size(24.dp)
-                .size(ChatTheme.dimens.reactionOptionItemIconSize),
+                .padding(8.dp),
             onReactionOptionSelected = onReactionOptionSelected,
             option = option,
         )

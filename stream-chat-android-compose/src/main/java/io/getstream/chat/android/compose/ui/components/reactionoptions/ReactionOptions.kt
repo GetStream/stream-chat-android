@@ -22,6 +22,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
@@ -35,6 +36,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
+import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.models.Reaction
 
 /**
@@ -66,7 +68,7 @@ public fun ReactionOptions(
     itemContent: @Composable RowScope.(ReactionOptionItemState) -> Unit = { option ->
         with(ChatTheme.componentFactory) {
             ReactionMenuOptionItem(
-                modifier = Modifier,
+                modifier = Modifier.size(ChatTheme.dimens.reactionOptionItemIconSize),
                 option = option,
                 onReactionOptionSelected = onReactionOptionSelected,
             )
