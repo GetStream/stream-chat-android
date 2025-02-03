@@ -1384,6 +1384,7 @@ public interface ChatComponentFactory {
      * It renders the [User] avatar that's shown on the messages screen or in headers of direct messages.
      * If [showOnlineIndicator] is `true` and the user is online, it uses [Avatar] to shows an image or their initials.
      */
+    @Suppress("LongParameterList")
     @Composable
     public fun UserAvatar(
         modifier: Modifier,

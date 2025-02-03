@@ -201,8 +201,7 @@ internal fun PollAnswersItem(
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
-                modifier = Modifier
-                    .weight(1f),
+                modifier = Modifier.weight(1f),
                 text = answer.text,
                 color = ChatTheme.colors.textHighEmphasis,
                 fontWeight = FontWeight.Bold,
