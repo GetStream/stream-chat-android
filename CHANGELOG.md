@@ -77,6 +77,7 @@
 - Create message stateless component factories and refactor to have a single component factory object. [#5593](https://github.com/GetStream/stream-chat-android/pull/5593)
 - Create message list header component factories. [#5599](https://github.com/GetStream/stream-chat-android/pull/5599)
 - Create message footer status indicator stateless component factories. [#5598](https://github.com/GetStream/stream-chat-android/pull/5598)
+- Create message composer stateless component factories. [#5579](https://github.com/GetStream/stream-chat-android/pull/5597)
 - Create thread list component factories. [#5602](https://github.com/GetStream/stream-chat-android/pull/5602)
 
 ### ✅ Added
