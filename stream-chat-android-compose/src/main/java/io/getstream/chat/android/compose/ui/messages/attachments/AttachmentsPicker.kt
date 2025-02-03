@@ -25,7 +25,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -228,12 +227,10 @@ private fun AttachmentPickerOptions(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        with(ChatTheme.componentFactory) {
-            AttachmentsPickerSendButton(
-                hasPickedAttachments = hasPickedAttachments,
-                onClick = onSendAttachmentsClick,
-            )
-        }
+        ChatTheme.componentFactory.AttachmentsPickerSendButton(
+            hasPickedAttachments = hasPickedAttachments,
+            onClick = onSendAttachmentsClick,
+        )
     }
 }
 
@@ -244,7 +241,7 @@ private fun AttachmentPickerOptions(
  * @param onClick The action to be taken when the button is clicked.
  */
 @Composable
-internal fun RowScope.DefaultAttachmentsPickerSendButton(
+internal fun DefaultAttachmentsPickerSendButton(
     hasPickedAttachments: Boolean,
     onClick: () -> Unit,
 ) {
@@ -255,7 +252,6 @@ internal fun RowScope.DefaultAttachmentsPickerSendButton(
             val layoutDirection = LocalLayoutDirection.current
             Icon(
                 modifier = Modifier
-                    .weight(1f)
                     .mirrorRtl(layoutDirection = layoutDirection)
                     .testTag("Stream_AttachmentPickerSendButton"),
                 painter = painterResource(id = R.drawable.stream_compose_ic_left),

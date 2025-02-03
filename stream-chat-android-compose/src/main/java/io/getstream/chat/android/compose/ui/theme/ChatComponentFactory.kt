@@ -1326,7 +1326,7 @@ public interface ChatComponentFactory {
      * @param onClick The click handler for the button.
      */
     @Composable
-    public fun RowScope.AttachmentsPickerSendButton(
+    public fun AttachmentsPickerSendButton(
         hasPickedAttachments: Boolean,
         onClick: () -> Unit,
     ) {
