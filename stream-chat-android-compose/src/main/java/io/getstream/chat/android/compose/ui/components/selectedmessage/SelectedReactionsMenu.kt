@@ -18,15 +18,11 @@ package io.getstream.chat.android.compose.ui.components.selectedmessage
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
 import io.getstream.chat.android.compose.ui.components.SimpleMenu
@@ -37,12 +33,10 @@ import io.getstream.chat.android.compose.ui.util.ReactionIcon
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewReactionData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
-import io.getstream.chat.android.ui.common.state.messages.React
 
 /**
  * Represents the list of user reactions.
@@ -98,7 +92,7 @@ public fun SelectedReactionsMenu(
                 userReactions = buildUserReactionItems(
                     message = message,
                     currentUser = currentUser,
-                )
+                ),
             )
         }
     },

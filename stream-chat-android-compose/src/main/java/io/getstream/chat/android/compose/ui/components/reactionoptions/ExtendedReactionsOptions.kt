@@ -60,7 +60,7 @@ public fun ExtendedReactionsOptions(
             ExtendedReactionMenuOptionItem(
                 modifier = Modifier.padding(vertical = 8.dp),
                 onReactionOptionSelected = onReactionOptionSelected,
-                option = option
+                option = option,
             )
         }
     },

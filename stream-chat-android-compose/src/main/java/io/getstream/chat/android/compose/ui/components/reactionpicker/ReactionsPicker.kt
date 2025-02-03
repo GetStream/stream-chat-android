@@ -18,23 +18,19 @@ package io.getstream.chat.android.compose.ui.components.reactionpicker
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedReactionsOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
-import io.getstream.chat.android.ui.common.state.messages.React
 
 /**
  * The default maximum number of reactions shown in the picker.
@@ -91,8 +87,7 @@ public fun ReactionsPicker(
         centerContent = centerContent,
         onDismiss = onDismiss,
     )
-    }
-
+}
 
 /**
  * Preview of [ReactionsPicker] with a reaction selected.
