@@ -253,6 +253,7 @@ private fun SearchUserResultItem(
             user = user,
             textStyle = ChatTheme.typography.title3Bold,
             showOnlineIndicator = true,
+            onlineIndicator = { },
             onClick = null,
         )
         Spacer(modifier = Modifier.size(8.dp))

@@ -367,6 +367,7 @@ private fun GroupChannelUserPreviewItem(
             user = user,
             textStyle = ChatTheme.typography.title3Bold,
             showOnlineIndicator = true,
+            onlineIndicator = { },
             onClick = null,
         )
         Text(
@@ -440,6 +441,7 @@ private fun SelectedUserItem(
                 user = user,
                 textStyle = ChatTheme.typography.title3Bold,
                 showOnlineIndicator = true,
+                onlineIndicator = { },
                 onClick = null,
             )
             Spacer(modifier = Modifier.height(4.dp))

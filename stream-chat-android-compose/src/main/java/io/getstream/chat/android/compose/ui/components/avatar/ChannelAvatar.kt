@@ -99,6 +99,7 @@ public fun ChannelAvatar(
                 user = user,
                 textStyle = ChatTheme.typography.title3Bold,
                 showOnlineIndicator = showOnlineIndicator,
+                onlineIndicator = onlineIndicator,
                 onClick = onClick,
             )
         }
@@ -114,6 +115,7 @@ public fun ChannelAvatar(
                 user = user,
                 textStyle = ChatTheme.typography.title3Bold,
                 showOnlineIndicator = showOnlineIndicator,
+                onlineIndicator = onlineIndicator,
                 onClick = onClick,
             )
         }

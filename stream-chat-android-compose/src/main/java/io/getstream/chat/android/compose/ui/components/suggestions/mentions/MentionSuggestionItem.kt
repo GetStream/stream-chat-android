@@ -109,6 +109,7 @@ internal fun DefaultMentionSuggestionItemLeadingContent(user: User) {
         user = user,
         textStyle = ChatTheme.typography.title3Bold,
         showOnlineIndicator = true,
+        onlineIndicator = { },
         onClick = null,
     )
 }

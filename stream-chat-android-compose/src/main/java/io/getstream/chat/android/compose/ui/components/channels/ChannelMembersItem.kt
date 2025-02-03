@@ -52,6 +52,7 @@ internal fun ChannelMembersItem(
             user = member.user,
             textStyle = ChatTheme.typography.title3Bold,
             showOnlineIndicator = true,
+            onlineIndicator = { },
             onClick = null,
         )
 

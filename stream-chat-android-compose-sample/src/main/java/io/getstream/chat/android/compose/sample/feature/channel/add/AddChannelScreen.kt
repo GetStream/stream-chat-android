@@ -287,6 +287,7 @@ private fun SelectedUserChip(
                 textStyle = ChatTheme.typography.title3Bold.copy(fontSize = 12.sp),
                 user = user,
                 showOnlineIndicator = true,
+                onlineIndicator = { },
                 onClick = null,
             )
         },

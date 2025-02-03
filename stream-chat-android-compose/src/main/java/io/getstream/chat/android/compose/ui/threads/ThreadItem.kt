@@ -203,6 +203,7 @@ internal fun DefaultLatestReplyContent(reply: Message) {
             user = reply.user,
             textStyle = ChatTheme.typography.title3Bold,
             showOnlineIndicator = true,
+            onlineIndicator = { },
             onClick = null,
         )
         Spacer(modifier = Modifier.width(8.dp))

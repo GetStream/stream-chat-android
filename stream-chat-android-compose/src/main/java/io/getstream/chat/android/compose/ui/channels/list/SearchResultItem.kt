@@ -134,6 +134,7 @@ internal fun DefaultSearchResultItemLeadingContent(
                     .size(ChatTheme.dimens.channelAvatarSize),
                 textStyle = ChatTheme.typography.title3Bold,
                 showOnlineIndicator = true,
+                onlineIndicator = { },
                 onClick = null,
             )
         }

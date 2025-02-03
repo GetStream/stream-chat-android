@@ -1390,6 +1390,7 @@ public interface ChatComponentFactory {
         user: User,
         textStyle: TextStyle,
         showOnlineIndicator: Boolean,
+        onlineIndicator: @Composable BoxScope.() -> Unit,
         onClick: (() -> Unit)?,
     ) {
         io.getstream.chat.android.compose.ui.components.avatar.UserAvatar(
@@ -1398,6 +1399,7 @@ public interface ChatComponentFactory {
             textStyle = textStyle,
             contentDescription = user.name,
             showOnlineIndicator = showOnlineIndicator,
+            onlineIndicator = onlineIndicator,
             onClick = onClick,
         )
     }
