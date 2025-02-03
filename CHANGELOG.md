@@ -78,6 +78,7 @@
 - Create message list header component factories. [#5599](https://github.com/GetStream/stream-chat-android/pull/5599)
 - Create message footer status indicator stateless component factories. [#5598](https://github.com/GetStream/stream-chat-android/pull/5598)
 - Create message composer stateless component factories. [#5579](https://github.com/GetStream/stream-chat-android/pull/5597)
+- Create attachments picker send button component factory. [#5607](https://github.com/GetStream/stream-chat-android/pull/5607)
 
 ### ✅ Added
 
