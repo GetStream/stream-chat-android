@@ -208,10 +208,12 @@ internal fun ThreadItemLatestReplyContent(thread: Thread) {
             ChatTheme.componentFactory.UserAvatar(
                 modifier = Modifier.size(ChatTheme.dimens.channelAvatarSize),
                 user = latestReply.user,
-            textStyle = ChatTheme.typography.title3Bold,
-            showOnlineIndicator = true,
-            onlineIndicator = { DefaultOnlineIndicator(onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd) },
-            onClick = null,
+                textStyle = ChatTheme.typography.title3Bold,
+                showOnlineIndicator = true,
+                onlineIndicator = {
+                    DefaultOnlineIndicator(onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd)
+                },
+                onClick = null,
             )
             Spacer(modifier = Modifier.width(8.dp))
             Column(
