@@ -50,7 +50,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param horizontalArrangement Used to apply horizontal arrangement.
  */
 @Composable
-public fun GenericMenuOptionItem(
+public fun MenuOptionItem(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     leadingIcon: @Composable RowScope.() -> Unit,

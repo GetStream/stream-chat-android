@@ -73,7 +73,6 @@ import io.getstream.chat.android.compose.ui.components.DefaultSearchLeadingIcon
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptions
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
-import io.getstream.chat.android.compose.ui.components.common.GenericMenuOptionItem
 import io.getstream.chat.android.compose.ui.components.composer.ComposerLinkPreview
 import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
 import io.getstream.chat.android.compose.ui.components.composer.MessageInputOptions
@@ -2075,7 +2074,7 @@ public interface ChatComponentFactory {
         verticalAlignment: Alignment.Vertical,
         horizontalArrangement: Arrangement.Horizontal,
     ) {
-        GenericMenuOptionItem(
+        io.getstream.chat.android.compose.ui.components.common.MenuOptionItem(
             modifier = modifier,
             onClick = onClick,
             leadingIcon = leadingIcon,
