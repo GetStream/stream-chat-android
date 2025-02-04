@@ -52,14 +52,13 @@ import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.avatar.DefaultOnlineIndicator
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
-import io.getstream.chat.android.models.ThreadParticipant
 import io.getstream.chat.android.models.User
-import java.util.Date
+import io.getstream.chat.android.previewdata.PreviewThreadData
 
 /**
  * The basic Thread item, showing information about the Thread title, parent message, last reply and number of unread
@@ -264,47 +263,11 @@ private fun formatMessage(message: Message) =
 @Composable
 @Preview
 private fun ThreadItemPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         Surface {
-            val user1 = User(id = "uid1", name = "User 1")
-            val user2 = User(id = "uid2", name = "User 2")
-            val thread = Thread(
-                activeParticipantCount = 2,
-                cid = "cid",
-                channel = Channel(),
-                parentMessageId = "pmid1",
-                parentMessage = Message(
-                    id = "pmid1",
-                    text = "Hey everyone, who's up for a group ride this Saturday morning?",
-                ),
-                createdByUserId = "uid2",
-                createdBy = user2,
-                participantCount = 2,
-                threadParticipants = listOf(
-                    ThreadParticipant(user1),
-                    ThreadParticipant(user2),
-                ),
-                lastMessageAt = Date(),
-                createdAt = Date(),
-                updatedAt = Date(),
-                deletedAt = null,
-                title = "Group ride preparation and discussion",
-                latestReplies = listOf(
-                    Message(id = "mid1", text = "See you all there, stay safe on the roads!", user = user1),
-                ),
-                read = listOf(
-                    ChannelUserRead(
-                        user = user2,
-                        lastReceivedEventDate = Date(),
-                        unreadMessages = 3,
-                        lastRead = Date(),
-                        lastReadMessageId = null,
-                    ),
-                ),
-            )
             ThreadItem(
-                thread = thread,
-                currentUser = user2,
+                thread = PreviewThreadData.thread,
+                currentUser = PreviewThreadData.participant2,
                 onThreadClick = {},
             )
         }
@@ -314,7 +277,7 @@ private fun ThreadItemPreview() {
 @Composable
 @Preview
 private fun DefaultThreadTitlePreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         Surface {
             DefaultThreadTitle(
                 channel = Channel(
@@ -331,7 +294,7 @@ private fun DefaultThreadTitlePreview() {
 @Composable
 @Preview
 private fun DefaultUnreadCountContentPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         Row {
             DefaultUnreadCountContent(unreadCount = 17)
         }
@@ -341,7 +304,7 @@ private fun DefaultUnreadCountContentPreview() {
 @Composable
 @Preview
 private fun ThreadParentMessageContentPreview() {
-    ChatTheme {
+    ChatPreviewTheme {
         Row {
             val parentMessage = Message(
                 id = "message1",

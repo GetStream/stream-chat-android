@@ -52,6 +52,15 @@ public final class io/getstream/chat/android/previewdata/PreviewReactionData {
 	public final fun getOneReaction ()Ljava/util/List;
 }
 
+public final class io/getstream/chat/android/previewdata/PreviewThreadData {
+	public static final field INSTANCE Lio/getstream/chat/android/previewdata/PreviewThreadData;
+	public final fun getParticipant1 ()Lio/getstream/chat/android/models/User;
+	public final fun getParticipant2 ()Lio/getstream/chat/android/models/User;
+	public final fun getThread ()Lio/getstream/chat/android/models/Thread;
+	public final fun getThread2 ()Lio/getstream/chat/android/models/Thread;
+	public final fun getThreadList ()Ljava/util/List;
+}
+
 public final class io/getstream/chat/android/previewdata/PreviewUserData {
 	public static final field INSTANCE Lio/getstream/chat/android/previewdata/PreviewUserData;
 	public final fun getUser1 ()Lio/getstream/chat/android/models/User;
