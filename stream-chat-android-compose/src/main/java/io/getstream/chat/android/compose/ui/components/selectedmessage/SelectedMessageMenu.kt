@@ -79,6 +79,8 @@ public fun SelectedMessageMenu(
                     onMessageAction = onMessageAction,
                     ownCapabilities = ownCapabilities,
                     onShowMore = onShowMoreReactionsSelected,
+                    reactionTypes = reactionTypes,
+                    showMoreReactionsIcon = showMoreReactionsIcon,
                 )
             }
         }

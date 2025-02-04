@@ -44,7 +44,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
@@ -138,7 +137,6 @@ import io.getstream.chat.android.compose.ui.messages.list.DefaultMessagesLoading
 import io.getstream.chat.android.compose.ui.messages.list.DefaultSystemMessageContent
 import io.getstream.chat.android.compose.ui.messages.list.MessagesLazyListState
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
-import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Command
@@ -1682,6 +1680,8 @@ public interface ChatComponentFactory {
      * @param ownCapabilities The capabilities of the current user.
      * @param onShowMore Callback for when the show more reactions option is clicked.
      * @param onMessageAction Callback for when a message action is clicked.
+     * @param reactionTypes The reaction types.
+     * @param showMoreReactionsIcon The icon to show for the "Show more reactions" option.
      */
     @Composable
     public fun MessageMenuHeaderContent(
@@ -1691,13 +1691,16 @@ public interface ChatComponentFactory {
         onMessageAction: (MessageAction) -> Unit,
         ownCapabilities: Set<String>,
         onShowMore: () -> Unit,
+        reactionTypes: Map<String, ReactionIcon>,
+        showMoreReactionsIcon: Int,
     ) {
         ReactionMenuOptions(
             modifier = modifier,
             message = message,
-            reactionTypes = ChatTheme.reactionIconFactory.createReactionIcons(),
+            reactionTypes = reactionTypes,
             onMessageAction = onMessageAction,
             onShowMoreReactionsSelected = onShowMore,
+            showMoreReactionsIcon = showMoreReactionsIcon,
         )
     }
 
@@ -1816,6 +1819,7 @@ public interface ChatComponentFactory {
         reactionTypes: Map<String, ReactionIcon>,
         onMessageAction: (MessageAction) -> Unit,
         onShowMoreReactionsSelected: () -> Unit,
+        showMoreReactionsIcon: Int,
     ) {
         ReactionMenuOptions(
             modifier = modifier,
@@ -1823,6 +1827,7 @@ public interface ChatComponentFactory {
             reactionTypes = reactionTypes,
             onMessageAction = onMessageAction,
             onShowMoreReactionsSelected = onShowMoreReactionsSelected,
+            showMoreReactionsIcon = showMoreReactionsIcon,
         )
     }
 
@@ -1861,13 +1866,14 @@ public interface ChatComponentFactory {
         reactionTypes: Map<String, ReactionIcon>,
         onMessageAction: (MessageAction) -> Unit,
         onShowMoreReactionsSelected: () -> Unit,
+        showMoreReactionsIcon: Int,
     ) {
         ReactionOptions(
             modifier = modifier
                 .fillMaxWidth()
                 .padding(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 20.dp),
             reactionTypes = reactionTypes,
-            showMoreReactionsIcon = R.drawable.stream_compose_ic_more,
+            showMoreReactionsIcon = showMoreReactionsIcon,
             onReactionOptionSelected = {
                 onMessageAction(
                     React(

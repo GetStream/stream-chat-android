@@ -81,6 +81,7 @@ public fun SelectedReactionsMenu(
                     reactionTypes = reactionTypes,
                     onMessageAction = onMessageAction,
                     onShowMoreReactionsSelected = onShowMoreReactionsSelected,
+                    showMoreReactionsIcon = showMoreReactionsIcon,
                 )
             }
         }
