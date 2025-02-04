@@ -30,6 +30,6 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 public fun Context.isPermissionDeclared(permission: String): Boolean {
     return packageManager
         .getPackageInfo(packageName, PackageManager.GET_PERMISSIONS)
-        .requestedPermissions
+        ?.requestedPermissions
         ?.contains(permission) == true
 }
