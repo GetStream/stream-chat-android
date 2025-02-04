@@ -152,7 +152,6 @@ class MessagesActivity : BaseConnectedActivity() {
             autoTranslationEnabled = ChatApp.autoTranslationEnabled,
             isComposerLinkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
             allowUIAutomationTest = true,
-            componentFactory = CustomChatComponentFactory(),
             messageComposerTheme = messageComposerTheme.let {
                 it.copy(
                     attachmentCancelIcon = it.attachmentCancelIcon.copy(
