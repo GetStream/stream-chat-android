@@ -67,7 +67,10 @@ public fun ReactionOptions(
             )
         }
     },
-    showMore: @Composable RowScope.(onShowMoreReactionsSelected: () -> Unit, showMoreReactionsIcon: Int) -> Unit = { par1, par2 ->
+    showMore: @Composable RowScope.(
+        onShowMoreReactionsSelected: () -> Unit,
+        showMoreReactionsIcon: Int,
+    ) -> Unit = { par1, par2 ->
         with(ChatTheme.componentFactory) {
             ReactionMenuShowMore(Modifier, par1, par2)
         }

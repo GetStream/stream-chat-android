@@ -171,6 +171,9 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
  */
 internal class DefaultChatComponentFactory : ChatComponentFactory
 
+// Default values
+private const val DefaultCellsCount: Int = 5
+
 /**
  * Factory for creating stateless components that are used by default throughout the Chat UI.
  *
@@ -219,7 +222,7 @@ internal class DefaultChatComponentFactory : ChatComponentFactory
  * }
  * ```
  */
-@Suppress("TooManyFunctions", "LargeClass")
+@Suppress("TooManyFunctions", "LargeClass", "LongParameterList")
 public interface ChatComponentFactory {
 
     /**
@@ -1600,7 +1603,8 @@ public interface ChatComponentFactory {
         onMessageOptionSelected: (MessageOptionItemState) -> Unit,
     ) {
         val title = stringResource(id = option.title)
-        // Not using directly the [MessageOptionsItem] because that one contains our default behavior which is not overridable.
+        // Not using directly the [MessageOptionsItem] because
+        // that one contains our default behavior which is not overridable.
         MenuOptionItem(
             modifier = modifier,
             title = title,
@@ -1822,7 +1826,7 @@ public interface ChatComponentFactory {
                     ),
                 )
             },
-            cells = GridCells.Fixed(5),
+            cells = GridCells.Fixed(DefaultCellsCount),
             ownReactions = message.ownReactions,
         )
     }
