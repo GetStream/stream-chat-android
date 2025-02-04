@@ -35,6 +35,7 @@ import androidx.compose.ui.zIndex
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewUserData
+import io.getstream.chat.android.ui.common.utils.extensions.initials
 
 /**
  * Represents the [User] avatar that's shown on the Messages screen or in headers of DMs.
@@ -72,14 +73,15 @@ public fun UserAvatarRow(
         horizontalArrangement = Arrangement.spacedBy((-offset).dp),
     ) {
         users.take(maxAvatarCount).forEachIndexed { index, user ->
-            UserAvatar(
+            ChatTheme.componentFactory.Avatar(
                 modifier = Modifier
                     .size(size)
                     .zIndex((users.size - index).toFloat()),
-                user = user,
+                imageUrl = user.image,
+                initials = user.initials,
                 shape = shape,
                 textStyle = textStyle,
-                showOnlineIndicator = false,
+                placeholderPainter = null,
                 contentDescription = contentDescription,
                 initialsAvatarOffset = initialsAvatarOffset,
                 onClick = onClick,
