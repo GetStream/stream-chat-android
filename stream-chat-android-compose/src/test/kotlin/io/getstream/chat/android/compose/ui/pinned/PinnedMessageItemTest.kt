@@ -24,7 +24,7 @@ import io.getstream.chat.android.previewdata.PreviewUserData
 import org.junit.Rule
 import org.junit.Test
 
-internal class PinnedMessageItemKtTest : SnapshotTest {
+internal class PinnedMessageItemTest : SnapshotTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)

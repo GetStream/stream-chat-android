@@ -28,7 +28,7 @@ import org.junit.Rule
 import org.junit.Test
 import java.util.Date
 
-internal class PinnedMessageListKtTest : SnapshotTest {
+internal class PinnedMessageListTest : SnapshotTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
