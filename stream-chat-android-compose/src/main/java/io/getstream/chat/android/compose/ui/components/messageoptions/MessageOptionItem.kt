@@ -43,6 +43,11 @@ import io.getstream.chat.android.ui.common.state.messages.Reply
  * @param horizontalArrangement Used to apply horizontal arrangement.
  */
 @Composable
+@Deprecated(
+    message = "This class is deprecated and will be removed in the next version.",
+    replaceWith = ReplaceWith("GenericMenuOptionItem"),
+    level = DeprecationLevel.WARNING,
+)
 public fun MessageOptionItem(
     option: MessageOptionItemState,
     modifier: Modifier = Modifier,
