@@ -1981,8 +1981,7 @@ public interface ChatComponentFactory {
         onReactionOptionSelected: (ReactionOptionItemState) -> Unit,
     ) {
         ReactionMenuOptionItem(
-            modifier = modifier
-                .padding(8.dp),
+            modifier = modifier,
             onReactionOptionSelected = onReactionOptionSelected,
             option = option,
         )
