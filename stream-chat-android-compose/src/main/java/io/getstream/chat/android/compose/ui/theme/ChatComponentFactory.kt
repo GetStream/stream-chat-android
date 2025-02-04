@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -1606,7 +1607,9 @@ public interface ChatComponentFactory {
         // Not using directly the [MessageOptionsItem] because
         // that one contains our default behavior which is not overridable.
         MenuOptionItem(
-            modifier = modifier,
+            modifier = modifier
+                .fillMaxWidth()
+                .height(ChatTheme.dimens.messageOptionsItemHeight),
             title = title,
             titleColor = option.titleColor,
             leadingIcon = {
