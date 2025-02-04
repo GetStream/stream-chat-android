@@ -1016,8 +1016,8 @@ public final class io/getstream/chat/android/compose/ui/components/channels/Unre
 	public static final fun UnreadCountIndicator-FNF3uiM (ILandroidx/compose/ui/Modifier;JLandroidx/compose/runtime/Composer;II)V
 }
 
-public final class io/getstream/chat/android/compose/ui/components/common/GenericMenuOptionItemKt {
-	public static final fun GenericMenuOptionItem-Y_kIC3U (Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Ljava/lang/String;JLandroidx/compose/ui/text/TextStyle;FLandroidx/compose/ui/Alignment$Vertical;Landroidx/compose/foundation/layout/Arrangement$Horizontal;Landroidx/compose/runtime/Composer;II)V
+public final class io/getstream/chat/android/compose/ui/components/common/MenuOptionItemKt {
+	public static final fun MenuOptionItem-Y_kIC3U (Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Ljava/lang/String;JLandroidx/compose/ui/text/TextStyle;FLandroidx/compose/ui/Alignment$Vertical;Landroidx/compose/foundation/layout/Arrangement$Horizontal;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/composer/ComposableSingletons$InputFieldKt {
