@@ -56,44 +56,44 @@ public fun UnreadThreadsBanner(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
 ) {
-    if (unreadThreads <= 0) {
-        // Don't show if there are no new threads
-        return
-    }
-    val clickableModifier = if (onClick != null) {
-        Modifier.clickable { onClick() }
-    } else {
-        Modifier
-    }
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .heightIn(min = 52.dp)
-            .background(ChatTheme.colors.textHighEmphasis, RoundedCornerShape(16.dp))
-            .clip(RoundedCornerShape(16.dp))
-            .then(clickableModifier)
-            .padding(start = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        val text = pluralStringResource(R.plurals.stream_compose_thread_list_new_threads, unreadThreads, unreadThreads)
-        Text(
-            modifier = Modifier.weight(1f),
-            text = text,
-            fontSize = 16.sp,
-            color = ChatTheme.colors.barsBackground,
-            lineHeight = 20.sp,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        IconButton(
-            onClick = {},
+    if (unreadThreads > 0) {
+        val clickableModifier = if (onClick != null) {
+            Modifier.clickable { onClick() }
+        } else {
+            Modifier
+        }
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .heightIn(min = 52.dp)
+                .background(ChatTheme.colors.textHighEmphasis, RoundedCornerShape(16.dp))
+                .clip(RoundedCornerShape(16.dp))
+                .then(clickableModifier)
+                .padding(start = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.stream_compose_ic_union),
-                contentDescription = "Reload threads",
-                tint = ChatTheme.colors.barsBackground,
+            val text =
+                pluralStringResource(R.plurals.stream_compose_thread_list_new_threads, unreadThreads, unreadThreads)
+            Text(
+                modifier = Modifier.weight(1f),
+                text = text,
+                fontSize = 16.sp,
+                color = ChatTheme.colors.barsBackground,
+                lineHeight = 20.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
+            IconButton(
+                onClick = {},
+            ) {
+                Icon(
+
+                    painter = painterResource(id = R.drawable.stream_compose_ic_union),
+                    contentDescription = "Reload threads",
+                    tint = ChatTheme.colors.barsBackground,
+                )
+            }
         }
     }
 }
