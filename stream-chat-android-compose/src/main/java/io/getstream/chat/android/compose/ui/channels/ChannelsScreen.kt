@@ -128,7 +128,8 @@ public fun ChannelsScreen(
             modifier = Modifier.fillMaxSize(),
             topBar = {
                 if (isShowingHeader) {
-                    ChannelListHeader(
+                    ChatTheme.componentFactory.ChannelListHeader(
+                        modifier = Modifier,
                         onHeaderActionClick = onHeaderActionClick,
                         onAvatarClick = { onHeaderAvatarClick() },
                         currentUser = user,

@@ -147,6 +147,7 @@ class MessagesActivity : BaseConnectedActivity() {
             colors = colors,
             shapes = shapes,
             typography = typography,
+            componentFactory = CustomChatComponentFactory(),
             dateFormatter = ChatApp.dateFormatter,
             autoTranslationEnabled = ChatApp.autoTranslationEnabled,
             isComposerLinkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
