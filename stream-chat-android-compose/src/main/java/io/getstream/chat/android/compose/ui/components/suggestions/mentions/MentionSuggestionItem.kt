@@ -37,7 +37,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
+import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
+import io.getstream.chat.android.compose.ui.components.avatar.DefaultOnlineIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
 
@@ -103,12 +104,15 @@ public fun MentionSuggestionItem(
  */
 @Composable
 internal fun DefaultMentionSuggestionItemLeadingContent(user: User) {
-    UserAvatar(
+    ChatTheme.componentFactory.UserAvatar(
         modifier = Modifier
             .padding(end = 8.dp)
             .size(ChatTheme.dimens.mentionSuggestionItemAvatarSize),
         user = user,
+        textStyle = ChatTheme.typography.title3Bold,
         showOnlineIndicator = true,
+        onlineIndicator = { DefaultOnlineIndicator(onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd) },
+        onClick = null,
     )
 }
 

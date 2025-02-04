@@ -59,8 +59,8 @@ public object PreviewUserData {
     )
 
     public val user7: User = User(
-        id = "andremion",
-        name = "André Mion",
+        id = "andrerego",
+        name = "André Rêgo",
         image = "https://ca.slack-edge.com/T02RM6X6B-U083JCB6ZEY-2da235988b74-512",
     )
 

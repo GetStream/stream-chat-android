@@ -19,11 +19,13 @@ package io.getstream.chat.android.compose.ui.theme
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.DpOffset
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelHeaderLeadingContent
@@ -191,6 +193,30 @@ internal class DefaultChatComponentFactory : ChatComponentFactory
  */
 @Suppress("TooManyFunctions", "LargeClass")
 public interface ChatComponentFactory {
+
+    /**
+     * The default header shown above the channel list.
+     * Usually contains the current user's avatar, a title or the connected status, and an action button.
+     */
+    @Suppress("LongParameterList")
+    @Composable
+    public fun ChannelListHeader(
+        modifier: Modifier,
+        title: String,
+        currentUser: User?,
+        connectionState: ConnectionState,
+        onAvatarClick: (User?) -> Unit,
+        onHeaderActionClick: () -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader(
+            modifier = modifier,
+            title = title,
+            currentUser = currentUser,
+            connectionState = connectionState,
+            onAvatarClick = onAvatarClick,
+            onHeaderActionClick = onHeaderActionClick,
+        )
+    }
 
     /**
      * The default leading content of the channel list header.
@@ -860,24 +886,24 @@ public interface ChatComponentFactory {
      * The default quoted message content.
      * Usually shows only the sender avatar, text and a single attachment preview.
      */
+    @Suppress("LongParameterList")
     @Composable
     public fun MessageQuotedContent(
+        modifier: Modifier,
         message: Message,
         currentUser: User?,
+        replyMessage: Message,
         onLongItemClick: (Message) -> Unit,
         onQuotedMessageClick: (Message) -> Unit,
     ) {
-        val quotedMessage = message.replyTo
-        if (quotedMessage != null) {
-            QuotedMessage(
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                message = quotedMessage,
-                currentUser = currentUser,
-                replyMessage = message,
-                onLongItemClick = { onLongItemClick(message) },
-                onQuotedMessageClick = onQuotedMessageClick,
-            )
-        }
+        QuotedMessage(
+            modifier = modifier,
+            message = message,
+            currentUser = currentUser,
+            replyMessage = replyMessage,
+            onLongItemClick = onLongItemClick,
+            onQuotedMessageClick = onQuotedMessageClick,
+        )
     }
 
     /**
@@ -1325,6 +1351,105 @@ public interface ChatComponentFactory {
         recordingActions: AudioRecordingActions,
     ) {
         DefaultMessageComposerRecordingContent(state, recordingActions)
+    }
+
+    /**
+     * The default avatar, which renders an image from the provided image URL.
+     * In case the image URL is empty or there is an error loading the image,
+     * it falls back to an image with initials.
+     */
+    @Suppress("LongParameterList")
+    @Composable
+    public fun Avatar(
+        modifier: Modifier,
+        imageUrl: String,
+        initials: String,
+        shape: Shape,
+        textStyle: TextStyle,
+        placeholderPainter: Painter?,
+        contentDescription: String?,
+        initialsAvatarOffset: DpOffset,
+        onClick: (() -> Unit)?,
+    ) {
+        io.getstream.chat.android.compose.ui.components.avatar.Avatar(
+            modifier = modifier,
+            imageUrl = imageUrl,
+            initials = initials,
+            shape = shape,
+            textStyle = textStyle,
+            placeholderPainter = placeholderPainter,
+            contentDescription = contentDescription,
+            initialsAvatarOffset = initialsAvatarOffset,
+            onClick = onClick,
+        )
+    }
+
+    /**
+     * The default user avatar content.
+     * It renders the [User] avatar that's shown on the messages screen or in headers of direct messages.
+     * If [showOnlineIndicator] is `true` and the user is online, it uses [Avatar] to shows an image or their initials.
+     */
+    @Suppress("LongParameterList")
+    @Composable
+    public fun UserAvatar(
+        modifier: Modifier,
+        user: User,
+        textStyle: TextStyle,
+        showOnlineIndicator: Boolean,
+        onlineIndicator: @Composable BoxScope.() -> Unit,
+        onClick: (() -> Unit)?,
+    ) {
+        io.getstream.chat.android.compose.ui.components.avatar.UserAvatar(
+            modifier = modifier,
+            user = user,
+            textStyle = textStyle,
+            contentDescription = user.name,
+            showOnlineIndicator = showOnlineIndicator,
+            onlineIndicator = onlineIndicator,
+            onClick = onClick,
+        )
+    }
+
+    /**
+     * The default group avatar, which renders a matrix of user images or initials.
+     */
+    @Composable
+    public fun GroupAvatar(
+        modifier: Modifier,
+        users: List<User>,
+        shape: Shape,
+        textStyle: TextStyle,
+        onClick: (() -> Unit)?,
+    ) {
+        io.getstream.chat.android.compose.ui.components.avatar.GroupAvatar(
+            modifier = modifier,
+            users = users,
+            shape = shape,
+            textStyle = textStyle,
+            onClick = onClick,
+        )
+    }
+
+    /**
+     * The default avatar for a channel.
+     * It renders the [Channel] avatar that's shown when browsing channels or when you open the messages screen.
+     * Based on the state of the [Channel] and the number of members,
+     * it might use [Avatar], [UserAvatar], or [GroupAvatar] to show different types of images.
+     */
+    @Composable
+    public fun ChannelAvatar(
+        modifier: Modifier,
+        channel: Channel,
+        currentUser: User?,
+        onClick: (() -> Unit)?,
+    ) {
+        io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar(
+            modifier = modifier,
+            channel = channel,
+            currentUser = currentUser,
+            contentDescription = channel.name,
+            onClick = onClick,
+        )
     }
 
     /**

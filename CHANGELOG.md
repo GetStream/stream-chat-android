@@ -73,17 +73,20 @@
 ### ⬆️ Improved
 - Create snapshot tests for channels stateless components. [#5570](https://github.com/GetStream/stream-chat-android/pull/5570)
 - Introduce `ChatComponentFactory` for easier channel components customization. Initially supporting channel stateless components. [#5571](https://github.com/GetStream/stream-chat-android/pull/5571)
+- Deprecate `MessageContentFactory` in favor of `ChatComponentFactory`. [#5571](https://github.com/GetStream/stream-chat-android/pull/5571)
 - Create snapshot tests for messages stateless components. [#5578](https://github.com/GetStream/stream-chat-android/pull/5578)
+- Create snapshot tests for thread list components. [#5610](https://github.com/GetStream/stream-chat-android/pull/5610)
 - Create message stateless component factories and refactor to have a single component factory object. [#5593](https://github.com/GetStream/stream-chat-android/pull/5593)
 - Create message list header component factories. [#5599](https://github.com/GetStream/stream-chat-android/pull/5599)
 - Create message footer status indicator stateless component factories. [#5598](https://github.com/GetStream/stream-chat-android/pull/5598)
 - Create message composer stateless component factories. [#5579](https://github.com/GetStream/stream-chat-android/pull/5597)
+- Create factories for the avatar stateless components. [#5596](https://github.com/GetStream/stream-chat-android/pull/5596)
 - Create thread list component factories. [#5602](https://github.com/GetStream/stream-chat-android/pull/5602)
 
 ### ✅ Added
 
 ### ⚠️ Changed
-- 🚨 Breaking change: Change `@Composable public fun MessageContainer` function to `@Composable public fun LazyItemScope.MessageContainer` so we can use functions scoped to a list item. [#5593](https://github.com/GetStream/stream-chat-android/pull/5593)
+- 🚨 Breaking change: Change `@Composable public fun MessageContainer` function to `@Composable public fun LazyItemScope.MessageContainer`. [#5593](https://github.com/GetStream/stream-chat-android/pull/5593)
 
 ### ❌ Removed
 
