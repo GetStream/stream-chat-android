@@ -118,7 +118,10 @@ public fun ChannelAvatar(
                 modifier = modifier.testTag("Stream_ChannelAvatar"),
                 user = user,
                 textStyle = ChatTheme.typography.title3Bold,
-                showOnlineIndicator = showOnlineIndicator,
+                showOnlineIndicator = showOnlineIndicator && user.shouldShowOnlineIndicator(
+                    userPresence = ChatTheme.userPresence,
+                    currentUser = currentUser,
+                ),
                 onlineIndicator = onlineIndicator,
                 onClick = onClick,
             )
