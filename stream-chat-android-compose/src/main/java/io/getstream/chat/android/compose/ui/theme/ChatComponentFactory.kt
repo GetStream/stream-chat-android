@@ -1960,8 +1960,7 @@ public interface ChatComponentFactory {
     ) {
         ExtendedReactionsOptions(
             modifier = modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 20.dp),
+                .fillMaxWidth(),
             reactionTypes = reactionTypes,
             onReactionOptionSelected = {
                 onMessageAction(
@@ -2055,7 +2054,7 @@ public interface ChatComponentFactory {
         onDismiss: () -> Unit,
     ) {
         ExtendedReactionsMenuOptions(
-            modifier = modifier,
+            modifier = modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
             message = message,
             reactionTypes = reactionTypes,
             onMessageAction = onMessageAction,
