@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.state.channels.list.ChannelOptionState
 import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.channels.ChannelMembers
-import io.getstream.chat.android.compose.ui.components.channels.ChannelOptions
 import io.getstream.chat.android.compose.ui.components.channels.buildDefaultChannelOptionsState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
@@ -79,16 +78,22 @@ public fun SelectedChannelMenu(
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
     headerContent: @Composable ColumnScope.() -> Unit = {
-        DefaultSelectedChannelMenuHeaderContent(
-            selectedChannel = selectedChannel,
-            currentUser = currentUser,
-        )
+        with(ChatTheme.componentFactory) {
+            ChannelMenuHeaderContent(
+                modifier = Modifier,
+                selectedChannel = selectedChannel,
+                currentUser = currentUser,
+            )
+        }
     },
     centerContent: @Composable ColumnScope.() -> Unit = {
-        DefaultSelectedChannelMenuCenterContent(
-            onChannelOptionClick = onChannelOptionClick,
-            channelOptions = channelOptions,
-        )
+        with(ChatTheme.componentFactory) {
+            ChannelMenuCenterContent(
+                modifier = Modifier,
+                onChannelOptionClick = onChannelOptionClick,
+                channelOptions = channelOptions,
+            )
+        }
     },
 ) {
     SimpleMenu(
@@ -139,20 +144,6 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
     )
 
     ChannelMembers(membersToDisplay)
-}
-
-/**
- * Represents the default content shown at the center of [SelectedChannelMenu] dialog.
- *
- * @param onChannelOptionClick Handler for when the user selects a channel option.
- * @param channelOptions The list of options to show in the UI, according to user permissions.
- */
-@Composable
-internal fun DefaultSelectedChannelMenuCenterContent(
-    onChannelOptionClick: (ChannelAction) -> Unit,
-    channelOptions: List<ChannelOptionState>,
-) {
-    ChannelOptions(channelOptions, onChannelOptionClick)
 }
 
 /**
