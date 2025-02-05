@@ -54,6 +54,7 @@ import io.getstream.chat.android.compose.ui.components.avatar.DefaultOnlineIndic
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.shouldShowOnlineIndicator
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
@@ -212,7 +213,10 @@ internal fun ThreadItemLatestReplyContent(
                 modifier = Modifier.size(ChatTheme.dimens.channelAvatarSize),
                 user = latestReply.user,
                 textStyle = ChatTheme.typography.title3Bold,
-                showOnlineIndicator = latestReply.user.id != currentUser?.id,
+                showOnlineIndicator = latestReply.user.shouldShowOnlineIndicator(
+                    userPresence = ChatTheme.userPresence,
+                    currentUser = currentUser,
+                ),
                 onlineIndicator = {
                     DefaultOnlineIndicator(onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd)
                 },

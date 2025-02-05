@@ -77,12 +77,21 @@ public fun Channel.isOneToOne(currentUser: User?): Boolean {
  *
  * @param context The context to load string resources.
  * @param currentUser The currently logged in user.
+ * @param countCurrentUserAsOnlineMember If `true`, the current user will be counted as an online member.
  * @return The text that represent the member status of the channel.
+ * @param countOtherUsersAsOnlineMembers If `true`, other users will be counted as online members.
  */
-public fun Channel.getMembersStatusText(context: Context, currentUser: User?): String {
+public fun Channel.getMembersStatusText(
+    context: Context,
+    currentUser: User?,
+    countCurrentUserAsOnlineMember: Boolean = false,
+    countOtherUsersAsOnlineMembers: Boolean = false,
+): String {
     return getMembersStatusText(
         context = context,
         currentUser = currentUser,
+        countCurrentUserAsOnlineMember = countCurrentUserAsOnlineMember,
+        countOtherUsersAsOnlineMembers = countOtherUsersAsOnlineMembers,
         userOnlineResId = R.string.stream_compose_user_status_online,
         userLastSeenJustNowResId = R.string.stream_compose_user_status_last_seen_just_now,
         userLastSeenResId = R.string.stream_compose_user_status_last_seen,

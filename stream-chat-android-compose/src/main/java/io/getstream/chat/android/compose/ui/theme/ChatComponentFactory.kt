@@ -2324,10 +2324,11 @@ public interface ChatComponentFactory {
      * Used in the [PinnedMessageListItem].
      *
      * @param message The pinned message to display.
+     * @param currentUser The currently logged-in user.
      */
     @Composable
-    public fun RowScope.PinnedMessageListItemLeadingContent(message: Message) {
-        DefaultMessagePreviewItemLeadingContent(message)
+    public fun RowScope.PinnedMessageListItemLeadingContent(message: Message, currentUser: User?) {
+        DefaultMessagePreviewItemLeadingContent(message, currentUser)
     }
 
     /**

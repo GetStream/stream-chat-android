@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.shouldShowOnlineIndicator
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewChannelData
@@ -98,7 +99,10 @@ public fun ChannelAvatar(
                 modifier = modifier.testTag("Stream_ChannelAvatar"),
                 user = user,
                 textStyle = ChatTheme.typography.title3Bold,
-                showOnlineIndicator = showOnlineIndicator && user.id != currentUser?.id,
+                showOnlineIndicator = showOnlineIndicator && user.shouldShowOnlineIndicator(
+                    userPresence = ChatTheme.userPresence,
+                    currentUser = currentUser,
+                ),
                 onlineIndicator = onlineIndicator,
                 onClick = onClick,
             )
@@ -114,7 +118,10 @@ public fun ChannelAvatar(
                 modifier = modifier.testTag("Stream_ChannelAvatar"),
                 user = user,
                 textStyle = ChatTheme.typography.title3Bold,
-                showOnlineIndicator = showOnlineIndicator,
+                showOnlineIndicator = showOnlineIndicator && user.shouldShowOnlineIndicator(
+                    userPresence = ChatTheme.userPresence,
+                    currentUser = currentUser,
+                ),
                 onlineIndicator = onlineIndicator,
                 onClick = onClick,
             )

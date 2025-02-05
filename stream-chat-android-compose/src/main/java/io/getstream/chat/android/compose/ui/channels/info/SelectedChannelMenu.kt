@@ -138,7 +138,12 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
     Text(
         modifier = Modifier.fillMaxWidth(),
         textAlign = TextAlign.Center,
-        text = selectedChannel.getMembersStatusText(LocalContext.current, currentUser),
+        text = selectedChannel.getMembersStatusText(
+            context = LocalContext.current,
+            currentUser = currentUser,
+            countCurrentUserAsOnlineMember = ChatTheme.userPresence.currentUser.countAsOnlineMember,
+            countOtherUsersAsOnlineMembers = ChatTheme.userPresence.otherUsers.countAsOnlineMember,
+        ),
         style = ChatTheme.typography.footnoteBold,
         color = ChatTheme.colors.textLowEmphasis,
     )

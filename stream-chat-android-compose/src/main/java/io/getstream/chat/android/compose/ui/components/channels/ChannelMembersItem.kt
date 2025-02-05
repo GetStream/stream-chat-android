@@ -28,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
 import io.getstream.chat.android.compose.ui.components.avatar.DefaultOnlineIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.shouldShowOnlineIndicator
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewUserData
@@ -55,7 +56,10 @@ internal fun ChannelMembersItem(
             modifier = Modifier.size(ChatTheme.dimens.selectedChannelMenuUserItemAvatarSize),
             user = member.user,
             textStyle = ChatTheme.typography.title3Bold,
-            showOnlineIndicator = member.user.id != currentUser?.id,
+            showOnlineIndicator = member.user.shouldShowOnlineIndicator(
+                userPresence = ChatTheme.userPresence,
+                currentUser = currentUser,
+            ),
             onlineIndicator = { DefaultOnlineIndicator(onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd) },
             onClick = null,
         )
