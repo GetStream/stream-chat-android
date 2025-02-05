@@ -103,24 +103,6 @@ object PredefinedUserCredentials {
         UserCredentials(
             apiKey = API_KEY,
             user = User(
-                id = "leandro",
-                name = "Leandro Borges Ferreira",
-                image = "https://ca.slack-edge.com/T02RM6X6B-U01AQ67NJ9Z-2f28d711cae9-128",
-            ),
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibGVhbmRybyJ9.CjlYUr79r4GopAhXIbqLBighl3meLsT4dQKzdKX7L3g",
-        ),
-        UserCredentials(
-            apiKey = API_KEY,
-            user = User(
-                id = "marton",
-                name = "Márton Braun",
-                image = "https://ca.slack-edge.com/T02RM6X6B-U018YPHEW7L-26ab96fd1ed3-128",
-            ),
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWFydG9uIn0.22wjzwYCNdaG5FLVeTD49NqVA11UJpEwrNRjZxZrcK8",
-        ),
-        UserCredentials(
-            apiKey = API_KEY,
-            user = User(
                 id = "oleg",
                 name = "Oleg Kuzmin",
                 image = "https://ca.slack-edge.com/T02RM6X6B-U019BEATNCD-bad2dcf654ef-128",
@@ -193,6 +175,34 @@ object PredefinedUserCredentials {
             ),
             token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicHZlbGlrb3YifQ." +
                 "d5eenuTIZD5gZh7rHiv3lYbE8uOqUiHfwULtUr8a-l0",
+        ),
+        UserCredentials(
+            apiKey = API_KEY,
+            user = User(
+                id = "andrerego",
+                name = "André Rêgo",
+                image = "https://ca.slack-edge.com/T02RM6X6B-U083JCB6ZEY-2da235988b74-512",
+            ),
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYW5kcmVyZWdvIn0." +
+                "4sUYJXmz8H0mkClVGGPMN3mUhxg-D9cUDNJeFQ2d82I",
+        ),
+        UserCredentials(
+            apiKey = API_KEY,
+            user = User(
+                id = "leandro",
+                name = "Leandro Borges Ferreira",
+                image = "https://ca.slack-edge.com/T02RM6X6B-U01AQ67NJ9Z-2f28d711cae9-128",
+            ),
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibGVhbmRybyJ9.CjlYUr79r4GopAhXIbqLBighl3meLsT4dQKzdKX7L3g",
+        ),
+        UserCredentials(
+            apiKey = API_KEY,
+            user = User(
+                id = "marton",
+                name = "Márton Braun",
+                image = "https://ca.slack-edge.com/T02RM6X6B-U018YPHEW7L-26ab96fd1ed3-128",
+            ),
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWFydG9uIn0.22wjzwYCNdaG5FLVeTD49NqVA11UJpEwrNRjZxZrcK8",
         ),
         UserCredentials(
             apiKey = API_KEY,

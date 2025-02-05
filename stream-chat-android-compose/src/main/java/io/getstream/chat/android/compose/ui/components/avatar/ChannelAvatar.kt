@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -74,13 +75,15 @@ public fun ChannelAvatar(
          * If the channel has an image we load that as a priority.
          */
         channel.image.isNotEmpty() -> {
-            Avatar(
+            ChatTheme.componentFactory.Avatar(
                 modifier = modifier.testTag("Stream_ChannelAvatar"),
                 imageUrl = channel.image,
                 initials = channel.initials,
                 textStyle = textStyle,
                 shape = shape,
-                contentDescription = contentDescription,
+                placeholderPainter = null,
+                contentDescription = contentDescription ?: channel.name,
+                initialsAvatarOffset = DpOffset.Zero,
                 onClick = onClick,
             )
         }
@@ -91,13 +94,11 @@ public fun ChannelAvatar(
         memberCount == 1 -> {
             val user = members.first().user
 
-            UserAvatar(
+            ChatTheme.componentFactory.UserAvatar(
                 modifier = modifier.testTag("Stream_ChannelAvatar"),
                 user = user,
-                shape = shape,
-                contentDescription = user.name,
+                textStyle = ChatTheme.typography.title3Bold,
                 showOnlineIndicator = showOnlineIndicator,
-                onlineIndicatorAlignment = onlineIndicatorAlignment,
                 onlineIndicator = onlineIndicator,
                 onClick = onClick,
             )
@@ -109,13 +110,11 @@ public fun ChannelAvatar(
         memberCount == 2 && members.any { it.user.id == currentUser?.id } -> {
             val user = members.first { it.user.id != currentUser?.id }.user
 
-            UserAvatar(
+            ChatTheme.componentFactory.UserAvatar(
                 modifier = modifier.testTag("Stream_ChannelAvatar"),
                 user = user,
-                shape = shape,
-                contentDescription = user.name,
+                textStyle = ChatTheme.typography.title3Bold,
                 showOnlineIndicator = showOnlineIndicator,
-                onlineIndicatorAlignment = onlineIndicatorAlignment,
                 onlineIndicator = onlineIndicator,
                 onClick = onClick,
             )
@@ -126,7 +125,7 @@ public fun ChannelAvatar(
         else -> {
             val users = members.filter { it.user.id != currentUser?.id }.map { it.user }
 
-            GroupAvatar(
+            ChatTheme.componentFactory.GroupAvatar(
                 users = users,
                 modifier = modifier.testTag("Stream_ChannelAvatar"),
                 shape = shape,

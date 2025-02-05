@@ -51,7 +51,6 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.TypingIndicator
-import io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
@@ -150,7 +149,7 @@ internal fun DefaultChannelItemLeadingContent(
     channelItem: ItemState.ChannelItemState,
     currentUser: User?,
 ) {
-    ChannelAvatar(
+    ChatTheme.componentFactory.ChannelAvatar(
         modifier = Modifier
             .padding(
                 start = ChatTheme.dimens.channelItemHorizontalPadding,
@@ -161,6 +160,7 @@ internal fun DefaultChannelItemLeadingContent(
             .size(ChatTheme.dimens.channelAvatarSize),
         channel = channelItem.channel,
         currentUser = currentUser,
+        onClick = null,
     )
 }
 

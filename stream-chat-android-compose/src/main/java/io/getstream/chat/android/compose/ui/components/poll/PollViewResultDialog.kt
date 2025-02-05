@@ -49,17 +49,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
+import io.getstream.chat.android.ui.common.utils.extensions.initials
 
 /**
  * A dialog that should be shown if a user taps the seeing result of the votes.
@@ -203,10 +204,16 @@ private fun PollVoteItem(vote: Vote) {
     ) {
         val user = vote.user
         if (user != null) {
-            UserAvatar(
+            ChatTheme.componentFactory.Avatar(
                 modifier = Modifier.size(20.dp),
-                user = user,
-                showOnlineIndicator = false,
+                imageUrl = user.image,
+                initials = user.initials,
+                shape = ChatTheme.shapes.avatar,
+                textStyle = ChatTheme.typography.title3Bold,
+                placeholderPainter = null,
+                contentDescription = user.name,
+                initialsAvatarOffset = DpOffset.Zero,
+                onClick = null,
             )
 
             Text(

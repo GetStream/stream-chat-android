@@ -68,16 +68,16 @@ public fun UserAvatar(
     onClick: (() -> Unit)? = null,
 ) {
     Box(modifier = modifier) {
-        Avatar(
+        ChatTheme.componentFactory.Avatar(
             modifier = Modifier.fillMaxSize(),
             imageUrl = user.image,
             initials = user.initials,
             textStyle = textStyle,
             shape = shape,
-            contentDescription = contentDescription,
-            onClick = onClick,
             placeholderPainter = placeholderPainter,
+            contentDescription = contentDescription,
             initialsAvatarOffset = initialsAvatarOffset,
+            onClick = onClick,
         )
 
         if (showOnlineIndicator && user.online) {

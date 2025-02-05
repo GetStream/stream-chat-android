@@ -37,14 +37,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
-import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewUserData
+import io.getstream.chat.android.ui.common.utils.extensions.initials
 
 /**
  * A clean, decoupled UI element that doesn't rely on ViewModels or our custom architecture setup.
@@ -61,7 +62,7 @@ import io.getstream.chat.android.previewdata.PreviewUserData
  * @param onAvatarClick Action handler when the user taps on an avatar.
  * @param onHeaderActionClick Action handler when the user taps on the header action.
  * @param leadingContent Custom composable that allows the user to replace the default header leading content.
- * By default it shows a [UserAvatar].
+ * By default it shows the currently logged-in user avatar.
  * @param centerContent Custom composable that allows the user to replace the default header center content.
  * By default it either shows a text with [title] or [connectionState].
  * @param trailingContent Custom composable that allows the user to replace the default leading content.
@@ -125,7 +126,7 @@ public fun ChannelListHeader(
 }
 
 /**
- * Represents the default leading content for the [ChannelListHeader], which is a [UserAvatar].
+ * Represents the default leading content of a channel list header, which is the currently logged-in user avatar.
  *
  * We show the avatar if the user is available, otherwise we add a spacer to make sure the alignment is correct.
  */
@@ -134,14 +135,18 @@ internal fun DefaultChannelHeaderLeadingContent(
     currentUser: User?,
     onAvatarClick: (User?) -> Unit,
 ) {
-    val size = Modifier.size(40.dp)
+    val size = Modifier.size(ChatTheme.dimens.channelAvatarSize)
 
     if (currentUser != null) {
-        UserAvatar(
+        ChatTheme.componentFactory.Avatar(
             modifier = size.testTag("Stream_UserAvatar"),
-            user = currentUser,
+            imageUrl = currentUser.image,
+            initials = currentUser.initials,
+            shape = ChatTheme.shapes.avatar,
+            textStyle = ChatTheme.typography.title3Bold,
+            placeholderPainter = null,
             contentDescription = currentUser.name,
-            showOnlineIndicator = false,
+            initialsAvatarOffset = DpOffset.Zero,
             onClick = { onAvatarClick(currentUser) },
         )
     } else {
@@ -174,6 +179,7 @@ internal fun RowScope.DefaultChannelListHeaderCenterContent(
                 color = ChatTheme.colors.textHighEmphasis,
             )
         }
+
         is ConnectionState.Connecting -> NetworkLoadingIndicator(modifier = Modifier.weight(1f))
         is ConnectionState.Offline -> {
             Text(

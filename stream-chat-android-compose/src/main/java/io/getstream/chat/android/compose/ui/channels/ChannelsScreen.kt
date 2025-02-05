@@ -46,8 +46,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
-import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
-import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -126,7 +124,8 @@ public fun ChannelsScreen(
             modifier = Modifier.fillMaxSize(),
             topBar = {
                 if (isShowingHeader) {
-                    ChannelListHeader(
+                    ChatTheme.componentFactory.ChannelListHeader(
+                        modifier = Modifier,
                         onHeaderActionClick = onHeaderActionClick,
                         onAvatarClick = { onHeaderAvatarClick() },
                         currentUser = user,
@@ -186,7 +185,7 @@ public fun ChannelsScreen(
             enter = fadeIn(),
             exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)),
         ) {
-            SelectedChannelMenu(
+            ChatTheme.componentFactory.ChannelMenu(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .animateEnterExit(
