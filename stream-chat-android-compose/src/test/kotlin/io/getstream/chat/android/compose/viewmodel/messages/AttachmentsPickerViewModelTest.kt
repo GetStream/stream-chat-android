@@ -48,7 +48,7 @@ internal class AttachmentsPickerViewModelTest {
         }
         val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
-        viewModel.changeAttachmentState(true)
+        viewModel.showAttachments()
         viewModel.loadData()
 
         viewModel.isShowingAttachments `should be equal to` true
@@ -67,7 +67,7 @@ internal class AttachmentsPickerViewModelTest {
         }
         val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
-        viewModel.changeAttachmentState(true)
+        viewModel.showAttachments()
         viewModel.changeAttachmentPickerMode(Files)
 
         viewModel.isShowingAttachments `should be equal to` true
@@ -87,7 +87,7 @@ internal class AttachmentsPickerViewModelTest {
         }
         val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
-        viewModel.changeAttachmentState(true)
+        viewModel.showAttachments()
         viewModel.loadData()
         viewModel.changeSelectedAttachments(viewModel.images.first())
 
@@ -107,12 +107,11 @@ internal class AttachmentsPickerViewModelTest {
         }
         val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
-        viewModel.changeAttachmentState(true)
-        viewModel.changeAttachmentPickerMode(Files)
-        viewModel.changeAttachmentState(false)
+        viewModel.showAttachments(Files)
+        viewModel.hideAttachments()
 
         viewModel.isShowingAttachments `should be equal to` false
-        viewModel.attachmentsPickerMode `should be equal to` Images
+        viewModel.attachmentsPickerMode `should be equal to` Files
         viewModel.images.size `should be equal to` 0
         viewModel.files.size `should be equal to` 0
         viewModel.hasPickedImages `should be equal to` false

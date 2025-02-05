@@ -189,9 +189,7 @@ public fun MessagesScreen(
 
             when {
                 isImeVisible -> Unit
-                attachmentsPickerViewModel.isShowingAttachments -> attachmentsPickerViewModel.changeAttachmentState(
-                    false,
-                )
+                attachmentsPickerViewModel.isShowingAttachments -> attachmentsPickerViewModel.hideAttachments()
 
                 isShowingOverlay -> listViewModel.selectMessage(null)
                 isStartedForThread -> onBackPressed()
@@ -350,6 +348,7 @@ internal fun DefaultBottomBarContent(
     val composerViewModel = viewModel(MessageComposerViewModel::class.java, factory = viewModelFactory)
     val attachmentsPickerViewModel =
         viewModel(AttachmentsPickerViewModel::class.java, factory = viewModelFactory)
+    val tabFactories = ChatTheme.attachmentsPickerTabFactories
 
     MessageComposer(
         modifier = Modifier
@@ -358,9 +357,10 @@ internal fun DefaultBottomBarContent(
         viewModel = composerViewModel,
         onAttachmentsClick = remember(attachmentsPickerViewModel) {
             {
-                attachmentsPickerViewModel.changeAttachmentState(
-                    true,
-                )
+                val initialAttachmentsPickerMode = tabFactories.firstOrNull {
+                    it.isPickerTabEnabled(attachmentsPickerViewModel.channel)
+                }?.attachmentsPickerMode
+                attachmentsPickerViewModel.showAttachments(initialAttachmentsPickerMode)
             }
         },
         onCommandsClick = remember(composerViewModel) {
@@ -696,7 +696,7 @@ public fun BoxScope.AttachmentsPickerMenu(
             onAttachmentsSelected = remember(attachmentsPickerViewModel) {
                 {
                         attachments ->
-                    attachmentsPickerViewModel.changeAttachmentState(false)
+                    attachmentsPickerViewModel.hideAttachments()
                     composerViewModel.addSelectedAttachments(attachments)
                 }
             },
@@ -724,11 +724,10 @@ public fun BoxScope.AttachmentsPickerMenu(
                     )
                 }
             },
-            onTabClick = { _, tab -> isFullScreenContent = tab.isFullContent },
+            onTabClick = { tab -> isFullScreenContent = tab.isFullContent },
             onDismiss = remember(attachmentsPickerViewModel) {
                 {
-                    attachmentsPickerViewModel.changeAttachmentState(false)
-                    attachmentsPickerViewModel.dismissAttachments()
+                    attachmentsPickerViewModel.hideAttachments()
                 }
             },
         )

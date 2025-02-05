@@ -289,7 +289,7 @@ class MessagesActivity : BaseConnectedActivity() {
                         attachmentsPickerViewModel.changeAttachmentState(false)
                         composerViewModel.addSelectedAttachments(attachments)
                     },
-                    onTabClick = { _, tab -> isFullScreenContent = tab.isFullContent },
+                    onTabClick = { tab -> isFullScreenContent = tab.isFullContent },
                     onAttachmentPickerAction = { action ->
                         if (action is AttachmentPickerPollCreation) {
                             composerViewModel.createPoll(
@@ -315,7 +315,6 @@ class MessagesActivity : BaseConnectedActivity() {
                     },
                     onDismiss = {
                         attachmentsPickerViewModel.changeAttachmentState(false)
-                        attachmentsPickerViewModel.dismissAttachments()
                     },
                 )
             }

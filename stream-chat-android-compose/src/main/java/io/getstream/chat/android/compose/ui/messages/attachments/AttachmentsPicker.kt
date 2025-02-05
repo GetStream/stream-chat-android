@@ -79,7 +79,7 @@ import io.getstream.chat.android.models.Channel
 public fun AttachmentsPicker(
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
     onAttachmentsSelected: (List<Attachment>) -> Unit,
-    onTabClick: (Int, AttachmentsPickerMode) -> Unit,
+    onTabClick: (AttachmentsPickerMode) -> Unit,
     onAttachmentPickerAction: (AttachmentPickerAction) -> Unit = {},
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
@@ -94,12 +94,6 @@ public fun AttachmentsPicker(
         onDismiss()
     }
     BackHandler(onBack = dismissAction)
-    val defaultTabIndex = tabFactories
-        .indexOfFirst { it.isPickerTabEnabled(attachmentsPickerViewModel.channel) }
-        .takeIf { it >= 0 }
-        ?: 0
-    var selectedTabIndex by remember { mutableIntStateOf(defaultTabIndex) }
-    var selectedAttachmentsPickerMode: AttachmentsPickerMode? by remember { mutableStateOf(null) }
 
     Box(
         modifier = Modifier
@@ -127,16 +121,14 @@ public fun AttachmentsPicker(
             colors = CardDefaults.cardColors(containerColor = ChatTheme.attachmentPickerTheme.backgroundSecondary),
         ) {
             Column {
-                if (selectedAttachmentsPickerMode == null || selectedAttachmentsPickerMode?.isFullContent == false) {
+                if (attachmentsPickerViewModel.attachmentPickerMode == null || attachmentsPickerViewModel.attachmentPickerMode?.isFullContent == false) {
                     AttachmentPickerOptions(
                         hasPickedAttachments = attachmentsPickerViewModel.hasPickedAttachments,
                         tabFactories = tabFactories,
                         tabIndex = selectedTabIndex,
                         channel = attachmentsPickerViewModel.channel,
-                        onTabClick = { index, attachmentPickerMode ->
-                            onTabClick.invoke(index, attachmentPickerMode)
-                            selectedTabIndex = index
-                            selectedAttachmentsPickerMode = attachmentPickerMode
+                        onTabClick = { attachmentPickerMode ->
+                            onTabClick.invoke(attachmentPickerMode)
                             attachmentsPickerViewModel.changeAttachmentPickerMode(attachmentPickerMode) { false }
                         },
                         onSendAttachmentsClick = {
@@ -154,8 +146,10 @@ public fun AttachmentsPicker(
                     },
                     color = ChatTheme.attachmentPickerTheme.backgroundPrimary,
                 ) {
-                    AnimatedContent(targetState = selectedTabIndex, label = "") {
-                        tabFactories.getOrNull(it)
+                    AnimatedContent(targetState = attachmentsPickerViewModel.attachmentsPickerMode, label = "") { attachmentsPickerMode ->
+                        tabFactories.firstOrNull { tabFactory ->
+                                tabFactory.attachmentsPickerMode == attachmentsPickerMode
+                            }
                             ?.PickerTabContent(
                                 onAttachmentPickerAction = { pickerAction ->
                                     when (pickerAction) {
@@ -183,7 +177,7 @@ public fun AttachmentsPicker(
  *
  * @param hasPickedAttachments If we selected any attachments in the currently selected tab.
  * @param tabFactories The list of factories to build tab icons.
- * @param tabIndex The index of the tab that we selected.
+ * @param attachmentsPickerMode The the tab that we selected.
  * @param channel The channel where the attachments picker is being used.
  * @param onTabClick Handler for clicking on any of the tabs, to change the shown attachments.
  * @param onSendAttachmentsClick Handler when confirming the picked attachments.
@@ -193,9 +187,9 @@ public fun AttachmentsPicker(
 private fun AttachmentPickerOptions(
     hasPickedAttachments: Boolean,
     tabFactories: List<AttachmentsPickerTabFactory>,
-    tabIndex: Int,
+    attachmentsPickerMode: AttachmentsPickerMode,
     channel: Channel,
-    onTabClick: (Int, AttachmentsPickerMode) -> Unit,
+    onTabClick: (AttachmentsPickerMode) -> Unit,
     onSendAttachmentsClick: () -> Unit,
 ) {
     Row(
@@ -203,9 +197,9 @@ private fun AttachmentPickerOptions(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(horizontalArrangement = Arrangement.SpaceEvenly) {
-            tabFactories.forEachIndexed { index, tabFactory ->
+            tabFactories.forEach { tabFactory ->
 
-                val isSelected = index == tabIndex
+                val isSelected = attachmentsPickerMode == tabFactory.attachmentsPickerMode
                 val isEnabled = isSelected || (!hasPickedAttachments && tabFactory.isPickerTabEnabled(channel))
 
                 IconButton(
@@ -216,7 +210,7 @@ private fun AttachmentPickerOptions(
                             isSelected = isSelected,
                         )
                     },
-                    onClick = { onTabClick(index, tabFactory.attachmentsPickerMode) },
+                    onClick = { onTabClick(tabFactory.attachmentsPickerMode) },
                 )
             }
         }

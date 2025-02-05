@@ -36,6 +36,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMet
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
+import org.jetbrains.kotlin.com.intellij.openapi.diagnostic.Attachment
 
 /**
  * ViewModel responsible for handling the state and business logic of attachments.
@@ -59,7 +60,7 @@ public class AttachmentsPickerViewModel(
     /**
      * Currently selected picker mode. [Images], [Files] or [MediaCapture].
      */
-    public var attachmentsPickerMode: AttachmentsPickerMode by mutableStateOf(Images)
+    public var attachmentsPickerMode: AttachmentsPickerMode? by mutableStateOf(null)
         private set
 
     /**
@@ -130,16 +131,21 @@ public class AttachmentsPickerViewModel(
     }
 
     /**
-     * Notifies the ViewModel if we should show attachments or not.
-     *
-     * @param showAttachments If we need to show attachments or hide them.
+     * Notifies the ViewModel if we should show attachments.
      */
-    public fun changeAttachmentState(showAttachments: Boolean) {
-        isShowingAttachments = showAttachments
+    public fun showAttachments(initialAttachmentsPickerMode: AttachmentsPickerMode? = Images) {
+        isShowingAttachments = true
+        attachmentsPickerMode = initialAttachmentsPickerMode ?: Images
+    }
 
-        if (!showAttachments) {
-            dismissAttachments()
-        }
+    /**
+     * Notifies the ViewModel if we should hide the attachments.
+     * We also clear the items for now, until the user needs them again.
+     */
+    public fun hideAttachments() {
+        isShowingAttachments = false
+        images = emptyList()
+        files = emptyList()
     }
 
     /**
@@ -217,15 +223,5 @@ public class AttachmentsPickerViewModel(
      */
     public fun getAttachmentsFromMetaData(metaData: List<AttachmentMetaData>): List<Attachment> {
         return storageHelper.getAttachmentsForUpload(metaData)
-    }
-
-    /**
-     * Triggered when we dismiss the attachments picker. We reset the state to show images and clear
-     * the items for now, until the user needs them again.
-     */
-    public fun dismissAttachments() {
-        attachmentsPickerMode = Images
-        images = emptyList()
-        files = emptyList()
     }
 }

@@ -2164,7 +2164,7 @@ restartable scheme("[androidx.compose.ui.UiComposable]") fun AttachmentPickerOpt
   stable hasPickedAttachments: Boolean
   unstable tabFactories: List<AttachmentsPickerTabFactory>
   stable tabIndex: Int
-  stable onTabClick: Function2<Int, AttachmentsPickerMode, Unit>
+  stable onTabClick: Function2<AttachmentsPickerMode, Unit>
   stable onSendAttachmentsClick: Function0<Unit>
 )
 restartable skippable scheme("[androidx.compose.ui.UiComposable]") fun PickerTabIcon(
