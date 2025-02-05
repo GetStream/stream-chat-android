@@ -174,6 +174,7 @@ internal fun DefaultMessageListHeaderLeadingContent(onBackPressed: () -> Unit) {
  * @param messageMode Currently active message mode, used to define the title information.
  * @param onHeaderTitleClick Handler for when the user taps on the header title section.
  */
+@Suppress("LongMethod")
 @Composable
 public fun DefaultMessageListHeaderCenterContent(
     channel: Channel,
@@ -190,7 +191,12 @@ public fun DefaultMessageListHeaderCenterContent(
     }
 
     val subtitle = when (messageMode) {
-        MessageMode.Normal -> channel.getMembersStatusText(LocalContext.current, currentUser)
+        MessageMode.Normal -> channel.getMembersStatusText(
+            context = LocalContext.current,
+            currentUser = currentUser,
+            countCurrentUserAsOnlineMember = ChatTheme.userPresence.currentUser.countAsOnlineMember,
+            countOtherUsersAsOnlineMembers = ChatTheme.userPresence.otherUsers.countAsOnlineMember,
+        )
         is MessageMode.MessageThread -> stringResource(
             R.string.stream_compose_thread_subtitle,
             ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser),

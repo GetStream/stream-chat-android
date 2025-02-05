@@ -2266,10 +2266,11 @@ public interface ChatComponentFactory {
      * Used in the [ThreadListItem] to display the latest reply in the thread.
      *
      * @param thread The thread to display.
+     * @param currentUser The currently logged-in user.
      */
     @Composable
-    public fun ThreadListItemLatestReplyContent(thread: Thread) {
-        ThreadItemLatestReplyContent(thread)
+    public fun ThreadListItemLatestReplyContent(thread: Thread, currentUser: User?) {
+        ThreadItemLatestReplyContent(thread, currentUser)
     }
 
     /**
@@ -2322,10 +2323,11 @@ public interface ChatComponentFactory {
      * Used in the [PinnedMessageListItem].
      *
      * @param message The pinned message to display.
+     * @param currentUser The currently logged-in user.
      */
     @Composable
-    public fun RowScope.PinnedMessageListItemLeadingContent(message: Message) {
-        DefaultMessagePreviewItemLeadingContent(message)
+    public fun RowScope.PinnedMessageListItemLeadingContent(message: Message, currentUser: User?) {
+        DefaultMessagePreviewItemLeadingContent(message, currentUser)
     }
 
     /**

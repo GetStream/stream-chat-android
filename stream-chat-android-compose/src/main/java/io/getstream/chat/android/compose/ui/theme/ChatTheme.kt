@@ -85,6 +85,9 @@ private val LocalTypography = compositionLocalOf<StreamTypography> {
 private val LocalShapes = compositionLocalOf<StreamShapes> {
     error("No shapes provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+private val LocalUserPresence = compositionLocalOf<UserPresence> {
+    error("No UserPresence provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
 private val LocalComponentFactory = compositionLocalOf<ChatComponentFactory> {
     error("No ComponentFactory provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -240,6 +243,7 @@ private val LocalKeyboardBehaviour = compositionLocalOf<StreamKeyboardBehaviour>
  * @param typography The set of typography styles we provide, wrapped in [StreamTypography].
  * @param shapes The set of shapes we provide, wrapped in [StreamShapes].
  * @param rippleConfiguration Defines the appearance for ripples.
+ * @param userPresence The user presence display configuration.
  * @param componentFactory Provide to customize the stateless components that are used throughout the UI
  * @param attachmentFactories Attachment factories that we provide.
  * @param attachmentPreviewHandlers Attachment preview handlers we provide.
@@ -292,6 +296,16 @@ public fun ChatTheme(
     rippleConfiguration: StreamRippleConfiguration = StreamRippleConfiguration.defaultRippleConfiguration(
         contentColor = LocalContentColor.current,
         lightTheme = !isInDarkMode,
+    ),
+    userPresence: UserPresence = UserPresence(
+        currentUser = UserPresence.DisplayOptions(
+            showOnlineIndicator = false,
+            countAsOnlineMember = false,
+        ),
+        otherUsers = UserPresence.DisplayOptions(
+            showOnlineIndicator = true,
+            countAsOnlineMember = true,
+        ),
     ),
     componentFactory: ChatComponentFactory = DefaultChatComponentFactory(),
     attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories(),
@@ -391,6 +405,7 @@ public fun ChatTheme(
         LocalShapes provides shapes,
         LocalRippleConfiguration provides rippleConfiguration.toRippleConfiguration(),
         LocalUseDefaultSystemMediaPicker provides useDefaultSystemMediaPicker,
+        LocalUserPresence provides userPresence,
         LocalComponentFactory provides componentFactory,
         LocalAttachmentFactories provides attachmentFactories,
         LocalAttachmentPreviewHandlers provides attachmentPreviewHandlers,
@@ -484,6 +499,14 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalUseDefaultSystemMediaPicker.current
+
+    /**
+     * Retrieves the current [UserPresence] at the call site's position in the hierarchy.
+     */
+    public val userPresence: UserPresence
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalUserPresence.current
 
     /**
      * Retrieves the current [ChatComponentFactory] at the call site's position in the hierarchy.

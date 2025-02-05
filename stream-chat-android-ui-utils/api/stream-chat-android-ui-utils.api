@@ -8,7 +8,8 @@ public final class io/getstream/chat/android/uiutils/extension/AttachmentKt {
 public final class io/getstream/chat/android/uiutils/extension/ChannelKt {
 	public static final fun getDisplayName (Lio/getstream/chat/android/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/models/User;II)Ljava/lang/String;
 	public static synthetic fun getDisplayName$default (Lio/getstream/chat/android/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/models/User;IIILjava/lang/Object;)Ljava/lang/String;
-	public static final fun getMembersStatusText (Lio/getstream/chat/android/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/models/User;IIIII)Ljava/lang/String;
+	public static final fun getMembersStatusText (Lio/getstream/chat/android/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/models/User;ZZIIIII)Ljava/lang/String;
+	public static synthetic fun getMembersStatusText$default (Lio/getstream/chat/android/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/models/User;ZZIIIIIILjava/lang/Object;)Ljava/lang/String;
 	public static final fun getPreviewMessage (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/models/Message;
 }
 
