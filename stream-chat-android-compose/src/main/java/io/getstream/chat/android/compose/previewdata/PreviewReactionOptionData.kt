@@ -108,7 +108,7 @@ internal object PreviewReactionOptionData {
             Icons.Rounded.LocationOn,
             Icons.Rounded.Star,
             Icons.Rounded.Home,
-            Icons.Rounded.Info
+            Icons.Rounded.Info,
         )
         val generated = icons.mapIndexed { index, icon ->
             "reaction_$index" to ReactionIcon(
@@ -119,7 +119,7 @@ internal object PreviewReactionOptionData {
                 selectedPainter = rememberTintedPainter(
                     imageVector = icon,
                     tintColor = colorResource(R.color.stream_compose_accent_blue),
-                )
+                ),
             )
         }
         val counted = take?.let { generated.take(it) } ?: generated
