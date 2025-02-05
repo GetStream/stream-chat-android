@@ -18,18 +18,14 @@ package io.getstream.chat.android.compose.ui.components.selectedmessage
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.components.SimpleMenu
-import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptions
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -37,10 +33,8 @@ import io.getstream.chat.android.compose.ui.util.ReactionIcon
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
-import io.getstream.chat.android.ui.common.state.messages.React
 
 /**
  * Represents the options user can take after selecting a message.
@@ -75,23 +69,26 @@ public fun SelectedMessageMenu(
     @DrawableRes showMoreReactionsIcon: Int = R.drawable.stream_compose_ic_more,
     onDismiss: () -> Unit = {},
     headerContent: @Composable ColumnScope.() -> Unit = {
-        val canLeaveReaction = ownCapabilities.contains(ChannelCapabilities.SEND_REACTION)
-
-        if (ChatTheme.reactionOptionsTheme.areReactionOptionsVisible && canLeaveReaction) {
-            DefaultSelectedMessageReactionOptions(
-                message = message,
-                reactionTypes = reactionTypes,
-                showMoreReactionsDrawableRes = showMoreReactionsIcon,
-                onMessageAction = onMessageAction,
-                showMoreReactionsIcon = onShowMoreReactionsSelected,
-            )
+        with(ChatTheme.componentFactory) {
+            val canLeaveReaction = ownCapabilities.contains(ChannelCapabilities.SEND_REACTION)
+            if (ChatTheme.reactionOptionsTheme.areReactionOptionsVisible && canLeaveReaction) {
+                MessageMenuHeaderContent(
+                    modifier = Modifier,
+                    message = message,
+                    messageOptions = messageOptions,
+                    onMessageAction = onMessageAction,
+                    ownCapabilities = ownCapabilities,
+                    onShowMore = onShowMoreReactionsSelected,
+                    reactionTypes = reactionTypes,
+                    showMoreReactionsIcon = showMoreReactionsIcon,
+                )
+            }
         }
     },
     centerContent: @Composable ColumnScope.() -> Unit = {
-        DefaultSelectedMessageOptions(
-            messageOptions = messageOptions,
-            onMessageAction = onMessageAction,
-        )
+        with(ChatTheme.componentFactory) {
+            MessageMenuOptions(Modifier, message, messageOptions, { onMessageAction(it.action) })
+        }
     },
 ) {
     SimpleMenu(
@@ -101,61 +98,6 @@ public fun SelectedMessageMenu(
         onDismiss = onDismiss,
         headerContent = headerContent,
         centerContent = centerContent,
-    )
-}
-
-/**
- * Default reaction options for the selected message.
- *
- * @param message The selected message.
- * @param reactionTypes Available reactions.
- * @param showMoreReactionsDrawableRes Drawable resource used for the show more button.
- * @param onMessageAction Handler when the user selects a reaction.
- * @param showMoreReactionsIcon Handler that propagates clicks on the show more button.
- */
-@Composable
-internal fun DefaultSelectedMessageReactionOptions(
-    message: Message,
-    reactionTypes: Map<String, ReactionIcon>,
-    @DrawableRes showMoreReactionsDrawableRes: Int = R.drawable.stream_compose_ic_more,
-    onMessageAction: (MessageAction) -> Unit,
-    showMoreReactionsIcon: () -> Unit,
-) {
-    ReactionOptions(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp, top = 20.dp),
-        reactionTypes = reactionTypes,
-        showMoreReactionsIcon = showMoreReactionsDrawableRes,
-        onReactionOptionSelected = {
-            onMessageAction(
-                React(
-                    reaction = Reaction(messageId = message.id, type = it.type),
-                    message = message,
-                ),
-            )
-        },
-        onShowMoreReactionsSelected = showMoreReactionsIcon,
-        ownReactions = message.ownReactions,
-    )
-}
-
-/**
- * Default selected message options.
- *
- * @param messageOptions The available options.
- * @param onMessageAction Handler when the user selects an option.
- */
-@Composable
-internal fun DefaultSelectedMessageOptions(
-    messageOptions: List<MessageOptionItemState>,
-    onMessageAction: (MessageAction) -> Unit,
-) {
-    MessageOptions(
-        options = messageOptions,
-        onMessageOptionSelected = {
-            onMessageAction(it.action)
-        },
     )
 }
 
