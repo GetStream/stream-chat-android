@@ -19,6 +19,7 @@ package io.getstream.chat.android.ai.assistant
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.scrollBy
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -62,7 +63,6 @@ import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.messages.list.MessageContainer
 import io.getstream.chat.android.compose.ui.messages.list.MessageItem
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
-import io.getstream.chat.android.compose.ui.messages.list.MessagesVerticalArrangement
 import io.getstream.chat.android.compose.ui.messages.list.ThreadMessagesStart
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
@@ -100,7 +100,7 @@ import io.getstream.chat.android.ui.common.state.messages.Reply
  * @param skipEnrichUrl If new messages being sent, or existing ones being updated should skip enriching the URL.
  * If URL is not enriched, it will not be displayed as a link attachment. False by default.
  * @param verticalArrangement Vertical arrangement of the regular message list.
- * Default: [MessagesVerticalArrangement.Top].
+ * Default: [Arrangement.Top].
  * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
  * Default: [ThreadMessagesStart.BOTTOM].
  * @param topBarContent custom top bar content to be displayed on top of the messages list.
@@ -124,7 +124,7 @@ public fun AiMessagesScreen(
     onUserAvatarClick: (User) -> Unit = {},
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
-    verticalArrangement: MessagesVerticalArrangement = MessagesVerticalArrangement.Top,
+    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
     aiStartButton: @Composable BoxScope.() -> Unit = {
         DefaultAiStartButton(

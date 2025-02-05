@@ -66,7 +66,7 @@ import kotlin.math.abs
  * @param messagesLazyListState State of the lazy list that represents the list of messages. Useful for controlling the
  * scroll state and focused message offset.
  * @param verticalArrangement Vertical arrangement of the regular message list.
- * Default: [MessagesVerticalArrangement.Top].
+ * Default: [Arrangement.Top].
  * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
  * Default: [ThreadMessagesStart.BOTTOM].
  * @param onMessagesStartReached Handler for pagination, when the user reaches the start of messages.
@@ -88,7 +88,7 @@ import kotlin.math.abs
 public fun Messages(
     messagesState: MessageListState,
     messagesLazyListState: MessagesLazyListState,
-    verticalArrangement: MessagesVerticalArrangement = MessagesVerticalArrangement.Top,
+    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
     onMessagesStartReached: () -> Unit,
     onLastVisibleMessageChanged: (Message) -> Unit,
@@ -228,7 +228,7 @@ public fun Messages(
  */
 private fun calculateVerticalArrangement(
     messagesState: MessageListState,
-    messagesVerticalArrangement: MessagesVerticalArrangement,
+    messagesVerticalArrangement: Arrangement.Vertical,
     threadMessagesStart: ThreadMessagesStart,
 ): Arrangement.Vertical {
     val isInThread = messagesState.parentMessageId != null
@@ -238,7 +238,7 @@ private fun calculateVerticalArrangement(
             ThreadMessagesStart.TOP -> Arrangement.Top
         }
     } else {
-        messagesVerticalArrangement.arrangement
+        messagesVerticalArrangement
     }
 }
 

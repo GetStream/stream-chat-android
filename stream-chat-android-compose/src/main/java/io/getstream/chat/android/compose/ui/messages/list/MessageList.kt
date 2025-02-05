@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.messages.list
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.PaddingValues
@@ -63,7 +64,7 @@ import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
  * @param messagesLazyListState State of the lazy list that represents the list of messages. Useful for controlling the
  * scroll state and focused message offset.
  * @param verticalArrangement Vertical arrangement of the regular message list.
- * Default: [MessagesVerticalArrangement.Top].
+ * Default: [Arrangement.Top].
  * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
  * Default: [ThreadMessagesStart.BOTTOM].
  * @param onThreadClick Handler when the user taps on the message, while there's a thread going.
@@ -98,7 +99,7 @@ public fun MessageList(
     messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     messagesLazyListState: MessagesLazyListState =
         rememberMessageListState(parentMessageId = viewModel.currentMessagesState.parentMessageId),
-    verticalArrangement: MessagesVerticalArrangement = MessagesVerticalArrangement.Top,
+    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
     onThreadClick: (Message) -> Unit = { viewModel.openMessageThread(it) },
     onLongItemClick: (Message) -> Unit = { viewModel.selectMessage(it) },
@@ -335,7 +336,7 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  *
  * @param currentState The state of the component, represented by [MessageListState].
  * @param verticalArrangement Vertical arrangement of the regular message list.
- * Default: [MessagesVerticalArrangement.Top].
+ * Default: [Arrangement.Top].
  * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
  * Default: [ThreadMessagesStart.BOTTOM].
  * @param reactionSorting The sorting of the reactions.
@@ -368,7 +369,7 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
 @Composable
 public fun MessageList(
     currentState: MessageListState,
-    verticalArrangement: MessagesVerticalArrangement = MessagesVerticalArrangement.Top,
+    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
     reactionSorting: ReactionSorting,
     modifier: Modifier = Modifier,

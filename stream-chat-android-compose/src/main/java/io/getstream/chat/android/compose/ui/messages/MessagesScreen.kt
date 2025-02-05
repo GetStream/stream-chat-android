@@ -26,6 +26,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.WindowInsets
@@ -72,7 +73,6 @@ import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPick
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
-import io.getstream.chat.android.compose.ui.messages.list.MessagesVerticalArrangement
 import io.getstream.chat.android.compose.ui.messages.list.ThreadMessagesStart
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
@@ -127,7 +127,7 @@ import io.getstream.chat.android.ui.common.state.messages.updateMessage
  * If URL is not enriched, it will not be displayed as a link attachment. False by default.
  * @param showAnonymousAvatar If the user avatar should be shown on comments for polls with anonymous voting visibility.
  * @param verticalArrangement Vertical arrangement of the regular message list.
- * Default: [MessagesVerticalArrangement.Top].
+ * Default: [Arrangement.Top].
  * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
  * Default: [ThreadMessagesStart.BOTTOM].
  * @param topBarContent custom top bar content to be displayed on top of the messages list.
@@ -150,7 +150,7 @@ public fun MessagesScreen(
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
     showAnonymousAvatar: Boolean = false,
-    verticalArrangement: MessagesVerticalArrangement = MessagesVerticalArrangement.Top,
+    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
     topBarContent: @Composable (BackAction) -> Unit = {
         DefaultTopBarContent(

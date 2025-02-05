@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.messages
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,7 +26,6 @@ import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.SnapshotTest
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.messages.list.MessagesLazyListState
-import io.getstream.chat.android.compose.ui.messages.list.MessagesVerticalArrangement
 import io.getstream.chat.android.compose.ui.util.rememberMessagesLazyListState
 import io.getstream.chat.android.models.ReactionSortingByCount
 import io.getstream.chat.android.previewdata.PreviewChannelUserRead
@@ -75,7 +75,7 @@ internal class MessageListTest : SnapshotTest {
         snapshotWithDarkMode {
             MessageList(
                 messageListState = TwoMessagesListState,
-                verticalArrangement = MessagesVerticalArrangement.Top,
+                verticalArrangement = Arrangement.Top,
             )
         }
     }
@@ -85,7 +85,7 @@ internal class MessageListTest : SnapshotTest {
         snapshotWithDarkMode {
             MessageList(
                 messageListState = TwoMessagesListState,
-                verticalArrangement = MessagesVerticalArrangement.Bottom,
+                verticalArrangement = Arrangement.Bottom,
             )
         }
     }
@@ -245,7 +245,7 @@ private val TwoMessagesListState = MessageListState(
 @Composable
 private fun MessageList(
     messagesLazyListState: MessagesLazyListState = rememberMessagesLazyListState(),
-    verticalArrangement: MessagesVerticalArrangement = MessagesVerticalArrangement.Top,
+    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     messageListState: MessageListState,
 ) {
     MessageList(
