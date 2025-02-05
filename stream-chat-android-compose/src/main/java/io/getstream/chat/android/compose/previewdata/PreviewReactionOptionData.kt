@@ -90,6 +90,7 @@ internal object PreviewReactionOptionData {
         reactionOption4(),
     )
 
+    @Suppress("MagicNumber")
     @Composable
     fun reactionPickerIcons(take: Int? = null): Map<String, ReactionIcon> {
         require(take == null || take > 0 || take < 15) { "take must be null or a positive number in [1,15]" }
