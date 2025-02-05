@@ -21,6 +21,10 @@
 
 ### ❌ Removed
 
+## stream-chat-android-core
+### ✅ Added
+- Expose `UserId` alias that Represents a user id. [#5616](https://github.com/GetStream/stream-chat-android/pull/5616)
+
 ## stream-chat-android-offline
 ### 🐞 Fixed
 
