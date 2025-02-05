@@ -16,10 +16,7 @@
 
 package io.getstream.chat.android.models
 
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
-
 /**
  * Represents [User.id] String.
  */
-@InternalStreamChatApi
 public typealias UserId = String
