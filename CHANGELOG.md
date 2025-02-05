@@ -81,6 +81,7 @@
 - Create snapshot tests for messages stateless components. [#5578](https://github.com/GetStream/stream-chat-android/pull/5578)
 - Create snapshot tests for thread list components. [#5610](https://github.com/GetStream/stream-chat-android/pull/5610)
 - Create snapshot tests for pinned message list components. [#5611](https://github.com/GetStream/stream-chat-android/pull/5611)
+- Create snapshot tests for attachment picker options. [#5617](https://github.com/GetStream/stream-chat-android/pull/5617)
 - Create message stateless component factories and refactor to have a single component factory object. [#5593](https://github.com/GetStream/stream-chat-android/pull/5593)
 - Create message list header component factories. [#5599](https://github.com/GetStream/stream-chat-android/pull/5599)
 - Create message footer status indicator stateless component factories. [#5598](https://github.com/GetStream/stream-chat-android/pull/5598)
