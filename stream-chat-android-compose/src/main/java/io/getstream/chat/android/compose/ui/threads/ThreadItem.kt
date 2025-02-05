@@ -85,16 +85,20 @@ public fun ThreadItem(
     onThreadClick: (Thread) -> Unit,
     modifier: Modifier = Modifier,
     titleContent: @Composable (Channel) -> Unit = { channel ->
-        DefaultThreadTitle(channel, currentUser)
+        ChatTheme.componentFactory.ThreadListItemTitle(thread, channel, currentUser)
     },
-    replyToContent: @Composable RowScope.(parentMessage: Message) -> Unit = { parentMessage ->
-        DefaultReplyToContent(parentMessage)
+    replyToContent: @Composable RowScope.(parentMessage: Message) -> Unit = {
+        with(ChatTheme.componentFactory) {
+            ThreadListItemReplyToContent(thread)
+        }
     },
     unreadCountContent: @Composable RowScope.(unreadCount: Int) -> Unit = { unreadCount ->
-        DefaultUnreadCountContent(unreadCount)
+        with(ChatTheme.componentFactory) {
+            ThreadListItemUnreadCountContent(unreadCount)
+        }
     },
-    latestReplyContent: @Composable (reply: Message) -> Unit = { reply ->
-        DefaultLatestReplyContent(reply)
+    latestReplyContent: @Composable (reply: Message) -> Unit = {
+        ChatTheme.componentFactory.ThreadListItemLatestReplyContent(thread)
     },
 ) {
     Column(
@@ -131,7 +135,7 @@ public fun ThreadItem(
  * @param currentUser The currently logged [User], used for formatting the message in the thread preview.
  */
 @Composable
-internal fun DefaultThreadTitle(
+internal fun ThreadItemTitle(
     channel: Channel,
     currentUser: User?,
 ) {
@@ -159,7 +163,7 @@ internal fun DefaultThreadTitle(
  * @param parentMessage The parent message of the thread.
  */
 @Composable
-internal fun RowScope.DefaultReplyToContent(parentMessage: Message) {
+internal fun RowScope.ThreadItemReplyToContent(parentMessage: Message) {
     val prefix = stringResource(id = R.string.stream_compose_replied_to)
     val text = formatMessage(parentMessage)
     Text(
@@ -179,7 +183,7 @@ internal fun RowScope.DefaultReplyToContent(parentMessage: Message) {
  * @param unreadCount The number of unread thread replies.
  */
 @Composable
-internal fun RowScope.DefaultUnreadCountContent(unreadCount: Int) {
+internal fun RowScope.ThreadItemUnreadCountContent(unreadCount: Int) {
     if (unreadCount > 0) {
         UnreadCountIndicator(
             unreadCount = unreadCount,
@@ -190,53 +194,58 @@ internal fun RowScope.DefaultUnreadCountContent(unreadCount: Int) {
 /**
  * Default representation of the latest reply content in a thread.
  *
- * @param reply The latest reply [Message] in the thread.
+ * @param thread The thread to display.
  */
 @Composable
-internal fun DefaultLatestReplyContent(reply: Message) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 8.dp),
-    ) {
-        ChatTheme.componentFactory.UserAvatar(
-            modifier = Modifier.size(ChatTheme.dimens.channelAvatarSize),
-            user = reply.user,
-            textStyle = ChatTheme.typography.title3Bold,
-            showOnlineIndicator = true,
-            onlineIndicator = { DefaultOnlineIndicator(onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd) },
-            onClick = null,
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
+internal fun ThreadItemLatestReplyContent(thread: Thread) {
+    val latestReply = thread.latestReplies.lastOrNull()
+    if (latestReply != null) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp),
         ) {
-            Text(
-                text = reply.user.name,
-                style = ChatTheme.typography.bodyBold,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                color = ChatTheme.colors.textHighEmphasis,
+            ChatTheme.componentFactory.UserAvatar(
+                modifier = Modifier.size(ChatTheme.dimens.channelAvatarSize),
+                user = latestReply.user,
+                textStyle = ChatTheme.typography.title3Bold,
+                showOnlineIndicator = true,
+                onlineIndicator = {
+                    DefaultOnlineIndicator(onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd)
+                },
+                onClick = null,
             )
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
+            Spacer(modifier = Modifier.width(8.dp))
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.Center,
             ) {
-                val text = formatMessage(reply)
                 Text(
-                    modifier = Modifier.weight(1f),
-                    text = text,
+                    text = latestReply.user.name,
+                    style = ChatTheme.typography.bodyBold,
                     maxLines = 1,
-                    fontSize = 14.sp,
                     overflow = TextOverflow.Ellipsis,
-                    style = ChatTheme.typography.body,
-                    color = ChatTheme.colors.textLowEmphasis,
+                    color = ChatTheme.colors.textHighEmphasis,
                 )
-                Timestamp(
-                    modifier = Modifier.padding(start = 8.dp),
-                    date = reply.updatedAt ?: reply.createdAt ?: reply.createdLocallyAt,
-                )
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    val text = formatMessage(latestReply)
+                    Text(
+                        modifier = Modifier.weight(1f),
+                        text = text,
+                        maxLines = 1,
+                        fontSize = 14.sp,
+                        overflow = TextOverflow.Ellipsis,
+                        style = ChatTheme.typography.body,
+                        color = ChatTheme.colors.textLowEmphasis,
+                    )
+                    Timestamp(
+                        modifier = Modifier.padding(start = 8.dp),
+                        date = latestReply.updatedAt ?: latestReply.createdAt ?: latestReply.createdLocallyAt,
+                    )
+                }
             }
         }
     }
@@ -279,7 +288,7 @@ private fun ThreadItemPreview() {
 private fun DefaultThreadTitlePreview() {
     ChatPreviewTheme {
         Surface {
-            DefaultThreadTitle(
+            ThreadItemTitle(
                 channel = Channel(
                     id = "messaging:123",
                     type = "messaging",
@@ -296,7 +305,7 @@ private fun DefaultThreadTitlePreview() {
 private fun DefaultUnreadCountContentPreview() {
     ChatPreviewTheme {
         Row {
-            DefaultUnreadCountContent(unreadCount = 17)
+            ThreadItemUnreadCountContent(unreadCount = 17)
         }
     }
 }
@@ -311,7 +320,7 @@ private fun ThreadParentMessageContentPreview() {
                 cid = "messaging:123",
                 text = "Hey everyone, who's up for a group ride this Saturday morning?",
             )
-            DefaultReplyToContent(parentMessage)
+            ThreadItemReplyToContent(parentMessage)
         }
     }
 }

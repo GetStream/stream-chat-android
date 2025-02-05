@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.threads
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
@@ -36,7 +37,9 @@ internal class ThreadListTest : SnapshotTest {
     fun `loading threads`() {
         snapshotWithDarkMode {
             ThreadList(
-                modifier = Modifier.background(ChatTheme.colors.appBackground),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(ChatTheme.colors.appBackground),
                 state = ThreadListState(
                     threads = emptyList(),
                     isLoading = true,
@@ -54,7 +57,9 @@ internal class ThreadListTest : SnapshotTest {
     fun `empty threads`() {
         snapshotWithDarkMode {
             ThreadList(
-                modifier = Modifier.background(ChatTheme.colors.appBackground),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(ChatTheme.colors.appBackground),
                 state = ThreadListState(
                     threads = emptyList(),
                     isLoading = false,
@@ -72,7 +77,9 @@ internal class ThreadListTest : SnapshotTest {
     fun `loaded threads`() {
         snapshotWithDarkMode {
             ThreadList(
-                modifier = Modifier.background(ChatTheme.colors.appBackground),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(ChatTheme.colors.appBackground),
                 state = ThreadListState(
                     threads = PreviewThreadData.threadList,
                     isLoading = false,
@@ -90,7 +97,9 @@ internal class ThreadListTest : SnapshotTest {
     fun `loaded threads with unread banner`() {
         snapshotWithDarkMode {
             ThreadList(
-                modifier = Modifier.background(ChatTheme.colors.appBackground),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(ChatTheme.colors.appBackground),
                 state = ThreadListState(
                     threads = PreviewThreadData.threadList,
                     isLoading = false,
@@ -108,7 +117,9 @@ internal class ThreadListTest : SnapshotTest {
     fun `loading more threads`() {
         snapshotWithDarkMode {
             ThreadList(
-                modifier = Modifier.background(ChatTheme.colors.appBackground),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(ChatTheme.colors.appBackground),
                 state = ThreadListState(
                     threads = PreviewThreadData.threadList,
                     isLoading = false,

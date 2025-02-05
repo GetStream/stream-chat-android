@@ -38,6 +38,14 @@ public final class io/getstream/chat/android/previewdata/PreviewMessageData {
 	public final fun getMessageWithPoll ()Lio/getstream/chat/android/models/Message;
 }
 
+public final class io/getstream/chat/android/previewdata/PreviewPinnedMessageData {
+	public static final field INSTANCE Lio/getstream/chat/android/previewdata/PreviewPinnedMessageData;
+	public final fun getPinnedMessage1 ()Lio/getstream/chat/android/models/Message;
+	public final fun getPinnedMessage2 ()Lio/getstream/chat/android/models/Message;
+	public final fun getPinnedMessageList ()Ljava/util/List;
+	public final fun getPinnedMessageListWithLoadingMore ()Ljava/util/List;
+}
+
 public final class io/getstream/chat/android/previewdata/PreviewPollData {
 	public static final field INSTANCE Lio/getstream/chat/android/previewdata/PreviewPollData;
 	public final fun getOption1 ()Lio/getstream/chat/android/models/Option;
