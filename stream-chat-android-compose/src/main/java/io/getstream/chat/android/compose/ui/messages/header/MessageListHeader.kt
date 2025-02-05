@@ -49,7 +49,6 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.BackButton
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.TypingIndicator
-import io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
@@ -80,7 +79,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
  * @param leadingContent The content shown at the start of the header, by default a [BackButton].
  * @param centerContent The content shown in the middle of the header and represents the core information, by default
  * [DefaultMessageListHeaderCenterContent].
- * @param trailingContent The content shown at the end of the header, by default a [ChannelAvatar].
+ * @param trailingContent The content shown at the end of the header, by default the channel avatar.
  */
 @Composable
 public fun MessageListHeader(
@@ -312,11 +311,10 @@ internal fun DefaultMessageListHeaderTrailingContent(
     currentUser: User?,
     onClick: () -> Unit,
 ) {
-    ChannelAvatar(
-        modifier = Modifier.size(40.dp),
+    ChatTheme.componentFactory.ChannelAvatar(
+        modifier = Modifier.size(ChatTheme.dimens.channelAvatarSize),
         channel = channel,
         currentUser = currentUser,
-        contentDescription = channel.name,
         onClick = onClick,
     )
 }

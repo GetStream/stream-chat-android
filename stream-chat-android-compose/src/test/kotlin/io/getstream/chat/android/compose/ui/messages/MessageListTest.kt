@@ -25,6 +25,7 @@ import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.SnapshotTest
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.messages.list.MessagesLazyListState
+import io.getstream.chat.android.compose.ui.messages.list.MessagesVerticalArrangement
 import io.getstream.chat.android.compose.ui.util.rememberMessagesLazyListState
 import io.getstream.chat.android.models.ReactionSortingByCount
 import io.getstream.chat.android.previewdata.PreviewChannelUserRead
@@ -65,6 +66,26 @@ internal class MessageListTest : SnapshotTest {
                     isLoading = true,
                 ),
                 reactionSorting = ReactionSortingByCount,
+            )
+        }
+    }
+
+    @Test
+    fun `loaded top aligned messages`() {
+        snapshotWithDarkMode {
+            MessageList(
+                messageListState = TwoMessagesListState,
+                verticalArrangement = MessagesVerticalArrangement.Top,
+            )
+        }
+    }
+
+    @Test
+    fun `loaded bottom aligned messages`() {
+        snapshotWithDarkMode {
+            MessageList(
+                messageListState = TwoMessagesListState,
+                verticalArrangement = MessagesVerticalArrangement.Bottom,
             )
         }
     }
@@ -206,14 +227,31 @@ private val LoadedMessageListState = MessageListState(
     ),
 )
 
+private val TwoMessagesListState = MessageListState(
+    messageItems = listOf(
+        MessageItemState(
+            message = PreviewMessageData.message3,
+            isMine = true,
+            showMessageFooter = true,
+        ),
+        MessageItemState(
+            message = PreviewMessageData.message5,
+            isMine = false,
+            showMessageFooter = true,
+        ),
+    ),
+)
+
 @Composable
 private fun MessageList(
     messagesLazyListState: MessagesLazyListState = rememberMessagesLazyListState(),
+    verticalArrangement: MessagesVerticalArrangement = MessagesVerticalArrangement.Top,
     messageListState: MessageListState,
 ) {
     MessageList(
         messagesLazyListState = messagesLazyListState,
         currentState = messageListState,
         reactionSorting = ReactionSortingByCount,
+        verticalArrangement = verticalArrangement,
     )
 }

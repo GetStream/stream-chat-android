@@ -68,9 +68,6 @@ import io.getstream.chat.android.compose.ui.components.moderatedmessage.Moderate
 import io.getstream.chat.android.compose.ui.components.poll.PollAnswersDialog
 import io.getstream.chat.android.compose.ui.components.poll.PollMoreOptionsDialog
 import io.getstream.chat.android.compose.ui.components.poll.PollViewResultDialog
-import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
-import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
-import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
@@ -485,7 +482,7 @@ private fun BoxScope.MessagesScreenMenus(
         enter = fadeIn(),
         exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)),
     ) {
-        SelectedMessageMenu(
+        ChatTheme.componentFactory.MessageMenu(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .animateEnterExit(
@@ -515,7 +512,7 @@ private fun BoxScope.MessagesScreenMenus(
                     }
                 }
             },
-            onShowMoreReactionsSelected = remember(listViewModel) {
+            onShowMore = remember(listViewModel) {
                 {
                     listViewModel.selectExtendedReactions(selectedMessage)
                 }
@@ -529,7 +526,7 @@ private fun BoxScope.MessagesScreenMenus(
         enter = fadeIn(),
         exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)),
     ) {
-        SelectedReactionsMenu(
+        ChatTheme.componentFactory.ReactionsMenu(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .animateEnterExit(
@@ -598,7 +595,7 @@ private fun BoxScope.MessagesScreenReactionsPicker(
         enter = fadeIn(),
         exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)),
     ) {
-        ReactionsPicker(
+        ChatTheme.componentFactory.MessageReactionPicker(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .heightIn(max = 400.dp)
