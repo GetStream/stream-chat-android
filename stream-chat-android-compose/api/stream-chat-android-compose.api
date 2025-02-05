@@ -934,7 +934,7 @@ public final class io/getstream/chat/android/compose/ui/components/avatar/UserAv
 }
 
 public final class io/getstream/chat/android/compose/ui/components/channels/ChannelMembersKt {
-	public static final fun ChannelMembers (Ljava/util/List;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+	public static final fun ChannelMembers (Ljava/util/List;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/channels/ChannelOptionItemVisibility {
@@ -2218,7 +2218,7 @@ public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatC
 	public abstract fun SearchResultItemTrailingContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun ThreadListEmptyContent (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun ThreadListItem (Lio/getstream/chat/android/models/Thread;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
-	public abstract fun ThreadListItemLatestReplyContent (Lio/getstream/chat/android/models/Thread;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun ThreadListItemLatestReplyContent (Lio/getstream/chat/android/models/Thread;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun ThreadListItemReplyToContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/models/Thread;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun ThreadListItemTitle (Lio/getstream/chat/android/models/Thread;Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun ThreadListItemUnreadCountContent (Landroidx/compose/foundation/layout/RowScope;ILandroidx/compose/runtime/Composer;I)V
@@ -2344,7 +2344,7 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatComponentFacto
 	public static fun SearchResultItemTrailingContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;Landroidx/compose/runtime/Composer;I)V
 	public static fun ThreadListEmptyContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
 	public static fun ThreadListItem (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/models/Thread;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
-	public static fun ThreadListItemLatestReplyContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/models/Thread;Landroidx/compose/runtime/Composer;I)V
+	public static fun ThreadListItemLatestReplyContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/models/Thread;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
 	public static fun ThreadListItemReplyToContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/models/Thread;Landroidx/compose/runtime/Composer;I)V
 	public static fun ThreadListItemTitle (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/models/Thread;Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
 	public static fun ThreadListItemUnreadCountContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/RowScope;ILandroidx/compose/runtime/Composer;I)V
