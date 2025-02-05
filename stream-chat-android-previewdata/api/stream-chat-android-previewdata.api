@@ -38,6 +38,14 @@ public final class io/getstream/chat/android/previewdata/PreviewMessageData {
 	public final fun getMessageWithPoll ()Lio/getstream/chat/android/models/Message;
 }
 
+public final class io/getstream/chat/android/previewdata/PreviewPinnedMessageData {
+	public static final field INSTANCE Lio/getstream/chat/android/previewdata/PreviewPinnedMessageData;
+	public final fun getPinnedMessage1 ()Lio/getstream/chat/android/models/Message;
+	public final fun getPinnedMessage2 ()Lio/getstream/chat/android/models/Message;
+	public final fun getPinnedMessageList ()Ljava/util/List;
+	public final fun getPinnedMessageListWithLoadingMore ()Ljava/util/List;
+}
+
 public final class io/getstream/chat/android/previewdata/PreviewPollData {
 	public static final field INSTANCE Lio/getstream/chat/android/previewdata/PreviewPollData;
 	public final fun getOption1 ()Lio/getstream/chat/android/models/Option;
@@ -50,6 +58,15 @@ public final class io/getstream/chat/android/previewdata/PreviewReactionData {
 	public static final field INSTANCE Lio/getstream/chat/android/previewdata/PreviewReactionData;
 	public final fun getManyReaction ()Ljava/util/List;
 	public final fun getOneReaction ()Ljava/util/List;
+}
+
+public final class io/getstream/chat/android/previewdata/PreviewThreadData {
+	public static final field INSTANCE Lio/getstream/chat/android/previewdata/PreviewThreadData;
+	public final fun getParticipant1 ()Lio/getstream/chat/android/models/User;
+	public final fun getParticipant2 ()Lio/getstream/chat/android/models/User;
+	public final fun getThread ()Lio/getstream/chat/android/models/Thread;
+	public final fun getThread2 ()Lio/getstream/chat/android/models/Thread;
+	public final fun getThreadList ()Ljava/util/List;
 }
 
 public final class io/getstream/chat/android/previewdata/PreviewUserData {

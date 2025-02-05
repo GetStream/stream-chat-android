@@ -58,6 +58,8 @@ import io.getstream.chat.android.compose.ui.util.parseBoldTags
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.previewdata.PreviewPinnedMessageData
+import io.getstream.chat.android.ui.common.state.pinned.PinnedMessageListState
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -88,34 +90,34 @@ public fun PinnedMessageList(
     currentUser: User? = ChatClient.instance().getCurrentUser(),
     onPinnedMessageClick: (Message) -> Unit = {},
     itemContent: @Composable (Message) -> Unit = {
-        DefaultPinnedMessageItem(it, currentUser, onPinnedMessageClick)
+        ChatTheme.componentFactory.PinnedMessageListItem(it, currentUser, onPinnedMessageClick)
     },
     itemDivider: @Composable (Int) -> Unit = {
-        DefaultPinnedMessageItemDivider()
+        ChatTheme.componentFactory.PinnedMessageListItemDivider()
     },
     emptyContent: @Composable () -> Unit = {
-        DefaultPinnedMessageListEmptyContent(modifier)
+        ChatTheme.componentFactory.PinnedMessageListEmptyContent(modifier)
     },
     loadingContent: @Composable () -> Unit = {
-        DefaultPinnedMessageListLoadingContent(modifier)
+        ChatTheme.componentFactory.PinnedMessageListLoadingContent(modifier)
     },
     loadingMoreContent: @Composable () -> Unit = {
-        DefaultPinnedMessageListLoadingMoreContent()
+        ChatTheme.componentFactory.PinnedMessageListLoadingMoreContent()
     },
 ) {
     val state by viewModel.state.collectAsState()
-    when {
-        state.results.isEmpty() && state.isLoading -> loadingContent()
-        state.results.isEmpty() && !state.isLoading -> emptyContent()
-        else -> PinnedMessages(
-            messages = state.results.map { it.message },
-            modifier = modifier,
-            itemContent = itemContent,
-            itemDivider = itemDivider,
-            loadingMoreContent = loadingMoreContent,
-            onLoadMore = viewModel::loadMore,
-        )
-    }
+    PinnedMessageList(
+        state = state,
+        modifier = modifier,
+        currentUser = currentUser,
+        onPinnedMessageClick = onPinnedMessageClick,
+        onLoadMore = viewModel::loadMore,
+        itemContent = itemContent,
+        itemDivider = itemDivider,
+        emptyContent = emptyContent,
+        loadingContent = loadingContent,
+        loadingMoreContent = loadingMoreContent,
+    )
 
     // Error emissions
     val coroutineScope = rememberCoroutineScope()
@@ -127,6 +129,63 @@ public fun PinnedMessageList(
                 Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
             }
         }
+    }
+}
+
+/**
+ * Stateless 'Pinned Messages List' component whose content is rendered based on the provided [PinnedMessageListState].
+ *
+ * @param state The [PinnedMessageListState] instance holding the data to be displayed.
+ * @param modifier [Modifier] instance for general styling.
+ * @param currentUser The currently logged [User], used for formatting the message preview.
+ * @param onPinnedMessageClick Action to be invoked when the user clicks on a message from the list.
+ * @param onLoadMore Action to be invoked when the user scrolls to the end of the list and more pinned messages should
+ * be loaded.
+ * @param itemContent Composable rendering each [Message] item in the list. Override this to provide custom component
+ * for rendering the items.
+ * @param itemDivider Composable rendering the divider between messages. Override this to provide (or remove) the
+ * default divider.
+ * @param emptyContent Composable shown when there are no pinned messages to display. Override this to provide custom
+ * component for rendering the empty state.
+ * @param loadingContent Composable shown during the initial loading of the pinned messages. Override this to provide a
+ * custom initial loading state.
+ * @param loadingMoreContent Composable shown at the bottom of the list during the loading of more pinned messages
+ * (pagination). Override this to provide a custom loading component shown during the loading of more items.
+ */
+@Composable
+internal fun PinnedMessageList(
+    state: PinnedMessageListState,
+    modifier: Modifier = Modifier,
+    currentUser: User? = ChatClient.instance().getCurrentUser(),
+    onPinnedMessageClick: (Message) -> Unit,
+    onLoadMore: () -> Unit,
+    itemContent: @Composable (Message) -> Unit = {
+        ChatTheme.componentFactory.PinnedMessageListItem(it, currentUser, onPinnedMessageClick)
+    },
+    itemDivider: @Composable (Int) -> Unit = {
+        ChatTheme.componentFactory.PinnedMessageListItemDivider()
+    },
+    emptyContent: @Composable () -> Unit = {
+        ChatTheme.componentFactory.PinnedMessageListEmptyContent(modifier)
+    },
+    loadingContent: @Composable () -> Unit = {
+        ChatTheme.componentFactory.PinnedMessageListLoadingContent(modifier)
+    },
+    loadingMoreContent: @Composable () -> Unit = {
+        ChatTheme.componentFactory.PinnedMessageListLoadingMoreContent()
+    },
+) {
+    when {
+        state.results.isEmpty() && state.isLoading -> loadingContent()
+        state.results.isEmpty() && !state.isLoading -> emptyContent()
+        else -> PinnedMessages(
+            messages = state.results.map { it.message },
+            modifier = modifier,
+            itemContent = itemContent,
+            itemDivider = itemDivider,
+            loadingMoreContent = loadingMoreContent,
+            onLoadMore = onLoadMore,
+        )
     }
 }
 
@@ -187,30 +246,10 @@ private fun PinnedMessages(
 }
 
 /**
- * The default item rendering a pinned message.
- *
- * @param message The [Message] to render.
- * @param currentUser The currently logged in [User].
- * @param onPinnedMessageClick The action invoked when the user clicks on the item.
- */
-@Composable
-internal fun DefaultPinnedMessageItem(
-    message: Message,
-    currentUser: User?,
-    onPinnedMessageClick: (Message) -> Unit,
-) {
-    PinnedMessageItem(
-        message = message,
-        currentUser = currentUser,
-        onPinnedMessageClick = onPinnedMessageClick,
-    )
-}
-
-/**
  * The default divider appended after each pinned message.
  */
 @Composable
-internal fun DefaultPinnedMessageItemDivider() {
+internal fun DefaultPinnedMessageListItemDivider() {
     Spacer(
         modifier = Modifier
             .fillMaxWidth()
@@ -297,20 +336,11 @@ private const val LoadMoreThreshold = 10
 
 @Composable
 @Preview
-private fun DefaultPinnedMessageContentPreview() {
+private fun PinnedMessageItemPreview() {
     ChatTheme {
         Surface {
-            val message = Message(
-                id = "msg1",
-                cid = "messaging:123",
-                text = "Some very long pinned message from a while ago.",
-                user = User(
-                    id = "usr1",
-                    name = "Test User",
-                ),
-            )
-            DefaultPinnedMessageItem(
-                message = message,
+            PinnedMessageItem(
+                message = PreviewPinnedMessageData.pinnedMessage1,
                 currentUser = null,
                 onPinnedMessageClick = {},
             )

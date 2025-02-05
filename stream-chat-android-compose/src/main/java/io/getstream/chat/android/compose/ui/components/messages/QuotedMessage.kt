@@ -25,10 +25,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -83,7 +84,7 @@ public fun QuotedMessage(
     Row(
         modifier = modifier
             .combinedClickable(
-                interactionSource = MutableInteractionSource(),
+                interactionSource = remember { MutableInteractionSource() },
                 indication = null,
                 onLongClick = { onLongItemClick(message) },
                 onClick = { onQuotedMessageClick(message) },
@@ -111,13 +112,18 @@ internal fun DefaultQuotedMessageLeadingContent(
     currentUser: User?,
 ) {
     if (!message.isMine(currentUser)) {
-        Avatar(
+        ChatTheme.componentFactory.Avatar(
             modifier = Modifier
                 .padding(start = 2.dp)
                 .size(24.dp),
             imageUrl = message.user.image,
             initials = message.user.initials,
+            shape = ChatTheme.shapes.avatar,
             textStyle = ChatTheme.typography.captionBold,
+            placeholderPainter = null,
+            contentDescription = message.user.name,
+            initialsAvatarOffset = DpOffset.Zero,
+            onClick = null,
         )
 
         Spacer(modifier = Modifier.size(8.dp))
@@ -139,13 +145,18 @@ internal fun DefaultQuotedMessageTrailingContent(
     if (message.isMine(currentUser)) {
         Spacer(modifier = Modifier.size(8.dp))
 
-        Avatar(
+        ChatTheme.componentFactory.Avatar(
             modifier = Modifier
                 .padding(start = 2.dp)
                 .size(24.dp),
             imageUrl = message.user.image,
             initials = message.user.initials,
+            shape = ChatTheme.shapes.avatar,
             textStyle = ChatTheme.typography.captionBold,
+            placeholderPainter = null,
+            contentDescription = message.user.name,
+            initialsAvatarOffset = DpOffset.Zero,
+            onClick = null,
         )
     }
 }

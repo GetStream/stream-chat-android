@@ -17,17 +17,13 @@
 package io.getstream.chat.android.compose.ui.components.reactionoptions
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -60,10 +56,13 @@ public fun ExtendedReactionsOptions(
     cells: GridCells = GridCells.Fixed(DefaultNumberOfColumns),
     reactionTypes: Map<String, ReactionIcon> = ChatTheme.reactionIconFactory.createReactionIcons(),
     itemContent: @Composable LazyGridScope.(ReactionOptionItemState) -> Unit = { option ->
-        DefaultExtendedReactionsItemContent(
-            option = option,
-            onReactionOptionSelected = onReactionOptionSelected,
-        )
+        with(ChatTheme.componentFactory) {
+            ExtendedReactionMenuOptionItem(
+                modifier = Modifier.padding(vertical = 8.dp),
+                onReactionOptionSelected = onReactionOptionSelected,
+                option = option,
+            )
+        }
     },
 ) {
     val options = reactionTypes.entries.map { (type, reactionIcon) ->
@@ -81,29 +80,6 @@ public fun ExtendedReactionsOptions(
             }
         }
     }
-}
-
-/**
- * The default item content inside [ExtendedReactionsOptions]. Shows an individual reaction.
- *
- * @param option Individual reaction option.
- * @param onReactionOptionSelected Handler that propagates click events on each item.
- */
-@Composable
-internal fun DefaultExtendedReactionsItemContent(
-    option: ReactionOptionItemState,
-    onReactionOptionSelected: (ReactionOptionItemState) -> Unit,
-) {
-    ReactionOptionItem(
-        modifier = Modifier
-            .padding(vertical = 8.dp)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = ripple(bounded = false),
-                onClick = { onReactionOptionSelected(option) },
-            ),
-        option = option,
-    )
 }
 
 /**

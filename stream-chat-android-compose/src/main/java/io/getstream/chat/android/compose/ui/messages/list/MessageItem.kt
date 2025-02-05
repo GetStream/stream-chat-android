@@ -52,6 +52,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.utils.message.belongsToThread
 import io.getstream.chat.android.client.utils.message.isDeleted
@@ -61,7 +62,6 @@ import io.getstream.chat.android.client.utils.message.isPoll
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
-import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.components.messages.MessageBubble
 import io.getstream.chat.android.compose.ui.components.messages.MessageContent
 import io.getstream.chat.android.compose.ui.components.messages.MessageHeaderLabel
@@ -84,6 +84,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
+import io.getstream.chat.android.ui.common.utils.extensions.initials
 
 /**
  * The default message container for all messages in the Conversation/Messages screen.
@@ -306,11 +307,15 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
                 messageItem.groupPosition.contains(MessagePosition.NONE)
             )
     ) {
-        UserAvatar(
+        ChatTheme.componentFactory.Avatar(
             modifier = modifier.testTag("Stream_UserAvatar"),
-            user = messageItem.message.user,
+            imageUrl = messageItem.message.user.image,
+            initials = messageItem.message.user.initials,
+            shape = ChatTheme.shapes.avatar,
             textStyle = ChatTheme.typography.captionBold,
-            showOnlineIndicator = false,
+            placeholderPainter = null,
+            contentDescription = messageItem.message.user.name,
+            initialsAvatarOffset = DpOffset.Zero,
             onClick = onUserAvatarClick,
         )
     } else {
@@ -741,12 +746,17 @@ internal fun DefaultMessageTextContent(
 ) {
     Column {
         if (messageContentFactory == MessageContentFactory.Deprecated) {
-            ChatTheme.componentFactory.MessageQuotedContent(
-                message = message,
-                currentUser = currentUser,
-                onLongItemClick = onLongItemClick,
-                onQuotedMessageClick = onQuotedMessageClick,
-            )
+            val quotedMessage = message.replyTo
+            if (quotedMessage != null) {
+                ChatTheme.componentFactory.MessageQuotedContent(
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    message = quotedMessage,
+                    currentUser = currentUser,
+                    replyMessage = message,
+                    onLongItemClick = onLongItemClick,
+                    onQuotedMessageClick = onQuotedMessageClick,
+                )
+            }
 
             ChatTheme.componentFactory.MessageTextContent(
                 message = message,

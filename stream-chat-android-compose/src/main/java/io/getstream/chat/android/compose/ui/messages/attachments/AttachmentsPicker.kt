@@ -194,7 +194,7 @@ public fun AttachmentsPicker(
  */
 @Suppress("LongParameterList")
 @Composable
-private fun AttachmentPickerOptions(
+internal fun AttachmentPickerOptions(
     hasPickedAttachments: Boolean,
     tabFactories: List<AttachmentsPickerTabFactory>,
     tabIndex: Int,

@@ -33,6 +33,7 @@ public object PreviewChannelData {
             Member(user = PreviewUserData.user1),
             Member(user = PreviewUserData.user2),
         ),
+        memberCount = 2,
     )
 
     public val channelWithOneUser: Channel = Channel(
@@ -41,6 +42,7 @@ public object PreviewChannelData {
         members = listOf(
             Member(user = PreviewUserData.user1),
         ),
+        memberCount = 1,
     )
 
     public val channelWithOnlineUser: Channel = Channel(
@@ -50,6 +52,7 @@ public object PreviewChannelData {
             Member(user = PreviewUserData.user1),
             Member(user = PreviewUserData.user2.copy(online = true)),
         ),
+        memberCount = 2,
     )
 
     public val channelWithFewMembers: Channel = Channel(
@@ -60,6 +63,7 @@ public object PreviewChannelData {
             Member(user = PreviewUserData.user2),
             Member(user = PreviewUserData.user3),
         ),
+        memberCount = 3,
     )
 
     public val channelWithManyMembers: Channel = Channel(
@@ -72,6 +76,7 @@ public object PreviewChannelData {
             Member(user = PreviewUserData.user4),
             Member(user = PreviewUserData.userWithoutImage),
         ),
+        memberCount = 5,
     )
 
     public val channelWithMessages: Channel = Channel(
@@ -81,6 +86,7 @@ public object PreviewChannelData {
             Member(user = PreviewUserData.user1),
             Member(user = PreviewUserData.user2),
         ),
+        memberCount = 2,
         messages = listOf(
             PreviewMessageData.message1,
             PreviewMessageData.message2,
