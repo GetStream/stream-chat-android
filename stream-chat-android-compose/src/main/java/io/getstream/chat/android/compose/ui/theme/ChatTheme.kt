@@ -243,7 +243,7 @@ private val LocalKeyboardBehaviour = compositionLocalOf<StreamKeyboardBehaviour>
  * @param typography The set of typography styles we provide, wrapped in [StreamTypography].
  * @param shapes The set of shapes we provide, wrapped in [StreamShapes].
  * @param rippleConfiguration Defines the appearance for ripples.
- * @param userPresence The user presence configuration.
+ * @param userPresence The user presence display configuration.
  * @param componentFactory Provide to customize the stateless components that are used throughout the UI
  * @param attachmentFactories Attachment factories that we provide.
  * @param attachmentPreviewHandlers Attachment preview handlers we provide.
