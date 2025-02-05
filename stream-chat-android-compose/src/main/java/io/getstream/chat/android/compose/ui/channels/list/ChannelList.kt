@@ -132,7 +132,7 @@ public fun ChannelList(
     searchResultContent: @Composable LazyItemScope.(ItemState.SearchResultItemState) -> Unit = { itemState ->
         val user by viewModel.user.collectAsState()
         with(ChatTheme.componentFactory) {
-            ChannelListSearchResultItemContent(
+            SearchResultItemContent(
                 searchResultItem = itemState,
                 currentUser = user,
                 onSearchResultClick = onSearchResultClick,
@@ -248,7 +248,7 @@ public fun ChannelList(
     },
     searchResultContent: @Composable LazyItemScope.(ItemState.SearchResultItemState) -> Unit = { searchResultItem ->
         with(ChatTheme.componentFactory) {
-            ChannelListSearchResultItemContent(
+            SearchResultItemContent(
                 searchResultItem = searchResultItem,
                 currentUser = currentUser,
                 onSearchResultClick = onSearchResultClick,
@@ -307,49 +307,6 @@ internal fun LazyItemScope.WrapperItemContent(
         is ItemState.ChannelItemState -> channelContent(itemState)
         is ItemState.SearchResultItemState -> searchResultContent(itemState)
     }
-}
-
-/**
- * The default search result item.
- *
- * @param searchResultItemState The item to represent.
- * @param currentUser The currently logged in user.
- * @param onSearchResultClick Handler when the user clicks on an item.
- */
-@Composable
-internal fun DefaultSearchResultItem(
-    searchResultItemState: ItemState.SearchResultItemState,
-    currentUser: User?,
-    onSearchResultClick: (Message) -> Unit,
-) {
-    SearchResultItem(
-        searchResultItemState = searchResultItemState,
-        currentUser = currentUser,
-        onSearchResultClick = onSearchResultClick,
-    )
-}
-
-/**
- * The default channel item.
- *
- * @param channelItem The item to represent.
- * @param currentUser The currently logged in user.
- * @param onChannelClick Handler when the user clicks on an item.
- * @param onChannelLongClick Handler when the user long taps on an item.
- */
-@Composable
-internal fun DefaultChannelItem(
-    channelItem: ItemState.ChannelItemState,
-    currentUser: User?,
-    onChannelClick: (Channel) -> Unit,
-    onChannelLongClick: (Channel) -> Unit,
-) {
-    ChannelItem(
-        channelItem = channelItem,
-        currentUser = currentUser,
-        onChannelClick = onChannelClick,
-        onChannelLongClick = onChannelLongClick,
-    )
 }
 
 /**
