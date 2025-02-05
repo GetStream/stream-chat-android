@@ -141,18 +141,18 @@ public fun Channel.getMembersStatusText(
                 memberCount,
             )
 
-            val watcherCount = watchers.count { user ->
-                when {
-                    user.id == currentUser?.id -> countCurrentUserAsOnlineMember
+            val onlineCount = members.count { member ->
+                member.user.online && when {
+                    member.user.id == currentUser?.id -> countCurrentUserAsOnlineMember
                     else -> countOtherUsersAsOnlineMembers
                 }
             }
 
-            return if (watcherCount > 0) {
+            return if (onlineCount > 0) {
                 context.getString(
                     memberCountWithOnlineResId,
                     memberCountString,
-                    watcherCount,
+                    onlineCount,
                 )
             } else {
                 memberCountString
