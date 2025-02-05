@@ -101,6 +101,14 @@ import io.getstream.chat.android.compose.ui.messages.list.DefaultMessagesHelperC
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessagesLoadingMoreIndicator
 import io.getstream.chat.android.compose.ui.messages.list.DefaultSystemMessageContent
 import io.getstream.chat.android.compose.ui.messages.list.MessagesLazyListState
+import io.getstream.chat.android.compose.ui.messages.preview.internal.DefaultMessagePreviewItemCenterContent
+import io.getstream.chat.android.compose.ui.messages.preview.internal.DefaultMessagePreviewItemLeadingContent
+import io.getstream.chat.android.compose.ui.messages.preview.internal.DefaultMessagePreviewItemTrailingContent
+import io.getstream.chat.android.compose.ui.pinned.DefaultPinnedMessageListEmptyContent
+import io.getstream.chat.android.compose.ui.pinned.DefaultPinnedMessageListItemDivider
+import io.getstream.chat.android.compose.ui.pinned.DefaultPinnedMessageListLoadingContent
+import io.getstream.chat.android.compose.ui.pinned.DefaultPinnedMessageListLoadingMoreContent
+import io.getstream.chat.android.compose.ui.pinned.PinnedMessageItem
 import io.getstream.chat.android.compose.ui.threads.DefaultThreadListEmptyContent
 import io.getstream.chat.android.compose.ui.threads.DefaultThreadListLoadingContent
 import io.getstream.chat.android.compose.ui.threads.DefaultThreadListLoadingMoreContent
@@ -1572,5 +1580,97 @@ public interface ChatComponentFactory {
     @Composable
     public fun ThreadListLoadingMoreContent() {
         DefaultThreadListLoadingMoreContent()
+    }
+
+    /**
+     * The default content of the pinned message list item.
+     *
+     * @param message The pinned message to display.
+     * @param currentUser The current user.
+     * @param onClick Action invoked when the user clicks on the pinned message.
+     */
+    @Composable
+    public fun PinnedMessageListItem(
+        message: Message,
+        currentUser: User?,
+        onClick: (Message) -> Unit,
+    ) {
+        PinnedMessageItem(message, currentUser, onClick)
+    }
+
+    /**
+     * The default loading content of the pinned message list. Shows an avatar of the user who sent the pinned message.
+     *
+     * Used in the [PinnedMessageListItem].
+     *
+     * @param message The pinned message to display.
+     */
+    @Composable
+    public fun RowScope.PinnedMessageListItemLeadingContent(message: Message) {
+        DefaultMessagePreviewItemLeadingContent(message)
+    }
+
+    /**
+     * The default loading content of the pinned message list. Shows the message sender name and the message content.
+     *
+     * Used in the [PinnedMessageListItem].
+     *
+     * @param message The pinned message to display.
+     * @param currentUser The current user.
+     */
+    @Composable
+    public fun RowScope.PinnedMessageListItemCenterContent(
+        message: Message,
+        currentUser: User?,
+    ) {
+        DefaultMessagePreviewItemCenterContent(message, currentUser)
+    }
+
+    /**
+     * The default loading content of the pinned message list. Shows the message timestamp.
+     *
+     * Used in the [PinnedMessageListItem].
+     *
+     * @param message The pinned message to display.
+     */
+    @Composable
+    public fun RowScope.PinnedMessageListItemTrailingContent(message: Message) {
+        DefaultMessagePreviewItemTrailingContent(message)
+    }
+
+    /**
+     * The default divider appended after each pinned message.
+     */
+    @Composable
+    public fun PinnedMessageListItemDivider() {
+        DefaultPinnedMessageListItemDivider()
+    }
+
+    /**
+     * The default empty placeholder that is displayed when there are no pinned messages.
+     *
+     * @param modifier Modifier for styling.
+     */
+    @Composable
+    public fun PinnedMessageListEmptyContent(modifier: Modifier) {
+        DefaultPinnedMessageListEmptyContent(modifier)
+    }
+
+    /**
+     * The default loading content that is displayed during the initial loading of the pinned messages.
+     *
+     * @param modifier Modifier for styling.
+     */
+    @Composable
+    public fun PinnedMessageListLoadingContent(modifier: Modifier) {
+        DefaultPinnedMessageListLoadingContent(modifier)
+    }
+
+    /**
+     * The default content shown on the bottom of the list during the loading of more pinned messages.
+     */
+    @Composable
+    public fun PinnedMessageListLoadingMoreContent() {
+        DefaultPinnedMessageListLoadingMoreContent()
     }
 }

@@ -83,6 +83,7 @@
 - Create message composer stateless component factories. [#5579](https://github.com/GetStream/stream-chat-android/pull/5597)
 - Create factories for the avatar stateless components. [#5596](https://github.com/GetStream/stream-chat-android/pull/5596)
 - Create thread list component factories. [#5602](https://github.com/GetStream/stream-chat-android/pull/5602)
+- Create pinned message list component factories. [#5603](https://github.com/GetStream/stream-chat-android/pull/5603)
 
 ### ✅ Added
 

@@ -19,10 +19,8 @@ package io.getstream.chat.android.compose.ui.pinned
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import io.getstream.chat.android.compose.ui.messages.preview.internal.DefaultMessagePreviewItemCenterContent
-import io.getstream.chat.android.compose.ui.messages.preview.internal.DefaultMessagePreviewItemLeadingContent
-import io.getstream.chat.android.compose.ui.messages.preview.internal.DefaultMessagePreviewItemTrailingContent
 import io.getstream.chat.android.compose.ui.messages.preview.internal.MessagePreviewItem
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 
@@ -46,13 +44,19 @@ public fun PinnedMessageItem(
     onPinnedMessageClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
     leadingContent: @Composable RowScope.(Message) -> Unit = {
-        DefaultMessagePreviewItemLeadingContent(it)
+        with(ChatTheme.componentFactory) {
+            PinnedMessageListItemLeadingContent(it)
+        }
     },
     centerContent: @Composable RowScope.(Message) -> Unit = {
-        DefaultMessagePreviewItemCenterContent(it, currentUser)
+        with(ChatTheme.componentFactory) {
+            PinnedMessageListItemCenterContent(it, currentUser)
+        }
     },
     trailingContent: @Composable RowScope.(Message) -> Unit = {
-        DefaultMessagePreviewItemTrailingContent(it)
+        with(ChatTheme.componentFactory) {
+            PinnedMessageListItemTrailingContent(it)
+        }
     },
 ) {
     MessagePreviewItem(
