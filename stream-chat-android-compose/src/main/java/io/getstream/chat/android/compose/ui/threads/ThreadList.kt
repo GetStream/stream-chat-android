@@ -88,19 +88,19 @@ public fun ThreadList(
     onThreadClick: (Thread) -> Unit = {},
     onLoadMore: () -> Unit = { viewModel.loadNextPage() },
     unreadThreadsBanner: @Composable (Int) -> Unit = {
-        DefaultUnreadThreadsBanner(it, onClick = onUnreadThreadsBannerClick)
+        ChatTheme.componentFactory.ThreadListUnreadThreadsBanner(it, onUnreadThreadsBannerClick)
     },
     itemContent: @Composable (Thread) -> Unit = {
-        DefaultThreadItem(it, currentUser, onThreadClick)
+        ChatTheme.componentFactory.ThreadListItem(it, currentUser, onThreadClick)
     },
     emptyContent: @Composable () -> Unit = {
-        DefaultThreadListEmptyContent(modifier)
+        ChatTheme.componentFactory.ThreadListEmptyContent(modifier)
     },
     loadingContent: @Composable () -> Unit = {
-        DefaultThreadListLoadingContent(modifier)
+        ChatTheme.componentFactory.ThreadListLoadingContent(modifier)
     },
     loadingMoreContent: @Composable () -> Unit = {
-        DefaultThreadListLoadingMoreContent()
+        ChatTheme.componentFactory.ThreadListLoadingMoreContent()
     },
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -150,19 +150,19 @@ public fun ThreadList(
     onThreadClick: (Thread) -> Unit,
     onLoadMore: () -> Unit,
     unreadThreadsBanner: @Composable (Int) -> Unit = {
-        DefaultUnreadThreadsBanner(it, onClick = onUnreadThreadsBannerClick)
+        ChatTheme.componentFactory.ThreadListUnreadThreadsBanner(it, onUnreadThreadsBannerClick)
     },
     itemContent: @Composable (Thread) -> Unit = {
-        DefaultThreadItem(it, currentUser, onThreadClick)
+        ChatTheme.componentFactory.ThreadListItem(it, currentUser, onThreadClick)
     },
     emptyContent: @Composable () -> Unit = {
-        DefaultThreadListEmptyContent(modifier)
+        ChatTheme.componentFactory.ThreadListEmptyContent(modifier)
     },
     loadingContent: @Composable () -> Unit = {
-        DefaultThreadListLoadingContent(modifier)
+        ChatTheme.componentFactory.ThreadListLoadingContent(modifier)
     },
     loadingMoreContent: @Composable () -> Unit = {
-        DefaultThreadListLoadingMoreContent()
+        ChatTheme.componentFactory.ThreadListLoadingMoreContent()
     },
 ) {
     Scaffold(
@@ -236,44 +236,6 @@ private fun Threads(
             onLoadMore()
         }
     }
-}
-
-/**
- * The default item rendering the unread threads banner.
- *
- * @param unreadThreads The number of unread threads.
- * @param onClick The action invoked when the user clicks on the banner.
- */
-@Composable
-internal fun DefaultUnreadThreadsBanner(
-    unreadThreads: Int,
-    onClick: () -> Unit,
-) {
-    UnreadThreadsBanner(
-        unreadThreads = unreadThreads,
-        modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
-        onClick = onClick,
-    )
-}
-
-/**
- * The default item rendering a [Thread].
- *
- * @param thread The [Thread] to render.
- * @param currentUser The currently logged in [User].
- * @param onThreadClick The action invoked when the user clicks on a thread item.
- */
-@Composable
-internal fun DefaultThreadItem(
-    thread: Thread,
-    currentUser: User?,
-    onThreadClick: (Thread) -> Unit,
-) {
-    ThreadItem(
-        thread = thread,
-        currentUser = currentUser,
-        onThreadClick = onThreadClick,
-    )
 }
 
 /**
