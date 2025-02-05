@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.messages.list
 
-import android.text.format.DateUtils
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -231,12 +230,7 @@ internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorItem
                 modifier = Modifier
                     .padding(vertical = 2.dp, horizontal = 16.dp)
                     .testTag("Stream_MessageDateSeparator"),
-                text = DateUtils.getRelativeTimeSpanString(
-                    dateSeparator.date.time,
-                    System.currentTimeMillis(),
-                    DateUtils.DAY_IN_MILLIS,
-                    DateUtils.FORMAT_ABBREV_RELATIVE,
-                ).toString(),
+                text = ChatTheme.dateFormatter.formatRelativeDate(dateSeparator.date),
                 style = ChatTheme.messageDateSeparatorTheme.textStyle,
             )
         }

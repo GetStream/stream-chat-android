@@ -444,6 +444,7 @@ public final class io/getstream/chat/android/ui/common/helper/ClipboardHandlerIm
 public abstract interface class io/getstream/chat/android/ui/common/helper/DateFormatter {
 	public static final field Companion Lio/getstream/chat/android/ui/common/helper/DateFormatter$Companion;
 	public abstract fun formatDate (Ljava/util/Date;)Ljava/lang/String;
+	public abstract fun formatRelativeDate (Ljava/util/Date;)Ljava/lang/String;
 	public abstract fun formatRelativeTime (Ljava/util/Date;)Ljava/lang/String;
 	public abstract fun formatTime (Ljava/util/Date;)Ljava/lang/String;
 	public static fun from (Landroid/content/Context;)Lio/getstream/chat/android/ui/common/helper/DateFormatter;
