@@ -135,7 +135,6 @@ import io.getstream.chat.android.compose.ui.messages.list.DefaultMessagesHelperC
 import io.getstream.chat.android.compose.ui.messages.list.DefaultMessagesLoadingMoreIndicator
 import io.getstream.chat.android.compose.ui.messages.list.DefaultSystemMessageContent
 import io.getstream.chat.android.compose.ui.messages.list.MessagesLazyListState
-import io.getstream.chat.android.compose.ui.util.ReactionIcon
 import io.getstream.chat.android.compose.ui.threads.DefaultThreadListEmptyContent
 import io.getstream.chat.android.compose.ui.threads.DefaultThreadListLoadingContent
 import io.getstream.chat.android.compose.ui.threads.DefaultThreadListLoadingMoreContent
@@ -145,6 +144,7 @@ import io.getstream.chat.android.compose.ui.threads.ThreadItemReplyToContent
 import io.getstream.chat.android.compose.ui.threads.ThreadItemTitle
 import io.getstream.chat.android.compose.ui.threads.ThreadItemUnreadCountContent
 import io.getstream.chat.android.compose.ui.threads.UnreadThreadsBanner
+import io.getstream.chat.android.compose.ui.util.ReactionIcon
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Command
