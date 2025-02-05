@@ -45,7 +45,7 @@ public fun PinnedMessageItem(
     modifier: Modifier = Modifier,
     leadingContent: @Composable RowScope.(Message) -> Unit = {
         with(ChatTheme.componentFactory) {
-            PinnedMessageListItemLeadingContent(it)
+            PinnedMessageListItemLeadingContent(it, currentUser)
         }
     },
     centerContent: @Composable RowScope.(Message) -> Unit = {

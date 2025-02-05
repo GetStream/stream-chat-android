@@ -41,6 +41,7 @@ import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.avatar.DefaultOnlineIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.shouldShowOnlineIndicator
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 
@@ -133,7 +134,10 @@ internal fun DefaultSearchResultItemLeadingContent(
                     )
                     .size(ChatTheme.dimens.channelAvatarSize),
                 textStyle = ChatTheme.typography.title3Bold,
-                showOnlineIndicator = true,
+                showOnlineIndicator = user.shouldShowOnlineIndicator(
+                    userPresence = ChatTheme.userPresence,
+                    currentUser = currentUser,
+                ),
                 onlineIndicator = {
                     DefaultOnlineIndicator(onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd)
                 },

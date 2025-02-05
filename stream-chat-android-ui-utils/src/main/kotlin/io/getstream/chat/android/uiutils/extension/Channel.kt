@@ -108,11 +108,16 @@ private fun Channel.nameFromMembers(
  *
  * @param context The context to load string resources.
  * @param currentUser The currently logged in user.
+ * @param countCurrentUserAsOnlineMember If `true`, the current user will be counted as an online member.
  * @return The text that represent the member status of the channel.
+ * @param countOtherUsersAsOnlineMembers If `true`, other users will be counted as online members.
  */
+@Suppress("LongParameterList")
 public fun Channel.getMembersStatusText(
     context: Context,
     currentUser: User?,
+    countCurrentUserAsOnlineMember: Boolean = true,
+    countOtherUsersAsOnlineMembers: Boolean = true,
     @StringRes userOnlineResId: Int,
     @StringRes userLastSeenJustNowResId: Int,
     @StringRes userLastSeenResId: Int,
@@ -128,6 +133,7 @@ public fun Channel.getMembersStatusText(
                 userLastSeenJustNowResId = userLastSeenJustNowResId,
                 userLastSeenResId = userLastSeenResId,
             )
+
         else -> {
             val memberCountString = context.resources.getQuantityString(
                 memberCountResId,
@@ -135,7 +141,12 @@ public fun Channel.getMembersStatusText(
                 memberCount,
             )
 
-            val watcherCount = watchers.count { user -> user.id != currentUser?.id }
+            val watcherCount = watchers.count { user ->
+                when {
+                    user.id == currentUser?.id -> countCurrentUserAsOnlineMember
+                    else -> countOtherUsersAsOnlineMembers
+                }
+            }
 
             return if (watcherCount > 0) {
                 context.getString(
