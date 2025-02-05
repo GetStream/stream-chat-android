@@ -3,7 +3,7 @@ public final class io/getstream/chat/android/ai/assistant/AiMessageTextKt {
 }
 
 public final class io/getstream/chat/android/ai/assistant/AiMessagesScreenKt {
-	public static final fun AiMessagesScreen (Lio/getstream/chat/android/compose/viewmodel/messages/MessagesViewModelFactory;ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ZLio/getstream/chat/android/ai/assistant/TypingState;Lio/getstream/chat/android/models/ReactionSorting;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;ZZLio/getstream/chat/android/compose/ui/messages/list/ThreadMessagesStart;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
+	public static final fun AiMessagesScreen (Lio/getstream/chat/android/compose/viewmodel/messages/MessagesViewModelFactory;ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ZLio/getstream/chat/android/ai/assistant/TypingState;Lio/getstream/chat/android/models/ReactionSorting;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;ZZLio/getstream/chat/android/compose/ui/messages/list/MessagesVerticalArrangement;Lio/getstream/chat/android/compose/ui/messages/list/ThreadMessagesStart;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
 }
 
 public final class io/getstream/chat/android/ai/assistant/AiRegularMessageContentKt {

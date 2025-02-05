@@ -75,6 +75,7 @@ import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPick
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
+import io.getstream.chat.android.compose.ui.messages.list.MessagesVerticalArrangement
 import io.getstream.chat.android.compose.ui.theme.AttachmentPickerTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageComposerTheme
@@ -188,6 +189,7 @@ class MessagesActivity : BaseConnectedActivity() {
                 reactionSorting = ReactionSortingByLastReactionAt,
                 onBackPressed = { finish() },
                 onHeaderTitleClick = ::openChannelInfo,
+                verticalArrangement = MessagesVerticalArrangement.Bottom,
                 onUserAvatarClick = { user ->
                     Log.i("MessagesActivity", "user avatar clicked: ${user.id}")
                 },
