@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.theme
-
-import io.getstream.chat.android.models.User
+package io.getstream.chat.android.ui.common.model
 
 /**
  * The user presence display configuration for the current user and other users.
@@ -40,18 +38,3 @@ public data class UserPresence(
         val countAsOnlineMember: Boolean = false,
     )
 }
-
-/**
- * Determines if the online indicator should be shown for the user based on the user presence configuration.
- *
- * @param userPresence The user presence configuration.
- * @param currentUser The current user.
- */
-internal fun User.shouldShowOnlineIndicator(
-    userPresence: UserPresence,
-    currentUser: User?,
-): Boolean =
-    when {
-        id == currentUser?.id -> userPresence.currentUser.showOnlineIndicator
-        else -> userPresence.otherUsers.showOnlineIndicator
-    }

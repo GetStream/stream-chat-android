@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.theme
+package io.getstream.chat.android.ui.common.utils
 
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.model.UserPresence
+import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndicator
 import org.amshove.kluent.internal.assertEquals
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
