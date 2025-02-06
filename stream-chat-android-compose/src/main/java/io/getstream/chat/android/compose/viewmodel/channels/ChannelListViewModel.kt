@@ -107,6 +107,11 @@ public class ChannelListViewModel(
     private val searchDebouncer = Debouncer(searchDebounceMs, searchScope)
 
     /**
+     * The debouncer used for channel list operations.
+     */
+    private val queryChannelDebouncer = Debouncer(searchDebounceMs, chListScope)
+
+    /**
      * State flow that keeps the value of the current [FilterObject] for channels.
      */
     private val filterFlow: MutableStateFlow<FilterObject?> = MutableStateFlow(initialFilters)
@@ -230,7 +235,11 @@ public class ChannelListViewModel(
                     is SearchQuery.Channels,
                     -> {
                         searchScope.coroutineContext.cancelChildren()
-                        observeQueryChannels(query.getConfig(config))
+                        observeQueryChannels(
+                            config.copy(
+                                filters = createQueryChannelsFilter(config.filters, query.query),
+                            ),
+                        )
                     }
                     is SearchQuery.Messages -> {
                         chListScope.coroutineContext.cancelChildren()
@@ -239,16 +248,6 @@ public class ChannelListViewModel(
                     }
                 }
             }
-    }
-
-    private fun SearchQuery.getConfig(defaultConfig: QueryConfig<Channel>): QueryConfig<Channel> {
-        return when (this) {
-            is SearchQuery.Channels -> defaultConfig.copy(
-                filters = createQueryChannelsFilter(defaultConfig.filters, query),
-            )
-            is SearchQuery.Messages -> defaultConfig
-            is SearchQuery.Empty -> defaultConfig
-        }
     }
 
     private suspend fun observeSearchMessages(query: String) = runCatching {
@@ -366,57 +365,62 @@ public class ChannelListViewModel(
         }
     }
 
-    private suspend fun observeQueryChannels(config: QueryConfig<Channel>) = runCatching {
-        val queryChannelsRequest = QueryChannelsRequest(
-            filter = config.filters,
-            querySort = config.querySort,
-            limit = channelLimit,
-            messageLimit = messageLimit,
-            memberLimit = memberLimit,
-        )
-        logger.d { "[observeQueryChannels] request: $queryChannelsRequest" }
-        queryChannelsState = chatClient.queryChannelsAsState(
-            request = queryChannelsRequest,
-            chatEventHandlerFactory = chatEventHandlerFactory,
-            coroutineScope = chListScope,
-        )
-        queryChannelsState.filterNotNull().collectLatest { queryChannelsState ->
-            combine(
-                queryChannelsState.channelsStateData,
-                channelMutes,
-                chatClient.globalState.typingChannels,
-            ) { state, channelMutes, typingChannels ->
-                when (state) {
-                    ChannelsStateData.NoQueryActive,
-                    ChannelsStateData.Loading,
-                    -> channelsState.copy(
-                        isLoading = true,
-                        searchQuery = searchQuery.value,
-                    ).also { logger.d { "[observeQueryChannels] state: Loading" } }
-                    ChannelsStateData.OfflineNoResults -> {
-                        logger.v { "[observeQueryChannels] state: OfflineNoResults(channels are empty)" }
-                        channelsState.copy(
-                            isLoading = false,
-                            channelItems = emptyList(),
+    @Suppress("LongMethod")
+    private fun observeQueryChannels(config: QueryConfig<Channel>) = runCatching {
+        queryChannelDebouncer.submitSuspendable {
+            val queryChannelsRequest = QueryChannelsRequest(
+                filter = config.filters,
+                querySort = config.querySort,
+                limit = channelLimit,
+                messageLimit = messageLimit,
+                memberLimit = memberLimit,
+            )
+            logger.d { "[observeQueryChannels] request: $queryChannelsRequest" }
+            queryChannelsState = chatClient.queryChannelsAsState(
+                request = queryChannelsRequest,
+                chatEventHandlerFactory = chatEventHandlerFactory,
+                coroutineScope = chListScope,
+            )
+            queryChannelsState.filterNotNull().collectLatest { queryChannelsState ->
+                combine(
+                    queryChannelsState.channelsStateData,
+                    channelMutes,
+                    chatClient.globalState.typingChannels,
+                ) { state, channelMutes, typingChannels ->
+                    when (state) {
+                        ChannelsStateData.NoQueryActive,
+                        ChannelsStateData.Loading,
+                        -> channelsState.copy(
+                            isLoading = true,
                             searchQuery = searchQuery.value,
-                        )
+                        ).also { logger.d { "[observeQueryChannels] state: Loading" } }
+
+                        ChannelsStateData.OfflineNoResults -> {
+                            logger.v { "[observeQueryChannels] state: OfflineNoResults(channels are empty)" }
+                            channelsState.copy(
+                                isLoading = false,
+                                channelItems = emptyList(),
+                                searchQuery = searchQuery.value,
+                            )
+                        }
+
+                        is ChannelsStateData.Result -> {
+                            logger.v { "[observeQueryChannels] state: Result(channels.size: ${state.channels.size})" }
+                            channelsState.copy(
+                                isLoading = false,
+                                channelItems = createChannelItems(
+                                    channels = state.channels,
+                                    channelMutes = channelMutes,
+                                    typingEvents = typingChannels,
+                                ),
+                                isLoadingMore = false,
+                                endOfChannels = queryChannelsState.endOfChannels.value,
+                                searchQuery = searchQuery.value,
+                            )
+                        }
                     }
-                    is ChannelsStateData.Result -> {
-                        logger.v { "[observeQueryChannels] state: Result(channels.size: ${state.channels.size})" }
-                        channelsState.copy(
-                            isLoading = false,
-                            channelItems = createChannelItems(
-                                channels = state.channels,
-                                channelMutes = channelMutes,
-                                typingEvents = typingChannels,
-                            ),
-                            isLoadingMore = false,
-                            endOfChannels = queryChannelsState.endOfChannels.value,
-                            searchQuery = searchQuery.value,
-                        )
-                    }
-                }
-            }.collectLatest { newState -> channelsState = newState }
+                }.collectLatest { newState -> channelsState = newState }
+            }
         }
     }.onFailure {
         when (it is CancellationException) {
