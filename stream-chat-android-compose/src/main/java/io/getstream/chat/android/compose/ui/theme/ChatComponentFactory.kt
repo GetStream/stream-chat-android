@@ -107,6 +107,7 @@ import io.getstream.chat.android.compose.ui.components.suggestions.mentions.Defa
 import io.getstream.chat.android.compose.ui.components.suggestions.mentions.MentionSuggestionItem
 import io.getstream.chat.android.compose.ui.components.suggestions.mentions.MentionSuggestionList
 import io.getstream.chat.android.compose.ui.components.userreactions.UserReactions
+import io.getstream.chat.android.compose.ui.messages.attachments.DefaultAttachmentsPickerSendButton
 import io.getstream.chat.android.compose.ui.messages.composer.AttachmentsButton
 import io.getstream.chat.android.compose.ui.messages.composer.CommandsButton
 import io.getstream.chat.android.compose.ui.messages.composer.DefaultComposerInputContent
@@ -2390,5 +2391,23 @@ public interface ChatComponentFactory {
     @Composable
     public fun PinnedMessageListLoadingMoreContent() {
         DefaultPinnedMessageListLoadingMoreContent()
+    }
+
+    /**
+     * The default 'Send' button in the attachments picker.
+     * Shown as ">" icon in the attachments picker header, enabled when there is at least one selected attachment.
+     *
+     * @param hasPickedAttachments If there are any attachments picked.
+     * @param onClick The click handler for the button.
+     */
+    @Composable
+    public fun AttachmentsPickerSendButton(
+        hasPickedAttachments: Boolean,
+        onClick: () -> Unit,
+    ) {
+        DefaultAttachmentsPickerSendButton(
+            hasPickedAttachments = hasPickedAttachments,
+            onClick = onClick,
+        )
     }
 }
