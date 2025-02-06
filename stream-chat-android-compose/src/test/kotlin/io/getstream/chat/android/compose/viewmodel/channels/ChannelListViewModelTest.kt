@@ -44,7 +44,6 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.state.channels.actions.DeleteConversation
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -55,7 +54,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
@@ -349,7 +347,6 @@ internal class ChannelListViewModelTest {
         private val clientState: ClientState = mock()
         private val stateRegistry: StateRegistry = mock()
         private val globalState: GlobalState = mock()
-
 
         init {
             val statePlugin: StatePlugin = mock()
