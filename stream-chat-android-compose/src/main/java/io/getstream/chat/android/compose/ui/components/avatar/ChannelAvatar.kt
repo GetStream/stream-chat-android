@@ -33,6 +33,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.utils.extensions.initials
+import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndicator
 
 /**
  * Represents the [Channel] avatar that's shown when browsing channels or when you open the Messages screen.
@@ -98,7 +99,10 @@ public fun ChannelAvatar(
                 modifier = modifier.testTag("Stream_ChannelAvatar"),
                 user = user,
                 textStyle = ChatTheme.typography.title3Bold,
-                showOnlineIndicator = showOnlineIndicator,
+                showOnlineIndicator = showOnlineIndicator && user.shouldShowOnlineIndicator(
+                    userPresence = ChatTheme.userPresence,
+                    currentUser = currentUser,
+                ),
                 onlineIndicator = onlineIndicator,
                 onClick = onClick,
             )
@@ -114,7 +118,10 @@ public fun ChannelAvatar(
                 modifier = modifier.testTag("Stream_ChannelAvatar"),
                 user = user,
                 textStyle = ChatTheme.typography.title3Bold,
-                showOnlineIndicator = showOnlineIndicator,
+                showOnlineIndicator = showOnlineIndicator && user.shouldShowOnlineIndicator(
+                    userPresence = ChatTheme.userPresence,
+                    currentUser = currentUser,
+                ),
                 onlineIndicator = onlineIndicator,
                 onClick = onClick,
             )

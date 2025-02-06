@@ -108,11 +108,20 @@ private fun Channel.nameFromMembers(
  *
  * @param context The context to load string resources.
  * @param currentUser The currently logged in user.
+ * @param countCurrentUserAsOnlineMember If `true`, the current user will be counted as an online member.
  * @return The text that represent the member status of the channel.
+ * @param countOtherUsersAsOnlineMembers If `true`, other users will be counted as online members.
+ * @param userOnlineResId The resource identifier of the string representing an online user.
+ * @param userLastSeenJustNowResId The resource identifier of the string representing a user who was last seen just now.
+ * @param userLastSeenResId The resource identifier of the string representing a user who was last seen.
+ * @param memberCountResId The resource identifier of the string representing the member count.
  */
+@Suppress("LongParameterList")
 public fun Channel.getMembersStatusText(
     context: Context,
     currentUser: User?,
+    countCurrentUserAsOnlineMember: Boolean = true,
+    countOtherUsersAsOnlineMembers: Boolean = true,
     @StringRes userOnlineResId: Int,
     @StringRes userLastSeenJustNowResId: Int,
     @StringRes userLastSeenResId: Int,
@@ -120,14 +129,21 @@ public fun Channel.getMembersStatusText(
     @StringRes memberCountWithOnlineResId: Int,
 ): String {
     return when {
-        isOneToOne(currentUser) -> members.first { it.user.id != currentUser?.id }
-            .user
-            .getLastSeenText(
-                context = context,
-                userOnlineResId = userOnlineResId,
-                userLastSeenJustNowResId = userLastSeenJustNowResId,
-                userLastSeenResId = userLastSeenResId,
-            )
+        isOneToOne(currentUser) -> {
+            if (countOtherUsersAsOnlineMembers) {
+                members.first { it.user.id != currentUser?.id }
+                    .user
+                    .getLastSeenText(
+                        context = context,
+                        userOnlineResId = userOnlineResId,
+                        userLastSeenJustNowResId = userLastSeenJustNowResId,
+                        userLastSeenResId = userLastSeenResId,
+                    )
+            } else {
+                ""
+            }
+        }
+
         else -> {
             val memberCountString = context.resources.getQuantityString(
                 memberCountResId,
@@ -135,11 +151,18 @@ public fun Channel.getMembersStatusText(
                 memberCount,
             )
 
-            return if (watcherCount > 0) {
+            val onlineCount = members.count { member ->
+                member.user.online && when {
+                    member.user.id == currentUser?.id -> countCurrentUserAsOnlineMember
+                    else -> countOtherUsersAsOnlineMembers
+                }
+            }
+
+            return if (onlineCount > 0) {
                 context.getString(
                     memberCountWithOnlineResId,
                     memberCountString,
-                    watcherCount,
+                    onlineCount,
                 )
             } else {
                 memberCountString

@@ -42,6 +42,7 @@ import io.getstream.chat.android.compose.ui.components.avatar.DefaultOnlineIndic
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndicator
 
 /**
  * Composable which represents a preview of a given message. It displays info about the channel in which it was typed,
@@ -66,7 +67,7 @@ internal fun MessagePreviewItem(
     onMessagePreviewClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
     leadingContent: @Composable RowScope.(Message) -> Unit = {
-        DefaultMessagePreviewItemLeadingContent(it)
+        DefaultMessagePreviewItemLeadingContent(it, currentUser)
     },
     centerContent: @Composable RowScope.(Message) -> Unit = {
         DefaultMessagePreviewItemCenterContent(it, currentUser)
@@ -100,9 +101,10 @@ internal fun MessagePreviewItem(
  * Default leading content for a message preview. Shows an avatar for the user which sent the message.
  *
  * @param message The [Message] for which the leading content is shown.
+ * @param currentUser The currently logged in user.
  */
 @Composable
-internal fun DefaultMessagePreviewItemLeadingContent(message: Message) {
+internal fun DefaultMessagePreviewItemLeadingContent(message: Message, currentUser: User?) {
     ChatTheme.componentFactory.UserAvatar(
         user = message.user,
         modifier = Modifier
@@ -114,7 +116,10 @@ internal fun DefaultMessagePreviewItemLeadingContent(message: Message) {
             )
             .size(ChatTheme.dimens.channelAvatarSize),
         textStyle = ChatTheme.typography.title3Bold,
-        showOnlineIndicator = true,
+        showOnlineIndicator = message.user.shouldShowOnlineIndicator(
+            userPresence = ChatTheme.userPresence,
+            currentUser = currentUser,
+        ),
         onlineIndicator = { DefaultOnlineIndicator(onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd) },
         onClick = null,
     )
