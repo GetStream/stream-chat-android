@@ -92,6 +92,7 @@
 - Create pinned message list component factories. [#5603](https://github.com/GetStream/stream-chat-android/pull/5603)
 - Create search input stateless component factories. [#5604](https://github.com/GetStream/stream-chat-android/pull/5604)
 - Create attachments picker send button component factory. [#5607](https://github.com/GetStream/stream-chat-android/pull/5607)
+- Introduce display configurations for user presence. [#5601](https://github.com/GetStream/stream-chat-android/pull/5601)
 
 ### ✅ Added
 
