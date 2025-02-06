@@ -111,6 +111,10 @@ private fun Channel.nameFromMembers(
  * @param countCurrentUserAsOnlineMember If `true`, the current user will be counted as an online member.
  * @return The text that represent the member status of the channel.
  * @param countOtherUsersAsOnlineMembers If `true`, other users will be counted as online members.
+ * @param userOnlineResId The resource identifier of the string representing an online user.
+ * @param userLastSeenJustNowResId The resource identifier of the string representing a user who was last seen just now.
+ * @param userLastSeenResId The resource identifier of the string representing a user who was last seen.
+ * @param memberCountResId The resource identifier of the string representing the member count.
  */
 @Suppress("LongParameterList")
 public fun Channel.getMembersStatusText(
