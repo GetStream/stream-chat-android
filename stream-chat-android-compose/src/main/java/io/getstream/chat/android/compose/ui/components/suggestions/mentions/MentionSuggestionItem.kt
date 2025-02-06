@@ -36,11 +36,13 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
 import io.getstream.chat.android.compose.ui.components.avatar.DefaultOnlineIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndicator
 
 /**
  * Represents the mention suggestion item in the mention suggestion list popup.
@@ -110,7 +112,10 @@ internal fun DefaultMentionSuggestionItemLeadingContent(user: User) {
             .size(ChatTheme.dimens.mentionSuggestionItemAvatarSize),
         user = user,
         textStyle = ChatTheme.typography.title3Bold,
-        showOnlineIndicator = true,
+        showOnlineIndicator = user.shouldShowOnlineIndicator(
+            userPresence = ChatTheme.userPresence,
+            currentUser = ChatClient.instance().getCurrentUser(),
+        ),
         onlineIndicator = { DefaultOnlineIndicator(onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd) },
         onClick = null,
     )
