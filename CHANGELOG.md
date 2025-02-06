@@ -90,6 +90,7 @@
 - Create thread list component factories. [#5602](https://github.com/GetStream/stream-chat-android/pull/5602)
 - Create pinned message list component factories. [#5603](https://github.com/GetStream/stream-chat-android/pull/5603)
 - Create search input stateless component factories. [#5604](https://github.com/GetStream/stream-chat-android/pull/5604)
+- Create attachments picker send button component factory. [#5607](https://github.com/GetStream/stream-chat-android/pull/5607)
 
 ### ✅ Added
 - Add customizable `verticalArrangement` to `MessagesScreen`, `MessageList` and `Messages`. [#5618](https://github.com/GetStream/stream-chat-android/pull/5618)

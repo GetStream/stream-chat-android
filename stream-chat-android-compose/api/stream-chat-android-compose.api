@@ -2103,6 +2103,7 @@ public final class io/getstream/chat/android/compose/ui/theme/ChannelOptionsThem
 }
 
 public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatComponentFactory {
+	public abstract fun AttachmentsPickerSendButton (ZLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun Avatar--oyy2HM (Landroidx/compose/ui/Modifier;Ljava/lang/String;Ljava/lang/String;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/graphics/painter/Painter;Ljava/lang/String;JLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun ChannelAvatar (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun ChannelItemCenterContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
@@ -2228,6 +2229,7 @@ public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatC
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/ChatComponentFactory$DefaultImpls {
+	public static fun AttachmentsPickerSendButton (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;ZLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 	public static fun Avatar--oyy2HM (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/ui/Modifier;Ljava/lang/String;Ljava/lang/String;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/graphics/painter/Painter;Ljava/lang/String;JLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelAvatar (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelItemCenterContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
