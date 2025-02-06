@@ -43,6 +43,7 @@ import io.getstream.chat.android.compose.ui.components.avatar.DefaultOnlineIndic
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndicator
 
 /**
  * The basic search result item that show the message and the channel name in a list and expose click actions.
@@ -133,7 +134,10 @@ internal fun DefaultSearchResultItemLeadingContent(
                     )
                     .size(ChatTheme.dimens.channelAvatarSize),
                 textStyle = ChatTheme.typography.title3Bold,
-                showOnlineIndicator = true,
+                showOnlineIndicator = user.shouldShowOnlineIndicator(
+                    userPresence = ChatTheme.userPresence,
+                    currentUser = currentUser,
+                ),
                 onlineIndicator = {
                     DefaultOnlineIndicator(onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd)
                 },

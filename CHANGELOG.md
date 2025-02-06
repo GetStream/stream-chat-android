@@ -75,6 +75,7 @@
 - Fix poll attachment picker not hidden if disabled in the dashboard. [#5562](https://github.com/GetStream/stream-chat-android/pull/5562)
 
 ### ⬆️ Improved
+- Add a debounce to the queryChannels process to avoid multiple requests while typing for search channels. [#5615](https://github.com/GetStream/stream-chat-android/pull/5615)
 - Create snapshot tests for channels stateless components. [#5570](https://github.com/GetStream/stream-chat-android/pull/5570)
 - Introduce `ChatComponentFactory` for easier channel components customization. Initially supporting channel stateless components. [#5571](https://github.com/GetStream/stream-chat-android/pull/5571)
 - Deprecate `MessageContentFactory` in favor of `ChatComponentFactory`. [#5571](https://github.com/GetStream/stream-chat-android/pull/5571)
@@ -91,6 +92,7 @@
 - Create pinned message list component factories. [#5603](https://github.com/GetStream/stream-chat-android/pull/5603)
 - Create search input stateless component factories. [#5604](https://github.com/GetStream/stream-chat-android/pull/5604)
 - Create attachments picker send button component factory. [#5607](https://github.com/GetStream/stream-chat-android/pull/5607)
+- Introduce display configurations for user presence. [#5601](https://github.com/GetStream/stream-chat-android/pull/5601)
 
 ### ✅ Added
 - Add customizable `verticalArrangement` to `MessagesScreen`, `MessageList` and `Messages`. [#5618](https://github.com/GetStream/stream-chat-android/pull/5618)

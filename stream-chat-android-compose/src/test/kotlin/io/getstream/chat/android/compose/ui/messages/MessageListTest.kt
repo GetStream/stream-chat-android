@@ -91,14 +91,14 @@ internal class MessageListTest : SnapshotTest {
     }
 
     @Test
-    fun `loaded message`() {
+    fun `loaded messages`() {
         snapshot {
             MessageList(messageListState = LoadedMessageListState)
         }
     }
 
     @Test
-    fun `loaded message in dark mode`() {
+    fun `loaded messages in dark mode`() {
         snapshot(isInDarkMode = true) {
             MessageList(messageListState = LoadedMessageListState)
         }

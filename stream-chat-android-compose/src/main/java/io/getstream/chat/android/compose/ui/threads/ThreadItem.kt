@@ -59,6 +59,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewThreadData
+import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndicator
 
 /**
  * The basic Thread item, showing information about the Thread title, parent message, last reply and number of unread
@@ -98,7 +99,7 @@ public fun ThreadItem(
         }
     },
     latestReplyContent: @Composable (reply: Message) -> Unit = {
-        ChatTheme.componentFactory.ThreadListItemLatestReplyContent(thread)
+        ChatTheme.componentFactory.ThreadListItemLatestReplyContent(thread, currentUser)
     },
 ) {
     Column(
@@ -197,7 +198,10 @@ internal fun RowScope.ThreadItemUnreadCountContent(unreadCount: Int) {
  * @param thread The thread to display.
  */
 @Composable
-internal fun ThreadItemLatestReplyContent(thread: Thread) {
+internal fun ThreadItemLatestReplyContent(
+    thread: Thread,
+    currentUser: User?,
+) {
     val latestReply = thread.latestReplies.lastOrNull()
     if (latestReply != null) {
         Row(
@@ -209,7 +213,10 @@ internal fun ThreadItemLatestReplyContent(thread: Thread) {
                 modifier = Modifier.size(ChatTheme.dimens.channelAvatarSize),
                 user = latestReply.user,
                 textStyle = ChatTheme.typography.title3Bold,
-                showOnlineIndicator = true,
+                showOnlineIndicator = latestReply.user.shouldShowOnlineIndicator(
+                    userPresence = ChatTheme.userPresence,
+                    currentUser = currentUser,
+                ),
                 onlineIndicator = {
                     DefaultOnlineIndicator(onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd)
                 },
