@@ -218,6 +218,19 @@ public class Configuration {
                                 0
                         ).toString();
                     }
+
+                    @NonNull
+                    @Override
+                    public String formatRelativeDate(@NonNull Date date) {
+                        // Provide a way to format relative date
+
+                        return DateUtils.getRelativeTimeSpanString(
+                                date.getTime(),
+                                System.currentTimeMillis(),
+                                DateUtils.DAY_IN_MILLIS,
+                                DateUtils.FORMAT_ABBREV_RELATIVE
+                        ).toString();
+                    }
                 }
         );
     }

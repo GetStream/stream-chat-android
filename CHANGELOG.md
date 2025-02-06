@@ -53,6 +53,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `DateFormatter::formatRelativeDate` method to format a relative date. [#5587](https://github.com/GetStream/stream-chat-android/pull/5587)
 
 ### ⚠️ Changed
 
@@ -63,6 +64,7 @@
 - Fix poll attachment picker not hidden if disabled in the dashboard. [#5562](https://github.com/GetStream/stream-chat-android/pull/5562)
 
 ### ⬆️ Improved
+- `DateDividerViewHolder` now uses `DateFormatter::formatRelativeDate` to format the date. [#5587](https://github.com/GetStream/stream-chat-android/pull/5587)
 
 ### ✅ Added
 
@@ -76,6 +78,7 @@
 
 ### ⬆️ Improved
 - Add a debounce to the queryChannels process to avoid multiple requests while typing for search channels. [#5615](https://github.com/GetStream/stream-chat-android/pull/5615)
+- `DefaultMessageDateSeparatorContent` now uses `DateFormatter::formatRelativeDate` to format the date. [#5587](https://github.com/GetStream/stream-chat-android/pull/5587)
 - Create snapshot tests for channels stateless components. [#5570](https://github.com/GetStream/stream-chat-android/pull/5570)
 - Introduce `ChatComponentFactory` for easier channel components customization. Initially supporting channel stateless components. [#5571](https://github.com/GetStream/stream-chat-android/pull/5571)
 - Deprecate `MessageContentFactory` in favor of `ChatComponentFactory`. [#5571](https://github.com/GetStream/stream-chat-android/pull/5571)

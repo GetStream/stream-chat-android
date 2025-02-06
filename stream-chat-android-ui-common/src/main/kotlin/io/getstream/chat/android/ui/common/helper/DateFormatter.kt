@@ -39,6 +39,8 @@ public interface DateFormatter {
 
     /**
      * Formats the given date as a String.
+     * A normal implementation of this method would return a string like "Yesterday", "Saturday", "9:25 AM"/"9:25", ...
+     * It is used to format the date of the last message in the channel list and the when an user voted in a poll.
      *
      * @param date The [Date] to format as a String.
      * @return The formatted date-time string.
@@ -47,6 +49,8 @@ public interface DateFormatter {
 
     /**
      * Formats the given time as a String.
+     * A normal implementation of this method would return a string like "9:25 AM"/"9:25".
+     * It is used to format the time of the message in the message list.
      *
      * @param date The [Date] object to format as a String.
      * @return The formatted time string.
@@ -55,11 +59,23 @@ public interface DateFormatter {
 
     /**
      * Formats the given date as a relative time string.
+     * A normal implementation of this method would return a string like "Just now", "5 minutes ago", ...
+     * It is used to format the time when a message was edited in the message list.
      *
      * @param date The [Date] to format as a relative time string.
      * @return The formatted relative time string.
      */
     public fun formatRelativeTime(date: Date?): String
+
+    /**
+     * Returns a relative date string for the given date.
+     * A normal implementation of this method would return a string like "Yesterday", "A day ago", ...
+     * It is used to format the date of the separator in the message list.
+     *
+     * @param date The [Date] to format as a relative date string.
+     * @return The formatted relative date string.
+     */
+    public fun formatRelativeDate(date: Date): String
 
     public companion object {
         /**
@@ -173,19 +189,29 @@ internal class DefaultDateFormatter(
         }
     }
 
+    /**
+     * Formats the given date as a relative time string.
+     *
+     * @param date The [Date] to format as a relative time string.
+     * @return The formatted relative time string.
+     */
     override fun formatRelativeTime(date: Date?): String {
         date ?: return ""
 
         return when (dateContext.isWithinLastMinute(date)) {
-            true -> dateContext.context().getString(R.string.stream_ui_message_list_footnote_edited_now)
-            else -> DateUtils.getRelativeDateTimeString(
-                dateContext.context(),
-                date.time,
-                DateUtils.MINUTE_IN_MILLIS,
-                DateUtils.WEEK_IN_MILLIS,
-                0,
-            ).toString()
+            true -> dateContext.justNowString()
+            else -> dateContext.relativeTime(date)
         }
+    }
+
+    /**
+     * Returns a relative date string for the given date.
+     *
+     * @param date The [Date] to format as a relative date string.
+     * @return The formatted relative date string.
+     */
+    override fun formatRelativeDate(date: Date): String {
+        return dateContext.relativeDate(date)
     }
 
     /**
@@ -268,6 +294,11 @@ internal class DefaultDateFormatter(
         fun yesterdayString(): String
 
         /**
+         * Returns the string representation of just now.
+         */
+        fun justNowString(): String
+
+        /**
          * Returns true if the device is set to 24-hour time format.
          */
         fun is24Hour(): Boolean
@@ -278,9 +309,14 @@ internal class DefaultDateFormatter(
         fun dateTimePattern(): String
 
         /**
-         * Returns the context.
+         * Returns the relative time string for the given date.
          */
-        fun context(): Context
+        fun relativeTime(date: Date): String
+
+        /**
+         * Returns the relative date string for the given date.
+         */
+        fun relativeDate(date: Date): String
     }
 
     private class DefaultDateContext(
@@ -300,6 +336,10 @@ internal class DefaultDateFormatter(
             return context.getString(R.string.stream_ui_yesterday)
         }
 
+        override fun justNowString(): String {
+            return context.getString(R.string.stream_ui_message_list_footnote_edited_now)
+        }
+
         override fun is24Hour(): Boolean {
             return DateFormat.is24HourFormat(context)
         }
@@ -314,8 +354,23 @@ internal class DefaultDateFormatter(
             return dateTimePatternLazy
         }
 
-        override fun context(): Context {
-            return context
+        override fun relativeTime(date: Date): String {
+            return DateUtils.getRelativeDateTimeString(
+                context,
+                date.time,
+                DateUtils.MINUTE_IN_MILLIS,
+                DateUtils.WEEK_IN_MILLIS,
+                0,
+            ).toString()
+        }
+
+        override fun relativeDate(date: Date): String {
+            return DateUtils.getRelativeTimeSpanString(
+                date.time,
+                now().time,
+                DateUtils.DAY_IN_MILLIS,
+                DateUtils.FORMAT_ABBREV_RELATIVE,
+            ).toString()
         }
     }
 }

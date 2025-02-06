@@ -205,6 +205,15 @@ private class ChatUiSnippets {
                     0,
                 ).toString()
             }
+
+            override fun formatRelativeDate(date: Date): String {
+                return DateUtils.getRelativeTimeSpanString(
+                    date.time,
+                    System.currentTimeMillis(),
+                    DateUtils.DAY_IN_MILLIS,
+                    DateUtils.FORMAT_ABBREV_RELATIVE,
+                ).toString()
+            }
         }
     }
 
