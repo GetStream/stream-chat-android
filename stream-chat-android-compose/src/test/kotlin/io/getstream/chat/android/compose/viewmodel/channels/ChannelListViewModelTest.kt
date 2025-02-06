@@ -44,8 +44,9 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.state.channels.actions.DeleteConversation
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
@@ -53,7 +54,6 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
@@ -73,7 +73,7 @@ internal class ChannelListViewModelTest {
             .givenChannelsQuery()
             .givenChannelsState(channelsStateData = channelsStateData, loading = true)
             .givenChannelMutes()
-            .get()
+            .get(this)
 
         val channelsState = viewModel.channelsState
         channelsState.channelItems.size `should be equal to` 0
@@ -92,7 +92,7 @@ internal class ChannelListViewModelTest {
                 )
                 .givenChannelMutes()
                 .givenTypingChannels()
-                .get()
+                .get(this)
 
             val channelsState = viewModel.channelsState
             channelsState.channelItems.size `should be equal to` 2
@@ -112,7 +112,7 @@ internal class ChannelListViewModelTest {
             )
             .givenChannelMutes()
             .givenDeleteChannel()
-            .get()
+            .get(this)
 
         viewModel.selectChannel(channel1)
         viewModel.performChannelAction(DeleteConversation(channel1))
@@ -135,7 +135,7 @@ internal class ChannelListViewModelTest {
             )
             .givenChannelMutes()
             .givenMuteChannel()
-            .get()
+            .get(this)
 
         viewModel.selectChannel(channel1)
         viewModel.muteChannel(channel1)
@@ -166,7 +166,7 @@ internal class ChannelListViewModelTest {
                 .givenChannelMutes(listOf(channelMute))
                 .givenUnmuteChannel()
                 .givenTypingChannels()
-                .get()
+                .get(this)
 
             viewModel.selectChannel(channel1)
             viewModel.unmuteChannel(channel1)
@@ -188,7 +188,7 @@ internal class ChannelListViewModelTest {
                     loading = false,
                 )
                 .givenChannelMutes()
-                .get()
+                .get(this)
 
             viewModel.selectChannel(channel1)
             viewModel.dismissChannelAction()
@@ -217,7 +217,7 @@ internal class ChannelListViewModelTest {
                 )
                 .givenChannelMutes()
                 .givenIsOffline(false)
-                .get()
+                .get(this)
 
             viewModel.loadMore()
 
@@ -240,7 +240,7 @@ internal class ChannelListViewModelTest {
                 )
                 .givenChannelMutes()
                 .givenIsOffline(true)
-                .get()
+                .get(this)
 
             viewModel.loadMore()
 
@@ -261,9 +261,40 @@ internal class ChannelListViewModelTest {
                     loading = false,
                 )
                 .givenChannelMutes()
-                .get()
+                .get(this)
 
             viewModel.setSearchQuery(SearchQuery.Channels("Search query"))
+            advanceUntilIdle()
+
+            val captor = argumentCaptor<QueryChannelsRequest>()
+            verify(chatClient, times(2)).queryChannels(captor.capture())
+            val andFilterObject = captor.secondValue.filter as AndFilterObject
+            val orFilterObject = andFilterObject.filterObjects.last() as OrFilterObject
+            val autoCompleteFilterObject = orFilterObject.filterObjects.last() as AutocompleteFilterObject
+            autoCompleteFilterObject.fieldName `should be equal to` "name"
+            autoCompleteFilterObject.value `should be equal to` "Search query"
+        }
+
+    @Test
+    fun `Given channel list When setting multiple search query a short period of time Should only query channels once for the last value`() =
+        runTest {
+            val chatClient: ChatClient = mock()
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(
+                    channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                    loading = false,
+                )
+                .givenChannelMutes()
+                .get(this)
+
+            "Search query".fold("") { previousSearch, newCharacter ->
+                (previousSearch + newCharacter).also {
+                    viewModel.setSearchQuery(SearchQuery.Channels(it))
+                }
+            }
+            advanceUntilIdle()
 
             val captor = argumentCaptor<QueryChannelsRequest>()
             verify(chatClient, times(2)).queryChannels(captor.capture())
@@ -294,7 +325,7 @@ internal class ChannelListViewModelTest {
                 )
                 .givenChannelMutes()
                 .givenIsOffline(false)
-                .get()
+                .get(this)
 
             viewModel.loadMore()
             viewModel.loadMore()
@@ -319,6 +350,7 @@ internal class ChannelListViewModelTest {
 
         init {
             val statePlugin: StatePlugin = mock()
+            whenever(globalState.typingChannels) doReturn MutableStateFlow(emptyMap())
             whenever(statePlugin.resolveDependency(eq(StateRegistry::class))) doReturn stateRegistry
             whenever(statePlugin.resolveDependency(eq(GlobalState::class))) doReturn globalState
             whenever(chatClient.plugins) doReturn listOf(statePlugin)
@@ -347,13 +379,6 @@ internal class ChannelListViewModelTest {
 
         fun givenChannelsQuery(channels: List<Channel> = emptyList()) = apply {
             whenever(chatClient.queryChannels(any())) doReturn channels.asCall()
-        }
-
-        fun givenChannelsQuery2(channels: List<Channel> = emptyList()) = apply {
-            whenever(chatClient.queryChannels(any())) doSuspendableAnswer {
-                delay(1)
-                channels.asCall()
-            }
         }
 
         fun givenDeleteChannel() = apply {
@@ -387,13 +412,15 @@ internal class ChannelListViewModelTest {
             whenever(stateRegistry.queryChannels(any(), any())) doReturn queryChannelsState
         }
 
-        fun get(): ChannelListViewModel {
-            return ChannelListViewModel(
+        fun get(testScope: TestScope): ChannelListViewModel {
+            val channelListViewModel = ChannelListViewModel(
                 chatClient = chatClient,
                 initialSort = initialSort,
                 initialFilters = initialFilters,
                 chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
             )
+            testScope.advanceUntilIdle()
+            return channelListViewModel
         }
     }
 
