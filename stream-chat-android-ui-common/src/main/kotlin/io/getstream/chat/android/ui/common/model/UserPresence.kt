@@ -34,7 +34,7 @@ public data class UserPresence(
      * @param countAsOnlineMember If the user should be counted as an online member.
      */
     public data class DisplayOptions(
-        val showOnlineIndicator: Boolean = false,
-        val countAsOnlineMember: Boolean = false,
+        val showOnlineIndicator: Boolean = true,
+        val countAsOnlineMember: Boolean = true,
     )
 }

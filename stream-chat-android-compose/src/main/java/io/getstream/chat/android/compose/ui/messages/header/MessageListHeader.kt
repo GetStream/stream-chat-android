@@ -194,8 +194,7 @@ public fun DefaultMessageListHeaderCenterContent(
         MessageMode.Normal -> channel.getMembersStatusText(
             context = LocalContext.current,
             currentUser = currentUser,
-            countCurrentUserAsOnlineMember = ChatTheme.userPresence.currentUser.countAsOnlineMember,
-            countOtherUsersAsOnlineMembers = ChatTheme.userPresence.otherUsers.countAsOnlineMember,
+            userPresence = ChatTheme.userPresence,
         )
         is MessageMode.MessageThread -> stringResource(
             R.string.stream_compose_thread_subtitle,

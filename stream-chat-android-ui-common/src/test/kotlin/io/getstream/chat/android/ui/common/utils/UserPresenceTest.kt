@@ -76,6 +76,7 @@ internal class UserPresenceTest {
         TestCase(
             userPresence = UserPresence(
                 currentUser = UserPresence.DisplayOptions(showOnlineIndicator = true),
+                otherUsers = UserPresence.DisplayOptions(showOnlineIndicator = false),
             ),
             currentUserId = null,
             userId = "B",
@@ -84,6 +85,7 @@ internal class UserPresenceTest {
         TestCase(
             userPresence = UserPresence(
                 currentUser = UserPresence.DisplayOptions(showOnlineIndicator = true),
+                otherUsers = UserPresence.DisplayOptions(showOnlineIndicator = false),
             ),
             currentUserId = null,
             userId = "B",

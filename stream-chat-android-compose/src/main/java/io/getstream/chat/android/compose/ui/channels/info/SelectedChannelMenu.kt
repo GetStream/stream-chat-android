@@ -141,8 +141,7 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
         text = selectedChannel.getMembersStatusText(
             context = LocalContext.current,
             currentUser = currentUser,
-            countCurrentUserAsOnlineMember = ChatTheme.userPresence.currentUser.countAsOnlineMember,
-            countOtherUsersAsOnlineMembers = ChatTheme.userPresence.otherUsers.countAsOnlineMember,
+            userPresence = ChatTheme.userPresence,
         ),
         style = ChatTheme.typography.footnoteBold,
         color = ChatTheme.colors.textLowEmphasis,

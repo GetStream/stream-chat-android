@@ -298,16 +298,7 @@ public fun ChatTheme(
         contentColor = LocalContentColor.current,
         lightTheme = !isInDarkMode,
     ),
-    userPresence: UserPresence = UserPresence(
-        currentUser = UserPresence.DisplayOptions(
-            showOnlineIndicator = false,
-            countAsOnlineMember = false,
-        ),
-        otherUsers = UserPresence.DisplayOptions(
-            showOnlineIndicator = true,
-            countAsOnlineMember = true,
-        ),
-    ),
+    userPresence: UserPresence = UserPresence(),
     componentFactory: ChatComponentFactory = DefaultChatComponentFactory(),
     attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories(),
     messageContentFactory: MessageContentFactory = MessageContentFactory.Deprecated,
