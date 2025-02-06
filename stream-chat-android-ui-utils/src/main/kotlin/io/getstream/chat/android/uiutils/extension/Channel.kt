@@ -125,14 +125,20 @@ public fun Channel.getMembersStatusText(
     @StringRes memberCountWithOnlineResId: Int,
 ): String {
     return when {
-        isOneToOne(currentUser) -> members.first { it.user.id != currentUser?.id }
-            .user
-            .getLastSeenText(
-                context = context,
-                userOnlineResId = userOnlineResId,
-                userLastSeenJustNowResId = userLastSeenJustNowResId,
-                userLastSeenResId = userLastSeenResId,
-            )
+        isOneToOne(currentUser) -> {
+            if (countOtherUsersAsOnlineMembers) {
+                members.first { it.user.id != currentUser?.id }
+                    .user
+                    .getLastSeenText(
+                        context = context,
+                        userOnlineResId = userOnlineResId,
+                        userLastSeenJustNowResId = userLastSeenJustNowResId,
+                        userLastSeenResId = userLastSeenResId,
+                    )
+            } else {
+                ""
+            }
+        }
 
         else -> {
             val memberCountString = context.resources.getQuantityString(
