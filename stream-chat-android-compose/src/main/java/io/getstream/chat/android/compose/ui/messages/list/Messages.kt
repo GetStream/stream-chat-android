@@ -65,6 +65,8 @@ import kotlin.math.abs
  * and if we've reached the end of the list.
  * @param messagesLazyListState State of the lazy list that represents the list of messages. Useful for controlling the
  * scroll state and focused message offset.
+ * @param verticalArrangement Vertical arrangement of the regular message list.
+ * Default: [Arrangement.Top].
  * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
  * Default: [ThreadMessagesStart.BOTTOM].
  * @param onMessagesStartReached Handler for pagination, when the user reaches the start of messages.
@@ -86,6 +88,7 @@ import kotlin.math.abs
 public fun Messages(
     messagesState: MessageListState,
     messagesLazyListState: MessagesLazyListState,
+    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
     onMessagesStartReached: () -> Unit,
     onLastVisibleMessageChanged: (Message) -> Unit,
@@ -141,7 +144,7 @@ public fun Messages(
                 },
             state = lazyListState,
             horizontalAlignment = Alignment.Start,
-            verticalArrangement = threadMessagesStart.from(messagesState),
+            verticalArrangement = calculateVerticalArrangement(messagesState, verticalArrangement, threadMessagesStart),
             reverseLayout = true,
             contentPadding = contentPadding,
         ) {
@@ -218,17 +221,26 @@ public fun Messages(
  * vertical arrangement of the messages based on the current state.
  *
  * @param messagesState A [MessageListState] instance that represents the current state of the messages.
+ * @param messagesVerticalArrangement Indicator from where the regular messages should start.
+ * @param threadMessagesStart Indicator from where the thread messages should start.
  * @return An [Arrangement.Vertical] instance that represents the vertical arrangement on the current
  * [MessageListState].
  */
-private fun ThreadMessagesStart.from(messagesState: MessageListState): Arrangement.Vertical =
-    when (messagesState.parentMessageId) {
-        null -> Arrangement.Top
-        else -> when (this) {
+private fun calculateVerticalArrangement(
+    messagesState: MessageListState,
+    messagesVerticalArrangement: Arrangement.Vertical,
+    threadMessagesStart: ThreadMessagesStart,
+): Arrangement.Vertical {
+    val isInThread = messagesState.parentMessageId != null
+    return if (isInThread) {
+        when (threadMessagesStart) {
             ThreadMessagesStart.BOTTOM -> Arrangement.Bottom
             ThreadMessagesStart.TOP -> Arrangement.Top
         }
+    } else {
+        messagesVerticalArrangement
     }
+}
 
 /**
  * Used to hoist state in a way that defers reads to a lambda,

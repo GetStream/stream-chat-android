@@ -98,6 +98,7 @@
 - Introduce display configurations for user presence. [#5601](https://github.com/GetStream/stream-chat-android/pull/5601)
 
 ### ✅ Added
+- Add customizable `verticalArrangement` to `MessagesScreen`, `MessageList` and `Messages`. [#5618](https://github.com/GetStream/stream-chat-android/pull/5618)
 
 ### ⚠️ Changed
 - 🚨 Breaking change: Change `@Composable public fun MessageContainer` function to `@Composable public fun LazyItemScope.MessageContainer`. [#5593](https://github.com/GetStream/stream-chat-android/pull/5593)
