@@ -83,6 +83,7 @@ io.getstream.chat.android.compose.ui.components.attachments.images
 io.getstream.chat.android.compose.ui.components.audio
 io.getstream.chat.android.compose.ui.components.avatar
 io.getstream.chat.android.compose.ui.components.channels
+io.getstream.chat.android.compose.ui.components.common
 io.getstream.chat.android.compose.ui.components.composer
 io.getstream.chat.android.compose.ui.components.messageoptions
 io.getstream.chat.android.compose.ui.components.messages

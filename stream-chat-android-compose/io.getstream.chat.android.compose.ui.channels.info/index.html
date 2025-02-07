@@ -41,7 +41,7 @@
 <a class="library-name--link" href="../../index.html">
                             stream-chat-android
                     </a>            </div>
-            <div class="library-version">6.10.0
+            <div class="library-version">6.11.0
             </div>
         </div>
         <div class="filter-section" id="filter-section">
@@ -83,15 +83,21 @@
         isMuted = isMuted,
         ownCapabilities = selectedChannel.ownCapabilities,
     )<span class="token punctuation">, </span></span><span class="parameter ">shape<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Shape.html">Shape</a><span class="token operator"> = </span>ChatTheme.shapes.bottomSheet<span class="token punctuation">, </span></span><span class="parameter ">overlayColor<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/androidx/compose/ui/graphics/Color.html">Color</a><span class="token operator"> = </span>ChatTheme.colors.overlay<span class="token punctuation">, </span></span><span class="parameter ">headerContent<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/foundation/layout/ColumnScope.html">ColumnScope</a><span class="token punctuation">.</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator"> = </span>{
-        DefaultSelectedChannelMenuHeaderContent(
-            selectedChannel = selectedChannel,
-            currentUser = currentUser,
-        )
+        with(ChatTheme.componentFactory) {
+            ChannelMenuHeaderContent(
+                modifier = Modifier,
+                selectedChannel = selectedChannel,
+                currentUser = currentUser,
+            )
+        }
     }<span class="token punctuation">, </span></span><span class="parameter ">centerContent<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/foundation/layout/ColumnScope.html">ColumnScope</a><span class="token punctuation">.</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator"> = </span>{
-        DefaultSelectedChannelMenuCenterContent(
-            onChannelOptionClick = onChannelOptionClick,
-            channelOptions = channelOptions,
-        )
+        with(ChatTheme.componentFactory) {
+            ChannelMenuCenterContent(
+                modifier = Modifier,
+                onChannelOptionClick = onChannelOptionClick,
+                channelOptions = channelOptions,
+            )
+        }
     }</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Shows special UI when an item is selected. It also prepares the available options for the channel, based on if we're an admin or not.</p></div></div></div>
                 </div>
               </div>
