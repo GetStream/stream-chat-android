@@ -1,63 +1,11 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-client
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# February 07th, 2025 - 6.11.0
 ## stream-chat-android-core
 ### ✅ Added
 - Expose `UserId` alias that Represents a user id. [#5616](https://github.com/GetStream/stream-chat-android/pull/5616)
 
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Added `DateFormatter::formatRelativeDate` method to format a relative date. [#5587](https://github.com/GetStream/stream-chat-android/pull/5587)
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
@@ -65,12 +13,6 @@
 
 ### ⬆️ Improved
 - `DateDividerViewHolder` now uses `DateFormatter::formatRelativeDate` to format the date. [#5587](https://github.com/GetStream/stream-chat-android/pull/5587)
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -102,19 +44,6 @@
 
 ### ⚠️ Changed
 - 🚨 Breaking change: Change `@Composable public fun MessageContainer` function to `@Composable public fun LazyItemScope.MessageContainer`. [#5593](https://github.com/GetStream/stream-chat-android/pull/5593)
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # January 23th, 2025 - 6.10.0
 ## Common changes for all artifacts
