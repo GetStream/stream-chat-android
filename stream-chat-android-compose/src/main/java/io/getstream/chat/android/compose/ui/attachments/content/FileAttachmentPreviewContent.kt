@@ -107,9 +107,7 @@ public fun FileAttachmentPreviewContent(
                     }
 
                     CancelIcon(
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .testTag("Stream_AttachmentCancelIcon"),
+                        modifier = Modifier.padding(4.dp).testTag("Stream_AttachmentCancelIcon"),
                         onClick = { onAttachmentRemoved(attachment) },
                     )
                 }
