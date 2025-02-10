@@ -30,6 +30,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
@@ -69,7 +70,9 @@ public fun Avatar(
 ) {
     var imageSize by remember { mutableStateOf(Size.ORIGINAL) }
     Box(
-        modifier = modifier.onSizeChanged { size -> imageSize = Size(size.width, size.height) },
+        modifier = modifier
+            .testTag("Stream_QuotedMessageAuthorAvatar") // This should not be here. Tied to the quoted component.
+            .onSizeChanged { size -> imageSize = Size(size.width, size.height) },
     ) {
         val cdnImageResizing = ChatTheme.streamCdnImageResizing
         val data = remember { imageUrl.applyStreamCdnImageResizingIfEnabled(cdnImageResizing) }
