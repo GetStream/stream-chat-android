@@ -738,7 +738,7 @@ public class MessageListView : ConstraintLayout {
                     ?.let { messageListViewStyle?.canReplyToMessage(it, ownCapabilities) }
                     ?: false
             }.let { swipeReplyCallback ->
-                ItemTouchHelper(swipeReplyCallback).let{ itemTouchHelper ->
+                ItemTouchHelper(swipeReplyCallback).let { itemTouchHelper ->
                     swipeReplyCallback.onReply = {
                         // We need to detach and attach the itemTouchHelper to the RecyclerView to make it work after
                         // the reply action is completed.

@@ -345,9 +345,8 @@ public data class MessageListViewStyle(
                     attributes.getResourceId(
                         R.styleable.MessageListView_streamUiSwipeToReplyIcon,
                         R.drawable.stream_ui_ic_arrow_curve_left_grey,
-                    )
+                    ),
                 )
-
 
                 val replyEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiReplyEnabled, true)
 
