@@ -17,11 +17,7 @@
 package io.getstream.chat.android.ui.feature.messages.list.options.message
 
 import android.content.Context
-import io.getstream.chat.android.client.utils.attachment.isGiphy
-import io.getstream.chat.android.models.AttachmentType
-import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.state.messages.BlockUser
