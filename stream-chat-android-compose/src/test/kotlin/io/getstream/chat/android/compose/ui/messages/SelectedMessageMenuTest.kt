@@ -95,7 +95,6 @@ internal class SelectedMessageMenuTest : SnapshotTest {
             val messageOptions = defaultMessageOptionsState(
                 selectedMessage = selectedMessage,
                 currentUser = currentUser,
-                isInThread = false,
                 ownCapabilities = channelCapabilities,
             )
 
