@@ -166,25 +166,25 @@ public data class MessageListViewStyle(
 ) : ViewStyle {
     public companion object {
         private val DEFAULT_BACKGROUND_COLOR = R.color.stream_ui_white_snow
-        private val DEFAULT_SCROLL_BUTTON_ELEVATION = 3.dpToPx().toFloat()
-        private val DEFAULT_SCROLL_BUTTON_MARGIN = 6.dpToPx()
-        private val DEFAULT_SCROLL_BUTTON_INTERNAL_MARGIN = 2.dpToPx()
-        private val DEFAULT_SCROLL_BUTTON_BADGE_ELEVATION = DEFAULT_SCROLL_BUTTON_ELEVATION
+        private val DEFAULT_SCROLL_BUTTON_ELEVATION by lazy { 3.dpToPx().toFloat() }
+        private val DEFAULT_SCROLL_BUTTON_MARGIN by lazy { 6.dpToPx() }
+        private val DEFAULT_SCROLL_BUTTON_INTERNAL_MARGIN by lazy { 2.dpToPx() }
+        private val DEFAULT_SCROLL_BUTTON_BADGE_ELEVATION by lazy { DEFAULT_SCROLL_BUTTON_ELEVATION }
 
-        private val DEFAULT_EDIT_REACTIONS_MARGIN_TOP = 0.dpToPx()
-        private val DEFAULT_EDIT_REACTIONS_MARGIN_BOTTOM = 0.dpToPx()
-        private val DEFAULT_EDIT_REACTIONS_MARGIN_START = 50.dpToPx()
-        private val DEFAULT_EDIT_REACTIONS_MARGIN_END = 8.dpToPx()
+        private val DEFAULT_EDIT_REACTIONS_MARGIN_TOP by lazy { 0.dpToPx() }
+        private val DEFAULT_EDIT_REACTIONS_MARGIN_BOTTOM by lazy { 0.dpToPx() }
+        private val DEFAULT_EDIT_REACTIONS_MARGIN_START by lazy { 50.dpToPx() }
+        private val DEFAULT_EDIT_REACTIONS_MARGIN_END by lazy { 8.dpToPx() }
 
-        private val DEFAULT_USER_REACTIONS_MARGIN_TOP = 8.dpToPx()
-        private val DEFAULT_USER_REACTIONS_MARGIN_BOTTOM = 0.dpToPx()
-        private val DEFAULT_USER_REACTIONS_MARGIN_START = 8.dpToPx()
-        private val DEFAULT_USER_REACTIONS_MARGIN_END = 8.dpToPx()
+        private val DEFAULT_USER_REACTIONS_MARGIN_TOP by lazy { 8.dpToPx() }
+        private val DEFAULT_USER_REACTIONS_MARGIN_BOTTOM by lazy { 0.dpToPx() }
+        private val DEFAULT_USER_REACTIONS_MARGIN_START by lazy { 8.dpToPx() }
+        private val DEFAULT_USER_REACTIONS_MARGIN_END by lazy { 8.dpToPx() }
 
-        private val DEFAULT_MESSAGE_OPTIONS_MARGIN_TOP = 24.dpToPx()
-        private val DEFAULT_MESSAGE_OPTIONS_MARGIN_BOTTOM = 0.dpToPx()
-        private val DEFAULT_MESSAGE_OPTIONS_MARGIN_START = 50.dpToPx()
-        private val DEFAULT_MESSAGE_OPTIONS_MARGIN_END = 8.dpToPx()
+        private val DEFAULT_MESSAGE_OPTIONS_MARGIN_TOP by lazy { 24.dpToPx() }
+        private val DEFAULT_MESSAGE_OPTIONS_MARGIN_BOTTOM by lazy { 0.dpToPx() }
+        private val DEFAULT_MESSAGE_OPTIONS_MARGIN_START by lazy { 50.dpToPx() }
+        private val DEFAULT_MESSAGE_OPTIONS_MARGIN_END by lazy { 8.dpToPx() }
 
         /**
          * Creates an [MessageListViewStyle] instance with the default values.

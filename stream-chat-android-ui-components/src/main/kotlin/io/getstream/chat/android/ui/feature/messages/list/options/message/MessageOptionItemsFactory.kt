@@ -36,8 +36,17 @@ import io.getstream.chat.android.ui.common.state.messages.Resend
 import io.getstream.chat.android.ui.common.state.messages.ThreadReply
 import io.getstream.chat.android.ui.common.state.messages.UnblockUser
 import io.getstream.chat.android.ui.feature.messages.list.MessageListViewStyle
+import io.getstream.chat.android.ui.feature.messages.list.internal.canBlockUser
+import io.getstream.chat.android.ui.feature.messages.list.internal.canCopyMessage
+import io.getstream.chat.android.ui.feature.messages.list.internal.canDeleteMessage
+import io.getstream.chat.android.ui.feature.messages.list.internal.canEditMessage
+import io.getstream.chat.android.ui.feature.messages.list.internal.canFlagMessage
+import io.getstream.chat.android.ui.feature.messages.list.internal.canMarkAsUnread
+import io.getstream.chat.android.ui.feature.messages.list.internal.canPinMessage
+import io.getstream.chat.android.ui.feature.messages.list.internal.canReplyToMessage
+import io.getstream.chat.android.ui.feature.messages.list.internal.canRetryMessage
+import io.getstream.chat.android.ui.feature.messages.list.internal.canThreadReplyToMessage
 import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
-import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**
  * An interface that allows the creation of message option items.
@@ -106,25 +115,8 @@ public open class DefaultMessageOptionItemsFactory(
 
         val selectedMessageUserId = selectedMessage.user.id
 
-        val isTextOnlyMessage = selectedMessage.text.isNotEmpty() && selectedMessage.attachments.isEmpty()
-        val hasLinks = selectedMessage.attachments.any { it.hasLink() && !it.isGiphy() }
-        val isOwnMessage = selectedMessageUserId == currentUser?.id
-        val isMessageSynced = selectedMessage.syncStatus == SyncStatus.COMPLETED
-        val isMessageFailed = selectedMessage.syncStatus == SyncStatus.FAILED_PERMANENTLY
-
-        // user capabilities
-        val canQuoteMessage = ownCapabilities.contains(ChannelCapabilities.QUOTE_MESSAGE)
-        val canThreadReply = ownCapabilities.contains(ChannelCapabilities.SEND_REPLY)
-        val canPinMessage = ownCapabilities.contains(ChannelCapabilities.PIN_MESSAGE)
-        val canDeleteOwnMessage = ownCapabilities.contains(ChannelCapabilities.DELETE_OWN_MESSAGE)
-        val canDeleteAnyMessage = ownCapabilities.contains(ChannelCapabilities.DELETE_ANY_MESSAGE)
-        val canEditOwnMessage = ownCapabilities.contains(ChannelCapabilities.UPDATE_OWN_MESSAGE)
-        val canEditAnyMessage = ownCapabilities.contains(ChannelCapabilities.UPDATE_ANY_MESSAGE)
-        val canMarkAsUnread = ownCapabilities.contains(ChannelCapabilities.READ_EVENTS)
-        val canFlagMessage = ownCapabilities.contains(ChannelCapabilities.FLAG_MESSAGE)
-
         return listOfNotNull(
-            if (style.retryMessageEnabled && isOwnMessage && isMessageFailed) {
+            if (style.canRetryMessage(currentUser, selectedMessage)) {
                 MessageOptionItem(
                     optionText = context.getString(R.string.stream_ui_message_list_resend_message),
                     optionIcon = context.getDrawableCompat(style.retryIcon)!!,
@@ -133,7 +125,7 @@ public open class DefaultMessageOptionItemsFactory(
             } else {
                 null
             },
-            if (style.replyEnabled && isMessageSynced && canQuoteMessage) {
+            if (style.canReplyToMessage(selectedMessage, ownCapabilities)) {
                 MessageOptionItem(
                     optionText = context.getString(R.string.stream_ui_message_list_reply),
                     optionIcon = context.getDrawableCompat(style.replyIcon)!!,
@@ -142,7 +134,7 @@ public open class DefaultMessageOptionItemsFactory(
             } else {
                 null
             },
-            if (style.threadsEnabled && !isInThread && isMessageSynced && canThreadReply) {
+            if (style.canThreadReplyToMessage(selectedMessage, ownCapabilities) && !isInThread) {
                 MessageOptionItem(
                     optionText = context.getString(R.string.stream_ui_message_list_thread_reply),
                     optionIcon = context.getDrawableCompat(style.threadReplyIcon)!!,
@@ -151,7 +143,7 @@ public open class DefaultMessageOptionItemsFactory(
             } else {
                 null
             },
-            if (style.markAsUnreadEnabled && canMarkAsUnread) {
+            if (style.canMarkAsUnread(ownCapabilities)) {
                 MessageOptionItem(
                     optionText = context.getString(R.string.stream_ui_message_list_mark_as_unread),
                     optionIcon = context.getDrawableCompat(style.markAsUnreadIcon)!!,
@@ -160,7 +152,7 @@ public open class DefaultMessageOptionItemsFactory(
             } else {
                 null
             },
-            if (style.copyTextEnabled && (isTextOnlyMessage || hasLinks)) {
+            if (style.canCopyMessage(selectedMessage)) {
                 MessageOptionItem(
                     optionText = context.getString(R.string.stream_ui_message_list_copy_message),
                     optionIcon = context.getDrawableCompat(style.copyIcon)!!,
@@ -169,9 +161,7 @@ public open class DefaultMessageOptionItemsFactory(
             } else {
                 null
             },
-            if (style.editMessageEnabled && ((isOwnMessage && canEditOwnMessage) || canEditAnyMessage) &&
-                selectedMessage.command != AttachmentType.GIPHY
-            ) {
+            if (style.canEditMessage(currentUser, selectedMessage, ownCapabilities)) {
                 MessageOptionItem(
                     optionText = context.getString(R.string.stream_ui_message_list_edit_message),
                     optionIcon = context.getDrawableCompat(style.editIcon)!!,
@@ -180,7 +170,7 @@ public open class DefaultMessageOptionItemsFactory(
             } else {
                 null
             },
-            if (style.flagEnabled && canFlagMessage && !isOwnMessage) {
+            if (style.canFlagMessage(currentUser, selectedMessage, ownCapabilities)) {
                 MessageOptionItem(
                     optionText = context.getString(R.string.stream_ui_message_list_flag_message),
                     optionIcon = context.getDrawableCompat(style.flagIcon)!!,
@@ -189,7 +179,7 @@ public open class DefaultMessageOptionItemsFactory(
             } else {
                 null
             },
-            if (style.pinMessageEnabled && isMessageSynced && canPinMessage) {
+            if (style.canPinMessage(selectedMessage, ownCapabilities)) {
                 val (pinText, pinIcon) = if (selectedMessage.pinned) {
                     R.string.stream_ui_message_list_unpin_message to style.unpinIcon
                 } else {
@@ -204,7 +194,7 @@ public open class DefaultMessageOptionItemsFactory(
             } else {
                 null
             },
-            if (style.blockUserEnabled && !isOwnMessage) {
+            if (style.canBlockUser(currentUser, selectedMessage)) {
                 val isSenderBlocked = currentUser?.blockedUserIds?.contains(selectedMessageUserId) == true
                 val text = if (isSenderBlocked) {
                     R.string.stream_ui_message_list_unblock_user
@@ -229,7 +219,7 @@ public open class DefaultMessageOptionItemsFactory(
             } else {
                 null
             },
-            if (style.deleteMessageEnabled && (canDeleteAnyMessage || (isOwnMessage && canDeleteOwnMessage))) {
+            if (style.canDeleteMessage(currentUser, selectedMessage, ownCapabilities)) {
                 MessageOptionItem(
                     optionText = context.getString(R.string.stream_ui_message_list_delete_message),
                     optionIcon = context.getDrawableCompat(style.deleteIcon)!!,
