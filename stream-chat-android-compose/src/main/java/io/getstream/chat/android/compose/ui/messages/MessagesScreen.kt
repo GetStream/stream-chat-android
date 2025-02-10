@@ -465,7 +465,6 @@ private fun BoxScope.MessagesScreenMenus(
     val newMessageOptions = defaultMessageOptionsState(
         selectedMessage = selectedMessage,
         currentUser = user,
-        isInThread = isInThread,
         ownCapabilities = ownCapabilities,
     )
 
