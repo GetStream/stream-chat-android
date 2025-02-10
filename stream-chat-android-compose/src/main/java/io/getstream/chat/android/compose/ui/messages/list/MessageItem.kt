@@ -17,42 +17,55 @@
 package io.getstream.chat.android.compose.ui.messages.list
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationConstants
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.utils.message.belongsToThread
 import io.getstream.chat.android.client.utils.message.isDeleted
@@ -85,6 +98,8 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import io.getstream.chat.android.ui.common.utils.extensions.initials
+import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 /**
  * The default message container for all messages in the Conversation/Messages screen.
@@ -780,6 +795,80 @@ internal fun DefaultMessageTextContent(
                 onLinkClick = onLinkClick,
                 onUserMentionClick = onUserMentionClick,
             )
+        }
+    }
+}
+
+/**
+ * Represent a swipe to reply content.
+ *
+ * @param modifier Modifier for styling.
+ * @param onReply Handler when the user swipes to reply.
+ * @param isSwipeable Handler to determine if the message is swipeable.
+ * @param swipeToReplyContent The content to show when swiping to reply.
+ * @param content The swipeable content to show when not swiping to reply.
+ */
+@Composable
+private fun SwipeToReply(
+    modifier: Modifier = Modifier,
+    onReply: () -> Unit = {},
+    isSwipeable: () -> Boolean = { true },
+    swipeToReplyContent: @Composable RowScope.() -> Unit,
+    content: @Composable () -> Unit,
+) {
+    var swipeToReplyWith by remember { mutableFloatStateOf(0f) }
+    var rowWith by remember { mutableFloatStateOf(0f) }
+    val offset = remember { Animatable(initialValue = 0f) }
+    val scope = rememberCoroutineScope()
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min),
+        contentAlignment = Alignment.CenterStart
+    ) {
+        Row(
+            modifier = Modifier
+                .offset {
+                    val roundToInt = swipeToReplyWith.roundToInt()
+                    IntOffset(
+                        (offset.value.roundToInt() - roundToInt)
+                            .coerceIn(-roundToInt, roundToInt * 2),
+                        0
+                    )
+                }
+                .onSizeChanged { swipeToReplyWith = it.width.toFloat() },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            swipeToReplyContent()
+        }
+        Surface(
+            modifier = modifier
+                .onSizeChanged { rowWith = it.width.toFloat() }
+                .offset { IntOffset(offset.value.roundToInt(), 0) }
+                .pointerInput(swipeToReplyWith) {
+                    if (isSwipeable()) {
+                        detectHorizontalDragGestures(
+                            onHorizontalDrag = { _, dragAmount ->
+                                scope.launch {
+                                    val newOffset = (offset.value + dragAmount)
+                                        .coerceIn(0f, rowWith / 2)
+                                    offset.snapTo(newOffset)
+                                }
+                            },
+                            onDragEnd = {
+                                scope.launch {
+                                    onReply
+                                        .takeIf { offset.value >= rowWith * 0.3f }
+                                        ?.invoke()
+                                    offset.animateTo(0f)
+                                }
+                            }
+                        )
+                    }
+                }
+        ) {
+            content()
         }
     }
 }
