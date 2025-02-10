@@ -20,6 +20,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
@@ -693,6 +694,7 @@ public interface ChatComponentFactory {
         onMessageLinkClick: ((Message, String) -> Unit)?,
         onUserMentionClick: (User) -> Unit,
         onAddAnswer: (Message, Poll, String) -> Unit,
+        onReply: (Message) -> Unit,
     ) {
         DefaultMessageContainer(
             messageListItemState = messageListItem,
@@ -714,6 +716,7 @@ public interface ChatComponentFactory {
             onLinkClick = onMessageLinkClick,
             onUserMentionClick = onUserMentionClick,
             onAddAnswer = onAddAnswer,
+            onReply = onReply,
         )
     }
 
@@ -817,6 +820,7 @@ public interface ChatComponentFactory {
         onMessageLinkClick: ((Message, String) -> Unit)?,
         onUserMentionClick: (User) -> Unit,
         onAddAnswer: (Message, Poll, String) -> Unit,
+        onReply: (Message) -> Unit,
     ) {
         DefaultMessageItem(
             messageItem = messageItem,
@@ -838,6 +842,7 @@ public interface ChatComponentFactory {
             onLinkClick = onMessageLinkClick,
             onUserMentionClick = onUserMentionClick,
             onAddAnswer = onAddAnswer,
+            onReply = onReply,
         )
     }
 
@@ -2411,5 +2416,19 @@ public interface ChatComponentFactory {
             hasPickedAttachments = hasPickedAttachments,
             onClick = onClick,
         )
+    }
+
+    /**
+     * The default content shown when swiping to reply to a message.
+     */
+    @Composable
+    public fun RowScope.SwipeToReplyContent() {
+        Box {
+            Icon(
+                painter = painterResource(id = R.drawable.stream_compose_ic_reply),
+                contentDescription = "",
+                tint = ChatTheme.colors.textLowEmphasis,
+            )
+        }
     }
 }
