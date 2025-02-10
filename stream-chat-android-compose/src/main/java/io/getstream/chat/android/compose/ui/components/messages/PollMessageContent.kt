@@ -64,6 +64,8 @@ import io.getstream.chat.android.compose.ui.components.composer.InputField
 import io.getstream.chat.android.compose.ui.components.poll.AddAnswerDialog
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
+import io.getstream.chat.android.compose.util.extensions.toSet
+import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
@@ -546,6 +548,7 @@ private fun PollMessageContentPreview() {
                 messageItem = MessageItemState(
                     message = io.getstream.chat.android.previewdata.PreviewMessageData.messageWithPoll,
                     isMine = true,
+                    ownCapabilities = ChannelCapabilities.toSet(),
                 ),
             )
 
@@ -562,6 +565,7 @@ private fun PollMessageContentPreview() {
                 messageItem = MessageItemState(
                     message = io.getstream.chat.android.previewdata.PreviewMessageData.messageWithError,
                     isMine = true,
+                    ownCapabilities = ChannelCapabilities.toSet(),
                 ),
             )
         }
