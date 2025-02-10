@@ -251,6 +251,9 @@ class MessagesActivity : BaseConnectedActivity() {
                             null -> Unit
                         }
                     },
+                    onReply = { message ->
+                        composerViewModel.performMessageAction(Reply(message))
+                    },
                 )
             }
 

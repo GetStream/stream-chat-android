@@ -85,6 +85,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
 import io.getstream.chat.android.compose.ui.util.isUploading
+import io.getstream.chat.android.compose.util.extensions.canReplyToMessage
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
@@ -157,6 +158,7 @@ public fun MessageItem(
     onUserAvatarClick: (() -> Unit)? = null,
     onLinkClick: ((Message, String) -> Unit)? = null,
     onUserMentionClick: (User) -> Unit = {},
+    onReply: (Message) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     leadingContent: @Composable RowScope.(MessageItemState) -> Unit = {
         with(ChatTheme.componentFactory) {
@@ -229,6 +231,11 @@ public fun MessageItem(
             )
         }
     },
+    swipeToReplyContent: @Composable RowScope.() -> Unit = {
+        with(ChatTheme.componentFactory) {
+            SwipeToReplyContent()
+        }
+    },
 ) {
     val message = messageItem.message
     val focusState = messageItem.focusState
@@ -267,6 +274,11 @@ public fun MessageItem(
 
     val messageAlignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
     val description = stringResource(id = R.string.stream_compose_cd_message_item)
+    val isSwipable = ChatTheme.messageOptionsTheme.optionVisibility
+        .canReplyToMessage(
+            message = message,
+            ownCapabilities = messageItem.ownCapabilities,
+        )
 
     Box(
         modifier = Modifier
@@ -277,23 +289,27 @@ public fun MessageItem(
             .semantics { contentDescription = description },
         contentAlignment = messageAlignment.itemAlignment,
     ) {
-        Row(
-            modifier
-                .widthIn(max = 300.dp)
-                .then(clickModifier)
-                .testTag("Stream_MessageCell"),
+
+        SwipeToReply(
+            modifier = modifier,
+            onReply = { onReply(message) },
+            isSwipeable = { isSwipable },
+            swipeToReplyContent = swipeToReplyContent,
         ) {
-            leadingContent(messageItem)
-
-            Column(horizontalAlignment = messageAlignment.contentAlignment) {
-                headerContent(messageItem)
-
-                centerContent(messageItem)
-
-                footerContent(messageItem)
+            Row(
+                modifier
+                    .widthIn(max = 300.dp)
+                    .then(clickModifier)
+                    .testTag("Stream_MessageCell"),
+            ) {
+                leadingContent(messageItem)
+                Column(horizontalAlignment = messageAlignment.contentAlignment) {
+                    headerContent(messageItem)
+                    centerContent(messageItem)
+                    footerContent(messageItem)
+                }
+                trailingContent(messageItem)
             }
-
-            trailingContent(messageItem)
         }
     }
 }
