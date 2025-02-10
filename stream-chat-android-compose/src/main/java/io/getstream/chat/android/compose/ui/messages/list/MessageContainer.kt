@@ -104,6 +104,7 @@ public fun LazyItemScope.MessageContainer(
     onLinkClick: ((Message, String) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onUserMentionClick: (User) -> Unit = {},
+    onReply: (Message) -> Unit = {},
     dateSeparatorContent: @Composable LazyItemScope.(DateSeparatorItemState) -> Unit = { dateSeparatorItem ->
         with(ChatTheme.componentFactory) {
             MessageListDateSeparatorItemContent(dateSeparatorItem = dateSeparatorItem)
@@ -153,6 +154,7 @@ public fun LazyItemScope.MessageContainer(
                     onMessageLinkClick = onLinkClick,
                     onUserMentionClick = onUserMentionClick,
                     onAddAnswer = onAddAnswer,
+                    onReply = onReply,
                 )
             }
         } else {
@@ -176,6 +178,7 @@ public fun LazyItemScope.MessageContainer(
                 onLinkClick = onLinkClick,
                 onUserMentionClick = onUserMentionClick,
                 onAddAnswer = onAddAnswer,
+                onReply = onReply,
             )
         }
     },
@@ -377,6 +380,7 @@ internal fun DefaultMessageItem(
     onUserAvatarClick: () -> Unit,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onUserMentionClick: (User) -> Unit = {},
+    onReply: (Message) -> Unit = {},
 ) {
     MessageItem(
         messageItem = messageItem,
@@ -398,5 +402,6 @@ internal fun DefaultMessageItem(
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         onUserMentionClick = onUserMentionClick,
         onAddAnswer = onAddAnswer,
+        onReply = onReply,
     )
 }

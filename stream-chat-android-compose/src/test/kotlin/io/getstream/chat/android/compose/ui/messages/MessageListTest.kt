@@ -27,6 +27,8 @@ import io.getstream.chat.android.compose.ui.SnapshotTest
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.messages.list.MessagesLazyListState
 import io.getstream.chat.android.compose.ui.util.rememberMessagesLazyListState
+import io.getstream.chat.android.compose.util.extensions.toSet
+import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ReactionSortingByCount
 import io.getstream.chat.android.previewdata.PreviewChannelUserRead
 import io.getstream.chat.android.previewdata.PreviewMessageData
@@ -145,6 +147,7 @@ internal class MessageListTest : SnapshotTest {
                     messageItems = listOf(
                         MessageItemState(
                             message = PreviewMessageData.message1,
+                            ownCapabilities = ChannelCapabilities.toSet(),
                         ),
                     ),
                 ),
@@ -165,6 +168,7 @@ private val LoadedMessageListState = MessageListState(
             message = PreviewMessageData.message5,
             isMine = true,
             showMessageFooter = true,
+            ownCapabilities = ChannelCapabilities.toSet(),
         ),
         SystemMessageItemState(
             message = PreviewMessageData.message4,
@@ -172,6 +176,7 @@ private val LoadedMessageListState = MessageListState(
         MessageItemState(
             message = PreviewMessageData.messageWithError,
             isMine = true,
+            ownCapabilities = ChannelCapabilities.toSet(),
         ),
         MessageItemState(
             message = PreviewMessageData.messageWithPoll,
@@ -182,6 +187,7 @@ private val LoadedMessageListState = MessageListState(
                 PreviewChannelUserRead.channelUserRead1,
                 PreviewChannelUserRead.channelUserRead2,
             ),
+            ownCapabilities = ChannelCapabilities.toSet(),
         ),
         DateSeparatorItemState(Date4),
         MessageItemState(
@@ -193,16 +199,19 @@ private val LoadedMessageListState = MessageListState(
             ),
             currentUser = PreviewUserData.user7,
             showMessageFooter = true,
+            ownCapabilities = ChannelCapabilities.toSet(),
         ),
         MessageItemState(
             message = PreviewMessageData.messageWithOwnReaction.copy(
                 user = PreviewUserData.user1,
             ),
             showMessageFooter = true,
+            ownCapabilities = ChannelCapabilities.toSet(),
         ),
         MessageItemState(
             message = PreviewMessageData.message3,
             isMine = true,
+            ownCapabilities = ChannelCapabilities.toSet(),
         ),
         DateSeparatorItemState(Date3),
         MessageItemState(
@@ -210,6 +219,7 @@ private val LoadedMessageListState = MessageListState(
                 user = PreviewUserData.user1,
             ),
             showMessageFooter = true,
+            ownCapabilities = ChannelCapabilities.toSet(),
         ),
         DateSeparatorItemState(Date2),
         MessageItemState(
@@ -218,10 +228,12 @@ private val LoadedMessageListState = MessageListState(
             ),
             deletedMessageVisibility = DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER,
             showMessageFooter = true,
+            ownCapabilities = ChannelCapabilities.toSet(),
         ),
         MessageItemState(
             message = PreviewMessageData.message1,
             groupPosition = listOf(MessagePosition.TOP),
+            ownCapabilities = ChannelCapabilities.toSet(),
         ),
         DateSeparatorItemState(Date1),
     ),
@@ -233,11 +245,13 @@ private val TwoMessagesListState = MessageListState(
             message = PreviewMessageData.message3,
             isMine = true,
             showMessageFooter = true,
+            ownCapabilities = ChannelCapabilities.toSet(),
         ),
         MessageItemState(
             message = PreviewMessageData.message5,
             isMine = false,
             showMessageFooter = true,
+            ownCapabilities = ChannelCapabilities.toSet(),
         ),
     ),
 )
