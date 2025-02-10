@@ -406,6 +406,7 @@
 
         <!-- Message options -->
         <attr name="streamUiReplyOptionIcon" format="reference" />
+        <attr name="streamUiSwipeToReplyIcon" format="reference" />
         <attr name="streamUiReplyEnabled" format="boolean" />
         <attr name="streamUiCopyMessageActionEnabled" format="boolean" />
         <attr name="streamUiMarkAsUnreadEnabled" format="boolean" />

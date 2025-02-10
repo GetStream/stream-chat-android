@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.feature.messages.list
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Typeface
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.Gravity
 import androidx.annotation.ColorInt
@@ -163,6 +164,7 @@ public data class MessageListViewStyle(
     public val optionsOverlayMessageOptionsMarginEnd: Int,
     public val showReactionsForUnsentMessages: Boolean,
     public val readCountEnabled: Boolean,
+    public val swipeToReplyIcon: Drawable?,
 ) : ViewStyle {
     public companion object {
         private val DEFAULT_BACKGROUND_COLOR = R.color.stream_ui_white_snow
@@ -338,6 +340,14 @@ public data class MessageListViewStyle(
                     R.styleable.MessageListView_streamUiReplyOptionIcon,
                     R.drawable.stream_ui_ic_arrow_curve_left_grey,
                 )
+
+                val replyToSwipeIcon: Drawable? = context.getDrawableCompat(
+                    attributes.getResourceId(
+                        R.styleable.MessageListView_streamUiSwipeToReplyIcon,
+                        R.drawable.stream_ui_ic_arrow_curve_left_grey,
+                    )
+                )
+
 
                 val replyEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiReplyEnabled, true)
 
@@ -673,6 +683,7 @@ public data class MessageListViewStyle(
                     optionsOverlayMessageOptionsMarginEnd = optionsOverlayMessageOptionsMarginEnd,
                     showReactionsForUnsentMessages = showReactionsForUnsentMessages,
                     readCountEnabled = readCountEnabled,
+                    swipeToReplyIcon = replyToSwipeIcon,
                 ).let(TransformStyle.messageListStyleTransformer::transform)
             }
         }

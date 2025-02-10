@@ -126,6 +126,7 @@ public fun randomMessageListViewStyle(
     optionsOverlayMessageOptionsMarginEnd: Int = randomInt(),
     showReactionsForUnsentMessages: Boolean = randomBoolean(),
     readCountEnabled: Boolean = randomBoolean(),
+    swipeToReplyIcon: Drawable? = null,
 ): MessageListViewStyle = MessageListViewStyle(
 scrollButtonViewStyle = scrollButtonViewStyle,
 scrollButtonBehaviour = scrollButtonBehaviour,
@@ -188,6 +189,7 @@ optionsOverlayMessageOptionsMarginStart = optionsOverlayMessageOptionsMarginStar
 optionsOverlayMessageOptionsMarginEnd = optionsOverlayMessageOptionsMarginEnd,
 showReactionsForUnsentMessages = showReactionsForUnsentMessages,
 readCountEnabled = readCountEnabled,
+swipeToReplyIcon = swipeToReplyIcon,
 )
 
 public fun randomScrollButtonViewStyle(
