@@ -36,7 +36,6 @@ import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMet
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
-import org.jetbrains.kotlin.com.intellij.openapi.diagnostic.Attachment
 
 /**
  * ViewModel responsible for handling the state and business logic of attachments.
