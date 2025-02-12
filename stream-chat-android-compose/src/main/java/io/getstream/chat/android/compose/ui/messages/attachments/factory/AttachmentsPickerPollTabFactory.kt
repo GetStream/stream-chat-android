@@ -118,7 +118,7 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
         val pollSwitchItemFactory = ChatTheme.pollSwitchitemFactory
         var optionItemList by remember { mutableStateOf(emptyList<PollOptionItem>()) }
         var switchItemList: List<PollSwitchItem> by remember { mutableStateOf(pollSwitchItemFactory.providePollSwitchItemList()) }
-        var hasErrorOnOptions by remember { mutableStateOf(false) }
+        var hasError by remember { mutableStateOf(false) }
         val nestedScrollConnection = remember {
             object : NestedScrollConnection {
                 override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
@@ -139,7 +139,7 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
                 .background(ChatTheme.colors.appBackground),
         ) {
             val (question, onQuestionChanged) = rememberSaveable { mutableStateOf("") }
-            val isEnabled = question.isNotBlank() && optionItemList.any { it.title.isNotBlank() } && !hasErrorOnOptions
+            val isEnabled = question.isNotBlank() && optionItemList.any { it.title.isNotBlank() } && !hasError
             val hasChanges = question.isNotBlank() || optionItemList.any { it.title.isNotBlank() }
             var isShowingDiscardDialog by remember { mutableStateOf(false) }
 
@@ -175,7 +175,7 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
                 onQuestionsChanged = {
                     optionItemList = it
                     switchItemList = updateMaxVotesAllowedSwitch(optionItemList, switchItemList)
-                    hasErrorOnOptions = it.fastAny { item -> item.pollOptionError != null }
+                    hasError = hasError(optionItemList, switchItemList)
                 },
             )
 
@@ -185,7 +185,7 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
                 pollSwitchItems = switchItemList,
                 onSwitchesChanged = {
                     switchItemList = it
-                    hasErrorOnOptions = it.fastAny { item -> item.pollOptionError != null }
+                    hasError = hasError(optionItemList, switchItemList)
                 },
             )
 
@@ -200,6 +200,28 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
             }
         }
     }
+}
+
+/**
+ * Checks if there are any errors in the 'options' list, or any errors or missing fields in the 'switches' list.
+ */
+private fun hasError(
+    options: List<PollOptionItem>,
+    switches: List<PollSwitchItem>,
+): Boolean {
+    // Check errors in options
+    val hasErrorInOptions = options.fastAny { item ->
+        item.pollOptionError != null
+    }
+    // Check errors or missing fields in switches
+    val hasErrorInSwitches = switches.fastAny { item ->
+        val hasError = item.pollOptionError != null
+        val isMissingMandatoryInput = item.enabled &&
+            item.pollSwitchInput != null &&
+            item.pollSwitchInput.value.toString().isEmpty()
+        hasError || isMissingMandatoryInput
+    }
+    return hasErrorInOptions || hasErrorInSwitches
 }
 
 /**
