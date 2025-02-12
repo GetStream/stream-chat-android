@@ -36,6 +36,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import coil.ImageLoader
+import com.valentinilk.shimmer.LocalShimmerTheme
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
@@ -396,6 +397,7 @@ public fun ChatTheme(
         LocalTypography provides typography,
         LocalShapes provides shapes,
         LocalRippleConfiguration provides rippleConfiguration.toRippleConfiguration(),
+        LocalShimmerTheme provides StreamShimmerTheme,
         LocalUseDefaultSystemMediaPicker provides useDefaultSystemMediaPicker,
         LocalUserPresence provides userPresence,
         LocalComponentFactory provides componentFactory,

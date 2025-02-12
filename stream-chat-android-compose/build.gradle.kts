@@ -104,6 +104,7 @@ dependencies {
 
     // UI
     implementation(libs.reorderable)
+    implementation(libs.shimmer.compose)
 
     // Tests
     testImplementation(project(":stream-chat-android-test"))
