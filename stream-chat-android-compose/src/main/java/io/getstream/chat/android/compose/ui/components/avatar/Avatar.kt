@@ -17,29 +17,20 @@
 package io.getstream.chat.android.compose.ui.components.avatar
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
-import coil.size.Size
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 
 /**
@@ -68,49 +59,40 @@ public fun Avatar(
     initialsAvatarOffset: DpOffset = DpOffset(0.dp, 0.dp),
     onClick: (() -> Unit)? = null,
 ) {
-    var imageSize by remember { mutableStateOf(Size.ORIGINAL) }
-    Box(
-        modifier = modifier
-            .testTag("Stream_QuotedMessageAuthorAvatar") // This should not be here. Tied to the quoted component.
-            .onSizeChanged { size -> imageSize = Size(size.width, size.height) },
-    ) {
-        val cdnImageResizing = ChatTheme.streamCdnImageResizing
-        val data = remember { imageUrl.applyStreamCdnImageResizingIfEnabled(cdnImageResizing) }
-        val asyncImagePainter = rememberAsyncImagePainter(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(data)
-                .size(imageSize) // Request image with the size of the rendered box
-                .build(),
-        )
-
-        val targetPainter = when (asyncImagePainter.state) {
-            is AsyncImagePainter.State.Empty -> placeholderPainter
-            is AsyncImagePainter.State.Loading -> placeholderPainter
-            is AsyncImagePainter.State.Success -> asyncImagePainter
-            is AsyncImagePainter.State.Error -> null
-        }
-
-        Crossfade(targetState = targetPainter) { state ->
-            if (state == null) {
-                InitialsAvatar(
-                    modifier = Modifier.fillMaxSize(),
-                    initials = initials,
-                    shape = shape,
-                    textStyle = textStyle,
-                    onClick = onClick,
-                    avatarOffset = initialsAvatarOffset,
-                )
-            } else {
-                ImageAvatar(
-                    modifier = Modifier.fillMaxSize(),
-                    shape = shape,
-                    painter = state,
-                    contentDescription = contentDescription,
-                    onClick = onClick,
-                )
+    val streamCdnImageResizing = ChatTheme.streamCdnImageResizing
+    val data = remember { imageUrl.applyStreamCdnImageResizingIfEnabled(streamCdnImageResizing) }
+    StreamAsyncImage(
+        data = data,
+        modifier = modifier,
+        content = { state ->
+            val targetPainter = when (state) {
+                is AsyncImagePainter.State.Empty -> placeholderPainter
+                is AsyncImagePainter.State.Loading -> placeholderPainter
+                is AsyncImagePainter.State.Success -> state.painter
+                is AsyncImagePainter.State.Error -> null
             }
-        }
-    }
+            Crossfade(targetState = targetPainter) { painter ->
+                if (painter == null) {
+                    InitialsAvatar(
+                        modifier = Modifier.fillMaxSize(),
+                        initials = initials,
+                        shape = shape,
+                        textStyle = textStyle,
+                        onClick = onClick,
+                        avatarOffset = initialsAvatarOffset,
+                    )
+                } else {
+                    ImageAvatar(
+                        modifier = Modifier.fillMaxSize(),
+                        shape = shape,
+                        painter = painter,
+                        contentDescription = contentDescription,
+                        onClick = onClick,
+                    )
+                }
+            }
+        },
+    )
 }
 
 /**

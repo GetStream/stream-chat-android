@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import coil.size.Size
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil.CoilImage
 import com.skydoves.landscapist.coil.CoilImageState
@@ -281,7 +282,7 @@ private fun (() -> ImageRequest).convertUrl(
     imageAssetTransformer: ImageAssetTransformer,
 ): () -> ImageRequest = { this().convertUrl(context, imageAssetTransformer) }
 
-private fun ImageRequest.convertUrl(
+internal fun ImageRequest.convertUrl(
     context: Context,
     imageAssetTransformer: ImageAssetTransformer,
 ): ImageRequest {
@@ -339,7 +340,7 @@ private fun (() -> ImageRequest).provideHeaders(
  * @param imageHeaderProvider The [ImageHeadersProvider] implementation to use.
  * @return The [ImageRequest] with the headers applied.
  */
-private fun ImageRequest.provideHeaders(
+internal fun ImageRequest.provideHeaders(
     context: Context,
     imageHeaderProvider: ImageHeadersProvider,
 ): ImageRequest =
@@ -350,6 +351,15 @@ private fun ImageRequest.provideHeaders(
                 .forEach { addHeader(it.key, it.value) }
         }
         .build()
+
+/**
+ * Set the [Size] as a new build of the [ImageRequest].
+ */
+internal fun ImageRequest.size(context: Context, size: Size): ImageRequest = run {
+    newBuilder(context)
+        .size(size)
+        .build()
+}
 
 /**
  * Used to change a parameter set on Coil requests in order
