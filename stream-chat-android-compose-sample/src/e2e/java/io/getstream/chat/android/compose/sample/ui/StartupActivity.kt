@@ -22,14 +22,14 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.data.PredefinedUserCredentials
-import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
 
 class StartupActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ChatHelper.initializeSdk(applicationContext, PredefinedUserCredentials.API_KEY, intent.getStringExtra("BASE_URL"))
-        startActivity(UserLoginActivity.createIntent(this@StartupActivity))
+        val initTestActivity = intent.getSerializableExtra("InitTestActivity") as InitTestActivity
+        startActivity(initTestActivity.createIntent(this@StartupActivity))
         finish()
     }
 

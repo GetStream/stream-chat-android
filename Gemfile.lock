@@ -33,6 +33,7 @@ GEM
     colored2 (3.1.2)
     commander (4.6.0)
       highline (~> 2.0.0)
+    connection_pool (2.4.1)
     declarative (0.0.20)
     digest-crc (0.6.5)
       rake (>= 12.0.0, < 14.0.0)
@@ -173,6 +174,8 @@ GEM
       ruby2_keywords (~> 0.0.1)
     nanaimo (0.4.0)
     naturally (2.2.1)
+    net-http-persistent (4.0.4)
+      connection_pool (~> 2.2)
     nio4r (2.7.4)
     nkf (0.2.0)
     optparse (0.6.0)
@@ -241,6 +244,14 @@ GEM
       rack-protection (= 4.1.0)
       rack-session (>= 2.0.0, < 3)
       tilt (~> 2.0)
+    sorbet-runtime (0.5.11826)
+    stream-chat-ruby (3.0.0)
+      faraday
+      faraday-multipart
+      faraday-net_http_persistent
+      jwt
+      net-http-persistent
+      sorbet-runtime
     sysrandom (1.0.5)
     terminal-notifier (2.0.0)
     terminal-table (3.0.2)
@@ -286,6 +297,7 @@ DEPENDENCIES
   rubocop-performance
   rubocop-require_tools
   sinatra
+  stream-chat-ruby (= 3.0.0)
 
 BUNDLED WITH
    2.5.17

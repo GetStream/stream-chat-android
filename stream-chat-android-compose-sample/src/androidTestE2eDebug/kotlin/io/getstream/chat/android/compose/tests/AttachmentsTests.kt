@@ -22,12 +22,15 @@ import io.getstream.chat.android.compose.robots.assertFileAttachmentInPreview
 import io.getstream.chat.android.compose.robots.assertImage
 import io.getstream.chat.android.compose.robots.assertMediaAttachmentInPreview
 import io.getstream.chat.android.compose.robots.assertVideo
+import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.getstream.chat.android.e2e.test.mockserver.AttachmentType
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
 import org.junit.Test
 
 class AttachmentsTests : StreamTestCase() {
+
+    override fun initTestActivity() = InitTestActivity.UserLogin
 
     @AllureId("5663")
     @Test

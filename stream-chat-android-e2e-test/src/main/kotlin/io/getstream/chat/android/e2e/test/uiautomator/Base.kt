@@ -22,17 +22,11 @@ import android.content.res.AssetManager
 import android.content.res.Resources
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.uiautomator.UiDevice
-import io.getstream.chat.android.e2e.test.mockserver.MockServer
 
 /**
  * Default timeout.
  */
 public val defaultTimeout: Long = 5.seconds
-
-/**
- * Mock Server.
- */
-public val mockServer: MockServer get() = MockServer()
 
 /**
  * UIDevice property initialized by singleton [UiDevice.getInstance] method, for the running Instrumentation.

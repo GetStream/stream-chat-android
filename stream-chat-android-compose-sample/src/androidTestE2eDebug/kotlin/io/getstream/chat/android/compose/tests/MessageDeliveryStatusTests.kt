@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.tests
 
 import io.getstream.chat.android.compose.robots.assertMessageDeliveryStatus
+import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.getstream.chat.android.e2e.test.mockserver.MessageDeliveryStatus
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
@@ -25,6 +26,7 @@ import org.junit.Test
 
 class MessageDeliveryStatusTests : StreamTestCase() {
 
+    override fun initTestActivity() = InitTestActivity.UserLogin
     private val sampleText = "Test"
 
     @AllureId("5741")
