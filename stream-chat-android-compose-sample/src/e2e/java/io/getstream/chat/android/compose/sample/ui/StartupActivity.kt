@@ -28,8 +28,18 @@ class StartupActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ChatHelper.initializeSdk(applicationContext, PredefinedUserCredentials.API_KEY, intent.getStringExtra("BASE_URL"))
-        startActivity(UserLoginActivity.createIntent(this@StartupActivity))
+
+        if (false) { // (intent.getStringExtra("MOCK_JWT") == null) {
+            ChatHelper.initializeSdk(
+                applicationContext,
+                PredefinedUserCredentials.API_KEY,
+                intent.getStringExtra("BASE_URL")
+            )
+            startActivity(UserLoginActivity.createIntent(this@StartupActivity))
+        } else {
+            startActivity(JwtTestActivity.createIntent(this@StartupActivity))
+        }
+
         finish()
     }
 
