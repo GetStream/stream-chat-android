@@ -30,9 +30,13 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
@@ -86,6 +90,7 @@ public fun PollOptionInput(
     val typography = ChatTheme.typography
     val colors = ChatTheme.colors
     val textColor = ChatTheme.colors.textHighEmphasis
+    val focusRequester = remember { FocusRequester() }
 
     Box(modifier = modifier.height(ChatTheme.dimens.pollOptionInputHeight)) {
         BasicTextField(
@@ -94,6 +99,7 @@ public fun PollOptionInput(
                 .clip(shape = shape)
                 .background(ChatTheme.colors.inputBackground)
                 .padding(innerPadding)
+                .focusRequester(focusRequester)
                 .semantics { contentDescription = description },
             value = value,
             onValueChange = {
@@ -138,6 +144,11 @@ public fun PollOptionInput(
                 fontSize = 16.sp,
             )
         }
+    }
+
+    // Request focus initially when the Input is first drawn.
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
     }
 }
 
