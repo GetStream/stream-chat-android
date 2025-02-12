@@ -73,6 +73,7 @@ import io.getstream.chat.android.compose.ui.util.buildAnnotatedMessageText
  * @param keyboardOptions The [KeyboardOptions] to be applied to the input.
  * @param decorationBox Composable function that represents the input field decoration as it's filled with content.
  */
+@Suppress("LongMethod")
 @Composable
 public fun PollOptionInput(
     value: String,
