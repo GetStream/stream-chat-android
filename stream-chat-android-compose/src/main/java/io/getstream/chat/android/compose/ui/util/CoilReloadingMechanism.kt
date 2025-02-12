@@ -16,9 +16,11 @@
 
 package io.getstream.chat.android.compose.ui.util
 
+import coil.compose.AsyncImagePainter
 import coil.network.HttpException
 import com.skydoves.landscapist.coil.CoilImageState
 import io.getstream.chat.android.models.ConnectionState
+import java.net.SocketTimeoutException
 
 /**
  * Used to automatically reload the image once all conditions are satisfied, such as
@@ -41,6 +43,29 @@ internal fun onImageNeedsToReload(
         val errorCode = (coilImageState.reason as? HttpException)?.response?.code
 
         if (errorCode == UnsatisfiableRequest) {
+            onReload()
+        }
+    }
+}
+
+/**
+ * Triggers [onReload] when the connection is established and the image load has failed due to a timeout.
+ *
+ * @param data The data to load.
+ * @param connectionState The state of the network connection.
+ * @param imageState The state of the async image painter.
+ * @param onReload The lambda function called when the conditions to reload have been met.
+ */
+internal fun onImageNeedsToReload(
+    data: Any?,
+    connectionState: ConnectionState,
+    imageState: AsyncImagePainter.State,
+    onReload: () -> Unit,
+) {
+    if (data != null && connectionState is ConnectionState.Connected &&
+        imageState is AsyncImagePainter.State.Error
+    ) {
+        if (imageState.result.throwable is SocketTimeoutException) {
             onReload()
         }
     }
