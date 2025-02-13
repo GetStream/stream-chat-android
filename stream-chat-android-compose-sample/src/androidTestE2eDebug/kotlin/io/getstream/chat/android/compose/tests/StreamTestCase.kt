@@ -20,11 +20,15 @@ import android.Manifest.permission.POST_NOTIFICATIONS
 import android.Manifest.permission.READ_MEDIA_IMAGES
 import android.Manifest.permission.READ_MEDIA_VIDEO
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
 import io.getstream.chat.android.compose.robots.UserRobot
+import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.getstream.chat.android.compose.uiautomator.device
 import io.getstream.chat.android.compose.uiautomator.grantPermission
-import io.getstream.chat.android.compose.uiautomator.mockServer
-import io.getstream.chat.android.compose.uiautomator.startApp
+import io.getstream.chat.android.compose.uiautomator.packageName
+import io.getstream.chat.android.compose.uiautomator.testContext
+import io.getstream.chat.android.e2e.test.mockserver.MockServer
 import io.getstream.chat.android.e2e.test.robots.BackendRobot
 import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
 import io.getstream.chat.android.e2e.test.rules.RetryRule
@@ -36,11 +40,12 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.rules.TestName
 
-open class StreamTestCase {
+abstract class StreamTestCase {
 
+    private lateinit var mockServer: MockServer
     val userRobot = UserRobot()
-    val backendRobot = BackendRobot()
-    val participantRobot = ParticipantRobot()
+    lateinit var backendRobot: BackendRobot
+    lateinit var participantRobot: ParticipantRobot
 
     @get:Rule
     var testName: TestName = TestName()
@@ -59,8 +64,10 @@ open class StreamTestCase {
 
     @Before
     fun setUp() {
-        mockServer.start(testName.methodName)
-        device.startApp()
+        mockServer = MockServer(testName.methodName)
+        backendRobot = BackendRobot(mockServer)
+        participantRobot = ParticipantRobot(mockServer)
+        startApp()
         grantAppPermissions()
     }
 
@@ -74,5 +81,16 @@ open class StreamTestCase {
         for (permission in arrayOf(POST_NOTIFICATIONS, READ_MEDIA_VIDEO, READ_MEDIA_IMAGES)) {
             device.grantPermission(permission)
         }
+    }
+
+    abstract fun initTestActivity(): InitTestActivity
+
+    private fun startApp() {
+        testContext.packageManager.getLaunchIntentForPackage(packageName)?.let {
+            it.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            it.putExtra("BASE_URL", mockServer.url)
+            it.putExtra("InitTestActivity", initTestActivity())
+            testContext.startActivity(it)
+        } ?: throw IllegalStateException("No launch intent found for package: $packageName")
     }
 }

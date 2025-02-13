@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.tests
 
 import io.getstream.chat.android.compose.robots.assertReaction
+import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.getstream.chat.android.compose.uiautomator.device
 import io.getstream.chat.android.compose.uiautomator.disableInternetConnection
 import io.getstream.chat.android.compose.uiautomator.enableInternetConnection
@@ -29,6 +30,8 @@ import org.junit.Test
 class ReactionsTests : StreamTestCase() {
 
     private val sampleText = "Test"
+
+    override fun initTestActivity(): InitTestActivity = InitTestActivity.UserLogin
 
     @AllureId("5675")
     @Test

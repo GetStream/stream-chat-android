@@ -16,18 +16,9 @@
 
 package io.getstream.chat.android.compose.uiautomator
 
-import android.content.Intent
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
-import io.getstream.chat.android.e2e.test.mockserver.mockServerUrl
 import java.io.ByteArrayOutputStream
-
-public fun UiDevice.startApp() {
-    val intent = testContext.packageManager.getLaunchIntentForPackage(packageName)
-    intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-    intent?.putExtra("BASE_URL", mockServerUrl)
-    testContext.startActivity(intent)
-}
 
 public fun UiDevice.stopApp() {
     executeShellCommand("pm clear $packageName")
