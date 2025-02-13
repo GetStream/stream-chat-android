@@ -61,8 +61,9 @@ public class DefaultPollSwitchItemFactory(
             PollSwitchItem(
                 title = context.getString(R.string.stream_compose_poll_option_switch_multiple_answers),
                 pollSwitchInput = PollSwitchInput(
-                    value = 0,
+                    value = "",
                     description = context.getString(R.string.stream_compose_poll_option_max_number_of_answers_hint),
+                    minValue = 1,
                     maxValue = 2,
                     keyboardType = KeyboardType.Decimal,
                 ),

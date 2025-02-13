@@ -26,6 +26,7 @@ import java.util.UUID
  * @property title The title of this poll item.
  * @property enabled Indicates if this switch is enabled or not.
  * @property key The key that identifies this poll item.
+ * @property pollSwitchInput Optional input field to be presented when the switch is enabled.
  * @property pollOptionError Indicates this option has an error.
  */
 @Immutable
@@ -42,12 +43,14 @@ public data class PollSwitchItem(
  *
  * @property value The default value of the switch.
  * @property description The description of the input in the switch (shown as hint/contentDescription).
- * @property maxValue The maximum vale of the switch. Normally, you can use the limit of the decimal format of the [value].
+ * @property minValue The minimum value of the switch. Normally, you can use the limit of the decimal format of the [value].
+ * @property maxValue The maximum value of the switch. Normally, you can use the limit of the decimal format of the [value].
  * @property keyboardType The type of the input of the switch and decide the keyboard type of the input.
  */
 public data class PollSwitchInput(
     public var value: Any,
     public val description: String = "",
+    public val minValue: Any? = null,
     public val maxValue: Any? = null,
     public val keyboardType: KeyboardType = KeyboardType.Text,
 )
