@@ -219,7 +219,7 @@ internal fun PollAnswersItem(
                     imageUrl = user.image,
                     initials = user.initials,
                     shape = ChatTheme.shapes.avatar,
-                    textStyle = ChatTheme.typography.title3Bold,
+                    textStyle = ChatTheme.typography.captionBold,
                     placeholderPainter = null,
                     contentDescription = user.name,
                     initialsAvatarOffset = DpOffset.Zero,

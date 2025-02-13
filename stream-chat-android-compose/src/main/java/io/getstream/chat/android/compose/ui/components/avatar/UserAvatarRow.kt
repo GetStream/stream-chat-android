@@ -61,7 +61,7 @@ public fun UserAvatarRow(
     size: Dp = 20.dp,
     offset: Int = 7,
     shape: Shape = ChatTheme.shapes.avatar,
-    textStyle: TextStyle = ChatTheme.typography.title3Bold,
+    textStyle: TextStyle = ChatTheme.typography.captionBold,
     contentDescription: String? = null,
     initialsAvatarOffset: DpOffset = DpOffset(0.dp, 0.dp),
     onClick: (() -> Unit)? = null,
