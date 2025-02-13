@@ -172,9 +172,9 @@ private_lane :install do |options|
     output = 'test-parser.jar'
     url = "https://linkedin.jfrog.io/artifactory/open-source/com/linkedin/dextestparser/parser/#{v}/parser-#{v}-all.jar"
   when :allurectl
-    v = '2.15.1'
+    v = '2.16.0'
     output = 'allurectl'
-    arch = RbConfig::CONFIG['host_os'].include?('darwin') ? 'darwin_amd64' : 'linux_386'
+    arch = RbConfig::CONFIG['host_os'].include?('darwin') ? 'darwin_amd64' : 'linux_amd64'
     url = "https://github.com/allure-framework/allurectl/releases/download/#{v}/allurectl_#{arch}"
   else
     UI.user_error!('Provide a correct tool name.')
