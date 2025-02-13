@@ -41,7 +41,8 @@ import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
  *
  * @param data The data to load the image from. Can be a URL, URI, resource ID, etc.
  * @param modifier Modifier for styling.
- * @param contentScale The scale to be used for the content.
+ * @param contentScale Used to determine the aspect ratio scaling to be used
+ * if the canvas bounds are a different size from the intrinsic size of the image loaded by model.
  * @param content A composable function that defines the content to be displayed based on the image loading state.
  *
  * @see ImageAssetTransformer
@@ -73,7 +74,8 @@ internal fun StreamAsyncImage(
  *
  * @param imageRequest The request to load the image.
  * @param modifier Modifier for styling.
- * @param contentScale The scale to be used for the content.
+ * @param contentScale Used to determine the aspect ratio scaling to be used
+ * if the canvas bounds are a different size from the intrinsic size of the image loaded by model.
  * @param content A composable function that defines the content to be displayed based on the image loading state.
  */
 @Composable
@@ -105,3 +107,9 @@ internal fun StreamAsyncImage(
         }
     }
 }
+
+/**
+ * A completed state is when the image is either successfully loaded or failed to load.
+ */
+internal val AsyncImagePainter.State.isCompleted: Boolean
+    get() = this is AsyncImagePainter.State.Success || this is AsyncImagePainter.State.Error
