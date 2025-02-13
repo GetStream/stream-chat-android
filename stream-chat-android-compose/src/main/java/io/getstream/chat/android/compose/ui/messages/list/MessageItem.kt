@@ -136,6 +136,7 @@ import kotlin.math.roundToInt
  * @param footerContent The content shown at the bottom of a message list item.
  * @param trailingContent The content shown at the end of a message list item.
  */
+@Suppress("LongMethod")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun MessageItem(
@@ -289,7 +290,6 @@ public fun MessageItem(
             .semantics { contentDescription = description },
         contentAlignment = messageAlignment.itemAlignment,
     ) {
-
         SwipeToReply(
             modifier = modifier,
             onReply = { onReply(message) },
@@ -841,7 +841,7 @@ private fun SwipeToReply(
         modifier = modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min),
-        contentAlignment = Alignment.CenterStart
+        contentAlignment = Alignment.CenterStart,
     ) {
         Row(
             modifier = Modifier
@@ -850,11 +850,11 @@ private fun SwipeToReply(
                     IntOffset(
                         (offset.value.roundToInt() - roundToInt)
                             .coerceIn(-roundToInt, roundToInt * 2),
-                        0
+                        0,
                     )
                 }
                 .onSizeChanged { swipeToReplyWith = it.width.toFloat() },
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             swipeToReplyContent()
         }
@@ -875,14 +875,14 @@ private fun SwipeToReply(
                             onDragEnd = {
                                 scope.launch {
                                     onReply
-                                        .takeIf { offset.value >= rowWith * 0.3f }
+                                        .takeIf { offset.value >= rowWith * ReplyDrawableSizeMultiplier }
                                         ?.invoke()
                                     offset.animateTo(0f)
                                 }
-                            }
+                            },
                         )
                     }
-                }
+                },
         ) {
             content()
         }
@@ -893,3 +893,9 @@ private fun SwipeToReply(
  * Represents the time the highlight fade out transition will take.
  */
 public const val HighlightFadeOutDurationMillis: Int = 1000
+
+/**
+ * Represents the size multiplier for the reply drawable.
+ * This is used to determine the swipe distance needed to trigger the reply action.
+ */
+private const val ReplyDrawableSizeMultiplier: Int = 3
