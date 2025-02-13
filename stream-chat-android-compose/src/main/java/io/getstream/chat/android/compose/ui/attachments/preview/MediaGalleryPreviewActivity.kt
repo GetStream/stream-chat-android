@@ -1590,12 +1590,16 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f)
-                .clickable {
-                    coroutineScope.launch {
-                        mediaGalleryPreviewViewModel.toggleGallery(isShowingGallery = false)
-                        pagerState.animateScrollToPage(index)
-                    }
-                },
+                .clickable(
+                    indication = ripple(),
+                    interactionSource = remember { MutableInteractionSource() },
+                    onClick = {
+                        coroutineScope.launch {
+                            mediaGalleryPreviewViewModel.toggleGallery(isShowingGallery = false)
+                            pagerState.animateScrollToPage(index)
+                        }
+                    },
+                ),
             contentAlignment = Alignment.Center,
         ) {
             val data =
