@@ -34,6 +34,7 @@ jobs:
         include:
           - batch: 0
           - batch: 1
+          - batch: 2
       fail-fast: false
     env:
       ANDROID_API_LEVEL: 34
@@ -77,6 +78,4 @@ jobs:
         if: failure()
         with:
           name: test_report
-          path: |
-            ./**/build/reports/androidTests/*
-            fastlane/stream-chat-test-mock-server/logs/*
+          path: fastlane/stream-chat-test-mock-server/logs/*

@@ -29,6 +29,7 @@ import io.getstream.chat.android.compose.uiautomator.findObjects
 import io.getstream.chat.android.compose.uiautomator.height
 import io.getstream.chat.android.compose.uiautomator.isDisplayed
 import io.getstream.chat.android.compose.uiautomator.wait
+import io.getstream.chat.android.compose.uiautomator.waitForCount
 import io.getstream.chat.android.compose.uiautomator.waitForText
 import io.getstream.chat.android.compose.uiautomator.waitToAppear
 import io.getstream.chat.android.compose.uiautomator.waitToDisappear
@@ -40,10 +41,15 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 
-fun UserRobot.assertMessage(text: String, isDisplayed: Boolean = true): UserRobot {
+fun UserRobot.assertMessage(
+    text: String,
+    isDisplayed: Boolean = true,
+    isClickable: Boolean = false,
+): UserRobot {
     if (isDisplayed) {
-        assertEquals(text, Message.text.waitToAppear().waitForText(text).text)
-        assertTrue(Message.text.isDisplayed())
+        val textLocator = if (isClickable) Message.clickableText else Message.text
+        assertEquals(text, textLocator.waitToAppear().waitForText(text).text)
+        assertTrue(textLocator.isDisplayed())
         assertTrue(Message.timestamp.isDisplayed())
     } else {
         MessageListPage.MessageList.messages.findObjects().forEach {
@@ -117,7 +123,7 @@ fun UserRobot.assertEditedMessage(text: String): UserRobot {
     return this
 }
 
-fun UserRobot.assertDeletedMessage(text: String, hard: Boolean = false): UserRobot {
+fun UserRobot.assertDeletedMessage(text: String? = null, hard: Boolean = false): UserRobot {
     if (hard) {
         assertFalse(Message.deletedMessage.isDisplayed())
     } else {
@@ -125,7 +131,9 @@ fun UserRobot.assertDeletedMessage(text: String, hard: Boolean = false): UserRob
         assertTrue(Message.deletedMessage.isDisplayed())
         assertTrue(Message.timestamp.isDisplayed())
     }
-    assertMessage(text, isDisplayed = false)
+    if (text != null) {
+        assertMessage(text, isDisplayed = false)
+    }
     return this
 }
 
@@ -238,13 +246,6 @@ fun UserRobot.assertScrollToBottomButton(isDisplayed: Boolean): UserRobot {
     } else {
         assertFalse(MessageListPage.MessageList.scrollToBottomButton.waitToDisappear().isDisplayed())
     }
-    return this
-}
-
-fun UserRobot.assertLinkPreview(): UserRobot {
-    assertTrue(Message.linkAttachmentPreview.waitToAppear().isClickable)
-    assertTrue(Message.linkAttachmentTitle.findObject().text.isNotEmpty())
-    assertTrue(Message.linkAttachmentDescription.findObject().text.isNotEmpty())
     return this
 }
 
@@ -373,5 +374,105 @@ fun UserRobot.assertThreadReplyLabelAvatars(count: Int): UserRobot {
 fun UserRobot.assertMessages(text: String, count: Int): UserRobot {
     val actualCount = Message.text.findObjects().count { it.text == text }
     assertEquals(count, actualCount)
+    return this
+}
+
+fun UserRobot.assertImage(isDisplayed: Boolean, count: Int = 1): UserRobot {
+    if (isDisplayed) {
+        assertEquals(count, Message.image.waitForCount(count).size)
+        if (count != 1) {
+            assertTrue(Message.columnWithMultipleMediaAttachments.isDisplayed())
+        }
+    } else {
+        assertFalse(Message.image.waitToDisappear().isDisplayed())
+    }
+    return this
+}
+
+fun UserRobot.assertVideo(isDisplayed: Boolean, count: Int = 1): UserRobot {
+    if (isDisplayed) {
+        assertEquals(count, Message.video.waitForCount(count).size)
+        if (count != 1) {
+            assertTrue(Message.columnWithMultipleMediaAttachments.waitToAppear().isDisplayed())
+        }
+    } else {
+        assertFalse(Message.video.waitToDisappear().isDisplayed())
+    }
+    return this
+}
+
+fun UserRobot.assertFile(isDisplayed: Boolean, count: Int = 1): UserRobot {
+    if (isDisplayed) {
+        assertEquals(count, Message.fileName.waitForCount(count).size)
+        assertEquals(count, Message.fileSize.findObjects().size)
+        assertEquals(count, Message.fileDownloadButton.findObjects().size)
+        assertEquals(count, Message.fileImage.waitForCount(count).size)
+        if (count > 1) {
+            assertTrue(Message.columnWithMultipleFileAttachments.isDisplayed())
+        }
+    } else {
+        assertFalse(Message.fileName.waitToDisappear().isDisplayed())
+        assertFalse(Message.fileSize.isDisplayed())
+        assertFalse(Message.fileImage.isDisplayed())
+        assertFalse(Message.fileDownloadButton.isDisplayed())
+    }
+    return this
+}
+
+fun UserRobot.assertMediaAttachmentInPreview(isDisplayed: Boolean, count: Int = 1): UserRobot {
+    if (isDisplayed) {
+        assertEquals(count, Composer.mediaAttachment.waitForCount(count).size)
+        assertEquals(count, Composer.attachmentCancelIcon.findObjects().size)
+        if (count != 1) {
+            assertTrue(Composer.columnWithMultipleMediaAttachments.isDisplayed())
+        }
+    } else {
+        assertFalse(Composer.mediaAttachment.waitToDisappear().isDisplayed())
+        assertFalse(Composer.attachmentCancelIcon.isDisplayed())
+    }
+    return this
+}
+
+fun UserRobot.assertFileAttachmentInPreview(isDisplayed: Boolean, count: Int = 1): UserRobot {
+    if (isDisplayed) {
+        assertTrue(Composer.fileName.waitToAppear().isDisplayed())
+        assertTrue(Composer.fileSize.isDisplayed())
+        assertTrue(Composer.fileImage.isDisplayed())
+        assertTrue(Composer.attachmentCancelIcon.isDisplayed())
+        if (count > 1) {
+            assertTrue(Composer.columnWithMultipleFileAttachments.isDisplayed())
+        }
+    } else {
+        assertFalse(Composer.fileName.waitToDisappear().isDisplayed())
+        assertFalse(Composer.fileSize.isDisplayed())
+        assertFalse(Composer.fileImage.isDisplayed())
+        assertFalse(Composer.attachmentCancelIcon.isDisplayed())
+    }
+    return this
+}
+
+fun UserRobot.assertLinkPreviewInMessageList(isDisplayed: Boolean): UserRobot {
+    if (isDisplayed) {
+        assertTrue(Message.linkPreviewImage.waitToAppear().isDisplayed())
+        assertTrue(Message.linkPreviewTitle.isDisplayed())
+        assertTrue(Message.linkPreviewDescription.isDisplayed())
+    } else {
+        assertFalse(Message.linkPreviewImage.waitToDisappear().isDisplayed())
+        assertFalse(Message.linkPreviewTitle.isDisplayed())
+        assertFalse(Message.linkPreviewDescription.isDisplayed())
+    }
+    return this
+}
+
+fun UserRobot.assertLinkPreviewInComposer(isDisplayed: Boolean): UserRobot {
+    if (isDisplayed) {
+        assertTrue(Composer.linkPreviewImage.waitToAppear().isDisplayed())
+        assertTrue(Composer.linkPreviewTitle.isDisplayed())
+        assertTrue(Composer.linkPreviewDescription.isDisplayed())
+    } else {
+        assertFalse(Composer.linkPreviewImage.waitToDisappear().isDisplayed())
+        assertFalse(Composer.linkPreviewTitle.isDisplayed())
+        assertFalse(Composer.linkPreviewDescription.isDisplayed())
+    }
     return this
 }

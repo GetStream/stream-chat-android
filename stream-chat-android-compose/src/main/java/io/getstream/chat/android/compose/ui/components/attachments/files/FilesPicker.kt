@@ -41,6 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -90,6 +91,7 @@ public fun FilesPicker(
             IconButton(
                 content = {
                     Icon(
+                        modifier = Modifier.testTag("Stream_FindFilesButton"),
                         painter = painterResource(id = R.drawable.stream_compose_ic_more_files),
                         contentDescription = stringResource(id = R.string.stream_compose_send_attachment),
                         tint = ChatTheme.colors.primaryAccent,

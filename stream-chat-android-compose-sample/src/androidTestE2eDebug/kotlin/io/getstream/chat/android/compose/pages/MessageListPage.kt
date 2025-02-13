@@ -44,11 +44,16 @@ open class MessageListPage {
         companion object {
             val view = By.res("Stream_AttachmentsPicker")
             val sendButton = By.res("Stream_AttachmentPickerSendButton")
-            val imagesTab = By.res("Stream_AttachmentPickerImagesTab")
             val filesTab = By.res("Stream_AttachmentPickerFilesTab")
             val mediaCaptureTab = By.res("Stream_AttachmentPickerMediaCaptureTab")
             val pollsTab = By.res("Stream_AttachmentPickerPollsTab")
-            val sampleImage = By.res("Stream_AttachmentPickerSampleImage")
+            val findFilesButton = By.res("Stream_FindFilesButton")
+            val rootsButton = By.descContains("Show roots")
+            val downloadsView = By.text("Downloads")
+            val image1 = By.text("file_1.png")
+            val image2 = By.text("file_2.png")
+            val pdf1 = By.text("file_1.pdf")
+            val pdf2 = By.text("file_2.pdf")
         }
     }
 
@@ -67,6 +72,16 @@ open class MessageListPage {
             val quotedMessage = By.res("Stream_QuotedMessage")
             val quotedMessageAvatar = By.res("Stream_QuotedMessageAuthorAvatar")
             val cancelButton = By.res("Stream_ComposerCancelButton")
+            val attachmentCancelIcon = By.res("Stream_AttachmentCancelIcon")
+            val columnWithMultipleFileAttachments = By.res("Stream_FileAttachmentPreviewContent")
+            val columnWithMultipleMediaAttachments = By.res("Stream_MediaAttachmentPreviewContent")
+            val mediaAttachment = By.res("Stream_MediaAttachmentPreviewItem")
+            val fileSize = By.res("Stream_FileSizeInPreview")
+            val fileName = By.res("Stream_FileNameInPreview")
+            val fileImage = MessageList.Message.fileImage
+            val linkPreviewImage = By.res("Stream_LinkPreviewImage")
+            val linkPreviewTitle = By.res("Stream_LinkPreviewTitle")
+            val linkPreviewDescription = By.res("Stream_LinkPreviewDescription")
         }
     }
 
@@ -102,16 +117,18 @@ open class MessageListPage {
                 val editedLabel = By.res("Stream_MessageEditedLabel")
                 val deletedMessage = By.res("Stream_MessageDeleted")
                 val messageHeaderLabel = By.res("Stream_MessageHeaderLabel") // e.g.: Pinned by you
-                val image = By.res("Stream_MediaContent")
-                val video = By.res("Stream_PlayButton")
+                val image = By.res("Stream_MediaContent_Image")
+                val video = By.res("Stream_MediaContent_Video")
+                val columnWithMultipleMediaAttachments = By.res("Stream_MultipleMediaAttachmentsColumn")
                 val fileImage = By.res("Stream_FileAttachmentImage")
-                val fileDescription = By.res("Stream_FileAttachmentDescription")
+                val fileName = By.res("Stream_FileAttachmentName")
                 val fileSize = By.res("Stream_FileAttachmentSize")
                 val fileDownloadButton = By.res("Stream_FileAttachmentDownloadButton")
+                val columnWithMultipleFileAttachments = By.res("Stream_MultipleFileAttachmentsColumn")
                 val giphy = By.res("Stream_GiphyContent")
-                val linkAttachmentPreview = By.res("Stream_LinkAttachmentPreview")
-                val linkAttachmentTitle = By.res("Stream_LinkAttachmentTitle")
-                val linkAttachmentDescription = By.res("Stream_LinkAttachmentDescription")
+                val linkPreviewImage = By.res("Stream_LinkAttachmentPreview")
+                val linkPreviewTitle = By.res("Stream_LinkAttachmentTitle")
+                val linkPreviewDescription = By.res("Stream_LinkAttachmentDescription")
             }
 
             class Reactions {
