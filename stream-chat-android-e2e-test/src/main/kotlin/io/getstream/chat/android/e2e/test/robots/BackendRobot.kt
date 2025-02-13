@@ -16,10 +16,12 @@
 
 package io.getstream.chat.android.e2e.test.robots
 
-import io.getstream.chat.android.compose.uiautomator.mockServer
 import io.getstream.chat.android.compose.uiautomator.sleep
+import io.getstream.chat.android.e2e.test.mockserver.MockServer
 
-public class BackendRobot {
+public class BackendRobot(
+    private val mockServer: MockServer,
+) {
 
     public fun generateChannels(
         channelsCount: Int,

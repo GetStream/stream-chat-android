@@ -30,11 +30,6 @@ import io.getstream.chat.android.e2e.test.mockserver.MockServer
 public val defaultTimeout: Long = 5.seconds
 
 /**
- * Mock Server.
- */
-public val mockServer: MockServer get() = MockServer()
-
-/**
  * UIDevice property initialized by singleton [UiDevice.getInstance] method, for the running Instrumentation.
  */
 public val device: UiDevice get() = UiDevice.getInstance(instrumentation)

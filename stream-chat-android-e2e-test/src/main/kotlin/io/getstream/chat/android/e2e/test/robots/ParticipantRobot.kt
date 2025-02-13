@@ -17,13 +17,15 @@
 package io.getstream.chat.android.e2e.test.robots
 
 import io.getstream.chat.android.compose.uiautomator.defaultTimeout
-import io.getstream.chat.android.compose.uiautomator.mockServer
 import io.getstream.chat.android.e2e.test.mockserver.AttachmentType
+import io.getstream.chat.android.e2e.test.mockserver.MockServer
 import io.getstream.chat.android.e2e.test.mockserver.ReactionType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 
-public class ParticipantRobot {
+public class ParticipantRobot(
+    private val mockServer: MockServer,
+) {
 
     public companion object {
         public const val name: String = "Han Solo"
