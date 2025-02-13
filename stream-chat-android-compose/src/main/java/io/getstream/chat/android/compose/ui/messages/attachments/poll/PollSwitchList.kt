@@ -68,7 +68,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param onSwitchesChanged A lambda that will be executed when a switch on the list is changed.
  * @param itemHeightSize The height size of the question item.
  * @param itemInnerPadding The inner padding size of the question item.
- * It provides the index information [from] and [to] as a receiver, so you must swap the item of the [questions] list.
  */
 @Composable
 public fun PollSwitchList(
@@ -189,24 +188,34 @@ public fun PollSwitchList(
                                     if (switchInput.keyboardType == KeyboardType.Number ||
                                         switchInput.keyboardType == KeyboardType.Decimal
                                     ) {
-                                        val newInt = if (newValue.isBlank()) 0 else newValue.toInt()
-                                        val maxInt = switchInput.maxValue?.toString()?.toInt() ?: 0
-
-                                        if (newInt > maxInt) {
-                                            this[index] = item.copy(
-                                                pollSwitchInput = item.pollSwitchInput.copy(value = newValue),
-                                                pollOptionError = PollOptionNumberExceed(
-                                                    context.getString(
-                                                        R.string.stream_compose_poll_option_error_exceed,
-                                                        maxInt,
-                                                    ),
-                                                ),
-                                            )
-                                        } else {
+                                        if (newValue.isBlank()) {
+                                            // If newValue is empty, don't validate
                                             this[index] = item.copy(
                                                 pollSwitchInput = item.pollSwitchInput.copy(value = newValue),
                                                 pollOptionError = null,
                                             )
+                                        } else {
+                                            // Validate min/max range
+                                            val min = switchInput.minValue?.toString()?.toIntOrNull() ?: 0
+                                            val max = switchInput.maxValue?.toString()?.toIntOrNull() ?: 0
+                                            val value = newValue.toInt() // assume it is always numeric
+                                            if (value < min || value > max) {
+                                                this[index] = item.copy(
+                                                    pollSwitchInput = item.pollSwitchInput.copy(value = newValue),
+                                                    pollOptionError = PollOptionNumberExceed(
+                                                        context.getString(
+                                                            R.string.stream_compose_poll_option_error_exceed,
+                                                            min,
+                                                            max,
+                                                        ),
+                                                    ),
+                                                )
+                                            } else {
+                                                this[index] = item.copy(
+                                                    pollSwitchInput = item.pollSwitchInput.copy(value = newValue),
+                                                    pollOptionError = null,
+                                                )
+                                            }
                                         }
                                     } else {
                                         this[index] = item.copy(
