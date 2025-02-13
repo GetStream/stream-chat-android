@@ -97,7 +97,6 @@ dependencies {
     // Coil
     implementation(libs.coil.compose)
     implementation(libs.skydoves.landscapist.coil)
-    implementation(libs.skydoves.landscapist.placeholder)
     implementation(libs.skydoves.landscapist.animation)
     implementation(libs.coil.gif)
     implementation(libs.coil.video)
