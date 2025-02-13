@@ -23,8 +23,6 @@ import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import io.getstream.chat.android.client.utils.attachment.isGiphy
-import io.getstream.chat.android.client.utils.message.isGiphy
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -56,7 +54,6 @@ import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.Resend
 import io.getstream.chat.android.ui.common.state.messages.ThreadReply
 import io.getstream.chat.android.ui.common.state.messages.UnblockUser
-import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**
  * Displays all available [MessageOptionItem]s.
@@ -100,6 +97,7 @@ public fun MessageOptions(
  * @param ownCapabilities Set of capabilities the user is given for the current channel.
  * For a full list @see [ChannelCapabilities].
  */
+@Suppress("LongMethod")
 @Composable
 public fun defaultMessageOptionsState(
     selectedMessage: Message,

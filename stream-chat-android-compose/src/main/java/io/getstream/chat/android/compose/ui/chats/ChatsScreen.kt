@@ -57,7 +57,6 @@ import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFact
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 
 /**

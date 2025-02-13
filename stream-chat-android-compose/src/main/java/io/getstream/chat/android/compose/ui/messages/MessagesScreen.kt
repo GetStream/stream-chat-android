@@ -250,7 +250,7 @@ public fun MessagesScreen(
                 onUserAvatarClick = onUserAvatarClick,
                 onMessageLinkClick = onMessageLinkClick,
                 onUserMentionClick = onUserMentionClick,
-                onReply = { message ->composerViewModel.performMessageAction(Reply(message)) },
+                onReply = { message -> composerViewModel.performMessageAction(Reply(message)) },
                 onMediaGalleryPreviewResult = remember(listViewModel, composerViewModel) {
                     {
                             result ->
