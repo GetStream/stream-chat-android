@@ -351,6 +351,7 @@ public interface ChatComponentFactory {
         onChannelLongClick: (Channel) -> Unit,
     ) {
         ChannelItem(
+            modifier = Modifier.animateItem(),
             channelItem = channelItem,
             currentUser = currentUser,
             onChannelClick = onChannelClick,
