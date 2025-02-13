@@ -21,6 +21,7 @@ import androidx.test.uiautomator.Direction
 import io.getstream.chat.android.compose.pages.ChannelListPage
 import io.getstream.chat.android.compose.pages.LoginPage
 import io.getstream.chat.android.compose.pages.MessageListPage
+import io.getstream.chat.android.compose.pages.MessageListPage.AttachmentPicker
 import io.getstream.chat.android.compose.pages.MessageListPage.Composer
 import io.getstream.chat.android.compose.pages.MessageListPage.MessageList
 import io.getstream.chat.android.compose.pages.MessageListPage.MessageList.Message
@@ -30,6 +31,7 @@ import io.getstream.chat.android.compose.uiautomator.defaultTimeout
 import io.getstream.chat.android.compose.uiautomator.device
 import io.getstream.chat.android.compose.uiautomator.findObject
 import io.getstream.chat.android.compose.uiautomator.findObjects
+import io.getstream.chat.android.compose.uiautomator.isDisplayed
 import io.getstream.chat.android.compose.uiautomator.longPress
 import io.getstream.chat.android.compose.uiautomator.swipeDown
 import io.getstream.chat.android.compose.uiautomator.swipeUp
@@ -38,6 +40,7 @@ import io.getstream.chat.android.compose.uiautomator.typeText
 import io.getstream.chat.android.compose.uiautomator.wait
 import io.getstream.chat.android.compose.uiautomator.waitToAppear
 import io.getstream.chat.android.compose.uiautomator.waitToDisappear
+import io.getstream.chat.android.e2e.test.mockserver.AttachmentType
 import io.getstream.chat.android.e2e.test.mockserver.ReactionType
 import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
 
@@ -96,9 +99,19 @@ class UserRobot {
         return this
     }
 
+    fun tapOnSendButton(): UserRobot {
+        Composer.sendButton.findObject().click()
+        return this
+    }
+
+    fun tapOnAttachmentCancelIcon(): UserRobot {
+        Composer.attachmentCancelIcon.waitToAppear().click()
+        return this
+    }
+
     fun sendMessage(text: String): UserRobot {
         typeText(text)
-        Composer.sendButton.findObject().click()
+        tapOnSendButton()
         return this
     }
 
@@ -289,16 +302,37 @@ class UserRobot {
         return this
     }
 
-    fun uploadImage(count: Int = 1, send: Boolean = true): UserRobot {
+    fun uploadAttachment(type: AttachmentType, multiple: Boolean = false, send: Boolean = true): UserRobot {
+        val count = if (multiple) 2 else 1
         repeat(count) {
             Composer.attachmentsButton.waitToAppear().click()
-            MessageListPage.AttachmentPicker.sampleImage.waitToAppear().click()
-            MessageListPage.AttachmentPicker.sendButton.findObject().click()
+            AttachmentPicker.filesTab.waitToAppear().click()
+            AttachmentPicker.findFilesButton.waitToAppear().click()
+
+            if (!AttachmentPicker.downloadsView.isDisplayed()) {
+                AttachmentPicker.rootsButton.waitToAppear().click()
+                val documentsUiPackageName = device.currentPackageName
+                By.text("Downloads")
+                    .hasAncestor(By.res("$documentsUiPackageName:id/roots_list"))
+                    .waitToAppear()
+                    .click()
+            }
+
+            if (type == AttachmentType.FILE) AttachmentPicker.pdf1 else AttachmentPicker.image1
+
+            if (it == 0) {
+                val attachment = if (type == AttachmentType.FILE) AttachmentPicker.pdf1 else AttachmentPicker.image1
+                attachment.waitToAppear().click()
+            } else {
+                val attachment = if (type == AttachmentType.FILE) AttachmentPicker.pdf2 else AttachmentPicker.image2
+                attachment.waitToAppear().click()
+            }
         }
 
         if (send) {
             Composer.sendButton.waitToAppear().click()
         }
+
         return this
     }
 

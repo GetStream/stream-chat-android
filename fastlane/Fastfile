@@ -60,7 +60,7 @@ end
 
 lane :build_and_run_e2e_test do |options|
   build_e2e_test
-  run_e2e_test(batch: options[:batch], batch_count: options[:batch_count])
+  run_e2e_test(batch: options[:batch], batch_count: options[:batch_count], local_server: options[:local_server])
 end
 
 lane :build_e2e_test do
@@ -80,8 +80,9 @@ lane :run_e2e_test do |options|
   sh("rm -rf #{allure_results_path}")
   sh("adb shell rm -rf #{adb_test_results_path}/#{allure_results_path}")
 
-  start_mock_server
+  start_mock_server(local_server: options[:local_server])
   install_test_services
+  upload_attachments
 
   stream_apk_folder_path = is_ci ? '..' : "../#{test_flavor}/build/outputs/apk"
   stream_app_path = "#{stream_apk_folder_path}/e2e/debug/stream-chat-android-compose-sample-e2e-debug.apk"
@@ -111,6 +112,12 @@ lane :run_e2e_test do |options|
   stop_mock_server
 
   UI.user_error!('Tests have failed!') if result.include?('Failures')
+end
+
+lane :upload_attachments do
+  ['png', 'pdf'].each do |ext|
+    [1, 2].each { |i| sh("adb push attachments/file.#{ext} /sdcard/Download/file_#{i}.#{ext}") }
+  end
 end
 
 private_lane :batch_tests do |options|
