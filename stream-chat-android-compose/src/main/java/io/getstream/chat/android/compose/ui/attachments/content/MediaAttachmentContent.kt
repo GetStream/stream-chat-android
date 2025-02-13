@@ -69,9 +69,9 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.ImageRequestTimeoutHandler
 import io.getstream.chat.android.compose.ui.util.RetryHash
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
-import io.getstream.chat.android.compose.ui.util.onImageNeedsToReload
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
@@ -439,9 +439,8 @@ internal fun MediaAttachmentContentItem(
         onResult = { result -> onMediaGalleryPreviewResult(result) },
     )
 
-    // Used to refresh the request for the current page
-    // if it has previously failed.
-    onImageNeedsToReload(
+    // Used to refresh the request for the current page if it has previously failed.
+    ImageRequestTimeoutHandler(
         data = data,
         connectionState = connectionState,
         imageState = imageState,
@@ -529,7 +528,7 @@ internal fun MediaAttachmentContentItem(
                                 modifier = Modifier.fillMaxSize(0.4f),
                                 painter = painterResource(R.drawable.stream_compose_ic_image_picker),
                                 contentDescription = stringResource(
-                                    id = R.string.stream_ui_message_list_attachment_load_failed
+                                    id = R.string.stream_ui_message_list_attachment_load_failed,
                                 ),
                             )
                             overlayContent(attachment.type)

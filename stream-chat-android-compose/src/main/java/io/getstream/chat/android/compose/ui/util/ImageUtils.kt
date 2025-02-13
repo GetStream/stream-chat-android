@@ -188,10 +188,10 @@ public fun StreamImage(
     previewPlaceholder: Painter? = null,
     loading: @Composable (BoxScope.(imageState: CoilImageState.Loading) -> Unit)? = null,
     success: @Composable (
-        BoxScope.(
-            imageState: CoilImageState.Success,
-            painter: Painter,
-        ) -> Unit
+    BoxScope.(
+        imageState: CoilImageState.Success,
+        painter: Painter,
+    ) -> Unit
     )? = null,
     failure: @Composable (BoxScope.(imageState: CoilImageState.Failure) -> Unit)? = null,
 ) {
@@ -232,10 +232,10 @@ public fun StreamImage(
     previewPlaceholder: Painter? = null,
     loading: @Composable (BoxScope.(imageState: CoilImageState.Loading) -> Unit)? = null,
     success: @Composable (
-        BoxScope.(
-            imageState: CoilImageState.Success,
-            painter: Painter,
-        ) -> Unit
+    BoxScope.(
+        imageState: CoilImageState.Success,
+        painter: Painter,
+    ) -> Unit
     )? = null,
     failure: @Composable (BoxScope.(imageState: CoilImageState.Failure) -> Unit)? = null,
 ) {
@@ -437,6 +437,12 @@ private fun ImageRequest.size(context: Context, size: Size): ImageRequest = run 
         .size(size)
         .build()
 }
+
+/**
+ * A completed state is when the image is either successfully loaded or failed to load.
+ */
+internal val AsyncImagePainter.State.isCompleted: Boolean
+    get() = this is AsyncImagePainter.State.Success || this is AsyncImagePainter.State.Error
 
 /**
  * Used to change a parameter set on Coil requests in order
