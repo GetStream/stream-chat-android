@@ -70,7 +70,7 @@ public class BackendRobot(
         val startTime = System.currentTimeMillis()
         while (System.currentTimeMillis() - startTime < 5000) {
             try {
-                val connection = URL(mockServer.url).openConnection() as HttpURLConnection
+                val connection = URL("${mockServer.url}/ping").openConnection() as HttpURLConnection
                 connection.requestMethod = "GET"
                 connection.connectTimeout = 1000
                 connection.readTimeout = 1000

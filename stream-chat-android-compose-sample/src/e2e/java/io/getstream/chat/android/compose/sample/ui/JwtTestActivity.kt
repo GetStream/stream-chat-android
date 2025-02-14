@@ -64,11 +64,24 @@ class JwtTestActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val a = intent.getStringExtra("BASE_URL")
+
         setContent {
             ChatTheme(allowUIAutomationTest = true) {
                 JwtTestScreen(
-                    onClick = { tokenProvider ->
+                    onClick = {
                         lifecycleScope.launch {
+                            val tokenProvider: TokenProvider = object : TokenProvider {
+                                override fun loadToken(): String {
+                                    val request = Request.Builder()
+                                        .url(intent.getStringExtra("BASE_URL")!!)
+                                        .post("".toRequestBody("text".toMediaTypeOrNull()))
+                                        .build()
+                                    val response = OkHttpClient().newCall(request).execute()
+                                    return response.body.toString()
+                                }
+                            }
+
                             ChatClient.instance().connectUser(
                                 user = User(id = PredefinedUserCredentials.availableUsers.first().user.id),
                                 tokenProvider = tokenProvider,
@@ -82,7 +95,7 @@ class JwtTestActivity : AppCompatActivity() {
 
     @Composable
     fun JwtTestScreen(
-        onClick: (TokenProvider) -> Unit
+        onClick: () -> Unit
     ) {
         val connectionState by ChatClient.instance()
             .clientState
@@ -94,20 +107,6 @@ class JwtTestActivity : AppCompatActivity() {
             .initializationState
             .collectAsState(initial = ConnectionState.Connecting)
 
-        val tokenProvider: TokenProvider = object : TokenProvider {
-            override fun loadToken(): String {
-                 intent.getStringExtra("BASE_URL")?.let {
-                     val request = Request.Builder()
-                        .url(it)
-                        .post("".toRequestBody("text".toMediaTypeOrNull()))
-                        .build()
-                     val response = OkHttpClient().newCall(request).execute()
-                     return response.body.toString()
-                } ?: run {
-                    return Response.Builder().build().toString()
-                }
-            }
-        }
 
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -120,7 +119,7 @@ class JwtTestActivity : AppCompatActivity() {
                     .testTag("Stream_JWT_InitButton")
                     .padding(horizontal = 16.dp)
                     .clickable(
-                        onClick = { onClick(tokenProvider) },
+                        onClick = { onClick() },
                         indication = ripple(),
                         interactionSource = remember { MutableInteractionSource() },
                     ),
@@ -175,9 +174,7 @@ class JwtTestActivity : AppCompatActivity() {
 
     companion object {
         fun createIntent(context: Context): Intent {
-            return Intent(context, JwtTestActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            }
+            return Intent(context, JwtTestActivity::class.java)
         }
     }
 }
