@@ -83,11 +83,9 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFac
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.Flag
@@ -703,26 +701,7 @@ public fun BoxScope.AttachmentsPickerMenu(
             },
             onAttachmentPickerAction = { action ->
                 if (action is AttachmentPickerPollCreation) {
-                    composerViewModel.createPoll(
-                        pollConfig = PollConfig(
-                            name = action.question,
-                            options = action.options.filter { it.title.isNotEmpty() }.map { it.title },
-                            allowUserSuggestedOptions = action.switches.any { it.key == "allowUserSuggestedOptions" && it.enabled },
-                            allowAnswers = action.switches.any { it.key == "allowAnswers" && it.enabled },
-                            votingVisibility = if (action.switches.any { it.key == "votingVisibility" && it.enabled }) {
-                                VotingVisibility.ANONYMOUS
-                            } else {
-                                VotingVisibility.PUBLIC
-                            },
-                            maxVotesAllowed = if (action.switches.any { it.key == "maxVotesAllowed" && it.enabled }) {
-                                action.switches.first { it.key == "maxVotesAllowed" }.pollSwitchInput?.value.toString()
-                                    .toInt()
-                            } else {
-                                1
-                            },
-                            enforceUniqueVote = action.switches.none { it.key == "maxVotesAllowed" && it.enabled },
-                        ),
-                    )
+                    composerViewModel.createPoll(action.pollConfig)
                 }
             },
             onTabClick = { _, tab -> isFullScreenContent = tab.isFullContent },

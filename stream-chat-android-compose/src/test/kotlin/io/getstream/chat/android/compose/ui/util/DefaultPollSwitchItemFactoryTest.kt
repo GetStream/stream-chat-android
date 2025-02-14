@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.util
 import android.content.Context
 import androidx.compose.ui.text.input.KeyboardType
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchItemKeys
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.mock
@@ -49,7 +50,7 @@ internal class DefaultPollSwitchItemFactoryTest {
         Assertions.assertEquals(4, items.size)
         // Max votes item
         Assertions.assertEquals("Multiple answers", items[0].title)
-        Assertions.assertEquals("maxVotesAllowed", items[0].key)
+        Assertions.assertEquals(PollSwitchItemKeys.MAX_VOTES_ALLOWED, items[0].key)
         Assertions.assertFalse(items[0].enabled)
         Assertions.assertEquals("", items[0].pollSwitchInput?.value)
         Assertions.assertEquals(1, items[0].pollSwitchInput?.minValue)
@@ -59,19 +60,19 @@ internal class DefaultPollSwitchItemFactoryTest {
         Assertions.assertNull(items[0].pollOptionError)
         // Anonymous poll item
         Assertions.assertEquals("Anonymous poll", items[1].title)
-        Assertions.assertEquals("votingVisibility", items[1].key)
+        Assertions.assertEquals(PollSwitchItemKeys.VOTING_VISIBILITY, items[1].key)
         Assertions.assertFalse(items[1].enabled)
         Assertions.assertNull(items[1].pollSwitchInput)
         Assertions.assertNull(items[1].pollOptionError)
         // Hide results item
         Assertions.assertEquals("Suggest an option", items[2].title)
-        Assertions.assertEquals("allowUserSuggestedOptions", items[2].key)
+        Assertions.assertEquals(PollSwitchItemKeys.ALLOW_USER_SUGGESTED_OPTIONS, items[2].key)
         Assertions.assertFalse(items[2].enabled)
         Assertions.assertNull(items[2].pollSwitchInput)
         Assertions.assertNull(items[2].pollOptionError)
         // Close poll item
         Assertions.assertEquals("Add a comment", items[3].title)
-        Assertions.assertEquals("allowAnswers", items[3].key)
+        Assertions.assertEquals(PollSwitchItemKeys.ALLOW_ANSWERS, items[3].key)
         Assertions.assertFalse(items[3].enabled)
         Assertions.assertNull(items[3].pollSwitchInput)
         Assertions.assertNull(items[3].pollOptionError)

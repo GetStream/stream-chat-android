@@ -55,7 +55,9 @@ import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOption
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionList
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollQuestionInput
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchItem
+import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchItemKeys
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchList
+import io.getstream.chat.android.compose.ui.messages.attachments.poll.pollConfigFrom
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -149,9 +151,11 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
                 onPollCreateClicked = {
                     onAttachmentPickerAction.invoke(
                         AttachmentPickerPollCreation(
-                            question = question,
-                            options = optionItemList,
-                            switches = switchItemList,
+                            pollConfigFrom(
+                                pollQuestion = question,
+                                pollOptions = optionItemList,
+                                pollSwitches = switchItemList,
+                            ),
                         ),
                     )
                     onAttachmentPickerAction.invoke(AttachmentPickerBack)
@@ -236,7 +240,7 @@ private fun updateMaxVotesAllowedSwitch(
 ): List<PollSwitchItem> =
     switchItemList.map {
         when (it.key) {
-            "maxVotesAllowed" -> it.copy(
+            PollSwitchItemKeys.MAX_VOTES_ALLOWED -> it.copy(
                 pollSwitchInput = it.pollSwitchInput?.copy(
                     maxValue = optionItemList.count { item -> item.title.isNotBlank() },
                 ),

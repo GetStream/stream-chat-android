@@ -70,6 +70,7 @@
 
 ### ⬆️ Improved
 - Autofocus the input fields in the poll creation screen. [#5629](https://github.com/GetStream/stream-chat-android/pull/5629)
+- 🚨Breaking change: Change the `AttachmentPickerPollCreation` event to hold a prepared `PollConfig` to simplify the poll creation handling. [#5634](https://github.com/GetStream/stream-chat-android/pull/5634)
 
 ### ✅ Added
 
