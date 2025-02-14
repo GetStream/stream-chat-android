@@ -39,7 +39,7 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
      * Can be used for listeners that need to pass along the currently
      * bound data as a parameter.
      */
-    internal lateinit var data: T
+    public lateinit var data: T
         private set
 
     private var highlightAnimation: ValueAnimator? = null
