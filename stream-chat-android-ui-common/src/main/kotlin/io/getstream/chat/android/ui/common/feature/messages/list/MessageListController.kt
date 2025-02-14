@@ -599,16 +599,18 @@ public class MessageListController(
             val messages = messagesState.messageItems
                 .filterIsInstance<MessageItemState>()
                 .map { it.message }
-
-            messages.firstOrNull { it.id == unreadLabel.lastReadMessageId }
-                ?.let { messages.focusUnreadMessage(it.id) }
-                ?: {
-                    scope.launch {
-                        chatClient.loadMessagesAroundId(cid, unreadLabel.lastReadMessageId)
-                            .await()
-                            .onSuccess { channel -> channel.messages.focusUnreadMessage(unreadLabel.lastReadMessageId) }
-                    }
+            val lastReadMessage = messages.firstOrNull { it.id == unreadLabel.lastReadMessageId }
+            if (lastReadMessage != null) {
+                // Message already leaded, focus it
+                messages.focusUnreadMessage(lastReadMessage.id)
+            } else {
+                // Message is not loaded, attempt to load it and then focus it
+                scope.launch {
+                    chatClient.loadMessagesAroundId(cid, unreadLabel.lastReadMessageId)
+                        .await()
+                        .onSuccess { channel -> channel.messages.focusUnreadMessage(unreadLabel.lastReadMessageId) }
                 }
+            }
         }
         disableUnreadLabelButton()
     }

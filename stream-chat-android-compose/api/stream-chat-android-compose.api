@@ -3999,6 +3999,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public final fun removeVote (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Poll;Lio/getstream/chat/android/models/Vote;)V
 	public final fun scrollToBottom (ILkotlin/jvm/functions/Function0;)V
 	public static synthetic fun scrollToBottom$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;ILkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
+	public final fun scrollToFirstUnreadMessage ()V
 	public final fun scrollToMessage (Ljava/lang/String;Ljava/lang/String;)V
 	public final fun selectExtendedReactions (Lio/getstream/chat/android/models/Message;)V
 	public final fun selectMessage (Lio/getstream/chat/android/models/Message;)V
