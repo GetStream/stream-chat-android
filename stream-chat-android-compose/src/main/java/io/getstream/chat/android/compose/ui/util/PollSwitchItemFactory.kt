@@ -22,6 +22,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchInput
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchItem
+import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchItemKeys
 
 /**
  * An interface that allows the creation of poll switch items for the creation screen.
@@ -67,22 +68,22 @@ public class DefaultPollSwitchItemFactory(
                     maxValue = 2,
                     keyboardType = KeyboardType.Decimal,
                 ),
-                key = "maxVotesAllowed",
+                key = PollSwitchItemKeys.MAX_VOTES_ALLOWED,
                 enabled = false,
             ),
             PollSwitchItem(
                 title = context.getString(R.string.stream_compose_poll_option_switch_anonymous_poll),
-                key = "votingVisibility",
+                key = PollSwitchItemKeys.VOTING_VISIBILITY,
                 enabled = false,
             ),
             PollSwitchItem(
                 title = context.getString(R.string.stream_compose_poll_option_switch_suggest_option),
-                key = "allowUserSuggestedOptions",
+                key = PollSwitchItemKeys.ALLOW_USER_SUGGESTED_OPTIONS,
                 enabled = false,
             ),
             PollSwitchItem(
                 title = context.getString(R.string.stream_compose_poll_option_switch_add_comment),
-                key = "allowAnswers",
+                key = PollSwitchItemKeys.ALLOW_ANSWERS,
                 enabled = false,
             ),
         )

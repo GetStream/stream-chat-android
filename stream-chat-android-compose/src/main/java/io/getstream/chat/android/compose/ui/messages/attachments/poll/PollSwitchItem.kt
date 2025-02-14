@@ -54,3 +54,29 @@ public data class PollSwitchInput(
     public val maxValue: Any? = null,
     public val keyboardType: KeyboardType = KeyboardType.Text,
 )
+
+/**
+ * Holds the internal keys identifying the different poll switch items.
+ */
+internal object PollSwitchItemKeys {
+
+    /**
+     * The key that identifies the maximum votes allowed switch.
+     */
+    internal const val MAX_VOTES_ALLOWED = "maxVotesAllowed"
+
+    /**
+     * The key that identifies the voting visibility switch.
+     */
+    internal const val VOTING_VISIBILITY = "votingVisibility"
+
+    /**
+     * The key that identifies the allow user suggested options switch.
+     */
+    internal const val ALLOW_USER_SUGGESTED_OPTIONS = "allowUserSuggestedOptions"
+
+    /**
+     * The key that identifies the allow answers switch.
+     */
+    internal const val ALLOW_ANSWERS = "allowAnswers"
+}
