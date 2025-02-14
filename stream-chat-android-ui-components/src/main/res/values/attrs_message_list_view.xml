@@ -610,6 +610,7 @@
         <attr name="streamUiShowReactionsForUnsentMessages" format="boolean" />
         <!-- Shows a counter next to the read status of a message. -->
         <attr name="streamUiReadCount" format="boolean" />
+        <attr name="streamUiSwipeToReply" format="boolean" />
 
         <!-- Audio record player view style -->
         <attr name="streamUiMessageListAudioRecordPlayerViewStyleOwn" format="reference" />

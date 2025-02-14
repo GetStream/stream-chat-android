@@ -732,24 +732,27 @@ public class MessageListView : ConstraintLayout {
     }
 
     private fun initSwipeToReply() {
-        messageListViewStyle?.swipeToReplyIcon?.let { swipeToReplyIcon ->
-            SwipeReplyCallback(swipeToReplyIcon) { message ->
-                message
-                    ?.let { messageListViewStyle?.canReplyToMessage(it, ownCapabilities) }
-                    ?: false
-            }.let { swipeReplyCallback ->
-                ItemTouchHelper(swipeReplyCallback).let { itemTouchHelper ->
-                    swipeReplyCallback.onReply = {
-                        // We need to detach and attach the itemTouchHelper to the RecyclerView to make it work after
-                        // the reply action is completed.
-                        itemTouchHelper.attachToRecyclerView(null)
+        messageListViewStyle?.swipeToReplyIcon
+            ?.takeUnless { messageListViewStyle?.swipeToReplyEnabled == false }
+            ?.let(context::getDrawable)
+            ?.let { swipeToReplyIcon ->
+                SwipeReplyCallback(swipeToReplyIcon) { message ->
+                    message
+                        ?.let { messageListViewStyle?.canReplyToMessage(it, ownCapabilities) }
+                        ?: false
+                }.let { swipeReplyCallback ->
+                    ItemTouchHelper(swipeReplyCallback).let { itemTouchHelper ->
+                        swipeReplyCallback.onReply = {
+                            // We need to detach and attach the itemTouchHelper to the RecyclerView to make it work
+                            // after the reply action is completed.
+                            itemTouchHelper.attachToRecyclerView(null)
+                            itemTouchHelper.attachToRecyclerView(binding.chatMessagesRV)
+                            messageReplyHandler.onMessageReply(it.cid, it)
+                        }
                         itemTouchHelper.attachToRecyclerView(binding.chatMessagesRV)
-                        messageReplyHandler.onMessageReply(it.cid, it)
                     }
-                    itemTouchHelper.attachToRecyclerView(binding.chatMessagesRV)
                 }
             }
-        }
     }
 
     private fun configureAttributes(attributeSet: AttributeSet?) {
