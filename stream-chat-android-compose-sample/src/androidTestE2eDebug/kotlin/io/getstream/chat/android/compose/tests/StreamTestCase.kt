@@ -20,7 +20,6 @@ import android.Manifest.permission.POST_NOTIFICATIONS
 import android.Manifest.permission.READ_MEDIA_IMAGES
 import android.Manifest.permission.READ_MEDIA_VIDEO
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
 import io.getstream.chat.android.compose.robots.UserRobot
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
