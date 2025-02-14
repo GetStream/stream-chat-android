@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -720,6 +721,19 @@ public interface ChatComponentFactory {
             onReply = onReply,
         )
     }
+
+    /**
+     * The default message list item modifier for styling.
+     */
+    @Composable
+    public fun LazyItemScope.messageListItemModifier(): Modifier =
+        // Disable animations in snapshot tests, at least until Paparazzi has a better support for animations.
+        // This is due to the scroll to bottom tests, where the items are not visible in the snapshots.
+        if (LocalInspectionMode.current) {
+            Modifier
+        } else {
+            Modifier.animateItem()
+        }
 
     /**
      * The default loading more item of the message list,
