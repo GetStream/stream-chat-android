@@ -65,6 +65,8 @@ jobs:
           arch : x86_64
           emulator-options: ${{ vars.EMULATOR_OPTIONS }}
           script: bundle exec fastlane run_e2e_test
+        env:
+          STREAM_DEMO_APP_SECRET: ${{ secrets.STREAM_DEMO_APP_SECRET }}
       - name: Allure TestOps Upload
         run: bundle exec fastlane allure_upload
         if: success() || failure()

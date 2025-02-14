@@ -24,11 +24,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -44,11 +47,17 @@ import androidx.lifecycle.lifecycleScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.compose.sample.ChatHelper
+import io.getstream.chat.android.compose.sample.data.PredefinedUserCredentials
 import io.getstream.chat.android.compose.sample.data.PredefinedUserCredentials.API_KEY
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.User
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
 
 class JwtTestActivity : AppCompatActivity() {
 
@@ -60,16 +69,8 @@ class JwtTestActivity : AppCompatActivity() {
                 JwtTestScreen(
                     onClick = { tokenProvider ->
                         lifecycleScope.launch {
-                            if (ChatClient.instance().config.apiKey != API_KEY) {
-                                ChatHelper.initializeSdk(
-                                    applicationContext,
-                                    API_KEY,
-                                    intent.getStringExtra("BASE_URL")
-                                )
-                            }
-
                             ChatClient.instance().connectUser(
-                                user = User(id = "luke_skywalker"),
+                                user = User(id = PredefinedUserCredentials.availableUsers.first().user.id),
                                 tokenProvider = tokenProvider,
                             ).enqueue()
                         }
@@ -95,7 +96,16 @@ class JwtTestActivity : AppCompatActivity() {
 
         val tokenProvider: TokenProvider = object : TokenProvider {
             override fun loadToken(): String {
-                return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibHVrZV9za3l3YWxrZXIifQ.kFSLHRB5X62t0Zlc7nwczWUfsQMwfkpylC6jCUZ6Mc0"
+                 intent.getStringExtra("BASE_URL")?.let {
+                     val request = Request.Builder()
+                        .url(it)
+                        .post("".toRequestBody("text".toMediaTypeOrNull()))
+                        .build()
+                     val response = OkHttpClient().newCall(request).execute()
+                     return response.body.toString()
+                } ?: run {
+                    return Response.Builder().build().toString()
+                }
             }
         }
 
@@ -103,6 +113,8 @@ class JwtTestActivity : AppCompatActivity() {
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            Spacer(modifier = Modifier.height(100.dp))
+
             Text(
                 modifier = Modifier
                     .testTag("Stream_JWT_InitButton")
@@ -117,27 +129,47 @@ class JwtTestActivity : AppCompatActivity() {
                 fontWeight = FontWeight.Bold,
             )
 
+            Spacer(modifier = Modifier.height(100.dp))
+
+            Row() {
+                Text(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    text = "Connection status:",
+                    fontSize = 20.sp,
+                )
+
+                Spacer(modifier = Modifier.height(5.dp))
+
+                Text(
+                    modifier = Modifier
+                        .testTag("Stream_JWT_ConnectionStatus")
+                        .padding(horizontal = 16.dp),
+                    text = connectionState.toString(),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+
             Spacer(modifier = Modifier.height(20.dp))
 
-            Text(
-                modifier = Modifier
-                    .testTag("Stream_JWT_ConnectionStatus")
-                    .padding(horizontal = 16.dp),
-                text = connectionState.toString(),
-                fontSize = 33.sp,
-                fontWeight = FontWeight.Bold,
-            )
+            Row() {
+                Text(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    text = "Initialization status:",
+                    fontSize = 20.sp,
+                )
 
-            Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(5.dp))
 
-            Text(
-                modifier = Modifier
-                    .testTag("Stream_JWT_InitializationStatus")
-                    .padding(horizontal = 16.dp),
-                text = initializationState.toString(),
-                fontSize = 33.sp,
-                fontWeight = FontWeight.Bold,
-            )
+                Text(
+                    modifier = Modifier
+                        .testTag("Stream_JWT_InitializationStatus")
+                        .padding(horizontal = 16.dp),
+                    text = initializationState.toString(),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
         }
     }
 

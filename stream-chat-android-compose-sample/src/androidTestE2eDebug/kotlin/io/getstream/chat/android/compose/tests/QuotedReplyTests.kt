@@ -40,7 +40,7 @@ class QuotedReplyTests : StreamTestCase() {
     private var quoteReply = "Alright"
     private val messagesCount = 30
 
-    override fun initTestActivity(): InitTestActivity = InitTestActivity.UserLogin
+    override fun initTestActivity() = InitTestActivity.UserLogin
 
     @AllureId("5923")
     @Ignore("https://linear.app/stream/issue/AND-261")

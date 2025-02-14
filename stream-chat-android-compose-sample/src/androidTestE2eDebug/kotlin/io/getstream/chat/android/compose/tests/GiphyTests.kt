@@ -32,7 +32,7 @@ import org.junit.Test
 
 class GiphyTests : StreamTestCase() {
 
-    override fun initTestActivity(): InitTestActivity = InitTestActivity.UserLogin
+    override fun initTestActivity() = InitTestActivity.UserLogin
 
     @AllureId("5698")
     @Test

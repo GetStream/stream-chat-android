@@ -34,7 +34,7 @@ class ChannelListTests : StreamTestCase() {
 
     private val sampleText = "Test"
 
-    override fun initTestActivity(): InitTestActivity = InitTestActivity.UserLogin
+    override fun initTestActivity() = InitTestActivity.UserLogin
 
     @AllureId("6343")
     @Test

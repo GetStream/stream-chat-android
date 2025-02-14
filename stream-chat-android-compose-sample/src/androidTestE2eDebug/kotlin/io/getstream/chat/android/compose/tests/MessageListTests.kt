@@ -52,7 +52,7 @@ class MessageListTests : StreamTestCase() {
 
     private val sampleText = "Test"
 
-    override fun initTestActivity(): InitTestActivity = InitTestActivity.UserLogin
+    override fun initTestActivity() = InitTestActivity.UserLogin
 
     // MARK: Message sending
 

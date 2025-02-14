@@ -26,7 +26,8 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okhttp3.ResponseBody
 import org.junit.Assert.fail
-
+import java.net.HttpURLConnection
+import java.net.URL
 
 public const val forbiddenWord: String = "wth"
 
