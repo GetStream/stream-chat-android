@@ -32,6 +32,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -278,47 +280,47 @@ internal fun BoxScope.DefaultMessagesHelperContent(
 
     val coroutineScope = rememberCoroutineScope()
 
-    val firstVisibleItemIndex = derivedStateOf { lazyListState.firstVisibleItemIndex }
+    val firstVisibleItemIndex by derivedStateOf { lazyListState.firstVisibleItemIndex }
 
-    val focusedItemIndex = messages.indexOfFirst { it is MessageItemState && it.focusState is MessageFocused }
+    val focusedItemIndex = remember(messages) {
+        messages.indexOfFirst { item -> item is MessageItemState && item.focusState is MessageFocused }
+    }
 
     val offset = messagesLazyListState.focusedMessageOffset
 
-    LaunchedEffect(newMessageState, focusedItemIndex, offset) {
+    LaunchedEffect(focusedItemIndex, offset) {
         if (focusedItemIndex != -1 &&
             !lazyListState.isScrollInProgress
         ) {
-            coroutineScope.launch {
-                lazyListState.scrollToItem(focusedItemIndex, offset)
-            }
+            lazyListState.scrollToItem(focusedItemIndex, offset)
         }
+    }
 
+    LaunchedEffect(newMessageState, focusedItemIndex) {
         val shouldScrollToBottom = shouldScrollToBottom(
             focusedItemIndex,
-            firstVisibleItemIndex.value,
+            firstVisibleItemIndex,
             newMessageState,
             areNewestMessagesLoaded,
             lazyListState.isScrollInProgress,
         )
 
         if (shouldScrollToBottom) {
-            coroutineScope.launch {
-                if (newMessageState is MyOwn && firstVisibleItemIndex.value > 5) {
-                    lazyListState.scrollToItem(5)
-                }
-                lazyListState.animateScrollToItem(0)
+            if (newMessageState is MyOwn && firstVisibleItemIndex > 5) {
+                lazyListState.scrollToItem(5)
             }
+            lazyListState.animateScrollToItem(0)
         }
     }
 
-    if (isScrollToBottomButtonVisible(isMessageInThread, firstVisibleItemIndex.value, areNewestMessagesLoaded)) {
+    if (isScrollToBottomButtonVisible(isMessageInThread, firstVisibleItemIndex, areNewestMessagesLoaded)) {
         MessagesScrollingOption(
             unreadCount = messagesState.unreadCount,
             modifier = Modifier.align(Alignment.BottomEnd),
             onClick = {
                 scrollToBottom {
                     coroutineScope.launch {
-                        if (firstVisibleItemIndex.value > 5) {
+                        if (firstVisibleItemIndex > 5) {
                             lazyListState.scrollToItem(5)
                         }
                         lazyListState.animateScrollToItem(0)
