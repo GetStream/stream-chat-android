@@ -45,6 +45,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fix `MessageListController#scrollToFirstUnreadMessage` not working when the first unread message was not loaded. [#5635](https://github.com/GetStream/stream-chat-android/pull/5635)
 
 ### ⬆️ Improved
 
@@ -60,6 +61,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `MessageListViewModel::scrollToFirstUnreadMessage` method. [#5635](https://github.com/GetStream/stream-chat-android/pull/5635)
 
 ### ⚠️ Changed
 
@@ -71,6 +73,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `MessageListViewModel::scrollToFirstUnreadMessage` method. [#5635](https://github.com/GetStream/stream-chat-android/pull/5635)
 
 ### ⚠️ Changed
 
