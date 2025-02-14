@@ -60,6 +60,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added Swipe To Reply feature to the MessageListView. [#5626](https://github.com/GetStream/stream-chat-android/pull/5626)
 
 ### ⚠️ Changed
 
