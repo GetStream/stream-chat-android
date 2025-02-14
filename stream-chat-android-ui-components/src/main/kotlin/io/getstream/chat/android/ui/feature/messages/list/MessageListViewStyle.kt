@@ -19,10 +19,10 @@ package io.getstream.chat.android.ui.feature.messages.list
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Typeface
-import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.Gravity
 import androidx.annotation.ColorInt
+import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.state.messages.list.MessageOptionsUserReactionAlignment
@@ -101,6 +101,8 @@ import io.getstream.chat.android.ui.utils.extensions.use
  * @property optionsOverlayMessageOptionsMarginEnd Defines the end margin between the message option list on the options overlay and the parent.
  * @property showReactionsForUnsentMessages If we need to show the edit reactions bubble for unsent messages on the options overlay.
  * @property readCountEnabled Enables/disables read count. Enabled by default.
+ * @property swipeToReplyEnabled Enables/disables swipe to reply feature. Enabled by default.
+ * @property swipeToReplyIcon Icon for swipe to reply feature. Default value is [R.drawable.stream_ui_ic_arrow_curve_left_grey].
  */
 public data class MessageListViewStyle(
     public val scrollButtonViewStyle: ScrollButtonViewStyle,
@@ -164,7 +166,8 @@ public data class MessageListViewStyle(
     public val optionsOverlayMessageOptionsMarginEnd: Int,
     public val showReactionsForUnsentMessages: Boolean,
     public val readCountEnabled: Boolean,
-    public val swipeToReplyIcon: Drawable?,
+    public val swipeToReplyEnabled: Boolean,
+    @DrawableRes public val swipeToReplyIcon: Int,
 ) : ViewStyle {
     public companion object {
         private val DEFAULT_BACKGROUND_COLOR = R.color.stream_ui_white_snow
@@ -341,11 +344,9 @@ public data class MessageListViewStyle(
                     R.drawable.stream_ui_ic_arrow_curve_left_grey,
                 )
 
-                val replyToSwipeIcon: Drawable? = context.getDrawableCompat(
-                    attributes.getResourceId(
-                        R.styleable.MessageListView_streamUiSwipeToReplyIcon,
-                        R.drawable.stream_ui_ic_arrow_curve_left_grey,
-                    ),
+                val replyToSwipeIcon: Int = attributes.getResourceId(
+                    R.styleable.MessageListView_streamUiSwipeToReplyIcon,
+                    R.drawable.stream_ui_ic_arrow_curve_left_grey,
                 )
 
                 val replyEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiReplyEnabled, true)
@@ -603,6 +604,11 @@ public data class MessageListViewStyle(
                     true,
                 )
 
+                val swipeToReplyEnabled = attributes.getBoolean(
+                    R.styleable.MessageListView_streamUiSwipeToReply,
+                    true,
+                )
+
                 val userBlockEnabled = attributes.getBoolean(
                     R.styleable.MessageListView_streamUiBlockUserOptionEnabled,
                     true,
@@ -682,6 +688,7 @@ public data class MessageListViewStyle(
                     optionsOverlayMessageOptionsMarginEnd = optionsOverlayMessageOptionsMarginEnd,
                     showReactionsForUnsentMessages = showReactionsForUnsentMessages,
                     readCountEnabled = readCountEnabled,
+                    swipeToReplyEnabled = swipeToReplyEnabled,
                     swipeToReplyIcon = replyToSwipeIcon,
                 ).let(TransformStyle.messageListStyleTransformer::transform)
             }
