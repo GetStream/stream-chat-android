@@ -91,7 +91,7 @@ public data class ViewReactionsViewStyle(
         private val DEFAULT_BUBBLE_BORDER_COLOR_MINE = R.color.stream_ui_grey_whisper
         private val DEFAULT_BUBBLE_COLOR_MINE = R.color.stream_ui_grey_whisper
         private val DEFAULT_BUBBLE_COLOR_THEIRS = R.color.stream_ui_grey_gainsboro
-        private val DEFAULT_BUBBLE_BORDER_WIDTH_MINE = 1.dpToPx() * 1.5f
+        private val DEFAULT_BUBBLE_BORDER_WIDTH_MINE: Float by lazy { 1.dpToPx() * 1.5f }
 
         private const val REACTION_SORTING_BY_FIRST_REACTION_AT = 0
         private const val REACTION_SORTING_BY_LAST_REACTION_AT = 1

@@ -504,7 +504,7 @@ public class MessageComposerController(
                 setMessageMode(MessageMode.MessageThread(messageAction.message))
             }
             is Reply -> {
-                messageActions.value = messageActions.value + messageAction
+                messageActions.value = (messageActions.value.filterNot { it is Reply } + messageAction).toSet()
             }
             is Edit -> {
                 setMessageInputInternal(messageAction.message.text, MessageInput.Source.Edit)

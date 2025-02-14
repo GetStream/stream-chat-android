@@ -251,6 +251,9 @@ class MessagesActivity : BaseConnectedActivity() {
                             null -> Unit
                         }
                     },
+                    onReply = { message ->
+                        composerViewModel.performMessageAction(Reply(message))
+                    },
                 )
             }
 
@@ -320,7 +323,6 @@ class MessagesActivity : BaseConnectedActivity() {
                             messageOptions = defaultMessageOptionsState(
                                 selectedMessage = selectedMessage,
                                 currentUser = user,
-                                isInThread = listViewModel.isInThread,
                                 ownCapabilities = selectedMessageState.ownCapabilities,
                             ),
                             message = selectedMessage,

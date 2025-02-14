@@ -19,6 +19,7 @@ package io.getstream.chat.android
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelConfig
 import io.getstream.chat.android.models.ChannelInfo
 import io.getstream.chat.android.models.ChannelMute
@@ -49,6 +50,7 @@ public fun positiveRandomInt(maxInt: Int = Int.MAX_VALUE - 1): Int =
 public fun positiveRandomLong(maxLong: Long = Long.MAX_VALUE - 1): Long =
     Random.nextLong(1, maxLong + 1)
 
+public fun randomFloat(): Float = Random.nextFloat()
 public fun randomInt(): Int = Random.nextInt()
 public fun randomIntBetween(min: Int, max: Int): Int = Random.nextInt(min, max + 1)
 public fun randomLong(): Long = Random.nextLong()
@@ -560,3 +562,48 @@ public fun randomReactionGroup(
     firstReactionAt = firstReactionAt,
     lastReactionAt = lastReactionAt,
 )
+
+public fun allChannelCapabilities(): Set<String> = setOf(
+    ChannelCapabilities.BAN_CHANNEL_MEMBERS,
+    ChannelCapabilities.CONNECT_EVENTS,
+    ChannelCapabilities.DELETE_ANY_MESSAGE,
+    ChannelCapabilities.DELETE_CHANNEL,
+    ChannelCapabilities.DELETE_OWN_MESSAGE,
+    ChannelCapabilities.FLAG_MESSAGE,
+    ChannelCapabilities.FREEZE_CHANNEL,
+    ChannelCapabilities.LEAVE_CHANNEL,
+    ChannelCapabilities.JOIN_CHANNEL,
+    ChannelCapabilities.MUTE_CHANNEL,
+    ChannelCapabilities.PIN_MESSAGE,
+    ChannelCapabilities.QUOTE_MESSAGE,
+    ChannelCapabilities.READ_EVENTS,
+    ChannelCapabilities.SEARCH_MESSAGES,
+    ChannelCapabilities.SEND_CUSTOM_EVENTS,
+    ChannelCapabilities.SEND_LINKS,
+    ChannelCapabilities.SEND_MESSAGE,
+    ChannelCapabilities.SEND_REACTION,
+    ChannelCapabilities.SEND_REPLY,
+    ChannelCapabilities.SET_CHANNEL_COOLDOWN,
+    ChannelCapabilities.UPDATE_ANY_MESSAGE,
+    ChannelCapabilities.UPDATE_CHANNEL,
+    ChannelCapabilities.UPDATE_CHANNEL_MEMBERS,
+    ChannelCapabilities.UPDATE_OWN_MESSAGE,
+    ChannelCapabilities.UPLOAD_FILE,
+    ChannelCapabilities.TYPING_EVENTS,
+    ChannelCapabilities.SLOW_MODE,
+    ChannelCapabilities.SKIP_SLOW_MODE,
+    ChannelCapabilities.JOIN_CALL,
+    ChannelCapabilities.CREATE_CALL,
+    ChannelCapabilities.CAST_POLL_VOTE,
+    ChannelCapabilities.SEND_POLL,
+)
+
+public fun randomChannelCapabilities(
+    exclude: Set<String> = emptySet(),
+    include: Set<String> = emptySet(),
+): Set<String> =
+    allChannelCapabilities()
+        .minus(exclude)
+        .shuffled()
+        .let { it.take(positiveRandomInt(it.size)) }
+        .toSet() + include

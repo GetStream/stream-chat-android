@@ -1418,12 +1418,12 @@ public final class io/getstream/chat/android/ui/common/state/messages/list/Messa
 
 public final class io/getstream/chat/android/ui/common/state/messages/list/MessageItemState : io/getstream/chat/android/ui/common/state/messages/list/HasMessageListItemState {
 	public static final field $stable I
-	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/models/Message;Ljava/lang/String;ZZZLio/getstream/chat/android/models/User;Ljava/util/List;ZLio/getstream/chat/android/ui/common/state/messages/list/DeletedMessageVisibility;Lio/getstream/chat/android/ui/common/state/messages/list/MessageFocusState;Ljava/util/List;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/models/Message;Ljava/lang/String;ZZZLio/getstream/chat/android/models/User;Ljava/util/List;ZLio/getstream/chat/android/ui/common/state/messages/list/DeletedMessageVisibility;Lio/getstream/chat/android/ui/common/state/messages/list/MessageFocusState;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/models/Message;Ljava/lang/String;ZZZLio/getstream/chat/android/models/User;Ljava/util/List;ZLio/getstream/chat/android/ui/common/state/messages/list/DeletedMessageVisibility;Lio/getstream/chat/android/ui/common/state/messages/list/MessageFocusState;Ljava/util/List;Ljava/util/Set;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/Message;Ljava/lang/String;ZZZLio/getstream/chat/android/models/User;Ljava/util/List;ZLio/getstream/chat/android/ui/common/state/messages/list/DeletedMessageVisibility;Lio/getstream/chat/android/ui/common/state/messages/list/MessageFocusState;Ljava/util/List;Ljava/util/Set;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/Message;
 	public final fun component10 ()Lio/getstream/chat/android/ui/common/state/messages/list/MessageFocusState;
 	public final fun component11 ()Ljava/util/List;
+	public final fun component12 ()Ljava/util/Set;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Z
 	public final fun component4 ()Z
@@ -1432,8 +1432,8 @@ public final class io/getstream/chat/android/ui/common/state/messages/list/Messa
 	public final fun component7 ()Ljava/util/List;
 	public final fun component8 ()Z
 	public final fun component9 ()Lio/getstream/chat/android/ui/common/state/messages/list/DeletedMessageVisibility;
-	public final fun copy (Lio/getstream/chat/android/models/Message;Ljava/lang/String;ZZZLio/getstream/chat/android/models/User;Ljava/util/List;ZLio/getstream/chat/android/ui/common/state/messages/list/DeletedMessageVisibility;Lio/getstream/chat/android/ui/common/state/messages/list/MessageFocusState;Ljava/util/List;)Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Lio/getstream/chat/android/models/Message;Ljava/lang/String;ZZZLio/getstream/chat/android/models/User;Ljava/util/List;ZLio/getstream/chat/android/ui/common/state/messages/list/DeletedMessageVisibility;Lio/getstream/chat/android/ui/common/state/messages/list/MessageFocusState;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;
+	public final fun copy (Lio/getstream/chat/android/models/Message;Ljava/lang/String;ZZZLio/getstream/chat/android/models/User;Ljava/util/List;ZLio/getstream/chat/android/ui/common/state/messages/list/DeletedMessageVisibility;Lio/getstream/chat/android/ui/common/state/messages/list/MessageFocusState;Ljava/util/List;Ljava/util/Set;)Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Lio/getstream/chat/android/models/Message;Ljava/lang/String;ZZZLio/getstream/chat/android/models/User;Ljava/util/List;ZLio/getstream/chat/android/ui/common/state/messages/list/DeletedMessageVisibility;Lio/getstream/chat/android/ui/common/state/messages/list/MessageFocusState;Ljava/util/List;Ljava/util/Set;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCurrentUser ()Lio/getstream/chat/android/models/User;
 	public final fun getDeletedMessageVisibility ()Lio/getstream/chat/android/ui/common/state/messages/list/DeletedMessageVisibility;
@@ -1441,6 +1441,7 @@ public final class io/getstream/chat/android/ui/common/state/messages/list/Messa
 	public final fun getGroupPosition ()Ljava/util/List;
 	public fun getMessage ()Lio/getstream/chat/android/models/Message;
 	public final fun getMessageReadBy ()Ljava/util/List;
+	public final fun getOwnCapabilities ()Ljava/util/Set;
 	public final fun getParentMessageId ()Ljava/lang/String;
 	public final fun getShowMessageFooter ()Z
 	public fun hashCode ()I
@@ -1805,6 +1806,19 @@ public final class io/getstream/chat/android/ui/common/state/threads/ThreadListS
 	public final fun isLoading ()Z
 	public final fun isLoadingMore ()Z
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/utils/CapabilitiesHelperKt {
+	public static final fun canBlockUser (ZLio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Message;)Z
+	public static final fun canCopyMessage (ZLio/getstream/chat/android/models/Message;)Z
+	public static final fun canDeleteMessage (ZLio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Message;Ljava/util/Set;)Z
+	public static final fun canEditMessage (ZLio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Message;Ljava/util/Set;)Z
+	public static final fun canFlagMessage (ZLio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Message;Ljava/util/Set;)Z
+	public static final fun canMarkAsUnread (ZLjava/util/Set;)Z
+	public static final fun canPinMessage (ZLio/getstream/chat/android/models/Message;Ljava/util/Set;)Z
+	public static final fun canReplyToMessage (ZLio/getstream/chat/android/models/Message;Ljava/util/Set;)Z
+	public static final fun canRetryMessage (ZLio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Message;)Z
+	public static final fun canThreadReplyToMessage (ZLio/getstream/chat/android/models/Message;Ljava/util/Set;)Z
 }
 
 public abstract interface class io/getstream/chat/android/ui/common/utils/ChannelNameFormatter {

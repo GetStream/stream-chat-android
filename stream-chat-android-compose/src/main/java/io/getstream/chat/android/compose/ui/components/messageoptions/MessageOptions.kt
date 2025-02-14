@@ -23,11 +23,19 @@ import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import io.getstream.chat.android.client.utils.attachment.isGiphy
-import io.getstream.chat.android.client.utils.message.isGiphy
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.util.extensions.canBlockUser
+import io.getstream.chat.android.compose.util.extensions.canCopyMessage
+import io.getstream.chat.android.compose.util.extensions.canDeleteMessage
+import io.getstream.chat.android.compose.util.extensions.canEditMessage
+import io.getstream.chat.android.compose.util.extensions.canFlagMessage
+import io.getstream.chat.android.compose.util.extensions.canMarkAsUnread
+import io.getstream.chat.android.compose.util.extensions.canPinMessage
+import io.getstream.chat.android.compose.util.extensions.canReplyToMessage
+import io.getstream.chat.android.compose.util.extensions.canRetryMessage
+import io.getstream.chat.android.compose.util.extensions.canThreadReplyToMessage
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
@@ -46,7 +54,6 @@ import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.Resend
 import io.getstream.chat.android.ui.common.state.messages.ThreadReply
 import io.getstream.chat.android.ui.common.state.messages.UnblockUser
-import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**
  * Displays all available [MessageOptionItem]s.
@@ -87,49 +94,24 @@ public fun MessageOptions(
  *
  * @param selectedMessage Currently selected message, used to callbacks.
  * @param currentUser Current user, used to expose different states for messages.
- * @param isInThread If the message is in a thread or not, to block off some options.
  * @param ownCapabilities Set of capabilities the user is given for the current channel.
  * For a full list @see [ChannelCapabilities].
  */
+@Suppress("LongMethod")
 @Composable
 public fun defaultMessageOptionsState(
     selectedMessage: Message,
     currentUser: User?,
-    isInThread: Boolean,
     ownCapabilities: Set<String>,
 ): List<MessageOptionItemState> {
     if (selectedMessage.id.isEmpty()) {
         return emptyList()
     }
-
     val selectedMessageUserId = selectedMessage.user.id
-
-    val isTextOnlyMessage = selectedMessage.text.isNotEmpty() && selectedMessage.attachments.isEmpty()
-    val hasLinks = selectedMessage.attachments.any { it.hasLink() && !it.isGiphy() }
-    val isOwnMessage = selectedMessageUserId == currentUser?.id
-    val isMessageSynced = selectedMessage.syncStatus == SyncStatus.COMPLETED
-    val isMessageFailed = selectedMessage.syncStatus == SyncStatus.FAILED_PERMANENTLY
-
-    // user capabilities
-    val canQuoteMessage = ownCapabilities.contains(ChannelCapabilities.QUOTE_MESSAGE)
-    val canThreadReply = ownCapabilities.contains(ChannelCapabilities.SEND_REPLY)
-    val canPinMessage = ownCapabilities.contains(ChannelCapabilities.PIN_MESSAGE)
-    val canDeleteOwnMessage = ownCapabilities.contains(ChannelCapabilities.DELETE_OWN_MESSAGE)
-    val canDeleteAnyMessage = ownCapabilities.contains(ChannelCapabilities.DELETE_ANY_MESSAGE)
-    val canEditOwnMessage = ownCapabilities.contains(ChannelCapabilities.UPDATE_OWN_MESSAGE)
-    val canEditAnyMessage = ownCapabilities.contains(ChannelCapabilities.UPDATE_ANY_MESSAGE)
-    val canMarkAsUnread = ownCapabilities.contains(ChannelCapabilities.READ_EVENTS)
-    val canFlagMessage = ownCapabilities.contains(ChannelCapabilities.FLAG_MESSAGE)
-
-    val isThreadReplyPossible = !isInThread && isMessageSynced && canThreadReply
-    val isEditMessagePossible = ((isOwnMessage && canEditOwnMessage) || canEditAnyMessage) && !selectedMessage.isGiphy()
-    val isDeleteMessagePossible = canDeleteAnyMessage || (isOwnMessage && canDeleteOwnMessage)
-
-    // options menu item visibility
     val visibility = ChatTheme.messageOptionsTheme.optionVisibility
 
     return listOfNotNull(
-        if (visibility.isRetryMessageVisible && isOwnMessage && isMessageFailed) {
+        if (visibility.canRetryMessage(currentUser, selectedMessage)) {
             MessageOptionItemState(
                 title = R.string.stream_compose_resend_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_resend),
@@ -140,7 +122,7 @@ public fun defaultMessageOptionsState(
         } else {
             null
         },
-        if (visibility.isReplyVisible && isMessageSynced && canQuoteMessage) {
+        if (visibility.canReplyToMessage(selectedMessage, ownCapabilities)) {
             MessageOptionItemState(
                 title = R.string.stream_compose_reply,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_reply),
@@ -151,7 +133,7 @@ public fun defaultMessageOptionsState(
         } else {
             null
         },
-        if (visibility.isThreadReplyVisible && isThreadReplyPossible) {
+        if (visibility.canThreadReplyToMessage(selectedMessage, ownCapabilities)) {
             MessageOptionItemState(
                 title = R.string.stream_compose_thread_reply,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_thread),
@@ -162,7 +144,7 @@ public fun defaultMessageOptionsState(
         } else {
             null
         },
-        if (visibility.isMarkAsUnreadVisible && canMarkAsUnread) {
+        if (visibility.canMarkAsUnread(ownCapabilities)) {
             MessageOptionItemState(
                 title = R.string.stream_compose_mark_as_unread,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_mark_as_unread),
@@ -173,7 +155,7 @@ public fun defaultMessageOptionsState(
         } else {
             null
         },
-        if (visibility.isCopyTextVisible && (isTextOnlyMessage || hasLinks)) {
+        if (visibility.canCopyMessage(selectedMessage)) {
             MessageOptionItemState(
                 title = R.string.stream_compose_copy_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_copy),
@@ -184,7 +166,7 @@ public fun defaultMessageOptionsState(
         } else {
             null
         },
-        if (visibility.isEditMessageVisible && isEditMessagePossible) {
+        if (visibility.canEditMessage(currentUser, selectedMessage, ownCapabilities)) {
             MessageOptionItemState(
                 title = R.string.stream_compose_edit_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_edit),
@@ -195,7 +177,7 @@ public fun defaultMessageOptionsState(
         } else {
             null
         },
-        if (visibility.isFlagMessageVisible && canFlagMessage && !isOwnMessage) {
+        if (visibility.canFlagMessage(currentUser, selectedMessage, ownCapabilities)) {
             MessageOptionItemState(
                 title = R.string.stream_compose_flag_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_flag),
@@ -206,7 +188,7 @@ public fun defaultMessageOptionsState(
         } else {
             null
         },
-        if (visibility.isPinMessageVisible && isMessageSynced && canPinMessage) {
+        if (visibility.canPinMessage(selectedMessage, ownCapabilities)) {
             MessageOptionItemState(
                 title = if (selectedMessage.pinned) R.string.stream_compose_unpin_message else R.string.stream_compose_pin_message,
                 action = Pin(selectedMessage),
@@ -223,7 +205,7 @@ public fun defaultMessageOptionsState(
         } else {
             null
         },
-        if (visibility.isBlockUserVisible && !isOwnMessage) {
+        if (visibility.canBlockUser(currentUser, selectedMessage)) {
             val isSenderBlocked = currentUser?.blockedUserIds?.contains(selectedMessageUserId) == true
             val title = if (isSenderBlocked) {
                 R.string.stream_compose_unblock_user
@@ -245,7 +227,7 @@ public fun defaultMessageOptionsState(
         } else {
             null
         },
-        if (visibility.isDeleteMessageVisible && isDeleteMessagePossible) {
+        if (visibility.canDeleteMessage(currentUser, selectedMessage, ownCapabilities)) {
             MessageOptionItemState(
                 title = R.string.stream_compose_delete_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_delete),
@@ -320,7 +302,6 @@ private fun MessageOptionsPreview(
         val messageOptionsStateList = defaultMessageOptionsState(
             selectedMessage = selectedMMessage,
             currentUser = currentUser,
-            isInThread = false,
             ownCapabilities = ChannelCapabilities.toSet(),
         )
 

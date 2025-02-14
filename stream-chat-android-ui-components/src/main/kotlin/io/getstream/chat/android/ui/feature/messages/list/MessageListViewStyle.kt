@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.feature.messages.list
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Typeface
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.Gravity
 import androidx.annotation.ColorInt
@@ -163,28 +164,29 @@ public data class MessageListViewStyle(
     public val optionsOverlayMessageOptionsMarginEnd: Int,
     public val showReactionsForUnsentMessages: Boolean,
     public val readCountEnabled: Boolean,
+    public val swipeToReplyIcon: Drawable?,
 ) : ViewStyle {
     public companion object {
         private val DEFAULT_BACKGROUND_COLOR = R.color.stream_ui_white_snow
-        private val DEFAULT_SCROLL_BUTTON_ELEVATION = 3.dpToPx().toFloat()
-        private val DEFAULT_SCROLL_BUTTON_MARGIN = 6.dpToPx()
-        private val DEFAULT_SCROLL_BUTTON_INTERNAL_MARGIN = 2.dpToPx()
-        private val DEFAULT_SCROLL_BUTTON_BADGE_ELEVATION = DEFAULT_SCROLL_BUTTON_ELEVATION
+        private val DEFAULT_SCROLL_BUTTON_ELEVATION by lazy { 3.dpToPx().toFloat() }
+        private val DEFAULT_SCROLL_BUTTON_MARGIN by lazy { 6.dpToPx() }
+        private val DEFAULT_SCROLL_BUTTON_INTERNAL_MARGIN by lazy { 2.dpToPx() }
+        private val DEFAULT_SCROLL_BUTTON_BADGE_ELEVATION by lazy { DEFAULT_SCROLL_BUTTON_ELEVATION }
 
-        private val DEFAULT_EDIT_REACTIONS_MARGIN_TOP = 0.dpToPx()
-        private val DEFAULT_EDIT_REACTIONS_MARGIN_BOTTOM = 0.dpToPx()
-        private val DEFAULT_EDIT_REACTIONS_MARGIN_START = 50.dpToPx()
-        private val DEFAULT_EDIT_REACTIONS_MARGIN_END = 8.dpToPx()
+        private val DEFAULT_EDIT_REACTIONS_MARGIN_TOP by lazy { 0.dpToPx() }
+        private val DEFAULT_EDIT_REACTIONS_MARGIN_BOTTOM by lazy { 0.dpToPx() }
+        private val DEFAULT_EDIT_REACTIONS_MARGIN_START by lazy { 50.dpToPx() }
+        private val DEFAULT_EDIT_REACTIONS_MARGIN_END by lazy { 8.dpToPx() }
 
-        private val DEFAULT_USER_REACTIONS_MARGIN_TOP = 8.dpToPx()
-        private val DEFAULT_USER_REACTIONS_MARGIN_BOTTOM = 0.dpToPx()
-        private val DEFAULT_USER_REACTIONS_MARGIN_START = 8.dpToPx()
-        private val DEFAULT_USER_REACTIONS_MARGIN_END = 8.dpToPx()
+        private val DEFAULT_USER_REACTIONS_MARGIN_TOP by lazy { 8.dpToPx() }
+        private val DEFAULT_USER_REACTIONS_MARGIN_BOTTOM by lazy { 0.dpToPx() }
+        private val DEFAULT_USER_REACTIONS_MARGIN_START by lazy { 8.dpToPx() }
+        private val DEFAULT_USER_REACTIONS_MARGIN_END by lazy { 8.dpToPx() }
 
-        private val DEFAULT_MESSAGE_OPTIONS_MARGIN_TOP = 24.dpToPx()
-        private val DEFAULT_MESSAGE_OPTIONS_MARGIN_BOTTOM = 0.dpToPx()
-        private val DEFAULT_MESSAGE_OPTIONS_MARGIN_START = 50.dpToPx()
-        private val DEFAULT_MESSAGE_OPTIONS_MARGIN_END = 8.dpToPx()
+        private val DEFAULT_MESSAGE_OPTIONS_MARGIN_TOP by lazy { 24.dpToPx() }
+        private val DEFAULT_MESSAGE_OPTIONS_MARGIN_BOTTOM by lazy { 0.dpToPx() }
+        private val DEFAULT_MESSAGE_OPTIONS_MARGIN_START by lazy { 50.dpToPx() }
+        private val DEFAULT_MESSAGE_OPTIONS_MARGIN_END by lazy { 8.dpToPx() }
 
         /**
          * Creates an [MessageListViewStyle] instance with the default values.
@@ -337,6 +339,13 @@ public data class MessageListViewStyle(
                 val replyIcon = attributes.getResourceId(
                     R.styleable.MessageListView_streamUiReplyOptionIcon,
                     R.drawable.stream_ui_ic_arrow_curve_left_grey,
+                )
+
+                val replyToSwipeIcon: Drawable? = context.getDrawableCompat(
+                    attributes.getResourceId(
+                        R.styleable.MessageListView_streamUiSwipeToReplyIcon,
+                        R.drawable.stream_ui_ic_arrow_curve_left_grey,
+                    ),
                 )
 
                 val replyEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiReplyEnabled, true)
@@ -673,6 +682,7 @@ public data class MessageListViewStyle(
                     optionsOverlayMessageOptionsMarginEnd = optionsOverlayMessageOptionsMarginEnd,
                     showReactionsForUnsentMessages = showReactionsForUnsentMessages,
                     readCountEnabled = readCountEnabled,
+                    swipeToReplyIcon = replyToSwipeIcon,
                 ).let(TransformStyle.messageListStyleTransformer::transform)
             }
         }

@@ -171,7 +171,7 @@ public data class MessageReplyStyle(
             ).let(TransformStyle.messageReplyStyleTransformer::transform)
         }
 
-        private val MESSAGE_STROKE_WIDTH_THEIRS: Float = 1.dpToPxPrecise()
+        private val MESSAGE_STROKE_WIDTH_THEIRS: Float by lazy { 1.dpToPxPrecise() }
         private const val VALUE_NOT_SET = Integer.MAX_VALUE
         internal val DEFAULT_TEXT_COLOR = R.color.stream_ui_text_color_primary
         internal val DEFAULT_TEXT_SIZE = R.dimen.stream_ui_text_medium
