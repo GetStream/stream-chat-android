@@ -200,7 +200,7 @@ public data class MessageListItemStyle(
         internal val MESSAGE_STROKE_COLOR_MINE = R.color.stream_ui_literal_transparent
         internal const val MESSAGE_STROKE_WIDTH_MINE: Float = 0f
         internal val MESSAGE_STROKE_COLOR_THEIRS = R.color.stream_ui_grey_whisper
-        internal val MESSAGE_STROKE_WIDTH_THEIRS: Float = 1.dpToPxPrecise()
+        internal val MESSAGE_STROKE_WIDTH_THEIRS: Float by lazy { 1.dpToPxPrecise() }
 
         private const val BASE_MESSAGE_MAX_WIDTH_FACTOR = 1
         private const val DEFAULT_MESSAGE_MAX_WIDTH_FACTOR = 0.75f
