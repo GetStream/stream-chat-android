@@ -3,6 +3,5 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>LongMethod:ChannelKtTest.kt$ChannelKtTest.Companion$@JvmStatic fun arguments()</ID>
-    <ID>LongParameterList:Channel.kt$( context: Context, currentUser: User?, @StringRes userOnlineResId: Int, @StringRes userLastSeenJustNowResId: Int, @StringRes userLastSeenResId: Int, @PluralsRes memberCountResId: Int, @StringRes memberCountWithOnlineResId: Int, )</ID>
   </CurrentIssues>
 </SmellBaseline>

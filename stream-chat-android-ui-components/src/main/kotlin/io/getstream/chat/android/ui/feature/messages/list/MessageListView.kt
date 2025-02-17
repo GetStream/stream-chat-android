@@ -29,6 +29,7 @@ import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemAnimator
@@ -108,6 +109,8 @@ import io.getstream.chat.android.ui.feature.messages.list.background.MessageBack
 import io.getstream.chat.android.ui.feature.messages.list.background.MessageBackgroundFactoryImpl
 import io.getstream.chat.android.ui.feature.messages.list.internal.HiddenMessageListItemPredicate
 import io.getstream.chat.android.ui.feature.messages.list.internal.MessageListScrollHelper
+import io.getstream.chat.android.ui.feature.messages.list.internal.SwipeReplyCallback
+import io.getstream.chat.android.ui.feature.messages.list.internal.canReplyToMessage
 import io.getstream.chat.android.ui.feature.messages.list.internal.poll.AllPollOptionsDialogFragment
 import io.getstream.chat.android.ui.feature.messages.list.internal.poll.PollResultsDialogFragment
 import io.getstream.chat.android.ui.feature.messages.list.options.message.MessageOptionItem
@@ -666,6 +669,7 @@ public class MessageListView : ConstraintLayout {
 
         initRecyclerView()
         initScrollHelper()
+        initSwipeToReply()
         initLoadingView()
         initEmptyStateView()
         messageListViewStyle?.unreadLabelButtonStyle?.let { initUnreadLabelButton(it) }
@@ -725,6 +729,30 @@ public class MessageListView : ConstraintLayout {
         ) {
             lastMessageReadHandler.onLastMessageRead()
         }
+    }
+
+    private fun initSwipeToReply() {
+        messageListViewStyle?.swipeToReplyIcon
+            ?.takeUnless { messageListViewStyle?.swipeToReplyEnabled == false }
+            ?.let(context::getDrawable)
+            ?.let { swipeToReplyIcon ->
+                SwipeReplyCallback(swipeToReplyIcon) { message ->
+                    message
+                        ?.let { messageListViewStyle?.canReplyToMessage(it, ownCapabilities) }
+                        ?: false
+                }.let { swipeReplyCallback ->
+                    ItemTouchHelper(swipeReplyCallback).let { itemTouchHelper ->
+                        swipeReplyCallback.onReply = {
+                            // We need to detach and attach the itemTouchHelper to the RecyclerView to make it work
+                            // after the reply action is completed.
+                            itemTouchHelper.attachToRecyclerView(null)
+                            itemTouchHelper.attachToRecyclerView(binding.chatMessagesRV)
+                            messageReplyHandler.onMessageReply(it.cid, it)
+                        }
+                        itemTouchHelper.attachToRecyclerView(binding.chatMessagesRV)
+                    }
+                }
+            }
     }
 
     private fun configureAttributes(attributeSet: AttributeSet?) {

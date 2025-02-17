@@ -32,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.CancelIcon
@@ -55,7 +56,8 @@ public fun FileAttachmentPreviewContent(
 ) {
     LazyRow(
         modifier = modifier
-            .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
+            .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+            .testTag("Stream_FileAttachmentPreviewContent"),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
     ) {
@@ -83,6 +85,7 @@ public fun FileAttachmentPreviewContent(
                         verticalArrangement = Arrangement.Center,
                     ) {
                         Text(
+                            modifier = Modifier.testTag("Stream_FileNameInPreview"),
                             text = attachment.title ?: attachment.name ?: "",
                             style = ChatTheme.typography.bodyBold,
                             maxLines = 1,
@@ -95,6 +98,7 @@ public fun FileAttachmentPreviewContent(
                         }
                         if (fileSize != null) {
                             Text(
+                                modifier = Modifier.testTag("Stream_FileSizeInPreview"),
                                 text = fileSize,
                                 style = ChatTheme.typography.footnote,
                                 color = ChatTheme.colors.textLowEmphasis,
@@ -103,7 +107,7 @@ public fun FileAttachmentPreviewContent(
                     }
 
                     CancelIcon(
-                        modifier = Modifier.padding(4.dp),
+                        modifier = Modifier.padding(4.dp).testTag("Stream_AttachmentCancelIcon"),
                         onClick = { onAttachmentRemoved(attachment) },
                     )
                 }

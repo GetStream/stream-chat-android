@@ -69,6 +69,8 @@ public final class io/getstream/chat/android/compose/uiautomator/WaitKt {
 	public static synthetic fun sleep$default (JILjava/lang/Object;)V
 	public static final fun wait (Landroidx/test/uiautomator/BySelector;J)Landroidx/test/uiautomator/BySelector;
 	public static synthetic fun wait$default (Landroidx/test/uiautomator/BySelector;JILjava/lang/Object;)Landroidx/test/uiautomator/BySelector;
+	public static final fun waitForCount (Landroidx/test/uiautomator/BySelector;IJ)Ljava/util/List;
+	public static synthetic fun waitForCount$default (Landroidx/test/uiautomator/BySelector;IJILjava/lang/Object;)Ljava/util/List;
 	public static final fun waitForText (Landroidx/test/uiautomator/UiObject2;Ljava/lang/String;ZJ)Landroidx/test/uiautomator/UiObject2;
 	public static synthetic fun waitForText$default (Landroidx/test/uiautomator/UiObject2;Ljava/lang/String;ZJILjava/lang/Object;)Landroidx/test/uiautomator/UiObject2;
 	public static final fun waitToAppear (Landroidx/test/uiautomator/BySelector;IJ)Landroidx/test/uiautomator/UiObject2;

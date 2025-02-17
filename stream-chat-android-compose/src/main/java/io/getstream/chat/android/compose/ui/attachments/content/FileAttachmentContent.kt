@@ -94,7 +94,7 @@ public fun FileAttachmentContent(
             interactionSource = remember { MutableInteractionSource() },
             onClick = {},
             onLongClick = { onItemLongClick(message) },
-        ),
+        ).testTag("Stream_MultipleFileAttachmentsColumn"),
     ) {
         for (attachment in message.attachments) {
             FileAttachmentItem(
@@ -166,7 +166,7 @@ private fun FileAttachmentDescription(
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            modifier = Modifier.testTag("Stream_FileAttachmentDescription"),
+            modifier = Modifier.testTag("Stream_FileAttachmentName"),
             text = attachment.title ?: attachment.name ?: "",
             style = ChatTheme.typography.bodyBold,
             maxLines = 1,

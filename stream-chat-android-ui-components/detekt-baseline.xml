@@ -9,9 +9,6 @@
     <ID>ComplexCondition:FileAttachmentsView.kt$RecordingFileAttachmentViewHolder$item.uploadState is Attachment.UploadState.Idle || item.uploadState is Attachment.UploadState.InProgress || (item.uploadState is Attachment.UploadState.Success &amp;&amp; item.fileSize == 0)</ID>
     <ID>ComplexCondition:FootnoteDecorator.kt$FootnoteDecorator$!isGiphy &amp;&amp; !isDeleted &amp;&amp; userLanguage != i18nLanguage &amp;&amp; translatedText != data.message.text</ID>
     <ID>ComplexCondition:MediaAttachmentView.kt$MediaAttachmentView$attachment.isImage() || (attachment.isVideo() &amp;&amp; ChatUI.videoThumbnailsEnabled &amp;&amp; attachment.thumbUrl != null)</ID>
-    <ID>ComplexCondition:MessageOptionItemsFactory.kt$DefaultMessageOptionItemsFactory$style.deleteMessageEnabled &amp;&amp; (canDeleteAnyMessage || (isOwnMessage &amp;&amp; canDeleteOwnMessage))</ID>
-    <ID>ComplexCondition:MessageOptionItemsFactory.kt$DefaultMessageOptionItemsFactory$style.editMessageEnabled &amp;&amp; ((isOwnMessage &amp;&amp; canEditOwnMessage) || canEditAnyMessage) &amp;&amp; selectedMessage.command != AttachmentType.GIPHY</ID>
-    <ID>ComplexCondition:MessageOptionItemsFactory.kt$DefaultMessageOptionItemsFactory$style.threadsEnabled &amp;&amp; !isInThread &amp;&amp; isMessageSynced &amp;&amp; canThreadReply</ID>
     <ID>ForbiddenComment:MediaAttachmentGridView.kt$MediaAttachmentGridView.SharedMediaSpaceItemDecorator$// TODO: leaves empty space after pagination</ID>
     <ID>ForbiddenComment:SearchViewModel.kt$SearchViewModel$// TODO: use the pagination based on "limit" nad "next" params here</ID>
     <ID>IteratorNotThrowingNoSuchElementException:MessageComposerView.kt$&lt;no name provided>$&lt;no name provided> : Iterator</ID>
