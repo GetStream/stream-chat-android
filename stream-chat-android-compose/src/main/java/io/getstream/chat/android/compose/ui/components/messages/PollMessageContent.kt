@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.components.messages
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,6 +38,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -401,7 +403,7 @@ private fun PollOptionItem(
         ) {
             if (!poll.closed) {
                 PollItemCheckBox(
-                    enabled = checked,
+                    checked = checked,
                     onCheckChanged = { enabled ->
                         if (enabled && checkedCount < poll.maxVotesAllowed && !checked) {
                             onCastVote.invoke()
@@ -475,14 +477,19 @@ private fun PollOptionItem(
 @Composable
 internal fun PollItemCheckBox(
     modifier: Modifier = Modifier,
-    enabled: Boolean,
+    checked: Boolean,
     onCheckChanged: (Boolean) -> Unit,
 ) {
     Box(
         modifier = modifier
             .size(18.dp)
+            .clickable(
+                indication = ripple(bounded = false),
+                interactionSource = remember { MutableInteractionSource() },
+                onClick = { onCheckChanged(!checked) },
+            )
             .background(
-                if (enabled) {
+                if (checked) {
                     ChatTheme.colors.primaryAccent
                 } else {
                     ChatTheme.colors.disabled
@@ -491,16 +498,15 @@ internal fun PollItemCheckBox(
             )
             .padding(1.dp)
             .background(
-                if (enabled) {
+                if (checked) {
                     ChatTheme.colors.primaryAccent
                 } else {
                     ChatTheme.colors.inputBackground
                 },
                 CircleShape,
-            )
-            .clickable { onCheckChanged.invoke(!enabled) },
+            ),
     ) {
-        if (enabled) {
+        if (checked) {
             Icon(
                 modifier = Modifier
                     .align(Alignment.Center)
@@ -578,12 +584,12 @@ private fun PollItemCheckBoxPreview() {
     ChatTheme {
         Row {
             PollItemCheckBox(
-                enabled = false,
+                checked = false,
                 onCheckChanged = {},
             )
 
             PollItemCheckBox(
-                enabled = true,
+                checked = true,
                 onCheckChanged = {},
             )
         }
