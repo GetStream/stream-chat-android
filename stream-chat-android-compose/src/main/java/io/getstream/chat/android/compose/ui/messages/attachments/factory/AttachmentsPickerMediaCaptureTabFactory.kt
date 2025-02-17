@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -100,8 +101,9 @@ public class AttachmentsPickerMediaCaptureTabFactory(private val pickerMediaMode
         val cameraPermissionState =
             if (requiresCameraPermission) rememberPermissionState(permission = Manifest.permission.CAMERA) else null
 
+        val contract = remember { CaptureMediaContract(pickerMediaMode.mode) }
         val mediaCaptureResultLauncher =
-            rememberLauncherForActivityResult(contract = CaptureMediaContract(pickerMediaMode.mode)) { file: File? ->
+            rememberLauncherForActivityResult(contract = contract) { file: File? ->
                 val attachments = if (file == null) {
                     emptyList()
                 } else {
