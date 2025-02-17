@@ -60,7 +60,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added Swipe To Reply feature to the MessageListView. [#5626](https://github.com/GetStream/stream-chat-android/pull/5626)
 
 ### ⚠️ Changed
 
@@ -68,11 +67,8 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Fading issue with the `Avatar`. [#5625](https://github.com/GetStream/stream-chat-android/pull/5625)
-- Fix `InitialsAvatar` font size in Poll components. [#5625](https://github.com/GetStream/stream-chat-android/pull/5625)
 
 ### ⬆️ Improved
-- Autofocus the input fields in the poll creation screen. [#5629](https://github.com/GetStream/stream-chat-android/pull/5629)
 
 ### ✅ Added
 
@@ -90,6 +86,19 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# February 17th, 2025 - 6.12.0
+## stream-chat-android-ui-components
+### ✅ Added
+- Added Swipe To Reply feature to the MessageListView. [#5626](https://github.com/GetStream/stream-chat-android/pull/5626)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fading issue with the `Avatar`. [#5625](https://github.com/GetStream/stream-chat-android/pull/5625)
+- Fix `InitialsAvatar` font size in Poll components. [#5625](https://github.com/GetStream/stream-chat-android/pull/5625)
+
+### ⬆️ Improved
+- Autofocus the input fields in the poll creation screen. [#5629](https://github.com/GetStream/stream-chat-android/pull/5629)
 
 # February 07th, 2025 - 6.11.0
 ## stream-chat-android-core
