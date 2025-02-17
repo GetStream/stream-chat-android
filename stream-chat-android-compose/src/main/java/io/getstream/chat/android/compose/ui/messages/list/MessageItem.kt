@@ -281,20 +281,20 @@ public fun MessageItem(
             ownCapabilities = messageItem.ownCapabilities,
         )
 
-    Box(
-        modifier = Modifier
-            .testTag("Stream_MessageItem")
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .background(color = color)
-            .semantics { contentDescription = description },
-        contentAlignment = messageAlignment.itemAlignment,
+    SwipeToReply(
+        modifier = modifier,
+        onReply = { onReply(message) },
+        isSwipeable = { isSwipable },
+        swipeToReplyContent = swipeToReplyContent,
     ) {
-        SwipeToReply(
-            modifier = modifier,
-            onReply = { onReply(message) },
-            isSwipeable = { isSwipable },
-            swipeToReplyContent = swipeToReplyContent,
+        Box(
+            modifier = Modifier
+                .testTag("Stream_MessageItem")
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .background(color = color)
+                .semantics { contentDescription = description },
+            contentAlignment = messageAlignment.itemAlignment,
         ) {
             Row(
                 modifier
@@ -839,27 +839,27 @@ private fun SwipeToReply(
 
     Box(
         modifier = modifier
-            .fillMaxWidth()
-            .height(IntrinsicSize.Min),
-        contentAlignment = Alignment.CenterStart,
+            .fillMaxWidth(),
     ) {
         Row(
             modifier = Modifier
+                .align(Alignment.CenterStart)
+                .onSizeChanged { swipeToReplyWith = it.width.toFloat() }
                 .offset {
                     val roundToInt = swipeToReplyWith.roundToInt()
                     IntOffset(
                         (offset.value.roundToInt() - roundToInt)
-                            .coerceIn(-roundToInt, roundToInt * 2),
+                            .coerceIn(-roundToInt, roundToInt),
                         0,
                     )
-                }
-                .onSizeChanged { swipeToReplyWith = it.width.toFloat() },
+                },
             verticalAlignment = Alignment.CenterVertically,
         ) {
             swipeToReplyContent()
         }
-        Surface(
+        Row(
             modifier = modifier
+                .fillMaxWidth()
                 .onSizeChanged { rowWith = it.width.toFloat() }
                 .offset { IntOffset(offset.value.roundToInt(), 0) }
                 .pointerInput(swipeToReplyWith) {
@@ -868,14 +868,14 @@ private fun SwipeToReply(
                             onHorizontalDrag = { _, dragAmount ->
                                 scope.launch {
                                     val newOffset = (offset.value + dragAmount)
-                                        .coerceIn(0f, rowWith / 2)
+                                        .coerceIn(0f, maxOf((rowWith / 2), swipeToReplyWith))
                                     offset.snapTo(newOffset)
                                 }
                             },
                             onDragEnd = {
                                 scope.launch {
                                     onReply
-                                        .takeIf { offset.value >= rowWith * ReplyDrawableSizeMultiplier }
+                                        .takeIf { offset.value >= swipeToReplyWith }
                                         ?.invoke()
                                     offset.animateTo(0f)
                                 }
@@ -893,9 +893,3 @@ private fun SwipeToReply(
  * Represents the time the highlight fade out transition will take.
  */
 public const val HighlightFadeOutDurationMillis: Int = 1000
-
-/**
- * Represents the size multiplier for the reply drawable.
- * This is used to determine the swipe distance needed to trigger the reply action.
- */
-private const val ReplyDrawableSizeMultiplier: Int = 3
