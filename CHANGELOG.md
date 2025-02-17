@@ -1,70 +1,7 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-client
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# February 17th, 2025 - 6.12.0
 ## stream-chat-android-ui-components
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Added Swipe To Reply feature to the MessageListView. [#5626](https://github.com/GetStream/stream-chat-android/pull/5626)
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -73,23 +10,6 @@
 
 ### ⬆️ Improved
 - Autofocus the input fields in the poll creation screen. [#5629](https://github.com/GetStream/stream-chat-android/pull/5629)
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # February 07th, 2025 - 6.11.0
 ## stream-chat-android-core
