@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -114,6 +115,7 @@ internal fun DefaultQuotedMessageLeadingContent(
     if (!message.isMine(currentUser)) {
         ChatTheme.componentFactory.Avatar(
             modifier = Modifier
+                .testTag("Stream_QuotedMessageAuthorAvatar")
                 .padding(start = 2.dp)
                 .size(24.dp),
             imageUrl = message.user.image,
@@ -147,6 +149,7 @@ internal fun DefaultQuotedMessageTrailingContent(
 
         ChatTheme.componentFactory.Avatar(
             modifier = Modifier
+                .testTag("Stream_QuotedMessageAuthorAvatar")
                 .padding(start = 2.dp)
                 .size(24.dp),
             imageUrl = message.user.image,

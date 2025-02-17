@@ -16,26 +16,22 @@
 
 package io.getstream.chat.android.compose.ui.components.avatar
 
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import com.skydoves.landscapist.ImageOptions
-import com.skydoves.landscapist.animation.crossfade.CrossfadePlugin
-import com.skydoves.landscapist.components.rememberImageComponent
-import com.skydoves.landscapist.placeholder.placeholder.PlaceholderPlugin
-import io.getstream.chat.android.compose.R
+import coil.compose.AsyncImagePainter
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.StreamImage
+import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 
 /**
@@ -64,59 +60,39 @@ public fun Avatar(
     initialsAvatarOffset: DpOffset = DpOffset(0.dp, 0.dp),
     onClick: (() -> Unit)? = null,
 ) {
-    if (imageUrl.isBlank()) {
-        InitialsAvatar(
-            modifier = modifier,
-            initials = initials,
-            shape = shape,
-            textStyle = textStyle,
-            onClick = onClick,
-            avatarOffset = initialsAvatarOffset,
-        )
-        return
-    }
-
-    val cdnImageResizing = ChatTheme.streamCdnImageResizing
-    val clickableModifier = if (onClick != null) {
-        Modifier.clickable { onClick() }
-    } else {
-        Modifier
-    }
-    StreamImage(
-        modifier = modifier
-            .testTag("Stream_QuotedMessageAuthorAvatar")
-            .clip(shape)
-            .then(clickableModifier),
-        data = { imageUrl.applyStreamCdnImageResizingIfEnabled(cdnImageResizing) },
-        loading = {
-            if (placeholderPainter != null) {
-                ImageAvatar(
-                    modifier = modifier,
-                    shape = shape,
-                    painter = placeholderPainter,
-                    contentDescription = contentDescription,
-                    onClick = onClick,
-                )
+    val streamCdnImageResizing = ChatTheme.streamCdnImageResizing
+    val data = remember { imageUrl.applyStreamCdnImageResizingIfEnabled(streamCdnImageResizing) }
+    StreamAsyncImage(
+        data = data,
+        modifier = modifier.testTag("Stream_QuotedMessageAuthorAvatar"),
+        content = { state ->
+            val targetPainter = when (state) {
+                is AsyncImagePainter.State.Empty -> placeholderPainter
+                is AsyncImagePainter.State.Loading -> placeholderPainter
+                is AsyncImagePainter.State.Success -> state.painter
+                is AsyncImagePainter.State.Error -> null
+            }
+            Crossfade(targetState = targetPainter) { painter ->
+                if (painter == null) {
+                    InitialsAvatar(
+                        modifier = Modifier.fillMaxSize(),
+                        initials = initials,
+                        shape = shape,
+                        textStyle = textStyle,
+                        onClick = onClick,
+                        avatarOffset = initialsAvatarOffset,
+                    )
+                } else {
+                    ImageAvatar(
+                        modifier = Modifier.fillMaxSize(),
+                        shape = shape,
+                        painter = painter,
+                        contentDescription = contentDescription,
+                        onClick = onClick,
+                    )
+                }
             }
         },
-        failure = {
-            InitialsAvatar(
-                modifier = modifier,
-                initials = initials,
-                shape = shape,
-                textStyle = textStyle,
-                onClick = onClick,
-                avatarOffset = initialsAvatarOffset,
-            )
-        },
-        component = rememberImageComponent {
-            if (placeholderPainter == null) {
-                +PlaceholderPlugin.Loading(painterResource(id = R.drawable.stream_compose_preview_avatar))
-            }
-            +CrossfadePlugin()
-        },
-        previewPlaceholder = painterResource(id = R.drawable.stream_compose_preview_avatar),
-        imageOptions = ImageOptions(contentDescription = contentDescription),
     )
 }
 
@@ -130,7 +106,6 @@ public fun Avatar(
 private fun AvatarWithImageUrlPreview() {
     AvatarPreview(
         imageUrl = "https://sample.com/image.png",
-        initials = "JC",
     )
 }
 
@@ -144,7 +119,6 @@ private fun AvatarWithImageUrlPreview() {
 private fun AvatarWithoutImageUrlPreview() {
     AvatarPreview(
         imageUrl = "",
-        initials = "JC",
     )
 }
 
@@ -152,18 +126,16 @@ private fun AvatarWithoutImageUrlPreview() {
  * Shows [Avatar] preview for the provided parameters.
  *
  * @param imageUrl The image URL to load.
- * @param initials The fallback initials.
  */
 @Composable
 private fun AvatarPreview(
     imageUrl: String,
-    initials: String,
 ) {
     ChatTheme {
         Avatar(
             modifier = Modifier.size(36.dp),
             imageUrl = imageUrl,
-            initials = initials,
+            initials = "JC",
         )
     }
 }
