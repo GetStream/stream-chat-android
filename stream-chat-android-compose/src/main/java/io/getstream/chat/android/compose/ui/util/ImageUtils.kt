@@ -188,10 +188,10 @@ public fun StreamImage(
     previewPlaceholder: Painter? = null,
     loading: @Composable (BoxScope.(imageState: CoilImageState.Loading) -> Unit)? = null,
     success: @Composable (
-    BoxScope.(
-        imageState: CoilImageState.Success,
-        painter: Painter,
-    ) -> Unit
+        BoxScope.(
+            imageState: CoilImageState.Success,
+            painter: Painter,
+        ) -> Unit
     )? = null,
     failure: @Composable (BoxScope.(imageState: CoilImageState.Failure) -> Unit)? = null,
 ) {
@@ -232,10 +232,10 @@ public fun StreamImage(
     previewPlaceholder: Painter? = null,
     loading: @Composable (BoxScope.(imageState: CoilImageState.Loading) -> Unit)? = null,
     success: @Composable (
-    BoxScope.(
-        imageState: CoilImageState.Success,
-        painter: Painter,
-    ) -> Unit
+        BoxScope.(
+            imageState: CoilImageState.Success,
+            painter: Painter,
+        ) -> Unit
     )? = null,
     failure: @Composable (BoxScope.(imageState: CoilImageState.Failure) -> Unit)? = null,
 ) {
