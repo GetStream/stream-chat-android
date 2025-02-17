@@ -67,6 +67,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix fading issue in media attachment content items. [#5631](https://github.com/GetStream/stream-chat-android/pull/5631)
 
 ### ⬆️ Improved
 
@@ -96,6 +97,7 @@
 ### 🐞 Fixed
 - Fading issue with the `Avatar`. [#5625](https://github.com/GetStream/stream-chat-android/pull/5625)
 - Fix `InitialsAvatar` font size in Poll components. [#5625](https://github.com/GetStream/stream-chat-android/pull/5625)
+- Fix default camera photo/video picker. [#5637](https://github.com/GetStream/stream-chat-android/pull/5637)
 
 ### ⬆️ Improved
 - Autofocus the input fields in the poll creation screen. [#5629](https://github.com/GetStream/stream-chat-android/pull/5629)
