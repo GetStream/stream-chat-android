@@ -531,8 +531,13 @@ private fun PollOptionButton(
     Text(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 11.dp)
-            .clickable { onButtonClicked.invoke() },
+            .clip(ButtonDefaults.shape)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = ripple(),
+                onClick = onButtonClicked,
+            )
+            .padding(vertical = 11.dp),
         textAlign = TextAlign.Center,
         text = text,
         color = ChatTheme.colors.primaryAccent,
