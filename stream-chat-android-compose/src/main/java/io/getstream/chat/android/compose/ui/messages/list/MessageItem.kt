@@ -834,8 +834,8 @@ private fun SwipeToReply(
     swipeToReplyContent: @Composable RowScope.() -> Unit,
     content: @Composable () -> Unit,
 ) {
-    var swipeToReplyWith by remember { mutableFloatStateOf(0f) }
-    var rowWith by remember { mutableFloatStateOf(0f) }
+    var swipeToReplyWidth by remember { mutableFloatStateOf(0f) }
+    var rowWidth by remember { mutableFloatStateOf(0f) }
     val offset = remember { Animatable(initialValue = 0f) }
     val scope = rememberCoroutineScope()
     val view = LocalView.current
@@ -847,9 +847,9 @@ private fun SwipeToReply(
         Row(
             modifier = Modifier
                 .align(Alignment.CenterStart)
-                .onSizeChanged { swipeToReplyWith = it.width.toFloat() }
+                .onSizeChanged { swipeToReplyWidth = it.width.toFloat() }
                 .offset {
-                    val roundToInt = swipeToReplyWith.roundToInt()
+                    val roundToInt = swipeToReplyWidth.roundToInt()
                     IntOffset(
                         (offset.value.roundToInt() - roundToInt)
                             .coerceIn(-roundToInt, roundToInt),
@@ -863,21 +863,21 @@ private fun SwipeToReply(
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .onSizeChanged { rowWith = it.width.toFloat() }
+                .onSizeChanged { rowWidth = it.width.toFloat() }
                 .offset { IntOffset(offset.value.roundToInt(), 0) }
-                .pointerInput(swipeToReplyWith) {
+                .pointerInput(swipeToReplyWidth) {
                     if (isSwipeable()) {
                         detectHorizontalDragGestures(
                             onHorizontalDrag = { _, dragAmount ->
                                 scope.launch {
                                     val newOffset = (offset.value + dragAmount)
-                                        .coerceIn(0f, maxOf((rowWith / 2), swipeToReplyWith))
+                                        .coerceIn(0f, maxOf((rowWidth / 2), swipeToReplyWidth))
                                     offset.snapTo(newOffset)
                                 }
                             },
                             onDragEnd = {
                                 scope.launch {
-                                    if (offset.value >= swipeToReplyWith) {
+                                    if (offset.value >= swipeToReplyWidth) {
                                         view.performHapticFeedback(HapticFeedbackConstantsCompat.CONFIRM)
                                         onReply()
                                     }
