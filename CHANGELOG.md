@@ -71,12 +71,14 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Autofocus the input fields in the poll creation screen. [#5629](https://github.com/GetStream/stream-chat-android/pull/5629)
 
 ### ✅ Added
 - Add `MessageListViewModel::scrollToFirstUnreadMessage` method. [#5635](https://github.com/GetStream/stream-chat-android/pull/5635)
 - Added Swipe To Reply feature to the Messages. [#5627](https://github.com/GetStream/stream-chat-android/pull/5627)
 
 ### ⚠️ Changed
+- 🚨Breaking change: Change the `AttachmentPickerPollCreation` event to hold a prepared `PollConfig` to simplify the poll creation handling. [#5634](https://github.com/GetStream/stream-chat-android/pull/5634)
 
 ### ❌ Removed
 
