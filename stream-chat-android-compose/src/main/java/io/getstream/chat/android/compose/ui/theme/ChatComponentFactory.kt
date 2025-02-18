@@ -91,6 +91,7 @@ import io.getstream.chat.android.compose.ui.components.messages.MessageText
 import io.getstream.chat.android.compose.ui.components.messages.MessageThreadFooter
 import io.getstream.chat.android.compose.ui.components.messages.OwnedMessageVisibilityContent
 import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
+import io.getstream.chat.android.compose.ui.components.messages.ScrollToBottomButton
 import io.getstream.chat.android.compose.ui.components.messages.UploadingFooter
 import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedReactionsOptions
@@ -150,6 +151,7 @@ import io.getstream.chat.android.compose.ui.pinned.DefaultPinnedMessageListItemD
 import io.getstream.chat.android.compose.ui.pinned.DefaultPinnedMessageListLoadingContent
 import io.getstream.chat.android.compose.ui.pinned.DefaultPinnedMessageListLoadingMoreContent
 import io.getstream.chat.android.compose.ui.pinned.PinnedMessageItem
+import io.getstream.chat.android.compose.ui.theme.animation.FadingVisibility
 import io.getstream.chat.android.compose.ui.threads.DefaultThreadListEmptyContent
 import io.getstream.chat.android.compose.ui.threads.DefaultThreadListLoadingContent
 import io.getstream.chat.android.compose.ui.threads.DefaultThreadListLoadingMoreContent
@@ -657,7 +659,7 @@ public interface ChatComponentFactory {
 
     /**
      * The default helper content of the message list.
-     * It shows the scroll to bottom button when the user scrolls up and it's away from the bottom.
+     * It handles the scroll-to-bottom and scroll-to-focused message features.
      */
     @Composable
     public fun BoxScope.MessageListHelperContent(
@@ -670,6 +672,39 @@ public interface ChatComponentFactory {
             messagesLazyListState = messagesLazyListState,
             scrollToBottom = onScrollToBottomClick,
         )
+    }
+
+    /**
+     * The default scroll-to-bottom button shown when the user scrolls away from the bottom of the list.
+     */
+    @Composable
+    public fun ScrollToBottomButton(
+        modifier: Modifier,
+        visible: Boolean,
+        count: Int,
+        onClick: () -> Unit,
+    ) {
+        // Disable animations in snapshot tests, at least until Paparazzi has a better support for animations.
+        // This is due to the scroll to bottom tests, where the items are not visible in the snapshots.
+        if (LocalInspectionMode.current) {
+            if (visible) {
+                ScrollToBottomButton(
+                    modifier = modifier,
+                    count = count,
+                    onClick = onClick,
+                )
+            }
+        } else {
+            FadingVisibility(
+                modifier = modifier,
+                visible = visible,
+            ) {
+                ScrollToBottomButton(
+                    count = count,
+                    onClick = onClick,
+                )
+            }
+        }
     }
 
     /**

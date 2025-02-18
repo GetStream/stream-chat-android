@@ -43,7 +43,6 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
-import io.getstream.chat.android.compose.ui.components.messages.MessagesScrollingOption
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.messages.list.HasMessageListItemState
@@ -51,7 +50,6 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
-import io.getstream.chat.android.ui.common.state.messages.list.MyOwn
 import io.getstream.chat.android.ui.common.state.messages.list.NewMessageState
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -296,8 +294,8 @@ internal fun BoxScope.DefaultMessagesHelperContent(
         }
     }
 
-    LaunchedEffect(newMessageState, focusedItemIndex) {
-        val shouldScrollToBottom = shouldScrollToBottom(
+    LaunchedEffect(newMessageState) {
+        val shouldScrollToBottom = shouldScrollToBottomOnNewMessage(
             focusedItemIndex,
             firstVisibleItemIndex,
             newMessageState,
@@ -306,24 +304,24 @@ internal fun BoxScope.DefaultMessagesHelperContent(
         )
 
         if (shouldScrollToBottom) {
-            if (newMessageState is MyOwn && firstVisibleItemIndex > 5) {
-                lazyListState.scrollToItem(5)
-            }
             lazyListState.animateScrollToItem(0)
         }
     }
 
-    if (isScrollToBottomButtonVisible(isMessageInThread, firstVisibleItemIndex, areNewestMessagesLoaded)) {
-        MessagesScrollingOption(
-            unreadCount = messagesState.unreadCount,
+    val scrollToBottomButtonVisible = isScrollToBottomButtonVisible(
+        isMessageInThread,
+        firstVisibleItemIndex,
+        areNewestMessagesLoaded,
+    )
+    with(ChatTheme.componentFactory) {
+        ScrollToBottomButton(
             modifier = Modifier.align(Alignment.BottomEnd),
+            visible = scrollToBottomButtonVisible,
+            count = messagesState.unreadCount,
             onClick = {
                 scrollToBottom {
                     coroutineScope.launch {
-                        if (firstVisibleItemIndex > 5) {
-                            lazyListState.scrollToItem(5)
-                        }
-                        lazyListState.animateScrollToItem(0)
+                        lazyListState.scrollToItem(0)
                     }
                 }
             },
@@ -345,7 +343,7 @@ internal fun BoxScope.DefaultMessagesHelperContent(
  *
  * @return Whether the list should scroll to the bottom when a new message arrives or not.
  */
-private fun shouldScrollToBottom(
+private fun shouldScrollToBottomOnNewMessage(
     focusedItemIndex: Int,
     firstVisibleItemIndex: Int,
     newMessageState: NewMessageState?,
