@@ -59,6 +59,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -67,6 +68,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.core.view.HapticFeedbackConstantsCompat
 import io.getstream.chat.android.client.utils.message.belongsToThread
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
@@ -836,6 +838,7 @@ private fun SwipeToReply(
     var rowWith by remember { mutableFloatStateOf(0f) }
     val offset = remember { Animatable(initialValue = 0f) }
     val scope = rememberCoroutineScope()
+    val view = LocalView.current
 
     Box(
         modifier = modifier
@@ -874,9 +877,10 @@ private fun SwipeToReply(
                             },
                             onDragEnd = {
                                 scope.launch {
-                                    onReply
-                                        .takeIf { offset.value >= swipeToReplyWith }
-                                        ?.invoke()
+                                    if (offset.value >= swipeToReplyWith) {
+                                        view.performHapticFeedback(HapticFeedbackConstantsCompat.CONFIRM)
+                                        onReply()
+                                    }
                                     offset.animateTo(0f)
                                 }
                             },
