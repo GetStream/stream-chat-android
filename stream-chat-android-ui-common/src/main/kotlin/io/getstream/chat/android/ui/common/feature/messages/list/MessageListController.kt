@@ -599,10 +599,9 @@ public class MessageListController(
             val messages = messagesState.messageItems
                 .filterIsInstance<MessageItemState>()
                 .map { it.message }
-
             messages.firstOrNull { it.id == unreadLabel.lastReadMessageId }
                 ?.let { messages.focusUnreadMessage(it.id) }
-                ?: {
+                ?: run {
                     scope.launch {
                         chatClient.loadMessagesAroundId(cid, unreadLabel.lastReadMessageId)
                             .await()

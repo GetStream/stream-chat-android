@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.createDate
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
+import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Member
@@ -38,6 +39,7 @@ import io.getstream.chat.android.randomMembers
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomMessageList
 import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
@@ -48,6 +50,7 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
+import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
@@ -635,6 +638,37 @@ internal class MessageListControllerTests {
         controller.messageListState.value.messageItems `should be equal to` expectedMessageItems
     }
 
+    @Test
+    fun `When scroll to first unread message is called, and message is already loaded, Then message is focused`() =
+        runTest {
+            val user = randomUser()
+            val messages = listOf(
+                randomMessage(id = "last_read_message_id"),
+                randomMessage(id = "first_unread_message_id"),
+            )
+            val channelRead = randomChannelUserRead(
+                user = user,
+                lastReadMessageId = "last_read_message_id",
+                unreadMessages = 1,
+            )
+            val messagesState = MutableStateFlow(messages)
+            val controller = Fixture()
+                .givenCurrentUser(user)
+                .givenChannelState(
+                    messagesState = messagesState,
+                    read = channelRead,
+                )
+                .get(dateSeparatorHandler = { _, _ -> false })
+            controller.scrollToFirstUnreadMessage()
+            val items = controller.messageListState.value.messageItems
+            val lastReadMessage = items.first() as MessageItemState
+            val firstUnreadMessage = items.last() as MessageItemState
+            lastReadMessage.message.id `should be equal to` "last_read_message_id"
+            lastReadMessage.focusState `should be equal to` null
+            firstUnreadMessage.message.id `should be equal to` "first_unread_message_id"
+            firstUnreadMessage.focusState `should be equal to` MessageFocused
+        }
+
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val cid: String = CID,
@@ -688,6 +722,7 @@ internal class MessageListControllerTests {
             watchersCountState: StateFlow<Int> = MutableStateFlow(0),
             typingUsers: List<User> = listOf(),
             typingState: StateFlow<TypingEvent> = MutableStateFlow(TypingEvent(cid, typingUsers)),
+            read: ChannelUserRead = randomChannelUserRead(lastReadMessageId = null),
         ) = apply {
             whenever(channelState.cid) doReturn CID
             whenever(channelState.channelData) doReturn channelDataState
@@ -703,7 +738,7 @@ internal class MessageListControllerTests {
             }.stateIn(testCoroutines.scope, SharingStarted.Eagerly, MessagesState.Result(emptyList()))
             whenever(channelState.typing) doReturn typingState
             whenever(channelState.reads) doReturn MutableStateFlow(listOf())
-            whenever(channelState.read) doReturn MutableStateFlow(randomChannelUserRead(lastReadMessageId = null))
+            whenever(channelState.read) doReturn MutableStateFlow(read)
             whenever(channelState.endOfOlderMessages) doReturn MutableStateFlow(false)
             whenever(channelState.endOfNewerMessages) doReturn MutableStateFlow(true)
             whenever(channelState.unreadCount) doReturn MutableStateFlow(0)

@@ -325,6 +325,17 @@ public class MessageListViewModel(
     }
 
     /**
+     * Scrolls to the first unread message in the list.
+     * If there are no unread messages, this method does nothing.
+     *
+     * Important: It is possible that the first unread message is not loaded in the list yet.
+     * In this case, the method will first try to load that message, and then scroll to it.
+     */
+    public fun scrollToFirstUnreadMessage() {
+        messageListController.scrollToFirstUnreadMessage()
+    }
+
+    /**
      * Sets the date separator handler which determines when to add date separators.
      * By default, a date separator will be added if the difference between two messages' dates is greater than 4h.
      *
