@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.components.messages
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -41,6 +42,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -442,6 +444,14 @@ private fun PollOptionItem(
             }
         }
 
+        val progress by animateFloatAsState(
+            targetValue = if (voteCount == 0 || totalVoteCount == 0) {
+                0f
+            } else {
+                voteCount / totalVoteCount.toFloat()
+            },
+        )
+
         LinearProgressIndicator(
             modifier = Modifier
                 .fillMaxWidth()
@@ -454,13 +464,7 @@ private fun PollOptionItem(
                 )
                 .clip(RoundedCornerShape(4.dp))
                 .height(4.dp),
-            progress = {
-                if (voteCount == 0 || totalVoteCount == 0) {
-                    0f
-                } else {
-                    voteCount / totalVoteCount.toFloat()
-                }
-            },
+            progress = { progress },
             color = if (isVotedByMine) {
                 ChatTheme.colors.infoAccent
             } else {
