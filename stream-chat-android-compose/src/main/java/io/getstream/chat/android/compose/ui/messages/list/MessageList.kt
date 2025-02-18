@@ -151,6 +151,7 @@ public fun MessageList(
     onUserAvatarClick: ((User) -> Unit)? = null,
     onMessageLinkClick: ((Message, String) -> Unit)? = null,
     onUserMentionClick: (User) -> Unit = {},
+    onReply: (Message) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {
         if (it?.resultType == MediaGalleryPreviewResultType.SHOW_IN_CHAT) {
             viewModel.scrollToMessage(
@@ -202,6 +203,7 @@ public fun MessageList(
                 onMessageLinkClick = onMessageLinkClick,
                 onUserMentionClick = onUserMentionClick,
                 onAddAnswer = onAddAnswer,
+                onReply = onReply,
             )
         }
     },
@@ -232,6 +234,7 @@ public fun MessageList(
         onMessageLinkClick = onMessageLinkClick,
         onClosePoll = onClosePoll,
         onAddAnswer = onAddAnswer,
+        onReply = onReply,
     )
 }
 
@@ -276,6 +279,7 @@ internal fun LazyItemScope.DefaultMessageContainer(
     onUserAvatarClick: ((User) -> Unit)? = null,
     onLinkClick: ((Message, String) -> Unit)? = null,
     onUserMentionClick: (User) -> Unit = {},
+    onReply: (Message) -> Unit = {},
 ) {
     MessageContainer(
         messageListItemState = messageListItemState,
@@ -297,6 +301,7 @@ internal fun LazyItemScope.DefaultMessageContainer(
         onLinkClick = onLinkClick,
         onUserMentionClick = onUserMentionClick,
         onAddAnswer = onAddAnswer,
+        onReply = onReply,
     )
 }
 
@@ -398,6 +403,7 @@ public fun MessageList(
     onUserAvatarClick: ((User) -> Unit)? = null,
     onMessageLinkClick: ((Message, String) -> Unit)? = null,
     onUserMentionClick: (User) -> Unit = { _ -> },
+    onReply: (Message) -> Unit = {},
     loadingContent: @Composable () -> Unit = {
         ChatTheme.componentFactory.MessageListLoadingIndicator(modifier)
     },
@@ -443,6 +449,7 @@ public fun MessageList(
                     onMessageLinkClick = onMessageLinkClick,
                     onUserMentionClick = onUserMentionClick,
                     onAddAnswer = onAddAnswer,
+                    onReply = onReply,
                 )
             }
         } else {
@@ -466,6 +473,7 @@ public fun MessageList(
                 onLinkClick = onMessageLinkClick,
                 onUserMentionClick = onUserMentionClick,
                 onAddAnswer = onAddAnswer,
+                onReply = onReply,
             )
         }
     },

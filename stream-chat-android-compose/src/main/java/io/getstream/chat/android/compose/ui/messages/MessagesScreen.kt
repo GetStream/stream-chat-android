@@ -250,6 +250,7 @@ public fun MessagesScreen(
                 onUserAvatarClick = onUserAvatarClick,
                 onMessageLinkClick = onMessageLinkClick,
                 onUserMentionClick = onUserMentionClick,
+                onReply = { message -> composerViewModel.performMessageAction(Reply(message)) },
                 onMediaGalleryPreviewResult = remember(listViewModel, composerViewModel) {
                     {
                             result ->
@@ -465,7 +466,6 @@ private fun BoxScope.MessagesScreenMenus(
     val newMessageOptions = defaultMessageOptionsState(
         selectedMessage = selectedMessage,
         currentUser = user,
-        isInThread = isInThread,
         ownCapabilities = ownCapabilities,
     )
 

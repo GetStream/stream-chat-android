@@ -74,6 +74,7 @@
 
 ### ✅ Added
 - Add `MessageListViewModel::scrollToFirstUnreadMessage` method. [#5635](https://github.com/GetStream/stream-chat-android/pull/5635)
+- Added Swipe To Reply feature to the Messages. [#5627](https://github.com/GetStream/stream-chat-android/pull/5627)
 
 ### ⚠️ Changed
 
