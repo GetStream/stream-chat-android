@@ -35,11 +35,13 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -114,18 +116,13 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import coil.compose.AsyncImagePainter
 import coil.request.ImageRequest
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
-import com.skydoves.landscapist.ImageOptions
-import com.skydoves.landscapist.coil.CoilImageState
-import com.skydoves.landscapist.coil.rememberCoilImageState
-import com.skydoves.landscapist.components.rememberImageComponent
-import com.skydoves.landscapist.placeholder.shimmer.Shimmer
-import com.skydoves.landscapist.placeholder.shimmer.ShimmerPlugin
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
@@ -145,13 +142,16 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.toMessage
 import io.getstream.chat.android.compose.ui.attachments.content.PlayButton
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
+import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.ImageRequestTimeoutHandler
 import io.getstream.chat.android.compose.ui.util.RetryHash
+import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.StreamImage
-import io.getstream.chat.android.compose.ui.util.onImageNeedsToReload
+import io.getstream.chat.android.compose.ui.util.isCompleted
 import io.getstream.chat.android.compose.util.attachmentDownloadState
 import io.getstream.chat.android.compose.util.onDownloadHandleRequest
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModel
@@ -810,12 +810,11 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             val imageRequest = remember(retryHash) {
                 ImageRequest.Builder(context)
                     .data(data)
-                    .crossfade(true)
                     .setParameter(key = RetryHash, value = retryHash)
                     .build()
             }
 
-            var imageState by rememberCoilImageState()
+            var imageState by remember { mutableStateOf<AsyncImagePainter.State>(AsyncImagePainter.State.Empty) }
 
             val density = LocalDensity.current
             val parentSize = Size(density.run { maxWidth.toPx() }, density.run { maxHeight.toPx() })
@@ -826,21 +825,20 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
             val scale by animateFloatAsState(targetValue = currentScale, label = "")
 
-            // Used to refresh the request for the current page
-            // if it has previously failed.
-            onImageNeedsToReload(
+            // Used to refresh the request if it has previously failed.
+            ImageRequestTimeoutHandler(
                 data = data,
                 connectionState = mediaGalleryPreviewViewModel.connectionState,
-                coilImageState = imageState,
+                imageState = imageState,
             ) {
                 retryHash++
             }
 
-            val transformModifier = if (imageState is CoilImageState.Success) {
-                val state = imageState as CoilImageState.Success
+            val transformModifier = if (imageState is AsyncImagePainter.State.Success) {
+                val state = imageState as AsyncImagePainter.State.Success
                 val size = Size(
-                    state.drawable?.intrinsicWidth?.toFloat() ?: 0f,
-                    state.drawable?.intrinsicHeight?.toFloat() ?: 0f,
+                    width = state.result.drawable.intrinsicWidth.toFloat(),
+                    height = state.result.drawable.intrinsicHeight.toFloat(),
                 )
                 Modifier
                     .aspectRatio(size.width / size.height, true)
@@ -853,7 +851,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center,
             ) {
-                StreamImage(
+                StreamAsyncImage(
+                    imageRequest = imageRequest,
                     modifier = transformModifier
                         .graphicsLayer(
                             scaleY = scale,
@@ -924,26 +923,29 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                                 }
                             }
                         },
-                    imageRequest = { imageRequest },
-                    component = rememberImageComponent {
-                        +ShimmerPlugin(
-                            Shimmer.Resonate(
-                                baseColor = ChatTheme.colors.mediaShimmerBase,
-                                highlightColor = ChatTheme.colors.mediaShimmerHighlights,
-                            ),
-                        )
-                    },
-                    failure = {
-                        Icon(
-                            tint = ChatTheme.colors.textLowEmphasis,
-                            modifier = Modifier.fillMaxSize(0.4f),
-                            painter = painterResource(
-                                id = R.drawable.stream_compose_ic_image_picker,
-                            ),
-                            contentDescription = null,
-                        )
-                    },
-                )
+                ) { asyncImageState ->
+                    imageState = asyncImageState
+
+                    Crossfade(targetState = asyncImageState) { state ->
+                        when (state) {
+                            is AsyncImagePainter.State.Empty,
+                            is AsyncImagePainter.State.Loading,
+                            -> ShimmerProgressIndicator(
+                                modifier = Modifier.fillMaxSize(),
+                            )
+
+                            is AsyncImagePainter.State.Success,
+                            -> Image(
+                                modifier = Modifier.fillMaxSize(),
+                                painter = state.painter,
+                                contentDescription = null,
+                            )
+
+                            is AsyncImagePainter.State.Error,
+                            -> ErrorIcon(modifier = Modifier.fillMaxSize())
+                        }
+                    }
+                }
 
                 Log.d("isCurrentPage", "${page != pagerState.currentPage}")
 
@@ -1580,9 +1582,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
         // Used as a workaround for Coil's lack of a retry policy.
         // See: https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
-        var retryHash by remember {
-            mutableStateOf(0)
-        }
+        var retryHash by remember { mutableIntStateOf(0) }
 
         val coroutineScope = rememberCoroutineScope()
 
@@ -1590,12 +1590,16 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f)
-                .clickable {
-                    coroutineScope.launch {
-                        mediaGalleryPreviewViewModel.toggleGallery(isShowingGallery = false)
-                        pagerState.animateScrollToPage(index)
-                    }
-                },
+                .clickable(
+                    indication = ripple(),
+                    interactionSource = remember { MutableInteractionSource() },
+                    onClick = {
+                        coroutineScope.launch {
+                            mediaGalleryPreviewViewModel.toggleGallery(isShowingGallery = false)
+                            pagerState.animateScrollToPage(index)
+                        }
+                    },
+                ),
             contentAlignment = Alignment.Center,
         ) {
             val data =
@@ -1613,14 +1617,13 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     .build()
             }
 
-            var imageState by rememberCoilImageState()
+            var imageState by remember { mutableStateOf<AsyncImagePainter.State>(AsyncImagePainter.State.Empty) }
 
-            // Used to refresh the request for the current page
-            // if it has previously failed.
-            onImageNeedsToReload(
+            // Used to refresh the request if it has previously failed.
+            ImageRequestTimeoutHandler(
                 data = data,
                 connectionState = mediaGalleryPreviewViewModel.connectionState,
-                coilImageState = imageState,
+                imageState = imageState,
             ) {
                 retryHash++
             }
@@ -1631,32 +1634,35 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 ChatTheme.colors.videoBackgroundMediaGalleryPicker
             }
 
-            StreamImage(
+            StreamAsyncImage(
+                imageRequest = imageRequest,
                 modifier = Modifier
                     .padding(1.dp)
                     .fillMaxSize()
                     .background(color = backgroundColor),
-                imageRequest = { imageRequest },
-                imageOptions = ImageOptions(contentScale = ContentScale.Crop),
-                component = rememberImageComponent {
-                    +ShimmerPlugin(
-                        Shimmer.Resonate(
-                            baseColor = ChatTheme.colors.mediaShimmerBase,
-                            highlightColor = ChatTheme.colors.mediaShimmerHighlights,
-                        ),
+                contentScale = ContentScale.Crop,
+            ) { asyncImageState ->
+                imageState = asyncImageState
+
+                when (asyncImageState) {
+                    is AsyncImagePainter.State.Empty,
+                    is AsyncImagePainter.State.Loading,
+                    -> ShimmerProgressIndicator(
+                        modifier = Modifier.fillMaxSize(),
                     )
-                },
-                failure = {
-                    Icon(
-                        tint = ChatTheme.colors.textLowEmphasis,
-                        modifier = Modifier.fillMaxSize(0.4f),
-                        painter = painterResource(
-                            id = R.drawable.stream_compose_ic_image_picker,
-                        ),
+
+                    is AsyncImagePainter.State.Success,
+                    -> Image(
+                        modifier = Modifier.fillMaxSize(),
+                        painter = asyncImageState.painter,
                         contentDescription = null,
+                        contentScale = ContentScale.Crop,
                     )
-                },
-            )
+
+                    is AsyncImagePainter.State.Error,
+                    -> ErrorIcon(Modifier.fillMaxSize())
+                }
+            }
 
             Avatar(
                 modifier = Modifier
@@ -1676,7 +1682,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 initials = user.initials,
             )
 
-            if (isVideo && imageState !is CoilImageState.Loading) {
+            if (isVideo && imageState.isCompleted) {
                 PlayButton(
                     modifier = Modifier
                         .shadow(6.dp, shape = CircleShape)
@@ -1685,6 +1691,21 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     contentDescription = getString(R.string.stream_compose_cd_play_button),
                 )
             }
+        }
+    }
+
+    @Composable
+    private fun ErrorIcon(modifier: Modifier) {
+        Box(
+            modifier = modifier,
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                tint = ChatTheme.colors.disabled,
+                modifier = Modifier.fillMaxSize(0.4f),
+                painter = painterResource(R.drawable.stream_compose_ic_image_picker),
+                contentDescription = stringResource(R.string.stream_ui_message_list_attachment_load_failed),
+            )
         }
     }
 

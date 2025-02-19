@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
-import android.annotation.SuppressLint
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -44,6 +44,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -57,14 +58,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import coil.compose.AsyncImagePainter
 import coil.request.ImageRequest
-import com.skydoves.landscapist.ImageOptions
-import com.skydoves.landscapist.animation.crossfade.CrossfadePlugin
-import com.skydoves.landscapist.coil.CoilImageState
-import com.skydoves.landscapist.coil.rememberCoilImageState
-import com.skydoves.landscapist.components.rememberImageComponent
-import com.skydoves.landscapist.placeholder.shimmer.Shimmer
-import com.skydoves.landscapist.placeholder.shimmer.ShimmerPlugin
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
@@ -72,10 +67,11 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract
+import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.ImageRequestTimeoutHandler
 import io.getstream.chat.android.compose.ui.util.RetryHash
-import io.getstream.chat.android.compose.ui.util.StreamImage
-import io.getstream.chat.android.compose.ui.util.onImageNeedsToReload
+import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
@@ -385,7 +381,6 @@ internal fun RowScope.MultipleMediaAttachments(
  * @param overlayContent Represents the content overlaid above attachment previews.
  * Usually used to display a play button over video previews.
  */
-@SuppressLint("UnrememberedMutableInteractionSource")
 @Suppress("LongParameterList", "LongMethod")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -430,26 +425,25 @@ internal fun MediaAttachmentContentItem(
         }
 
     val context = LocalContext.current
-    val model = remember(retryHash) {
+    val imageRequest = remember(retryHash) {
         ImageRequest.Builder(context)
             .data(data)
             .setParameter(key = RetryHash, value = retryHash)
             .build()
     }
 
-    var imageState by rememberCoilImageState()
+    var imageState by remember { mutableStateOf<AsyncImagePainter.State>(AsyncImagePainter.State.Empty) }
 
     val mixedMediaPreviewLauncher = rememberLauncherForActivityResult(
         contract = MediaGalleryPreviewContract(),
         onResult = { result -> onMediaGalleryPreviewResult(result) },
     )
 
-    // Used to refresh the request for the current page
-    // if it has previously failed.
-    onImageNeedsToReload(
+    // Used to refresh the request for the current page if it has previously failed.
+    ImageRequestTimeoutHandler(
         data = data,
         connectionState = connectionState,
-        coilImageState = imageState,
+        imageState = imageState,
     ) {
         retryHash++
     }
@@ -468,7 +462,7 @@ internal fun MediaAttachmentContentItem(
             .fillMaxWidth()
             .testTag("Stream_MediaContent_$testTag")
             .combinedClickable(
-                interactionSource = MutableInteractionSource(),
+                interactionSource = remember { MutableInteractionSource() },
                 indication = ripple(),
                 onClick = {
                     if (message.syncStatus == SyncStatus.COMPLETED) {
@@ -497,36 +491,51 @@ internal fun MediaAttachmentContentItem(
                 ChatTheme.colors.videoBackgroundMessageList
             }
 
-        StreamImage(
+        StreamAsyncImage(
+            imageRequest = imageRequest,
             modifier = modifier
                 .fillMaxSize()
                 .background(backgroundColor),
-            imageRequest = { model },
-            onImageStateChanged = { imageState = it },
-            component = rememberImageComponent {
-                +ShimmerPlugin(
-                    Shimmer.Resonate(
-                        baseColor = ChatTheme.colors.mediaShimmerBase,
-                        highlightColor = ChatTheme.colors.mediaShimmerHighlights,
-                    ),
-                )
-                +CrossfadePlugin()
-            },
-            failure = {
-                Icon(
-                    tint = ChatTheme.colors.disabled,
-                    modifier = Modifier.fillMaxSize(0.4f),
-                    painter = painterResource(
-                        id = R.drawable.stream_compose_ic_image_picker,
-                    ),
-                    contentDescription = null,
-                )
-            },
-            imageOptions = ImageOptions(contentScale = ContentScale.Crop),
-        )
+            contentScale = ContentScale.Crop,
+        ) { asyncImageState ->
+            imageState = asyncImageState
 
-        if (imageState !is CoilImageState.Loading) {
-            overlayContent(attachment.type)
+            Crossfade(targetState = asyncImageState) { state ->
+                when (state) {
+                    is AsyncImagePainter.State.Empty,
+                    is AsyncImagePainter.State.Loading,
+                    -> ShimmerProgressIndicator(
+                        modifier = Modifier.fillMaxSize(),
+                    )
+
+                    is AsyncImagePainter.State.Success -> {
+                        Image(
+                            modifier = Modifier.fillMaxSize(),
+                            painter = state.painter,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                        )
+                        overlayContent(attachment.type)
+                    }
+
+                    is AsyncImagePainter.State.Error -> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Icon(
+                                tint = ChatTheme.colors.disabled,
+                                modifier = Modifier.fillMaxSize(0.4f),
+                                painter = painterResource(R.drawable.stream_compose_ic_image_picker),
+                                contentDescription = stringResource(
+                                    id = R.string.stream_ui_message_list_attachment_load_failed,
+                                ),
+                            )
+                            overlayContent(attachment.type)
+                        }
+                    }
+                }
+            }
         }
     }
 }
