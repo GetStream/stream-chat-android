@@ -43,16 +43,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import com.skydoves.landscapist.ImageOptions
-import com.skydoves.landscapist.components.rememberImageComponent
-import com.skydoves.landscapist.placeholder.shimmer.Shimmer
-import com.skydoves.landscapist.placeholder.shimmer.ShimmerPlugin
+import coil.compose.AsyncImagePainter
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDimens
-import io.getstream.chat.android.compose.ui.util.StreamImage
+import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.GiphyInfoType
 import io.getstream.chat.android.ui.common.utils.GiphySizingMode
@@ -159,19 +157,22 @@ public fun GiphyAttachmentContent(
                 onLongClick = { onLongItemClick(message) },
             ),
     ) {
-        StreamImage(
-            modifier = Modifier.fillMaxSize(),
-            data = { giphyInfo?.url },
-            component = rememberImageComponent {
-                +ShimmerPlugin(
-                    Shimmer.Resonate(
-                        baseColor = ChatTheme.colors.mediaShimmerBase,
-                        highlightColor = ChatTheme.colors.mediaShimmerHighlights,
-                    ),
+        StreamAsyncImage(
+            data = giphyInfo?.url,
+        ) { state ->
+            if (state !is AsyncImagePainter.State.Success) {
+                ShimmerProgressIndicator(
+                    modifier = Modifier.fillMaxSize(),
                 )
-            },
-            imageOptions = ImageOptions(contentScale = contentScale),
-        )
+            } else {
+                Image(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = state.painter,
+                    contentDescription = null,
+                    contentScale = contentScale,
+                )
+            }
+        }
 
         Image(
             modifier = Modifier

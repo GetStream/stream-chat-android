@@ -97,13 +97,13 @@ dependencies {
     // Coil
     implementation(libs.coil.compose)
     implementation(libs.skydoves.landscapist.coil)
-    implementation(libs.skydoves.landscapist.placeholder)
     implementation(libs.skydoves.landscapist.animation)
     implementation(libs.coil.gif)
     implementation(libs.coil.video)
 
     // UI
     implementation(libs.reorderable)
+    implementation(libs.shimmer.compose)
 
     // Tests
     testImplementation(project(":stream-chat-android-test"))
