@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.messages.list
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -42,6 +41,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Message
@@ -69,11 +69,11 @@ import kotlin.math.abs
  * Default: [Arrangement.Top].
  * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
  * Default: [ThreadMessagesStart.BOTTOM].
- * @param onMessagesStartReached Handler for pagination, when the user reaches the start of messages.
+ * @param onMessagesStartReached Handler for pagination, when the user reaches chronologically the start of messages.
  * @param onLastVisibleMessageChanged Handler that notifies us when the user scrolls and the last visible message
  * changes.
  * @param onScrolledToBottom Handler when the user reaches the bottom of the list.
- * @param onMessagesEndReached Handler for pagination, when the user reaches the end of messages.
+ * @param onMessagesEndReached Handler for pagination, when the user reaches chronologically the end of messages.
  * @param onScrollToBottom Handler when the user requests to scroll to the bottom of the messages list.
  * @param modifier Modifier for styling.
  * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
@@ -177,26 +177,6 @@ public fun Messages(
                 val finalItemModifier = messageItemModifier.then(itemModifier)
                 Box(modifier = finalItemModifier) {
                     itemContent(item)
-
-                    if (index == 0 && lazyListState.isScrollInProgress) {
-                        onScrolledToBottom()
-                    }
-
-                    if (!endOfMessages &&
-                        index == messages.lastIndex &&
-                        messages.isNotEmpty() &&
-                        lazyListState.isScrollInProgress
-                    ) {
-                        onMessagesStartReached()
-                    }
-
-                    val newestMessageItem = (messages.firstOrNull { it is MessageItemState } as? MessageItemState)
-                    if (index == 0 &&
-                        messages.isNotEmpty() &&
-                        lazyListState.isScrollInProgress
-                    ) {
-                        newestMessageItem?.message?.id?.let(onMessagesEndReached)
-                    }
                 }
             }
 
@@ -208,6 +188,37 @@ public fun Messages(
         }
 
         helperContent()
+    }
+
+    // reverseLayout influences the scrolling behavior.
+    // When reverseLayout is true, canScrollBackward is false when the list is scrolled to the bottom.
+    val isScrolledToBottom by remember { derivedStateOf { !lazyListState.canScrollBackward } }
+    LaunchedEffect(isScrolledToBottom) {
+        if (isScrolledToBottom) {
+            onScrolledToBottom()
+        }
+    }
+
+    LoadMoreHandler(lazyListState) {
+        if (!endOfMessages) {
+            onMessagesStartReached()
+        }
+    }
+
+    val isMessagesEndReached by remember {
+        derivedStateOf {
+            !startOfMessages &&
+                lazyListState.firstVisibleItemIndex == 0 &&
+                lazyListState.isScrollInProgress
+        }
+    }
+    LaunchedEffect(isMessagesEndReached) {
+        if (isMessagesEndReached) {
+            val newestMessageItem = messages.firstOrNull { item -> item is MessageItemState } as? MessageItemState
+            newestMessageItem?.message?.id?.let {
+                onMessagesEndReached(it)
+            }
+        }
     }
 
     /** Marks the bottom most item as read every time it changes. **/
@@ -262,7 +273,6 @@ private fun OnLastVisibleItemChanged(lazyListState: LazyListState, onChanged: (f
  * @param messagesLazyListState The scrolling state of the list, used to manipulate and trigger scroll events.
  * @param scrollToBottom Handler when the user requests to scroll to the bottom of the messages list.
  */
-@SuppressLint("UnrememberedMutableState")
 @Composable
 internal fun BoxScope.DefaultMessagesHelperContent(
     messagesState: MessageListState,
@@ -278,7 +288,7 @@ internal fun BoxScope.DefaultMessagesHelperContent(
 
     val coroutineScope = rememberCoroutineScope()
 
-    val firstVisibleItemIndex by derivedStateOf { lazyListState.firstVisibleItemIndex }
+    val firstVisibleItemIndex by remember(messages) { derivedStateOf { lazyListState.firstVisibleItemIndex } }
 
     val focusedItemIndex = remember(messages) {
         messages.indexOfFirst { item -> item is MessageItemState && item.focusState is MessageFocused }
