@@ -40,7 +40,6 @@ class QuotedReplyTests : StreamTestCase() {
     private val messagesCount = 30
 
     @AllureId("5923")
-    @Ignore("https://linear.app/stream/issue/AND-261")
     @Test
     fun test_whenSwipingMessage_thenMessageIsQuotedReply() {
         step("GIVEN user opens the channel") {
