@@ -443,6 +443,12 @@ private fun ImageRequest.size(context: Context, size: Size): ImageRequest = run 
 }
 
 /**
+ * A completed state is when the image is either successfully loaded or failed to load.
+ */
+internal val AsyncImagePainter.State.isCompleted: Boolean
+    get() = this is AsyncImagePainter.State.Success || this is AsyncImagePainter.State.Error
+
+/**
  * Used to change a parameter set on Coil requests in order
  * to force Coil into retrying a request.
  *
