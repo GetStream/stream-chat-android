@@ -20,12 +20,22 @@ package io.getstream.chat.android.ui.feature.messages.list.internal
 
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.utils.canBlockUser
+import io.getstream.chat.android.ui.common.utils.canCopyMessage
+import io.getstream.chat.android.ui.common.utils.canDeleteMessage
+import io.getstream.chat.android.ui.common.utils.canEditMessage
+import io.getstream.chat.android.ui.common.utils.canFlagMessage
+import io.getstream.chat.android.ui.common.utils.canMarkAsUnread
+import io.getstream.chat.android.ui.common.utils.canPinMessage
+import io.getstream.chat.android.ui.common.utils.canReplyToMessage
+import io.getstream.chat.android.ui.common.utils.canRetryMessage
+import io.getstream.chat.android.ui.common.utils.canThreadReplyToMessage
 import io.getstream.chat.android.ui.feature.messages.list.MessageListViewStyle
 
 internal fun MessageListViewStyle.canReplyToMessage(
     message: Message,
     ownCapabilities: Set<String>,
-): Boolean = io.getstream.chat.android.ui.common.utils.canReplyToMessage(
+): Boolean = canReplyToMessage(
     replyEnabled = replyEnabled,
     message = message,
     ownCapabilities = ownCapabilities,
@@ -34,7 +44,7 @@ internal fun MessageListViewStyle.canReplyToMessage(
 internal fun MessageListViewStyle.canThreadReplyToMessage(
     message: Message,
     ownCapabilities: Set<String>,
-): Boolean = io.getstream.chat.android.ui.common.utils.canThreadReplyToMessage(
+): Boolean = canThreadReplyToMessage(
     threadsEnabled = threadsEnabled,
     message = message,
     ownCapabilities = ownCapabilities,
@@ -42,7 +52,7 @@ internal fun MessageListViewStyle.canThreadReplyToMessage(
 
 internal fun MessageListViewStyle.canCopyMessage(
     message: Message,
-): Boolean = io.getstream.chat.android.ui.common.utils.canCopyMessage(
+): Boolean = canCopyMessage(
     copyTextEnabled = copyTextEnabled,
     message = message,
 )
@@ -51,7 +61,7 @@ internal fun MessageListViewStyle.canEditMessage(
     currentUser: User?,
     message: Message,
     ownCapabilities: Set<String>,
-): Boolean = io.getstream.chat.android.ui.common.utils.canEditMessage(
+): Boolean = canEditMessage(
     editMessageEnabled = editMessageEnabled,
     currentUser = currentUser,
     message = message,
@@ -62,7 +72,7 @@ internal fun MessageListViewStyle.canDeleteMessage(
     currentUser: User?,
     message: Message,
     ownCapabilities: Set<String>,
-): Boolean = io.getstream.chat.android.ui.common.utils.canDeleteMessage(
+): Boolean = canDeleteMessage(
     deleteMessageEnabled = deleteMessageEnabled,
     currentUser = currentUser,
     message = message,
@@ -73,7 +83,7 @@ internal fun MessageListViewStyle.canFlagMessage(
     currentUser: User?,
     message: Message,
     ownCapabilities: Set<String>,
-): Boolean = io.getstream.chat.android.ui.common.utils.canFlagMessage(
+): Boolean = canFlagMessage(
     flagEnabled = flagEnabled,
     currentUser = currentUser,
     message = message,
@@ -83,7 +93,7 @@ internal fun MessageListViewStyle.canFlagMessage(
 internal fun MessageListViewStyle.canPinMessage(
     message: Message,
     ownCapabilities: Set<String>,
-): Boolean = io.getstream.chat.android.ui.common.utils.canPinMessage(
+): Boolean = canPinMessage(
     pinMessageEnabled = pinMessageEnabled,
     message = message,
     ownCapabilities = ownCapabilities,
@@ -92,7 +102,7 @@ internal fun MessageListViewStyle.canPinMessage(
 internal fun MessageListViewStyle.canBlockUser(
     currentUser: User?,
     message: Message,
-): Boolean = io.getstream.chat.android.ui.common.utils.canBlockUser(
+): Boolean = canBlockUser(
     blockUserEnabled = blockUserEnabled,
     currentUser = currentUser,
     message = message,
@@ -100,7 +110,7 @@ internal fun MessageListViewStyle.canBlockUser(
 
 internal fun MessageListViewStyle.canMarkAsUnread(
     ownCapabilities: Set<String>,
-): Boolean = io.getstream.chat.android.ui.common.utils.canMarkAsUnread(
+): Boolean = canMarkAsUnread(
     markAsUnreadEnabled = markAsUnreadEnabled,
     ownCapabilities = ownCapabilities,
 )
@@ -108,7 +118,7 @@ internal fun MessageListViewStyle.canMarkAsUnread(
 internal fun MessageListViewStyle.canRetryMessage(
     currentUser: User?,
     message: Message,
-): Boolean = io.getstream.chat.android.ui.common.utils.canRetryMessage(
+): Boolean = canRetryMessage(
     retryMessageEnabled = retryMessageEnabled,
     currentUser = currentUser,
     message = message,
