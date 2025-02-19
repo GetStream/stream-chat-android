@@ -36,7 +36,7 @@ class AuthTests : StreamTestCase() {
 
     override fun initTestActivity() = InitTestActivity.Jwt(baseUrl = mockServer.url)
 
-    @AllureId("FIXME")
+    @AllureId("6857")
     @Test
     fun test_tokenInvalidatesBeforeUserLogsIn() {
         step("GIVEN token is invalid") {
@@ -50,7 +50,7 @@ class AuthTests : StreamTestCase() {
         }
     }
 
-    @AllureId("")
+    @AllureId("6858")
     @Test
     fun test_tokenInvalidatesAfterUserLogsIn() {
         step("GIVEN user logs in") {
@@ -68,7 +68,7 @@ class AuthTests : StreamTestCase() {
         }
     }
 
-    @AllureId("")
+    @AllureId("6859")
     @Test
     fun test_tokenDateInvalidatesBeforeUserLogsIn() {
         step("GIVEN token is invalid") {
@@ -82,7 +82,7 @@ class AuthTests : StreamTestCase() {
         }
     }
 
-    @AllureId("")
+    @AllureId("6860")
     @Test
     fun test_tokenDateInvalidatesAfterUserLogsIn() {
         step("GIVEN user logs in") {
@@ -100,7 +100,7 @@ class AuthTests : StreamTestCase() {
         }
     }
 
-    @AllureId("")
+    @AllureId("6861")
     @Test
     fun test_tokenSignatureInvalidatesBeforeUserLogsIn() {
         step("GIVEN token is invalid") {
@@ -114,7 +114,7 @@ class AuthTests : StreamTestCase() {
         }
     }
 
-    @AllureId("")
+    @AllureId("6862")
     @Test
     fun test_tokenSignatureInvalidatesAfterUserLogsIn() {
         step("GIVEN user logs in") {
@@ -132,7 +132,7 @@ class AuthTests : StreamTestCase() {
         }
     }
 
-    @AllureId("")
+    @AllureId("5849")
     @Test
     fun test_tokenExpiresBeforeUserLogsIn() {
         step("GIVEN token expires") {
@@ -146,7 +146,7 @@ class AuthTests : StreamTestCase() {
         }
     }
 
-    @AllureId("")
+    @AllureId("5850")
     @Test
     fun test_tokenExpiresAfterUserLoggedIn() {
         step("GIVEN user logs in") {
@@ -164,7 +164,7 @@ class AuthTests : StreamTestCase() {
         }
     }
 
-    @AllureId("")
+    @AllureId("5851")
     @Test
     fun test_tokenExpiresWhenUserIsInBackground() {
         step("GIVEN user logs in") {
@@ -188,7 +188,7 @@ class AuthTests : StreamTestCase() {
         }
     }
 
-    @AllureId("")
+    @AllureId("5852")
     @Test
     fun test_tokenExpiresWhileUserIsOffline() {
         step("GIVEN user logs in") {
@@ -212,7 +212,7 @@ class AuthTests : StreamTestCase() {
         }
     }
 
-    @AllureId("")
+    @AllureId("5853")
     @Test
     fun test_tokenGenerationFails() {
         step("GIVEN user logs in") {
