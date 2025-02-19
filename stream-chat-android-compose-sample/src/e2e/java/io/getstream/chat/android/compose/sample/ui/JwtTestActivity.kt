@@ -174,9 +174,10 @@ class JwtTestActivity : AppCompatActivity() {
     }
 
     companion object {
-        fun createIntent(context: Context): Intent {
+        fun createIntent(context: Context, baseUrl: String): Intent {
             return Intent(context, JwtTestActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
+                putExtra("BASE_URL", baseUrl)
             }
         }
     }

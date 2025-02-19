@@ -32,6 +32,10 @@ import io.qameta.allure.kotlin.AllureId
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
+// In order to run the authentication e2e tests,
+// Make sure you've set up a `STREAM_DEMO_APP_SECRET` env var
+// With a secret from: https://dashboard.getstream.io/app/102399/chat/
+
 class AuthTests : StreamTestCase() {
 
     override fun initTestActivity() = InitTestActivity.Jwt(baseUrl = mockServer.url)

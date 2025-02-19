@@ -31,10 +31,7 @@ sealed class InitTestActivity : Serializable {
     }
 
     data class Jwt(val baseUrl: String) : InitTestActivity() {
-        override fun createIntent(context: Context): Intent {
-            val intent = JwtTestActivity.createIntent(context)
-            intent.putExtra("BASE_URL", baseUrl)
-            return intent
-        }
+        override fun createIntent(context: Context): Intent =
+            JwtTestActivity.createIntent(context, baseUrl)
     }
 }
