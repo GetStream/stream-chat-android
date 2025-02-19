@@ -19,7 +19,6 @@
     <ID>LongMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun ImagePreviewContent( attachment: Attachment, pagerState: PagerState, page: Int, )</ID>
     <ID>LongMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun MediaGalleryItem( index: Int, attachment: Attachment, user: User, pagerState: PagerState, )</ID>
     <ID>LongMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun VideoPreviewContent( attachment: Attachment, pagerState: PagerState, page: Int, onPlaybackError: () -> Unit, )</ID>
-    <ID>LongMethod:MessageOptions.kt$@Composable public fun defaultMessageOptionsState( selectedMessage: Message, currentUser: User?, isInThread: Boolean, ownCapabilities: Set&lt;String>, ): List&lt;MessageOptionItemState></ID>
     <ID>LongMethod:MessageTheme.kt$MessageTheme.Companion$@Composable @Suppress("DEPRECATION_ERROR") private fun defaultTheme( own: Boolean, isInDarkMode: Boolean, typography: StreamTypography, shapes: StreamShapes, colors: StreamColors, ): MessageTheme</ID>
     <ID>LongMethod:PollCreationDiscardDialog.kt$@Composable public fun PollCreationDiscardDialog( usePlatformDefaultWidth: Boolean = false, onCancelClicked: () -> Unit, onDiscardClicked: () -> Unit, )</ID>
     <ID>LongMethod:PollMessageContent.kt$@Composable private fun PollOptionItem( modifier: Modifier = Modifier, poll: Poll, option: Option, voteCount: Int, totalVoteCount: Int, users: List&lt;User>, checkedCount: Int, checked: Boolean, onCastVote: () -> Unit, onRemoveVote: () -> Unit, )</ID>
@@ -73,7 +72,6 @@
     <ID>MaxLineLength:MessageItem.kt$message.isDeleted() &amp;&amp; messageItem.deletedMessageVisibility == DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER</ID>
     <ID>MaxLineLength:MessageOptions.kt$title = if (selectedMessage.pinned) R.string.stream_compose_unpin_message else R.string.stream_compose_pin_message</ID>
     <ID>MaxLineLength:MessagesScreen.kt$*</ID>
-    <ID>MaxLineLength:MessagesScreen.kt$allowUserSuggestedOptions = action.switches.any { it.key == "allowUserSuggestedOptions" &amp;&amp; it.enabled }</ID>
     <ID>MaxLineLength:PollCreationHeader.kt$*</ID>
     <ID>MaxLineLength:PollSwitchItem.kt$PollSwitchInput$*</ID>
     <ID>MaxLineLength:StreamAttachmentFactories.kt$StreamAttachmentFactories$mediaGalleryPreviewLauncher: ManagedActivityResultLauncher&lt;MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?></ID>
