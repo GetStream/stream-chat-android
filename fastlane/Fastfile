@@ -9,7 +9,7 @@ github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-android'
 test_flavor = 'stream-chat-android-compose-sample'
 mock_server_driver_port = 4567
 is_localhost = !is_ci
-@force_check = false
+@force_check = true # FIXME
 
 before_all do |lane|
   if is_ci
