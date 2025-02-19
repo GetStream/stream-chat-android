@@ -17,8 +17,7 @@
 package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
 import androidx.compose.runtime.Stable
-import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionItem
-import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchItem
+import io.getstream.chat.android.models.PollConfig
 
 /**
  * An user action event that occurs inside the attachment picker screen.
@@ -34,10 +33,8 @@ public data object AttachmentPickerBack : AttachmentPickerAction
 
 /**
  * An user action that indicates a poll creation event.
+ *
+ * @param pollConfig The [PollConfig] object holding the data required to create the new poll.
  */
 @Stable
-public data class AttachmentPickerPollCreation(
-    public val question: String,
-    public val options: List<PollOptionItem>,
-    public val switches: List<PollSwitchItem>,
-) : AttachmentPickerAction
+public data class AttachmentPickerPollCreation(public val pollConfig: PollConfig) : AttachmentPickerAction

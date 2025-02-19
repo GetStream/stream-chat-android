@@ -1556,16 +1556,12 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/fac
 
 public final class io/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentPickerPollCreation : io/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentPickerAction {
 	public static final field $stable I
-	public fun <init> (Ljava/lang/String;Ljava/util/List;Ljava/util/List;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/util/List;
-	public final fun component3 ()Ljava/util/List;
-	public final fun copy (Ljava/lang/String;Ljava/util/List;Ljava/util/List;)Lio/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentPickerPollCreation;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentPickerPollCreation;Ljava/lang/String;Ljava/util/List;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentPickerPollCreation;
+	public fun <init> (Lio/getstream/chat/android/models/PollConfig;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/PollConfig;
+	public final fun copy (Lio/getstream/chat/android/models/PollConfig;)Lio/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentPickerPollCreation;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentPickerPollCreation;Lio/getstream/chat/android/models/PollConfig;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentPickerPollCreation;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getOptions ()Ljava/util/List;
-	public final fun getQuestion ()Ljava/lang/String;
-	public final fun getSwitches ()Ljava/util/List;
+	public final fun getPollConfig ()Lio/getstream/chat/android/models/PollConfig;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
