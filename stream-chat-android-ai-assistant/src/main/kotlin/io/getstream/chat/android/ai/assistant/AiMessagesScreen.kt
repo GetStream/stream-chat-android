@@ -230,6 +230,7 @@ public fun AiMessagesScreen(
                 }
             }
 
+            val onReply: (Message) -> Unit = { message -> composerViewModel.performMessageAction(Reply(message)) }
             MessageList(
                 modifier = Modifier
                     .testTag("Stream_MessagesList")
@@ -250,10 +251,12 @@ public fun AiMessagesScreen(
                 },
                 onUserAvatarClick = onUserAvatarClick,
                 onMessageLinkClick = onMessageLinkClick,
+                onReply = onReply,
                 itemContent = { messageListItem ->
                     MessageContainer(
                         messageListItemState = messageListItem,
                         reactionSorting = reactionSorting,
+                        onReply = onReply,
                         messageItemContent = { itemState ->
                             MessageItem(
                                 messageItem = itemState,
@@ -261,6 +264,7 @@ public fun AiMessagesScreen(
                                 messageContentFactory = AiMessageContentFactory(),
                                 onUserAvatarClick = { onUserAvatarClick.invoke(itemState.message.user) },
                                 onLongItemClick = {},
+                                onReply = onReply,
                                 centerContent = { messageItemState ->
                                     AiRegularMessageContent(
                                         messageItem = messageItemState,

@@ -17,12 +17,14 @@
 package io.getstream.chat.android.compose.ui.messages.list
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationConstants
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,6 +33,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -40,20 +43,29 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.core.view.HapticFeedbackConstantsCompat
 import io.getstream.chat.android.client.utils.message.belongsToThread
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
@@ -72,6 +84,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
 import io.getstream.chat.android.compose.ui.util.isUploading
+import io.getstream.chat.android.compose.util.extensions.canReplyToMessage
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
@@ -85,6 +98,8 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import io.getstream.chat.android.ui.common.utils.extensions.initials
+import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 /**
  * The default message container for all messages in the Conversation/Messages screen.
@@ -120,6 +135,7 @@ import io.getstream.chat.android.ui.common.utils.extensions.initials
  * @param footerContent The content shown at the bottom of a message list item.
  * @param trailingContent The content shown at the end of a message list item.
  */
+@Suppress("LongMethod")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun MessageItem(
@@ -142,6 +158,7 @@ public fun MessageItem(
     onUserAvatarClick: (() -> Unit)? = null,
     onLinkClick: ((Message, String) -> Unit)? = null,
     onUserMentionClick: (User) -> Unit = {},
+    onReply: (Message) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     leadingContent: @Composable RowScope.(MessageItemState) -> Unit = {
         with(ChatTheme.componentFactory) {
@@ -214,6 +231,11 @@ public fun MessageItem(
             )
         }
     },
+    swipeToReplyContent: @Composable RowScope.() -> Unit = {
+        with(ChatTheme.componentFactory) {
+            SwipeToReplyContent()
+        }
+    },
 ) {
     val message = messageItem.message
     val focusState = messageItem.focusState
@@ -252,33 +274,41 @@ public fun MessageItem(
 
     val messageAlignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
     val description = stringResource(id = R.string.stream_compose_cd_message_item)
+    val isSwipable = ChatTheme.messageOptionsTheme.optionVisibility
+        .canReplyToMessage(
+            message = message,
+            ownCapabilities = messageItem.ownCapabilities,
+        )
 
-    Box(
-        modifier = Modifier
-            .testTag("Stream_MessageItem")
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .background(color = color)
-            .semantics { contentDescription = description },
-        contentAlignment = messageAlignment.itemAlignment,
+    SwipeToReply(
+        modifier = modifier,
+        onReply = { onReply(message) },
+        isSwipeable = { isSwipable },
+        swipeToReplyContent = swipeToReplyContent,
     ) {
-        Row(
-            modifier
-                .widthIn(max = 300.dp)
-                .then(clickModifier)
-                .testTag("Stream_MessageCell"),
+        Box(
+            modifier = Modifier
+                .testTag("Stream_MessageItem")
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .background(color = color)
+                .semantics { contentDescription = description },
+            contentAlignment = messageAlignment.itemAlignment,
         ) {
-            leadingContent(messageItem)
-
-            Column(horizontalAlignment = messageAlignment.contentAlignment) {
-                headerContent(messageItem)
-
-                centerContent(messageItem)
-
-                footerContent(messageItem)
+            Row(
+                modifier
+                    .widthIn(max = 300.dp)
+                    .then(clickModifier)
+                    .testTag("Stream_MessageCell"),
+            ) {
+                leadingContent(messageItem)
+                Column(horizontalAlignment = messageAlignment.contentAlignment) {
+                    headerContent(messageItem)
+                    centerContent(messageItem)
+                    footerContent(messageItem)
+                }
+                trailingContent(messageItem)
             }
-
-            trailingContent(messageItem)
         }
     }
 }
@@ -780,6 +810,82 @@ internal fun DefaultMessageTextContent(
                 onLinkClick = onLinkClick,
                 onUserMentionClick = onUserMentionClick,
             )
+        }
+    }
+}
+
+/**
+ * Represent a swipe to reply content.
+ *
+ * @param modifier Modifier for styling.
+ * @param onReply Handler when the user swipes to reply.
+ * @param isSwipeable Handler to determine if the message is swipeable.
+ * @param swipeToReplyContent The content to show when swiping to reply.
+ * @param content The swipeable content to show when not swiping to reply.
+ */
+@Composable
+private fun SwipeToReply(
+    modifier: Modifier = Modifier,
+    onReply: () -> Unit = {},
+    isSwipeable: () -> Boolean = { true },
+    swipeToReplyContent: @Composable RowScope.() -> Unit,
+    content: @Composable () -> Unit,
+) {
+    var swipeToReplyWidth by remember { mutableFloatStateOf(0f) }
+    var rowWidth by remember { mutableFloatStateOf(0f) }
+    val offset = remember { Animatable(initialValue = 0f) }
+    val scope = rememberCoroutineScope()
+    val view = LocalView.current
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth(),
+    ) {
+        Row(
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .onSizeChanged { swipeToReplyWidth = it.width.toFloat() }
+                .offset {
+                    val roundToInt = swipeToReplyWidth.roundToInt()
+                    IntOffset(
+                        (offset.value.roundToInt() - roundToInt)
+                            .coerceIn(-roundToInt, roundToInt),
+                        0,
+                    )
+                },
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            swipeToReplyContent()
+        }
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .onSizeChanged { rowWidth = it.width.toFloat() }
+                .offset { IntOffset(offset.value.roundToInt(), 0) }
+                .pointerInput(swipeToReplyWidth) {
+                    if (isSwipeable()) {
+                        detectHorizontalDragGestures(
+                            onHorizontalDrag = { _, dragAmount ->
+                                scope.launch {
+                                    val newOffset = (offset.value + dragAmount)
+                                        .coerceIn(0f, maxOf((rowWidth / 2), swipeToReplyWidth))
+                                    offset.snapTo(newOffset)
+                                }
+                            },
+                            onDragEnd = {
+                                scope.launch {
+                                    if (offset.value >= swipeToReplyWidth) {
+                                        view.performHapticFeedback(HapticFeedbackConstantsCompat.CONFIRM)
+                                        onReply()
+                                    }
+                                    offset.animateTo(0f)
+                                }
+                            },
+                        )
+                    }
+                },
+        ) {
+            content()
         }
     }
 }

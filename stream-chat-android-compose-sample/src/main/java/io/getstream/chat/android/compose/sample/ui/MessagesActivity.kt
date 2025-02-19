@@ -90,10 +90,8 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
-import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
@@ -251,6 +249,9 @@ class MessagesActivity : BaseConnectedActivity() {
                             null -> Unit
                         }
                     },
+                    onReply = { message ->
+                        composerViewModel.performMessageAction(Reply(message))
+                    },
                 )
             }
 
@@ -279,25 +280,7 @@ class MessagesActivity : BaseConnectedActivity() {
                     onTabClick = { _, tab -> isFullScreenContent = tab.isFullContent },
                     onAttachmentPickerAction = { action ->
                         if (action is AttachmentPickerPollCreation) {
-                            composerViewModel.createPoll(
-                                pollConfig = PollConfig(
-                                    name = action.question,
-                                    options = action.options.filter { it.title.isNotEmpty() }.map { it.title },
-                                    description = action.question,
-                                    allowUserSuggestedOptions = action.switches.any { it.key == "allowUserSuggestedOptions" && it.enabled },
-                                    votingVisibility = if (action.switches.any { it.key == "votingVisibility" && it.enabled }) {
-                                        VotingVisibility.ANONYMOUS
-                                    } else {
-                                        VotingVisibility.PUBLIC
-                                    },
-                                    maxVotesAllowed = if (action.switches.any { it.key == "maxVotesAllowed" && it.enabled }) {
-                                        action.switches.first { it.key == "maxVotesAllowed" }.pollSwitchInput?.value.toString()
-                                            .toInt()
-                                    } else {
-                                        1
-                                    },
-                                ),
-                            )
+                            composerViewModel.createPoll(action.pollConfig)
                         }
                     },
                     onDismiss = {
@@ -320,7 +303,6 @@ class MessagesActivity : BaseConnectedActivity() {
                             messageOptions = defaultMessageOptionsState(
                                 selectedMessage = selectedMessage,
                                 currentUser = user,
-                                isInThread = listViewModel.isInThread,
                                 ownCapabilities = selectedMessageState.ownCapabilities,
                             ),
                             message = selectedMessage,

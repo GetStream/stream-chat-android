@@ -509,6 +509,7 @@ public class MessageListController(
                                 members = members,
                                 read = reads,
                             ),
+                            ownCapabilities = channel.ownCapabilities,
                         ),
                         endOfNewMessagesReached = endOfNewerMessages,
                     )
@@ -599,10 +600,9 @@ public class MessageListController(
             val messages = messagesState.messageItems
                 .filterIsInstance<MessageItemState>()
                 .map { it.message }
-
             messages.firstOrNull { it.id == unreadLabel.lastReadMessageId }
                 ?.let { messages.focusUnreadMessage(it.id) }
-                ?: {
+                ?: run {
                     scope.launch {
                         chatClient.loadMessagesAroundId(cid, unreadLabel.lastReadMessageId)
                             .await()
@@ -740,6 +740,7 @@ public class MessageListController(
                 typingUsers,
                 focusedMessage,
                 members,
+                ownCapabilities,
             ) { data ->
                 val messages = data[0] as List<Message>
                 val reads = data[1] as List<ChannelUserRead>
@@ -751,6 +752,7 @@ public class MessageListController(
                 val typingUsers = data[7] as List<User>
                 val focusedMessage = data[8] as Message?
                 val members = data[9] as List<Member>
+                val ownCapabilities = data[10] as Set<String>
 
                 _threadListState.value.copy(
                     isLoading = false,
@@ -772,6 +774,7 @@ public class MessageListController(
                         members = members,
                         endOfOlderMessages = false,
                         channel = null,
+                        ownCapabilities = ownCapabilities,
                     ),
                     parentMessageId = threadId,
                     endOfNewMessagesReached = true,
@@ -811,6 +814,7 @@ public class MessageListController(
      * @param members The list of members in the channel.
      * @param endOfOlderMessages Whether we reached the end of older messages.
      * @param channel The channel we are currently in.
+     * @param ownCapabilities The capabilities the current user has in the channel.
      *
      * @return A list of [MessageListItemState]s, each containing a position.
      */
@@ -829,6 +833,7 @@ public class MessageListController(
         members: List<Member>,
         endOfOlderMessages: Boolean,
         channel: Channel?,
+        ownCapabilities: Set<String>,
     ): List<MessageListItemState> {
         val parentMessageId = (_mode.value as? MessageMode.MessageThread)?.parentMessage?.id
         val currentUser = user.value
@@ -920,6 +925,7 @@ public class MessageListController(
                         showMessageFooter = shouldShowFooter,
                         messageReadBy = messageReadBy,
                         focusState = if (isMessageFocused) MessageFocused else null,
+                        ownCapabilities = ownCapabilities,
                     ),
                 )
             }

@@ -544,6 +544,17 @@ public class MessageListViewModel(
     }
 
     /**
+     * Scrolls to the first unread message in the list.
+     * If there are no unread messages, this method does nothing.
+     *
+     * Important: It is possible that the first unread message is not loaded in the list yet.
+     * In this case, the method will first try to load that message, and then scroll to it.
+     */
+    public fun scrollToFirstUnreadMessage() {
+        messageListController.scrollToFirstUnreadMessage()
+    }
+
+    /**
      * Sets a handler which determines the position of a message inside a group.
      *
      * @param messagePositionHandler The handler to use.
