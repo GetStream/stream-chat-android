@@ -141,7 +141,11 @@ internal fun StreamAsyncImage(
 ) {
     var imageSize by remember { mutableStateOf(Size.ORIGINAL) }
     Box(
-        modifier = modifier.onSizeChanged { size -> imageSize = Size(size.width, size.height) },
+        modifier = modifier.onSizeChanged { size ->
+            if (size.width > 0 && size.height > 0) {
+                imageSize = Size(size.width, size.height)
+            }
+        },
     ) {
         if (imageSize == Size.ORIGINAL) {
             content(AsyncImagePainter.State.Empty)
