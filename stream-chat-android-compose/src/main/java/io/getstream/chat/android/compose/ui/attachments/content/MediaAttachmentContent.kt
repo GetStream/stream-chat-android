@@ -58,8 +58,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
-import coil.compose.AsyncImagePainter
-import coil.request.ImageRequest
+import coil3.compose.AsyncImagePainter
+import coil3.request.ImageRequest
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
@@ -70,7 +70,6 @@ import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPrev
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ImageRequestTimeoutHandler
-import io.getstream.chat.android.compose.ui.util.RetryHash
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
@@ -428,7 +427,7 @@ internal fun MediaAttachmentContentItem(
     val imageRequest = remember(retryHash) {
         ImageRequest.Builder(context)
             .data(data)
-            .setParameter(key = RetryHash, value = retryHash)
+            // .setParameter(key = RetryHash, value = retryHash)
             .build()
     }
 

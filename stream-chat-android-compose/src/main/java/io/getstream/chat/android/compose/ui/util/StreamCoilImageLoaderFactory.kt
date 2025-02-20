@@ -17,8 +17,8 @@
 package io.getstream.chat.android.compose.ui.util
 
 import android.content.Context
-import coil.ImageLoader
-import coil.ImageLoaderFactory
+import coil3.ImageLoader
+import coil3.SingletonImageLoader
 import io.getstream.chat.android.ui.common.images.StreamImageLoaderFactory
 
 /**
@@ -58,7 +58,7 @@ internal object DefaultStreamCoilImageLoaderFactory : StreamCoilImageLoaderFacto
     /**
      * Provides an [ImageLoader] using our custom [ImageLoaderFactory].
      */
-    private var imageLoaderFactory: ImageLoaderFactory? = null
+    private var imageLoaderFactory: SingletonImageLoader.Factory? = null
 
     /**
      * Returns either the currently available [ImageLoader] or builds a new one.
@@ -79,7 +79,7 @@ internal object DefaultStreamCoilImageLoaderFactory : StreamCoilImageLoaderFacto
         imageLoader?.let { return it }
 
         val imageLoaderFactory = imageLoaderFactory ?: newImageLoaderFactory(context)
-        return imageLoaderFactory.newImageLoader().apply {
+        return imageLoaderFactory.newImageLoader(context).apply {
             imageLoader = this
         }
     }
@@ -90,7 +90,7 @@ internal object DefaultStreamCoilImageLoaderFactory : StreamCoilImageLoaderFacto
      * @param context - The context to load the factory with.
      * @return [ImageLoaderFactory] that loads all the images in the app.
      */
-    private fun newImageLoaderFactory(context: Context): ImageLoaderFactory {
+    private fun newImageLoaderFactory(context: Context): SingletonImageLoader.Factory {
         return StreamImageLoaderFactory(context).apply {
             imageLoaderFactory = this
         }

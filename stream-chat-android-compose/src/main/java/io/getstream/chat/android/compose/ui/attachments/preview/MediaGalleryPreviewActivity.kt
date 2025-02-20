@@ -116,8 +116,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import coil.compose.AsyncImagePainter
-import coil.request.ImageRequest
+import coil3.compose.AsyncImagePainter
+import coil3.request.ImageRequest
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
@@ -1613,7 +1613,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             val imageRequest = remember(retryHash) {
                 ImageRequest.Builder(context)
                     .data(data)
-                    .setParameter(RetryHash, retryHash.toString())
+                    // .setParameter(RetryHash, retryHash.toString())
                     .build()
             }
 

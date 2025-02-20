@@ -18,7 +18,7 @@ package io.getstream.chat.android.compose.ui.util
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import coil.compose.AsyncImagePainter
+import coil3.compose.AsyncImagePainter
 import io.getstream.chat.android.models.ConnectionState
 import java.net.SocketTimeoutException
 
