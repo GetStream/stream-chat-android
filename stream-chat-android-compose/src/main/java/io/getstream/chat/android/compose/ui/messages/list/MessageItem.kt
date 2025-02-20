@@ -18,7 +18,6 @@ package io.getstream.chat.android.compose.ui.messages.list
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationConstants
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -253,24 +252,13 @@ public fun MessageItem(
 
     val backgroundColor = when (focusState is MessageFocused || message.isPinned(ChatTheme.timeProvider)) {
         true -> ChatTheme.colors.highlight
-        else -> Color.Transparent
+        else -> ChatTheme.colors.highlight.copy(alpha = 0f) // Ensures a smooth fade-out without unwanted color shifts.
     }
-    val shouldAnimateBackground = !message.pinned && focusState != null
 
-    val color = if (shouldAnimateBackground) {
-        animateColorAsState(
-            targetValue = backgroundColor,
-            animationSpec = tween(
-                durationMillis = if (focusState is MessageFocused) {
-                    AnimationConstants.DefaultDurationMillis
-                } else {
-                    HighlightFadeOutDurationMillis
-                },
-            ),
-        ).value
-    } else {
-        backgroundColor
-    }
+    val color by animateColorAsState(
+        targetValue = backgroundColor,
+        animationSpec = tween(durationMillis = HighlightFadeOutDurationMillis),
+    )
 
     val messageAlignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
     val description = stringResource(id = R.string.stream_compose_cd_message_item)
@@ -893,4 +881,4 @@ private fun SwipeToReply(
 /**
  * Represents the time the highlight fade out transition will take.
  */
-public const val HighlightFadeOutDurationMillis: Int = 1000
+public const val HighlightFadeOutDurationMillis: Int = 2000
