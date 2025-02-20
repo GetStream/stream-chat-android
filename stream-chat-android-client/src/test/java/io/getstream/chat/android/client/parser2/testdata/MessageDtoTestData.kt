@@ -447,7 +447,8 @@ internal object MessageDtoTestData {
           "show_in_channel": false,
           "silent": false,
           "text": "",
-          "thread_participants": []
+          "thread_participants": [],
+          "restricted_visibility": []
         }""".withoutWhitespace()
     val upstreamMessageWithoutExtraData = UpstreamMessageDto(
         id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",

@@ -18,8 +18,8 @@ package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.api2.model.dto.UpstreamChannelDto
 import io.getstream.chat.android.client.parser2.testdata.ChannelDtoTestData
+import io.kotest.assertions.json.shouldEqualJson
 import org.amshove.kluent.invoking
-import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Test
 
@@ -30,13 +30,13 @@ internal class UpstreamChannelDtoAdapterTest {
     @Test
     fun `Serialize JSON channel with custom fields`() {
         val jsonString = parser.toJson(ChannelDtoTestData.upstreamChannel)
-        jsonString shouldBeEqualTo ChannelDtoTestData.upstreamJson
+        jsonString.shouldEqualJson(ChannelDtoTestData.upstreamJson)
     }
 
     @Test
     fun `Serialize JSON channel without custom fields`() {
         val jsonString = parser.toJson(ChannelDtoTestData.upstreamChannelWithoutExtraData)
-        jsonString shouldBeEqualTo ChannelDtoTestData.upstreamJsonWithoutExtraData
+        jsonString.shouldEqualJson(ChannelDtoTestData.upstreamJsonWithoutExtraData)
     }
 
     @Test
