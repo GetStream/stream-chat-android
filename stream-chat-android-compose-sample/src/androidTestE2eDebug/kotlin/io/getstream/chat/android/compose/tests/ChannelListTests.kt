@@ -20,6 +20,7 @@ import io.getstream.chat.android.compose.robots.assertChannelAvatar
 import io.getstream.chat.android.compose.robots.assertMessageDeliveryStatus
 import io.getstream.chat.android.compose.robots.assertMessageInChannelPreview
 import io.getstream.chat.android.compose.robots.assertMessagePreviewTimestamp
+import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.getstream.chat.android.compose.uiautomator.device
 import io.getstream.chat.android.compose.uiautomator.disableInternetConnection
 import io.getstream.chat.android.compose.uiautomator.enableInternetConnection
@@ -31,6 +32,7 @@ import org.junit.Test
 
 class ChannelListTests : StreamTestCase() {
 
+    override fun initTestActivity() = InitTestActivity.UserLogin
     private val sampleText = "Test"
 
     @AllureId("6343")

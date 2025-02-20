@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.tests
 import io.getstream.chat.android.compose.robots.assertLinkPreviewInComposer
 import io.getstream.chat.android.compose.robots.assertLinkPreviewInMessageList
 import io.getstream.chat.android.compose.robots.assertMessage
+import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
 import org.junit.Ignore
@@ -26,6 +27,7 @@ import org.junit.Test
 
 class HyperLinksTests : StreamTestCase() {
 
+    override fun initTestActivity() = InitTestActivity.UserLogin
     private val youtubeVideoLink = "Look at https://youtube.com/watch?v=xOX7MsrbaPY"
     private val unsplashImageLink = "Look at https://unsplash.com/photos/1_2d3MRbI9c"
     private val giphyGifLink = "Look at https://giphy.com/gifs/test-gw3IWyGkC0rsazTi"

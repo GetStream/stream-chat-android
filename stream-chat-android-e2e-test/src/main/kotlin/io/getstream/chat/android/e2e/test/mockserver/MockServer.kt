@@ -27,19 +27,19 @@ import okhttp3.Response
 import okhttp3.ResponseBody
 import org.junit.Assert.fail
 
-public var mockServerUrl: String? = null
-private const val driverUrl: String = "http://10.0.2.2:4567"
-private val okHttp: OkHttpClient = OkHttpClient()
 public const val forbiddenWord: String = "wth"
 
-public class MockServer {
+public class MockServer(testName: String) {
+    public val url: String
+    private val driverUrl: String = "http://10.0.2.2:4567"
+    private val okHttp: OkHttpClient = OkHttpClient()
 
-    public fun start(testName: String) {
+    init {
         val request = Request.Builder().url("$driverUrl/start/$testName").build()
         val response = execute(request)
         val mockServerPort = response.body?.string().toString()
         val driverPort = driverUrl.split(":").last()
-        mockServerUrl = driverUrl.replace(driverPort, mockServerPort)
+        url = driverUrl.replace(driverPort, mockServerPort)
     }
 
     public fun stop() {
@@ -51,7 +51,7 @@ public class MockServer {
         body: RequestBody = "".toRequestBody("text".toMediaTypeOrNull()),
     ): ResponseBody? {
         val request = Request.Builder()
-            .url("$mockServerUrl/$endpoint")
+            .url("$url/$endpoint")
             .post(body)
             .build()
         val response = execute(request)
@@ -60,7 +60,7 @@ public class MockServer {
 
     public fun getRequest(endpoint: String): ResponseBody? {
         val request = Request.Builder()
-            .url("$mockServerUrl/$endpoint")
+            .url("$url/$endpoint")
             .build()
         val response = execute(request)
         return response.body

@@ -35,6 +35,7 @@ import io.getstream.chat.android.compose.robots.assertThreadMessage
 import io.getstream.chat.android.compose.robots.assertThreadReplyLabelOnParentMessage
 import io.getstream.chat.android.compose.robots.assertThreadReplyLabelOnThreadMessage
 import io.getstream.chat.android.compose.robots.assertTypingIndicator
+import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.getstream.chat.android.compose.uiautomator.device
 import io.getstream.chat.android.compose.uiautomator.disableInternetConnection
 import io.getstream.chat.android.compose.uiautomator.enableInternetConnection
@@ -49,6 +50,7 @@ import org.junit.Test
 
 class MessageListTests : StreamTestCase() {
 
+    override fun initTestActivity() = InitTestActivity.UserLogin
     private val sampleText = "Test"
 
     // MARK: Message sending

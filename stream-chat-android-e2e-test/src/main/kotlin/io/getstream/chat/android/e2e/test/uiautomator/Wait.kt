@@ -67,3 +67,12 @@ public fun BySelector.waitForCount(count: Int, timeOutMillis: Long = defaultTime
     }
     return elements
 }
+
+public fun UiObject2.waitForTextToChange(text: String, timeOutMillis: Long = defaultTimeout): UiObject2 {
+    val endTime = System.currentTimeMillis() + timeOutMillis
+    var textChanged = false
+    while (!textChanged && System.currentTimeMillis() < endTime) {
+        textChanged = this.text != text
+    }
+    return this
+}

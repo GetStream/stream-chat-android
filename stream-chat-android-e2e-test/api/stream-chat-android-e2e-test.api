@@ -6,7 +6,6 @@ public final class io/getstream/chat/android/compose/uiautomator/ActionsKt {
 	public static final fun goToForeground (Landroidx/test/uiautomator/UiDevice;)V
 	public static final fun longPress (Landroidx/test/uiautomator/UiObject2;I)V
 	public static synthetic fun longPress$default (Landroidx/test/uiautomator/UiObject2;IILjava/lang/Object;)V
-	public static final fun startApp (Landroidx/test/uiautomator/UiDevice;)V
 	public static final fun stopApp (Landroidx/test/uiautomator/UiDevice;)V
 	public static final fun swipeDown (Landroidx/test/uiautomator/UiDevice;II)V
 	public static synthetic fun swipeDown$default (Landroidx/test/uiautomator/UiDevice;IIILjava/lang/Object;)V
@@ -22,7 +21,6 @@ public final class io/getstream/chat/android/compose/uiautomator/BaseKt {
 	public static final fun getDefaultTimeout ()J
 	public static final fun getDevice ()Landroidx/test/uiautomator/UiDevice;
 	public static final fun getInstrumentation ()Landroid/app/Instrumentation;
-	public static final fun getMockServer ()Lio/getstream/chat/android/e2e/test/mockserver/MockServer;
 	public static final fun getPackageName ()Ljava/lang/String;
 	public static final fun getResources ()Landroid/content/res/Resources;
 	public static final fun getTestAssets ()Landroid/content/res/AssetManager;
@@ -73,6 +71,8 @@ public final class io/getstream/chat/android/compose/uiautomator/WaitKt {
 	public static synthetic fun waitForCount$default (Landroidx/test/uiautomator/BySelector;IJILjava/lang/Object;)Ljava/util/List;
 	public static final fun waitForText (Landroidx/test/uiautomator/UiObject2;Ljava/lang/String;ZJ)Landroidx/test/uiautomator/UiObject2;
 	public static synthetic fun waitForText$default (Landroidx/test/uiautomator/UiObject2;Ljava/lang/String;ZJILjava/lang/Object;)Landroidx/test/uiautomator/UiObject2;
+	public static final fun waitForTextToChange (Landroidx/test/uiautomator/UiObject2;Ljava/lang/String;J)Landroidx/test/uiautomator/UiObject2;
+	public static synthetic fun waitForTextToChange$default (Landroidx/test/uiautomator/UiObject2;Ljava/lang/String;JILjava/lang/Object;)Landroidx/test/uiautomator/UiObject2;
 	public static final fun waitToAppear (Landroidx/test/uiautomator/BySelector;IJ)Landroidx/test/uiautomator/UiObject2;
 	public static final fun waitToAppear (Landroidx/test/uiautomator/BySelector;J)Landroidx/test/uiautomator/UiObject2;
 	public static synthetic fun waitToAppear$default (Landroidx/test/uiautomator/BySelector;IJILjava/lang/Object;)Landroidx/test/uiautomator/UiObject2;
@@ -108,18 +108,16 @@ public final class io/getstream/chat/android/e2e/test/mockserver/MessageDelivery
 }
 
 public final class io/getstream/chat/android/e2e/test/mockserver/MockServer {
-	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
 	public final fun getRequest (Ljava/lang/String;)Lokhttp3/ResponseBody;
+	public final fun getUrl ()Ljava/lang/String;
 	public final fun postRequest (Ljava/lang/String;Lokhttp3/RequestBody;)Lokhttp3/ResponseBody;
 	public static synthetic fun postRequest$default (Lio/getstream/chat/android/e2e/test/mockserver/MockServer;Ljava/lang/String;Lokhttp3/RequestBody;ILjava/lang/Object;)Lokhttp3/ResponseBody;
-	public final fun start (Ljava/lang/String;)V
 	public final fun stop ()V
 }
 
 public final class io/getstream/chat/android/e2e/test/mockserver/MockServerKt {
 	public static final field forbiddenWord Ljava/lang/String;
-	public static final fun getMockServerUrl ()Ljava/lang/String;
-	public static final fun setMockServerUrl (Ljava/lang/String;)V
 }
 
 public final class io/getstream/chat/android/e2e/test/mockserver/ReactionType : java/lang/Enum {
@@ -135,17 +133,27 @@ public final class io/getstream/chat/android/e2e/test/mockserver/ReactionType : 
 }
 
 public final class io/getstream/chat/android/e2e/test/robots/BackendRobot {
-	public fun <init> ()V
+	public fun <init> (Lio/getstream/chat/android/e2e/test/mockserver/MockServer;)V
+	public final fun breakTokenGeneration (I)V
+	public static synthetic fun breakTokenGeneration$default (Lio/getstream/chat/android/e2e/test/robots/BackendRobot;IILjava/lang/Object;)V
 	public final fun failNewMessages ()Lio/getstream/chat/android/e2e/test/robots/BackendRobot;
 	public final fun freezeNewMessages ()Lio/getstream/chat/android/e2e/test/robots/BackendRobot;
 	public final fun generateChannels (IIILjava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/e2e/test/robots/BackendRobot;
 	public static synthetic fun generateChannels$default (Lio/getstream/chat/android/e2e/test/robots/BackendRobot;IIILjava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/BackendRobot;
+	public final fun invalidateToken (I)V
+	public static synthetic fun invalidateToken$default (Lio/getstream/chat/android/e2e/test/robots/BackendRobot;IILjava/lang/Object;)V
+	public final fun invalidateTokenDate (I)V
+	public static synthetic fun invalidateTokenDate$default (Lio/getstream/chat/android/e2e/test/robots/BackendRobot;IILjava/lang/Object;)V
+	public final fun invalidateTokenSignature (I)V
+	public static synthetic fun invalidateTokenSignature$default (Lio/getstream/chat/android/e2e/test/robots/BackendRobot;IILjava/lang/Object;)V
+	public final fun revokeToken (I)V
+	public static synthetic fun revokeToken$default (Lio/getstream/chat/android/e2e/test/robots/BackendRobot;IILjava/lang/Object;)V
 }
 
 public final class io/getstream/chat/android/e2e/test/robots/ParticipantRobot {
 	public static final field Companion Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot$Companion;
 	public static final field name Ljava/lang/String;
-	public fun <init> ()V
+	public fun <init> (Lio/getstream/chat/android/e2e/test/mockserver/MockServer;)V
 	public final fun addReaction (Lio/getstream/chat/android/e2e/test/mockserver/ReactionType;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
 	public final fun deleteMessage (Z)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
 	public static synthetic fun deleteMessage$default (Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;ZILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
