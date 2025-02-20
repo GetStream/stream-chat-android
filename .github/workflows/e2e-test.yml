@@ -76,6 +76,7 @@ jobs:
       - name: Upload test results
         uses: actions/upload-artifact@v4.4.3
         if: failure()
+        timeout-minutes: 10
         with:
-          name: test_report
+          name: logs_${{ env.ANDROID_API_LEVEL }}
           path: fastlane/stream-chat-test-mock-server/logs/*

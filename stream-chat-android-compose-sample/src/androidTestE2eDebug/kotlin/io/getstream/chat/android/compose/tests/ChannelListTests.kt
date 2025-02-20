@@ -24,6 +24,7 @@ import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.getstream.chat.android.compose.uiautomator.device
 import io.getstream.chat.android.compose.uiautomator.disableInternetConnection
 import io.getstream.chat.android.compose.uiautomator.enableInternetConnection
+import io.getstream.chat.android.compose.uiautomator.seconds
 import io.getstream.chat.android.e2e.test.mockserver.MessageDeliveryStatus
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
@@ -84,14 +85,18 @@ class ChannelListTests : StreamTestCase() {
     @AllureId("6679")
     @Test
     fun test_channelPreviewUpdates_whenUserIsOfflineAndParticipantSendsMessage() {
+        val delay = 3
         step("GIVEN user opens a channel list") {
             userRobot.login().waitForChannelListToLoad()
         }
         step("AND user goes offline") {
+            participantRobot.sendMessage(sampleText, delay)
             device.disableInternetConnection()
+            userRobot.sleep((delay + 1).seconds)
         }
         step("WHEN participant sends a message") {
-            participantRobot.sendMessage(sampleText)
+            // this action has been completed above with given delay,
+            // because we can't send requests to the mock server being offline.
         }
         step("AND user goes back online") {
             device.enableInternetConnection()

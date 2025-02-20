@@ -21,6 +21,7 @@ import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.getstream.chat.android.compose.uiautomator.device
 import io.getstream.chat.android.compose.uiautomator.disableInternetConnection
 import io.getstream.chat.android.compose.uiautomator.enableInternetConnection
+import io.getstream.chat.android.compose.uiautomator.seconds
 import io.getstream.chat.android.e2e.test.mockserver.ReactionType
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
@@ -210,7 +211,8 @@ class ReactionsTests : StreamTestCase() {
     @AllureId("5714")
     @Ignore("https://linear.app/stream/issue/AND-247")
     @Test
-    fun s() {
+    fun test_participantAddsReactionWhileUserIsOffline() {
+        val delay = 3
         step("GIVEN user opens the channel") {
             userRobot.login().openChannel()
         }
@@ -218,10 +220,13 @@ class ReactionsTests : StreamTestCase() {
             userRobot.sendMessage(sampleText)
         }
         step("AND user becomes offline") {
+            participantRobot.addReaction(type = ReactionType.LIKE, delay)
             device.disableInternetConnection()
+            userRobot.sleep((delay + 1).seconds)
         }
         step("WHEN participant adds a reaction") {
-            participantRobot.addReaction(type = ReactionType.LIKE)
+            // this action has been completed above with given delay,
+            // because we can't send requests to the mock server being offline.
         }
         step("AND user becomes online") {
             device.enableInternetConnection()
