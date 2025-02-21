@@ -64,6 +64,7 @@
 - Add `MessageListViewModel::scrollToFirstUnreadMessage` method. [#5635](https://github.com/GetStream/stream-chat-android/pull/5635)
 
 ### ⚠️ Changed
+- Upgrade to Coil 3. If you use Coil internally in your app and want to upgrade it, you can follow [their migration guide](https://coil-kt.github.io/coil/upgrading_to_coil3/). [#5645](https://github.com/GetStream/stream-chat-android/pull/5645)
 
 ### ❌ Removed
 
@@ -81,6 +82,7 @@
 
 ### ⚠️ Changed
 - 🚨Breaking change: Change the `AttachmentPickerPollCreation` event to hold a prepared `PollConfig` to simplify the poll creation handling. [#5634](https://github.com/GetStream/stream-chat-android/pull/5634)
+- Upgrade to Coil 3. If you use Coil internally in your app and want to upgrade it, you can follow [their migration guide](https://coil-kt.github.io/coil/upgrading_to_coil3/). [#5645](https://github.com/GetStream/stream-chat-android/pull/5645)
 
 ### ❌ Removed
 
