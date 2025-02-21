@@ -17,8 +17,8 @@
 package io.getstream.chat.android.ui.common.images.internal
 
 import android.content.Context
-import coil.ImageLoader
-import coil.ImageLoaderFactory
+import coil3.ImageLoader
+import coil3.SingletonImageLoader
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.common.images.StreamImageLoaderFactory
 
@@ -26,10 +26,10 @@ import io.getstream.chat.android.ui.common.images.StreamImageLoaderFactory
 public object StreamCoil {
 
     private var imageLoader: ImageLoader? = null
-    private var imageLoaderFactory: ImageLoaderFactory? = null
+    private var imageLoaderFactory: SingletonImageLoader.Factory? = null
 
     @Synchronized
-    public fun setImageLoader(factory: ImageLoaderFactory) {
+    public fun setImageLoader(factory: SingletonImageLoader.Factory) {
         imageLoaderFactory = factory
         imageLoader = null
     }
@@ -40,14 +40,14 @@ public object StreamCoil {
     private fun newImageLoader(context: Context): ImageLoader {
         imageLoader?.let { return it }
 
-        val imageLoaderFactory = imageLoaderFactory ?: newImageLoaderFactory(context)
-        return imageLoaderFactory.newImageLoader().apply {
+        val imageLoaderFactory = imageLoaderFactory ?: newImageLoaderFactory()
+        return imageLoaderFactory.newImageLoader(context).apply {
             imageLoader = this
         }
     }
 
-    private fun newImageLoaderFactory(context: Context): ImageLoaderFactory {
-        return StreamImageLoaderFactory(context).apply {
+    private fun newImageLoaderFactory(): SingletonImageLoader.Factory {
+        return StreamImageLoaderFactory().apply {
             imageLoaderFactory = this
         }
     }

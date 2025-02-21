@@ -21,16 +21,17 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
 import coil.ComponentRegistry
-import coil.ImageLoader
 import coil.decode.DataSource
 import coil.disk.DiskCache
 import coil.memory.MemoryCache
 import coil.request.DefaultRequestOptions
-import coil.request.Disposable
-import coil.request.ErrorResult
-import coil.request.ImageRequest
-import coil.request.ImageResult
-import coil.request.SuccessResult
+import coil3.ImageLoader
+import coil3.request.DefaultRequestOptions
+import coil3.request.Disposable
+import coil3.request.ErrorResult
+import coil3.request.ImageRequest
+import coil3.request.ImageResult
+import coil3.request.SuccessResult
 import io.getstream.chat.android.uitests.R
 import kotlinx.coroutines.CompletableDeferred
 

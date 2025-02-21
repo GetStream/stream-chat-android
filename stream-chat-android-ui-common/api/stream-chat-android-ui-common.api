@@ -5,7 +5,7 @@ public final class io/getstream/chat/android/ui/common/StreamFileProvider : andr
 
 public final class io/getstream/chat/android/ui/common/disposable/CoilDisposable : io/getstream/chat/android/ui/common/disposable/Disposable {
 	public static final field $stable I
-	public fun <init> (Lcoil/request/Disposable;)V
+	public fun <init> (Lcoil3/request/Disposable;)V
 	public fun dispose ()V
 	public fun isDisposed ()Z
 }
@@ -508,11 +508,16 @@ public abstract interface class io/getstream/chat/android/ui/common/helper/Video
 public final class io/getstream/chat/android/ui/common/helper/internal/StorageHelper$Companion {
 }
 
-public final class io/getstream/chat/android/ui/common/images/StreamImageLoaderFactory : coil/ImageLoaderFactory {
+public final class io/getstream/chat/android/ui/common/images/StreamImageLoaderFactory : coil3/SingletonImageLoader$Factory {
 	public static final field $stable I
-	public fun <init> (Landroid/content/Context;Lkotlin/jvm/functions/Function1;)V
-	public synthetic fun <init> (Landroid/content/Context;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun newImageLoader ()Lcoil/ImageLoader;
+	public fun <init> ()V
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun newImageLoader (Landroid/content/Context;)Lcoil3/ImageLoader;
+}
+
+public final class io/getstream/chat/android/ui/common/images/internal/CoilStreamImageLoaderKt {
+	public static final fun toNetworkHeaders (Ljava/util/Map;)Lcoil3/network/NetworkHeaders;
 }
 
 public final class io/getstream/chat/android/ui/common/images/internal/StreamImageLoader$Companion {
