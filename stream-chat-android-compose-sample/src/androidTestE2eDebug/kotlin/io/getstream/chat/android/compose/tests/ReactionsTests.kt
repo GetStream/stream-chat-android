@@ -208,7 +208,7 @@ class ReactionsTests : StreamTestCase() {
         }
     }
 
-    @AllureId("5714")
+    @AllureId("6713")
     @Ignore("https://linear.app/stream/issue/AND-247")
     @Test
     fun test_participantAddsReactionWhileUserIsOffline() {
