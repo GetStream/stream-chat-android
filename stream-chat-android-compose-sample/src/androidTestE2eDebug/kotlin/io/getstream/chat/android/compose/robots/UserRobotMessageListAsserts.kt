@@ -24,10 +24,12 @@ import io.getstream.chat.android.compose.pages.MessageListPage.Composer
 import io.getstream.chat.android.compose.pages.MessageListPage.MessageList.Message
 import io.getstream.chat.android.compose.pages.ThreadPage
 import io.getstream.chat.android.compose.uiautomator.appContext
+import io.getstream.chat.android.compose.uiautomator.device
 import io.getstream.chat.android.compose.uiautomator.findObject
 import io.getstream.chat.android.compose.uiautomator.findObjects
 import io.getstream.chat.android.compose.uiautomator.height
 import io.getstream.chat.android.compose.uiautomator.isDisplayed
+import io.getstream.chat.android.compose.uiautomator.retryOnStaleObjectException
 import io.getstream.chat.android.compose.uiautomator.wait
 import io.getstream.chat.android.compose.uiautomator.waitForCount
 import io.getstream.chat.android.compose.uiautomator.waitForText
@@ -372,7 +374,9 @@ fun UserRobot.assertThreadReplyLabelAvatars(count: Int): UserRobot {
 }
 
 fun UserRobot.assertMessages(text: String, count: Int): UserRobot {
-    val actualCount = Message.text.findObjects().count { it.text == text }
+    val actualCount = device.retryOnStaleObjectException {
+        Message.text.findObjects().count { it.text == text }
+    }
     assertEquals(count, actualCount)
     return this
 }

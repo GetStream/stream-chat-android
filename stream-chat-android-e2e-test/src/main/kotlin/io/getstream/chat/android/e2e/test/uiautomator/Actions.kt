@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.uiautomator
 
+import androidx.test.uiautomator.StaleObjectException
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
 import java.io.ByteArrayOutputStream
@@ -96,4 +97,16 @@ public fun UiDevice.dumpWindowHierarchy() {
     val outputStream = ByteArrayOutputStream()
     device.dumpWindowHierarchy(outputStream)
     println(outputStream.toString("UTF-8"))
+}
+
+public fun <T> UiDevice.retryOnStaleObjectException(retries: Int = 3, action: () -> T): T {
+    repeat(retries - 1) {
+        try {
+            return action()
+        } catch (e: StaleObjectException) {
+            println(e)
+            Thread.sleep(500)
+        }
+    }
+    return action()
 }

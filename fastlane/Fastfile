@@ -114,6 +114,15 @@ lane :run_e2e_test do |options|
   UI.user_error!('Tests have failed!') if result.include?('Failures')
 end
 
+# This lane can be used for local linting
+lane :lint_e2e_test do |options|
+  Dir.chdir('..') do
+    ['spotlessApply', 'detekt'].each do |target|
+      sh("./gradlew :#{target}:#{spotlessApply} :#{target}:#{detekt}")
+    end
+  end
+end
+
 lane :upload_attachments do
   ['png', 'pdf'].each do |ext|
     [1, 2].each { |i| sh("adb push attachments/file.#{ext} /sdcard/Download/file_#{i}.#{ext}") }
