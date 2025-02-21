@@ -53,8 +53,10 @@ import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -238,6 +240,7 @@ public fun MessageItem(
 ) {
     val message = messageItem.message
     val focusState = messageItem.focusState
+    val haptic = LocalHapticFeedback.current
 
     val clickModifier = if (message.isDeleted()) {
         Modifier
@@ -246,7 +249,12 @@ public fun MessageItem(
             interactionSource = remember { MutableInteractionSource() },
             indication = null,
             onClick = { if (message.belongsToThread()) onThreadClick(message) },
-            onLongClick = { if (!message.isUploading()) onLongItemClick(message) },
+            onLongClick = {
+                if (!message.isUploading()) {
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    onLongItemClick(message)
+                }
+            },
         )
     }
 
