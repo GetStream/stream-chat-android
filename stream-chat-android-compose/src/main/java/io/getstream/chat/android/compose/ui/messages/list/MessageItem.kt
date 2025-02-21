@@ -18,11 +18,9 @@ package io.getstream.chat.android.compose.ui.messages.list
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationConstants
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -40,7 +38,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -54,8 +51,10 @@ import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -81,6 +80,7 @@ import io.getstream.chat.android.compose.ui.components.messages.MessageReactions
 import io.getstream.chat.android.compose.ui.components.messages.PollMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
 import io.getstream.chat.android.compose.ui.util.isUploading
@@ -239,6 +239,7 @@ public fun MessageItem(
 ) {
     val message = messageItem.message
     val focusState = messageItem.focusState
+    val haptic = LocalHapticFeedback.current
 
     val clickModifier = if (message.isDeleted()) {
         Modifier
@@ -247,30 +248,24 @@ public fun MessageItem(
             interactionSource = remember { MutableInteractionSource() },
             indication = null,
             onClick = { if (message.belongsToThread()) onThreadClick(message) },
-            onLongClick = { if (!message.isUploading()) onLongItemClick(message) },
+            onLongClick = {
+                if (!message.isUploading()) {
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    onLongItemClick(message)
+                }
+            },
         )
     }
 
     val backgroundColor = when (focusState is MessageFocused || message.isPinned(ChatTheme.timeProvider)) {
         true -> ChatTheme.colors.highlight
-        else -> Color.Transparent
+        else -> ChatTheme.colors.highlight.copy(alpha = 0f) // Ensures a smooth fade-out without unwanted color shifts.
     }
-    val shouldAnimateBackground = !message.pinned && focusState != null
 
-    val color = if (shouldAnimateBackground) {
-        animateColorAsState(
-            targetValue = backgroundColor,
-            animationSpec = tween(
-                durationMillis = if (focusState is MessageFocused) {
-                    AnimationConstants.DefaultDurationMillis
-                } else {
-                    HighlightFadeOutDurationMillis
-                },
-            ),
-        ).value
-    } else {
-        backgroundColor
-    }
+    val color by animateColorAsState(
+        targetValue = backgroundColor,
+        animationSpec = tween(durationMillis = HighlightFadeOutDurationMillis),
+    )
 
     val messageAlignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
     val description = stringResource(id = R.string.stream_compose_cd_message_item)
@@ -419,10 +414,7 @@ internal fun DefaultMessageItemHeaderContent(
             }?.let { options ->
                 MessageReactions(
                     modifier = Modifier
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = ripple(bounded = false),
-                        ) {
+                        .clickable(bounded = false) {
                             onReactionsClick(message)
                         }
                         .padding(horizontal = 4.dp, vertical = 2.dp),
@@ -893,4 +885,4 @@ private fun SwipeToReply(
 /**
  * Represents the time the highlight fade out transition will take.
  */
-public const val HighlightFadeOutDurationMillis: Int = 1000
+public const val HighlightFadeOutDurationMillis: Int = 2000

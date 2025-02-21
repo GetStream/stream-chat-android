@@ -49,7 +49,6 @@ import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateZoom
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -82,7 +81,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -151,6 +149,7 @@ import io.getstream.chat.android.compose.ui.util.ImageRequestTimeoutHandler
 import io.getstream.chat.android.compose.ui.util.RetryHash
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.StreamImage
+import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.isCompleted
 import io.getstream.chat.android.compose.util.attachmentDownloadState
 import io.getstream.chat.android.compose.util.onDownloadHandleRequest
@@ -528,16 +527,9 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             modifier = modifier
                 .size(24.dp)
                 .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = ripple(bounded = false),
-                    onClick = remember(mediaGalleryPreviewViewModel) {
-                        {
-                            mediaGalleryPreviewViewModel.toggleMediaOptions(
-                                isShowingOptions = true,
-                            )
-                        }
-                    },
+                    bounded = false,
                     enabled = message.id.isNotEmpty(),
+                    onClick = { mediaGalleryPreviewViewModel.toggleMediaOptions(isShowingOptions = true) },
                 ),
             painter = painterResource(id = R.drawable.stream_compose_ic_menu_vertical),
             contentDescription = stringResource(R.string.stream_compose_image_options),
@@ -567,7 +559,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 .background(ChatTheme.colors.overlay)
                 .clickable(
                     indication = null,
-                    interactionSource = remember { MutableInteractionSource() },
+                    interactionSource = null,
                     onClick = remember(mediaGalleryPreviewViewModel) {
                         {
                             mediaGalleryPreviewViewModel.toggleMediaOptions(
@@ -633,8 +625,6 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 .background(ChatTheme.colors.barsBackground)
                 .padding(8.dp)
                 .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = ripple(),
                     onClick = remember(mediaGalleryPreviewViewModel) {
                         {
                             mediaGalleryPreviewViewModel.toggleMediaOptions(isShowingOptions = false)
@@ -1487,7 +1477,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 .background(ChatTheme.colors.overlay)
                 .clickable(
                     indication = null,
-                    interactionSource = remember { MutableInteractionSource() },
+                    interactionSource = null,
                     onClick = remember(mediaGalleryPreviewViewModel) {
                         {
                             mediaGalleryPreviewViewModel.toggleGallery(
@@ -1504,7 +1494,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     .align(Alignment.BottomCenter)
                     .clickable(
                         indication = null,
-                        interactionSource = remember { MutableInteractionSource() },
+                        interactionSource = null,
                         onClick = {},
                     ),
                 shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
@@ -1538,8 +1528,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     .align(Alignment.CenterStart)
                     .padding(8.dp)
                     .clickable(
-                        indication = ripple(),
-                        interactionSource = remember { MutableInteractionSource() },
+                        bounded = false,
                         onClick = remember(mediaGalleryPreviewViewModel) {
                             {
                                 mediaGalleryPreviewViewModel.toggleGallery(
@@ -1591,8 +1580,6 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 .fillMaxWidth()
                 .aspectRatio(1f)
                 .clickable(
-                    indication = ripple(),
-                    interactionSource = remember { MutableInteractionSource() },
                     onClick = {
                         coroutineScope.launch {
                             mediaGalleryPreviewViewModel.toggleGallery(isShowingGallery = false)

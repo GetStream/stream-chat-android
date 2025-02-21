@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.compose.ui.components.messages
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,6 +39,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -63,6 +64,7 @@ import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarRow
 import io.getstream.chat.android.compose.ui.components.composer.InputField
 import io.getstream.chat.android.compose.ui.components.poll.AddAnswerDialog
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -401,7 +403,7 @@ private fun PollOptionItem(
         ) {
             if (!poll.closed) {
                 PollItemCheckBox(
-                    enabled = checked,
+                    checked = checked,
                     onCheckChanged = { enabled ->
                         if (enabled && checkedCount < poll.maxVotesAllowed && !checked) {
                             onCastVote.invoke()
@@ -440,6 +442,14 @@ private fun PollOptionItem(
             }
         }
 
+        val progress by animateFloatAsState(
+            targetValue = if (voteCount == 0 || totalVoteCount == 0) {
+                0f
+            } else {
+                voteCount / totalVoteCount.toFloat()
+            },
+        )
+
         LinearProgressIndicator(
             modifier = Modifier
                 .fillMaxWidth()
@@ -452,13 +462,7 @@ private fun PollOptionItem(
                 )
                 .clip(RoundedCornerShape(4.dp))
                 .height(4.dp),
-            progress = {
-                if (voteCount == 0 || totalVoteCount == 0) {
-                    0f
-                } else {
-                    voteCount / totalVoteCount.toFloat()
-                }
-            },
+            progress = { progress },
             color = if (isVotedByMine) {
                 ChatTheme.colors.infoAccent
             } else {
@@ -475,14 +479,18 @@ private fun PollOptionItem(
 @Composable
 internal fun PollItemCheckBox(
     modifier: Modifier = Modifier,
-    enabled: Boolean,
+    checked: Boolean,
     onCheckChanged: (Boolean) -> Unit,
 ) {
     Box(
         modifier = modifier
             .size(18.dp)
+            .clickable(
+                bounded = false,
+                onClick = { onCheckChanged(!checked) },
+            )
             .background(
-                if (enabled) {
+                if (checked) {
                     ChatTheme.colors.primaryAccent
                 } else {
                     ChatTheme.colors.disabled
@@ -491,16 +499,15 @@ internal fun PollItemCheckBox(
             )
             .padding(1.dp)
             .background(
-                if (enabled) {
+                if (checked) {
                     ChatTheme.colors.primaryAccent
                 } else {
                     ChatTheme.colors.inputBackground
                 },
                 CircleShape,
-            )
-            .clickable { onCheckChanged.invoke(!enabled) },
+            ),
     ) {
-        if (enabled) {
+        if (checked) {
             Icon(
                 modifier = Modifier
                     .align(Alignment.Center)
@@ -521,8 +528,9 @@ private fun PollOptionButton(
     Text(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 11.dp)
-            .clickable { onButtonClicked.invoke() },
+            .clip(ButtonDefaults.shape)
+            .clickable(onClick = onButtonClicked)
+            .padding(vertical = 11.dp),
         textAlign = TextAlign.Center,
         text = text,
         color = ChatTheme.colors.primaryAccent,
@@ -578,12 +586,12 @@ private fun PollItemCheckBoxPreview() {
     ChatTheme {
         Row {
             PollItemCheckBox(
-                enabled = false,
+                checked = false,
                 onCheckChanged = {},
             )
 
             PollItemCheckBox(
-                enabled = true,
+                checked = true,
                 onCheckChanged = {},
             )
         }

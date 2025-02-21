@@ -20,6 +20,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import io.getstream.chat.android.client.extensions.isPinned
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
@@ -37,14 +38,17 @@ class CustomChatComponentFactory : ChatComponentFactory {
         onChannelClick: (Channel) -> Unit,
         onChannelLongClick: (Channel) -> Unit,
     ) {
-        // Highlight the item background color if it is pinned
-        val backgroundModifier = if (channelItem.channel.isPinned()) {
-            Modifier.background(color = ChatTheme.colors.highlight)
-        } else {
-            Modifier
-        }
         ChannelItem(
-            modifier = backgroundModifier,
+            modifier = Modifier
+                .animateItem()
+                .composed {
+                    // Highlight the item background color if it is pinned
+                    if (channelItem.channel.isPinned()) {
+                        background(color = ChatTheme.colors.highlight)
+                    } else {
+                        this
+                    }
+                },
             channelItem = channelItem,
             currentUser = currentUser,
             onChannelClick = onChannelClick,

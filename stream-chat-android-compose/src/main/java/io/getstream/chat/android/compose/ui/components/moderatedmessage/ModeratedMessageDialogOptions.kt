@@ -16,17 +16,14 @@
 
 package io.getstream.chat.android.compose.ui.components.moderatedmessage
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageOption
 
@@ -80,10 +77,7 @@ internal fun DefaultModeratedMessageOptionItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = ripple(),
-            ) {
+            .clickable {
                 onDialogOptionInteraction(message, option)
                 onDismissRequest()
             },

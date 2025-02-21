@@ -49,7 +49,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
@@ -202,7 +201,7 @@ public fun MessageComposer(
 ) {
     val messageComposerState by viewModel.messageComposerState.collectAsState()
 
-    MessageComposer(
+    ChatTheme.componentFactory.MessageComposer(
         modifier = modifier.safeDrawingPadding(),
         onSendMessage = { text, attachments ->
             val messageWithData = viewModel.buildNewMessage(text, attachments)
@@ -223,6 +222,12 @@ public fun MessageComposer(
         trailingContent = trailingContent,
         messageComposerState = messageComposerState,
         onCancelAction = onCancelAction,
+        onAttachmentsClick = onAttachmentsClick,
+        onCommandsClick = onCommandsClick,
+        onValueChange = onValueChange,
+        onAttachmentRemoved = onAttachmentRemoved,
+        onLinkPreviewClick = onLinkPreviewClick,
+        label = label,
     )
 }
 
@@ -433,37 +438,52 @@ public fun DefaultMessageComposerHeaderContent(
  * @param messageComposerState The state of the message composer.
  * @param onAlsoSendToChannelSelected Handler when the user checks the also send to channel checkbox.
  */
+@Deprecated(
+    message = "Use ChatComponentFactory.MessageComposerFooterContent to customize the footer content",
+    level = DeprecationLevel.WARNING,
+)
 @Composable
 public fun DefaultMessageComposerFooterContent(
     messageComposerState: MessageComposerState,
     onAlsoSendToChannelSelected: (Boolean) -> Unit,
 ) {
     if (messageComposerState.messageMode is MessageMode.MessageThread) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Checkbox(
-                modifier = Modifier.testTag("Stream_AlsoSendToChannel"),
-                checked = messageComposerState.alsoSendToChannel,
-                onCheckedChange = { onAlsoSendToChannelSelected(it) },
-                colors = CheckboxDefaults.colors(
-                    ChatTheme.colors.primaryAccent,
-                    ChatTheme.colors.textLowEmphasis,
-                ),
-            )
+        DefaultMessageComposerFooterInThreadMode(
+            alsoSendToChannel = messageComposerState.alsoSendToChannel,
+            onAlsoSendToChannelChanged = onAlsoSendToChannelSelected,
+        )
+    }
+}
 
-            Spacer(modifier = Modifier.width(8.dp))
+@Composable
+internal fun DefaultMessageComposerFooterInThreadMode(
+    alsoSendToChannel: Boolean,
+    onAlsoSendToChannelChanged: (Boolean) -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Checkbox(
+            modifier = Modifier.testTag("Stream_AlsoSendToChannel"),
+            checked = alsoSendToChannel,
+            onCheckedChange = onAlsoSendToChannelChanged,
+            colors = CheckboxDefaults.colors(
+                ChatTheme.colors.primaryAccent,
+                ChatTheme.colors.textLowEmphasis,
+            ),
+        )
 
-            Text(
-                text = stringResource(R.string.stream_compose_message_composer_show_in_channel),
-                color = ChatTheme.colors.textLowEmphasis,
-                textAlign = TextAlign.Center,
-                style = ChatTheme.typography.body,
-            )
-        }
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Text(
+            text = stringResource(R.string.stream_compose_message_composer_show_in_channel),
+            color = ChatTheme.colors.textLowEmphasis,
+            textAlign = TextAlign.Center,
+            style = ChatTheme.typography.body,
+        )
     }
 }
 
@@ -561,6 +581,7 @@ internal fun DefaultComposerLabel(ownCapabilities: Set<String>) {
  */
 @Composable
 internal fun RowScope.DefaultComposerInputContent(
+    modifier: Modifier,
     messageComposerState: MessageComposerState,
     onValueChange: (String) -> Unit,
     onAttachmentRemoved: (Attachment) -> Unit,
@@ -569,9 +590,9 @@ internal fun RowScope.DefaultComposerInputContent(
     val isRecording = messageComposerState.recording !is RecordingState.Idle
     MessageInput(
         modifier = if (isRecording) {
-            Modifier.size(0.dp)
+            modifier.size(0.dp)
         } else {
-            Modifier
+            modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp)
                 .weight(1f)
@@ -831,5 +852,3 @@ private fun SnackbarPopup(snackbarHostState: SnackbarHostState) {
  * Used to ensure that container before the composer has the same min height as the container after the composer.
  */
 private val ComposerActionContainerMinHeight = 44.dp
-
-private fun Offset.toRestrictedCoordinates(): Pair<Float, Float> = x.coerceAtMost(0f) to y.coerceAtMost(0f)
