@@ -19,8 +19,6 @@ package io.getstream.chat.android.compose.ui.components.messages
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,7 +37,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -67,6 +64,7 @@ import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarRow
 import io.getstream.chat.android.compose.ui.components.composer.InputField
 import io.getstream.chat.android.compose.ui.components.poll.AddAnswerDialog
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -488,8 +486,7 @@ internal fun PollItemCheckBox(
         modifier = modifier
             .size(18.dp)
             .clickable(
-                indication = ripple(bounded = false),
-                interactionSource = remember { MutableInteractionSource() },
+                bounded = false,
                 onClick = { onCheckChanged(!checked) },
             )
             .background(
@@ -532,11 +529,7 @@ private fun PollOptionButton(
         modifier = Modifier
             .fillMaxWidth()
             .clip(ButtonDefaults.shape)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = ripple(),
-                onClick = onButtonClicked,
-            )
+            .clickable(onClick = onButtonClicked)
             .padding(vertical = 11.dp),
         textAlign = TextAlign.Center,
         text = text,

@@ -17,17 +17,14 @@
 package io.getstream.chat.android.compose.ui.components.avatar
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.clickable
 
 /**
  * Renders an image the [painter] provides. It allows for customization,
@@ -50,8 +47,7 @@ public fun ImageAvatar(
     val clickableModifier: Modifier = if (onClick != null) {
         modifier.clickable(
             onClick = onClick,
-            indication = ripple(bounded = false),
-            interactionSource = remember { MutableInteractionSource() },
+            bounded = false,
         )
     } else {
         modifier

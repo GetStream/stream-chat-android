@@ -18,8 +18,6 @@ package io.getstream.chat.android.compose.ui.components.attachments.images
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -40,9 +38,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,6 +58,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
+import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
@@ -137,11 +134,7 @@ internal fun DefaultImagesPickerItem(
         modifier = Modifier
             .height(125.dp)
             .padding(2.dp)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = ripple(),
-                onClick = { onImageSelected(imageItem) },
-            )
+            .clickable { onImageSelected(imageItem) }
             .testTag("Stream_AttachmentPickerSampleImage"),
     ) {
         CoilImage(
@@ -244,8 +237,6 @@ internal fun DefaultAddMoreItem(onPickMoreClick: () -> Unit) {
                 shape = RoundedCornerShape(8.dp),
             )
             .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = ripple(),
                 onClick = onPickMoreClick,
             )
             .testTag("Stream_AttachmentPickerPickMore"),

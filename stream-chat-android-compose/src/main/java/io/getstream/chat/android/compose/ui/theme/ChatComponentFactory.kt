@@ -18,8 +18,6 @@ package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -34,9 +32,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -164,6 +160,7 @@ import io.getstream.chat.android.compose.ui.threads.ThreadItemTitle
 import io.getstream.chat.android.compose.ui.threads.ThreadItemUnreadCountContent
 import io.getstream.chat.android.compose.ui.threads.UnreadThreadsBanner
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
+import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Command
@@ -2129,11 +2126,9 @@ public interface ChatComponentFactory {
     ) {
         ReactionOptionItem(
             modifier = modifier
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = ripple(bounded = false),
-                    onClick = { onReactionOptionSelected(option) },
-                ),
+                .clickable(bounded = false) {
+                    onReactionOptionSelected(option)
+                },
             option = option,
         )
     }
@@ -2151,11 +2146,9 @@ public interface ChatComponentFactory {
         showMoreReactionsIcon: Int,
     ) {
         Icon(
-            modifier = modifier.clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = ripple(bounded = false),
-                onClick = { onShowMoreReactionsSelected() },
-            ),
+            modifier = modifier.clickable(bounded = false) {
+                onShowMoreReactionsSelected()
+            },
             painter = painterResource(id = showMoreReactionsIcon),
             contentDescription = LocalContext.current.getString(R.string.stream_compose_show_more_reactions),
             tint = ChatTheme.colors.textLowEmphasis,

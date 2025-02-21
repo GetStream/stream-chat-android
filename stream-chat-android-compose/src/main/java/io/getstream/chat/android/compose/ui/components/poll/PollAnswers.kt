@@ -25,8 +25,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -43,7 +41,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -65,6 +62,7 @@ import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.composer.InputField
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.VotingVisibility
@@ -149,11 +147,7 @@ public fun PollAnswersDialog(
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp)
                                 .clip(shape = ButtonDefaults.shape)
-                                .clickable(
-                                    indication = ripple(),
-                                    interactionSource = remember { MutableInteractionSource() },
-                                    onClick = { showAddAnswerDialog.value = true }
-                                )
+                                .clickable { showAddAnswerDialog.value = true }
                                 .background(color = ChatTheme.colors.inputBackground),
                             contentAlignment = Alignment.Center,
                         ) {
