@@ -509,13 +509,18 @@ internal fun MediaAttachmentContentItem(
                     )
 
                     is AsyncImagePainter.State.Success -> {
-                        Image(
+                        Box(
                             modifier = Modifier.fillMaxSize(),
-                            painter = state.painter,
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                        )
-                        overlayContent(attachment.type)
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Image(
+                                modifier = Modifier.fillMaxSize(),
+                                painter = state.painter,
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                            )
+                            overlayContent(attachment.type)
+                        }
                     }
 
                     is AsyncImagePainter.State.Error -> {
