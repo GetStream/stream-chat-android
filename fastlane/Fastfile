@@ -114,6 +114,15 @@ lane :run_e2e_test do |options|
   UI.user_error!('Tests have failed!') if result.include?('Failures')
 end
 
+lane :lint_e2e_test do |options|
+  Dir.chdir('..') do
+    ['spotlessApply', 'apiDump', 'detekt'].each do |task|
+      sh("./gradlew :stream-chat-android-e2e-test:#{task}")
+      sh("./gradlew :stream-chat-android-compose-sample:#{task}") unless task == 'apiDump'
+    end
+  end
+end
+
 lane :upload_attachments do
   ['png', 'pdf'].each do |ext|
     [1, 2].each { |i| sh("adb push attachments/file.#{ext} /sdcard/Download/file_#{i}.#{ext}") }

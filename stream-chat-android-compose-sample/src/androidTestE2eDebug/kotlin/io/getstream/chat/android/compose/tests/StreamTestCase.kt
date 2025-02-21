@@ -79,13 +79,14 @@ abstract class StreamTestCase {
 
     @SuppressLint("InlinedApi")
     private fun grantAppPermissions() {
-        for (permission in arrayOf(
+        val permissions = arrayOf(
             POST_NOTIFICATIONS,
             READ_MEDIA_VIDEO,
             READ_MEDIA_IMAGES,
             READ_EXTERNAL_STORAGE,
-            WRITE_EXTERNAL_STORAGE)
-        ) {
+            WRITE_EXTERNAL_STORAGE,
+        )
+        for (permission in permissions) {
             device.grantPermission(permission)
         }
     }
