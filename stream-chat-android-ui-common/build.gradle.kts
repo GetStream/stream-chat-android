@@ -94,6 +94,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata.ktx)
 
     implementation(libs.coil)
+    implementation(libs.coil.network.okhttp)
     implementation(libs.coil.gif)
     implementation(libs.coil.video)
 

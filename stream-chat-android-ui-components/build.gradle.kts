@@ -94,6 +94,7 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.coil.gif)
     implementation(libs.coil.video)
+    implementation(libs.okhttp)
     implementation(libs.androidx.startup.runtime)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.keyboardvisibilityevent)

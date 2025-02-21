@@ -40,10 +40,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -58,9 +56,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
-import coil.compose.AsyncImagePainter
-import coil.request.ImageRequest
-import io.getstream.chat.android.client.ChatClient
+import coil3.compose.AsyncImagePainter
+import coil3.request.ImageRequest
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
@@ -69,8 +66,6 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.ImageRequestTimeoutHandler
-import io.getstream.chat.android.compose.ui.util.RetryHash
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
@@ -404,13 +399,8 @@ internal fun MediaAttachmentContentItem(
     ) -> Unit,
     overlayContent: @Composable (attachmentType: String?) -> Unit,
 ) {
-    val connectionState by ChatClient.instance().clientState.connectionState.collectAsState()
     val isImage = attachment.isImage()
     val isVideo = attachment.isVideo()
-
-    // Used as a workaround for Coil's lack of a retry policy.
-    // See: https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
-    var retryHash by remember { mutableIntStateOf(0) }
 
     val data =
         if (isImage || (isVideo && ChatTheme.videoThumbnailsEnabled)) {
@@ -425,10 +415,9 @@ internal fun MediaAttachmentContentItem(
         }
 
     val context = LocalContext.current
-    val imageRequest = remember(retryHash) {
+    val imageRequest = remember {
         ImageRequest.Builder(context)
             .data(data)
-            .setParameter(key = RetryHash, value = retryHash)
             .build()
     }
 
@@ -438,15 +427,6 @@ internal fun MediaAttachmentContentItem(
         contract = MediaGalleryPreviewContract(),
         onResult = { result -> onMediaGalleryPreviewResult(result) },
     )
-
-    // Used to refresh the request for the current page if it has previously failed.
-    ImageRequestTimeoutHandler(
-        data = data,
-        connectionState = connectionState,
-        imageState = imageState,
-    ) {
-        retryHash++
-    }
 
     val areVideosEnabled = ChatTheme.videoThumbnailsEnabled
     val streamCdnImageResizing = ChatTheme.streamCdnImageResizing

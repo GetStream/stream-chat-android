@@ -19,9 +19,9 @@ package io.getstream.chat.android.ui.common.disposable
 /**
  * Wrapper around the Coil Disposable.
  *
- * @param disposable [coil.request.Disposable]
+ * @param disposable [coil3.request.Disposable]
  */
-public class CoilDisposable(private val disposable: coil.request.Disposable) : Disposable {
+public class CoilDisposable(private val disposable: coil3.request.Disposable) : Disposable {
 
     override val isDisposed: Boolean
         get() = disposable.isDisposed
