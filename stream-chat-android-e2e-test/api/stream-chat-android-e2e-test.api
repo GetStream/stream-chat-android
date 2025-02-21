@@ -6,6 +6,8 @@ public final class io/getstream/chat/android/compose/uiautomator/ActionsKt {
 	public static final fun goToForeground (Landroidx/test/uiautomator/UiDevice;)V
 	public static final fun longPress (Landroidx/test/uiautomator/UiObject2;I)V
 	public static synthetic fun longPress$default (Landroidx/test/uiautomator/UiObject2;IILjava/lang/Object;)V
+	public static final fun retryOnStaleObjectException (Landroidx/test/uiautomator/UiDevice;ILkotlin/jvm/functions/Function0;)Ljava/lang/Object;
+	public static synthetic fun retryOnStaleObjectException$default (Landroidx/test/uiautomator/UiDevice;ILkotlin/jvm/functions/Function0;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun stopApp (Landroidx/test/uiautomator/UiDevice;)V
 	public static final fun swipeDown (Landroidx/test/uiautomator/UiDevice;II)V
 	public static synthetic fun swipeDown$default (Landroidx/test/uiautomator/UiDevice;IIILjava/lang/Object;)V
@@ -154,7 +156,8 @@ public final class io/getstream/chat/android/e2e/test/robots/ParticipantRobot {
 	public static final field Companion Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot$Companion;
 	public static final field name Ljava/lang/String;
 	public fun <init> (Lio/getstream/chat/android/e2e/test/mockserver/MockServer;)V
-	public final fun addReaction (Lio/getstream/chat/android/e2e/test/mockserver/ReactionType;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
+	public final fun addReaction (Lio/getstream/chat/android/e2e/test/mockserver/ReactionType;I)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
+	public static synthetic fun addReaction$default (Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;Lio/getstream/chat/android/e2e/test/mockserver/ReactionType;IILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
 	public final fun deleteMessage (Z)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
 	public static synthetic fun deleteMessage$default (Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;ZILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
 	public final fun deleteReaction (Lio/getstream/chat/android/e2e/test/mockserver/ReactionType;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
@@ -174,7 +177,8 @@ public final class io/getstream/chat/android/e2e/test/robots/ParticipantRobot {
 	public static synthetic fun quoteMessageWithGiphyInThread$default (Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;ZZILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
 	public final fun readMessage (Ljava/lang/String;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
 	public static synthetic fun readMessage$default (Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
-	public final fun sendMessage (Ljava/lang/String;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
+	public final fun sendMessage (Ljava/lang/String;I)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
+	public static synthetic fun sendMessage$default (Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;Ljava/lang/String;IILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
 	public final fun sendMessageInThread (Ljava/lang/String;Z)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
 	public static synthetic fun sendMessageInThread$default (Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;
 	public final fun sleep (J)Lio/getstream/chat/android/e2e/test/robots/ParticipantRobot;

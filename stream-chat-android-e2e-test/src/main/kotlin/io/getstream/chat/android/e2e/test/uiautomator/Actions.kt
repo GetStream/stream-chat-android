@@ -104,6 +104,7 @@ public fun <T> UiDevice.retryOnStaleObjectException(retries: Int = 3, action: ()
         try {
             return action()
         } catch (e: StaleObjectException) {
+            println(e)
             Thread.sleep(500)
         }
     }
