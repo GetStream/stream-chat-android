@@ -188,6 +188,7 @@ public fun randomMessage(
     pinExpires: Date? = randomDate(),
     pinnedBy: User? = randomUser(),
     threadParticipants: List<User> = emptyList(),
+    restrictedVisibility: List<String> = emptyList(),
 ): Message = Message(
     id = id,
     cid = cid,
@@ -226,6 +227,7 @@ public fun randomMessage(
     pinnedBy = pinnedBy,
     threadParticipants = threadParticipants,
     messageTextUpdatedAt = messageTextUpdatedAt,
+    restrictedVisibility = restrictedVisibility,
 )
 
 public fun randomChannelMute(

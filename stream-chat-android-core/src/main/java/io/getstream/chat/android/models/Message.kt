@@ -248,6 +248,11 @@ public data class Message(
      * Contains poll configuration
      */
     val poll: Poll? = null,
+
+    /**
+     * List of user ids that are allowed to see the message
+     */
+    val restrictedVisibility: List<String> = emptyList(),
 ) : CustomObject, ComparableFieldProvider {
     public companion object {
         /**
@@ -419,6 +424,7 @@ public data class Message(
         private var moderation: Moderation? = null
         private var messageTextUpdatedAt: Date? = null
         private var poll: Poll? = null
+        private var restrictedVisibility: List<String> = emptyList()
 
         public constructor(message: Message) : this() {
             id = message.id
@@ -464,6 +470,7 @@ public data class Message(
             moderation = message.moderation
             messageTextUpdatedAt = message.messageTextUpdatedAt
             poll = message.poll
+            restrictedVisibility = message.restrictedVisibility
         }
 
         public fun withId(id: String): Builder = apply { this.id = id }
@@ -537,6 +544,9 @@ public data class Message(
         }
 
         public fun withPoll(poll: Poll?): Builder = apply { this.poll = poll }
+        public fun withRestrictedVisibility(restrictedVisibility: List<String>): Builder = apply {
+            this.restrictedVisibility = restrictedVisibility
+        }
 
         public fun build(): Message {
             return Message(
@@ -582,6 +592,7 @@ public data class Message(
                 moderationDetails = moderationDetails,
                 moderation = moderation,
                 messageTextUpdatedAt = messageTextUpdatedAt,
+                restrictedVisibility = restrictedVisibility,
                 poll = poll,
             )
         }

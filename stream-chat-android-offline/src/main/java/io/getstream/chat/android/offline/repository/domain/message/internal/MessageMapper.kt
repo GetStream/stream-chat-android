@@ -80,6 +80,7 @@ internal suspend fun MessageEntity.toModel(
         moderationDetails = moderationDetails?.toModel(),
         moderation = moderation?.toDomain(),
         messageTextUpdatedAt = messageTextUpdatedAt,
+        restrictedVisibility = restrictedVisibility,
         poll = pollId?.let { getPoll(it) },
     )
 }
@@ -172,6 +173,7 @@ internal suspend fun ReplyMessageEntity.toModel(
             moderationDetails = moderationDetails?.toModel(),
             messageTextUpdatedAt = messageTextUpdatedAt,
             poll = pollId?.let { getPoll(it) },
+            restrictedVisibility = restrictedVisibility,
         )
     }
 }

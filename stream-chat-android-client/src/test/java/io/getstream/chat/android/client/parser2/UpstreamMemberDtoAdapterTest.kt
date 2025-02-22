@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.parser2.testdata.MemberDtoTestData
-import org.amshove.kluent.shouldBeEqualTo
+import io.kotest.assertions.json.shouldEqualJson
 import org.junit.jupiter.api.Test
 
 internal class UpstreamMemberDtoAdapterTest {
@@ -27,12 +27,12 @@ internal class UpstreamMemberDtoAdapterTest {
     @Test
     fun `Serialize JSON member with custom data`() {
         val json = parser.toJson(MemberDtoTestData.upstreamMemberWithExtraData)
-        json shouldBeEqualTo MemberDtoTestData.upstreamJsonWithExtraData
+        json.shouldEqualJson(MemberDtoTestData.upstreamJsonWithExtraData)
     }
 
     @Test
     fun `Serialize JSON member without custom data`() {
         val json = parser.toJson(MemberDtoTestData.upstreamMemberWithoutExtraData)
-        json shouldBeEqualTo MemberDtoTestData.upstreamJsonWithoutExtraData
+        json.shouldEqualJson(MemberDtoTestData.upstreamJsonWithoutExtraData)
     }
 }

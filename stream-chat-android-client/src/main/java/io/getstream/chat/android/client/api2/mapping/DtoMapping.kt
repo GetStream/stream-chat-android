@@ -131,6 +131,7 @@ internal class DtoMapping(
                     silent = silent,
                     text = text,
                     thread_participants = threadParticipants.map { it.toDto() },
+                    restricted_visibility = restrictedVisibility,
                     extraData = extraData,
                 )
             }

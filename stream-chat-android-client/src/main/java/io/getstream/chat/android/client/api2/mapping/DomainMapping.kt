@@ -200,6 +200,7 @@ internal class DomainMapping(
             moderation = moderation?.toDomain(),
             messageTextUpdatedAt = message_text_updated_at,
             poll = poll?.toDomain(),
+            restrictedVisibility = emptyList(),
             extraData = extraData.toMutableMap(),
         ).let(messageTransformer::transform)
 

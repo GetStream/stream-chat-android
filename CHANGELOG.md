@@ -14,6 +14,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Add sending messages to only specific members. The `Message` entity contains a new property `restrictedVisibility` where a list of IDs for the desired members can be set.[#5644](https://github.com/GetStream/stream-chat-android/pull/5644)
 
 ### ✅ Added
 
