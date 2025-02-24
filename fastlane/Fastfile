@@ -117,8 +117,8 @@ end
 # This lane can be used for local linting
 lane :lint_e2e_test do |options|
   Dir.chdir('..') do
-    ['spotlessApply', 'detekt'].each do |target|
-      sh("./gradlew :#{target}:#{spotlessApply} :#{target}:#{detekt}")
+    ['stream-chat-android-e2e-test', 'stream-chat-android-compose-sample'].each do |target|
+      sh("./gradlew :#{target}:spotlessApply :#{target}:detekt")
     end
   end
 end

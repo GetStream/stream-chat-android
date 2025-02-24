@@ -77,25 +77,25 @@ fun UserRobot.assertMessageDeliveryStatus(status: MessageDeliveryStatus, count: 
         MessageDeliveryStatus.READ -> {
             assertTrue(Message.deliveryStatusIsRead.wait().isDisplayed())
             if (count != null) {
-                assertEquals(count, Message.deliveryStatusIsRead.findObjects().size)
+                assertEquals(count, Message.deliveryStatusIsRead.waitForCount(count).size)
             }
         }
         MessageDeliveryStatus.PENDING -> {
             assertTrue(Message.deliveryStatusIsPending.wait().isDisplayed())
             if (count != null) {
-                assertEquals(count, Message.deliveryStatusIsPending.findObjects().size)
+                assertEquals(count, Message.deliveryStatusIsPending.waitForCount(count).size)
             }
         }
         MessageDeliveryStatus.SENT -> {
             assertTrue(Message.deliveryStatusIsSent.wait().isDisplayed())
             if (count != null) {
-                assertEquals(count, Message.deliveryStatusIsSent.findObjects().size)
+                assertEquals(count, Message.deliveryStatusIsSent.waitForCount(count).size)
             }
         }
         MessageDeliveryStatus.FAILED -> {
             assertTrue(Message.deliveryStatusIsFailed.wait().isDisplayed())
             if (count != null) {
-                assertEquals(count, Message.deliveryStatusIsFailed.findObjects().size)
+                assertEquals(count, Message.deliveryStatusIsFailed.waitForCount(count).size)
             }
         }
         MessageDeliveryStatus.NIL -> {
