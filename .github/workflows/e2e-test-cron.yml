@@ -83,3 +83,12 @@ jobs:
         with:
           name: logs_${{ env.ANDROID_API_LEVEL }}
           path: fastlane/stream-chat-test-mock-server/logs/*
+      - uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          text: "You shall not pass!"
+          job_name: "${{ github.workflow }}: ${{ github.job }}"
+          fields: message,commit,author,workflow
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_NIGHTLY_CHECKS }}
+        if: failure() && github.event_name == 'schedule'
