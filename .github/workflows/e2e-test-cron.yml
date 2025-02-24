@@ -83,3 +83,18 @@ jobs:
         with:
           name: logs_${{ env.ANDROID_API_LEVEL }}
           path: fastlane/stream-chat-test-mock-server/logs/*
+
+  slack:
+    name: Slack Report
+    runs-on: ubuntu-latest
+    needs: [build-compose-apks, run-compose-tests-nightly]
+    if: failure() && github.event_name == 'schedule'
+    steps:
+      - uses: 8398a7/action-slack@v3
+        with:
+          status: cancelled
+          text: "You shall not pass!"
+          job_name: "${{ github.workflow }}: ${{ github.job }}"
+          fields: repo,commit,author,workflow
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_NIGHTLY_CHECKS }}
