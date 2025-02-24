@@ -257,8 +257,6 @@ internal constructor(
     private val repositoryFactoryProvider: RepositoryFactory.Provider,
     @InternalStreamChatApi
     public val audioPlayer: AudioPlayer,
-    public val appName: String,
-    public val appVersion: String,
 ) {
     private val logger by taggedLogger(TAG)
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
@@ -3899,6 +3897,8 @@ internal constructor(
                     customOkHttpClient = customOkHttpClient,
                     clientDebugger = clientDebugger,
                     lifecycle = lifecycle,
+                    appName = this.appName,
+                    appVersion = this.appVersion,
                 )
 
             val appSettingsManager = AppSettingManager(module.api())
@@ -3939,8 +3939,6 @@ internal constructor(
                 mutableClientState = MutableClientState(module.networkStateProvider),
                 currentUserFetcher = module.currentUserFetcher,
                 audioPlayer = audioPlayer,
-                appName = appName ?: appContext.packageName.toString(),
-                appVersion = appVersion ?: getAppVersion(appContext),
             ).apply {
                 attachmentsSender = AttachmentsSender(
                     context = appContext,

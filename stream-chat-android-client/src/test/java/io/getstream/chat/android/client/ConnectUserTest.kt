@@ -124,8 +124,6 @@ internal class ConnectUserTest {
             mutableClientState = mutableClientState,
             currentUserFetcher = mock(),
             audioPlayer = mock(),
-            appName = mock(),
-            appVersion = mock(),
         ).apply {
             attachmentsSender = mock()
         }

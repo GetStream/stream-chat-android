@@ -43,7 +43,7 @@ internal class SocketFactoryTest {
     private val httpClient: OkHttpClient = mock<OkHttpClient>().apply {
         whenever(this.newWebSocket(any(), any())) doReturn mock()
     }
-    private val socketFactory = SocketFactory(chatParser, FakeTokenManager(token, loadSyncToken), httpClient) { "" }
+    private val socketFactory = SocketFactory(chatParser, FakeTokenManager(token, loadSyncToken), httpClient) { X_STREAM_CLIENT }
 
     /** [arguments] */
     @ParameterizedTest
@@ -65,6 +65,7 @@ internal class SocketFactoryTest {
         private val apiKey = randomString()
         private val token = randomString()
         private val loadSyncToken = randomString()
+        private val X_STREAM_CLIENT = randomString()
 
         @JvmStatic
         @Suppress("MaxLineLength")
@@ -119,7 +120,7 @@ internal class SocketFactoryTest {
                 "user_details" to userDetails,
                 "user_id" to userId,
                 "server_determines_connection_id" to true,
-                "X-Stream-Client" to "",
+                "X-Stream-Client" to X_STREAM_CLIENT,
             )
 
         private fun encode(map: Map<String, Any>): String =

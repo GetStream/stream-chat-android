@@ -45,6 +45,8 @@ internal class ChatModule(
     customOkHttpClient: OkHttpClient?,
     clientDebugger: ChatClientDebugger?,
     lifecycle: Lifecycle,
+    appName: String?,
+    appVersion: String?,
 ) : BaseChatModule(
     appContext,
     clientScope,
@@ -58,4 +60,6 @@ internal class ChatModule(
     customOkHttpClient,
     clientDebugger,
     lifecycle,
+    appName,
+    appVersion
 )

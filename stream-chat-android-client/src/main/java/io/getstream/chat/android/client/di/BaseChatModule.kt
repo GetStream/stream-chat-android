@@ -23,7 +23,6 @@ import androidx.lifecycle.Lifecycle
 import com.moczul.ok2curl.CurlInterceptor
 import com.moczul.ok2curl.logger.Logger
 import io.getstream.chat.android.client.BuildConfig
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.ChatClient.Companion.OFFLINE_SUPPORT_ENABLED
 import io.getstream.chat.android.client.ChatClient.Companion.VERSION_PREFIX_HEADER
 import io.getstream.chat.android.client.StreamLifecycleObserver
@@ -83,6 +82,7 @@ import io.getstream.chat.android.client.uploader.FileTransformer
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamFileUploader
 import io.getstream.chat.android.client.user.CurrentUserFetcher
+import io.getstream.chat.android.client.utils.AppInfoUtil
 import io.getstream.chat.android.models.UserId
 import io.getstream.log.StreamLog
 import okhttp3.OkHttpClient
@@ -105,8 +105,12 @@ constructor(
     private val customOkHttpClient: OkHttpClient? = null,
     private val clientDebugger: ChatClientDebugger? = null,
     private val lifecycle: Lifecycle,
+    private val appName: String?,
+    private val appVersion: String?,
     private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it },
 ) {
+
+    private val appInfoUtil = AppInfoUtil(appContext)
 
     private val domainMapping by lazy {
         DomainMapping(
@@ -214,7 +218,7 @@ constructor(
             // timeouts
             // interceptors
             .addInterceptor(ApiKeyInterceptor(config.apiKey))
-            .addInterceptor(HeadersInterceptor(context = appContext, getAnonymousProvider(config, isAnonymousApi), buildSdkTrackingHeaders()))
+            .addInterceptor(HeadersInterceptor(context = appContext, getAnonymousProvider(config, isAnonymousApi), appInfoUtil, buildSdkTrackingHeaders()))
             .apply {
                 if (config.debugRequests) {
                     addInterceptor(ApiRequestAnalyserInterceptor(ApiRequestsAnalyser.get()))
@@ -352,8 +356,8 @@ constructor(
             val deviceManufacturer = Build.MANUFACTURER
             val apiLevel = Build.VERSION.SDK_INT
             val osName = "Android ${Build.VERSION.RELEASE}"
-            val appName = ChatClient.instance().appName
-            val appVersion = ChatClient.instance().appVersion
+            val appName = appName ?: appInfoUtil.getAppName()
+            val appVersion = appVersion ?: appInfoUtil.getAppVersionName()
 
             buildString {
                 append(clientInformation)
