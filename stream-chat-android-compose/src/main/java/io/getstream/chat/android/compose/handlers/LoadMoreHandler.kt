@@ -48,6 +48,6 @@ public fun LoadMoreHandler(
     }
 
     LaunchedEffect(shouldLoadMore) {
-        loadMore()
+        if (shouldLoadMore) { loadMore() }
     }
 }
