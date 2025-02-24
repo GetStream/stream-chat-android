@@ -152,6 +152,8 @@ internal class ChatClientTest {
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             currentUserFetcher = mock(),
             audioPlayer = mock(),
+            appName = mock(),
+            appVersion = mock(),
         ).apply {
             attachmentsSender = mock()
             connectUser(user, token).enqueue()

@@ -18,9 +18,14 @@ package io.getstream.chat.android.client.di
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.os.Build
 import androidx.lifecycle.Lifecycle
 import com.moczul.ok2curl.CurlInterceptor
 import com.moczul.ok2curl.logger.Logger
+import io.getstream.chat.android.client.BuildConfig
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.ChatClient.Companion.OFFLINE_SUPPORT_ENABLED
+import io.getstream.chat.android.client.ChatClient.Companion.VERSION_PREFIX_HEADER
 import io.getstream.chat.android.client.StreamLifecycleObserver
 import io.getstream.chat.android.client.api.AnonymousApi
 import io.getstream.chat.android.client.api.AuthenticatedApi
@@ -125,7 +130,7 @@ constructor(
             dtoMapping = dtoMapping,
         )
     }
-    private val socketFactory: SocketFactory by lazy { SocketFactory(moshiParser, tokenManager) }
+    private val socketFactory: SocketFactory by lazy { SocketFactory(moshiParser, tokenManager, sdkTrackingHeaders = buildSdkTrackingHeaders()) }
 
     private val defaultNotifications by lazy { buildNotification(notificationsHandler, config.notificationConfig) }
     private val defaultApi by lazy { buildApi(config) }
@@ -209,7 +214,7 @@ constructor(
             // timeouts
             // interceptors
             .addInterceptor(ApiKeyInterceptor(config.apiKey))
-            .addInterceptor(HeadersInterceptor(context = appContext, getAnonymousProvider(config, isAnonymousApi)))
+            .addInterceptor(HeadersInterceptor(context = appContext, getAnonymousProvider(config, isAnonymousApi), buildSdkTrackingHeaders()))
             .apply {
                 if (config.debugRequests) {
                     addInterceptor(ApiRequestAnalyserInterceptor(ApiRequestsAnalyser.get()))
@@ -332,5 +337,33 @@ constructor(
     private companion object {
         private const val BASE_TIMEOUT = 30_000L
         private var CDN_TIMEOUT = 30_000L
+    }
+
+    /**
+     * Builds a detailed header of information we track around the SDK, Android OS, API Level, device name and
+     * vendor and more.
+     *
+     * @return String formatted header that contains all the information.
+     */
+    internal fun buildSdkTrackingHeaders(): () -> String {
+        return {
+            val clientInformation = VERSION_PREFIX_HEADER.prefix + BuildConfig.STREAM_CHAT_VERSION
+            val buildModel = Build.MODEL
+            val deviceManufacturer = Build.MANUFACTURER
+            val apiLevel = Build.VERSION.SDK_INT
+            val osName = "Android ${Build.VERSION.RELEASE}"
+            val appName = ChatClient.instance().appName
+            val appVersion = ChatClient.instance().appVersion
+
+            buildString {
+                append(clientInformation)
+                append("|os=$osName")
+                append("|api_version=$apiLevel")
+                append("|device_model=$deviceManufacturer $buildModel")
+                append("|offline_enabled=$OFFLINE_SUPPORT_ENABLED")
+                append("|app=$appName")
+                append("|app_version=$appVersion")
+            }
+        }
     }
 }

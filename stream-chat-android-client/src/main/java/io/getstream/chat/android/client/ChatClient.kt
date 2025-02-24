@@ -3940,7 +3940,7 @@ internal constructor(
                 currentUserFetcher = module.currentUserFetcher,
                 audioPlayer = audioPlayer,
                 appName = appName ?: appContext.packageName.toString(),
-                appVersion = appVersion ?: getAppVersion(appContext)
+                appVersion = appVersion ?: getAppVersion(appContext),
             ).apply {
                 attachmentsSender = AttachmentsSender(
                     context = appContext,
@@ -4112,32 +4112,6 @@ internal constructor(
         private fun ensureClientInitialized(): ChatClient {
             check(isInitialized) { "ChatClient should be initialized first!" }
             return instance()
-        }
-
-        /**
-         * Builds a detailed header of information we track around the SDK, Android OS, API Level, device name and
-         * vendor and more.
-         *
-         * @return String formatted header that contains all the information.
-         */
-        internal fun buildSdkTrackingHeaders(): String {
-            val clientInformation = VERSION_PREFIX_HEADER.prefix + BuildConfig.STREAM_CHAT_VERSION
-            val buildModel = Build.MODEL
-            val deviceManufacturer = Build.MANUFACTURER
-            val apiLevel = Build.VERSION.SDK_INT
-            val osName = "Android ${Build.VERSION.RELEASE}"
-            val appName = ensureClientInitialized().appName
-            val appVersion = ensureClientInitialized().appVersion
-
-            return buildString {
-                append(clientInformation)
-                append("|os=$osName")
-                append("|api_version=$apiLevel")
-                append("|device_model=$deviceManufacturer $buildModel")
-                append("|offline_enabled=$OFFLINE_SUPPORT_ENABLED")
-                append("|app=$appName")
-                append("|app_version=$appVersion")
-            }
         }
     }
 }

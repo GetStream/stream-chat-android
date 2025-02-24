@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.api.interceptor
 
 import android.content.Context
 import android.os.Build
-import io.getstream.chat.android.client.ChatClient
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.text.Normalizer
@@ -26,6 +25,7 @@ import java.text.Normalizer
 internal class HeadersInterceptor(
     context: Context,
     private val isAnonymous: () -> Boolean,
+    private val sdkTrackingHeaders: () -> String,
 ) : Interceptor {
 
     private val userAgent by lazy { buildUserAgent(context) }
@@ -37,7 +37,7 @@ internal class HeadersInterceptor(
             .addHeader("User-Agent", userAgent)
             .addHeader("Content-Type", "application/json")
             .addHeader("stream-auth-type", authType)
-            .addHeader("X-Stream-Client", ChatClient.buildSdkTrackingHeaders())
+            .addHeader("X-Stream-Client", sdkTrackingHeaders())
             .addHeader("Cache-Control", "no-cache")
             .build()
         return chain.proceed(request)

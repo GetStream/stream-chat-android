@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client.socket
 
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.ParserFactory
 import io.getstream.chat.android.client.token.FakeTokenManager
@@ -44,7 +43,7 @@ internal class SocketFactoryTest {
     private val httpClient: OkHttpClient = mock<OkHttpClient>().apply {
         whenever(this.newWebSocket(any(), any())) doReturn mock()
     }
-    private val socketFactory = SocketFactory(chatParser, FakeTokenManager(token, loadSyncToken), httpClient)
+    private val socketFactory = SocketFactory(chatParser, FakeTokenManager(token, loadSyncToken), httpClient) { "" }
 
     /** [arguments] */
     @ParameterizedTest
@@ -120,7 +119,7 @@ internal class SocketFactoryTest {
                 "user_details" to userDetails,
                 "user_id" to userId,
                 "server_determines_connection_id" to true,
-                "X-Stream-Client" to ChatClient.buildSdkTrackingHeaders(),
+                "X-Stream-Client" to "",
             )
 
         private fun encode(map: Map<String, Any>): String =

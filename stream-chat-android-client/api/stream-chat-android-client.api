@@ -60,7 +60,9 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun fetchCurrentUser ()Lio/getstream/result/call/Call;
 	public final fun flagMessage (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)Lio/getstream/result/call/Call;
 	public final fun flagUser (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)Lio/getstream/result/call/Call;
+	public final fun getAppName ()Ljava/lang/String;
 	public final fun getAppSettings ()Lio/getstream/chat/android/models/AppSettings;
+	public final fun getAppVersion ()Ljava/lang/String;
 	public final fun getChannel (Ljava/lang/String;IIZ)Lio/getstream/result/call/Call;
 	public final fun getChannel (Ljava/lang/String;Ljava/lang/String;IIZ)Lio/getstream/result/call/Call;
 	public static synthetic fun getChannel$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;IIZILjava/lang/Object;)Lio/getstream/result/call/Call;
@@ -217,6 +219,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 
 public final class io/getstream/chat/android/client/ChatClient$Builder : io/getstream/chat/android/client/ChatClient$ChatClientBuilder {
 	public fun <init> (Ljava/lang/String;Landroid/content/Context;)V
+	public final fun appName (Ljava/lang/String;)Lio/getstream/chat/android/client/ChatClient$Builder;
+	public final fun appVersion (Ljava/lang/String;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun baseUrl (Ljava/lang/String;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public fun build ()Lio/getstream/chat/android/client/ChatClient;
 	public final fun cdnUrl (Ljava/lang/String;)Lio/getstream/chat/android/client/ChatClient$Builder;

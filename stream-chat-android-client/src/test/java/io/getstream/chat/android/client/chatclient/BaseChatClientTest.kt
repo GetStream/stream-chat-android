@@ -124,6 +124,8 @@ internal open class BaseChatClientTest {
             mutableClientState = mutableClientState,
             currentUserFetcher = currentUserFetcher,
             audioPlayer = mock(),
+            appName = mock(),
+            appVersion = mock(),
         )
 
         Mockito.reset(

@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.PrivacySettings
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.models.User
@@ -32,6 +31,7 @@ internal class SocketFactory(
     private val parser: ChatParser,
     private val tokenManager: TokenManager,
     private val httpClient: OkHttpClient = OkHttpClient(),
+    private val sdkTrackingHeaders: () -> String,
 ) {
     private val logger by taggedLogger("Chat:SocketFactory")
 
@@ -74,7 +74,7 @@ internal class SocketFactory(
             "user_details" to connectionConf.reduceUserDetails(),
             "user_id" to connectionConf.id,
             "server_determines_connection_id" to true,
-            "X-Stream-Client" to ChatClient.buildSdkTrackingHeaders(),
+            "X-Stream-Client" to sdkTrackingHeaders(),
         )
         return parser.toJson(data)
     }
