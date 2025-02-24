@@ -257,6 +257,8 @@ internal constructor(
     private val repositoryFactoryProvider: RepositoryFactory.Provider,
     @InternalStreamChatApi
     public val audioPlayer: AudioPlayer,
+    public val appName: String,
+    public val appVersion: String,
 ) {
     private val logger by taggedLogger(TAG)
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
@@ -414,7 +416,6 @@ internal constructor(
                 handleEvent(event)
             }
         }
-        logger.i { "Initialised: ${buildSdkTrackingHeaders()}" }
     }
 
     private suspend fun handleEvent(event: ChatEvent) {
@@ -3601,6 +3602,8 @@ internal constructor(
         private var uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.CONNECTED
         private var fileTransformer: FileTransformer = NoOpFileTransformer
         private var apiModelTransformers: ApiModelTransformers = ApiModelTransformers()
+        private var appName: String? = null
+        private var appVersion: String? = null
 
         /**
          * Sets the log level to be used by the client.
@@ -3817,6 +3820,21 @@ internal constructor(
             this.uploadAttachmentsNetworkType = type
         }
 
+        /**
+         * Sets name of the application that is using the Stream Chat SDK. Used for logging and debugging purposes.
+         */
+        public fun appName(appName: String): Builder = apply {
+            this.appName = appName
+        }
+
+        /**
+         * Sets version of the application that is using the Stream Chat SDK. Used for logging and debugging purposes.
+         * Eg: 1.0.0
+         */
+        public fun appVersion(appVersion: String): Builder = apply {
+            this.appVersion = appVersion
+        }
+
         public override fun build(): ChatClient {
             return super.build()
         }
@@ -3921,6 +3939,8 @@ internal constructor(
                 mutableClientState = MutableClientState(module.networkStateProvider),
                 currentUserFetcher = module.currentUserFetcher,
                 audioPlayer = audioPlayer,
+                appName = appName ?: appContext.packageName.toString(),
+                appVersion = appVersion ?: getAppVersion(appContext)
             ).apply {
                 attachmentsSender = AttachmentsSender(
                     context = appContext,
@@ -3940,6 +3960,15 @@ internal constructor(
                         StreamLoggerHandler(loggerHandler),
                     ),
                 )
+            }
+        }
+
+        private fun getAppVersion(context: Context): String {
+            return try {
+                val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+                packageInfo.versionName ?: ""
+            } catch (e: Exception) {
+                ""
             }
         }
 
@@ -4097,13 +4126,18 @@ internal constructor(
             val deviceManufacturer = Build.MANUFACTURER
             val apiLevel = Build.VERSION.SDK_INT
             val osName = "Android ${Build.VERSION.RELEASE}"
+            val appName = ensureClientInitialized().appName
+            val appVersion = ensureClientInitialized().appVersion
 
-            return clientInformation +
-                "|os=$osName" +
-                "|api_version=$apiLevel" +
-                "|device_vendor=$deviceManufacturer" +
-                "|device_model=$buildModel" +
-                "|offline_enabled=$OFFLINE_SUPPORT_ENABLED"
+            return buildString {
+                append(clientInformation)
+                append("|os=$osName")
+                append("|api_version=$apiLevel")
+                append("|device_model=$deviceManufacturer $buildModel")
+                append("|offline_enabled=$OFFLINE_SUPPORT_ENABLED")
+                append("|app=$appName")
+                append("|app_version=$appVersion")
+            }
         }
     }
 }
