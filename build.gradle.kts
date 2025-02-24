@@ -96,12 +96,16 @@ apiValidation {
     ignoredPackages.add("io/getstream/chat/android/ui/databinding")
 
     ignoredProjects += listOf(
-            "stream-chat-android-docs",
-            "stream-chat-android-ui-components-sample",
-            "stream-chat-android-test",
-            "stream-chat-android-compose-sample",
-            "stream-chat-android-ui-guides",
-            "stream-chat-android-metrics",
+        "stream-chat-android-client-test",
+        "stream-chat-android-compose-sample",
+        "stream-chat-android-docs",
+        "stream-chat-android-e2e-test",
+        "stream-chat-android-previewdata",
+        "stream-chat-android-test",
+        "stream-chat-android-ui-components-sample",
+        "stream-chat-android-ui-guides",
+        "stream-chat-android-ui-uitests",
+        "stream-chat-android-metrics",
     )
 
     nonPublicMarkers += listOf(
