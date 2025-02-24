@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -60,6 +61,7 @@ import kotlin.math.abs
 
 private const val GradientDarkerColorFactor = 1.3f
 private const val GradientLighterColorFactor = 0.7f
+private const val MaxRetries = 3
 
 /**
  * Generates a gradient for an initials avatar based on the user initials.
@@ -157,6 +159,7 @@ internal fun StreamAsyncImage(
             val context = LocalContext.current
             val imageAssetTransformer = ChatTheme.streamImageAssetTransformer
             val imageHeaderProvider = ChatTheme.streamImageHeadersProvider
+            val fetchRetries = remember { mutableIntStateOf(0) }
             val asyncImagePainter = rememberAsyncImagePainter(
                 model = imageRequest
                     .convertUrl(context, imageAssetTransformer)
@@ -167,7 +170,9 @@ internal fun StreamAsyncImage(
             )
             val state: AsyncImagePainter.State by asyncImagePainter.state.collectAsState()
             if ((state as? AsyncImagePainter.State.Error)?.result?.throwable is SocketTimeoutException) {
-                asyncImagePainter.restart()
+                if (fetchRetries.intValue++ < MaxRetries) {
+                    asyncImagePainter.restart()
+                }
             }
             content(state)
         }
