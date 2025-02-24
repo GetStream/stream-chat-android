@@ -394,7 +394,8 @@ internal object MessageDtoTestData {
             "a",
             "b",
             "c"
-          ]
+          ],
+          "restricted_visibility": ["jc"]
         }""".withoutWhitespace()
     val upstreamMessage = UpstreamMessageDto(
         id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
@@ -430,6 +431,7 @@ internal object MessageDtoTestData {
         pinned_by = null,
         pinned_at = null,
         pin_expires = null,
+        restricted_visibility = listOf("jc"),
     )
 
     @Language("JSON")
@@ -445,7 +447,8 @@ internal object MessageDtoTestData {
           "show_in_channel": false,
           "silent": false,
           "text": "",
-          "thread_participants": []
+          "thread_participants": [],
+          "restricted_visibility": []
         }""".withoutWhitespace()
     val upstreamMessageWithoutExtraData = UpstreamMessageDto(
         id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
@@ -466,5 +469,6 @@ internal object MessageDtoTestData {
         pinned_by = null,
         pinned_at = null,
         pin_expires = null,
+        restricted_visibility = emptyList(),
     )
 }

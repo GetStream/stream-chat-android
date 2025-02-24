@@ -47,7 +47,7 @@ internal data class UpstreamMessageDto(
     val silent: Boolean,
     val text: String,
     val thread_participants: List<UpstreamUserDto>,
-
+    val restricted_visibility: List<String>,
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
 
