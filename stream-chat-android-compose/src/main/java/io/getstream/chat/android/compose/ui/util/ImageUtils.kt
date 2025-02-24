@@ -21,6 +21,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -169,9 +170,11 @@ internal fun StreamAsyncImage(
                 contentScale = contentScale,
             )
             val state: AsyncImagePainter.State by asyncImagePainter.state.collectAsState()
-            if ((state as? AsyncImagePainter.State.Error)?.result?.throwable is SocketTimeoutException) {
-                if (fetchRetries.intValue++ < MaxRetries) {
-                    asyncImagePainter.restart()
+            LaunchedEffect(state) {
+                if ((state as? AsyncImagePainter.State.Error)?.result?.throwable is SocketTimeoutException) {
+                    if (fetchRetries.intValue++ < MaxRetries) {
+                        asyncImagePainter.restart()
+                    }
                 }
             }
             content(state)
