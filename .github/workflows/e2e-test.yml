@@ -25,10 +25,26 @@ jobs:
       app: compose
     secrets: inherit
 
+  allure_testops_launch:
+    name: Launch Allure TestOps
+    runs-on: ubuntu-24.04
+    needs: build-compose-apks
+    outputs:
+      launch_id: ${{ env.LAUNCH_ID }}
+    steps:
+      - uses: actions/checkout@v4.1.1
+      - uses: ./.github/actions/setup-ruby
+      - uses: ./.github/actions/allure-launch
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+        with:
+          allure-token: ${{ secrets.ALLURE_TOKEN }}
+
   run-compose-tests:
     name: Test compose
     runs-on: ubuntu-24.04
-    needs: build-compose-apks
+    needs:
+      - build-compose-apks
+      - allure_testops_launch
     strategy:
       matrix:
         include:
@@ -38,6 +54,7 @@ jobs:
       fail-fast: false
     env:
       ANDROID_API_LEVEL: 34
+      LAUNCH_ID: ${{ needs.allure_testops_launch.outputs.launch_id }}
     steps:
       - uses: actions/checkout@v4.2.2
       - uses: actions/download-artifact@v4.1.8
@@ -47,10 +64,6 @@ jobs:
       - uses: ./.github/actions/setup-java
       - uses: ./.github/actions/enable-kvm
       - uses: ./.github/actions/setup-ruby
-      - uses: ./.github/actions/allure-launch
-        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
-        with:
-          allure-token: ${{ secrets.ALLURE_TOKEN }}
       - name: Run tests
         uses: reactivecircus/android-emulator-runner@v2
         timeout-minutes: 45
@@ -78,5 +91,5 @@ jobs:
         if: failure()
         timeout-minutes: 10
         with:
-          name: logs_${{ env.ANDROID_API_LEVEL }}
+          name: logs_${{ matrix.batch }}
           path: fastlane/stream-chat-test-mock-server/logs/*
