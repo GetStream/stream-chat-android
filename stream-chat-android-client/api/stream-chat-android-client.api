@@ -3217,16 +3217,6 @@ public abstract interface class io/getstream/chat/android/client/user/storage/Us
 	public abstract fun put (Lio/getstream/chat/android/client/user/CredentialConfig;)V
 }
 
-public final class io/getstream/chat/android/client/utils/AppInfoUtil {
-	public fun <init> (Landroid/content/Context;)V
-	public final fun getAppName ()Ljava/lang/String;
-	public final fun getAppVersionCode ()Ljava/lang/String;
-	public final fun getAppVersionName ()Ljava/lang/String;
-	public final fun getContext ()Landroid/content/Context;
-	public final fun getInstallerName ()Ljava/lang/String;
-	public final fun setContext (Landroid/content/Context;)V
-}
-
 public abstract interface class io/getstream/chat/android/client/utils/ProgressCallback {
 	public abstract fun onError (Lio/getstream/result/Error;)V
 	public abstract fun onProgress (JJ)V

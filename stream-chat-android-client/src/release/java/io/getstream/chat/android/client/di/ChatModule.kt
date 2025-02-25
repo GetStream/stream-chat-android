@@ -61,5 +61,5 @@ internal class ChatModule(
     clientDebugger,
     lifecycle,
     appName,
-    appVersion
+    appVersion,
 )

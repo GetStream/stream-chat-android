@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.socket
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.ParserFactory
 import io.getstream.chat.android.client.token.FakeTokenManager
+import io.getstream.chat.android.client.utils.HeadersUtil
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
@@ -43,7 +44,8 @@ internal class SocketFactoryTest {
     private val httpClient: OkHttpClient = mock<OkHttpClient>().apply {
         whenever(this.newWebSocket(any(), any())) doReturn mock()
     }
-    private val socketFactory = SocketFactory(chatParser, FakeTokenManager(token, loadSyncToken), httpClient) { X_STREAM_CLIENT }
+
+    private val socketFactory = SocketFactory(chatParser, FakeTokenManager(token, loadSyncToken), headersUtil, httpClient)
 
     /** [arguments] */
     @ParameterizedTest
@@ -65,7 +67,9 @@ internal class SocketFactoryTest {
         private val apiKey = randomString()
         private val token = randomString()
         private val loadSyncToken = randomString()
-        private val X_STREAM_CLIENT = randomString()
+        private val headersUtil: HeadersUtil = mock<HeadersUtil>().apply {
+            whenever(this.buildSdkTrackingHeaders()) doReturn "mocked-header-value"
+        }
 
         @JvmStatic
         @Suppress("MaxLineLength")
@@ -120,7 +124,7 @@ internal class SocketFactoryTest {
                 "user_details" to userDetails,
                 "user_id" to userId,
                 "server_determines_connection_id" to true,
-                "X-Stream-Client" to X_STREAM_CLIENT,
+                "X-Stream-Client" to headersUtil.buildSdkTrackingHeaders(),
             )
 
         private fun encode(map: Map<String, Any>): String =

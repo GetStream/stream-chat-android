@@ -3961,6 +3961,15 @@ internal constructor(
             }
         }
 
+        private fun getAppVersion(context: Context): String {
+            return try {
+                val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+                packageInfo.versionName ?: ""
+            } catch (e: Exception) {
+                ""
+            }
+        }
+
         /**
          * Our [CustomObjectDtoAdapter] is using KClass.members - the first call for
          * each class is quite slow (can be hundreds of milliseconds). We can launch this

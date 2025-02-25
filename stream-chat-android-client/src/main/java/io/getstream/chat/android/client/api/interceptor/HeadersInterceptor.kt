@@ -16,21 +16,16 @@
 
 package io.getstream.chat.android.client.api.interceptor
 
-import android.content.Context
-import android.os.Build
-import io.getstream.chat.android.client.utils.AppInfoUtil
+import io.getstream.chat.android.client.utils.HeadersUtil
 import okhttp3.Interceptor
 import okhttp3.Response
-import java.text.Normalizer
 
 internal class HeadersInterceptor(
-    context: Context,
     private val isAnonymous: () -> Boolean,
-    private val appInfoUtil: AppInfoUtil,
-    private val sdkTrackingHeaders: () -> String,
+    private val headersUtil: HeadersUtil,
 ) : Interceptor {
 
-    private val userAgent by lazy { buildUserAgent(context) }
+    private val userAgent by lazy { headersUtil.buildUserAgent() }
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val authType = if (isAnonymous()) "anonymous" else "jwt"
@@ -39,35 +34,9 @@ internal class HeadersInterceptor(
             .addHeader("User-Agent", userAgent)
             .addHeader("Content-Type", "application/json")
             .addHeader("stream-auth-type", authType)
-            .addHeader("X-Stream-Client", sdkTrackingHeaders())
+            .addHeader("X-Stream-Client", headersUtil.buildSdkTrackingHeaders())
             .addHeader("Cache-Control", "no-cache")
             .build()
         return chain.proceed(request)
-    }
-
-    private fun buildUserAgent(context: Context): String {
-        with(context.packageManager) {
-            val versionName = appInfoUtil.getAppVersionName()
-            val versionCode = appInfoUtil.getAppVersionCode()
-            val appName = appInfoUtil.getAppName()
-
-            val manufacturer = Build.MANUFACTURER
-            val model = Build.MODEL
-            val version = Build.VERSION.SDK_INT
-            val versionRelease = Build.VERSION.RELEASE
-
-            val installerName = appInfoUtil.getInstallerName()
-
-            return (
-                "$appName / $versionName($versionCode); $installerName; ($manufacturer; " +
-                    "$model; SDK $version; Android $versionRelease)"
-                )
-                .sanitize()
-        }
-    }
-
-    private fun String.sanitize(): String {
-        return Normalizer.normalize(this, Normalizer.Form.NFD)
-            .replace("[^\\p{ASCII}]".toRegex(), "")
     }
 }
