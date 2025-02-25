@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.parser2
 
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.parser2.testdata.AttachmentDtoTestData
+import io.kotest.assertions.json.shouldEqualJson
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
 
@@ -40,12 +41,12 @@ internal class AttachmentDtoAdapterTest {
     @Test
     fun `Serialize JSON attachment with custom fields`() {
         val jsonString = parser.toJson(AttachmentDtoTestData.attachment)
-        jsonString shouldBeEqualTo AttachmentDtoTestData.json
+        jsonString.shouldEqualJson(AttachmentDtoTestData.json)
     }
 
     @Test
     fun `Serialize JSON attachment without custom fields`() {
         val jsonString = parser.toJson(AttachmentDtoTestData.attachmentWithoutExtraData)
-        jsonString shouldBeEqualTo AttachmentDtoTestData.jsonWithoutExtraData
+        jsonString.shouldEqualJson(AttachmentDtoTestData.jsonWithoutExtraData)
     }
 }
