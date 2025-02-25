@@ -16,56 +16,65 @@
 
 package io.getstream.chat.android.ui.common.images
 
-import android.content.Context
 import android.os.Build
-import coil.ImageLoader
-import coil.ImageLoaderFactory
-import coil.decode.GifDecoder
-import coil.decode.ImageDecoderDecoder
-import coil.decode.VideoFrameDecoder
-import coil.disk.DiskCache
-import coil.memory.MemoryCache
+import coil3.ImageLoader
+import coil3.PlatformContext
+import coil3.SingletonImageLoader
+import coil3.disk.DiskCache
+import coil3.gif.AnimatedImageDecoder
+import coil3.gif.GifDecoder
+import coil3.memory.MemoryCache
+import coil3.network.okhttp.OkHttpNetworkFetcherFactory
+import coil3.request.allowHardware
+import coil3.request.crossfade
+import coil3.video.VideoFrameDecoder
 import okhttp3.Dispatcher
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okio.Path.Companion.toOkioPath
 
 private const val DEFAULT_MEMORY_PERCENTAGE = 0.25
 private const val DEFAULT_DISK_CACHE_PERCENTAGE = 0.02
 private const val DISK_CACHE_DIRECTORY = "image_cache"
 
 public class StreamImageLoaderFactory(
-    private val context: Context,
     private val builder: ImageLoader.Builder.() -> Unit = {},
-) : ImageLoaderFactory {
-    override fun newImageLoader(): ImageLoader {
+) : SingletonImageLoader.Factory {
+    override fun newImageLoader(context: PlatformContext): ImageLoader {
         return ImageLoader.Builder(context)
-            .memoryCache { MemoryCache.Builder(context).maxSizePercent(DEFAULT_MEMORY_PERCENTAGE).build() }
+            .memoryCache { MemoryCache.Builder().maxSizePercent(context, DEFAULT_MEMORY_PERCENTAGE).build() }
             .allowHardware(false)
             .crossfade(true)
-            .okHttpClient {
-                val cacheControlInterceptor = Interceptor { chain ->
-                    chain.proceed(chain.request())
-                        .newBuilder()
-                        .header("Cache-Control", "max-age=3600,public")
-                        .build()
-                }
-                // Don't limit concurrent network requests by host.
-                val dispatcher = Dispatcher().apply { maxRequestsPerHost = maxRequests }
+            .components {
+                add(
+                    OkHttpNetworkFetcherFactory(
+                        callFactory = {
+                            val cacheControlInterceptor = Interceptor { chain ->
+                                chain.proceed(chain.request())
+                                    .newBuilder()
+                                    .header("Cache-Control", "max-age=3600,public")
+                                    .build()
+                            }
+                            // Don't limit concurrent network requests by host.
+                            val dispatcher = Dispatcher().apply { maxRequestsPerHost = maxRequests }
 
-                OkHttpClient.Builder()
-                    .dispatcher(dispatcher)
-                    .addNetworkInterceptor(cacheControlInterceptor)
-                    .build()
+                            OkHttpClient.Builder()
+                                .dispatcher(dispatcher)
+                                .addNetworkInterceptor(cacheControlInterceptor)
+                                .build()
+                        },
+                    ),
+                )
             }
             .diskCache {
                 DiskCache.Builder()
-                    .directory(context.cacheDir.resolve(DISK_CACHE_DIRECTORY))
+                    .directory(context.cacheDir.resolve(DISK_CACHE_DIRECTORY).toOkioPath())
                     .maxSizePercent(DEFAULT_DISK_CACHE_PERCENTAGE)
                     .build()
             }
             .components {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    add(ImageDecoderDecoder.Factory(enforceMinimumFrameDelay = true))
+                    add(AnimatedImageDecoder.Factory(enforceMinimumFrameDelay = true))
                 } else {
                     add(GifDecoder.Factory(enforceMinimumFrameDelay = true))
                 }

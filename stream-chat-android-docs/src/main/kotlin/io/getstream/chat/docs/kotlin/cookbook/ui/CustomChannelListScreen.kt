@@ -32,9 +32,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.request.ImageRequest
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.skydoves.landscapist.ImageOptions
-import com.skydoves.landscapist.coil.CoilImage
+import com.skydoves.landscapist.coil3.CoilImage
 import com.skydoves.landscapist.components.rememberImageComponent
 import com.skydoves.landscapist.placeholder.placeholder.PlaceholderPlugin
 import io.getstream.chat.android.models.Channel
