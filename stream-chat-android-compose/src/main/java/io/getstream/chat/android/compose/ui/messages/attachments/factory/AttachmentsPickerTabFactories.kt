@@ -16,30 +16,24 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
+import io.getstream.chat.android.ui.common.permissions.SystemAttachmentsPickerConfig
+
 /**
  * Provides different attachment picker tab factories that build tab icons and tab contents for
  * the attachment picker.
  */
 public object AttachmentsPickerTabFactories {
 
+    /**
+     * Builds the default list of attachment picker tab factories (without requesting storage permission).
+     */
     @Deprecated(
-        message = "Use defaultFactoriesWithoutStoragePermissions(filesAllowed: Boolean, mediaAllowed: Boolean = true," +
-            " captureImageAllowed: Boolean, captureVideoAllowed: Boolean, pollAllowed: Boolean = true) instead.",
-        replaceWith = ReplaceWith(
-            expression = "defaultFactoriesWithoutStoragePermissions(filesAllowed, mediaAllowed, captureImageAllowed," +
-                " captureVideoAllowed, pollAllowed)",
-        ),
-        level = DeprecationLevel.WARNING,
+        message = "Use systemAttachmentsPickerTabFactories(config: SystemAttachmentsPickerConfig2) instead.",
+        replaceWith = ReplaceWith(expression = "systemAttachmentsPickerTabFactories(config)"),
+        level = DeprecationLevel.ERROR,
     )
     public fun defaultFactoriesWithoutStoragePermissions(): List<AttachmentsPickerTabFactory> {
-        val otherFactories = defaultFactories(
-            imagesTabEnabled = false,
-            filesTabEnabled = false,
-            takeImageEnabled = true,
-            recordVideoEnabled = true,
-            pollEnabled = true,
-        )
-        return listOf(AttachmentsPickerSystemTabFactory(otherFactories))
+        return systemAttachmentsPickerTabFactories(SystemAttachmentsPickerConfig())
     }
 
     /**
@@ -51,6 +45,11 @@ public object AttachmentsPickerTabFactories {
      * @param captureVideoAllowed If the option to capture a video is included in the attachments picker.
      * @param pollAllowed If the option to create a poll is included in the attachments picker.
      */
+    @Deprecated(
+        message = "Use systemAttachmentsPickerTabFactories(config: SystemAttachmentsPickerConfig2) instead.",
+        replaceWith = ReplaceWith(expression = "systemAttachmentsPickerTabFactories(config)"),
+        level = DeprecationLevel.WARNING,
+    )
     public fun defaultFactoriesWithoutStoragePermissions(
         filesAllowed: Boolean = true,
         mediaAllowed: Boolean = true,
@@ -58,13 +57,25 @@ public object AttachmentsPickerTabFactories {
         captureVideoAllowed: Boolean = true,
         pollAllowed: Boolean = true,
     ): List<AttachmentsPickerTabFactory> {
-        val factory = AttachmentsPickerSystemTabFactory(
+        val config = SystemAttachmentsPickerConfig(
             filesAllowed = filesAllowed,
-            mediaAllowed = mediaAllowed,
+            visualMediaAllowed = mediaAllowed,
             captureImageAllowed = captureImageAllowed,
             captureVideoAllowed = captureVideoAllowed,
             pollAllowed = pollAllowed,
         )
+        return systemAttachmentsPickerTabFactories(config)
+    }
+
+    /**
+     * Builds the default list of attachment picker tab factories (without requesting storage permission).
+     *
+     * @param config The configuration for the system attachment picker.
+     */
+    public fun systemAttachmentsPickerTabFactories(
+        config: SystemAttachmentsPickerConfig,
+    ): List<AttachmentsPickerTabFactory> {
+        val factory = AttachmentsPickerSystemTabFactory(config)
         return listOf(factory)
     }
 
