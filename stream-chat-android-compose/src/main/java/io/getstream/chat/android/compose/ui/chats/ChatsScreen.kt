@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.chats
 
+import android.content.Context
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
@@ -36,10 +37,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -60,26 +64,27 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
 
 /**
- * Default Chat screen component, that provides adaptive layout based on the screen size.
+ * A composable function that displays the chat screen, including a list of channels and messages.
+ * The layout adapts based on the screen size, showing a single-panel layout on smaller screens
+ * and a dual-panel layout on larger screens.
  *
- * It can be used without most parameters for default behavior, that can be tweaked if necessary.
- *
- * @param modifier The modifier to be applied to the layout.
- * @param channelViewModelFactory The factory used to build the [ChannelListViewModel] and power the behavior.
- * You can use the default implementation by not passing in an instance yourself, or you
- * can customize the behavior using its parameters.
- * @param channelViewModelKey Key to differentiate between instances of [ChannelListViewModel].
- * @param title The header title.
- * @param isShowingHeader If a header should be shown.
- * @param searchMode The search mode for the screen.
- * @param onChannelsHeaderAvatarClick Called when the user clicks on the channels header avatar.
- * @param onChannelsHeaderActionClick Called when the user clicks on the channels header action.
- * @param onViewChannelInfoAction Called when the user clicks on the view channel info action.
- * @param onMessagesHeaderTitleClick Called when the user clicks on the messages header title.
- * @param onMessagesHeaderAvatarClick Called when the user clicks on the messages header avatar.
- * @param onNavigateToMessages Called when the user navigates towards a channel or navigates back from a channel.
- * The `channelId` is `null` when user navigates back from a channel.
- * @param onBackPressed Handler for back press action.
+ * @param modifier The modifier to be applied to the root layout of the screen.
+ * @param channelViewModelFactory Factory for creating the [ChannelListViewModel] used for managing channel data.
+ * @param channelViewModelKey An optional key to scope the [ChannelListViewModel] instance.
+ * @param messagesViewModelFactory A lambda function that provides a [MessagesViewModelFactory] for managing messages
+ * within a selected channel.
+ * The selected channel ID is `null` when the initial [MessagesViewModelFactory] is requested.
+ * @param title The title displayed in the chat screen header. Default is `"Stream Chat"`.
+ * @param isShowingHeader Whether to display the header in the channel list. Default is `true`.
+ * @param searchMode The current search mode for the chat screen. Default is [SearchMode.None].
+ * @param onChannelsHeaderAvatarClick Callback invoked when the user clicks on the avatar in the channel header.
+ * @param onChannelsHeaderActionClick Callback invoked when the user clicks on the action button in the channel header.
+ * @param onViewChannelInfoAction Callback invoked when the user selects a channel to view its details.
+ * @param onMessagesHeaderTitleClick Callback invoked when the user clicks the title in the message header.
+ * @param onMessagesHeaderAvatarClick Callback invoked when the user clicks on a user's avatar in a message.
+ * @param onNavigateToMessages Callback invoked when navigating to the messages screen, passing the selected channel ID.
+ * The selected channel ID is `null` when user navigates back from a channel.
+ * @param onBackPressed Callback invoked when the user presses the back button.
  */
 @ExperimentalStreamChatApi
 @Suppress("LongMethod")
@@ -88,6 +93,23 @@ public fun ChatsScreen(
     modifier: Modifier = Modifier,
     channelViewModelFactory: ChannelViewModelFactory = ChannelViewModelFactory(),
     channelViewModelKey: String? = null,
+    messagesViewModelFactory: (
+        context: Context,
+        channelId: String?,
+        messageId: String?,
+        parentMessageId: String?,
+    ) -> MessagesViewModelFactory? = { context, channelId, messageId, parentMessageId ->
+        if (channelId == null) {
+            null
+        } else {
+            MessagesViewModelFactory(
+                context = context,
+                channelId = channelId,
+                messageId = messageId,
+                parentMessageId = parentMessageId,
+            )
+        }
+    },
     title: String = "Stream Chat",
     isShowingHeader: Boolean = true,
     searchMode: SearchMode = SearchMode.None,
@@ -100,35 +122,35 @@ public fun ChatsScreen(
     onBackPressed: () -> Unit = {},
 ) {
     val context = LocalContext.current
-    val singlePanel = singlePanel()
-    var clickedChannelId by rememberSaveable { mutableStateOf<String?>(null) }
-    val messagesViewModelFactory = remember(clickedChannelId) {
-        clickedChannelId?.let {
-            MessagesViewModelFactory(
-                context = context,
-                channelId = it,
-            )
+
+    var channelMessagesViewModelFactory by rememberSaveable(
+        saver = factorySaver { channelId, messageId, parentMessageId ->
+            messagesViewModelFactory(context, channelId, messageId, parentMessageId)
         }
+    ) {
+        mutableStateOf(messagesViewModelFactory(context, null, null, null))
     }
-    val channelListViewModel =
-        viewModel(ChannelListViewModel::class.java, key = channelViewModelKey, factory = channelViewModelFactory)
-    val channelItems = channelListViewModel.channelsState.channelItems
     val onSinglePanelBackPressed: () -> Unit = {
-        if (clickedChannelId != null) {
-            clickedChannelId = null
+        if (channelMessagesViewModelFactory != null) {
+            channelMessagesViewModelFactory = null
         } else {
             onBackPressed()
         }
     }
 
+    val singlePanel = singlePanel()
+    val channelListViewModel =
+        viewModel(ChannelListViewModel::class.java, key = channelViewModelKey, factory = channelViewModelFactory)
+    val channelItems = channelListViewModel.channelsState.channelItems
     LaunchedEffect(channelItems) {
         // Auto-select the first channel in the list when it loads on large screens
-        if (!singlePanel && channelItems.isNotEmpty() && clickedChannelId == null) {
-            clickedChannelId = channelItems.first().key
+        if (!singlePanel && channelItems.isNotEmpty() && channelMessagesViewModelFactory == null) {
+            val channelId = channelItems.first().key
+            channelMessagesViewModelFactory = messagesViewModelFactory(context, channelId, null, null)
         }
     }
-    LaunchedEffect(clickedChannelId) {
-        onNavigateToMessages(clickedChannelId, singlePanel)
+    LaunchedEffect(channelMessagesViewModelFactory) {
+        onNavigateToMessages(channelMessagesViewModelFactory?.channelId, singlePanel)
     }
 
     Scaffold(
@@ -147,21 +169,31 @@ public fun ChatsScreen(
                     onHeaderAvatarClick = onChannelsHeaderAvatarClick,
                     onHeaderActionClick = onChannelsHeaderActionClick,
                     onChannelClick = { channel ->
-                        clickedChannelId = channel.cid
+                        channelMessagesViewModelFactory = messagesViewModelFactory(
+                            context,
+                            channel.cid,
+                            null,
+                            null,
+                        )
                     },
-                    onSearchMessageItemClick = { channel ->
-                        clickedChannelId = channel.cid
+                    onSearchMessageItemClick = { message ->
+                        channelMessagesViewModelFactory = messagesViewModelFactory(
+                            context,
+                            message.cid,
+                            message.id,
+                            message.parentId,
+                        )
                     },
                     onViewChannelInfoAction = onViewChannelInfoAction,
                     onBackPressed = onSinglePanelBackPressed,
                 )
                 AnimatedContent(
-                    targetState = messagesViewModelFactory,
+                    targetState = channelMessagesViewModelFactory,
                     transitionSpec = slideTransitionSpec(),
-                ) { factory ->
-                    if (factory != null) {
+                ) { viewModelFactory ->
+                    if (viewModelFactory != null) {
                         Messages(
-                            viewModelFactory = factory,
+                            viewModelFactory = viewModelFactory,
                             onHeaderTitleClick = onMessagesHeaderTitleClick,
                             onUserAvatarClick = onMessagesHeaderAvatarClick,
                             onBackPressed = onSinglePanelBackPressed,
@@ -182,10 +214,20 @@ public fun ChatsScreen(
                             onHeaderAvatarClick = onChannelsHeaderAvatarClick,
                             onHeaderActionClick = onChannelsHeaderActionClick,
                             onChannelClick = { channel ->
-                                clickedChannelId = channel.cid
+                                channelMessagesViewModelFactory = messagesViewModelFactory(
+                                    context,
+                                    channel.cid,
+                                    null,
+                                    null,
+                                )
                             },
-                            onSearchMessageItemClick = { channel ->
-                                clickedChannelId = channel.cid
+                            onSearchMessageItemClick = { message ->
+                                channelMessagesViewModelFactory = messagesViewModelFactory(
+                                    context,
+                                    message.cid,
+                                    message.id,
+                                    message.parentId,
+                                )
                             },
                             onViewChannelInfoAction = onViewChannelInfoAction,
                             onBackPressed = onBackPressed,
@@ -195,10 +237,10 @@ public fun ChatsScreen(
                     Box(
                         modifier = Modifier.weight(DetailsPanelWeight),
                     ) {
-                        Crossfade(targetState = messagesViewModelFactory) { factory ->
-                            if (factory != null) {
+                        Crossfade(targetState = channelMessagesViewModelFactory) { viewModelFactory ->
+                            if (viewModelFactory != null) {
                                 Messages(
-                                    viewModelFactory = factory,
+                                    viewModelFactory = viewModelFactory,
                                     onHeaderTitleClick = onMessagesHeaderTitleClick,
                                     onUserAvatarClick = onMessagesHeaderAvatarClick,
                                     onBackPressed = onBackPressed,
@@ -272,3 +314,38 @@ private fun <S> slideTransitionSpec(): AnimatedContentTransitionScope<S>.() -> C
             SizeTransform(clip = false),
         )
 }
+
+/**
+ * This [Saver] is used to save and restore the state of the [MessagesViewModelFactory]
+ * across configuration changes and process death.
+ * It saves the channel ID, message ID, and parent message ID of the factory.
+ */
+private fun factorySaver(
+    messagesViewModelFactory: (
+        channelId: String?,
+        messageId: String?,
+        parentMessageId: String?,
+    ) -> MessagesViewModelFactory?,
+): Saver<MutableState<MessagesViewModelFactory?>, *> = listSaver(
+    save = { state ->
+        state.value?.let { factory ->
+            listOf(factory.channelId, factory.messageId, factory.parentMessageId)
+        } ?: emptyList()
+    },
+    restore = { state ->
+        if (state.isEmpty()) {
+            mutableStateOf(null)
+        } else {
+            val channelId = state[0]
+            val messageId = state[1]
+            val parentMessageId = state[2]
+            mutableStateOf(
+                messagesViewModelFactory(
+                    channelId,
+                    messageId,
+                    parentMessageId,
+                ),
+            )
+        }
+    },
+)
