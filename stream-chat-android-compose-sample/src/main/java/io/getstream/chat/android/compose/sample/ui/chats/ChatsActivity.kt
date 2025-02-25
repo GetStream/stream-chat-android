@@ -51,6 +51,7 @@ import io.getstream.chat.android.compose.ui.chats.ChatsScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.threads.ThreadList
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadListViewModel
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadsViewModelFactory
 import io.getstream.chat.android.models.Channel
@@ -58,16 +59,41 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.state.extensions.globalState
+import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import kotlinx.coroutines.launch
 
 class ChatsActivity : BaseConnectedActivity() {
+
+    companion object {
+        private const val KEY_CHANNEL_ID = "channelId"
+        private const val KEY_MESSAGE_ID = "messageId"
+        private const val KEY_PARENT_MESSAGE_ID = "parentMessageId"
+
+        fun createIntent(
+            context: Context,
+            channelId: String? = null,
+            messageId: String? = null,
+            parentMessageId: String? = null,
+        ): Intent =
+            Intent(context, ChatsActivity::class.java)
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                .putExtra(KEY_CHANNEL_ID, channelId)
+                .putExtra(KEY_MESSAGE_ID, messageId)
+                .putExtra(KEY_PARENT_MESSAGE_ID, parentMessageId)
+    }
+
+    private val channelId by lazy { intent.getStringExtra(KEY_CHANNEL_ID) }
+    private val messageId by lazy { intent.getStringExtra(KEY_MESSAGE_ID) }
+    private val parentMessageId by lazy { intent.getStringExtra(KEY_PARENT_MESSAGE_ID) }
 
     private val channelViewModelFactory by lazy {
         val chatClient = ChatClient.instance()
         val currentUserId = chatClient.getCurrentUser()?.id ?: ""
         ChannelViewModelFactory(
             chatClient = chatClient,
-            querySort = QuerySortByField.descByName("last_updated"),
+            querySort = QuerySortByField
+                .descByName<Channel>("pinned_at") // pinned channels first
+                .desc("last_updated"), // then by last updated
             filters = Filters.and(
                 Filters.eq("type", "messaging"),
                 Filters.`in`("members", listOf(currentUserId)),
@@ -76,6 +102,17 @@ class ChatsActivity : BaseConnectedActivity() {
             chatEventHandlerFactory = CustomChatEventHandlerFactory(),
         )
     }
+
+    private val messagesViewModelFactory by lazy {
+        channelId?.let { cid ->
+            buildMessagesViewModelFactory(
+                channelId = cid,
+                messageId = messageId,
+                parentMessageId = parentMessageId,
+            )
+        }
+    }
+
     private val threadsViewModelFactory by lazy { ThreadsViewModelFactory() }
 
     private val threadsViewModel: ThreadListViewModel by viewModels { threadsViewModelFactory }
@@ -133,6 +170,17 @@ class ChatsActivity : BaseConnectedActivity() {
         ChatsScreen(
             modifier = modifier,
             channelViewModelFactory = channelViewModelFactory,
+            messagesViewModelFactory = { _, channelId, messageId, parentMessageId ->
+                if (channelId == null) {
+                    messagesViewModelFactory
+                } else {
+                    buildMessagesViewModelFactory(
+                        channelId = channelId,
+                        messageId = messageId,
+                        parentMessageId = parentMessageId,
+                    )
+                }
+            },
             title = stringResource(id = R.string.app_name),
             isShowingHeader = true,
             searchMode = SearchMode.Messages,
@@ -149,6 +197,20 @@ class ChatsActivity : BaseConnectedActivity() {
             onMessagesHeaderTitleClick = ::openChannelInfo,
         )
     }
+
+    private fun buildMessagesViewModelFactory(
+        channelId: String,
+        messageId: String?,
+        parentMessageId: String?,
+    ) = MessagesViewModelFactory(
+        context = applicationContext,
+        channelId = channelId,
+        messageId = messageId,
+        parentMessageId = parentMessageId,
+        autoTranslationEnabled = ChatApp.autoTranslationEnabled,
+        deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
+        isComposerLinkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
+    )
 
     @Composable
     private fun ThreadsContent(modifier: Modifier) {
@@ -179,11 +241,5 @@ class ChatsActivity : BaseConnectedActivity() {
 
     private fun openChannelInfo(channel: Channel) {
         startActivity(ChannelInfoActivity.createIntent(applicationContext, channel.cid))
-    }
-
-    companion object {
-        fun createIntent(context: Context): Intent =
-            Intent(context, ChatsActivity::class.java)
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
     }
 }

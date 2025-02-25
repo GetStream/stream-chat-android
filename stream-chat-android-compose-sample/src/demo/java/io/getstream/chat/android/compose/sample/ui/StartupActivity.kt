@@ -58,17 +58,28 @@ class StartupActivity : AppCompatActivity() {
                     val messageId = intent.getStringExtra(KEY_MESSAGE_ID)
                     val parentMessageId = intent.getStringExtra(KEY_PARENT_MESSAGE_ID)
 
-                    TaskStackBuilder.create(this@StartupActivity)
-                        .addNextIntent(ChannelsActivity.createIntent(this@StartupActivity))
-                        .addNextIntent(
-                            MessagesActivity.createIntent(
-                                context = this@StartupActivity,
+                    if (settings.isAdaptiveLayoutEnabled) {
+                        startActivity(
+                            ChatsActivity.createIntent(
+                                context = applicationContext,
                                 channelId = channelId,
                                 messageId = messageId,
                                 parentMessageId = parentMessageId,
                             ),
                         )
-                        .startActivities()
+                    } else {
+                        TaskStackBuilder.create(applicationContext)
+                            .addNextIntent(ChannelsActivity.createIntent(applicationContext))
+                            .addNextIntent(
+                                MessagesActivity.createIntent(
+                                    context = applicationContext,
+                                    channelId = channelId,
+                                    messageId = messageId,
+                                    parentMessageId = parentMessageId,
+                                ),
+                            )
+                            .startActivities()
+                    }
                 } else {
                     // User is logged in, navigate to the chat screens
                     if (settings.isAdaptiveLayoutEnabled) {
