@@ -102,6 +102,8 @@ internal data class ReplyMessageInnerEntity(
     val messageTextUpdatedAt: Date? = null,
     /** The ID of the poll **/
     val pollId: String?,
+    /** The list of user IDs that have restricted visibility of the message **/
+    val restrictedVisibility: List<String> = emptyList(),
 )
 
 internal const val REPLY_MESSAGE_ENTITY_TABLE_NAME = "stream_chat_reply_message"
