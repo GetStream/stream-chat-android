@@ -124,6 +124,6 @@ public data class AttachmentsPickerDialogStyle(
     val allowAccessToCameraIconDrawable: Drawable,
     val pickerMediaMode: PickerMediaMode,
     // System media picker
-    val systemMediaPickerVisualMediaAllowMultiple: Boolean = false,
-    val systemMediaPickerVisualMediaType: VisualMediaType = VisualMediaType.IMAGE_AND_VIDEO,
+    val systemMediaPickerVisualMediaAllowMultiple: Boolean,
+    val systemMediaPickerVisualMediaType: VisualMediaType,
 ) : ViewStyle
