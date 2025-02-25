@@ -17,8 +17,10 @@
 package io.getstream.chat.android.compose.tests
 
 import android.Manifest.permission.POST_NOTIFICATIONS
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.READ_MEDIA_IMAGES
 import android.Manifest.permission.READ_MEDIA_VIDEO
+import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.annotation.SuppressLint
 import android.content.Intent
 import io.getstream.chat.android.compose.robots.UserRobot
@@ -77,7 +79,14 @@ abstract class StreamTestCase {
 
     @SuppressLint("InlinedApi")
     private fun grantAppPermissions() {
-        for (permission in arrayOf(POST_NOTIFICATIONS, READ_MEDIA_VIDEO, READ_MEDIA_IMAGES)) {
+        val permissions = arrayOf(
+            POST_NOTIFICATIONS,
+            READ_MEDIA_VIDEO,
+            READ_MEDIA_IMAGES,
+            READ_EXTERNAL_STORAGE,
+            WRITE_EXTERNAL_STORAGE,
+        )
+        for (permission in permissions) {
             device.grantPermission(permission)
         }
     }

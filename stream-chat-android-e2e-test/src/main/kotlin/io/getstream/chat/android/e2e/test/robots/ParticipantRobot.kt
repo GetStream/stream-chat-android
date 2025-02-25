@@ -61,8 +61,12 @@ public class ParticipantRobot(
         return this
     }
 
-    public fun sendMessage(text: String): ParticipantRobot {
-        mockServer.postRequest("participant/message", text.toRequestBody("text".toMediaTypeOrNull()))
+    public fun sendMessage(text: String, delay: Int = 0): ParticipantRobot {
+        var endpoint = "participant/message"
+        if (delay > 0) {
+            endpoint += "?delay=$delay"
+        }
+        mockServer.postRequest(endpoint, text.toRequestBody("text".toMediaTypeOrNull()))
         return this
     }
 
@@ -180,8 +184,12 @@ public class ParticipantRobot(
         return this
     }
 
-    public fun addReaction(type: ReactionType): ParticipantRobot {
-        mockServer.postRequest("participant/reaction?type=${type.reaction}")
+    public fun addReaction(type: ReactionType, delay: Int = 0): ParticipantRobot {
+        var endpoint = "participant/reaction?type=${type.reaction}"
+        if (delay > 0) {
+            endpoint += "&delay=$delay"
+        }
+        mockServer.postRequest(endpoint)
         return this
     }
 

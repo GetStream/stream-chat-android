@@ -123,6 +123,7 @@ dependencies {
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.okhttp.mockwebserver)
     testImplementation(libs.robolectric)
+    testImplementation(libs.kotest.assertions.json)
 
     // Instrumentation tests
     androidTestImplementation(libs.junit)
