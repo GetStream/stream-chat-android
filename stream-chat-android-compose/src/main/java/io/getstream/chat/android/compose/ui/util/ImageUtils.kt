@@ -160,7 +160,7 @@ internal fun StreamAsyncImage(
             val context = LocalContext.current
             val imageAssetTransformer = ChatTheme.streamImageAssetTransformer
             val imageHeaderProvider = ChatTheme.streamImageHeadersProvider
-            val fetchRetries = remember { mutableIntStateOf(0) }
+            var fetchRetries by remember { mutableIntStateOf(0) }
             val asyncImagePainter = rememberAsyncImagePainter(
                 model = imageRequest
                     .convertUrl(context, imageAssetTransformer)
@@ -169,10 +169,10 @@ internal fun StreamAsyncImage(
                 imageLoader = LocalStreamImageLoader.current,
                 contentScale = contentScale,
             )
-            val state: AsyncImagePainter.State by asyncImagePainter.state.collectAsState()
+            val state by asyncImagePainter.state.collectAsState()
             LaunchedEffect(state) {
                 if ((state as? AsyncImagePainter.State.Error)?.result?.throwable is SocketTimeoutException) {
-                    if (fetchRetries.intValue++ < MaxRetries) {
+                    if (fetchRetries++ < MaxRetries) {
                         asyncImagePainter.restart()
                     }
                 }
