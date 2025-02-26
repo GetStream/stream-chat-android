@@ -141,9 +141,11 @@ public fun ChatsScreen(
         }
     }
 
-    LaunchedEffect(listContentMode) {
-        // Clear the messages view model factory when switching between list content modes
-        channelMessagesViewModelFactory = null
+    // Clear the messages view model factory when switching between list content modes
+    DisposableEffect(listContentMode) {
+        onDispose {
+            channelMessagesViewModelFactory = null
+        }
     }
 
     val singlePanel = singlePanel()
