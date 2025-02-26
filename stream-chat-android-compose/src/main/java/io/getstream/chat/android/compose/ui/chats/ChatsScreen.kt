@@ -55,6 +55,7 @@ import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.window.core.layout.WindowWidthSizeClass
+import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
 import io.getstream.chat.android.compose.ui.channels.SearchMode
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
@@ -66,6 +67,7 @@ import io.getstream.chat.android.compose.viewmodel.threads.ThreadListViewModel
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadsViewModelFactory
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 
 /**
@@ -149,31 +151,24 @@ public fun ChatsScreen(
     }
 
     val singlePanel = singlePanel()
+
+    // Auto-select the first item in the list when it loads on wide screens
     if (!singlePanel) {
-        // Auto-select the first item in the list when it loads on wide screens
         when (listContentMode) {
             ListContentMode.Channels -> {
-                val viewModel = viewModel(ChannelListViewModel::class.java, factory = channelViewModelFactory)
-                val channelList = viewModel.channelsState.channelItems
-                LaunchedEffect(channelList) {
-                    if (channelList.isNotEmpty() && channelMessagesViewModelFactory == null) {
-                        val channelId = channelList.first().key
-                        channelMessagesViewModelFactory = messagesViewModelFactory(context, channelId, null, null)
+                FirstChannelLoadHandler(channelViewModelFactory) { channelId, messageId, parentMessageId ->
+                    if (channelMessagesViewModelFactory == null) {
+                        channelMessagesViewModelFactory =
+                            messagesViewModelFactory(context, channelId, messageId, parentMessageId)
                     }
                 }
             }
 
             ListContentMode.Threads -> {
-                val viewModel = viewModel(ThreadListViewModel::class.java, factory = threadsViewModelFactory)
-                val state by viewModel.state.collectAsState()
-                val threadList = state.threads
-                LaunchedEffect(threadList) {
-                    if (threadList.isNotEmpty() && channelMessagesViewModelFactory == null) {
-                        val thread = threadList.first()
-                        val channelId = thread.cid
-                        val parentMessageId = thread.parentMessageId
+                FirstThreadLoadHandler(threadsViewModelFactory) { thread ->
+                    if (channelMessagesViewModelFactory == null) {
                         channelMessagesViewModelFactory =
-                            messagesViewModelFactory(context, channelId, null, parentMessageId)
+                            messagesViewModelFactory(context, thread.cid, null, thread.parentMessageId)
                     }
                 }
             }
@@ -324,6 +319,42 @@ private const val DetailsPanelWeight = 0.7f
 private fun singlePanel(): Boolean {
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
     return windowSizeClass.windowWidthSizeClass != WindowWidthSizeClass.EXPANDED
+}
+
+@Composable
+private fun FirstChannelLoadHandler(
+    channelViewModelFactory: ChannelViewModelFactory,
+    block: (channelId: String, messageId: String?, parentMessageId: String?) -> Unit,
+) {
+    val viewModel = viewModel(ChannelListViewModel::class.java, factory = channelViewModelFactory)
+    val itemList = viewModel.channelsState.channelItems
+    LaunchedEffect(itemList) {
+        if (itemList.isNotEmpty()) {
+            when (val item = itemList.first()) {
+                is ItemState.ChannelItemState ->
+                    block(item.channel.cid, null, null)
+
+                is ItemState.SearchResultItemState ->
+                    block(item.message.cid, item.message.id, item.message.parentId)
+            }
+        }
+    }
+}
+
+@Composable
+private fun FirstThreadLoadHandler(
+    threadsViewModelFactory: ThreadsViewModelFactory,
+    block: (thread: Thread) -> Unit,
+) {
+    val viewModel = viewModel(ThreadListViewModel::class.java, factory = threadsViewModelFactory)
+    val state by viewModel.state.collectAsState()
+    val threadList = state.threads
+    LaunchedEffect(threadList) {
+        if (threadList.isNotEmpty()) {
+            val thread = threadList.first()
+            block(thread)
+        }
+    }
 }
 
 @Composable
