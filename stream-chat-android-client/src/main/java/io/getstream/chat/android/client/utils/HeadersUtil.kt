@@ -147,7 +147,8 @@ internal class HeadersUtil(var context: Context, private var appName: String?, p
      * MyApp / 1.2.3(123); Google Play Store; (Samsung; Galaxy S21; SDK 30; Android 11)
      * ```
      *
-     * @return A sanitized string containing app version, device manufacturer, model, OS version, and installer information.
+     * @return A sanitized string containing app version, device manufacturer, model, OS version, and installer
+     * information.
      */
     fun buildUserAgent(): String {
         with(context.packageManager) {
