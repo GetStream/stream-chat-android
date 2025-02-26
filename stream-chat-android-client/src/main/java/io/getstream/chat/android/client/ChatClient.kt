@@ -414,7 +414,6 @@ internal constructor(
                 handleEvent(event)
             }
         }
-        logger.i { "Initialised: ${buildSdkTrackingHeaders()}" }
     }
 
     private suspend fun handleEvent(event: ChatEvent) {
@@ -3601,6 +3600,8 @@ internal constructor(
         private var uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.CONNECTED
         private var fileTransformer: FileTransformer = NoOpFileTransformer
         private var apiModelTransformers: ApiModelTransformers = ApiModelTransformers()
+        private var appName: String? = null
+        private var appVersion: String? = null
 
         /**
          * Sets the log level to be used by the client.
@@ -3817,6 +3818,21 @@ internal constructor(
             this.uploadAttachmentsNetworkType = type
         }
 
+        /**
+         * Sets name of the application that is using the Stream Chat SDK. Used for logging and debugging purposes.
+         */
+        public fun appName(appName: String): Builder = apply {
+            this.appName = appName
+        }
+
+        /**
+         * Sets version of the application that is using the Stream Chat SDK. Used for logging and debugging purposes.
+         * Eg: 1.0.0
+         */
+        public fun appVersion(appVersion: String): Builder = apply {
+            this.appVersion = appVersion
+        }
+
         public override fun build(): ChatClient {
             return super.build()
         }
@@ -3881,6 +3897,8 @@ internal constructor(
                     customOkHttpClient = customOkHttpClient,
                     clientDebugger = clientDebugger,
                     lifecycle = lifecycle,
+                    appName = this.appName,
+                    appVersion = this.appVersion,
                 )
 
             val appSettingsManager = AppSettingManager(module.api())
@@ -4083,27 +4101,6 @@ internal constructor(
         private fun ensureClientInitialized(): ChatClient {
             check(isInitialized) { "ChatClient should be initialized first!" }
             return instance()
-        }
-
-        /**
-         * Builds a detailed header of information we track around the SDK, Android OS, API Level, device name and
-         * vendor and more.
-         *
-         * @return String formatted header that contains all the information.
-         */
-        internal fun buildSdkTrackingHeaders(): String {
-            val clientInformation = VERSION_PREFIX_HEADER.prefix + BuildConfig.STREAM_CHAT_VERSION
-            val buildModel = Build.MODEL
-            val deviceManufacturer = Build.MANUFACTURER
-            val apiLevel = Build.VERSION.SDK_INT
-            val osName = "Android ${Build.VERSION.RELEASE}"
-
-            return clientInformation +
-                "|os=$osName" +
-                "|api_version=$apiLevel" +
-                "|device_vendor=$deviceManufacturer" +
-                "|device_model=$buildModel" +
-                "|offline_enabled=$OFFLINE_SUPPORT_ENABLED"
         }
     }
 }
