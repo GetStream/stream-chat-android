@@ -21,9 +21,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,13 +40,13 @@ import io.getstream.chat.android.compose.sample.feature.channel.ChannelConstants
 import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelActivity
 import io.getstream.chat.android.compose.sample.feature.channel.list.CustomChatEventHandlerFactory
 import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
-import io.getstream.chat.android.compose.sample.ui.MessagesActivity
 import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBar
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBarOption
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
 import io.getstream.chat.android.compose.ui.channels.SearchMode
 import io.getstream.chat.android.compose.ui.chats.ChatsScreen
+import io.getstream.chat.android.compose.ui.chats.ListContentMode
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.threads.ThreadList
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
@@ -121,54 +120,20 @@ class ChatsActivity : BaseConnectedActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            var selectedTab by rememberSaveable { mutableStateOf(AppBottomBarOption.CHATS) }
-            val globalState = ChatClient.instance().globalState
-            val unreadChannelsCount by globalState.channelUnreadCount.collectAsState()
-            val unreadThreadsCount by globalState.unreadThreadsCount.collectAsState()
-            var showBottomBar by remember { mutableStateOf(true) }
-
             ChatTheme(
                 dateFormatter = ChatApp.dateFormatter,
                 autoTranslationEnabled = ChatApp.autoTranslationEnabled,
                 allowUIAutomationTest = true,
             ) {
-                Scaffold(
-                    bottomBar = {
-                        if (showBottomBar) {
-                            AppBottomBar(
-                                unreadChannelsCount = unreadChannelsCount,
-                                unreadThreadsCount = unreadThreadsCount,
-                                selectedOption = selectedTab,
-                                onOptionSelected = { selectedTab = it },
-                            )
-                        }
-                    },
-                    content = { scaffoldPadding ->
-                        when (selectedTab) {
-                            AppBottomBarOption.CHATS -> ChannelsContent(
-                                modifier = Modifier.padding(scaffoldPadding),
-                                onNavigateToMessages = { channelId, singlePanel ->
-                                    showBottomBar = !singlePanel || channelId == null
-                                },
-                            )
-
-                            AppBottomBarOption.THREADS -> ThreadsContent(
-                                modifier = Modifier.padding(scaffoldPadding),
-                            )
-                        }
-                    },
-                )
+                ChatsScreen()
             }
         }
     }
 
     @Composable
-    private fun ChannelsContent(
-        modifier: Modifier,
-        onNavigateToMessages: (channelId: String?, singlePanel: Boolean) -> Unit,
-    ) {
+    private fun ChatsScreen() {
+        var listContentMode by remember { mutableStateOf(ListContentMode.Channels) }
         ChatsScreen(
-            modifier = modifier,
             channelViewModelFactory = channelViewModelFactory,
             messagesViewModelFactory = { _, channelId, messageId, parentMessageId ->
                 if (channelId == null) {
@@ -184,7 +149,25 @@ class ChatsActivity : BaseConnectedActivity() {
             title = stringResource(id = R.string.app_name),
             isShowingHeader = true,
             searchMode = SearchMode.Messages,
-            onNavigateToMessages = onNavigateToMessages,
+            listContentMode = listContentMode,
+            listFooterContent = {
+                var selectedTab by rememberSaveable { mutableStateOf(AppBottomBarOption.CHATS) }
+                val globalState = ChatClient.instance().globalState
+                val unreadChannelsCount by globalState.channelUnreadCount.collectAsState()
+                val unreadThreadsCount by globalState.unreadThreadsCount.collectAsState()
+                LaunchedEffect(selectedTab) {
+                    listContentMode = when (selectedTab) {
+                        AppBottomBarOption.CHATS -> ListContentMode.Channels
+                        AppBottomBarOption.THREADS -> ListContentMode.Threads
+                    }
+                }
+                AppBottomBar(
+                    unreadChannelsCount = unreadChannelsCount,
+                    unreadThreadsCount = unreadThreadsCount,
+                    selectedOption = selectedTab,
+                    onOptionSelected = { selectedTab = it },
+                )
+            },
             onBackPressed = ::finish,
             onChannelsHeaderAvatarClick = {
                 lifecycleScope.launch {
@@ -223,7 +206,7 @@ class ChatsActivity : BaseConnectedActivity() {
 
     private fun openThread(thread: Thread) {
         startActivity(
-            MessagesActivity.createIntent(
+            createIntent(
                 context = applicationContext,
                 channelId = thread.parentMessage.cid,
                 parentMessageId = thread.parentMessageId,

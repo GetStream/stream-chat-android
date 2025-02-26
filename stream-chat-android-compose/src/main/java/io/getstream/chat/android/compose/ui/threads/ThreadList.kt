@@ -166,6 +166,7 @@ public fun ThreadList(
     },
 ) {
     Scaffold(
+        containerColor = ChatTheme.colors.appBackground,
         topBar = {
             unreadThreadsBanner(state.unseenThreadsCount)
         },

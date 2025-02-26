@@ -28,6 +28,8 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -40,6 +42,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
@@ -56,9 +59,12 @@ import androidx.window.core.layout.WindowWidthSizeClass
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
 import io.getstream.chat.android.compose.ui.channels.SearchMode
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
+import io.getstream.chat.android.compose.ui.threads.ThreadList
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.threads.ThreadListViewModel
+import io.getstream.chat.android.compose.viewmodel.threads.ThreadsViewModelFactory
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
@@ -71,19 +77,21 @@ import io.getstream.chat.android.models.User
  * @param modifier The modifier to be applied to the root layout of the screen.
  * @param channelViewModelFactory Factory for creating the [ChannelListViewModel] used for managing channel data.
  * @param channelViewModelKey An optional key to scope the [ChannelListViewModel] instance.
+ * @param threadsViewModelFactory Factory for creating the [ThreadListViewModel] used for managing thread data.
  * @param messagesViewModelFactory A lambda function that provides a [MessagesViewModelFactory] for managing messages
  * within a selected channel.
  * The selected channel ID is `null` when the initial [MessagesViewModelFactory] is requested.
  * @param title The title displayed in the chat screen header. Default is `"Stream Chat"`.
  * @param isShowingHeader Whether to display the header in the channel list. Default is `true`.
  * @param searchMode The current search mode for the chat screen. Default is [SearchMode.None].
+ * @param listContentMode The mode for displaying the list content in the chat screen.
+ * Default is [ListContentMode.Channels].
+ * @param listFooterContent The content to display at the bottom of the list.
  * @param onChannelsHeaderAvatarClick Callback invoked when the user clicks on the avatar in the channel header.
  * @param onChannelsHeaderActionClick Callback invoked when the user clicks on the action button in the channel header.
  * @param onViewChannelInfoAction Callback invoked when the user selects a channel to view its details.
  * @param onMessagesHeaderTitleClick Callback invoked when the user clicks the title in the message header.
  * @param onMessagesHeaderAvatarClick Callback invoked when the user clicks on a user's avatar in a message.
- * @param onNavigateToMessages Callback invoked when navigating to the messages screen, passing the selected channel ID.
- * The selected channel ID is `null` when user navigates back from a channel.
  * @param onBackPressed Callback invoked when the user presses the back button.
  */
 @ExperimentalStreamChatApi
@@ -93,6 +101,7 @@ public fun ChatsScreen(
     modifier: Modifier = Modifier,
     channelViewModelFactory: ChannelViewModelFactory = ChannelViewModelFactory(),
     channelViewModelKey: String? = null,
+    threadsViewModelFactory: ThreadsViewModelFactory = ThreadsViewModelFactory(),
     messagesViewModelFactory: (
         context: Context,
         channelId: String?,
@@ -113,12 +122,13 @@ public fun ChatsScreen(
     title: String = "Stream Chat",
     isShowingHeader: Boolean = true,
     searchMode: SearchMode = SearchMode.None,
+    listContentMode: ListContentMode = ListContentMode.Channels,
+    listFooterContent: @Composable ColumnScope.() -> Unit = {},
     onChannelsHeaderAvatarClick: () -> Unit = {},
     onChannelsHeaderActionClick: () -> Unit = {},
     onViewChannelInfoAction: (channel: Channel) -> Unit = {},
     onMessagesHeaderTitleClick: (channel: Channel) -> Unit = {},
     onMessagesHeaderAvatarClick: (user: User) -> Unit = {},
-    onNavigateToMessages: (channelId: String?, singlePanel: Boolean) -> Unit = { _, _ -> },
     onBackPressed: () -> Unit = {},
 ) {
     val context = LocalContext.current
@@ -126,7 +136,7 @@ public fun ChatsScreen(
     var channelMessagesViewModelFactory by rememberSaveable(
         saver = factorySaver { channelId, messageId, parentMessageId ->
             messagesViewModelFactory(context, channelId, messageId, parentMessageId)
-        }
+        },
     ) {
         mutableStateOf(messagesViewModelFactory(context, null, null, null))
     }
@@ -149,44 +159,66 @@ public fun ChatsScreen(
             channelMessagesViewModelFactory = messagesViewModelFactory(context, channelId, null, null)
         }
     }
-    LaunchedEffect(channelMessagesViewModelFactory) {
-        onNavigateToMessages(channelMessagesViewModelFactory?.channelId, singlePanel)
+
+    val channels = remember {
+        movableContentOf {
+            ChannelsScreen(
+                title = title,
+                viewModelFactory = channelViewModelFactory,
+                viewModelKey = channelViewModelKey,
+                isShowingHeader = isShowingHeader,
+                searchMode = searchMode,
+                onHeaderAvatarClick = onChannelsHeaderAvatarClick,
+                onHeaderActionClick = onChannelsHeaderActionClick,
+                onChannelClick = { channel ->
+                    channelMessagesViewModelFactory = messagesViewModelFactory(
+                        context,
+                        channel.cid,
+                        null,
+                        null
+                    )
+                },
+                onSearchMessageItemClick = { message ->
+                    channelMessagesViewModelFactory = messagesViewModelFactory(
+                        context,
+                        message.cid,
+                        message.id,
+                        message.parentId,
+                    )
+                },
+                onViewChannelInfoAction = onViewChannelInfoAction,
+                onBackPressed = onSinglePanelBackPressed,
+            )
+        }
+    }
+    val threads = remember {
+        movableContentOf {
+            val viewModel = viewModel(modelClass = ThreadListViewModel::class.java, factory = threadsViewModelFactory)
+            ThreadList(
+                viewModel = viewModel,
+            )
+        }
     }
 
     Scaffold(
         modifier = modifier,
     ) { scaffoldPadding ->
-        Box(
-            modifier = Modifier.padding(scaffoldPadding),
-        ) {
-            if (singlePanel) {
-                ChannelsScreen(
-                    title = title,
-                    viewModelFactory = channelViewModelFactory,
-                    viewModelKey = channelViewModelKey,
-                    isShowingHeader = isShowingHeader,
-                    searchMode = searchMode,
-                    onHeaderAvatarClick = onChannelsHeaderAvatarClick,
-                    onHeaderActionClick = onChannelsHeaderActionClick,
-                    onChannelClick = { channel ->
-                        channelMessagesViewModelFactory = messagesViewModelFactory(
-                            context,
-                            channel.cid,
-                            null,
-                            null,
-                        )
-                    },
-                    onSearchMessageItemClick = { message ->
-                        channelMessagesViewModelFactory = messagesViewModelFactory(
-                            context,
-                            message.cid,
-                            message.id,
-                            message.parentId,
-                        )
-                    },
-                    onViewChannelInfoAction = onViewChannelInfoAction,
-                    onBackPressed = onSinglePanelBackPressed,
-                )
+        if (singlePanel) {
+            Box(
+                modifier = Modifier.padding(scaffoldPadding),
+            ) {
+                Column {
+                    Crossfade(
+                        modifier = Modifier.weight(1f),
+                        targetState = listContentMode,
+                    ) { mode ->
+                        when (mode) {
+                            ListContentMode.Channels -> channels()
+                            ListContentMode.Threads -> threads()
+                        }
+                    }
+                    listFooterContent()
+                }
                 AnimatedContent(
                     targetState = channelMessagesViewModelFactory,
                     transitionSpec = slideTransitionSpec(),
@@ -200,58 +232,58 @@ public fun ChatsScreen(
                         )
                     }
                 }
-            } else {
-                Row {
-                    Box(
-                        modifier = Modifier.weight(ListPanelWeight),
-                    ) {
-                        ChannelsScreen(
-                            viewModelFactory = channelViewModelFactory,
-                            viewModelKey = channelViewModelKey,
-                            title = title,
-                            isShowingHeader = isShowingHeader,
-                            searchMode = searchMode,
-                            onHeaderAvatarClick = onChannelsHeaderAvatarClick,
-                            onHeaderActionClick = onChannelsHeaderActionClick,
-                            onChannelClick = { channel ->
-                                channelMessagesViewModelFactory = messagesViewModelFactory(
-                                    context,
-                                    channel.cid,
-                                    null,
-                                    null,
-                                )
-                            },
-                            onSearchMessageItemClick = { message ->
-                                channelMessagesViewModelFactory = messagesViewModelFactory(
-                                    context,
-                                    message.cid,
-                                    message.id,
-                                    message.parentId,
-                                )
-                            },
-                            onViewChannelInfoAction = onViewChannelInfoAction,
-                            onBackPressed = onBackPressed,
-                        )
+            }
+        } else {
+            Row(
+                modifier = Modifier.padding(scaffoldPadding),
+            ) {
+                Column(
+                    modifier = Modifier.weight(ListPanelWeight),
+                ) {
+                    Crossfade(
+                        modifier = Modifier.weight(1f),
+                        targetState = listContentMode,
+                    ) { mode ->
+                        when (mode) {
+                            ListContentMode.Channels -> channels()
+                            ListContentMode.Threads -> threads()
+                        }
                     }
-                    VerticalDivider()
-                    Box(
-                        modifier = Modifier.weight(DetailsPanelWeight),
-                    ) {
-                        Crossfade(targetState = channelMessagesViewModelFactory) { viewModelFactory ->
-                            if (viewModelFactory != null) {
-                                Messages(
-                                    viewModelFactory = viewModelFactory,
-                                    onHeaderTitleClick = onMessagesHeaderTitleClick,
-                                    onUserAvatarClick = onMessagesHeaderAvatarClick,
-                                    onBackPressed = onBackPressed,
-                                )
-                            }
+                    listFooterContent()
+                }
+                VerticalDivider()
+                Box(
+                    modifier = Modifier.weight(DetailsPanelWeight),
+                ) {
+                    Crossfade(targetState = channelMessagesViewModelFactory) { viewModelFactory ->
+                        if (viewModelFactory != null) {
+                            Messages(
+                                viewModelFactory = viewModelFactory,
+                                onHeaderTitleClick = onMessagesHeaderTitleClick,
+                                onUserAvatarClick = onMessagesHeaderAvatarClick,
+                                onBackPressed = onBackPressed,
+                            )
                         }
                     }
                 }
             }
         }
     }
+}
+
+/**
+ * The mode for displaying the list content in the chat screen.
+ */
+public enum class ListContentMode {
+    /**
+     * Display the list of channels.
+     */
+    Channels,
+
+    /**
+     * Display the list of threads.
+     */
+    Threads,
 }
 
 private const val ListPanelWeight = 0.3f
