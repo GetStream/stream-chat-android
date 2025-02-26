@@ -113,7 +113,7 @@ public fun ChannelsScreen(
         }
     }
 
-    var searchQuery by rememberSaveable { mutableStateOf("") }
+    var searchQuery by rememberSaveable { mutableStateOf(listViewModel.searchQuery.query) }
 
     Box(
         modifier = Modifier

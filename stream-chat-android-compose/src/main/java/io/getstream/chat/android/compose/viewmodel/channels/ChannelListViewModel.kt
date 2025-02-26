@@ -28,6 +28,7 @@ import io.getstream.chat.android.compose.state.QueryConfig
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
+import io.getstream.chat.android.compose.util.extensions.asState
 import io.getstream.chat.android.core.utils.Debouncer
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelMute
@@ -133,7 +134,12 @@ public class ChannelListViewModel(
      * The current state of the search input. When changed, it emits a new value in a flow, which
      * queries and loads new data.
      */
-    private val searchQuery = MutableStateFlow<SearchQuery>(SearchQuery.Empty)
+    private val _searchQuery = MutableStateFlow<SearchQuery>(SearchQuery.Empty)
+
+    /**
+     * The current search query.
+     */
+    public val searchQuery: SearchQuery by _searchQuery.asState(viewModelScope)
 
     /**
      * The refresh flow used to trigger a refresh of either channels or search results.
@@ -227,7 +233,7 @@ public class ChannelListViewModel(
      */
     private suspend fun init() {
         logger.d { "[init] no args" }
-        combine(searchQuery, queryConfigFlow, refreshFlow) { query, config, ts -> Triple(query, config, ts) }
+        combine(_searchQuery, queryConfigFlow, refreshFlow) { query, config, ts -> Triple(query, config, ts) }
             .collectLatest { (query, config, ts) ->
                 logger.i { "[observeInit] ts: $ts, query: $query, config: $config" }
                 when (query) {
@@ -256,7 +262,7 @@ public class ChannelListViewModel(
             logger.v { "[observeSearchMessages] state: ${it.stringify()}" }
             val channels = chatClient.repositoryFacade.selectChannels(it.messages.map { message -> message.cid })
             channelsState = channelsState.copy(
-                searchQuery = searchQuery.value,
+                searchQuery = _searchQuery.value,
                 isLoading = it.isLoading,
                 isLoadingMore = it.isLoadingMore,
                 endOfChannels = !it.canLoadMore,
@@ -392,7 +398,7 @@ public class ChannelListViewModel(
                         ChannelsStateData.Loading,
                         -> channelsState.copy(
                             isLoading = true,
-                            searchQuery = searchQuery.value,
+                            searchQuery = _searchQuery.value,
                         ).also { logger.d { "[observeQueryChannels] state: Loading" } }
 
                         ChannelsStateData.OfflineNoResults -> {
@@ -400,7 +406,7 @@ public class ChannelListViewModel(
                             channelsState.copy(
                                 isLoading = false,
                                 channelItems = emptyList(),
-                                searchQuery = searchQuery.value,
+                                searchQuery = _searchQuery.value,
                             )
                         }
 
@@ -415,7 +421,7 @@ public class ChannelListViewModel(
                                 ),
                                 isLoadingMore = false,
                                 endOfChannels = queryChannelsState.endOfChannels.value,
-                                searchQuery = searchQuery.value,
+                                searchQuery = _searchQuery.value,
                             )
                         }
                     }
@@ -487,12 +493,12 @@ public class ChannelListViewModel(
         ),
     )
     public fun setSearchQuery(newQuery: String) {
-        this.searchQuery.value = SearchQuery.Messages(newQuery)
+        this._searchQuery.value = SearchQuery.Messages(newQuery)
     }
 
     public fun setSearchQuery(searchQuery: SearchQuery) {
         logger.d { "[setSearchQuery] searchQuery: $searchQuery" }
-        this.searchQuery.value = searchQuery
+        this._searchQuery.value = searchQuery
     }
 
     /**
@@ -527,7 +533,7 @@ public class ChannelListViewModel(
             logger.v { "[loadMore] rejected (client is offline)" }
             return
         }
-        when (searchQuery.value) {
+        when (_searchQuery.value) {
             is SearchQuery.Empty,
             is SearchQuery.Channels,
             -> chListScope.launch { loadMoreQueryChannels() }
@@ -557,7 +563,7 @@ public class ChannelListViewModel(
             return
         }
         val nextQuery = currentQuery.copy(
-            filter = createQueryChannelsFilter(currentFilter, searchQuery.value.query),
+            filter = createQueryChannelsFilter(currentFilter, _searchQuery.value.query),
             querySort = querySortFlow.value,
         )
         if (lastNextQuery == nextQuery) {
