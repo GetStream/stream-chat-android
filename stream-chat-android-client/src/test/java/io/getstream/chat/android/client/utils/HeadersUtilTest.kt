@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.utils
 
 import android.content.Context
+import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Build
@@ -137,11 +138,45 @@ internal class HeadersUtilTest {
     }
 
     @Test
-    @Config(sdk = [28])
     fun `getInstallerName will return StandAloneInstall for any error`() {
+        val packageInfo = PackageInfo()
+        `when`(context.packageManager).thenReturn(packageManager)
+        `when`(packageManager.getPackageInfo(context.packageName, 0)).thenReturn(packageInfo)
+
         val headersUtil = HeadersUtil(context, "Chat App", "1.3.1-DEBUG")
         val result = headersUtil.buildUserAgent()
 
         assertTrue(result.contains("StandAloneInstall"))
+    }
+
+    @Test
+    fun `getAppName will get appName from nonLocalizedLabel when labelRes is zero`() {
+        // val packageInfo = PackageInfo()
+        val applicationInfo = ApplicationInfo().apply {
+            labelRes = 0
+            nonLocalizedLabel = "My label"
+        }
+        `when`(context.applicationInfo).thenReturn(applicationInfo)
+
+        val headersUtil = HeadersUtil(context, null, "1.3.1-DEBUG")
+        val result = headersUtil.buildUserAgent()
+
+        assertTrue(result.contains("My label"))
+    }
+
+    @Test
+    fun `getAppName will get appName from context getString if stringId is not eq zero`() {
+        // val packageInfo = PackageInfo()
+        val applicationInfo = ApplicationInfo().apply {
+            labelRes = 1
+        }
+
+        `when`(context.applicationInfo).thenReturn(applicationInfo)
+        `when`(context.getString(1)).thenReturn("My label")
+
+        val headersUtil = HeadersUtil(context, null, "1.3.1-DEBUG")
+        val result = headersUtil.buildUserAgent()
+
+        assertTrue(result.contains("My label"))
     }
 }
