@@ -165,6 +165,21 @@ internal class HeadersUtilTest {
     }
 
     @Test
+    fun `getAppName will return UnknownApp when nonLocalizedLabel is null`() {
+        // val packageInfo = PackageInfo()
+        val applicationInfo = ApplicationInfo().apply {
+            labelRes = 0
+            nonLocalizedLabel = null
+        }
+        `when`(context.applicationInfo).thenReturn(applicationInfo)
+
+        val headersUtil = HeadersUtil(context, null, "1.3.1-DEBUG")
+        val result = headersUtil.buildUserAgent()
+
+        assertTrue(result.contains("UnknownApp"))
+    }
+
+    @Test
     fun `getAppName will get appName from context getString if stringId is not eq zero`() {
         // val packageInfo = PackageInfo()
         val applicationInfo = ApplicationInfo().apply {
@@ -178,5 +193,21 @@ internal class HeadersUtilTest {
         val result = headersUtil.buildUserAgent()
 
         assertTrue(result.contains("My label"))
+    }
+
+    @Test
+    fun `getAppName will return UnknownApp when context getString is null`() {
+        // val packageInfo = PackageInfo()
+        val applicationInfo = ApplicationInfo().apply {
+            labelRes = 1
+        }
+
+        `when`(context.applicationInfo).thenReturn(applicationInfo)
+        `when`(context.getString(1)).thenReturn(null)
+
+        val headersUtil = HeadersUtil(context, null, "1.3.1-DEBUG")
+        val result = headersUtil.buildUserAgent()
+
+        assertTrue(result.contains("UnknownApp"))
     }
 }
