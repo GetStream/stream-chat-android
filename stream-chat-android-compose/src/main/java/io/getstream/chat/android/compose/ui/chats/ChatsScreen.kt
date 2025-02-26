@@ -38,6 +38,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.movableContentOf
@@ -140,15 +141,39 @@ public fun ChatsScreen(
         }
     }
 
+    LaunchedEffect(listContentMode) {
+        // Clear the messages view model factory when switching between list content modes
+        channelMessagesViewModelFactory = null
+    }
+
     val singlePanel = singlePanel()
-    if (listContentMode == ListContentMode.Channels) {
-        val channelListViewModel = viewModel(ChannelListViewModel::class.java, factory = channelViewModelFactory)
-        val channelItems = channelListViewModel.channelsState.channelItems
-        LaunchedEffect(channelItems) {
-            // Auto-select the first channel in the list when it loads on large screens
-            if (!singlePanel && channelItems.isNotEmpty() && channelMessagesViewModelFactory == null) {
-                val channelId = channelItems.first().key
-                channelMessagesViewModelFactory = messagesViewModelFactory(context, channelId, null, null)
+    if (!singlePanel) {
+        // Auto-select the first item in the list when it loads on wide screens
+        when (listContentMode) {
+            ListContentMode.Channels -> {
+                val viewModel = viewModel(ChannelListViewModel::class.java, factory = channelViewModelFactory)
+                val channelList = viewModel.channelsState.channelItems
+                LaunchedEffect(channelList) {
+                    if (channelList.isNotEmpty() && channelMessagesViewModelFactory == null) {
+                        val channelId = channelList.first().key
+                        channelMessagesViewModelFactory = messagesViewModelFactory(context, channelId, null, null)
+                    }
+                }
+            }
+
+            ListContentMode.Threads -> {
+                val viewModel = viewModel(ThreadListViewModel::class.java, factory = threadsViewModelFactory)
+                val state by viewModel.state.collectAsState()
+                val threadList = state.threads
+                LaunchedEffect(threadList) {
+                    if (threadList.isNotEmpty() && channelMessagesViewModelFactory == null) {
+                        val thread = threadList.first()
+                        val channelId = thread.cid
+                        val parentMessageId = thread.parentMessageId
+                        channelMessagesViewModelFactory =
+                            messagesViewModelFactory(context, channelId, null, parentMessageId)
+                    }
+                }
             }
         }
     }
@@ -165,7 +190,7 @@ public fun ChatsScreen(
                         context,
                         channel.cid,
                         null,
-                        null
+                        null,
                     )
                 },
                 onSearchMessageItemClick = { message ->
@@ -186,6 +211,14 @@ public fun ChatsScreen(
             val viewModel = viewModel(modelClass = ThreadListViewModel::class.java, factory = threadsViewModelFactory)
             ThreadList(
                 viewModel = viewModel,
+                onThreadClick = { thread ->
+                    channelMessagesViewModelFactory = messagesViewModelFactory(
+                        context,
+                        thread.cid,
+                        null,
+                        thread.parentMessageId,
+                    )
+                },
             )
         }
     }
@@ -199,7 +232,7 @@ public fun ChatsScreen(
             ) {
                 Scaffold(
                     topBar = { listHeaderContent() },
-                    bottomBar = { listFooterContent() }
+                    bottomBar = { listFooterContent() },
                 ) { scaffoldPadding ->
                     Crossfade(
                         modifier = Modifier.padding(scaffoldPadding),
@@ -216,7 +249,7 @@ public fun ChatsScreen(
                     transitionSpec = slideTransitionSpec(),
                 ) { viewModelFactory ->
                     if (viewModelFactory != null) {
-                        Messages(
+                        MessagesContent(
                             viewModelFactory = viewModelFactory,
                             onHeaderTitleClick = onMessagesHeaderTitleClick,
                             onUserAvatarClick = onMessagesHeaderAvatarClick,
@@ -232,7 +265,7 @@ public fun ChatsScreen(
                 Scaffold(
                     modifier = Modifier.weight(ListPanelWeight),
                     topBar = { listHeaderContent() },
-                    bottomBar = { listFooterContent() }
+                    bottomBar = { listFooterContent() },
                 ) { scaffoldPadding ->
                     Crossfade(
                         modifier = Modifier.padding(scaffoldPadding),
@@ -247,10 +280,10 @@ public fun ChatsScreen(
                 VerticalDivider()
                 Crossfade(
                     modifier = Modifier.weight(DetailsPanelWeight),
-                    targetState = channelMessagesViewModelFactory
+                    targetState = channelMessagesViewModelFactory,
                 ) { viewModelFactory ->
                     if (viewModelFactory != null) {
-                        Messages(
+                        MessagesContent(
                             viewModelFactory = viewModelFactory,
                             onHeaderTitleClick = onMessagesHeaderTitleClick,
                             onUserAvatarClick = onMessagesHeaderAvatarClick,
@@ -292,7 +325,7 @@ private fun singlePanel(): Boolean {
 }
 
 @Composable
-private fun Messages(
+private fun MessagesContent(
     viewModelFactory: MessagesViewModelFactory,
     onHeaderTitleClick: (channel: Channel) -> Unit,
     onUserAvatarClick: (user: User) -> Unit,
@@ -327,6 +360,9 @@ private fun Messages(
     }
 }
 
+/**
+ * The transition spec used for animating the content when switching between channels and threads in single-panel mode.
+ */
 @Composable
 private fun <S> slideTransitionSpec(): AnimatedContentTransitionScope<S>.() -> ContentTransform = {
     (

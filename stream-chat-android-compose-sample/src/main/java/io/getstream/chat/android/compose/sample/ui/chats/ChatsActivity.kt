@@ -20,7 +20,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -43,20 +42,19 @@ import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
 import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBar
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBarOption
+import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponentFactory
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
 import io.getstream.chat.android.compose.ui.channels.SearchMode
 import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
 import io.getstream.chat.android.compose.ui.chats.ChatsScreen
 import io.getstream.chat.android.compose.ui.chats.ListContentMode
+import io.getstream.chat.android.compose.ui.components.channels.ChannelOptionItemVisibility
+import io.getstream.chat.android.compose.ui.theme.ChannelOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.threads.ThreadList
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
-import io.getstream.chat.android.compose.viewmodel.threads.ThreadListViewModel
-import io.getstream.chat.android.compose.viewmodel.threads.ThreadsViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
-import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
@@ -113,10 +111,6 @@ class ChatsActivity : BaseConnectedActivity() {
         }
     }
 
-    private val threadsViewModelFactory by lazy { ThreadsViewModelFactory() }
-
-    private val threadsViewModel: ThreadListViewModel by viewModels { threadsViewModelFactory }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -125,6 +119,12 @@ class ChatsActivity : BaseConnectedActivity() {
                 dateFormatter = ChatApp.dateFormatter,
                 autoTranslationEnabled = ChatApp.autoTranslationEnabled,
                 allowUIAutomationTest = true,
+                componentFactory = CustomChatComponentFactory(),
+                channelOptionsTheme = ChannelOptionsTheme.defaultTheme(
+                    optionVisibility = ChannelOptionItemVisibility(
+                        isPinChannelVisible = true,
+                    ),
+                ),
             ) {
                 ChatsScreen()
             }
@@ -205,25 +205,6 @@ class ChatsActivity : BaseConnectedActivity() {
         deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
         isComposerLinkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
     )
-
-    @Composable
-    private fun ThreadsContent(modifier: Modifier) {
-        ThreadList(
-            modifier = modifier,
-            viewModel = threadsViewModel,
-            onThreadClick = ::openThread,
-        )
-    }
-
-    private fun openThread(thread: Thread) {
-        startActivity(
-            createIntent(
-                context = applicationContext,
-                channelId = thread.parentMessage.cid,
-                parentMessageId = thread.parentMessageId,
-            ),
-        )
-    }
 
     private fun openAddChannel() {
         startActivity(Intent(applicationContext, AddChannelActivity::class.java))
