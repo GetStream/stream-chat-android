@@ -106,4 +106,42 @@ internal class HeadersUtilTest {
 
         assertTrue(result.contains("12345"))
     }
+
+    @Test
+    @Config(sdk = [27]) // Simulates API 28+ (P)
+    fun `getAppVersionCode returns correct value for API 27`() {
+        val packageInfo = PackageInfo()
+
+        `when`(context.packageManager).thenReturn(packageManager)
+        `when`(packageManager.getPackageInfo(context.packageName, 0)).thenReturn(packageInfo)
+
+        val headersUtil = HeadersUtil(context, "Chat App", "1.3.1-DEBUG")
+        val result = headersUtil.buildUserAgent()
+
+        assertTrue(result.contains("1.3.1-DEBUG(0)"))
+    }
+
+    @Test
+    @Config(sdk = [28])
+    fun `getInstallerName will read installingPackageName for API below 30`() {
+        val packageInfo = PackageInfo()
+
+        `when`(context.packageManager).thenReturn(packageManager)
+        `when`(packageManager.getPackageInfo(context.packageName, 0)).thenReturn(packageInfo)
+        `when`(context.packageManager.getInstallerPackageName(context.packageName)).thenReturn("CustomInstall")
+
+        val headersUtil = HeadersUtil(context, "Chat App", "1.3.1-DEBUG")
+        val result = headersUtil.buildUserAgent()
+
+        assertTrue(result.contains("CustomInstall"))
+    }
+
+    @Test
+    @Config(sdk = [28])
+    fun `getInstallerName will return StandAloneInstall for any error`() {
+        val headersUtil = HeadersUtil(context, "Chat App", "1.3.1-DEBUG")
+        val result = headersUtil.buildUserAgent()
+
+        assertTrue(result.contains("StandAloneInstall"))
+    }
 }
