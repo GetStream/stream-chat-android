@@ -45,6 +45,7 @@ import io.getstream.chat.android.compose.sample.ui.component.AppBottomBar
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBarOption
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
 import io.getstream.chat.android.compose.ui.channels.SearchMode
+import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
 import io.getstream.chat.android.compose.ui.chats.ChatsScreen
 import io.getstream.chat.android.compose.ui.chats.ListContentMode
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -147,9 +148,26 @@ class ChatsActivity : BaseConnectedActivity() {
                 }
             },
             title = stringResource(id = R.string.app_name),
-            isShowingHeader = true,
             searchMode = SearchMode.Messages,
             listContentMode = listContentMode,
+            listHeaderContent = {
+                val clientState = ChatClient.instance().clientState
+                val user by clientState.user.collectAsState()
+                val connectionState by clientState.connectionState.collectAsState()
+                ChannelListHeader(
+                    modifier = Modifier,
+                    title = stringResource(id = R.string.app_name),
+                    currentUser = user,
+                    connectionState = connectionState,
+                    onAvatarClick = {
+                        lifecycleScope.launch {
+                            ChatHelper.disconnectUser()
+                            openUserLogin()
+                        }
+                    },
+                    onHeaderActionClick = ::openAddChannel,
+                )
+            },
             listFooterContent = {
                 var selectedTab by rememberSaveable { mutableStateOf(AppBottomBarOption.CHATS) }
                 val globalState = ChatClient.instance().globalState
@@ -168,16 +186,9 @@ class ChatsActivity : BaseConnectedActivity() {
                     onOptionSelected = { selectedTab = it },
                 )
             },
-            onBackPressed = ::finish,
-            onChannelsHeaderAvatarClick = {
-                lifecycleScope.launch {
-                    ChatHelper.disconnectUser()
-                    openUserLogin()
-                }
-            },
-            onChannelsHeaderActionClick = ::openAddChannel,
             onViewChannelInfoAction = ::openChannelInfo,
             onMessagesHeaderTitleClick = ::openChannelInfo,
+            onBackPressed = ::finish,
         )
     }
 

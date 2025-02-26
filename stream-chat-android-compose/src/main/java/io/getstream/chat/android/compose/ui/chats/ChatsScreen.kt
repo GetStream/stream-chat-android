@@ -28,8 +28,6 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -76,19 +74,16 @@ import io.getstream.chat.android.models.User
  *
  * @param modifier The modifier to be applied to the root layout of the screen.
  * @param channelViewModelFactory Factory for creating the [ChannelListViewModel] used for managing channel data.
- * @param channelViewModelKey An optional key to scope the [ChannelListViewModel] instance.
  * @param threadsViewModelFactory Factory for creating the [ThreadListViewModel] used for managing thread data.
  * @param messagesViewModelFactory A lambda function that provides a [MessagesViewModelFactory] for managing messages
  * within a selected channel.
  * The selected channel ID is `null` when the initial [MessagesViewModelFactory] is requested.
  * @param title The title displayed in the chat screen header. Default is `"Stream Chat"`.
- * @param isShowingHeader Whether to display the header in the channel list. Default is `true`.
  * @param searchMode The current search mode for the chat screen. Default is [SearchMode.None].
  * @param listContentMode The mode for displaying the list content in the chat screen.
  * Default is [ListContentMode.Channels].
+ * @param listHeaderContent The content to display at the top of the list.
  * @param listFooterContent The content to display at the bottom of the list.
- * @param onChannelsHeaderAvatarClick Callback invoked when the user clicks on the avatar in the channel header.
- * @param onChannelsHeaderActionClick Callback invoked when the user clicks on the action button in the channel header.
  * @param onViewChannelInfoAction Callback invoked when the user selects a channel to view its details.
  * @param onMessagesHeaderTitleClick Callback invoked when the user clicks the title in the message header.
  * @param onMessagesHeaderAvatarClick Callback invoked when the user clicks on a user's avatar in a message.
@@ -100,7 +95,6 @@ import io.getstream.chat.android.models.User
 public fun ChatsScreen(
     modifier: Modifier = Modifier,
     channelViewModelFactory: ChannelViewModelFactory = ChannelViewModelFactory(),
-    channelViewModelKey: String? = null,
     threadsViewModelFactory: ThreadsViewModelFactory = ThreadsViewModelFactory(),
     messagesViewModelFactory: (
         context: Context,
@@ -120,12 +114,10 @@ public fun ChatsScreen(
         }
     },
     title: String = "Stream Chat",
-    isShowingHeader: Boolean = true,
     searchMode: SearchMode = SearchMode.None,
     listContentMode: ListContentMode = ListContentMode.Channels,
-    listFooterContent: @Composable ColumnScope.() -> Unit = {},
-    onChannelsHeaderAvatarClick: () -> Unit = {},
-    onChannelsHeaderActionClick: () -> Unit = {},
+    listHeaderContent: @Composable () -> Unit = {},
+    listFooterContent: @Composable () -> Unit = {},
     onViewChannelInfoAction: (channel: Channel) -> Unit = {},
     onMessagesHeaderTitleClick: (channel: Channel) -> Unit = {},
     onMessagesHeaderAvatarClick: (user: User) -> Unit = {},
@@ -149,27 +141,25 @@ public fun ChatsScreen(
     }
 
     val singlePanel = singlePanel()
-    val channelListViewModel =
-        viewModel(ChannelListViewModel::class.java, key = channelViewModelKey, factory = channelViewModelFactory)
-    val channelItems = channelListViewModel.channelsState.channelItems
-    LaunchedEffect(channelItems) {
-        // Auto-select the first channel in the list when it loads on large screens
-        if (!singlePanel && channelItems.isNotEmpty() && channelMessagesViewModelFactory == null) {
-            val channelId = channelItems.first().key
-            channelMessagesViewModelFactory = messagesViewModelFactory(context, channelId, null, null)
+    if (listContentMode == ListContentMode.Channels) {
+        val channelListViewModel = viewModel(ChannelListViewModel::class.java, factory = channelViewModelFactory)
+        val channelItems = channelListViewModel.channelsState.channelItems
+        LaunchedEffect(channelItems) {
+            // Auto-select the first channel in the list when it loads on large screens
+            if (!singlePanel && channelItems.isNotEmpty() && channelMessagesViewModelFactory == null) {
+                val channelId = channelItems.first().key
+                channelMessagesViewModelFactory = messagesViewModelFactory(context, channelId, null, null)
+            }
         }
     }
 
-    val channels = remember {
+    val channelsContent = remember {
         movableContentOf {
             ChannelsScreen(
                 title = title,
                 viewModelFactory = channelViewModelFactory,
-                viewModelKey = channelViewModelKey,
-                isShowingHeader = isShowingHeader,
+                isShowingHeader = false,
                 searchMode = searchMode,
-                onHeaderAvatarClick = onChannelsHeaderAvatarClick,
-                onHeaderActionClick = onChannelsHeaderActionClick,
                 onChannelClick = { channel ->
                     channelMessagesViewModelFactory = messagesViewModelFactory(
                         context,
@@ -191,7 +181,7 @@ public fun ChatsScreen(
             )
         }
     }
-    val threads = remember {
+    val threadsContent = remember {
         movableContentOf {
             val viewModel = viewModel(modelClass = ThreadListViewModel::class.java, factory = threadsViewModelFactory)
             ThreadList(
@@ -207,17 +197,19 @@ public fun ChatsScreen(
             Box(
                 modifier = Modifier.padding(scaffoldPadding),
             ) {
-                Column {
+                Scaffold(
+                    topBar = { listHeaderContent() },
+                    bottomBar = { listFooterContent() }
+                ) { scaffoldPadding ->
                     Crossfade(
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.padding(scaffoldPadding),
                         targetState = listContentMode,
                     ) { mode ->
                         when (mode) {
-                            ListContentMode.Channels -> channels()
-                            ListContentMode.Threads -> threads()
+                            ListContentMode.Channels -> channelsContent()
+                            ListContentMode.Threads -> threadsContent()
                         }
                     }
-                    listFooterContent()
                 }
                 AnimatedContent(
                     targetState = channelMessagesViewModelFactory,
@@ -237,33 +229,33 @@ public fun ChatsScreen(
             Row(
                 modifier = Modifier.padding(scaffoldPadding),
             ) {
-                Column(
+                Scaffold(
                     modifier = Modifier.weight(ListPanelWeight),
-                ) {
+                    topBar = { listHeaderContent() },
+                    bottomBar = { listFooterContent() }
+                ) { scaffoldPadding ->
                     Crossfade(
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.padding(scaffoldPadding),
                         targetState = listContentMode,
                     ) { mode ->
                         when (mode) {
-                            ListContentMode.Channels -> channels()
-                            ListContentMode.Threads -> threads()
+                            ListContentMode.Channels -> channelsContent()
+                            ListContentMode.Threads -> threadsContent()
                         }
                     }
-                    listFooterContent()
                 }
                 VerticalDivider()
-                Box(
+                Crossfade(
                     modifier = Modifier.weight(DetailsPanelWeight),
-                ) {
-                    Crossfade(targetState = channelMessagesViewModelFactory) { viewModelFactory ->
-                        if (viewModelFactory != null) {
-                            Messages(
-                                viewModelFactory = viewModelFactory,
-                                onHeaderTitleClick = onMessagesHeaderTitleClick,
-                                onUserAvatarClick = onMessagesHeaderAvatarClick,
-                                onBackPressed = onBackPressed,
-                            )
-                        }
+                    targetState = channelMessagesViewModelFactory
+                ) { viewModelFactory ->
+                    if (viewModelFactory != null) {
+                        Messages(
+                            viewModelFactory = viewModelFactory,
+                            onHeaderTitleClick = onMessagesHeaderTitleClick,
+                            onUserAvatarClick = onMessagesHeaderAvatarClick,
+                            onBackPressed = onBackPressed,
+                        )
                     }
                 }
             }
