@@ -23,9 +23,8 @@ import androidx.compose.runtime.ProvidedValue
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalContext
-import coil.Coil
-import coil.ImageLoader
-import coil.imageLoader
+import coil3.ImageLoader
+import coil3.imageLoader
 
 /**
  * A [CompositionLocal] that returns the current [ImageLoader] for the composition.
