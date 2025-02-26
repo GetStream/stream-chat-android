@@ -45,8 +45,12 @@ internal class SocketFactoryTest {
         whenever(this.newWebSocket(any(), any())) doReturn mock()
     }
 
-    private val socketFactory = SocketFactory(chatParser, FakeTokenManager(token, loadSyncToken), headersUtil,
-        httpClient)
+    private val socketFactory = SocketFactory(
+        chatParser,
+        FakeTokenManager(token, loadSyncToken),
+        headersUtil,
+        httpClient,
+    )
 
     /** [arguments] */
     @ParameterizedTest
