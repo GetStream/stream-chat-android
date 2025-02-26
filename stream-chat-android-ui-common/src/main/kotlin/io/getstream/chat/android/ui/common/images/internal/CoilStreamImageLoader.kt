@@ -24,13 +24,20 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import android.widget.ImageView
-import coil.ImageLoader
-import coil.drawable.MovieDrawable
-import coil.drawable.ScaleDrawable
-import coil.imageLoader
-import coil.load
-import coil.request.ImageRequest
-import coil.transform.CircleCropTransformation
+import coil3.ImageLoader
+import coil3.asDrawable
+import coil3.gif.MovieDrawable
+import coil3.imageLoader
+import coil3.load
+import coil3.network.NetworkHeaders
+import coil3.network.httpHeaders
+import coil3.request.ImageRequest
+import coil3.request.error
+import coil3.request.fallback
+import coil3.request.placeholder
+import coil3.request.transformations
+import coil3.size.ScaleDrawable
+import coil3.transform.CircleCropTransformation
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.common.disposable.CoilDisposable
 import io.getstream.chat.android.ui.common.disposable.Disposable
@@ -40,7 +47,6 @@ import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.ui.common.images.internal.StreamCoil.streamImageLoader
 import kotlinx.coroutines.withContext
-import okhttp3.Headers.Companion.toHeaders
 
 internal object CoilStreamImageLoader : StreamImageLoader {
 
@@ -57,12 +63,12 @@ internal object CoilStreamImageLoader : StreamImageLoader {
             ?.let { asset ->
                 val imageResult = context.streamImageLoader.execute(
                     ImageRequest.Builder(context)
-                        .headers(imageHeadersProvider.getImageRequestHeaders(asset.toString()).toHeaders())
+                        .httpHeaders(imageHeadersProvider.getImageRequestHeaders(asset.toString()).toNetworkHeaders())
                         .data(url)
                         .applyTransformation(transformation)
                         .build(),
                 )
-                (imageResult.drawable as? BitmapDrawable)?.bitmap
+                (imageResult.image?.asDrawable(context.resources) as? BitmapDrawable)?.bitmap
             }
     }
 
@@ -145,12 +151,12 @@ internal object CoilStreamImageLoader : StreamImageLoader {
 
         val drawable = withContext(DispatcherProvider.IO) {
             val asset = data.transformedAsset()
-            val headersMap = asset?.toString()?.let { url ->
-                imageHeadersProvider.getImageRequestHeaders(url)
-            } ?: emptyMap()
+            val headers = asset?.toString()?.let { url ->
+                imageHeadersProvider.getImageRequestHeaders(url).toNetworkHeaders()
+            } ?: NetworkHeaders.EMPTY
             val result = context.streamImageLoader.execute(
                 ImageRequest.Builder(context)
-                    .headers(headersMap.toHeaders())
+                    .httpHeaders(headers)
                     .placeholder(placeholderDrawable)
                     .fallback(placeholderDrawable)
                     .error(placeholderDrawable)
@@ -165,7 +171,7 @@ internal object CoilStreamImageLoader : StreamImageLoader {
                     .build(),
             )
 
-            result.drawable
+            result.image?.asDrawable(context.resources)
         } ?: return
 
         if (drawable is ScaleDrawable &&
@@ -211,14 +217,14 @@ internal object CoilStreamImageLoader : StreamImageLoader {
         data: Any?,
         imageLoader: ImageLoader = context.imageLoader,
         builder: ImageRequest.Builder.() -> Unit = {},
-    ): coil.request.Disposable {
+    ): coil3.request.Disposable {
         val asset = data.transformedAsset()
         return this.load(
             asset,
             imageLoader,
         ) {
             asset?.toString()?.let { url ->
-                headers(imageHeadersProvider.getImageRequestHeaders(url).toHeaders())
+                httpHeaders(imageHeadersProvider.getImageRequestHeaders(url).toNetworkHeaders())
             }
             builder()
         }
@@ -234,6 +240,7 @@ internal object CoilStreamImageLoader : StreamImageLoader {
             is StreamImageLoader.ImageTransformation.Circle -> transformations(
                 CircleCropTransformation(),
             )
+
             is StreamImageLoader.ImageTransformation.RoundedCorners -> transformations(
                 RoundedCornersTransformation(
                     transformation.radius,
@@ -241,3 +248,8 @@ internal object CoilStreamImageLoader : StreamImageLoader {
             )
         }
 }
+
+public fun Map<String, String>.toNetworkHeaders(): NetworkHeaders =
+    NetworkHeaders.Builder().apply {
+        forEach { (key, value) -> add(key, value) }
+    }.build()

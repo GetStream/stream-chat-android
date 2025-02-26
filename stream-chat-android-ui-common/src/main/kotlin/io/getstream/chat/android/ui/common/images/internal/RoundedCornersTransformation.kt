@@ -28,15 +28,15 @@ import android.graphics.Shader
 import androidx.annotation.Px
 import androidx.core.graphics.applyCanvas
 import androidx.core.graphics.createBitmap
-import coil.decode.DecodeUtils
-import coil.size.Scale
-import coil.size.Size
-import coil.size.pxOrElse
-import coil.transform.Transformation
+import coil3.decode.DecodeUtils
+import coil3.size.Scale
+import coil3.size.Size
+import coil3.size.pxOrElse
+import coil3.transform.Transformation
 import kotlin.math.roundToInt
 
 /**
- * This class is a duplicate of [coil.transform.RoundedCornersTransformation]
+ * This class is a duplicate of [coil3.transform.RoundedCornersTransformation]
  * with destination width and height reverted to an older implementation
  * because the new one breaks how link attachments are displayed.
  *
@@ -50,7 +50,7 @@ internal class RoundedCornersTransformation(
     @Px private val topRight: Float = 0f,
     @Px private val bottomLeft: Float = 0f,
     @Px private val bottomRight: Float = 0f,
-) : Transformation {
+) : Transformation() {
 
     constructor(@Px radius: Float) : this(radius, radius, radius, radius)
 

@@ -21,8 +21,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -37,13 +40,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.LayoutDirection
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
-import coil.size.Size
+import coil3.compose.AsyncImagePainter
+import coil3.compose.rememberAsyncImagePainter
+import coil3.network.httpHeaders
+import coil3.request.ImageRequest
+import coil3.size.Size
 import com.skydoves.landscapist.ImageOptions
-import com.skydoves.landscapist.coil.CoilImage
-import com.skydoves.landscapist.coil.CoilImageState
+import com.skydoves.landscapist.coil3.CoilImage
+import com.skydoves.landscapist.coil3.CoilImageState
 import com.skydoves.landscapist.components.ImageComponent
 import com.skydoves.landscapist.components.rememberImageComponent
 import com.skydoves.landscapist.plugins.ImagePlugin
@@ -51,11 +55,14 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
+import io.getstream.chat.android.ui.common.images.internal.toNetworkHeaders
 import io.getstream.chat.android.uiutils.util.adjustColorBrightness
+import java.net.SocketTimeoutException
 import kotlin.math.abs
 
 private const val GradientDarkerColorFactor = 1.3f
 private const val GradientLighterColorFactor = 0.7f
+private const val MaxRetries = 3
 
 /**
  * Generates a gradient for an initials avatar based on the user initials.
@@ -153,6 +160,7 @@ internal fun StreamAsyncImage(
             val context = LocalContext.current
             val imageAssetTransformer = ChatTheme.streamImageAssetTransformer
             val imageHeaderProvider = ChatTheme.streamImageHeadersProvider
+            var fetchRetries by remember { mutableIntStateOf(0) }
             val asyncImagePainter = rememberAsyncImagePainter(
                 model = imageRequest
                     .convertUrl(context, imageAssetTransformer)
@@ -161,7 +169,15 @@ internal fun StreamAsyncImage(
                 imageLoader = LocalStreamImageLoader.current,
                 contentScale = contentScale,
             )
-            content(asyncImagePainter.state)
+            val state by asyncImagePainter.state.collectAsState()
+            LaunchedEffect(state) {
+                if ((state as? AsyncImagePainter.State.Error)?.result?.throwable is SocketTimeoutException) {
+                    if (fetchRetries++ < MaxRetries) {
+                        asyncImagePainter.restart()
+                    }
+                }
+            }
+            content(state)
         }
     }
 }
@@ -425,13 +441,12 @@ private fun ImageRequest.provideHeaders(
     context: Context,
     imageHeaderProvider: ImageHeadersProvider,
 ): ImageRequest =
-    this.newBuilder(context)
-        .apply {
-            imageHeaderProvider.getImageRequestHeaders(this@provideHeaders.data.toString())
-                .entries
-                .forEach { addHeader(it.key, it.value) }
-        }
-        .build()
+    this.newBuilder(context).apply {
+        httpHeaders(
+            imageHeaderProvider.getImageRequestHeaders(data.toString())
+                .toNetworkHeaders(),
+        )
+    }.build()
 
 /**
  * Set the [Size] as a new build of the [ImageRequest].
@@ -447,11 +462,3 @@ private fun ImageRequest.size(context: Context, size: Size): ImageRequest = run 
  */
 internal val AsyncImagePainter.State.isCompleted: Boolean
     get() = this is AsyncImagePainter.State.Success || this is AsyncImagePainter.State.Error
-
-/**
- * Used to change a parameter set on Coil requests in order
- * to force Coil into retrying a request.
- *
- * See: https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
- */
-internal const val RetryHash: String = "retry_hash"

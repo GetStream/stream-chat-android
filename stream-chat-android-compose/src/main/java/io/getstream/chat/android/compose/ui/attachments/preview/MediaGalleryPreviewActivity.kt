@@ -88,7 +88,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -114,8 +113,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import coil.compose.AsyncImagePainter
-import coil.request.ImageRequest
+import coil3.compose.AsyncImagePainter
+import coil3.request.ImageRequest
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
@@ -145,8 +144,6 @@ import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.ImageRequestTimeoutHandler
-import io.getstream.chat.android.compose.ui.util.RetryHash
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.StreamImage
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -791,16 +788,11 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
-            // Used as a workaround for Coil's lack of a retry policy.
-            // See: https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
-            var retryHash by remember { mutableIntStateOf(0) }
-
             val data = attachment.imagePreviewUrl
             val context = LocalContext.current
-            val imageRequest = remember(retryHash) {
+            val imageRequest = remember {
                 ImageRequest.Builder(context)
                     .data(data)
-                    .setParameter(key = RetryHash, value = retryHash)
                     .build()
             }
 
@@ -815,20 +807,11 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
             val scale by animateFloatAsState(targetValue = currentScale, label = "")
 
-            // Used to refresh the request if it has previously failed.
-            ImageRequestTimeoutHandler(
-                data = data,
-                connectionState = mediaGalleryPreviewViewModel.connectionState,
-                imageState = imageState,
-            ) {
-                retryHash++
-            }
-
             val transformModifier = if (imageState is AsyncImagePainter.State.Success) {
                 val state = imageState as AsyncImagePainter.State.Success
                 val size = Size(
-                    width = state.result.drawable.intrinsicWidth.toFloat(),
-                    height = state.result.drawable.intrinsicHeight.toFloat(),
+                    width = state.result.image.width.toFloat(),
+                    height = state.result.image.height.toFloat(),
                 )
                 Modifier
                     .aspectRatio(size.width / size.height, true)
@@ -1568,11 +1551,6 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
     ) {
         val isImage = attachment.isImage()
         val isVideo = attachment.isVideo()
-
-        // Used as a workaround for Coil's lack of a retry policy.
-        // See: https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
-        var retryHash by remember { mutableIntStateOf(0) }
-
         val coroutineScope = rememberCoroutineScope()
 
         Box(
@@ -1597,23 +1575,13 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 }
 
             val context = LocalContext.current
-            val imageRequest = remember(retryHash) {
+            val imageRequest = remember {
                 ImageRequest.Builder(context)
                     .data(data)
-                    .setParameter(RetryHash, retryHash.toString())
                     .build()
             }
 
             var imageState by remember { mutableStateOf<AsyncImagePainter.State>(AsyncImagePainter.State.Empty) }
-
-            // Used to refresh the request if it has previously failed.
-            ImageRequestTimeoutHandler(
-                data = data,
-                connectionState = mediaGalleryPreviewViewModel.connectionState,
-                imageState = imageState,
-            ) {
-                retryHash++
-            }
 
             val backgroundColor = if (isImage) {
                 ChatTheme.colors.imageBackgroundMediaGalleryPicker

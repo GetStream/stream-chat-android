@@ -49,11 +49,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import coil.decode.VideoFrameDecoder
-import coil.request.ImageRequest
-import coil.request.videoFrameMillis
+import coil3.request.ImageRequest
+import coil3.video.VideoFrameDecoder
+import coil3.video.videoFrameMillis
 import com.skydoves.landscapist.ImageOptions
-import com.skydoves.landscapist.coil.CoilImage
+import com.skydoves.landscapist.coil3.CoilImage
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
