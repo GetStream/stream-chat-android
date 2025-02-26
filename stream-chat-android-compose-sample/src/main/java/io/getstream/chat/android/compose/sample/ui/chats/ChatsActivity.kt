@@ -21,7 +21,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -150,45 +149,55 @@ class ChatsActivity : BaseConnectedActivity() {
             title = stringResource(id = R.string.app_name),
             searchMode = SearchMode.Messages,
             listContentMode = listContentMode,
-            listHeaderContent = {
-                val clientState = ChatClient.instance().clientState
-                val user by clientState.user.collectAsState()
-                val connectionState by clientState.connectionState.collectAsState()
-                ChannelListHeader(
-                    modifier = Modifier,
-                    title = stringResource(id = R.string.app_name),
-                    currentUser = user,
-                    connectionState = connectionState,
-                    onAvatarClick = {
-                        lifecycleScope.launch {
-                            ChatHelper.disconnectUser()
-                            openUserLogin()
-                        }
-                    },
-                    onHeaderActionClick = ::openAddChannel,
-                )
-            },
+            listHeaderContent = { ListHeaderContent() },
             listFooterContent = {
-                var selectedTab by rememberSaveable { mutableStateOf(AppBottomBarOption.CHATS) }
-                val globalState = ChatClient.instance().globalState
-                val unreadChannelsCount by globalState.channelUnreadCount.collectAsState()
-                val unreadThreadsCount by globalState.unreadThreadsCount.collectAsState()
-                LaunchedEffect(selectedTab) {
-                    listContentMode = when (selectedTab) {
+                ListFooterContent { option ->
+                    listContentMode = when (option) {
                         AppBottomBarOption.CHATS -> ListContentMode.Channels
                         AppBottomBarOption.THREADS -> ListContentMode.Threads
                     }
                 }
-                AppBottomBar(
-                    unreadChannelsCount = unreadChannelsCount,
-                    unreadThreadsCount = unreadThreadsCount,
-                    selectedOption = selectedTab,
-                    onOptionSelected = { selectedTab = it },
-                )
             },
             onViewChannelInfoAction = ::openChannelInfo,
             onMessagesHeaderTitleClick = ::openChannelInfo,
             onBackPressed = ::finish,
+        )
+    }
+
+    @Composable
+    private fun ListHeaderContent() {
+        val clientState = ChatClient.instance().clientState
+        val user by clientState.user.collectAsState()
+        val connectionState by clientState.connectionState.collectAsState()
+        ChannelListHeader(
+            modifier = Modifier,
+            title = stringResource(id = R.string.app_name),
+            currentUser = user,
+            connectionState = connectionState,
+            onAvatarClick = {
+                lifecycleScope.launch {
+                    ChatHelper.disconnectUser()
+                    openUserLogin()
+                }
+            },
+            onHeaderActionClick = ::openAddChannel,
+        )
+    }
+
+    @Composable
+    private fun ListFooterContent(onOptionSelected: (option: AppBottomBarOption) -> Unit) {
+        val globalState = ChatClient.instance().globalState
+        val unreadChannelsCount by globalState.channelUnreadCount.collectAsState()
+        val unreadThreadsCount by globalState.unreadThreadsCount.collectAsState()
+        var selectedOption by rememberSaveable { mutableStateOf(AppBottomBarOption.CHATS) }
+        AppBottomBar(
+            unreadChannelsCount = unreadChannelsCount,
+            unreadThreadsCount = unreadThreadsCount,
+            selectedOption = selectedOption,
+            onOptionSelected = { option ->
+                selectedOption = option
+                onOptionSelected(option)
+            },
         )
     }
 
