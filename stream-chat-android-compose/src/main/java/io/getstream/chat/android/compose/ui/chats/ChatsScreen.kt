@@ -29,10 +29,11 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.VerticalDivider
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -54,43 +55,55 @@ import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.window.core.layout.WindowWidthSizeClass
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
 import io.getstream.chat.android.compose.ui.channels.SearchMode
+import io.getstream.chat.android.compose.ui.messages.BackAction
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
+import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
+import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.threads.ThreadList
+import io.getstream.chat.android.compose.ui.util.AdaptiveLayoutConstraints
+import io.getstream.chat.android.compose.ui.util.AdaptiveLayoutInfo
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
+import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
+import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadListViewModel
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadsViewModelFactory
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 
 /**
- * A composable function that displays the chat screen, including a list of channels and messages.
+ * Represents a complete screen for chat, including a list of channels, threads, and messages.
  * The layout adapts based on the screen size, showing a single-panel layout on smaller screens
  * and a dual-panel layout on larger screens.
  *
  * @param modifier The modifier to be applied to the root layout of the screen.
  * @param channelViewModelFactory Factory for creating the [ChannelListViewModel] used for managing channel data.
  * @param threadsViewModelFactory Factory for creating the [ThreadListViewModel] used for managing thread data.
- * @param messagesViewModelFactory A lambda function that provides a [MessagesViewModelFactory] for managing messages
- * within a selected channel.
- * The selected channel ID is `null` when the initial [MessagesViewModelFactory] is requested.
- * @param title The title displayed in the chat screen header. Default is `"Stream Chat"`.
+ * @param messagesViewModelFactoryProvider A lambda function that provides a [MessagesViewModelFactory]
+ * for managing messages within a selected channel.
+ * The factory is created dynamically based on the selected channel and message context (if any).
+ * When the initial [MessagesViewModelFactory] is requested (before a channel is selected),
+ * `channelId`, `messageId`, and `parentMessageId` are `null`.
+ * @param title The title displayed in the list pane top bar. Default is `"Stream Chat"`.
  * @param searchMode The current search mode for the chat screen. Default is [SearchMode.None].
  * @param listContentMode The mode for displaying the list content in the chat screen.
  * Default is [ListContentMode.Channels].
- * @param listHeaderContent The content to display at the top of the list.
- * @param listFooterContent The content to display at the bottom of the list.
+ * @param onBackPress Callback invoked when the user presses the back button.
+ * @param onListTopBarAvatarClick Callback invoked when the user clicks on the avatar in the list pane top bar.
+ * @param onListTopBarActionClick Callback invoked when the user clicks on the action icon in the list pane top bar.
+ * @param onDetailTopBarTitleClick Callback invoked when the user clicks on the title in the detail pane top bar.
  * @param onViewChannelInfoAction Callback invoked when the user selects a channel to view its details.
- * @param onMessagesHeaderTitleClick Callback invoked when the user clicks the title in the message header.
- * @param onMessagesHeaderAvatarClick Callback invoked when the user clicks on a user's avatar in a message.
- * @param onBackPressed Callback invoked when the user presses the back button.
+ * @param listTopBarContent The content to display at the top of the list pane.
+ * @param listBottomBarContent The content to display at the bottom of the list pane.
+ * @param detailTopBarContent The content to display at the top of the detail pane.
+ * @param detailBottomBarContent The content to display at the bottom of the detail pane.
  */
 @ExperimentalStreamChatApi
 @Suppress("LongMethod")
@@ -99,76 +112,73 @@ public fun ChatsScreen(
     modifier: Modifier = Modifier,
     channelViewModelFactory: ChannelViewModelFactory = ChannelViewModelFactory(),
     threadsViewModelFactory: ThreadsViewModelFactory = ThreadsViewModelFactory(),
-    messagesViewModelFactory: (
-        context: Context,
-        channelId: String?,
-        messageId: String?,
-        parentMessageId: String?,
-    ) -> MessagesViewModelFactory? = { context, channelId, messageId, parentMessageId ->
-        if (channelId == null) {
-            null
-        } else {
-            MessagesViewModelFactory(
-                context = context,
-                channelId = channelId,
-                messageId = messageId,
-                parentMessageId = parentMessageId,
-            )
-        }
-    },
+    messagesViewModelFactoryProvider: MessagesViewModelFactoryProvider = DefaultMessagesViewModelFactoryProvider(),
     title: String = "Stream Chat",
     searchMode: SearchMode = SearchMode.None,
     listContentMode: ListContentMode = ListContentMode.Channels,
-    listHeaderContent: @Composable () -> Unit = {},
-    listFooterContent: @Composable () -> Unit = {},
+    onBackPress: () -> Unit = {},
+    onListTopBarAvatarClick: (User?) -> Unit = {},
+    onListTopBarActionClick: () -> Unit = {},
+    onDetailTopBarTitleClick: (channel: Channel) -> Unit = {},
     onViewChannelInfoAction: (channel: Channel) -> Unit = {},
-    onMessagesHeaderTitleClick: (channel: Channel) -> Unit = {},
-    onMessagesHeaderAvatarClick: (user: User) -> Unit = {},
-    onBackPressed: () -> Unit = {},
+    listTopBarContent: @Composable () -> Unit = {
+        DefaultListTopBarContent(
+            viewModelFactory = channelViewModelFactory,
+            title = title,
+            onAvatarClick = onListTopBarAvatarClick,
+            onActionClick = onListTopBarActionClick,
+        )
+    },
+    listBottomBarContent: @Composable () -> Unit = {},
+    detailTopBarContent: @Composable (viewModelFactory: MessagesViewModelFactory, backAction: BackAction) -> Unit =
+        { viewModelFactory, backAction ->
+            DefaultDetailTopBarContent(
+                viewModelFactory = viewModelFactory,
+                backAction = backAction,
+                onTitleClick = onDetailTopBarTitleClick,
+            )
+        },
+    detailBottomBarContent: @Composable (viewModelFactory: MessagesViewModelFactory) -> Unit = { viewModelFactory ->
+        DefaultDetailBottomBarContent(viewModelFactory = viewModelFactory)
+    },
 ) {
     val context = LocalContext.current
+    val singlePanel = !AdaptiveLayoutInfo.isExpanded()
 
     var channelMessagesViewModelFactory by rememberSaveable(
-        saver = factorySaver { channelId, messageId, parentMessageId ->
-            messagesViewModelFactory(context, channelId, messageId, parentMessageId)
-        },
+        saver = factorySaver { selection -> messagesViewModelFactoryProvider(context, selection) },
     ) {
-        mutableStateOf(messagesViewModelFactory(context, null, null, null))
+        mutableStateOf(messagesViewModelFactoryProvider(context, MessageSelection()))
     }
-    val onSinglePanelBackPressed: () -> Unit = {
-        if (channelMessagesViewModelFactory != null) {
+    val backPressHandler = {
+        // Clear the messages view model factory when the user navigates back in single-panel mode
+        if (singlePanel && channelMessagesViewModelFactory != null) {
             channelMessagesViewModelFactory = null
         } else {
-            onBackPressed()
+            onBackPress()
         }
     }
 
     // Clear the messages view model factory when switching between list content modes
     DisposableEffect(listContentMode) {
-        onDispose {
-            channelMessagesViewModelFactory = null
-        }
+        onDispose { channelMessagesViewModelFactory = null }
     }
-
-    val singlePanel = singlePanel()
 
     // Auto-select the first item in the list when it loads on wide screens
     if (!singlePanel) {
         when (listContentMode) {
             ListContentMode.Channels -> {
-                FirstChannelLoadHandler(channelViewModelFactory) { channelId, messageId, parentMessageId ->
+                FirstChannelLoadHandler(channelViewModelFactory) { selection ->
                     if (channelMessagesViewModelFactory == null) {
-                        channelMessagesViewModelFactory =
-                            messagesViewModelFactory(context, channelId, messageId, parentMessageId)
+                        channelMessagesViewModelFactory = messagesViewModelFactoryProvider(context, selection)
                     }
                 }
             }
 
             ListContentMode.Threads -> {
-                FirstThreadLoadHandler(threadsViewModelFactory) { thread ->
+                FirstThreadLoadHandler(threadsViewModelFactory) { selection ->
                     if (channelMessagesViewModelFactory == null) {
-                        channelMessagesViewModelFactory =
-                            messagesViewModelFactory(context, thread.cid, null, thread.parentMessageId)
+                        channelMessagesViewModelFactory = messagesViewModelFactoryProvider(context, selection)
                     }
                 }
             }
@@ -183,23 +193,23 @@ public fun ChatsScreen(
                 isShowingHeader = false,
                 searchMode = searchMode,
                 onChannelClick = { channel ->
-                    channelMessagesViewModelFactory = messagesViewModelFactory(
+                    channelMessagesViewModelFactory = messagesViewModelFactoryProvider(
                         context,
-                        channel.cid,
-                        null,
-                        null,
+                        MessageSelection(channelId = channel.cid),
                     )
                 },
                 onSearchMessageItemClick = { message ->
-                    channelMessagesViewModelFactory = messagesViewModelFactory(
+                    channelMessagesViewModelFactory = messagesViewModelFactoryProvider(
                         context,
-                        message.cid,
-                        message.id,
-                        message.parentId,
+                        MessageSelection(
+                            channelId = message.cid,
+                            messageId = message.id,
+                            parentMessageId = message.parentId,
+                        ),
                     )
                 },
                 onViewChannelInfoAction = onViewChannelInfoAction,
-                onBackPressed = onSinglePanelBackPressed,
+                onBackPressed = backPressHandler,
             )
         }
     }
@@ -209,11 +219,12 @@ public fun ChatsScreen(
             ThreadList(
                 viewModel = viewModel,
                 onThreadClick = { thread ->
-                    channelMessagesViewModelFactory = messagesViewModelFactory(
+                    channelMessagesViewModelFactory = messagesViewModelFactoryProvider(
                         context,
-                        thread.cid,
-                        null,
-                        thread.parentMessageId,
+                        MessageSelection(
+                            channelId = thread.cid,
+                            parentMessageId = thread.parentMessageId,
+                        ),
                     )
                 },
             )
@@ -228,8 +239,8 @@ public fun ChatsScreen(
                 modifier = Modifier.padding(scaffoldPadding),
             ) {
                 Scaffold(
-                    topBar = { listHeaderContent() },
-                    bottomBar = { listFooterContent() },
+                    topBar = { listTopBarContent() },
+                    bottomBar = { listBottomBarContent() },
                 ) { scaffoldPadding ->
                     Crossfade(
                         modifier = Modifier.padding(scaffoldPadding),
@@ -246,11 +257,11 @@ public fun ChatsScreen(
                     transitionSpec = slideTransitionSpec(),
                 ) { viewModelFactory ->
                     if (viewModelFactory != null) {
-                        MessagesContent(
+                        DetailPane(
                             viewModelFactory = viewModelFactory,
-                            onHeaderTitleClick = onMessagesHeaderTitleClick,
-                            onUserAvatarClick = onMessagesHeaderAvatarClick,
-                            onBackPressed = onSinglePanelBackPressed,
+                            topBarContent = detailTopBarContent,
+                            bottomBarContent = detailBottomBarContent,
+                            onBackPress = backPressHandler,
                         )
                     }
                 }
@@ -260,9 +271,9 @@ public fun ChatsScreen(
                 modifier = Modifier.padding(scaffoldPadding),
             ) {
                 Scaffold(
-                    modifier = Modifier.weight(ListPanelWeight),
-                    topBar = { listHeaderContent() },
-                    bottomBar = { listFooterContent() },
+                    modifier = Modifier.weight(AdaptiveLayoutConstraints.LIST_PANE_WEIGHT),
+                    topBar = { listTopBarContent() },
+                    bottomBar = { listBottomBarContent() },
                 ) { scaffoldPadding ->
                     Crossfade(
                         modifier = Modifier.padding(scaffoldPadding),
@@ -276,15 +287,15 @@ public fun ChatsScreen(
                 }
                 VerticalDivider()
                 Crossfade(
-                    modifier = Modifier.weight(DetailsPanelWeight),
+                    modifier = Modifier.weight(AdaptiveLayoutConstraints.DETAIL_PANE_WEIGHT),
                     targetState = channelMessagesViewModelFactory,
                 ) { viewModelFactory ->
                     if (viewModelFactory != null) {
-                        MessagesContent(
+                        DetailPane(
                             viewModelFactory = viewModelFactory,
-                            onHeaderTitleClick = onMessagesHeaderTitleClick,
-                            onUserAvatarClick = onMessagesHeaderAvatarClick,
-                            onBackPressed = onBackPressed,
+                            topBarContent = detailTopBarContent,
+                            bottomBarContent = detailBottomBarContent,
+                            onBackPress = backPressHandler,
                         )
                     }
                 }
@@ -308,23 +319,37 @@ public enum class ListContentMode {
     Threads,
 }
 
-private const val ListPanelWeight = 0.3f
-private const val DetailsPanelWeight = 0.7f
+/**
+ * Represents the selection of a message within a channel.
+ */
+public data class MessageSelection(
+    /**
+     * The ID of the selected channel, or `null` if no channel is selected.
+     */
+    val channelId: String? = null,
+    /**
+     * The ID of a specific message, or `null` if navigating to a channel without a pre-selected message.
+     */
+    val messageId: String? = null,
+    /**
+     * The ID of the parent message (for threads), or `null` if not in a thread.
+     */
+    val parentMessageId: String? = null,
+)
 
 /**
- * @see <a href=https://developer.android.com/develop/ui/compose/layouts/adaptive/use-window-size-classes>
- *     Use window size classes</a>
+ * A lambda function that provides a [MessagesViewModelFactory] for managing messages within a selected channel.
  */
-@Composable
-private fun singlePanel(): Boolean {
-    val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
-    return windowSizeClass.windowWidthSizeClass != WindowWidthSizeClass.EXPANDED
-}
+public typealias MessagesViewModelFactoryProvider =
+        (context: Context, selection: MessageSelection) -> MessagesViewModelFactory?
 
+/**
+ * Calls the provided block when the first channel item is loaded.
+ */
 @Composable
 private fun FirstChannelLoadHandler(
     channelViewModelFactory: ChannelViewModelFactory,
-    block: (channelId: String, messageId: String?, parentMessageId: String?) -> Unit,
+    block: (selection: MessageSelection) -> Unit,
 ) {
     val viewModel = viewModel(ChannelListViewModel::class.java, factory = channelViewModelFactory)
     val itemList = viewModel.channelsState.channelItems
@@ -332,19 +357,28 @@ private fun FirstChannelLoadHandler(
         if (itemList.isNotEmpty()) {
             when (val item = itemList.first()) {
                 is ItemState.ChannelItemState ->
-                    block(item.channel.cid, null, null)
+                    block(MessageSelection(channelId = item.channel.cid))
 
                 is ItemState.SearchResultItemState ->
-                    block(item.message.cid, item.message.id, item.message.parentId)
+                    block(
+                        MessageSelection(
+                            channelId = item.message.cid,
+                            messageId = item.message.id,
+                            parentMessageId = item.message.parentId,
+                        ),
+                    )
             }
         }
     }
 }
 
+/**
+ * Calls the provided block when the first thread item is loaded.
+ */
 @Composable
 private fun FirstThreadLoadHandler(
     threadsViewModelFactory: ThreadsViewModelFactory,
-    block: (thread: Thread) -> Unit,
+    block: (selection: MessageSelection) -> Unit,
 ) {
     val viewModel = viewModel(ThreadListViewModel::class.java, factory = threadsViewModelFactory)
     val state by viewModel.state.collectAsState()
@@ -352,17 +386,108 @@ private fun FirstThreadLoadHandler(
     LaunchedEffect(threadList) {
         if (threadList.isNotEmpty()) {
             val thread = threadList.first()
-            block(thread)
+            block(
+                MessageSelection(
+                    channelId = thread.cid,
+                    parentMessageId = thread.parentMessageId
+                )
+            )
         }
     }
 }
 
 @Composable
-private fun MessagesContent(
+private fun DefaultListTopBarContent(
+    viewModelFactory: ChannelViewModelFactory,
+    title: String,
+    onAvatarClick: (User?) -> Unit,
+    onActionClick: () -> Unit,
+) {
+    val viewModel = viewModel(ChannelListViewModel::class.java, factory = viewModelFactory)
+    val user by viewModel.user.collectAsState()
+    val connectionState by viewModel.connectionState.collectAsState()
+
+    ChatTheme.componentFactory.ChannelListHeader(
+        modifier = Modifier,
+        title = title,
+        currentUser = user,
+        connectionState = connectionState,
+        onAvatarClick = onAvatarClick,
+        onHeaderActionClick = onActionClick,
+    )
+}
+
+@Composable
+private fun DefaultDetailTopBarContent(
     viewModelFactory: MessagesViewModelFactory,
-    onHeaderTitleClick: (channel: Channel) -> Unit,
-    onUserAvatarClick: (user: User) -> Unit,
-    onBackPressed: () -> Unit,
+    backAction: BackAction,
+    onTitleClick: (channel: Channel) -> Unit,
+) {
+    val viewModel = viewModel(MessageListViewModel::class.java, factory = viewModelFactory)
+    val connectionState by viewModel.connectionState.collectAsState()
+    val user by viewModel.user.collectAsState()
+    val messageMode = viewModel.messageMode
+
+    MessageListHeader(
+        channel = viewModel.channel,
+        currentUser = user,
+        connectionState = connectionState,
+        typingUsers = viewModel.typingUsers,
+        messageMode = messageMode,
+        onHeaderTitleClick = onTitleClick,
+        leadingContent = {
+            if (!AdaptiveLayoutInfo.isExpanded()) {
+                with(ChatTheme.componentFactory) {
+                    MessageListHeaderLeadingContent(
+                        onBackPressed = backAction,
+                    )
+                }
+            }
+        },
+    )
+}
+
+@Composable
+private fun DefaultDetailBottomBarContent(viewModelFactory: MessagesViewModelFactory) {
+    val listViewModel = viewModel(MessageListViewModel::class.java, factory = viewModelFactory)
+    val composerViewModel = viewModel(MessageComposerViewModel::class.java, factory = viewModelFactory)
+    val attachmentsPickerViewModel = viewModel(AttachmentsPickerViewModel::class.java, factory = viewModelFactory)
+
+    MessageComposer(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        viewModel = composerViewModel,
+        onAttachmentsClick = remember(attachmentsPickerViewModel) {
+            {
+                attachmentsPickerViewModel.changeAttachmentState(showAttachments = true)
+            }
+        },
+        onCommandsClick = remember(composerViewModel) {
+            {
+                composerViewModel.toggleCommandsVisibility()
+            }
+        },
+        onCancelAction = remember(listViewModel, composerViewModel) {
+            {
+                listViewModel.dismissAllMessageActions()
+                composerViewModel.dismissMessageActions()
+            }
+        },
+        onSendMessage = remember(composerViewModel) {
+            { message ->
+                composerViewModel.sendMessage(message)
+            }
+        },
+    )
+}
+
+@Composable
+private fun DetailPane(
+    viewModelFactory: MessagesViewModelFactory,
+    topBarContent: @Composable (viewModelFactory: MessagesViewModelFactory, onBackPressed: BackAction) -> Unit,
+    bottomBarContent: @Composable (viewModelFactory: MessagesViewModelFactory) -> Unit,
+    onBackPress: () -> Unit,
 ) {
     // Restart composition on every new instance of the factory
     key(viewModelFactory) {
@@ -385,9 +510,9 @@ private fun MessagesContent(
         CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
             MessagesScreen(
                 viewModelFactory = viewModelFactory,
-                onHeaderTitleClick = onHeaderTitleClick,
-                onUserAvatarClick = onUserAvatarClick,
-                onBackPressed = onBackPressed,
+                onBackPressed = onBackPress,
+                topBarContent = { backAction -> topBarContent(viewModelFactory, backAction) },
+                bottomBarContent = { bottomBarContent(viewModelFactory) },
             )
         }
     }
@@ -408,17 +533,27 @@ private fun <S> slideTransitionSpec(): AnimatedContentTransitionScope<S>.() -> C
         )
 }
 
+private class DefaultMessagesViewModelFactoryProvider : MessagesViewModelFactoryProvider {
+    override fun invoke(context: Context, selection: MessageSelection): MessagesViewModelFactory? =
+        if (selection.channelId == null) {
+            null
+        } else {
+            MessagesViewModelFactory(
+                context = context,
+                channelId = selection.channelId,
+                messageId = selection.messageId,
+                parentMessageId = selection.parentMessageId,
+            )
+        }
+}
+
 /**
  * This [Saver] is used to save and restore the state of the [MessagesViewModelFactory]
  * across configuration changes and process death.
  * It saves the channel ID, message ID, and parent message ID of the factory.
  */
 private fun factorySaver(
-    messagesViewModelFactory: (
-        channelId: String?,
-        messageId: String?,
-        parentMessageId: String?,
-    ) -> MessagesViewModelFactory?,
+    messagesViewModelFactory: (selection: MessageSelection) -> MessagesViewModelFactory?,
 ): Saver<MutableState<MessagesViewModelFactory?>, *> = listSaver(
     save = { state ->
         state.value?.let { factory ->
@@ -433,11 +568,7 @@ private fun factorySaver(
             val messageId = state[1]
             val parentMessageId = state[2]
             mutableStateOf(
-                messagesViewModelFactory(
-                    channelId,
-                    messageId,
-                    parentMessageId,
-                ),
+                messagesViewModelFactory(MessageSelection(channelId, messageId, parentMessageId)),
             )
         }
     },

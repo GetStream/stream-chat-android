@@ -27,7 +27,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.lifecycleScope
 import io.getstream.chat.android.client.ChatClient
@@ -44,7 +43,6 @@ import io.getstream.chat.android.compose.sample.ui.component.AppBottomBarOption
 import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponentFactory
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
 import io.getstream.chat.android.compose.ui.channels.SearchMode
-import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
 import io.getstream.chat.android.compose.ui.chats.ChatsScreen
 import io.getstream.chat.android.compose.ui.chats.ListContentMode
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptionItemVisibility
@@ -135,7 +133,7 @@ class ChatsActivity : BaseConnectedActivity() {
         var listContentMode by remember { mutableStateOf(ListContentMode.Channels) }
         ChatsScreen(
             channelViewModelFactory = channelViewModelFactory,
-            messagesViewModelFactory = { _, channelId, messageId, parentMessageId ->
+            messagesViewModelFactoryProvider = { _, (channelId, messageId, parentMessageId) ->
                 if (channelId == null) {
                     messagesViewModelFactory
                 } else {
@@ -149,8 +147,7 @@ class ChatsActivity : BaseConnectedActivity() {
             title = stringResource(id = R.string.app_name),
             searchMode = SearchMode.Messages,
             listContentMode = listContentMode,
-            listHeaderContent = { ListHeaderContent() },
-            listFooterContent = {
+            listBottomBarContent = {
                 ListFooterContent { option ->
                     listContentMode = when (option) {
                         AppBottomBarOption.CHATS -> ListContentMode.Channels
@@ -158,29 +155,16 @@ class ChatsActivity : BaseConnectedActivity() {
                     }
                 }
             },
-            onViewChannelInfoAction = ::openChannelInfo,
-            onMessagesHeaderTitleClick = ::openChannelInfo,
-            onBackPressed = ::finish,
-        )
-    }
-
-    @Composable
-    private fun ListHeaderContent() {
-        val clientState = ChatClient.instance().clientState
-        val user by clientState.user.collectAsState()
-        val connectionState by clientState.connectionState.collectAsState()
-        ChannelListHeader(
-            modifier = Modifier,
-            title = stringResource(id = R.string.app_name),
-            currentUser = user,
-            connectionState = connectionState,
-            onAvatarClick = {
+            onListTopBarAvatarClick = {
                 lifecycleScope.launch {
                     ChatHelper.disconnectUser()
                     openUserLogin()
                 }
             },
-            onHeaderActionClick = ::openAddChannel,
+            onListTopBarActionClick = ::openAddChannel,
+            onDetailTopBarTitleClick = ::openChannelInfo,
+            onViewChannelInfoAction = ::openChannelInfo,
+            onBackPress = ::finish,
         )
     }
 
