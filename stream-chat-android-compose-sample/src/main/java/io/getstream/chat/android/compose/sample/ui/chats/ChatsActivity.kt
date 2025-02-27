@@ -123,13 +123,13 @@ class ChatsActivity : BaseConnectedActivity() {
                     ),
                 ),
             ) {
-                ChatsScreen()
+                ScreenContent()
             }
         }
     }
 
     @Composable
-    private fun ChatsScreen() {
+    private fun ScreenContent() {
         var listContentMode by remember { mutableStateOf(ListContentMode.Channels) }
         ChatsScreen(
             channelViewModelFactory = channelViewModelFactory,

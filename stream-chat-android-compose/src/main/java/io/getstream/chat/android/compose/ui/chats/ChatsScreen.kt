@@ -28,6 +28,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -185,49 +186,60 @@ public fun ChatsScreen(
         }
     }
 
-    val channelsContent = remember {
-        movableContentOf {
-            ChannelsScreen(
-                title = title,
-                viewModelFactory = channelViewModelFactory,
-                isShowingHeader = false,
-                searchMode = searchMode,
-                onChannelClick = { channel ->
-                    channelMessagesViewModelFactory = messagesViewModelFactoryProvider(
-                        context,
-                        MessageSelection(channelId = channel.cid),
-                    )
-                },
-                onSearchMessageItemClick = { message ->
-                    channelMessagesViewModelFactory = messagesViewModelFactoryProvider(
-                        context,
-                        MessageSelection(
-                            channelId = message.cid,
-                            messageId = message.id,
-                            parentMessageId = message.parentId,
-                        ),
-                    )
-                },
-                onViewChannelInfoAction = onViewChannelInfoAction,
-                onBackPressed = backPressHandler,
-            )
-        }
-    }
-    val threadsContent = remember {
-        movableContentOf {
-            val viewModel = viewModel(modelClass = ThreadListViewModel::class.java, factory = threadsViewModelFactory)
-            ThreadList(
-                viewModel = viewModel,
-                onThreadClick = { thread ->
-                    channelMessagesViewModelFactory = messagesViewModelFactoryProvider(
-                        context,
-                        MessageSelection(
-                            channelId = thread.cid,
-                            parentMessageId = thread.parentMessageId,
-                        ),
-                    )
-                },
-            )
+    val listPane = remember(listContentMode) {
+        movableContentOf { padding: PaddingValues ->
+            Crossfade(
+                modifier = Modifier.padding(padding),
+                targetState = listContentMode,
+            ) { mode ->
+                when (mode) {
+                    ListContentMode.Channels -> {
+                        ChannelsScreen(
+                            title = title,
+                            viewModelFactory = channelViewModelFactory,
+                            isShowingHeader = false,
+                            searchMode = searchMode,
+                            onChannelClick = { channel ->
+                                channelMessagesViewModelFactory = messagesViewModelFactoryProvider(
+                                    context,
+                                    MessageSelection(channelId = channel.cid),
+                                )
+                            },
+                            onSearchMessageItemClick = { message ->
+                                channelMessagesViewModelFactory = messagesViewModelFactoryProvider(
+                                    context,
+                                    MessageSelection(
+                                        channelId = message.cid,
+                                        messageId = message.id,
+                                        parentMessageId = message.parentId,
+                                    ),
+                                )
+                            },
+                            onViewChannelInfoAction = onViewChannelInfoAction,
+                            onBackPressed = backPressHandler,
+                        )
+                    }
+
+                    ListContentMode.Threads -> {
+                        val viewModel = viewModel(
+                            modelClass = ThreadListViewModel::class.java,
+                            factory = threadsViewModelFactory,
+                        )
+                        ThreadList(
+                            viewModel = viewModel,
+                            onThreadClick = { thread ->
+                                channelMessagesViewModelFactory = messagesViewModelFactoryProvider(
+                                    context,
+                                    MessageSelection(
+                                        channelId = thread.cid,
+                                        parentMessageId = thread.parentMessageId,
+                                    ),
+                                )
+                            },
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -241,17 +253,8 @@ public fun ChatsScreen(
                 Scaffold(
                     topBar = { listTopBarContent() },
                     bottomBar = { listBottomBarContent() },
-                ) { scaffoldPadding ->
-                    Crossfade(
-                        modifier = Modifier.padding(scaffoldPadding),
-                        targetState = listContentMode,
-                    ) { mode ->
-                        when (mode) {
-                            ListContentMode.Channels -> channelsContent()
-                            ListContentMode.Threads -> threadsContent()
-                        }
-                    }
-                }
+                    content = listPane,
+                )
                 AnimatedContent(
                     targetState = channelMessagesViewModelFactory,
                     transitionSpec = slideTransitionSpec(),
@@ -274,17 +277,8 @@ public fun ChatsScreen(
                     modifier = Modifier.weight(AdaptiveLayoutConstraints.LIST_PANE_WEIGHT),
                     topBar = { listTopBarContent() },
                     bottomBar = { listBottomBarContent() },
-                ) { scaffoldPadding ->
-                    Crossfade(
-                        modifier = Modifier.padding(scaffoldPadding),
-                        targetState = listContentMode,
-                    ) { mode ->
-                        when (mode) {
-                            ListContentMode.Channels -> channelsContent()
-                            ListContentMode.Threads -> threadsContent()
-                        }
-                    }
-                }
+                    content = listPane,
+                )
                 VerticalDivider()
                 Crossfade(
                     modifier = Modifier.weight(AdaptiveLayoutConstraints.DETAIL_PANE_WEIGHT),
@@ -341,7 +335,7 @@ public data class MessageSelection(
  * A lambda function that provides a [MessagesViewModelFactory] for managing messages within a selected channel.
  */
 public typealias MessagesViewModelFactoryProvider =
-        (context: Context, selection: MessageSelection) -> MessagesViewModelFactory?
+    (context: Context, selection: MessageSelection) -> MessagesViewModelFactory?
 
 /**
  * Calls the provided block when the first channel item is loaded.
@@ -389,8 +383,8 @@ private fun FirstThreadLoadHandler(
             block(
                 MessageSelection(
                     channelId = thread.cid,
-                    parentMessageId = thread.parentMessageId
-                )
+                    parentMessageId = thread.parentMessageId,
+                ),
             )
         }
     }
@@ -475,7 +469,8 @@ private fun DefaultDetailBottomBarContent(viewModelFactory: MessagesViewModelFac
             }
         },
         onSendMessage = remember(composerViewModel) {
-            { message ->
+            {
+                    message ->
                 composerViewModel.sendMessage(message)
             }
         },
