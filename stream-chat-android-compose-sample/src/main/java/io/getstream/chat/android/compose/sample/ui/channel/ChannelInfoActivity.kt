@@ -26,9 +26,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -68,8 +68,7 @@ class ChannelInfoActivity : BaseConnectedActivity() {
          * @param channelId The ID of the channel for which the pinned messages are shown.
          */
         fun createIntent(context: Context, channelId: String) =
-            Intent(context, ChannelInfoActivity::class.java)
-                .putExtra(KEY_CHANNEL_ID, channelId)
+            Intent(context, ChannelInfoActivity::class.java).putExtra(KEY_CHANNEL_ID, channelId)
     }
 
     private val viewModelFactory by lazy {
@@ -84,15 +83,13 @@ class ChannelInfoActivity : BaseConnectedActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ChatTheme {
-                Surface {
-                    val state by viewModel.state.collectAsState()
-                    ChannelInfoScreen(
-                        state = state,
-                        onBack = ::finish,
-                        onPinnedMessagesClick = ::openPinnedMessages,
-                        onConfirmDelete = viewModel::onDeleteChannel,
-                    )
-                }
+                val state by viewModel.state.collectAsState()
+                ChannelInfoScreen(
+                    state = state,
+                    onBack = ::finish,
+                    onPinnedMessagesClick = ::openPinnedMessages,
+                    onConfirmDelete = viewModel::onDeleteChannel,
+                )
             }
             LaunchedEffect(Unit) {
                 lifecycleScope.launch {
@@ -135,6 +132,7 @@ class ChannelInfoActivity : BaseConnectedActivity() {
         onConfirmDelete: () -> Unit,
     ) {
         Scaffold(
+            modifier = Modifier.statusBarsPadding(),
             topBar = {
                 state.member?.let { member ->
                     ChannelInfoHeader(member = member, onBack = onBack)
@@ -180,10 +178,8 @@ class ChannelInfoActivity : BaseConnectedActivity() {
                     }
 
                     if (showConfirmDeleteDialog) {
-                        SimpleDialog(
-                            title = stringResource(id = R.string.channel_info_option_delete_conversation),
-                            message = stringResource(id = R.string.channel_info_delete_conversation_confirm),
-                            onPositiveAction = {
+                        ConfirmDeleteDialog(
+                            onConfirm = {
                                 onConfirmDelete()
                                 showConfirmDeleteDialog = false
                             },
@@ -196,4 +192,17 @@ class ChannelInfoActivity : BaseConnectedActivity() {
             },
         )
     }
+}
+
+@Composable
+private fun ConfirmDeleteDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    SimpleDialog(
+        title = stringResource(id = R.string.channel_info_option_delete_conversation),
+        message = stringResource(id = R.string.channel_info_delete_conversation_confirm),
+        onPositiveAction = onConfirm,
+        onDismiss = onDismiss,
+    )
 }
