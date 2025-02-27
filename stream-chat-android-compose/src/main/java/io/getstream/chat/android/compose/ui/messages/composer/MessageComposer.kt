@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Checkbox
@@ -203,7 +202,7 @@ public fun MessageComposer(
     val messageComposerState by viewModel.messageComposerState.collectAsState()
 
     MessageComposer(
-        modifier = modifier.safeDrawingPadding(),
+        modifier = modifier,
         onSendMessage = { text, attachments ->
             val messageWithData = viewModel.buildNewMessage(text, attachments)
 
