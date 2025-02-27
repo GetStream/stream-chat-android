@@ -30,9 +30,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -448,32 +446,14 @@ private fun DefaultDetailBottomBarContent(viewModelFactory: MessagesViewModelFac
     val attachmentsPickerViewModel = viewModel(AttachmentsPickerViewModel::class.java, factory = viewModelFactory)
 
     MessageComposer(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
         viewModel = composerViewModel,
-        onAttachmentsClick = remember(attachmentsPickerViewModel) {
-            {
-                attachmentsPickerViewModel.changeAttachmentState(showAttachments = true)
-            }
+        onAttachmentsClick = { attachmentsPickerViewModel.changeAttachmentState(showAttachments = true) },
+        onCommandsClick = composerViewModel::toggleCommandsVisibility,
+        onCancelAction = {
+            listViewModel.dismissAllMessageActions()
+            composerViewModel.dismissMessageActions()
         },
-        onCommandsClick = remember(composerViewModel) {
-            {
-                composerViewModel.toggleCommandsVisibility()
-            }
-        },
-        onCancelAction = remember(listViewModel, composerViewModel) {
-            {
-                listViewModel.dismissAllMessageActions()
-                composerViewModel.dismissMessageActions()
-            }
-        },
-        onSendMessage = remember(composerViewModel) {
-            {
-                    message ->
-                composerViewModel.sendMessage(message)
-            }
-        },
+        onSendMessage = composerViewModel::sendMessage,
     )
 }
 
