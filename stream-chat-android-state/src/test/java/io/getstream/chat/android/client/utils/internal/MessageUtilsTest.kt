@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test
 internal class MessageUtilsTest {
 
     @Test
-    fun testEphemeralMessage() {
+    fun testCommandMessage() {
         val message = Message(text = "/command")
         val updatedMessageType = getMessageType(message)
         updatedMessageType `should be equal to` MessageType.EPHEMERAL
