@@ -78,6 +78,7 @@ import io.getstream.chat.android.client.uploader.FileTransformer
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamFileUploader
 import io.getstream.chat.android.client.user.CurrentUserFetcher
+import io.getstream.chat.android.client.utils.HeadersUtil
 import io.getstream.chat.android.models.UserId
 import io.getstream.log.StreamLog
 import okhttp3.OkHttpClient
@@ -100,8 +101,12 @@ constructor(
     private val customOkHttpClient: OkHttpClient? = null,
     private val clientDebugger: ChatClientDebugger? = null,
     private val lifecycle: Lifecycle,
+    private val appName: String?,
+    private val appVersion: String?,
     private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it },
 ) {
+
+    private val headersUtil = HeadersUtil(appContext, appName, appVersion)
 
     private val domainMapping by lazy {
         DomainMapping(
@@ -125,7 +130,7 @@ constructor(
             dtoMapping = dtoMapping,
         )
     }
-    private val socketFactory: SocketFactory by lazy { SocketFactory(moshiParser, tokenManager) }
+    private val socketFactory: SocketFactory by lazy { SocketFactory(moshiParser, tokenManager, headersUtil) }
 
     private val defaultNotifications by lazy { buildNotification(notificationsHandler, config.notificationConfig) }
     private val defaultApi by lazy { buildApi(config) }
@@ -209,7 +214,7 @@ constructor(
             // timeouts
             // interceptors
             .addInterceptor(ApiKeyInterceptor(config.apiKey))
-            .addInterceptor(HeadersInterceptor(context = appContext, getAnonymousProvider(config, isAnonymousApi)))
+            .addInterceptor(HeadersInterceptor(getAnonymousProvider(config, isAnonymousApi), headersUtil))
             .apply {
                 if (config.debugRequests) {
                     addInterceptor(ApiRequestAnalyserInterceptor(ApiRequestsAnalyser.get()))
