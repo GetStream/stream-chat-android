@@ -374,6 +374,7 @@ internal object MessageDtoTestData {
           "cid": "cid",
           "html": "html",
           "id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
+          "type": "regular",
           "mentioned_users": [],
           "pinned": true,
           "shadowed": false,
@@ -399,6 +400,7 @@ internal object MessageDtoTestData {
         }""".withoutWhitespace()
     val upstreamMessage = UpstreamMessageDto(
         id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
+        type = "regular",
         cid = "cid",
         text = "text",
         html = "html",
@@ -441,6 +443,7 @@ internal object MessageDtoTestData {
           "cid": "cid",
           "html": "",
           "id": "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
+          "type": "regular",
           "mentioned_users": [],
           "pinned": false,
           "shadowed": false,
@@ -452,6 +455,7 @@ internal object MessageDtoTestData {
         }""".withoutWhitespace()
     val upstreamMessageWithoutExtraData = UpstreamMessageDto(
         id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
+        type = "regular",
         cid = "cid",
         text = "",
         html = "",
