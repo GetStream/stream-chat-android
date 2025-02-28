@@ -217,6 +217,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 
 public final class io/getstream/chat/android/client/ChatClient$Builder : io/getstream/chat/android/client/ChatClient$ChatClientBuilder {
 	public fun <init> (Ljava/lang/String;Landroid/content/Context;)V
+	public final fun appName (Ljava/lang/String;)Lio/getstream/chat/android/client/ChatClient$Builder;
+	public final fun appVersion (Ljava/lang/String;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun baseUrl (Ljava/lang/String;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public fun build ()Lio/getstream/chat/android/client/ChatClient;
 	public final fun cdnUrl (Ljava/lang/String;)Lio/getstream/chat/android/client/ChatClient$Builder;

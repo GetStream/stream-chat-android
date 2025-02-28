@@ -88,6 +88,7 @@ object ChatHelper {
             .withPlugins(offlinePlugin, statePluginFactory)
             .logLevel(logLevel)
             .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
+            .appName("Chat Sample Compose")
             .apply {
                 baseUrl?.let {
                     if (it.startsWith("http://")) forceInsecureConnection()
