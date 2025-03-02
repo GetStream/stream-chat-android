@@ -21,10 +21,8 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshotFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
 
 /**
  * Handler to be used with [LazyColumn] to implement infinite scroll.
@@ -39,7 +37,7 @@ public fun LoadMoreHandler(
     loadMoreThreshold: Int = 3,
     loadMore: () -> Unit,
 ) {
-    val shouldLoadMore = remember {
+    val shouldLoadMore by remember {
         derivedStateOf {
             val totalItemsCount = listState.layoutInfo.totalItemsCount
             val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
@@ -50,11 +48,6 @@ public fun LoadMoreHandler(
     }
 
     LaunchedEffect(shouldLoadMore) {
-        snapshotFlow { shouldLoadMore.value }
-            .distinctUntilChanged()
-            .filter { shouldLoad -> shouldLoad }
-            .collect {
-                loadMore()
-            }
+        if (shouldLoadMore) { loadMore() }
     }
 }

@@ -25,7 +25,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -50,6 +49,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
@@ -62,6 +62,7 @@ import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.composer.InputField
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.VotingVisibility
@@ -143,18 +144,11 @@ public fun PollAnswersDialog(
                     item {
                         Box(
                             modifier = Modifier
-                                .clickable { showAddAnswerDialog.value = true }
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp)
-                                .background(
-                                    color = ChatTheme.colors.inputBackground,
-                                    shape = RoundedCornerShape(
-                                        topStart = 12.dp,
-                                        topEnd = 12.dp,
-                                        bottomStart = 12.dp,
-                                        bottomEnd = 12.dp,
-                                    ),
-                                ),
+                                .clip(shape = ButtonDefaults.shape)
+                                .clickable { showAddAnswerDialog.value = true }
+                                .background(color = ChatTheme.colors.inputBackground),
                             contentAlignment = Alignment.Center,
                         ) {
                             Text(
