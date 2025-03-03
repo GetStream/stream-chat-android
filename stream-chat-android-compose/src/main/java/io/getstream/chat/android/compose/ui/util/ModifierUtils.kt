@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.util
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,6 +24,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.ripple
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
@@ -84,3 +86,25 @@ internal fun Modifier.dragPointerInput(
         )
     }
 }
+
+/**
+ * Add this modifier to the element to make it clickable within its bounds
+ * and show a default indication when it's pressed.
+ *
+ * @param bounded If `true`, ripples are clipped by the bounds of the target layout.
+ * Unbounded ripples always animate from the target layout center, bounded ripples animate from the touch position.
+ * @param enabled Controls the enabled state.
+ * When `false`, [onClick], and this modifier will appear disabled for accessibility service.
+ * @param onClick The callback to be invoked when the click gesture is detected.
+ */
+internal fun Modifier.clickable(
+    bounded: Boolean = true,
+    enabled: Boolean = true,
+    onClick: () -> Unit,
+): Modifier =
+    clickable(
+        interactionSource = null,
+        indication = ripple(bounded),
+        enabled = enabled,
+        onClick = onClick,
+    )
