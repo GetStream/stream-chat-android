@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.notifications.handler
 
 import io.getstream.android.push.PushDeviceGenerator
+import io.getstream.chat.android.client.token.TokenProvider
 
 /**
  * Push notifications configuration class
@@ -55,4 +56,11 @@ public data class NotificationConfig @JvmOverloads constructor(
      * Whether or not the auto-translation feature is enabled.
      */
     val autoTranslationEnabled: Boolean = false,
+
+    /**
+     * A token provider to be used on case of restoring user credentials and an expired token needs to be refreshed.
+     * If not provided, the SDK will create a [TokenProvider] with the last token used within the client.
+     */
+    val tokenProvider: TokenProvider? = null,
+
 )
