@@ -17,15 +17,13 @@
 package io.getstream.chat.android.compose.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.clickable
 
 /**
  * Represents a simple cancel icon that is used primarily for attachments.
@@ -45,8 +43,7 @@ public fun CancelIcon(
                 color = ChatTheme.messageComposerTheme.attachmentCancelIcon.backgroundColor,
             )
             .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() },
+                bounded = false,
                 onClick = onClick,
             ),
         painter = ChatTheme.messageComposerTheme.attachmentCancelIcon.painter,

@@ -16,6 +16,7 @@
 
 ### ⬆️ Improved
 - Add sending messages to only specific members. The `Message` entity contains a new property `restrictedVisibility` where a list of IDs for the desired members can be set.[#5644](https://github.com/GetStream/stream-chat-android/pull/5644)
+- Ensure that `TokenProvider.loadToken()` is not called multiple times while the token is being generated. [#5656](https://github.com/GetStream/stream-chat-android/pull/5656)
 
 ### ✅ Added
 
@@ -81,6 +82,7 @@
 ### ✅ Added
 - Add `MessageListViewModel::scrollToFirstUnreadMessage` method. [#5635](https://github.com/GetStream/stream-chat-android/pull/5635)
 - Added Swipe To Reply feature to the Messages. [#5627](https://github.com/GetStream/stream-chat-android/pull/5627)
+- Apply motion design. [#5647](https://github.com/GetStream/stream-chat-android/pull/5647)
 
 ### ⚠️ Changed
 - 🚨Breaking change: Change the `AttachmentPickerPollCreation` event to hold a prepared `PollConfig` to simplify the poll creation handling. [#5634](https://github.com/GetStream/stream-chat-android/pull/5634)

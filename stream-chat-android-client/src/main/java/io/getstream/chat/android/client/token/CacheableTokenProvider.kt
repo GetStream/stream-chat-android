@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.client.token
 
+import kotlin.concurrent.Volatile
+
 /**
  * An implementation of [TokenProvider] that keeps previous values of the loaded token.
  * This implementation delegate the process to obtain a new token to another tokenProvider.
@@ -23,8 +25,15 @@ package io.getstream.chat.android.client.token
  * @property tokenProvider The [TokenProvider] used to obtain new tokens.
  */
 internal class CacheableTokenProvider(private val tokenProvider: TokenProvider) : TokenProvider {
-    private var cachedToken = ""
-    override fun loadToken(): String = tokenProvider.loadToken().also { cachedToken = it }
+    @Volatile private var cachedToken = ""
+    override fun loadToken(): String {
+        val currentCachedToken = cachedToken
+        return synchronized(this) {
+            cachedToken
+                .takeIf { it != currentCachedToken }
+                ?: tokenProvider.loadToken().also { cachedToken = it }
+        }
+    }
 
     /**
      * Obtain the cached token.

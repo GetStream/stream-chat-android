@@ -424,8 +424,10 @@ public fun MessageList(
             MessageListLoadingMoreItemContent()
         }
     },
-    itemModifier: (index: Int, item: MessageListItemState) -> Modifier = { _, _ ->
-        Modifier
+    itemModifier: @Composable LazyItemScope.(index: Int, item: MessageListItemState) -> Modifier = { _, _ ->
+        with(ChatTheme.componentFactory) {
+            messageListItemModifier()
+        }
     },
     itemContent: @Composable LazyItemScope.(MessageListItemState) -> Unit = { messageListItem ->
         if (messageContentFactory == MessageContentFactory.Deprecated) {
