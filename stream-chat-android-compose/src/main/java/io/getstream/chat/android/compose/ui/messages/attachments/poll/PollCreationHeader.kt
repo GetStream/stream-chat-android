@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.ui.messages.attachments.poll
 
 import android.content.res.Configuration
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -27,6 +26,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -137,18 +138,19 @@ internal fun DefaultPollOptionsHeaderTrailingContent(
     enabled: Boolean,
     onPollCreateClicked: () -> Unit,
 ) {
-    Icon(
-        modifier = Modifier.clickable(enabled = enabled, onClick = onPollCreateClicked),
-        painter = painterResource(
-            id = R.drawable.stream_compose_ic_send,
+    IconButton(
+        enabled = enabled,
+        colors = IconButtonDefaults.iconButtonColors(
+            contentColor = ChatTheme.colors.primaryAccent,
+            disabledContentColor = ChatTheme.colors.textLowEmphasis,
         ),
-        tint = if (enabled) {
-            ChatTheme.colors.primaryAccent
-        } else {
-            ChatTheme.colors.textLowEmphasis
-        },
-        contentDescription = null,
-    )
+        onClick = onPollCreateClicked,
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.stream_compose_ic_send),
+            contentDescription = stringResource(R.string.stream_compose_send_message),
+        )
+    }
 }
 
 @Preview(name = "PollOptionHeader Light Mode")

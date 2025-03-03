@@ -16,12 +16,12 @@
 
 package io.getstream.chat.android.compose.ui.theme
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,15 +32,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -90,6 +89,7 @@ import io.getstream.chat.android.compose.ui.components.messages.MessageText
 import io.getstream.chat.android.compose.ui.components.messages.MessageThreadFooter
 import io.getstream.chat.android.compose.ui.components.messages.OwnedMessageVisibilityContent
 import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
+import io.getstream.chat.android.compose.ui.components.messages.ScrollToBottomButton
 import io.getstream.chat.android.compose.ui.components.messages.UploadingFooter
 import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedReactionsOptions
@@ -114,7 +114,7 @@ import io.getstream.chat.android.compose.ui.messages.composer.CommandsButton
 import io.getstream.chat.android.compose.ui.messages.composer.DefaultComposerInputContent
 import io.getstream.chat.android.compose.ui.messages.composer.DefaultComposerIntegrations
 import io.getstream.chat.android.compose.ui.messages.composer.DefaultComposerLabel
-import io.getstream.chat.android.compose.ui.messages.composer.DefaultMessageComposerFooterContent
+import io.getstream.chat.android.compose.ui.messages.composer.DefaultMessageComposerFooterInThreadMode
 import io.getstream.chat.android.compose.ui.messages.composer.DefaultMessageComposerHeaderContent
 import io.getstream.chat.android.compose.ui.messages.composer.DefaultMessageComposerTrailingContent
 import io.getstream.chat.android.compose.ui.messages.composer.SendButton
@@ -149,6 +149,7 @@ import io.getstream.chat.android.compose.ui.pinned.DefaultPinnedMessageListItemD
 import io.getstream.chat.android.compose.ui.pinned.DefaultPinnedMessageListLoadingContent
 import io.getstream.chat.android.compose.ui.pinned.DefaultPinnedMessageListLoadingMoreContent
 import io.getstream.chat.android.compose.ui.pinned.PinnedMessageItem
+import io.getstream.chat.android.compose.ui.theme.animation.FadingVisibility
 import io.getstream.chat.android.compose.ui.threads.DefaultThreadListEmptyContent
 import io.getstream.chat.android.compose.ui.threads.DefaultThreadListLoadingContent
 import io.getstream.chat.android.compose.ui.threads.DefaultThreadListLoadingMoreContent
@@ -159,6 +160,7 @@ import io.getstream.chat.android.compose.ui.threads.ThreadItemTitle
 import io.getstream.chat.android.compose.ui.threads.ThreadItemUnreadCountContent
 import io.getstream.chat.android.compose.ui.threads.UnreadThreadsBanner
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
+import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Command
@@ -351,6 +353,7 @@ public interface ChatComponentFactory {
         onChannelLongClick: (Channel) -> Unit,
     ) {
         ChannelItem(
+            modifier = Modifier.animateItem(),
             channelItem = channelItem,
             currentUser = currentUser,
             onChannelClick = onChannelClick,
@@ -655,7 +658,7 @@ public interface ChatComponentFactory {
 
     /**
      * The default helper content of the message list.
-     * It shows the scroll to bottom button when the user scrolls up and it's away from the bottom.
+     * It handles the scroll-to-bottom and scroll-to-focused message features.
      */
     @Composable
     public fun BoxScope.MessageListHelperContent(
@@ -668,6 +671,39 @@ public interface ChatComponentFactory {
             messagesLazyListState = messagesLazyListState,
             scrollToBottom = onScrollToBottomClick,
         )
+    }
+
+    /**
+     * The default scroll-to-bottom button shown when the user scrolls away from the bottom of the list.
+     */
+    @Composable
+    public fun ScrollToBottomButton(
+        modifier: Modifier,
+        visible: Boolean,
+        count: Int,
+        onClick: () -> Unit,
+    ) {
+        // Disable animations in snapshot tests, at least until Paparazzi has a better support for animations.
+        // This is due to the scroll to bottom tests, where the items are not visible in the snapshots.
+        if (LocalInspectionMode.current) {
+            if (visible) {
+                ScrollToBottomButton(
+                    modifier = modifier,
+                    count = count,
+                    onClick = onClick,
+                )
+            }
+        } else {
+            FadingVisibility(
+                modifier = modifier,
+                visible = visible,
+            ) {
+                ScrollToBottomButton(
+                    count = count,
+                    onClick = onClick,
+                )
+            }
+        }
     }
 
     /**
@@ -719,6 +755,19 @@ public interface ChatComponentFactory {
             onReply = onReply,
         )
     }
+
+    /**
+     * The default message list item modifier for styling.
+     */
+    @Composable
+    public fun LazyItemScope.messageListItemModifier(): Modifier =
+        // Disable animations in snapshot tests, at least until Paparazzi has a better support for animations.
+        // This is due to the scroll to bottom tests, where the items are not visible in the snapshots.
+        if (LocalInspectionMode.current) {
+            Modifier
+        } else {
+            Modifier.animateItem()
+        }
 
     /**
      * The default loading more item of the message list,
@@ -1097,6 +1146,61 @@ public interface ChatComponentFactory {
     }
 
     /**
+     * The default message composer that contains
+     * the message input, attachments, commands, recording actions, integrations, and the send button.
+     */
+    @Composable
+    public fun MessageComposer(
+        messageComposerState: MessageComposerState,
+        onSendMessage: (String, List<Attachment>) -> Unit,
+        modifier: Modifier,
+        onAttachmentsClick: () -> Unit,
+        onCommandsClick: () -> Unit,
+        onValueChange: (String) -> Unit,
+        onAttachmentRemoved: (Attachment) -> Unit,
+        onCancelAction: () -> Unit,
+        onLinkPreviewClick: ((LinkPreview) -> Unit)?,
+        onMentionSelected: (User) -> Unit,
+        onCommandSelected: (Command) -> Unit,
+        onAlsoSendToChannelSelected: (Boolean) -> Unit,
+        recordingActions: AudioRecordingActions,
+        headerContent: @Composable ColumnScope.(MessageComposerState) -> Unit,
+        footerContent: @Composable ColumnScope.(MessageComposerState) -> Unit,
+        mentionPopupContent: @Composable (List<User>) -> Unit,
+        commandPopupContent: @Composable (List<Command>) -> Unit,
+        integrations: @Composable RowScope.(MessageComposerState) -> Unit,
+        label: @Composable (MessageComposerState) -> Unit,
+        input: @Composable RowScope.(MessageComposerState) -> Unit,
+        audioRecordingContent: @Composable RowScope.(MessageComposerState) -> Unit,
+        trailingContent: @Composable (MessageComposerState) -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.messages.composer.MessageComposer(
+            messageComposerState = messageComposerState,
+            onSendMessage = onSendMessage,
+            modifier = modifier,
+            onAttachmentsClick = onAttachmentsClick,
+            onCommandsClick = onCommandsClick,
+            onValueChange = onValueChange,
+            onAttachmentRemoved = onAttachmentRemoved,
+            onCancelAction = onCancelAction,
+            onLinkPreviewClick = onLinkPreviewClick,
+            onMentionSelected = onMentionSelected,
+            onCommandSelected = onCommandSelected,
+            onAlsoSendToChannelSelected = onAlsoSendToChannelSelected,
+            recordingActions = recordingActions,
+            headerContent = headerContent,
+            footerContent = footerContent,
+            mentionPopupContent = mentionPopupContent,
+            commandPopupContent = commandPopupContent,
+            integrations = integrations,
+            label = label,
+            input = input,
+            audioRecordingContent = audioRecordingContent,
+            trailingContent = trailingContent,
+        )
+    }
+
+    /**
      * The default header content of the message composer.
      * Shown on top of the composer and contains additional info/context, and is shown during editing/replying to a
      * message, or when there is a link pasted in the composer.
@@ -1111,7 +1215,9 @@ public interface ChatComponentFactory {
         onCancel: () -> Unit,
         onLinkPreviewClick: ((LinkPreview) -> Unit)?,
     ) {
-        DefaultMessageComposerHeaderContent(state, onCancel, onLinkPreviewClick)
+        Column(modifier = Modifier.animateContentSize()) {
+            DefaultMessageComposerHeaderContent(state, onCancel, onLinkPreviewClick)
+        }
     }
 
     /**
@@ -1156,7 +1262,7 @@ public interface ChatComponentFactory {
 
     /**
      * The default footer content of the message composer.
-     * Shown during replying to a thread, and it provides the checkbox to also send the message to the channel.
+     * When replying to a thread, it provides the checkbox to also send the message to the channel.
      *
      * @param state The current state of the message composer.
      * @param onAlsoSendToChannelSelected The action to perform when the "Also send to channel" checkbox is selected.
@@ -1166,7 +1272,20 @@ public interface ChatComponentFactory {
         state: MessageComposerState,
         onAlsoSendToChannelSelected: (Boolean) -> Unit,
     ) {
-        DefaultMessageComposerFooterContent(state, onAlsoSendToChannelSelected)
+        Box(modifier = Modifier.animateContentSize()) {
+            when (state.messageMode) {
+                is MessageMode.Normal -> {
+                    // no footer in normal mode
+                }
+
+                is MessageMode.MessageThread -> {
+                    DefaultMessageComposerFooterInThreadMode(
+                        alsoSendToChannel = state.alsoSendToChannel,
+                        onAlsoSendToChannelChanged = onAlsoSendToChannelSelected,
+                    )
+                }
+            }
+        }
     }
 
     /**
@@ -1374,7 +1493,13 @@ public interface ChatComponentFactory {
         onAttachmentRemoved: (Attachment) -> Unit,
         label: @Composable (MessageComposerState) -> Unit,
     ) {
-        DefaultComposerInputContent(state, onInputChanged, onAttachmentRemoved, label)
+        DefaultComposerInputContent(
+            modifier = Modifier.animateContentSize(),
+            messageComposerState = state,
+            onValueChange = onInputChanged,
+            onAttachmentRemoved = onAttachmentRemoved,
+            label = label,
+        )
     }
 
     /**
@@ -2001,11 +2126,9 @@ public interface ChatComponentFactory {
     ) {
         ReactionOptionItem(
             modifier = modifier
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = ripple(bounded = false),
-                    onClick = { onReactionOptionSelected(option) },
-                ),
+                .clickable(bounded = false) {
+                    onReactionOptionSelected(option)
+                },
             option = option,
         )
     }
@@ -2023,11 +2146,9 @@ public interface ChatComponentFactory {
         showMoreReactionsIcon: Int,
     ) {
         Icon(
-            modifier = modifier.clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = ripple(bounded = false),
-                onClick = { onShowMoreReactionsSelected() },
-            ),
+            modifier = modifier.clickable(bounded = false) {
+                onShowMoreReactionsSelected()
+            },
             painter = painterResource(id = showMoreReactionsIcon),
             contentDescription = LocalContext.current.getString(R.string.stream_compose_show_more_reactions),
             tint = ChatTheme.colors.textLowEmphasis,
