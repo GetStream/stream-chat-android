@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.ui.messages.attachments.poll
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +26,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +40,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.padding
 
 /**
  * A dialog to ask if a user wants to discard the current poll creation information.
@@ -92,28 +93,26 @@ public fun PollCreationDiscardDialog(
                 }
 
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(20.dp),
+                    modifier = Modifier.fillMaxWidth().padding(end = 7.dp, bottom = 7.dp),
                     horizontalArrangement = Arrangement.End,
                 ) {
-                    Text(
-                        modifier = Modifier
-                            .padding(end = 32.dp)
-                            .clickable { onCancelClicked.invoke() },
-                        text = stringResource(id = R.string.stream_compose_poll_option_discard_dialog_cancel),
-                        color = ChatTheme.colors.primaryAccent,
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.Medium,
-                    )
+                    TextButton(onClick = { onCancelClicked() }) {
+                        Text(
+                            text = stringResource(id = R.string.stream_compose_poll_option_discard_dialog_cancel),
+                            color = ChatTheme.colors.primaryAccent,
+                            fontSize = 17.sp,
+                            fontWeight = FontWeight.Medium,
+                        )
+                    }
 
-                    Text(
-                        modifier = Modifier.clickable { onDiscardClicked.invoke() },
-                        text = stringResource(id = R.string.stream_compose_poll_option_discard_dialog_confirm),
-                        color = ChatTheme.colors.primaryAccent,
-                        fontSize = 17.sp,
-                        fontWeight = FontWeight.Medium,
-                    )
+                    TextButton(onClick = { onDiscardClicked() }) {
+                        Text(
+                            text = stringResource(id = R.string.stream_compose_poll_option_discard_dialog_confirm),
+                            color = ChatTheme.colors.primaryAccent,
+                            fontSize = 17.sp,
+                            fontWeight = FontWeight.Medium,
+                        )
+                    }
                 }
             }
         }

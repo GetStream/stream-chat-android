@@ -223,7 +223,7 @@ internal fun PollMoreOptionItem(
     ) {
         if (!poll.closed) {
             PollItemCheckBox(
-                enabled = checked,
+                checked = checked,
                 onCheckChanged = { enabled ->
                     if (enabled && checkedCount < poll.maxVotesAllowed && !checked) {
                         onCastVote.invoke()
