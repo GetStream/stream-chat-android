@@ -3,7 +3,6 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>ComplexCondition:MessageTranslatedLabel.kt$!isGiphy &amp;&amp; !isDeleted &amp;&amp; userLanguage != i18nLanguage &amp;&amp; translatedText != messageItem.message.text</ID>
-    <ID>ComplexCondition:Messages.kt$!endOfMessages &amp;&amp; index == messages.lastIndex &amp;&amp; messages.isNotEmpty() &amp;&amp; lazyListState.isScrollInProgress</ID>
     <ID>ForbiddenComment:MessageText.kt$// TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808</ID>
     <ID>ForbiddenComment:QuotedMessageText.kt$// TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808</ID>
     <ID>LargeClass:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity : AppCompatActivity</ID>
@@ -50,7 +49,6 @@
     <ID>MagicNumber:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$0.4f</ID>
     <ID>MagicNumber:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$8f</ID>
     <ID>MagicNumber:Messages.kt$3</ID>
-    <ID>MagicNumber:Messages.kt$5</ID>
     <ID>MagicNumber:PlaybackTimer.kt$100</ID>
     <ID>MagicNumber:PollMessageContent.kt$0.5f</ID>
     <ID>MagicNumber:PollMessageContent.kt$10</ID>
@@ -87,6 +85,5 @@
     <ID>TopLevelPropertyNaming:DefaultMessageComposerRecordingContent.kt$private const val HOLD_TO_RECORD_THRESHOLD = 1000L</ID>
     <ID>TopLevelPropertyNaming:DefaultMessageComposerRecordingContent.kt$private const val PERMISSION_RATIONALE_DISMISS_TIMEOUT = 1000L</ID>
     <ID>UnusedPrivateMember:DefaultMessageComposerRecordingContent.kt$private fun formatMillis(milliseconds: Int): String</ID>
-    <ID>UnusedPrivateMember:MessageComposer.kt$private fun Offset.toRestrictedCoordinates(): Pair&lt;Float, Float></ID>
   </CurrentIssues>
 </SmellBaseline>
