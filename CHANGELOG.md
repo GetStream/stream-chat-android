@@ -85,7 +85,6 @@
 - Apply motion design. [#5647](https://github.com/GetStream/stream-chat-android/pull/5647)
 - Add `SystemAttachmentsPickerConfig` for customization of the system attachments picker. [#5654](https://github.com/GetStream/stream-chat-android/pull/5654)
 
-
 ### ⚠️ Changed
 - 🚨Breaking change: Change the `AttachmentPickerPollCreation` event to hold a prepared `PollConfig` to simplify the poll creation handling. [#5634](https://github.com/GetStream/stream-chat-android/pull/5634)
 - Upgrade to Coil 3. If you use Coil internally in your app and want to upgrade it, you can follow [their migration guide](https://coil-kt.github.io/coil/upgrading_to_coil3/). [#5645](https://github.com/GetStream/stream-chat-android/pull/5645)
