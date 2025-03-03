@@ -18,45 +18,93 @@ package io.getstream.chat.android.client.token
 
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomString
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.doReturnConsecutively
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.lang.Thread.sleep
+import kotlin.concurrent.Volatile
+import kotlin.concurrent.thread
 
 internal class CacheableTokenProviderTest {
 
-    private val delegatedTokenProvider: TokenProvider = mock()
-    private val cacheableTokenProvider = CacheableTokenProvider(delegatedTokenProvider)
-
     @Test
     fun `Initial cached token should be empty`() {
+        val cacheableTokenProvider = Fixture()
+            .get()
         cacheableTokenProvider.getCachedToken() `should be equal to` ""
     }
 
     @Test
     fun `CacheableTokenProvider should store last value`() {
         val tokens = List(positiveRandomInt(20)) { randomString() }
-        whenever(delegatedTokenProvider.loadToken()) doReturnConsecutively tokens
+        val cacheableTokenProvider = Fixture()
+            .withTokens(tokens)
+            .get()
 
-        tokens.forEach { cacheableTokenProvider.loadToken() }
+        repeat(tokens.size) { cacheableTokenProvider.loadToken() }
         val result = cacheableTokenProvider.getCachedToken()
 
         result `should be equal to` tokens.last()
-        verify(delegatedTokenProvider, times(tokens.size)).loadToken()
     }
 
     @Test
     fun `CacheableTokenProvider should delegate the process to obtain a token to his delegated token provider`() {
         val token = randomString()
-        whenever(delegatedTokenProvider.loadToken()) doReturn token
-
+        val cacheableTokenProvider = Fixture()
+            .withToken(token)
+            .get()
         val result = cacheableTokenProvider.loadToken()
 
         result `should be equal to` token
-        verify(delegatedTokenProvider).loadToken()
+    }
+
+    @Test
+    fun `CacheableTokenProvider should avoid multiple calls to its delegate while previous call to loadToken() has not been completed`() = runTest {
+        val tokens = List(positiveRandomInt(20)) { randomString() }
+        val cacheableTokenProvider = Fixture()
+            .withDelay(1000L)
+            .withTokens(tokens)
+            .get()
+
+        repeat(tokens.size) {
+            thread { cacheableTokenProvider.loadToken() }
+        }
+        sleep(100)
+
+        val result = cacheableTokenProvider.loadToken()
+
+        result `should be equal to` tokens.first()
+    }
+
+    private class Fixture {
+        @Volatile var tokenIndex = 0
+        private val delegatedTokenProvider: TokenProvider = mock()
+        private var delayMiliseconds = 0L
+        private var tokens = listOf(randomString())
+
+        fun withToken(token: String) = apply {
+            tokens = listOf(token)
+        }
+
+        fun withTokens(tokens: List<String>) = apply {
+            this.tokens = tokens
+        }
+
+        fun withDelay(delayMiliseconds: Long) = apply {
+            this.delayMiliseconds = delayMiliseconds
+        }
+
+        fun get(): CacheableTokenProvider {
+            whenever(delegatedTokenProvider.loadToken()) doAnswer {
+                if (delayMiliseconds > 0) {
+                    sleep(delayMiliseconds)
+                }
+                tokens[tokenIndex++]
+            }
+            return CacheableTokenProvider(delegatedTokenProvider)
+        }
     }
 }
