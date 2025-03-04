@@ -161,7 +161,6 @@ dependencies {
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.compose.material3)
     implementation(libs.stream.push.firebase)
-    implementation(libs.stream.push.huawei)
     implementation(libs.stream.push.xiaomi)
 
     implementation(libs.androidx.navigation.runtime.ktx)
