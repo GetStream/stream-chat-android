@@ -16,10 +16,14 @@
 
 package io.getstream.chat.android.client.api.interceptor
 
+import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.api.FakeChain
 import io.getstream.chat.android.client.api.FakeResponse
 import io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser
-import org.junit.Test
+import okhttp3.Request
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doNothing
 import org.mockito.kotlin.mock
@@ -29,19 +33,32 @@ import org.mockito.kotlin.whenever
 
 internal class ApiRequestAnalyserInterceptorTest {
 
-    @Test
-    fun testApiRequestAnalyserInterceptorRegistersTheRequestInTheAnalyser() {
+    @ParameterizedTest
+    @MethodSource("apiRequestAnalyzerInterceptorInput")
+    fun testApiRequestAnalyserInterceptor(request: Request, body: String) {
         // given
         val analyser = mock<ApiRequestsAnalyser>()
         doNothing().whenever(analyser).registerRequest(any(), any())
         val interceptor = ApiRequestAnalyserInterceptor(analyser)
         // when
-        val chain = FakeChain(FakeResponse(200))
+        val chain = FakeChain(
+            response = arrayOf(FakeResponse(200)),
+            request = request,
+        )
         interceptor.intercept(chain)
         // then
         verify(analyser, times(1)).registerRequest(
             requestName = chain.request().url.toString(),
-            data = mapOf("body" to "no_body"),
+            data = mapOf("body" to body),
+        )
+    }
+
+    companion object {
+
+        @JvmStatic
+        fun apiRequestAnalyzerInterceptorInput() = listOf(
+            Arguments.of(Mother.randomGetRequest(), "no_body"),
+            Arguments.of(Mother.randomPostRequest(body = "body"), "body"),
         )
     }
 }

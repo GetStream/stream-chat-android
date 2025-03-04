@@ -16,13 +16,12 @@
 
 package io.getstream.chat.android.client.api.interceptor
 
+import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.api.FakeChain
 import io.getstream.chat.android.client.api.FakeResponse
 import io.getstream.chat.android.client.api.models.ProgressRequestBody
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.result.Error
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
 import org.amshove.kluent.`should be instance of`
 import org.junit.Test
 
@@ -33,15 +32,22 @@ internal class ProgressInterceptorTest {
         // given
         val interceptor = ProgressInterceptor()
         val progressCallback = object : ProgressCallback {
-            override fun onSuccess(url: String?) { /* No-Op */ }
-            override fun onError(error: Error) { /* No-Op */ }
-            override fun onProgress(bytesUploaded: Long, totalBytes: Long) { /* No-Op */ }
+            override fun onSuccess(url: String?) {
+                /* No-Op */
+            }
+
+            override fun onError(error: Error) {
+                /* No-Op */
+            }
+
+            override fun onProgress(bytesUploaded: Long, totalBytes: Long) {
+                /* No-Op */
+            }
         }
-        val request = Request.Builder()
-            .url("https://hello.url")
-            .post("body".toRequestBody())
-            .tag(ProgressCallback::class.java, progressCallback)
-            .build()
+        val request = Mother.randomTaggedPostRequest(
+            tagType = ProgressCallback::class.java,
+            tag = progressCallback,
+        )
         val chain = FakeChain(FakeResponse(200), request = request)
         // when
         val response = interceptor.intercept(chain)

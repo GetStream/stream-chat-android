@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.api
 
+import io.getstream.chat.android.client.Mother
 import okhttp3.Call
 import okhttp3.Connection
 import okhttp3.Interceptor
@@ -26,9 +27,7 @@ import java.util.concurrent.TimeUnit
 
 internal class FakeChain(
     vararg val response: FakeResponse,
-    val request: Request = Request.Builder()
-        .url("https://hello.url")
-        .build(),
+    val request: Request = Mother.randomGetRequest(url = "https://hello.url"),
 ) : Interceptor.Chain {
 
     var chainIndex = 0

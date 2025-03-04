@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.api
 
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -34,7 +35,7 @@ internal class ErrorCallTest {
     @Test
     fun testErrorCallExecute() {
         // given
-        val error = Error.GenericError("Generic error")
+        val error = Error.GenericError(randomString())
         val errorCall = ErrorCall<Unit>(TestScope(), error)
         // when
         val result = errorCall.execute()
@@ -47,7 +48,7 @@ internal class ErrorCallTest {
     @Test
     fun testErrorCallEnqueue() = runTest {
         // given
-        val error = Error.GenericError("Generic error")
+        val error = Error.GenericError(randomString())
         val errorCall = ErrorCall<Unit>(backgroundScope, error)
         // when
         errorCall.enqueue { result ->
@@ -61,7 +62,7 @@ internal class ErrorCallTest {
     @Test
     fun testErrorCallAwait() = runTest {
         // given
-        val error = Error.GenericError("Generic error")
+        val error = Error.GenericError(randomString())
         val errorCall = ErrorCall<Unit>(TestScope(), error)
         // when
         val result = errorCall.await()

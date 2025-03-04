@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.api.interceptor
 
 import io.getstream.chat.android.client.api.FakeChain
 import io.getstream.chat.android.client.api.FakeResponse
+import io.getstream.chat.android.randomString
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 
@@ -26,7 +27,7 @@ internal class ApiKeyInterceptorTest {
     @Test
     fun testApiKeyIsAddedAsHeader() {
         // given
-        val apiKey = "apiKeyValue"
+        val apiKey = randomString()
         val interceptor = ApiKeyInterceptor(apiKey)
         // when
         val response = interceptor.intercept(FakeChain(FakeResponse(200)))

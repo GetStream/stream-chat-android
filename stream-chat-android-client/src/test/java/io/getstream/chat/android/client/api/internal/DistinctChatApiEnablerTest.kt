@@ -17,12 +17,18 @@
 package io.getstream.chat.android.client.api.internal
 
 import android.annotation.SuppressLint
+import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
-import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.randomDate
+import io.getstream.chat.android.randomInt
+import io.getstream.chat.android.randomMember
+import io.getstream.chat.android.randomString
 import kotlinx.coroutines.test.TestScope
 import org.junit.Test
 import org.mockito.kotlin.any
@@ -34,6 +40,27 @@ import org.mockito.kotlin.verifyNoInteractions
 
 internal class DistinctChatApiEnablerTest {
 
+    private val messageId = randomString()
+    private val firstId = randomString()
+    private val parentId = randomString()
+    private val lastId = randomString()
+    private val limit = randomInt()
+    private val offset = randomInt()
+    private val channelType = randomString()
+    private val channelId = randomString()
+    private val messageSort = QuerySortByField.ascByName<Message>("created_at")
+    private val pagination = PinnedMessagesPagination.AroundMessage(randomString())
+    private val channelRequest = Mother.randomQueryChannelRequest()
+    private val channelsRequest = Mother.randomQueryChannelsRequest()
+    private val filter = Filters.neutral()
+    private val bannedUserSort = QuerySortByField.ascByName<BannedUsersSort>("created_at")
+    private val createdAtAfter = randomDate()
+    private val createdAtAfterOrEqual = randomDate()
+    private val createdAtBefore = randomDate()
+    private val createdAtBeforeOrEqual = randomDate()
+    private val memberSort = QuerySortByField.ascByName<Member>("name")
+    private val members = listOf(randomMember())
+
     @SuppressLint("CheckResult")
     @Suppress("LongMethod")
     @Test
@@ -43,73 +70,67 @@ internal class DistinctChatApiEnablerTest {
         val distinctApi = spy(DistinctChatApi(TestScope(), api))
         val enabler = DistinctChatApiEnabler(distinctApi) { true }
         // when
-        enabler.getRepliesMore("messageId", "firstId", 10)
-        enabler.getReplies("messageId", 10)
-        enabler.getNewerReplies("parentId", 10, "lastId")
-        enabler.getReactions("messageId", 0, 10)
-        enabler.getMessage("messageId")
-        enabler.getPinnedMessages(
-            channelType = "messaging",
-            channelId = "2",
-            limit = 10,
-            sort = QuerySortByField.ascByName("created_at"),
-            pagination = PinnedMessagesPagination.AroundMessage("1"),
-        )
-        enabler.queryChannels(QueryChannelsRequest(Filters.neutral(), limit = 10))
+        enabler.getRepliesMore(messageId, firstId, limit)
+        enabler.getReplies(messageId, limit)
+        enabler.getNewerReplies(parentId, limit, lastId)
+        enabler.getReactions(messageId, offset, limit)
+        enabler.getMessage(messageId)
+        enabler.getPinnedMessages(channelType, channelId, limit, messageSort, pagination)
+        enabler.queryChannels(channelsRequest)
         enabler.queryBannedUsers(
-            filter = Filters.ne("field", "value"),
-            sort = QuerySortByField.ascByName("created_at"),
-            offset = 0,
-            limit = 10,
-            createdAtAfter = null,
-            createdAtAfterOrEqual = null,
-            createdAtBefore = null,
-            createdAtBeforeOrEqual = null,
+            filter = filter,
+            sort = bannedUserSort,
+            offset = offset,
+            limit = limit,
+            createdAtAfter = createdAtAfter,
+            createdAtAfterOrEqual = createdAtAfterOrEqual,
+            createdAtBefore = createdAtBefore,
+            createdAtBeforeOrEqual = createdAtBeforeOrEqual,
         )
         enabler.queryMembers(
-            channelType = "messaging",
-            channelId = "1",
-            offset = 0,
-            limit = 10,
-            filter = Filters.neutral(),
-            sort = QuerySortByField.ascByName("name"),
-            members = emptyList(),
+            channelType = channelType,
+            channelId = channelId,
+            offset = offset,
+            limit = limit,
+            filter = filter,
+            sort = memberSort,
+            members = members,
         )
-        enabler.queryChannel("channelType", "channelId", QueryChannelRequest())
+        enabler.queryChannel(channelType, channelId, channelRequest)
         // then
-        verify(distinctApi, times(1)).getRepliesMore("messageId", "firstId", 10)
-        verify(distinctApi, times(1)).getReplies("messageId", 10)
-        verify(distinctApi, times(1)).getNewerReplies("parentId", 10, "lastId")
-        verify(distinctApi, times(1)).getReactions("messageId", 0, 10)
-        verify(distinctApi, times(1)).getMessage("messageId")
+        verify(distinctApi, times(1)).getRepliesMore(messageId, firstId, limit)
+        verify(distinctApi, times(1)).getReplies(messageId, limit)
+        verify(distinctApi, times(1)).getNewerReplies(parentId, limit, lastId)
+        verify(distinctApi, times(1)).getReactions(messageId, offset, limit)
+        verify(distinctApi, times(1)).getMessage(messageId)
         verify(distinctApi, times(1)).getPinnedMessages(
-            channelType = "messaging",
-            channelId = "2",
-            limit = 10,
-            sort = QuerySortByField.ascByName("created_at"),
-            pagination = PinnedMessagesPagination.AroundMessage("1"),
+            channelType = channelType,
+            channelId = channelId,
+            limit = limit,
+            sort = messageSort,
+            pagination = pagination,
         )
-        verify(distinctApi, times(1)).queryChannels(QueryChannelsRequest(Filters.neutral(), limit = 10))
+        verify(distinctApi, times(1)).queryChannels(channelsRequest)
         verify(distinctApi, times(1)).queryBannedUsers(
-            filter = Filters.ne("field", "value"),
-            sort = QuerySortByField.ascByName("created_at"),
-            offset = 0,
-            limit = 10,
-            createdAtAfter = null,
-            createdAtAfterOrEqual = null,
-            createdAtBefore = null,
-            createdAtBeforeOrEqual = null,
+            filter = filter,
+            sort = bannedUserSort,
+            offset = offset,
+            limit = limit,
+            createdAtAfter = createdAtAfter,
+            createdAtAfterOrEqual = createdAtAfterOrEqual,
+            createdAtBefore = createdAtBefore,
+            createdAtBeforeOrEqual = createdAtBeforeOrEqual,
         )
         verify(distinctApi, times(1)).queryMembers(
-            channelType = "messaging",
-            channelId = "1",
-            offset = 0,
-            limit = 10,
-            filter = Filters.neutral(),
-            sort = QuerySortByField.ascByName("name"),
-            members = emptyList(),
+            channelType = channelType,
+            channelId = channelId,
+            offset = offset,
+            limit = limit,
+            filter = filter,
+            sort = memberSort,
+            members = members,
         )
-        verify(distinctApi, times(1)).queryChannel("channelType", "channelId", QueryChannelRequest())
+        verify(distinctApi, times(1)).queryChannel(channelType, channelId, channelRequest)
         verifyNoInteractions(api)
     }
 
@@ -122,74 +143,62 @@ internal class DistinctChatApiEnablerTest {
         val distinctApi = spy(DistinctChatApi(TestScope(), api))
         val enabler = DistinctChatApiEnabler(distinctApi) { false }
         // when
-        enabler.getRepliesMore("messageId", "firstId", 10)
-        enabler.getReplies("messageId", 10)
-        enabler.getNewerReplies("parentId", 10, "lastId")
-        enabler.getReactions("messageId", 0, 10)
-        enabler.getMessage("messageId")
-        enabler.getPinnedMessages(
-            channelType = "messaging",
-            channelId = "2",
-            limit = 10,
-            sort = QuerySortByField.ascByName("created_at"),
-            pagination = PinnedMessagesPagination.AroundMessage("1"),
-        )
-        enabler.queryChannels(QueryChannelsRequest(Filters.neutral(), limit = 10))
+        enabler.getRepliesMore(messageId, firstId, limit)
+        enabler.getReplies(messageId, limit)
+        enabler.getNewerReplies(parentId, limit, lastId)
+        enabler.getReactions(messageId, offset, limit)
+        enabler.getMessage(messageId)
+        enabler.getPinnedMessages(channelType, channelId, limit, messageSort, pagination)
+        enabler.queryChannels(channelsRequest)
         enabler.queryBannedUsers(
-            filter = Filters.ne("field", "value"),
-            sort = QuerySortByField.ascByName("created_at"),
-            offset = 0,
-            limit = 10,
-            createdAtAfter = null,
-            createdAtAfterOrEqual = null,
-            createdAtBefore = null,
-            createdAtBeforeOrEqual = null,
+            filter = filter,
+            sort = bannedUserSort,
+            offset = offset,
+            limit = limit,
+            createdAtAfter = createdAtAfter,
+            createdAtAfterOrEqual = createdAtAfterOrEqual,
+            createdAtBefore = createdAtBefore,
+            createdAtBeforeOrEqual = createdAtBeforeOrEqual,
         )
         enabler.queryMembers(
-            channelType = "messaging",
-            channelId = "1",
-            offset = 0,
-            limit = 10,
-            filter = Filters.neutral(),
-            sort = QuerySortByField.ascByName("name"),
-            members = emptyList(),
+            channelType = channelType,
+            channelId = channelId,
+            offset = offset,
+            limit = limit,
+            filter = filter,
+            sort = memberSort,
+            members = members,
         )
-        enabler.queryChannel("channelType", "channelId", QueryChannelRequest())
+        enabler.queryChannel(channelType, channelId, channelRequest)
 
         // then
-        verify(api, times(1)).getRepliesMore("messageId", "firstId", 10)
-        verify(api, times(1)).getReplies("messageId", 10)
-        verify(api, times(1)).getNewerReplies("parentId", 10, "lastId")
-        verify(api, times(1)).getReactions("messageId", 0, 10)
-        verify(api, times(1)).getMessage("messageId")
-        verify(api, times(1)).getPinnedMessages(
-            channelType = "messaging",
-            channelId = "2",
-            limit = 10,
-            sort = QuerySortByField.ascByName("created_at"),
-            pagination = PinnedMessagesPagination.AroundMessage("1"),
-        )
-        verify(api, times(1)).queryChannels(QueryChannelsRequest(Filters.neutral(), limit = 10))
+        verify(api, times(1)).getRepliesMore(messageId, firstId, limit)
+        verify(api, times(1)).getReplies(messageId, limit)
+        verify(api, times(1)).getNewerReplies(parentId, limit, lastId)
+        verify(api, times(1)).getReactions(messageId, offset, limit)
+        verify(api, times(1)).getMessage(messageId)
+        verify(api, times(1)).getPinnedMessages(channelType, channelId, limit, messageSort, pagination)
+        verify(api, times(1)).queryChannels(channelsRequest)
         verify(api, times(1)).queryBannedUsers(
-            filter = Filters.ne("field", "value"),
-            sort = QuerySortByField.ascByName("created_at"),
-            offset = 0,
-            limit = 10,
-            createdAtAfter = null,
-            createdAtAfterOrEqual = null,
-            createdAtBefore = null,
-            createdAtBeforeOrEqual = null,
+            filter = filter,
+            sort = bannedUserSort,
+            offset = offset,
+            limit = limit,
+            createdAtAfter = createdAtAfter,
+            createdAtAfterOrEqual = createdAtAfterOrEqual,
+            createdAtBefore = createdAtBefore,
+            createdAtBeforeOrEqual = createdAtBeforeOrEqual,
         )
         verify(api, times(1)).queryMembers(
-            channelType = "messaging",
-            channelId = "1",
-            offset = 0,
-            limit = 10,
-            filter = Filters.neutral(),
-            sort = QuerySortByField.ascByName("name"),
-            members = emptyList(),
+            channelType = channelType,
+            channelId = channelId,
+            offset = offset,
+            limit = limit,
+            filter = filter,
+            sort = memberSort,
+            members = members,
         )
-        verify(api, times(1)).queryChannel("channelType", "channelId", QueryChannelRequest())
+        verify(api, times(1)).queryChannel(channelType, channelId, channelRequest)
         verify(distinctApi, times(0)).getRepliesMore(any(), any(), any())
         verify(distinctApi, times(0)).getReplies(any(), any())
         verify(distinctApi, times(0)).getNewerReplies(any(), any(), any())
