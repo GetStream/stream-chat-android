@@ -35,6 +35,7 @@ internal data class UpstreamMessageDto(
     val command: String?,
     val html: String,
     val id: String,
+    val type: String,
     val mentioned_users: List<String>,
     val parent_id: String?,
     val pin_expires: Date?,
