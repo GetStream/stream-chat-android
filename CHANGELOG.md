@@ -19,6 +19,7 @@
 - Ensure that `TokenProvider.loadToken()` is not called multiple times while the token is being generated. [#5656](https://github.com/GetStream/stream-chat-android/pull/5656)
 
 ### ✅ Added
+- Add a way to inject a TokenProvider from PN on the case an expired token needs to be refreshed. [#5655](https://github.com/GetStream/stream-chat-android/pull/5655)
 
 ### ⚠️ Changed
 
