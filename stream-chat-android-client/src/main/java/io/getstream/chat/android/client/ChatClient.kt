@@ -789,14 +789,17 @@ internal constructor(
             return
         }
 
-        userCredentialStorage.get()?.let { config ->
+        userCredentialStorage.get()?.let { credentialConfig ->
+            val tokenProvider = config.notificationConfig.tokenProvider
             initializeClientWithUser(
                 User(
-                    id = config.userId,
-                    name = config.userName,
+                    id = credentialConfig.userId,
+                    name = credentialConfig.userName,
                 ),
-                tokenProvider = CacheableTokenProvider(ConstantTokenProvider(config.userToken)),
-                isAnonymous = config.isAnonymous,
+                tokenProvider = CacheableTokenProvider(
+                    tokenProvider = tokenProvider ?: ConstantTokenProvider(credentialConfig.userToken),
+                ),
+                isAnonymous = credentialConfig.isAnonymous,
             )
         }
     }
@@ -4055,11 +4058,14 @@ internal constructor(
          * Push message will be handled internally unless user overrides [NotificationHandler.onPushMessage]
          * Be sure to initialize ChatClient before calling this method!
          *
+         * @param pushMessage The push message to handle.
+         *
          * @see [NotificationHandler.onPushMessage]
          * @throws IllegalStateException if called before initializing ChatClient
          */
         @Throws(IllegalStateException::class)
         @JvmStatic
+        @JvmOverloads
         public fun handlePushMessage(pushMessage: PushMessage) {
             ensureClientInitialized().run {
                 if (!config.notificationConfig.ignorePushMessagesWhenUserOnline || !isSocketConnected()) {
