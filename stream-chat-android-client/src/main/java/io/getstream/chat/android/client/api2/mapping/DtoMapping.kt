@@ -119,6 +119,7 @@ internal class DtoMapping(
                     command = command,
                     html = html,
                     id = id,
+                    type = type,
                     mentioned_users = mentionedUsersIds,
                     parent_id = parentId,
                     pin_expires = pinExpires,

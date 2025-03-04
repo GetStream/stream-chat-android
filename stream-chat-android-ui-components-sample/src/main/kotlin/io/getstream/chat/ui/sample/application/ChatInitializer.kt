@@ -20,7 +20,6 @@ import android.content.Context
 import android.graphics.Color
 import com.google.firebase.FirebaseApp
 import io.getstream.android.push.firebase.FirebasePushDeviceGenerator
-import io.getstream.android.push.huawei.HuaweiPushDeviceGenerator
 import io.getstream.android.push.xiaomi.XiaomiPushDeviceGenerator
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -57,18 +56,13 @@ class ChatInitializer(
                 pushDeviceGenerators = listOf(
                     FirebasePushDeviceGenerator(
                         context = context,
-                        providerName = "Firebase",
-                    ),
-                    HuaweiPushDeviceGenerator(
-                        context = context,
-                        appId = ApplicationConfigurator.HUAWEI_APP_ID,
-                        providerName = "huawei",
+                        providerName = "chat-android-firebase",
                     ),
                     XiaomiPushDeviceGenerator(
                         context = context,
                         appId = ApplicationConfigurator.XIAOMI_APP_ID,
                         appKey = ApplicationConfigurator.XIAOMI_APP_KEY,
-                        providerName = "Xiaomi",
+                        providerName = "chat-android-xiaomi",
                     ),
                 ),
                 autoTranslationEnabled = autoTranslationEnabled,

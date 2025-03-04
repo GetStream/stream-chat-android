@@ -12,12 +12,14 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fix not being able to send `system` messages via the `ChatClient`. [#5657](https://github.com/GetStream/stream-chat-android/pull/5657)
 
 ### ⬆️ Improved
 - Add sending messages to only specific members. The `Message` entity contains a new property `restrictedVisibility` where a list of IDs for the desired members can be set.[#5644](https://github.com/GetStream/stream-chat-android/pull/5644)
 - Ensure that `TokenProvider.loadToken()` is not called multiple times while the token is being generated. [#5656](https://github.com/GetStream/stream-chat-android/pull/5656)
 
 ### ✅ Added
+- Add a way to inject a TokenProvider from PN on the case an expired token needs to be refreshed. [#5655](https://github.com/GetStream/stream-chat-android/pull/5655)
 
 ### ⚠️ Changed
 
