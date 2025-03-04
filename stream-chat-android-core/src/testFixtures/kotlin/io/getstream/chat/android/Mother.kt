@@ -28,6 +28,7 @@ import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.PushProvider
@@ -464,6 +465,14 @@ public fun randomMember(
     shadowBanned = shadowBanned,
     banned = banned,
     banExpires = banExpires,
+)
+
+public fun randomMemberData(
+    userId: String = randomString(),
+    extraData: Map<String, Any> = randomExtraData(),
+): MemberData = MemberData(
+    userId = userId,
+    extraData = extraData,
 )
 
 public fun randomChannelInfo(

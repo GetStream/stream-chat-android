@@ -102,6 +102,9 @@ internal class DomainMapping(
     private val userTransformer: UserTransformer,
 ) {
 
+    /**
+     * Transforms [AppSettingsResponse] to [AppSettings].
+     */
     internal fun AppSettingsResponse.toDomain(): AppSettings = AppSettings(app.toDomain())
 
     private fun AppDto.toDomain(): App = App(
@@ -224,6 +227,9 @@ internal class DomainMapping(
         poll?.updated_at,
     ).maxBy { it.time }
 
+    /**
+     * Transforms [DownstreamUserDto] to [User].
+     */
     internal fun DownstreamUserDto.toDomain(): User =
         User(
             id = id,
@@ -264,7 +270,10 @@ internal class DomainMapping(
             extraData = extraData.toMutableMap(),
         )
 
-    private fun DownstreamReactionGroupDto.toDomain(type: String): ReactionGroup =
+    /**
+     * Transforms [DownstreamReactionGroupDto] to [ReactionGroup].
+     */
+    internal fun DownstreamReactionGroupDto.toDomain(type: String): ReactionGroup =
         ReactionGroup(
             type = type,
             count = count,
@@ -288,7 +297,7 @@ internal class DomainMapping(
     /**
      * Transforms [DownstreamChannelMuteDto] into [ChannelMute]
      */
-    private fun DownstreamChannelMuteDto.toDomain(): ChannelMute =
+    internal fun DownstreamChannelMuteDto.toDomain(): ChannelMute =
         ChannelMute(
             user = user?.toDomain(),
             channel = channel?.toDomain(
@@ -408,7 +417,7 @@ internal class DomainMapping(
      *
      * @return VotingVisibility
      */
-    private fun String?.toVotingVisibility(): VotingVisibility = when (this) {
+    internal fun String?.toVotingVisibility(): VotingVisibility = when (this) {
         null,
         "public",
         -> VotingVisibility.PUBLIC
@@ -432,6 +441,9 @@ internal class DomainMapping(
             lastReadMessageId = last_read_message_id,
         )
 
+    /**
+     * Transforms [AttachmentDto] to [Attachment].
+     */
     internal fun AttachmentDto.toDomain(): Attachment =
         Attachment(
             assetUrl = asset_url,
@@ -471,6 +483,9 @@ internal class DomainMapping(
         )
     }
 
+    /**
+     * Transforms [ChannelInfoDto] to [ChannelInfo].
+     */
     internal fun ChannelInfoDto.toDomain(): ChannelInfo =
         ChannelInfo(
             cid = cid,
@@ -481,6 +496,9 @@ internal class DomainMapping(
             image = image,
         )
 
+    /**
+     * Transforms [CommandDto] to [Command].
+     */
     internal fun CommandDto.toDomain(): Command = Command(
         name = name,
         description = description,
@@ -488,6 +506,9 @@ internal class DomainMapping(
         set = set,
     )
 
+    /**
+     * Transforms [ConfigDto] to [Config].
+     */
     internal fun ConfigDto.toDomain(): Config = Config(
         createdAt = created_at,
         updatedAt = updated_at,
@@ -513,6 +534,9 @@ internal class DomainMapping(
         commands = commands.map { it.toDomain() },
     )
 
+    /**
+     * Transforms [DeviceDto] to [Device].
+     */
     internal fun DeviceDto.toDomain(): Device = Device(
         token = id,
         pushProvider = PushProvider.fromKey(push_provider),
@@ -559,19 +583,31 @@ internal class DomainMapping(
         platformCircumvented = this.platform_circumvented ?: false,
     )
 
+    /**
+     * Transforms [PrivacySettingsDto] to [PrivacySettings].
+     */
     internal fun PrivacySettingsDto.toDomain(): PrivacySettings = PrivacySettings(
         typingIndicators = typing_indicators?.toDomain(),
         readReceipts = read_receipts?.toDomain(),
     )
 
+    /**
+     * Transforms [TypingIndicatorsDto] to [TypingIndicators].
+     */
     internal fun TypingIndicatorsDto.toDomain(): TypingIndicators = TypingIndicators(
         enabled = enabled,
     )
 
+    /**
+     * Transforms [ReadReceiptsDto] to [ReadReceipts].
+     */
     internal fun ReadReceiptsDto.toDomain(): ReadReceipts = ReadReceipts(
         enabled = enabled,
     )
 
+    /**
+     * Transforms [SearchWarningDto] to [SearchWarning].
+     */
     internal fun SearchWarningDto.toDomain(): SearchWarning = SearchWarning(
         channelSearchCids = channel_search_cids,
         channelSearchCount = channel_search_count,
@@ -635,14 +671,23 @@ internal class DomainMapping(
         user = user.toDomain(),
     )
 
+    /**
+     * Transforms [DownstreamUserBlockDto] into [UserBlock]
+     */
     internal fun DownstreamUserBlockDto.toDomain(): UserBlock = UserBlock(
         blockedBy = user_id,
         userId = blocked_user_id,
         blockedAt = created_at,
     )
 
+    /**
+     * Transforms a list of [DownstreamUserBlockDto] into a list of [UserBlock]
+     */
     internal fun List<DownstreamUserBlockDto>.toDomain(): List<UserBlock> = map { it.toDomain() }
 
+    /**
+     * Transforms [BlockUserResponse] into [UserBlock].
+     */
     internal fun BlockUserResponse.toDomain(): UserBlock = UserBlock(
         blockedBy = blocked_by_user_id,
         userId = blocked_user_id,

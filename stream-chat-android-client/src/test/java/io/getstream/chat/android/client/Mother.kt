@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.client
 
+import io.getstream.chat.android.client.api.models.UploadFileResponse
+import io.getstream.chat.android.client.api2.model.dto.AgoraDto
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.CommandDto
@@ -24,16 +26,38 @@ import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
+import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamOptionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamUserBlockDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamVoteDto
+import io.getstream.chat.android.client.api2.model.dto.ErrorDetailDto
+import io.getstream.chat.android.client.api2.model.dto.ErrorDto
+import io.getstream.chat.android.client.api2.model.dto.HMSDto
 import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
+import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
+import io.getstream.chat.android.client.api2.model.dto.SearchWarningDto
+import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
+import io.getstream.chat.android.client.api2.model.dto.VideoCallInfoDto
+import io.getstream.chat.android.client.api2.model.response.AppDto
+import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
+import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
+import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
+import io.getstream.chat.android.client.api2.model.response.CreateVideoCallResponse
+import io.getstream.chat.android.client.api2.model.response.FileUploadConfigDto
+import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
+import io.getstream.chat.android.client.api2.model.response.VideoCallTokenResponse
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -47,6 +71,8 @@ import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.positiveRandomInt
+import io.getstream.chat.android.positiveRandomLong
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomDateOrNull
@@ -58,6 +84,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.util.Date
 
+@Suppress("LargeClass")
 internal object Mother {
     private val streamDateFormatter = StreamDateFormatter()
 
@@ -303,6 +330,22 @@ internal object Mother {
         extraData = extraData,
     )
 
+    fun randomChannelInfoDto(
+        type: String = randomString(),
+        id: String = randomString(),
+        cid: String = "$type$id",
+        memberCount: Int = randomInt(),
+        name: String? = randomString(),
+        image: String? = randomString(),
+    ): ChannelInfoDto = ChannelInfoDto(
+        cid = cid,
+        id = id,
+        member_count = memberCount,
+        name = name,
+        type = type,
+        image = image,
+    )
+
     fun randomConfigDto(
         created_at: Date? = randomDateOrNull(),
         updated_at: Date? = randomDateOrNull(),
@@ -350,4 +393,585 @@ internal object Mother {
         blocklist_behavior = blocklist_behavior,
         commands = commands,
     )
+
+    fun randomAppSettingsResponse(app: AppDto = randomAppDto()): AppSettingsResponse = AppSettingsResponse(app)
+
+    fun randomAppDto(
+        name: String = randomString(),
+        fileUploadConfig: FileUploadConfigDto = randomFileUploadConfigDto(),
+        imageUploadConfig: FileUploadConfigDto = randomFileUploadConfigDto(),
+    ): AppDto = AppDto(
+        name = name,
+        file_upload_config = fileUploadConfig,
+        image_upload_config = imageUploadConfig,
+    )
+
+    fun randomFileUploadConfigDto(
+        allowedFileExtensions: List<String> = listOf(randomString()),
+        allowedMimeTypes: List<String> = listOf(randomString()),
+        blockedFileExtensions: List<String> = listOf(randomString()),
+        blockedMimeTypes: List<String> = listOf(randomString()),
+        sizeLimit: Long = positiveRandomLong(),
+    ): FileUploadConfigDto = FileUploadConfigDto(
+        allowed_file_extensions = allowedFileExtensions,
+        allowed_mime_types = allowedMimeTypes,
+        blocked_file_extensions = blockedFileExtensions,
+        blocked_mime_types = blockedMimeTypes,
+        size_limit = sizeLimit,
+    )
+
+    fun randomDownstreamReactionDto(
+        createdAt: Date = randomDate(),
+        messageId: String = randomString(),
+        score: Int = randomInt(),
+        type: String = randomString(),
+        updatedAt: Date = randomDate(),
+        userId: String = randomString(),
+        user: DownstreamUserDto = randomDownstreamUserDto(id = userId),
+        extraData: Map<String, Any> = emptyMap(),
+    ): DownstreamReactionDto = DownstreamReactionDto(
+        created_at = createdAt,
+        message_id = messageId,
+        score = score,
+        type = type,
+        updated_at = updatedAt,
+        user = user,
+        user_id = userId,
+        extraData = extraData,
+    )
+
+    fun randomDownstreamMuteDto(
+        user: DownstreamUserDto = randomDownstreamUserDto(),
+        target: DownstreamUserDto = randomDownstreamUserDto(),
+        createdAt: Date = randomDate(),
+        updatedAt: Date = randomDate(),
+        expires: Date? = randomDateOrNull(),
+    ): DownstreamMuteDto = DownstreamMuteDto(
+        user = user,
+        target = target,
+        created_at = createdAt,
+        updated_at = updatedAt,
+        expires = expires,
+    )
+
+    fun randomDownstreamChannelMuteDto(
+        user: DownstreamUserDto = randomDownstreamUserDto(),
+        channel: DownstreamChannelDto = randomDownstreamChannelDto(),
+        createdAt: Date = randomDate(),
+        updatedAt: Date = randomDate(),
+        expires: Date? = randomDateOrNull(),
+    ): DownstreamChannelMuteDto = DownstreamChannelMuteDto(
+        user = user,
+        channel = channel,
+        created_at = createdAt,
+        updated_at = updatedAt,
+        expires = expires,
+    )
+
+    fun randomDownstreamReactionGroupDto(
+        count: Int = randomInt(),
+        sumScores: Int = randomInt(),
+        firstReactionAt: Date = randomDate(),
+        lastReactionAt: Date = randomDate(),
+    ): DownstreamReactionGroupDto = DownstreamReactionGroupDto(
+        count = count,
+        sum_scores = sumScores,
+        first_reaction_at = firstReactionAt,
+        last_reaction_at = lastReactionAt,
+    )
+
+    fun randomDownstreamMemberDto(
+        user: DownstreamUserDto = randomDownstreamUserDto(),
+        createdAt: Date = randomDate(),
+        updatedAt: Date = randomDate(),
+        invited: Boolean = randomBoolean(),
+        inviteAcceptedAt: Date = randomDate(),
+        inviteRejectedAt: Date = randomDate(),
+        shadowBanned: Boolean = randomBoolean(),
+        banned: Boolean = randomBoolean(),
+        channelRole: String = randomString(),
+        notificationsMuted: Boolean = randomBoolean(),
+        status: String = randomString(),
+        banExpires: Date = randomDate(),
+        pinnedAt: Date? = randomDateOrNull(),
+        archivedAt: Date? = randomDateOrNull(),
+        extraData: Map<String, Any> = emptyMap(),
+    ): DownstreamMemberDto = DownstreamMemberDto(
+        user = user,
+        created_at = createdAt,
+        updated_at = updatedAt,
+        invited = invited,
+        invite_accepted_at = inviteAcceptedAt,
+        invite_rejected_at = inviteRejectedAt,
+        shadow_banned = shadowBanned,
+        banned = banned,
+        channel_role = channelRole,
+        notifications_muted = notificationsMuted,
+        status = status,
+        ban_expires = banExpires,
+        pinned_at = pinnedAt,
+        archived_at = archivedAt,
+        extraData = extraData,
+    )
+
+    fun randomDownstreamChannelUserRead(
+        user: DownstreamUserDto = randomDownstreamUserDto(),
+        lastRead: Date = randomDate(),
+        unreadMessages: Int = randomInt(),
+        lastReadMessageId: String? = randomString(),
+    ): DownstreamChannelUserRead = DownstreamChannelUserRead(
+        user = user,
+        last_read = lastRead,
+        unread_messages = unreadMessages,
+        last_read_message_id = lastReadMessageId,
+    )
+
+    fun randomAttachmentDto(
+        assetUrl: String? = randomString(),
+        authorName: String? = randomString(),
+        authorLink: String? = randomString(),
+        fallback: String? = randomString(),
+        fileSize: Int = positiveRandomInt(),
+        image: String? = randomString(),
+        imageUrl: String? = randomString(),
+        mimeType: String? = randomString(),
+        name: String? = randomString(),
+        ogScrapeUrl: String? = randomString(),
+        text: String? = randomString(),
+        thumbUrl: String? = randomString(),
+        title: String? = randomString(),
+        titleLink: String? = randomString(),
+        type: String? = randomString(),
+        originalHeight: Int? = positiveRandomInt(),
+        originalWidth: Int? = positiveRandomInt(),
+        extraData: Map<String, Any> = emptyMap(),
+    ): AttachmentDto = AttachmentDto(
+        asset_url = assetUrl,
+        author_name = authorName,
+        author_link = authorLink,
+        fallback = fallback,
+        file_size = fileSize,
+        image = image,
+        image_url = imageUrl,
+        mime_type = mimeType,
+        name = name,
+        og_scrape_url = ogScrapeUrl,
+        text = text,
+        thumb_url = thumbUrl,
+        title = title,
+        title_link = titleLink,
+        type = type,
+        original_height = originalHeight,
+        original_width = originalWidth,
+        extraData = extraData,
+    )
+
+    fun randomBannedUserResponse(
+        user: DownstreamUserDto = randomDownstreamUserDto(),
+        bannedBy: DownstreamUserDto = randomDownstreamUserDto(),
+        channel: DownstreamChannelDto = randomDownstreamChannelDto(),
+        createdAt: Date = randomDate(),
+        expires: Date = randomDate(),
+        shadow: Boolean = randomBoolean(),
+        reason: String = randomString(),
+    ): BannedUserResponse = BannedUserResponse(
+        user = user,
+        banned_by = bannedBy,
+        channel = channel,
+        created_at = createdAt,
+        expires = expires,
+        shadow = shadow,
+        reason = reason,
+    )
+
+    fun randomCommandDto(
+        name: String = randomString(),
+        description: String = randomString(),
+        args: String = randomString(),
+        set: String = randomString(),
+    ): CommandDto = CommandDto(
+        name = name,
+        description = description,
+        args = args,
+        set = set,
+    )
+
+    fun randomDeviceDto(
+        id: String = randomString(),
+        pushProvider: String = randomString(),
+        providerName: String = randomString(),
+    ): DeviceDto = DeviceDto(
+        id = id,
+        push_provider = pushProvider,
+        provider_name = providerName,
+    )
+
+    fun randomDownstreamFlagDto(
+        user: DownstreamUserDto = randomDownstreamUserDto(),
+        targetUser: DownstreamUserDto = randomDownstreamUserDto(),
+        targetMessageId: String = randomString(),
+        createdAt: String = randomString(),
+        createdByAutomod: Boolean = randomBoolean(),
+        approvedAt: Date? = randomDateOrNull(),
+        updatedAt: Date = randomDate(),
+        reviewedAt: Date? = randomDateOrNull(),
+        reviewedBy: Date? = randomDateOrNull(),
+        rejectedAt: Date? = randomDateOrNull(),
+    ): DownstreamFlagDto = DownstreamFlagDto(
+        user = user,
+        target_user = targetUser,
+        target_message_id = targetMessageId,
+        created_at = createdAt,
+        created_by_automod = createdByAutomod,
+        approved_at = approvedAt,
+        updated_at = updatedAt,
+        reviewed_at = reviewedAt,
+        reviewed_by = reviewedBy,
+        rejected_at = rejectedAt,
+    )
+
+    fun randomDownstreamModerationDetailsDto(
+        originalText: String = randomString(),
+        action: String = randomString(),
+        errorMsg: String = randomString(),
+        extraData: Map<String, Any> = emptyMap(),
+    ): DownstreamModerationDetailsDto = DownstreamModerationDetailsDto(
+        original_text = originalText,
+        action = action,
+        error_msg = errorMsg,
+        extraData = extraData,
+    )
+
+    fun randomDownstreamModerationDto(
+        action: String = randomString(),
+        originalText: String = randomString(),
+        textHarms: List<String> = listOf(randomString()),
+        imageHarms: List<String> = listOf(randomString()),
+        blocklistMatched: String = randomString(),
+        semanticFilterMatched: String = randomString(),
+        platformCircumvented: Boolean = randomBoolean(),
+    ): DownstreamModerationDto = DownstreamModerationDto(
+        action = action,
+        original_text = originalText,
+        text_harms = textHarms,
+        image_harms = imageHarms,
+        blocklist_matched = blocklistMatched,
+        semantic_filter_matched = semanticFilterMatched,
+        platform_circumvented = platformCircumvented,
+    )
+
+    fun randomPrivacySettingsDto(
+        typingIndicators: TypingIndicatorsDto = randomTypingIndicatorsDto(),
+        readReceipts: ReadReceiptsDto = randomReadReceiptsDto(),
+    ): PrivacySettingsDto = PrivacySettingsDto(
+        typing_indicators = typingIndicators,
+        read_receipts = readReceipts,
+    )
+
+    fun randomTypingIndicatorsDto(enabled: Boolean = randomBoolean()): TypingIndicatorsDto =
+        TypingIndicatorsDto(enabled)
+
+    fun randomReadReceiptsDto(enabled: Boolean = randomBoolean()): ReadReceiptsDto =
+        ReadReceiptsDto(enabled)
+
+    fun randomSearchWarningDto(
+        channelSearchCids: List<String> = listOf(randomString()),
+        channelSearchCount: Int = randomInt(),
+        warningCode: Int = randomInt(),
+        warningDescription: String = randomString(),
+    ): SearchWarningDto = SearchWarningDto(
+        channel_search_cids = channelSearchCids,
+        channel_search_count = channelSearchCount,
+        warning_code = warningCode,
+        warning_description = warningDescription,
+    )
+
+    fun randomDownstreamThreadDto(
+        activeParticipantCount: Int = randomInt(),
+        channelCid: String = randomString(),
+        channel: DownstreamChannelDto = randomDownstreamChannelDto(id = channelCid),
+        parentMessageId: String = randomString(),
+        parentMessage: DownstreamMessageDto = randomDownstreamMessageDto(),
+        createdByUserId: String = randomString(),
+        createdBy: DownstreamUserDto = randomDownstreamUserDto(id = createdByUserId),
+        participantCount: Int = randomInt(),
+        threadParticipants: List<DownstreamThreadParticipantDto> = emptyList(),
+        lastMessageAt: Date = randomDate(),
+        createdAt: Date = randomDate(),
+        updatedAt: Date = randomDate(),
+        deletedAt: Date? = randomDateOrNull(),
+        title: String = randomString(),
+        latestReplies: List<DownstreamMessageDto> = listOf(randomDownstreamMessageDto()),
+        read: List<DownstreamChannelUserRead> = listOf(randomDownstreamChannelUserRead()),
+    ): DownstreamThreadDto = DownstreamThreadDto(
+        active_participant_count = activeParticipantCount,
+        channel_cid = channelCid,
+        channel = channel,
+        parent_message_id = parentMessageId,
+        parent_message = parentMessage,
+        created_by_user_id = createdByUserId,
+        created_by = createdBy,
+        participant_count = participantCount,
+        thread_participants = threadParticipants,
+        last_message_at = lastMessageAt,
+        created_at = createdAt,
+        updated_at = updatedAt,
+        deleted_at = deletedAt,
+        title = title,
+        latest_replies = latestReplies,
+        read = read,
+    )
+
+    fun randomDownstreamThreadInfoDto(
+        activeParticipantCount: Int = randomInt(),
+        channelCid: String = randomString(),
+        createdByUserId: String = randomString(),
+        createdBy: DownstreamUserDto = randomDownstreamUserDto(id = createdByUserId),
+        createdAt: Date = randomDate(),
+        deletedAt: Date? = randomDateOrNull(),
+        lastMessageAt: Date = randomDate(),
+        parentMessageId: String = randomString(),
+        parentMessage: DownstreamMessageDto = randomDownstreamMessageDto(id = parentMessageId),
+        participantCount: Int = randomInt(),
+        replyCount: Int = randomInt(),
+        title: String = randomString(),
+        updatedAt: Date = randomDate(),
+    ): DownstreamThreadInfoDto = DownstreamThreadInfoDto(
+        active_participant_count = activeParticipantCount,
+        channel_cid = channelCid,
+        created_by = createdBy,
+        created_by_user_id = createdByUserId,
+        created_at = createdAt,
+        deleted_at = deletedAt,
+        last_message_at = lastMessageAt,
+        parent_message = parentMessage,
+        parent_message_id = parentMessageId,
+        participant_count = participantCount,
+        reply_count = replyCount,
+        title = title,
+        updated_at = updatedAt,
+    )
+
+    fun randomDownstreamUserBlockDto(
+        userId: String = randomString(),
+        blockedUserId: String = randomString(),
+        createdAt: Date = randomDate(),
+    ): DownstreamUserBlockDto = DownstreamUserBlockDto(
+        user_id = userId,
+        blocked_user_id = blockedUserId,
+        created_at = createdAt,
+    )
+
+    fun randomBlockUserResponse(
+        blockedByUserId: String = randomString(),
+        blockedUserId: String = randomString(),
+        createdAt: Date = randomDate(),
+    ): BlockUserResponse = BlockUserResponse(
+        blocked_by_user_id = blockedByUserId,
+        blocked_user_id = blockedUserId,
+        created_at = createdAt,
+    )
+
+    fun randomDownstreamPollDto(
+        id: String = randomString(),
+        name: String = randomString(),
+        description: String = randomString(),
+        votingVisibility: String = "public",
+        enforceUniqueVote: Boolean = randomBoolean(),
+        maxVotesAllowed: Int = randomInt(),
+        allowUserSuggestedOptions: Boolean = randomBoolean(),
+        allowAnswers: Boolean = randomBoolean(),
+        options: List<DownstreamOptionDto> = listOf(randomDownstreamOptionDto()),
+        voteCountsByOption: Map<String, Int> = emptyMap(),
+        latestVotesByOption: Map<String, List<DownstreamVoteDto>> = emptyMap(),
+        latestAnswers: List<DownstreamVoteDto> = listOf(randomAnswerDownstreamVoteDto()),
+        createdAt: Date = randomDate(),
+        createdBy: DownstreamUserDto = randomDownstreamUserDto(),
+        createdById: String = randomString(),
+        ownVotes: List<DownstreamVoteDto> = listOf(randomDownstreamVoteDto()),
+        updatedAt: Date = randomDate(),
+        voteCount: Int = randomInt(),
+        isClosed: Boolean = randomBoolean(),
+    ): DownstreamPollDto = DownstreamPollDto(
+        id = id,
+        name = name,
+        description = description,
+        voting_visibility = votingVisibility,
+        enforce_unique_vote = enforceUniqueVote,
+        max_votes_allowed = maxVotesAllowed,
+        allow_user_suggested_options = allowUserSuggestedOptions,
+        allow_answers = allowAnswers,
+        options = options,
+        vote_counts_by_option = voteCountsByOption,
+        latest_votes_by_option = latestVotesByOption,
+        latest_answers = latestAnswers,
+        created_at = createdAt,
+        created_by = createdBy,
+        created_by_id = createdById,
+        own_votes = ownVotes,
+        updated_at = updatedAt,
+        vote_count = voteCount,
+        is_closed = isClosed,
+    )
+
+    fun randomDownstreamOptionDto(
+        id: String = randomString(),
+        text: String = randomString(),
+    ): DownstreamOptionDto = DownstreamOptionDto(
+        id = id,
+        text = text,
+    )
+
+    fun randomDownstreamVoteDto(
+        id: String = randomString(),
+        pollId: String = randomString(),
+        optionId: String = randomString(),
+        createdAt: Date = randomDate(),
+        updatedAt: Date = randomDate(),
+        userId: String = randomString(),
+        user: DownstreamUserDto? = randomDownstreamUserDto(id = userId),
+    ): DownstreamVoteDto = DownstreamVoteDto(
+        id = id,
+        poll_id = pollId,
+        option_id = optionId,
+        created_at = createdAt,
+        updated_at = updatedAt,
+        user = user,
+        user_id = userId,
+        is_answer = false,
+        answer_text = null,
+    )
+
+    fun randomAnswerDownstreamVoteDto(
+        id: String = randomString(),
+        pollId: String = randomString(),
+        optionId: String = randomString(),
+        createdAt: Date = randomDate(),
+        updatedAt: Date = randomDate(),
+        userId: String = randomString(),
+        user: DownstreamUserDto? = randomDownstreamUserDto(id = userId),
+        answerText: String = randomString(),
+    ): DownstreamVoteDto = DownstreamVoteDto(
+        id = id,
+        poll_id = pollId,
+        option_id = optionId,
+        created_at = createdAt,
+        updated_at = updatedAt,
+        user = user,
+        user_id = userId,
+        is_answer = true,
+        answer_text = answerText,
+    )
+
+    fun randomUploadFileResponse(
+        file: String = randomString(),
+        thumbUrl: String? = randomString(),
+    ): UploadFileResponse = UploadFileResponse(
+        file = file,
+        thumb_url = thumbUrl,
+    )
+
+    fun randomAgoraDto(channel: String = randomString()): AgoraDto =
+        AgoraDto(channel)
+
+    fun randomHMSDto(
+        roomId: String = randomString(),
+        roomName: String = randomString(),
+    ): HMSDto = HMSDto(
+        roomId = roomId,
+        roomName = roomName,
+    )
+
+    fun randomCreateVideoCallResponse(
+        call: VideoCallInfoDto = randomVideoCallInfoDto(),
+        token: String = randomString(),
+        agoraUid: Int = randomInt(),
+        agoraAppId: String = randomString(),
+    ): CreateVideoCallResponse = CreateVideoCallResponse(
+        call = call,
+        token = token,
+        agoraUid = agoraUid,
+        agoraAppId = agoraAppId,
+    )
+
+    fun randomVideoCallInfoDto(
+        id: String = randomString(),
+        provider: String = randomString(),
+        type: String = randomString(),
+        agora: AgoraDto = randomAgoraDto(),
+        hms: HMSDto = randomHMSDto(),
+    ): VideoCallInfoDto = VideoCallInfoDto(
+        id = id,
+        provider = provider,
+        type = type,
+        agora = agora,
+        hms = hms,
+    )
+
+    fun randomVideoCallTokenResponse(
+        token: String = randomString(),
+        agoraUid: Int = randomInt(),
+        agoraAppId: String = randomString(),
+    ): VideoCallTokenResponse = VideoCallTokenResponse(
+        token = token,
+        agoraUid = agoraUid,
+        agoraAppId = agoraAppId,
+    )
+
+    fun randomErrorDto(
+        code: Int = randomInt(),
+        message: String = randomString(),
+        statusCode: Int = randomInt(),
+        duration: String = randomString(),
+        exceptionFields: Map<String, String> = emptyMap(),
+        moreInfo: String = randomString(),
+        details: List<ErrorDetailDto> = emptyList(),
+    ): ErrorDto = ErrorDto(
+        code = code,
+        message = message,
+        StatusCode = statusCode,
+        duration = duration,
+        exception_fields = exceptionFields,
+        more_info = moreInfo,
+        details = details,
+    )
+
+    fun randomErrorDetailDto(
+        code: Int = randomInt(),
+        messages: List<String> = listOf(randomString()),
+    ): ErrorDetailDto = ErrorDetailDto(
+        code = code,
+        messages = messages,
+    )
+
+    fun randomSocketErrorResponse(
+        error: SocketErrorResponse.ErrorResponse = randomErrorResponse(),
+    ): SocketErrorResponse = SocketErrorResponse(error = error)
+
+    fun randomErrorResponse(
+        code: Int = randomInt(),
+        message: String = randomString(),
+        statusCode: Int = randomInt(),
+        duration: String = randomString(),
+        exceptionFields: Map<String, String> = emptyMap(),
+        moreInfo: String = randomString(),
+        details: List<SocketErrorResponse.ErrorResponse.ErrorDetail> = listOf(randomErrorDetail()),
+    ): SocketErrorResponse.ErrorResponse = SocketErrorResponse.ErrorResponse(
+        code = code,
+        message = message,
+        StatusCode = statusCode,
+        duration = duration,
+        exception_fields = exceptionFields,
+        more_info = moreInfo,
+        details = details,
+    )
+
+    fun randomErrorDetail(
+        code: Int = randomInt(),
+        messages: List<String> = listOf(randomString()),
+    ): SocketErrorResponse.ErrorResponse.ErrorDetail =
+        SocketErrorResponse.ErrorResponse.ErrorDetail(
+            code = code,
+            messages = messages,
+        )
 }
