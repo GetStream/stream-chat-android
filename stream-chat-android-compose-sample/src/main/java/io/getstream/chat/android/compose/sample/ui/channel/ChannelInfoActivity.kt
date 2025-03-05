@@ -70,13 +70,15 @@ class ChannelInfoActivity : BaseConnectedActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ChatTheme {
-                val state by viewModel.state.collectAsState()
-                ChannelInfoScreen(
-                    state = state,
-                    onBack = ::finish,
-                    onPinnedMessagesClick = ::openPinnedMessages,
-                    onConfirmDelete = viewModel::onDeleteChannel,
-                )
+                Surface {
+                    val state by viewModel.state.collectAsState()
+                    ChannelInfoScreen(
+                        state = state,
+                        onNavigationIconClick = ::finish,
+                        onPinnedMessagesClick = ::openPinnedMessages,
+                        onConfirmDelete = viewModel::onDeleteChannel,
+                    )
+                }
             }
             LaunchedEffect(Unit) {
                 lifecycleScope.launch {

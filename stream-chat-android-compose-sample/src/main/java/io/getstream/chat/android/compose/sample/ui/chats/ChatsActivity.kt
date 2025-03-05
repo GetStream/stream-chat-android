@@ -20,6 +20,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,6 +29,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -42,6 +45,7 @@ import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoScreen
 import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoViewModelFactory
+import io.getstream.chat.android.compose.sample.ui.channel.DefaultChannelInfoNavigationIcon
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBar
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBarOption
 import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponentFactory
@@ -119,7 +123,6 @@ class ChatsActivity : BaseConnectedActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            val isViewChannelInfoVisible = !AdaptiveLayoutInfo.isWidthExpanded()
             ChatTheme(
                 dateFormatter = ChatApp.dateFormatter,
                 autoTranslationEnabled = ChatApp.autoTranslationEnabled,
@@ -127,7 +130,7 @@ class ChatsActivity : BaseConnectedActivity() {
                 componentFactory = CustomChatComponentFactory(),
                 channelOptionsTheme = ChannelOptionsTheme.defaultTheme(
                     optionVisibility = ChannelOptionItemVisibility(
-                        isViewInfoVisible = isViewChannelInfoVisible,
+                        isViewInfoVisible = !AdaptiveLayoutInfo.isWidthExpanded(),
                         isPinChannelVisible = true,
                     ),
                 ),
@@ -171,7 +174,7 @@ class ChatsActivity : BaseConnectedActivity() {
                 extraContentMode = ExtraContentMode.Display {
                     ChannelInfoContent(
                         channelId = channel.cid,
-                        onBackPress = { extraContentMode = ExtraContentMode.Hidden }
+                        onNavigationIconClick = { extraContentMode = ExtraContentMode.Hidden }
                     )
                 }
             },
@@ -207,7 +210,7 @@ class ChatsActivity : BaseConnectedActivity() {
     @Composable
     private fun ChannelInfoContent(
         channelId: String,
-        onBackPress: () -> Unit,
+        onNavigationIconClick: () -> Unit,
     ) {
         val viewModel = viewModel(
             ChannelInfoViewModel::class.java,
@@ -217,9 +220,22 @@ class ChatsActivity : BaseConnectedActivity() {
         val state by viewModel.state.collectAsState()
         ChannelInfoScreen(
             state = state,
-            onBack = onBackPress,
             onPinnedMessagesClick = { openPinnedMessages(channelId) },
             onConfirmDelete = viewModel::onDeleteChannel,
+            navigationIcon = {
+                val singlePane = !AdaptiveLayoutInfo.isWidthExpanded()
+                if (singlePane) {
+                    DefaultChannelInfoNavigationIcon(onClick = onNavigationIconClick)
+                } else {
+                    IconButton(onClick = onNavigationIconClick) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.stream_compose_ic_close),
+                            contentDescription = stringResource(id = R.string.stream_compose_cancel),
+                            tint = ChatTheme.colors.textHighEmphasis,
+                        )
+                    }
+                }
+            }
         )
     }
 

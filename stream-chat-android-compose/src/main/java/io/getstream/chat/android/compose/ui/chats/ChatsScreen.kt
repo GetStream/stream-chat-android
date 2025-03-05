@@ -22,29 +22,18 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.SizeTransform
-import androidx.compose.animation.core.animateDp
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -52,7 +41,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.movableContentOf
@@ -63,15 +51,10 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
@@ -101,8 +84,8 @@ import io.getstream.chat.android.models.User
 
 /**
  * Represents a complete screen for chat, including a list of channels, threads, and messages.
- * The layout adapts based on the screen size, showing a single-panel layout on smaller screens
- * and a dual-panel layout on larger screens.
+ * The layout adapts based on the screen size, showing a single-pane layout on smaller screens
+ * and a dual-pane layout on larger screens.
  *
  * @param modifier The modifier to be applied to the root layout of the screen.
  * @param channelViewModelFactory Factory for creating the [ChannelListViewModel] used for managing channel data.
@@ -165,7 +148,7 @@ public fun ChatsScreen(
     },
 ) {
     val context = LocalContext.current
-    val singlePanel = !AdaptiveLayoutInfo.isWidthExpanded()
+    val singlePane = !AdaptiveLayoutInfo.isWidthExpanded()
 
     var channelMessagesViewModelFactory by rememberSaveable(
         saver = factorySaver { selection -> messagesViewModelFactoryProvider(context, selection) },
@@ -173,8 +156,8 @@ public fun ChatsScreen(
         mutableStateOf(messagesViewModelFactoryProvider(context, MessageSelection()))
     }
     val backPressHandler = {
-        // Clear the messages view model factory when the user navigates back in single-panel mode
-        if (singlePanel && channelMessagesViewModelFactory != null) {
+        // Clear the messages view model factory when the user navigates back in single-pane mode
+        if (singlePane && channelMessagesViewModelFactory != null) {
             channelMessagesViewModelFactory = null
         } else {
             onBackPress()
@@ -187,7 +170,7 @@ public fun ChatsScreen(
     }
 
     // Auto-select the first item in the list when it loads on wide screens
-    if (!singlePanel) {
+    if (!singlePane) {
         when (listContentMode) {
             ListContentMode.Channels -> {
                 FirstChannelLoadHandler(channelViewModelFactory) { selection ->
@@ -264,7 +247,7 @@ public fun ChatsScreen(
         }
     }
 
-    if (singlePanel) {
+    if (singlePane) {
         Box(
             modifier = modifier,
         ) {
@@ -503,7 +486,8 @@ private fun DefaultDetailTopBarContent(
         messageMode = messageMode,
         onHeaderTitleClick = onTitleClick,
         leadingContent = {
-            if (!AdaptiveLayoutInfo.isWidthExpanded()) {
+            val showBackButton = !AdaptiveLayoutInfo.isWidthExpanded()
+            if (showBackButton) {
                 with(ChatTheme.componentFactory) {
                     MessageListHeaderLeadingContent(
                         onBackPressed = backAction,
@@ -569,7 +553,7 @@ private fun DetailPane(
 }
 
 /**
- * The transition spec used for animating the content when switching between channels and threads in single-panel mode.
+ * The transition spec used for animating the content when switching between channels and threads in single-pane mode.
  */
 @Composable
 private fun <S> slideTransitionSpec(): AnimatedContentTransitionScope<S>.() -> ContentTransform = {
