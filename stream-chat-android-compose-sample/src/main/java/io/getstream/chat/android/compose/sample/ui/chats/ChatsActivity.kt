@@ -133,7 +133,7 @@ class ChatsActivity : BaseConnectedActivity() {
                 componentFactory = CustomChatComponentFactory(),
                 channelOptionsTheme = ChannelOptionsTheme.defaultTheme(
                     optionVisibility = ChannelOptionItemVisibility(
-                        isViewInfoVisible = !AdaptiveLayoutInfo.isWidthExpanded(),
+                        isViewInfoVisible = AdaptiveLayoutInfo.singlePaneWindow(),
                         isPinChannelVisible = true,
                     ),
                 ),
@@ -233,8 +233,7 @@ class ChatsActivity : BaseConnectedActivity() {
             onPinnedMessagesClick = { openPinnedMessages(channelId) },
             onConfirmDelete = viewModel::onDeleteChannel,
             navigationIcon = {
-                val singlePane = !AdaptiveLayoutInfo.isWidthExpanded()
-                if (singlePane) {
+                if (AdaptiveLayoutInfo.singlePaneWindow()) {
                     DefaultChannelInfoNavigationIcon(onClick = onNavigationIconClick)
                 } else {
                     CloseButton(onClick = onNavigationIconClick)

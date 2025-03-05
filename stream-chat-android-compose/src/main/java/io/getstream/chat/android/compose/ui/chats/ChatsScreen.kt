@@ -148,7 +148,7 @@ public fun ChatsScreen(
     },
 ) {
     val context = LocalContext.current
-    val singlePane = !AdaptiveLayoutInfo.isWidthExpanded()
+    val singlePane = AdaptiveLayoutInfo.singlePaneWindow()
 
     var channelMessagesViewModelFactory by rememberSaveable(
         saver = factorySaver { selection -> messagesViewModelFactoryProvider(context, selection) },
@@ -441,7 +441,7 @@ private fun DefaultDetailTopBarContent(
         messageMode = messageMode,
         onHeaderTitleClick = onTitleClick,
         leadingContent = {
-            val showBackButton = !AdaptiveLayoutInfo.isWidthExpanded()
+            val showBackButton = AdaptiveLayoutInfo.singlePaneWindow()
             if (showBackButton) {
                 with(ChatTheme.componentFactory) {
                     MessageListHeaderLeadingContent(
