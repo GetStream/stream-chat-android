@@ -68,7 +68,8 @@ class ChannelInfoActivity : BaseConnectedActivity() {
          * @param channelId The ID of the channel for which the pinned messages are shown.
          */
         fun createIntent(context: Context, channelId: String) =
-            Intent(context, ChannelInfoActivity::class.java).putExtra(KEY_CHANNEL_ID, channelId)
+            Intent(context, ChannelInfoActivity::class.java)
+                .putExtra(KEY_CHANNEL_ID, channelId)
     }
 
     private val viewModelFactory by lazy {
