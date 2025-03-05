@@ -34,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
@@ -46,6 +47,9 @@ import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoScreen
 import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoViewModelFactory
 import io.getstream.chat.android.compose.sample.ui.channel.DefaultChannelInfoNavigationIcon
+import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoScreen
+import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoViewModel
+import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoViewModelFactory
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBar
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBarOption
 import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponentFactory
@@ -172,10 +176,17 @@ class ChatsActivity : BaseConnectedActivity() {
             onListTopBarActionClick = ::openAddChannel,
             onDetailTopBarTitleClick = { channel ->
                 extraContentMode = ExtraContentMode.Display {
-                    ChannelInfoContent(
-                        channelId = channel.cid,
-                        onNavigationIconClick = { extraContentMode = ExtraContentMode.Hidden }
-                    )
+                    if (channel.memberCount > 2 || !channel.isAnonymousChannel()) {
+                        GroupChannelInfoContent(
+                            channelId = channel.cid,
+                            onNavigationIconClick = { extraContentMode = ExtraContentMode.Hidden }
+                        )
+                    } else {
+                        ChannelInfoContent(
+                            channelId = channel.cid,
+                            onNavigationIconClick = { extraContentMode = ExtraContentMode.Hidden }
+                        )
+                    }
                 }
             },
             onViewChannelInfoAction = ::openChannelInfo,
@@ -227,14 +238,31 @@ class ChatsActivity : BaseConnectedActivity() {
                 if (singlePane) {
                     DefaultChannelInfoNavigationIcon(onClick = onNavigationIconClick)
                 } else {
-                    IconButton(onClick = onNavigationIconClick) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.stream_compose_ic_close),
-                            contentDescription = stringResource(id = R.string.stream_compose_cancel),
-                            tint = ChatTheme.colors.textHighEmphasis,
-                        )
-                    }
+                    CloseButton(onClick = onNavigationIconClick)
                 }
+            }
+        )
+    }
+
+    @Composable
+    private fun GroupChannelInfoContent(
+        channelId: String,
+        onNavigationIconClick: () -> Unit,
+    ) {
+        val viewModel = viewModel(
+            GroupChannelInfoViewModel::class.java,
+            key = channelId,
+            factory = GroupChannelInfoViewModelFactory(channelId)
+        )
+        val state by viewModel.state.collectAsState()
+        GroupChannelInfoScreen(
+            state = state,
+            onNavigationIconClick = onNavigationIconClick,
+            onPinnedMessagesClick = { openPinnedMessages(channelId) },
+            navigationIcon = if (AdaptiveLayoutInfo.singlePaneWindow()) {
+                null
+            } else {
+                { CloseButton(onClick = onNavigationIconClick) }
             }
         )
     }
@@ -267,5 +295,16 @@ class ChatsActivity : BaseConnectedActivity() {
 
     private fun openPinnedMessages(channelId: String) {
         startActivity(PinnedMessagesActivity.createIntent(applicationContext, channelId))
+    }
+}
+
+@Composable
+private fun CloseButton(onClick: () -> Unit) {
+    IconButton(onClick = onClick) {
+        Icon(
+            painter = painterResource(id = R.drawable.stream_compose_ic_close),
+            contentDescription = stringResource(id = R.string.stream_compose_cancel),
+            tint = ChatTheme.colors.textHighEmphasis,
+        )
     }
 }
