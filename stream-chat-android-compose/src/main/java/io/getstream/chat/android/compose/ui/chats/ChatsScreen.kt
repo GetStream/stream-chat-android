@@ -22,16 +22,29 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -39,6 +52,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.movableContentOf
@@ -49,7 +63,15 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Devices
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
@@ -115,6 +137,7 @@ public fun ChatsScreen(
     title: String = "Stream Chat",
     searchMode: SearchMode = SearchMode.None,
     listContentMode: ListContentMode = ListContentMode.Channels,
+    extraContentMode: ExtraContentMode = ExtraContentMode.Hidden,
     onBackPress: () -> Unit = {},
     onListTopBarAvatarClick: (User?) -> Unit = {},
     onListTopBarActionClick: () -> Unit = {},
@@ -142,7 +165,7 @@ public fun ChatsScreen(
     },
 ) {
     val context = LocalContext.current
-    val singlePanel = !AdaptiveLayoutInfo.isExpanded()
+    val singlePanel = !AdaptiveLayoutInfo.isWidthExpanded()
 
     var channelMessagesViewModelFactory by rememberSaveable(
         saver = factorySaver { selection -> messagesViewModelFactoryProvider(context, selection) },
@@ -241,21 +264,49 @@ public fun ChatsScreen(
         }
     }
 
-    Scaffold(
-        modifier = modifier,
-    ) { scaffoldPadding ->
-        if (singlePanel) {
-            Box(
-                modifier = Modifier.padding(scaffoldPadding),
+    if (singlePanel) {
+        Box(
+            modifier = modifier,
+        ) {
+            Scaffold(
+                topBar = { listTopBarContent() },
+                bottomBar = { listBottomBarContent() },
+                content = listPane,
+            )
+            AnimatedContent(
+                targetState = channelMessagesViewModelFactory,
+                transitionSpec = slideTransitionSpec(),
+            ) { viewModelFactory ->
+                if (viewModelFactory != null) {
+                    DetailPane(
+                        viewModelFactory = viewModelFactory,
+                        topBarContent = detailTopBarContent,
+                        bottomBarContent = detailBottomBarContent,
+                        onBackPress = backPressHandler,
+                    )
+                }
+            }
+        }
+    } else {
+        Row(
+            modifier = modifier,
+        ) {
+            Scaffold(
+                modifier = Modifier.weight(AdaptiveLayoutConstraints.LIST_PANE_WEIGHT),
+                topBar = { listTopBarContent() },
+                bottomBar = { listBottomBarContent() },
+                content = listPane,
+            )
+            VerticalDivider()
+            var detailPaneSize by remember { mutableStateOf(IntSize.Zero) }
+            Row(
+                modifier = Modifier
+                    .weight(AdaptiveLayoutConstraints.DETAIL_PANE_WEIGHT)
+                    .onSizeChanged { size -> detailPaneSize = size },
             ) {
-                Scaffold(
-                    topBar = { listTopBarContent() },
-                    bottomBar = { listBottomBarContent() },
-                    content = listPane,
-                )
-                AnimatedContent(
+                Crossfade(
+                    modifier = Modifier.weight(1f),
                     targetState = channelMessagesViewModelFactory,
-                    transitionSpec = slideTransitionSpec(),
                 ) { viewModelFactory ->
                     if (viewModelFactory != null) {
                         DetailPane(
@@ -266,29 +317,36 @@ public fun ChatsScreen(
                         )
                     }
                 }
-            }
-        } else {
-            Row(
-                modifier = Modifier.padding(scaffoldPadding),
-            ) {
-                Scaffold(
-                    modifier = Modifier.weight(AdaptiveLayoutConstraints.LIST_PANE_WEIGHT),
-                    topBar = { listTopBarContent() },
-                    bottomBar = { listBottomBarContent() },
-                    content = listPane,
+                val extraPaneOffsetX by animateFloatAsState(
+                    targetValue = if (extraContentMode is ExtraContentMode.Hidden) {
+                        detailPaneSize.width / 2f
+                    } else {
+                        0f
+                    },
                 )
-                VerticalDivider()
-                Crossfade(
-                    modifier = Modifier.weight(AdaptiveLayoutConstraints.DETAIL_PANE_WEIGHT),
-                    targetState = channelMessagesViewModelFactory,
-                ) { viewModelFactory ->
-                    if (viewModelFactory != null) {
-                        DetailPane(
-                            viewModelFactory = viewModelFactory,
-                            topBarContent = detailTopBarContent,
-                            bottomBarContent = detailBottomBarContent,
-                            onBackPress = backPressHandler,
-                        )
+                val extraPaneWeight by animateFloatAsState(
+                    targetValue = if (extraContentMode is ExtraContentMode.Hidden) {
+                        0f
+                    } else {
+                        1f
+                    },
+                )
+                if (extraPaneWeight > 0f) {
+                    Box(
+                        modifier = Modifier.weight(extraPaneWeight),
+                    ) {
+                        Row(
+                            modifier = Modifier.offset { IntOffset(x = extraPaneOffsetX.toInt(), y = 0) },
+                        ) {
+                            VerticalDivider()
+                            Crossfade(
+                                targetState = extraContentMode,
+                            ) { mode ->
+                                if (mode is ExtraContentMode.Display) {
+                                    mode.content()
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -309,6 +367,23 @@ public enum class ListContentMode {
      * Display the list of threads.
      */
     Threads,
+}
+
+/**
+ * The mode for displaying extra content in the chat screen.
+ */
+public sealed class ExtraContentMode {
+    /**
+     * No extra content is displayed.
+     */
+    public data object Hidden : ExtraContentMode()
+
+    /**
+     * Display extra custom content.
+     *
+     * @param content The composable content to display.
+     */
+    public data class Display(val content: @Composable () -> Unit) : ExtraContentMode()
 }
 
 /**
@@ -333,7 +408,7 @@ public data class MessageSelection(
  * A lambda function that provides a [MessagesViewModelFactory] for managing messages within a selected channel.
  */
 public typealias MessagesViewModelFactoryProvider =
-    (context: Context, selection: MessageSelection) -> MessagesViewModelFactory?
+        (context: Context, selection: MessageSelection) -> MessagesViewModelFactory?
 
 /**
  * Calls the provided block when the first channel item is loaded.
@@ -428,7 +503,7 @@ private fun DefaultDetailTopBarContent(
         messageMode = messageMode,
         onHeaderTitleClick = onTitleClick,
         leadingContent = {
-            if (!AdaptiveLayoutInfo.isExpanded()) {
+            if (!AdaptiveLayoutInfo.isWidthExpanded()) {
                 with(ChatTheme.componentFactory) {
                     MessageListHeaderLeadingContent(
                         onBackPressed = backAction,

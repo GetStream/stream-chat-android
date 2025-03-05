@@ -26,12 +26,18 @@ internal object AdaptiveLayoutConstraints {
 }
 
 /**
- * @see <a href=https://developer.android.com/develop/ui/compose/layouts/adaptive/use-window-size-classes>
- *     Use window size classes</a>
+ * Provides information about the current adaptive layout.
  */
-internal object AdaptiveLayoutInfo {
+public object AdaptiveLayoutInfo {
+    /**
+     * Returns if the current window width size class is expanded.
+     * Expanded width windows are windows that are wider than `840dp`, typically used on tablets and desktops.
+     *
+     * @see <a href=https://developer.android.com/develop/ui/compose/layouts/adaptive/use-window-size-classes>
+     *     Use window size classes</a>
+     */
     @Composable
-    fun isExpanded(): Boolean =
+    public fun isWidthExpanded(): Boolean =
         currentWindowAdaptiveInfo()
             .windowSizeClass
             .windowWidthSizeClass == WindowWidthSizeClass.EXPANDED

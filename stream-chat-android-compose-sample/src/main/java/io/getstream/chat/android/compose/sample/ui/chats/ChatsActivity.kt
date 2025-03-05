@@ -29,6 +29,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
@@ -38,16 +39,22 @@ import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelAc
 import io.getstream.chat.android.compose.sample.feature.channel.list.CustomChatEventHandlerFactory
 import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
 import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoActivity
+import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoScreen
+import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoViewModel
+import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoViewModelFactory
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBar
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBarOption
 import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponentFactory
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
+import io.getstream.chat.android.compose.sample.ui.pinned.PinnedMessagesActivity
 import io.getstream.chat.android.compose.ui.channels.SearchMode
 import io.getstream.chat.android.compose.ui.chats.ChatsScreen
+import io.getstream.chat.android.compose.ui.chats.ExtraContentMode
 import io.getstream.chat.android.compose.ui.chats.ListContentMode
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptionItemVisibility
 import io.getstream.chat.android.compose.ui.theme.ChannelOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.AdaptiveLayoutInfo
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.Channel
@@ -112,6 +119,7 @@ class ChatsActivity : BaseConnectedActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
+            val isViewChannelInfoVisible = !AdaptiveLayoutInfo.isWidthExpanded()
             ChatTheme(
                 dateFormatter = ChatApp.dateFormatter,
                 autoTranslationEnabled = ChatApp.autoTranslationEnabled,
@@ -119,6 +127,7 @@ class ChatsActivity : BaseConnectedActivity() {
                 componentFactory = CustomChatComponentFactory(),
                 channelOptionsTheme = ChannelOptionsTheme.defaultTheme(
                     optionVisibility = ChannelOptionItemVisibility(
+                        isViewInfoVisible = isViewChannelInfoVisible,
                         isPinChannelVisible = true,
                     ),
                 ),
@@ -131,9 +140,11 @@ class ChatsActivity : BaseConnectedActivity() {
     @Composable
     private fun ScreenContent() {
         var listContentMode by remember { mutableStateOf(ListContentMode.Channels) }
+        var extraContentMode by remember { mutableStateOf<ExtraContentMode>(ExtraContentMode.Hidden) }
         ChatsScreen(
             channelViewModelFactory = channelViewModelFactory,
             messagesViewModelFactoryProvider = { _, (channelId, messageId, parentMessageId) ->
+                extraContentMode = ExtraContentMode.Hidden // Reset extra content mode when switching channels
                 if (channelId == null) {
                     messagesViewModelFactory
                 } else {
@@ -147,14 +158,8 @@ class ChatsActivity : BaseConnectedActivity() {
             title = stringResource(id = R.string.app_name),
             searchMode = SearchMode.Messages,
             listContentMode = listContentMode,
-            listBottomBarContent = {
-                ListFooterContent { option ->
-                    listContentMode = when (option) {
-                        AppBottomBarOption.CHATS -> ListContentMode.Channels
-                        AppBottomBarOption.THREADS -> ListContentMode.Threads
-                    }
-                }
-            },
+            extraContentMode = extraContentMode,
+            onBackPress = ::finish,
             onListTopBarAvatarClick = {
                 lifecycleScope.launch {
                     ChatHelper.disconnectUser()
@@ -162,9 +167,23 @@ class ChatsActivity : BaseConnectedActivity() {
                 }
             },
             onListTopBarActionClick = ::openAddChannel,
-            onDetailTopBarTitleClick = ::openChannelInfo,
+            onDetailTopBarTitleClick = { channel ->
+                extraContentMode = ExtraContentMode.Display {
+                    ChannelInfoContent(
+                        channelId = channel.cid,
+                        onBackPress = { extraContentMode = ExtraContentMode.Hidden }
+                    )
+                }
+            },
             onViewChannelInfoAction = ::openChannelInfo,
-            onBackPress = ::finish,
+            listBottomBarContent = {
+                ListFooterContent { option ->
+                    listContentMode = when (option) {
+                        AppBottomBarOption.CHATS -> ListContentMode.Channels
+                        AppBottomBarOption.THREADS -> ListContentMode.Threads
+                    }
+                }
+            }
         )
     }
 
@@ -182,6 +201,25 @@ class ChatsActivity : BaseConnectedActivity() {
                 selectedOption = option
                 onOptionSelected(option)
             },
+        )
+    }
+
+    @Composable
+    private fun ChannelInfoContent(
+        channelId: String,
+        onBackPress: () -> Unit,
+    ) {
+        val viewModel = viewModel(
+            ChannelInfoViewModel::class.java,
+            key = channelId,
+            factory = ChannelInfoViewModelFactory(channelId)
+        )
+        val state by viewModel.state.collectAsState()
+        ChannelInfoScreen(
+            state = state,
+            onBack = onBackPress,
+            onPinnedMessagesClick = { openPinnedMessages(channelId) },
+            onConfirmDelete = viewModel::onDeleteChannel,
         )
     }
 
@@ -209,5 +247,9 @@ class ChatsActivity : BaseConnectedActivity() {
 
     private fun openChannelInfo(channel: Channel) {
         startActivity(ChannelInfoActivity.createIntent(applicationContext, channel.cid))
+    }
+
+    private fun openPinnedMessages(channelId: String) {
+        startActivity(PinnedMessagesActivity.createIntent(applicationContext, channelId))
     }
 }
