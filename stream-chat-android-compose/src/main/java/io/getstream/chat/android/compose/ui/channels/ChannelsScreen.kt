@@ -205,7 +205,10 @@ public fun ChannelsScreen(
                     {
                             action ->
                         when (action) {
-                            is ViewInfo -> onViewChannelInfoAction(action.channel)
+                            is ViewInfo -> {
+                                listViewModel.dismissChannelAction()
+                                onViewChannelInfoAction(action.channel)
+                            }
                             is MuteChannel -> listViewModel.muteChannel(action.channel)
                             is UnmuteChannel -> listViewModel.unmuteChannel(action.channel)
                             is PinChannel -> listViewModel.pinChannel(action.channel)
