@@ -103,7 +103,7 @@ import io.getstream.chat.android.models.User
  * @param onListTopBarAvatarClick Callback invoked when the user clicks on the avatar in the list pane top bar.
  * @param onListTopBarActionClick Callback invoked when the user clicks on the action icon in the list pane top bar.
  * @param onDetailTopBarTitleClick Callback invoked when the user clicks on the title in the detail pane top bar.
- * @param onViewChannelInfoAction Callback invoked when the user selects a channel to view its details.
+ * @param onViewChannelInfoAction Callback invoked when the user long presses a channel and selects "View Info".
  * @param listTopBarContent The content to display at the top of the list pane.
  * @param listBottomBarContent The content to display at the bottom of the list pane.
  * @param detailTopBarContent The content to display at the top of the detail pane.

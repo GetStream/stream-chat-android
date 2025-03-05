@@ -42,7 +42,6 @@ import io.getstream.chat.android.compose.sample.feature.channel.ChannelConstants
 import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelActivity
 import io.getstream.chat.android.compose.sample.feature.channel.list.CustomChatEventHandlerFactory
 import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
-import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoScreen
 import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoViewModelFactory
@@ -176,20 +175,20 @@ class ChatsActivity : BaseConnectedActivity() {
             onListTopBarActionClick = ::openAddChannel,
             onDetailTopBarTitleClick = { channel ->
                 extraContentMode = ExtraContentMode.Display {
-                    if (channel.memberCount > 2 || !channel.isAnonymousChannel()) {
-                        GroupChannelInfoContent(
-                            channelId = channel.cid,
-                            onNavigationIconClick = { extraContentMode = ExtraContentMode.Hidden }
-                        )
-                    } else {
-                        ChannelInfoContent(
-                            channelId = channel.cid,
-                            onNavigationIconClick = { extraContentMode = ExtraContentMode.Hidden }
-                        )
-                    }
+                    ChannelInfoContent(
+                        channel = channel,
+                        onNavigationIconClick = { extraContentMode = ExtraContentMode.Hidden }
+                    )
                 }
             },
-            onViewChannelInfoAction = ::openChannelInfo,
+            onViewChannelInfoAction = { channel ->
+                extraContentMode = ExtraContentMode.Display {
+                    ChannelInfoContent(
+                        channel = channel,
+                        onNavigationIconClick = { extraContentMode = ExtraContentMode.Hidden }
+                    )
+                }
+            },
             listBottomBarContent = {
                 ListFooterContent { option ->
                     listContentMode = when (option) {
@@ -219,7 +218,7 @@ class ChatsActivity : BaseConnectedActivity() {
     }
 
     @Composable
-    private fun ChannelInfoContent(
+    private fun SingleChannelInfoContent(
         channelId: String,
         onNavigationIconClick: () -> Unit,
     ) {
@@ -267,6 +266,24 @@ class ChatsActivity : BaseConnectedActivity() {
         )
     }
 
+    @Composable
+    private fun ChannelInfoContent(
+        channel: Channel,
+        onNavigationIconClick: () -> Unit,
+    ) {
+        if (channel.memberCount > 2 || !channel.isAnonymousChannel()) {
+            GroupChannelInfoContent(
+                channelId = channel.cid,
+                onNavigationIconClick = onNavigationIconClick,
+            )
+        } else {
+            SingleChannelInfoContent(
+                channelId = channel.cid,
+                onNavigationIconClick = onNavigationIconClick,
+            )
+        }
+    }
+
     private fun buildMessagesViewModelFactory(
         channelId: String,
         messageId: String?,
@@ -287,10 +304,6 @@ class ChatsActivity : BaseConnectedActivity() {
 
     private fun openUserLogin() {
         startActivity(UserLoginActivity.createIntent(applicationContext))
-    }
-
-    private fun openChannelInfo(channel: Channel) {
-        startActivity(ChannelInfoActivity.createIntent(applicationContext, channel.cid))
     }
 
     private fun openPinnedMessages(channelId: String) {
