@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2025 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.client.api2
 
 import io.getstream.chat.android.client.Mother
@@ -19,17 +35,26 @@ import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
+import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
+import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
+import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
+import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
+import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.CompletableResponse
 import io.getstream.chat.android.client.api2.model.response.DevicesResponse
+import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
+import io.getstream.chat.android.client.api2.model.response.QueryBannedUsersResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.call.RetrofitCall
+import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.uploader.FileTransformer
@@ -38,12 +63,17 @@ import io.getstream.chat.android.client.uploader.NoOpFileTransformer
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
+import io.getstream.chat.android.models.BannedUsersSort
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.UploadedFile
+import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
+import io.getstream.chat.android.randomDate
+import io.getstream.chat.android.randomDateOrNull
 import io.getstream.chat.android.randomDevice
 import io.getstream.chat.android.randomFile
 import io.getstream.chat.android.randomInt
@@ -72,6 +102,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import kotlin.reflect.KClass
 
+@Suppress("LargeClass")
 internal class MoshiChatApiTest {
 
     @ParameterizedTest
@@ -569,6 +600,265 @@ internal class MoshiChatApiTest {
         verify(fileUploader, times(1)).deleteFile(channelType, channelId, userId, url)
     }
 
+    @ParameterizedTest
+    @MethodSource("deleteImageInput")
+    fun testDeleteImage(fileUploaderResult: Result<Unit>, expected: KClass<*>) = runTest {
+        // given
+        val fileUploader = mock<FileUploader>()
+        whenever(fileUploader.deleteImage(any(), any(), any(), any())).doReturn(fileUploaderResult)
+        val sut = Fixture()
+            .withFileUploader(fileUploader)
+            .get()
+        // when
+        val userId = randomString()
+        val connectionId = randomString()
+        val channelType = randomString()
+        val channelId = randomString()
+        val url = randomString()
+        sut.setConnection(userId = userId, connectionId = connectionId)
+        val result = sut.deleteImage(channelType, channelId, url).await()
+        // then
+        result `should be instance of` expected
+        verify(fileUploader, times(1)).deleteImage(channelType, channelId, userId, url)
+    }
+
+    @ParameterizedTest
+    @MethodSource("flagUserInput")
+    fun testFlagUser(call: RetrofitCall<FlagResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ModerationApi>()
+        whenever(api.flag(any())).doReturn(call)
+        val sut = Fixture()
+            .withModerationApi(api)
+            .get()
+        // when
+        val userId = randomString()
+        val reason = randomString()
+        val customData = emptyMap<String, String>()
+        val result = sut.flagUser(userId, reason, customData).await()
+        // then
+        val expectedRequest = FlagUserRequest(
+            targetUserId = userId,
+            reason = reason,
+            custom = customData,
+        )
+        result `should be instance of` expected
+        verify(api, times(1)).flag(expectedRequest)
+    }
+
+    @ParameterizedTest
+    @MethodSource("flagMessageInput")
+    fun testFlagMessage(call: RetrofitCall<FlagResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ModerationApi>()
+        whenever(api.flag(any())).doReturn(call)
+        val sut = Fixture()
+            .withModerationApi(api)
+            .get()
+        // when
+        val messageId = randomString()
+        val reason = randomString()
+        val customData = emptyMap<String, String>()
+        val result = sut.flagMessage(messageId, reason, customData).await()
+        // then
+        val expectedRequest = FlagMessageRequest(
+            targetMessageId = messageId,
+            reason = reason,
+            custom = customData,
+        )
+        result `should be instance of` expected
+        verify(api, times(1)).flag(expectedRequest)
+    }
+
+    @ParameterizedTest
+    @MethodSource("unflagUserInput")
+    fun testUnflagUser(call: RetrofitCall<FlagResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ModerationApi>()
+        whenever(api.unflag(any())).doReturn(call)
+        val sut = Fixture()
+            .withModerationApi(api)
+            .get()
+        // when
+        val userId = randomString()
+        val result = sut.unflagUser(userId).await()
+        // then
+        val expectedBody = mapOf("target_user_id" to userId)
+        result `should be instance of` expected
+        verify(api, times(1)).unflag(expectedBody)
+    }
+
+    @ParameterizedTest
+    @MethodSource("unflagMessageInput")
+    fun testUnflagMessage(call: RetrofitCall<FlagResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ModerationApi>()
+        whenever(api.unflag(any())).doReturn(call)
+        val sut = Fixture()
+            .withModerationApi(api)
+            .get()
+        // when
+        val messageId = randomString()
+        val result = sut.unflagMessage(messageId).await()
+        // then
+        val expectedBody = mapOf("target_message_id" to messageId)
+        result `should be instance of` expected
+        verify(api, times(1)).unflag(expectedBody)
+    }
+
+    @ParameterizedTest
+    @MethodSource("banUserInput")
+    fun testBanUser(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ModerationApi>()
+        whenever(api.banUser(any())).doReturn(call)
+        val sut = Fixture()
+            .withModerationApi(api)
+            .get()
+        // when
+        val targetId = randomString()
+        val timeout = randomInt()
+        val reason = randomString()
+        val channelType = randomString()
+        val channelId = randomString()
+        val shadow = randomBoolean()
+        val result = sut.banUser(targetId, timeout, reason, channelType, channelId, shadow).await()
+        // then
+        val expectedBody = BanUserRequest(
+            target_user_id = targetId,
+            timeout = timeout,
+            reason = reason,
+            type = channelType,
+            id = channelId,
+            shadow = shadow,
+        )
+        result `should be instance of` expected
+        verify(api, times(1)).banUser(expectedBody)
+    }
+
+    @ParameterizedTest
+    @MethodSource("unbanUserInput")
+    fun testUnbanUser(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ModerationApi>()
+        whenever(api.unbanUser(any(), any(), any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withModerationApi(api)
+            .get()
+        // when
+        val targetId = randomString()
+        val channelType = randomString()
+        val channelId = randomString()
+        val shadow = randomBoolean()
+        val result = sut.unbanUser(targetId, channelType, channelId, shadow).await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).unbanUser(targetId, channelType, channelId, shadow)
+    }
+
+    @ParameterizedTest
+    @MethodSource("queryBannedUsersInput")
+    fun testQueryBannedUsers(call: RetrofitCall<QueryBannedUsersResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ModerationApi>()
+        whenever(api.queryBannedUsers(any())).doReturn(call)
+        val sut = Fixture()
+            .withModerationApi(api)
+            .get()
+        // when
+        val filter = Filters.neutral()
+        val sort = QuerySortByField.ascByName<BannedUsersSort>("created_at")
+        val offset = randomInt()
+        val limit = randomInt()
+        val createdAtAfter = randomDate()
+        val createdAtAfterOrEqual = randomDate()
+        val createdAtBefore = randomDate()
+        val createdAtBeforeOrEqual = randomDate()
+        val result = sut.queryBannedUsers(
+            filter = filter,
+            sort = sort,
+            offset = offset,
+            limit = limit,
+            createdAtAfter = createdAtAfter,
+            createdAtAfterOrEqual = createdAtAfterOrEqual,
+            createdAtBefore = createdAtBefore,
+            createdAtBeforeOrEqual = createdAtBeforeOrEqual,
+        ).await()
+        // then
+        val expectedPayload = QueryBannedUsersRequest(
+            filter_conditions = filter.toMap(),
+            sort = sort.toDto(),
+            offset = offset,
+            limit = limit,
+            created_at_after = createdAtAfter,
+            created_at_after_or_equal = createdAtAfterOrEqual,
+            created_at_before = createdAtBefore,
+            created_at_before_or_equal = createdAtBeforeOrEqual,
+        )
+        result `should be instance of` expected
+        verify(api, times(1)).queryBannedUsers(expectedPayload)
+    }
+
+    @ParameterizedTest
+    @MethodSource("enableSlowModeInput")
+    fun testEnableSlowMode(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ChannelApi>()
+        whenever(api.updateCooldown(any(), any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        // when
+        val channelType = randomString()
+        val channelId = randomString()
+        val cooldown = randomInt()
+        val result = sut.enableSlowMode(channelType, channelId, cooldown).await()
+        // then
+        val expectedBody = UpdateCooldownRequest.create(cooldown)
+        result `should be instance of` expected
+        verify(api, times(1)).updateCooldown(channelType, channelId, expectedBody)
+    }
+
+    @ParameterizedTest
+    @MethodSource("disableSlowModeInput")
+    fun testDisableSlowMode(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ChannelApi>()
+        whenever(api.updateCooldown(any(), any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        // when
+        val channelType = randomString()
+        val channelId = randomString()
+        val result = sut.disableSlowMode(channelType, channelId).await()
+        // then
+        val expectedBody = UpdateCooldownRequest.create(0)
+        result `should be instance of` expected
+        verify(api, times(1)).updateCooldown(channelType, channelId, expectedBody)
+    }
+
+    @ParameterizedTest
+    @MethodSource("stopWatchingInput")
+    fun testStopWatching(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ChannelApi>()
+        whenever(api.stopWatching(any(), any(), any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        // when
+        val userId = randomString()
+        val connectionId = randomString()
+        val channelType = randomString()
+        val channelId = randomString()
+        sut.setConnection(userId = userId, connectionId = connectionId)
+        val result = sut.stopWatching(channelType, channelId).await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).stopWatching(channelType, channelId, connectionId, emptyMap())
+    }
+
     private class Fixture {
 
         private var domainMapping = DomainMapping(
@@ -702,34 +992,34 @@ internal class MoshiChatApiTest {
         @JvmStatic
         fun appSettingsInput() = listOf(
             Arguments.of(RetroSuccess(Mother.randomAppSettingsResponse()).toRetrofitCall(), Result.Success::class),
-            Arguments.of(RetroError<AppSettingsResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class)
+            Arguments.of(RetroError<AppSettingsResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
         )
 
         @JvmStatic
         fun sendMessageInput() = listOf(
             Arguments.of(
                 RetroSuccess(MessageResponse(Mother.randomDownstreamMessageDto())).toRetrofitCall(),
-                Result.Success::class
+                Result.Success::class,
             ),
-            Arguments.of(RetroError<MessageResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class)
+            Arguments.of(RetroError<MessageResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
         )
 
         @JvmStatic
         fun updateMessageInput() = listOf(
             Arguments.of(
                 RetroSuccess(MessageResponse(Mother.randomDownstreamMessageDto())).toRetrofitCall(),
-                Result.Success::class
+                Result.Success::class,
             ),
-            Arguments.of(RetroError<MessageResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class)
+            Arguments.of(RetroError<MessageResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
         )
 
         @JvmStatic
         fun partialUpdateMessageInput() = listOf(
             Arguments.of(
                 RetroSuccess(MessageResponse(Mother.randomDownstreamMessageDto())).toRetrofitCall(),
-                Result.Success::class
+                Result.Success::class,
             ),
-            Arguments.of(RetroError<MessageResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class)
+            Arguments.of(RetroError<MessageResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
         )
 
         @JvmStatic
@@ -738,7 +1028,7 @@ internal class MoshiChatApiTest {
                 RetroSuccess(MessageResponse(Mother.randomDownstreamMessageDto())).toRetrofitCall(),
                 Result.Success::class,
             ),
-            Arguments.of(RetroError<MessageResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class)
+            Arguments.of(RetroError<MessageResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
         )
 
         @JvmStatic
@@ -756,35 +1046,35 @@ internal class MoshiChatApiTest {
             Arguments.of(
                 true,
                 RetroError<MessageResponse>(statusCode = 500).toRetrofitCall(),
-                Result.Failure::class
-            )
+                Result.Failure::class,
+            ),
         )
 
         @JvmStatic
         fun getReactionsInput() = listOf(
             Arguments.of(
                 RetroSuccess(ReactionsResponse(listOf(Mother.randomDownstreamReactionDto()))).toRetrofitCall(),
-                Result.Success::class
+                Result.Success::class,
             ),
-            Arguments.of(RetroError<ReactionsResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class)
+            Arguments.of(RetroError<ReactionsResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
         )
 
         @JvmStatic
         fun sendReactionInput() = listOf(
             Arguments.of(
                 RetroSuccess(ReactionResponse(Mother.randomDownstreamReactionDto())).toRetrofitCall(),
-                Result.Success::class
+                Result.Success::class,
             ),
-            Arguments.of(RetroError<ReactionsResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class)
+            Arguments.of(RetroError<ReactionsResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
         )
 
         @JvmStatic
         fun deleteReactionInput() = listOf(
             Arguments.of(
                 RetroSuccess(MessageResponse(Mother.randomDownstreamMessageDto())).toRetrofitCall(),
-                Result.Success::class
+                Result.Success::class,
             ),
-            Arguments.of(RetroError<MessageResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class)
+            Arguments.of(RetroError<MessageResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
         )
 
         @JvmStatic
@@ -797,9 +1087,9 @@ internal class MoshiChatApiTest {
         fun getDevicesInput() = listOf(
             Arguments.of(
                 RetroSuccess(DevicesResponse(listOf(Mother.randomDeviceDto()))).toRetrofitCall(),
-                Result.Success::class
+                Result.Success::class,
             ),
-            Arguments.of(RetroError<DevicesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class)
+            Arguments.of(RetroError<DevicesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
         )
 
         @JvmStatic
@@ -830,34 +1120,93 @@ internal class MoshiChatApiTest {
         fun deleteFileInput() = deleteFileArguments()
 
         @JvmStatic
-        fun deleteImage() = deleteFileArguments()
+        fun deleteImageInput() = deleteFileArguments()
+
+        @JvmStatic
+        fun flagUserInput() = flagResponseArguments()
+
+        @JvmStatic
+        fun flagMessageInput() = flagResponseArguments()
+
+        @JvmStatic
+        fun unflagUserInput() = flagResponseArguments()
+
+        @JvmStatic
+        fun unflagMessageInput() = flagResponseArguments()
+
+        @JvmStatic
+        fun banUserInput() = completableResponseArguments()
+
+        @JvmStatic
+        fun unbanUserInput() = completableResponseArguments()
+
+        @JvmStatic
+        fun queryBannedUsersInput() = listOf(
+            Arguments.of(
+                RetroSuccess(QueryBannedUsersResponse(listOf(Mother.randomBannedUserResponse()))).toRetrofitCall(),
+                Result.Success::class,
+            ),
+            Arguments.of(RetroError<QueryBannedUsersResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        )
+
+        @JvmStatic
+        fun enableSlowModeInput() = channelResponseArguments()
+
+        @JvmStatic
+        fun disableSlowModeInput() = channelResponseArguments()
+
+        @JvmStatic
+        fun stopWatchingInput() = completableResponseArguments()
 
         fun muteUserResponseArguments() = listOf(
             Arguments.of(
                 RetroSuccess(
                     MuteUserResponse(
                         Mother.randomDownstreamMuteDto(),
-                        Mother.randomDownstreamUserDto()
-                    )
+                        Mother.randomDownstreamUserDto(),
+                    ),
                 ).toRetrofitCall(),
                 Result.Success::class,
             ),
-            Arguments.of(RetroError<CompletableResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class)
+            Arguments.of(RetroError<CompletableResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
         )
 
         fun completableResponseArguments() = listOf(
             Arguments.of(RetroSuccess(CompletableResponse("")).toRetrofitCall(), Result.Success::class),
-            Arguments.of(RetroError<CompletableResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class)
+            Arguments.of(RetroError<CompletableResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
         )
 
         fun uploadedFileArguments() = listOf(
             Arguments.of(Result.Success(UploadedFile(randomString())), Result.Success::class),
-            Arguments.of(Result.Failure(Error.GenericError(randomString())), Result.Failure::class)
+            Arguments.of(Result.Failure(Error.GenericError(randomString())), Result.Failure::class),
         )
 
         fun deleteFileArguments() = listOf(
             Arguments.of(Result.Success(Unit), Result.Success::class),
-            Arguments.of(Result.Failure(Error.GenericError(randomString())), Result.Failure::class)
+            Arguments.of(Result.Failure(Error.GenericError(randomString())), Result.Success::class),
+        )
+
+        fun flagResponseArguments() = listOf(
+            Arguments.of(
+                RetroSuccess(FlagResponse(Mother.randomDownstreamFlagDto())).toRetrofitCall(),
+                Result.Success::class,
+            ),
+            Arguments.of(RetroError<FlagResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        )
+
+        fun channelResponseArguments() = listOf(
+            Arguments.of(
+                RetroSuccess(
+                    ChannelResponse(
+                        channel = Mother.randomDownstreamChannelDto(),
+                        hidden = randomBoolean(),
+                        membership = Mother.randomDownstreamMemberDto(),
+                        hide_messages_before = randomDateOrNull(),
+                    ),
+                ).toRetrofitCall(),
+                Result.Success::class,
+            ),
+            Arguments.of(RetroError<ChannelResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
         )
     }
 }
