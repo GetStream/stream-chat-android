@@ -53,7 +53,7 @@ object ChatHelper {
             pushDeviceGenerators = listOf(
                 FirebasePushDeviceGenerator(
                     context = context,
-                    providerName = "Firebase",
+                    providerName = "chat-android-firebase",
                 ),
             ),
             autoTranslationEnabled = ChatApp.autoTranslationEnabled,

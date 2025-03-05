@@ -3,7 +3,6 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>ComplexCondition:NativeMediaPlayerMock.kt$NativeMediaPlayerMock$_state != NativeMediaPlayerState.PREPARED &amp;&amp; _state != NativeMediaPlayerState.PAUSED &amp;&amp; _state != NativeMediaPlayerState.STARTED &amp;&amp; _state != NativeMediaPlayerState.PLAYBACK_COMPLETED</ID>
-    <ID>ForbiddenComment:MessageUtils.kt$// TODO: type should be a sealed/class or enum at the client level</ID>
     <ID>FunctionOnlyReturningConstant:StringExtensionsKtTest.kt$StringExtensionsKtTest.Companion$fun createStreamCdnImageLinkWithoutDimensionParameters()</ID>
     <ID>LongMethod:ChatClient.kt$ChatClient$private suspend fun handleEvent(event: ChatEvent)</ID>
     <ID>LongMethod:ChatClientDebuggerTest.kt$ChatClientDebuggerTest$@BeforeEach fun setUp()</ID>
