@@ -337,61 +337,16 @@ public fun ChatsScreen(
     }
 }
 
-/**
- * The mode for displaying the list content in the chat screen.
- */
-public enum class ListContentMode {
-    /**
-     * Display the list of channels.
-     */
-    Channels,
-
-    /**
-     * Display the list of threads.
-     */
-    Threads,
+private fun Navigation.navigate(
+    viewModelFactory: MessagesViewModelFactory?,
+    extraContentMode: ExtraContentMode,
+): Navigation = if (current is NavDestination.List && viewModelFactory != null) {
+    copy(destinations = destinations + NavDestination.Detail(viewModelFactory))
+} else if (extraContentMode is ExtraContentMode.Display) {
+    copy(destinations = destinations + NavDestination.Extra(extraContentMode))
+} else {
+    copy(destinations = destinations.dropLast(1))
 }
-
-/**
- * The mode for displaying extra content in the chat screen.
- */
-public sealed class ExtraContentMode {
-    /**
-     * No extra content is displayed.
-     */
-    public data object Hidden : ExtraContentMode()
-
-    /**
-     * Display extra custom content.
-     *
-     * @param content The composable content to display.
-     */
-    public data class Display(val content: @Composable () -> Unit) : ExtraContentMode()
-}
-
-/**
- * Represents the selection of a message within a channel.
- */
-public data class MessageSelection(
-    /**
-     * The ID of the selected channel, or `null` if no channel is selected.
-     */
-    val channelId: String? = null,
-    /**
-     * The ID of a specific message, or `null` if navigating to a channel without a pre-selected message.
-     */
-    val messageId: String? = null,
-    /**
-     * The ID of the parent message (for threads), or `null` if not in a thread.
-     */
-    val parentMessageId: String? = null,
-)
-
-/**
- * A lambda function that provides a [MessagesViewModelFactory] for managing messages within a selected channel.
- */
-public typealias MessagesViewModelFactoryProvider =
-        (context: Context, selection: MessageSelection) -> MessagesViewModelFactory?
 
 /**
  * Calls the provided block when the first channel item is loaded.
