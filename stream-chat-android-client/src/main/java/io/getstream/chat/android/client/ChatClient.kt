@@ -3584,6 +3584,8 @@ internal constructor(
     public class Builder(private val apiKey: String, private val appContext: Context) : ChatClientBuilder() {
 
         private var forceInsecureConnection = false
+        private var forceHttpUrl: String? = null
+        private var forceWsUrl: String? = null
         private var baseUrl: String = "chat.stream-io-api.com"
         private var cdnUrl: String? = null
         private var logLevel = ChatLogLevel.NOTHING
@@ -3747,6 +3749,30 @@ internal constructor(
         }
 
         /**
+         * Sets the HTTP URL to be used by the client.
+         *
+         * This for internal use only.
+         *
+         * @param value The HTTP URL to use.
+         */
+        @InternalStreamChatApi
+        public fun forceHttpUrl(value: String): Builder = apply {
+            forceHttpUrl = value
+        }
+
+        /**
+         * Sets the WebSocket URL to be used by the client.
+         *
+         * This for internal use only.
+         *
+         * @param value The WebSocket URL to use.
+         */
+        @InternalStreamChatApi
+        public fun forceWsUrl(value: String): Builder = apply {
+            forceWsUrl = value
+        }
+
+        /**
          * Sets the CDN URL to be used by the client.
          */
         public fun cdnUrl(value: String): Builder = apply {
@@ -3855,16 +3881,16 @@ internal constructor(
             }
 
             // Use clear text traffic for instrumented tests
-            val isInsecureConnection = baseUrl.contains("localhost") || forceInsecureConnection
+            val isInsecureConnection = forceInsecureConnection || baseUrl.contains("localhost")
             val httpProtocol = if (isInsecureConnection) "http" else "https"
             val wsProtocol = if (isInsecureConnection) "ws" else "wss"
             val lifecycle = ProcessLifecycleOwner.get().lifecycle
 
             val config = ChatClientConfig(
                 apiKey = apiKey,
-                httpUrl = "$httpProtocol://$baseUrl/",
+                httpUrl = forceHttpUrl ?: "$httpProtocol://$baseUrl/",
                 cdnHttpUrl = "$httpProtocol://${cdnUrl ?: baseUrl}/",
-                wssUrl = "$wsProtocol://$baseUrl/",
+                wssUrl = forceWsUrl ?: "$wsProtocol://$baseUrl/",
                 warmUp = warmUp,
                 loggerConfig = ChatLoggerConfigImpl(logLevel, loggerHandler),
                 distinctApiCalls = distinctApiCalls,

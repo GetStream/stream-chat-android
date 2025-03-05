@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.client
 
+import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.UploadFileResponse
 import io.getstream.chat.android.client.api2.model.dto.AgoraDto
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
@@ -68,9 +70,14 @@ import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateForm
 import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.client.socket.ChatSocketStateService
 import io.getstream.chat.android.client.socket.SocketFactory
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.positiveRandomLong
 import io.getstream.chat.android.randomBoolean
@@ -79,6 +86,8 @@ import io.getstream.chat.android.randomDateOrNull
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
@@ -87,6 +96,47 @@ import java.util.Date
 @Suppress("LargeClass")
 internal object Mother {
     private val streamDateFormatter = StreamDateFormatter()
+
+    /**
+     * Provides a GET request with a configurable [url].
+     */
+    fun randomGetRequest(
+        url: String = "http://${randomString()}",
+    ): Request =
+        Request.Builder()
+            .url(url)
+            .build()
+
+    /**
+     * Provides a POST request with a configurable [url] and [body].
+     */
+    fun randomPostRequest(
+        url: String = "http://${randomString()}",
+        body: String = randomString(),
+    ): Request =
+        Request.Builder()
+            .url(url)
+            .post(body.toRequestBody())
+            .build()
+
+    /**
+     * Provides a POST request with a configurable [url], [body], [tagType], and [tag].
+     */
+    fun <T> randomTaggedPostRequest(
+        url: String = "http://${randomString()}",
+        body: String = randomString(),
+        tagType: Class<in T>? = null,
+        tag: T? = null,
+    ): Request =
+        Request.Builder()
+            .url(url)
+            .post(body.toRequestBody())
+            .apply {
+                if (tagType != null) {
+                    tag(tagType, tag)
+                }
+            }
+            .build()
 
     fun randomUserPresenceChangedEvent(
         type: String = randomString(),
@@ -132,7 +182,7 @@ internal object Mother {
     }
 
     fun randomConnectionType(): ChatSocketStateService.ConnectionType =
-        ChatSocketStateService.ConnectionType.values().random()
+        ChatSocketStateService.ConnectionType.entries.random()
 
     fun chatLoggerConfig(): ChatLoggerConfig = object : ChatLoggerConfig {
         override val level: ChatLogLevel = ChatLogLevel.NOTHING
@@ -393,6 +443,51 @@ internal object Mother {
         blocklist_behavior = blocklist_behavior,
         commands = commands,
     )
+
+    /**
+     * Provides a [QueryChannelsRequest] with random parameters (that can also be customized).
+     */
+    fun randomQueryChannelRequest(
+        state: Boolean = randomBoolean(),
+        watch: Boolean = randomBoolean(),
+        presence: Boolean = randomBoolean(),
+        memberLimit: Int = randomInt(),
+        memberOffset: Int = randomInt(),
+        watchersLimit: Int = randomInt(),
+        watchersOffset: Int = randomInt(),
+        messagesLimit: Int = randomInt(),
+    ): QueryChannelRequest {
+        return QueryChannelRequest()
+            .withMembers(memberLimit, memberOffset)
+            .withMembers(watchersLimit, watchersOffset)
+            .withMessages(messagesLimit)
+            .apply {
+                this.state = state
+                this.watch = watch
+                this.presence = presence
+            }
+    }
+
+    /**
+     * Provides a [QueryChannelsRequest] with random parameters (that can also be customized).
+     */
+    fun randomQueryChannelsRequest(
+        filter: FilterObject = Filters.neutral(),
+        offset: Int = randomInt(),
+        limit: Int = randomInt(),
+        querySort: QuerySorter<Channel> = QuerySortByField(),
+        messageLimit: Int = randomInt(),
+        memberLimit: Int = randomInt(),
+    ): QueryChannelsRequest {
+        return QueryChannelsRequest(
+            filter = filter,
+            offset = offset,
+            limit = limit,
+            querySort = querySort,
+            messageLimit = messageLimit,
+            memberLimit = memberLimit,
+        )
+    }
 
     fun randomAppSettingsResponse(app: AppDto = randomAppDto()): AppSettingsResponse = AppSettingsResponse(app)
 
