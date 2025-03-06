@@ -318,14 +318,13 @@ public fun ChatsScreen(
                     Box(
                         modifier = Modifier.weight(extraPaneWeight),
                     ) {
-                        Row(
+                        Crossfade(
                             modifier = Modifier.offset { IntOffset(x = extraPaneOffsetX.toInt(), y = 0) },
-                        ) {
-                            VerticalDivider()
-                            Crossfade(
-                                targetState = extraContentMode,
-                            ) { mode ->
+                            targetState = extraContentMode,
+                        ) { mode ->
+                            Row {
                                 if (mode is ExtraContentMode.Display) {
+                                    VerticalDivider()
                                     mode.content()
                                 }
                             }
@@ -335,17 +334,6 @@ public fun ChatsScreen(
             }
         }
     }
-}
-
-private fun Navigation.navigate(
-    viewModelFactory: MessagesViewModelFactory?,
-    extraContentMode: ExtraContentMode,
-): Navigation = if (current is NavDestination.List && viewModelFactory != null) {
-    copy(destinations = destinations + NavDestination.Detail(viewModelFactory))
-} else if (extraContentMode is ExtraContentMode.Display) {
-    copy(destinations = destinations + NavDestination.Extra(extraContentMode))
-} else {
-    copy(destinations = destinations.dropLast(1))
 }
 
 /**
