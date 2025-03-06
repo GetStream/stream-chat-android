@@ -16,8 +16,12 @@
 
 package io.getstream.chat.android.client
 
+import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryThreadsRequest
+import io.getstream.chat.android.client.api.models.QueryUsersRequest
+import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.UploadFileResponse
 import io.getstream.chat.android.client.api2.model.dto.AgoraDto
@@ -78,7 +82,9 @@ import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.InitializationState
+import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.positiveRandomInt
@@ -787,6 +793,32 @@ internal object Mother {
     fun randomReadReceiptsDto(enabled: Boolean = randomBoolean()): ReadReceiptsDto =
         ReadReceiptsDto(enabled)
 
+    fun randomSearchMessagesRequest(
+        offset: Int = randomInt(),
+        limit: Int = randomInt(),
+        channelFilter: FilterObject = Filters.neutral(),
+        messageFilter: FilterObject = Filters.neutral(),
+    ): SearchMessagesRequest = SearchMessagesRequest(
+        offset = offset,
+        limit = limit,
+        channelFilter = channelFilter,
+        messageFilter = messageFilter,
+    )
+
+    fun randomQueryUsersRequest(
+        filter: FilterObject = Filters.neutral(),
+        offset: Int = randomInt(),
+        limit: Int = randomInt(),
+        querySort: QuerySorter<User> = QuerySortByField(),
+        presence: Boolean = randomBoolean(),
+    ): QueryUsersRequest = QueryUsersRequest(
+        filter = filter,
+        offset = offset,
+        limit = limit,
+        querySort = querySort,
+        presence = presence,
+    )
+
     fun randomSearchWarningDto(
         channelSearchCids: List<String> = listOf(randomString()),
         channelSearchCount: Int = randomInt(),
@@ -797,6 +829,40 @@ internal object Mother {
         channel_search_count = channelSearchCount,
         warning_code = warningCode,
         warning_description = warningDescription,
+    )
+
+    fun randomQueryThreadsRequest(
+        watch: Boolean = randomBoolean(),
+        limit: Int = randomInt(),
+        memberLimit: Int = randomInt(),
+        next: String? = randomString(),
+        participantLimit: Int = randomInt(),
+        prev: String? = randomString(),
+        replyLimit: Int = randomInt(),
+        userId: String? = randomString(),
+        user: User? = randomUser(),
+    ): QueryThreadsRequest = QueryThreadsRequest(
+        watch = watch,
+        limit = limit,
+        memberLimit = memberLimit,
+        next = next,
+        participantLimit = participantLimit,
+        prev = prev,
+        replyLimit = replyLimit,
+        userId = userId,
+        user = user,
+    )
+
+    fun randomGetThreadOptions(
+        watch: Boolean = randomBoolean(),
+        replyLimit: Int = randomInt(),
+        participantLimit: Int = randomInt(),
+        memberLimit: Int = randomInt(),
+    ): GetThreadOptions = GetThreadOptions(
+        watch = watch,
+        replyLimit = replyLimit,
+        participantLimit = participantLimit,
+        memberLimit = memberLimit,
     )
 
     fun randomDownstreamThreadDto(
@@ -892,6 +958,26 @@ internal object Mother {
         user: DownstreamUserDto = randomDownstreamUserDto(),
         accessToken: String = randomString(),
     ): TokenResponse = TokenResponse(user, accessToken)
+
+    fun randomPollConfig(
+        name: String = randomString(),
+        description: String = randomString(),
+        options: List<String> = listOf(randomString()),
+        votingVisibility: VotingVisibility = VotingVisibility.PUBLIC,
+        enforceUniqueVote: Boolean = randomBoolean(),
+        maxVotesAllowed: Int = positiveRandomInt(),
+        allowUserSuggestedOptions: Boolean = randomBoolean(),
+        allowAnswers: Boolean = randomBoolean(),
+    ): PollConfig = PollConfig(
+        name = name,
+        description = description,
+        options = options,
+        votingVisibility = votingVisibility,
+        enforceUniqueVote = enforceUniqueVote,
+        maxVotesAllowed = maxVotesAllowed,
+        allowUserSuggestedOptions = allowUserSuggestedOptions,
+        allowAnswers = allowAnswers,
+    )
 
     fun randomDownstreamPollDto(
         id: String = randomString(),
