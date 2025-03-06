@@ -18,6 +18,7 @@ package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.UploadFileResponse
 import io.getstream.chat.android.client.api2.model.dto.AgoraDto
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
@@ -59,6 +60,8 @@ import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.client.api2.model.response.CreateVideoCallResponse
 import io.getstream.chat.android.client.api2.model.response.FileUploadConfigDto
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
+import io.getstream.chat.android.client.api2.model.response.TokenResponse
+import io.getstream.chat.android.client.api2.model.response.UnblockUserResponse
 import io.getstream.chat.android.client.api2.model.response.VideoCallTokenResponse
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
@@ -469,6 +472,21 @@ internal object Mother {
     }
 
     /**
+     * Provides a [SendActionRequest] with random parameters (that can also be customized).
+     */
+    fun randomSendActionRequest(
+        channelId: String = randomString(),
+        messageId: String = randomString(),
+        type: String = randomString(),
+        formData: Map<Any, Any> = emptyMap(),
+    ): SendActionRequest = SendActionRequest(
+        channelId = channelId,
+        messageId = messageId,
+        type = type,
+        formData = formData,
+    )
+
+    /**
      * Provides a [QueryChannelsRequest] with random parameters (that can also be customized).
      */
     fun randomQueryChannelsRequest(
@@ -866,6 +884,14 @@ internal object Mother {
         blocked_user_id = blockedUserId,
         created_at = createdAt,
     )
+
+    fun randomUnblockUserResponse(duration: String = randomString()): UnblockUserResponse =
+        UnblockUserResponse(duration)
+
+    fun randomTokenResponse(
+        user: DownstreamUserDto = randomDownstreamUserDto(),
+        accessToken: String = randomString(),
+    ): TokenResponse = TokenResponse(user, accessToken)
 
     fun randomDownstreamPollDto(
         id: String = randomString(),

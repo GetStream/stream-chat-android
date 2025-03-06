@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.api2
 
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.api.RetrofitCdnApi
+import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
 import io.getstream.chat.android.client.api2.endpoint.DeviceApi
@@ -34,25 +35,48 @@ import io.getstream.chat.android.client.api2.endpoint.VideoCallApi
 import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
+import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
+import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
+import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
+import io.getstream.chat.android.client.api2.model.requests.BlockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
+import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
+import io.getstream.chat.android.client.api2.model.requests.HideChannelRequest
+import io.getstream.chat.android.client.api2.model.requests.MarkReadRequest
+import io.getstream.chat.android.client.api2.model.requests.MarkUnreadRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
+import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
+import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
+import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
+import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
+import io.getstream.chat.android.client.api2.model.requests.UnblockUserRequest
+import io.getstream.chat.android.client.api2.model.requests.UpdateChannelPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
+import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialRequest
+import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
+import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.CompletableResponse
 import io.getstream.chat.android.client.api2.model.response.DevicesResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
+import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.MuteUserResponse
 import io.getstream.chat.android.client.api2.model.response.QueryBannedUsersResponse
+import io.getstream.chat.android.client.api2.model.response.QueryBlockedUsersResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
+import io.getstream.chat.android.client.api2.model.response.TokenResponse
+import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
+import io.getstream.chat.android.client.api2.model.response.UnblockUserResponse
+import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.client.scope.ClientScope
@@ -65,6 +89,7 @@ import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
@@ -77,9 +102,11 @@ import io.getstream.chat.android.randomDateOrNull
 import io.getstream.chat.android.randomDevice
 import io.getstream.chat.android.randomFile
 import io.getstream.chat.android.randomInt
+import io.getstream.chat.android.randomMemberData
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -859,6 +886,605 @@ internal class MoshiChatApiTest {
         verify(api, times(1)).stopWatching(channelType, channelId, connectionId, emptyMap())
     }
 
+    @ParameterizedTest
+    @MethodSource("getPinnedMessagesInput")
+    fun testGetPinnedMessages(call: RetrofitCall<MessagesResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ChannelApi>()
+        whenever(api.getPinnedMessages(any(), any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        // when
+        val channelType = randomString()
+        val channelId = randomString()
+        val limit = randomInt()
+        val sort = QuerySortByField.ascByName<Message>("created_at")
+        val pagination = PinnedMessagesPagination.AroundMessage(randomString())
+        val result = sut.getPinnedMessages(channelType, channelId, limit, sort, pagination).await()
+        // then
+        val expectedPayload = PinnedMessagesRequest.create(
+            limit = limit,
+            sort = sort,
+            pagination = pagination,
+        )
+        result `should be instance of` expected
+        verify(api, times(1)).getPinnedMessages(channelType, channelId, expectedPayload)
+    }
+
+    @ParameterizedTest
+    @MethodSource("updateChannelInput")
+    fun testUpdateChannel(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ChannelApi>()
+        whenever(api.updateChannel(any(), any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        // when
+        val channelType = randomString()
+        val channelId = randomString()
+        val extraData = emptyMap<String, Any>()
+        val updateMessage = randomMessage()
+        val result = sut.updateChannel(channelType, channelId, extraData, updateMessage).await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).updateChannel(eq(channelType), eq(channelId), any())
+    }
+
+    @ParameterizedTest
+    @MethodSource("updateChannelPartialInput")
+    fun testUpdateChannelPartial(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ChannelApi>()
+        whenever(api.updateChannelPartial(any(), any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        // when
+        val channelType = randomString()
+        val channelId = randomString()
+        val set = emptyMap<String, Any>()
+        val unset = emptyList<String>()
+        val result = sut.updateChannelPartial(channelType, channelId, set, unset).await()
+        // then
+        val expectedBody = UpdateChannelPartialRequest(set = set, unset = unset)
+        result `should be instance of` expected
+        verify(api, times(1)).updateChannelPartial(channelType, channelId, expectedBody)
+    }
+
+    @ParameterizedTest
+    @MethodSource("showChannelInput")
+    fun testShowChannel(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ChannelApi>()
+        whenever(api.showChannel(any(), any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        // when
+        val channelType = randomString()
+        val channelId = randomString()
+        val result = sut.showChannel(channelType, channelId).await()
+        // then
+        val expectedBody = emptyMap<Any, Any>()
+        result `should be instance of` expected
+        verify(api, times(1)).showChannel(channelType, channelId, expectedBody)
+    }
+
+    @ParameterizedTest
+    @MethodSource("hideChannelInput")
+    fun testHideChannel(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ChannelApi>()
+        whenever(api.hideChannel(any(), any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        // when
+        val channelType = randomString()
+        val channelId = randomString()
+        val clearHistory = randomBoolean()
+        val result = sut.hideChannel(channelType, channelId, clearHistory).await()
+        // then
+        val expectedBody = HideChannelRequest(clearHistory)
+        result `should be instance of` expected
+        verify(api, times(1)).hideChannel(channelType, channelId, expectedBody)
+    }
+
+    @ParameterizedTest
+    @MethodSource("truncateChannelInput")
+    fun testTruncateChannel(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ChannelApi>()
+        whenever(api.truncateChannel(any(), any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        // when
+        val channelType = randomString()
+        val channelId = randomString()
+        val systemMessage = randomMessage()
+        val result = sut.truncateChannel(channelType, channelId, systemMessage).await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).truncateChannel(eq(channelType), eq(channelId), any())
+    }
+
+    @ParameterizedTest
+    @MethodSource("rejectInviteInput")
+    fun testRejectInvite(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ChannelApi>()
+        whenever(api.rejectInvite(any(), any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        // when
+        val channelType = randomString()
+        val channelId = randomString()
+        val result = sut.rejectInvite(channelType, channelId).await()
+        // then
+        val expectedBody = RejectInviteRequest()
+        result `should be instance of` expected
+        verify(api, times(1)).rejectInvite(channelType, channelId, expectedBody)
+    }
+
+    @ParameterizedTest
+    @MethodSource("acceptInviteInput")
+    fun testAcceptInvite(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ChannelApi>()
+        whenever(api.acceptInvite(any(), any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        // when
+        val userId = randomString()
+        val connectionId = randomString()
+        val channelType = randomString()
+        val channelId = randomString()
+        val message = randomString()
+        sut.setConnection(userId = userId, connectionId = connectionId)
+        val result = sut.acceptInvite(channelType, channelId, message).await()
+        // then
+        val expectedBody = AcceptInviteRequest.create(userId, message)
+        result `should be instance of` expected
+        verify(api, times(1)).acceptInvite(channelType, channelId, expectedBody)
+    }
+
+    @ParameterizedTest
+    @MethodSource("deleteChannelInput")
+    fun testDeleteChannel(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ChannelApi>()
+        whenever(api.deleteChannel(any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        // when
+        val channelType = randomString()
+        val channelId = randomString()
+        val result = sut.deleteChannel(channelType, channelId).await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).deleteChannel(channelType, channelId)
+    }
+
+    @ParameterizedTest
+    @MethodSource("markReadInput")
+    fun testMarkRead(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ChannelApi>()
+        whenever(api.markRead(any(), any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        // when
+        val channelType = randomString()
+        val channelId = randomString()
+        val messageId = randomString()
+        val result = sut.markRead(channelType, channelId, messageId).await()
+        // then
+        val expectedRequest = MarkReadRequest(message_id = messageId)
+        result `should be instance of` expected
+        verify(api, times(1)).markRead(channelType, channelId, expectedRequest)
+    }
+
+    @ParameterizedTest
+    @MethodSource("markThreadReadInput")
+    fun testMarkThreadRead(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ChannelApi>()
+        whenever(api.markRead(any(), any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        // when
+        val channelType = randomString()
+        val channelId = randomString()
+        val threadId = randomString()
+        val result = sut.markThreadRead(channelType, channelId, threadId).await()
+        // then
+        val expectedRequest = MarkReadRequest(thread_id = threadId)
+        result `should be instance of` expected
+        verify(api, times(1)).markRead(channelType, channelId, expectedRequest)
+    }
+
+    @ParameterizedTest
+    @MethodSource("markUnreadInput")
+    fun testMarkUnread(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ChannelApi>()
+        whenever(api.markUnread(any(), any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        // when
+        val channelType = randomString()
+        val channelId = randomString()
+        val messageId = randomString()
+        val result = sut.markUnread(channelType, channelId, messageId).await()
+        // then
+        val expectedRequest = MarkUnreadRequest(message_id = messageId)
+        result `should be instance of` expected
+        verify(api, times(1)).markUnread(channelType, channelId, expectedRequest)
+    }
+
+    @ParameterizedTest
+    @MethodSource("markThreadUnreadInput")
+    fun testMarkThreadUnread(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ChannelApi>()
+        whenever(api.markUnread(any(), any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        // when
+        val channelType = randomString()
+        val channelId = randomString()
+        val threadId = randomString()
+        val messageId = randomString()
+        val result = sut.markThreadUnread(channelType, channelId, threadId, messageId).await()
+        // then
+        val expectedRequest = MarkUnreadRequest(thread_id = threadId, message_id = messageId)
+        result `should be instance of` expected
+        verify(api, times(1)).markUnread(channelType, channelId, expectedRequest)
+    }
+
+    @ParameterizedTest
+    @MethodSource("markAllReadInput")
+    fun testMarkAllRead(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ChannelApi>()
+        whenever(api.markAllRead()).doReturn(call)
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        // when
+        val result = sut.markAllRead().await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).markAllRead()
+    }
+
+    @ParameterizedTest
+    @MethodSource("addMembersInput")
+    fun testAddMembers(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ChannelApi>()
+        whenever(api.addMembers(any(), any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        // when
+        val channelType = randomString()
+        val channelId = randomString()
+        val members = listOf(randomMemberData())
+        val systemMessage = randomMessage()
+        val hideHistory = randomBoolean()
+        val skipPush = randomBoolean()
+        val result = sut.addMembers(channelType, channelId, members, systemMessage, hideHistory, skipPush).await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).addMembers(eq(channelType), eq(channelId), any())
+    }
+
+    @ParameterizedTest
+    @MethodSource("removeMembersInput")
+    fun testRemoveMembers(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ChannelApi>()
+        whenever(api.removeMembers(any(), any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        // when
+        val channelType = randomString()
+        val channelId = randomString()
+        val members = listOf(randomString())
+        val systemMessage = randomMessage()
+        val skipPush = randomBoolean()
+        val result = sut.removeMembers(channelType, channelId, members, systemMessage, skipPush).await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).removeMembers(eq(channelType), eq(channelId), any())
+    }
+
+    @ParameterizedTest
+    @MethodSource("inviteMembersInput")
+    fun testInviteMembers(call: RetrofitCall<ChannelResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ChannelApi>()
+        whenever(api.inviteMembers(any(), any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        // when
+        val channelType = randomString()
+        val channelId = randomString()
+        val members = listOf(randomString())
+        val systemMessage = randomMessage()
+        val skipPush = randomBoolean()
+        val result = sut.inviteMembers(channelType, channelId, members, systemMessage, skipPush).await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).inviteMembers(eq(channelType), eq(channelId), any())
+    }
+
+    @ParameterizedTest
+    @MethodSource("partialUpdateMemberInput")
+    fun testPartialUpdateMember(call: RetrofitCall<UpdateMemberPartialResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<ChannelApi>()
+        whenever(api.partialUpdateMember(any(), any(), any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withChannelApi(api)
+            .get()
+        // when
+        val channelType = randomString()
+        val channelId = randomString()
+        val userId = randomString()
+        val set = emptyMap<String, Any>()
+        val unset = emptyList<String>()
+        val result = sut.partialUpdateMember(channelType, channelId, userId, set, unset).await()
+        // then
+        val expectedBody = UpdateMemberPartialRequest(set = set, unset = unset)
+        result `should be instance of` expected
+        verify(api, times(1)).partialUpdateMember(channelType, channelId, userId, expectedBody)
+    }
+
+    @ParameterizedTest
+    @MethodSource("getNewerRepliesInput")
+    fun testGetNewerReplies(call: RetrofitCall<MessagesResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<MessageApi>()
+        whenever(api.getNewerReplies(any(), any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withMessageApi(api)
+            .get()
+        // when
+        val parentId = randomString()
+        val limit = randomInt()
+        val lastId = randomString()
+        val result = sut.getNewerReplies(parentId, limit, lastId).await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).getNewerReplies(parentId, limit, lastId)
+    }
+
+    @ParameterizedTest
+    @MethodSource("getRepliesInput")
+    fun testGetReplies(call: RetrofitCall<MessagesResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<MessageApi>()
+        whenever(api.getReplies(any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withMessageApi(api)
+            .get()
+        // when
+        val parentId = randomString()
+        val limit = randomInt()
+        val result = sut.getReplies(parentId, limit).await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).getReplies(parentId, limit)
+    }
+
+    @ParameterizedTest
+    @MethodSource("getRepliesMoreInput")
+    fun testGetRepliesMore(call: RetrofitCall<MessagesResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<MessageApi>()
+        whenever(api.getRepliesMore(any(), any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withMessageApi(api)
+            .get()
+        // when
+        val parentId = randomString()
+        val limit = randomInt()
+        val firstId = randomString()
+        val result = sut.getRepliesMore(parentId, firstId, limit).await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).getRepliesMore(parentId, limit, firstId)
+    }
+
+    @ParameterizedTest
+    @MethodSource("sendActionInput")
+    fun testSendAction(call: RetrofitCall<MessageResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<MessageApi>()
+        whenever(api.sendAction(any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withMessageApi(api)
+            .get()
+        // when
+        val request = Mother.randomSendActionRequest()
+        val result = sut.sendAction(request).await()
+        // then
+        val expectedRequest = SendActionRequest(
+            channel_id = request.channelId,
+            message_id = request.messageId,
+            type = request.type,
+            form_data = request.formData,
+        )
+        result `should be instance of` expected
+        verify(api, times(1)).sendAction(request.messageId, expectedRequest)
+    }
+
+    @ParameterizedTest
+    @MethodSource("updateUsersInput")
+    fun testUpdateUsers(call: RetrofitCall<UpdateUsersResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<UserApi>()
+        whenever(api.updateUsers(any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withUserApi(api)
+            .get()
+        // when
+        val userUd = randomString()
+        val connectionId = randomString()
+        val users = listOf(randomUser())
+        sut.setConnection(userId = userUd, connectionId = connectionId)
+        val result = sut.updateUsers(users).await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).updateUsers(eq(connectionId), any())
+    }
+
+    @ParameterizedTest
+    @MethodSource("blockUserInput")
+    fun testBlockUser(call: RetrofitCall<BlockUserResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<UserApi>()
+        whenever(api.blockUser(any())).doReturn(call)
+        val sut = Fixture()
+            .withUserApi(api)
+            .get()
+        // when
+        val targetId = randomString()
+        val result = sut.blockUser(targetId).await()
+        // then
+        val expectedBody = BlockUserRequest(targetId)
+        result `should be instance of` expected
+        verify(api, times(1)).blockUser(expectedBody)
+    }
+
+    @ParameterizedTest
+    @MethodSource("unblockUserInput")
+    fun testUnblockUser(call: RetrofitCall<UnblockUserResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<UserApi>()
+        whenever(api.unblockUser(any())).doReturn(call)
+        val sut = Fixture()
+            .withUserApi(api)
+            .get()
+        // when
+        val targetId = randomString()
+        val result = sut.unblockUser(targetId).await()
+        // then
+        val expectedBody = UnblockUserRequest(targetId)
+        result `should be instance of` expected
+        verify(api, times(1)).unblockUser(expectedBody)
+    }
+
+    @ParameterizedTest
+    @MethodSource("queryBlockedUsersInput")
+    fun testQueryBlockedUsers(call: RetrofitCall<QueryBlockedUsersResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<UserApi>()
+        whenever(api.queryBlockedUsers()).doReturn(call)
+        val sut = Fixture()
+            .withUserApi(api)
+            .get()
+        // when
+        val result = sut.queryBlockedUsers().await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).queryBlockedUsers()
+    }
+
+    @ParameterizedTest
+    @MethodSource("partialUpdateUserInput")
+    fun testPartialUpdateUser(call: RetrofitCall<UpdateUsersResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<UserApi>()
+        whenever(api.partialUpdateUsers(any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withUserApi(api)
+            .get()
+        // when
+        val userId = randomString()
+        val connectionId = randomString()
+        val targetUserId = randomString()
+        val set = emptyMap<String, Any>()
+        val unset = emptyList<String>()
+        sut.setConnection(userId = userId, connectionId = connectionId)
+        val result = sut.partialUpdateUser(targetUserId, set, unset).await()
+        // then
+        val expectedBody = PartialUpdateUsersRequest(
+            users = listOf(PartialUpdateUserDto(targetUserId, set, unset)),
+        )
+        result `should be instance of` expected
+        verify(api, times(1)).partialUpdateUsers(connectionId, expectedBody)
+    }
+
+    @ParameterizedTest
+    @MethodSource("getGuestUserInput")
+    fun testGetGuestUser(call: RetrofitCall<TokenResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<GuestApi>()
+        whenever(api.getGuestUser(any())).doReturn(call)
+        val sut = Fixture()
+            .withGuestApi(api)
+            .get()
+        // when
+        val userId = randomString()
+        val userName = randomString()
+        val result = sut.getGuestUser(userId, userName).await()
+        // then
+        val expectedBody = GuestUserRequest.create(userId, userName)
+        result `should be instance of` expected
+        verify(api, times(1)).getGuestUser(expectedBody)
+    }
+
+    @ParameterizedTest
+    @MethodSource("translateInput")
+    fun testTranslate(call: RetrofitCall<MessageResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<MessageApi>()
+        whenever(api.translate(any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withMessageApi(api)
+            .get()
+        // when
+        val messageId = randomString()
+        val language = randomString()
+        val result = sut.translate(messageId, language).await()
+        // then
+        val expectedBody = TranslateMessageRequest(language)
+        result `should be instance of` expected
+        verify(api, times(1)).translate(messageId, expectedBody)
+    }
+
+    @ParameterizedTest
+    @MethodSource("ogInput")
+    fun testOg(call: RetrofitCall<AttachmentDto>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<OpenGraphApi>()
+        whenever(api.get(any())).doReturn(call)
+        val sut = Fixture()
+            .withOgApi(api)
+            .get()
+        // when
+        val url = randomString()
+        val result = sut.og(url).await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).get(url)
+    }
+
     private class Fixture {
 
         private var domainMapping = DomainMapping(
@@ -1146,7 +1772,10 @@ internal class MoshiChatApiTest {
                 RetroSuccess(QueryBannedUsersResponse(listOf(Mother.randomBannedUserResponse()))).toRetrofitCall(),
                 Result.Success::class,
             ),
-            Arguments.of(RetroError<QueryBannedUsersResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+            Arguments.of(
+                RetroError<QueryBannedUsersResponse>(statusCode = 500).toRetrofitCall(),
+                Result.Failure::class,
+            ),
         )
 
         @JvmStatic
@@ -1157,6 +1786,126 @@ internal class MoshiChatApiTest {
 
         @JvmStatic
         fun stopWatchingInput() = completableResponseArguments()
+
+        @JvmStatic
+        fun getPinnedMessagesInput() = messagesResponseArguments()
+
+        @JvmStatic
+        fun updateChannelInput() = channelResponseArguments()
+
+        @JvmStatic
+        fun updateChannelPartialInput() = channelResponseArguments()
+
+        @JvmStatic
+        fun showChannelInput() = completableResponseArguments()
+
+        @JvmStatic
+        fun hideChannelInput() = completableResponseArguments()
+
+        @JvmStatic
+        fun truncateChannelInput() = channelResponseArguments()
+
+        @JvmStatic
+        fun rejectInviteInput() = channelResponseArguments()
+
+        @JvmStatic
+        fun acceptInviteInput() = channelResponseArguments()
+
+        @JvmStatic
+        fun deleteChannelInput() = channelResponseArguments()
+
+        @JvmStatic
+        fun markReadInput() = completableResponseArguments()
+
+        @JvmStatic
+        fun markThreadReadInput() = completableResponseArguments()
+
+        @JvmStatic
+        fun markUnreadInput() = completableResponseArguments()
+
+        @JvmStatic
+        fun markThreadUnreadInput() = completableResponseArguments()
+
+        @JvmStatic
+        fun markAllReadInput() = completableResponseArguments()
+
+        @JvmStatic
+        fun addMembersInput() = channelResponseArguments()
+
+        @JvmStatic
+        fun removeMembersInput() = channelResponseArguments()
+
+        @JvmStatic
+        fun inviteMembersInput() = channelResponseArguments()
+
+        @JvmStatic
+        fun partialUpdateMemberInput() = listOf(
+            Arguments.of(
+                RetroSuccess(UpdateMemberPartialResponse(Mother.randomDownstreamMemberDto())).toRetrofitCall(),
+                Result.Success::class,
+            ),
+            Arguments.of(
+                RetroError<UpdateMemberPartialResponse>(statusCode = 500).toRetrofitCall(),
+                Result.Failure::class,
+            ),
+        )
+
+        @JvmStatic
+        fun getNewerRepliesInput() = messagesResponseArguments()
+
+        @JvmStatic
+        fun getRepliesInput() = messagesResponseArguments()
+
+        @JvmStatic
+        fun getRepliesMoreInput() = messagesResponseArguments()
+
+        @JvmStatic
+        fun sendActionInput() = messageResponseArguments()
+
+        @JvmStatic
+        fun updateUsersInput() = updateUsersResponseArguments()
+
+        @JvmStatic
+        fun blockUserInput() = listOf(
+            Arguments.of(RetroSuccess(Mother.randomBlockUserResponse()).toRetrofitCall(), Result.Success::class),
+            Arguments.of(RetroError<BlockUserResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        )
+
+        @JvmStatic
+        fun unblockUserInput() = listOf(
+            Arguments.of(RetroSuccess(Mother.randomUnblockUserResponse()).toRetrofitCall(), Result.Success::class),
+            Arguments.of(RetroError<BlockUserResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        )
+
+        @JvmStatic
+        fun queryBlockedUsersInput() = listOf(
+            Arguments.of(
+                RetroSuccess(QueryBlockedUsersResponse(listOf(Mother.randomDownstreamUserBlockDto()))).toRetrofitCall(),
+                Result.Success::class,
+            ),
+            Arguments.of(
+                RetroError<QueryBlockedUsersResponse>(statusCode = 500).toRetrofitCall(),
+                Result.Failure::class,
+            ),
+        )
+
+        @JvmStatic
+        fun partialUpdateUserInput() = updateUsersResponseArguments()
+
+        @JvmStatic
+        fun getGuestUserInput() = listOf(
+            Arguments.of(RetroSuccess(Mother.randomTokenResponse()).toRetrofitCall(), Result.Success::class),
+            Arguments.of(RetroError<TokenResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        )
+
+        @JvmStatic
+        fun translateInput() = messageResponseArguments()
+
+        @JvmStatic
+        fun ogInput() = listOf(
+            Arguments.of(RetroSuccess(Mother.randomAttachmentDto()).toRetrofitCall(), Result.Success::class),
+            Arguments.of(RetroError<AttachmentDto>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        )
 
         fun muteUserResponseArguments() = listOf(
             Arguments.of(
@@ -1208,5 +1957,31 @@ internal class MoshiChatApiTest {
             ),
             Arguments.of(RetroError<ChannelResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
         )
+
+        fun messageResponseArguments() = listOf(
+            Arguments.of(
+                RetroSuccess(MessageResponse(Mother.randomDownstreamMessageDto())).toRetrofitCall(),
+                Result.Success::class,
+            ),
+            Arguments.of(RetroError<MessageResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        )
+
+        fun messagesResponseArguments() = listOf(
+            Arguments.of(
+                RetroSuccess(MessagesResponse(listOf(Mother.randomDownstreamMessageDto()))).toRetrofitCall(),
+                Result.Success::class,
+            ),
+            Arguments.of(RetroError<MessagesResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        )
+
+        fun updateUsersResponseArguments(): List<Arguments> {
+            val userId = randomString()
+            val user = Mother.randomDownstreamUserDto()
+            val response = UpdateUsersResponse(mapOf(userId to user))
+            return listOf(
+                Arguments.of(RetroSuccess(response).toRetrofitCall(), Result.Success::class),
+                Arguments.of(RetroError<UpdateUsersResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+            )
+        }
     }
 }
