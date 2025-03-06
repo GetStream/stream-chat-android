@@ -146,6 +146,7 @@ public fun ChatsScreen(
     detailBottomBarContent: @Composable (viewModelFactory: MessagesViewModelFactory) -> Unit = { viewModelFactory ->
         DefaultDetailBottomBarContent(viewModelFactory = viewModelFactory)
     },
+    extraContent: @Composable (mode: ExtraContentMode) -> Unit = {},
 ) {
     val context = LocalContext.current
     val singlePane = AdaptiveLayoutInfo.singlePaneWindow()
@@ -323,10 +324,8 @@ public fun ChatsScreen(
                             targetState = extraContentMode,
                         ) { mode ->
                             Row {
-                                if (mode is ExtraContentMode.Display) {
-                                    VerticalDivider()
-                                    mode.content()
-                                }
+                                VerticalDivider()
+                                extraContent(mode)
                             }
                         }
                     }

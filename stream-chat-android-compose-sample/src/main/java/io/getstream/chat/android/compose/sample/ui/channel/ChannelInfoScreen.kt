@@ -37,6 +37,7 @@ import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
+@Suppress("LongMethod")
 @Composable
 fun ChannelInfoScreen(
     state: ChannelInfoViewModel.State,

@@ -26,7 +26,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.painterResource
@@ -58,6 +57,7 @@ import io.getstream.chat.android.compose.ui.channels.SearchMode
 import io.getstream.chat.android.compose.ui.chats.ChatsScreen
 import io.getstream.chat.android.compose.ui.chats.ExtraContentMode
 import io.getstream.chat.android.compose.ui.chats.ListContentMode
+import io.getstream.chat.android.compose.ui.chats.rememberExtraContentMode
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptionItemVisibility
 import io.getstream.chat.android.compose.ui.theme.ChannelOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -145,12 +145,13 @@ class ChatsActivity : BaseConnectedActivity() {
 
     @Composable
     private fun ScreenContent() {
-        var listContentMode by remember { mutableStateOf(ListContentMode.Channels) }
-        var extraContentMode by remember { mutableStateOf<ExtraContentMode>(ExtraContentMode.Hidden) }
+        var listContentMode by rememberSaveable { mutableStateOf(ListContentMode.Channels) }
+        var extraContentMode by rememberExtraContentMode()
         ChatsScreen(
             channelViewModelFactory = channelViewModelFactory,
             messagesViewModelFactoryProvider = { _, (channelId, messageId, parentMessageId) ->
-                extraContentMode = ExtraContentMode.Hidden // Reset extra content mode when switching channels
+                // TODO Reset extra content mode when switching channels
+                // extraContentMode = ExtraContentMode.Hidden // Reset extra content mode when switching channels
                 if (channelId == null) {
                     messagesViewModelFactory
                 } else {
@@ -174,19 +175,17 @@ class ChatsActivity : BaseConnectedActivity() {
             },
             onListTopBarActionClick = ::openAddChannel,
             onDetailTopBarTitleClick = { channel ->
-                extraContentMode = ExtraContentMode.Display {
-                    ChannelInfoContent(
-                        channel = channel,
-                        onNavigationIconClick = { extraContentMode = ExtraContentMode.Hidden }
-                    )
+                extraContentMode = if (channel.isGroupChannel) {
+                    ExtraContentMode.GroupChannelInfo(channel.cid)
+                } else {
+                    ExtraContentMode.SingleChannelInfo(channel.cid)
                 }
             },
             onViewChannelInfoAction = { channel ->
-                extraContentMode = ExtraContentMode.Display {
-                    ChannelInfoContent(
-                        channel = channel,
-                        onNavigationIconClick = { extraContentMode = ExtraContentMode.Hidden }
-                    )
+                extraContentMode = if (channel.isGroupChannel) {
+                    ExtraContentMode.GroupChannelInfo(channel.cid)
+                } else {
+                    ExtraContentMode.SingleChannelInfo(channel.cid)
                 }
             },
             listBottomBarContent = {
@@ -196,7 +195,22 @@ class ChatsActivity : BaseConnectedActivity() {
                         AppBottomBarOption.THREADS -> ListContentMode.Threads
                     }
                 }
-            }
+            },
+            extraContent = { mode ->
+                when (mode) {
+                    is ExtraContentMode.SingleChannelInfo -> SingleChannelInfoContent(
+                        channelId = mode.id,
+                        onNavigationIconClick = { extraContentMode = ExtraContentMode.Hidden },
+                    )
+
+                    is ExtraContentMode.GroupChannelInfo -> GroupChannelInfoContent(
+                        channelId = mode.id,
+                        onNavigationIconClick = { extraContentMode = ExtraContentMode.Hidden },
+                    )
+
+                    ExtraContentMode.Hidden -> Unit
+                }
+            },
         )
     }
 
@@ -225,7 +239,7 @@ class ChatsActivity : BaseConnectedActivity() {
         val viewModel = viewModel(
             ChannelInfoViewModel::class.java,
             key = channelId,
-            factory = ChannelInfoViewModelFactory(channelId)
+            factory = ChannelInfoViewModelFactory(channelId),
         )
         val state by viewModel.state.collectAsState()
         ChannelInfoScreen(
@@ -238,7 +252,7 @@ class ChatsActivity : BaseConnectedActivity() {
                 } else {
                     CloseButton(onClick = onNavigationIconClick)
                 }
-            }
+            },
         )
     }
 
@@ -250,7 +264,7 @@ class ChatsActivity : BaseConnectedActivity() {
         val viewModel = viewModel(
             GroupChannelInfoViewModel::class.java,
             key = channelId,
-            factory = GroupChannelInfoViewModelFactory(channelId)
+            factory = GroupChannelInfoViewModelFactory(channelId),
         )
         val state by viewModel.state.collectAsState()
         GroupChannelInfoScreen(
@@ -261,26 +275,8 @@ class ChatsActivity : BaseConnectedActivity() {
                 null
             } else {
                 { CloseButton(onClick = onNavigationIconClick) }
-            }
+            },
         )
-    }
-
-    @Composable
-    private fun ChannelInfoContent(
-        channel: Channel,
-        onNavigationIconClick: () -> Unit,
-    ) {
-        if (channel.memberCount > 2 || !channel.isAnonymousChannel()) {
-            GroupChannelInfoContent(
-                channelId = channel.cid,
-                onNavigationIconClick = onNavigationIconClick,
-            )
-        } else {
-            SingleChannelInfoContent(
-                channelId = channel.cid,
-                onNavigationIconClick = onNavigationIconClick,
-            )
-        }
     }
 
     private fun buildMessagesViewModelFactory(
@@ -320,3 +316,6 @@ private fun CloseButton(onClick: () -> Unit) {
         )
     }
 }
+
+private val Channel.isGroupChannel: Boolean
+    get() = memberCount > 2 || !isAnonymousChannel()
