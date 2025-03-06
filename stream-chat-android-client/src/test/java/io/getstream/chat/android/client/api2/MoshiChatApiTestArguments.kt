@@ -73,40 +73,16 @@ internal object MoshiChatApiTestArguments {
     )
 
     @JvmStatic
-    fun sendMessageInput() = listOf(
-        Arguments.of(
-            RetroSuccess(MessageResponse(Mother.randomDownstreamMessageDto())).toRetrofitCall(),
-            Result.Success::class,
-        ),
-        Arguments.of(RetroError<MessageResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
-    )
+    fun sendMessageInput() = messageResponseArguments()
 
     @JvmStatic
-    fun updateMessageInput() = listOf(
-        Arguments.of(
-            RetroSuccess(MessageResponse(Mother.randomDownstreamMessageDto())).toRetrofitCall(),
-            Result.Success::class,
-        ),
-        Arguments.of(RetroError<MessageResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
-    )
+    fun updateMessageInput() = messageResponseArguments()
 
     @JvmStatic
-    fun partialUpdateMessageInput() = listOf(
-        Arguments.of(
-            RetroSuccess(MessageResponse(Mother.randomDownstreamMessageDto())).toRetrofitCall(),
-            Result.Success::class,
-        ),
-        Arguments.of(RetroError<MessageResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
-    )
+    fun partialUpdateMessageInput() = messageResponseArguments()
 
     @JvmStatic
-    fun getMessageInput() = listOf(
-        Arguments.of(
-            RetroSuccess(MessageResponse(Mother.randomDownstreamMessageDto())).toRetrofitCall(),
-            Result.Success::class,
-        ),
-        Arguments.of(RetroError<MessageResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
-    )
+    fun getMessageInput() = messageResponseArguments()
 
     @JvmStatic
     fun deleteMessageInput() = listOf(
@@ -142,17 +118,11 @@ internal object MoshiChatApiTestArguments {
             RetroSuccess(ReactionResponse(Mother.randomDownstreamReactionDto())).toRetrofitCall(),
             Result.Success::class,
         ),
-        Arguments.of(RetroError<ReactionsResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+        Arguments.of(RetroError<ReactionResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     @JvmStatic
-    fun deleteReactionInput() = listOf(
-        Arguments.of(
-            RetroSuccess(MessageResponse(Mother.randomDownstreamMessageDto())).toRetrofitCall(),
-            Result.Success::class,
-        ),
-        Arguments.of(RetroError<MessageResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
-    )
+    fun deleteReactionInput() = messageResponseArguments()
 
     @JvmStatic
     fun addDeviceInput() = completableResponseArguments()
