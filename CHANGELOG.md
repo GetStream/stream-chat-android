@@ -3,6 +3,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Upgrade StreamLog dependency to avoid a warning message while compilation time related with a duplicated namespace. [#5664](https://github.com/GetStream/stream-chat-android/pull/5664)
 
 ### ✅ Added
 
