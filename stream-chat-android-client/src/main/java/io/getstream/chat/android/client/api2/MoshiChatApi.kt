@@ -248,12 +248,27 @@ constructor(
         return messageApi.partialUpdateMessage(
             messageId = messageId,
             body = PartialUpdateMessageRequest(
-                set = set,
+                set = set.toDto(),
                 unset = unset,
                 skip_enrich_url = skipEnrichUrl,
             ),
         ).mapDomain { response ->
             response.message.toDomain()
+        }
+    }
+
+    private fun Map<String, Any>.toDto(): Map<String, Any> = with(dtoMapping) {
+        mapValues {
+            when {
+                it.value is Collection<*> -> (it.value as Collection<*>).map {
+                    when (it) {
+                        is Attachment -> it.toDto()
+                        else -> it
+                    }
+                }
+
+                else -> it.value
+            }
         }
     }
 

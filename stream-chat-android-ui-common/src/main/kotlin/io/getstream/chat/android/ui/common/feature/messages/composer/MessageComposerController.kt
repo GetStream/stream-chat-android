@@ -912,7 +912,13 @@ public class MessageComposerController(
      * @param message [Message]
      */
     private fun getEditMessageCall(message: Message): Call<Message> {
-        return chatClient.updateMessage(message)
+        return chatClient.partialUpdateMessage(
+            messageId = message.id,
+            set = mapOf(
+                "text" to message.text,
+                "attachments" to message.attachments,
+            ),
+        )
     }
 
     /**
