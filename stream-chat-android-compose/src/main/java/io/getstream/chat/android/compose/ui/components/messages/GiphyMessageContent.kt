@@ -45,6 +45,7 @@ import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.state.messages.list.CancelGiphy
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
@@ -55,12 +56,14 @@ import io.getstream.chat.android.ui.common.state.messages.list.ShuffleGiphy
  * Represents the content of an ephemeral giphy message.
  *
  * @param message The ephemeral giphy message.
+ * @param currentUser The current user that's logged in.
  * @param modifier Modifier for styling.
  * @param onGiphyActionClick Handler when the user clicks on action button.
  */
 @Composable
 public fun GiphyMessageContent(
     message: Message,
+    currentUser: User?,
     modifier: Modifier = Modifier,
     onGiphyActionClick: (GiphyAction) -> Unit = {},
 ) {
@@ -104,6 +107,7 @@ public fun GiphyMessageContent(
 
         MessageAttachmentsContent(
             message = message,
+            currentUser = currentUser,
             onLongItemClick = {},
             onMediaGalleryPreviewResult = {},
         )
@@ -204,6 +208,7 @@ private fun GiphyMessageContentPreview() {
         GiphyMessageContent(
             modifier = Modifier.size(600.dp),
             message = PreviewMessageData.message1,
+            currentUser = PreviewMessageData.message1.user,
             onGiphyActionClick = {},
         )
     }

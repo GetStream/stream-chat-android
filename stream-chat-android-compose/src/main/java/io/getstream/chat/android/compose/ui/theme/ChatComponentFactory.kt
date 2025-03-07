@@ -999,10 +999,12 @@ public interface ChatComponentFactory {
     @Composable
     public fun MessageGiphyContent(
         message: Message,
+        currentUser: User?,
         onGiphyActionClick: (GiphyAction) -> Unit,
     ) {
         DefaultMessageGiphyContent(
             message = message,
+            currentUser = currentUser,
             onGiphyActionClick = onGiphyActionClick,
         )
     }

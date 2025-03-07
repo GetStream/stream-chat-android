@@ -84,7 +84,7 @@ public fun FileAttachmentContent(
         attachment: Attachment,
     ) -> Unit = ::onFileAttachmentContentItemClick,
 ) {
-    val (message, onItemLongClick) = attachmentState
+    val (message, isMine, onItemLongClick) = attachmentState
     val previewHandlers = ChatTheme.attachmentPreviewHandlers
 
     Column(
@@ -109,6 +109,7 @@ public fun FileAttachmentContent(
                         onLongClick = { onItemLongClick(message) },
                     ),
                 attachment = attachment,
+                isMine = isMine,
                 showFileSize = showFileSize,
             )
         }
@@ -119,11 +120,14 @@ public fun FileAttachmentContent(
  * Represents each file item in the list of file attachments.
  *
  * @param attachment The file attachment to show.
+ * @param isMine Whether the message is sent by the current user or not.
+ * @param showFileSize Whether to show the file size or not.
  * @param modifier Modifier for styling.
  */
 @Composable
 public fun FileAttachmentItem(
     attachment: Attachment,
+    isMine: Boolean,
     showFileSize: (Attachment) -> Boolean,
     modifier: Modifier = Modifier,
 ) {

@@ -22,18 +22,21 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryP
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 
 /**
  * Represents the content that's shown in a quoted message if the attachments are not empty.
  *
  * @param message The message that contains the attachments.
- * @param modifier Modifier for styling.
+ * @param currentUser The current user that's logged in.
  * @param onLongItemClick Handler for long item taps.
+ * @param modifier Modifier for styling.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  */
 @Composable
 public fun QuotedMessageAttachmentContent(
     message: Message,
+    currentUser: User?,
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
@@ -55,6 +58,7 @@ public fun QuotedMessageAttachmentContent(
 
     val attachmentState = AttachmentState(
         message = message,
+        isMine = message.user.id == currentUser?.id,
         onLongItemClick = onLongItemClick,
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
     )

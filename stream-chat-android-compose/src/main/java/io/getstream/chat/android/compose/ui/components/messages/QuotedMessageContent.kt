@@ -42,7 +42,12 @@ public fun QuotedMessageContent(
     currentUser: User?,
     modifier: Modifier = Modifier,
     replyMessage: Message? = null,
-    attachmentContent: @Composable (Message) -> Unit = { DefaultQuotedMessageAttachmentContent(it) },
+    attachmentContent: @Composable (Message) -> Unit = {
+        DefaultQuotedMessageAttachmentContent(
+            message = it,
+            currentUser = currentUser,
+        )
+    },
     textContent: @Composable (Message) -> Unit = {
         DefaultQuotedMessageTextContent(
             message = it,
@@ -90,19 +95,23 @@ public fun QuotedMessageContent(
         },
     )
 }
-
 /**
  * Represents the default attachment preview of the quoted message.
  *
  * By default we show the first attachment that is sent inside the message.
  *
  * @param message The quoted message.
+ * @param currentUser The currently logged in user.
  */
 @Composable
-internal fun DefaultQuotedMessageAttachmentContent(message: Message) {
+internal fun DefaultQuotedMessageAttachmentContent(
+    message: Message,
+    currentUser: User?,
+) {
     if (message.attachments.isNotEmpty()) {
         QuotedMessageAttachmentContent(
             message = message,
+            currentUser = currentUser,
             onLongItemClick = {},
         )
     }
