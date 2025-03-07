@@ -55,7 +55,12 @@ internal class SocketFactory(
         var json = buildUserDetailJson(connectionConf)
         return try {
             json = URLEncoder.encode(json, StandardCharsets.UTF_8.name())
-            val baseWsUrl = "${connectionConf.endpoint}connect?json=$json&api_key=${connectionConf.apiKey}"
+            val sdkTrackingHeaders =
+                URLEncoder.encode(headersUtil.buildSdkTrackingHeaders(), StandardCharsets.UTF_8.name())
+            val baseWsUrl = "${connectionConf.endpoint}connect?" +
+                "json=$json" +
+                "&api_key=${connectionConf.apiKey}" +
+                "&X-Stream-Client=$sdkTrackingHeaders"
             when (connectionConf) {
                 is ConnectionConf.AnonymousConnectionConf -> "$baseWsUrl&stream-auth-type=anonymous"
                 is ConnectionConf.UserConnectionConf -> {
@@ -75,7 +80,6 @@ internal class SocketFactory(
             "user_details" to connectionConf.reduceUserDetails(),
             "user_id" to connectionConf.id,
             "server_determines_connection_id" to true,
-            "X-Stream-Client" to headersUtil.buildSdkTrackingHeaders(),
         )
         return parser.toJson(data)
     }
