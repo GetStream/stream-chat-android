@@ -189,12 +189,15 @@ class ChatsActivity : BaseConnectedActivity() {
                 }
             },
             listBottomBarContent = {
-                ListFooterContent { option ->
-                    listContentMode = when (option) {
-                        AppBottomBarOption.CHATS -> ListContentMode.Channels
-                        AppBottomBarOption.THREADS -> ListContentMode.Threads
+                ListFooterContent(
+                    listContentMode = listContentMode,
+                    onOptionSelected = { option ->
+                        listContentMode = when (option) {
+                            AppBottomBarOption.CHATS -> ListContentMode.Channels
+                            AppBottomBarOption.THREADS -> ListContentMode.Threads
+                        }
                     }
-                }
+                )
             },
             extraContent = { mode ->
                 when (mode) {
@@ -215,19 +218,22 @@ class ChatsActivity : BaseConnectedActivity() {
     }
 
     @Composable
-    private fun ListFooterContent(onOptionSelected: (option: AppBottomBarOption) -> Unit) {
+    private fun ListFooterContent(
+        listContentMode: ListContentMode,
+        onOptionSelected: (option: AppBottomBarOption) -> Unit,
+    ) {
         val globalState = ChatClient.instance().globalState
         val unreadChannelsCount by globalState.channelUnreadCount.collectAsState()
         val unreadThreadsCount by globalState.unreadThreadsCount.collectAsState()
-        var selectedOption by rememberSaveable { mutableStateOf(AppBottomBarOption.CHATS) }
+        val selectedOption = when (listContentMode) {
+            ListContentMode.Channels -> AppBottomBarOption.CHATS
+            ListContentMode.Threads -> AppBottomBarOption.THREADS
+        }
         AppBottomBar(
             unreadChannelsCount = unreadChannelsCount,
             unreadThreadsCount = unreadThreadsCount,
             selectedOption = selectedOption,
-            onOptionSelected = { option ->
-                selectedOption = option
-                onOptionSelected(option)
-            },
+            onOptionSelected = onOptionSelected,
         )
     }
 
