@@ -181,7 +181,7 @@ class ChatsActivity : BaseConnectedActivity() {
                     ExtraContentMode.SingleChannelInfo(channel.cid)
                 }
             },
-            onViewChannelInfoAction = { channel ->
+            onViewChannelInfoClick = { channel ->
                 extraContentMode = if (channel.isGroupChannel) {
                     ExtraContentMode.GroupChannelInfo(channel.cid)
                 } else {
