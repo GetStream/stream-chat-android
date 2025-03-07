@@ -54,6 +54,7 @@
 - Fix `MessageListController#scrollToFirstUnreadMessage` not working when the first unread message was not loaded. [#5635](https://github.com/GetStream/stream-chat-android/pull/5635)
 
 ### ⬆️ Improved
+- Use `partialUpdateMessage` when editing messages from the message composer. [#5669](https://github.com/GetStream/stream-chat-android/pull/5669)
 
 ### ✅ Added
 
