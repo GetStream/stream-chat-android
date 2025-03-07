@@ -60,6 +60,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.ShuffleGiphy
  * @param modifier Modifier for styling.
  * @param onGiphyActionClick Handler when the user clicks on action button.
  */
+@Suppress("LongMethod")
 @Composable
 public fun GiphyMessageContent(
     message: Message,

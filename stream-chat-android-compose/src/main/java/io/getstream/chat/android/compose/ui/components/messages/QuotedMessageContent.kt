@@ -95,6 +95,7 @@ public fun QuotedMessageContent(
         },
     )
 }
+
 /**
  * Represents the default attachment preview of the quoted message.
  *

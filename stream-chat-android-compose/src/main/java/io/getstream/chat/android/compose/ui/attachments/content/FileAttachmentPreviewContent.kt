@@ -48,6 +48,7 @@ import io.getstream.chat.android.ui.common.utils.MediaStringUtil
  * @param onAttachmentRemoved Handler when the user removes an attachment from the list.
  * @param modifier Modifier for styling.
  */
+@Suppress("LongMethod")
 @Composable
 public fun FileAttachmentPreviewContent(
     attachments: List<Attachment>,
@@ -75,7 +76,10 @@ public fun FileAttachmentPreviewContent(
                         .padding(vertical = 8.dp, horizontal = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    FileAttachmentImage(attachment = attachment)
+                    FileAttachmentImage(
+                        attachment = attachment,
+                        true,
+                    )
 
                     Column(
                         modifier = Modifier
