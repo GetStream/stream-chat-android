@@ -526,8 +526,8 @@ private fun DefaultDetailTopBarContent(
         messageMode = messageMode,
         onHeaderTitleClick = onTitleClick,
         leadingContent = {
-            val showBackButton = AdaptiveLayoutInfo.singlePaneWindow()
-            if (showBackButton) {
+            val showNavigationIcon = AdaptiveLayoutInfo.singlePaneWindow() || messageMode is MessageMode.MessageThread
+            if (showNavigationIcon) {
                 with(ChatTheme.componentFactory) {
                     MessageListHeaderLeadingContent(
                         onBackPressed = backAction,
