@@ -16,11 +16,12 @@
 
 package io.getstream.chat.android.compose.ui.chats
 
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.listSaver
+import java.io.Serializable
 
 /**
  * Represents the selection of a message within a channel.
+ *
+ * Implements [Serializable] to allow for saving and restoring the state across configuration changes.
  */
 public data class MessageSelection(
     /**
@@ -35,12 +36,4 @@ public data class MessageSelection(
      * The ID of the parent message (for threads), or `null` if not in a thread.
      */
     val parentMessageId: String? = null,
-) {
-
-    public companion object {
-        public val Saver: Saver<MessageSelection, Any> = listSaver(
-            save = { selection -> listOf(selection.channelId, selection.messageId, selection.parentMessageId) },
-            restore = { MessageSelection(it[0], it[1], it[2]) }
-        )
-    }
-}
+) : Serializable

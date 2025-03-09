@@ -46,38 +46,26 @@ internal class DefaultThreePaneNavigator(destinations: List<ThreePaneDestination
     }
 }
 
+/**
+ * Represents a destination in the three-pane navigation system.
+ *
+ * @param T The type of the arguments associated with the destination. It must be serializable.
+ * @property pane The pane destination of the navigation.
+ * @property arguments The optional arguments to pass to the destination.
+ */
 internal data class ThreePaneDestination<out T>(
     val pane: ThreePaneRole,
-    val arguments: T,
+    val arguments: T? = null,
 ) {
     companion object {
         val Saver: Saver<ThreePaneDestination<*>, Any> = listSaver(
-            save = { destination ->
-                listOf(
-                    destination.pane,
-                    when (destination.arguments) {
-                        is MessageSelection -> with(MessageSelection.Saver) { save(destination.arguments) }
-                        is ExtraContentMode -> with(ExtraContentMode.Saver) { save(destination.arguments) }
-                        else -> null
-                    }
-                )
-            },
-            restore = { state ->
-                val pane = state[0] as ThreePaneRole
-                ThreePaneDestination(
-                    pane = pane,
-                    arguments = when (pane) {
-                        ThreePaneRole.Detail -> with(MessageSelection.Saver) { state[1]?.let(::restore) }
-                        ThreePaneRole.Info -> with(ExtraContentMode.Saver) { state[1]?.let { restore(it.toString()) } }
-                        else -> null
-                    }
-                )
-            }
+            save = { destination -> listOf(destination.pane, destination.arguments) },
+            restore = { state -> ThreePaneDestination(pane = state[0] as ThreePaneRole, arguments = state[1]) }
         )
     }
 }
 
 @Composable
 public fun rememberNavigator(): ThreePaneNavigator = rememberSaveable(saver = DefaultThreePaneNavigator.Saver) {
-    DefaultThreePaneNavigator(destinations = listOf(ThreePaneDestination(pane = ThreePaneRole.List, null)))
+    DefaultThreePaneNavigator(destinations = listOf(ThreePaneDestination<Unit>(pane = ThreePaneRole.List)))
 }

@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.chats
 
-import androidx.compose.runtime.saveable.Saver
+import java.io.Serializable
 
 /**
  * The mode for displaying the list content in the chat screen.
@@ -35,8 +35,10 @@ public enum class ListContentMode {
 
 /**
  * The mode for displaying extra content in the chat screen.
+ *
+ * Implements [Serializable] to allow for saving and restoring the state across configuration changes.
  */
-public sealed class ExtraContentMode(public open val id: String) {
+public sealed class ExtraContentMode(public open val id: String) : Serializable {
     /**
      * No extra content.
      */
@@ -45,35 +47,4 @@ public sealed class ExtraContentMode(public open val id: String) {
     public data class SingleChannelInfo(override val id: String) : ExtraContentMode(id)
 
     public data class GroupChannelInfo(override val id: String) : ExtraContentMode(id)
-
-    public companion object {
-
-        /**
-         * The default [Saver] implementation for [ExtraContentMode].
-         */
-        public val Saver: Saver<ExtraContentMode, String> = Saver(
-            save = { mode ->
-                when (mode) {
-                    is SingleChannelInfo -> "SingleChannelInfo:${mode.id}"
-                    is GroupChannelInfo -> "GroupChannelInfo:${mode.id}"
-                    else -> ""
-                }
-            },
-            restore = { state ->
-                when {
-                    state.startsWith("SingleChannelInfo:") -> {
-                        val id = state.removePrefix("SingleChannelInfo:")
-                        SingleChannelInfo(id)
-                    }
-
-                    state.startsWith("GroupChannelInfo:") -> {
-                        val id = state.removePrefix("GroupChannelInfo:")
-                        GroupChannelInfo(id)
-                    }
-
-                    else -> Hidden
-                }
-            },
-        )
-    }
 }
