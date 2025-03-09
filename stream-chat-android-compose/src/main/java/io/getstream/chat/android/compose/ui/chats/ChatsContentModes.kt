@@ -34,17 +34,23 @@ public enum class ListContentMode {
 }
 
 /**
- * The mode for displaying extra content in the chat screen.
+ * The mode for displaying info content in the chat screen.
  *
  * Implements [Serializable] to allow for saving and restoring the state across configuration changes.
  */
-public sealed class ExtraContentMode(public open val id: String) : Serializable {
+public sealed class InfoContentMode(public open val id: String) : Serializable {
     /**
-     * No extra content.
+     * No info content.
      */
-    public data object Hidden : ExtraContentMode("")
+    public data object Hidden : InfoContentMode("")
 
-    public data class SingleChannelInfo(override val id: String) : ExtraContentMode(id)
+    /**
+     * Display the info for a single channel.
+     */
+    public data class SingleChannelInfo(override val id: String) : InfoContentMode(id)
 
-    public data class GroupChannelInfo(override val id: String) : ExtraContentMode(id)
+    /**
+     * Display the info for a group of channels.
+     */
+    public data class GroupChannelInfo(override val id: String) : InfoContentMode(id)
 }

@@ -1,35 +1,40 @@
-package io.getstream.chat.android.compose.ui.chats
+/*
+ * Copyright (c) 2014-2025 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import androidx.compose.runtime.Composable
+package io.getstream.chat.android.compose.ui.util.adaptivelayout
+
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
-import androidx.compose.runtime.saveable.rememberSaveable
-
-public interface ThreePaneNavigator {
-    public fun navigateToInfo(mode: ExtraContentMode)
-    public fun navigateBack()
-}
 
 internal enum class ThreePaneRole { List, Detail, Info }
 
-internal class DefaultThreePaneNavigator(destinations: List<ThreePaneDestination<*>>) : ThreePaneNavigator {
+internal class DefaultThreePaneNavigator(destinations: List<ThreePaneDestination<*>>) {
     private val _destinations = mutableStateListOf(*destinations.toTypedArray())
     val destinations: List<ThreePaneDestination<*>> get() = _destinations
 
     val current: ThreePaneDestination<*> get() = _destinations.last()
 
-    override fun navigateToInfo(mode: ExtraContentMode) {
-        navigateTo(ThreePaneDestination(pane = ThreePaneRole.Info, mode))
-    }
-
-    override fun navigateBack() {
-        if (_destinations.size > 1) _destinations.removeAt(_destinations.lastIndex)
-    }
-
     fun navigateTo(destination: ThreePaneDestination<*>, popUpTo: ThreePaneRole? = null) {
         popUpTo?.let(::popUpTo)
         _destinations.add(destination)
+    }
+
+    fun navigateBack() {
+        if (_destinations.size > 1) _destinations.removeAt(_destinations.lastIndex)
     }
 
     fun popUpTo(pane: ThreePaneRole) {
@@ -40,8 +45,12 @@ internal class DefaultThreePaneNavigator(destinations: List<ThreePaneDestination
 
     companion object {
         val Saver: Saver<DefaultThreePaneNavigator, Any> = listSaver(
-            save = { navigator -> navigator.destinations.map { with(ThreePaneDestination.Saver) { save(it) } } },
-            restore = { state -> DefaultThreePaneNavigator(state.mapNotNull { it?.let(ThreePaneDestination.Saver::restore) }) }
+            save = { navigator ->
+                navigator.destinations.map { with(ThreePaneDestination.Saver) { save(it) } }
+            },
+            restore = { state ->
+                DefaultThreePaneNavigator(state.mapNotNull { it?.let(ThreePaneDestination.Saver::restore) })
+            },
         )
     }
 }
@@ -60,12 +69,7 @@ internal data class ThreePaneDestination<out T>(
     companion object {
         val Saver: Saver<ThreePaneDestination<*>, Any> = listSaver(
             save = { destination -> listOf(destination.pane, destination.arguments) },
-            restore = { state -> ThreePaneDestination(pane = state[0] as ThreePaneRole, arguments = state[1]) }
+            restore = { state -> ThreePaneDestination(pane = state[0] as ThreePaneRole, arguments = state[1]) },
         )
     }
-}
-
-@Composable
-public fun rememberNavigator(): ThreePaneNavigator = rememberSaveable(saver = DefaultThreePaneNavigator.Saver) {
-    DefaultThreePaneNavigator(destinations = listOf(ThreePaneDestination<Unit>(pane = ThreePaneRole.List)))
 }

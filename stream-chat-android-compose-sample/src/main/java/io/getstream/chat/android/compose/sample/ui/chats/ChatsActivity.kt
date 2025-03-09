@@ -55,13 +55,13 @@ import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
 import io.getstream.chat.android.compose.sample.ui.pinned.PinnedMessagesActivity
 import io.getstream.chat.android.compose.ui.channels.SearchMode
 import io.getstream.chat.android.compose.ui.chats.ChatsScreen
-import io.getstream.chat.android.compose.ui.chats.ExtraContentMode
+import io.getstream.chat.android.compose.ui.chats.InfoContentMode
 import io.getstream.chat.android.compose.ui.chats.ListContentMode
-import io.getstream.chat.android.compose.ui.chats.rememberNavigator
+import io.getstream.chat.android.compose.ui.chats.rememberChatsNavigator
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptionItemVisibility
 import io.getstream.chat.android.compose.ui.theme.ChannelOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.AdaptiveLayoutInfo
+import io.getstream.chat.android.compose.ui.util.adaptivelayout.AdaptiveLayoutInfo
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.Channel
@@ -146,12 +146,12 @@ class ChatsActivity : BaseConnectedActivity() {
     @Composable
     private fun ScreenContent() {
         var listContentMode by rememberSaveable { mutableStateOf(ListContentMode.Channels) }
-        val navigator = rememberNavigator()
+        val navigator = rememberChatsNavigator()
         ChatsScreen(
             navigator = navigator,
             channelViewModelFactory = channelViewModelFactory,
             messagesViewModelFactoryProvider = { _, (channelId, messageId, parentMessageId) ->
-                println("alor: messagesViewModelFactoryProvider channelId: $channelId, messageId: $messageId, parentMessageId: $parentMessageId")
+                println("alor: messagesViewModelFactoryProvider: channelId=$channelId, messageId=$messageId, parentMessageId=$parentMessageId")
                 if (channelId == null) {
                     messagesViewModelFactory
                 } else {
@@ -174,21 +174,21 @@ class ChatsActivity : BaseConnectedActivity() {
             },
             onListTopBarActionClick = ::openAddChannel,
             onDetailTopBarTitleClick = { channel ->
-                navigator.navigateToInfo(
+                navigator.navigateToInfoPane(
                     if (channel.isGroupChannel) {
-                        ExtraContentMode.GroupChannelInfo(channel.cid)
+                        InfoContentMode.GroupChannelInfo(channel.cid)
                     } else {
-                        ExtraContentMode.SingleChannelInfo(channel.cid)
+                        InfoContentMode.SingleChannelInfo(channel.cid)
                     },
                 )
             },
             onViewChannelInfoClick = { channel ->
-                navigator.navigateToInfo(
+                navigator.navigateToInfoPane(
                     if (channel.isGroupChannel) {
-                        ExtraContentMode.GroupChannelInfo(channel.cid)
+                        InfoContentMode.GroupChannelInfo(channel.cid)
                     } else {
-                        ExtraContentMode.SingleChannelInfo(channel.cid)
-                    }
+                        InfoContentMode.SingleChannelInfo(channel.cid)
+                    },
                 )
             },
             listBottomBarContent = {
@@ -199,22 +199,22 @@ class ChatsActivity : BaseConnectedActivity() {
                             AppBottomBarOption.CHATS -> ListContentMode.Channels
                             AppBottomBarOption.THREADS -> ListContentMode.Threads
                         }
-                    }
+                    },
                 )
             },
-            extraContent = { mode ->
-                when (mode) {
-                    is ExtraContentMode.SingleChannelInfo -> SingleChannelInfoContent(
-                        channelId = mode.id,
+            infoContent = { arguments ->
+                when (arguments) {
+                    is InfoContentMode.SingleChannelInfo -> SingleChannelInfoContent(
+                        channelId = arguments.id,
                         onNavigationIconClick = { navigator.navigateBack() },
                     )
 
-                    is ExtraContentMode.GroupChannelInfo -> GroupChannelInfoContent(
-                        channelId = mode.id,
+                    is InfoContentMode.GroupChannelInfo -> GroupChannelInfoContent(
+                        channelId = arguments.id,
                         onNavigationIconClick = { navigator.navigateBack() },
                     )
 
-                    ExtraContentMode.Hidden -> Unit
+                    is InfoContentMode.Hidden -> Unit
                 }
             },
         )
