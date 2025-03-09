@@ -21,11 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.window.core.layout.WindowHeightSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
 
-internal object AdaptiveLayoutConstraints {
-    const val LIST_PANE_WEIGHT = 0.3f
-    const val DETAIL_PANE_WEIGHT = 0.7f
-}
-
 /**
  * Provides information about the current adaptive layout.
  *
@@ -44,6 +39,11 @@ public object AdaptiveLayoutInfo {
         return windowSize.windowWidthSizeClass < WindowWidthSizeClass.EXPANDED ||
             windowSize.windowHeightSizeClass < WindowHeightSizeClass.MEDIUM
     }
+}
+
+internal object AdaptiveLayoutConstraints {
+    const val LIST_PANE_WEIGHT = 0.3f
+    const val DETAIL_PANE_WEIGHT = 0.7f
 }
 
 /**

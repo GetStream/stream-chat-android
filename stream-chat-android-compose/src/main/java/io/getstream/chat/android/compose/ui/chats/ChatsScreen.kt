@@ -18,10 +18,8 @@ package io.getstream.chat.android.compose.ui.chats
 
 import android.content.Context
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -38,16 +36,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.listSaver
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
@@ -80,73 +75,7 @@ import io.getstream.chat.android.compose.viewmodel.threads.ThreadsViewModelFacto
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
-
-private data class PaneState(
-    val detail: Detail? = null,
-    val extra: Extra? = null,
-) {
-
-    data class Detail(
-        val channelId: String,
-        val messageId: String? = null,
-        val parentMessageId: String? = null,
-    )
-
-    data class Extra(
-        val mode: ExtraContentMode,
-    )
-
-    companion object {
-        val Saver: Saver<MutableState<PaneState>, *> = listSaver(
-            save = { state ->
-                listOf(
-                    state.value.detail?.run {
-                        listOf(channelId, messageId, parentMessageId)
-                    },
-                    state.value.extra?.run {
-                        with(ExtraContentMode.Saver) { save(mutableStateOf(mode)) }
-                    }
-                )
-            },
-            restore = { state ->
-                val (detail, extra) = state
-                mutableStateOf(PaneState(
-                    detail = (detail as? List<String?>)?.run {
-                        Detail(
-                            channelId = get(0)!!,
-                            messageId = get(1),
-                            parentMessageId = get(2)
-                        )
-                    },
-                    extra = (extra as? String)?.run {
-                        Extra(
-                            mode = ExtraContentMode.Saver.restore(this)!!.value
-                        )
-                    }
-                ))
-            }
-        )
-    }
-}
-
-private fun PaneState.update(
-    viewModelFactory: MessagesViewModelFactory?,
-    extraContentMode: ExtraContentMode,
-): PaneState =
-    copy(
-        detail = viewModelFactory?.let { factory ->
-            PaneState.Detail(
-                factory.channelId,
-                factory.messageId,
-                factory.parentMessageId
-            )
-        },
-        extra = if (viewModelFactory == null || extraContentMode is ExtraContentMode.Hidden) {
-            null
-        } else {
-            PaneState.Extra(mode = extraContentMode)
-        }
-    )
+import io.getstream.chat.android.ui.common.state.messages.MessageMode
 
 /**
  * Represents a complete screen for chat, including a list of channels, threads, and messages.
@@ -180,13 +109,13 @@ private fun PaneState.update(
 @Composable
 public fun ChatsScreen(
     modifier: Modifier = Modifier,
+    navigator: ThreePaneNavigator,
     channelViewModelFactory: ChannelViewModelFactory = ChannelViewModelFactory(),
     threadsViewModelFactory: ThreadsViewModelFactory = ThreadsViewModelFactory(),
     messagesViewModelFactoryProvider: MessagesViewModelFactoryProvider = DefaultMessagesViewModelFactoryProvider(),
     title: String = "Stream Chat",
     searchMode: SearchMode = SearchMode.None,
     listContentMode: ListContentMode = ListContentMode.Channels,
-    extraContentMode: ExtraContentMode = ExtraContentMode.Hidden,
     onBackPress: () -> Unit = {},
     onListTopBarAvatarClick: (User?) -> Unit = {},
     onListTopBarActionClick: () -> Unit = {},
@@ -214,48 +143,44 @@ public fun ChatsScreen(
     },
     extraContent: @Composable (mode: ExtraContentMode) -> Unit = {},
 ) {
+    navigator as DefaultThreePaneNavigator
     val context = LocalContext.current
     val singlePane = AdaptiveLayoutInfo.singlePaneWindow()
 
-    var channelMessagesViewModelFactory by rememberSaveable(
-        saver = factorySaver { selection -> messagesViewModelFactoryProvider(context, selection) },
-    ) {
-        mutableStateOf(messagesViewModelFactoryProvider(context, MessageSelection()))
-    }
     val backPressHandler = {
-        println("alor: backPressHandler channelMessagesViewModelFactory=$channelMessagesViewModelFactory")
-        // Clear the messages view model factory when the user navigates back in single-pane mode
-        if (singlePane && channelMessagesViewModelFactory != null) {
-            channelMessagesViewModelFactory = null
+        //TODO Move to detail pane
+        println("alor: backPressHandler")
+        // Navigate back when the user presses back in single-pane mode
+        if (singlePane && navigator.current.pane != ThreePaneRole.List) {
+            navigator.navigateBack()
         } else {
             onBackPress()
         }
     }
 
-    // Clear the messages view model factory when switching between list content modes
+    // Pop up navigation to the list when switching between list content modes
     DisposableEffect(listContentMode) {
-        onDispose { channelMessagesViewModelFactory = null }
+        onDispose { navigator.popUpTo(ThreePaneRole.List) }
     }
 
-    // Auto-select the first item in the list when it loads on wide screens
-    if (!singlePane) {
-        when (listContentMode) {
-            ListContentMode.Channels -> {
-                FirstChannelLoadHandler(channelViewModelFactory) { selection ->
-                    if (channelMessagesViewModelFactory == null) {
-                        channelMessagesViewModelFactory = messagesViewModelFactoryProvider(context, selection)
-                    }
-                }
-            }
-
-            ListContentMode.Threads -> {
-                FirstThreadLoadHandler(threadsViewModelFactory) { selection ->
-                    if (channelMessagesViewModelFactory == null) {
-                        channelMessagesViewModelFactory = messagesViewModelFactoryProvider(context, selection)
-                    }
-                }
-            }
+    // Initial navigation when the provider returns a factory based on an empty selection
+    LaunchedEffect(Unit) {
+        messagesViewModelFactoryProvider(context, MessageSelection())?.let { viewModelFactory ->
+            navigator.navigateTo(
+                ThreePaneDestination(
+                    pane = ThreePaneRole.Detail,
+                    arguments = MessageSelection(
+                        channelId = viewModelFactory.channelId,
+                        messageId = viewModelFactory.messageId,
+                        parentMessageId = viewModelFactory.parentMessageId
+                    )
+                )
+            )
         }
+    }
+
+    LaunchedEffect(navigator.destinations) {
+        println("alor: navigator.destinations=${navigator.destinations}")
     }
 
     val listPane = remember(listContentMode) {
@@ -277,19 +202,24 @@ public fun ChatsScreen(
                                 isShowingHeader = false,
                                 searchMode = searchMode,
                                 onChannelClick = { channel ->
-                                    channelMessagesViewModelFactory = messagesViewModelFactoryProvider(
-                                        context,
-                                        MessageSelection(channelId = channel.cid),
+                                    navigator.navigateTo(
+                                        destination = ThreePaneDestination(
+                                            pane = ThreePaneRole.Detail,
+                                            arguments = MessageSelection(channelId = channel.cid)
+                                        ),
+                                        popUpTo = ThreePaneRole.List,
                                     )
                                 },
                                 onSearchMessageItemClick = { message ->
-                                    channelMessagesViewModelFactory = messagesViewModelFactoryProvider(
-                                        context,
-                                        MessageSelection(
-                                            channelId = message.cid,
-                                            messageId = message.id,
-                                            parentMessageId = message.parentId,
+                                    navigator.navigateTo(
+                                        destination = ThreePaneDestination(
+                                            pane = ThreePaneRole.Detail,
+                                            arguments = MessageSelection(
+                                                channelId = message.cid,
+                                                messageId = message.id
+                                            )
                                         ),
+                                        popUpTo = ThreePaneRole.List,
                                     )
                                 },
                                 onViewChannelInfoAction = onViewChannelInfoClick,
@@ -305,12 +235,15 @@ public fun ChatsScreen(
                             ThreadList(
                                 viewModel = viewModel,
                                 onThreadClick = { thread ->
-                                    channelMessagesViewModelFactory = messagesViewModelFactoryProvider(
-                                        context,
-                                        MessageSelection(
-                                            channelId = thread.cid,
-                                            parentMessageId = thread.parentMessageId,
+                                    navigator.navigateTo(
+                                        destination = ThreePaneDestination(
+                                            pane = ThreePaneRole.Detail,
+                                            arguments = MessageSelection(
+                                                channelId = thread.cid,
+                                                parentMessageId = thread.parentMessageId
+                                            )
                                         ),
+                                        popUpTo = ThreePaneRole.List,
                                     )
                                 },
                             )
@@ -322,15 +255,8 @@ public fun ChatsScreen(
     }
 
     val detailPane = remember {
-        movableContentOf { detail: PaneState.Detail ->
-            messagesViewModelFactoryProvider(
-                context,
-                MessageSelection(
-                    channelId = detail.channelId,
-                    messageId = detail.messageId,
-                    parentMessageId = detail.parentMessageId
-                )
-            )?.let { viewModelFactory ->
+        movableContentOf { selection: MessageSelection ->
+            messagesViewModelFactoryProvider(context, selection)?.let { viewModelFactory ->
                 DetailPane(
                     viewModelFactory = viewModelFactory,
                     topBarContent = detailTopBarContent,
@@ -341,40 +267,39 @@ public fun ChatsScreen(
         }
     }
 
-    var paneState by rememberSaveable(saver = PaneState.Saver) { mutableStateOf(PaneState()) }
-    LaunchedEffect(channelMessagesViewModelFactory, extraContentMode) {
-        println("alor: channelMessagesViewModelFactory=$channelMessagesViewModelFactory extraContentMode=$extraContentMode")
-        paneState = paneState.update(channelMessagesViewModelFactory, extraContentMode)
-        println("alor: navigation=$paneState")
-    }
-
     if (singlePane) {
         Box(
             modifier = modifier,
         ) {
             AnimatedContent(
-                targetState = paneState,
+                targetState = navigator.current,
                 transitionSpec = {
-                    val isNavigatingForward =
-                        (targetState.detail != null && initialState.detail == null) ||
-                            (targetState.extra != null && initialState.extra == null)
+                    val isNavigatingForward = navigator.destinations.contains(initialState)
                     slideContentTransform(isNavigatingForward = isNavigatingForward)
                 },
-            ) { state ->
-                if (state.detail == null) {
-                    listPane(Modifier)
-                }
-
-                if (state.detail != null) {
-                    detailPane(state.detail)
-                }
-
-                if (state.extra != null) {
-                    extraContent(state.extra.mode)
+            ) { destination ->
+                when (destination.pane) {
+                    ThreePaneRole.List -> listPane(Modifier)
+                    ThreePaneRole.Detail -> detailPane(destination.arguments as MessageSelection)
+                    ThreePaneRole.Info -> extraContent(destination.arguments as ExtraContentMode)
                 }
             }
         }
     } else {
+        // Auto-select the first item in the list when it loads on wide screens
+        when (listContentMode) {
+            ListContentMode.Channels -> {
+                FirstChannelLoadHandler(channelViewModelFactory) { selection ->
+                    navigator.navigateTo(ThreePaneDestination(ThreePaneRole.Detail, selection))
+                }
+            }
+
+            ListContentMode.Threads -> {
+                FirstThreadLoadHandler(threadsViewModelFactory) { selection ->
+                    navigator.navigateTo(ThreePaneDestination(ThreePaneRole.Detail, selection))
+                }
+            }
+        }
         Row(
             modifier = modifier,
         ) {
@@ -389,23 +314,25 @@ public fun ChatsScreen(
                     .weight(AdaptiveLayoutConstraints.DETAIL_PANE_WEIGHT)
                     .onSizeChanged { size -> detailPaneSize = size },
             ) {
+                val detail by remember(navigator.destinations) { derivedStateOf { navigator.destinations.firstOrNull { it.pane == ThreePaneRole.Detail } } }
                 Crossfade(
                     modifier = Modifier.weight(1f),
-                    targetState = paneState.detail,
-                ) { detail ->
-                    if (detail != null) {
-                        detailPane(detail)
+                    targetState = detail,
+                ) { state ->
+                    if (state != null) {
+                        detailPane(state.arguments as MessageSelection)
                     }
                 }
+                val info by remember(navigator.destinations) { derivedStateOf { navigator.destinations.firstOrNull { it.pane == ThreePaneRole.Info } } }
                 val extraPaneOffsetX by animateFloatAsState(
-                    targetValue = if (paneState.extra == null) {
+                    targetValue = if (info == null) {
                         detailPaneSize.width / 2f
                     } else {
                         0f
                     },
                 )
                 val extraPaneWeight by animateFloatAsState(
-                    targetValue = if (paneState.extra == null) {
+                    targetValue = if (info == null) {
                         0f
                     } else {
                         1f
@@ -417,12 +344,12 @@ public fun ChatsScreen(
                     ) {
                         Crossfade(
                             modifier = Modifier.offset { IntOffset(x = extraPaneOffsetX.toInt(), y = 0) },
-                            targetState = paneState.extra,
-                        ) { extra ->
-                            if (extra != null) {
+                            targetState = info,
+                        ) { state ->
+                            if (state != null) {
                                 Row {
                                     VerticalDivider()
-                                    extraContent(extra.mode)
+                                    extraContent(state.arguments as ExtraContentMode)
                                 }
                             }
                         }
@@ -442,9 +369,11 @@ private fun FirstChannelLoadHandler(
     block: (selection: MessageSelection) -> Unit,
 ) {
     val viewModel = viewModel(ChannelListViewModel::class.java, factory = channelViewModelFactory)
+    val isLoading = viewModel.channelsState.isLoading
     val itemList = viewModel.channelsState.channelItems
-    LaunchedEffect(itemList) {
-        if (itemList.isNotEmpty()) {
+    LaunchedEffect(isLoading) {
+        if (!isLoading && itemList.isNotEmpty()) {
+            println("alor: FirstChannelLoadHandler")
             when (val item = itemList.first()) {
                 is ItemState.ChannelItemState ->
                     block(MessageSelection(channelId = item.channel.cid))
@@ -472,9 +401,11 @@ private fun FirstThreadLoadHandler(
 ) {
     val viewModel = viewModel(ThreadListViewModel::class.java, factory = threadsViewModelFactory)
     val state by viewModel.state.collectAsState()
+    val isLoading = state.isLoading
     val threadList = state.threads
-    LaunchedEffect(threadList) {
-        if (threadList.isNotEmpty()) {
+    LaunchedEffect(isLoading) {
+        if (!isLoading && threadList.isNotEmpty()) {
+            println("alor: FirstThreadLoadHandler")
             val thread = threadList.first()
             block(
                 MessageSelection(
@@ -563,8 +494,8 @@ private fun DetailPane(
     bottomBarContent: @Composable (viewModelFactory: MessagesViewModelFactory) -> Unit,
     onBackPress: () -> Unit,
 ) {
-    // Restart composition on every new instance of the factory
-    key(viewModelFactory) {
+    // Restart composition on every new combination of values
+    key(viewModelFactory.channelId, viewModelFactory.messageId, viewModelFactory.parentMessageId) {
         // Scope messages view models to a local store
         // so that they are cleared when the user navigates between channels
         val viewModelStore = remember { ViewModelStore() }
@@ -595,20 +526,12 @@ private fun DetailPane(
 /**
  * The content transform used for animating the content when navigating in single-pane mode.
  */
-private fun AnimatedContentTransitionScope<*>.slideContentTransform(
-    isNavigatingForward: Boolean,
-): ContentTransform =
-    (
-        fadeIn() +
-            slideInHorizontally(initialOffsetX = { fullWidth -> if (isNavigatingForward) fullWidth else -fullWidth })
-            togetherWith
-            slideOutHorizontally(targetOffsetX = { fullWidth -> if (isNavigatingForward) -fullWidth else fullWidth }) +
-            fadeOut()
-        )
-        .using(
-            // Disable clipping to allow content to slide out fully
-            SizeTransform(clip = false),
-        )
+private fun slideContentTransform(isNavigatingForward: Boolean): ContentTransform =
+    (fadeIn() +
+        slideInHorizontally(initialOffsetX = { fullWidth -> if (isNavigatingForward) fullWidth else -fullWidth })
+        togetherWith
+        slideOutHorizontally(targetOffsetX = { fullWidth -> if (isNavigatingForward) -fullWidth else fullWidth }) +
+        fadeOut())
 
 private class DefaultMessagesViewModelFactoryProvider : MessagesViewModelFactoryProvider {
     override fun invoke(context: Context, selection: MessageSelection): MessagesViewModelFactory? =
@@ -623,30 +546,3 @@ private class DefaultMessagesViewModelFactoryProvider : MessagesViewModelFactory
             )
         }
 }
-
-/**
- * This [Saver] is used to save and restore the state of the [MessagesViewModelFactory]
- * across configuration changes and process death.
- * It saves the channel ID, message ID, and parent message ID of the factory.
- */
-private fun factorySaver(
-    messagesViewModelFactory: (selection: MessageSelection) -> MessagesViewModelFactory?,
-): Saver<MutableState<MessagesViewModelFactory?>, *> = listSaver(
-    save = { state ->
-        state.value?.let { factory ->
-            listOf(factory.channelId, factory.messageId, factory.parentMessageId)
-        } ?: emptyList()
-    },
-    restore = { state ->
-        if (state.isEmpty()) {
-            mutableStateOf(null)
-        } else {
-            val channelId = state[0]
-            val messageId = state[1]
-            val parentMessageId = state[2]
-            mutableStateOf(
-                messagesViewModelFactory(MessageSelection(channelId, messageId, parentMessageId)),
-            )
-        }
-    },
-)

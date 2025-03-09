@@ -57,7 +57,7 @@ import io.getstream.chat.android.compose.ui.channels.SearchMode
 import io.getstream.chat.android.compose.ui.chats.ChatsScreen
 import io.getstream.chat.android.compose.ui.chats.ExtraContentMode
 import io.getstream.chat.android.compose.ui.chats.ListContentMode
-import io.getstream.chat.android.compose.ui.chats.rememberExtraContentMode
+import io.getstream.chat.android.compose.ui.chats.rememberNavigator
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptionItemVisibility
 import io.getstream.chat.android.compose.ui.theme.ChannelOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -146,12 +146,12 @@ class ChatsActivity : BaseConnectedActivity() {
     @Composable
     private fun ScreenContent() {
         var listContentMode by rememberSaveable { mutableStateOf(ListContentMode.Channels) }
-        var extraContentMode by rememberExtraContentMode()
+        val navigator = rememberNavigator()
         ChatsScreen(
+            navigator = navigator,
             channelViewModelFactory = channelViewModelFactory,
             messagesViewModelFactoryProvider = { _, (channelId, messageId, parentMessageId) ->
-                // TODO Reset extra content mode when switching channels
-                // extraContentMode = ExtraContentMode.Hidden // Reset extra content mode when switching channels
+                println("alor: messagesViewModelFactoryProvider channelId: $channelId, messageId: $messageId, parentMessageId: $parentMessageId")
                 if (channelId == null) {
                     messagesViewModelFactory
                 } else {
@@ -165,7 +165,6 @@ class ChatsActivity : BaseConnectedActivity() {
             title = stringResource(id = R.string.app_name),
             searchMode = SearchMode.Messages,
             listContentMode = listContentMode,
-            extraContentMode = extraContentMode,
             onBackPress = ::finish,
             onListTopBarAvatarClick = {
                 lifecycleScope.launch {
@@ -175,18 +174,22 @@ class ChatsActivity : BaseConnectedActivity() {
             },
             onListTopBarActionClick = ::openAddChannel,
             onDetailTopBarTitleClick = { channel ->
-                extraContentMode = if (channel.isGroupChannel) {
-                    ExtraContentMode.GroupChannelInfo(channel.cid)
-                } else {
-                    ExtraContentMode.SingleChannelInfo(channel.cid)
-                }
+                navigator.navigateToInfo(
+                    if (channel.isGroupChannel) {
+                        ExtraContentMode.GroupChannelInfo(channel.cid)
+                    } else {
+                        ExtraContentMode.SingleChannelInfo(channel.cid)
+                    },
+                )
             },
             onViewChannelInfoClick = { channel ->
-                extraContentMode = if (channel.isGroupChannel) {
-                    ExtraContentMode.GroupChannelInfo(channel.cid)
-                } else {
-                    ExtraContentMode.SingleChannelInfo(channel.cid)
-                }
+                navigator.navigateToInfo(
+                    if (channel.isGroupChannel) {
+                        ExtraContentMode.GroupChannelInfo(channel.cid)
+                    } else {
+                        ExtraContentMode.SingleChannelInfo(channel.cid)
+                    }
+                )
             },
             listBottomBarContent = {
                 ListFooterContent(
@@ -203,12 +206,12 @@ class ChatsActivity : BaseConnectedActivity() {
                 when (mode) {
                     is ExtraContentMode.SingleChannelInfo -> SingleChannelInfoContent(
                         channelId = mode.id,
-                        onNavigationIconClick = { extraContentMode = ExtraContentMode.Hidden },
+                        onNavigationIconClick = { navigator.navigateBack() },
                     )
 
                     is ExtraContentMode.GroupChannelInfo -> GroupChannelInfoContent(
                         channelId = mode.id,
-                        onNavigationIconClick = { extraContentMode = ExtraContentMode.Hidden },
+                        onNavigationIconClick = { navigator.navigateBack() },
                     )
 
                     ExtraContentMode.Hidden -> Unit
