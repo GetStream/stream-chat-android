@@ -68,10 +68,10 @@ public class ThreePaneNavigator(
     internal companion object {
         val Saver: Saver<ThreePaneNavigator, Any> = listSaver(
             save = { navigator ->
-                navigator.destinations.map { with(ThreePaneDestination.Saver) { save(it) } }
+                navigator.destinations.mapNotNull { with(ThreePaneDestination.Saver) { save(it) } }
             },
             restore = { state ->
-                ThreePaneNavigator(state.mapNotNull { it?.let(ThreePaneDestination.Saver::restore) })
+                ThreePaneNavigator(state.mapNotNull(ThreePaneDestination.Saver::restore))
             },
         )
     }
