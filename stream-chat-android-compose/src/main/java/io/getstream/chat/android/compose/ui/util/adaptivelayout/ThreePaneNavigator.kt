@@ -30,6 +30,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 public class ThreePaneNavigator(
     destinations: List<ThreePaneDestination<*>> = listOf(ThreePaneDestination<Unit>(pane = ThreePaneRole.List)),
 ) {
+    @Suppress("SpreadOperator")
     private val _destinations = mutableStateListOf(*destinations.toTypedArray())
     internal val destinations: List<ThreePaneDestination<*>> get() = _destinations.toList()
 

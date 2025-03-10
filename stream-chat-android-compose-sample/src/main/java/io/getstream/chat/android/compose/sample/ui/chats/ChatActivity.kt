@@ -62,6 +62,7 @@ import io.getstream.chat.android.compose.ui.theme.ChannelOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.AdaptiveLayoutInfo
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneDestination
+import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneNavigator
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneRole
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.rememberThreePaneNavigator
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
@@ -174,30 +175,8 @@ class ChatActivity : BaseConnectedActivity() {
                 }
             },
             onListTopBarActionClick = ::openAddChannel,
-            onDetailTopBarTitleClick = { channel ->
-                navigator.navigateTo(
-                    destination = ThreePaneDestination(
-                        pane = ThreePaneRole.Info,
-                        arguments = if (channel.isGroupChannel) {
-                            ChatInfoContentMode.GroupChannelInfo(channel.cid)
-                        } else {
-                            ChatInfoContentMode.SingleChannelInfo(channel.cid)
-                        },
-                    ),
-                )
-            },
-            onViewChannelInfoClick = { channel ->
-                navigator.navigateTo(
-                    destination = ThreePaneDestination(
-                        pane = ThreePaneRole.Info,
-                        arguments = if (channel.isGroupChannel) {
-                            ChatInfoContentMode.GroupChannelInfo(channel.cid)
-                        } else {
-                            ChatInfoContentMode.SingleChannelInfo(channel.cid)
-                        },
-                    ),
-                )
-            },
+            onDetailTopBarTitleClick = navigator::navigateToChannelInfo,
+            onViewChannelInfoClick = navigator::navigateToChannelInfo,
             listBottomBarContent = {
                 ListFooterContent(
                     listContentMode = listContentMode,
@@ -334,6 +313,19 @@ private fun CloseButton(onClick: () -> Unit) {
             tint = ChatTheme.colors.textHighEmphasis,
         )
     }
+}
+
+private fun ThreePaneNavigator.navigateToChannelInfo(channel: Channel) {
+    navigateTo(
+        destination = ThreePaneDestination(
+            pane = ThreePaneRole.Info,
+            arguments = if (channel.isGroupChannel) {
+                ChatInfoContentMode.GroupChannelInfo(channel.cid)
+            } else {
+                ChatInfoContentMode.SingleChannelInfo(channel.cid)
+            },
+        ),
+    )
 }
 
 private val Channel.isGroupChannel: Boolean

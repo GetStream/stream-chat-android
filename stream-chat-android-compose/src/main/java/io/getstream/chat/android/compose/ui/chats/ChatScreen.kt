@@ -314,25 +314,37 @@ public fun ChatScreen(
                     .weight(AdaptiveLayoutConstraints.DETAIL_PANE_WEIGHT)
                     .onSizeChanged { size -> detailPaneSize = size },
             ) {
-                val detail by remember(navigator.destinations) { derivedStateOf { navigator.destinations.firstOrNull { it.pane == ThreePaneRole.Detail } } }
+                val detailDestination by remember(navigator.destinations) {
+                    derivedStateOf {
+                        navigator.destinations.lastOrNull { destination ->
+                            destination.pane == ThreePaneRole.Detail
+                        }
+                    }
+                }
                 Crossfade(
                     modifier = Modifier.weight(1f),
-                    targetState = detail,
+                    targetState = detailDestination,
                 ) { state ->
                     if (state != null) {
                         detailPane(state.arguments as ChatMessageSelection)
                     }
                 }
-                val info by remember(navigator.destinations) { derivedStateOf { navigator.destinations.firstOrNull { it.pane == ThreePaneRole.Info } } }
+                val infoDestination by remember(navigator.destinations) {
+                    derivedStateOf {
+                        navigator.destinations.lastOrNull { destination ->
+                            destination.pane == ThreePaneRole.Info
+                        }
+                    }
+                }
                 val infoPaneOffsetX by animateFloatAsState(
-                    targetValue = if (info == null) {
+                    targetValue = if (infoDestination == null) {
                         detailPaneSize.width / 2f
                     } else {
                         0f
                     },
                 )
                 val infoPaneWeight by animateFloatAsState(
-                    targetValue = if (info == null) {
+                    targetValue = if (infoDestination == null) {
                         0f
                     } else {
                         1f
@@ -344,7 +356,7 @@ public fun ChatScreen(
                     ) {
                         Crossfade(
                             modifier = Modifier.offset { IntOffset(x = infoPaneOffsetX.toInt(), y = 0) },
-                            targetState = info,
+                            targetState = infoDestination,
                         ) { state ->
                             if (state != null) {
                                 Row {

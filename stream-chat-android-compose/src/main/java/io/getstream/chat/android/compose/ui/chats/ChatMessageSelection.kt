@@ -23,6 +23,7 @@ import java.io.Serializable
  *
  * Implements [Serializable] to allow for saving and restoring the state across configuration changes.
  */
+@Suppress("SerialVersionUIDInSerializableClass")
 public data class ChatMessageSelection(
     /**
      * The ID of the selected channel, or `null` if no channel is selected.

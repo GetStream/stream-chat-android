@@ -25,6 +25,7 @@ import java.io.Serializable
  *
  * @param channelId The ID of the channel to display the info for.
  */
+@Suppress("SerialVersionUIDInSerializableClass")
 sealed class ChatInfoContentMode(open val channelId: String) : Serializable {
     /**
      * No info content.
