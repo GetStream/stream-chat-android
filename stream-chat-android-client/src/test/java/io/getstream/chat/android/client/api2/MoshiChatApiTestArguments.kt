@@ -490,7 +490,7 @@ internal object MoshiChatApiTestArguments {
 
     private fun deleteFileArguments() = listOf(
         Arguments.of(Result.Success(Unit), Result.Success::class),
-        Arguments.of(Result.Failure(Error.GenericError(randomString())), Result.Success::class),
+        Arguments.of(Result.Failure(Error.GenericError(randomString())), Result.Failure::class),
     )
 
     private fun flagResponseArguments() = listOf(
