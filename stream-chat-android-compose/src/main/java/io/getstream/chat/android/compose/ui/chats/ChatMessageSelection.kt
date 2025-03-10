@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.chats
 
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import java.io.Serializable
 
 /**
@@ -23,6 +24,7 @@ import java.io.Serializable
  *
  * Implements [Serializable] to allow for saving and restoring the state across configuration changes.
  */
+@ExperimentalStreamChatApi
 @Suppress("SerialVersionUIDInSerializableClass")
 public data class ChatMessageSelection(
     /**

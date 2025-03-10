@@ -16,9 +16,12 @@
 
 package io.getstream.chat.android.compose.ui.chats
 
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
+
 /**
  * The mode for displaying the list content in the chat screen.
  */
+@ExperimentalStreamChatApi
 public enum class ListContentMode {
     /**
      * Display the list of channels.
