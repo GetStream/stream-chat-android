@@ -16,29 +16,30 @@
 
 package io.getstream.chat.android.compose.sample.ui.chats
 
+import io.getstream.chat.android.compose.ui.chats.ChatsScreen
 import java.io.Serializable
 
 /**
- * The mode for displaying info content in the chat screen.
+ * The mode for displaying info content in the [ChatsScreen].
  *
  * Implements [Serializable] to allow for saving and restoring the state across configuration changes.
  *
  * @param channelId The ID of the channel to display the info for.
  */
 @Suppress("SerialVersionUIDInSerializableClass")
-sealed class ChatInfoContentMode(open val channelId: String) : Serializable {
+sealed class InfoContentMode(open val channelId: String) : Serializable {
     /**
      * No info content.
      */
-    data object Hidden : ChatInfoContentMode("")
+    data object Hidden : InfoContentMode("")
 
     /**
      * Display the info for a single channel.
      */
-    data class SingleChannelInfo(override val channelId: String) : ChatInfoContentMode(channelId)
+    data class SingleChannelInfo(override val channelId: String) : InfoContentMode(channelId)
 
     /**
      * Display the info for a group of channels.
      */
-    data class GroupChannelInfo(override val channelId: String) : ChatInfoContentMode(channelId)
+    data class GroupChannelInfo(override val channelId: String) : InfoContentMode(channelId)
 }

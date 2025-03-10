@@ -769,12 +769,12 @@ public final class io/getstream/chat/android/compose/ui/chats/ChatMessageSelecti
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/compose/ui/chats/ChatScreenKt {
-	public static final fun ChatScreen (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneNavigator;Lio/getstream/chat/android/compose/viewmodel/channels/ChannelViewModelFactory;Lio/getstream/chat/android/compose/viewmodel/threads/ThreadsViewModelFactory;Lkotlin/jvm/functions/Function2;Ljava/lang/String;Lio/getstream/chat/android/compose/ui/channels/SearchMode;Lio/getstream/chat/android/compose/ui/chats/ListContentMode;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
+public final class io/getstream/chat/android/compose/ui/chats/ChatsScreenKt {
+	public static final fun ChatsScreen (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneNavigator;Lio/getstream/chat/android/compose/viewmodel/channels/ChannelViewModelFactory;Lio/getstream/chat/android/compose/viewmodel/threads/ThreadsViewModelFactory;Lkotlin/jvm/functions/Function2;Ljava/lang/String;Lio/getstream/chat/android/compose/ui/channels/SearchMode;Lio/getstream/chat/android/compose/ui/chats/ListContentMode;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
 }
 
-public final class io/getstream/chat/android/compose/ui/chats/ComposableSingletons$ChatScreenKt {
-	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/chats/ComposableSingletons$ChatScreenKt;
+public final class io/getstream/chat/android/compose/ui/chats/ComposableSingletons$ChatsScreenKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/chats/ComposableSingletons$ChatsScreenKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function2;
 	public static field lambda-2 Lkotlin/jvm/functions/Function3;
 	public static field lambda-3 Lkotlin/jvm/functions/Function3;

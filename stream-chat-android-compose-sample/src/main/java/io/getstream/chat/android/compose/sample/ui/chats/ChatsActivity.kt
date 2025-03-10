@@ -55,7 +55,7 @@ import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponent
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
 import io.getstream.chat.android.compose.sample.ui.pinned.PinnedMessagesActivity
 import io.getstream.chat.android.compose.ui.channels.SearchMode
-import io.getstream.chat.android.compose.ui.chats.ChatScreen
+import io.getstream.chat.android.compose.ui.chats.ChatsScreen
 import io.getstream.chat.android.compose.ui.chats.ListContentMode
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptionItemVisibility
 import io.getstream.chat.android.compose.ui.theme.ChannelOptionsTheme
@@ -74,7 +74,7 @@ import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import kotlinx.coroutines.launch
 
-class ChatActivity : BaseConnectedActivity() {
+class ChatsActivity : BaseConnectedActivity() {
 
     companion object {
         private const val KEY_CHANNEL_ID = "channelId"
@@ -87,7 +87,7 @@ class ChatActivity : BaseConnectedActivity() {
             messageId: String? = null,
             parentMessageId: String? = null,
         ): Intent =
-            Intent(context, ChatActivity::class.java)
+            Intent(context, ChatsActivity::class.java)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 .putExtra(KEY_CHANNEL_ID, channelId)
                 .putExtra(KEY_MESSAGE_ID, messageId)
@@ -150,7 +150,7 @@ class ChatActivity : BaseConnectedActivity() {
     private fun ScreenContent() {
         var listContentMode by rememberSaveable { mutableStateOf(ListContentMode.Channels) }
         val navigator = rememberThreePaneNavigator()
-        ChatScreen(
+        ChatsScreen(
             navigator = navigator,
             channelViewModelFactory = channelViewModelFactory,
             messagesViewModelFactoryProvider = { _, (channelId, messageId, parentMessageId) ->
@@ -193,17 +193,17 @@ class ChatActivity : BaseConnectedActivity() {
                 BackHandler(enabled = navigator.canNavigateBack()) { navigator.navigateBack() }
 
                 when (arguments) {
-                    is ChatInfoContentMode.SingleChannelInfo -> SingleChannelInfoContent(
+                    is InfoContentMode.SingleChannelInfo -> SingleChannelInfoContent(
                         channelId = arguments.channelId,
                         onNavigationIconClick = { navigator.navigateBack() },
                     )
 
-                    is ChatInfoContentMode.GroupChannelInfo -> GroupChannelInfoContent(
+                    is InfoContentMode.GroupChannelInfo -> GroupChannelInfoContent(
                         channelId = arguments.channelId,
                         onNavigationIconClick = { navigator.navigateBack() },
                     )
 
-                    is ChatInfoContentMode.Hidden -> Unit
+                    is InfoContentMode.Hidden -> Unit
                 }
             },
         )
@@ -320,9 +320,9 @@ private fun ThreePaneNavigator.navigateToChannelInfo(channel: Channel) {
         destination = ThreePaneDestination(
             pane = ThreePaneRole.Info,
             arguments = if (channel.isGroupChannel) {
-                ChatInfoContentMode.GroupChannelInfo(channel.cid)
+                InfoContentMode.GroupChannelInfo(channel.cid)
             } else {
-                ChatInfoContentMode.SingleChannelInfo(channel.cid)
+                InfoContentMode.SingleChannelInfo(channel.cid)
             },
         ),
     )

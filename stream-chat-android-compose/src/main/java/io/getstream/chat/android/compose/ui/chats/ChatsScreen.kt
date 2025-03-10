@@ -97,9 +97,8 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
  * When the initial [MessagesViewModelFactory] is requested (before a channel is selected),
  * `channelId`, `messageId`, and `parentMessageId` are `null`.
  * @param title The title displayed in the list pane top bar. Default is `"Stream Chat"`.
- * @param searchMode The current search mode for the chat screen. Default is [SearchMode.None].
- * @param listContentMode The mode for displaying the list content in the chat screen.
- * Default is [ListContentMode.Channels].
+ * @param searchMode The current search mode. Default is [SearchMode.None].
+ * @param listContentMode The mode for displaying the list content. Default is [ListContentMode.Channels].
  * @param onBackPress Callback invoked when the user presses the back button.
  * @param onListTopBarAvatarClick Callback invoked when the user clicks on the avatar in the list pane top bar.
  * @param onListTopBarActionClick Callback invoked when the user clicks on the action icon in the list pane top bar.
@@ -114,7 +113,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
 @ExperimentalStreamChatApi
 @Suppress("LongMethod")
 @Composable
-public fun ChatScreen(
+public fun ChatsScreen(
     modifier: Modifier = Modifier,
     navigator: ThreePaneNavigator = rememberThreePaneNavigator(),
     channelViewModelFactory: ChannelViewModelFactory = ChannelViewModelFactory(),
