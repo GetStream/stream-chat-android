@@ -80,7 +80,7 @@ public class ThreePaneNavigator(
 /**
  * Represents a destination in the three-pane navigation system.
  *
- * @param T The type of the arguments associated with the destination. It must be serializable.
+ * @param T The type of the arguments associated with the destination. **It must be serializable**.
  * @property pane The pane destination of the navigation.
  * @property arguments The optional arguments to pass to the destination.
  */
