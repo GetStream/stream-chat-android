@@ -884,6 +884,9 @@ public final class io/getstream/chat/android/models/Filters {
 	public static final fun lessThanEquals (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/models/FilterObject;
 	public static final fun ne (Ljava/lang/String;Ljava/lang/Object;)Lio/getstream/chat/android/models/FilterObject;
 	public static final fun neutral ()Lio/getstream/chat/android/models/FilterObject;
+	public static final fun nin (Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/models/FilterObject;
+	public static final fun nin (Ljava/lang/String;[Ljava/lang/Number;)Lio/getstream/chat/android/models/FilterObject;
+	public static final fun nin (Ljava/lang/String;[Ljava/lang/String;)Lio/getstream/chat/android/models/FilterObject;
 	public static final fun nor ([Lio/getstream/chat/android/models/FilterObject;)Lio/getstream/chat/android/models/FilterObject;
 	public static final fun notExists (Ljava/lang/String;)Lio/getstream/chat/android/models/FilterObject;
 	public static final fun or ([Lio/getstream/chat/android/models/FilterObject;)Lio/getstream/chat/android/models/FilterObject;
@@ -1428,6 +1431,18 @@ public final class io/getstream/chat/android/models/NotExistsFilterObject : io/g
 	public final fun component1 ()Ljava/lang/String;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFieldName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/models/NotInFilterObject : io/getstream/chat/android/models/FilterObject {
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Set;
+	public final fun copy (Ljava/lang/String;Ljava/util/Set;)Lio/getstream/chat/android/models/NotInFilterObject;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/NotInFilterObject;Ljava/lang/String;Ljava/util/Set;ILjava/lang/Object;)Lio/getstream/chat/android/models/NotInFilterObject;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFieldName ()Ljava/lang/String;
+	public final fun getValues ()Ljava/util/Set;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
