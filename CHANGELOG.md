@@ -22,6 +22,7 @@
 
 ### ✅ Added
 - Add a way to inject a TokenProvider from PN on the case an expired token needs to be refreshed. [#5655](https://github.com/GetStream/stream-chat-android/pull/5655)
+- Recover deprecated `NotInFilterObject` to avoid breaking changes. [#5672](https://github.com/GetStream/stream-chat-android/pull/5672)
 
 ### ⚠️ Changed
 
