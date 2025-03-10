@@ -19,14 +19,14 @@ package io.getstream.chat.android.compose.ui.chats
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
-import io.getstream.chat.android.compose.ui.util.adaptivelayout.DefaultThreePaneNavigator
+import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneNavigator
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneDestination
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneRole
 
 /**
  * Represents the navigator that can be used to navigate between the different destination in the chat screen.
  */
-public class ChatsNavigator internal constructor(internal val navigator: DefaultThreePaneNavigator) {
+public class ChatsNavigator internal constructor(internal val navigator: ThreePaneNavigator) {
 
     /**
      * Navigates to the info pane with the provided [infoContentMode].
@@ -44,8 +44,8 @@ public class ChatsNavigator internal constructor(internal val navigator: Default
 
     internal companion object {
         val Saver: Saver<ChatsNavigator, Any> = Saver(
-            save = { navigator -> with(DefaultThreePaneNavigator.Saver) { save(navigator.navigator) } },
-            restore = { state -> DefaultThreePaneNavigator.Saver.restore(state)?.let(::ChatsNavigator) },
+            save = { navigator -> with(ThreePaneNavigator.Saver) { save(navigator.navigator) } },
+            restore = { state -> ThreePaneNavigator.Saver.restore(state)?.let(::ChatsNavigator) },
         )
     }
 }
@@ -55,9 +55,5 @@ public class ChatsNavigator internal constructor(internal val navigator: Default
  */
 @Composable
 public fun rememberChatsNavigator(): ChatsNavigator = rememberSaveable(saver = ChatsNavigator.Saver) {
-    ChatsNavigator(
-        navigator = DefaultThreePaneNavigator(
-            destinations = listOf(ThreePaneDestination<Unit>(pane = ThreePaneRole.List)),
-        ),
-    )
+    ChatsNavigator(navigator = ThreePaneNavigator())
 }

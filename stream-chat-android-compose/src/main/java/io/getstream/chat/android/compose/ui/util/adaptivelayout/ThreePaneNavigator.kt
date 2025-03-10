@@ -22,7 +22,14 @@ import androidx.compose.runtime.saveable.listSaver
 
 internal enum class ThreePaneRole { List, Detail, Info }
 
-internal class DefaultThreePaneNavigator(destinations: List<ThreePaneDestination<*>>) {
+/**
+ * The navigator used to navigate between the different destinations in the three-pane layout.
+ *
+ * @param destinations The list of destinations to start with. Defaults to a single destination in the list pane.
+ */
+internal class ThreePaneNavigator(
+    destinations: List<ThreePaneDestination<*>> = listOf(ThreePaneDestination<Unit>(pane = ThreePaneRole.List))
+) {
     private val _destinations = mutableStateListOf(*destinations.toTypedArray())
     val destinations: List<ThreePaneDestination<*>> get() = _destinations
 
@@ -44,12 +51,12 @@ internal class DefaultThreePaneNavigator(destinations: List<ThreePaneDestination
     }
 
     companion object {
-        val Saver: Saver<DefaultThreePaneNavigator, Any> = listSaver(
+        val Saver: Saver<ThreePaneNavigator, Any> = listSaver(
             save = { navigator ->
                 navigator.destinations.map { with(ThreePaneDestination.Saver) { save(it) } }
             },
             restore = { state ->
-                DefaultThreePaneNavigator(state.mapNotNull { it?.let(ThreePaneDestination.Saver::restore) })
+                ThreePaneNavigator(state.mapNotNull { it?.let(ThreePaneDestination.Saver::restore) })
             },
         )
     }

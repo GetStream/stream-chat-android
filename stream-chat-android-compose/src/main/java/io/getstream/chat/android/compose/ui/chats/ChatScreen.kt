@@ -110,7 +110,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
 @ExperimentalStreamChatApi
 @Suppress("LongMethod")
 @Composable
-public fun ChatsScreen(
+public fun ChatScreen(
     modifier: Modifier = Modifier,
     navigator: ChatsNavigator,
     channelViewModelFactory: ChannelViewModelFactory = ChannelViewModelFactory(),
@@ -168,11 +168,11 @@ public fun ChatsScreen(
 
     // Initial navigation when the provider returns a factory based on an empty selection
     LaunchedEffect(Unit) {
-        messagesViewModelFactoryProvider(context, MessageSelection())?.let { viewModelFactory ->
+        messagesViewModelFactoryProvider(context, ChatMessageSelection())?.let { viewModelFactory ->
             internalNavigator.navigateTo(
                 ThreePaneDestination(
                     pane = ThreePaneRole.Detail,
-                    arguments = MessageSelection(
+                    arguments = ChatMessageSelection(
                         channelId = viewModelFactory.channelId,
                         messageId = viewModelFactory.messageId,
                         parentMessageId = viewModelFactory.parentMessageId,
@@ -208,7 +208,7 @@ public fun ChatsScreen(
                                     internalNavigator.navigateTo(
                                         destination = ThreePaneDestination(
                                             pane = ThreePaneRole.Detail,
-                                            arguments = MessageSelection(channelId = channel.cid),
+                                            arguments = ChatMessageSelection(channelId = channel.cid),
                                         ),
                                         popUpTo = ThreePaneRole.List,
                                     )
@@ -217,7 +217,7 @@ public fun ChatsScreen(
                                     internalNavigator.navigateTo(
                                         destination = ThreePaneDestination(
                                             pane = ThreePaneRole.Detail,
-                                            arguments = MessageSelection(
+                                            arguments = ChatMessageSelection(
                                                 channelId = message.cid,
                                                 messageId = message.id,
                                             ),
@@ -241,7 +241,7 @@ public fun ChatsScreen(
                                     internalNavigator.navigateTo(
                                         destination = ThreePaneDestination(
                                             pane = ThreePaneRole.Detail,
-                                            arguments = MessageSelection(
+                                            arguments = ChatMessageSelection(
                                                 channelId = thread.cid,
                                                 parentMessageId = thread.parentMessageId,
                                             ),
@@ -258,7 +258,7 @@ public fun ChatsScreen(
     }
 
     val detailPane = remember {
-        movableContentOf { selection: MessageSelection ->
+        movableContentOf { selection: ChatMessageSelection ->
             messagesViewModelFactoryProvider(context, selection)?.let { viewModelFactory ->
                 DetailPane(
                     viewModelFactory = viewModelFactory,
@@ -283,7 +283,7 @@ public fun ChatsScreen(
             ) { destination ->
                 when (destination.pane) {
                     ThreePaneRole.List -> listPane(Modifier)
-                    ThreePaneRole.Detail -> detailPane(destination.arguments as MessageSelection)
+                    ThreePaneRole.Detail -> detailPane(destination.arguments as ChatMessageSelection)
                     ThreePaneRole.Info -> infoContent(destination.arguments)
                 }
             }
@@ -323,7 +323,7 @@ public fun ChatsScreen(
                     targetState = detail,
                 ) { state ->
                     if (state != null) {
-                        detailPane(state.arguments as MessageSelection)
+                        detailPane(state.arguments as ChatMessageSelection)
                     }
                 }
                 val info by remember(internalNavigator.destinations) { derivedStateOf { internalNavigator.destinations.firstOrNull { it.pane == ThreePaneRole.Info } } }
@@ -369,7 +369,7 @@ public fun ChatsScreen(
 @Composable
 private fun FirstChannelLoadHandler(
     channelViewModelFactory: ChannelViewModelFactory,
-    block: (selection: MessageSelection) -> Unit,
+    block: (selection: ChatMessageSelection) -> Unit,
 ) {
     val viewModel = viewModel(ChannelListViewModel::class.java, factory = channelViewModelFactory)
     val isLoading = viewModel.channelsState.isLoading
@@ -379,11 +379,11 @@ private fun FirstChannelLoadHandler(
             println("alor: FirstChannelLoadHandler")
             when (val item = itemList.first()) {
                 is ItemState.ChannelItemState ->
-                    block(MessageSelection(channelId = item.channel.cid))
+                    block(ChatMessageSelection(channelId = item.channel.cid))
 
                 is ItemState.SearchResultItemState ->
                     block(
-                        MessageSelection(
+                        ChatMessageSelection(
                             channelId = item.message.cid,
                             messageId = item.message.id,
                             parentMessageId = item.message.parentId,
@@ -400,7 +400,7 @@ private fun FirstChannelLoadHandler(
 @Composable
 private fun FirstThreadLoadHandler(
     threadsViewModelFactory: ThreadsViewModelFactory,
-    block: (selection: MessageSelection) -> Unit,
+    block: (selection: ChatMessageSelection) -> Unit,
 ) {
     val viewModel = viewModel(ThreadListViewModel::class.java, factory = threadsViewModelFactory)
     val state by viewModel.state.collectAsState()
@@ -411,7 +411,7 @@ private fun FirstThreadLoadHandler(
             println("alor: FirstThreadLoadHandler")
             val thread = threadList.first()
             block(
-                MessageSelection(
+                ChatMessageSelection(
                     channelId = thread.cid,
                     parentMessageId = thread.parentMessageId,
                 ),
@@ -538,8 +538,14 @@ private fun slideContentTransform(isNavigatingForward: Boolean): ContentTransfor
             fadeOut()
         )
 
+/**
+ * A lambda function that provides a [MessagesViewModelFactory] for managing messages within a selected channel.
+ */
+public typealias MessagesViewModelFactoryProvider =
+        (context: Context, selection: ChatMessageSelection) -> MessagesViewModelFactory?
+
 private class DefaultMessagesViewModelFactoryProvider : MessagesViewModelFactoryProvider {
-    override fun invoke(context: Context, selection: MessageSelection): MessagesViewModelFactory? =
+    override fun invoke(context: Context, selection: ChatMessageSelection): MessagesViewModelFactory? =
         if (selection.channelId == null) {
             null
         } else {

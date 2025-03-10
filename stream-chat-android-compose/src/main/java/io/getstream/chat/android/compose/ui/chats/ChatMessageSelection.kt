@@ -19,38 +19,21 @@ package io.getstream.chat.android.compose.ui.chats
 import java.io.Serializable
 
 /**
- * The mode for displaying the list content in the chat screen.
- */
-public enum class ListContentMode {
-    /**
-     * Display the list of channels.
-     */
-    Channels,
-
-    /**
-     * Display the list of threads.
-     */
-    Threads,
-}
-
-/**
- * The mode for displaying info content in the chat screen.
+ * Represents the selection of a message within a channel.
  *
  * Implements [Serializable] to allow for saving and restoring the state across configuration changes.
  */
-public sealed class InfoContentMode(public open val id: String) : Serializable {
+public data class ChatMessageSelection(
     /**
-     * No info content.
+     * The ID of the selected channel, or `null` if no channel is selected.
      */
-    public data object Hidden : InfoContentMode("")
-
+    val channelId: String? = null,
     /**
-     * Display the info for a single channel.
+     * The ID of a specific message, or `null` if navigating to a channel without a pre-selected message.
      */
-    public data class SingleChannelInfo(override val id: String) : InfoContentMode(id)
-
+    val messageId: String? = null,
     /**
-     * Display the info for a group of channels.
+     * The ID of the parent message (for threads), or `null` if not in a thread.
      */
-    public data class GroupChannelInfo(override val id: String) : InfoContentMode(id)
-}
+    val parentMessageId: String? = null,
+) : Serializable

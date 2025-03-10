@@ -54,7 +54,7 @@ import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponent
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
 import io.getstream.chat.android.compose.sample.ui.pinned.PinnedMessagesActivity
 import io.getstream.chat.android.compose.ui.channels.SearchMode
-import io.getstream.chat.android.compose.ui.chats.ChatsScreen
+import io.getstream.chat.android.compose.ui.chats.ChatScreen
 import io.getstream.chat.android.compose.ui.chats.InfoContentMode
 import io.getstream.chat.android.compose.ui.chats.ListContentMode
 import io.getstream.chat.android.compose.ui.chats.rememberChatsNavigator
@@ -147,7 +147,7 @@ class ChatsActivity : BaseConnectedActivity() {
     private fun ScreenContent() {
         var listContentMode by rememberSaveable { mutableStateOf(ListContentMode.Channels) }
         val navigator = rememberChatsNavigator()
-        ChatsScreen(
+        ChatScreen(
             navigator = navigator,
             channelViewModelFactory = channelViewModelFactory,
             messagesViewModelFactoryProvider = { _, (channelId, messageId, parentMessageId) ->
