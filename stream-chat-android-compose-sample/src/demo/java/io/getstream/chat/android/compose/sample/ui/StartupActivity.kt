@@ -27,7 +27,7 @@ import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.feature.channel.list.ChannelsActivity
-import io.getstream.chat.android.compose.sample.ui.chats.ChatsActivity
+import io.getstream.chat.android.compose.sample.ui.chats.ChatActivity
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
 import kotlinx.coroutines.launch
 
@@ -60,7 +60,7 @@ class StartupActivity : AppCompatActivity() {
 
                     if (settings.isAdaptiveLayoutEnabled) {
                         startActivity(
-                            ChatsActivity.createIntent(
+                            ChatActivity.createIntent(
                                 context = applicationContext,
                                 channelId = channelId,
                                 messageId = messageId,
@@ -83,7 +83,7 @@ class StartupActivity : AppCompatActivity() {
                 } else {
                     // User is logged in, navigate to the chat screens
                     if (settings.isAdaptiveLayoutEnabled) {
-                        startActivity(ChatsActivity.createIntent(applicationContext))
+                        startActivity(ChatActivity.createIntent(applicationContext))
                     } else {
                         startActivity(ChannelsActivity.createIntent(applicationContext))
                     }

@@ -16,41 +16,55 @@
 
 package io.getstream.chat.android.compose.ui.util.adaptivelayout
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
-
-internal enum class ThreePaneRole { List, Detail, Info }
+import androidx.compose.runtime.saveable.rememberSaveable
 
 /**
  * The navigator used to navigate between the different destinations in the three-pane layout.
  *
  * @param destinations The list of destinations to start with. Defaults to a single destination in the list pane.
  */
-internal class ThreePaneNavigator(
-    destinations: List<ThreePaneDestination<*>> = listOf(ThreePaneDestination<Unit>(pane = ThreePaneRole.List))
+public class ThreePaneNavigator(
+    destinations: List<ThreePaneDestination<*>> = listOf(ThreePaneDestination<Unit>(pane = ThreePaneRole.List)),
 ) {
     private val _destinations = mutableStateListOf(*destinations.toTypedArray())
-    val destinations: List<ThreePaneDestination<*>> get() = _destinations
+    internal val destinations: List<ThreePaneDestination<*>> get() = _destinations.toList()
 
-    val current: ThreePaneDestination<*> get() = _destinations.last()
+    internal val current: ThreePaneDestination<*> get() = _destinations.last()
 
-    fun navigateTo(destination: ThreePaneDestination<*>, popUpTo: ThreePaneRole? = null) {
+    /**
+     * Navigates to the provided [destination].
+     *
+     * @param destination The destination to navigate to.
+     * @param popUpTo The role of the pane to pop up to before navigating to the destination.
+     */
+    public fun navigateTo(destination: ThreePaneDestination<*>, popUpTo: ThreePaneRole? = null) {
         popUpTo?.let(::popUpTo)
         _destinations.add(destination)
     }
 
-    fun navigateBack() {
-        if (_destinations.size > 1) _destinations.removeAt(_destinations.lastIndex)
+    /**
+     * Whether the navigator can navigate back to the previous destination.
+     */
+    public fun canNavigateBack(): Boolean = _destinations.size > 1
+
+    /**
+     * Navigates back to the previous destination.
+     */
+    public fun navigateBack() {
+        if (canNavigateBack()) _destinations.removeAt(_destinations.lastIndex)
     }
 
-    fun popUpTo(pane: ThreePaneRole) {
-        while (_destinations.size > 1 && _destinations[_destinations.lastIndex].pane != pane) {
+    internal fun popUpTo(pane: ThreePaneRole) {
+        while (canNavigateBack() && _destinations[_destinations.lastIndex].pane != pane) {
             _destinations.removeAt(_destinations.lastIndex)
         }
     }
 
-    companion object {
+    internal companion object {
         val Saver: Saver<ThreePaneNavigator, Any> = listSaver(
             save = { navigator ->
                 navigator.destinations.map { with(ThreePaneDestination.Saver) { save(it) } }
@@ -69,14 +83,42 @@ internal class ThreePaneNavigator(
  * @property pane The pane destination of the navigation.
  * @property arguments The optional arguments to pass to the destination.
  */
-internal data class ThreePaneDestination<out T>(
+public data class ThreePaneDestination<out T>(
     val pane: ThreePaneRole,
     val arguments: T? = null,
 ) {
-    companion object {
+    internal companion object {
         val Saver: Saver<ThreePaneDestination<*>, Any> = listSaver(
             save = { destination -> listOf(destination.pane, destination.arguments) },
             restore = { state -> ThreePaneDestination(pane = state[0] as ThreePaneRole, arguments = state[1]) },
         )
     }
 }
+
+/**
+ * Represents the role of a pane in the three-pane layout.
+ */
+public enum class ThreePaneRole {
+    /**
+     * The list pane.
+     */
+    List,
+
+    /**
+     * The detail pane.
+     */
+    Detail,
+
+    /**
+     * The info pane.
+     */
+    Info,
+}
+
+/**
+ * Remembers a [ThreePaneNavigator] that can be used to navigate between
+ * the different destinations in the three-pane layout.
+ */
+@Composable
+public fun rememberThreePaneNavigator(): ThreePaneNavigator =
+    rememberSaveable(saver = ThreePaneNavigator.Saver) { ThreePaneNavigator() }

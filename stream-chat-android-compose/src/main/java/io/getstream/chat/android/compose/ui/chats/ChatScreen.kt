@@ -65,7 +65,9 @@ import io.getstream.chat.android.compose.ui.threads.ThreadList
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.AdaptiveLayoutConstraints
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.AdaptiveLayoutInfo
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneDestination
+import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneNavigator
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneRole
+import io.getstream.chat.android.compose.ui.util.adaptivelayout.rememberThreePaneNavigator
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
@@ -82,10 +84,11 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
 /**
  * Represents a complete screen for chat, including a list of channels, threads, and messages.
  * The layout adapts based on the screen size, showing a single-pane layout on smaller screens
- * and a dual-pane layout on larger screens.
+ * and a dual-pane layout on larger screens with an optional info pane.
  *
  * @param modifier The modifier to be applied to the root layout of the screen.
  * @param navigator The navigator used for managing the navigation between destinations.
+ * Defaults to [rememberThreePaneNavigator].
  * @param channelViewModelFactory Factory for creating the [ChannelListViewModel] used for managing channel data.
  * @param threadsViewModelFactory Factory for creating the [ThreadListViewModel] used for managing thread data.
  * @param messagesViewModelFactoryProvider A lambda function that provides a [MessagesViewModelFactory]
@@ -106,13 +109,14 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
  * @param listBottomBarContent The content to display at the bottom of the list pane.
  * @param detailTopBarContent The content to display at the top of the detail pane.
  * @param detailBottomBarContent The content to display at the bottom of the detail pane.
+ * @param infoContent The content to display in the optional info pane given the provided arguments.
  */
 @ExperimentalStreamChatApi
 @Suppress("LongMethod")
 @Composable
 public fun ChatScreen(
     modifier: Modifier = Modifier,
-    navigator: ChatsNavigator,
+    navigator: ThreePaneNavigator = rememberThreePaneNavigator(),
     channelViewModelFactory: ChannelViewModelFactory = ChannelViewModelFactory(),
     threadsViewModelFactory: ThreadsViewModelFactory = ThreadsViewModelFactory(),
     messagesViewModelFactoryProvider: MessagesViewModelFactoryProvider = DefaultMessagesViewModelFactoryProvider(),
@@ -146,15 +150,12 @@ public fun ChatScreen(
     },
     infoContent: @Composable (arguments: Any?) -> Unit = {},
 ) {
-    val internalNavigator  = navigator.navigator
-
     val context = LocalContext.current
     val singlePane = AdaptiveLayoutInfo.singlePaneWindow()
+
     val backPressHandler = {
-        // TODO Move to detail pane
-        println("alor: backPressHandler")
         // Navigate back when the user presses back in single-pane mode
-        if (singlePane && internalNavigator.current.pane != ThreePaneRole.List) {
+        if (singlePane && navigator.canNavigateBack()) {
             navigator.navigateBack()
         } else {
             onBackPress()
@@ -163,13 +164,13 @@ public fun ChatScreen(
 
     // Pop up navigation to the list when switching between list content modes
     DisposableEffect(listContentMode) {
-        onDispose { internalNavigator.popUpTo(ThreePaneRole.List) }
+        onDispose { navigator.popUpTo(ThreePaneRole.List) }
     }
 
     // Initial navigation when the provider returns a factory based on an empty selection
     LaunchedEffect(Unit) {
         messagesViewModelFactoryProvider(context, ChatMessageSelection())?.let { viewModelFactory ->
-            internalNavigator.navigateTo(
+            navigator.navigateTo(
                 ThreePaneDestination(
                     pane = ThreePaneRole.Detail,
                     arguments = ChatMessageSelection(
@@ -180,10 +181,6 @@ public fun ChatScreen(
                 ),
             )
         }
-    }
-
-    LaunchedEffect(internalNavigator.destinations) {
-        println("alor: navigator.destinations=${internalNavigator.destinations}")
     }
 
     val listPane = remember(listContentMode) {
@@ -205,7 +202,7 @@ public fun ChatScreen(
                                 isShowingHeader = false,
                                 searchMode = searchMode,
                                 onChannelClick = { channel ->
-                                    internalNavigator.navigateTo(
+                                    navigator.navigateTo(
                                         destination = ThreePaneDestination(
                                             pane = ThreePaneRole.Detail,
                                             arguments = ChatMessageSelection(channelId = channel.cid),
@@ -214,7 +211,7 @@ public fun ChatScreen(
                                     )
                                 },
                                 onSearchMessageItemClick = { message ->
-                                    internalNavigator.navigateTo(
+                                    navigator.navigateTo(
                                         destination = ThreePaneDestination(
                                             pane = ThreePaneRole.Detail,
                                             arguments = ChatMessageSelection(
@@ -238,7 +235,7 @@ public fun ChatScreen(
                             ThreadList(
                                 viewModel = viewModel,
                                 onThreadClick = { thread ->
-                                    internalNavigator.navigateTo(
+                                    navigator.navigateTo(
                                         destination = ThreePaneDestination(
                                             pane = ThreePaneRole.Detail,
                                             arguments = ChatMessageSelection(
@@ -275,9 +272,9 @@ public fun ChatScreen(
             modifier = modifier,
         ) {
             AnimatedContent(
-                targetState = internalNavigator.current,
+                targetState = navigator.current,
                 transitionSpec = {
-                    val isNavigatingForward = internalNavigator.destinations.contains(initialState)
+                    val isNavigatingForward = navigator.destinations.contains(initialState)
                     slideContentTransform(isNavigatingForward = isNavigatingForward)
                 },
             ) { destination ->
@@ -293,13 +290,13 @@ public fun ChatScreen(
         when (listContentMode) {
             ListContentMode.Channels -> {
                 FirstChannelLoadHandler(channelViewModelFactory) { selection ->
-                    internalNavigator.navigateTo(ThreePaneDestination(ThreePaneRole.Detail, selection))
+                    navigator.navigateTo(ThreePaneDestination(ThreePaneRole.Detail, selection))
                 }
             }
 
             ListContentMode.Threads -> {
                 FirstThreadLoadHandler(threadsViewModelFactory) { selection ->
-                    internalNavigator.navigateTo(ThreePaneDestination(ThreePaneRole.Detail, selection))
+                    navigator.navigateTo(ThreePaneDestination(ThreePaneRole.Detail, selection))
                 }
             }
         }
@@ -317,7 +314,7 @@ public fun ChatScreen(
                     .weight(AdaptiveLayoutConstraints.DETAIL_PANE_WEIGHT)
                     .onSizeChanged { size -> detailPaneSize = size },
             ) {
-                val detail by remember(internalNavigator.destinations) { derivedStateOf { internalNavigator.destinations.firstOrNull { it.pane == ThreePaneRole.Detail } } }
+                val detail by remember(navigator.destinations) { derivedStateOf { navigator.destinations.firstOrNull { it.pane == ThreePaneRole.Detail } } }
                 Crossfade(
                     modifier = Modifier.weight(1f),
                     targetState = detail,
@@ -326,7 +323,7 @@ public fun ChatScreen(
                         detailPane(state.arguments as ChatMessageSelection)
                     }
                 }
-                val info by remember(internalNavigator.destinations) { derivedStateOf { internalNavigator.destinations.firstOrNull { it.pane == ThreePaneRole.Info } } }
+                val info by remember(navigator.destinations) { derivedStateOf { navigator.destinations.firstOrNull { it.pane == ThreePaneRole.Info } } }
                 val infoPaneOffsetX by animateFloatAsState(
                     targetValue = if (info == null) {
                         detailPaneSize.width / 2f
@@ -364,6 +361,12 @@ public fun ChatScreen(
 }
 
 /**
+ * A lambda function that provides a [MessagesViewModelFactory] for managing messages within a selected channel.
+ */
+public typealias MessagesViewModelFactoryProvider =
+    (context: Context, selection: ChatMessageSelection) -> MessagesViewModelFactory?
+
+/**
  * Calls the provided block when the first channel item is loaded.
  */
 @Composable
@@ -376,7 +379,6 @@ private fun FirstChannelLoadHandler(
     val itemList = viewModel.channelsState.channelItems
     LaunchedEffect(isLoading) {
         if (!isLoading && itemList.isNotEmpty()) {
-            println("alor: FirstChannelLoadHandler")
             when (val item = itemList.first()) {
                 is ItemState.ChannelItemState ->
                     block(ChatMessageSelection(channelId = item.channel.cid))
@@ -408,7 +410,6 @@ private fun FirstThreadLoadHandler(
     val threadList = state.threads
     LaunchedEffect(isLoading) {
         if (!isLoading && threadList.isNotEmpty()) {
-            println("alor: FirstThreadLoadHandler")
             val thread = threadList.first()
             block(
                 ChatMessageSelection(
@@ -537,12 +538,6 @@ private fun slideContentTransform(isNavigatingForward: Boolean): ContentTransfor
             slideOutHorizontally(targetOffsetX = { fullWidth -> if (isNavigatingForward) -fullWidth else fullWidth }) +
             fadeOut()
         )
-
-/**
- * A lambda function that provides a [MessagesViewModelFactory] for managing messages within a selected channel.
- */
-public typealias MessagesViewModelFactoryProvider =
-        (context: Context, selection: ChatMessageSelection) -> MessagesViewModelFactory?
 
 private class DefaultMessagesViewModelFactoryProvider : MessagesViewModelFactoryProvider {
     override fun invoke(context: Context, selection: ChatMessageSelection): MessagesViewModelFactory? =

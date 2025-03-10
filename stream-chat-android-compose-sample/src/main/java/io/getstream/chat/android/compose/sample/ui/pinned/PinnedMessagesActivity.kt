@@ -33,7 +33,7 @@ import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
 import io.getstream.chat.android.compose.sample.ui.MessagesActivity
-import io.getstream.chat.android.compose.sample.ui.chats.ChatsActivity
+import io.getstream.chat.android.compose.sample.ui.chats.ChatActivity
 import io.getstream.chat.android.compose.sample.ui.component.AppToolbar
 import io.getstream.chat.android.compose.ui.pinned.PinnedMessageList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -101,7 +101,7 @@ class PinnedMessagesActivity : BaseConnectedActivity() {
 
     private fun openMessage(message: Message) {
         val intent = if (settings.isAdaptiveLayoutEnabled) {
-            ChatsActivity.createIntent(
+            ChatActivity.createIntent(
                 context = applicationContext,
                 channelId = message.cid,
                 messageId = message.id,

@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.sample.ui.chats
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -55,13 +56,14 @@ import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
 import io.getstream.chat.android.compose.sample.ui.pinned.PinnedMessagesActivity
 import io.getstream.chat.android.compose.ui.channels.SearchMode
 import io.getstream.chat.android.compose.ui.chats.ChatScreen
-import io.getstream.chat.android.compose.ui.chats.InfoContentMode
 import io.getstream.chat.android.compose.ui.chats.ListContentMode
-import io.getstream.chat.android.compose.ui.chats.rememberChatsNavigator
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptionItemVisibility
 import io.getstream.chat.android.compose.ui.theme.ChannelOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.AdaptiveLayoutInfo
+import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneDestination
+import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneRole
+import io.getstream.chat.android.compose.ui.util.adaptivelayout.rememberThreePaneNavigator
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.Channel
@@ -71,7 +73,7 @@ import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import kotlinx.coroutines.launch
 
-class ChatsActivity : BaseConnectedActivity() {
+class ChatActivity : BaseConnectedActivity() {
 
     companion object {
         private const val KEY_CHANNEL_ID = "channelId"
@@ -84,7 +86,7 @@ class ChatsActivity : BaseConnectedActivity() {
             messageId: String? = null,
             parentMessageId: String? = null,
         ): Intent =
-            Intent(context, ChatsActivity::class.java)
+            Intent(context, ChatActivity::class.java)
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 .putExtra(KEY_CHANNEL_ID, channelId)
                 .putExtra(KEY_MESSAGE_ID, messageId)
@@ -146,12 +148,11 @@ class ChatsActivity : BaseConnectedActivity() {
     @Composable
     private fun ScreenContent() {
         var listContentMode by rememberSaveable { mutableStateOf(ListContentMode.Channels) }
-        val navigator = rememberChatsNavigator()
+        val navigator = rememberThreePaneNavigator()
         ChatScreen(
             navigator = navigator,
             channelViewModelFactory = channelViewModelFactory,
             messagesViewModelFactoryProvider = { _, (channelId, messageId, parentMessageId) ->
-                println("alor: messagesViewModelFactoryProvider: channelId=$channelId, messageId=$messageId, parentMessageId=$parentMessageId")
                 if (channelId == null) {
                     messagesViewModelFactory
                 } else {
@@ -174,21 +175,27 @@ class ChatsActivity : BaseConnectedActivity() {
             },
             onListTopBarActionClick = ::openAddChannel,
             onDetailTopBarTitleClick = { channel ->
-                navigator.navigateToInfoPane(
-                    if (channel.isGroupChannel) {
-                        InfoContentMode.GroupChannelInfo(channel.cid)
-                    } else {
-                        InfoContentMode.SingleChannelInfo(channel.cid)
-                    },
+                navigator.navigateTo(
+                    destination = ThreePaneDestination(
+                        pane = ThreePaneRole.Info,
+                        arguments = if (channel.isGroupChannel) {
+                            ChatInfoContentMode.GroupChannelInfo(channel.cid)
+                        } else {
+                            ChatInfoContentMode.SingleChannelInfo(channel.cid)
+                        },
+                    ),
                 )
             },
             onViewChannelInfoClick = { channel ->
-                navigator.navigateToInfoPane(
-                    if (channel.isGroupChannel) {
-                        InfoContentMode.GroupChannelInfo(channel.cid)
-                    } else {
-                        InfoContentMode.SingleChannelInfo(channel.cid)
-                    },
+                navigator.navigateTo(
+                    destination = ThreePaneDestination(
+                        pane = ThreePaneRole.Info,
+                        arguments = if (channel.isGroupChannel) {
+                            ChatInfoContentMode.GroupChannelInfo(channel.cid)
+                        } else {
+                            ChatInfoContentMode.SingleChannelInfo(channel.cid)
+                        },
+                    ),
                 )
             },
             listBottomBarContent = {
@@ -203,18 +210,21 @@ class ChatsActivity : BaseConnectedActivity() {
                 )
             },
             infoContent = { arguments ->
+
+                BackHandler(enabled = navigator.canNavigateBack()) { navigator.navigateBack() }
+
                 when (arguments) {
-                    is InfoContentMode.SingleChannelInfo -> SingleChannelInfoContent(
-                        channelId = arguments.id,
+                    is ChatInfoContentMode.SingleChannelInfo -> SingleChannelInfoContent(
+                        channelId = arguments.channelId,
                         onNavigationIconClick = { navigator.navigateBack() },
                     )
 
-                    is InfoContentMode.GroupChannelInfo -> GroupChannelInfoContent(
-                        channelId = arguments.id,
+                    is ChatInfoContentMode.GroupChannelInfo -> GroupChannelInfoContent(
+                        channelId = arguments.channelId,
                         onNavigationIconClick = { navigator.navigateBack() },
                     )
 
-                    is InfoContentMode.Hidden -> Unit
+                    is ChatInfoContentMode.Hidden -> Unit
                 }
             },
         )
