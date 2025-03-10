@@ -392,7 +392,7 @@ internal object Mother {
     fun randomChannelInfoDto(
         type: String = randomString(),
         id: String = randomString(),
-        cid: String = "$type$id",
+        cid: String = "$type:$id",
         memberCount: Int = randomInt(),
         name: String? = randomString(),
         image: String? = randomString(),
