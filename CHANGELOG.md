@@ -63,6 +63,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix wrong timestamp shown for updated GIPHY messages. [#5674](https://github.com/GetStream/stream-chat-android/pull/5674)
 
 ### ⬆️ Improved
 
@@ -79,6 +80,7 @@
 - Crash when recording audio on a message reply. [#5642](https://github.com/GetStream/stream-chat-android/pull/5642)
 - Fix fading issue in media attachment content items. [#5631](https://github.com/GetStream/stream-chat-android/pull/5631)
 - Fix additional padding applied to the `MessageComposer` on Android 15. [#5659](https://github.com/GetStream/stream-chat-android/pull/5659)
+- Fix wrong timestamp shown for updated messages. [#5674](https://github.com/GetStream/stream-chat-android/pull/5674)
 
 ### ⬆️ Improved
 - Autofocus the input fields in the poll creation screen. [#5629](https://github.com/GetStream/stream-chat-android/pull/5629)
