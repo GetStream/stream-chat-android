@@ -48,9 +48,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.imp
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.PollViewHolder
 import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrNull
-import io.getstream.chat.android.ui.utils.extensions.getUpdatedAtOrNull
 import io.getstream.chat.android.ui.utils.extensions.isBottomPosition
-import io.getstream.chat.android.ui.utils.extensions.isGiphyNotEphemeral
 import io.getstream.chat.android.ui.utils.extensions.isNotBottomPosition
 import io.getstream.chat.android.ui.utils.extensions.setStartDrawable
 import io.getstream.chat.android.ui.utils.extensions.updateConstraints
@@ -347,18 +345,10 @@ internal class FootnoteDecorator(
 
     private fun setupMessageFooterTime(footnoteView: FootnoteView, data: MessageListItem.MessageItem) {
         val createdAt = data.message.getCreatedAtOrNull()
-        val updatedAt = data.message.getUpdatedAtOrNull()
         val editedAt = data.message.messageTextUpdatedAt.truncateFuture()?.let(dateFormatter::formatRelativeTime)
 
         when {
             createdAt == null || !data.showMessageFooter -> footnoteView.hideTimeLabel()
-            data.message.isGiphyNotEphemeral() && updatedAt != null -> footnoteView.showTime(
-                dateFormatter.formatTime(
-                    updatedAt,
-                ),
-                null,
-                listViewStyle.itemStyle,
-            )
             else -> footnoteView.showTime(dateFormatter.formatTime(createdAt), editedAt, listViewStyle.itemStyle)
         }
     }
