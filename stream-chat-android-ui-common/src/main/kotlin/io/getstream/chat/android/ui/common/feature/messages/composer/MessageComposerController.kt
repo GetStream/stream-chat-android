@@ -917,6 +917,7 @@ public class MessageComposerController(
             set = mapOf(
                 "text" to message.text,
                 "attachments" to message.attachments,
+                "mentioned_users" to message.mentionedUsersIds,
             ),
         )
     }
