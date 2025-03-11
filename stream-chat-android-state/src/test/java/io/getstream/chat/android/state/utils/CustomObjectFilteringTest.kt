@@ -1363,6 +1363,7 @@ internal class CustomObjectFilteringTest {
                 )
             }
 
+        @Suppress("LongMethod")
         @JvmStatic
         fun notInFilterArguments() = List(positiveRandomInt(10)) { randomInt() }.let { intList ->
             val notIntList = List(positiveRandomInt(10)) { randomInt() } - intList
@@ -1477,7 +1478,9 @@ internal class CustomObjectFilteringTest {
                                 .map { randomMember(user = randomUser(id = it)) }.let { members ->
                                     List(positiveRandomInt(10)) {
                                         randomChannel(
-                                            members = (List(positiveRandomInt(10)) { randomMember() } + members).shuffled(),
+                                            members = (
+                                                List(positiveRandomInt(10)) { randomMember() } + members
+                                                ).shuffled(),
                                         )
                                     }
                                 }

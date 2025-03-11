@@ -1438,8 +1438,6 @@ public final class io/getstream/chat/android/models/NotExistsFilterObject : io/g
 public final class io/getstream/chat/android/models/NotInFilterObject : io/getstream/chat/android/models/FilterObject {
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/util/Set;
-	public final fun copy (Ljava/lang/String;Ljava/util/Set;)Lio/getstream/chat/android/models/NotInFilterObject;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/NotInFilterObject;Ljava/lang/String;Ljava/util/Set;ILjava/lang/Object;)Lio/getstream/chat/android/models/NotInFilterObject;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getFieldName ()Ljava/lang/String;
 	public final fun getValues ()Ljava/util/Set;
