@@ -3,6 +3,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Upgrade StreamLog dependency to avoid a warning message while compilation time related with a duplicated namespace. [#5664](https://github.com/GetStream/stream-chat-android/pull/5664)
 
 ### ✅ Added
 
@@ -13,6 +14,7 @@
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fix not being able to send `system` messages via the `ChatClient`. [#5657](https://github.com/GetStream/stream-chat-android/pull/5657)
+- Fix `ChatClient.deleteFile()` and `ChatClient.deleteImage()` not propagating errors. [#5666](https://github.com/GetStream/stream-chat-android/pull/5666)
 
 ### ⬆️ Improved
 - Add sending messages to only specific members. The `Message` entity contains a new property `restrictedVisibility` where a list of IDs for the desired members can be set.[#5644](https://github.com/GetStream/stream-chat-android/pull/5644)
@@ -77,6 +79,7 @@
 ### 🐞 Fixed
 - Crash when recording audio on a message reply. [#5642](https://github.com/GetStream/stream-chat-android/pull/5642)
 - Fix fading issue in media attachment content items. [#5631](https://github.com/GetStream/stream-chat-android/pull/5631)
+- Fix additional padding applied to the `MessageComposer` on Android 15. [#5659](https://github.com/GetStream/stream-chat-android/pull/5659)
 
 ### ⬆️ Improved
 - Autofocus the input fields in the poll creation screen. [#5629](https://github.com/GetStream/stream-chat-android/pull/5629)

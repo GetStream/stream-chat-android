@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.utils.Utils.Companion.runOnUi
 import io.getstream.chat.android.models.User
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
@@ -55,6 +56,18 @@ internal class ClientInstrumentationTests {
         context = getInstrumentation().targetContext
         initCallback = TestInitCallback()
         connectedEventConsumer = EventsConsumer(listOf(ConnectedEvent::class.java))
+    }
+
+    @Test
+    fun customBaseUrl() {
+        runOnUi {
+            val client = ChatClient.Builder(apiKey, context)
+                .forceHttpUrl("http://10.0.0.212:8080/")
+                .forceWsUrl("ws://10.0.0.212:3030/")
+                .build()
+            Assert.assertEquals("http://10.0.0.212:8080/", client.config.httpUrl)
+            Assert.assertEquals("ws://10.0.0.212:3030/", client.config.wssUrl)
+        }
     }
 
     @Test

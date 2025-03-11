@@ -20,6 +20,12 @@ import io.getstream.chat.android.client.utils.HeadersUtil
 import okhttp3.Interceptor
 import okhttp3.Response
 
+/**
+ * Interceptor that adds the default headers to the request.
+ *
+ * @param isAnonymous a function that returns true if the logged in user is anonymous.
+ * @param headersUtil a utility class for building headers.
+ */
 internal class HeadersInterceptor(
     private val isAnonymous: () -> Boolean,
     private val headersUtil: HeadersUtil,

@@ -128,7 +128,6 @@ import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.log.taggedLogger
-import io.getstream.result.Result
 import io.getstream.result.call.Call
 import io.getstream.result.call.CoroutineCall
 import io.getstream.result.call.map
@@ -458,7 +457,6 @@ constructor(
                 userId = userId,
                 url = url,
             )
-            Result.Success(Unit)
         }
     }
 
@@ -470,7 +468,6 @@ constructor(
                 userId = userId,
                 url = url,
             )
-            Result.Success(Unit)
         }
     }
 

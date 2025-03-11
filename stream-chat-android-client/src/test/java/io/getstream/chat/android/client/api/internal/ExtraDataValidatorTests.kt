@@ -18,6 +18,8 @@ package io.getstream.chat.android.client.api.internal
 
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -40,6 +42,7 @@ internal class ExtraDataValidatorTests {
         @RegisterExtension
         val testCoroutines = TestCoroutineExtension()
     }
+
     private val chatApi: ChatApi = mock()
     private lateinit var validator: ExtraDataValidator
 
@@ -172,5 +175,67 @@ internal class ExtraDataValidatorTests {
         (result as Result.Failure).value.message.contains("updated_at") `should be equal to` true
         result.value.message.contains("created_at") `should be equal to` true
         println(result.value.message)
+    }
+
+    @Test
+    fun testAddMembers() = runTest {
+        /* Given */
+        val channel: Channel = mock()
+        val channelType = "channel-type"
+        val channelId = "channel-id"
+        val members = listOf(
+            MemberData(
+                userId = "user-id",
+                extraData = mapOf("created_at" to "another-date"),
+            ),
+        )
+        val systemMessage: Message = mock()
+        val hideHistory = false
+        val skipPush = false
+
+        whenever(
+            chatApi.addMembers(
+                channelType,
+                channelId,
+                members,
+                systemMessage,
+                hideHistory,
+                skipPush,
+            ),
+        ) doReturn channel.asCall()
+
+        /* When */
+        val result: Result<Channel> = validator.addMembers(
+            channelType = channelType,
+            channelId = channelId,
+            members = members,
+            systemMessage = systemMessage,
+            hideHistory = hideHistory,
+            skipPush = skipPush,
+        ).await()
+
+        /* Then */
+        result.shouldBeInstanceOf(Result.Failure::class)
+        (result as Result.Failure).value.message.contains("created_at") `should be equal to` true
+    }
+
+    @Test
+    fun testPartialUpdateMember() = runTest {
+        /* Given */
+        val member = mock<Member>()
+        val channelType = "channel-type"
+        val channelId = "channel-id"
+        val userId = "user-id"
+        val set: MutableMap<String, Any> = mutableMapOf("created_at" to "another-date")
+        val unset = emptyList<String>()
+
+        whenever(chatApi.partialUpdateMember(channelType, channelId, userId, set, unset)) doReturn member.asCall()
+
+        /* When */
+        val result: Result<Member> = validator.partialUpdateMember(channelType, channelId, userId, set, unset).await()
+
+        /* Then */
+        result.shouldBeInstanceOf(Result.Failure::class)
+        (result as Result.Failure).value.message.contains("created_at") `should be equal to` true
     }
 }
