@@ -19,6 +19,11 @@ package io.getstream.chat.android.client.api.interceptor
 import okhttp3.Interceptor
 import okhttp3.Response
 
+/**
+ * Interceptor adding the API_KEY query parameter to the request.
+ *
+ * @param apiKey the API key to be added to the request.
+ */
 internal class ApiKeyInterceptor(private val apiKey: String) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val original = chain.request()

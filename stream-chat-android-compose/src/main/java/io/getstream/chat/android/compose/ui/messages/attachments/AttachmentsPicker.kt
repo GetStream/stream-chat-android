@@ -121,7 +121,6 @@ public fun AttachmentsPicker(
                 onClick = {},
                 interactionSource = null,
             ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
             shape = if (selectedAttachmentsPickerMode?.isFullContent == true) {
                 RoundedCornerShape(0.dp)
             } else {

@@ -14,6 +14,7 @@
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fix not being able to send `system` messages via the `ChatClient`. [#5657](https://github.com/GetStream/stream-chat-android/pull/5657)
+- Fix `ChatClient.deleteFile()` and `ChatClient.deleteImage()` not propagating errors. [#5666](https://github.com/GetStream/stream-chat-android/pull/5666)
 - Fix `X-Stream-Client` header placement in the WebSocket request URL. [#5668](https://github.com/GetStream/stream-chat-android/pull/5668)
 
 ### ⬆️ Improved
@@ -78,6 +79,7 @@
 ### 🐞 Fixed
 - Crash when recording audio on a message reply. [#5642](https://github.com/GetStream/stream-chat-android/pull/5642)
 - Fix fading issue in media attachment content items. [#5631](https://github.com/GetStream/stream-chat-android/pull/5631)
+- Fix additional padding applied to the `MessageComposer` on Android 15. [#5659](https://github.com/GetStream/stream-chat-android/pull/5659)
 
 ### ⬆️ Improved
 - Autofocus the input fields in the poll creation screen. [#5629](https://github.com/GetStream/stream-chat-android/pull/5629)
