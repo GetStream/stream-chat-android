@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.utils.message.belongsToThread
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.DateFormatType
@@ -102,16 +103,7 @@ public fun MessageFooter(
                     )
                 }
 
-                val updatedAt = message.updatedAt
-                val createdAt = message.createdAt ?: message.createdLocallyAt
-                val date = when {
-                    createdAt == null -> updatedAt
-                    updatedAt == null -> createdAt
-                    else -> when (updatedAt.after(createdAt)) {
-                        true -> updatedAt
-                        else -> createdAt
-                    }
-                }
+                val date = message.getCreatedAtOrNull()
                 if (date != null) {
                     Timestamp(date = date, formatType = DateFormatType.TIME)
                 }
