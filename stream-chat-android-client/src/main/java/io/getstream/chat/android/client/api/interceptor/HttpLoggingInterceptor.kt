@@ -32,6 +32,9 @@ import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 import java.util.concurrent.TimeUnit
 
+/**
+ * Interceptor logging the requests made to the server.
+ */
 internal class HttpLoggingInterceptor : Interceptor {
 
     private val logger by taggedLogger("Chat:Http")

@@ -82,13 +82,16 @@ internal class DtoMapping(
     )
 
     /**
-     * Maps the domain [MemberData] to a network [UpstreamMemberDataDto]
+     * Maps the domain [MemberData] model to a network [UpstreamMemberDataDto] model.
      */
     internal fun MemberData.toDto(): UpstreamMemberDataDto = UpstreamMemberDataDto(
         user_id = userId,
         extraData = extraData,
     )
 
+    /**
+     * Maps the domain [Member] to a network [UpstreamMemberDto] model.
+     */
     internal fun Member.toDto(): UpstreamMemberDto = UpstreamMemberDto(
         user = user.toDto(),
         created_at = createdAt,
@@ -137,6 +140,9 @@ internal class DtoMapping(
                 )
             }
 
+    /**
+     * Maps the domain [Mute] model to a network [UpstreamMuteDto] model.
+     */
     internal fun Mute.toDto(): UpstreamMuteDto = UpstreamMuteDto(
         user = user?.toDto(),
         target = target?.toDto(),
@@ -145,6 +151,9 @@ internal class DtoMapping(
         expires = expires,
     )
 
+    /**
+     * Maps the domain [Reaction] model to a network [UpstreamReactionDto].
+     */
     internal fun Reaction.toDto(): UpstreamReactionDto = UpstreamReactionDto(
         created_at = createdAt,
         message_id = messageId,
@@ -156,19 +165,33 @@ internal class DtoMapping(
         extraData = extraData,
     )
 
+    /**
+     * Maps the domain [PrivacySettings] model to a network [PrivacySettingsDto] model.
+     */
     internal fun PrivacySettings.toDto(): PrivacySettingsDto = PrivacySettingsDto(
         typing_indicators = typingIndicators?.toDto(),
         read_receipts = readReceipts?.toDto(),
     )
 
+    /**
+     * Maps the domain [TypingIndicators] model to a network [TypingIndicatorsDto] model.
+     */
     internal fun TypingIndicators.toDto(): TypingIndicatorsDto = TypingIndicatorsDto(
         enabled = enabled,
     )
 
+    /**
+     * Maps the domain [ReadReceipts] model to a network [ReadReceiptsDto] model.
+     */
     internal fun ReadReceipts.toDto(): ReadReceiptsDto = ReadReceiptsDto(
         enabled = enabled,
     )
 
+    /**
+     * Maps the domain [User] model to a network [UpstreamUserDto] model.
+     *
+     * Additionally, applies transformation using the provided [UserTransformer] before mapping.
+     */
     internal fun User.toDto(): UpstreamUserDto =
         userTransformer.transform(this)
             .run {
@@ -187,6 +210,9 @@ internal class DtoMapping(
                 )
             }
 
+    /**
+     * Maps the domain [ConnectedEvent] model to a network [UpstreamConnectedEventDto] model.
+     */
     internal fun ConnectedEvent.toDto(): UpstreamConnectedEventDto = UpstreamConnectedEventDto(
         type = this.type,
         created_at = createdAt,

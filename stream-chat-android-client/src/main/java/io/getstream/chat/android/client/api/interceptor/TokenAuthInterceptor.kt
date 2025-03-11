@@ -24,6 +24,13 @@ import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 
+/**
+ * Interceptor adding the authorization token to the request.
+ *
+ * @param tokenManager The token manager to get the token from.
+ * @param parser The parser to parse the error response.
+ * @param isAnonymous Lambda checking if the currently logged in user is anonymous.
+ */
 internal class TokenAuthInterceptor internal constructor(
     private val tokenManager: TokenManager,
     private val parser: ChatParser,
