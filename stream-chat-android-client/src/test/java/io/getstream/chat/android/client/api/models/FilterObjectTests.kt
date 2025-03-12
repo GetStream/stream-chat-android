@@ -34,7 +34,7 @@ internal class FilterObjectTests {
     @Test
     fun `Two filters with different types Should not be equal`() {
         val filterObject1 = Filters.`in`("members", listOf("userId1"))
-        val filterObject2 = Filters.ne("members", listOf("userId1"))
+        val filterObject2 = Filters.nin("members", listOf("userId1"))
 
         filterObject1 `should not be equal to` filterObject2
     }

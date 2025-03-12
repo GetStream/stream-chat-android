@@ -4,7 +4,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
-| `NotInFilterObject` | 2024.09.03 <br/>6.5.1 | 2024.10.17 ⌛| 2024.10.03 ⌛| This filter is not supported backend-side anymore, if you are using it and need help with your integration, contact us and we will provide you an alternative. |
+| `NotInFilterObject` | 2024.09.03 <br/>6.5.1 | ⌛ | ⌛ | This filter is not supported backend-side anymore, if you are using it and need help with your integration, contact us and we will provide you an alternative. |
 | `AttachmentSelectionListener` | 2024.02.21 <br/>6.0.15 | 2024.03.21 ⌛ | 2024.04.21 ⌛ | Use `AttachmentsPickerDialogFragment.AttachmentsSelectionListener` instead. |
 | `ImageAttachmentQuotedContent` | 2022.09.13 <br/>5.9.1 | 2022.09.27<br/>5.9.1 | 2023.08.29<br/>6.0.0 | Deprecated in favor of `MediaAttachmentQuotedContent`. The new function has the ability to preview videos as well as images. |
 | `StreamDimens` constructor containing parameter `attachmentsContentImageGridSpacing`  | 2022.09.13 <br/>5.9.1 | 2022.09.27<br/>5.9.1 | 2023.08.29<br/>6.0.0 | This constructor has been deprecated. Use the constructor that does not contain the parameter `attachmentsContentImageGridSpacing`. |
