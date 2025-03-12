@@ -82,25 +82,25 @@ internal class SocketFactoryTest {
             randomUser(image = randomString(), name = randomString(), language = randomString()).let {
                 Arguments.of(
                     SocketFactory.ConnectionConf.UserConnectionConf(endpoint, apiKey, it),
-                    "${endpoint}connect?json=${buildFullUserJson(it, it.id)}&api_key=$apiKey&authorization=$token&stream-auth-type=jwt",
+                    "${endpoint}connect?json=${buildFullUserJson(it, it.id)}&api_key=$apiKey&X-Stream-Client=${headersUtil.buildSdkTrackingHeaders()}&authorization=$token&stream-auth-type=jwt",
                 )
             },
             randomUser().let {
                 Arguments.of(
                     SocketFactory.ConnectionConf.UserConnectionConf(endpoint, apiKey, it).asReconnectionConf(),
-                    "${endpoint}connect?json=${buildMinimumUserJson(it.id)}&api_key=$apiKey&authorization=$loadSyncToken&stream-auth-type=jwt",
+                    "${endpoint}connect?json=${buildMinimumUserJson(it.id)}&api_key=$apiKey&X-Stream-Client=${headersUtil.buildSdkTrackingHeaders()}&authorization=$loadSyncToken&stream-auth-type=jwt",
                 )
             },
             User("anon").let {
                 Arguments.of(
                     SocketFactory.ConnectionConf.AnonymousConnectionConf(endpoint, apiKey, it).asReconnectionConf(),
-                    "${endpoint}connect?json=${buildMinimumUserJson(it.id)}&api_key=$apiKey&stream-auth-type=anonymous",
+                    "${endpoint}connect?json=${buildMinimumUserJson(it.id)}&api_key=$apiKey&X-Stream-Client=${headersUtil.buildSdkTrackingHeaders()}&stream-auth-type=anonymous",
                 )
             },
             User("!anon").let {
                 Arguments.of(
                     SocketFactory.ConnectionConf.AnonymousConnectionConf(endpoint, apiKey, it).asReconnectionConf(),
-                    "${endpoint}connect?json=${buildMinimumUserJson("anon")}&api_key=$apiKey&stream-auth-type=anonymous",
+                    "${endpoint}connect?json=${buildMinimumUserJson("anon")}&api_key=$apiKey&X-Stream-Client=${headersUtil.buildSdkTrackingHeaders()}&stream-auth-type=anonymous",
                 )
             },
         )
@@ -129,7 +129,6 @@ internal class SocketFactoryTest {
                 "user_details" to userDetails,
                 "user_id" to userId,
                 "server_determines_connection_id" to true,
-                "X-Stream-Client" to headersUtil.buildSdkTrackingHeaders(),
             )
 
         private fun encode(map: Map<String, Any>): String =
