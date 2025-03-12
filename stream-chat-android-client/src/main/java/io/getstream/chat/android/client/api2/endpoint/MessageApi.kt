@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
+import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
@@ -64,6 +65,9 @@ internal interface MessageApi {
         @Path("type") channelType: String,
         @Path("id") channelId: String,
     ): RetrofitCall<MessageResponse>
+
+    @POST("/drafts/query")
+    fun queryDraftMessages(): RetrofitCall<QueryDraftMessagesResponse>
 
     @GET("/messages/{id}")
     fun getMessage(@Path("id") messageId: String): RetrofitCall<MessageResponse>

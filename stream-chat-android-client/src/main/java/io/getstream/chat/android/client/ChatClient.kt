@@ -1938,6 +1938,12 @@ internal constructor(
             .retry(userScope, retryPolicy)
     }
 
+    @CheckResult
+    public fun queryDraftMessages(): Call<List<DraftMessage>> {
+        return api.queryDraftMessages()
+            .retry(userScope, retryPolicy)
+    }
+
     private suspend fun doSendMessage(
         channelType: String,
         channelId: String,

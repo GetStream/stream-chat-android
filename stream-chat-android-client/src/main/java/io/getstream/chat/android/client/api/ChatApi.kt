@@ -184,7 +184,11 @@ internal interface ChatApi {
     fun deleteDraftMessage(
         channelType: String,
         channelId: String,
+        message: DraftMessage,
     ): Call<DraftMessage>
+
+    @CheckResult
+    fun queryDraftMessages(): Call<List<DraftMessage>>
 
     @CheckResult
     fun muteChannel(

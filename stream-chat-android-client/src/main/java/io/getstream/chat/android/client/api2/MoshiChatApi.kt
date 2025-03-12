@@ -251,6 +251,10 @@ constructor(
         response.message.toDraftMessage()
     }
 
+    override fun queryDraftMessages(): Call<List<DraftMessage>> = messageApi.queryDraftMessages().mapDomain { response ->
+        response.messages.map { it.toDraftMessage() }
+    }
+
     override fun updateMessage(
         message: Message,
     ): Call<Message> {
