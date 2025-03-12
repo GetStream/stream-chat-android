@@ -15,6 +15,7 @@
 ### 🐞 Fixed
 - Fix not being able to send `system` messages via the `ChatClient`. [#5657](https://github.com/GetStream/stream-chat-android/pull/5657)
 - Fix `ChatClient.deleteFile()` and `ChatClient.deleteImage()` not propagating errors. [#5666](https://github.com/GetStream/stream-chat-android/pull/5666)
+- Fix `X-Stream-Client` header placement in the WebSocket request URL. [#5668](https://github.com/GetStream/stream-chat-android/pull/5668)
 
 ### ⬆️ Improved
 - Add sending messages to only specific members. The `Message` entity contains a new property `restrictedVisibility` where a list of IDs for the desired members can be set.[#5644](https://github.com/GetStream/stream-chat-android/pull/5644)
@@ -22,6 +23,7 @@
 
 ### ✅ Added
 - Add a way to inject a TokenProvider from PN on the case an expired token needs to be refreshed. [#5655](https://github.com/GetStream/stream-chat-android/pull/5655)
+- Recover deprecated `NotInFilterObject` to avoid breaking changes. [#5672](https://github.com/GetStream/stream-chat-android/pull/5672)
 
 ### ⚠️ Changed
 
@@ -64,6 +66,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix wrong timestamp shown for updated GIPHY messages. [#5674](https://github.com/GetStream/stream-chat-android/pull/5674)
 
 ### ⬆️ Improved
 
@@ -79,6 +82,8 @@
 ### 🐞 Fixed
 - Crash when recording audio on a message reply. [#5642](https://github.com/GetStream/stream-chat-android/pull/5642)
 - Fix fading issue in media attachment content items. [#5631](https://github.com/GetStream/stream-chat-android/pull/5631)
+- Fix additional padding applied to the `MessageComposer` on Android 15. [#5659](https://github.com/GetStream/stream-chat-android/pull/5659)
+- Fix wrong timestamp shown for updated messages. [#5674](https://github.com/GetStream/stream-chat-android/pull/5674)
 
 ### ⬆️ Improved
 - Autofocus the input fields in the poll creation screen. [#5629](https://github.com/GetStream/stream-chat-android/pull/5629)

@@ -35,6 +35,7 @@ import io.getstream.chat.android.models.NeutralFilterObject
 import io.getstream.chat.android.models.NorFilterObject
 import io.getstream.chat.android.models.NotEqualsFilterObject
 import io.getstream.chat.android.models.NotExistsFilterObject
+import io.getstream.chat.android.models.NotInFilterObject
 import io.getstream.chat.android.models.OrFilterObject
 import java.lang.IllegalArgumentException
 
@@ -83,6 +84,7 @@ private fun Map.Entry<String, Any>.toFilterObject(): FilterObject = when (this.k
             KEY_LESS_THAN -> Filters.lessThan(this.key, it.value)
             KEY_LESS_THAN_OR_EQUALS -> Filters.lessThanEquals(this.key, it.value)
             KEY_IN -> Filters.`in`(this.key, (it.value as List<Any>))
+            KEY_NOT_IN -> Filters.nin(this.key, (it.value as List<Any>))
             KEY_AUTOCOMPLETE -> Filters.autocomplete(this.key, it.value as String)
             else -> throw IllegalArgumentException("FilterObject can be create with this map `$this`")
         }
@@ -103,6 +105,7 @@ private fun FilterObject.toMap(): Map<String, Any> = when (this) {
     is LessThanFilterObject -> mapOf(this.fieldName to mapOf(KEY_LESS_THAN to this.value))
     is LessThanOrEqualsFilterObject -> mapOf(this.fieldName to mapOf(KEY_LESS_THAN_OR_EQUALS to this.value))
     is InFilterObject -> mapOf(this.fieldName to mapOf(KEY_IN to this.values))
+    is NotInFilterObject -> mapOf(this.fieldName to mapOf(KEY_NOT_IN to this.values))
     is AutocompleteFilterObject -> mapOf(this.fieldName to mapOf(KEY_AUTOCOMPLETE to this.value))
     is DistinctFilterObject -> mapOf(KEY_DISTINCT to true, KEY_MEMBERS to this.memberIds)
     is NeutralFilterObject -> emptyMap<String, String>()
@@ -120,6 +123,7 @@ private const val KEY_GREATER_THAN_OR_EQUALS: String = "\$gte"
 private const val KEY_LESS_THAN: String = "\$lt"
 private const val KEY_LESS_THAN_OR_EQUALS: String = "\$lte"
 private const val KEY_IN: String = "\$in"
+private const val KEY_NOT_IN: String = "\$nin"
 private const val KEY_AUTOCOMPLETE: String = "\$autocomplete"
 private const val KEY_DISTINCT: String = "distinct"
 private const val KEY_MEMBERS: String = "members"

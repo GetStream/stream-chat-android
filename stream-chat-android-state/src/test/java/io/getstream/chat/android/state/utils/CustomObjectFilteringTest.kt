@@ -74,6 +74,7 @@ internal class CustomObjectFilteringTest {
             lessThanFilterArguments() +
             lessThanOrEqualsFilterArguments() +
             inFilterArguments() +
+            notInFilterArguments() +
             andFilterArguments() +
             norFilterArguments() +
             orFilterArguments()
@@ -1356,6 +1357,168 @@ internal class CustomObjectFilteringTest {
                         Arguments.of(
                             (expectedList + List(positiveRandomInt(10)) { randomChannel() }).shuffled(),
                             Filters.`in`("someField", stringList),
+                            expectedList,
+                        )
+                    },
+                )
+            }
+
+        @Suppress("LongMethod")
+        @JvmStatic
+        fun notInFilterArguments() = List(positiveRandomInt(10)) { randomInt() }.let { intList ->
+            val notIntList = List(positiveRandomInt(10)) { randomInt() } - intList
+            listOf(
+                List(positiveRandomInt(10)) {
+                    randomChannel(
+                        extraData = mapOf("someField" to notIntList.random()),
+                    )
+                }.let { expectedList ->
+                    Arguments.of(
+                        (
+                            expectedList + List(positiveRandomInt(10)) {
+                                randomChannel(
+                                    extraData = mapOf("someField" to intList.random()),
+                                )
+                            }
+                            ).shuffled(),
+                        Filters.nin("someField", intList),
+                        expectedList,
+                    )
+                },
+                List(positiveRandomInt(10)) { randomChannel() }.let { expectedList ->
+                    Arguments.of(
+                        (
+                            expectedList + List(positiveRandomInt(10)) {
+                                randomChannel(
+                                    extraData = mapOf("someField" to intList.random()),
+                                )
+                            }
+                            ).shuffled(),
+                        Filters.nin("someField", intList),
+                        expectedList,
+                    )
+                },
+            )
+        } +
+            List(positiveRandomInt(10)) { randomLong() }.let { longList ->
+                val notLongList = List(positiveRandomInt(10)) { randomLong() } - longList
+                listOf(
+                    List(positiveRandomInt(10)) {
+                        randomChannel(
+                            extraData = mapOf("someField" to notLongList.random()),
+                        )
+                    }.let { expectedList ->
+                        Arguments.of(
+                            (
+                                expectedList + List(positiveRandomInt(10)) {
+                                    randomChannel(
+                                        extraData = mapOf("someField" to longList.random()),
+                                    )
+                                }
+                                ).shuffled(),
+                            Filters.nin("someField", longList),
+                            expectedList,
+                        )
+                    },
+                    List(positiveRandomInt(10)) { randomChannel() }.let { expectedList ->
+                        Arguments.of(
+                            (
+                                expectedList + List(positiveRandomInt(10)) {
+                                    randomChannel(
+                                        extraData = mapOf("someField" to longList.random()),
+                                    )
+                                }
+                                ).shuffled(),
+                            Filters.nin("someField", longList),
+                            expectedList,
+                        )
+                    },
+                )
+            } +
+            List(positiveRandomInt(10)) { randomString() }.let { stringList ->
+                val notStringList = List(positiveRandomInt(10)) { randomString() } - stringList
+                listOf(
+                    List(positiveRandomInt(10)) {
+                        randomChannel(
+                            extraData = mapOf("someField" to notStringList.random()),
+                        )
+                    }.let { expectedList ->
+                        Arguments.of(
+                            (
+                                expectedList + List(positiveRandomInt(10)) {
+                                    randomChannel(
+                                        extraData = mapOf("someField" to stringList.random()),
+                                    )
+                                }
+                                ).shuffled(),
+                            Filters.nin("someField", stringList),
+                            expectedList,
+                        )
+                    },
+                    List(positiveRandomInt(10)) { randomChannel() }.let { expectedList ->
+                        Arguments.of(
+                            (
+                                expectedList + List(positiveRandomInt(10)) {
+                                    randomChannel(
+                                        extraData = mapOf("someField" to stringList.random()),
+                                    )
+                                }
+                                ).shuffled(),
+                            Filters.nin("someField", stringList),
+                            expectedList,
+                        )
+                    },
+                )
+            } +
+            List(positiveRandomInt(10)) { randomChannel() }.let { expectedList ->
+                Arguments.of(
+                    (
+                        expectedList +
+                            memberIds.take(positiveRandomInt(memberIds.size))
+                                .map { randomMember(user = randomUser(id = it)) }.let { members ->
+                                    List(positiveRandomInt(10)) {
+                                        randomChannel(
+                                            members = (
+                                                List(positiveRandomInt(10)) { randomMember() } + members
+                                                ).shuffled(),
+                                        )
+                                    }
+                                }
+                        ).shuffled(),
+                    Filters.nin("members", memberIds),
+                    expectedList,
+                )
+            } +
+            List(positiveRandomInt(10)) { randomString() }.let { stringList ->
+                val notStringList = List(positiveRandomInt(10)) { randomString() } - stringList
+                listOf(
+                    List(positiveRandomInt(10)) {
+                        randomChannel(
+                            extraData = mapOf("someField" to listOf(notStringList.random())),
+                        )
+                    }.let { expectedList ->
+                        Arguments.of(
+                            (
+                                expectedList + List(positiveRandomInt(10)) {
+                                    randomChannel(
+                                        extraData = mapOf("someField" to listOf(stringList.random())),
+                                    )
+                                }
+                                ).shuffled(),
+                            Filters.nin("someField", stringList),
+                            expectedList,
+                        )
+                    },
+                    List(positiveRandomInt(10)) { randomChannel() }.let { expectedList ->
+                        Arguments.of(
+                            (
+                                expectedList + List(positiveRandomInt(10)) {
+                                    randomChannel(
+                                        extraData = mapOf("someField" to listOf(stringList.random())),
+                                    )
+                                }
+                                ).shuffled(),
+                            Filters.nin("someField", stringList),
                             expectedList,
                         )
                     },
