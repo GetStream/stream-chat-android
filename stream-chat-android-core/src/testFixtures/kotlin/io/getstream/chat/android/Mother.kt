@@ -35,6 +35,7 @@ import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.HMSRoom
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
@@ -234,6 +235,33 @@ public fun randomReaction(
     syncStatus = syncStatus,
     extraData = extraData,
     enforceUnique = enforceUnique,
+)
+
+public fun randomDraftMessage(
+    id: String = randomString(),
+    cid: String = randomCID(),
+    text: String = randomString(),
+    html: String = randomString(),
+    parentId: String? = randomString(),
+    attachments: List<Attachment> = listOf(),
+    mentionedUsers: List<User> = listOf(),
+    extraData: Map<String, Any> = mapOf(),
+    silent: Boolean = randomBoolean(),
+    showInChannel: Boolean = randomBoolean(),
+    replyMessageId: String? = randomString(),
+): DraftMessage = DraftMessage(
+    id = id,
+    cid = cid,
+    text = text,
+    html = html,
+    parentId = parentId,
+    attachments = attachments,
+    mentionedUsersIds = mentionedUsers.map(User::id).toMutableList(),
+
+    extraData = extraData,
+    silent = silent,
+    showInChannel = showInChannel,
+    replyMessageId = replyMessageId,
 )
 
 public fun randomMessage(
