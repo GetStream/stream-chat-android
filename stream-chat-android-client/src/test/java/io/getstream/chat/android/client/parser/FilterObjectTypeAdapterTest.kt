@@ -199,6 +199,30 @@ internal class FilterObjectTypeAdapterTest {
                 }
             },
             randomString().let { fieldName ->
+                List(positiveRandomInt(20)) { randomString() }.let { values ->
+                    Arguments.of(
+                        Filters.nin(fieldName, values),
+                        "{\"$fieldName\":{\"\$nin\":[\"${values.toSet().joinToString(separator = "\",\"")}\"]}}",
+                    )
+                }
+            },
+            randomString().let { fieldName ->
+                List(positiveRandomInt(20)) { randomInt() }.let { values ->
+                    Arguments.of(
+                        Filters.nin(fieldName, values),
+                        "{\"$fieldName\":{\"\$nin\":[${values.toSet().joinToString(separator = ",")}]}}",
+                    )
+                }
+            },
+            randomString().let { fieldName ->
+                List(positiveRandomInt(20)) { randomBoolean() }.let { values ->
+                    Arguments.of(
+                        Filters.nin(fieldName, values),
+                        "{\"$fieldName\":{\"\$nin\":[${values.toSet().joinToString(separator = ",")}]}}",
+                    )
+                }
+            },
+            randomString().let { fieldName ->
                 List(positiveRandomInt(20)) { randomInt() }.let { values ->
                     Arguments.of(
                         Filters.and(

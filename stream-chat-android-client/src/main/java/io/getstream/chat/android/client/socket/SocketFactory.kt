@@ -47,6 +47,7 @@ internal class SocketFactory(
     private fun buildRequest(connectionConf: ConnectionConf): Request =
         Request.Builder()
             .url(buildUrl(connectionConf))
+            .addHeader(X_STREAM_CLIENT, headersUtil.buildSdkTrackingHeaders())
             .build()
 
     @Suppress("TooGenericExceptionCaught")
@@ -55,7 +56,12 @@ internal class SocketFactory(
         var json = buildUserDetailJson(connectionConf)
         return try {
             json = URLEncoder.encode(json, StandardCharsets.UTF_8.name())
-            val baseWsUrl = "${connectionConf.endpoint}connect?json=$json&api_key=${connectionConf.apiKey}"
+            val sdkTrackingHeaders =
+                URLEncoder.encode(headersUtil.buildSdkTrackingHeaders(), StandardCharsets.UTF_8.name())
+            val baseWsUrl = "${connectionConf.endpoint}connect?" +
+                "json=$json" +
+                "&api_key=${connectionConf.apiKey}" +
+                "&$X_STREAM_CLIENT=$sdkTrackingHeaders"
             when (connectionConf) {
                 is ConnectionConf.AnonymousConnectionConf -> "$baseWsUrl&stream-auth-type=anonymous"
                 is ConnectionConf.UserConnectionConf -> {
@@ -75,7 +81,6 @@ internal class SocketFactory(
             "user_details" to connectionConf.reduceUserDetails(),
             "user_id" to connectionConf.id,
             "server_determines_connection_id" to true,
-            "X-Stream-Client" to headersUtil.buildSdkTrackingHeaders(),
         )
         return parser.toJson(data)
     }
@@ -147,5 +152,9 @@ internal class SocketFactory(
                 is AnonymousConnectionConf -> user.id.replace("!", "")
                 is UserConnectionConf -> user.id
             }
+    }
+
+    companion object {
+        private const val X_STREAM_CLIENT = "X-Stream-Client"
     }
 }

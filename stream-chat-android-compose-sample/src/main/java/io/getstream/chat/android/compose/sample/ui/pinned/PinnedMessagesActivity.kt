@@ -21,11 +21,12 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import io.getstream.chat.android.compose.sample.R
@@ -68,29 +69,29 @@ class PinnedMessagesActivity : BaseConnectedActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ChatTheme {
-                Surface {
-                    Scaffold(
-                        topBar = {
-                            AppToolbar(
-                                title = stringResource(id = R.string.channel_info_option_pinned_messages),
-                                onBack = ::finish,
+                Scaffold(
+                    modifier = Modifier.statusBarsPadding(),
+                    topBar = {
+                        AppToolbar(
+                            title = stringResource(id = R.string.channel_info_option_pinned_messages),
+                            onBack = ::finish,
+                        )
+                    },
+                    content = { padding ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(ChatTheme.colors.appBackground)
+                                .padding(padding),
+                        ) {
+                            PinnedMessageList(
+                                modifier = Modifier.fillMaxSize(),
+                                viewModel = viewModel,
+                                onPinnedMessageClick = ::openMessage,
                             )
-                        },
-                        content = { padding ->
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(padding),
-                            ) {
-                                PinnedMessageList(
-                                    modifier = Modifier.fillMaxSize(),
-                                    viewModel = viewModel,
-                                    onPinnedMessageClick = ::openMessage,
-                                )
-                            }
-                        },
-                    )
-                }
+                        }
+                    },
+                )
             }
         }
     }
