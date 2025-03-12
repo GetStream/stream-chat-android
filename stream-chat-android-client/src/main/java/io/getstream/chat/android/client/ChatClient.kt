@@ -161,6 +161,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionData
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
@@ -1913,6 +1914,18 @@ internal constructor(
                     SendMessageIdentifier(channelType, channelId, processedMessage.id)
                 }
             }
+    }
+
+    @CheckResult
+    public fun createDraftMessage(
+        channelType: String,
+        channelId: String,
+        message: DraftMessage,
+    ): Call<DraftMessage> {
+        return message.ensureId(getCurrentUser() ?: getStoredUser()).let { processedDraftMessage ->
+            api.createDraftMessage(channelType, channelId, processedDraftMessage)
+                .retry(userScope, retryPolicy)
+        }
     }
 
     private suspend fun doSendMessage(

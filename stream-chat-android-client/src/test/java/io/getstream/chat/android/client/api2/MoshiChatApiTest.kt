@@ -122,6 +122,7 @@ import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomDevice
+import io.getstream.chat.android.randomDraftMessage
 import io.getstream.chat.android.randomFile
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomMember
@@ -186,6 +187,22 @@ internal class MoshiChatApiTest {
         // then
         result `should be instance of` expected
         verify(api, times(1)).sendMessage(any(), any(), any())
+    }
+
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#createDraftMessageInput")
+    fun testCreateDraftMessage(call: RetrofitCall<MessageResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<MessageApi>()
+        whenever(api.createDraftMessage(any(), any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withMessageApi(api)
+            .get()
+        // when
+        val result = sut.createDraftMessage(randomString(), randomString(), randomDraftMessage()).await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).createDraftMessage(any(), any(), any())
     }
 
     @ParameterizedTest
