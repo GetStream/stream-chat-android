@@ -139,7 +139,7 @@ public fun FileAttachmentItem(
     Surface(
         modifier = modifier,
         color = fileAttachmentTheme.background,
-        shape = fileAttachmentTheme.attachment,
+        shape = fileAttachmentTheme.itemShape,
     ) {
         Row(
             Modifier

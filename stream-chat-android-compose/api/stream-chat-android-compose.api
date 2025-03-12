@@ -3262,12 +3262,12 @@ public final class io/getstream/chat/android/compose/ui/theme/messages/attachmen
 	public final fun copy-KTwxG1Y (JLandroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Lio/getstream/chat/android/compose/ui/theme/IconStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;)Lio/getstream/chat/android/compose/ui/theme/messages/attachments/FileAttachmentTheme;
 	public static synthetic fun copy-KTwxG1Y$default (Lio/getstream/chat/android/compose/ui/theme/messages/attachments/FileAttachmentTheme;JLandroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/graphics/Shape;Lio/getstream/chat/android/compose/ui/theme/IconStyle;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/messages/attachments/FileAttachmentTheme;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getAttachment ()Landroidx/compose/ui/graphics/Shape;
 	public final fun getBackground-0d7_KjU ()J
 	public final fun getDownloadIconStyle ()Lio/getstream/chat/android/compose/ui/theme/IconStyle;
 	public final fun getFileMetadataTextStyle ()Landroidx/compose/ui/text/TextStyle;
 	public final fun getFileNameTextStyle ()Landroidx/compose/ui/text/TextStyle;
 	public final fun getImageThumbnail ()Landroidx/compose/ui/graphics/Shape;
+	public final fun getItemShape ()Landroidx/compose/ui/graphics/Shape;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

@@ -33,7 +33,7 @@ import io.getstream.chat.android.compose.ui.theme.StreamTypography
  * Represents the theming for the file attachment component.
  *
  * @param background The background color for the file attachment.
- * @param attachment The shape for the file attachment.
+ * @param itemShape The shape for the file attachment.
  * @param imageThumbnail The shape for the image thumbnail.
  * @param downloadIconStyle The styling for the download icon.
  * @param fileNameTextStyle The text style for the file name.
@@ -42,7 +42,7 @@ import io.getstream.chat.android.compose.ui.theme.StreamTypography
 @Immutable
 public data class FileAttachmentTheme(
     public val background: Color,
-    public val attachment: Shape,
+    public val itemShape: Shape,
     public val imageThumbnail: Shape,
     public val downloadIconStyle: IconStyle,
     public val fileNameTextStyle: TextStyle,
@@ -61,7 +61,7 @@ public data class FileAttachmentTheme(
             colors: StreamColors,
         ): FileAttachmentTheme = FileAttachmentTheme(
             background = colors.appBackground,
-            attachment = shapes.attachment,
+            itemShape = shapes.attachment,
             imageThumbnail = shapes.imageThumbnail,
             downloadIconStyle = IconStyle(
                 painter = painterResource(id = R.drawable.stream_compose_ic_file_download),
