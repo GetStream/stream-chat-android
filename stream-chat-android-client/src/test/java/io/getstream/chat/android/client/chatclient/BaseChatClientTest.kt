@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.StreamLifecycleObserver
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
+import io.getstream.chat.android.client.attachment.AttachmentsSender
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
@@ -39,7 +40,6 @@ import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.test.TestCoroutineExtension
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
@@ -52,7 +52,6 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal open class BaseChatClientTest {
 
     companion object {
@@ -78,6 +77,9 @@ internal open class BaseChatClientTest {
 
     @Mock
     protected lateinit var api: ChatApi
+
+    @Mock
+    protected lateinit var attachmentsSender: AttachmentsSender
 
     @Mock
     protected lateinit var currentUserFetcher: CurrentUserFetcher
@@ -125,6 +127,7 @@ internal open class BaseChatClientTest {
             currentUserFetcher = currentUserFetcher,
             audioPlayer = mock(),
         )
+        chatClient.attachmentsSender = attachmentsSender
 
         Mockito.reset(
             userStateService,
