@@ -66,6 +66,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.`should be false`
+import org.amshove.kluent.`should be true`
+import org.amshove.kluent.`should not be null`
 import org.amshove.kluent.shouldBeFalse
 import org.amshove.kluent.shouldBeNull
 import org.amshove.kluent.shouldBeTrue
@@ -646,10 +649,11 @@ internal class MessageListControllerTests {
                 randomMessage(id = "last_read_message_id"),
                 randomMessage(id = "first_unread_message_id"),
             )
-            val channelRead = randomChannelUserRead(
-                user = user,
-                lastReadMessageId = "last_read_message_id",
-                unreadMessages = 1,
+            val channelRead = MutableStateFlow(
+                randomChannelUserRead(
+                    user = user,
+                    lastReadMessageId = "last_read_message_id",
+                ),
             )
             val messagesState = MutableStateFlow(messages)
             val controller = Fixture()
@@ -667,6 +671,72 @@ internal class MessageListControllerTests {
             lastReadMessage.focusState `should be equal to` null
             firstUnreadMessage.message.id `should be equal to` "first_unread_message_id"
             firstUnreadMessage.focusState `should be equal to` MessageFocused
+        }
+
+    @Test
+    fun `Show unread label, when unread message is loaded`() =
+        runTest {
+            val user = randomUser()
+            val firstMessage = randomMessage(id = "last_read_message_id", deletedAt = null)
+            val messages = listOf(
+                firstMessage,
+                randomMessage(id = "first_unread_message_id", deletedAt = null),
+            )
+            val channelRead = MutableStateFlow(
+                randomChannelUserRead(
+                    user = user,
+                    lastReadMessageId = firstMessage.id,
+                    unreadMessages = 0,
+                ),
+            )
+            val messagesState = MutableStateFlow(messages)
+            val controller = Fixture()
+                .givenCurrentUser(user)
+                .givenChannelState(
+                    messagesState = messagesState,
+                    read = channelRead,
+                )
+                .get()
+
+            val unreadLabel = controller.unreadLabelState.value
+            unreadLabel.`should not be null`()
+            unreadLabel.lastReadMessageId `should be equal to` firstMessage.id
+            unreadLabel.buttonVisibility.`should be true`()
+        }
+
+    @Test
+    fun `Show unread label, when message is marked as unread`() =
+        runTest {
+            val user = randomUser()
+            val lastReadMessage = randomMessage(id = "last_read_message_id")
+            val messages = listOf(
+                lastReadMessage,
+                randomMessage(id = "first_unread_message_id"),
+            )
+            val channelUserRead = MutableStateFlow<ChannelUserRead?>(null)
+            val messagesState = MutableStateFlow(messages)
+            val controller = Fixture()
+                .givenCurrentUser(user)
+                .givenChannelState(
+                    messagesState = messagesState,
+                    read = channelUserRead,
+                )
+                .givenMarkMessageUnread()
+                .get()
+
+            controller.markUnread(lastReadMessage)
+            channelUserRead.emit(
+                randomChannelUserRead(
+                    user = user,
+                    lastReadMessageId = lastReadMessage.id,
+                    unreadMessages = 0,
+                ),
+            )
+
+            val unreadLabel = controller.unreadLabelState.value
+            unreadLabel.`should not be null`()
+            unreadLabel.lastReadMessageId `should be equal to` lastReadMessage.id
+            unreadLabel.buttonVisibility.`should be false`()
         }
 
     private class Fixture(
@@ -707,6 +777,10 @@ internal class MessageListControllerTests {
             whenever(chatClient.markMessageRead(any(), any(), any())) doReturn Unit.asCall()
         }
 
+        fun givenMarkMessageUnread() = apply {
+            whenever(chatClient.markUnread(any(), any(), any())) doReturn Unit.asCall()
+        }
+
         fun givenChannelState(
             channelDataState: StateFlow<ChannelData> = MutableStateFlow(
                 ChannelData(
@@ -722,7 +796,7 @@ internal class MessageListControllerTests {
             watchersCountState: StateFlow<Int> = MutableStateFlow(0),
             typingUsers: List<User> = listOf(),
             typingState: StateFlow<TypingEvent> = MutableStateFlow(TypingEvent(cid, typingUsers)),
-            read: ChannelUserRead = randomChannelUserRead(lastReadMessageId = null),
+            read: StateFlow<ChannelUserRead?> = MutableStateFlow(randomChannelUserRead(lastReadMessageId = null)),
         ) = apply {
             whenever(channelState.cid) doReturn CID
             whenever(channelState.channelData) doReturn channelDataState
@@ -738,7 +812,7 @@ internal class MessageListControllerTests {
             }.stateIn(testCoroutines.scope, SharingStarted.Eagerly, MessagesState.Result(emptyList()))
             whenever(channelState.typing) doReturn typingState
             whenever(channelState.reads) doReturn MutableStateFlow(listOf())
-            whenever(channelState.read) doReturn MutableStateFlow(read)
+            whenever(channelState.read) doReturn read
             whenever(channelState.endOfOlderMessages) doReturn MutableStateFlow(false)
             whenever(channelState.endOfNewerMessages) doReturn MutableStateFlow(true)
             whenever(channelState.unreadCount) doReturn MutableStateFlow(0)
