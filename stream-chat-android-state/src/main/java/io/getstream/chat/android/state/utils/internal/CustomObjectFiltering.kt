@@ -36,6 +36,7 @@ import io.getstream.chat.android.models.NeutralFilterObject
 import io.getstream.chat.android.models.NorFilterObject
 import io.getstream.chat.android.models.NotEqualsFilterObject
 import io.getstream.chat.android.models.NotExistsFilterObject
+import io.getstream.chat.android.models.NotInFilterObject
 import io.getstream.chat.android.models.OrFilterObject
 import java.lang.ClassCastException
 import kotlin.reflect.KClass
@@ -77,6 +78,17 @@ internal fun <T : CustomObject> FilterObject.filter(t: T): Boolean = try {
                     values.any(fieldValue::contains)
                 } else {
                     values.contains(fieldValue)
+                }
+            }
+        }
+        is NotInFilterObject -> when (fieldName) {
+            MEMBERS_FIELD_NAME -> values.none(t.getMembersId()::contains)
+            else -> {
+                val fieldValue = t.getMemberPropertyOrExtra(fieldName, Any::class)
+                if (fieldValue is List<*>) {
+                    values.none(fieldValue::contains)
+                } else {
+                    !values.contains(fieldValue)
                 }
             }
         }
