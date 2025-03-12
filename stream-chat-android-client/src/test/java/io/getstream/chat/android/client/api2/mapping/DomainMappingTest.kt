@@ -61,6 +61,7 @@ import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Member
@@ -115,6 +116,32 @@ internal class DomainMappingTest {
         }
 
         result `should be equal to` transformedMessage
+    }
+
+    @Test
+    fun `DownstreamMessageDto is correctly mapped to DraftMessage`() {
+        val messageResponse = randomDownstreamMessageDto()
+        val sut = Fixture()
+            .get()
+        val expectedMappedDraftMessage = DraftMessage(
+            id = messageResponse.id,
+            cid = messageResponse.cid,
+            text = messageResponse.text,
+            html = messageResponse.html,
+            parentId = messageResponse.parent_id,
+            replyMessageId = messageResponse.quoted_message_id,
+            attachments = with(sut) { messageResponse.attachments.map { it.toDomain() } },
+            mentionedUsersIds = messageResponse.mentioned_users.map { it.id },
+            extraData = messageResponse.extraData.toMutableMap(),
+            silent = messageResponse.silent,
+            showInChannel = messageResponse.show_in_channel,
+        )
+
+        val result = with(sut) {
+            messageResponse.toDraftMessage()
+        }
+
+        result `should be equal to` expectedMappedDraftMessage
     }
 
     @Test

@@ -34,6 +34,7 @@ import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
@@ -139,6 +140,29 @@ internal class DtoMapping(
                     extraData = extraData,
                 )
             }
+
+    internal fun DraftMessage.toDto(): UpstreamMessageDto = UpstreamMessageDto(
+        attachments = attachments.map { it.toDto() },
+        cid = cid,
+        command = null,
+        html = html,
+        id = id,
+        mentioned_users = mentionedUsersIds,
+        parent_id = parentId,
+        pin_expires = null,
+        pinned = false,
+        pinned_at = null,
+        pinned_by = null,
+        quoted_message_id = replyMessageId,
+        shadowed = false,
+        show_in_channel = showInChannel,
+        silent = silent,
+        text = text,
+        type = "regular",
+        thread_participants = emptyList(),
+        restricted_visibility = emptyList(),
+        extraData = extraData,
+    )
 
     /**
      * Maps the domain [Mute] model to a network [UpstreamMuteDto] model.

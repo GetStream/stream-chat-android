@@ -38,6 +38,7 @@ import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.UserTransformer
 import io.getstream.chat.android.randomAttachment
 import io.getstream.chat.android.randomDevice
+import io.getstream.chat.android.randomDraftMessage
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMemberData
 import io.getstream.chat.android.randomMessage
@@ -126,6 +127,36 @@ internal class DtoMappingTest {
             pinned_at = member.pinnedAt,
             archived_at = member.archivedAt,
             extraData = member.extraData,
+        )
+        dto shouldBeEqualTo expected
+    }
+
+    @Test
+    fun `DraftMessage is correctly mapped to Dto`() {
+        val message = randomDraftMessage()
+        val mapping = Fixture().get()
+        val dto = with(mapping) { message.toDto() }
+        val expected = UpstreamMessageDto(
+            attachments = message.attachments.map { with(mapping) { it.toDto() } },
+            cid = message.cid,
+            command = null,
+            html = message.html,
+            id = message.id,
+            type = "regular",
+            mentioned_users = message.mentionedUsersIds,
+            parent_id = message.parentId,
+            pin_expires = null,
+            pinned = false,
+            pinned_at = null,
+            pinned_by = null,
+            quoted_message_id = message.replyMessageId,
+            shadowed = false,
+            show_in_channel = message.showInChannel,
+            silent = message.silent,
+            text = message.text,
+            thread_participants = emptyList(),
+            restricted_visibility = emptyList(),
+            extraData = message.extraData,
         )
         dto shouldBeEqualTo expected
     }
