@@ -547,14 +547,14 @@ public class MessageListController(
     }
 
     private fun refreshUnreadLabel(shouldShowButton: Boolean) {
-        val previousUnreadMessageId = unreadLabelState.value?.lastReadMessageId
         channelState.filterNotNull()
             .flatMapLatest {
                 it.read
                     .filterNotNull()
-                    .filter {
-                        it.lastReadMessageId != null &&
-                            previousUnreadMessageId?.equals(it.lastReadMessageId)?.not() ?: true
+                    .filter { channelUserRead ->
+                        val previousUnreadMessageId = unreadLabelState.value?.lastReadMessageId
+                        channelUserRead.lastReadMessageId != null &&
+                            previousUnreadMessageId != channelUserRead.lastReadMessageId
                     }
             }
             .onFirst { channelUserRead ->
