@@ -121,6 +121,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -135,6 +136,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -216,6 +218,7 @@ public class MessageListController(
      * Holds information about the unread label state.
      */
     public val unreadLabelState: MutableStateFlow<UnreadLabel?> = MutableStateFlow(null)
+    private val updateUnreadLabelState = MutableSharedFlow<Boolean>(extraBufferCapacity = 1)
 
     /**
      * Holds information about the abilities the current user is able to exercise in the given channel.
@@ -543,45 +546,50 @@ public class MessageListController(
         channelState.filterNotNull().flatMapLatest { it.loadingNewerMessages }.onEach {
             updateIsLoadingNewerMessages(it)
         }.launchIn(scope)
-        refreshUnreadLabel(true)
+
+        observeUnreadLabelState()
     }
 
-    private fun refreshUnreadLabel(shouldShowButton: Boolean) {
-        channelState.filterNotNull()
-            .flatMapLatest {
-                it.read
-                    .filterNotNull()
-                    .filter { channelUserRead ->
-                        val previousUnreadMessageId = unreadLabelState.value?.lastReadMessageId
-                        channelUserRead.lastReadMessageId != null &&
-                            previousUnreadMessageId != channelUserRead.lastReadMessageId
-                    }
-            }
-            .onFirst { channelUserRead ->
-                // Don't show the label if no unread messages in the channel, or the controller is started for a thread
-                val unreadLabel = if (isStartedForThread || channelUserRead.unreadMessages == 0) {
-                    null
-                } else {
-                    val unreadMessages = (channelState.value?.messages?.value ?: emptyList())
-                        .fold(emptyList<Message>()) { acc, message ->
-                            when {
-                                channelUserRead.lastReadMessageId == message.id -> emptyList()
-                                else -> acc + message
+    private fun observeUnreadLabelState() {
+        updateUnreadLabelState
+            // Start with shouldShowButton = true
+            .onStart { emit(true) }
+            .flatMapLatest { shouldShowButton ->
+                channelState.filterNotNull()
+                    .flatMapLatest { channel ->
+                        channel.read
+                            .filterNotNull()
+                            .filter { channelUserRead ->
+                                val previousUnreadMessageId = unreadLabelState.value?.lastReadMessageId
+                                channelUserRead.lastReadMessageId != null &&
+                                    previousUnreadMessageId != channelUserRead.lastReadMessageId
                             }
-                        }
-                    channelUserRead.lastReadMessageId
-                        ?.takeUnless { unreadMessages.isEmpty() }
-                        ?.takeUnless { unreadMessages.lastOrNull()?.id == it }
-                        ?.let { lastReadMessageId ->
-                            UnreadLabel(
-                                unreadCount = channelUserRead.unreadMessages,
-                                lastReadMessageId = lastReadMessageId,
-                                buttonVisibility = shouldShowButton &&
-                                    unreadMessages.any { !it.isDeleted() },
-                            )
-                        }
-                }
-                unreadLabelState.value = unreadLabel
+                            .map { channelUserRead ->
+                                val unreadMessages = channel.messages.value
+                                    .fold(emptyList<Message>()) { acc, message ->
+                                        when {
+                                            channelUserRead.lastReadMessageId == message.id -> emptyList()
+                                            else -> acc + message
+                                        }
+                                    }
+                                channelUserRead to unreadMessages
+                            }
+                    }
+                    .onEach { (channelUserRead, unreadMessages) ->
+                        val unreadLabel = channelUserRead.lastReadMessageId
+                            ?.takeUnless { isStartedForThread }
+                            ?.takeUnless { unreadMessages.isEmpty() }
+                            ?.takeUnless { unreadMessages.lastOrNull()?.id == it }
+                            ?.let { lastReadMessageId ->
+                                UnreadLabel(
+                                    unreadCount = channelUserRead.unreadMessages,
+                                    lastReadMessageId = lastReadMessageId,
+                                    buttonVisibility = shouldShowButton &&
+                                        unreadMessages.any { !it.isDeleted() },
+                                )
+                            }
+                        unreadLabelState.value = unreadLabel
+                    }
             }.launchIn(scope)
     }
 
@@ -862,7 +870,8 @@ public class MessageListController(
             val nextMessage = messages.getOrNull(index + 1)
 
             val hasDateSeparatorBefore = dateSeparatorHandler.shouldAddDateSeparator(previousMessage, message)
-            val hasDateSeparatorAfter = nextMessage?.let { dateSeparatorHandler.shouldAddDateSeparator(message, it) } ?: false
+            val hasDateSeparatorAfter =
+                nextMessage?.let { dateSeparatorHandler.shouldAddDateSeparator(message, it) } ?: false
 
             val position = messagePositionHandler.handleMessagePosition(
                 previousMessage = previousMessage,
@@ -997,6 +1006,7 @@ public class MessageListController(
                     DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> message.user.id == currentUser?.id
                     DeletedMessageVisibility.ALWAYS_HIDDEN -> false
                 }
+
                 isSystemMessage -> showSystemMessages
                 else -> true
             }
@@ -1730,7 +1740,8 @@ public class MessageListController(
                         ErrorEvent.MarkUnreadError(it)
                     }
                 } else {
-                    refreshUnreadLabel(false)
+                    // Emit with shouldShowButton = false
+                    updateUnreadLabelState.tryEmit(false)
                 }
             }
         }
