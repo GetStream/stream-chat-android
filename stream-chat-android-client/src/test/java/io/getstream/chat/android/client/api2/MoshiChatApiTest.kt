@@ -206,6 +206,22 @@ internal class MoshiChatApiTest {
     }
 
     @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#createDraftMessageInput")
+    fun testDeleteDraftMessage(call: RetrofitCall<MessageResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<MessageApi>()
+        whenever(api.deleteDraftMessage(any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withMessageApi(api)
+            .get()
+        // when
+        val result = sut.deleteDraftMessage(randomString(), randomString()).await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).deleteDraftMessage(any(), any())
+    }
+
+    @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#updateMessageInput")
     fun testUpdateMessage(call: RetrofitCall<MessageResponse>, expected: KClass<*>) = runTest {
         // given

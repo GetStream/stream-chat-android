@@ -240,6 +240,17 @@ constructor(
         response.message.toDraftMessage()
     }
 
+    override fun deleteDraftMessage(
+        channelType: String,
+        channelId: String,
+        message: DraftMessage,
+    ): Call<DraftMessage> = messageApi.deleteDraftMessage(
+        channelType = channelType,
+        channelId = channelId,
+    ).mapDomain { response ->
+        response.message.toDraftMessage()
+    }
+
     override fun updateMessage(
         message: Message,
     ): Call<Message> {

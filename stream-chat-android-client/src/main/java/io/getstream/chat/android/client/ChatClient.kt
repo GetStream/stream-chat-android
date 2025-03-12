@@ -1928,6 +1928,16 @@ internal constructor(
         }
     }
 
+    @CheckResult
+    public fun deleteDraftMessages(
+        channelType: String,
+        channelId: String,
+        message: DraftMessage
+    ): Call<DraftMessage> {
+        return api.deleteDraftMessage(channelType, channelId, message)
+            .retry(userScope, retryPolicy)
+    }
+
     private suspend fun doSendMessage(
         channelType: String,
         channelId: String,

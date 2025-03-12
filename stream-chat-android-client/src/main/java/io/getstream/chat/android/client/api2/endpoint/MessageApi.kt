@@ -59,6 +59,12 @@ internal interface MessageApi {
         @Body message: SendMessageRequest,
     ): RetrofitCall<MessageResponse>
 
+    @DELETE("/channels/{type}/{id}/draft")
+    fun deleteDraftMessage(
+        @Path("type") channelType: String,
+        @Path("id") channelId: String,
+    ): RetrofitCall<MessageResponse>
+
     @GET("/messages/{id}")
     fun getMessage(@Path("id") messageId: String): RetrofitCall<MessageResponse>
 
