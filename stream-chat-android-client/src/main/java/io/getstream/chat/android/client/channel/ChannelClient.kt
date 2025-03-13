@@ -41,6 +41,8 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.ConnectionErrorEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.events.DraftMessageDeletedEvent
+import io.getstream.chat.android.client.events.DraftMessageUpdatedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
@@ -311,6 +313,8 @@ public class ChannelClient internal constructor(
             is DisconnectedEvent,
             is ErrorEvent,
             is MarkAllReadEvent,
+            is DraftMessageUpdatedEvent,
+            is DraftMessageDeletedEvent,
             -> false
         }
     }

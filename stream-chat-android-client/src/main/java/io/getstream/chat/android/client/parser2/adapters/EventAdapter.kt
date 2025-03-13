@@ -38,6 +38,8 @@ import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
+import io.getstream.chat.android.client.api2.model.dto.DraftMessageDeletedEventDto
+import io.getstream.chat.android.client.api2.model.dto.DraftMessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
@@ -102,6 +104,8 @@ internal class EventDtoAdapter(
     private val connectedEventAdapter = moshi.adapter(ConnectedEventDto::class.java)
     private val connectionErrorEventAdapter = moshi.adapter(ConnectionErrorEventDto::class.java)
     private val healthEventAdapter = moshi.adapter(HealthEventDto::class.java)
+    private val draftMessageUpdatedEventAdapter = moshi.adapter(DraftMessageUpdatedEventDto::class.java)
+    private val draftMessageDeletedEventAdapter = moshi.adapter(DraftMessageDeletedEventDto::class.java)
     private val newMessageEventAdapter = moshi.adapter(NewMessageEventDto::class.java)
     private val messageDeletedEventAdapter = moshi.adapter(MessageDeletedEventDto::class.java)
     private val messageUpdatedEventAdapter = moshi.adapter(MessageUpdatedEventDto::class.java)
@@ -173,6 +177,8 @@ internal class EventDtoAdapter(
                 else -> healthEventAdapter
             }
             EventType.CONNECTION_ERROR -> connectionErrorEventAdapter
+            EventType.DRAFT_MESSAGE_UPDATED -> draftMessageUpdatedEventAdapter
+            EventType.DRAFT_MESSAGE_DELETED -> draftMessageDeletedEventAdapter
             EventType.MESSAGE_NEW -> newMessageEventAdapter
             EventType.MESSAGE_DELETED -> messageDeletedEventAdapter
             EventType.MESSAGE_UPDATED -> messageUpdatedEventAdapter

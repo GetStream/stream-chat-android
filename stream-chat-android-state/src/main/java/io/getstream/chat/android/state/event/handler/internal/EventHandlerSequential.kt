@@ -30,6 +30,8 @@ import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.CidEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.DraftMessageDeletedEvent
+import io.getstream.chat.android.client.events.DraftMessageUpdatedEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
 import io.getstream.chat.android.client.events.HasMessage
@@ -339,6 +341,8 @@ internal class EventHandlerSequential(
             .takeUnless { it.isFromHistorySync }
             ?.sortedEvents
             ?.forEach { event: ChatEvent ->
+                (event as? DraftMessageUpdatedEvent)?.let { mutableGlobalState.updateDraftMessage(it.draftMessage) }
+                (event as? DraftMessageDeletedEvent)?.let { mutableGlobalState.removeDraftMessage(it.draftMessage) }
                 (event as? HasUnreadCounts)?.let { modifyValuesFromEvent(it) }
                 (event as? HasOwnUser)?.let { modifyValuesFromUser(it.me) }
                 (event as? HasUnreadThreadCounts)?.let { modifyUnreadThreadsCount(it) }

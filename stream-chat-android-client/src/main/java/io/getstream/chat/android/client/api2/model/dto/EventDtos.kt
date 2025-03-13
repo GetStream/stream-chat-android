@@ -192,6 +192,20 @@ internal data class NewMessageEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
+internal data class DraftMessageUpdatedEventDto(
+    val type: String,
+    val created_at: ExactDate,
+    val message: DownstreamMessageDto,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
+internal data class DraftMessageDeletedEventDto(
+    val type: String,
+    val created_at: ExactDate,
+    val message: DownstreamMessageDto,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
 internal data class NotificationAddedToChannelEventDto(
     val type: String,
     val created_at: ExactDate,

@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Poll
@@ -309,6 +310,20 @@ public data class MessageUpdatedEvent(
     override val message: Message,
     override val channelLastMessageAt: Date?,
 ) : CidEvent(), UserEvent, HasMessage
+
+public data class DraftMessageUpdatedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String,
+    val draftMessage: DraftMessage,
+) : ChatEvent()
+
+public data class DraftMessageDeletedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String,
+    val draftMessage: DraftMessage,
+) : ChatEvent()
 
 /**
  * Triggered when a new message is added on a channel.
