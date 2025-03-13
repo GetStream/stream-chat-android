@@ -25,6 +25,7 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryP
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**
@@ -32,6 +33,7 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  * attachments.
  *
  * @param message The message that contains the attachments.
+ * @param currentUser The current user that's logged in.
  * @param onLongItemClick Handler for long item taps on this content.
  * @param onMediaGalleryPreviewResult Handler when the user selects a message option in the
  * Media Gallery Preview screen.
@@ -39,6 +41,7 @@ import io.getstream.chat.android.uiutils.extension.hasLink
 @Composable
 public fun MessageAttachmentsContent(
     message: Message,
+    currentUser: User?,
     onLongItemClick: (Message) -> Unit,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
 ) {
@@ -59,6 +62,7 @@ public fun MessageAttachmentsContent(
 
         val attachmentState = AttachmentState(
             message = message,
+            isMine = message.user.id == currentUser?.id,
             onLongItemClick = onLongItemClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         )

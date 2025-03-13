@@ -51,10 +51,12 @@ public open class MessageContentFactory {
     @Composable
     public open fun MessageGiphyContent(
         message: Message,
+        currentUser: User?,
         onGiphyActionClick: (GiphyAction) -> Unit,
     ) {
         DefaultMessageGiphyContent(
             message = message,
+            currentUser = currentUser,
             onGiphyActionClick = onGiphyActionClick,
         )
     }

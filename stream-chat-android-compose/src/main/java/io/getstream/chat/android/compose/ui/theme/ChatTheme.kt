@@ -45,6 +45,7 @@ import io.getstream.chat.android.compose.ui.attachments.preview.handler.Attachme
 import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactories
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
+import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
 import io.getstream.chat.android.compose.ui.util.DefaultPollSwitchItemFactory
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.MessageAlignmentProvider
@@ -701,12 +702,28 @@ public object ChatTheme {
         get() = LocalOwnMessageTheme.current
 
     /**
+     * Retrieves the current own [FileAttachmentTheme] at the call site's position in the hierarchy.
+     */
+    public val ownFileAttachmentTheme: FileAttachmentTheme
+        @Composable
+        @ReadOnlyComposable
+        get() = ownMessageTheme.fileAttachmentTheme
+
+    /**
      * Retrieves the current other [MessageTheme] at the call site's position in the hierarchy.
      */
     public val otherMessageTheme: MessageTheme
         @Composable
         @ReadOnlyComposable
         get() = LocalOtherMessageTheme.current
+
+    /**
+     * Retrieves the current other [FileAttachmentTheme] at the call site's position in the hierarchy.
+     */
+    public val otherFileAttachmentTheme: FileAttachmentTheme
+        @Composable
+        @ReadOnlyComposable
+        get() = otherMessageTheme.fileAttachmentTheme
 
     /**
      * Retrieves the current [MessageDateSeparatorTheme] at the call site's position in the hierarchy.
