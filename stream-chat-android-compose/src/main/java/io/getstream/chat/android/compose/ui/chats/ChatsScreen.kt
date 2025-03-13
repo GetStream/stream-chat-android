@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -169,7 +170,7 @@ public fun ChatsScreen(
     val listPane = remember(listContentMode) {
         movableContentOf { modifier: Modifier ->
             Scaffold(
-                modifier = modifier,
+                modifier = modifier.safeDrawingPadding(),
                 topBar = { listTopBarContent() },
                 bottomBar = { listBottomBarContent() },
             ) { padding ->
@@ -250,6 +251,14 @@ public fun ChatsScreen(
         }
     }
 
+    val infoPane = remember {
+        movableContentOf { arguments: Any? ->
+            Box(modifier = Modifier.safeDrawingPadding()) {
+                infoContent(arguments)
+            }
+        }
+    }
+
     if (singlePane) {
         LaunchedEffect(Unit) {
             navigator.initialDetailNavigation(messagesViewModelFactoryProvider, context)
@@ -267,7 +276,7 @@ public fun ChatsScreen(
                 when (destination.pane) {
                     ThreePaneRole.List -> listPane(Modifier)
                     ThreePaneRole.Detail -> detailPane(destination.arguments as ChatMessageSelection)
-                    ThreePaneRole.Info -> infoContent(destination.arguments)
+                    ThreePaneRole.Info -> infoPane(destination.arguments)
                 }
             }
         }
@@ -351,7 +360,7 @@ public fun ChatsScreen(
                             if (state != null) {
                                 Row {
                                     VerticalDivider()
-                                    infoContent(state.arguments)
+                                    infoPane(state.arguments)
                                 }
                             }
                         }

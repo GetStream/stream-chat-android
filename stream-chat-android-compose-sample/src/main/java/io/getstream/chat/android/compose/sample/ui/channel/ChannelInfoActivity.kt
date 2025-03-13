@@ -22,10 +22,11 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
@@ -70,15 +71,14 @@ class ChannelInfoActivity : BaseConnectedActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ChatTheme {
-                Surface {
-                    val state by viewModel.state.collectAsState()
-                    ChannelInfoScreen(
-                        state = state,
-                        onNavigationIconClick = ::finish,
-                        onPinnedMessagesClick = ::openPinnedMessages,
-                        onConfirmDelete = viewModel::onDeleteChannel,
-                    )
-                }
+                val state by viewModel.state.collectAsState()
+                ChannelInfoScreen(
+                    modifier = Modifier.statusBarsPadding(),
+                    state = state,
+                    onNavigationIconClick = ::finish,
+                    onPinnedMessagesClick = ::openPinnedMessages,
+                    onConfirmDelete = viewModel::onDeleteChannel,
+                )
             }
             LaunchedEffect(Unit) {
                 lifecycleScope.launch {
@@ -112,86 +112,4 @@ class ChannelInfoActivity : BaseConnectedActivity() {
         }
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
-
-    @Composable
-    private fun ChannelInfoScreen(
-        state: ChannelInfoViewModel.State,
-        onBack: () -> Unit,
-        onPinnedMessagesClick: () -> Unit,
-        onConfirmDelete: () -> Unit,
-    ) {
-        Scaffold(
-            modifier = Modifier.statusBarsPadding(),
-            topBar = {
-                state.member?.let { member ->
-                    ChannelInfoHeader(member = member, onBack = onBack)
-                }
-            },
-            content = { padding ->
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(ChatTheme.colors.appBackground)
-                        .padding(padding),
-                ) {
-                    var showConfirmDeleteDialog by remember { mutableStateOf(false) }
-                    LazyColumn {
-                        // Spacer
-                        item {
-                            ChannelInfoContentDivider(height = 8.dp)
-                        }
-                        // Pinned messages
-                        item {
-                            ChannelInfoOptionItem(
-                                icon = R.drawable.stream_compose_ic_message_pinned,
-                                text = stringResource(id = R.string.channel_info_option_pinned_messages),
-                                onClick = onPinnedMessagesClick,
-                            )
-                            ChannelInfoContentDivider(height = 1.dp)
-                        }
-                        // Delete channel
-                        if (state.canDeleteChannel) {
-                            item {
-                                ChannelInfoContentDivider(height = 8.dp)
-                                ChannelInfoOptionItem(
-                                    icon = R.drawable.stream_compose_ic_delete_red,
-                                    iconTint = ChatTheme.colors.errorAccent,
-                                    text = stringResource(id = R.string.channel_info_option_delete_conversation),
-                                    textColor = ChatTheme.colors.errorAccent,
-                                    onClick = { showConfirmDeleteDialog = true },
-                                    trailingContent = {},
-                                )
-                                ChannelInfoContentDivider(height = 1.dp)
-                            }
-                        }
-                    }
-
-                    if (showConfirmDeleteDialog) {
-                        ConfirmDeleteDialog(
-                            onConfirm = {
-                                onConfirmDelete()
-                                showConfirmDeleteDialog = false
-                            },
-                            onDismiss = {
-                                showConfirmDeleteDialog = false
-                            },
-                        )
-                    }
-                }
-            },
-        )
-    }
-}
-
-@Composable
-private fun ConfirmDeleteDialog(
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
-) {
-    SimpleDialog(
-        title = stringResource(id = R.string.channel_info_option_delete_conversation),
-        message = stringResource(id = R.string.channel_info_delete_conversation_confirm),
-        onPositiveAction = onConfirm,
-        onDismiss = onDismiss,
-    )
 }

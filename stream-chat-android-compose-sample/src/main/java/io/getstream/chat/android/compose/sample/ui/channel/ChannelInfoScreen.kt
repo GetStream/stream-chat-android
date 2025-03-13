@@ -41,6 +41,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 @Composable
 fun ChannelInfoScreen(
     state: ChannelInfoViewModel.State,
+    modifier: Modifier = Modifier,
     onNavigationIconClick: () -> Unit = {},
     onPinnedMessagesClick: () -> Unit,
     onConfirmDelete: () -> Unit,
@@ -49,6 +50,7 @@ fun ChannelInfoScreen(
     },
 ) {
     Scaffold(
+        modifier = modifier,
         topBar = {
             state.member?.let { member ->
                 ChannelInfoHeader(
@@ -97,10 +99,8 @@ fun ChannelInfoScreen(
                 }
 
                 if (showConfirmDeleteDialog) {
-                    SimpleDialog(
-                        title = stringResource(id = R.string.channel_info_option_delete_conversation),
-                        message = stringResource(id = R.string.channel_info_delete_conversation_confirm),
-                        onPositiveAction = {
+                    ConfirmDeleteDialog(
+                        onConfirm = {
                             onConfirmDelete()
                             showConfirmDeleteDialog = false
                         },
@@ -123,4 +123,17 @@ fun DefaultChannelInfoNavigationIcon(onClick: () -> Unit) {
             tint = ChatTheme.colors.textHighEmphasis,
         )
     }
+}
+
+@Composable
+private fun ConfirmDeleteDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    SimpleDialog(
+        title = stringResource(id = R.string.channel_info_option_delete_conversation),
+        message = stringResource(id = R.string.channel_info_delete_conversation_confirm),
+        onPositiveAction = onConfirm,
+        onDismiss = onDismiss,
+    )
 }

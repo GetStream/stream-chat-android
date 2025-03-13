@@ -40,11 +40,13 @@ import io.getstream.chat.android.models.Channel
 @Composable
 fun GroupChannelInfoScreen(
     state: GroupChannelInfoViewModel.State,
+    modifier: Modifier = Modifier,
     onNavigationIconClick: () -> Unit,
     onPinnedMessagesClick: () -> Unit,
     navigationIcon: @Composable (() -> Unit)? = null,
 ) {
     Scaffold(
+        modifier = modifier,
         topBar = {
             GroupChannelHeader(
                 channel = state.channel,
