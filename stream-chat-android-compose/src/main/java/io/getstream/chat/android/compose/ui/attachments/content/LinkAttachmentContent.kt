@@ -77,7 +77,7 @@ public fun LinkAttachmentContent(
     modifier: Modifier = Modifier,
     onItemClick: (context: Context, Url: String) -> Unit = ::onLinkAttachmentContentClick,
 ) {
-    val (message, onLongItemClick) = attachmentState
+    val (message, isMine, onLongItemClick) = attachmentState
 
     val context = LocalContext.current
     val attachment = message.attachments.firstOrNull { it.hasLink() && !it.isGiphy() }

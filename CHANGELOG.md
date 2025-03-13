@@ -93,6 +93,7 @@
 - Add `MessageListViewModel::scrollToFirstUnreadMessage` method. [#5635](https://github.com/GetStream/stream-chat-android/pull/5635)
 - Added Swipe To Reply feature to the Messages. [#5627](https://github.com/GetStream/stream-chat-android/pull/5627)
 - Apply motion design. [#5647](https://github.com/GetStream/stream-chat-android/pull/5647)
+- Add `FileAttachmentTheme` to the `MessageTheme` for customizing the file attachments. [#5670](https://github.com/GetStream/stream-chat-android/pull/5670)
 - Add `SystemAttachmentsPickerConfig` for customization of the system attachments picker. [#5654](https://github.com/GetStream/stream-chat-android/pull/5654)
 
 ### ⚠️ Changed

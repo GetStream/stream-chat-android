@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.AudioRecordingAttachmentTheme
+import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
 import io.getstream.chat.android.compose.ui.theme.messages.list.PollMessageStyle
 import io.getstream.chat.android.compose.ui.theme.messages.list.QuotedMessageStyle
 
@@ -70,6 +71,7 @@ public data class MessageTheme(
     val quotedBackgroundColor: Color,
     val deletedBackgroundColor: Color,
     val audioRecording: AudioRecordingAttachmentTheme,
+    val fileAttachmentTheme: FileAttachmentTheme,
     val quoted: QuotedMessageStyle,
     val poll: PollMessageStyle,
     val mentionColor: Color,
@@ -189,6 +191,11 @@ public data class MessageTheme(
                     typography = typography,
                     colors = colors,
                     shapes = shapes,
+                ),
+                fileAttachmentTheme = FileAttachmentTheme.defaultTheme(
+                    typography = typography,
+                    shapes = shapes,
+                    colors = colors,
                 ),
                 mentionColor = colors.primaryAccent,
             ).let { theme ->
