@@ -69,11 +69,13 @@ public fun MessageContent(
         if (messageContentFactory == MessageContentFactory.Deprecated) {
             ChatTheme.componentFactory.MessageGiphyContent(
                 message = message,
+                currentUser = currentUser,
                 onGiphyActionClick = onGiphyActionClick,
             )
         } else {
             messageContentFactory.MessageGiphyContent(
                 message = message,
+                currentUser = currentUser,
                 onGiphyActionClick = onGiphyActionClick,
             )
         }
@@ -118,10 +120,12 @@ public fun MessageContent(
 @Composable
 internal fun DefaultMessageGiphyContent(
     message: Message,
+    currentUser: User?,
     onGiphyActionClick: (GiphyAction) -> Unit,
 ) {
     GiphyMessageContent(
         message = message,
+        currentUser = currentUser,
         onGiphyActionClick = onGiphyActionClick,
     )
 }
@@ -174,6 +178,7 @@ internal fun DefaultMessageContent(
     Column {
         MessageAttachmentsContent(
             message = message,
+            currentUser = currentUser,
             onLongItemClick = onLongItemClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         )

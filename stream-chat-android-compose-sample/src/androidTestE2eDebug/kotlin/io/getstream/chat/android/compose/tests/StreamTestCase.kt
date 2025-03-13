@@ -61,7 +61,7 @@ abstract class StreamTestCase {
     val windowHierarchyRule = WindowHierarchyRule()
 
     @get:Rule
-    val retryRule = RetryRule()
+    val retryRule = RetryRule(3)
 
     @Before
     fun setUp() {

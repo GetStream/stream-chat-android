@@ -18,6 +18,7 @@ package io.getstream.chat.android.ui.feature.messages.composer.attachment.picker
 
 import android.graphics.drawable.Drawable
 import androidx.fragment.app.Fragment
+import io.getstream.chat.android.ui.common.permissions.VisualMediaType
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.AttachmentsPickerTabFactory
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.AttachmentsPickerTabListener
@@ -26,9 +27,18 @@ import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.
 
 /**
  * An attachment factory that creates a tab with the few icons and uses system pickers instead.
+ *
+ * @param mediaAttachmentsTabEnabled If the option to pick media (images/videos) is included in the attachments picker.
+ * @param visualMediaAllowMultiple If true, multiple visual media items can be selected.
+ * @param visualMediaType The types of visual media that can be picked.
+ * @param fileAttachmentsTabEnabled If the option to pick files is included in the attachments picker.
+ * @param cameraAttachmentsTabEnabled If the option to capture an image/video is included in the attachments picker.
+ * @param pollAttachmentsTabEnabled If the option to create a poll is included in the attachments picker.
  */
 public class AttachmentsPickerSystemTabFactory(
     private val mediaAttachmentsTabEnabled: Boolean,
+    private val visualMediaAllowMultiple: Boolean,
+    private val visualMediaType: VisualMediaType,
     private val fileAttachmentsTabEnabled: Boolean,
     private val cameraAttachmentsTabEnabled: Boolean,
     private val pollAttachmentsTabEnabled: Boolean,
@@ -55,10 +65,12 @@ public class AttachmentsPickerSystemTabFactory(
             style,
             attachmentsPickerTabListener,
             AttachmentsPickerSystemConfig(
-                mediaAttachmentsTabEnabled,
-                fileAttachmentsTabEnabled,
-                cameraAttachmentsTabEnabled,
-                pollAttachmentsTabEnabled,
+                visualMediaAttachmentsTabEnabled = mediaAttachmentsTabEnabled,
+                visualMediaAllowMultiple = visualMediaAllowMultiple,
+                visualMediaType = visualMediaType,
+                fileAttachmentsTabEnabled = fileAttachmentsTabEnabled,
+                cameraAttachmentsTabEnabled = cameraAttachmentsTabEnabled,
+                pollAttachmentsTabEnabled = pollAttachmentsTabEnabled,
             ),
         )
     }

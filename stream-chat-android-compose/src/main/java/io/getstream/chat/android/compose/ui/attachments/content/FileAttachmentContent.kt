@@ -39,7 +39,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -53,6 +52,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 import io.getstream.chat.android.compose.ui.util.StreamImage
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -84,7 +84,7 @@ public fun FileAttachmentContent(
         attachment: Attachment,
     ) -> Unit = ::onFileAttachmentContentItemClick,
 ) {
-    val (message, onItemLongClick) = attachmentState
+    val (message, isMine, onItemLongClick) = attachmentState
     val previewHandlers = ChatTheme.attachmentPreviewHandlers
 
     Column(
@@ -109,6 +109,7 @@ public fun FileAttachmentContent(
                         onLongClick = { onItemLongClick(message) },
                     ),
                 attachment = attachment,
+                isMine = isMine,
                 showFileSize = showFileSize,
             )
         }
@@ -119,18 +120,26 @@ public fun FileAttachmentContent(
  * Represents each file item in the list of file attachments.
  *
  * @param attachment The file attachment to show.
+ * @param isMine Whether the message is sent by the current user or not.
+ * @param showFileSize Whether to show the file size or not.
  * @param modifier Modifier for styling.
  */
 @Composable
 public fun FileAttachmentItem(
     attachment: Attachment,
+    isMine: Boolean,
     showFileSize: (Attachment) -> Boolean,
     modifier: Modifier = Modifier,
 ) {
+    val fileAttachmentTheme: FileAttachmentTheme = when {
+        isMine -> ChatTheme.ownFileAttachmentTheme
+        else -> ChatTheme.otherFileAttachmentTheme
+    }
+
     Surface(
         modifier = modifier,
-        color = ChatTheme.colors.appBackground,
-        shape = ChatTheme.shapes.attachment,
+        color = fileAttachmentTheme.background,
+        shape = fileAttachmentTheme.itemShape,
     ) {
         Row(
             Modifier
@@ -139,9 +148,19 @@ public fun FileAttachmentItem(
                 .padding(vertical = 8.dp, horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            FileAttachmentImage(attachment = attachment)
-            FileAttachmentDescription(attachment = attachment, showFileSize = showFileSize)
-            FileAttachmentDownloadIcon(attachment = attachment)
+            FileAttachmentImage(
+                attachment = attachment,
+                isMine = isMine,
+            )
+            FileAttachmentDescription(
+                attachment = attachment,
+                isMine = isMine,
+                showFileSize = showFileSize,
+            )
+            FileAttachmentDownloadIcon(
+                attachment = attachment,
+                isMine = isMine,
+            )
         }
     }
 }
@@ -155,8 +174,13 @@ public fun FileAttachmentItem(
 @Composable
 private fun FileAttachmentDescription(
     attachment: Attachment,
+    isMine: Boolean,
     showFileSize: (Attachment) -> Boolean,
 ) {
+    val fileAttachmentTheme: FileAttachmentTheme = when {
+        isMine -> ChatTheme.ownFileAttachmentTheme
+        else -> ChatTheme.otherFileAttachmentTheme
+    }
     Column(
         modifier = Modifier
             .fillMaxWidth(0.85f)
@@ -167,18 +191,16 @@ private fun FileAttachmentDescription(
         Text(
             modifier = Modifier.testTag("Stream_FileAttachmentName"),
             text = attachment.title ?: attachment.name ?: "",
-            style = ChatTheme.typography.bodyBold,
+            style = fileAttachmentTheme.fileNameTextStyle,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = ChatTheme.colors.textHighEmphasis,
         )
 
         if (showFileSize(attachment)) {
             Text(
                 modifier = Modifier.testTag("Stream_FileAttachmentSize"),
                 text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong()),
-                style = ChatTheme.typography.footnote,
-                color = ChatTheme.colors.textLowEmphasis,
+                style = fileAttachmentTheme.fileMetadataTextStyle,
             )
         }
     }
@@ -191,15 +213,19 @@ private fun FileAttachmentDescription(
  */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-private fun RowScope.FileAttachmentDownloadIcon(attachment: Attachment) {
+private fun RowScope.FileAttachmentDownloadIcon(attachment: Attachment, isMine: Boolean) {
+    val fileAttachmentTheme: FileAttachmentTheme = when {
+        isMine -> ChatTheme.ownFileAttachmentTheme
+        else -> ChatTheme.otherFileAttachmentTheme
+    }
     if (LocalInspectionMode.current) {
         Icon(
             modifier = Modifier
                 .align(Alignment.Top)
                 .padding(end = 2.dp),
-            painter = painterResource(id = R.drawable.stream_compose_ic_file_download),
+            painter = fileAttachmentTheme.downloadIconStyle.painter,
             contentDescription = stringResource(id = R.string.stream_compose_download),
-            tint = ChatTheme.colors.textHighEmphasis,
+            tint = fileAttachmentTheme.downloadIconStyle.tint,
         )
         return
     }
@@ -223,9 +249,9 @@ private fun RowScope.FileAttachmentDownloadIcon(attachment: Attachment) {
                     interceptRequest = downloadRequestInterceptor::intercept,
                 )
             },
-        painter = painterResource(id = R.drawable.stream_compose_ic_file_download),
+        painter = fileAttachmentTheme.downloadIconStyle.painter,
         contentDescription = stringResource(id = R.string.stream_compose_download),
-        tint = ChatTheme.colors.textHighEmphasis,
+        tint = fileAttachmentTheme.downloadIconStyle.tint,
     )
 }
 
@@ -236,30 +262,32 @@ private fun RowScope.FileAttachmentDownloadIcon(attachment: Attachment) {
  * @param attachment - The attachment we use to show the image.
  */
 @Composable
-public fun FileAttachmentImage(attachment: Attachment) {
+public fun FileAttachmentImage(
+    attachment: Attachment,
+    isMine: Boolean,
+) {
+    val fileAttachmentTheme: FileAttachmentTheme = when {
+        isMine -> ChatTheme.ownFileAttachmentTheme
+        else -> ChatTheme.otherFileAttachmentTheme
+    }
     val isImage = attachment.isImage()
     val isVideoWithThumbnails = attachment.isVideo() && ChatTheme.videoThumbnailsEnabled
 
     val data = when {
-        isImage -> {
-            val dataToLoad =
-                attachment.imagePreviewUrl?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
-                    ?: attachment.upload
-
-            dataToLoad
-        }
-
-        isVideoWithThumbnails -> {
-            val dataToLoad = attachment.thumbUrl?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
+        isImage ->
+            attachment.imagePreviewUrl
+                ?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
                 ?: attachment.upload
 
-            dataToLoad
-        }
+        isVideoWithThumbnails ->
+            attachment.thumbUrl
+                ?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
+                ?: attachment.upload
 
         else -> MimeTypeIconProvider.getIconRes(attachment.mimeType)
     }
 
-    val shape = if (isImage || isVideoWithThumbnails) ChatTheme.shapes.imageThumbnail else null
+    val shape = if (isImage || isVideoWithThumbnails) fileAttachmentTheme.imageThumbnail else null
 
     val imageModifier = Modifier
         .size(height = 40.dp, width = 35.dp)

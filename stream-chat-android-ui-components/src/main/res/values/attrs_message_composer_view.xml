@@ -315,6 +315,12 @@
 
         <!-- Media attachments tab -->
         <attr name="streamUiMessageComposerAttachmentsPickerSystemPickerEnabled" format="boolean" />
+        <attr name="streamUiMessageComposerAttachmentsPickerSystemPickerVisualMediaAllowMultiple" format="boolean" />
+        <attr name="streamUiMessageComposerAttachmentsPickerSystemPickerVisualMediaType" format="enum">
+            <enum name="image" value="0" />
+            <enum name="video" value="1" />
+            <enum name="image_and_video" value="2" />
+        </attr>
         <attr name="streamUiMessageComposerAttachmentsPickerSaveAttachmentsOnDismiss" format="boolean" />
         <attr name="streamUiMessageComposerAttachmentsPickerMediaAttachmentsTabEnabled" format="boolean" />
         <attr name="streamUiMessageComposerAttachmentsPickerMediaMode" format="enum">
