@@ -181,7 +181,6 @@ public fun ChatsScreen(
                     when (mode) {
                         ListContentMode.Channels -> {
                             ChannelsScreen(
-                                title = title,
                                 viewModelFactory = channelViewModelFactory,
                                 isShowingHeader = false,
                                 searchMode = searchMode,
