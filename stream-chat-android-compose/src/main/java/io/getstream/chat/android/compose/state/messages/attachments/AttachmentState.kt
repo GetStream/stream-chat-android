@@ -23,12 +23,14 @@ import io.getstream.chat.android.models.Message
  * Represents the state of Attachment items, used to render and add handlers required for the attachment to work.
  *
  * @param message Data that represents the message information.
+ * @param isMine Flag that indicates if the message is from the current user.
  * @param onLongItemClick Handler for a long click on the message item.
  * @param onMediaGalleryPreviewResult Handler used when the user selects an action to perform from
  * [io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewActivity].
  */
 public data class AttachmentState(
     val message: Message,
+    val isMine: Boolean = false,
     val onLongItemClick: (Message) -> Unit = {},
     val onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
 )
