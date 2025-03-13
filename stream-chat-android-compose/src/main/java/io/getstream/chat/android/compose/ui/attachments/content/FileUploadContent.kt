@@ -107,7 +107,10 @@ public fun FileUploadItem(
                 .padding(vertical = 8.dp, horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            FileAttachmentImage(attachment = attachment)
+            FileAttachmentImage(
+                attachment = attachment,
+                true,
+            )
 
             Column(
                 modifier = Modifier
