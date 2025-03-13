@@ -219,6 +219,7 @@ internal class SyncManager(
 
     private suspend fun performSync() {
         logger.i { "[performSync] no args" }
+        chatClient.queryDraftMessages().await()
         val cids = logicRegistry.getActiveChannelsLogic().map { it.cid }.ifEmpty {
             logger.w { "[performSync] no active cids found" }
             repos.selectSyncState(currentUserId)?.activeChannelIds ?: emptyList()
