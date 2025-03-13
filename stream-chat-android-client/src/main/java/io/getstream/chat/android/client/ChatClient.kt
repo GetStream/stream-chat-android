@@ -1925,6 +1925,13 @@ internal constructor(
         return message.ensureId(getCurrentUser() ?: getStoredUser()).let { processedDraftMessage ->
             api.createDraftMessage(channelType, channelId, processedDraftMessage)
                 .retry(userScope, retryPolicy)
+                .doOnResult(userScope) { result ->
+                    logger.i { "[createDraftMessage] result: ${result.stringify { it.toString() }}" }
+                    plugins.forEach { listener ->
+                        logger.v { "[createDraftMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
+                        listener.onCreateDraftMessageResult(result, channelType, channelId, processedDraftMessage)
+                    }
+                }
         }
     }
 
@@ -1936,12 +1943,27 @@ internal constructor(
     ): Call<DraftMessage> {
         return api.deleteDraftMessage(channelType, channelId, message)
             .retry(userScope, retryPolicy)
+            .doOnResult(userScope) { result ->
+                logger.i { "[deleteDraftMessages] result: ${result.stringify { it.toString() }}" }
+                plugins.forEach { listener ->
+                    logger.v { "[deleteDraftMessages] #doOnResult; plugin: ${listener::class.qualifiedName}" }
+                    listener.onDeleteDraftMessagesResult(result, channelType, channelId, message)
+                }
+            }
+
     }
 
     @CheckResult
     public fun queryDraftMessages(): Call<List<DraftMessage>> {
         return api.queryDraftMessages()
             .retry(userScope, retryPolicy)
+            .doOnResult(userScope) { result ->
+                logger.i { "[queryDraftMessages] result: ${result.stringify { it.toString() }}" }
+                plugins.forEach { listener ->
+                    logger.v { "[queryDraftMessages] #doOnResult; plugin: ${listener::class.qualifiedName}" }
+                    listener.onQueryDraftMessagesResult(result)
+                }
+            }
     }
 
     private suspend fun doSendMessage(
