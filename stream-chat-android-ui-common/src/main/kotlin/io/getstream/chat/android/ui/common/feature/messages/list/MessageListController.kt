@@ -555,9 +555,11 @@ public class MessageListController(
             // Start with shouldShowButton = true
             .onStart { emit(true) }
             .flatMapLatest { shouldShowButton ->
-                channelState.filterNotNull()
+                channelState
+                    .filterNotNull()
                     .flatMapLatest { channel ->
                         channel.read
+                            .filter { !isStartedForThread }
                             .filterNotNull()
                             .filter { channelUserRead ->
                                 val previousUnreadMessageId = unreadLabelState.value?.lastReadMessageId
@@ -577,7 +579,6 @@ public class MessageListController(
                     }
                     .onEach { (channelUserRead, unreadMessages) ->
                         val unreadLabel = channelUserRead.lastReadMessageId
-                            ?.takeUnless { isStartedForThread }
                             ?.takeUnless { unreadMessages.isEmpty() }
                             ?.takeUnless { unreadMessages.lastOrNull()?.id == it }
                             ?.let { lastReadMessageId ->
