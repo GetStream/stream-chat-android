@@ -94,7 +94,7 @@ internal class AttachmentsPickerTabFactoryFilterTest {
         filteredFactories.size `should be equal to` 1
         filteredFactories[0] `should be instance of` AttachmentsPickerSystemTabFactory::class
         val systemFactory = filteredFactories[0] as AttachmentsPickerSystemTabFactory
-        systemFactory.pollAllowed `should be` true
+        systemFactory.config.pollAllowed `should be` true
     }
 
     @Test
@@ -118,7 +118,7 @@ internal class AttachmentsPickerTabFactoryFilterTest {
         filteredFactories.size `should be equal to` 1
         filteredFactories[0] `should be instance of` AttachmentsPickerSystemTabFactory::class
         val systemFactory = filteredFactories[0] as AttachmentsPickerSystemTabFactory
-        systemFactory.pollAllowed `should be` false
+        systemFactory.config.pollAllowed `should be` false
     }
 
     @Test
@@ -142,6 +142,6 @@ internal class AttachmentsPickerTabFactoryFilterTest {
         filteredFactories.size `should be equal to` 1
         filteredFactories[0] `should be instance of` AttachmentsPickerSystemTabFactory::class
         val systemFactory = filteredFactories[0] as AttachmentsPickerSystemTabFactory
-        systemFactory.pollAllowed `should be` false
+        systemFactory.config.pollAllowed `should be` false
     }
 }

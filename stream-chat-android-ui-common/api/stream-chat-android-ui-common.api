@@ -629,6 +629,42 @@ public final class io/getstream/chat/android/ui/common/notifications/StreamCoilU
 	public fun buildIcon (Lio/getstream/chat/android/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
+public final class io/getstream/chat/android/ui/common/permissions/SystemAttachmentsPickerConfig {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (ZZLio/getstream/chat/android/ui/common/permissions/VisualMediaType;ZZZZ)V
+	public synthetic fun <init> (ZZLio/getstream/chat/android/ui/common/permissions/VisualMediaType;ZZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Z
+	public final fun component2 ()Z
+	public final fun component3 ()Lio/getstream/chat/android/ui/common/permissions/VisualMediaType;
+	public final fun component4 ()Z
+	public final fun component5 ()Z
+	public final fun component6 ()Z
+	public final fun component7 ()Z
+	public final fun copy (ZZLio/getstream/chat/android/ui/common/permissions/VisualMediaType;ZZZZ)Lio/getstream/chat/android/ui/common/permissions/SystemAttachmentsPickerConfig;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/permissions/SystemAttachmentsPickerConfig;ZZLio/getstream/chat/android/ui/common/permissions/VisualMediaType;ZZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/common/permissions/SystemAttachmentsPickerConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCaptureImageAllowed ()Z
+	public final fun getCaptureVideoAllowed ()Z
+	public final fun getFilesAllowed ()Z
+	public final fun getPollAllowed ()Z
+	public final fun getVisualMediaAllowMultiple ()Z
+	public final fun getVisualMediaAllowed ()Z
+	public final fun getVisualMediaType ()Lio/getstream/chat/android/ui/common/permissions/VisualMediaType;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/permissions/VisualMediaType : java/lang/Enum {
+	public static final field IMAGE Lio/getstream/chat/android/ui/common/permissions/VisualMediaType;
+	public static final field IMAGE_AND_VIDEO Lio/getstream/chat/android/ui/common/permissions/VisualMediaType;
+	public static final field VIDEO Lio/getstream/chat/android/ui/common/permissions/VisualMediaType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/common/permissions/VisualMediaType;
+	public static fun values ()[Lio/getstream/chat/android/ui/common/permissions/VisualMediaType;
+}
+
 public final class io/getstream/chat/android/ui/common/state/channels/actions/ArchiveChannel : io/getstream/chat/android/ui/common/state/channels/actions/ChannelAction {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/models/Channel;)V

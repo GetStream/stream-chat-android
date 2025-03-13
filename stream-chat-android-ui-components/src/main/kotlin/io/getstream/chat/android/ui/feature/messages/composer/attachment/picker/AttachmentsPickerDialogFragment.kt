@@ -293,6 +293,8 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
                     AttachmentsPickerTabFactories
                         .defaultFactoriesWithoutPermissions(
                             mediaAttachmentsTabEnabled = style.mediaAttachmentsTabEnabled,
+                            visualMediaAllowMultiple = style.systemMediaPickerVisualMediaAllowMultiple,
+                            visualMediaType = style.systemMediaPickerVisualMediaType,
                             fileAttachmentsTabEnabled = style.fileAttachmentsTabEnabled,
                             cameraAttachmentsTabEnabled = style.cameraAttachmentsTabEnabled,
                             pollAttachmentsTabEnabled = style.pollAttachmentsTabEnabled,
