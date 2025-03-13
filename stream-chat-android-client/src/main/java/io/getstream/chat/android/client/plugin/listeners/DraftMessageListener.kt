@@ -52,7 +52,7 @@ public interface DraftMessageListener {
         channelType: String,
         channelId: String,
         message: DraftMessage,
-        )
+    )
 
     /**
      * Side effect to be invoked when the original request is completed with a response.
@@ -60,6 +60,6 @@ public interface DraftMessageListener {
      * @param result [Result] response from the original request.
      */
     public suspend fun onQueryDraftMessagesResult(
-        result: Result<List<DraftMessage>>
+        result: Result<List<DraftMessage>>,
     )
 }

@@ -1939,7 +1939,7 @@ internal constructor(
     public fun deleteDraftMessages(
         channelType: String,
         channelId: String,
-        message: DraftMessage
+        message: DraftMessage,
     ): Call<DraftMessage> {
         return api.deleteDraftMessage(channelType, channelId, message)
             .retry(userScope, retryPolicy)
@@ -1950,7 +1950,6 @@ internal constructor(
                     listener.onDeleteDraftMessagesResult(result, channelType, channelId, message)
                 }
             }
-
     }
 
     @CheckResult

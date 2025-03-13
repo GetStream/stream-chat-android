@@ -52,7 +52,6 @@ internal interface MessageApi {
         @Body message: SendMessageRequest,
     ): RetrofitCall<MessageResponse>
 
-
     @POST("/channels/{type}/{id}/draft")
     fun createDraftMessage(
         @Path("type") channelType: String,
