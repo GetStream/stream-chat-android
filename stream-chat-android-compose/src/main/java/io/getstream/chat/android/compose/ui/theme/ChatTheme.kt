@@ -68,6 +68,7 @@ import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.ui.common.helper.TimeProvider
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.model.UserPresence
+import io.getstream.chat.android.ui.common.permissions.SystemAttachmentsPickerConfig
 import io.getstream.chat.android.ui.common.state.messages.list.MessageOptionsUserReactionAlignment
 import io.getstream.chat.android.ui.common.utils.ChannelNameFormatter
 import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
@@ -241,6 +242,10 @@ private val LocalKeyboardBehaviour = compositionLocalOf<StreamKeyboardBehaviour>
  * provided. If you customize [colors], make sure to add your own logic for dark/light colors.
  * @param autoTranslationEnabled Whether messages auto translation is enabled or not.
  * @param isComposerLinkPreviewEnabled Whether the composer link preview is enabled or not.
+ * @param useDefaultSystemMediaPicker Flag that determines which attachment picker should be used. If true, the system
+ * attachments picker which doesn't use storage permissions will be used. If false, the default attachments picker which
+ * requires storage permissions will be used.
+ * @param systemAttachmentsPickerConfig Configuration for the system attachments picker.
  * @param colors The set of colors we provide, wrapped in [StreamColors].
  * @param dimens The set of dimens we provide, wrapped in [StreamDimens].
  * @param typography The set of typography styles we provide, wrapped in [StreamTypography].
@@ -292,6 +297,7 @@ public fun ChatTheme(
     autoTranslationEnabled: Boolean = false,
     isComposerLinkPreviewEnabled: Boolean = false,
     useDefaultSystemMediaPicker: Boolean = false,
+    systemAttachmentsPickerConfig: SystemAttachmentsPickerConfig = SystemAttachmentsPickerConfig(),
     colors: StreamColors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors(),
     dimens: StreamDimens = StreamDimens.defaultDimens(),
     typography: StreamTypography = StreamTypography.defaultTypography(),
@@ -333,7 +339,7 @@ public fun ChatTheme(
     messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment = MessageOptionsUserReactionAlignment.END,
     attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory> =
         if (useDefaultSystemMediaPicker) {
-            AttachmentsPickerTabFactories.defaultFactoriesWithoutStoragePermissions()
+            AttachmentsPickerTabFactories.systemAttachmentsPickerTabFactories(systemAttachmentsPickerConfig)
         } else {
             AttachmentsPickerTabFactories.defaultFactories()
         },
@@ -490,6 +496,9 @@ public object ChatTheme {
         @ReadOnlyComposable
         get() = LocalShapes.current
 
+    /**
+     * Retrieves the current flag for the "System Attachments Picker" at the call site's position in the hierarchy.
+     */
     public val useDefaultSystemMediaPicker: Boolean
         @Composable
         @ReadOnlyComposable

@@ -59,12 +59,9 @@ internal class AttachmentsPickerTabFactoryFilter {
     ): AttachmentsPickerSystemTabFactory {
         // Adjust pollEnabled based on the channel config
         val pollsAllowed = channel.config.pollsEnabled
-        return AttachmentsPickerSystemTabFactory(
-            filesAllowed = factory.filesAllowed,
-            mediaAllowed = factory.mediaAllowed,
-            captureImageAllowed = factory.captureImageAllowed,
-            captureVideoAllowed = factory.captureVideoAllowed,
-            pollAllowed = pollsAllowed && factory.pollAllowed,
+        val config = factory.config.copy(
+            pollAllowed = pollsAllowed && factory.config.pollAllowed,
         )
+        return AttachmentsPickerSystemTabFactory(config)
     }
 }

@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.feature.messages.composer.attachment.picker
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
+import io.getstream.chat.android.ui.common.permissions.VisualMediaType
 import io.getstream.chat.android.ui.font.TextStyle
 import io.getstream.chat.android.ui.helper.ViewStyle
 
@@ -68,6 +69,9 @@ import io.getstream.chat.android.ui.helper.ViewStyle
  * @param allowAccessToCameraButtonText The text to request required permissions on the camera attachments tab.
  * @param allowAccessToCameraIconDrawable The icon above the permissions text on the camera attachments tab.
  * @param pickerMediaMode define which media type will be allowed.
+ * @param systemMediaPickerVisualMediaAllowMultiple Flag indicating whether the user can pick multiple visual media
+ * attachments.
+ * @param systemMediaPickerVisualMediaType The type of visual media that can be picked via the system media picker.
  */
 public data class AttachmentsPickerDialogStyle(
     val useDefaultSystemMediaPicker: Boolean = false,
@@ -119,4 +123,7 @@ public data class AttachmentsPickerDialogStyle(
     val allowAccessToCameraButtonText: String,
     val allowAccessToCameraIconDrawable: Drawable,
     val pickerMediaMode: PickerMediaMode,
+    // System media picker
+    val systemMediaPickerVisualMediaAllowMultiple: Boolean,
+    val systemMediaPickerVisualMediaType: VisualMediaType,
 ) : ViewStyle
