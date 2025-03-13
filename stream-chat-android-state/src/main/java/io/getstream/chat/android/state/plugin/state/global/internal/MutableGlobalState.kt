@@ -17,6 +17,7 @@
 package io.getstream.chat.android.state.plugin.state.global.internal
 
 import io.getstream.chat.android.models.ChannelMute
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
@@ -37,6 +38,8 @@ internal class MutableGlobalState : GlobalState {
     private var _channelMutes: MutableStateFlow<List<ChannelMute>>? = MutableStateFlow(emptyList())
     private var _blockedUsersIds: MutableStateFlow<List<String>>? = MutableStateFlow(emptyList())
     private var _typingChannels: MutableStateFlow<Map<String, TypingEvent>>? = MutableStateFlow(emptyMap())
+    private var _channelDraftMessages: MutableStateFlow<Map<String, DraftMessage>>? = MutableStateFlow(emptyMap())
+    private var _threadDraftMessages: MutableStateFlow<Map<String, DraftMessage>>? = MutableStateFlow(emptyMap())
 
     override val totalUnreadCount: StateFlow<Int> = _totalUnreadCount!!
     override val channelUnreadCount: StateFlow<Int> = _channelUnreadCount!!
@@ -46,6 +49,8 @@ internal class MutableGlobalState : GlobalState {
     override val blockedUserIds: StateFlow<List<String>> = _blockedUsersIds!!
     override val banned: StateFlow<Boolean> = _banned!!
     override val typingChannels: StateFlow<Map<String, TypingEvent>> = _typingChannels!!
+    override val channelDraftMessages: StateFlow<Map<String, DraftMessage>> = _channelDraftMessages!!
+    override val threadDraftMessages: StateFlow<Map<String, DraftMessage>> = _threadDraftMessages!!
 
     /**
      * Destroys the state.
@@ -59,6 +64,8 @@ internal class MutableGlobalState : GlobalState {
         _blockedUsersIds = null
         _banned = null
         _typingChannels = null
+        _channelDraftMessages = null
+        _threadDraftMessages = null
     }
 
     fun setTotalUnreadCount(totalUnreadCount: Int) {
@@ -92,6 +99,24 @@ internal class MutableGlobalState : GlobalState {
 
     fun setMutedUsers(mutedUsers: List<Mute>) {
         _mutedUsers?.value = mutedUsers
+    }
+
+    fun updateDraftMessage(draftMessage: DraftMessage) {
+        draftMessage.parentId?.let { parentId ->
+            _threadDraftMessages?.let { it.value += (parentId to draftMessage) }
+        }
+        _channelDraftMessages
+            ?.takeUnless { draftMessage.parentId != null }
+            ?.let { it.value += (draftMessage.cid to draftMessage) }
+    }
+
+    fun removeDraftMessage(draftMessage: DraftMessage) {
+        draftMessage.parentId?.let { parentId ->
+            _threadDraftMessages?.let { it.value -= parentId }
+        }
+        _channelDraftMessages
+            ?.takeUnless { draftMessage.parentId != null }
+            ?.let { it.value -= draftMessage.cid }
     }
 
     /**
