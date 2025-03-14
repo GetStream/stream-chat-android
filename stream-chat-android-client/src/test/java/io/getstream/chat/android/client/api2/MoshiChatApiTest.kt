@@ -127,6 +127,7 @@ import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMemberData
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomPollConfig
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
@@ -1976,7 +1977,7 @@ internal class MoshiChatApiTest {
             .withPollsApi(api)
             .get()
         // when
-        val pollConfig = Mother.randomPollConfig()
+        val pollConfig = randomPollConfig()
         val result = sut.createPoll(pollConfig).await()
         // then
         val expectedBody = PollRequest(

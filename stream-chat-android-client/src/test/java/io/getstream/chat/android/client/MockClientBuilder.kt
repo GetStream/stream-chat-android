@@ -39,7 +39,6 @@ import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.TestCoroutineExtension
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.mockito.Mockito
 import org.mockito.kotlin.doReturn
@@ -50,7 +49,6 @@ import java.util.Date
  * Used for integrations tests.
  * Initialises mock internals of [ChatClient]
  */
-@ExperimentalCoroutinesApi
 internal class MockClientBuilder(
     private val testCoroutineExtension: TestCoroutineExtension,
 ) {

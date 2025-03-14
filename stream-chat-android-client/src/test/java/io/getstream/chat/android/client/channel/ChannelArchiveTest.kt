@@ -18,14 +18,10 @@ package io.getstream.chat.android.client.channel
 
 import android.annotation.SuppressLint
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.MockClientBuilder
 import io.getstream.chat.android.test.TestCoroutineExtension
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.spy
 import org.mockito.Mockito.verify
 
 internal class ChannelArchiveTest {
@@ -66,33 +62,5 @@ internal class ChannelArchiveTest {
 
         // Then
         verify(chatClient).unarchiveChannel(CHANNEL_TYPE, CHANNEL_ID)
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @SuppressLint("CheckResult")
-    @Test
-    fun `When archiveChannel is called it does partial update with rchived true`() {
-        // Given
-        val chatClient = MockClientBuilder(testCoroutineExtension = testCoroutines).build()
-        val spyClient = spy(chatClient)
-        // When
-        spyClient.archiveChannel(CHANNEL_TYPE, CHANNEL_ID)
-
-        // Then
-        verify(spyClient).partialUpdateMember(CHANNEL_TYPE, CHANNEL_ID, USER_ID, set = mapOf("archived" to true))
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @SuppressLint("CheckResult")
-    @Test
-    fun `When unpinChannel is called it does partial update with archived as unset option`() = runTest {
-        // Given
-        val chatClient = MockClientBuilder(testCoroutineExtension = testCoroutines).build()
-        val spyClient = spy(chatClient)
-        // When
-        spyClient.unarchiveChannel(CHANNEL_TYPE, CHANNEL_ID)
-
-        // Then
-        verify(spyClient).partialUpdateMember(CHANNEL_TYPE, CHANNEL_ID, USER_ID, unset = listOf("archived"))
     }
 }

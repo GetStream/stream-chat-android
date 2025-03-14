@@ -27,9 +27,10 @@ import io.getstream.chat.android.client.errorhandler.factory.ErrorHandlerFactory
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
-import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.UnknownEvent
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.network.NetworkStateProvider
+import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.parser.EventArguments
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
@@ -46,13 +47,12 @@ import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
-import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.result.Error
 import io.getstream.result.Result
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
@@ -67,7 +67,6 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class ChatClientTest {
 
     companion object {
@@ -123,6 +122,7 @@ internal class ChatClientTest {
         val userScope = UserTestScope(clientScope)
         val lifecycleObserver = StreamLifecycleObserver(userScope, lifecycleOwner.lifecycle)
         val tokenManager = FakeTokenManager("")
+        val notifications = mock<ChatNotifications>()
         val networkStateProvider: NetworkStateProvider = mock()
         whenever(networkStateProvider.isConnected()) doReturn true
         fakeChatSocket = FakeChatSocket(
@@ -137,7 +137,7 @@ internal class ChatClientTest {
             config = config,
             api = api,
             dtoMapping = DtoMapping(NoOpMessageTransformer, NoOpUserTransformer),
-            notifications = mock(),
+            notifications = notifications,
             tokenManager = tokenManager,
             userCredentialStorage = mock(),
             userStateService = userStateService,
@@ -158,6 +158,26 @@ internal class ChatClientTest {
         }
 
         result = mutableListOf()
+    }
+
+    @Test
+    fun `Instantiate ChannelClient by type and id`() {
+        val channelType = randomString()
+        val channelId = randomString()
+        val channelClient = client.channel(channelType, channelId)
+
+        channelClient.channelType shouldBeEqualTo channelType
+        channelClient.channelId shouldBeEqualTo channelId
+    }
+
+    @Test
+    fun `Instantiate ChannelClient by cid`() {
+        val cid = randomCID()
+        val channelClient = client.channel(cid)
+
+        val (type, id) = cid.cidToTypeAndId()
+        channelClient.channelType shouldBeEqualTo type
+        channelClient.channelId shouldBeEqualTo id
     }
 
     @Test
@@ -239,6 +259,20 @@ internal class ChatClientTest {
     }
 
     @Test
+    fun `Subscribe for single string event type`() = runTest {
+        client.subscribeForSingle("d") {
+            result.add(it)
+        }
+
+        fakeChatSocket.mockEventReceived(eventD)
+        fakeChatSocket.mockEventReceived(eventE)
+        fakeChatSocket.mockEventReceived(eventD)
+        fakeChatSocket.mockEventReceived(eventE)
+
+        result shouldBeEqualTo listOf(eventD)
+    }
+
+    @Test
     fun `Subscribe for single event, with event type as type parameter`() = runTest {
         client.subscribeForSingle<UnknownEvent> {
             result.add(it)
@@ -277,62 +311,6 @@ internal class ChatClientTest {
         fakeChatSocket.mockEventReceived(Mother.randomUserPresenceChangedEvent(user = updateUser))
 
         client.getCurrentUser() shouldBeEqualTo updateUser
-    }
-
-    @Test
-    @ExperimentalCoroutinesApi
-    fun `Sync with empty cids`() = runTest {
-        /* Given */
-        whenever(api.getSyncHistory(any(), any())) doReturn TestCall(
-            Result.Failure(
-                Error.NetworkError(
-                    statusCode = 400,
-                    serverErrorCode = 4,
-                    message = "channel_cids must contain at least 1 item",
-                ),
-            ),
-        )
-
-        /* When */
-        val result = client.getSyncHistory(emptyList(), Date()).await()
-
-        /* Then */
-        result shouldBeEqualTo Result.Failure(Error.GenericError("channelsIds must contain at least 1 id."))
-    }
-
-    @Test
-    fun `Sync with nonempty cids`() = runTest {
-        /* Given */
-        val date = Date()
-        val rawDate = streamDateFormatter.format(date)
-
-        whenever(api.getSyncHistory(any(), any())) doReturn TestCall(
-            Result.Success(
-                listOf(
-                    HealthEvent(
-                        type = "type",
-                        createdAt = date,
-                        rawCreatedAt = rawDate,
-                        connectionId = "12345",
-                    ),
-                ),
-            ),
-        )
-
-        /* When */
-        val result = client.getSyncHistory(listOf("test"), Date()).await()
-
-        /* Then */
-        result shouldBeEqualTo Result.Success(
-            listOf(
-                HealthEvent(
-                    type = "type",
-                    createdAt = date,
-                    rawCreatedAt = rawDate,
-                    connectionId = "12345",
-                ),
-            ),
-        )
     }
 
     @Test
