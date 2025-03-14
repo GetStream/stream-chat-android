@@ -218,7 +218,8 @@ public class MessageListController(
      * Holds information about the unread label state.
      */
     public val unreadLabelState: MutableStateFlow<UnreadLabel?> = MutableStateFlow(null)
-    private val updateUnreadLabelState = MutableSharedFlow<Boolean>(extraBufferCapacity = 1)
+    private val showUnreadButtonState = MutableSharedFlow<Boolean>(extraBufferCapacity = 1)
+    private val updateUnreadLabelState = MutableStateFlow(true)
 
     /**
      * Holds information about the abilities the current user is able to exercise in the given channel.
@@ -550,48 +551,49 @@ public class MessageListController(
         observeUnreadLabelState()
     }
 
+    @Suppress("MagicNumber")
     private fun observeUnreadLabelState() {
-        updateUnreadLabelState
-            // Start with shouldShowButton = true
-            .onStart { emit(true) }
-            .flatMapLatest { shouldShowButton ->
-                channelState
-                    .filterNotNull()
-                    .flatMapLatest { channel ->
-                        channel.read
-                            .filter { !isStartedForThread }
-                            .filterNotNull()
-                            .filter { channelUserRead ->
-                                val previousUnreadMessageId = unreadLabelState.value?.lastReadMessageId
-                                channelUserRead.lastReadMessageId != null &&
-                                    previousUnreadMessageId != channelUserRead.lastReadMessageId
+        combine(
+            showUnreadButtonState.onStart { emit(true) },
+            updateUnreadLabelState,
+            channelState.filterNotNull(),
+            channelState.filterNotNull().flatMapLatest { it.read },
+        ) { data ->
+            val shouldShowButton = data[0] as Boolean
+            val shouldUpdateLabelState = data[1] as Boolean
+            val channel = data[2] as ChannelState
+            val read = data[3] as ChannelUserRead?
+
+            read
+                ?.takeIf { shouldUpdateLabelState }
+                ?.takeIf { !isStartedForThread }
+                ?.takeIf {
+                    val previousUnreadMessageId = unreadLabelState.value?.lastReadMessageId
+                    it.lastReadMessageId != null && previousUnreadMessageId != it.lastReadMessageId
+                }
+                ?.let { channelUserRead ->
+                    val unreadMessages = channel.messages.value
+                        .fold(emptyList<Message>()) { acc, message ->
+                            when {
+                                channelUserRead.lastReadMessageId == message.id -> emptyList()
+                                else -> acc + message
                             }
-                            .map { channelUserRead ->
-                                val unreadMessages = channel.messages.value
-                                    .fold(emptyList<Message>()) { acc, message ->
-                                        when {
-                                            channelUserRead.lastReadMessageId == message.id -> emptyList()
-                                            else -> acc + message
-                                        }
-                                    }
-                                channelUserRead to unreadMessages
-                            }
-                    }
-                    .onEach { (channelUserRead, unreadMessages) ->
-                        val unreadLabel = channelUserRead.lastReadMessageId
-                            ?.takeUnless { unreadMessages.isEmpty() }
-                            ?.takeUnless { unreadMessages.lastOrNull()?.id == it }
-                            ?.let { lastReadMessageId ->
-                                UnreadLabel(
-                                    unreadCount = channelUserRead.unreadMessages,
-                                    lastReadMessageId = lastReadMessageId,
-                                    buttonVisibility = shouldShowButton &&
-                                        unreadMessages.any { !it.isDeleted() },
-                                )
-                            }
-                        unreadLabelState.value = unreadLabel
-                    }
-            }.launchIn(scope)
+                        }
+                    val unreadLabel = channelUserRead.lastReadMessageId
+                        ?.takeUnless { unreadMessages.isEmpty() }
+                        ?.takeUnless { unreadMessages.lastOrNull()?.id == it }
+                        ?.let { lastReadMessageId ->
+                            UnreadLabel(
+                                unreadCount = channelUserRead.unreadMessages,
+                                lastReadMessageId = lastReadMessageId,
+                                buttonVisibility = shouldShowButton &&
+                                    unreadMessages.any { !it.isDeleted() },
+                            )
+                        }
+                    unreadLabelState.value = unreadLabel
+                    updateUnreadLabelState.value = false
+                }
+        }.launchIn(scope)
     }
 
     /**
@@ -1742,7 +1744,8 @@ public class MessageListController(
                     }
                 } else {
                     // Emit with shouldShowButton = false
-                    updateUnreadLabelState.tryEmit(false)
+                    showUnreadButtonState.tryEmit(false)
+                    updateUnreadLabelState.value = true
                 }
             }
         }
