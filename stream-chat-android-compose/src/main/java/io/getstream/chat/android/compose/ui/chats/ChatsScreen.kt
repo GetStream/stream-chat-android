@@ -17,20 +17,15 @@
 package io.getstream.chat.android.compose.ui.chats
 
 import android.content.Context
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -259,19 +254,38 @@ public fun ChatsScreen(
     }
 
     if (singlePane) {
+        var pagerDestinations by remember { mutableStateOf(navigator.destinations) }
+        val pagerState = rememberPagerState(pageCount = pagerDestinations::size)
+
+        // Scroll to the last page when pages are updated.
+        LaunchedEffect(pagerState.pageCount) {
+            pagerState.animateScrollToPage(pagerState.pageCount - 1)
+        }
+
+        LaunchedEffect(navigator.destinations) {
+            if (navigator.destinations.size > pagerDestinations.size) {
+                // When navigating forward, postpone the scroll to the last page until the new page is ready.
+                pagerDestinations = navigator.destinations
+            } else if (navigator.destinations.size < pagerDestinations.size) {
+                // When navigating back, scroll to the previous page before removing the last page.
+                pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                pagerDestinations = navigator.destinations
+            }
+        }
+
         LaunchedEffect(Unit) {
             navigator.initialDetailNavigation(messagesViewModelFactoryProvider, context)
         }
+
         Box(
             modifier = modifier,
         ) {
-            AnimatedContent(
-                targetState = navigator.current,
-                transitionSpec = {
-                    val isNavigatingForward = navigator.destinations.contains(initialState)
-                    slideContentTransform(isNavigatingForward = isNavigatingForward)
-                },
-            ) { destination ->
+            HorizontalPager(
+                state = pagerState,
+                beyondViewportPageCount = pagerDestinations.size,
+                userScrollEnabled = false,
+            ) { page ->
+                val destination = pagerDestinations[page]
                 when (destination.pane) {
                     ThreePaneRole.List -> listPane(Modifier)
                     ThreePaneRole.Detail -> detailPane(destination.arguments as ChatMessageSelection)
@@ -578,18 +592,6 @@ private fun DetailPane(
         }
     }
 }
-
-/**
- * The content transform used for animating the content when navigating in single-pane mode.
- */
-private fun slideContentTransform(isNavigatingForward: Boolean): ContentTransform =
-    (
-        fadeIn() +
-            slideInHorizontally(initialOffsetX = { fullWidth -> if (isNavigatingForward) fullWidth else -fullWidth })
-            togetherWith
-            slideOutHorizontally(targetOffsetX = { fullWidth -> if (isNavigatingForward) -fullWidth else fullWidth }) +
-            fadeOut()
-        )
 
 private class DefaultMessagesViewModelFactoryProvider : MessagesViewModelFactoryProvider {
     override fun invoke(context: Context, selection: ChatMessageSelection): MessagesViewModelFactory? =
