@@ -109,6 +109,13 @@ import io.getstream.result.call.Call
 import java.io.File
 import java.util.Date
 
+/**
+ * Client for performing actions related to a specific channel.
+ *
+ * @param channelType The type of the channel.
+ * @param channelId The id of the channel.
+ * @param client The ChatClient instance.
+ */
 @Suppress("TooManyFunctions")
 public class ChannelClient internal constructor(
     public val channelType: String,
@@ -116,6 +123,9 @@ public class ChannelClient internal constructor(
     private val client: ChatClient,
 ) {
 
+    /**
+     * The channel id in the format of `channelType:channelId`.
+     */
     public val cid: String = "$channelType:$channelId"
 
     /**
