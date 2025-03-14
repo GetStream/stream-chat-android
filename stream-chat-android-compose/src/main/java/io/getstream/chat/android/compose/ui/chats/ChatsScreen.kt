@@ -281,23 +281,13 @@ public fun ChatsScreen(
         }
     } else {
         // Auto-select the first item in the list when it loads on wide screens
-        when (listContentMode) {
-            ListContentMode.Channels -> {
-                FirstChannelLoadHandler(channelViewModelFactory) { selection ->
-                    navigator.initialDetailNavigation(messagesViewModelFactoryProvider, context) ?: run {
-                        navigator.navigateTo(ThreePaneDestination(ThreePaneRole.Detail, selection))
-                    }
-                }
-            }
-
-            ListContentMode.Threads -> {
-                FirstThreadLoadHandler(threadsViewModelFactory) { selection ->
-                    navigator.initialDetailNavigation(messagesViewModelFactoryProvider, context) ?: run {
-                        navigator.navigateTo(ThreePaneDestination(ThreePaneRole.Detail, selection))
-                    }
-                }
-            }
-        }
+        AutoSelectFirstItem(
+            listContentMode = listContentMode,
+            channelViewModelFactory = channelViewModelFactory,
+            threadsViewModelFactory = threadsViewModelFactory,
+            navigator = navigator,
+            messagesViewModelFactoryProvider = messagesViewModelFactoryProvider,
+        )
         Row(
             modifier = modifier,
         ) {
@@ -370,6 +360,34 @@ public fun ChatsScreen(
     }
 }
 
+@Composable
+private fun AutoSelectFirstItem(
+    listContentMode: ListContentMode,
+    channelViewModelFactory: ChannelViewModelFactory,
+    threadsViewModelFactory: ThreadsViewModelFactory,
+    navigator: ThreePaneNavigator,
+    messagesViewModelFactoryProvider: MessagesViewModelFactoryProvider,
+) {
+    val context = LocalContext.current
+    when (listContentMode) {
+        ListContentMode.Channels -> {
+            FirstChannelLoadHandler(channelViewModelFactory) { selection ->
+                navigator.initialDetailNavigation(messagesViewModelFactoryProvider, context) ?: run {
+                    navigator.navigateTo(ThreePaneDestination(ThreePaneRole.Detail, selection))
+                }
+            }
+        }
+
+        ListContentMode.Threads -> {
+            FirstThreadLoadHandler(threadsViewModelFactory) { selection ->
+                navigator.initialDetailNavigation(messagesViewModelFactoryProvider, context) ?: run {
+                    navigator.navigateTo(ThreePaneDestination(ThreePaneRole.Detail, selection))
+                }
+            }
+        }
+    }
+}
+
 /**
  * A lambda function that provides a [MessagesViewModelFactory] for managing messages within a selected channel.
  */
@@ -377,22 +395,27 @@ public typealias MessagesViewModelFactoryProvider =
     (context: Context, selection: ChatMessageSelection) -> MessagesViewModelFactory?
 
 /**
- * Initial Detail navigation, when the provider returns a factory based on an empty selection.
+ * If there's no detail pane, navigate to the initial detail pane,
+ * when the provider returns a factory based on an empty selection.
  */
 private fun ThreePaneNavigator.initialDetailNavigation(
     messagesViewModelFactoryProvider: MessagesViewModelFactoryProvider,
     context: Context,
-) = messagesViewModelFactoryProvider(context, ChatMessageSelection())?.let { viewModelFactory ->
-    navigateTo(
-        ThreePaneDestination(
-            pane = ThreePaneRole.Detail,
-            arguments = ChatMessageSelection(
-                channelId = viewModelFactory.channelId,
-                messageId = viewModelFactory.messageId,
-                parentMessageId = viewModelFactory.parentMessageId,
+) = if (destinations.none { destination -> destination.pane == ThreePaneRole.Detail }) {
+    messagesViewModelFactoryProvider(context, ChatMessageSelection())?.let { viewModelFactory ->
+        navigateTo(
+            ThreePaneDestination(
+                pane = ThreePaneRole.Detail,
+                arguments = ChatMessageSelection(
+                    channelId = viewModelFactory.channelId,
+                    messageId = viewModelFactory.messageId,
+                    parentMessageId = viewModelFactory.parentMessageId,
+                ),
             ),
-        ),
-    )
+        )
+    }
+} else {
+    Unit
 }
 
 /**
