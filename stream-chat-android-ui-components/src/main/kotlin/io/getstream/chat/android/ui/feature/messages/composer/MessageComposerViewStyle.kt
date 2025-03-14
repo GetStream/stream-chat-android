@@ -28,6 +28,7 @@ import androidx.annotation.Px
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.permissions.VisualMediaType
 import io.getstream.chat.android.ui.feature.messages.common.AudioRecordPlayerViewStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.PickerMediaMode
@@ -1430,6 +1431,14 @@ public data class MessageComposerViewStyle(
                 R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerSystemPickerEnabled,
                 false,
             )
+            val systemMediaPickerVisualMediaAllowMultiple = a.getBoolean(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerSystemPickerVisualMediaAllowMultiple,
+                false,
+            )
+            val systemMediaPickerVisualMediaType = a.getEnum(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerSystemPickerVisualMediaType,
+                VisualMediaType.IMAGE_AND_VIDEO,
+            )
 
             return AttachmentsPickerDialogStyle(
                 useDefaultSystemMediaPicker = useDefaultSystemMediaPicker,
@@ -1480,6 +1489,9 @@ public data class MessageComposerViewStyle(
                 pollAttachmentsTabEnabled = pollAttachmentsTabEnabled,
                 pollAttachmentsTabIconDrawable = pollAttachmentsTabIconDrawable,
                 pickerMediaMode = pickerMediaMode,
+                // System media picker
+                systemMediaPickerVisualMediaAllowMultiple = systemMediaPickerVisualMediaAllowMultiple,
+                systemMediaPickerVisualMediaType = systemMediaPickerVisualMediaType,
             ).let(TransformStyle.attachmentsPickerStyleTransformer::transform)
         }
 

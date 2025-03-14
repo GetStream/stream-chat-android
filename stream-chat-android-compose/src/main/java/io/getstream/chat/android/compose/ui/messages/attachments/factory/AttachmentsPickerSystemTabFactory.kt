@@ -77,6 +77,8 @@ import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
 import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
+import io.getstream.chat.android.ui.common.permissions.SystemAttachmentsPickerConfig
+import io.getstream.chat.android.ui.common.permissions.toContractVisualMediaType
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
 import java.io.File
@@ -84,18 +86,10 @@ import java.io.File
 /**
  * Holds the information required to add support for "files" tab in the attachment picker.
  *
- * @param filesAllowed If the option to pick files is included in the attachments picker.
- * @param mediaAllowed If the option to pick media (images/videos) is included in the attachments picker.
- * @param captureImageAllowed If the option to capture an image is included in the attachments picker.
- * @param captureVideoAllowed If the option to capture a video is included in the attachments picker.
- * @param pollAllowed If the option to create a poll is included in the attachments picker.
+ * @param config The configuration for the system attachment picker.
  */
 public class AttachmentsPickerSystemTabFactory(
-    public val filesAllowed: Boolean,
-    public val mediaAllowed: Boolean,
-    public val captureImageAllowed: Boolean,
-    public val captureVideoAllowed: Boolean,
-    public val pollAllowed: Boolean,
+    public val config: SystemAttachmentsPickerConfig,
 ) : AttachmentsPickerTabFactory {
 
     /**
@@ -104,23 +98,71 @@ public class AttachmentsPickerSystemTabFactory(
      * @param otherFactories A list of other [AttachmentsPickerTabFactory] used to handle different attachment pickers.
      */
     @Deprecated(
-        message = "Use constructor(filesAllowed, mediaAllowed, captureImageAllowed, captureVideoAllowed, pollAllowed)" +
-            " instead.",
-        replaceWith = ReplaceWith(
-            expression = "AttachmentsPickerSystemTabFactory(filesAllowed, mediaAllowed, captureImageAllowed," +
-                " captureVideoAllowed, pollAllowed)",
-        ),
-        level = DeprecationLevel.WARNING,
+        message = "Use constructor(config) instead.",
+        replaceWith = ReplaceWith(expression = "AttachmentsPickerSystemTabFactory(config)"),
+        level = DeprecationLevel.ERROR,
     )
     public constructor(otherFactories: List<AttachmentsPickerTabFactory>) : this(
-        filesAllowed = true,
-        mediaAllowed = true,
-        captureImageAllowed = otherFactories.any { it.attachmentsPickerMode == MediaCapture },
-        captureVideoAllowed = otherFactories.any { it.attachmentsPickerMode == MediaCapture },
-        pollAllowed = otherFactories.any { it.attachmentsPickerMode == Poll },
+        config = SystemAttachmentsPickerConfig(
+            filesAllowed = true,
+            visualMediaAllowed = true,
+            captureImageAllowed = otherFactories.any { it.attachmentsPickerMode == MediaCapture },
+            captureVideoAllowed = otherFactories.any { it.attachmentsPickerMode == MediaCapture },
+            pollAllowed = otherFactories.any { it.attachmentsPickerMode == Poll },
+        ),
     )
 
-    private val mediaPickerContract = resolveMediaPickerMode(captureImageAllowed, captureVideoAllowed)
+    /**
+     * Holds the information required to add support for "files" tab in the attachment picker.
+     *
+     * @param filesAllowed If the option to pick files is included in the attachments picker.
+     * @param mediaAllowed If the option to pick media (images/videos) is included in the attachments picker.
+     * @param captureImageAllowed If the option to capture an image is included in the attachments picker.
+     * @param captureVideoAllowed If the option to capture a video is included in the attachments picker.
+     * @param pollAllowed If the option to create a poll is included in the attachments picker.
+     */
+    @Deprecated(
+        message = "Use AttachmentsPickerSystemTabFactory(config) instead.",
+        replaceWith = ReplaceWith(expression = "AttachmentsPickerSystemTabFactory(config)"),
+        level = DeprecationLevel.WARNING,
+    )
+    public constructor(
+        filesAllowed: Boolean,
+        mediaAllowed: Boolean,
+        captureImageAllowed: Boolean,
+        captureVideoAllowed: Boolean,
+        pollAllowed: Boolean,
+    ) : this(
+        config = SystemAttachmentsPickerConfig(
+            filesAllowed = filesAllowed,
+            visualMediaAllowed = mediaAllowed,
+            captureImageAllowed = captureImageAllowed,
+            captureVideoAllowed = captureVideoAllowed,
+            pollAllowed = pollAllowed,
+        ),
+    )
+
+    /** Returns whether file attachments are allowed. */
+    @Deprecated(message = "Use config.filesAllowed instead.", level = DeprecationLevel.WARNING)
+    public val filesAllowed: Boolean = config.filesAllowed
+
+    /** Returns whether visual media attachments are allowed. */
+    @Deprecated(message = "Use config.visualMediaAllowed instead.", level = DeprecationLevel.WARNING)
+    public val mediaAllowed: Boolean = config.visualMediaAllowed
+
+    /** Returns whether capturing images is allowed. */
+    @Deprecated(message = "Use config.captureImageAllowed instead.", level = DeprecationLevel.WARNING)
+    public val captureImageAllowed: Boolean = config.captureImageAllowed
+
+    /** Returns whether capturing videos is allowed. */
+    @Deprecated(message = "Use config.captureVideoAllowed instead.", level = DeprecationLevel.WARNING)
+    public val captureVideoAllowed: Boolean = config.captureVideoAllowed
+
+    /** Returns whether poll attachments are allowed. */
+    @Deprecated(message = "Use config.pollAllowed instead.", level = DeprecationLevel.WARNING)
+    public val pollAllowed: Boolean = config.pollAllowed
+
+    private val mediaPickerContract = resolveMediaPickerMode(config.captureImageAllowed, config.captureVideoAllowed)
         ?.let(::CaptureMediaContract)
 
     private val pollFactory by lazy { AttachmentsPickerPollTabFactory() }
@@ -178,9 +220,10 @@ public class AttachmentsPickerSystemTabFactory(
             onAttachmentsSubmitted(storageHelper.getAttachmentsMetadataFromUris(listOf(uri)))
         }
 
-        val imagePickerLauncher = rememberImagePickerLauncher { uri ->
-            onAttachmentsSubmitted(storageHelper.getAttachmentsMetadataFromUris(listOf(uri)))
-        }
+        val imagePickerLauncher =
+            rememberVisualMediaPickerLauncher(config.visualMediaAllowMultiple) { uris ->
+                onAttachmentsSubmitted(storageHelper.getAttachmentsMetadataFromUris(uris))
+            }
 
         val captureLauncher = rememberCaptureMediaLauncher { file ->
             onAttachmentsSubmitted(listOf(AttachmentMetaData(context, file)))
@@ -198,16 +241,16 @@ public class AttachmentsPickerSystemTabFactory(
         var pollShown by remember { mutableStateOf(false) }
 
         val buttonsConfig = ButtonsConfig(
-            filesAllowed = filesAllowed,
-            mediaAllowed = mediaAllowed,
+            filesAllowed = config.filesAllowed,
+            mediaAllowed = config.visualMediaAllowed,
             captureAllowed = mediaPickerContract != null,
-            pollAllowed = pollAllowed,
+            pollAllowed = config.pollAllowed,
         )
+        val visualMediaType = config.visualMediaType.toContractVisualMediaType()
         val buttonActions = ButtonActions(
             onFilesClick = { filePickerLauncher.launch(filePickerIntent()) },
             onMediaClick = {
-                imagePickerLauncher
-                    .launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo))
+                imagePickerLauncher.launch(PickVisualMediaRequest(visualMediaType))
             },
             onCaptureClick = {
                 // Permission grant is needed only if CAMERA is declared in the Manifest and is not yet granted
@@ -260,9 +303,17 @@ public class AttachmentsPickerSystemTabFactory(
         }
 
     @Composable
-    private fun rememberImagePickerLauncher(onResult: (Uri) -> Unit) =
-        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            uri?.let(onResult)
+    private fun rememberVisualMediaPickerLauncher(allowMultiple: Boolean, onResult: (List<Uri>) -> Unit) =
+        if (allowMultiple) {
+            rememberLauncherForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
+                onResult(uris)
+            }
+        } else {
+            rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+                if (uri != null) {
+                    onResult(listOf(uri))
+                }
+            }
         }
 
     @Composable

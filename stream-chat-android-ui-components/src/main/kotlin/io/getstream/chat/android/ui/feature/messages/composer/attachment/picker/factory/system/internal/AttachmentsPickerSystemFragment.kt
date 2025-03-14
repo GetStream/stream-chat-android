@@ -17,7 +17,6 @@
 package io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.system.internal
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -30,6 +29,8 @@ import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
 import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
+import io.getstream.chat.android.ui.common.permissions.VisualMediaType
+import io.getstream.chat.android.ui.common.permissions.toContractVisualMediaType
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentAttachmentSystemPickerBinding
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
@@ -68,14 +69,7 @@ internal class AttachmentsPickerSystemFragment : Fragment() {
             attachmentsPickerTabListener?.onSelectedAttachmentsSubmitted()
         }
 
-    private val imagePickerLauncher =
-        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
-            if (uri != null) {
-                val attachmentMetaData = storageHelper.getAttachmentsFromUriList(requireContext(), listOf(uri))
-                attachmentsPickerTabListener?.onSelectedAttachmentsChanged(attachmentMetaData)
-            }
-            attachmentsPickerTabListener?.onSelectedAttachmentsSubmitted()
-        }
+    private var visualMediaPickerLauncher: ActivityResultLauncher<PickVisualMediaRequest>? = null
 
     private var captureMedia: ActivityResultLauncher<Unit>? = null
 
@@ -96,6 +90,7 @@ internal class AttachmentsPickerSystemFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        visualMediaPickerLauncher?.unregister()
         captureMedia?.unregister()
         _binding = null
     }
@@ -107,7 +102,7 @@ internal class AttachmentsPickerSystemFragment : Fragment() {
             binding.textFiles.visibility = View.GONE
         }
 
-        if (!config.mediaAttachmentsTabEnabled) {
+        if (!config.visualMediaAttachmentsTabEnabled) {
             binding.buttonMedia.visibility = View.GONE
             binding.textMedia.visibility = View.GONE
         }
@@ -131,13 +126,13 @@ internal class AttachmentsPickerSystemFragment : Fragment() {
 
             filePickerLauncher.launch(filePickerIntent)
         }
+        visualMediaPickerLauncher = registerVisualMediaPickerLauncher(config.visualMediaAllowMultiple)
         binding.buttonMedia.setOnClickListener {
-            imagePickerLauncher.launch(
-                PickVisualMediaRequest(
-                    mediaType = ActivityResultContracts.PickVisualMedia.ImageAndVideo,
-                ),
+            visualMediaPickerLauncher?.launch(
+                input = PickVisualMediaRequest(config.visualMediaType.toContractVisualMediaType()),
             )
         }
+
         captureMedia = activity?.activityResultRegistry?.register(
             LauncherRequestsKeys.CAPTURE_MEDIA,
             CaptureMediaContract(style.pickerMediaMode.mode),
@@ -193,6 +188,22 @@ internal class AttachmentsPickerSystemFragment : Fragment() {
         this.style = style
     }
 
+    private fun registerVisualMediaPickerLauncher(allowMultiple: Boolean) = if (allowMultiple) {
+        registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
+            val attachmentMetaData = storageHelper.getAttachmentsFromUriList(requireContext(), uris)
+            attachmentsPickerTabListener?.onSelectedAttachmentsChanged(attachmentMetaData)
+            attachmentsPickerTabListener?.onSelectedAttachmentsSubmitted()
+        }
+    } else {
+        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri != null) {
+                val attachmentMetaData = storageHelper.getAttachmentsFromUriList(requireContext(), listOf(uri))
+                attachmentsPickerTabListener?.onSelectedAttachmentsChanged(attachmentMetaData)
+            }
+            attachmentsPickerTabListener?.onSelectedAttachmentsSubmitted()
+        }
+    }
+
     private fun checkCameraPermissions(onPermissionGranted: () -> Unit) {
         if (permissionChecker.isNeededToRequestForCameraPermissions(requireContext())) {
             permissionChecker.checkCameraPermissions(
@@ -220,7 +231,9 @@ internal class AttachmentsPickerSystemFragment : Fragment() {
 }
 
 internal data class AttachmentsPickerSystemConfig(
-    val mediaAttachmentsTabEnabled: Boolean,
+    val visualMediaAttachmentsTabEnabled: Boolean,
+    val visualMediaAllowMultiple: Boolean,
+    val visualMediaType: VisualMediaType,
     val fileAttachmentsTabEnabled: Boolean,
     val cameraAttachmentsTabEnabled: Boolean,
     val pollAttachmentsTabEnabled: Boolean,
