@@ -30,8 +30,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import io.getstream.chat.android.compose.sample.R
+import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
 import io.getstream.chat.android.compose.sample.ui.MessagesActivity
+import io.getstream.chat.android.compose.sample.ui.chats.ChatsActivity
 import io.getstream.chat.android.compose.sample.ui.component.AppToolbar
 import io.getstream.chat.android.compose.ui.pinned.PinnedMessageList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -64,6 +66,7 @@ class PinnedMessagesActivity : BaseConnectedActivity() {
         )
     }
     private val viewModel by viewModels<PinnedMessageListViewModel> { viewModelFactory }
+    private val settings by lazy { customSettings() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,12 +100,21 @@ class PinnedMessagesActivity : BaseConnectedActivity() {
     }
 
     private fun openMessage(message: Message) {
-        val intent = MessagesActivity.createIntent(
-            context = this,
-            channelId = message.cid,
-            messageId = message.id,
-            parentMessageId = message.parentId,
-        )
+        val intent = if (settings.isAdaptiveLayoutEnabled) {
+            ChatsActivity.createIntent(
+                context = applicationContext,
+                channelId = message.cid,
+                messageId = message.id,
+                parentMessageId = message.parentId,
+            )
+        } else {
+            MessagesActivity.createIntent(
+                context = applicationContext,
+                channelId = message.cid,
+                messageId = message.id,
+                parentMessageId = message.parentId,
+            )
+        }
         startActivity(intent)
     }
 }

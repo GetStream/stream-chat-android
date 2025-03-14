@@ -76,9 +76,9 @@ import java.io.File
  */
 public class MessagesViewModelFactory(
     private val context: Context,
-    private val channelId: String,
-    private val messageId: String? = null,
-    private val parentMessageId: String? = null,
+    internal val channelId: String,
+    internal val messageId: String? = null,
+    internal val parentMessageId: String? = null,
     private val autoTranslationEnabled: Boolean = false,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val clientState: ClientState = chatClient.clientState,

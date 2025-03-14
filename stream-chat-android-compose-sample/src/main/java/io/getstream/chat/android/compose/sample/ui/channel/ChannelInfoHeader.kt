@@ -25,14 +25,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -46,15 +43,15 @@ import io.getstream.chat.android.models.Member
 
 /**
  * Composable representing a header for the "Channel Info" screen. Shows an avatar, the username, and 'Last seen' info
- * the user. Additionally, shows a back button for returning to the previous screen.
+ * the user. Additionally, shows a navigation button, which can be customized.
  *
  * @param member The [Member] for which the header is shown.
- * @param onBack Action invoked when the user taps on the "Back" button.
+ * @param navigationIcon The icon to show for navigation.
  */
 @Composable
 fun ChannelInfoHeader(
     member: Member,
-    onBack: () -> Unit,
+    navigationIcon: @Composable () -> Unit,
 ) {
     val context = LocalContext.current
     Column(
@@ -69,14 +66,7 @@ fun ChannelInfoHeader(
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            IconButton(onClick = onBack) {
-                Icon(
-                    modifier = Modifier.size(24.dp),
-                    painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
-                    contentDescription = "Back",
-                    tint = ChatTheme.colors.textHighEmphasis,
-                )
-            }
+            navigationIcon()
         }
         UserAvatar(
             modifier = Modifier.size(72.dp),

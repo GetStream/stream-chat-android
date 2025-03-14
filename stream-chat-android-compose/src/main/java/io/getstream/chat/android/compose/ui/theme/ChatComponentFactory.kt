@@ -566,7 +566,7 @@ public interface ChatComponentFactory {
         messageMode: MessageMode,
         onBackPressed: () -> Unit,
         onHeaderTitleClick: (Channel) -> Unit,
-        onChannelAvatarClick: () -> Unit,
+        onChannelAvatarClick: (() -> Unit)?,
     ) {
         io.getstream.chat.android.compose.ui.messages.header.MessageListHeader(
             channel = channel,
@@ -625,7 +625,7 @@ public interface ChatComponentFactory {
     public fun RowScope.MessageListHeaderTrailingContent(
         channel: Channel,
         currentUser: User?,
-        onClick: () -> Unit,
+        onClick: (() -> Unit)?,
     ) {
         DefaultMessageListHeaderTrailingContent(
             channel = channel,

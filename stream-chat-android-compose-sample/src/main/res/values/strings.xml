@@ -33,6 +33,8 @@
     <string name="custom_login_hint_user_id">User ID</string>
     <string name="custom_login_hint_user_token">User Token</string>
     <string name="custom_login_hint_user_name">Username (optional)</string>
+    <string name="custom_login_enable_adaptive_layout">Enable adaptive layout</string>
+    <string name="custom_login_enable_adaptive_layout_description">Adjust layout based on screen sizes</string>
 
     <!--  Channel Info Screens  -->
     <string name="channel_info_user_name">Username</string>

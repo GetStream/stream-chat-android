@@ -92,7 +92,7 @@ public fun MessageListHeader(
     elevation: Dp = ChatTheme.dimens.headerElevation,
     onBackPressed: () -> Unit = {},
     onHeaderTitleClick: (Channel) -> Unit = {},
-    onChannelAvatarClick: () -> Unit = {},
+    onChannelAvatarClick: (() -> Unit)? = null,
     leadingContent: @Composable RowScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             MessageListHeaderLeadingContent(
@@ -308,7 +308,7 @@ internal fun DefaultMessageListHeaderSubtitle(
 internal fun DefaultMessageListHeaderTrailingContent(
     channel: Channel,
     currentUser: User?,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)?,
 ) {
     ChatTheme.componentFactory.ChannelAvatar(
         modifier = Modifier.size(ChatTheme.dimens.channelAvatarSize),
