@@ -1,15 +1,7 @@
-# UNRELEASED CHANGELOG
+# March 14th, 2025 - 6.12.1
 ## Common changes for all artifacts
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - Upgrade StreamLog dependency to avoid a warning message while compilation time related with a duplicated namespace. [#5664](https://github.com/GetStream/stream-chat-android/pull/5664)
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-client
 ### 🐞 Fixed
@@ -25,32 +17,6 @@
 - Add a way to inject a TokenProvider from PN on the case an expired token needs to be refreshed. [#5655](https://github.com/GetStream/stream-chat-android/pull/5655)
 - Recover deprecated `NotInFilterObject` to avoid breaking changes. [#5672](https://github.com/GetStream/stream-chat-android/pull/5672)
 
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
 - Fix `MessageListController#scrollToFirstUnreadMessage` not working when the first unread message was not loaded. [#5635](https://github.com/GetStream/stream-chat-android/pull/5635)
@@ -59,17 +25,9 @@
 ### ⬆️ Improved
 - Use `partialUpdateMessage` when editing messages from the message composer. [#5669](https://github.com/GetStream/stream-chat-android/pull/5669)
 
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fix wrong timestamp shown for updated GIPHY messages. [#5674](https://github.com/GetStream/stream-chat-android/pull/5674)
-
-### ⬆️ Improved
 
 ### ✅ Added
 - Add `MessageListViewModel::scrollToFirstUnreadMessage` method. [#5635](https://github.com/GetStream/stream-chat-android/pull/5635)
@@ -77,8 +35,6 @@
 
 ### ⚠️ Changed
 - Upgrade to Coil 3. If you use Coil internally in your app and want to upgrade it, you can follow [their migration guide](https://coil-kt.github.io/coil/upgrading_to_coil3/). [#5645](https://github.com/GetStream/stream-chat-android/pull/5645)
-
-### ❌ Removed
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -107,19 +63,6 @@
 - Deprecate `AttachmentsPickerSystemTabFactory.captureImageAllowed` property in favor of `AttachmentsPickerSystemTabFactory.config.captureImageAllowed`. [#5654](https://github.com/GetStream/stream-chat-android/pull/5654)
 - Deprecate `AttachmentsPickerSystemTabFactory.captureVideoAllowed` property in favor of `AttachmentsPickerSystemTabFactory.config.captureVideoAllowed`. [#5654](https://github.com/GetStream/stream-chat-android/pull/5654)
 - Deprecate `AttachmentsPickerSystemTabFactory.pollAllowed` property in favor of `AttachmentsPickerSystemTabFactory.config.pollAllowed`. [#5654](https://github.com/GetStream/stream-chat-android/pull/5654)
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # February 17th, 2025 - 6.12.0
 ## stream-chat-android-ui-components
