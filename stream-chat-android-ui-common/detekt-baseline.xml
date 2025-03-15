@@ -18,7 +18,6 @@
     <ID>MagicNumber:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$31</ID>
     <ID>MagicNumber:DurationFormatter.kt$DurationFormatter$1000</ID>
     <ID>MaxLineLength:AudioPlayerController.kt$AudioPlayerController$seekTo</ID>
-    <ID>MaxLineLength:MessageListController.kt$MessageListController$val hasDateSeparatorAfter = nextMessage?.let { dateSeparatorHandler.shouldAddDateSeparator(message, it) } ?: false</ID>
     <ID>ReturnCount:AudioPlayerController.kt$AudioPlayerController$public fun changeSpeed(attachment: Attachment)</ID>
     <ID>ReturnCount:AudioPlayerController.kt$AudioPlayerController$public fun resetAudio(attachment: Attachment)</ID>
     <ID>ReturnCount:AudioPlayerController.kt$AudioPlayerController$public fun resume()</ID>
