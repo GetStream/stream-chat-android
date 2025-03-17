@@ -76,6 +76,7 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
+import kotlin.math.abs
 
 /**
  * Represents a complete screen for chat, including a list of channels, threads, and messages.
@@ -263,12 +264,18 @@ public fun ChatsScreen(
         }
 
         LaunchedEffect(navigator.destinations) {
-            if (navigator.destinations.size > pagerDestinations.size) {
+            val diff = navigator.destinations.size - pagerDestinations.size
+            if (diff > 0) {
                 // When navigating forward, postpone the scroll to the last page until the new page is ready.
                 pagerDestinations = navigator.destinations
-            } else if (navigator.destinations.size < pagerDestinations.size) {
-                // When navigating back, scroll to the previous page before removing the last page.
-                pagerState.animateScrollToPage(pagerState.currentPage - 1)
+            } else if (diff < 0) {
+                if (abs(diff) > 1) {
+                    // When navigating back multiple pages, scroll directly to the new page then update destinations.
+                    pagerState.scrollToPage(pagerState.currentPage - 1)
+                } else {
+                    // When navigating back to the previous page, scroll then update destinations.
+                    pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                }
                 pagerDestinations = navigator.destinations
             }
         }
