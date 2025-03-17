@@ -21,21 +21,10 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import io.getstream.chat.android.compose.sample.R
-import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
 import io.getstream.chat.android.compose.sample.ui.MessagesActivity
-import io.getstream.chat.android.compose.sample.ui.chats.ChatsActivity
-import io.getstream.chat.android.compose.sample.ui.component.AppToolbar
-import io.getstream.chat.android.compose.ui.pinned.PinnedMessageList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModelFactory
@@ -66,55 +55,28 @@ class PinnedMessagesActivity : BaseConnectedActivity() {
         )
     }
     private val viewModel by viewModels<PinnedMessageListViewModel> { viewModelFactory }
-    private val settings by lazy { customSettings() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             ChatTheme {
-                Scaffold(
+                PinnedMessagesScreen(
                     modifier = Modifier.statusBarsPadding(),
-                    topBar = {
-                        AppToolbar(
-                            title = stringResource(id = R.string.channel_info_option_pinned_messages),
-                            onBack = ::finish,
-                        )
-                    },
-                    content = { padding ->
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(ChatTheme.colors.appBackground)
-                                .padding(padding),
-                        ) {
-                            PinnedMessageList(
-                                modifier = Modifier.fillMaxSize(),
-                                viewModel = viewModel,
-                                onPinnedMessageClick = ::openMessage,
-                            )
-                        }
-                    },
+                    viewModel = viewModel,
+                    onNavigationIconClick = ::finish,
+                    onMessageClick = ::openMessage,
                 )
             }
         }
     }
 
     private fun openMessage(message: Message) {
-        val intent = if (settings.isAdaptiveLayoutEnabled) {
-            ChatsActivity.createIntent(
-                context = applicationContext,
-                channelId = message.cid,
-                messageId = message.id,
-                parentMessageId = message.parentId,
-            )
-        } else {
-            MessagesActivity.createIntent(
-                context = applicationContext,
-                channelId = message.cid,
-                messageId = message.id,
-                parentMessageId = message.parentId,
-            )
-        }
+        val intent = MessagesActivity.createIntent(
+            context = applicationContext,
+            channelId = message.cid,
+            messageId = message.id,
+            parentMessageId = message.parentId,
+        )
         startActivity(intent)
     }
 }
