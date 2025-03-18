@@ -51,11 +51,12 @@ internal class MessageListViewExtensionsKtTest {
     @MethodSource("canThreadReplyToMessageArguments")
     fun `Verify canThreadReplyToMessage() extension function return proper value`(
         messageListViewStyle: MessageListViewStyle,
+        isInThread: Boolean,
         message: Message,
         ownCapabilities: Set<String>,
         expectedResult: Boolean,
     ) {
-        messageListViewStyle.canThreadReplyToMessage(message, ownCapabilities) `should be` expectedResult
+        messageListViewStyle.canThreadReplyToMessage(isInThread, message, ownCapabilities) `should be` expectedResult
     }
 
     @ParameterizedTest
@@ -405,24 +406,35 @@ internal class MessageListViewExtensionsKtTest {
         fun canThreadReplyToMessageArguments() = listOf(
             Arguments.of(
                 randomMessageListViewStyle(threadsEnabled = false),
+                randomBoolean(),
                 randomMessage(),
                 randomChannelCapabilities(),
                 false,
             ),
             Arguments.of(
                 randomMessageListViewStyle(),
+                randomBoolean(),
                 randomMessage(syncStatus = randomSyncStatus(exclude = listOf(SyncStatus.COMPLETED))),
                 randomChannelCapabilities(),
                 false,
             ),
             Arguments.of(
                 randomMessageListViewStyle(),
+                randomBoolean(),
                 randomMessage(),
                 randomChannelCapabilities(exclude = setOf(ChannelCapabilities.QUOTE_MESSAGE)),
                 false,
             ),
             Arguments.of(
                 randomMessageListViewStyle(threadsEnabled = true),
+                true,
+                randomMessage(syncStatus = SyncStatus.COMPLETED),
+                randomChannelCapabilities(include = setOf(ChannelCapabilities.QUOTE_MESSAGE)),
+                false,
+            ),
+            Arguments.of(
+                randomMessageListViewStyle(threadsEnabled = true),
+                false,
                 randomMessage(syncStatus = SyncStatus.COMPLETED),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.QUOTE_MESSAGE)),
                 true,

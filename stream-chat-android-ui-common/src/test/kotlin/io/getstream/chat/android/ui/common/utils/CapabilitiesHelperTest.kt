@@ -49,11 +49,12 @@ internal class CapabilitiesHelperTest {
     @MethodSource("canThreadReplyToMessageArguments")
     fun `Verify canThreadReplyToMessage() extension function return proper value`(
         localFlag: Boolean,
+        isInThread: Boolean,
         message: Message,
         ownCapabilities: Set<String>,
         expectedResult: Boolean,
     ) {
-        canThreadReplyToMessage(localFlag, message, ownCapabilities) `should be` expectedResult
+        canThreadReplyToMessage(localFlag, isInThread, message, ownCapabilities) `should be` expectedResult
     }
 
     @ParameterizedTest
@@ -403,11 +404,13 @@ internal class CapabilitiesHelperTest {
         fun canThreadReplyToMessageArguments() = listOf(
             Arguments.of(
                 false,
+                false,
                 randomMessage(),
                 randomChannelCapabilities(),
                 false,
             ),
             Arguments.of(
+                randomBoolean(),
                 randomBoolean(),
                 randomMessage(syncStatus = randomSyncStatus(exclude = listOf(SyncStatus.COMPLETED))),
                 randomChannelCapabilities(),
@@ -415,12 +418,21 @@ internal class CapabilitiesHelperTest {
             ),
             Arguments.of(
                 randomBoolean(),
+                randomBoolean(),
                 randomMessage(),
                 randomChannelCapabilities(exclude = setOf(ChannelCapabilities.QUOTE_MESSAGE)),
                 false,
             ),
             Arguments.of(
                 true,
+                true,
+                randomMessage(syncStatus = SyncStatus.COMPLETED),
+                randomChannelCapabilities(include = setOf(ChannelCapabilities.QUOTE_MESSAGE)),
+                false,
+            ),
+            Arguments.of(
+                true,
+                false,
                 randomMessage(syncStatus = SyncStatus.COMPLETED),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.QUOTE_MESSAGE)),
                 true,

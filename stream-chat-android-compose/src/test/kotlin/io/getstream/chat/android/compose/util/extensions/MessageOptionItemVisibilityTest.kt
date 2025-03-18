@@ -50,11 +50,12 @@ internal class MessageOptionItemVisibilityTest {
     @MethodSource("canThreadReplyToMessageArguments")
     fun `Verify canThreadReplyToMessage() extension function return proper value`(
         messageOptionItemVisibility: MessageOptionItemVisibility,
+        isInThread: Boolean,
         message: Message,
         ownCapabilities: Set<String>,
         expectedResult: Boolean,
     ) {
-        messageOptionItemVisibility.canThreadReplyToMessage(message, ownCapabilities) `should be` expectedResult
+        messageOptionItemVisibility.canThreadReplyToMessage(isInThread, message, ownCapabilities) `should be` expectedResult
     }
 
     @ParameterizedTest
@@ -404,24 +405,35 @@ internal class MessageOptionItemVisibilityTest {
         fun canThreadReplyToMessageArguments() = listOf(
             Arguments.of(
                 MessageOptionItemVisibility(isThreadReplyVisible = false),
+                randomBoolean(),
                 randomMessage(),
                 randomChannelCapabilities(),
                 false,
             ),
             Arguments.of(
                 MessageOptionItemVisibility(),
+                randomBoolean(),
                 randomMessage(syncStatus = randomSyncStatus(exclude = listOf(SyncStatus.COMPLETED))),
                 randomChannelCapabilities(),
                 false,
             ),
             Arguments.of(
                 MessageOptionItemVisibility(),
+                randomBoolean(),
                 randomMessage(),
                 randomChannelCapabilities(exclude = setOf(ChannelCapabilities.QUOTE_MESSAGE)),
                 false,
             ),
             Arguments.of(
                 MessageOptionItemVisibility(isThreadReplyVisible = true),
+                true,
+                randomMessage(syncStatus = SyncStatus.COMPLETED),
+                randomChannelCapabilities(include = setOf(ChannelCapabilities.QUOTE_MESSAGE)),
+                false,
+            ),
+            Arguments.of(
+                MessageOptionItemVisibility(isThreadReplyVisible = true),
+                false,
                 randomMessage(syncStatus = SyncStatus.COMPLETED),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.QUOTE_MESSAGE)),
                 true,
