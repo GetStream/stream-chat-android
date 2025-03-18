@@ -29,6 +29,9 @@ import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -645,6 +648,12 @@ public class MessageListView : ConstraintLayout {
     private var enterThreadListener = defaultEnterThreadListener
     private var userReactionClickListener = defaultUserReactionClickListener
 
+    private val pauseAudioPlayerListener = object : DefaultLifecycleObserver {
+        override fun onPause(owner: LifecycleOwner) {
+            ChatClient.instance().audioPlayer.pause()
+        }
+    }
+
     private lateinit var messageListItemViewHolderFactory: MessageListItemViewHolderFactory
     private lateinit var messageDateFormatter: DateFormatter
     private lateinit var attachmentFactoryManager: AttachmentFactoryManager
@@ -812,12 +821,15 @@ public class MessageListView : ConstraintLayout {
         activity?.activityResultRegistry?.let { registry ->
             attachmentGalleryDestination.register(registry)
         }
+        findViewTreeLifecycleOwner()?.lifecycle?.addObserver(pauseAudioPlayerListener)
     }
 
     override fun onDetachedFromWindow() {
+        ChatClient.instance().audioPlayer.reset()
         if (isAdapterInitialized()) {
             adapter.onDetachedFromRecyclerView(binding.chatMessagesRV)
         }
+        findViewTreeLifecycleOwner()?.lifecycle?.removeObserver(pauseAudioPlayerListener)
         attachmentGalleryDestination.unregister()
         super.onDetachedFromWindow()
     }

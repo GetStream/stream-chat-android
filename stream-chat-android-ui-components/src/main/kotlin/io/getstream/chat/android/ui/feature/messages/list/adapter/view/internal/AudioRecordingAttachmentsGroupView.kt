@@ -21,6 +21,9 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.view.children
 import androidx.core.view.updateLayoutParams
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.AudioState
@@ -57,6 +60,12 @@ internal class AudioRecordingAttachmentsGroupView : LinearLayoutCompat {
 
     var attachmentClickListener: AttachmentClickListener? = null
     var attachmentLongClickListener: AttachmentLongClickListener? = null
+
+    private val pauseAudioPlayerListener = object : DefaultLifecycleObserver {
+        override fun onPause(owner: LifecycleOwner) {
+            ChatClient.instance().audioPlayer.pause()
+        }
+    }
 
     private val logger by taggedLogger("AudioRecAttachGroupView")
 
@@ -99,6 +108,7 @@ internal class AudioRecordingAttachmentsGroupView : LinearLayoutCompat {
             audioPlayer.registerStateChange(child, audioHash)
             logger.v { "[onAttachedToWindow] restored (audioHash: $audioHash)" }
         }
+        findViewTreeLifecycleOwner()?.lifecycle?.addObserver(pauseAudioPlayerListener)
     }
 
     /**
@@ -159,7 +169,7 @@ internal class AudioRecordingAttachmentsGroupView : LinearLayoutCompat {
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         logger.d { "[onDetachedFromWindow] no args" }
-        resetCurrentAttachments()
+        findViewTreeLifecycleOwner()?.lifecycle?.removeObserver(pauseAudioPlayerListener)
     }
 
     private fun resetCurrentAttachments() {

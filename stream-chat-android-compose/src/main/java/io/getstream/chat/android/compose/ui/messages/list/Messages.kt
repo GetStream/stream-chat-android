@@ -41,6 +41,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -228,6 +231,12 @@ public fun Messages(
         if (message is HasMessageListItemState) {
             onLastVisibleMessageChanged(message.message)
         }
+    }
+
+    /** Clean up: Pause any playing audio tracks in onPause(). **/
+    LifecycleEventEffect(Lifecycle.Event.ON_PAUSE) {
+        val audioPlayer = ChatClient.instance().audioPlayer
+        audioPlayer.pause()
     }
 }
 

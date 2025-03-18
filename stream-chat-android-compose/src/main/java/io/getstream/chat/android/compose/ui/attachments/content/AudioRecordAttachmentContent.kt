@@ -45,6 +45,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.extensions.durationInMs
@@ -170,6 +172,14 @@ public fun AudioRecordAttachmentContent(
                 },
             )
         }
+    }
+
+    // Cleanup: Pause any playing tracks in onPause.
+    LifecycleEventEffect(event = Lifecycle.Event.ON_PAUSE) {
+        // Important: This effect is disposed when the parent composable is disposed. A side effect of this is that if
+        // the AudioRecordAttachmentContent is shown in LazyList, and is scrolled away, the effect is disposed and the
+        // lifecycle event is not received. Therefore, the audio needs to be paused higher in the hierarchy.
+        viewModel.pause()
     }
 }
 
