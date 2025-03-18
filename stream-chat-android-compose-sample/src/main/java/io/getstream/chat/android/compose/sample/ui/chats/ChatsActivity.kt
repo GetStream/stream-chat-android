@@ -195,7 +195,7 @@ class ChatsActivity : BaseConnectedActivity() {
             infoContent = { arguments ->
                 InfoContent(
                     navigator = navigator,
-                    mode = arguments as InfoContentMode
+                    mode = arguments as InfoContentMode,
                 )
             },
         )
