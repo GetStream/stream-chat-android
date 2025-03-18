@@ -57,6 +57,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param leadingIcon The icon at the start of the search component that's customizable, but shows
  * [DefaultSearchLeadingIcon] by default.
  * @param label The label shown in the search component, when there's no input.
+ * @param clearButton The clear button shown when the search is focused and not empty.
  */
 @Composable
 public fun SearchInput(
@@ -72,25 +73,16 @@ public fun SearchInput(
     label: @Composable () -> Unit = {
         ChatTheme.componentFactory.SearchInputLabel()
     },
+    clearButton: (@Composable RowScope.() -> Unit) = {
+        with(ChatTheme.componentFactory) {
+            SearchInputClearButton(onClick = { onValueChange("") })
+        }
+    },
 ) {
     var isFocused by remember { mutableStateOf(false) }
 
-    val trailingIcon: (@Composable RowScope.() -> Unit)? = if (isFocused && query.isNotEmpty()) {
-        @Composable {
-            IconButton(
-                modifier = Modifier
-                    .weight(1f)
-                    .size(24.dp),
-                onClick = { onValueChange("") },
-                content = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_clear),
-                        contentDescription = stringResource(id = R.string.stream_compose_search_input_cancel),
-                        tint = ChatTheme.colors.textLowEmphasis,
-                    )
-                },
-            )
-        }
+    val trailingContent: (@Composable RowScope.() -> Unit)? = if (isFocused && query.isNotEmpty()) {
+        clearButton
     } else {
         null
     }
@@ -123,7 +115,7 @@ public fun SearchInput(
                     innerTextField()
                 }
 
-                trailingIcon?.invoke(this)
+                trailingContent?.invoke(this)
             }
         },
         maxLines = 1,
@@ -154,6 +146,25 @@ internal fun DefaultSearchLabel() {
         style = ChatTheme.typography.body,
         color = ChatTheme.colors.textLowEmphasis,
     )
+}
+
+/**
+ * Default clear button for the search input field when the input is focused and not empty.
+ */
+@Composable
+internal fun DefaultSearchClearButton(onClick: () -> Unit) {
+    IconButton(
+        modifier = Modifier
+            .padding(horizontal = 4.dp)
+            .size(24.dp),
+        onClick = onClick,
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.stream_compose_ic_clear),
+            contentDescription = stringResource(id = R.string.stream_compose_search_input_cancel),
+            tint = ChatTheme.colors.textLowEmphasis,
+        )
+    }
 }
 
 @Preview(name = "Search input")

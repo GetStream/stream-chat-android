@@ -77,6 +77,7 @@ import io.getstream.chat.android.compose.ui.channels.list.DefaultSearchResultIte
 import io.getstream.chat.android.compose.ui.channels.list.DefaultSearchResultItemLeadingContent
 import io.getstream.chat.android.compose.ui.channels.list.DefaultSearchResultItemTrailingContent
 import io.getstream.chat.android.compose.ui.channels.list.SearchResultItem
+import io.getstream.chat.android.compose.ui.components.DefaultSearchClearButton
 import io.getstream.chat.android.compose.ui.components.DefaultSearchLabel
 import io.getstream.chat.android.compose.ui.components.DefaultSearchLeadingIcon
 import io.getstream.chat.android.compose.ui.components.EmptyContent
@@ -482,6 +483,16 @@ public interface ChatComponentFactory {
     @Composable
     public fun SearchInputLabel() {
         DefaultSearchLabel()
+    }
+
+    /**
+     * The default clear button of the search input.
+     *
+     * Used by [ChannelListSearchInput].
+     */
+    @Composable
+    public fun SearchInputClearButton(onClick: () -> Unit) {
+        DefaultSearchClearButton(onClick = onClick)
     }
 
     /**
