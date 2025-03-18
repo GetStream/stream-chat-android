@@ -18,6 +18,7 @@ package io.getstream.chat.android.client
 
 import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.api.ChatApi
+import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -30,6 +31,9 @@ import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.client.socket.FakeChatSocket
 import io.getstream.chat.android.client.token.FakeTokenManager
+import io.getstream.chat.android.client.token.TokenManager
+import io.getstream.chat.android.client.user.CredentialConfig
+import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.models.ConnectionData
 import io.getstream.chat.android.models.EventType
@@ -38,12 +42,13 @@ import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.result.Error
 import io.getstream.result.Result
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.cancel
@@ -58,11 +63,12 @@ import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
 
-@OptIn(ExperimentalCoroutinesApi::class)
-internal class ConnectUserTest {
+internal class ChatClientConnectionTests {
 
     companion object {
         @JvmField
@@ -84,6 +90,9 @@ internal class ConnectUserTest {
     private val anonUser = User(id = anonId)
     private val mutableClientState: MutableClientState = MutableClientState(mock())
     private val streamDateFormatter = StreamDateFormatter()
+    private val config = mock<ChatClientConfig>()
+    private val tokenManager = mock<TokenManager>()
+    private val userCredentialStorage = mock<UserCredentialStorage>()
 
     @BeforeEach
     fun setup() {
@@ -106,12 +115,12 @@ internal class ConnectUserTest {
             networkStateProvider = networkStateProvider,
         )
         client = ChatClient(
-            config = mock(),
+            config = config,
             api = chatApi,
             dtoMapping = DtoMapping(NoOpMessageTransformer, NoOpUserTransformer),
             notifications = mock(),
-            tokenManager = mock(),
-            userCredentialStorage = mock(),
+            tokenManager = tokenManager,
+            userCredentialStorage = userCredentialStorage,
             userStateService = userStateService,
             tokenUtils = tokenUtils,
             clientScope = clientScope,
@@ -154,6 +163,21 @@ internal class ConnectUserTest {
 
         result.shouldBeInstanceOf(Result.Success::class)
         mutableClientState.initializationState.value `should be equal to` InitializationState.COMPLETE
+    }
+
+    @Test
+    fun `Connect an user when alive connection exists with a different user should return error`() = runCancellableTest {
+        val connectionId = randomString()
+        prepareAliveConnection(user, connectionId)
+
+        val differentJwt = randomString()
+        val differentUser = randomUser()
+        whenever(tokenUtils.getUserId(differentJwt)).thenReturn(differentUser.id)
+        val result = client.connectUser(differentUser, differentJwt).await()
+
+        result.shouldBeInstanceOf(Result.Failure::class)
+        (result as Result.Failure).value.message`should be equal to`
+            "User cannot be set until the previous one is disconnected."
     }
 
     @Test
@@ -294,6 +318,129 @@ internal class ConnectUserTest {
 
         result.shouldBeInstanceOf(Result.Failure::class)
         (result as Result.Failure).value.message `should be equal to` messageError
+    }
+
+    @Test
+    fun `Given no connected user, calling disconnect should return error`() = runCancellableTest {
+        val flushPersistence = randomBoolean()
+        val result = client.disconnect(flushPersistence).await()
+
+        result.shouldBeInstanceOf(Result.Failure::class)
+        (result as Result.Failure).value.message `should be equal to`
+            "ChatClient can't be disconnected because user wasn't connected previously"
+    }
+
+    @Test
+    fun `Given connected user, calling disconnect with flushPersistence should return success and clear local data`() = runCancellableTest {
+        val connectionId = randomString()
+        prepareAliveConnection(user, connectionId)
+
+        val flushPersistence = true
+        val result = client.disconnect(flushPersistence).await()
+
+        result.shouldBeInstanceOf(Result.Success::class)
+        verify(userCredentialStorage).clear()
+    }
+
+    @Test
+    fun `Given connected user, calling disconnect without flushPersistence should return success and not clear local data`() = runCancellableTest {
+        val connectionId = randomString()
+        prepareAliveConnection(user, connectionId)
+
+        val flushPersistence = false
+        val result = client.disconnect(flushPersistence).await()
+
+        result.shouldBeInstanceOf(Result.Success::class)
+        verify(userCredentialStorage, never()).clear()
+    }
+
+    @Test
+    fun `Given stored credentials, containsStoredCredentials returns true`() {
+        val credentials = CredentialConfig(
+            userId = randomString(),
+            userToken = randomString(),
+            userName = randomString(),
+            isAnonymous = randomBoolean(),
+        )
+        whenever(userCredentialStorage.get()).doReturn(credentials)
+        client.containsStoredCredentials() `should be equal to` true
+    }
+
+    @Test
+    fun `Given no stored credentials, containsStoredCredentials returns false`() {
+        whenever(userCredentialStorage.get()).doReturn(null)
+        client.containsStoredCredentials() `should be equal to` false
+    }
+
+    @Test
+    fun `Given stored credentials, getStoredUser returns the user`() {
+        val credentials = CredentialConfig(
+            userId = randomString(),
+            userToken = randomString(),
+            userName = randomString(),
+            isAnonymous = randomBoolean(),
+        )
+        whenever(userCredentialStorage.get()).doReturn(credentials)
+
+        val expectedUser = User(id = credentials.userId, name = credentials.userName)
+        client.getStoredUser() `should be equal to` expectedUser
+    }
+
+    @Test
+    fun `Given no stored credentials, getStoredUser returns null`() {
+        whenever(userCredentialStorage.get()).doReturn(null)
+        client.getStoredUser() `should be equal to` null
+    }
+
+    @Test
+    fun `Given connected user, getConnectionId returns the active connectionId`() = runCancellableTest {
+        val connectionId = randomString()
+        prepareAliveConnection(user, connectionId)
+
+        client.getConnectionId() `should be equal to` connectionId
+    }
+
+    @Test
+    fun `Given no connected user, getConnectionId returns null`() {
+        client.getConnectionId() `should be equal to` null
+    }
+
+    @Test
+    fun `Given no connected user and no stored user, getCurrentOrStoredUserId returns null`() = runCancellableTest {
+        userStateService.onLogout() // disconnect any user
+        whenever(userCredentialStorage.get()).thenReturn(null)
+
+        client.getCurrentOrStoredUserId() `should be equal to` null
+    }
+
+    @Test
+    fun `Given connected user and no stored user, getCurrentOrStoredUserId returns the connected user id`() = runCancellableTest {
+        val connectionId = randomString()
+        prepareAliveConnection(user, connectionId)
+        whenever(userCredentialStorage.get()).thenReturn(null)
+
+        client.getCurrentOrStoredUserId() `should be equal to` user.id
+    }
+
+    @Test
+    fun `Given no connected user and stored user, getCurrentOrStoredUserId returns the stored user id`() = runCancellableTest {
+        userStateService.onLogout() // disconnect any user
+        val storedUserId = randomString()
+        whenever(userCredentialStorage.get())
+            .thenReturn(CredentialConfig(storedUserId, randomString(), randomString(), randomBoolean()))
+
+        client.getCurrentOrStoredUserId() `should be equal to` storedUserId
+    }
+
+    @Test
+    fun `Given connected user and stored user, getCurrentOrStoredUserId returns the connected user id`() = runCancellableTest {
+        val connectionId = randomString()
+        prepareAliveConnection(user, connectionId)
+        val storedUserId = randomString()
+        whenever(userCredentialStorage.get())
+            .thenReturn(CredentialConfig(storedUserId, randomString(), randomString(), randomBoolean()))
+
+        client.getCurrentOrStoredUserId() `should be equal to` user.id
     }
 
     private suspend fun prepareAliveConnection(user: User, connectionId: String) {
