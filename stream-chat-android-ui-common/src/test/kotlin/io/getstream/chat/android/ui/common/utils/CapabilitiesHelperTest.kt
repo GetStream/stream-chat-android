@@ -433,6 +433,20 @@ internal class CapabilitiesHelperTest {
             Arguments.of(
                 true,
                 false,
+                randomMessage(syncStatus = randomSyncStatus(exclude = listOf(SyncStatus.COMPLETED))),
+                randomChannelCapabilities(include = setOf(ChannelCapabilities.QUOTE_MESSAGE)),
+                false,
+            ),
+            Arguments.of(
+                true,
+                false,
+                randomMessage(syncStatus = SyncStatus.COMPLETED),
+                randomChannelCapabilities(exclude = setOf(ChannelCapabilities.QUOTE_MESSAGE)),
+                false,
+            ),
+            Arguments.of(
+                true,
+                false,
                 randomMessage(syncStatus = SyncStatus.COMPLETED),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.QUOTE_MESSAGE)),
                 true,
