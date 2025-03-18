@@ -115,7 +115,7 @@ public fun SearchInput(
             ) {
                 leadingIcon()
 
-                Box(modifier = Modifier.weight(8f)) {
+                Box(modifier = Modifier.weight(1f)) {
                     if (query.isEmpty()) {
                         label()
                     }
@@ -135,9 +135,9 @@ public fun SearchInput(
  * Default search input field leading "search" icon.
  */
 @Composable
-internal fun RowScope.DefaultSearchLeadingIcon() {
+internal fun DefaultSearchLeadingIcon() {
     Icon(
-        modifier = Modifier.weight(1f),
+        modifier = Modifier.padding(horizontal = 6.dp),
         painter = painterResource(id = R.drawable.stream_compose_ic_search),
         contentDescription = null,
         tint = ChatTheme.colors.textLowEmphasis,
