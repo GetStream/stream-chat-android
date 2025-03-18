@@ -3877,8 +3877,8 @@ public final class io/getstream/chat/android/compose/ui/util/adaptivelayout/Thre
 	public synthetic fun <init> (Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun canNavigateBack ()Z
 	public final fun navigateBack ()V
-	public final fun navigateTo (Lio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneDestination;Lio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneRole;)V
-	public static synthetic fun navigateTo$default (Lio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneNavigator;Lio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneDestination;Lio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneRole;ILjava/lang/Object;)V
+	public final fun navigateTo (Lio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneDestination;ZLio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneRole;)V
+	public static synthetic fun navigateTo$default (Lio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneNavigator;Lio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneDestination;ZLio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneRole;ILjava/lang/Object;)V
 }
 
 public final class io/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneNavigatorKt {
