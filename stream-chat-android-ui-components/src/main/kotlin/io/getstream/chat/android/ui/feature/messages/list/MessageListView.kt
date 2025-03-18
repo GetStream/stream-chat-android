@@ -825,7 +825,6 @@ public class MessageListView : ConstraintLayout {
     }
 
     override fun onDetachedFromWindow() {
-        ChatClient.instance().audioPlayer.reset()
         if (isAdapterInitialized()) {
             adapter.onDetachedFromRecyclerView(binding.chatMessagesRV)
         }
