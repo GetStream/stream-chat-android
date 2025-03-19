@@ -271,18 +271,20 @@ class ChatsActivity : BaseConnectedActivity() {
             factory = ChannelInfoViewModelFactory(channelId),
         )
         val state by viewModel.state.collectAsState()
-        ChannelInfoScreen(
-            state = state,
-            onPinnedMessagesClick = onPinnedMessagesClick,
-            onConfirmDelete = viewModel::onDeleteChannel,
-            navigationIcon = {
-                if (AdaptiveLayoutInfo.singlePaneWindow()) {
-                    DefaultChannelInfoNavigationIcon(onClick = onNavigationIconClick)
-                } else {
-                    CloseButton(onClick = onNavigationIconClick)
-                }
-            },
-        )
+        if (state.member != null) {
+            ChannelInfoScreen(
+                state = state,
+                onPinnedMessagesClick = onPinnedMessagesClick,
+                onConfirmDelete = viewModel::onDeleteChannel,
+                navigationIcon = {
+                    if (AdaptiveLayoutInfo.singlePaneWindow()) {
+                        DefaultChannelInfoNavigationIcon(onClick = onNavigationIconClick)
+                    } else {
+                        CloseButton(onClick = onNavigationIconClick)
+                    }
+                },
+            )
+        }
     }
 
     @Composable
