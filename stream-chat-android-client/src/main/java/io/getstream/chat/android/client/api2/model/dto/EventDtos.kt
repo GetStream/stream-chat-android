@@ -195,14 +195,14 @@ internal data class NewMessageEventDto(
 internal data class DraftMessageUpdatedEventDto(
     val type: String,
     val created_at: ExactDate,
-    val message: DownstreamMessageDto,
+    val draft: DownstreamDraftDto,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
 internal data class DraftMessageDeletedEventDto(
     val type: String,
     val created_at: ExactDate,
-    val message: DownstreamMessageDto,
+    val draft: DownstreamDraftDto,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)

@@ -23,6 +23,8 @@ import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
+import io.getstream.chat.android.client.api2.model.response.CompletableResponse
+import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
@@ -57,13 +59,14 @@ internal interface MessageApi {
         @Path("type") channelType: String,
         @Path("id") channelId: String,
         @Body message: SendMessageRequest,
-    ): RetrofitCall<MessageResponse>
+    ): RetrofitCall<DraftMessageResponse>
 
     @DELETE("/channels/{type}/{id}/draft")
     fun deleteDraftMessage(
         @Path("type") channelType: String,
         @Path("id") channelId: String,
-    ): RetrofitCall<MessageResponse>
+        @Query("parent_id") parentId: String?,
+    ): RetrofitCall<CompletableResponse>
 
     @POST("/drafts/query")
     fun queryDraftMessages(): RetrofitCall<QueryDraftMessagesResponse>

@@ -150,7 +150,7 @@ internal class DtoMapping(
         mentioned_users = mentionedUsersIds,
         parent_id = parentId,
         pin_expires = null,
-        pinned = false,
+        pinned = null,
         pinned_at = null,
         pinned_by = null,
         quoted_message_id = replyMessageId,

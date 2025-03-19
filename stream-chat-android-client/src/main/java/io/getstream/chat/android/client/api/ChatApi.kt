@@ -185,7 +185,7 @@ internal interface ChatApi {
         channelType: String,
         channelId: String,
         message: DraftMessage,
-    ): Call<DraftMessage>
+    ): Call<Unit>
 
     @CheckResult
     fun queryDraftMessages(): Call<List<DraftMessage>>

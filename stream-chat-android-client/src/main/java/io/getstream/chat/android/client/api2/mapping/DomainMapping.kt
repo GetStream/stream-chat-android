@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
+import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
@@ -208,21 +209,19 @@ internal class DomainMapping(
             extraData = extraData.toMutableMap(),
         ).let(messageTransformer::transform)
 
-    /**
-     * Transforms [DownstreamMessageDto] to [DraftMessage].
-     */
-    internal fun DownstreamMessageDto.toDraftMessage(): DraftMessage =
+    internal fun DownstreamDraftDto.toDomain(): DraftMessage =
         DraftMessage(
-            attachments = attachments.map { it.toDomain() },
-            cid = cid,
-            html = html,
-            id = id,
-            parentId = parent_id,
-            replyMessageId = quoted_message_id,
-            showInChannel = show_in_channel,
-            silent = silent,
-            text = text,
-            extraData = extraData.toMutableMap(),
+            attachments = message.attachments?.map { it.toDomain() } ?: emptyList(),
+            cid = channel_cid,
+            html = "",
+            id = message.id,
+            parentId = parent_message?.id,
+            replyMessageId = quoted_message?.id,
+            showInChannel = message.show_in_channel,
+            mentionedUsersIds = message.mentioned_users?.map { it.id } ?: emptyList(),
+            silent = message.silent,
+            text = message.text,
+            extraData = message.extraData ?: emptyMap(),
         )
 
     /**

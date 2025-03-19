@@ -1940,7 +1940,7 @@ internal constructor(
         channelType: String,
         channelId: String,
         message: DraftMessage,
-    ): Call<DraftMessage> {
+    ): Call<Unit> {
         return api.deleteDraftMessage(channelType, channelId, message)
             .retry(userScope, retryPolicy)
             .doOnResult(userScope) { result ->

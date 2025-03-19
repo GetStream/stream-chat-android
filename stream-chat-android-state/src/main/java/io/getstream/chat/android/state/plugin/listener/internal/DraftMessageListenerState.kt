@@ -58,13 +58,13 @@ internal class DraftMessageListenerState(
      * @param message [DraftMessage] to be updated.
      */
     override suspend fun onDeleteDraftMessagesResult(
-        result: Result<DraftMessage>,
+        result: Result<Unit>,
         channelType: String,
         channelId: String,
         message: DraftMessage,
     ) {
-        result.onSuccess { draftMessage ->
-            mutableGlobalState.removeDraftMessage(draftMessage)
+        result.onSuccess {
+            mutableGlobalState.removeDraftMessage(message)
         }
     }
 

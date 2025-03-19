@@ -21,6 +21,6 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 
 @JsonClass(generateAdapter = true)
-internal data class QueryDraftMessagesResponse(
-    val drafts: List<DownstreamDraftDto>,
+internal data class DraftMessageResponse(
+    val draft: DownstreamDraftDto,
 )

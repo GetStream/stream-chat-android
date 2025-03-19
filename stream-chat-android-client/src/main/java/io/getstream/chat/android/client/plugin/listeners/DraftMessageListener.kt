@@ -48,7 +48,7 @@ public interface DraftMessageListener {
      * @param message [DraftMessage] to be updated.
      */
     public suspend fun onDeleteDraftMessagesResult(
-        result: Result<DraftMessage>,
+        result: Result<Unit>,
         channelType: String,
         channelId: String,
         message: DraftMessage,

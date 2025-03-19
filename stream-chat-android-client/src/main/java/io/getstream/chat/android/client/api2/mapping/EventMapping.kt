@@ -1102,7 +1102,7 @@ internal class EventMapping(
             type = type,
             createdAt = created_at.date,
             rawCreatedAt = created_at.rawDate,
-            draftMessage = message.toDraftMessage(),
+            draftMessage = draft.toDomain(),
         )
     }
 
@@ -1114,7 +1114,7 @@ internal class EventMapping(
             type = type,
             createdAt = created_at.date,
             rawCreatedAt = created_at.rawDate,
-            draftMessage = message.toDraftMessage(),
+            draftMessage = draft.toDomain(),
         )
     }
 

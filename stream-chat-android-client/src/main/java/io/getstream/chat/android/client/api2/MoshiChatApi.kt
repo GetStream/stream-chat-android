@@ -237,23 +237,22 @@ constructor(
             message = with(dtoMapping) { message.toDto() },
         ),
     ).mapDomain { response ->
-        response.message.toDraftMessage()
+        response.draft.toDomain()
     }
 
     override fun deleteDraftMessage(
         channelType: String,
         channelId: String,
         message: DraftMessage,
-    ): Call<DraftMessage> = messageApi.deleteDraftMessage(
+    ): Call<Unit> = messageApi.deleteDraftMessage(
         channelType = channelType,
         channelId = channelId,
-    ).mapDomain { response ->
-        response.message.toDraftMessage()
-    }
+        parentId = message.parentId,
+    ).toUnitCall()
 
     override fun queryDraftMessages(): Call<List<DraftMessage>> =
         messageApi.queryDraftMessages().mapDomain { response ->
-            response.messages.map { it.toDraftMessage() }
+            response.drafts.map { it.toDomain() }
         }
 
     override fun updateMessage(

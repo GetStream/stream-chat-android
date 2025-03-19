@@ -455,7 +455,7 @@ public interface Plugin :
     }
 
     override suspend fun onDeleteDraftMessagesResult(
-        result: Result<DraftMessage>,
+        result: Result<Unit>,
         channelType: String,
         channelId: String,
         message: DraftMessage,

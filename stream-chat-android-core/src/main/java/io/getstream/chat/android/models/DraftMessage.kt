@@ -115,7 +115,7 @@ public data class DraftMessage(
 
     override fun toString(): String = StringBuilder().apply {
         append("Message(")
-        append(", id=\"").append(id).append("\"")
+        append("id=\"").append(id).append("\"")
         append(", text=\"").append(text).append("\"")
         append(", html=\"").append(html).append("\"")
         append(", cid=\"").append(cid).append("\"")
