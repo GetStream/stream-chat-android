@@ -33,7 +33,7 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.observable.Disposable
-import io.getstream.chat.android.client.utils.verifyError
+import io.getstream.chat.android.client.utils.verifyNetworkError
 import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
@@ -131,7 +131,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.get(messageLimit, memberLimit, state).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).getChannel(channelClient.cid, messageLimit, memberLimit, state)
     }
 
@@ -164,7 +164,7 @@ internal class ChannelClientTest {
             // when
             val result = channelClient.create(memberIds, extraData).await()
             // then
-            verifyError(result, errorCode)
+            verifyNetworkError(result, errorCode)
             verify(chatClient).createChannel(channelType, channelId, memberIds, extraData)
         }
 
@@ -194,7 +194,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.create(params).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).createChannel(channelType, channelId, params)
     }
 
@@ -353,7 +353,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.query(request).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).queryChannel(channelType, channelId, request, false)
     }
 
@@ -383,7 +383,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.watch(request).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).queryChannel(channelType, channelId, request, false)
     }
 
@@ -417,7 +417,7 @@ internal class ChannelClientTest {
         // then
         val expectedRequest = WatchChannelRequest()
         expectedRequest.data.putAll(data)
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).queryChannel(channelType, channelId, expectedRequest, false)
     }
 
@@ -447,7 +447,7 @@ internal class ChannelClientTest {
         val result = channelClient.watch().await()
         // then
         val expectedRequest = WatchChannelRequest()
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).queryChannel(channelType, channelId, expectedRequest, false)
     }
 
@@ -472,7 +472,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.stopWatching().await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).stopWatching(channelType, channelId)
     }
 
@@ -500,7 +500,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.getMessage(messageId).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).getMessage(messageId)
     }
 
@@ -528,7 +528,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.updateMessage(message).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).updateMessage(message)
     }
 
@@ -572,7 +572,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.deleteMessage(messageId, hard).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).deleteMessage(messageId, hard)
     }
 
@@ -616,7 +616,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.sendMessage(message, isRetrying).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).sendMessage(channelType, channelId, message, isRetrying)
     }
 
@@ -647,7 +647,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.banUser(targetId, reason, timeout).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).banUser(targetId, channelType, channelId, reason, timeout)
     }
 
@@ -674,7 +674,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.unbanUser(targetId).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).unbanUser(targetId, channelType, channelId)
     }
 
@@ -705,7 +705,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.shadowBanUser(targetId, reason, timeout).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).shadowBanUser(targetId, channelType, channelId, reason, timeout)
     }
 
@@ -732,7 +732,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.removeShadowBan(targetId).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).removeShadowBan(targetId, channelType, channelId)
     }
 
@@ -823,7 +823,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.queryBannedUsers().await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         val expectedFilter = Filters.eq("channel_cid", channelClient.cid)
         val expectedSort = QuerySortByField.ascByName<BannedUsersSort>("created_at")
         verify(chatClient).queryBannedUsers(expectedFilter, expectedSort, null, null, null, null, null, null)
@@ -852,7 +852,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.markMessageRead(messageId).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).markMessageRead(channelType, channelId, messageId)
     }
 
@@ -879,7 +879,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.markThreadRead(threadId).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).markThreadRead(channelType, channelId, threadId)
     }
 
@@ -906,7 +906,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.markUnread(messageId).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).markUnread(channelType, channelId, messageId)
     }
 
@@ -935,7 +935,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.markThreadUnread(threadId, messageId).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).markThreadUnread(channelType, channelId, threadId, messageId)
     }
 
@@ -960,7 +960,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.markRead().await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).markRead(channelType, channelId)
     }
 
@@ -986,7 +986,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.delete().await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).deleteChannel(channelType, channelId)
     }
 
@@ -1011,7 +1011,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.show().await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).showChannel(channelType, channelId)
     }
 
@@ -1050,7 +1050,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.hide(clearHistory).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).hideChannel(channelType, channelId, clearHistory)
     }
 
@@ -1078,7 +1078,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.truncate(systemMessage).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).truncateChannel(channelType, channelId, systemMessage)
     }
 
@@ -1104,7 +1104,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.truncate().await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).truncateChannel(channelType, channelId, null)
     }
 
@@ -1148,7 +1148,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.sendFile(file, callback).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).sendFile(channelType, channelId, file, callback)
     }
 
@@ -1192,7 +1192,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.sendImage(file, callback).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).sendImage(channelType, channelId, file, callback)
     }
 
@@ -1219,7 +1219,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.deleteFile(url).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).deleteFile(channelType, channelId, url)
     }
 
@@ -1246,7 +1246,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.deleteImage(url).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).deleteImage(channelType, channelId, url)
     }
 
@@ -1274,7 +1274,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.sendAction(request).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).sendAction(request)
     }
 
@@ -1316,7 +1316,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.sendReaction(reaction, enforceUnique).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).sendReaction(reaction, enforceUnique, channelClient.cid)
     }
 
@@ -1346,7 +1346,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.deleteReaction(messageId, reactionType).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).deleteReaction(messageId, reactionType, channelClient.cid)
     }
 
@@ -1378,7 +1378,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.getReactions(messageId, offset, limit).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).getReactions(messageId, offset, limit)
     }
 
@@ -1411,7 +1411,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.getReactions(messageId, firstReactionId, limit).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).getRepliesMore(messageId, firstReactionId, limit)
     }
 
@@ -1454,7 +1454,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.update(message, extraData).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).updateChannel(channelType, channelId, message, extraData)
     }
 
@@ -1497,7 +1497,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.updatePartial(set, unset).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).updateChannelPartial(channelType, channelId, set, unset)
     }
 
@@ -1544,7 +1544,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.partialUpdateMember(userId, set, unset).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).partialUpdateMember(channelType, channelId, userId, set, unset)
     }
 
@@ -1602,7 +1602,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.addMembers(memberIds, systemMessage, hideHistory, skipPush).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).addMembers(channelType, channelId, memberIds, systemMessage, hideHistory, skipPush)
     }
 
@@ -1630,7 +1630,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.addMembers(params).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).addMembers(channelType, channelId, params)
     }
 
@@ -1676,7 +1676,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.removeMembers(memberIds, systemMessage, skipPush).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).removeMembers(channelType, channelId, memberIds, systemMessage, skipPush)
     }
 
@@ -1722,7 +1722,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.inviteMembers(memberIds, systemMessage, skipPush).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).inviteMembers(channelType, channelId, memberIds, systemMessage, skipPush)
     }
 
@@ -1750,7 +1750,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.enableSlowMode(cooldownTimeInSeconds).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).enableSlowMode(channelType, channelId, cooldownTimeInSeconds)
     }
 
@@ -1776,7 +1776,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.disableSlowMode().await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).disableSlowMode(channelType, channelId)
     }
 
@@ -1817,7 +1817,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.acceptInvite(message).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).acceptInvite(channelType, channelId, message)
     }
 
@@ -1843,7 +1843,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.rejectInvite().await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).rejectInvite(channelType, channelId)
     }
 
@@ -1882,7 +1882,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.mute(expiration).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).muteChannel(channelType, channelId, expiration)
     }
 
@@ -1907,7 +1907,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.unmute().await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).unmuteChannel(channelType, channelId)
     }
 
@@ -1951,7 +1951,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.muteUser(userId, timeout).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).muteUser(userId, timeout)
     }
 
@@ -1978,7 +1978,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.unmuteUser(userId).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).unmuteUser(userId)
     }
 
@@ -2004,7 +2004,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.muteCurrentUser().await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).muteCurrentUser()
     }
 
@@ -2029,7 +2029,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.unmuteCurrentUser().await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).unmuteCurrentUser()
     }
 
@@ -2070,7 +2070,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.keystroke(parentId).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).keystroke(channelType, channelId, parentId)
     }
 
@@ -2111,7 +2111,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.stopTyping(parentId).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).stopTyping(channelType, channelId, parentId)
     }
 
@@ -2155,7 +2155,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.sendEvent(eventType, extraData).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).sendEvent(eventType, channelType, channelId, extraData)
     }
 
@@ -2208,7 +2208,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.queryMembers(offset, limit, filter, sort, members).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).queryMembers(channelType, channelId, offset, limit, filter, sort, members)
     }
 
@@ -2240,7 +2240,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.getFileAttachments(offset, limit).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).getFileAttachments(channelType, channelId, offset, limit)
     }
 
@@ -2270,7 +2270,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.getImageAttachments(offset, limit).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).getImageAttachments(channelType, channelId, offset, limit)
     }
 
@@ -2302,7 +2302,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.getMessagesWithAttachments(offset, limit, types).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).getMessagesWithAttachments(channelType, channelId, offset, limit, types)
     }
 
@@ -2334,7 +2334,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.getPinnedMessages(limit, sort, pagination).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).getPinnedMessages(channelType, channelId, limit, sort, pagination)
     }
 
@@ -2379,7 +2379,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.pinMessage(message, expirationDate).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).pinMessage(message, expirationDate)
     }
 
@@ -2409,7 +2409,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.pinMessage(message, timeout).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).pinMessage(message, timeout)
     }
 
@@ -2437,7 +2437,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.unpinMessage(message).await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).unpinMessage(message)
     }
 
@@ -2463,7 +2463,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.pin().await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).pinChannel(channelType, channelId)
     }
 
@@ -2489,7 +2489,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.unpin().await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).unpinChannel(channelType, channelId)
     }
 
@@ -2515,7 +2515,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.archive().await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).archiveChannel(channelType, channelId)
     }
 
@@ -2541,7 +2541,7 @@ internal class ChannelClientTest {
         // when
         val result = channelClient.unarchive().await()
         // then
-        verifyError(result, errorCode)
+        verifyNetworkError(result, errorCode)
         verify(chatClient).unarchiveChannel(channelType, channelId)
     }
 }
