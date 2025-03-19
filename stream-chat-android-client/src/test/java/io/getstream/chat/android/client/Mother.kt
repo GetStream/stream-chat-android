@@ -33,6 +33,8 @@ import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
+import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
@@ -62,6 +64,7 @@ import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
 import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.client.api2.model.response.CreateVideoCallResponse
+import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.FileUploadConfigDto
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
 import io.getstream.chat.android.client.api2.model.response.TokenResponse
@@ -88,6 +91,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.positiveRandomLong
 import io.getstream.chat.android.randomBoolean
+import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomDateOrNull
 import io.getstream.chat.android.randomInt
@@ -204,6 +208,38 @@ internal object Mother {
     ): ConnectedEvent {
         return ConnectedEvent(type, createdAt, streamDateFormatter.format(createdAt), me, connectionId)
     }
+
+    fun randomDraftMessageResponse(
+        draft: DownstreamDraftDto = randomDownstreamDraftDto(),
+    ): DraftMessageResponse = DraftMessageResponse(draft)
+
+    fun randomDownstreamDraftDto(
+        message: DownstreamDraftMessageDto = randomDownstreamDraftMessageDto(),
+        channelCid: String = randomCID(),
+        quotedMessage: DownstreamMessageDto? = randomDownstreamMessageDto().takeIf { randomBoolean() },
+        parentMessage: DownstreamMessageDto? = randomDownstreamMessageDto().takeIf { randomBoolean() },
+    ): DownstreamDraftDto = DownstreamDraftDto(
+        message = message,
+        channel_cid = channelCid,
+        quoted_message = quotedMessage,
+        parent_message = parentMessage,
+    )
+
+    fun randomDownstreamDraftMessageDto(
+        id: String = randomString(),
+        text: String = randomString(),
+        attachments: List<AttachmentDto>? = emptyList(),
+        mentionedUsers: List<DownstreamUserDto>? = emptyList(),
+        silent: Boolean = randomBoolean(),
+        showInChannel: Boolean = randomBoolean(),
+    ): DownstreamDraftMessageDto = DownstreamDraftMessageDto(
+        id = id,
+        text = text,
+        attachments = attachments,
+        mentioned_users = mentionedUsers,
+        silent = silent,
+        show_in_channel = showInChannel,
+    )
 
     fun randomDownstreamMessageDto(
         attachments: List<AttachmentDto> = emptyList(),

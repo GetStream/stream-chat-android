@@ -213,7 +213,6 @@ internal class DomainMapping(
         DraftMessage(
             attachments = message.attachments?.map { it.toDomain() } ?: emptyList(),
             cid = channel_cid,
-            html = "",
             id = message.id,
             parentId = parent_message?.id,
             replyMessageId = quoted_message?.id,

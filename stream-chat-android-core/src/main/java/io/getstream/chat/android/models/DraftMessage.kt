@@ -41,11 +41,6 @@ public data class DraftMessage(
     val text: String = "",
 
     /**
-     * The message text formatted as HTML
-     */
-    val html: String = "",
-
-    /**
      * The ID of the parent message, if the message is a thread reply
      */
     val parentId: String? = null,
@@ -88,7 +83,6 @@ public data class DraftMessage(
             "id" -> id
             "cid" -> cid
             "text" -> text
-            "html" -> html
             "parent_id", "parentId" -> parentId
             "silent" -> silent
             else -> extraData[fieldName] as? Comparable<*>
@@ -117,7 +111,6 @@ public data class DraftMessage(
         append("Message(")
         append("id=\"").append(id).append("\"")
         append(", text=\"").append(text).append("\"")
-        append(", html=\"").append(html).append("\"")
         append(", cid=\"").append(cid).append("\"")
         if (parentId != null) append(", parentId=").append(parentId)
         if (attachments.isNotEmpty()) append(", attachments=").append(attachments)
@@ -138,7 +131,6 @@ public data class DraftMessage(
         private var id: String = ""
         private var cid: String = ""
         private var text: String = ""
-        private var html: String = ""
         private var parentId: String? = null
         private var attachments: List<Attachment> = listOf()
         private var mentionedUsersIds: List<String> = listOf()
@@ -151,7 +143,6 @@ public data class DraftMessage(
             id = message.id
             cid = message.cid
             text = message.text
-            html = message.html
             parentId = message.parentId
             attachments = message.attachments
             mentionedUsersIds = message.mentionedUsersIds
@@ -164,7 +155,6 @@ public data class DraftMessage(
         public fun withId(id: String): Builder = apply { this.id = id }
         public fun withCid(cid: String): Builder = apply { this.cid = cid }
         public fun withText(text: String): Builder = apply { this.text = text }
-        public fun withHtml(html: String): Builder = apply { this.html = html }
         public fun withParentId(parentId: String?): Builder = apply { this.parentId = parentId }
         public fun withAttachments(attachments: List<Attachment>): Builder = apply { this.attachments = attachments }
         public fun withMentionedUsersIds(mentionedUsersIds: List<String>): Builder = apply {
@@ -180,7 +170,6 @@ public data class DraftMessage(
                 id = id,
                 cid = cid,
                 text = text,
-                html = html,
                 parentId = parentId,
                 attachments = attachments,
                 mentionedUsersIds = mentionedUsersIds,

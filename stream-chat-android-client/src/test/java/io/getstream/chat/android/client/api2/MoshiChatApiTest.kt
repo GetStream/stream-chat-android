@@ -75,6 +75,7 @@ import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.CompletableResponse
 import io.getstream.chat.android.client.api2.model.response.CreateVideoCallResponse
 import io.getstream.chat.android.client.api2.model.response.DevicesResponse
+import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
@@ -191,7 +192,7 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#createDraftMessageInput")
-    fun testCreateDraftMessage(call: RetrofitCall<MessageResponse>, expected: KClass<*>) = runTest {
+    fun testCreateDraftMessage(call: RetrofitCall<DraftMessageResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<MessageApi>()
         whenever(api.createDraftMessage(any(), any(), any())).doReturn(call)
@@ -207,18 +208,18 @@ internal class MoshiChatApiTest {
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#createDraftMessageInput")
-    fun testDeleteDraftMessage(call: RetrofitCall<MessageResponse>, expected: KClass<*>) = runTest {
+    fun testDeleteDraftMessage(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
         // given
         val api = mock<MessageApi>()
-        whenever(api.deleteDraftMessage(any(), any())).doReturn(call)
+        whenever(api.deleteDraftMessage(any(), any(), any())).doReturn(call)
         val sut = Fixture()
             .withMessageApi(api)
             .get()
         // when
-        val result = sut.deleteDraftMessage(randomString(), randomString()).await()
+        val result = sut.deleteDraftMessage(randomString(), randomString(), randomDraftMessage()).await()
         // then
         result `should be instance of` expected
-        verify(api, times(1)).deleteDraftMessage(any(), any())
+        verify(api, times(1)).deleteDraftMessage(any(), any(), any())
     }
 
     @ParameterizedTest
