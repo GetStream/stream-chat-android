@@ -95,7 +95,7 @@ import kotlin.math.abs
  * `channelId`, `messageId`, and `parentMessageId` are `null`.
  * @param title The title displayed in the list pane top bar. Default is `"Stream Chat"`.
  * @param searchMode The current search mode. Default is [SearchMode.None].
- * @param listContentMode The mode for displaying the list content. Default is [ListContentMode.Channels].
+ * @param listContentMode The mode for displaying the list content. Default is [ChatListContentMode.Channels].
  * @param onBackPress Callback invoked when the user presses the back button.
  * @param onListTopBarAvatarClick Callback invoked when the user clicks on the avatar in the list pane top bar.
  * @param onListTopBarActionClick Callback invoked when the user clicks on the action icon in the list pane top bar.
@@ -118,7 +118,7 @@ public fun ChatsScreen(
     messagesViewModelFactoryProvider: MessagesViewModelFactoryProvider = DefaultMessagesViewModelFactoryProvider(),
     title: String = "Stream Chat",
     searchMode: SearchMode = SearchMode.None,
-    listContentMode: ListContentMode = ListContentMode.Channels,
+    listContentMode: ChatListContentMode = ChatListContentMode.Channels,
     onBackPress: () -> Unit = {},
     onListTopBarAvatarClick: (User?) -> Unit = {},
     onListTopBarActionClick: () -> Unit = {},
@@ -175,7 +175,7 @@ public fun ChatsScreen(
                     targetState = listContentMode,
                 ) { mode ->
                     when (mode) {
-                        ListContentMode.Channels -> {
+                        ChatListContentMode.Channels -> {
                             ChannelsScreen(
                                 viewModelFactory = channelViewModelFactory,
                                 isShowingHeader = false,
@@ -206,7 +206,7 @@ public fun ChatsScreen(
                             )
                         }
 
-                        ListContentMode.Threads -> {
+                        ChatListContentMode.Threads -> {
                             val viewModel = viewModel(
                                 modelClass = ThreadListViewModel::class.java,
                                 factory = threadsViewModelFactory,
@@ -383,7 +383,7 @@ public fun ChatsScreen(
 
 @Composable
 private fun AutoSelectFirstItem(
-    listContentMode: ListContentMode,
+    listContentMode: ChatListContentMode,
     channelViewModelFactory: ChannelViewModelFactory,
     threadsViewModelFactory: ThreadsViewModelFactory,
     navigator: ThreePaneNavigator,
@@ -391,7 +391,7 @@ private fun AutoSelectFirstItem(
 ) {
     val context = LocalContext.current
     when (listContentMode) {
-        ListContentMode.Channels -> {
+        ChatListContentMode.Channels -> {
             FirstChannelLoadHandler(channelViewModelFactory) { selection ->
                 navigator.initialDetailNavigation(messagesViewModelFactoryProvider, context) ?: run {
                     navigator.navigateTo(ThreePaneDestination(ThreePaneRole.Detail, selection))
@@ -399,7 +399,7 @@ private fun AutoSelectFirstItem(
             }
         }
 
-        ListContentMode.Threads -> {
+        ChatListContentMode.Threads -> {
             FirstThreadLoadHandler(threadsViewModelFactory) { selection ->
                 navigator.initialDetailNavigation(messagesViewModelFactoryProvider, context) ?: run {
                     navigator.navigateTo(ThreePaneDestination(ThreePaneRole.Detail, selection))

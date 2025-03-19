@@ -55,9 +55,9 @@ import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponent
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
 import io.getstream.chat.android.compose.sample.ui.pinned.PinnedMessagesScreen
 import io.getstream.chat.android.compose.ui.channels.SearchMode
+import io.getstream.chat.android.compose.ui.chats.ChatListContentMode
 import io.getstream.chat.android.compose.ui.chats.ChatMessageSelection
 import io.getstream.chat.android.compose.ui.chats.ChatsScreen
-import io.getstream.chat.android.compose.ui.chats.ListContentMode
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptionItemVisibility
 import io.getstream.chat.android.compose.ui.theme.ChannelOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -152,7 +152,7 @@ class ChatsActivity : BaseConnectedActivity() {
 
     @Composable
     private fun ScreenContent() {
-        var listContentMode by rememberSaveable { mutableStateOf(ListContentMode.Channels) }
+        var listContentMode by rememberSaveable { mutableStateOf(ChatListContentMode.Channels) }
         val navigator = rememberThreePaneNavigator()
         ChatsScreen(
             navigator = navigator,
@@ -186,8 +186,8 @@ class ChatsActivity : BaseConnectedActivity() {
                     listContentMode = listContentMode,
                     onOptionSelected = { option ->
                         listContentMode = when (option) {
-                            AppBottomBarOption.CHATS -> ListContentMode.Channels
-                            AppBottomBarOption.THREADS -> ListContentMode.Threads
+                            AppBottomBarOption.CHATS -> ChatListContentMode.Channels
+                            AppBottomBarOption.THREADS -> ChatListContentMode.Threads
                         }
                     },
                 )
@@ -203,15 +203,15 @@ class ChatsActivity : BaseConnectedActivity() {
 
     @Composable
     private fun ListFooterContent(
-        listContentMode: ListContentMode,
+        listContentMode: ChatListContentMode,
         onOptionSelected: (option: AppBottomBarOption) -> Unit,
     ) {
         val globalState = ChatClient.instance().globalState
         val unreadChannelsCount by globalState.channelUnreadCount.collectAsState()
         val unreadThreadsCount by globalState.unreadThreadsCount.collectAsState()
         val selectedOption = when (listContentMode) {
-            ListContentMode.Channels -> AppBottomBarOption.CHATS
-            ListContentMode.Threads -> AppBottomBarOption.THREADS
+            ChatListContentMode.Channels -> AppBottomBarOption.CHATS
+            ChatListContentMode.Threads -> AppBottomBarOption.THREADS
         }
         AppBottomBar(
             unreadChannelsCount = unreadChannelsCount,
