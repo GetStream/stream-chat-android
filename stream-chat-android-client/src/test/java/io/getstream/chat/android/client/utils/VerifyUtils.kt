@@ -21,12 +21,29 @@ import io.getstream.result.Result
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 
-internal fun <T : Any> verifyError(result: Result<T>, statusCode: Int) {
+internal fun <T : Any> verifyNetworkError(result: Result<T>, statusCode: Int) {
     result shouldBeInstanceOf Result.Failure::class
     (result as Result.Failure).value.shouldBeInstanceOf<Error.NetworkError>()
 
     val error = result.value as Error.NetworkError
     error.statusCode shouldBeEqualTo statusCode
+}
+
+internal fun <T : Any> verifyThrowableError(result: Result<T>, message: String, cause: Class<out Throwable>) {
+    result shouldBeInstanceOf Result.Failure::class
+    (result as Result.Failure).value.shouldBeInstanceOf<Error.ThrowableError>()
+
+    val error = result.value as Error.ThrowableError
+    error.message shouldBeEqualTo message
+    error.cause shouldBeInstanceOf cause
+}
+
+internal fun <T : Any> verifyGenericError(result: Result<T>, message: String) {
+    result shouldBeInstanceOf Result.Failure::class
+    (result as Result.Failure).value.shouldBeInstanceOf<Error.GenericError>()
+
+    val error = result.value as Error.GenericError
+    error.message shouldBeEqualTo message
 }
 
 internal fun <T : Any> verifySuccess(result: Result<T>, equalsTo: T) {

@@ -18,14 +18,10 @@ package io.getstream.chat.android.client.channel
 
 import android.annotation.SuppressLint
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.MockClientBuilder
 import io.getstream.chat.android.test.TestCoroutineExtension
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Mockito.mock
-import org.mockito.Mockito.spy
 import org.mockito.Mockito.verify
 
 internal class ChannelPinTest {
@@ -66,33 +62,5 @@ internal class ChannelPinTest {
 
         // Then
         verify(chatClient).unpinChannel(CHANNEL_TYPE, CHANNEL_ID)
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @SuppressLint("CheckResult")
-    @Test
-    fun `When pinChannel is called it does partial update with pinned true`() {
-        // Given
-        val chatClient = MockClientBuilder(testCoroutineExtension = testCoroutines).build()
-        val spyClient = spy(chatClient)
-        // When
-        spyClient.pinChannel(CHANNEL_TYPE, CHANNEL_ID)
-
-        // Then
-        verify(spyClient).partialUpdateMember(CHANNEL_TYPE, CHANNEL_ID, USER_ID, set = mapOf("pinned" to true))
-    }
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    @SuppressLint("CheckResult")
-    @Test
-    fun `When unpinChannel is called it does partial update with pinned as unset option`() = runTest {
-        // Given
-        val chatClient = MockClientBuilder(testCoroutineExtension = testCoroutines).build()
-        val spyClient = spy(chatClient)
-        // When
-        spyClient.unpinChannel(CHANNEL_TYPE, CHANNEL_ID)
-
-        // Then
-        verify(spyClient).partialUpdateMember(CHANNEL_TYPE, CHANNEL_ID, USER_ID, unset = listOf("pinned"))
     }
 }

@@ -16,8 +16,13 @@
 
 package io.getstream.chat.android
 
+import io.getstream.chat.android.models.AgoraChannel
+import io.getstream.chat.android.models.Answer
+import io.getstream.chat.android.models.App
+import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
+import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelConfig
@@ -27,15 +32,30 @@ import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.FileUploadConfig
+import io.getstream.chat.android.models.Flag
+import io.getstream.chat.android.models.HMSRoom
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
+import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PushProvider
+import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.ReactionGroup
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.Thread
+import io.getstream.chat.android.models.ThreadParticipant
+import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.UserBlock
+import io.getstream.chat.android.models.VideoCallInfo
+import io.getstream.chat.android.models.VideoCallToken
+import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.result.Error
 import java.io.File
 import java.util.Calendar
@@ -68,6 +88,16 @@ public fun randomFile(extension: String = randomString(3)): File {
     return File("${randomString()}.$extension")
 }
 
+public fun randomUploadedFile(
+    file: String = randomString(),
+    thumbUrl: String = randomString(),
+    extraData: Map<String, Any> = randomExtraData(),
+): UploadedFile = UploadedFile(
+    file = file,
+    thumbUrl = thumbUrl,
+    extraData = extraData,
+)
+
 public fun randomMute(
     user: User = randomUser(),
     target: User = randomUser(),
@@ -80,6 +110,58 @@ public fun randomMute(
     createdAt = createdAt,
     updatedAt = updatedAt,
     expires = expires,
+)
+
+public fun randomFlag(
+    user: User = randomUser(),
+    targetUser: User = randomUser(),
+    targetMessageId: String = randomString(),
+    reviewedBy: String = randomString(),
+    createdByAutomod: Boolean = randomBoolean(),
+    createdAt: Date? = randomDateOrNull(),
+    updatedAt: Date = randomDate(),
+    reviewedAt: Date? = randomDateOrNull(),
+    approvedAt: Date? = randomDateOrNull(),
+    rejectedAt: Date? = randomDateOrNull(),
+): Flag = Flag(
+    user = user,
+    targetUser = targetUser,
+    targetMessageId = targetMessageId,
+    reviewedBy = reviewedBy,
+    createdByAutomod = createdByAutomod,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    reviewedAt = reviewedAt,
+    approvedAt = approvedAt,
+    rejectedAt = rejectedAt,
+)
+
+public fun randomBannedUser(
+    user: User = randomUser(),
+    bannedBy: User? = randomUser(),
+    channel: Channel? = randomChannel(),
+    createdAt: Date = randomDate(),
+    expires: Date? = randomDateOrNull(),
+    shadow: Boolean = randomBoolean(),
+    reason: String? = randomString(),
+): BannedUser = BannedUser(
+    user = user,
+    bannedBy = bannedBy,
+    channel = channel,
+    createdAt = createdAt,
+    expires = expires,
+    shadow = shadow,
+    reason = reason,
+)
+
+public fun randomUserBlock(
+    blockedBy: String = randomString(),
+    userId: String = randomString(),
+    blockedAt: Date = randomDate(),
+): UserBlock = UserBlock(
+    blockedBy = blockedBy,
+    userId = userId,
+    blockedAt = blockedAt,
 )
 
 public fun randomUser(
@@ -102,6 +184,7 @@ public fun randomUser(
     teams: List<String> = listOf(),
     channelMutes: List<ChannelMute> = emptyList(),
     blockedUserIds: List<String> = emptyList(),
+    privacySettings: PrivacySettings? = null,
     extraData: MutableMap<String, Any> = mutableMapOf(),
 ): User = User(
     id = id,
@@ -123,6 +206,7 @@ public fun randomUser(
     teams = teams,
     channelMutes = channelMutes,
     blockedUserIds = blockedUserIds,
+    privacySettings = privacySettings,
     extraData = extraData,
 )
 
@@ -190,6 +274,7 @@ public fun randomMessage(
     pinnedBy: User? = randomUser(),
     threadParticipants: List<User> = emptyList(),
     restrictedVisibility: List<String> = emptyList(),
+    poll: Poll? = null,
 ): Message = Message(
     id = id,
     cid = cid,
@@ -229,6 +314,7 @@ public fun randomMessage(
     threadParticipants = threadParticipants,
     messageTextUpdatedAt = messageTextUpdatedAt,
     restrictedVisibility = restrictedVisibility,
+    poll = poll,
 )
 
 public fun randomChannelMute(
@@ -382,7 +468,7 @@ public fun randomConfig(
 public fun randomChannelConfig(type: String = randomString(), config: Config = randomConfig()): ChannelConfig =
     ChannelConfig(type = type, config = config)
 public fun randomSyncStatus(exclude: List<SyncStatus> = emptyList()): SyncStatus =
-    (SyncStatus.values().asList() - exclude - SyncStatus.AWAITING_ATTACHMENTS).random()
+    (SyncStatus.entries - exclude - SyncStatus.AWAITING_ATTACHMENTS).random()
 
 public fun randomAttachment(
     authorName: String? = randomString(),
@@ -540,7 +626,7 @@ public fun randomImageFile(): File = randomFile(extension = "jpg")
 
 public fun randomDevice(
     token: String = randomString(),
-    pushProvider: PushProvider = PushProvider.values().random(),
+    pushProvider: PushProvider = PushProvider.entries.random(),
     providerName: String? = randomString().takeIf { randomBoolean() },
 ): Device =
     Device(
@@ -618,3 +704,213 @@ public fun randomChannelCapabilities(
         .shuffled()
         .let { it.take(positiveRandomInt(it.size)) }
         .toSet() + include
+
+public fun randomPollConfig(
+    name: String = randomString(),
+    description: String = randomString(),
+    options: List<String> = listOf(randomString()),
+    votingVisibility: VotingVisibility = VotingVisibility.PUBLIC,
+    enforceUniqueVote: Boolean = randomBoolean(),
+    maxVotesAllowed: Int = positiveRandomInt(),
+    allowUserSuggestedOptions: Boolean = randomBoolean(),
+    allowAnswers: Boolean = randomBoolean(),
+): PollConfig = PollConfig(
+    name = name,
+    description = description,
+    options = options,
+    votingVisibility = votingVisibility,
+    enforceUniqueVote = enforceUniqueVote,
+    maxVotesAllowed = maxVotesAllowed,
+    allowUserSuggestedOptions = allowUserSuggestedOptions,
+    allowAnswers = allowAnswers,
+)
+
+public fun randomPoll(
+    id: String = randomString(),
+    name: String = randomString(),
+    description: String = randomString(),
+    votingVisibility: VotingVisibility = VotingVisibility.PUBLIC,
+    enforceUniqueVote: Boolean = randomBoolean(),
+    maxVotesAllowed: Int = positiveRandomInt(),
+    voteCountsByOption: Map<String, Int> = emptyMap(),
+    allowUserSuggestedOptions: Boolean = randomBoolean(),
+    allowAnswers: Boolean = randomBoolean(),
+    options: List<Option> = listOf(randomPollOption()),
+    votes: List<Vote> = emptyList(),
+    ownVotes: List<Vote> = emptyList(),
+    createdAt: Date = randomDate(),
+    updatedAt: Date = randomDate(),
+    closed: Boolean = randomBoolean(),
+    answers: List<Answer> = emptyList(),
+): Poll = Poll(
+    id = id,
+    name = name,
+    description = description,
+    votingVisibility = votingVisibility,
+    enforceUniqueVote = enforceUniqueVote,
+    maxVotesAllowed = maxVotesAllowed,
+    voteCountsByOption = voteCountsByOption,
+    allowUserSuggestedOptions = allowUserSuggestedOptions,
+    allowAnswers = allowAnswers,
+    options = options,
+    votes = votes,
+    ownVotes = ownVotes,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    closed = closed,
+    answers = answers,
+)
+
+public fun randomPollOption(
+    id: String = randomString(),
+    text: String = randomString(),
+): Option = Option(
+    id = id,
+    text = text,
+)
+
+public fun randomPollVote(
+    id: String = randomString(),
+    pollId: String = randomString(),
+    user: User = randomUser(),
+    optionId: String = randomString(),
+    createdAt: Date = randomDate(),
+    updatedAt: Date = randomDate(),
+): Vote = Vote(
+    id = id,
+    pollId = pollId,
+    user = user,
+    optionId = optionId,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+)
+
+public fun randomPollAnswer(
+    id: String = randomString(),
+    pollId: String = randomString(),
+    text: String = randomString(),
+    createdAt: Date = randomDate(),
+    updatedAt: Date = randomDate(),
+    user: User? = randomUser(),
+): Answer = Answer(
+    id = id,
+    pollId = pollId,
+    text = text,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    user = user,
+)
+
+public fun randomVideoCallInfo(
+    callId: String = randomString(),
+    provider: String = randomString(),
+    type: String = randomString(),
+    agoraChannel: AgoraChannel = randomAgoraChannel(),
+    hmsRoom: HMSRoom = randomHMSRoom(),
+    videoCallToken: VideoCallToken = randomVideoCallToken(),
+): VideoCallInfo = VideoCallInfo(
+    callId = callId,
+    provider = provider,
+    type = type,
+    agoraChannel = agoraChannel,
+    hmsRoom = hmsRoom,
+    videoCallToken = videoCallToken,
+)
+
+public fun randomAgoraChannel(
+    channel: String = randomString(),
+): AgoraChannel = AgoraChannel(channel)
+
+public fun randomHMSRoom(
+    roomId: String = randomString(),
+    roomName: String = randomString(),
+): HMSRoom = HMSRoom(
+    roomId = roomId,
+    roomName = roomName,
+)
+
+public fun randomVideoCallToken(
+    token: String = randomString(),
+    agoraUid: Int = randomInt(),
+    agoraAppId: String = randomString(),
+): VideoCallToken = VideoCallToken(
+    token = token,
+    agoraUid = agoraUid,
+    agoraAppId = agoraAppId,
+)
+
+public fun randomQueryThreadsResult(
+    threads: List<Thread> = List(positiveRandomInt(5)) { randomThread() },
+    prev: String? = randomString(),
+    next: String? = randomString(),
+): QueryThreadsResult = QueryThreadsResult(
+    threads = threads,
+    prev = prev,
+    next = next,
+)
+
+public fun randomThread(
+    activeParticipantCount: Int = positiveRandomInt(),
+    cid: String = randomCID(),
+    channel: Channel = randomChannel(),
+    parentMessageId: String = randomString(),
+    parentMessage: Message = randomMessage(id = parentMessageId),
+    createdByUserId: String = randomString(),
+    createdBy: User = randomUser(id = createdByUserId),
+    participantCount: Int = positiveRandomInt(),
+    threadParticipants: List<ThreadParticipant> = List(positiveRandomInt(5)) { ThreadParticipant(randomUser()) },
+    lastMessageAt: Date = randomDate(),
+    createdAt: Date = randomDate(),
+    updatedAt: Date = randomDate(),
+    deletedAt: Date? = randomDateOrNull(),
+    title: String = randomString(),
+    latestReplies: List<Message> = List(positiveRandomInt(5)) { randomMessage() },
+    read: List<ChannelUserRead> = List(positiveRandomInt(5)) { randomChannelUserRead() },
+): Thread = Thread(
+    activeParticipantCount = activeParticipantCount,
+    cid = cid,
+    channel = channel,
+    parentMessageId = parentMessageId,
+    parentMessage = parentMessage,
+    createdByUserId = createdByUserId,
+    createdBy = createdBy,
+    participantCount = participantCount,
+    threadParticipants = threadParticipants,
+    lastMessageAt = lastMessageAt,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    deletedAt = deletedAt,
+    title = title,
+    latestReplies = latestReplies,
+    read = read,
+)
+
+public fun randomAppSettings(
+    app: App = randomApp(),
+): AppSettings = AppSettings(
+    app = app,
+)
+
+public fun randomApp(
+    name: String = randomString(),
+    fileUploadConfig: FileUploadConfig = randomFileUploadConfig(),
+    imageUploadConfig: FileUploadConfig = randomFileUploadConfig(),
+): App = App(
+    name = name,
+    fileUploadConfig = fileUploadConfig,
+    imageUploadConfig = imageUploadConfig,
+)
+
+public fun randomFileUploadConfig(
+    allowedFileExtensions: List<String> = listOf(randomString()),
+    allowedMimeTypes: List<String> = listOf(randomString()),
+    blockedFileExtensions: List<String> = listOf(randomString()),
+    blockedMimeTypes: List<String> = listOf(randomString()),
+    sizeLimitInBytes: Long = positiveRandomLong(),
+): FileUploadConfig = FileUploadConfig(
+    allowedFileExtensions = allowedFileExtensions,
+    allowedMimeTypes = allowedMimeTypes,
+    blockedFileExtensions = blockedFileExtensions,
+    blockedMimeTypes = blockedMimeTypes,
+    sizeLimitInBytes = sizeLimitInBytes,
+)

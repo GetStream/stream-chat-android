@@ -82,9 +82,7 @@ import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.InitializationState
-import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.positiveRandomInt
@@ -958,26 +956,6 @@ internal object Mother {
         user: DownstreamUserDto = randomDownstreamUserDto(),
         accessToken: String = randomString(),
     ): TokenResponse = TokenResponse(user, accessToken)
-
-    fun randomPollConfig(
-        name: String = randomString(),
-        description: String = randomString(),
-        options: List<String> = listOf(randomString()),
-        votingVisibility: VotingVisibility = VotingVisibility.PUBLIC,
-        enforceUniqueVote: Boolean = randomBoolean(),
-        maxVotesAllowed: Int = positiveRandomInt(),
-        allowUserSuggestedOptions: Boolean = randomBoolean(),
-        allowAnswers: Boolean = randomBoolean(),
-    ): PollConfig = PollConfig(
-        name = name,
-        description = description,
-        options = options,
-        votingVisibility = votingVisibility,
-        enforceUniqueVote = enforceUniqueVote,
-        maxVotesAllowed = maxVotesAllowed,
-        allowUserSuggestedOptions = allowUserSuggestedOptions,
-        allowAnswers = allowAnswers,
-    )
 
     fun randomDownstreamPollDto(
         id: String = randomString(),
