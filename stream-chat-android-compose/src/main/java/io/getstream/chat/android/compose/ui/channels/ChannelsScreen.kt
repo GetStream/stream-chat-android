@@ -45,8 +45,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
+import io.getstream.chat.android.compose.ui.components.EmphasisBox
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
@@ -74,6 +76,7 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
  * @param title Header title.
  * @param isShowingHeader If we show the header or hide it.
  * @param searchMode The search mode for the screen.
+ * @param emphasizeClickedItem Whether to emphasize the clicked item.
  * @param onHeaderActionClick Handler for the default header action.
  * @param onHeaderAvatarClick Handle for when the user clicks on the header avatar.
  * @param onChannelClick Handler for Channel item clicks.
@@ -88,6 +91,7 @@ public fun ChannelsScreen(
     title: String = "Stream Chat",
     isShowingHeader: Boolean = true,
     searchMode: SearchMode = SearchMode.None,
+    emphasizeClickedItem: Boolean = false,
     onHeaderActionClick: () -> Unit = {},
     onHeaderAvatarClick: () -> Unit = {},
     onChannelClick: (Channel) -> Unit = {},
@@ -165,14 +169,38 @@ public fun ChannelsScreen(
                     )
                 }
 
+                val lastClickedItem = listViewModel.lastClickedItem
+
                 ChannelList(
                     modifier = Modifier.fillMaxSize(),
                     viewModel = listViewModel,
-                    onChannelClick = onChannelClick,
-                    onSearchResultClick = onSearchMessageItemClick,
-                    onChannelLongClick = remember(listViewModel) {
-                        {
-                            listViewModel.selectChannel(it)
+                    channelContent = { itemState ->
+                        EmphasisBox(isEmphasized = emphasizeClickedItem && itemState.key == lastClickedItem?.key) {
+                            with(ChatTheme.componentFactory) {
+                                ChannelListItemContent(
+                                    channelItem = itemState,
+                                    currentUser = user,
+                                    onChannelClick = { channel ->
+                                        listViewModel.itemClick(ItemState.ChannelItemState(channel))
+                                        onChannelClick(channel)
+                                    },
+                                    onChannelLongClick = listViewModel::selectChannel,
+                                )
+                            }
+                        }
+                    },
+                    searchResultContent = { itemState ->
+                        EmphasisBox(isEmphasized = emphasizeClickedItem && itemState.key == lastClickedItem?.key) {
+                            with(ChatTheme.componentFactory) {
+                                SearchResultItemContent(
+                                    searchResultItem = itemState,
+                                    currentUser = user,
+                                    onSearchResultClick = { message ->
+                                        listViewModel.itemClick(ItemState.SearchResultItemState(message))
+                                        onSearchMessageItemClick(message)
+                                    },
+                                )
+                            }
                         }
                     },
                 )

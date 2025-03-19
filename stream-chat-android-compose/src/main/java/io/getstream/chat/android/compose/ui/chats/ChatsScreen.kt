@@ -180,6 +180,7 @@ public fun ChatsScreen(
                                 viewModelFactory = channelViewModelFactory,
                                 isShowingHeader = false,
                                 searchMode = searchMode,
+                                emphasizeClickedItem = !singlePane,
                                 onChannelClick = { channel ->
                                     navigator.navigateTo(
                                         destination = ThreePaneDestination(
@@ -392,8 +393,10 @@ private fun AutoSelectFirstItem(
     val context = LocalContext.current
     when (listContentMode) {
         ChatListContentMode.Channels -> {
-            FirstChannelLoadHandler(channelViewModelFactory) { selection ->
+            val viewModel = viewModel(ChannelListViewModel::class.java, factory = channelViewModelFactory)
+            FirstChannelLoadHandler(viewModel) { selection ->
                 navigator.initialDetailNavigation(messagesViewModelFactoryProvider, context) ?: run {
+                    viewModel.itemClick(viewModel.channelsState.channelItems.first())
                     navigator.navigateTo(ThreePaneDestination(ThreePaneRole.Detail, selection))
                 }
             }
@@ -444,10 +447,9 @@ private fun ThreePaneNavigator.initialDetailNavigation(
  */
 @Composable
 private fun FirstChannelLoadHandler(
-    channelViewModelFactory: ChannelViewModelFactory,
+    viewModel: ChannelListViewModel,
     onLoad: (selection: ChatMessageSelection) -> Unit,
 ) {
-    val viewModel = viewModel(ChannelListViewModel::class.java, factory = channelViewModelFactory)
     val isLoading = viewModel.channelsState.isLoading
     val itemList = viewModel.channelsState.channelItems
     LaunchedEffect(isLoading) {
