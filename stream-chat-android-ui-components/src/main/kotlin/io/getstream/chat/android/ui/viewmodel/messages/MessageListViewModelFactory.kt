@@ -94,6 +94,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
     private val showDateSeparatorInEmptyThread: Boolean = false,
     private val showThreadSeparatorInEmptyThread: Boolean = false,
     private val threadLoadOlderToNewer: Boolean = false,
+    private val isComposerDraftMessageEnabled: Boolean = false,
 ) : ViewModelProvider.Factory {
 
     private val channelStateFlow: StateFlow<ChannelState?> by lazy {
@@ -138,9 +139,12 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                     chatClient = chatClient,
                     mediaRecorder = mediaRecorder,
                     userLookupHandler = userLookupHandler,
-                    maxAttachmentCount = maxAttachmentCount,
                     fileToUri = fileToUri,
                     channelState = channelStateFlow,
+                    config = MessageComposerController.Config(
+                        maxAttachmentCount = maxAttachmentCount,
+                        isDraftMessageEnabled = isComposerDraftMessageEnabled,
+                    ),
                 ),
             )
         },
