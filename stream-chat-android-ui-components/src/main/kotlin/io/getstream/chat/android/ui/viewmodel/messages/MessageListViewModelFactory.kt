@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.extensions.watchChannelAsState
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.CompatUserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler
@@ -94,7 +95,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
     private val showDateSeparatorInEmptyThread: Boolean = false,
     private val showThreadSeparatorInEmptyThread: Boolean = false,
     private val threadLoadOlderToNewer: Boolean = false,
-    private val isComposerDraftMessageEnabled: Boolean = false,
+    private val isComposerDraftMessageEnabled: Boolean = ChatUI.draftMessageEnabled,
 ) : ViewModelProvider.Factory {
 
     private val channelStateFlow: StateFlow<ChannelState?> by lazy {
