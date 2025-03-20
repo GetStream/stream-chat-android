@@ -20,12 +20,18 @@ package io.getstream.chat.android.ui.viewmodel.channels
 
 import android.app.AlertDialog
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.distinctUntilChanged
+import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.state.utils.EventObserver
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.utils.extensions.combineWith
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel.PaginationState
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel.State
+import io.getstream.chat.android.ui.viewmodel.channels.internal.ChannelListBindingData
 
 /**
  * Binds [ChannelListView] with [ChannelListViewModel], updating the view's state based on
@@ -39,36 +45,44 @@ public fun ChannelListViewModel.bindView(
     view: ChannelListView,
     lifecycleOwner: LifecycleOwner,
 ) {
-    state.combineWith(paginationState) { state, paginationState -> state to paginationState }
-        .combineWith(typingEvents) { states, typingEvents ->
-            val state = states?.first
-            val paginationState = states?.second
+    val mediatorLiveData = MediatorLiveData(ChannelListBindingData())
+    mediatorLiveData.addSource(state) {
+        mediatorLiveData.value = mediatorLiveData.value?.copy(state = it)
+    }
+    mediatorLiveData.addSource(paginationState) {
+        mediatorLiveData.value = mediatorLiveData.value?.copy(paginationState = it)
+    }
+    mediatorLiveData.addSource(typingEvents) {
+        mediatorLiveData.value = mediatorLiveData.value?.copy(typingEvents = it)
+    }
+    mediatorLiveData.addSource(draftMessages) {
+        mediatorLiveData.value = mediatorLiveData.value?.copy(draftMessages = it)
+    }
+    mediatorLiveData
+        .distinctUntilChanged()
+        .observe(lifecycleOwner) {
+            with(it) {
+                view.setPaginationEnabled(!paginationState.endOfChannels && !paginationState.loadingMore)
 
-            paginationState?.let {
-                view.setPaginationEnabled(!it.endOfChannels && !it.loadingMore)
-            }
+                val list: List<ChannelListItem> = state.channels.map { channel ->
+                    ChannelListItem.ChannelItem(
+                        channel = channel,
+                        typingUsers = typingEvents[channel.cid]?.users ?: emptyList(),
+                        draftMessage = draftMessages[channel.cid])
+                } + listOfNotNull(ChannelListItem.LoadingMoreItem.takeIf { paginationState.loadingMore })
 
-            var list: List<ChannelListItem> = state?.channels?.map {
-                ChannelListItem.ChannelItem(it, typingEvents?.get(it.cid)?.users ?: emptyList())
-            } ?: emptyList()
-            if (paginationState?.loadingMore == true) {
-                list = list + ChannelListItem.LoadingMoreItem
-            }
+                when {
+                    state.isLoading && list.isEmpty() -> view.showLoadingView()
 
-            list to (state?.isLoading == true)
-        }.distinctUntilChanged().observe(lifecycleOwner) { (list, isLoading) ->
+                    list.isNotEmpty() -> {
+                        view.hideLoadingView()
+                        view.setChannels(list)
+                    }
 
-            when {
-                isLoading && list.isEmpty() -> view.showLoadingView()
-
-                list.isNotEmpty() -> {
-                    view.hideLoadingView()
-                    view.setChannels(list)
-                }
-
-                else -> {
-                    view.hideLoadingView()
-                    view.setChannels(emptyList())
+                    else -> {
+                        view.hideLoadingView()
+                        view.setChannels(emptyList())
+                    }
                 }
             }
         }

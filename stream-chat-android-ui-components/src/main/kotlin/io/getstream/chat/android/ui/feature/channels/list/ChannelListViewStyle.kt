@@ -79,6 +79,7 @@ public data class ChannelListViewStyle(
     @ColorInt public val backgroundColor: Int,
     @ColorInt public val backgroundLayoutColor: Int,
     public val channelTitleText: TextStyle,
+    public val draftMessageLabel: TextStyle,
     public val lastMessageText: TextStyle,
     public val lastMessageDateText: TextStyle,
     public val indicatorSentIcon: Drawable,
@@ -174,6 +175,25 @@ public data class ChannelListViewStyle(
                     .color(
                         R.styleable.ChannelListView_streamUiLastMessageTextColor,
                         context.getColorCompat(R.color.stream_ui_text_color_secondary),
+                    )
+                    .font(
+                        R.styleable.ChannelListView_streamUiLastMessageFontAssets,
+                        R.styleable.ChannelListView_streamUiLastMessageTextFont,
+                    )
+                    .style(
+                        R.styleable.ChannelListView_streamUiLastMessageTextStyle,
+                        Typeface.NORMAL,
+                    )
+                    .build()
+
+                val draftMessageLabel = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.ChannelListView_streamUiLastMessageTextSize,
+                        context.getDimension(R.dimen.stream_ui_channel_item_message),
+                    )
+                    .color(
+                        R.styleable.ChannelListView_streamUiDraftMessageLabelTextColor,
+                        context.getColorCompat(R.color.stream_ui_accent_blue),
                     )
                     .font(
                         R.styleable.ChannelListView_streamUiLastMessageFontAssets,
@@ -315,6 +335,7 @@ public data class ChannelListViewStyle(
                     backgroundColor = backgroundColor,
                     backgroundLayoutColor = backgroundLayoutColor,
                     channelTitleText = channelTitleText,
+                    draftMessageLabel = draftMessageLabel,
                     lastMessageText = lastMessageText,
                     lastMessageDateText = lastMessageDateText,
                     indicatorSentIcon = indicatorSentIcon,

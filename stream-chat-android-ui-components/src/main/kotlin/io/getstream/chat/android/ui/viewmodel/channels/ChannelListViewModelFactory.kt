@@ -23,6 +23,7 @@ import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
+import io.getstream.chat.android.ui.ChatUI
 
 /**
  * Creates a channels view model factory.
@@ -43,6 +44,7 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
     private val limit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
     private val messageLimit: Int = ChannelListViewModel.DEFAULT_MESSAGE_LIMIT,
     private val memberLimit: Int = ChannelListViewModel.DEFAULT_MEMBER_LIMIT,
+    private val isDraftMessageEnabled: Boolean = ChatUI.draftMessageEnabled,
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
 ) : ViewModelProvider.Factory {
 
@@ -62,6 +64,7 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
             messageLimit = messageLimit,
             memberLimit = memberLimit,
             chatEventHandlerFactory = chatEventHandlerFactory,
+            isDraftMessageEnabled = isDraftMessageEnabled,
         ) as T
     }
 
@@ -76,6 +79,7 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
         private var messageLimit: Int = ChannelListViewModel.DEFAULT_MESSAGE_LIMIT
         private var memberLimit: Int = ChannelListViewModel.DEFAULT_MEMBER_LIMIT
         private var chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory()
+        private var isDraftMessageEnabled: Boolean = ChatUI.draftMessageEnabled
 
         /**
          * Sets the way to filter the channels.
@@ -120,6 +124,13 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
         }
 
         /**
+         * Enables or disables draft messages.
+         */
+        public fun isDraftMessageEnabled(isDraftMessageEnabled: Boolean): Builder = apply {
+            this.isDraftMessageEnabled = isDraftMessageEnabled
+        }
+
+        /**
          * Builds [ChannelListViewModelFactory] instance.
          */
         public fun build(): ViewModelProvider.Factory {
@@ -129,7 +140,8 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
                 limit = limit,
                 messageLimit = messageLimit,
                 memberLimit = memberLimit,
-                chatEventHandlerFactory,
+                chatEventHandlerFactory = chatEventHandlerFactory,
+                isDraftMessageEnabled = isDraftMessageEnabled,
             )
         }
     }

@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.errors.extractCause
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelMute
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.TypingEvent
@@ -83,6 +84,7 @@ public class ChannelListViewModel(
     private val limit: Int = 30,
     private val messageLimit: Int = 1,
     private val memberLimit: Int = 30,
+    private val isDraftMessageEnabled: Boolean,
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
     private val chatClient: ChatClient = ChatClient.instance(),
     private val globalState: GlobalState = chatClient.globalState,
@@ -108,6 +110,12 @@ public class ChannelListViewModel(
      */
     public val typingEvents: LiveData<Map<String, TypingEvent>>
         get() = globalState.typingChannels.asLiveData()
+
+    public val draftMessages: LiveData<Map<String, DraftMessage>>
+        get() = globalState.channelDraftMessages
+            .takeIf { isDraftMessageEnabled }
+            ?.asLiveData()
+            ?: MutableLiveData(emptyMap())
 
     /**
      * Represents the current pagination state that is a product
