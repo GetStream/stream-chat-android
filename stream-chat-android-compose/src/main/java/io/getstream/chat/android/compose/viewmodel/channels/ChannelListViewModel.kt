@@ -48,7 +48,6 @@ import io.getstream.chat.android.ui.common.state.channels.actions.Cancel
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.uiutils.extension.defaultChannelListFilter
 import io.getstream.log.taggedLogger
-import io.getstream.result.Result
 import io.getstream.result.call.toUnitCall
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
@@ -158,12 +157,6 @@ public class ChannelListViewModel(
      * tapping on a list item.
      */
     public var selectedChannel: MutableState<Channel?> = mutableStateOf(null)
-        private set
-
-    /**
-     * The last clicked item id, if any.
-     */
-    public var lastClickedItemId: String? by mutableStateOf(null)
         private set
 
     /**
@@ -358,7 +351,7 @@ public class ChannelListViewModel(
             limit = limit,
         ).await()
         return when (result) {
-            is Result.Success -> {
+            is io.getstream.result.Result.Success -> {
                 logger.v { "[searchMessages] #$src; completed(messages.size: ${result.value.messages.size})" }
                 currentState.copy(
                     messages = currentState.messages + result.value.messages,
@@ -367,7 +360,7 @@ public class ChannelListViewModel(
                     canLoadMore = result.value.messages.size >= limit,
                 )
             }
-            is Result.Failure -> {
+            is io.getstream.result.Result.Failure -> {
                 logger.e { "[searchMessages] #$src; failed: ${result.value}" }
                 currentState.copy(
                     isLoading = false,
@@ -485,13 +478,6 @@ public class ChannelListViewModel(
      */
     public fun selectChannel(channel: Channel?) {
         this.selectedChannel.value = channel
-    }
-
-    /**
-     * Notify the click event on an item in the list.
-     */
-    public fun itemClick(itemId: String) {
-        lastClickedItemId = itemId
     }
 
     /**
