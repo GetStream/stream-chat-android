@@ -42,7 +42,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -57,6 +61,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getLastMessage
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.previewdata.PreviewUserData
@@ -216,9 +221,13 @@ internal fun RowScope.DefaultChannelItemCenterContent(
         if (channelItemState.typingUsers.isNotEmpty()) {
             UserTypingIndicator(channelItemState.typingUsers)
         } else {
-            val lastMessageText = channelItemState.channel.getLastMessage(currentUser)?.let { lastMessage ->
-                ChatTheme.messagePreviewFormatter.formatMessagePreview(lastMessage, currentUser)
-            } ?: AnnotatedString("")
+            val lastMessageText =
+                channelItemState.draftMessage
+                    ?.let { ChatTheme.messagePreviewFormatter.formatDraftMessagePreview(it) }
+                    ?: channelItemState.channel.getLastMessage(currentUser)?.let { lastMessage ->
+                        ChatTheme.messagePreviewFormatter.formatMessagePreview(lastMessage, currentUser)
+                    }
+                    ?: AnnotatedString("")
 
             if (lastMessageText.isNotEmpty()) {
                 Text(
@@ -377,6 +386,7 @@ private fun ChannelItemPreview(
     channel: Channel,
     isMuted: Boolean = false,
     currentUser: User? = null,
+    draftMessage: DraftMessage? = null,
 ) {
     ChatPreviewTheme {
         ChannelItem(
@@ -384,6 +394,7 @@ private fun ChannelItemPreview(
                 channel = channel,
                 isMuted = isMuted,
                 typingUsers = emptyList(),
+                draftMessage = draftMessage,
             ),
             currentUser = currentUser,
             onChannelClick = {},

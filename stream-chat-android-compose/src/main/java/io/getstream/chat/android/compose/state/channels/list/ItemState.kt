@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.state.channels.list
 
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 
@@ -32,11 +33,13 @@ public sealed class ItemState {
      * @param channel The channel to show.
      * @param isMuted If the channel is muted for the current user.
      * @param typingUsers The list of users currently typing in the channel.
+     * @param draftMessage The draft message for the current user in the channel.
      */
     public data class ChannelItemState(
         val channel: Channel,
         val isMuted: Boolean = false,
         val typingUsers: List<User> = emptyList(),
+        val draftMessage: DraftMessage?,
     ) : ItemState() {
         override val key: String = channel.cid
     }

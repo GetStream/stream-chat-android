@@ -51,6 +51,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.previewdata.PreviewChannelData
+import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewUserData
 
 /**
@@ -379,22 +380,32 @@ private fun ChannelListForContentStatePreview() {
                 ItemState.ChannelItemState(
                     channel = PreviewChannelData.channelWithImage,
                     typingUsers = emptyList(),
+                    draftMessage = null,
                 ),
                 ItemState.ChannelItemState(
                     channel = PreviewChannelData.channelWithMessages,
                     typingUsers = emptyList(),
+                    draftMessage = null,
                 ),
                 ItemState.ChannelItemState(
                     channel = PreviewChannelData.channelWithFewMembers,
                     typingUsers = emptyList(),
+                    draftMessage = null,
                 ),
                 ItemState.ChannelItemState(
                     channel = PreviewChannelData.channelWithManyMembers,
                     typingUsers = emptyList(),
+                    draftMessage = null,
                 ),
                 ItemState.ChannelItemState(
                     channel = PreviewChannelData.channelWithOnlineUser,
                     typingUsers = emptyList(),
+                    draftMessage = null,
+                ),
+                ItemState.ChannelItemState(
+                    channel = PreviewChannelData.channelWithOnlineUser,
+                    typingUsers = emptyList(),
+                    draftMessage = PreviewMessageData.draftMessage,
                 ),
             ),
         ),
