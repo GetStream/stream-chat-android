@@ -804,6 +804,9 @@ internal constructor(
         }
     }
 
+    /**
+     * Checks if there are currently stored user credentials in the local storage.
+     */
     @InternalStreamChatApi
     public fun containsStoredCredentials(): Boolean {
         return userCredentialStorage.get() != null
@@ -1012,6 +1015,13 @@ internal constructor(
     }
 
     //region Reactions
+    /**
+     * Retrieves the reactions on a given message.
+     *
+     * @param messageId The ID of the message to which the reactions belong.
+     * @param offset The offset of the first reaction to retrieve.
+     * @param limit The maximum number of reactions to retrieve.
+     */
     @CheckResult
     public fun getReactions(
         messageId: String,
@@ -1123,8 +1133,6 @@ internal constructor(
             .precondition(plugins) { onSendReactionPrecondition(currentUser, reaction) }
             .share(userScope) { SendReactionIdentifier(reaction, enforceUnique, cid) }
     }
-    //endregion
-
     //endregion
 
     @CheckResult
@@ -1605,6 +1613,14 @@ internal constructor(
         return api.closePoll(pollId)
     }
 
+    /**
+     * Retrieves the file attachments from the given channel.
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param offset The attachments offset.
+     * @param limit Max limit attachments to be fetched.
+     */
     @CheckResult
     public fun getFileAttachments(
         channelType: String,
@@ -1614,6 +1630,14 @@ internal constructor(
     ): Call<List<Attachment>> =
         getAttachments(channelType, channelId, offset, limit, ATTACHMENT_TYPE_FILE)
 
+    /**
+     * Retrieves the image attachments from the given channel.
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param offset The attachments offset.
+     * @param limit Max limit attachments to be fetched.
+     */
     @CheckResult
     public fun getImageAttachments(
         channelType: String,
@@ -1802,6 +1826,12 @@ internal constructor(
             .share(userScope) { ShuffleGiphyIdentifier(request) }
     }
 
+    /**
+     * Deletes a message.
+     *
+     * @param messageId The ID of the message to be deleted.
+     * @param hard True if the message should be hard deleted.
+     */
     @CheckResult
     @JvmOverloads
     public fun deleteMessage(messageId: String, hard: Boolean = false): Call<Message> {
@@ -1839,9 +1869,7 @@ internal constructor(
         logger.d { "[getMessage] messageId: $messageId" }
 
         return api.getMessage(messageId)
-            .doOnResult(
-                userScope,
-            ) { result ->
+            .doOnResult(userScope) { result ->
                 plugins.forEach { listener ->
                     logger.v { "[getMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
                     listener.onGetMessageResult(messageId, result)
@@ -2195,7 +2223,12 @@ internal constructor(
         memberLimit: Int = 0,
         state: Boolean = false,
     ): Call<Channel> {
-        return getChannel(cid = "$channelType:$channelId")
+        return getChannel(
+            cid = "$channelType:$channelId",
+            messageLimit = messageLimit,
+            memberLimit = memberLimit,
+            state = state,
+        )
     }
 
     /**
@@ -2286,6 +2319,12 @@ internal constructor(
         }
     }
 
+    /**
+     * Deletes the channel specified by the [channelType] and [channelId].
+     *
+     * @param channelType The type of the channel.
+     * @param channelId The ID of the channel.
+     */
     @CheckResult
     public fun deleteChannel(channelType: String, channelId: String): Call<Channel> {
         return api.deleteChannel(channelType, channelId)
@@ -2306,6 +2345,13 @@ internal constructor(
             }
     }
 
+    /**
+     * Marks the given message as read.
+     *
+     * @param channelType The type of the channel in which the thread resides.
+     * @param channelId The ID of the channel in which the thread resides.
+     * @param messageId The ID of the message to mark as read.
+     */
     @CheckResult
     public fun markMessageRead(
         channelType: String,
@@ -2337,6 +2383,12 @@ internal constructor(
         return api.markThreadRead(channelType, channelId, threadId)
     }
 
+    /**
+     * Shows the specified channel (if previously hidden).
+     *
+     * @param channelType The type of the channel.
+     * @param channelId Id of the channel.
+     */
     @CheckResult
     public fun showChannel(channelType: String, channelId: String): Call<Unit> {
         return api.showChannel(channelType, channelId)
@@ -2538,6 +2590,28 @@ internal constructor(
         return api.disableSlowMode(channelType, channelId)
     }
 
+    /**
+     * Accepts the invitation to join a channel.
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param message The message to send with the accept invitation.
+     */
+    @CheckResult
+    public fun acceptInvite(
+        channelType: String,
+        channelId: String,
+        message: String?,
+    ): Call<Channel> {
+        return api.acceptInvite(channelType, channelId, message)
+    }
+
+    /**
+     * Rejects the invitation to join the channel.
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     */
     @CheckResult
     public fun rejectInvite(channelType: String, channelId: String): Call<Channel> {
         return api.rejectInvite(channelType, channelId)
@@ -2560,15 +2634,6 @@ internal constructor(
         channelId: String,
         extraData: Map<Any, Any> = emptyMap(),
     ): Call<ChatEvent> = api.sendEvent(eventType, channelType, channelId, extraData)
-
-    @CheckResult
-    public fun acceptInvite(
-        channelType: String,
-        channelId: String,
-        message: String?,
-    ): Call<Channel> {
-        return api.acceptInvite(channelType, channelId, message)
-    }
 
     /**
      * Marks all the channel as read.
@@ -2647,11 +2712,21 @@ internal constructor(
         return api.markThreadUnread(channelType, channelId, threadId = threadId, messageId = messageId)
     }
 
+    /**
+     * Updates multiple users in a single request.
+     *
+     * @param users The list of users to be updated.
+     */
     @CheckResult
     public fun updateUsers(users: List<User>): Call<List<User>> {
         return api.updateUsers(users)
     }
 
+    /**
+     * Updates a single user.
+     *
+     * @param user The user to be updated.
+     */
     @CheckResult
     public fun updateUser(user: User): Call<User> {
         return updateUsers(listOf(user)).map { it.first() }
@@ -2957,6 +3032,13 @@ internal constructor(
     @CheckResult
     public fun muteCurrentUser(): Call<Mute> = api.muteCurrentUser()
 
+    /**
+     * Flags a user.
+     *
+     * @param userId The ID of the user to flag.
+     * @param reason The (optional) reason for flagging the user.
+     * @param customData Custom data to be attached to the flag.
+     */
     @CheckResult
     public fun flagUser(
         userId: String,
@@ -2968,9 +3050,21 @@ internal constructor(
         customData,
     )
 
+    /**
+     * Un-flags a previously flagged user.
+     *
+     * @param userId The ID of the user to un-flag.
+     */
     @CheckResult
     public fun unflagUser(userId: String): Call<Flag> = api.unflagUser(userId)
 
+    /**
+     * Flags a message.
+     *
+     * @param messageId The ID of the message to flag.
+     * @param reason The (optional) reason for flagging the message.
+     * @param customData Custom data to be attached to the flag.
+     */
     @CheckResult
     public fun flagMessage(
         messageId: String,
@@ -2982,9 +3076,20 @@ internal constructor(
         customData,
     )
 
+    /**
+     * Un-flags a previously flagged message.
+     *
+     * @param messageId The ID of the message to un-flag.
+     */
     @CheckResult
     public fun unflagMessage(messageId: String): Call<Flag> = api.unflagMessage(messageId)
 
+    /**
+     * Translate a message.
+     *
+     * @param messageId The ID of the message to translate.
+     * @param language The language to translate the message to.
+     */
     @CheckResult
     public fun translate(messageId: String, language: String): Call<Message> =
         api.translate(messageId, language)
@@ -3001,6 +3106,15 @@ internal constructor(
             logger.v { "[enrichUrl] #doOnResult; completed($url): $it" }
         }
 
+    /**
+     * Bans a user from a given channel.
+     *
+     * @param targetId The ID of the user to ban.
+     * @param channelType The type of the channel.
+     * @param channelId The ID of the channel.
+     * @param reason The (optional) reason for banning the user.
+     * @param timeout The (optional) duration of the ban in **minutes**.
+     */
     @CheckResult
     public fun banUser(
         targetId: String,
@@ -3017,6 +3131,13 @@ internal constructor(
         shadow = false,
     ).toUnitCall()
 
+    /**
+     * Unbans a user from a given channel.
+     *
+     * @param targetId The ID of the user to unban.
+     * @param channelType The type of the channel.
+     * @param channelId The ID of the channel.
+     */
     @CheckResult
     public fun unbanUser(
         targetId: String,
@@ -3029,6 +3150,15 @@ internal constructor(
         shadow = false,
     ).toUnitCall()
 
+    /**
+     * Shadow bans a user from a given channel.
+     *
+     * @param targetId The ID of the user to shadow ban.
+     * @param channelType The type of the channel.
+     * @param channelId The ID of the channel.
+     * @param reason The (optional) reason for shadow banning the user.
+     * @param timeout The (optional) duration of the shadow ban in **minutes**.
+     */
     @CheckResult
     public fun shadowBanUser(
         targetId: String,
@@ -3045,6 +3175,13 @@ internal constructor(
         shadow = true,
     ).toUnitCall()
 
+    /**
+     * Removes a shadow ban from a user in a given channel.
+     *
+     * @param targetId The ID of the user to un-shadow ban.
+     * @param channelType The type of the channel.
+     * @param channelId The ID of the channel.
+     */
     @CheckResult
     public fun removeShadowBan(
         targetId: String,
@@ -3057,6 +3194,18 @@ internal constructor(
         shadow = true,
     ).toUnitCall()
 
+    /**
+     * Queries the banned users matching the provided filters.
+     *
+     * @param filter The filter object to apply to the query.
+     * @param sort The sorter object to apply to the query.
+     * @param offset The offset to start from.
+     * @param limit The maximum number of banned users to return.
+     * @param createdAtAfter The date after which the ban was created.
+     * @param createdAtAfterOrEqual The date after (or at) which the ban was created.
+     * @param createdAtBefore The date before which the ban was created.
+     * @param createdAtBeforeOrEqual The date before (or at) which the ban was created.
+     */
     @CheckResult
     @JvmOverloads
     public fun queryBannedUsers(
@@ -3110,6 +3259,9 @@ internal constructor(
         return getCurrentUser()?.id ?: getStoredUser()?.id
     }
 
+    /**
+     * Retrieves the current user token (or null if it doesn't exist).
+     */
     public fun getCurrentToken(): String? {
         return runCatching {
             when (userStateService.state) {
@@ -3128,6 +3280,9 @@ internal constructor(
         return appSettingsManager.getAppSettings()
     }
 
+    /**
+     * Checks if the chat socket is connected.
+     */
     public fun isSocketConnected(): Boolean = chatSocket.isConnected()
 
     /**
