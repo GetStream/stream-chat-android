@@ -310,7 +310,6 @@ public fun ChatsScreen(
         }
     } else {
         CompositionLocalProvider(LocalComponentFactory provides rememberCompoundComponentFactory(navigator)) {
-
             // Auto-select the first item in the list when it loads on wide screens
             FirstItemLoadHandler(
                 listContentMode = listContentMode,
