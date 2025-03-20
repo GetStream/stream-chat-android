@@ -161,9 +161,9 @@ public class ChannelListViewModel(
         private set
 
     /**
-     * The last clicked item, if any.
+     * The last clicked item id, if any.
      */
-    public var lastClickedItem: ItemState? by mutableStateOf(null)
+    public var lastClickedItemId: String? by mutableStateOf(null)
         private set
 
     /**
@@ -490,8 +490,8 @@ public class ChannelListViewModel(
     /**
      * Notify the click event on an item in the list.
      */
-    public fun itemClick(item: ItemState) {
-        lastClickedItem = item
+    public fun itemClick(itemId: String) {
+        lastClickedItemId = itemId
     }
 
     /**

@@ -39,6 +39,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.movableContentOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
@@ -49,9 +50,11 @@ import androidx.lifecycle.ViewModelStore
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
 import io.getstream.chat.android.compose.ui.channels.SearchMode
+import io.getstream.chat.android.compose.ui.components.EmphasisBox
 import io.getstream.chat.android.compose.ui.messages.BackAction
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
@@ -163,6 +166,8 @@ public fun ChatsScreen(
         onDispose { navigator.popUpTo(ThreePaneRole.List) }
     }
 
+    var selectedItemId by rememberSaveable { mutableStateOf<String?>(null) }
+
     val listPane = remember(listContentMode) {
         movableContentOf { modifier: Modifier ->
             Scaffold(
@@ -212,19 +217,29 @@ public fun ChatsScreen(
                                 modelClass = ThreadListViewModel::class.java,
                                 factory = threadsViewModelFactory,
                             )
+                            val currentUser = ChatClient.instance().getCurrentUser()
                             ThreadList(
                                 viewModel = viewModel,
-                                onThreadClick = { thread ->
-                                    navigator.navigateTo(
-                                        destination = ThreePaneDestination(
-                                            pane = ThreePaneRole.Detail,
-                                            arguments = ChatMessageSelection(
-                                                channelId = thread.cid,
-                                                parentMessageId = thread.parentMessageId,
-                                            ),
-                                        ),
-                                        popUpTo = ThreePaneRole.List,
-                                    )
+                                itemContent = { thread ->
+                                    EmphasisBox(isEmphasized = thread.parentMessageId == selectedItemId) {
+                                        ChatTheme.componentFactory.ThreadListItem(
+                                            thread = thread,
+                                            currentUser = currentUser,
+                                            onThreadClick = { thread ->
+                                                selectedItemId = thread.parentMessageId
+                                                navigator.navigateTo(
+                                                    destination = ThreePaneDestination(
+                                                        pane = ThreePaneRole.Detail,
+                                                        arguments = ChatMessageSelection(
+                                                            channelId = thread.cid,
+                                                            parentMessageId = thread.parentMessageId,
+                                                        ),
+                                                    ),
+                                                    popUpTo = ThreePaneRole.List,
+                                                )
+                                            }
+                                        )
+                                    }
                                 },
                             )
                         }
@@ -282,7 +297,9 @@ public fun ChatsScreen(
         }
 
         LaunchedEffect(Unit) {
-            navigator.initialDetailNavigation(messagesViewModelFactoryProvider, context)
+            navigator.initialSelection(messagesViewModelFactoryProvider, context)?.let { selection ->
+                navigator.navigateTo(ThreePaneDestination(ThreePaneRole.Detail, selection))
+            }
         }
 
         Box(
@@ -302,14 +319,48 @@ public fun ChatsScreen(
             }
         }
     } else {
-        // Auto-select the first item in the list when it loads on wide screens
-        AutoSelectFirstItem(
-            listContentMode = listContentMode,
-            channelViewModelFactory = channelViewModelFactory,
-            threadsViewModelFactory = threadsViewModelFactory,
-            navigator = navigator,
-            messagesViewModelFactoryProvider = messagesViewModelFactoryProvider,
-        )
+        var initialSelection by rememberSaveable { mutableStateOf<ChatMessageSelection?>(null) }
+
+        LaunchedEffect(Unit) {
+            println("alor: tablet flow started")
+            initialSelection = navigator.initialSelection(messagesViewModelFactoryProvider, context)
+        }
+
+        println("alor: initialSelection: $initialSelection")
+        val channelListViewModel = viewModel(ChannelListViewModel::class.java, factory = channelViewModelFactory)
+
+        if (initialSelection == null) {
+            // Auto-select the first item in the list when it loads on wide screens
+            FirstItemLoadHandler(
+                listContentMode = listContentMode,
+                channelViewModelFactory = channelViewModelFactory,
+                threadsViewModelFactory = threadsViewModelFactory,
+            ) { selection ->
+                println("alor: FirstItemLoadHandler: $selection")
+                when (listContentMode) {
+                    ChatListContentMode.Channels -> channelListViewModel.itemClick(if (channelListViewModel.searchQuery.query.isEmpty()) {
+                        selection.channelId!!
+                    } else {
+                        selection.messageId!!
+                    })
+                    ChatListContentMode.Threads -> selectedItemId = selection.parentMessageId
+                }
+                navigator.navigateTo(ThreePaneDestination(ThreePaneRole.Detail, selection))
+            }
+        } else {
+            LaunchedEffect(listContentMode) {
+                when (listContentMode) {
+                    ChatListContentMode.Channels -> channelListViewModel.itemClick(if (channelListViewModel.searchQuery.query.isEmpty()) {
+                        initialSelection!!.channelId!!
+                    } else {
+                        initialSelection!!.messageId!!
+                    })
+                    ChatListContentMode.Threads -> selectedItemId = initialSelection!!.parentMessageId
+                }
+                navigator.navigateTo(ThreePaneDestination(ThreePaneRole.Detail, initialSelection))
+            }
+        }
+
         Row(
             modifier = modifier,
         ) {
@@ -382,36 +433,6 @@ public fun ChatsScreen(
     }
 }
 
-@Composable
-private fun AutoSelectFirstItem(
-    listContentMode: ChatListContentMode,
-    channelViewModelFactory: ChannelViewModelFactory,
-    threadsViewModelFactory: ThreadsViewModelFactory,
-    navigator: ThreePaneNavigator,
-    messagesViewModelFactoryProvider: MessagesViewModelFactoryProvider,
-) {
-    val context = LocalContext.current
-    when (listContentMode) {
-        ChatListContentMode.Channels -> {
-            val viewModel = viewModel(ChannelListViewModel::class.java, factory = channelViewModelFactory)
-            FirstChannelLoadHandler(viewModel) { selection ->
-                navigator.initialDetailNavigation(messagesViewModelFactoryProvider, context) ?: run {
-                    viewModel.itemClick(viewModel.channelsState.channelItems.first())
-                    navigator.navigateTo(ThreePaneDestination(ThreePaneRole.Detail, selection))
-                }
-            }
-        }
-
-        ChatListContentMode.Threads -> {
-            FirstThreadLoadHandler(threadsViewModelFactory) { selection ->
-                navigator.initialDetailNavigation(messagesViewModelFactoryProvider, context) ?: run {
-                    navigator.navigateTo(ThreePaneDestination(ThreePaneRole.Detail, selection))
-                }
-            }
-        }
-    }
-}
-
 /**
  * A lambda function that provides a [MessagesViewModelFactory] for managing messages within a selected channel.
  */
@@ -419,27 +440,43 @@ public typealias MessagesViewModelFactoryProvider =
     (context: Context, selection: ChatMessageSelection) -> MessagesViewModelFactory?
 
 /**
- * If there's no detail pane, navigate to the initial detail pane,
- * when the provider returns a factory based on an empty selection.
+ * Builds the initial message selection when there are no detail destinations
+ * and a factory is provided based on the an empty selection.
  */
-private fun ThreePaneNavigator.initialDetailNavigation(
+private fun ThreePaneNavigator.initialSelection(
     messagesViewModelFactoryProvider: MessagesViewModelFactoryProvider,
     context: Context,
-) = if (destinations.none { destination -> destination.pane == ThreePaneRole.Detail }) {
-    messagesViewModelFactoryProvider(context, ChatMessageSelection())?.let { viewModelFactory ->
-        navigateTo(
-            ThreePaneDestination(
-                pane = ThreePaneRole.Detail,
-                arguments = ChatMessageSelection(
-                    channelId = viewModelFactory.channelId,
-                    messageId = viewModelFactory.messageId,
-                    parentMessageId = viewModelFactory.parentMessageId,
-                ),
-            ),
-        )
+): ChatMessageSelection? =
+    if (destinations.none { destination -> destination.pane == ThreePaneRole.Detail }) {
+        messagesViewModelFactoryProvider(context, ChatMessageSelection())?.let { viewModelFactory ->
+            ChatMessageSelection(
+                channelId = viewModelFactory.channelId,
+                messageId = viewModelFactory.messageId,
+                parentMessageId = viewModelFactory.parentMessageId,
+            )
+        }
+    } else {
+        null
     }
-} else {
-    Unit
+
+@Composable
+private fun FirstItemLoadHandler(
+    listContentMode: ChatListContentMode,
+    channelViewModelFactory: ChannelViewModelFactory,
+    threadsViewModelFactory: ThreadsViewModelFactory,
+    onLoad: (selection: ChatMessageSelection) -> Unit,
+) {
+    when (listContentMode) {
+        ChatListContentMode.Channels -> {
+            val viewModel = viewModel(ChannelListViewModel::class.java, factory = channelViewModelFactory)
+            FirstChannelLoadHandler(viewModel, onLoad)
+        }
+
+        ChatListContentMode.Threads -> {
+            val viewModel = viewModel(ThreadListViewModel::class.java, factory = threadsViewModelFactory)
+            FirstThreadLoadHandler(viewModel, onLoad)
+        }
+    }
 }
 
 /**
@@ -455,17 +492,23 @@ private fun FirstChannelLoadHandler(
     LaunchedEffect(isLoading) {
         if (!isLoading && itemList.isNotEmpty()) {
             when (val item = itemList.first()) {
-                is ItemState.ChannelItemState ->
-                    onLoad(ChatMessageSelection(channelId = item.channel.cid))
+                is ItemState.ChannelItemState -> {
+                    val itemId = item.channel.cid
+                    viewModel.itemClick(itemId)
+                    onLoad(ChatMessageSelection(channelId = itemId))
+                }
 
-                is ItemState.SearchResultItemState ->
+                is ItemState.SearchResultItemState -> {
+                    val itemId = item.message.id
+                    viewModel.itemClick(itemId)
                     onLoad(
                         ChatMessageSelection(
                             channelId = item.message.cid,
-                            messageId = item.message.id,
+                            messageId = itemId,
                             parentMessageId = item.message.parentId,
                         ),
                     )
+                }
             }
         }
     }
@@ -476,10 +519,9 @@ private fun FirstChannelLoadHandler(
  */
 @Composable
 private fun FirstThreadLoadHandler(
-    threadsViewModelFactory: ThreadsViewModelFactory,
+    viewModel: ThreadListViewModel,
     onLoad: (selection: ChatMessageSelection) -> Unit,
 ) {
-    val viewModel = viewModel(ThreadListViewModel::class.java, factory = threadsViewModelFactory)
     val state by viewModel.state.collectAsState()
     val isLoading = state.isLoading
     val threadList = state.threads

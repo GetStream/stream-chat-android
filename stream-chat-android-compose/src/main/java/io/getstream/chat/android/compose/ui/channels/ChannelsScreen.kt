@@ -45,7 +45,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.EmphasisBox
@@ -169,19 +168,19 @@ public fun ChannelsScreen(
                     )
                 }
 
-                val lastClickedItem = listViewModel.lastClickedItem
+                val lastClickedItemId = listViewModel.lastClickedItemId
 
                 ChannelList(
                     modifier = Modifier.fillMaxSize(),
                     viewModel = listViewModel,
                     channelContent = { itemState ->
-                        EmphasisBox(isEmphasized = emphasizeClickedItem && itemState.key == lastClickedItem?.key) {
+                        EmphasisBox(isEmphasized = emphasizeClickedItem && itemState.key == lastClickedItemId) {
                             with(ChatTheme.componentFactory) {
                                 ChannelListItemContent(
                                     channelItem = itemState,
                                     currentUser = user,
                                     onChannelClick = { channel ->
-                                        listViewModel.itemClick(ItemState.ChannelItemState(channel))
+                                        listViewModel.itemClick(channel.cid)
                                         onChannelClick(channel)
                                     },
                                     onChannelLongClick = listViewModel::selectChannel,
@@ -190,13 +189,13 @@ public fun ChannelsScreen(
                         }
                     },
                     searchResultContent = { itemState ->
-                        EmphasisBox(isEmphasized = emphasizeClickedItem && itemState.key == lastClickedItem?.key) {
+                        EmphasisBox(isEmphasized = emphasizeClickedItem && itemState.key == lastClickedItemId) {
                             with(ChatTheme.componentFactory) {
                                 SearchResultItemContent(
                                     searchResultItem = itemState,
                                     currentUser = user,
                                     onSearchResultClick = { message ->
-                                        listViewModel.itemClick(ItemState.SearchResultItemState(message))
+                                        listViewModel.itemClick(message.id)
                                         onSearchMessageItemClick(message)
                                     },
                                 )
