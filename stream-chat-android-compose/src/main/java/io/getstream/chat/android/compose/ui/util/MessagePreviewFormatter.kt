@@ -106,6 +106,7 @@ public interface MessagePreviewFormatter {
  *
  * @param context The context to load string resources.
  */
+@Suppress("LongParameterList")
 private class DefaultMessagePreviewFormatter(
     private val context: Context,
     private val autoTranslationEnabled: Boolean,
@@ -212,27 +213,25 @@ private class DefaultMessagePreviewFormatter(
      * @param draftMessage The draft message whose data is used to generate the preview text.
      * @return The formatted text representation for the given draft message.
      */
-    override fun formatDraftMessagePreview(draftMessage: DraftMessage): AnnotatedString {
-        return buildAnnotatedString {
-            withStyle(
-                    style = SpanStyle(
-                        fontStyle = draftMessageLabelTextStyle.fontStyle,
-                        fontFamily = draftMessageLabelTextStyle.fontFamily,
-                        color = draftMessageLabelTextStyle.color,
-                )
-            ) {
-                append(context.getString(R.string.stream_compose_channel_list_draft))
-            }
-            append(SPACE)
-            withStyle(
-                style = SpanStyle(
-                    fontStyle = messageTextStyle.fontStyle,
-                    fontFamily = messageTextStyle.fontFamily,
-                    color = messageTextStyle.color,
-                )
-            ) {
-                append(draftMessage.text)
-            }
+    override fun formatDraftMessagePreview(draftMessage: DraftMessage): AnnotatedString = buildAnnotatedString {
+        withStyle(
+            style = SpanStyle(
+                fontStyle = draftMessageLabelTextStyle.fontStyle,
+                fontFamily = draftMessageLabelTextStyle.fontFamily,
+                color = draftMessageLabelTextStyle.color,
+            ),
+        ) {
+            append(context.getString(R.string.stream_compose_channel_list_draft))
+        }
+        append(SPACE)
+        withStyle(
+            style = SpanStyle(
+                fontStyle = messageTextStyle.fontStyle,
+                fontFamily = messageTextStyle.fontFamily,
+                color = messageTextStyle.color,
+            ),
+        ) {
+            append(draftMessage.text)
         }
     }
 

@@ -951,6 +951,14 @@ public final class io/getstream/chat/android/ui/common/state/messages/MessageInp
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/ui/common/state/messages/MessageInput$Source$DraftMessage : io/getstream/chat/android/ui/common/state/messages/MessageInput$Source$Internal {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/messages/MessageInput$Source$DraftMessage;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/common/state/messages/MessageInput$Source$Edit : io/getstream/chat/android/ui/common/state/messages/MessageInput$Source$Internal {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/messages/MessageInput$Source$Edit;

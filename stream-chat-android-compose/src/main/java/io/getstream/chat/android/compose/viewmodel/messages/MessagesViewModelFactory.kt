@@ -133,7 +133,7 @@ public class MessagesViewModelFactory(
                     config = MessageComposerController.Config(
                         maxAttachmentCount = maxAttachmentCount,
                         isLinkPreviewEnabled = isComposerLinkPreviewEnabled,
-                        isDraftMessageEnabled = isComposerDraftMessageEnabled
+                        isDraftMessageEnabled = isComposerDraftMessageEnabled,
                     ),
                 ),
             )

@@ -30,7 +30,6 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
-import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.context
@@ -237,7 +236,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
                         channelItem.typingUsers.isEmpty()
                             .and(
                                 lastMessage.isNotNull()
-                                    .or(channelItem.draftMessage.isNotNull())
+                                    .or(channelItem.draftMessage.isNotNull()),
                             )
                     draftMessageLabel.isVisible = channelItem.draftMessage.isNotNull()
                         .and(channelItem.typingUsers.isEmpty())

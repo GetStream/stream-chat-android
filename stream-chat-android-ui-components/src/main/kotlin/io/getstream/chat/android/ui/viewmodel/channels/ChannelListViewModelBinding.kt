@@ -22,15 +22,10 @@ import android.app.AlertDialog
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.distinctUntilChanged
-import io.getstream.chat.android.models.DraftMessage
-import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.state.utils.EventObserver
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListItem
-import io.getstream.chat.android.ui.utils.extensions.combineWith
-import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel.PaginationState
-import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel.State
 import io.getstream.chat.android.ui.viewmodel.channels.internal.ChannelListBindingData
 
 /**
@@ -41,6 +36,7 @@ import io.getstream.chat.android.ui.viewmodel.channels.internal.ChannelListBindi
  * before setting any additional listeners on these objects yourself.
  */
 @JvmName("bind")
+@Suppress("LongMethod")
 public fun ChannelListViewModel.bindView(
     view: ChannelListView,
     lifecycleOwner: LifecycleOwner,
@@ -68,7 +64,8 @@ public fun ChannelListViewModel.bindView(
                     ChannelListItem.ChannelItem(
                         channel = channel,
                         typingUsers = typingEvents[channel.cid]?.users ?: emptyList(),
-                        draftMessage = draftMessages[channel.cid])
+                        draftMessage = draftMessages[channel.cid],
+                    )
                 } + listOfNotNull(ChannelListItem.LoadingMoreItem.takeIf { paginationState.loadingMore })
 
                 when {
