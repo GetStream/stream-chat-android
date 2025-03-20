@@ -259,6 +259,7 @@ internal class MessageListViewModelTest {
             whenever(chatClient.plugins) doReturn listOf(statePlugin)
             whenever(chatClient.pluginFactories) doReturn listOf(statePluginFactory)
             whenever(chatClient.clientState) doReturn clientState
+            whenever(chatClient.audioPlayer) doReturn mock()
         }
 
         fun givenCurrentUser(currentUser: User = user1) = apply {
