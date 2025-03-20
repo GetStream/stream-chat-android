@@ -158,7 +158,6 @@ class ChatsActivity : BaseConnectedActivity() {
             navigator = navigator,
             channelViewModelFactory = channelViewModelFactory,
             messagesViewModelFactoryProvider = { _, (channelId, messageId, parentMessageId) ->
-                println("alor: messagesViewModelFactoryProvider: channelId=$channelId, messageId=$messageId, parentMessageId=$parentMessageId")
                 if (channelId == null) {
                     messagesViewModelFactory
                 } else {

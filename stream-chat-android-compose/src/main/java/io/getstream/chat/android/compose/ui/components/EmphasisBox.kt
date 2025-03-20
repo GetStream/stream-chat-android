@@ -29,13 +29,14 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  */
 @Composable
 internal fun EmphasisBox(
+    modifier: Modifier = Modifier,
     isEmphasized: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     val color = ChatTheme.colors.textLowEmphasis
-    val alpha by animateFloatAsState(targetValue = if (isEmphasized) EMPHASIS_TRANSPARENCY else 0f)
+    val alpha by animateFloatAsState(targetValue = if (isEmphasized) EmphasisTransparency else 0f)
     Box(
-        modifier = Modifier.drawWithContent {
+        modifier = modifier.drawWithContent {
             drawContent()
             drawRect(color = color, alpha = alpha, size = size)
         },
@@ -44,4 +45,4 @@ internal fun EmphasisBox(
     }
 }
 
-private const val EMPHASIS_TRANSPARENCY = .3f
+private const val EmphasisTransparency = .3f
