@@ -49,6 +49,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import io.getstream.chat.android.client.audio.audioHash
 import io.getstream.chat.android.client.extensions.durationInMs
 import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
@@ -259,7 +260,7 @@ internal fun AudioRecordAttachmentContentItemBase(
     val attachmentUrl = attachment.assetUrl ?: attachment.upload?.toUri()?.toString()
     val isCurrentAttachment = attachmentUrl == playerState.current.audioUri
     val trackProgress = playerState.current.playingProgress.takeIf { isCurrentAttachment }
-        ?: attachmentUrl?.let { playerState.seekTo.getOrDefault(it.hashCode(), 0f) } ?: 0f
+        ?: attachmentUrl?.let { playerState.seekTo.getOrDefault(attachment.audioHash, 0f) } ?: 0f
     val playing = isCurrentAttachment && playerState.current.isPlaying
     val waveform = when (playing) {
         true -> playerState.current.waveform

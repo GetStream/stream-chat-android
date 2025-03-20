@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.AudioState
 import io.getstream.chat.android.client.audio.WaveformExtractor
+import io.getstream.chat.android.client.audio.audioHash
 import io.getstream.chat.android.client.extensions.duration
 import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
@@ -100,7 +101,7 @@ internal class AudioRecordingAttachmentsGroupView : LinearLayoutCompat {
         super.onAttachedToWindow()
         logger.d { "[onAttachedToWindow] audioAttachments.size: ${audioAttachments?.size}" }
         val audioPlayer = ChatClient.instance().audioPlayer
-        val audioHashes = audioAttachments?.map { it.hashCode() }?.toHashSet() ?: return
+        val audioHashes = audioAttachments?.map { it.audioHash }?.toHashSet() ?: return
         for (child in children) {
             if (child !is AudioRecordPlayerView) continue
             val audioHash = child.audioHash ?: continue
@@ -156,8 +157,7 @@ internal class AudioRecordingAttachmentsGroupView : LinearLayoutCompat {
             }
 
             val audioPlayer = ChatClient.instance().audioPlayer
-            val audioHash = attachment.hashCode()
-
+            val audioHash = attachment.audioHash
             audioPlayer.registerStateChange(playerView, audioHash)
             playerView.registerButtonsListeners(audioPlayer, attachment, audioHash)
             playerView.audioHash = audioHash
@@ -177,7 +177,7 @@ internal class AudioRecordingAttachmentsGroupView : LinearLayoutCompat {
         logger.d { "[resetCurrentAttachments] no args" }
         val audioPlayer = ChatClient.instance().audioPlayer
         audioAttachments.forEach { attachment ->
-            val audioHash = attachment.hashCode()
+            val audioHash = attachment.audioHash
             logger.v { "[resetCurrentAttachments] audioHash: $audioHash" }
             audioPlayer.resetAudio(audioHash)
         }
@@ -213,7 +213,7 @@ internal class AudioRecordingAttachmentsGroupView : LinearLayoutCompat {
             audioPlayer.clearTracks()
             audioAttachments?.forEachIndexed { index, attachment ->
                 attachment.assetUrl?.also {
-                    val curAudioHash = it.hashCode()
+                    val curAudioHash = attachment.audioHash
                     audioPlayer.registerTrack(it, curAudioHash, index)
                 }
             }
@@ -233,15 +233,12 @@ internal class AudioRecordingAttachmentsGroupView : LinearLayoutCompat {
 
         setOnSeekbarMoveListeners({
             logger.v { "[onSeekBarStart] audioHash: $audioHash" }
-            audioPlayer.startSeek(attachment.hashCode())
+            audioPlayer.startSeek(attachment.audioHash)
         }, { progress ->
             val durationInSeconds = attachment.duration ?: NULL_DURATION
             val positionInMs = progressToMillis(progress, durationInSeconds)
             logger.v { "[onSeekBarStop] audioHash: $audioHash, progress: $progress, duration: $durationInSeconds" }
-            audioPlayer.seekTo(
-                positionInMs,
-                attachment.hashCode(),
-            )
+            audioPlayer.seekTo(positionInMs, attachment.audioHash)
         })
     }
 
@@ -255,7 +252,7 @@ internal class AudioRecordingAttachmentsGroupView : LinearLayoutCompat {
      */
     public fun unbind() {
         // extractor.stop()
-        audioAttachments?.map { attachment -> attachment.hashCode() }
+        audioAttachments?.map { attachment -> attachment.audioHash }
             ?.let(ChatClient.instance().audioPlayer::removeAudios)
     }
 }
