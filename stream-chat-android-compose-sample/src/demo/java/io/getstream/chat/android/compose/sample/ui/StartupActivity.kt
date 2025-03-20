@@ -25,7 +25,9 @@ import androidx.lifecycle.lifecycleScope
 import io.getstream.chat.android.compose.sample.BuildConfig
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
+import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.feature.channel.list.ChannelsActivity
+import io.getstream.chat.android.compose.sample.ui.chats.ChatsActivity
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
 import kotlinx.coroutines.launch
 
@@ -34,10 +36,12 @@ import kotlinx.coroutines.launch
  * one of the following screens:
  *
  * - Login screen, if the user is not authenticated
- * - Channels screen, if the user is authenticated
+ * - Chat or Channels screen, if the user is authenticated
  * - Messages screen, if the user is coming from a push notification
  */
 class StartupActivity : AppCompatActivity() {
+
+    private val settings by lazy { customSettings() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,20 +58,35 @@ class StartupActivity : AppCompatActivity() {
                     val messageId = intent.getStringExtra(KEY_MESSAGE_ID)
                     val parentMessageId = intent.getStringExtra(KEY_PARENT_MESSAGE_ID)
 
-                    TaskStackBuilder.create(this@StartupActivity)
-                        .addNextIntent(ChannelsActivity.createIntent(this@StartupActivity))
-                        .addNextIntent(
-                            MessagesActivity.createIntent(
-                                context = this@StartupActivity,
+                    if (settings.isAdaptiveLayoutEnabled) {
+                        startActivity(
+                            ChatsActivity.createIntent(
+                                context = applicationContext,
                                 channelId = channelId,
                                 messageId = messageId,
                                 parentMessageId = parentMessageId,
                             ),
                         )
-                        .startActivities()
+                    } else {
+                        TaskStackBuilder.create(applicationContext)
+                            .addNextIntent(ChannelsActivity.createIntent(applicationContext))
+                            .addNextIntent(
+                                MessagesActivity.createIntent(
+                                    context = applicationContext,
+                                    channelId = channelId,
+                                    messageId = messageId,
+                                    parentMessageId = parentMessageId,
+                                ),
+                            )
+                            .startActivities()
+                    }
                 } else {
-                    // Logged in, navigate to the channels screen
-                    startActivity(ChannelsActivity.createIntent(this@StartupActivity))
+                    // User is logged in, navigate to the chats or channels screen
+                    if (settings.isAdaptiveLayoutEnabled) {
+                        startActivity(ChatsActivity.createIntent(applicationContext))
+                    } else {
+                        startActivity(ChannelsActivity.createIntent(applicationContext))
+                    }
                 }
             } else {
                 // Not logged in, start with the login screen
