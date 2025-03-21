@@ -153,7 +153,7 @@ internal class DtoMapping(
         pinned = null,
         pinned_at = null,
         pinned_by = null,
-        quoted_message_id = replyMessageId,
+        quoted_message_id = replyMessage?.id,
         shadowed = false,
         show_in_channel = showInChannel,
         silent = silent,

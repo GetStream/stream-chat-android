@@ -149,7 +149,7 @@ internal class DtoMappingTest {
             pinned = null,
             pinned_at = null,
             pinned_by = null,
-            quoted_message_id = message.replyMessageId,
+            quoted_message_id = message.replyMessage?.id,
             shadowed = false,
             show_in_channel = message.showInChannel,
             silent = message.silent,

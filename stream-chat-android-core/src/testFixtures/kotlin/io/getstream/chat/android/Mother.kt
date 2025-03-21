@@ -247,7 +247,7 @@ public fun randomDraftMessage(
     extraData: Map<String, Any> = mapOf(),
     silent: Boolean = randomBoolean(),
     showInChannel: Boolean = randomBoolean(),
-    replyMessageId: String? = randomString(),
+    replyMessage: Message? = randomMessage(),
 ): DraftMessage = DraftMessage(
     id = id,
     cid = cid,
@@ -259,7 +259,7 @@ public fun randomDraftMessage(
     extraData = extraData,
     silent = silent,
     showInChannel = showInChannel,
-    replyMessageId = replyMessageId,
+    replyMessage = replyMessage,
 )
 
 public fun randomMessage(

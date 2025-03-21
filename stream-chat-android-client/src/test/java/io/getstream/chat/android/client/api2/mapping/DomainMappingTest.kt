@@ -124,18 +124,20 @@ internal class DomainMappingTest {
         val draftMessageResponse = randomDownstreamDraftDto()
         val sut = Fixture()
             .get()
-        val expectedMappedDraftMessage = DraftMessage(
-            id = draftMessageResponse.message.id,
-            cid = draftMessageResponse.channel_cid,
-            text = draftMessageResponse.message.text,
-            parentId = draftMessageResponse.parent_message?.id,
-            replyMessageId = draftMessageResponse.quoted_message?.id,
-            attachments = with(sut) { draftMessageResponse.message.attachments?.map { it.toDomain() } ?: emptyList() },
-            mentionedUsersIds = draftMessageResponse.message.mentioned_users?.map { it.id } ?: emptyList(),
-            extraData = draftMessageResponse.message.extraData ?: emptyMap(),
-            silent = draftMessageResponse.message.silent,
-            showInChannel = draftMessageResponse.message.show_in_channel,
-        )
+        val expectedMappedDraftMessage = with(sut) {
+            DraftMessage(
+                id = draftMessageResponse.message.id,
+                cid = draftMessageResponse.channel_cid,
+                text = draftMessageResponse.message.text,
+                parentId = draftMessageResponse.parent_message?.id,
+                replyMessage = draftMessageResponse.quoted_message?.toDomain(),
+                attachments = with(sut) { draftMessageResponse.message.attachments?.map { it.toDomain() } ?: emptyList() },
+                mentionedUsersIds = draftMessageResponse.message.mentioned_users?.map { it.id } ?: emptyList(),
+                extraData = draftMessageResponse.message.extraData ?: emptyMap(),
+                silent = draftMessageResponse.message.silent,
+                showInChannel = draftMessageResponse.message.show_in_channel,
+            )
+        }
 
         val result = with(sut) {
             draftMessageResponse.toDomain()

@@ -71,9 +71,9 @@ public data class DraftMessage(
     val showInChannel: Boolean = false,
 
     /**
-     * The ID of the quoted message, if the message is a quoted reply.
+     * The message that is being replied to.
      */
-    val replyMessageId: String? = null,
+    val replyMessage: Message? = null,
 
 ) : CustomObject, ComparableFieldProvider {
 
@@ -99,11 +99,9 @@ public data class DraftMessage(
     @Suppress("MagicNumber")
     public fun identifierHash(): Long {
         var result = id.hashCode()
-
-        replyMessageId.hashCode().takeIf { it != 0 }?.let { replyHash ->
-            result = 31 * result + replyHash
+        parentId?.hashCode()?.let { parentIdHash ->
+            result = 31 * result + parentIdHash
         }
-
         return result.toLong()
     }
 
@@ -117,7 +115,7 @@ public data class DraftMessage(
         if (mentionedUsersIds.isNotEmpty()) append(", mentionedUsersIds=").append(mentionedUsersIds)
         append(", silent=").append(silent)
         append(", showInChannel=").append(showInChannel)
-        if (replyMessageId != null) append(", replyMessageId=").append(replyMessageId)
+        if (replyMessage != null) append(", replyMessage=").append(replyMessage)
         if (extraData.isNotEmpty()) append(", extraData=").append(extraData)
         append(")")
     }.toString()
@@ -137,7 +135,7 @@ public data class DraftMessage(
         private var extraData: Map<String, Any> = mapOf()
         private var silent: Boolean = false
         private var showInChannel: Boolean = false
-        private var replyMessageId: String? = null
+        private var replyMessage: Message? = null
 
         public constructor(message: DraftMessage) : this() {
             id = message.id
@@ -149,7 +147,7 @@ public data class DraftMessage(
             extraData = message.extraData
             silent = message.silent
             showInChannel = message.showInChannel
-            replyMessageId = message.replyMessageId
+            replyMessage = message.replyMessage
         }
 
         public fun withId(id: String): Builder = apply { this.id = id }
@@ -163,7 +161,7 @@ public data class DraftMessage(
         public fun withExtraData(extraData: Map<String, Any>): Builder = apply { this.extraData = extraData }
         public fun withSilent(silent: Boolean): Builder = apply { this.silent = silent }
         public fun withShowInChannel(showInChannel: Boolean): Builder = apply { this.showInChannel = showInChannel }
-        public fun withReplyMessageId(replyMessageId: String?): Builder = apply { this.replyMessageId = replyMessageId }
+        public fun withReplyMessage(replyMessage: Message?): Builder = apply { this.replyMessage = replyMessage }
 
         public fun build(): DraftMessage {
             return DraftMessage(
@@ -176,7 +174,7 @@ public data class DraftMessage(
                 extraData = extraData,
                 silent = silent,
                 showInChannel = showInChannel,
-                replyMessageId = replyMessageId,
+                replyMessage = replyMessage,
             )
         }
     }

@@ -215,7 +215,7 @@ internal class DomainMapping(
             cid = channel_cid,
             id = message.id,
             parentId = parent_message?.id,
-            replyMessageId = quoted_message?.id,
+            replyMessage = quoted_message?.toDomain(),
             showInChannel = message.show_in_channel,
             mentionedUsersIds = message.mentioned_users?.map { it.id } ?: emptyList(),
             silent = message.silent,
