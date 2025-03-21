@@ -17,6 +17,7 @@
 package io.getstream.chat.android.state.plugin.listener.internal
 
 import io.getstream.chat.android.randomDraftMessage
+import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.result.Error
@@ -91,6 +92,8 @@ internal class DraftMessageListenerStateTest {
 
         listener.onQueryDraftMessagesResult(
             Result.Success(draftMessages),
+            randomInt(),
+            randomInt(),
         )
 
         draftMessages.forEach { message ->
@@ -100,7 +103,11 @@ internal class DraftMessageListenerStateTest {
 
     @Test
     fun `onQueryDraftMessagesResult should not update state on error`() = runTest {
-        listener.onQueryDraftMessagesResult(Result.Failure(Error.GenericError("")))
+        listener.onQueryDraftMessagesResult(
+            Result.Failure(Error.GenericError("")),
+            randomInt(),
+            randomInt(),
+        )
 
         verify(mutableGlobalState, never()).updateDraftMessage(any())
     }
