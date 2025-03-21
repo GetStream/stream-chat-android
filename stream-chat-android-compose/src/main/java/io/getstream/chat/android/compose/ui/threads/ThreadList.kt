@@ -222,7 +222,10 @@ private fun Threads(
     }
     Box(modifier = modifier) {
         LazyColumn(state = listState) {
-            items(threads) { thread ->
+            items(
+                items = threads,
+                key = Thread::parentMessageId
+            ) { thread ->
                 itemContent(thread)
             }
             if (isLoadingMore) {
