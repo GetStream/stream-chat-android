@@ -66,6 +66,7 @@ import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.client.api2.model.response.CreateVideoCallResponse
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.FileUploadConfigDto
+import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
 import io.getstream.chat.android.client.api2.model.response.TokenResponse
 import io.getstream.chat.android.client.api2.model.response.UnblockUserResponse
@@ -212,6 +213,12 @@ internal object Mother {
     fun randomDraftMessageResponse(
         draft: DownstreamDraftDto = randomDownstreamDraftDto(),
     ): DraftMessageResponse = DraftMessageResponse(draft)
+
+    fun randomQueryDraftMessagesResponse(
+        drafts: List<DownstreamDraftDto> = (0 until positiveRandomInt(10)).map { randomDownstreamDraftDto() },
+    ): QueryDraftMessagesResponse = QueryDraftMessagesResponse(
+        drafts = drafts
+    )
 
     fun randomDownstreamDraftDto(
         message: DownstreamDraftMessageDto = randomDownstreamDraftMessageDto(),

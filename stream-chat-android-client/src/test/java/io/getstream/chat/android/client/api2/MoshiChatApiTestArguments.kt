@@ -79,6 +79,15 @@ internal object MoshiChatApiTestArguments {
     fun createDraftMessageInput() = draftMessageResponseArguments()
 
     @JvmStatic
+    fun queryDraftMessageInput() = listOf(
+        Arguments.of(
+            RetroSuccess(Mother.randomQueryDraftMessagesResponse()).toRetrofitCall(),
+            Result.Success::class,
+        ),
+        Arguments.of(RetroError<MessageResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
+
+    @JvmStatic
     fun updateMessageInput() = messageResponseArguments()
 
     @JvmStatic
