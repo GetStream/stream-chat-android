@@ -299,6 +299,8 @@ public class ChannelClient internal constructor(
             is AIIndicatorUpdatedEvent -> event.cid == cid
             is AIIndicatorClearEvent -> event.cid == cid
             is AIIndicatorStopEvent -> event.cid == cid
+            is DraftMessageUpdatedEvent -> event.draftMessage.cid == cid
+            is DraftMessageDeletedEvent -> event.draftMessage.cid == cid
             is HealthEvent,
             is NotificationChannelMutesUpdatedEvent,
             is NotificationMutesUpdatedEvent,
@@ -313,8 +315,6 @@ public class ChannelClient internal constructor(
             is DisconnectedEvent,
             is ErrorEvent,
             is MarkAllReadEvent,
-            is DraftMessageUpdatedEvent,
-            is DraftMessageDeletedEvent,
             -> false
         }
     }

@@ -56,7 +56,6 @@ import io.getstream.chat.android.client.api2.model.requests.PollRequest
 import io.getstream.chat.android.client.api2.model.requests.PollUpdateRequest
 import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
@@ -242,8 +241,6 @@ internal class MoshiChatApiTest {
         result `should be instance of` expected
         verify(api, times(1)).queryDraftMessages(any())
     }
-
-
 
     @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#updateMessageInput")

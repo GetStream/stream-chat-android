@@ -217,7 +217,7 @@ internal object Mother {
     fun randomQueryDraftMessagesResponse(
         drafts: List<DownstreamDraftDto> = (0 until positiveRandomInt(10)).map { randomDownstreamDraftDto() },
     ): QueryDraftMessagesResponse = QueryDraftMessagesResponse(
-        drafts = drafts
+        drafts = drafts,
     )
 
     fun randomDownstreamDraftDto(
