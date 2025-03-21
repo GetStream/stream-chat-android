@@ -224,7 +224,7 @@ private fun Threads(
         LazyColumn(state = listState) {
             items(
                 items = threads,
-                key = Thread::parentMessageId
+                key = Thread::parentMessageId,
             ) { thread ->
                 itemContent(thread)
             }
