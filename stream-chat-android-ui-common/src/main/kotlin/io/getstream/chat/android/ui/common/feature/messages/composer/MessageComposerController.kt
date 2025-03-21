@@ -444,7 +444,7 @@ public class MessageComposerController(
 
         alsoSendToChannel.onEach { alsoSendToChannel ->
             state.value = state.value.copy(alsoSendToChannel = alsoSendToChannel)
-            currentDraftMessage.copy(showInChannel = alsoSendToChannel)
+            currentDraftMessage = currentDraftMessage.copy(showInChannel = alsoSendToChannel)
         }.launchIn(scope)
 
         ownCapabilities.onEach { ownCapabilities ->
@@ -484,6 +484,7 @@ public class MessageComposerController(
         currentDraftMessage = globalState.getDraftMessage(messageMode)
         setMessageInputInternal(currentDraftMessage.text, MessageInput.Source.DraftMessage)
         setAlsoSendToChannel(currentDraftMessage.showInChannel)
+        currentDraftMessage.replyMessage?.let { performMessageAction(Reply(it)) }
     }
 
     /**
@@ -522,6 +523,7 @@ public class MessageComposerController(
             }
             is Reply -> {
                 messageActions.value = (messageActions.value.filterNot { it is Reply } + messageAction).toSet()
+                currentDraftMessage = currentDraftMessage.copy(replyMessage = messageAction.message)
             }
             is Edit -> {
                 setMessageInputInternal(messageAction.message.text, MessageInput.Source.Edit)

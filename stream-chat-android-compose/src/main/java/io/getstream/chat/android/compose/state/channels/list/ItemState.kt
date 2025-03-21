@@ -39,7 +39,7 @@ public sealed class ItemState {
         val channel: Channel,
         val isMuted: Boolean = false,
         val typingUsers: List<User> = emptyList(),
-        val draftMessage: DraftMessage?,
+        val draftMessage: DraftMessage? = null,
     ) : ItemState() {
         override val key: String = channel.cid
     }
