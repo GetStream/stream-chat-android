@@ -58,8 +58,12 @@ public interface DraftMessageListener {
      * Side effect to be invoked when the original request is completed with a response.
      *
      * @param result [Result] response from the original request.
+     * @param offset The offset of the query.
+     * @param limit The limit of the query.
      */
     public suspend fun onQueryDraftMessagesResult(
         result: Result<List<DraftMessage>>,
+        offset: Int?,
+        limit: Int?,
     )
 }

@@ -188,7 +188,10 @@ internal interface ChatApi {
     ): Call<Unit>
 
     @CheckResult
-    fun queryDraftMessages(): Call<List<DraftMessage>>
+    fun queryDraftMessages(
+        offset: Int?,
+        limit: Int?,
+    ): Call<List<DraftMessage>>
 
     @CheckResult
     fun muteChannel(

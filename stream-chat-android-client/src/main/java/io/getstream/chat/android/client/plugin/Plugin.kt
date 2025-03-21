@@ -463,7 +463,11 @@ public interface Plugin :
         /* No-Op */
     }
 
-    override suspend fun onQueryDraftMessagesResult(result: Result<List<DraftMessage>>) {
+    override suspend fun onQueryDraftMessagesResult(
+        result: Result<List<DraftMessage>>,
+        offset: Int?,
+        limit: Int?,
+    ) {
         /* No-Op */
     }
 }

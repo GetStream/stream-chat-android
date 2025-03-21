@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.api2.endpoint
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
@@ -69,7 +70,9 @@ internal interface MessageApi {
     ): RetrofitCall<CompletableResponse>
 
     @POST("/drafts/query")
-    fun queryDraftMessages(): RetrofitCall<QueryDraftMessagesResponse>
+    fun queryDraftMessages(
+        @Body request: QueryDraftMessagesRequest,
+    ): RetrofitCall<QueryDraftMessagesResponse>
 
     @GET("/messages/{id}")
     fun getMessage(@Path("id") messageId: String): RetrofitCall<MessageResponse>

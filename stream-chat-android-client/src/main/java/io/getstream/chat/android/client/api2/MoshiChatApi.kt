@@ -65,6 +65,7 @@ import io.getstream.chat.android.client.api2.model.requests.PollRequest
 import io.getstream.chat.android.client.api2.model.requests.PollUpdateRequest
 import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
@@ -250,8 +251,16 @@ constructor(
         parentId = message.parentId,
     ).toUnitCall()
 
-    override fun queryDraftMessages(): Call<List<DraftMessage>> =
-        messageApi.queryDraftMessages().mapDomain { response ->
+    override fun queryDraftMessages(
+        offset: Int?,
+        limit: Int?,
+    ): Call<List<DraftMessage>> =
+        messageApi.queryDraftMessages(
+            QueryDraftMessagesRequest(
+                offset = offset,
+                limit = limit,
+            ),
+        ).mapDomain { response ->
             response.drafts.map { it.toDomain() }
         }
 

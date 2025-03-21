@@ -54,6 +54,7 @@ import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.call.Call
 import io.getstream.result.call.CoroutineCall
+import io.getstream.result.call.enqueue
 import io.getstream.result.onSuccessSuspend
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -219,13 +220,29 @@ internal class SyncManager(
 
     private suspend fun performSync() {
         logger.i { "[performSync] no args" }
-        chatClient.queryDraftMessages().await()
+        syncDraftMessages()
         val cids = logicRegistry.getActiveChannelsLogic().map { it.cid }.ifEmpty {
             logger.w { "[performSync] no active cids found" }
             repos.selectSyncState(currentUserId)?.activeChannelIds ?: emptyList()
         }
         mutex.withLock {
             performSync(cids)
+        }
+    }
+
+    private fun syncDraftMessages(
+        offset: Int = 0,
+        limit: Int = QUERY_DRAFT_MESSAGES_LIMIT,
+    ) {
+        chatClient.queryDraftMessages(
+            offset = offset,
+            limit = limit,
+        ).enqueue {
+            it.onSuccess {
+                if (it.size >= limit) {
+                    syncDraftMessages(offset + limit, limit)
+                }
+            }
         }
     }
 
@@ -678,5 +695,9 @@ internal class SyncManager(
 
     private enum class State {
         Idle, Syncing
+    }
+
+    companion object {
+        const val QUERY_DRAFT_MESSAGES_LIMIT = 100
     }
 }

@@ -73,8 +73,14 @@ internal class DraftMessageListenerState(
      * is successful.
      *
      * @param result [Result] response from the original request.
+     * @param offset The offset of the query.
+     * @param limit The limit of the query.
      */
-    override suspend fun onQueryDraftMessagesResult(result: Result<List<DraftMessage>>) {
+    override suspend fun onQueryDraftMessagesResult(
+        result: Result<List<DraftMessage>>,
+        offset: Int?,
+        limit: Int?,
+    ) {
         result.onSuccess { draftMessages ->
             draftMessages.forEach { draftMessage ->
                 mutableGlobalState.updateDraftMessage(draftMessage)

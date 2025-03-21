@@ -1952,15 +1952,27 @@ internal constructor(
             }
     }
 
+    /**
+     * Query draft messages for the current user.
+     * The query can be paginated using [offset] and [limit].
+     *
+     * @param offset The offset to start querying from.
+     * @param limit The number of draft messages to return.
+     *
+     * @return Executable async [Call] responsible for querying draft messages.
+     */
     @CheckResult
-    public fun queryDraftMessages(): Call<List<DraftMessage>> {
-        return api.queryDraftMessages()
+    public fun queryDraftMessages(
+        offset: Int?,
+        limit: Int?,
+    ): Call<List<DraftMessage>> {
+        return api.queryDraftMessages(offset, limit)
             .retry(userScope, retryPolicy)
             .doOnResult(userScope) { result ->
                 logger.i { "[queryDraftMessages] result: ${result.stringify { it.toString() }}" }
                 plugins.forEach { listener ->
                     logger.v { "[queryDraftMessages] #doOnResult; plugin: ${listener::class.qualifiedName}" }
-                    listener.onQueryDraftMessagesResult(result)
+                    listener.onQueryDraftMessagesResult(result, offset, limit)
                 }
             }
     }
