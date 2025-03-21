@@ -51,5 +51,7 @@ public data class MessageInput(
          * The message was created internally by the SDK
          */
         public data object MentionSelected : Internal()
+
+        public data object DraftMessage : Internal()
     }
 }

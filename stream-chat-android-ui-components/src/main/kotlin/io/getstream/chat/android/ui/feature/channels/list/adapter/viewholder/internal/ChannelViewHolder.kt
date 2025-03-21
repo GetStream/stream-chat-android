@@ -27,9 +27,9 @@ import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.client.extensions.currentUserUnreadCount
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
-import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.context
@@ -224,17 +224,23 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         binding.itemForegroundView.apply {
             diff.run {
                 val lastMessage = channelItem.channel.getLastMessage()
-                val anonymousNameChanged = channelItem.channel.isAnonymousChannel() && diff.usersChanged
-                if (nameChanged || typingUsersChanged || lastMessageChanged || anonymousNameChanged) {
-                    configureChannelNameLabel(lastMessage, channelItem.typingUsers)
+                if (channelNameLabelChanged(channelItem.channel.isAnonymousChannel())) {
+                    configureChannelNameLabel(lastMessage, channelItem)
                 }
 
                 if (avatarViewChanged) {
                     configureAvatarView()
                 }
-                if (lastMessageChanged || typingUsersChanged) {
-                    lastMessageLabel.isVisible = channelItem.typingUsers.isEmpty() && lastMessage.isNotNull()
-                    configureLastMessageLabelAndTimestamp(lastMessage)
+                if (lastMessageChanged || typingUsersChanged || draftMessageChanged) {
+                    lastMessageLabel.isVisible =
+                        channelItem.typingUsers.isEmpty()
+                            .and(
+                                lastMessage.isNotNull()
+                                    .or(channelItem.draftMessage.isNotNull()),
+                            )
+                    draftMessageLabel.isVisible = channelItem.draftMessage.isNotNull()
+                        .and(channelItem.typingUsers.isEmpty())
+                    configureLastMessageLabelAndTimestamp(lastMessage, channelItem.draftMessage)
                     typingIndicatorView.setTypingUsers(channelItem.typingUsers)
                 }
 
@@ -251,16 +257,23 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         }
     }
 
+    private fun ChannelListPayloadDiff.channelNameLabelChanged(isAnonymousChannel: Boolean): Boolean =
+        nameChanged
+            .or(typingUsersChanged)
+            .or(lastMessageChanged)
+            .or(usersChanged.and(isAnonymousChannel))
+            .or(draftMessageChanged)
+
     private fun StreamUiChannelListItemForegroundViewBinding.configureChannelNameLabel(
         lastMessage: Message?,
-        typingUsers: List<User>,
+        channelItem: ChannelListItem.ChannelItem,
     ) {
         channelNameLabel.text = ChatUI.channelNameFormatter.formatChannelName(
             channel = channel,
             currentUser = ChatUI.currentUserProvider.getCurrentUser(),
         )
 
-        if (lastMessage != null || typingUsers.isNotEmpty()) {
+        if (lastMessage != null || channelItem.typingUsers.isNotEmpty() || channelItem.draftMessage != null) {
             channelNameLabel.translationY = 0f
         } else if (channelNameLabel.height > 0) {
             channelNameLabel.translationY = yDiffBetweenCenters(channelNameLabel, foregroundView)
@@ -277,20 +290,24 @@ internal class ChannelViewHolder @JvmOverloads constructor(
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureLastMessageLabelAndTimestamp(
         lastMessage: Message?,
+        draftMessage: DraftMessage?,
     ) {
-        lastMessageTimeLabel.isVisible = lastMessage.isNotNull()
-
-        lastMessage ?: return run {
-            lastMessageLabel.text = ""
-            lastMessageTimeLabel.text = ""
-        }
-
-        lastMessageLabel.text = ChatUI.messagePreviewFormatter.formatMessagePreview(
-            channel = channel,
-            message = lastMessage,
-            currentUser = ChatUI.currentUserProvider.getCurrentUser(),
-        )
-        lastMessageTimeLabel.text = ChatUI.dateFormatter.formatDate(channel.lastMessageAt)
+        lastMessageTimeLabel.isVisible = lastMessage.isNotNull().and(draftMessage == null)
+        lastMessageTimeLabel.text =
+            lastMessage
+                ?.takeUnless { draftMessage != null }
+                ?.let { ChatUI.dateFormatter.formatDate(channel.lastMessageAt) }
+                ?: ""
+        lastMessageLabel.text =
+            draftMessage?.text
+                ?: lastMessage?.let {
+                    ChatUI.messagePreviewFormatter.formatMessagePreview(
+                        channel = channel,
+                        message = it,
+                        currentUser = ChatUI.currentUserProvider.getCurrentUser(),
+                    )
+                }
+                ?: ""
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureUnreadCountBadge() {
@@ -369,6 +386,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
             height = style.itemHeight
         }
         channelNameLabel.setTextStyle(style.channelTitleText)
+        draftMessageLabel.setTextStyle(style.draftMessageLabel)
         lastMessageLabel.setTextStyle(style.lastMessageText)
         lastMessageTimeLabel.setTextStyle(style.lastMessageDateText)
         unreadCountBadge.setTextStyle(style.unreadMessageCounterText)

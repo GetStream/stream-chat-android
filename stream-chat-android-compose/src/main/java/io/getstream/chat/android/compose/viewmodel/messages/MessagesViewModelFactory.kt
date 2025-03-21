@@ -73,6 +73,8 @@ import java.io.File
  * @param showThreadSeparatorInEmptyThread Configures if we show a thread separator when threads are empty.
  * Adds the separator item when the value is `true`.
  * @param threadLoadOlderToNewer Configures if the thread should load older messages to newer messages.
+ * @param isComposerLinkPreviewEnabled If the link preview is enabled in the composer.
+ * @param isComposerDraftMessageEnabled If the draft message is enabled in the composer.
  */
 public class MessagesViewModelFactory(
     private val context: Context,
@@ -104,6 +106,7 @@ public class MessagesViewModelFactory(
     private val showThreadSeparatorInEmptyThread: Boolean = false,
     private val threadLoadOlderToNewer: Boolean = false,
     private val isComposerLinkPreviewEnabled: Boolean = false,
+    private val isComposerDraftMessageEnabled: Boolean = false,
 ) : ViewModelProvider.Factory {
 
     private val channelStateFlow: StateFlow<ChannelState?> by lazy {
@@ -127,8 +130,11 @@ public class MessagesViewModelFactory(
                     userLookupHandler = userLookupHandler,
                     fileToUri = fileToUriConverter,
                     channelCid = channelId,
-                    maxAttachmentCount = maxAttachmentCount,
-                    isLinkPreviewEnabled = isComposerLinkPreviewEnabled,
+                    config = MessageComposerController.Config(
+                        maxAttachmentCount = maxAttachmentCount,
+                        isLinkPreviewEnabled = isComposerLinkPreviewEnabled,
+                        isDraftMessageEnabled = isComposerDraftMessageEnabled,
+                    ),
                 ),
             )
         },

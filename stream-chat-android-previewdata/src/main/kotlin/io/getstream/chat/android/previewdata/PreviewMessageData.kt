@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.previewdata
 
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.Reaction
@@ -105,5 +106,11 @@ public object PreviewMessageData {
         createdAt = Date(),
         type = MessageType.REGULAR,
         mentionedUsers = listOf(PreviewUserData.user7),
+    )
+
+    public val draftMessage: DraftMessage = DraftMessage(
+        id = "draft-message",
+        cid = "channel-id",
+        text = "Some text for the draft message",
     )
 }
