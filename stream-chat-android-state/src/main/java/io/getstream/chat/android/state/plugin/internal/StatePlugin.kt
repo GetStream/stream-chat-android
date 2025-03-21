@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
+import io.getstream.chat.android.client.plugin.listeners.DraftMessageListener
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.plugin.listeners.FetchCurrentUserListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
@@ -52,6 +53,7 @@ import io.getstream.chat.android.state.plugin.listener.internal.ChannelMarkReadL
 import io.getstream.chat.android.state.plugin.listener.internal.DeleteChannelListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.DeleteMessageListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.DeleteReactionListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.DraftMessageListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.EditMessageListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.FetchCurrentUserListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.HideChannelListenerState
@@ -88,7 +90,7 @@ import kotlin.reflect.KClass
  * @param stateRegistry [StateRegistry]
  * @param syncManager [SyncManager]
  * @param eventHandler [EventHandler]
- * @param globalState [GlobalState]
+ * @param mutableGlobalState [GlobalState]
  */
 @InternalStreamChatApi
 @Suppress("LongParameterList")
@@ -100,7 +102,7 @@ public class StatePlugin internal constructor(
     private val stateRegistry: StateRegistry,
     private val syncManager: SyncManager,
     private val eventHandler: EventHandler,
-    private val globalState: MutableGlobalState,
+    private val mutableGlobalState: MutableGlobalState,
     private val queryingChannelsFree: MutableStateFlow<Boolean>,
     private val statePluginConfig: StatePluginConfig,
 ) : Plugin,
@@ -115,17 +117,18 @@ public class StatePlugin internal constructor(
     DeleteReactionListener by DeleteReactionListenerState(logic, clientState),
     DeleteChannelListener by DeleteChannelListenerState(logic, clientState),
     SendReactionListener by SendReactionListenerState(logic, clientState),
-    DeleteMessageListener by DeleteMessageListenerState(logic, clientState, globalState),
+    DeleteMessageListener by DeleteMessageListenerState(logic, clientState, mutableGlobalState),
     SendGiphyListener by SendGiphyListenerState(logic),
     ShuffleGiphyListener by ShuffleGiphyListenerState(logic),
     SendMessageListener by SendMessageListenerState(logic),
     TypingEventListener by TypingEventListenerState(stateRegistry),
     SendAttachmentListener by SendAttachmentListenerState(logic),
-    FetchCurrentUserListener by FetchCurrentUserListenerState(clientState, globalState),
+    FetchCurrentUserListener by FetchCurrentUserListenerState(clientState, mutableGlobalState),
     QueryThreadsListener by QueryThreadsListenerState(logic),
-    BlockUserListener by BlockUserListenerState(globalState),
-    UnblockUserListener by UnblockUserListenerState(globalState),
-    QueryBlockedUsersListener by QueryBlockedUsersListenerState(globalState) {
+    BlockUserListener by BlockUserListenerState(mutableGlobalState),
+    DraftMessageListener by DraftMessageListenerState(mutableGlobalState),
+    UnblockUserListener by UnblockUserListenerState(mutableGlobalState),
+    QueryBlockedUsersListener by QueryBlockedUsersListenerState(mutableGlobalState) {
 
     private val lazyErrorHandler: ErrorHandler by lazy { errorHandlerFactory.create() }
     override fun getErrorHandler(): ErrorHandler = lazyErrorHandler
@@ -149,7 +152,7 @@ public class StatePlugin internal constructor(
         EventHandler::class -> eventHandler as T
         LogicRegistry::class -> logic as T
         StateRegistry::class -> stateRegistry as T
-        GlobalState::class -> globalState as T
+        GlobalState::class -> mutableGlobalState as T
         StatePluginConfig::class -> statePluginConfig as T
         else -> null
     }
