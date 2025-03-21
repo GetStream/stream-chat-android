@@ -21,6 +21,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
@@ -218,6 +219,7 @@ public fun ChatsScreen(
                                 factory = threadsViewModelFactory,
                             )
                             ThreadList(
+                                modifier = Modifier.fillMaxSize(),
                                 viewModel = viewModel,
                                 onThreadClick = { thread ->
                                     navigator.navigateTo(
