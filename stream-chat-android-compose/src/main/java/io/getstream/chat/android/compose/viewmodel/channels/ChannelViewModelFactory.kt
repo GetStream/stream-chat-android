@@ -46,7 +46,7 @@ public class ChannelViewModelFactory(
     private val memberLimit: Int = ChannelListViewModel.DEFAULT_MEMBER_LIMIT,
     private val messageLimit: Int = ChannelListViewModel.DEFAULT_MESSAGE_LIMIT,
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
-    private val isDraftMessageEnabled: Boolean = true,
+    private val isDraftMessageEnabled: Boolean = false,
 ) : ViewModelProvider.Factory {
 
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(

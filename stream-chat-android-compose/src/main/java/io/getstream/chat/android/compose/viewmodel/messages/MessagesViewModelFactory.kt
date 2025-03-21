@@ -106,7 +106,7 @@ public class MessagesViewModelFactory(
     private val showThreadSeparatorInEmptyThread: Boolean = false,
     private val threadLoadOlderToNewer: Boolean = false,
     private val isComposerLinkPreviewEnabled: Boolean = false,
-    private val isComposerDraftMessageEnabled: Boolean = true,
+    private val isComposerDraftMessageEnabled: Boolean = false,
 ) : ViewModelProvider.Factory {
 
     private val channelStateFlow: StateFlow<ChannelState?> by lazy {
