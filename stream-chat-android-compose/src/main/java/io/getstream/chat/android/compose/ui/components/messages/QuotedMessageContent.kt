@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.components.messages
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -81,11 +82,13 @@ public fun QuotedMessageContent(
         ChatTheme.otherMessageTheme.quoted.backgroundBorder
     }
 
-    MessageBubble(
+    ChatTheme.componentFactory.MessageBubble(
         modifier = modifier.padding(messageBubblePadding),
+        message = message,
         shape = messageBubbleShape,
         color = messageBubbleColor,
         border = messageBubbleBorder,
+        contentPadding = PaddingValues(),
         content = {
             Row {
                 attachmentContent(message)

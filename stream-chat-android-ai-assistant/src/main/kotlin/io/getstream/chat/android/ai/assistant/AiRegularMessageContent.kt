@@ -18,21 +18,18 @@ package io.getstream.chat.android.ai.assistant
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isErrorOrFailed
-import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
-import io.getstream.chat.android.compose.ui.components.messages.MessageBubble
 import io.getstream.chat.android.compose.ui.components.messages.MessageContent
+import io.getstream.chat.android.compose.ui.components.messages.getMessageBubbleColor
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Message
@@ -67,25 +64,16 @@ public fun AiRegularMessageContent(
         }
     }
 
-    val messageBubbleColor = when {
-        message.isGiphyEphemeral() -> ChatTheme.colors.giphyMessageBackground
-        message.isDeleted() -> when (ownsMessage) {
-            true -> ChatTheme.ownMessageTheme.deletedBackgroundColor
-            else -> ChatTheme.otherMessageTheme.deletedBackgroundColor
-        }
-
-        else -> when (ownsMessage) {
-            true -> ChatTheme.ownMessageTheme.backgroundColor
-            else -> ChatTheme.otherMessageTheme.backgroundColor
-        }
-    }
+    val messageBubbleColor = getMessageBubbleColor(message, ownsMessage)
 
     if (!messageItem.isErrorOrFailed()) {
-        MessageBubble(
+        ChatTheme.componentFactory.MessageBubble(
             modifier = modifier,
+            message = message,
             shape = messageBubbleShape,
             color = messageBubbleColor,
             border = if (messageItem.isMine) null else BorderStroke(1.dp, ChatTheme.colors.borders),
+            contentPadding = PaddingValues(),
             content = {
                 MessageContent(
                     message = message,
@@ -110,10 +98,13 @@ public fun AiRegularMessageContent(
         )
     } else {
         Box(modifier = modifier) {
-            MessageBubble(
+            ChatTheme.componentFactory.MessageBubble(
                 modifier = Modifier.padding(end = 12.dp),
+                message = message,
                 shape = messageBubbleShape,
                 color = messageBubbleColor,
+                border = BorderStroke(1.dp, ChatTheme.colors.borders),
+                contentPadding = PaddingValues(),
                 content = {
                     MessageContent(
                         message = message,
@@ -137,13 +128,11 @@ public fun AiRegularMessageContent(
                 },
             )
 
-            Icon(
+            ChatTheme.componentFactory.MessageFailedIcon(
                 modifier = Modifier
                     .size(24.dp)
                     .align(BottomEnd),
-                painter = painterResource(id = io.getstream.chat.android.compose.R.drawable.stream_compose_ic_error),
-                contentDescription = null,
-                tint = ChatTheme.colors.errorAccent,
+                message = message,
             )
         }
     }
