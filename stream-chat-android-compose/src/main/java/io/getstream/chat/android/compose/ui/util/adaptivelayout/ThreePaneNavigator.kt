@@ -36,17 +36,25 @@ public class ThreePaneNavigator(
     private val _destinations = mutableStateListOf(*destinations.toTypedArray())
     internal val destinations: List<ThreePaneDestination<*>> get() = _destinations.toList()
 
-    internal val current: ThreePaneDestination<*> get() = _destinations.last()
-
     /**
      * Navigates to the provided [destination].
      *
      * @param destination The destination to navigate to.
+     * @param replace Whether to replace an existing destination with a new one of the same pane *(if it exists)*,
+     * or add it to the stack.
      * @param popUpTo The role of the pane to pop up to before navigating to the destination.
      */
-    public fun navigateTo(destination: ThreePaneDestination<*>, popUpTo: ThreePaneRole? = null) {
+    public fun navigateTo(
+        destination: ThreePaneDestination<*>,
+        replace: Boolean = false,
+        popUpTo: ThreePaneRole? = null,
+    ) {
         popUpTo?.let(::popUpTo)
-        _destinations.add(destination)
+        if (replace) {
+            replace(destination)
+        } else {
+            _destinations.add(destination)
+        }
     }
 
     /**
@@ -64,6 +72,23 @@ public class ThreePaneNavigator(
     internal fun popUpTo(pane: ThreePaneRole) {
         while (canNavigateBack() && _destinations[_destinations.lastIndex].pane != pane) {
             _destinations.removeAt(_destinations.lastIndex)
+        }
+    }
+
+    /**
+     * Replace an existing destination with a new one of the same pane *(if it exists)*.
+     */
+    private fun replace(destination: ThreePaneDestination<*>) {
+        val operator = { existing: ThreePaneDestination<*> ->
+            if (existing.pane == destination.pane) {
+                destination
+            } else {
+                existing
+            }
+        }
+        val iterator = _destinations.listIterator()
+        while (iterator.hasNext()) {
+            iterator.set(operator(iterator.next()))
         }
     }
 
