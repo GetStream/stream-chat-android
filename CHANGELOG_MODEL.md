@@ -55,6 +55,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
 
 ### ⬆️ Improved
 
@@ -66,6 +67,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
 
 ### ⬆️ Improved
 

@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.common.feature.messages.composer
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.AudioState
 import io.getstream.chat.android.client.audio.ProgressData
+import io.getstream.chat.android.client.audio.audioHash
 import io.getstream.chat.android.client.extensions.EXTRA_WAVEFORM_DATA
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
@@ -231,7 +232,7 @@ internal class AudioRecordingController(
             }
             return
         }
-        val audioHash = audioFile.hashCode()
+        val audioHash = state.attachment.audioHash
         logger.d { "[toggleRecordingPlayback] start playback: $audioHash" }
         audioPlayer.registerOnProgressStateChange(audioHash, ::onAudioPlayingProgress)
         audioPlayer.registerOnAudioStateChange(audioHash, ::onAudioStateChanged)
@@ -305,13 +306,13 @@ internal class AudioRecordingController(
             logger.w { "[seekRecordingTo] rejected (state is not Overview)" }
             return
         }
-        val audioFile = state.attachment.upload ?: run {
+        state.attachment.upload ?: run {
             logger.w { "[seekRecordingTo] rejected (audioFile is null)" }
             return
         }
         val positionInMs = (progress * state.durationInMs).toInt()
         logger.i { "[seekRecordingTo] progress: $progress (${positionInMs}ms), state: $state" }
-        val audioHash = audioFile.hashCode()
+        val audioHash = state.attachment.audioHash
         audioPlayer.seekTo(positionInMs, audioHash)
         setState(state.copy(playingProgress = progress))
     }

@@ -18,6 +18,8 @@ package io.getstream.chat.android.ui.common.feature.messages.list
 
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.audio.AudioState
+import io.getstream.chat.android.client.audio.audioHash
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.errors.extractCause
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -25,6 +27,7 @@ import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isError
 import io.getstream.chat.android.client.utils.message.isGiphy
@@ -128,7 +131,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -1598,6 +1600,7 @@ public class MessageListController(
     public fun deleteMessage(message: Message, hard: Boolean = false) {
         _messageActions.value = _messageActions.value - _messageActions.value.filterIsInstance<Delete>().toSet()
         removeOverlay()
+        pauseRunningAudioRecordings(message)
 
         chatClient.deleteMessage(message.id, hard)
             .enqueue(
@@ -2283,6 +2286,18 @@ public class MessageListController(
      */
     public fun setSystemMessageVisibility(areSystemMessagesVisible: Boolean) {
         _showSystemMessagesState.value = areSystemMessagesVisible
+    }
+
+    /** Pauses any running audio recordings from the given [Message] */
+    private fun pauseRunningAudioRecordings(message: Message) {
+        val audioRecordingsIds = message.attachments
+            .filter(Attachment::isAudioRecording)
+            .map(Attachment::audioHash)
+        val audioPlayer = chatClient.audioPlayer
+        val isCurrentlyPlaying = audioPlayer.currentState == AudioState.PLAYING
+        if (isCurrentlyPlaying && audioRecordingsIds.contains(audioPlayer.currentPlayingId)) {
+            audioPlayer.pause()
+        }
     }
 
     /**

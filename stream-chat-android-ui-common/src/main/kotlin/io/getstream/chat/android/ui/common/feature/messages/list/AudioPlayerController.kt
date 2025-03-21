@@ -21,6 +21,7 @@ import androidx.collection.MutableIntFloatMap
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.AudioState
 import io.getstream.chat.android.client.audio.ProgressData
+import io.getstream.chat.android.client.audio.audioHash
 import io.getstream.chat.android.client.extensions.duration
 import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
@@ -45,10 +46,11 @@ public class AudioPlayerController(
             logger.v { "[resetAudio] rejected (not an audio recording): ${attachment.type}" }
             return
         }
-        val audioHash = getRecordingUri(attachment)?.hashCode() ?: run {
+        getRecordingUri(attachment) ?: run {
             logger.v { "[resetAudio] rejected (no recordingUri): $attachment" }
             return
         }
+        val audioHash = attachment.audioHash
         val curState = state.value
         if (curState.current.playingId != audioHash) {
             logger.v { "[resetAudio] rejected (not playing): $audioHash" }
@@ -65,10 +67,11 @@ public class AudioPlayerController(
             logger.v { "[togglePlayback] rejected (not an audio recording): ${attachment.type}" }
             return
         }
-        val audioHash = getRecordingUri(attachment)?.hashCode() ?: run {
+        getRecordingUri(attachment) ?: run {
             logger.v { "[togglePlayback] rejected (no recordingUri): $attachment" }
             return
         }
+        val audioHash = attachment.audioHash
         val curState = state.value
         val currentPlayingId = audioPlayer.currentPlayingId
         val isCurrentTrack = curState.current.playingId == audioHash
@@ -91,10 +94,11 @@ public class AudioPlayerController(
             logger.v { "[changeSpeed] rejected (not an audio recording): ${attachment.type}" }
             return
         }
-        val audioHash = getRecordingUri(attachment)?.hashCode() ?: run {
+        getRecordingUri(attachment) ?: run {
             logger.v { "[changeSpeed] rejected (no recordingUri): $attachment" }
             return
         }
+        val audioHash = attachment.audioHash
         val curState = state.value
         if (curState.current.playingId != audioHash) {
             logger.v { "[startSeek] rejected (not playing): $audioHash" }
@@ -108,10 +112,11 @@ public class AudioPlayerController(
             logger.v { "[startSeek] rejected (not an audio recording): ${attachment.type}" }
             return
         }
-        val audioHash = getRecordingUri(attachment)?.hashCode() ?: run {
+        getRecordingUri(attachment) ?: run {
             logger.v { "[startSeek] rejected (no recordingUri): $attachment" }
             return
         }
+        val audioHash = attachment.audioHash
         val curState = state.value
         if (curState.current.playingId != audioHash) {
             logger.v { "[startSeek] rejected (not playing): $audioHash" }
@@ -138,10 +143,11 @@ public class AudioPlayerController(
             logger.v { "[seekTo] rejected (not an audio recording): ${attachment.type}" }
             return
         }
-        val audioHash = getRecordingUri(attachment)?.hashCode() ?: run {
+        getRecordingUri(attachment) ?: run {
             logger.v { "[seekTo] rejected (no recordingUri): $attachment" }
             return
         }
+        val audioHash = attachment.audioHash
         val curState = state.value
         val isCurrentAudio = curState.current.playingId == audioHash
         val durationInSeconds = attachment.duration ?: NULL_DURATION
@@ -182,7 +188,7 @@ public class AudioPlayerController(
         }
 
         val curState = state.value
-        val audioHash = recordingUri.hashCode()
+        val audioHash = attachment.audioHash
         val waveform = attachment.waveformData ?: emptyList()
         var playbackInMs = audioPlayer.getCurrentPositionInMs(audioHash)
         val durationInMs = ((attachment.duration ?: NULL_DURATION) * MILLIS_IN_SECOND).toInt()

@@ -50,6 +50,13 @@ public class AudioPlayerViewModel(
     }
 
     /**
+     * Pause any running audio.
+     */
+    public fun pause() {
+        controller.pause()
+    }
+
+    /**
      * Change the speed of the audio.
      */
     public fun changeSpeed(attachment: Attachment) {

@@ -21,6 +21,7 @@ import androidx.core.net.toUri
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.AudioState
+import io.getstream.chat.android.client.audio.audioHash
 import io.getstream.chat.android.client.extensions.duration
 import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
@@ -116,13 +117,14 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
                 playerView.setWaveBars(waveBars)
             }
 
-            audioPlayer.registerStateChange(playerView, attachment.hashCode())
-            playerView.registerButtonsListeners(audioPlayer, attachment, attachment.hashCode())
+            val audioHash = attachment.audioHash
+            audioPlayer.registerStateChange(playerView, audioHash)
+            playerView.registerButtonsListeners(audioPlayer, attachment, audioHash)
         }
 
         override fun unbind() {
             val attachment = attachment ?: return
-            ChatClient.instance().audioPlayer.removeAudios(listOf(attachment.hashCode()))
+            ChatClient.instance().audioPlayer.removeAudios(listOf(attachment.audioHash))
         }
 
         private fun AudioPlayer.registerStateChange(playerView: AudioRecordPlayerView, hashCode: Int) {
@@ -160,11 +162,11 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
             }
 
             setOnSeekbarMoveListeners({
-                audioPlayer.startSeek(attachment.hashCode())
+                audioPlayer.startSeek(attachment.audioHash)
             }, { progress ->
                 audioPlayer.seekTo(
                     progressToDecimal(progress, attachment.duration),
-                    attachment.hashCode(),
+                    attachment.audioHash,
                 )
             })
         }

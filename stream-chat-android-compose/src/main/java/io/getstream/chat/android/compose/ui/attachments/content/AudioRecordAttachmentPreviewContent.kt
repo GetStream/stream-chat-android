@@ -30,6 +30,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.ui.components.CancelIcon
@@ -74,6 +76,11 @@ public fun AudioRecordAttachmentPreviewContent(
                 },
             )
         }
+    }
+
+    // Cleanup: Pause any playing tracks in onPause.
+    LifecycleEventEffect(event = Lifecycle.Event.ON_PAUSE) {
+        viewModel.pause()
     }
 }
 
