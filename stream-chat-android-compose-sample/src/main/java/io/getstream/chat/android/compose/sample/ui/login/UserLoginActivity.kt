@@ -60,7 +60,9 @@ import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.data.PredefinedUserCredentials
 import io.getstream.chat.android.compose.sample.data.UserCredentials
+import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.feature.channel.list.ChannelsActivity
+import io.getstream.chat.android.compose.sample.ui.chats.ChatsActivity
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import kotlinx.coroutines.launch
@@ -69,6 +71,8 @@ import kotlinx.coroutines.launch
  * An Activity that allows users to log in using one of our predefined sample users.
  */
 class UserLoginActivity : AppCompatActivity() {
+
+    private val settings by lazy { customSettings() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -287,7 +291,11 @@ class UserLoginActivity : AppCompatActivity() {
     }
 
     private fun openChannels() {
-        startActivity(ChannelsActivity.createIntent(this))
+        if (settings.isAdaptiveLayoutEnabled) {
+            startActivity(ChatsActivity.createIntent(applicationContext))
+        } else {
+            startActivity(ChannelsActivity.createIntent(applicationContext))
+        }
         finish()
     }
 

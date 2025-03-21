@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.sample.ui.component
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -30,7 +31,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -104,10 +107,16 @@ private fun AppBottomBarOptionTile(
     onClick: () -> Unit,
     decorationBadge: (@Composable () -> Unit)? = null,
 ) {
-    val contentColor = if (isSelected) ChatTheme.colors.textHighEmphasis else ChatTheme.colors.textLowEmphasis
+    val contentColor by animateColorAsState(
+        targetValue = if (isSelected) ChatTheme.colors.textHighEmphasis else ChatTheme.colors.textLowEmphasis,
+    )
     Box(
         modifier = Modifier
-            .clickable { onClick() }
+            .clickable(
+                indication = ripple(bounded = false),
+                interactionSource = null,
+                onClick = onClick,
+            )
             .padding(4.dp),
     ) {
         // Content

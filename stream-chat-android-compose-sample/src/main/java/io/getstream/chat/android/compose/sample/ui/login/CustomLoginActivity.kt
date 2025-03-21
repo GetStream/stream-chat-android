@@ -24,6 +24,7 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,15 +34,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,6 +56,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
@@ -58,7 +64,9 @@ import io.getstream.chat.android.client.BuildConfig
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.data.UserCredentials
+import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.feature.channel.list.ChannelsActivity
+import io.getstream.chat.android.compose.sample.ui.chats.ChatsActivity
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
 import io.getstream.result.Error
@@ -69,6 +77,8 @@ import kotlinx.coroutines.launch
  * user ID, user token and user name.
  */
 class CustomLoginActivity : AppCompatActivity() {
+
+    private val settings by lazy { customSettings() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,6 +109,7 @@ class CustomLoginActivity : AppCompatActivity() {
         onLoginButtonClick: (UserCredentials) -> Unit,
     ) {
         Scaffold(
+            containerColor = ChatTheme.colors.appBackground,
             topBar = { CustomLoginToolbar(onClick = onBackButtonClick) },
             content = {
                 Column(
@@ -113,10 +124,15 @@ class CustomLoginActivity : AppCompatActivity() {
                     var userIdText by remember { mutableStateOf("") }
                     var userTokenText by remember { mutableStateOf("") }
                     var userNameText by remember { mutableStateOf("") }
+                    var isAdaptiveLayoutEnabled by remember { mutableStateOf(settings.isAdaptiveLayoutEnabled) }
 
                     val isLoginButtonEnabled = apiKeyText.isNotEmpty() &&
                         userIdText.isNotEmpty() &&
                         userTokenText.isNotEmpty()
+
+                    LaunchedEffect(isAdaptiveLayoutEnabled) {
+                        settings.isAdaptiveLayoutEnabled = isAdaptiveLayoutEnabled
+                    }
 
                     CustomLoginInputField(
                         hint = stringResource(id = R.string.custom_login_hint_api_key),
@@ -140,6 +156,13 @@ class CustomLoginActivity : AppCompatActivity() {
                         hint = stringResource(id = R.string.custom_login_hint_user_name),
                         value = userNameText,
                         onValueChange = { userNameText = it },
+                    )
+
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+
+                    EnableAdaptiveScreenField(
+                        value = isAdaptiveLayoutEnabled,
+                        onValueChange = { isChecked -> isAdaptiveLayoutEnabled = isChecked },
                     )
 
                     Spacer(modifier = Modifier.weight(1f))
@@ -189,7 +212,7 @@ class CustomLoginActivity : AppCompatActivity() {
                     )
                 }
             },
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White),
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = ChatTheme.colors.barsBackground),
         )
     }
 
@@ -208,13 +231,15 @@ class CustomLoginActivity : AppCompatActivity() {
             onValueChange = { onValueChange(it) },
             singleLine = true,
             label = { Text(hint) },
+            shape = ChatTheme.shapes.inputField,
             colors = TextFieldDefaults.colors(
                 focusedTextColor = ChatTheme.colors.textHighEmphasis,
                 unfocusedTextColor = ChatTheme.colors.textHighEmphasis,
                 focusedContainerColor = ChatTheme.colors.inputBackground,
                 unfocusedContainerColor = ChatTheme.colors.inputBackground,
                 cursorColor = ChatTheme.colors.primaryAccent,
-                focusedIndicatorColor = ChatTheme.colors.primaryAccent,
+                focusedIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
                 focusedLabelColor = ChatTheme.colors.primaryAccent,
                 unfocusedLabelColor = ChatTheme.colors.textLowEmphasis,
             ),
@@ -246,8 +271,56 @@ class CustomLoginActivity : AppCompatActivity() {
         }
     }
 
+    @Composable
+    private fun EnableAdaptiveScreenField(
+        value: Boolean,
+        onValueChange: (Boolean) -> Unit,
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Switch(
+                checked = value,
+                onCheckedChange = onValueChange,
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = ChatTheme.colors.primaryAccent,
+                    checkedTrackColor = ChatTheme.colors.primaryAccent.copy(alpha = 0.5f),
+                    uncheckedThumbColor = ChatTheme.colors.textLowEmphasis,
+                    uncheckedTrackColor = ChatTheme.colors.textLowEmphasis.copy(alpha = 0.5f),
+                ),
+            )
+            Column {
+                Text(
+                    text = stringResource(id = R.string.custom_login_enable_adaptive_layout),
+                    style = ChatTheme.typography.title3,
+                )
+                Text(
+                    text = stringResource(id = R.string.custom_login_enable_adaptive_layout_description),
+                    style = ChatTheme.typography.footnote,
+                )
+            }
+        }
+    }
+
+    @Composable
+    @Preview
+    private fun Preview() {
+        ChatTheme {
+            CustomLoginScreen(
+                onBackButtonClick = {},
+                onLoginButtonClick = {},
+            )
+        }
+    }
+
     private fun openChannels() {
-        startActivity(ChannelsActivity.createIntent(this))
+        if (settings.isAdaptiveLayoutEnabled) {
+            startActivity(ChatsActivity.createIntent(this))
+        } else {
+            startActivity(ChannelsActivity.createIntent(this))
+        }
         finish()
     }
 
