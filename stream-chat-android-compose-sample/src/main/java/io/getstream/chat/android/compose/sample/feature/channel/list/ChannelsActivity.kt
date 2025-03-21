@@ -101,6 +101,7 @@ class ChannelsActivity : BaseConnectedActivity() {
                 Filters.or(Filters.notExists(CHANNEL_ARG_DRAFT), Filters.eq(CHANNEL_ARG_DRAFT, false)),
             ),
             chatEventHandlerFactory = CustomChatEventHandlerFactory(),
+            isDraftMessageEnabled = true,
         )
     }
     private val threadsViewModelFactory by lazy { ThreadsViewModelFactory() }
