@@ -17,12 +17,14 @@
 package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -892,6 +894,55 @@ public interface ChatComponentFactory {
             onUserMentionClick = onUserMentionClick,
             onAddAnswer = onAddAnswer,
             onReply = onReply,
+        )
+    }
+
+    /**
+     * The default appearance of the message bubble.
+     *
+     * @param modifier Prepared [Modifier] for styling.
+     * @param message The [Message] to be rendered inside the bubble.
+     * @param color The color of the message bubble.
+     * @param shape The shape of the message bubble.
+     * @param border The border of the message bubble.
+     * @param contentPadding The padding of the message bubble.
+     * @param content The content shown inside the message bubble.
+     */
+    @Composable
+    public fun MessageBubble(
+        modifier: Modifier,
+        message: Message,
+        color: Color,
+        shape: Shape,
+        border: BorderStroke?,
+        contentPadding: PaddingValues,
+        content: @Composable () -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.components.messages.MessageBubble(
+            modifier = modifier,
+            color = color,
+            shape = shape,
+            contentPadding = contentPadding,
+            content = content,
+        )
+    }
+
+    /**
+     * Icon shown at the bottom-end of a [Message] when it failed to send.
+     *
+     * @param modifier Prepared [Modifier] for styling.
+     * @param message The [Message] that failed to send.
+     */
+    @Composable
+    public fun MessageFailedIcon(
+        modifier: Modifier,
+        message: Message,
+    ) {
+        Icon(
+            modifier = modifier,
+            painter = painterResource(id = R.drawable.stream_compose_ic_error),
+            contentDescription = null,
+            tint = ChatTheme.colors.errorAccent,
         )
     }
 

@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.messages.list
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -27,6 +28,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -37,7 +39,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -73,7 +74,6 @@ import io.getstream.chat.android.client.utils.message.isPoll
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
-import io.getstream.chat.android.compose.ui.components.messages.MessageBubble
 import io.getstream.chat.android.compose.ui.components.messages.MessageContent
 import io.getstream.chat.android.compose.ui.components.messages.MessageHeaderLabel
 import io.getstream.chat.android.compose.ui.components.messages.MessageReactions
@@ -616,13 +616,11 @@ public fun EmojiMessageContent(
                 onQuotedMessageClick = onQuotedMessageClick,
             )
 
-            Icon(
+            ChatTheme.componentFactory.MessageFailedIcon(
                 modifier = Modifier
                     .size(24.dp)
                     .align(BottomEnd),
-                painter = painterResource(id = R.drawable.stream_compose_ic_error),
-                contentDescription = null,
-                tint = ChatTheme.colors.errorAccent,
+                message = message,
             )
         }
     }
@@ -659,55 +657,47 @@ public fun RegularMessageContent(
     val messageBubbleShape = getMessageBubbleShape(position = position, ownsMessage = ownsMessage)
     val messageBubbleColor = getMessageBubbleColor(message = message, ownsMessage = ownsMessage)
 
+    val content = @Composable {
+        MessageContent(
+            message = message,
+            messageContentFactory = messageContentFactory,
+            currentUser = messageItem.currentUser,
+            onLongItemClick = onLongItemClick,
+            onGiphyActionClick = onGiphyActionClick,
+            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+            onQuotedMessageClick = onQuotedMessageClick,
+            onLinkClick = onLinkClick,
+            onUserMentionClick = onUserMentionClick,
+        )
+    }
     if (!messageItem.isErrorOrFailed()) {
-        MessageBubble(
+        ChatTheme.componentFactory.MessageBubble(
             modifier = modifier,
+            message = message,
             shape = messageBubbleShape,
             color = messageBubbleColor,
             border = messageTheme.backgroundBorder,
             contentPadding = messageTheme.contentPadding.values,
-            content = {
-                MessageContent(
-                    message = message,
-                    currentUser = messageItem.currentUser,
-                    messageContentFactory = messageContentFactory,
-                    onLongItemClick = onLongItemClick,
-                    onGiphyActionClick = onGiphyActionClick,
-                    onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                    onQuotedMessageClick = onQuotedMessageClick,
-                    onLinkClick = onLinkClick,
-                    onUserMentionClick = onUserMentionClick,
-                )
-            },
+            content = content,
         )
     } else {
         Box(modifier = modifier) {
-            MessageBubble(
+            ChatTheme.componentFactory.MessageBubble(
                 modifier = Modifier.padding(end = 12.dp),
+                message = message,
                 shape = messageBubbleShape,
                 color = messageBubbleColor,
-                content = {
-                    MessageContent(
-                        message = message,
-                        messageContentFactory = messageContentFactory,
-                        currentUser = messageItem.currentUser,
-                        onLongItemClick = onLongItemClick,
-                        onGiphyActionClick = onGiphyActionClick,
-                        onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                        onQuotedMessageClick = onQuotedMessageClick,
-                        onLinkClick = onLinkClick,
-                    )
-                },
+                border = BorderStroke(1.dp, ChatTheme.colors.borders),
+                contentPadding = PaddingValues(),
+                content = content,
             )
 
-            Icon(
+            ChatTheme.componentFactory.MessageFailedIcon(
                 modifier = Modifier
                     .size(24.dp)
                     .align(BottomEnd)
                     .testTag("Stream_MessageFailedIcon"),
-                painter = painterResource(id = R.drawable.stream_compose_ic_error),
-                contentDescription = null,
-                tint = ChatTheme.colors.errorAccent,
+                message = message,
             )
         }
     }
