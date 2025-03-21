@@ -50,7 +50,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
@@ -68,7 +67,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.HapticFeedbackConstantsCompat
 import io.getstream.chat.android.client.utils.message.belongsToThread
 import io.getstream.chat.android.client.utils.message.isDeleted
-import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
 import io.getstream.chat.android.client.utils.message.isPinned
 import io.getstream.chat.android.client.utils.message.isPoll
 import io.getstream.chat.android.compose.R
@@ -79,6 +77,7 @@ import io.getstream.chat.android.compose.ui.components.messages.MessageHeaderLab
 import io.getstream.chat.android.compose.ui.components.messages.MessageReactions
 import io.getstream.chat.android.compose.ui.components.messages.PollMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
+import io.getstream.chat.android.compose.ui.components.messages.getMessageBubbleColor
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
@@ -718,23 +717,6 @@ private fun getMessageBubbleShape(position: List<MessagePosition>, ownsMessage: 
         position.contains(MessagePosition.MIDDLE) -> theme.backgroundShapes.middle
         position.contains(MessagePosition.BOTTOM) -> theme.backgroundShapes.bottom
         else -> theme.backgroundShapes.none
-    }
-}
-
-/**
- * Determines the background color of the message bubble based on the message content and ownership.
- *
- * @param message The message data.
- * @param ownsMessage Indicates if the current user owns the message.
- * @return A color for the message bubble.
- */
-@Composable
-private fun getMessageBubbleColor(message: Message, ownsMessage: Boolean): Color {
-    val theme = if (ownsMessage) ChatTheme.ownMessageTheme else ChatTheme.otherMessageTheme
-    return when {
-        message.isGiphyEphemeral() -> ChatTheme.colors.giphyMessageBackground
-        message.isDeleted() -> theme.deletedBackgroundColor
-        else -> theme.backgroundColor
     }
 }
 

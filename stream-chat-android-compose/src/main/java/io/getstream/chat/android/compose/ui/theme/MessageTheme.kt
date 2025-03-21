@@ -40,6 +40,7 @@ import io.getstream.chat.android.compose.ui.theme.messages.list.QuotedMessageSty
  * @param backgroundShapes The shapes for the message background.
  * @param quotedTextStyle The text style for the quoted messages contained in a reply.
  * @param quotedBackgroundColor The background color for the quoted messages.
+ * @param errorBackgroundColor The background color for the error messages.
  * @param deletedBackgroundColor The background color for the deleted messages.
  * @param audioRecording The theming for the audio recording attachment.
  * @param mentionColor The color for the mentions in the messages.
@@ -69,6 +70,7 @@ public data class MessageTheme(
         level = DeprecationLevel.WARNING,
     )
     val quotedBackgroundColor: Color,
+    val errorBackgroundColor: Color,
     val deletedBackgroundColor: Color,
     val audioRecording: AudioRecordingAttachmentTheme,
     val fileAttachmentTheme: FileAttachmentTheme,
@@ -131,6 +133,10 @@ public data class MessageTheme(
             shapes: StreamShapes,
             colors: StreamColors,
         ): MessageTheme {
+            val backgroundColor = when (own) {
+                true -> colors.ownMessagesBackground
+                else -> colors.otherMessagesBackground
+            }
             return MessageTheme(
                 textStyle = typography.bodyBold.copy(
                     color = when (own) {
@@ -139,10 +145,7 @@ public data class MessageTheme(
                     },
                 ),
                 contentPadding = ComponentPadding.Zero,
-                backgroundColor = when (own) {
-                    true -> colors.ownMessagesBackground
-                    else -> colors.otherMessagesBackground
-                },
+                backgroundColor = backgroundColor,
                 backgroundBorder = when (own) {
                     true -> null
                     else -> BorderStroke(1.dp, colors.borders)
@@ -171,6 +174,7 @@ public data class MessageTheme(
                     true -> colors.ownMessageQuotedBackground
                     else -> colors.otherMessageQuotedBackground
                 },
+                errorBackgroundColor = backgroundColor,
                 deletedBackgroundColor = colors.deletedMessagesBackground,
                 audioRecording = AudioRecordingAttachmentTheme.defaultTheme(
                     own = own,

@@ -26,11 +26,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isErrorOrFailed
-import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.components.messages.MessageContent
+import io.getstream.chat.android.compose.ui.components.messages.getMessageBubbleColor
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Message
@@ -65,18 +64,7 @@ public fun AiRegularMessageContent(
         }
     }
 
-    val messageBubbleColor = when {
-        message.isGiphyEphemeral() -> ChatTheme.colors.giphyMessageBackground
-        message.isDeleted() -> when (ownsMessage) {
-            true -> ChatTheme.ownMessageTheme.deletedBackgroundColor
-            else -> ChatTheme.otherMessageTheme.deletedBackgroundColor
-        }
-
-        else -> when (ownsMessage) {
-            true -> ChatTheme.ownMessageTheme.backgroundColor
-            else -> ChatTheme.otherMessageTheme.backgroundColor
-        }
-    }
+    val messageBubbleColor = getMessageBubbleColor(message, ownsMessage)
 
     if (!messageItem.isErrorOrFailed()) {
         ChatTheme.componentFactory.MessageBubble(
