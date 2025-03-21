@@ -27,6 +27,7 @@ import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -92,7 +93,11 @@ private val LocalShapes = compositionLocalOf<StreamShapes> {
 private val LocalUserPresence = compositionLocalOf<UserPresence> {
     error("No UserPresence provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
-private val LocalComponentFactory = compositionLocalOf<ChatComponentFactory> {
+
+/**
+ * The local composition containing the current [ChatComponentFactory].
+ */
+public val LocalComponentFactory: ProvidableCompositionLocal<ChatComponentFactory> = compositionLocalOf {
     error("No ComponentFactory provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 private val LocalAttachmentFactories = compositionLocalOf<List<AttachmentFactory>> {

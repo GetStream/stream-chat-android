@@ -21,9 +21,11 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Scaffold
@@ -52,11 +54,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
 import io.getstream.chat.android.compose.ui.channels.SearchMode
+import io.getstream.chat.android.compose.ui.components.EmphasisBox
 import io.getstream.chat.android.compose.ui.messages.BackAction
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
+import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.LocalComponentFactory
 import io.getstream.chat.android.compose.ui.threads.ThreadList
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.AdaptiveLayoutConstraints
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.AdaptiveLayoutInfo
@@ -74,6 +79,8 @@ import io.getstream.chat.android.compose.viewmodel.threads.ThreadListViewModel
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadsViewModelFactory
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import kotlin.math.abs
@@ -212,6 +219,7 @@ public fun ChatsScreen(
                                 factory = threadsViewModelFactory,
                             )
                             ThreadList(
+                                modifier = Modifier.fillMaxSize(),
                                 viewModel = viewModel,
                                 onThreadClick = { thread ->
                                     navigator.navigateTo(
@@ -254,6 +262,12 @@ public fun ChatsScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        navigator.initialSelection(messagesViewModelFactoryProvider, context)?.let { selection ->
+            navigator.navigateTo(ThreePaneDestination(ThreePaneRole.Detail, selection))
+        }
+    }
+
     if (singlePane) {
         var pagerDestinations by remember { mutableStateOf(navigator.destinations) }
         val pagerState = rememberPagerState(pageCount = pagerDestinations::size)
@@ -280,10 +294,6 @@ public fun ChatsScreen(
             }
         }
 
-        LaunchedEffect(Unit) {
-            navigator.initialDetailNavigation(messagesViewModelFactoryProvider, context)
-        }
-
         Box(
             modifier = modifier,
         ) {
@@ -301,108 +311,85 @@ public fun ChatsScreen(
             }
         }
     } else {
-        // Auto-select the first item in the list when it loads on wide screens
-        AutoSelectFirstItem(
-            listContentMode = listContentMode,
-            channelViewModelFactory = channelViewModelFactory,
-            threadsViewModelFactory = threadsViewModelFactory,
-            navigator = navigator,
-            messagesViewModelFactoryProvider = messagesViewModelFactoryProvider,
-        )
-        Row(
-            modifier = modifier,
-        ) {
-            listPane(Modifier.weight(AdaptiveLayoutConstraints.LIST_PANE_WEIGHT))
-
-            VerticalDivider()
-
-            var detailPaneSize by remember { mutableStateOf(IntSize.Zero) }
+        CompositionLocalProvider(LocalComponentFactory provides rememberCompoundComponentFactory(navigator)) {
+            // Auto-select the first item in the list when it loads on wide screens
+            FirstItemLoadHandler(
+                listContentMode = listContentMode,
+                channelViewModelFactory = channelViewModelFactory,
+                threadsViewModelFactory = threadsViewModelFactory,
+            ) { selection ->
+                if (navigator.destinations.none { destination -> destination.pane == ThreePaneRole.Detail }) {
+                    navigator.navigateTo(ThreePaneDestination(ThreePaneRole.Detail, selection))
+                }
+            }
 
             Row(
-                modifier = Modifier
-                    .weight(AdaptiveLayoutConstraints.DETAIL_PANE_WEIGHT)
-                    .onSizeChanged { size -> detailPaneSize = size },
+                modifier = modifier,
             ) {
-                val detailDestination by remember(navigator.destinations) {
-                    derivedStateOf {
-                        navigator.destinations.lastOrNull { destination ->
-                            destination.pane == ThreePaneRole.Detail
+                listPane(Modifier.weight(AdaptiveLayoutConstraints.LIST_PANE_WEIGHT))
+
+                VerticalDivider()
+
+                var detailPaneSize by remember { mutableStateOf(IntSize.Zero) }
+
+                Row(
+                    modifier = Modifier
+                        .weight(AdaptiveLayoutConstraints.DETAIL_PANE_WEIGHT)
+                        .onSizeChanged { size -> detailPaneSize = size },
+                ) {
+                    val detailDestination by remember(navigator.destinations) {
+                        derivedStateOf {
+                            navigator.destinations.lastOrNull { destination ->
+                                destination.pane == ThreePaneRole.Detail
+                            }
                         }
                     }
-                }
-                Crossfade(
-                    modifier = Modifier.weight(1f),
-                    targetState = detailDestination,
-                ) { state ->
-                    if (state != null) {
-                        detailPane(state.arguments as ChatMessageSelection)
-                    }
-                }
-                val infoDestination by remember(navigator.destinations) {
-                    derivedStateOf {
-                        navigator.destinations.lastOrNull { destination ->
-                            destination.pane == ThreePaneRole.Info
+                    Crossfade(
+                        modifier = Modifier.weight(1f),
+                        targetState = detailDestination,
+                    ) { state ->
+                        if (state != null) {
+                            detailPane(state.arguments as ChatMessageSelection)
                         }
                     }
-                }
-                val infoPaneOffsetX by animateFloatAsState(
-                    targetValue = if (infoDestination == null) {
-                        detailPaneSize.width / 2f
-                    } else {
-                        0f
-                    },
-                )
-                val infoPaneWeight by animateFloatAsState(
-                    targetValue = if (infoDestination == null) {
-                        0f
-                    } else {
-                        1f
-                    },
-                )
-                if (infoPaneWeight > 0f) {
-                    Box(
-                        modifier = Modifier.weight(infoPaneWeight),
-                    ) {
-                        Crossfade(
-                            modifier = Modifier.offset { IntOffset(x = infoPaneOffsetX.toInt(), y = 0) },
-                            targetState = infoDestination,
-                        ) { state ->
-                            if (state != null) {
-                                Row {
-                                    VerticalDivider()
-                                    infoPane(state.arguments)
+                    val infoDestination by remember(navigator.destinations) {
+                        derivedStateOf {
+                            navigator.destinations.lastOrNull { destination ->
+                                destination.pane == ThreePaneRole.Info
+                            }
+                        }
+                    }
+                    val infoPaneOffsetX by animateFloatAsState(
+                        targetValue = if (infoDestination == null) {
+                            detailPaneSize.width / 2f
+                        } else {
+                            0f
+                        },
+                    )
+                    val infoPaneWeight by animateFloatAsState(
+                        targetValue = if (infoDestination == null) {
+                            0f
+                        } else {
+                            1f
+                        },
+                    )
+                    if (infoPaneWeight > 0f) {
+                        Box(
+                            modifier = Modifier.weight(infoPaneWeight),
+                        ) {
+                            Crossfade(
+                                modifier = Modifier.offset { IntOffset(x = infoPaneOffsetX.toInt(), y = 0) },
+                                targetState = infoDestination,
+                            ) { state ->
+                                if (state != null) {
+                                    Row {
+                                        VerticalDivider()
+                                        infoPane(state.arguments)
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun AutoSelectFirstItem(
-    listContentMode: ChatListContentMode,
-    channelViewModelFactory: ChannelViewModelFactory,
-    threadsViewModelFactory: ThreadsViewModelFactory,
-    navigator: ThreePaneNavigator,
-    messagesViewModelFactoryProvider: MessagesViewModelFactoryProvider,
-) {
-    val context = LocalContext.current
-    when (listContentMode) {
-        ChatListContentMode.Channels -> {
-            FirstChannelLoadHandler(channelViewModelFactory) { selection ->
-                navigator.initialDetailNavigation(messagesViewModelFactoryProvider, context) ?: run {
-                    navigator.navigateTo(ThreePaneDestination(ThreePaneRole.Detail, selection))
-                }
-            }
-        }
-
-        ChatListContentMode.Threads -> {
-            FirstThreadLoadHandler(threadsViewModelFactory) { selection ->
-                navigator.initialDetailNavigation(messagesViewModelFactoryProvider, context) ?: run {
-                    navigator.navigateTo(ThreePaneDestination(ThreePaneRole.Detail, selection))
                 }
             }
         }
@@ -416,38 +403,128 @@ public typealias MessagesViewModelFactoryProvider =
     (context: Context, selection: ChatMessageSelection) -> MessagesViewModelFactory?
 
 /**
- * If there's no detail pane, navigate to the initial detail pane,
- * when the provider returns a factory based on an empty selection.
+ * Builds the initial message selection when there are no detail destinations
+ * and a factory is provided based on the an empty selection.
  */
-private fun ThreePaneNavigator.initialDetailNavigation(
+private fun ThreePaneNavigator.initialSelection(
     messagesViewModelFactoryProvider: MessagesViewModelFactoryProvider,
     context: Context,
-) = if (destinations.none { destination -> destination.pane == ThreePaneRole.Detail }) {
-    messagesViewModelFactoryProvider(context, ChatMessageSelection())?.let { viewModelFactory ->
-        navigateTo(
-            ThreePaneDestination(
-                pane = ThreePaneRole.Detail,
-                arguments = ChatMessageSelection(
-                    channelId = viewModelFactory.channelId,
-                    messageId = viewModelFactory.messageId,
-                    parentMessageId = viewModelFactory.parentMessageId,
-                ),
-            ),
-        )
+): ChatMessageSelection? =
+    if (destinations.none { destination -> destination.pane == ThreePaneRole.Detail }) {
+        messagesViewModelFactoryProvider(context, ChatMessageSelection())?.let { viewModelFactory ->
+            ChatMessageSelection(
+                channelId = viewModelFactory.channelId,
+                messageId = viewModelFactory.messageId,
+                parentMessageId = viewModelFactory.parentMessageId,
+            )
+        }
+    } else {
+        null
     }
-} else {
-    Unit
+
+/**
+ * Remember a compound [ChatComponentFactory] that adapts the list items to emphasize the selected item.
+ */
+@Composable
+private fun rememberCompoundComponentFactory(navigator: ThreePaneNavigator): ChatComponentFactory {
+    val currentSelection by remember(navigator.destinations) {
+        derivedStateOf {
+            navigator.destinations.lastOrNull { destination ->
+                destination.pane == ThreePaneRole.Detail
+            }?.arguments as? ChatMessageSelection
+        }
+    }
+    val currentComponentFactory = LocalComponentFactory.current
+    return remember {
+        object : ChatComponentFactory by currentComponentFactory {
+
+            @Composable
+            override fun LazyItemScope.ChannelListItemContent(
+                channelItem: ItemState.ChannelItemState,
+                currentUser: User?,
+                onChannelClick: (Channel) -> Unit,
+                onChannelLongClick: (Channel) -> Unit,
+            ) {
+                EmphasisBox(
+                    modifier = Modifier.animateItem(),
+                    isEmphasized = channelItem.key == currentSelection?.channelId,
+                ) {
+                    with(currentComponentFactory) {
+                        ChannelListItemContent(
+                            channelItem = channelItem,
+                            currentUser = currentUser,
+                            onChannelClick = onChannelClick,
+                            onChannelLongClick = onChannelLongClick,
+                        )
+                    }
+                }
+            }
+
+            @Composable
+            override fun LazyItemScope.SearchResultItemContent(
+                searchResultItem: ItemState.SearchResultItemState,
+                currentUser: User?,
+                onSearchResultClick: (Message) -> Unit,
+            ) {
+                EmphasisBox(
+                    modifier = Modifier.animateItem(),
+                    isEmphasized = searchResultItem.key == currentSelection?.messageId,
+                ) {
+                    with(currentComponentFactory) {
+                        SearchResultItemContent(
+                            searchResultItem = searchResultItem,
+                            currentUser = currentUser,
+                            onSearchResultClick = onSearchResultClick,
+                        )
+                    }
+                }
+            }
+
+            @Composable
+            override fun ThreadListItem(thread: Thread, currentUser: User?, onThreadClick: (Thread) -> Unit) {
+                EmphasisBox(isEmphasized = thread.parentMessageId == currentSelection?.parentMessageId) {
+                    currentComponentFactory.ThreadListItem(
+                        thread = thread,
+                        currentUser = currentUser,
+                        onThreadClick = onThreadClick,
+                    )
+                }
+            }
+        }
+    }
 }
 
 /**
- * Calls the provided block when the first channel item is loaded.
+ * Calls [onLoad] when the first list content item is loaded. It can be a channel or a thread item.
+ */
+@Composable
+private fun FirstItemLoadHandler(
+    listContentMode: ChatListContentMode,
+    channelViewModelFactory: ChannelViewModelFactory,
+    threadsViewModelFactory: ThreadsViewModelFactory,
+    onLoad: (selection: ChatMessageSelection) -> Unit,
+) {
+    when (listContentMode) {
+        ChatListContentMode.Channels -> {
+            val viewModel = viewModel(ChannelListViewModel::class.java, factory = channelViewModelFactory)
+            FirstChannelLoadHandler(viewModel, onLoad)
+        }
+
+        ChatListContentMode.Threads -> {
+            val viewModel = viewModel(ThreadListViewModel::class.java, factory = threadsViewModelFactory)
+            FirstThreadLoadHandler(viewModel, onLoad)
+        }
+    }
+}
+
+/**
+ * Calls [onLoad] when the first channel item is loaded.
  */
 @Composable
 private fun FirstChannelLoadHandler(
-    channelViewModelFactory: ChannelViewModelFactory,
+    viewModel: ChannelListViewModel,
     onLoad: (selection: ChatMessageSelection) -> Unit,
 ) {
-    val viewModel = viewModel(ChannelListViewModel::class.java, factory = channelViewModelFactory)
     val isLoading = viewModel.channelsState.isLoading
     val itemList = viewModel.channelsState.channelItems
     LaunchedEffect(isLoading) {
@@ -470,14 +547,13 @@ private fun FirstChannelLoadHandler(
 }
 
 /**
- * Calls the provided block when the first thread item is loaded.
+ * Calls [onLoad] when the first thread item is loaded.
  */
 @Composable
 private fun FirstThreadLoadHandler(
-    threadsViewModelFactory: ThreadsViewModelFactory,
+    viewModel: ThreadListViewModel,
     onLoad: (selection: ChatMessageSelection) -> Unit,
 ) {
-    val viewModel = viewModel(ThreadListViewModel::class.java, factory = threadsViewModelFactory)
     val state by viewModel.state.collectAsState()
     val isLoading = state.isLoading
     val threadList = state.threads

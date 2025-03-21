@@ -84,9 +84,9 @@ public object PreviewThreadData {
         activeParticipantCount = 2,
         cid = "cid",
         channel = Channel(),
-        parentMessageId = "pmid1",
+        parentMessageId = "pmid2",
         parentMessage = Message(
-            id = "pmid1",
+            id = "pmid2",
             text = "Hello hello!",
         ),
         createdByUserId = "uid2",

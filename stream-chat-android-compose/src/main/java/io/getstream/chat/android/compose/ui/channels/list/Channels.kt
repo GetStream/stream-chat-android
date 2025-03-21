@@ -94,7 +94,7 @@ public fun Channels(
 
             items(
                 items = channelItems,
-                key = { it.key },
+                key = ItemState::key,
             ) { item ->
                 itemContent(item)
 
