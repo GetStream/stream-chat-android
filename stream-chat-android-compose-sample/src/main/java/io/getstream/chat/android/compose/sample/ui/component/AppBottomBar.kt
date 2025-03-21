@@ -78,6 +78,12 @@ fun AppBottomBar(
             },
         )
         AppBottomBarOptionTile(
+            icon = R.drawable.ic_mentions,
+            text = R.string.app_bottom_bar_mentions,
+            isSelected = selectedOption == AppBottomBarOption.MENTIONS,
+            onClick = { onOptionSelected(AppBottomBarOption.MENTIONS) },
+        )
+        AppBottomBarOptionTile(
             icon = R.drawable.ic_threads,
             text = R.string.app_bottom_bar_threads,
             isSelected = selectedOption == AppBottomBarOption.THREADS,
@@ -96,6 +102,7 @@ fun AppBottomBar(
  */
 enum class AppBottomBarOption {
     CHATS,
+    MENTIONS,
     THREADS,
 }
 

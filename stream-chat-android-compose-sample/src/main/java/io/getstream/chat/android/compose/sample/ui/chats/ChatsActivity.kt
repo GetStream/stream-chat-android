@@ -187,6 +187,7 @@ class ChatsActivity : BaseConnectedActivity() {
                     onOptionSelected = { option ->
                         listContentMode = when (option) {
                             AppBottomBarOption.CHATS -> ChatListContentMode.Channels
+                            AppBottomBarOption.MENTIONS -> ChatListContentMode.Channels // TODO Support mention list
                             AppBottomBarOption.THREADS -> ChatListContentMode.Threads
                         }
                     },

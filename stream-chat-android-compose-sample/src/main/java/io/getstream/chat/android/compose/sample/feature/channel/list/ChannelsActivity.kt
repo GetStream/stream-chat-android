@@ -146,9 +146,11 @@ class ChannelsActivity : BaseConnectedActivity() {
                             onOptionSelected = { selectedTab = it },
                         )
                     },
+                    containerColor = ChatTheme.colors.appBackground,
                     content = { _ ->
                         when (selectedTab) {
                             AppBottomBarOption.CHATS -> ChannelsContent()
+                            AppBottomBarOption.MENTIONS -> Text(text = "Mentions")
                             AppBottomBarOption.THREADS -> ThreadsContent()
                         }
                     },
