@@ -61,7 +61,6 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
 
 ### ⬆️ Improved
 
@@ -73,13 +72,14 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
+- Fix "Thread reply" item shown in the message options menu for messages in a Thread. [#5683](https://github.com/GetStream/stream-chat-android/pull/5683)
 
 ### ⬆️ Improved
 
 ### ✅ Added
 
 ### ⚠️ Changed
+- `defaultMessageOptionsState()` now accepts an `isInThread` flag to show/hide the "Thread reply" option. [#5683](https://github.com/GetStream/stream-chat-android/pull/5683)
 
 ### ❌ Removed
 

@@ -42,10 +42,12 @@ internal fun MessageListViewStyle.canReplyToMessage(
 )
 
 internal fun MessageListViewStyle.canThreadReplyToMessage(
+    isInThread: Boolean,
     message: Message,
     ownCapabilities: Set<String>,
 ): Boolean = canThreadReplyToMessage(
     threadsEnabled = threadsEnabled,
+    isInThread = isInThread,
     message = message,
     ownCapabilities = ownCapabilities,
 )

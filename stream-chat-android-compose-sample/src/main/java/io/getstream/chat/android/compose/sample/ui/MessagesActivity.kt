@@ -303,6 +303,7 @@ class MessagesActivity : BaseConnectedActivity() {
                             messageOptions = defaultMessageOptionsState(
                                 selectedMessage = selectedMessage,
                                 currentUser = user,
+                                isInThread = listViewModel.isInThread,
                                 ownCapabilities = selectedMessageState.ownCapabilities,
                             ),
                             message = selectedMessage,
