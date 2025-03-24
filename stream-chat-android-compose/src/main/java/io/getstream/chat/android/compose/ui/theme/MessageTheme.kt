@@ -34,6 +34,7 @@ import io.getstream.chat.android.compose.ui.theme.messages.list.QuotedMessageSty
  * Represents message theming.
  *
  * @param textStyle The text style for the messages.
+ * @param errorTextStyle The text style for the error messages.
  * @param contentPadding The padding for the message content.
  * @param backgroundColor The background color for the messages.
  * @param backgroundBorder The border for the message background.
@@ -48,6 +49,7 @@ import io.getstream.chat.android.compose.ui.theme.messages.list.QuotedMessageSty
 @Immutable
 public data class MessageTheme(
     val textStyle: TextStyle,
+    val errorTextStyle: TextStyle,
     val contentPadding: ComponentPadding,
     val backgroundColor: Color,
     val backgroundBorder: BorderStroke?,
@@ -133,17 +135,19 @@ public data class MessageTheme(
             shapes: StreamShapes,
             colors: StreamColors,
         ): MessageTheme {
+            val textStyle = typography.bodyBold.copy(
+                color = when (own) {
+                    true -> colors.ownMessageText
+                    else -> colors.otherMessageText
+                },
+            )
             val backgroundColor = when (own) {
                 true -> colors.ownMessagesBackground
                 else -> colors.otherMessagesBackground
             }
             return MessageTheme(
-                textStyle = typography.bodyBold.copy(
-                    color = when (own) {
-                        true -> colors.ownMessageText
-                        else -> colors.otherMessageText
-                    },
-                ),
+                textStyle = textStyle,
+                errorTextStyle = textStyle,
                 contentPadding = ComponentPadding.Zero,
                 backgroundColor = backgroundColor,
                 backgroundBorder = when (own) {

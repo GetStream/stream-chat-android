@@ -2738,23 +2738,24 @@ public final class io/getstream/chat/android/compose/ui/theme/MessageOptionsThem
 public final class io/getstream/chat/android/compose/ui/theme/MessageTheme {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/MessageTheme$Companion;
-	public synthetic fun <init> (Landroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;JLandroidx/compose/foundation/BorderStroke;Lio/getstream/chat/android/compose/ui/theme/MessageBackgroundShapes;Landroidx/compose/ui/text/TextStyle;JJJLio/getstream/chat/android/compose/ui/theme/messages/attachments/AudioRecordingAttachmentTheme;Lio/getstream/chat/android/compose/ui/theme/messages/attachments/FileAttachmentTheme;Lio/getstream/chat/android/compose/ui/theme/messages/list/QuotedMessageStyle;Lio/getstream/chat/android/compose/ui/theme/messages/list/PollMessageStyle;JLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;JLandroidx/compose/foundation/BorderStroke;Lio/getstream/chat/android/compose/ui/theme/MessageBackgroundShapes;Landroidx/compose/ui/text/TextStyle;JJJLio/getstream/chat/android/compose/ui/theme/messages/attachments/AudioRecordingAttachmentTheme;Lio/getstream/chat/android/compose/ui/theme/messages/attachments/FileAttachmentTheme;Lio/getstream/chat/android/compose/ui/theme/messages/list/QuotedMessageStyle;Lio/getstream/chat/android/compose/ui/theme/messages/list/PollMessageStyle;JLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Landroidx/compose/ui/text/TextStyle;
-	public final fun component10 ()Lio/getstream/chat/android/compose/ui/theme/messages/attachments/AudioRecordingAttachmentTheme;
-	public final fun component11 ()Lio/getstream/chat/android/compose/ui/theme/messages/attachments/FileAttachmentTheme;
-	public final fun component12 ()Lio/getstream/chat/android/compose/ui/theme/messages/list/QuotedMessageStyle;
-	public final fun component13 ()Lio/getstream/chat/android/compose/ui/theme/messages/list/PollMessageStyle;
-	public final fun component14-0d7_KjU ()J
-	public final fun component2 ()Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;
-	public final fun component3-0d7_KjU ()J
-	public final fun component4 ()Landroidx/compose/foundation/BorderStroke;
-	public final fun component5 ()Lio/getstream/chat/android/compose/ui/theme/MessageBackgroundShapes;
-	public final fun component6 ()Landroidx/compose/ui/text/TextStyle;
-	public final fun component7-0d7_KjU ()J
+	public final fun component10-0d7_KjU ()J
+	public final fun component11 ()Lio/getstream/chat/android/compose/ui/theme/messages/attachments/AudioRecordingAttachmentTheme;
+	public final fun component12 ()Lio/getstream/chat/android/compose/ui/theme/messages/attachments/FileAttachmentTheme;
+	public final fun component13 ()Lio/getstream/chat/android/compose/ui/theme/messages/list/QuotedMessageStyle;
+	public final fun component14 ()Lio/getstream/chat/android/compose/ui/theme/messages/list/PollMessageStyle;
+	public final fun component15-0d7_KjU ()J
+	public final fun component2 ()Landroidx/compose/ui/text/TextStyle;
+	public final fun component3 ()Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;
+	public final fun component4-0d7_KjU ()J
+	public final fun component5 ()Landroidx/compose/foundation/BorderStroke;
+	public final fun component6 ()Lio/getstream/chat/android/compose/ui/theme/MessageBackgroundShapes;
+	public final fun component7 ()Landroidx/compose/ui/text/TextStyle;
 	public final fun component8-0d7_KjU ()J
 	public final fun component9-0d7_KjU ()J
-	public final fun copy-JUHc93g (Landroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;JLandroidx/compose/foundation/BorderStroke;Lio/getstream/chat/android/compose/ui/theme/MessageBackgroundShapes;Landroidx/compose/ui/text/TextStyle;JJJLio/getstream/chat/android/compose/ui/theme/messages/attachments/AudioRecordingAttachmentTheme;Lio/getstream/chat/android/compose/ui/theme/messages/attachments/FileAttachmentTheme;Lio/getstream/chat/android/compose/ui/theme/messages/list/QuotedMessageStyle;Lio/getstream/chat/android/compose/ui/theme/messages/list/PollMessageStyle;J)Lio/getstream/chat/android/compose/ui/theme/MessageTheme;
-	public static synthetic fun copy-JUHc93g$default (Lio/getstream/chat/android/compose/ui/theme/MessageTheme;Landroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;JLandroidx/compose/foundation/BorderStroke;Lio/getstream/chat/android/compose/ui/theme/MessageBackgroundShapes;Landroidx/compose/ui/text/TextStyle;JJJLio/getstream/chat/android/compose/ui/theme/messages/attachments/AudioRecordingAttachmentTheme;Lio/getstream/chat/android/compose/ui/theme/messages/attachments/FileAttachmentTheme;Lio/getstream/chat/android/compose/ui/theme/messages/list/QuotedMessageStyle;Lio/getstream/chat/android/compose/ui/theme/messages/list/PollMessageStyle;JILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/MessageTheme;
+	public final fun copy-yJyw9xE (Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;JLandroidx/compose/foundation/BorderStroke;Lio/getstream/chat/android/compose/ui/theme/MessageBackgroundShapes;Landroidx/compose/ui/text/TextStyle;JJJLio/getstream/chat/android/compose/ui/theme/messages/attachments/AudioRecordingAttachmentTheme;Lio/getstream/chat/android/compose/ui/theme/messages/attachments/FileAttachmentTheme;Lio/getstream/chat/android/compose/ui/theme/messages/list/QuotedMessageStyle;Lio/getstream/chat/android/compose/ui/theme/messages/list/PollMessageStyle;J)Lio/getstream/chat/android/compose/ui/theme/MessageTheme;
+	public static synthetic fun copy-yJyw9xE$default (Lio/getstream/chat/android/compose/ui/theme/MessageTheme;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;JLandroidx/compose/foundation/BorderStroke;Lio/getstream/chat/android/compose/ui/theme/MessageBackgroundShapes;Landroidx/compose/ui/text/TextStyle;JJJLio/getstream/chat/android/compose/ui/theme/messages/attachments/AudioRecordingAttachmentTheme;Lio/getstream/chat/android/compose/ui/theme/messages/attachments/FileAttachmentTheme;Lio/getstream/chat/android/compose/ui/theme/messages/list/QuotedMessageStyle;Lio/getstream/chat/android/compose/ui/theme/messages/list/PollMessageStyle;JILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/MessageTheme;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAudioRecording ()Lio/getstream/chat/android/compose/ui/theme/messages/attachments/AudioRecordingAttachmentTheme;
 	public final fun getBackgroundBorder ()Landroidx/compose/foundation/BorderStroke;
@@ -2763,6 +2764,7 @@ public final class io/getstream/chat/android/compose/ui/theme/MessageTheme {
 	public final fun getContentPadding ()Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;
 	public final fun getDeletedBackgroundColor-0d7_KjU ()J
 	public final fun getErrorBackgroundColor-0d7_KjU ()J
+	public final fun getErrorTextStyle ()Landroidx/compose/ui/text/TextStyle;
 	public final fun getFileAttachmentTheme ()Lio/getstream/chat/android/compose/ui/theme/messages/attachments/FileAttachmentTheme;
 	public final fun getMentionColor-0d7_KjU ()J
 	public final fun getPoll ()Lio/getstream/chat/android/compose/ui/theme/messages/list/PollMessageStyle;
@@ -3745,7 +3747,7 @@ public abstract interface class io/getstream/chat/android/compose/ui/util/Messag
 
 public final class io/getstream/chat/android/compose/ui/util/MessageTextFormatter$Companion {
 	public final fun composite ([Lio/getstream/chat/android/compose/ui/util/MessageTextFormatter;)Lio/getstream/chat/android/compose/ui/util/MessageTextFormatter;
-	public final fun defaultFormatter (ZZLio/getstream/chat/android/compose/ui/theme/StreamTypography;Lio/getstream/chat/android/compose/ui/theme/StreamColors;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)Lio/getstream/chat/android/compose/ui/util/MessageTextFormatter;
+	public final fun defaultFormatter (ZZLio/getstream/chat/android/compose/ui/theme/StreamTypography;Lio/getstream/chat/android/compose/ui/theme/StreamColors;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)Lio/getstream/chat/android/compose/ui/util/MessageTextFormatter;
 	public final fun defaultFormatter (ZZLio/getstream/chat/android/compose/ui/theme/StreamTypography;Lio/getstream/chat/android/compose/ui/theme/StreamShapes;Lio/getstream/chat/android/compose/ui/theme/StreamColors;Lio/getstream/chat/android/compose/ui/theme/MessageTheme;Lio/getstream/chat/android/compose/ui/theme/MessageTheme;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)Lio/getstream/chat/android/compose/ui/util/MessageTextFormatter;
 }
 
