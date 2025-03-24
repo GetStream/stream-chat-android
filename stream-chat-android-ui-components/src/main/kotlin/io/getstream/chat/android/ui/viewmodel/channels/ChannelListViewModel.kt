@@ -73,6 +73,7 @@ import kotlinx.coroutines.launch
  * @param limit The maximum number of channels to fetch.
  * @param messageLimit The number of messages to fetch for each channel.
  * @param memberLimit The number of members to fetch per channel.
+ * @param isDraftMessagesEnabled Enables or disables draft messages.
  * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] that will be used to create [ChatEventHandler].
  * @param chatClient Entry point for all low-level operations.
  * @param globalState Global state of OfflinePlugin. Contains information
@@ -84,7 +85,7 @@ public class ChannelListViewModel(
     private val limit: Int = 30,
     private val messageLimit: Int = 1,
     private val memberLimit: Int = 30,
-    private val isDraftMessageEnabled: Boolean,
+    private val isDraftMessagesEnabled: Boolean,
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
     private val chatClient: ChatClient = ChatClient.instance(),
     private val globalState: GlobalState = chatClient.globalState,
@@ -111,9 +112,12 @@ public class ChannelListViewModel(
     public val typingEvents: LiveData<Map<String, TypingEvent>>
         get() = globalState.typingChannels.asLiveData()
 
+    /**
+     * Draft messages for channels.
+     */
     public val draftMessages: LiveData<Map<String, DraftMessage>>
         get() = globalState.channelDraftMessages
-            .takeIf { isDraftMessageEnabled }
+            .takeIf { isDraftMessagesEnabled }
             ?.asLiveData()
             ?: MutableLiveData(emptyMap())
 

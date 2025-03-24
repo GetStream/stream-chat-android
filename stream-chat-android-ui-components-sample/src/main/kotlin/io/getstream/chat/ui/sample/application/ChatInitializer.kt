@@ -113,7 +113,7 @@ class ChatInitializer(
         val messageTranslator = MessageTranslator(client::getCurrentUser, autoTranslationEnabled)
         ChatUI.autoTranslationEnabled = autoTranslationEnabled
         ChatUI.messageTextTransformer = MarkdownTextTransformer(context, messageTranslator)
-        ChatUI.draftMessageEnabled = true
+        ChatUI.draftMessagesEnabled = true
 
         TransformStyle.viewReactionsStyleTransformer = StyleTransformer { defaultStyle ->
             defaultStyle.copy(

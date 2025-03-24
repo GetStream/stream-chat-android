@@ -199,7 +199,7 @@ public object ChatUI {
      * Whether draft messages are enabled.
      */
     @JvmStatic
-    public var draftMessageEnabled: Boolean = false
+    public var draftMessagesEnabled: Boolean = false
 
     /**
      * Sets the strategy for resizing images hosted on Stream's CDN. Disabled by default,

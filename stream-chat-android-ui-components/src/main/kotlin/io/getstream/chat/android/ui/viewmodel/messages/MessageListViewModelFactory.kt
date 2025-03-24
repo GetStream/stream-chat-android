@@ -67,6 +67,7 @@ import java.io.File
  * @param showThreadSeparatorInEmptyThread Configures if we show a thread separator when threads are empty.
  * Adds the separator item when the value is `true`.
  * @param threadLoadOlderToNewer Configures if the thread should be loaded from older to newer messages.
+ * @param isComposerDraftMessagesEnabled Configures if the composer should support draft messages.
  *
  * @see MessageListHeaderViewModel
  * @see MessageListViewModel
@@ -95,7 +96,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
     private val showDateSeparatorInEmptyThread: Boolean = false,
     private val showThreadSeparatorInEmptyThread: Boolean = false,
     private val threadLoadOlderToNewer: Boolean = false,
-    private val isComposerDraftMessageEnabled: Boolean = ChatUI.draftMessageEnabled,
+    private val isComposerDraftMessagesEnabled: Boolean = ChatUI.draftMessagesEnabled,
 ) : ViewModelProvider.Factory {
 
     private val channelStateFlow: StateFlow<ChannelState?> by lazy {
@@ -144,7 +145,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                     channelState = channelStateFlow,
                     config = MessageComposerController.Config(
                         maxAttachmentCount = maxAttachmentCount,
-                        isDraftMessageEnabled = isComposerDraftMessageEnabled,
+                        isDraftMessageEnabled = isComposerDraftMessagesEnabled,
                     ),
                 ),
             )
