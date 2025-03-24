@@ -69,6 +69,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -300,8 +301,6 @@ public class MessageComposerController(
      */
     public val messageMode: MutableStateFlow<MessageMode> = MutableStateFlow(MessageMode.Normal)
 
-    private var currentDraftMessage: DraftMessage = messageMode.value.emptyDraftMessage()
-
     /**
      * Set of currently active message actions. These are used to display different UI in the composer,
      * as well as help us decorate the message with information, such as the quoted message id.
@@ -406,7 +405,6 @@ public class MessageComposerController(
         }.debounce(TEXT_INPUT_DEBOUNCE_TIME).onEach {
             scope.launch { handleMentionSuggestions() }
             scope.launch { handleLinkPreviews() }
-            scope.launch { updateDraftMessageText(it.text) }
         }.launchIn(scope)
 
         selectedAttachments.onEach { selectedAttachments ->
@@ -437,14 +435,22 @@ public class MessageComposerController(
             state.value = state.value.copy(coolDownTime = cooldownTimer)
         }.launchIn(scope)
 
-        messageMode.onEach { messageMode ->
-            state.value = state.value.copy(messageMode = messageMode)
-            fetchDraftMessage(messageMode)
-        }.launchIn(scope)
+        messageMode
+            .distinctUntilChanged { old, new ->
+                when (old) {
+                    is MessageMode.Normal -> new is MessageMode.Normal
+                    is MessageMode.MessageThread ->
+                        old.parentMessage.id == (new as? MessageMode.MessageThread)?.parentMessage?.id
+                }
+            }
+            .onEach { messageMode ->
+                saveDraftMessage(state.value.messageMode)
+                state.value = state.value.copy(messageMode = messageMode)
+                fetchDraftMessage(messageMode)
+            }.launchIn(scope)
 
         alsoSendToChannel.onEach { alsoSendToChannel ->
             state.value = state.value.copy(alsoSendToChannel = alsoSendToChannel)
-            currentDraftMessage = currentDraftMessage.copy(showInChannel = alsoSendToChannel)
         }.launchIn(scope)
 
         ownCapabilities.onEach { ownCapabilities ->
@@ -479,12 +485,37 @@ public class MessageComposerController(
         this.messageInput.value = MessageInput(value, source)
     }
 
+    private suspend fun saveDraftMessage(messageMode: MessageMode) {
+        if (!config.isDraftMessageEnabled) return
+        when (val messageText = messageInput.value.text) {
+            "" -> clearDraftMessage()
+            else -> {
+                globalState.getDraftMessageOrEmpty(messageMode).let {
+                    chatClient.createDraftMessage(
+                        channelType = channelType,
+                        channelId = channelId,
+                        message = it.copy(
+                            text = messageText,
+                            showInChannel = alsoSendToChannel.value,
+                            replyMessage = (messageActions.value.firstOrNull { it is Reply } as? Reply)?.message,
+                        ),
+                    ).await()
+                }
+            }
+        }
+    }
+
     private fun fetchDraftMessage(messageMode: MessageMode) {
         if (!config.isDraftMessageEnabled) return
-        currentDraftMessage = globalState.getDraftMessage(messageMode)
-        setMessageInputInternal(currentDraftMessage.text, MessageInput.Source.DraftMessage)
-        setAlsoSendToChannel(currentDraftMessage.showInChannel)
-        currentDraftMessage.replyMessage?.let { performMessageAction(Reply(it)) }
+        globalState.getDraftMessageOrEmpty(messageMode).let { draftMessage ->
+            setMessageInputInternal(draftMessage.text, MessageInput.Source.DraftMessage)
+            setAlsoSendToChannel(draftMessage.showInChannel)
+            draftMessage.replyMessage
+                ?.let { performMessageAction(Reply(it)) }
+                ?: run {
+                    messageActions.value = messageActions.value.filterNot { it is Reply }.toSet()
+                }
+        }
     }
 
     /**
@@ -523,7 +554,6 @@ public class MessageComposerController(
             }
             is Reply -> {
                 messageActions.value = (messageActions.value.filterNot { it is Reply } + messageAction).toSet()
-                currentDraftMessage = currentDraftMessage.copy(replyMessage = messageAction.message)
             }
             is Edit -> {
                 setMessageInputInternal(messageAction.message.text, MessageInput.Source.Edit)
@@ -611,12 +641,14 @@ public class MessageComposerController(
     }
 
     private suspend fun clearDraftMessage() {
-        chatClient.deleteDraftMessages(
-            channelType = channelType,
-            channelId = channelId,
-            message = currentDraftMessage,
-        ).await()
-        currentDraftMessage = messageMode.value.emptyDraftMessage()
+        if (!config.isDraftMessageEnabled) return
+        globalState.getDraftMessage(messageMode.value)?.let { draftMessage ->
+            chatClient.deleteDraftMessages(
+                channelType = channelType,
+                channelId = channelId,
+                message = draftMessage,
+            ).await()
+        }
     }
 
     /**
@@ -739,7 +771,10 @@ public class MessageComposerController(
     public fun onCleared() {
         typingUpdatesBuffer.clear()
         audioRecordingController.onCleared()
-        scope.cancel()
+        scope.launch {
+            saveDraftMessage(messageMode.value)
+            scope.cancel()
+        }
     }
 
     /**
@@ -840,19 +875,6 @@ public class MessageComposerController(
      * Sets [RecordingState.Overview.playingProgress] to the given progress.
      */
     public fun seekRecordingTo(progress: Float): Unit = audioRecordingController.seekRecordingTo(progress)
-
-    private suspend fun updateDraftMessageText(text: String) {
-        if (!config.isDraftMessageEnabled) return
-        currentDraftMessage = currentDraftMessage.copy(text = text)
-        when (text) {
-            "" -> clearDraftMessage()
-            else -> chatClient.createDraftMessage(
-                channelType = channelType,
-                channelId = channelId,
-                message = currentDraftMessage,
-            ).await()
-        }
-    }
 
     /**
      * Shows the mention suggestion list popup if necessary.
@@ -1012,10 +1034,12 @@ public class MessageComposerController(
         val isDraftMessageEnabled: Boolean = false,
     )
 
-    private fun GlobalState.getDraftMessage(messageMode: MessageMode): DraftMessage = when (messageMode) {
+    private fun GlobalState.getDraftMessageOrEmpty(messageMode: MessageMode): DraftMessage =
+        getDraftMessage(messageMode) ?: messageMode.emptyDraftMessage()
+
+    private fun GlobalState.getDraftMessage(messageMode: MessageMode): DraftMessage? = when (messageMode) {
         is MessageMode.MessageThread -> threadDraftMessages.value[messageMode.parentMessage.id]
-            ?: messageMode.emptyDraftMessage()
-        else -> channelDraftMessages.value[channelCid] ?: messageMode.emptyDraftMessage()
+        else -> channelDraftMessages.value[channelCid]
     }
 
     private fun MessageMode.emptyDraftMessage(): DraftMessage = when (this) {
