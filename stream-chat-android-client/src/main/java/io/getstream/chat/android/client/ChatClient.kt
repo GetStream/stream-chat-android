@@ -161,6 +161,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionData
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
@@ -1911,6 +1912,67 @@ internal constructor(
                         }
                 }.share(userScope) {
                     SendMessageIdentifier(channelType, channelId, processedMessage.id)
+                }
+            }
+    }
+
+    @CheckResult
+    public fun createDraftMessage(
+        channelType: String,
+        channelId: String,
+        message: DraftMessage,
+    ): Call<DraftMessage> {
+        return message.ensureId(getCurrentUser() ?: getStoredUser()).let { processedDraftMessage ->
+            api.createDraftMessage(channelType, channelId, processedDraftMessage)
+                .retry(userScope, retryPolicy)
+                .doOnResult(userScope) { result ->
+                    logger.i { "[createDraftMessage] result: ${result.stringify { it.toString() }}" }
+                    plugins.forEach { listener ->
+                        logger.v { "[createDraftMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
+                        listener.onCreateDraftMessageResult(result, channelType, channelId, processedDraftMessage)
+                    }
+                }
+        }
+    }
+
+    @CheckResult
+    public fun deleteDraftMessages(
+        channelType: String,
+        channelId: String,
+        message: DraftMessage,
+    ): Call<Unit> {
+        return api.deleteDraftMessage(channelType, channelId, message)
+            .retry(userScope, retryPolicy)
+            .doOnResult(userScope) { result ->
+                logger.i { "[deleteDraftMessages] result: ${result.stringify { it.toString() }}" }
+                plugins.forEach { listener ->
+                    logger.v { "[deleteDraftMessages] #doOnResult; plugin: ${listener::class.qualifiedName}" }
+                    listener.onDeleteDraftMessagesResult(result, channelType, channelId, message)
+                }
+            }
+    }
+
+    /**
+     * Query draft messages for the current user.
+     * The query can be paginated using [offset] and [limit].
+     *
+     * @param offset The offset to start querying from.
+     * @param limit The number of draft messages to return.
+     *
+     * @return Executable async [Call] responsible for querying draft messages.
+     */
+    @CheckResult
+    public fun queryDraftMessages(
+        offset: Int?,
+        limit: Int?,
+    ): Call<List<DraftMessage>> {
+        return api.queryDraftMessages(offset, limit)
+            .retry(userScope, retryPolicy)
+            .doOnResult(userScope) { result ->
+                logger.i { "[queryDraftMessages] result: ${result.stringify { it.toString() }}" }
+                plugins.forEach { listener ->
+                    logger.v { "[queryDraftMessages] #doOnResult; plugin: ${listener::class.qualifiedName}" }
+                    listener.onQueryDraftMessagesResult(result, offset, limit)
                 }
             }
     }

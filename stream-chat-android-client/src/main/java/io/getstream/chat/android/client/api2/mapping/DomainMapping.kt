@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
+import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
@@ -67,6 +68,7 @@ import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Member
@@ -206,6 +208,20 @@ internal class DomainMapping(
             restrictedVisibility = emptyList(),
             extraData = extraData.toMutableMap(),
         ).let(messageTransformer::transform)
+
+    internal fun DownstreamDraftDto.toDomain(): DraftMessage =
+        DraftMessage(
+            attachments = message.attachments?.map { it.toDomain() } ?: emptyList(),
+            cid = channel_cid,
+            id = message.id,
+            parentId = parent_message?.id,
+            replyMessage = quoted_message?.toDomain(),
+            showInChannel = message.show_in_channel,
+            mentionedUsersIds = message.mentioned_users?.map { it.id } ?: emptyList(),
+            silent = message.silent,
+            text = message.text,
+            extraData = message.extraData ?: emptyMap(),
+        )
 
     /**
      * Map a list of [DownstreamReactionDto] to a list of [Reaction].

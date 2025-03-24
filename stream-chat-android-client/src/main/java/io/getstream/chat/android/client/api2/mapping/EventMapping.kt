@@ -35,6 +35,8 @@ import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
+import io.getstream.chat.android.client.api2.model.dto.DraftMessageDeletedEventDto
+import io.getstream.chat.android.client.api2.model.dto.DraftMessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserUnbannedEventDto
@@ -94,6 +96,8 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.ConnectionErrorEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.events.DraftMessageDeletedEvent
+import io.getstream.chat.android.client.events.DraftMessageUpdatedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
@@ -207,6 +211,8 @@ internal class EventMapping(
             is VoteChangedEventDto -> toDomain()
             is AnswerCastedEventDto -> toDomain()
             is VoteRemovedEventDto -> toDomain()
+            is DraftMessageDeletedEventDto -> toDomain()
+            is DraftMessageUpdatedEventDto -> toDomain()
             is AIIndicatorUpdatedEventDto -> toDomain()
             is AIIndicatorClearEventDto -> toDomain()
             is AIIndicatorStopEventDto -> toDomain()
@@ -1085,6 +1091,30 @@ internal class EventMapping(
             poll = newPoll,
             removedVote = removedVote,
             channelLastMessageAt = channel_last_message_at,
+        )
+    }
+
+    /**
+     * Transforms [DraftMessageUpdatedEventDto] to [DraftMessageUpdatedEvent].
+     */
+    private fun DraftMessageUpdatedEventDto.toDomain(): DraftMessageUpdatedEvent = with(domainMapping) {
+        return DraftMessageUpdatedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            draftMessage = draft.toDomain(),
+        )
+    }
+
+    /**
+     * Transforms [DraftMessageDeletedEventDto] to [DraftMessageDeletedEvent].
+     */
+    private fun DraftMessageDeletedEventDto.toDomain(): DraftMessageDeletedEvent = with(domainMapping) {
+        return DraftMessageDeletedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            draftMessage = draft.toDomain(),
         )
     }
 

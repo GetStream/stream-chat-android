@@ -22,7 +22,7 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
  * The mode for displaying the list content in the chat screen.
  */
 @ExperimentalStreamChatApi
-public enum class ListContentMode {
+public enum class ChatListContentMode {
     /**
      * Display the list of channels.
      */

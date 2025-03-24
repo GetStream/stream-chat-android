@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.Mother.randomDeviceDto
 import io.getstream.chat.android.client.Mother.randomDownstreamChannelDto
 import io.getstream.chat.android.client.Mother.randomDownstreamChannelMuteDto
 import io.getstream.chat.android.client.Mother.randomDownstreamChannelUserRead
+import io.getstream.chat.android.client.Mother.randomDownstreamDraftDto
 import io.getstream.chat.android.client.Mother.randomDownstreamFlagDto
 import io.getstream.chat.android.client.Mother.randomDownstreamMemberDto
 import io.getstream.chat.android.client.Mother.randomDownstreamMessageDto
@@ -61,6 +62,7 @@ import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Member
@@ -115,6 +117,33 @@ internal class DomainMappingTest {
         }
 
         result `should be equal to` transformedMessage
+    }
+
+    @Test
+    fun `Down is correctly mapped to DraftMessage`() {
+        val draftMessageResponse = randomDownstreamDraftDto()
+        val sut = Fixture()
+            .get()
+        val expectedMappedDraftMessage = with(sut) {
+            DraftMessage(
+                id = draftMessageResponse.message.id,
+                cid = draftMessageResponse.channel_cid,
+                text = draftMessageResponse.message.text,
+                parentId = draftMessageResponse.parent_message?.id,
+                replyMessage = draftMessageResponse.quoted_message?.toDomain(),
+                attachments = with(sut) { draftMessageResponse.message.attachments?.map { it.toDomain() } ?: emptyList() },
+                mentionedUsersIds = draftMessageResponse.message.mentioned_users?.map { it.id } ?: emptyList(),
+                extraData = draftMessageResponse.message.extraData ?: emptyMap(),
+                silent = draftMessageResponse.message.silent,
+                showInChannel = draftMessageResponse.message.show_in_channel,
+            )
+        }
+
+        val result = with(sut) {
+            draftMessageResponse.toDomain()
+        }
+
+        result `should be equal to` expectedMappedDraftMessage
     }
 
     @Test

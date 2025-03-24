@@ -33,6 +33,8 @@ import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
+import io.getstream.chat.android.client.api2.model.dto.DraftMessageDeletedEventDto
+import io.getstream.chat.android.client.api2.model.dto.DraftMessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserUnbannedEventDto
@@ -92,6 +94,8 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.ConnectionErrorEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.events.DraftMessageDeletedEvent
+import io.getstream.chat.android.client.events.DraftMessageUpdatedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
@@ -166,6 +170,7 @@ internal object EventMappingTestArguments {
     private val CHANNEL_ID = randomString()
     private val CID = "$CHANNEL_TYPE:$CHANNEL_ID"
     private val MESSAGE = Mother.randomDownstreamMessageDto()
+    private val DRAFT = Mother.randomDownstreamDraftDto()
     private val CHANNEL = Mother.randomDownstreamChannelDto()
     private val CLEAR_HISTORY = randomBoolean()
     private val SHADOW_BAN = randomBoolean()
@@ -199,6 +204,18 @@ internal object EventMappingTestArguments {
         channel_id = CHANNEL_ID,
         message = MESSAGE,
         channel_last_message_at = DATE,
+    )
+
+    private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
+        type = EventType.DRAFT_MESSAGE_UPDATED,
+        created_at = EXACT_DATE,
+        draft = DRAFT,
+    )
+
+    private val draftMessageDeletedDto = DraftMessageDeletedEventDto(
+        type = EventType.DRAFT_MESSAGE_DELETED,
+        created_at = EXACT_DATE,
+        draft = DRAFT,
     )
 
     private val channelDeletedDto = ChannelDeletedEventDto(
@@ -758,6 +775,20 @@ internal object EventMappingTestArguments {
         totalUnreadCount = newMessageDto.total_unread_count,
         unreadChannels = newMessageDto.unread_channels,
         channelLastMessageAt = newMessageDto.channel_last_message_at,
+    )
+
+    private val draftMessageUpdatedEvent = DraftMessageUpdatedEvent(
+        type = draftMessageUpdatedDto.type,
+        createdAt = draftMessageUpdatedDto.created_at.date,
+        rawCreatedAt = draftMessageUpdatedDto.created_at.rawDate,
+        draftMessage = with(domainMapping) { draftMessageUpdatedDto.draft.toDomain() },
+    )
+
+    private val draftMessageDeletedEvent = DraftMessageDeletedEvent(
+        type = draftMessageDeletedDto.type,
+        createdAt = draftMessageDeletedDto.created_at.date,
+        rawCreatedAt = draftMessageDeletedDto.created_at.rawDate,
+        draftMessage = with(domainMapping) { draftMessageDeletedDto.draft.toDomain() },
     )
 
     private val channelDeleted = ChannelDeletedEvent(
@@ -1410,6 +1441,8 @@ internal object EventMappingTestArguments {
     @Suppress("LongMethod")
     fun arguments() = listOf(
         Arguments.of(newMessageDto, newMessage),
+        Arguments.of(draftMessageUpdatedDto, draftMessageUpdatedEvent),
+        Arguments.of(draftMessageDeletedDto, draftMessageDeletedEvent),
         Arguments.of(channelDeletedDto, channelDeleted),
         Arguments.of(channelHiddenDto, channelHidden),
         Arguments.of(channelTruncatedDto, channelTruncated),

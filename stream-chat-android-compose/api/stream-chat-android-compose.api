@@ -751,6 +751,14 @@ public final class io/getstream/chat/android/compose/ui/channels/list/SearchResu
 	public static final fun SearchResultItem (Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V
 }
 
+public final class io/getstream/chat/android/compose/ui/chats/ChatListContentMode : java/lang/Enum {
+	public static final field Channels Lio/getstream/chat/android/compose/ui/chats/ChatListContentMode;
+	public static final field Threads Lio/getstream/chat/android/compose/ui/chats/ChatListContentMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/compose/ui/chats/ChatListContentMode;
+	public static fun values ()[Lio/getstream/chat/android/compose/ui/chats/ChatListContentMode;
+}
+
 public final class io/getstream/chat/android/compose/ui/chats/ChatMessageSelection : java/io/Serializable {
 	public static final field $stable I
 	public fun <init> ()V
@@ -770,7 +778,7 @@ public final class io/getstream/chat/android/compose/ui/chats/ChatMessageSelecti
 }
 
 public final class io/getstream/chat/android/compose/ui/chats/ChatsScreenKt {
-	public static final fun ChatsScreen (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneNavigator;Lio/getstream/chat/android/compose/viewmodel/channels/ChannelViewModelFactory;Lio/getstream/chat/android/compose/viewmodel/threads/ThreadsViewModelFactory;Lkotlin/jvm/functions/Function2;Ljava/lang/String;Lio/getstream/chat/android/compose/ui/channels/SearchMode;Lio/getstream/chat/android/compose/ui/chats/ListContentMode;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
+	public static final fun ChatsScreen (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneNavigator;Lio/getstream/chat/android/compose/viewmodel/channels/ChannelViewModelFactory;Lio/getstream/chat/android/compose/viewmodel/threads/ThreadsViewModelFactory;Lkotlin/jvm/functions/Function2;Ljava/lang/String;Lio/getstream/chat/android/compose/ui/channels/SearchMode;Lio/getstream/chat/android/compose/ui/chats/ChatListContentMode;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
 }
 
 public final class io/getstream/chat/android/compose/ui/chats/ComposableSingletons$ChatsScreenKt {
@@ -782,14 +790,6 @@ public final class io/getstream/chat/android/compose/ui/chats/ComposableSingleto
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 	public final fun getLambda-3$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
-}
-
-public final class io/getstream/chat/android/compose/ui/chats/ListContentMode : java/lang/Enum {
-	public static final field Channels Lio/getstream/chat/android/compose/ui/chats/ListContentMode;
-	public static final field Threads Lio/getstream/chat/android/compose/ui/chats/ListContentMode;
-	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/compose/ui/chats/ListContentMode;
-	public static fun values ()[Lio/getstream/chat/android/compose/ui/chats/ListContentMode;
 }
 
 public final class io/getstream/chat/android/compose/ui/components/BackButtonKt {
@@ -3883,8 +3883,8 @@ public final class io/getstream/chat/android/compose/ui/util/adaptivelayout/Thre
 	public synthetic fun <init> (Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun canNavigateBack ()Z
 	public final fun navigateBack ()V
-	public final fun navigateTo (Lio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneDestination;Lio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneRole;)V
-	public static synthetic fun navigateTo$default (Lio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneNavigator;Lio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneDestination;Lio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneRole;ILjava/lang/Object;)V
+	public final fun navigateTo (Lio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneDestination;ZLio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneRole;)V
+	public static synthetic fun navigateTo$default (Lio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneNavigator;Lio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneDestination;ZLio/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneRole;ILjava/lang/Object;)V
 }
 
 public final class io/getstream/chat/android/compose/ui/util/adaptivelayout/ThreePaneNavigatorKt {

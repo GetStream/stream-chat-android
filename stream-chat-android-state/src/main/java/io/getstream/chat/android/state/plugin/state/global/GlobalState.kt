@@ -18,6 +18,7 @@ package io.getstream.chat.android.state.plugin.state.global
 
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelMute
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
@@ -71,4 +72,16 @@ public interface GlobalState {
      * @see [TypingEvent]
      */
     public val typingChannels: StateFlow<Map<String, TypingEvent>>
+
+    /**
+     * Map of draft messages for all channels.
+     * Use [Channel.cid] to access draft message for a particular channel.
+     */
+    public val channelDraftMessages: StateFlow<Map<String, DraftMessage>>
+
+    /**
+     * Map of draft messages for all threads.
+     * Use the parentId to access draft message for a particular thread.
+     */
+    public val threadDraftMessages: StateFlow<Map<String, DraftMessage>>
 }

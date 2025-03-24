@@ -42,4 +42,9 @@ sealed class InfoContentMode(open val channelId: String) : Serializable {
      * Display the info for a group channel.
      */
     data class GroupChannelInfo(override val channelId: String) : InfoContentMode(channelId)
+
+    /**
+     * Display the pinned messages for a channel.
+     */
+    data class PinnedMessages(override val channelId: String) : InfoContentMode(channelId)
 }
