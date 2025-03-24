@@ -32,6 +32,7 @@ import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.HMSRoom
@@ -234,6 +235,31 @@ public fun randomReaction(
     syncStatus = syncStatus,
     extraData = extraData,
     enforceUnique = enforceUnique,
+)
+
+public fun randomDraftMessage(
+    id: String = randomString(),
+    cid: String = randomCID(),
+    text: String = randomString(),
+    parentId: String? = randomString(),
+    attachments: List<Attachment> = listOf(),
+    mentionedUsers: List<User> = listOf(),
+    extraData: Map<String, Any> = mapOf(),
+    silent: Boolean = randomBoolean(),
+    showInChannel: Boolean = randomBoolean(),
+    replyMessage: Message? = randomMessage(),
+): DraftMessage = DraftMessage(
+    id = id,
+    cid = cid,
+    text = text,
+    parentId = parentId,
+    attachments = attachments,
+    mentionedUsersIds = mentionedUsers.map(User::id).toMutableList(),
+
+    extraData = extraData,
+    silent = silent,
+    showInChannel = showInChannel,
+    replyMessage = replyMessage,
 )
 
 public fun randomMessage(

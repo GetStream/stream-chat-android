@@ -41,6 +41,8 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.ConnectionErrorEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.events.DraftMessageDeletedEvent
+import io.getstream.chat.android.client.events.DraftMessageUpdatedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
@@ -297,6 +299,8 @@ public class ChannelClient internal constructor(
             is AIIndicatorUpdatedEvent -> event.cid == cid
             is AIIndicatorClearEvent -> event.cid == cid
             is AIIndicatorStopEvent -> event.cid == cid
+            is DraftMessageUpdatedEvent -> event.draftMessage.cid == cid
+            is DraftMessageDeletedEvent -> event.draftMessage.cid == cid
             is HealthEvent,
             is NotificationChannelMutesUpdatedEvent,
             is NotificationMutesUpdatedEvent,

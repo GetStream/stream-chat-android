@@ -65,6 +65,7 @@ import io.getstream.chat.android.client.api2.model.requests.PollRequest
 import io.getstream.chat.android.client.api2.model.requests.PollUpdateRequest
 import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
@@ -105,6 +106,7 @@ import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.GuestUser
@@ -224,6 +226,43 @@ constructor(
     ).mapDomain { response ->
         response.message.toDomain()
     }
+
+    override fun createDraftMessage(
+        channelType: String,
+        channelId: String,
+        message: DraftMessage,
+    ): Call<DraftMessage> = messageApi.createDraftMessage(
+        channelType = channelType,
+        channelId = channelId,
+        message = SendMessageRequest(
+            message = with(dtoMapping) { message.toDto() },
+        ),
+    ).mapDomain { response ->
+        response.draft.toDomain()
+    }
+
+    override fun deleteDraftMessage(
+        channelType: String,
+        channelId: String,
+        message: DraftMessage,
+    ): Call<Unit> = messageApi.deleteDraftMessage(
+        channelType = channelType,
+        channelId = channelId,
+        parentId = message.parentId,
+    ).toUnitCall()
+
+    override fun queryDraftMessages(
+        offset: Int?,
+        limit: Int?,
+    ): Call<List<DraftMessage>> =
+        messageApi.queryDraftMessages(
+            QueryDraftMessagesRequest(
+                offset = offset,
+                limit = limit,
+            ),
+        ).mapDomain { response ->
+            response.drafts.map { it.toDomain() }
+        }
 
     override fun updateMessage(
         message: Message,

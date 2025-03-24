@@ -39,6 +39,8 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.ConnectionErrorEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
+import io.getstream.chat.android.client.events.DraftMessageDeletedEvent
+import io.getstream.chat.android.client.events.DraftMessageUpdatedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
@@ -658,6 +660,8 @@ internal class ChannelLogic(
             is NotificationMutesUpdatedEvent,
             is UnknownEvent,
             is UserDeletedEvent,
+            is DraftMessageUpdatedEvent,
+            is DraftMessageDeletedEvent,
             -> Unit // Ignore these events
         }
     }

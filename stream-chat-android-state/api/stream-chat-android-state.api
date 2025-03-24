@@ -144,9 +144,11 @@ public abstract interface class io/getstream/chat/android/state/plugin/state/cha
 public abstract interface class io/getstream/chat/android/state/plugin/state/global/GlobalState {
 	public abstract fun getBanned ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getBlockedUserIds ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getChannelDraftMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getChannelMutes ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getChannelUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMuted ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getThreadDraftMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getTotalUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getTypingChannels ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getUnreadThreadsCount ()Lkotlinx/coroutines/flow/StateFlow;
