@@ -19,12 +19,16 @@ package io.getstream.chat.android.client.api2.endpoint
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
+import io.getstream.chat.android.client.api2.model.response.CompletableResponse
+import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.MessagesResponse
+import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
@@ -50,6 +54,25 @@ internal interface MessageApi {
         @Path("id") channelId: String,
         @Body message: SendMessageRequest,
     ): RetrofitCall<MessageResponse>
+
+    @POST("/channels/{type}/{id}/draft")
+    fun createDraftMessage(
+        @Path("type") channelType: String,
+        @Path("id") channelId: String,
+        @Body message: SendMessageRequest,
+    ): RetrofitCall<DraftMessageResponse>
+
+    @DELETE("/channels/{type}/{id}/draft")
+    fun deleteDraftMessage(
+        @Path("type") channelType: String,
+        @Path("id") channelId: String,
+        @Query("parent_id") parentId: String?,
+    ): RetrofitCall<CompletableResponse>
+
+    @POST("/drafts/query")
+    fun queryDraftMessages(
+        @Body request: QueryDraftMessagesRequest,
+    ): RetrofitCall<QueryDraftMessagesResponse>
 
     @GET("/messages/{id}")
     fun getMessage(@Path("id") messageId: String): RetrofitCall<MessageResponse>

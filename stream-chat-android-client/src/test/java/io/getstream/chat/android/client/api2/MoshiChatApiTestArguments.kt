@@ -76,6 +76,18 @@ internal object MoshiChatApiTestArguments {
     fun sendMessageInput() = messageResponseArguments()
 
     @JvmStatic
+    fun createDraftMessageInput() = draftMessageResponseArguments()
+
+    @JvmStatic
+    fun queryDraftMessageInput() = listOf(
+        Arguments.of(
+            RetroSuccess(Mother.randomQueryDraftMessagesResponse()).toRetrofitCall(),
+            Result.Success::class,
+        ),
+        Arguments.of(RetroError<MessageResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
+
+    @JvmStatic
     fun updateMessageInput() = messageResponseArguments()
 
     @JvmStatic
@@ -519,6 +531,14 @@ internal object MoshiChatApiTestArguments {
     private fun messageResponseArguments() = listOf(
         Arguments.of(
             RetroSuccess(MessageResponse(Mother.randomDownstreamMessageDto())).toRetrofitCall(),
+            Result.Success::class,
+        ),
+        Arguments.of(RetroError<MessageResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
+
+    private fun draftMessageResponseArguments() = listOf(
+        Arguments.of(
+            RetroSuccess(Mother.randomDraftMessageResponse()).toRetrofitCall(),
             Result.Success::class,
         ),
         Arguments.of(RetroError<MessageResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),

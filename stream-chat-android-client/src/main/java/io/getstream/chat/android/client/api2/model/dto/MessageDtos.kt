@@ -39,7 +39,7 @@ internal data class UpstreamMessageDto(
     val mentioned_users: List<String>,
     val parent_id: String?,
     val pin_expires: Date?,
-    val pinned: Boolean,
+    val pinned: Boolean?,
     val pinned_at: Date?,
     val pinned_by: UpstreamUserDto?,
     val quoted_message_id: String?,
@@ -101,3 +101,23 @@ internal data class DownstreamMessageDto(
 
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
+
+@JsonClass(generateAdapter = true)
+internal data class DownstreamDraftDto(
+    val message: DownstreamDraftMessageDto,
+    val channel_cid: String,
+    val quoted_message: DownstreamMessageDto? = null,
+    val parent_message: DownstreamMessageDto? = null,
+)
+
+@JsonClass(generateAdapter = true)
+internal data class DownstreamDraftMessageDto(
+    val id: String,
+    val text: String,
+    val attachments: List<AttachmentDto>? = null,
+    val mentioned_users: List<DownstreamUserDto>? = null,
+    val silent: Boolean = false,
+    val show_in_channel: Boolean = false,
+
+    val extraData: Map<String, Any>? = null,
+)
