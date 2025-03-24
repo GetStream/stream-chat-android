@@ -29,6 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
@@ -81,6 +83,7 @@ import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  * @param onMessagesPageEndReached Handler for pagination when the end of newest messages have been reached.
  * @param onScrollToBottomClicked Handler when the user requests to scroll to the bottom of the messages list.
+ * @param onPauseAudioRecordingAttachments Handler for lifecycle events.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based
@@ -162,6 +165,7 @@ public fun MessageList(
     },
     onMessagesPageEndReached: (String) -> Unit = { viewModel.onBottomEndRegionReached(it) },
     onScrollToBottomClicked: (() -> Unit) -> Unit = { viewModel.scrollToBottom(scrollToBottom = it) },
+    onPauseAudioRecordingAttachments: () -> Unit = { viewModel.pauseAudioRecordingAttachments() },
     loadingContent: @Composable () -> Unit = {
         ChatTheme.componentFactory.MessageListLoadingIndicator(modifier)
     },
@@ -231,6 +235,7 @@ public fun MessageList(
         onQuotedMessageClick = onQuotedMessageClick,
         onMessagesPageEndReached = onMessagesPageEndReached,
         onScrollToBottom = onScrollToBottomClicked,
+        onPauseAudioRecordingAttachments = onPauseAudioRecordingAttachments,
         onMessageLinkClick = onMessageLinkClick,
         onClosePoll = onClosePoll,
         onAddAnswer = onAddAnswer,
@@ -362,6 +367,7 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * @param onMessageLinkClick Handler for clicking on a link in the message.
  * @param onMessagesPageEndReached Handler for pagination when the end of newest messages have been reached.
  * @param onScrollToBottom Handler when the user requests to scroll to the bottom of the messages list.
+ * @param onPauseAudioRecordingAttachments Handler for lifecycle events.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based
@@ -400,6 +406,7 @@ public fun MessageList(
     onQuotedMessageClick: (Message) -> Unit = {},
     onMessagesPageEndReached: (String) -> Unit = {},
     onScrollToBottom: (() -> Unit) -> Unit = {},
+    onPauseAudioRecordingAttachments: () -> Unit = {},
     onUserAvatarClick: ((User) -> Unit)? = null,
     onMessageLinkClick: ((Message, String) -> Unit)? = null,
     onUserMentionClick: (User) -> Unit = { _ -> },
@@ -485,23 +492,28 @@ public fun MessageList(
 
     when {
         isLoading -> loadingContent()
-        messages.isNotEmpty() -> Messages(
-            modifier = modifier,
-            contentPadding = contentPadding,
-            messagesState = currentState,
-            messagesLazyListState = messagesLazyListState,
-            onMessagesStartReached = onMessagesPageStartReached,
-            verticalArrangement = verticalArrangement,
-            threadMessagesStart = threadMessagesStart,
-            onLastVisibleMessageChanged = onLastVisibleMessageChanged,
-            onScrolledToBottom = onScrolledToBottom,
-            helperContent = helperContent,
-            loadingMoreContent = loadingMoreContent,
-            itemModifier = itemModifier,
-            itemContent = itemContent,
-            onMessagesEndReached = onMessagesPageEndReached,
-            onScrollToBottom = onScrollToBottom,
-        )
+        messages.isNotEmpty() -> {
+            Messages(
+                modifier = modifier,
+                contentPadding = contentPadding,
+                messagesState = currentState,
+                messagesLazyListState = messagesLazyListState,
+                onMessagesStartReached = onMessagesPageStartReached,
+                verticalArrangement = verticalArrangement,
+                threadMessagesStart = threadMessagesStart,
+                onLastVisibleMessageChanged = onLastVisibleMessageChanged,
+                onScrolledToBottom = onScrolledToBottom,
+                helperContent = helperContent,
+                loadingMoreContent = loadingMoreContent,
+                itemModifier = itemModifier,
+                itemContent = itemContent,
+                onMessagesEndReached = onMessagesPageEndReached,
+                onScrollToBottom = onScrollToBottom,
+            )
+
+            /** Clean up: Pause any playing audio tracks in onPause(). **/
+            LifecycleEventEffect(Lifecycle.Event.ON_PAUSE, onEvent = onPauseAudioRecordingAttachments)
+        }
 
         else -> emptyContent()
     }

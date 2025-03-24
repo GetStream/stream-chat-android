@@ -2361,6 +2361,13 @@ public class MessageListController(
     }
 
     /**
+     * Pauses all running audio recording attachments.
+     */
+    public fun pauseAudioRecordingAttachments() {
+        chatClient.audioPlayer.pause()
+    }
+
+    /**
      * A class designed for error event propagation.
      *
      * @param streamError Contains the original [Throwable] along with a message.

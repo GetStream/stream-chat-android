@@ -833,6 +833,19 @@ internal class MessageListControllerTests {
         verify(audioPlayer, times(0)).pause()
     }
 
+    @Test
+    fun `When calling pauseAudioRecordingAttachments, audioPlayer is invoked`() = runTest {
+        val audioPlayer = mock<AudioPlayer>()
+        val messagesState = MutableStateFlow(emptyList<Message>())
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelState(messagesState = messagesState)
+            .givenAudioPlayer(audioPlayer)
+            .get()
+        controller.pauseAudioRecordingAttachments()
+        verify(audioPlayer).pause()
+    }
+
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val cid: String = CID,

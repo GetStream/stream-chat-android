@@ -251,6 +251,7 @@ public class MessageListView : ConstraintLayout {
     private var attachmentDownloadHandler = AttachmentDownloadHandler {
         throw IllegalStateException("onAttachmentDownloadHandler must be set")
     }
+    private var onPauseAudioRecordingAttachmentsHandler: OnPauseAudioRecordingAttachmentsHandler? = null
 
     private var confirmDeleteMessageHandler = ConfirmDeleteMessageHandler { _, confirmCallback ->
         AlertDialog.Builder(context)
@@ -650,7 +651,7 @@ public class MessageListView : ConstraintLayout {
 
     private val pauseAudioPlayerListener = object : DefaultLifecycleObserver {
         override fun onPause(owner: LifecycleOwner) {
-            ChatClient.instance().audioPlayer.pause()
+            onPauseAudioRecordingAttachmentsHandler?.onPauseAudioRecordingAttachments()
         }
     }
 
@@ -2147,6 +2148,13 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
+     * Sets the handler for pausing the audio recording attachments.
+     */
+    public fun setOnPauseAudioRecordingAttachmentsHandler(handler: OnPauseAudioRecordingAttachmentsHandler) {
+        this.onPauseAudioRecordingAttachmentsHandler = handler
+    }
+
+    /**
      * Sets the handler used when the user interacts with the unread label.
      *
      * @param listener The listener to use.
@@ -2585,6 +2593,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface OnScrollToBottomHandler {
         public fun onScrollToBottom()
+    }
+
+    public fun interface OnPauseAudioRecordingAttachmentsHandler {
+        public fun onPauseAudioRecordingAttachments()
     }
     //endregion
 
