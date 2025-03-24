@@ -78,6 +78,9 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `MessageBubble` and `MessageFailedIcon` to `ChatComponentFactory` to allow customization of the message bubbles and the failed message icon. [#5688](https://github.com/GetStream/stream-chat-android/pull/5688)
+- Add `errorTextStyle` and `errorBackgroundColor` to `MessageTheme` to allow customization of the error message bubbles and error message text style. [#5688](https://github.com/GetStream/stream-chat-android/pull/5688)
+- ⚠️Add `Message` as an argument of the `textStyle` lambda parameter of the `MessageTextFormatter.defaultFormatter` method to allow customizing the text style based on the `Message`. [#5688](https://github.com/GetStream/stream-chat-android/pull/5688)
 
 ### ⚠️ Changed
 
