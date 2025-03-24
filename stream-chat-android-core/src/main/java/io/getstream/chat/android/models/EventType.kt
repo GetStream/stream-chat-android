@@ -33,6 +33,8 @@ public object EventType {
     public const val USER_UNBANNED: String = "user.unbanned"
     public const val TYPING_START: String = "typing.start"
     public const val TYPING_STOP: String = "typing.stop"
+    public const val DRAFT_MESSAGE_UPDATED: String = "draft.updated"
+    public const val DRAFT_MESSAGE_DELETED: String = "draft.deleted"
     public const val MESSAGE_NEW: String = "message.new"
     public const val MESSAGE_UPDATED: String = "message.updated"
     public const val MESSAGE_DELETED: String = "message.deleted"

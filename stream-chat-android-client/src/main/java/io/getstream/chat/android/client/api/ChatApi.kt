@@ -33,6 +33,7 @@ import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.GuestUser
@@ -171,6 +172,26 @@ internal interface ChatApi {
         channelId: String,
         message: Message,
     ): Call<Message>
+
+    @CheckResult
+    fun createDraftMessage(
+        channelType: String,
+        channelId: String,
+        message: DraftMessage,
+    ): Call<DraftMessage>
+
+    @CheckResult
+    fun deleteDraftMessage(
+        channelType: String,
+        channelId: String,
+        message: DraftMessage,
+    ): Call<Unit>
+
+    @CheckResult
+    fun queryDraftMessages(
+        offset: Int?,
+        limit: Int?,
+    ): Call<List<DraftMessage>>
 
     @CheckResult
     fun muteChannel(
