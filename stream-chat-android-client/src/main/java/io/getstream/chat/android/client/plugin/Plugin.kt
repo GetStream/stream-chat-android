@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
+import io.getstream.chat.android.client.plugin.listeners.DraftMessageListener
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.plugin.listeners.FetchCurrentUserListener
 import io.getstream.chat.android.client.plugin.listeners.GetMessageListener
@@ -48,6 +49,7 @@ import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.client.plugin.listeners.UnblockUserListener
 import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
@@ -72,6 +74,7 @@ public interface Plugin :
     SendGiphyListener,
     ShuffleGiphyListener,
     DeleteMessageListener,
+    DraftMessageListener,
     SendMessageListener,
     SendAttachmentListener,
     EditMessageListener,
@@ -439,6 +442,32 @@ public interface Plugin :
     }
 
     override fun onQueryBlockedUsersResult(result: Result<List<UserBlock>>) {
+        /* No-Op */
+    }
+
+    override suspend fun onCreateDraftMessageResult(
+        result: Result<DraftMessage>,
+        channelType: String,
+        channelId: String,
+        message: DraftMessage,
+    ) {
+        /* No-Op */
+    }
+
+    override suspend fun onDeleteDraftMessagesResult(
+        result: Result<Unit>,
+        channelType: String,
+        channelId: String,
+        message: DraftMessage,
+    ) {
+        /* No-Op */
+    }
+
+    override suspend fun onQueryDraftMessagesResult(
+        result: Result<List<DraftMessage>>,
+        offset: Int?,
+        limit: Int?,
+    ) {
         /* No-Op */
     }
 }

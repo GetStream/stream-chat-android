@@ -170,7 +170,7 @@ public class StreamStatePluginFactory(
             stateRegistry = stateRegistry,
             syncManager = syncManager,
             eventHandler = eventHandler,
-            globalState = mutableGlobalState,
+            mutableGlobalState = mutableGlobalState,
             queryingChannelsFree = isQueryingFree,
             statePluginConfig = config,
         )

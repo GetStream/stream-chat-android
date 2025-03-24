@@ -22,6 +22,7 @@ package io.getstream.chat.android.client.utils.message
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.utils.date.after
 import io.getstream.chat.android.models.AttachmentType
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageModerationAction
 import io.getstream.chat.android.models.MessageType
@@ -204,6 +205,14 @@ public fun Message.isModerationError(currentUserId: String?): Boolean = isMine(c
  * @return the message with an id.
  */
 internal fun Message.ensureId(currentUser: User?): Message =
+    copy(id = id.takeIf { it.isNotBlank() } ?: generateMessageId(currentUser))
+
+/**
+ * Ensures the draft message has an id.
+ * If the draft message doesn't have an id, a unique message id is generated.
+ * @return the draft message with an id.
+ */
+internal fun DraftMessage.ensureId(currentUser: User?): DraftMessage =
     copy(id = id.takeIf { it.isNotBlank() } ?: generateMessageId(currentUser))
 
 /**

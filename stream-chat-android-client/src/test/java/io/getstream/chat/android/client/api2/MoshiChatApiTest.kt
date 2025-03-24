@@ -75,6 +75,7 @@ import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.CompletableResponse
 import io.getstream.chat.android.client.api2.model.response.CreateVideoCallResponse
 import io.getstream.chat.android.client.api2.model.response.DevicesResponse
+import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
@@ -85,6 +86,7 @@ import io.getstream.chat.android.client.api2.model.response.PollVoteResponse
 import io.getstream.chat.android.client.api2.model.response.QueryBannedUsersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryBlockedUsersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryChannelsResponse
+import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.QueryMembersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryThreadsResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionResponse
@@ -122,6 +124,7 @@ import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomDevice
+import io.getstream.chat.android.randomDraftMessage
 import io.getstream.chat.android.randomFile
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomMember
@@ -186,6 +189,57 @@ internal class MoshiChatApiTest {
         // then
         result `should be instance of` expected
         verify(api, times(1)).sendMessage(any(), any(), any())
+    }
+
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#createDraftMessageInput")
+    fun testCreateDraftMessage(call: RetrofitCall<DraftMessageResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<MessageApi>()
+        whenever(api.createDraftMessage(any(), any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withMessageApi(api)
+            .get()
+        // when
+        val result = sut.createDraftMessage(randomString(), randomString(), randomDraftMessage()).await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).createDraftMessage(any(), any(), any())
+    }
+
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#createDraftMessageInput")
+    fun testDeleteDraftMessage(call: RetrofitCall<CompletableResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<MessageApi>()
+        whenever(api.deleteDraftMessage(any(), any(), any())).doReturn(call)
+        val sut = Fixture()
+            .withMessageApi(api)
+            .get()
+        // when
+        val result = sut.deleteDraftMessage(randomString(), randomString(), randomDraftMessage()).await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).deleteDraftMessage(any(), any(), any())
+    }
+
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryDraftMessageInput")
+    fun testQueryDraftMessage(call: RetrofitCall<QueryDraftMessagesResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<MessageApi>()
+        whenever(api.queryDraftMessages(any())).doReturn(call)
+        val sut = Fixture()
+            .withMessageApi(api)
+            .get()
+        // when
+        val result = sut.queryDraftMessages(
+            offset = randomInt(),
+            limit = randomInt(),
+        ).await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).queryDraftMessages(any())
     }
 
     @ParameterizedTest
