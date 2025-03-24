@@ -67,6 +67,7 @@
 - Enable pagination in `MentionListView`. [#5692](https://github.com/GetStream/stream-chat-android/pull/5692)
 
 ### ✅ Added
+- Add `ChatUI.draftMessagesEnabled` property to enable/disable Draft Messages. [#5687](https://github.com/GetStream/stream-chat-android/pull/5687)
 
 ### ⚠️ Changed
 - 🚨Breaking change: Move `MentionListViewModel` logic and its state to a shared component so they can be reused in Compose. [#5692](https://github.com/GetStream/stream-chat-android/pull/5692)
@@ -82,6 +83,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `MessagesViewModelFactory.isComposerDraftMessageEnabled` property to enable/disable Draft Messages within `MessageComposer`. [#5687](https://github.com/GetStream/stream-chat-android/pull/5687)
+- Add `ChannelViewModelFactory.isDraftMessageEnabled` property to enable/disable Draft Messages within `ChannelList`. [#5687](https://github.com/GetStream/stream-chat-android/pull/5687)
 
 ### ⚠️ Changed
 - `defaultMessageOptionsState()` now accepts an `isInThread` flag to show/hide the "Thread reply" option. [#5683](https://github.com/GetStream/stream-chat-android/pull/5683)
