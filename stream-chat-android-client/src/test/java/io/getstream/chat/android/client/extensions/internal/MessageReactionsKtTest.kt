@@ -47,6 +47,23 @@ internal class MessageReactionsKtTest {
         updatedMessage `should be equal to` expectedMessage
     }
 
+    /** This method uses [removeMyReactionArguments] as a source of arguments. */
+    @ParameterizedTest
+    @MethodSource("removeMyReactionArguments")
+    fun `Removing reactions from a message should return a copy of it with the updated reaction list`(
+        initialMessage: Message,
+        reactionToRemove: Reaction,
+        expectedMessage: Message,
+    ) {
+        val updatedMessage = initialMessage.removeMyReaction(reactionToRemove)
+
+        updatedMessage.latestReactions `should be equal to` expectedMessage.latestReactions
+        updatedMessage.ownReactions `should be equal to` expectedMessage.ownReactions
+        updatedMessage.reactionCounts `should be equal to` expectedMessage.reactionCounts
+        updatedMessage.reactionScores `should be equal to` expectedMessage.reactionScores
+        updatedMessage `should be equal to` expectedMessage
+    }
+
     companion object {
         private val messageId = randomString()
         private val currentUserId = randomString()
@@ -271,6 +288,93 @@ internal class MessageReactionsKtTest {
                             newReactionType to reaction.score,
                         ),
                     ),
+                )
+            },
+        )
+
+        @JvmStatic
+        @Suppress("LongMethod")
+        fun removeMyReactionArguments(): List<Arguments> = listOf(
+            run {
+                val reactionType = "like"
+                val ownReaction = createOwnReaction(reactionType)
+                val otherReaction = createOtherReaction(reactionType)
+                val initialMessage = randomMessage(
+                    id = messageId,
+                    latestReactions = listOf(ownReaction, otherReaction),
+                    ownReactions = listOf(ownReaction),
+                    reactionCounts = mapOf(reactionType to 2),
+                    reactionScores = mapOf(reactionType to ownReaction.score + otherReaction.score),
+                )
+                Arguments.of(
+                    initialMessage,
+                    ownReaction,
+                    initialMessage.copy(
+                        latestReactions = listOf(otherReaction),
+                        ownReactions = emptyList(),
+                        reactionCounts = mapOf(reactionType to 1),
+                        reactionScores = mapOf(reactionType to otherReaction.score),
+                    ),
+                )
+            },
+            run {
+                val reactionType = "like"
+                val ownReaction = createOwnReaction(reactionType)
+                val initialMessage = randomMessage(
+                    id = messageId,
+                    latestReactions = listOf(ownReaction),
+                    ownReactions = listOf(ownReaction),
+                    reactionCounts = mapOf(reactionType to 1),
+                    reactionScores = mapOf(reactionType to ownReaction.score),
+                )
+                Arguments.of(
+                    initialMessage,
+                    ownReaction,
+                    initialMessage.copy(
+                        latestReactions = emptyList(),
+                        ownReactions = emptyList(),
+                        reactionCounts = emptyMap(),
+                        reactionScores = emptyMap(),
+                    ),
+                )
+            },
+            run {
+                val reactionType = "like"
+                val ownReaction = createOwnReaction(reactionType)
+                val otherReaction = createOtherReaction(reactionType)
+                val initialMessage = randomMessage(
+                    id = messageId,
+                    latestReactions = listOf(ownReaction, otherReaction),
+                    ownReactions = listOf(ownReaction),
+                    reactionCounts = mapOf(reactionType to 2),
+                    reactionScores = mapOf(reactionType to ownReaction.score + otherReaction.score),
+                )
+                Arguments.of(
+                    initialMessage,
+                    createOwnReaction(reactionType), // Different reaction with same type and userId
+                    initialMessage.copy(
+                        latestReactions = listOf(otherReaction),
+                        ownReactions = emptyList(),
+                        reactionCounts = mapOf(reactionType to 1),
+                        reactionScores = mapOf(reactionType to otherReaction.score),
+                    ),
+                )
+            },
+            run {
+                val reactionType = "like"
+                val ownReaction = createOwnReaction(reactionType)
+                val otherReaction = createOtherReaction(reactionType)
+                val initialMessage = randomMessage(
+                    id = messageId,
+                    latestReactions = listOf(ownReaction, otherReaction),
+                    ownReactions = listOf(ownReaction),
+                    reactionCounts = mapOf(reactionType to 2),
+                    reactionScores = mapOf(reactionType to ownReaction.score + otherReaction.score),
+                )
+                Arguments.of(
+                    initialMessage,
+                    createOwnReaction("haha"), // Different reaction type
+                    initialMessage, // Should remain unchanged
                 )
             },
         )

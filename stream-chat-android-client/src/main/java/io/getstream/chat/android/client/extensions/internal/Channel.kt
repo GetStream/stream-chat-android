@@ -44,12 +44,23 @@ public fun Channel.users(): List<User> {
         watchers
 }
 
+/**
+ * Retrieves the last not deleted [Message] of the [Channel], calculated as the messages with the most recent
+ * [Message.createdAt] or [Message.createdLocallyAt].
+ */
 @InternalStreamChatApi
 public val Channel.lastMessage: Message?
     get() = messages
         .filterNot { it.isDeleted() }
         .maxByOrNull { it.createdAt ?: it.createdLocallyAt ?: Date(0) }
 
+/**
+ * Updates the [Channel] with newest [Message].
+ *
+ * @param receivedEventDate Date when the event which updates the message was received.
+ * @param message New message to update the channel with.
+ * @param currentUserId User id of the currently logged in user.
+ */
 @InternalStreamChatApi
 public fun Channel.updateLastMessage(
     receivedEventDate: Date,
@@ -89,7 +100,6 @@ public fun Channel.updateLastMessage(
 /**
  * Removes member from the [Channel.members] and aligns [Channel.memberCount].
  *
- * @param currentUserId User id of the currently logged in user.
  * @param memberUserId User id of the removed member.
  */
 @InternalStreamChatApi
@@ -109,7 +119,6 @@ public fun Channel.addMember(member: Member): Channel {
     return copy(
         members = members + listOfNotNull(member.takeUnless { memberExists }),
         memberCount = memberCount + (1.takeUnless { memberExists } ?: 0),
-
     )
 }
 
@@ -173,7 +182,7 @@ public fun Channel.updateMembership(member: Member): Channel = copy(
 )
 
 /**
- * Sets [Channel.membership.banned] to [banned] if [memberUserId] equals to [membership.user.id].
+ * Sets [Channel.membership.banned] to [banned] if [memberUserId] equals to [Channel.membership.user.id].
  *
  * @param memberUserId Member user id.
  * @param banned Shows whether a user is banned or not in this channel.
@@ -195,6 +204,14 @@ public fun Channel.updateMembershipBanned(memberUserId: String, banned: Boolean)
 public fun Channel.removeMembership(currentUserId: String?): Channel =
     copy(membership = membership.takeUnless { it?.user?.id == currentUserId })
 
+/**
+ * Updates the [Channel] with a new [ChannelUserRead].
+ * If an existing read for the user already exists, it will be replaced with the new one. If not, the new read will be
+ * added to the list of reads.
+ *
+ * @param newRead New read to update the channel with.
+ * @param currentUserId User id of the currently logged in user.
+ */
 @InternalStreamChatApi
 public fun Channel.updateReads(newRead: ChannelUserRead, currentUserId: UserId): Channel {
     val oldRead = read.firstOrNull { it.user.id == newRead.user.id }
@@ -207,6 +224,9 @@ public fun Channel.updateReads(newRead: ChannelUserRead, currentUserId: UserId):
     ).syncUnreadCountWithReads(currentUserId)
 }
 
+/**
+ * Transforms the given [Collection] of [Channel]s by applying the given [AnyChannelPaginationRequest].
+ */
 @InternalStreamChatApi
 public fun Collection<Channel>.applyPagination(pagination: AnyChannelPaginationRequest): List<Channel> {
     val logger by taggedLogger("Chat:ChannelSort")
