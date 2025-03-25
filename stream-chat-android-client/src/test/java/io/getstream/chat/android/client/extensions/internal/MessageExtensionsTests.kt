@@ -429,7 +429,7 @@ internal class MessageExtensionsTests {
             ownReactions = listOf(randomReaction(userId = user4.id, user = user4)),
             threadParticipants = listOf(user5),
             pinnedBy = user6,
-            poll = randomPoll(votes = listOf(randomPollVote(user = user7)))
+            poll = randomPoll(votes = listOf(randomPollVote(user = user7))),
         )
 
         // when
