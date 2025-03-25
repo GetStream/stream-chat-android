@@ -27,7 +27,6 @@ import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import org.amshove.kluent.shouldBeEqualTo
-import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.util.Date
 
@@ -95,8 +94,8 @@ internal class ChannelExtensionsTests {
         )
         val channel = randomChannel(members = members)
         val users = channel.getUsersExcludingCurrent(currentUser)
-        assertEquals(1, users.size)
-        assertEquals(otherUser, users.first())
+        users.size shouldBeEqualTo 1
+        users.first() shouldBeEqualTo otherUser
     }
 
     @Test

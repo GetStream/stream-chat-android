@@ -27,7 +27,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 
-internal class MessageReactionsKtTest {
+internal class MessageReactionsTests {
 
     /** This me use [addMyReactionArguments] as a source of arguments. */
     @ParameterizedTest

@@ -28,7 +28,7 @@ import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
-import org.junit.Assert.assertEquals
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 import java.util.Date
 
@@ -103,8 +103,8 @@ internal class PollExtensionsTests {
         val result = event.processPoll(currentUserId = "user1") { basePoll }
 
         // then
-        assertEquals(listOf(newVote), result.ownVotes)
-        assertEquals(basePoll.answers, result.answers)
+        result.ownVotes shouldBeEqualTo listOf(newVote)
+        result.answers shouldBeEqualTo basePoll.answers
     }
 
     @Test
@@ -127,8 +127,8 @@ internal class PollExtensionsTests {
         val result = event.processPoll(currentUserId = "user1") { basePoll }
 
         // then
-        assertEquals(basePoll.ownVotes, result.ownVotes)
-        assertEquals(basePoll.answers, result.answers)
+        result.ownVotes shouldBeEqualTo basePoll.ownVotes
+        result.answers shouldBeEqualTo basePoll.answers
     }
 
     @Test
@@ -158,9 +158,9 @@ internal class PollExtensionsTests {
         val result = event.processPoll(currentUserId = "user1") { basePoll }
 
         // then
-        assertEquals(2, result.ownVotes.size)
-        assertEquals(newVote, result.ownVotes.last())
-        assertEquals(basePoll.answers, result.answers)
+        result.ownVotes.size shouldBeEqualTo 2
+        result.ownVotes.last() shouldBeEqualTo newVote
+        result.answers shouldBeEqualTo basePoll.answers
     }
 
     @Test
@@ -182,8 +182,8 @@ internal class PollExtensionsTests {
         val result = event.processPoll { basePoll }
 
         // then
-        assertEquals(0, result.ownVotes.size)
-        assertEquals(basePoll.answers, result.answers)
+        result.ownVotes.size shouldBeEqualTo 0
+        result.answers shouldBeEqualTo basePoll.answers
     }
 
     @Test
@@ -213,9 +213,9 @@ internal class PollExtensionsTests {
         val result = event.processPoll { basePoll }
 
         // then
-        assertEquals(2, result.answers.size)
-        assertEquals(newAnswer, result.answers.last())
-        assertEquals(basePoll.ownVotes, result.ownVotes)
+        result.answers.size shouldBeEqualTo 2
+        result.answers.last() shouldBeEqualTo newAnswer
+        result.ownVotes shouldBeEqualTo basePoll.ownVotes
     }
 
     @Test
@@ -236,7 +236,7 @@ internal class PollExtensionsTests {
         val result = event.processPoll { basePoll }
 
         // then
-        assertEquals(true, result.closed)
+        result.closed shouldBeEqualTo true
     }
 
     @Test
@@ -257,8 +257,8 @@ internal class PollExtensionsTests {
         val result = event.processPoll { basePoll }
 
         // then
-        assertEquals(basePoll.ownVotes, result.ownVotes)
-        assertEquals(basePoll.answers, result.answers)
+        result.ownVotes shouldBeEqualTo basePoll.ownVotes
+        result.answers shouldBeEqualTo basePoll.answers
     }
 
     @Test
@@ -280,8 +280,8 @@ internal class PollExtensionsTests {
         val result = event.processPoll(currentUserId = "user1") { null }
 
         // then
-        assertEquals(1, result.ownVotes.size)
-        assertEquals(vote1, result.ownVotes.first())
-        assertEquals(basePoll.answers, result.answers)
+        result.ownVotes.size shouldBeEqualTo 1
+        result.ownVotes.first() shouldBeEqualTo vote1
+        result.answers shouldBeEqualTo basePoll.answers
     }
 }

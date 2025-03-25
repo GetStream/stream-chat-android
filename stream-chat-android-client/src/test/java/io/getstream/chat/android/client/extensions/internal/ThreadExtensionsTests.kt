@@ -22,7 +22,7 @@ import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
 import io.getstream.chat.android.models.ThreadParticipant
 import io.getstream.chat.android.models.User
-import org.junit.Assert.assertEquals
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 import java.util.Date
 
@@ -89,7 +89,7 @@ internal class ThreadExtensionsTests {
         val result = baseThread.updateParentOrReply(updatedParent)
 
         // then
-        assertEquals(updatedParent, result.parentMessage)
+        result.parentMessage shouldBeEqualTo updatedParent
     }
 
     @Test
@@ -101,7 +101,7 @@ internal class ThreadExtensionsTests {
         val result = baseThread.updateParentOrReply(updatedReply)
 
         // then
-        assertEquals(updatedReply, result.latestReplies.first())
+        result.latestReplies.first() shouldBeEqualTo updatedReply
     }
 
     @Test
@@ -118,7 +118,7 @@ internal class ThreadExtensionsTests {
         val result = baseThread.updateParentOrReply(unrelatedMessage)
 
         // then
-        assertEquals(baseThread, result)
+        result shouldBeEqualTo baseThread
     }
 
     @Test
@@ -134,9 +134,9 @@ internal class ThreadExtensionsTests {
         val result = baseThread.updateParent(updatedParent)
 
         // then
-        assertEquals(updatedParent, result.parentMessage)
-        assertEquals(now, result.deletedAt)
-        assertEquals(now, result.updatedAt)
+        result.parentMessage shouldBeEqualTo updatedParent
+        result.deletedAt shouldBeEqualTo now
+        result.updatedAt shouldBeEqualTo now
     }
 
     @Test
@@ -153,7 +153,7 @@ internal class ThreadExtensionsTests {
         val result = baseThread.updateParent(wrongParent)
 
         // then
-        assertEquals(baseThread, result)
+        result shouldBeEqualTo baseThread
     }
 
     @Test
@@ -171,10 +171,10 @@ internal class ThreadExtensionsTests {
         val result = baseThread.upsertReply(newReply)
 
         // then
-        assertEquals(2, result.latestReplies.size)
-        assertEquals(newReply, result.latestReplies.last())
-        assertEquals(now, result.lastMessageAt)
-        assertEquals(now, result.updatedAt)
+        result.latestReplies.size shouldBeEqualTo 2
+        result.latestReplies.last() shouldBeEqualTo newReply
+        result.lastMessageAt shouldBeEqualTo now
+        result.updatedAt shouldBeEqualTo now
     }
 
     @Test
@@ -186,8 +186,8 @@ internal class ThreadExtensionsTests {
         val result = baseThread.upsertReply(updatedReply)
 
         // then
-        assertEquals(1, result.latestReplies.size)
-        assertEquals(updatedReply, result.latestReplies.first())
+        result.latestReplies.size shouldBeEqualTo 1
+        result.latestReplies.first() shouldBeEqualTo updatedReply
     }
 
     @Test
@@ -205,7 +205,7 @@ internal class ThreadExtensionsTests {
         val result = baseThread.upsertReply(wrongReply)
 
         // then
-        assertEquals(baseThread, result)
+        result shouldBeEqualTo baseThread
     }
 
     @Test
@@ -233,11 +233,11 @@ internal class ThreadExtensionsTests {
         val result = baseThread.markAsReadByUser(threadInfo, updatedUser, newDate)
 
         // then
-        assertEquals(3, result.activeParticipantCount)
-        assertEquals(3, result.participantCount)
-        assertEquals("Updated Thread", result.title)
-        assertEquals(0, result.read.find { it.user.id == updatedUser.id }?.unreadMessages)
-        assertEquals(newDate, result.read.find { it.user.id == updatedUser.id }?.lastReceivedEventDate)
+        result.activeParticipantCount shouldBeEqualTo 3
+        result.participantCount shouldBeEqualTo 3
+        result.title shouldBeEqualTo "Updated Thread"
+        result.read.find { it.user.id == updatedUser.id }?.unreadMessages shouldBeEqualTo 0
+        result.read.find { it.user.id == updatedUser.id }?.lastReceivedEventDate shouldBeEqualTo newDate
     }
 
     @Test
@@ -263,7 +263,7 @@ internal class ThreadExtensionsTests {
         val result = baseThread.markAsReadByUser(wrongThreadInfo, user2, now)
 
         // then
-        assertEquals(baseThread, result)
+        result shouldBeEqualTo baseThread
     }
 
     @Test
@@ -276,7 +276,7 @@ internal class ThreadExtensionsTests {
         val result = baseThread.markAsUnreadByUser(updatedUser, newDate)
 
         // then
-        assertEquals(2, result.read.find { it.user.id == updatedUser.id }?.unreadMessages)
-        assertEquals(newDate, result.read.find { it.user.id == updatedUser.id }?.lastReceivedEventDate)
+        result.read.find { it.user.id == updatedUser.id }?.unreadMessages shouldBeEqualTo 2
+        result.read.find { it.user.id == updatedUser.id }?.lastReceivedEventDate shouldBeEqualTo newDate
     }
 }
