@@ -22,6 +22,8 @@ import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomPoll
+import io.getstream.chat.android.randomPollVote
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomUser
 import org.amshove.kluent.shouldBe
@@ -348,6 +350,66 @@ internal class MessageExtensionsTests {
     }
 
     @Test
+    fun `local message creation time comparisons should work correctly`() {
+        // given
+        val now = randomDate()
+        val oneHourAgo = Date(now.time - TimeUnit.HOURS.toMillis(1))
+        val oneHourLater = Date(now.time + TimeUnit.HOURS.toMillis(1))
+        val message = randomMessage(
+            id = "message1",
+            createdAt = null,
+            createdLocallyAt = now,
+        )
+
+        // when/then
+        message.wasCreatedAfterOrAt(oneHourAgo) shouldBeEqualTo true
+        message.wasCreatedAfterOrAt(now) shouldBeEqualTo true
+        message.wasCreatedAfterOrAt(oneHourLater) shouldBeEqualTo false
+
+        message.wasCreatedAfter(oneHourAgo) shouldBeEqualTo true
+        message.wasCreatedAfter(now) shouldBeEqualTo false
+        message.wasCreatedAfter(oneHourLater) shouldBeEqualTo false
+
+        message.wasCreatedBefore(oneHourAgo) shouldBeEqualTo false
+        message.wasCreatedBefore(now) shouldBeEqualTo false
+        message.wasCreatedBefore(oneHourLater) shouldBeEqualTo true
+
+        message.wasCreatedBeforeOrAt(oneHourAgo) shouldBeEqualTo false
+        message.wasCreatedBeforeOrAt(now) shouldBeEqualTo true
+        message.wasCreatedBeforeOrAt(oneHourLater) shouldBeEqualTo true
+    }
+
+    @Test
+    fun `message without creation times comparisons should work correctly`() {
+        // given
+        val now = Date(10000000)
+        val oneHourAgo = Date(now.time - TimeUnit.HOURS.toMillis(1))
+        val oneHourLater = Date(now.time + TimeUnit.HOURS.toMillis(1))
+        val message = randomMessage(
+            id = "message1",
+            createdAt = null,
+            createdLocallyAt = null,
+        )
+
+        // when/then
+        message.wasCreatedAfterOrAt(oneHourAgo) shouldBeEqualTo false
+        message.wasCreatedAfterOrAt(now) shouldBeEqualTo false
+        message.wasCreatedAfterOrAt(oneHourLater) shouldBeEqualTo false
+
+        message.wasCreatedAfter(oneHourAgo) shouldBeEqualTo false
+        message.wasCreatedAfter(now) shouldBeEqualTo false
+        message.wasCreatedAfter(oneHourLater) shouldBeEqualTo false
+
+        message.wasCreatedBefore(oneHourAgo) shouldBeEqualTo true
+        message.wasCreatedBefore(now) shouldBeEqualTo true
+        message.wasCreatedBefore(oneHourLater) shouldBeEqualTo true
+
+        message.wasCreatedBeforeOrAt(oneHourAgo) shouldBeEqualTo true
+        message.wasCreatedBeforeOrAt(now) shouldBeEqualTo true
+        message.wasCreatedBeforeOrAt(oneHourLater) shouldBeEqualTo true
+    }
+
+    @Test
     fun `users should return all users associated with message`() {
         // given
         val user1 = randomUser(id = "user1", name = "User 1")
@@ -356,6 +418,7 @@ internal class MessageExtensionsTests {
         val user4 = randomUser(id = "user4", name = "User 4")
         val user5 = randomUser(id = "user5", name = "User 5")
         val user6 = randomUser(id = "user6", name = "User 6")
+        val user7 = randomUser(id = "user7", name = "User 7")
 
         val message = randomMessage(
             id = "message1",
@@ -366,13 +429,14 @@ internal class MessageExtensionsTests {
             ownReactions = listOf(randomReaction(userId = user4.id, user = user4)),
             threadParticipants = listOf(user5),
             pinnedBy = user6,
+            poll = randomPoll(votes = listOf(randomPollVote(user = user7)))
         )
 
         // when
         val result = message.users()
 
         // then
-        result shouldBeEqualTo listOf(user1, user2, user3, user4, user5, user6)
+        result shouldBeEqualTo listOf(user1, user2, user3, user4, user5, user6, user7)
     }
 
     @Test
