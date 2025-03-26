@@ -100,7 +100,7 @@ internal class MentionListControllerTest {
             skipItems(1) // Skip initial state
             val actual = awaitItem()
             assertFalse(actual.isLoading)
-            assertEquals(emptyList<MessageResult>(), actual.messages)
+            assertTrue(actual.messages.isEmpty())
             assertNull(actual.nextPage)
             assertTrue(actual.canLoadMore)
             assertFalse(actual.isLoadingMore)
@@ -202,6 +202,52 @@ internal class MentionListControllerTest {
             assertEquals("next", finalActual.nextPage)
             assertTrue(finalActual.canLoadMore)
             assertFalse(finalActual.isLoadingMore)
+        }
+    }
+
+    @Test
+    fun `no more messages to load`() = runTest {
+        val sut = Fixture()
+            .givenCurrentUser()
+            .givenSearchMessagesResult(next = null, result = SearchMessagesResult())
+            .get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+            val actual = awaitItem()
+            assertFalse(actual.isLoading)
+            assertTrue(actual.messages.isEmpty())
+            assertNull(actual.nextPage)
+            assertFalse(actual.canLoadMore)
+            assertFalse(actual.isLoadingMore)
+
+            sut.loadMore()
+
+            expectNoEvents()
+        }
+    }
+
+    @Test
+    fun `already loading more`() = runTest {
+        val sut = Fixture()
+            .givenCurrentUser()
+            .givenSearchMessagesResult(next = null, result = SearchMessagesResult(next = "next"))
+            .get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+            val actual = awaitItem()
+            assertFalse(actual.isLoading)
+            assertTrue(actual.messages.isEmpty())
+            assertEquals("next", actual.nextPage)
+            assertTrue(actual.canLoadMore)
+            assertFalse(actual.isLoadingMore)
+
+            sut.loadMore()
+            assertTrue(awaitItem().isLoadingMore)
+
+            sut.loadMore()
+            expectNoEvents()
         }
     }
 }
