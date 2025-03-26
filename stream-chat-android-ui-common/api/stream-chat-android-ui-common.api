@@ -797,7 +797,7 @@ public final class io/getstream/chat/android/ui/common/state/mentions/MentionLis
 	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/mentions/MentionListState;ZLjava/util/List;Ljava/lang/String;ZZILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/mentions/MentionListState;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCanLoadMore ()Z
-	public final fun getMessages ()Ljava/util/List;
+	public final fun getResults ()Ljava/util/List;
 	public fun hashCode ()I
 	public final fun isLoading ()Z
 	public final fun isLoadingMore ()Z

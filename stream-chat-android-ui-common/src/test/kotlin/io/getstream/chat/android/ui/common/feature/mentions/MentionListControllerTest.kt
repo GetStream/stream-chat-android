@@ -52,7 +52,7 @@ internal class MentionListControllerTest {
 
         sut.state.value.let { state ->
             assertTrue(state.isLoading)
-            assertTrue(state.messages.isEmpty())
+            assertTrue(state.results.isEmpty())
             assertNull(state.nextPage)
             assertTrue(state.canLoadMore)
             assertFalse(state.isLoadingMore)
@@ -74,7 +74,7 @@ internal class MentionListControllerTest {
             .givenSearchMessagesResult(next = null, result = searchMessagesResult)
             .get(backgroundScope)
 
-        val expectedMessages = listOf(
+        val expectedResults = listOf(
             MessageResult(message = message1, channel = channel),
             MessageResult(message = message2, channel = channel),
         )
@@ -82,7 +82,7 @@ internal class MentionListControllerTest {
             skipItems(1) // Skip initial state
             val actual = awaitItem()
             assertFalse(actual.isLoading)
-            assertEquals(expectedMessages, actual.messages)
+            assertEquals(expectedResults, actual.results)
             assertEquals("next", actual.nextPage)
             assertTrue(actual.canLoadMore)
             assertFalse(actual.isLoadingMore)
@@ -101,7 +101,7 @@ internal class MentionListControllerTest {
             skipItems(1) // Skip initial state
             val actual = awaitItem()
             assertFalse(actual.isLoading)
-            assertTrue(actual.messages.isEmpty())
+            assertTrue(actual.results.isEmpty())
             assertNull(actual.nextPage)
             assertTrue(actual.canLoadMore)
             assertFalse(actual.isLoadingMore)
@@ -130,7 +130,7 @@ internal class MentionListControllerTest {
             .givenSearchMessagesResult(next = "next", result = secondSearchMessagesResult)
             .get(backgroundScope)
 
-        val expectedFirstPageMessages = listOf(
+        val expectedFirstPageResults = listOf(
             MessageResult(message = message1, channel = channel),
             MessageResult(message = message2, channel = channel),
         )
@@ -138,7 +138,7 @@ internal class MentionListControllerTest {
             skipItems(1) // Skip initial state
             val initialActual = awaitItem()
             assertFalse(initialActual.isLoading)
-            assertEquals(expectedFirstPageMessages, initialActual.messages)
+            assertEquals(expectedFirstPageResults, initialActual.results)
             assertEquals("next", initialActual.nextPage)
             assertTrue(initialActual.canLoadMore)
             assertFalse(initialActual.isLoadingMore)
@@ -146,13 +146,13 @@ internal class MentionListControllerTest {
             sut.loadMore()
             assertTrue(awaitItem().isLoadingMore)
 
-            val expectedAccumulatedMessages = expectedFirstPageMessages + listOf(
+            val expectedAccumulatedResults = expectedFirstPageResults + listOf(
                 MessageResult(message = message3, channel = channel),
                 MessageResult(message = message4, channel = channel),
             )
             val finalActual = awaitItem()
             assertFalse(finalActual.isLoading)
-            assertEquals(expectedAccumulatedMessages, finalActual.messages)
+            assertEquals(expectedAccumulatedResults, finalActual.results)
             assertNull(finalActual.nextPage)
             assertFalse(finalActual.canLoadMore)
             assertFalse(finalActual.isLoadingMore)
@@ -176,7 +176,7 @@ internal class MentionListControllerTest {
             .givenSearchMessagesResult(next = "next", error = error)
             .get(backgroundScope)
 
-        val expectedMessages = listOf(
+        val expectedResults = listOf(
             MessageResult(message = message1, channel = channel),
             MessageResult(message = message2, channel = channel),
         )
@@ -184,7 +184,7 @@ internal class MentionListControllerTest {
             skipItems(1) // Skip initial state
             val initialActual = awaitItem()
             assertFalse(initialActual.isLoading)
-            assertEquals(expectedMessages, initialActual.messages)
+            assertEquals(expectedResults, initialActual.results)
             assertEquals("next", initialActual.nextPage)
             assertTrue(initialActual.canLoadMore)
             assertFalse(initialActual.isLoadingMore)
@@ -199,7 +199,7 @@ internal class MentionListControllerTest {
 
             val finalActual = awaitItem()
             assertFalse(finalActual.isLoading)
-            assertEquals(expectedMessages, finalActual.messages)
+            assertEquals(expectedResults, finalActual.results)
             assertEquals("next", finalActual.nextPage)
             assertTrue(finalActual.canLoadMore)
             assertFalse(finalActual.isLoadingMore)
@@ -207,7 +207,7 @@ internal class MentionListControllerTest {
     }
 
     @Test
-    fun `no more messages to load`() = runTest {
+    fun `no more results to load`() = runTest {
         val sut = Fixture()
             .givenCurrentUser()
             .givenSearchMessagesResult(next = null, result = SearchMessagesResult())
@@ -217,7 +217,7 @@ internal class MentionListControllerTest {
             skipItems(1) // Skip initial state
             val actual = awaitItem()
             assertFalse(actual.isLoading)
-            assertTrue(actual.messages.isEmpty())
+            assertTrue(actual.results.isEmpty())
             assertNull(actual.nextPage)
             assertFalse(actual.canLoadMore)
             assertFalse(actual.isLoadingMore)
@@ -239,7 +239,7 @@ internal class MentionListControllerTest {
             skipItems(1) // Skip initial state
             val actual = awaitItem()
             assertFalse(actual.isLoading)
-            assertTrue(actual.messages.isEmpty())
+            assertTrue(actual.results.isEmpty())
             assertEquals("next", actual.nextPage)
             assertTrue(actual.canLoadMore)
             assertFalse(actual.isLoadingMore)

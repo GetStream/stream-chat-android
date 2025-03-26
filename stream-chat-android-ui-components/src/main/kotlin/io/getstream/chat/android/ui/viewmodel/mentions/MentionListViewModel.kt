@@ -51,7 +51,7 @@ public class MentionListViewModel(
     public val errorEvents: LiveData<Event<Unit>> = controller.events.map { Event(Unit) }.asLiveData()
 
     /**
-     * Loads more messages if there are more messages to load.
+     * Loads more mentions if there are more to load.
      */
     public fun loadMore() {
         controller.loadMore()

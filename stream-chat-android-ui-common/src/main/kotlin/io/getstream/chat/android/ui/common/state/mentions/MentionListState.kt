@@ -22,14 +22,14 @@ import io.getstream.chat.android.ui.common.model.MessageResult
  * The state of the mention list on which the UI should be rendered.
  *
  * @param isLoading True if the initial loading is in progress.
- * @param messages The list of messages to be displayed.
+ * @param results The list of mentions to be displayed.
  * @param nextPage The next page token to be loaded *(Internal usage only)*
- * @param canLoadMore True if there are more messages to be loaded.
+ * @param canLoadMore True if there are more mentions to be loaded.
  * @param isLoadingMore True if the loading of the next page is in progress.
  */
 public data class MentionListState(
     val isLoading: Boolean,
-    val messages: List<MessageResult>,
+    val results: List<MessageResult>,
     internal val nextPage: String?,
     val canLoadMore: Boolean,
     val isLoadingMore: Boolean,

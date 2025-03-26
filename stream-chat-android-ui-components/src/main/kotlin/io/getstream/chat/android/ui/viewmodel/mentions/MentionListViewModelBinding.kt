@@ -34,7 +34,7 @@ public fun MentionListViewModel.bindView(view: MentionListView, lifecycleOwner: 
     state.observe(lifecycleOwner) { state ->
         when {
             state.isLoading -> view.showLoading()
-            else -> view.showMessages(state.messages, state.canLoadMore)
+            else -> view.showMessages(state.results, state.canLoadMore)
         }
     }
     errorEvents.observe(

@@ -74,7 +74,7 @@ public class MentionListController(
 
     init {
         loadTrigger.onStart { emit(Unit) } // Triggers the initial load
-            .map { searchMessages() }
+            .map { searchMentions() }
             .onEach { result ->
                 when (result) {
                     is Result.Success -> onSuccessResult(result.value)
@@ -85,18 +85,18 @@ public class MentionListController(
     }
 
     /**
-     * Loads more messages if there are more messages to load.
+     * Loads more mentions if there are more to load.
      */
     public fun loadMore() {
         val currentState = state.value
 
         if (!currentState.canLoadMore) {
-            logger.d { "[loadMore] no more messages to load" }
+            logger.d { "[loadMore] no more mentions to load" }
             return
         }
 
         if (currentState.isLoadingMore) {
-            logger.d { "[loadMore] already loading more messages" }
+            logger.d { "[loadMore] already loading more mentions" }
             return
         }
 
@@ -105,13 +105,13 @@ public class MentionListController(
         loadTrigger.tryEmit(Unit)
     }
 
-    private suspend fun searchMessages(): Result<SearchMessagesResult> {
+    private suspend fun searchMentions(): Result<SearchMessagesResult> {
         val currentUser = requireNotNull(chatClient.getCurrentUser())
         val channelFilter = Filters.`in`("members", listOf(currentUser.id))
         val messageFilter = Filters.contains("mentioned_users.id", currentUser.id)
         val currentState = _state.value
         logger.d {
-            "[searchMessages] currentUser: ${currentUser.id}, limit: $QUERY_LIMIT, nextPage: ${currentState.nextPage}"
+            "[searchMentions] currentUser: ${currentUser.id}, limit: $QUERY_LIMIT, nextPage: ${currentState.nextPage}"
         }
         return chatClient.searchMessages(
             channelFilter = channelFilter,
@@ -130,7 +130,7 @@ public class MentionListController(
         _state.update { currentState ->
             currentState.copy(
                 isLoading = false,
-                messages = currentState.messages + messages.map { message ->
+                results = currentState.results + messages.map { message ->
                     MessageResult(
                         message = message,
                         channel = channels.firstOrNull { channel -> channel.cid == message.cid },
@@ -159,7 +159,7 @@ private const val QUERY_LIMIT = 30
 
 private val InitialState: MentionListState = MentionListState(
     isLoading = true,
-    messages = emptyList(),
+    results = emptyList(),
     nextPage = null,
     canLoadMore = true,
     isLoadingMore = false,
