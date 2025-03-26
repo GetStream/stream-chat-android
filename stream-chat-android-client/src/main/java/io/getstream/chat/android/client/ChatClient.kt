@@ -120,6 +120,9 @@ import io.getstream.chat.android.client.persistance.repository.noop.NoOpReposito
 import io.getstream.chat.android.client.plugin.DependencyResolver
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
+import io.getstream.chat.android.client.process.ProcessDeathRecoveryLifecycleObserver
+import io.getstream.chat.android.client.process.ProcessDeathRecoveryStorage
+import io.getstream.chat.android.client.process.SharedPreferencesProcessDeathRecoveryStorage
 import io.getstream.chat.android.client.query.AddMembersParams
 import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.client.scope.ClientScope
@@ -243,6 +246,7 @@ internal constructor(
     private val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val userCredentialStorage: UserCredentialStorage,
+    private val processDeathRecoveryStorage: ProcessDeathRecoveryStorage,
     private val userStateService: UserStateService = UserStateService(),
     private val clientDebugger: ChatClientDebugger = StubChatClientDebugger,
     private val tokenUtils: TokenUtils = TokenUtils,
@@ -272,6 +276,11 @@ internal constructor(
      * Used in [initializeClientWithUser] to prevent recreating objects like repository, plugins, etc.
      */
     private val initializedUserId = AtomicReference<String?>(null)
+
+    init {
+        val observer = ProcessDeathRecoveryLifecycleObserver(clientState, processDeathRecoveryStorage)
+        ProcessLifecycleOwner.get().lifecycle.addObserver(observer)
+    }
 
     /**
      * Launches a new coroutine in the [UserScope] without blocking the current thread
@@ -364,6 +373,13 @@ internal constructor(
     @Suppress("ThrowsCount")
     internal inline fun <reified P : DependencyResolver, reified T : Any> resolvePluginDependency(): T {
         StreamLog.v(TAG) { "[resolvePluginDependency] P: ${P::class.simpleName}, T: ${T::class.simpleName}" }
+        if (clientState.initializationState.value == InitializationState.NOT_INITIALIZED) {
+            StreamLog.e(TAG) {
+                "[resolvePluginDependency] Calling resolvePluginDependency without calling " +
+                    "ChatClient::connectUser(). Potential process death recovery."
+            }
+            recoverFromProcessDeath()
+        }
         val initState = awaitInitializationState(RESOLVE_DEPENDENCY_TIMEOUT)
         if (initState != InitializationState.COMPLETE) {
             StreamLog.e(TAG) { "[resolvePluginDependency] failed (initializationState is not COMPLETE): $initState " }
@@ -397,6 +413,30 @@ internal constructor(
             spendTime += INITIALIZATION_DELAY
         }
         return initState
+    }
+
+    /**
+     * Attempts to recover the SDK state after the process death. Relevant for the case where we try to access a
+     * [Plugin] after the app was restored from the background, and [connectUser] was not called yet.
+     * Attempts to call [connectUser] with the stored [User] in the [ProcessDeathRecoveryStorage], and the token stored
+     * in the [UserCredentialStorage]. If one of them are missing, the recovery is aborted.
+     */
+    @InternalStreamChatApi
+    public fun recoverFromProcessDeath() {
+        val user = processDeathRecoveryStorage.readUser()
+        if (user == null) {
+            StreamLog.e(TAG) { "[recoverFromProcessDeath] No user stored - cannot recover." }
+            return
+        }
+        val token = userCredentialStorage.get()?.userToken
+        if (token == null) {
+            StreamLog.e(TAG) { "[recoverFromProcessDeath] No token stored - cannot recover." }
+            return
+        }
+        mutableClientState.setInitializationState(InitializationState.INITIALIZING)
+        clientScope.launch {
+            connectUser(user, ConstantTokenProvider(token)).await()
+        }
     }
 
     /**
@@ -682,6 +722,8 @@ internal constructor(
         tokenProvider: TokenProvider,
         timeoutMilliseconds: Long?,
     ): Result<ConnectionData> {
+        // Clear ProcessDeathRecoveryStorage when connecting a specific user
+        processDeathRecoveryStorage.clearUser()
         mutableClientState.setInitializationState(InitializationState.INITIALIZING)
         logger.d { "[connectUserSuspend] userId: '${user.id}', username: '${user.name}'" }
         return setUser(user, tokenProvider, timeoutMilliseconds).also { result ->
@@ -1391,6 +1433,7 @@ internal constructor(
             repositoryFacade.clear()
             userCredentialStorage.clear()
         }
+        processDeathRecoveryStorage.clearUser()
 
         _repositoryFacade = null
         attachmentsSender.cancelJobs()
@@ -4169,6 +4212,7 @@ internal constructor(
                 module.notifications(),
                 tokenManager,
                 userCredentialStorage = userCredentialStorage ?: SharedPreferencesCredentialStorage(appContext),
+                processDeathRecoveryStorage = SharedPreferencesProcessDeathRecoveryStorage(appContext),
                 userStateService = module.userStateService,
                 clientDebugger = clientDebugger ?: StubChatClientDebugger,
                 clientScope = clientScope,
