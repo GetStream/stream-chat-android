@@ -21,6 +21,11 @@ import androidx.lifecycle.ViewModelProvider
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.querysort.QuerySorter
 
+/**
+ * Factory for creating a [MentionListViewModel] with a custom sort.
+ *
+ * @param sort The sorting options for the messages.
+ */
 public class MentionListViewModelFactory @JvmOverloads constructor(
     private val sort: QuerySorter<Message>? = null,
 ) : ViewModelProvider.Factory {
