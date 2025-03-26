@@ -33,21 +33,13 @@ import io.getstream.chat.android.ui.feature.mentions.list.MentionListView
 public fun MentionListViewModel.bindView(view: MentionListView, lifecycleOwner: LifecycleOwner) {
     state.observe(lifecycleOwner) { state ->
         when {
-            state.isLoading -> {
-                view.showLoading()
-            }
-            else -> {
-                view.showMessages(state.results)
-            }
+            state.isLoading -> view.showLoading()
+            else -> view.showMessages(state.messages, state.canLoadMore)
         }
     }
     errorEvents.observe(
         lifecycleOwner,
-        EventObserver {
-            view.showError()
-        },
+        EventObserver { view.showError() },
     )
-    view.setLoadMoreListener {
-        this.loadMore()
-    }
+    view.setLoadMoreListener(::loadMore)
 }

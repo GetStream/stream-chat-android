@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider;
 import io.getstream.chat.android.ui.feature.mentions.list.MentionListView;
 import io.getstream.chat.android.ui.viewmodel.mentions.MentionListViewModel;
 import io.getstream.chat.android.ui.viewmodel.mentions.MentionListViewModelBinding;
+import io.getstream.chat.android.ui.viewmodel.mentions.MentionListViewModelFactory;
 
 /**
  * [Mention List View](https://getstream.io/chat/docs/sdk/android/ui/utility-components/mention-list-view/)
@@ -18,7 +19,8 @@ public class MentionList extends Fragment {
      * [Usage](https://getstream.io/chat/docs/sdk/android/ui/utility-components/mention-list-view/#usage)
      */
     public void usage() {
-        MentionListViewModel viewModel = new ViewModelProvider(this).get(MentionListViewModel.class);
+        ViewModelProvider.Factory factory = new MentionListViewModelFactory();
+        MentionListViewModel viewModel = new ViewModelProvider(this, factory).get(MentionListViewModel.class);
         MentionListViewModelBinding.bind(viewModel, mentionListView, getViewLifecycleOwner());
     }
 
