@@ -391,6 +391,7 @@ public class MessageComposerController(
      * Sets up the observing operations for various composer states.
      */
     @OptIn(FlowPreview::class)
+    @Suppress("LongMethod")
     private fun setupComposerState() {
         fetchDraftMessage(messageMode.value)
         messageInput.onEach { value ->
