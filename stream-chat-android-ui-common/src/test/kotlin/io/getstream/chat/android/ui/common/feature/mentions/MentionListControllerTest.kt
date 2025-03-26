@@ -23,6 +23,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.model.MessageResult
@@ -259,6 +260,7 @@ private val User = User(id = "uid", name = "Username")
 
 private class Fixture {
 
+    private val sort: QuerySorter<Message> = mock()
     private val repositoryFacade: RepositoryFacade = mock()
     private val chatClient: ChatClient = mock {
         whenever(mock.repositoryFacade) doReturn repositoryFacade
@@ -268,7 +270,11 @@ private class Fixture {
         whenever(chatClient.getCurrentUser()) doReturn currentUser
     }
 
-    fun givenSearchMessagesResult(next: String?, result: SearchMessagesResult? = null, error: Error? = null) = apply {
+    fun givenSearchMessagesResult(
+        next: String?,
+        result: SearchMessagesResult? = null,
+        error: Error? = null,
+    ) = apply {
         whenever(
             chatClient.searchMessages(
                 channelFilter = any(),
@@ -276,7 +282,7 @@ private class Fixture {
                 offset = anyOrNull(),
                 limit = anyOrNull(),
                 next = eq(next),
-                sort = anyOrNull(),
+                sort = eq(sort),
             ),
         ) doAnswer {
             result?.asCall() ?: error?.let { TestCall(Result.Failure(it)) }
@@ -288,5 +294,5 @@ private class Fixture {
     }
 
     fun get(scope: CoroutineScope): MentionListController =
-        MentionListController(scope = scope, sort = null, chatClient = chatClient)
+        MentionListController(scope = scope, sort = sort, chatClient = chatClient)
 }
