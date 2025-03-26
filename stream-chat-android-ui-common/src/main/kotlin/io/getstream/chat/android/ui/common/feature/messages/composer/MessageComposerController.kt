@@ -507,6 +507,13 @@ public class MessageComposerController(
 
     private fun fetchDraftMessage(messageMode: MessageMode) {
         if (!config.isDraftMessageEnabled) return
+        (messageMode as? MessageMode.MessageThread)?.let {
+            println("JcLog: parentId: ${it.parentMessage.id}")
+            globalState.threadDraftMessages.value.values.forEachIndexed { index, draftMessage ->
+                println("JcLog: #$index ${draftMessage.id} -> ${draftMessage.parentId}")
+            }
+            println("JcLog: draftMessage: ${globalState.threadDraftMessages.value[it.parentMessage.id]}")
+        }
         globalState.getDraftMessageOrEmpty(messageMode).let { draftMessage ->
             setMessageInputInternal(draftMessage.text, MessageInput.Source.DraftMessage)
             setAlsoSendToChannel(draftMessage.showInChannel)
