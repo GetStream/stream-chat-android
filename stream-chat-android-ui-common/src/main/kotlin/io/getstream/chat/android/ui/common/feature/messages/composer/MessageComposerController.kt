@@ -488,7 +488,7 @@ public class MessageComposerController(
     private suspend fun saveDraftMessage(messageMode: MessageMode) {
         if (!config.isDraftMessageEnabled) return
         when (val messageText = messageInput.value.text) {
-            "" -> clearDraftMessage()
+            "" -> clearDraftMessage(messageMode)
             else -> {
                 globalState.getDraftMessageOrEmpty(messageMode).let {
                     chatClient.createDraftMessage(
@@ -633,16 +633,16 @@ public class MessageComposerController(
      */
     public fun clearData() {
         logger.i { "[clearData]" }
-        scope.launch { clearDraftMessage() }
+        scope.launch { clearDraftMessage(messageMode.value) }
         messageInput.value = MessageInput()
         selectedAttachments.value = emptyList()
         validationErrors.value = emptyList()
         alsoSendToChannel.value = false
     }
 
-    private suspend fun clearDraftMessage() {
+    private suspend fun clearDraftMessage(messageMode: MessageMode) {
         if (!config.isDraftMessageEnabled) return
-        globalState.getDraftMessage(messageMode.value)?.let { draftMessage ->
+        globalState.getDraftMessage(messageMode)?.let { draftMessage ->
             chatClient.deleteDraftMessages(
                 channelType = channelType,
                 channelId = channelId,
