@@ -17,24 +17,16 @@
 package io.getstream.chat.android.compose.ui.mentions
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.compose.handlers.LoadMoreHandler
-import io.getstream.chat.android.compose.state.channels.list.ItemState
-import io.getstream.chat.android.compose.ui.channels.list.SearchResultItem
-import io.getstream.chat.android.compose.ui.components.LoadingFooter
-import io.getstream.chat.android.compose.ui.components.LoadingIndicator
+import io.getstream.chat.android.compose.ui.components.LazyPagingColumn
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.mentions.MentionListViewModel
 import io.getstream.chat.android.models.Message
@@ -53,6 +45,33 @@ public fun MentionList(
     currentUser: User? = ChatClient.instance().getCurrentUser(),
     onItemClick: ((message: Message) -> Unit)? = null,
     onEvent: (event: Any) -> Unit = {},
+    loadingContent: @Composable () -> Unit = {
+        ChatTheme.componentFactory.MentionListLoadingIndicator(
+            modifier = Modifier,
+        )
+    },
+    emptyContent: @Composable () -> Unit = {
+        ChatTheme.componentFactory.MentionListEmptyContent(
+            modifier = Modifier,
+        )
+    },
+    itemContent: @Composable LazyItemScope.(MessageResult) -> Unit = { mention ->
+        with(ChatTheme.componentFactory) {
+            MentionListItem(
+                mention = mention,
+                modifier = Modifier,
+                currentUser = currentUser,
+                onClick = onItemClick,
+            )
+        }
+    },
+    loadingMoreContent: @Composable LazyItemScope.() -> Unit = {
+        with(ChatTheme.componentFactory) {
+            MentionListItemLoadingMoreIndicator(
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+    },
 ) {
     val state by viewModel.state.collectAsState()
     LaunchedEffect(Unit) {
@@ -64,75 +83,66 @@ public fun MentionList(
         modifier = modifier,
         onItemClick = onItemClick,
         onLoadMore = viewModel::loadMore,
+        loadingContent = loadingContent,
+        emptyContent = emptyContent,
+        itemContent = itemContent,
+        loadingMoreContent = loadingMoreContent,
     )
 }
 
 @Composable
 public fun MentionList(
     state: MentionListState,
-    currentUser: User?,
     modifier: Modifier = Modifier,
+    currentUser: User? = ChatClient.instance().getCurrentUser(),
     onItemClick: ((message: Message) -> Unit)? = null,
     onLoadMore: () -> Unit = {},
+    loadingContent: @Composable () -> Unit = {
+        ChatTheme.componentFactory.MentionListLoadingIndicator(
+            modifier = Modifier,
+        )
+    },
+    emptyContent: @Composable () -> Unit = {
+        ChatTheme.componentFactory.MentionListEmptyContent(
+            modifier = Modifier,
+        )
+    },
+    itemContent: @Composable LazyItemScope.(MessageResult) -> Unit = { mention ->
+        with(ChatTheme.componentFactory) {
+            MentionListItem(
+                mention = mention,
+                modifier = Modifier,
+                currentUser = currentUser,
+                onClick = onItemClick,
+            )
+        }
+    },
+    loadingMoreContent: @Composable LazyItemScope.() -> Unit = {
+        with(ChatTheme.componentFactory) {
+            MentionListItemLoadingMoreIndicator(
+                modifier = Modifier.fillMaxWidth(),
+            )
+        }
+    },
 ) {
     Crossfade(
         targetState = state.isLoading,
         modifier = modifier,
     ) { isLoading ->
-        if (isLoading) {
-            LoadingIndicator(
-                modifier = Modifier.fillMaxSize(),
-            )
-        } else {
-            val lazyListState = rememberLazyListState()
-            LazyColumn(
+        when {
+            isLoading -> loadingContent()
+            state.results.isEmpty() -> emptyContent()
+            else -> LazyPagingColumn(
+                items = state.results,
                 modifier = modifier,
-                state = lazyListState,
-            ) {
-                items(
-                    items = state.results,
-                    key = { item -> item.message.identifierHash() },
-                ) { mention ->
-                    MentionListItem(
-                        mention = mention,
-                        currentUser = currentUser,
-                        onClick = onItemClick,
-                    )
-                }
-                if (state.isLoadingMore) {
-                    item {
-                        LoadingFooter(
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-                }
-            }
-            LoadMoreHandler(
-                listState = lazyListState,
-                loadMore = onLoadMore,
+                itemKey = { item -> item.message.identifierHash() },
+                showFooterContent = state.isLoadingMore,
+                onLoadMore = onLoadMore,
+                itemContent = itemContent,
+                footerContent = loadingMoreContent,
             )
         }
     }
-}
-
-@Composable
-public fun MentionListItem(
-    mention: MessageResult,
-    modifier: Modifier = Modifier,
-    currentUser: User? = null,
-    onClick: ((message: Message) -> Unit)? = null,
-) {
-    SearchResultItem(
-        searchResultItemState = remember {
-            ItemState.SearchResultItemState(
-                message = mention.message,
-                channel = mention.channel,
-            )
-        },
-        currentUser = currentUser,
-        modifier = modifier,
-        onSearchResultClick = onClick,
-    )
 }
 
 @Preview
@@ -142,6 +152,23 @@ private fun MentionListLoadingPreview() {
         MentionList(
             state = MentionListState(
                 isLoading = true,
+                results = emptyList(),
+                nextPage = null,
+                canLoadMore = true,
+                isLoadingMore = false,
+            ),
+            currentUser = PreviewUserData.user1,
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun MentionListEmptyPreview() {
+    ChatTheme {
+        MentionList(
+            state = MentionListState(
+                isLoading = false,
                 results = emptyList(),
                 nextPage = null,
                 canLoadMore = true,

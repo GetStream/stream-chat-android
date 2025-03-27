@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -35,6 +36,7 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -75,6 +77,8 @@ import io.getstream.chat.android.compose.ui.channels.list.DefaultSearchResultIte
 import io.getstream.chat.android.compose.ui.channels.list.SearchResultItem
 import io.getstream.chat.android.compose.ui.components.DefaultSearchLabel
 import io.getstream.chat.android.compose.ui.components.DefaultSearchLeadingIcon
+import io.getstream.chat.android.compose.ui.components.LoadingFooter
+import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptions
@@ -176,6 +180,7 @@ import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
@@ -2605,5 +2610,60 @@ public interface ChatComponentFactory {
                 tint = ChatTheme.colors.textLowEmphasis,
             )
         }
+    }
+
+    /**
+     * The default loading indicator that is displayed during the initial loading of the mention list.
+     *
+     * @param modifier Modifier for styling.
+     */
+    @Composable
+    public fun MentionListLoadingIndicator(modifier: Modifier) {
+        LoadingIndicator(
+            modifier = Modifier.fillMaxSize(),
+        )
+    }
+
+    /**
+     * The default empty placeholder that is displayed when the mention list is empty.
+     *
+     * @param modifier Modifier for styling.
+     */
+    @Composable
+    public fun MentionListEmptyContent(modifier: Modifier) {
+        // TODO MentionListEmptyContent
+    }
+
+    /**
+     * The default content of a mention list item.
+     */
+    @Composable
+    public fun LazyItemScope.MentionListItem(
+        mention: MessageResult,
+        modifier: Modifier,
+        currentUser: User?,
+        onClick: ((message: Message) -> Unit)?,
+    ) {
+        SearchResultItem(
+            searchResultItemState = remember {
+                ItemState.SearchResultItemState(
+                    message = mention.message,
+                    channel = mention.channel,
+                )
+            },
+            currentUser = currentUser,
+            modifier = modifier,
+            onSearchResultClick = onClick,
+        )
+    }
+
+    /**
+     * The default loading indicator that is displayed on the bottom of the list when there are more mentions loading.
+     */
+    @Composable
+    public fun LazyItemScope.MentionListItemLoadingMoreIndicator(modifier: Modifier) {
+        LoadingFooter(
+            modifier = modifier.fillMaxWidth(),
+        )
     }
 }
