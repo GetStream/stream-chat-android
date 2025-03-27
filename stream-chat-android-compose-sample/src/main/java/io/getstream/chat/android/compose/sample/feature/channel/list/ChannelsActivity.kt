@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.sample.feature.channel.list
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
@@ -46,7 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.lifecycleScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
@@ -69,11 +70,14 @@ import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptionItemVisibility
+import io.getstream.chat.android.compose.ui.mentions.MentionList
 import io.getstream.chat.android.compose.ui.theme.ChannelOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.threads.ThreadList
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.mentions.MentionListViewModel
+import io.getstream.chat.android.compose.viewmodel.mentions.MentionListViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadListViewModel
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadsViewModelFactory
 import io.getstream.chat.android.models.Channel
@@ -87,7 +91,7 @@ import kotlinx.coroutines.launch
 
 class ChannelsActivity : BaseConnectedActivity() {
 
-    private val listViewModelFactory by lazy {
+    private val channelsViewModelFactory by lazy {
         val chatClient = ChatClient.instance()
         val currentUserId = chatClient.getCurrentUser()?.id ?: ""
         ChannelViewModelFactory(
@@ -104,10 +108,10 @@ class ChannelsActivity : BaseConnectedActivity() {
             isDraftMessageEnabled = true,
         )
     }
-    private val threadsViewModelFactory by lazy { ThreadsViewModelFactory() }
 
-    private val listViewModel: ChannelListViewModel by viewModels { listViewModelFactory }
-    private val threadsViewModel: ThreadListViewModel by viewModels { threadsViewModelFactory }
+    private val channelsViewModel: ChannelListViewModel by viewModels { channelsViewModelFactory }
+    private val mentionListViewModel: MentionListViewModel by viewModels { MentionListViewModelFactory() }
+    private val threadsViewModel: ThreadListViewModel by viewModels { ThreadsViewModelFactory() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -147,14 +151,17 @@ class ChannelsActivity : BaseConnectedActivity() {
                         )
                     },
                     containerColor = ChatTheme.colors.appBackground,
-                    content = { _ ->
+                ) { padding ->
+                    Box(
+                        modifier = Modifier.padding(padding),
+                    ) {
                         when (selectedTab) {
                             AppBottomBarOption.CHATS -> ChannelsContent()
-                            AppBottomBarOption.MENTIONS -> Text(text = "Mentions")
+                            AppBottomBarOption.MENTIONS -> MentionsContent()
                             AppBottomBarOption.THREADS -> ThreadsContent()
                         }
-                    },
-                )
+                    }
+                }
             }
         }
     }
@@ -162,7 +169,7 @@ class ChannelsActivity : BaseConnectedActivity() {
     @Composable
     private fun ChannelsContent() {
         ChannelsScreen(
-            viewModelFactory = listViewModelFactory,
+            viewModelFactory = channelsViewModelFactory,
             title = stringResource(id = R.string.app_name),
             isShowingHeader = true,
             searchMode = SearchMode.Messages,
@@ -170,7 +177,7 @@ class ChannelsActivity : BaseConnectedActivity() {
             onSearchMessageItemClick = ::openMessages,
             onBackPressed = ::finish,
             onHeaderAvatarClick = {
-                listViewModel.viewModelScope.launch {
+                lifecycleScope.launch {
                     ChatHelper.disconnectUser()
                     openUserLogin()
                 }
@@ -183,12 +190,20 @@ class ChannelsActivity : BaseConnectedActivity() {
     }
 
     @Composable
+    private fun MentionsContent() {
+        MentionList(
+            viewModel = mentionListViewModel,
+            modifier = Modifier.fillMaxSize(),
+            onItemClick = ::openMessages,
+            onEvent = { Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show() },
+        )
+    }
+
+    @Composable
     private fun ThreadsContent() {
         ThreadList(
             viewModel = threadsViewModel,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(ChatTheme.colors.appBackground),
+            modifier = Modifier.fillMaxSize(),
             onThreadClick = ::openThread,
         )
     }
@@ -266,9 +281,9 @@ class ChannelsActivity : BaseConnectedActivity() {
     private fun MyCustomUi() {
         var query by remember { mutableStateOf("") }
 
-        val user by listViewModel.user.collectAsState()
-        val delegatedSelectedChannel by listViewModel.selectedChannel
-        val connectionState by listViewModel.connectionState.collectAsState()
+        val user by channelsViewModel.user.collectAsState()
+        val delegatedSelectedChannel by channelsViewModel.selectedChannel
+        val connectionState by channelsViewModel.connectionState.collectAsState()
 
         Box(modifier = Modifier.fillMaxSize()) {
             Column {
@@ -286,15 +301,15 @@ class ChannelsActivity : BaseConnectedActivity() {
                     query = query,
                     onValueChange = {
                         query = it
-                        listViewModel.setSearchQuery(SearchQuery.Channels(it))
+                        channelsViewModel.setSearchQuery(SearchQuery.Channels(it))
                     },
                 )
 
                 ChannelList(
                     modifier = Modifier.fillMaxSize(),
-                    viewModel = listViewModel,
+                    viewModel = channelsViewModel,
                     onChannelClick = ::openMessages,
-                    onChannelLongClick = { listViewModel.selectChannel(it) },
+                    onChannelLongClick = { channelsViewModel.selectChannel(it) },
                 )
             }
 
@@ -307,11 +322,11 @@ class ChannelsActivity : BaseConnectedActivity() {
                         .wrapContentHeight()
                         .align(Alignment.Center),
                     shape = RoundedCornerShape(16.dp),
-                    isMuted = listViewModel.isChannelMuted(selectedChannel.cid),
+                    isMuted = channelsViewModel.isChannelMuted(selectedChannel.cid),
                     selectedChannel = selectedChannel,
                     currentUser = user,
-                    onChannelOptionClick = { action -> listViewModel.performChannelAction(action) },
-                    onDismiss = { listViewModel.dismissChannelAction() },
+                    onChannelOptionClick = { action -> channelsViewModel.performChannelAction(action) },
+                    onDismiss = { channelsViewModel.dismissChannelAction() },
                 )
             }
         }
