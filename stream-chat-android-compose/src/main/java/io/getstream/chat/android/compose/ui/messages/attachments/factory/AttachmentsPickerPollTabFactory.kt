@@ -59,6 +59,7 @@ import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitch
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchList
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.pollConfigFrom
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.util.extensions.isPollEnabled
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
@@ -75,9 +76,7 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
     override val attachmentsPickerMode: AttachmentsPickerMode
         get() = Poll
 
-    override fun isPickerTabEnabled(channel: Channel): Boolean =
-        channel.config.pollsEnabled &&
-            channel.ownCapabilities.contains(ChannelCapabilities.SEND_POLL)
+    override fun isPickerTabEnabled(channel: Channel): Boolean = channel.isPollEnabled()
 
     /**
      * Emits a file icon for this tab.
