@@ -111,6 +111,7 @@ private fun SelectedMessageMenuPreview() {
         val messageOptionsStateList = defaultMessageOptionsState(
             selectedMessage = Message(),
             currentUser = User(),
+            isInThread = false,
             ownCapabilities = ChannelCapabilities.toSet(),
         )
 
