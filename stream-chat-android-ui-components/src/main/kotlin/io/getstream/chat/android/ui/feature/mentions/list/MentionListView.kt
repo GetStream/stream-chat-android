@@ -93,15 +93,15 @@ public class MentionListView : ViewFlipper {
      * Shows the list of messages that contain the mention.
      *
      * @param messages The list of messages that contain the mention.
-     * @param canLoadMore If the list can be paginated.
+     * @param isLoadingMore If there are more messages loading.
      */
-    public fun showMessages(messages: List<MessageResult>, canLoadMore: Boolean = false) {
+    public fun showMessages(messages: List<MessageResult>, isLoadingMore: Boolean = false) {
         val isEmpty = messages.isEmpty()
 
         displayedChild = if (isEmpty) Flipper.EMPTY else Flipper.RESULTS
 
         val items = messages.map(MentionListItem::MessageItem) +
-            if (canLoadMore) listOf(MentionListItem.LoadingItem) else emptyList()
+            if (isLoadingMore) listOf(MentionListItem.LoadingItem) else emptyList()
         adapter.submitList(items)
         scrollListener.enablePagination()
     }
