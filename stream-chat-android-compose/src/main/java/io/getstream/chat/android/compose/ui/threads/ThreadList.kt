@@ -33,10 +33,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -49,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadListViewModel
@@ -211,15 +209,6 @@ private fun Threads(
     loadingMoreContent: @Composable () -> Unit,
 ) {
     val listState = rememberLazyListState()
-    val shouldLoadMore by remember {
-        derivedStateOf {
-            val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
-            val totalItemsCount = listState.layoutInfo.totalItemsCount
-            lastVisibleItem != null &&
-                totalItemsCount - LoadMoreThreshold > 0 &&
-                lastVisibleItem.index >= totalItemsCount - LoadMoreThreshold
-        }
-    }
     Box(modifier = modifier) {
         LazyColumn(state = listState) {
             items(
@@ -235,11 +224,10 @@ private fun Threads(
             }
         }
     }
-    LaunchedEffect(shouldLoadMore) {
-        if (shouldLoadMore) {
-            onLoadMore()
-        }
-    }
+    LoadMoreHandler(
+        listState = listState,
+        loadMore = onLoadMore,
+    )
 }
 
 /**
@@ -300,12 +288,6 @@ internal fun DefaultThreadListLoadingMoreContent() {
         LoadingIndicator(modifier = Modifier.size(16.dp))
     }
 }
-
-/**
- * Default load more threshold - Trigger the loading of the next page of items, if the user scrolls to the N-th element
- * from the end of the list.
- */
-private const val LoadMoreThreshold = 10
 
 @Preview
 @Composable
