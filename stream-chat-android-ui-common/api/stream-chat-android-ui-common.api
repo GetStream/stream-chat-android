@@ -1859,7 +1859,7 @@ public final class io/getstream/chat/android/ui/common/utils/CapabilitiesHelperK
 	public static final fun canPinMessage (ZLio/getstream/chat/android/models/Message;Ljava/util/Set;)Z
 	public static final fun canReplyToMessage (ZLio/getstream/chat/android/models/Message;Ljava/util/Set;)Z
 	public static final fun canRetryMessage (ZLio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Message;)Z
-	public static final fun canThreadReplyToMessage (ZLio/getstream/chat/android/models/Message;Ljava/util/Set;)Z
+	public static final fun canThreadReplyToMessage (ZZLio/getstream/chat/android/models/Message;Ljava/util/Set;)Z
 }
 
 public abstract interface class io/getstream/chat/android/ui/common/utils/ChannelNameFormatter {
