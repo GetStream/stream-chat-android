@@ -39,6 +39,9 @@ internal class ProcessDeathRecoveryLifecycleObserver(
         if (currentUser != null) {
             logger.d { "Writing user to ProcessDeathRecoveryStorage." }
             storage.writeUser(currentUser)
+            storage.writeAppBackgroundedTimestamp(System.currentTimeMillis())
+        } else {
+            logger.d { "No user to write in ProcessDeathRecoveryStorage." }
         }
     }
 }

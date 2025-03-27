@@ -32,9 +32,19 @@ internal interface ProcessDeathRecoveryStorage {
     fun readUser(): User?
 
     /**
+     * Reads the timestamp when the app was last backgrounded.
+     */
+    fun readAppBackgroundedTimestamp(): Long?
+
+    /**
      * Writes the user to the storage.
      */
     fun writeUser(user: User)
+
+    /**
+     * Writes the timestamp when the app was backgrounded.
+     */
+    fun writeAppBackgroundedTimestamp(timestamp: Long)
 
     /**
      * Clears the user from the storage.
@@ -60,12 +70,23 @@ internal class SharedPreferencesProcessDeathRecoveryStorage(context: Context) : 
         return User(id = id, name = name, image = image, invisible = invisible)
     }
 
+    override fun readAppBackgroundedTimestamp(): Long? {
+        return prefs.getLong(KEY_APP_BACKGROUNDED_TIMESTAMP, -1)
+            .takeIf { it != -1L }
+    }
+
     override fun writeUser(user: User) {
         prefs.edit {
             putString(KEY_USER_ID, user.id)
             putString(KEY_USER_NAME, user.name)
             putString(KEY_USER_IMAGE, user.image)
             putBoolean(KEY_USER_INVISIBLE, user.invisible ?: false)
+        }
+    }
+
+    override fun writeAppBackgroundedTimestamp(timestamp: Long) {
+        prefs.edit {
+            putLong(KEY_APP_BACKGROUNDED_TIMESTAMP, timestamp)
         }
     }
 
@@ -80,5 +101,6 @@ internal class SharedPreferencesProcessDeathRecoveryStorage(context: Context) : 
         private const val KEY_USER_NAME = "user_name"
         private const val KEY_USER_IMAGE = "user_image"
         private const val KEY_USER_INVISIBLE = "user_invisible"
+        private const val KEY_APP_BACKGROUNDED_TIMESTAMP = "app_backgrounded_timestamp"
     }
 }

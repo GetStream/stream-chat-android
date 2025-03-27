@@ -424,7 +424,8 @@ internal constructor(
     @InternalStreamChatApi
     public fun recoverFromProcessDeath() {
         val user = processDeathRecoveryStorage.readUser()
-        if (user == null) {
+        val timestamp = processDeathRecoveryStorage.readAppBackgroundedTimestamp()
+        if (user == null || timestamp == null) {
             StreamLog.e(TAG) { "[recoverFromProcessDeath] No user stored - cannot recover." }
             return
         }
@@ -433,9 +434,13 @@ internal constructor(
             StreamLog.e(TAG) { "[recoverFromProcessDeath] No token stored - cannot recover." }
             return
         }
-        mutableClientState.setInitializationState(InitializationState.INITIALIZING)
-        clientScope.launch {
-            connectUser(user, ConstantTokenProvider(token)).await()
+        if (System.currentTimeMillis() - timestamp <= PROCESS_DEATH_RESTORE_TIMEOUT) {
+            mutableClientState.setInitializationState(InitializationState.INITIALIZING)
+            clientScope.launch {
+                connectUser(user, ConstantTokenProvider(token)).await()
+            }
+        } else {
+            StreamLog.e(TAG) { "[recoverFromProcessDeath] App restore timeout exceeded - cannot recover." }
         }
     }
 
@@ -4315,6 +4320,7 @@ internal constructor(
         private val THIRTY_DAYS_IN_MILLISECONDS = 30.days.inWholeMilliseconds
         private const val INITIALIZATION_DELAY = 100L
         public const val RESOLVE_DEPENDENCY_TIMEOUT: Long = 10_000L
+        private val PROCESS_DEATH_RESTORE_TIMEOUT: Long = 1.days.inWholeMilliseconds
 
         private const val ARG_TYPING_PARENT_ID = "parent_id"
 
