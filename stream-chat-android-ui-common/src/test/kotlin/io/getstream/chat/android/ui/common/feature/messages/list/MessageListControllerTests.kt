@@ -17,10 +17,14 @@
 package io.getstream.chat.android.ui.common.feature.messages.list
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.audio.AudioPlayer
+import io.getstream.chat.android.client.audio.AudioState
+import io.getstream.chat.android.client.audio.audioHash
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.createDate
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.ChannelUserRead
@@ -32,8 +36,10 @@ import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomAttachment
 import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomDate
+import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMembers
 import io.getstream.chat.android.randomMessage
@@ -48,6 +54,7 @@ import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.suspendableRandomMessageList
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
+import io.getstream.chat.android.test.callFrom
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
@@ -57,6 +64,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.list.Other
 import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
+import io.getstream.result.call.Call
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -85,6 +93,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
 
+@Suppress("LargeClass")
 @ExperimentalCoroutinesApi
 internal class MessageListControllerTests {
 
@@ -739,6 +748,104 @@ internal class MessageListControllerTests {
             unreadLabel.buttonVisibility.`should be false`()
         }
 
+    @Test
+    fun `When deleting message with playing audio, audio is stopped before deletion`() = runTest {
+        val messageId = randomString()
+        val audioRecording = randomAttachment(type = AttachmentType.AUDIO_RECORDING)
+        val messages = listOf(
+            randomMessage(id = messageId, attachments = listOf(audioRecording)),
+        )
+        val messagesState = MutableStateFlow(messages)
+        val audioPlayer = mock<AudioPlayer>().apply {
+            whenever(currentState) doReturn AudioState.PLAYING
+            whenever(currentPlayingId) doReturn audioRecording.audioHash
+        }
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelState(messagesState = messagesState)
+            .givenAudioPlayer(audioPlayer)
+            .givenDeleteMessage(callFrom { messages.first() })
+            .get()
+        controller.deleteMessage(messages.first())
+        verify(audioPlayer).pause()
+    }
+
+    @Test
+    fun `When deleting message with not playing audio, audio is not stopped before deletion`() = runTest {
+        val messageId = randomString()
+        val audioRecording = randomAttachment(type = AttachmentType.AUDIO_RECORDING)
+        val messages = listOf(randomMessage(id = messageId, attachments = listOf(audioRecording)))
+        val messagesState = MutableStateFlow(messages)
+
+        val audioPlayer = mock<AudioPlayer>().apply {
+            whenever(currentState) doReturn AudioState.IDLE
+            whenever(currentPlayingId) doReturn audioRecording.audioHash
+        }
+
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelState(messagesState = messagesState)
+            .givenAudioPlayer(audioPlayer)
+            .givenDeleteMessage(callFrom { messages.first() })
+            .get()
+        controller.deleteMessage(messages.first())
+        verify(audioPlayer, times(0)).pause()
+    }
+
+    @Test
+    fun `When deleting message with audio attachment, and different audio is playing, audio is not stopped before deletion`() = runTest {
+        val messageId = randomString()
+        val audioRecording = randomAttachment(type = AttachmentType.AUDIO_RECORDING)
+        val messages = listOf(randomMessage(id = messageId, attachments = listOf(audioRecording)))
+        val messagesState = MutableStateFlow(messages)
+
+        val audioPlayer = mock<AudioPlayer>().apply {
+            whenever(currentState) doReturn AudioState.PLAYING
+            whenever(currentPlayingId) doReturn randomAttachment().audioHash
+        }
+
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelState(messagesState = messagesState)
+            .givenAudioPlayer(audioPlayer)
+            .givenDeleteMessage(callFrom { messages.first() })
+            .get()
+        controller.deleteMessage(messages.first())
+        verify(audioPlayer, times(0)).pause()
+    }
+
+    @Test
+    fun `When deleting message without attachments, audio is not stopped before deletion`() = runTest {
+        val messageId = randomString()
+        val messages = listOf(randomMessage(id = messageId))
+        val messagesState = MutableStateFlow(messages)
+        val audioPlayer = mock<AudioPlayer>().apply {
+            whenever(currentState) doReturn AudioState.PLAYING
+            whenever(currentPlayingId) doReturn randomInt()
+        }
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelState(messagesState = messagesState)
+            .givenAudioPlayer(audioPlayer)
+            .givenDeleteMessage(callFrom { messages.first() })
+            .get()
+        controller.deleteMessage(messages.first())
+        verify(audioPlayer, times(0)).pause()
+    }
+
+    @Test
+    fun `When calling pauseAudioRecordingAttachments, audioPlayer is invoked`() = runTest {
+        val audioPlayer = mock<AudioPlayer>()
+        val messagesState = MutableStateFlow(emptyList<Message>())
+        val controller = Fixture()
+            .givenCurrentUser()
+            .givenChannelState(messagesState = messagesState)
+            .givenAudioPlayer(audioPlayer)
+            .get()
+        controller.pauseAudioRecordingAttachments()
+        verify(audioPlayer).pause()
+    }
+
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val cid: String = CID,
@@ -779,6 +886,10 @@ internal class MessageListControllerTests {
 
         fun givenMarkMessageUnread() = apply {
             whenever(chatClient.markUnread(any(), any(), any())) doReturn Unit.asCall()
+        }
+
+        fun givenDeleteMessage(message: Call<Message>) = apply {
+            whenever(chatClient.deleteMessage(any(), any())) doReturn message
         }
 
         fun givenChannelState(
@@ -824,6 +935,17 @@ internal class MessageListControllerTests {
                 channelState.convertToChannel()
             }
             whenever(stateRegistry.channel(any(), any())) doReturn channelState
+        }
+
+        fun givenAudioPlayerState(state: AudioState, playingId: Int) = apply {
+            val audioPlayer = mock<AudioPlayer>()
+            whenever(audioPlayer.currentState) doReturn state
+            whenever(audioPlayer.currentPlayingId) doReturn playingId
+            whenever(chatClient.audioPlayer) doReturn audioPlayer
+        }
+
+        fun givenAudioPlayer(audioPlayer: AudioPlayer) = apply {
+            whenever(chatClient.audioPlayer) doReturn audioPlayer
         }
 
         fun get(

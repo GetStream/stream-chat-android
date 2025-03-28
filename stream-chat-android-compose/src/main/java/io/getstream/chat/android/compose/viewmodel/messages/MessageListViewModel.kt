@@ -613,14 +613,27 @@ public class MessageListViewModel(
     }
 
     /**
+     * Adds a new poll option to the given poll.
+     *
+     * @param poll The poll to add the option to.
+     * @param option The option to add.
+     */
+    public fun addPollOption(poll: Poll, option: String) {
+        messageListController.addPollOption(poll, option)
+    }
+
+    /**
+     * Pauses all running audio recording attachments.
+     */
+    public fun pauseAudioRecordingAttachments() {
+        messageListController.pauseAudioRecordingAttachments()
+    }
+
+    /**
      * Clears the [MessageListController] coroutine scope.
      */
     override fun onCleared() {
         messageListController.onCleared()
         super.onCleared()
-    }
-
-    public fun addPollOption(poll: Poll, option: String) {
-        messageListController.addPollOption(poll, option)
     }
 }

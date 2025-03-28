@@ -187,6 +187,7 @@ public final class io/getstream/chat/android/ui/common/feature/messages/list/Mes
 	public static synthetic fun muteUser$default (Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)V
 	public final fun onCleared ()V
 	public final fun openRelatedThread (Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun pauseAudioRecordingAttachments ()V
 	public final fun performGiphyAction (Lio/getstream/chat/android/ui/common/state/messages/list/GiphyAction;)V
 	public final fun performMessageAction (Lio/getstream/chat/android/ui/common/state/messages/MessageAction;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun pinMessage (Lio/getstream/chat/android/models/Message;)V
