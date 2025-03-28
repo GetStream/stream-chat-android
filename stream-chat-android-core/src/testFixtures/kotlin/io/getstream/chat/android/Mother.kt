@@ -379,7 +379,7 @@ public fun randomChannel(
     team: String = randomString(),
     hidden: Boolean? = randomBoolean(),
     hiddenMessagesBefore: Date? = randomDate(),
-    ownCapabilities: Set<String> = setOf(),
+    ownCapabilities: Set<String> = randomChannelCapabilities(),
     extraData: Map<String, Any> = emptyMap(),
 ): Channel = Channel(
     id = id,
@@ -468,6 +468,7 @@ public fun randomConfig(
     automodBehavior: String = randomString(),
     blocklistBehavior: String = randomString(),
     commands: List<Command> = emptyList(),
+    pollsEnabled: Boolean = randomBoolean(),
 ): Config = Config(
     createdAt = createdAt,
     updatedAt = updatedAt,
@@ -489,6 +490,7 @@ public fun randomConfig(
     automodBehavior = automodBehavior,
     blocklistBehavior = blocklistBehavior,
     commands = commands,
+    pollsEnabled = pollsEnabled,
 )
 
 public fun randomChannelConfig(type: String = randomString(), config: Config = randomConfig()): ChannelConfig =
