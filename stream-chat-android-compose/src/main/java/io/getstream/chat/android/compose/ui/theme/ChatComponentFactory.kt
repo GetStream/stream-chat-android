@@ -77,6 +77,7 @@ import io.getstream.chat.android.compose.ui.channels.list.DefaultSearchResultIte
 import io.getstream.chat.android.compose.ui.channels.list.SearchResultItem
 import io.getstream.chat.android.compose.ui.components.DefaultSearchLabel
 import io.getstream.chat.android.compose.ui.components.DefaultSearchLeadingIcon
+import io.getstream.chat.android.compose.ui.components.EmptyContent
 import io.getstream.chat.android.compose.ui.components.LoadingFooter
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
@@ -200,6 +201,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparat
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Default implementation of [ChatComponentFactory].
@@ -2631,7 +2633,11 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun MentionListEmptyContent(modifier: Modifier) {
-        // TODO MentionListEmptyContent
+        EmptyContent(
+            text = stringResource(UiCommonR.string.stream_ui_mention_list_empty),
+            painter = painterResource(UiCommonR.drawable.stream_compose_ic_mentions),
+            modifier = modifier.fillMaxSize(),
+        )
     }
 
     /**

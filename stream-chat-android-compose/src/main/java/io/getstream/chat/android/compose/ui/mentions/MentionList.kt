@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.ui.mentions
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -68,7 +67,7 @@ public fun MentionList(
     loadingMoreContent: @Composable LazyItemScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             MentionListItemLoadingMoreIndicator(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier,
             )
         }
     },
@@ -120,7 +119,7 @@ public fun MentionList(
     loadingMoreContent: @Composable LazyItemScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             MentionListItemLoadingMoreIndicator(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier,
             )
         }
     },
