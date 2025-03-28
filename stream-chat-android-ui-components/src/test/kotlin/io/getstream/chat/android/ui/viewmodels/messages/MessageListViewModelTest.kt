@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.viewmodels.messages
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Channel
@@ -240,6 +241,18 @@ internal class MessageListViewModelTest {
             )
         }
 
+    @Test
+    fun `When calling pauseAudioRecordingAttachments, audioPlayer is invoked`() = runTest {
+        val audioPlayer = mock<AudioPlayer>()
+        val chatClient = MockChatClientBuilder().build()
+        val viewModel = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenAudioPlayer(audioPlayer)
+            .get()
+        viewModel.pauseAudioRecordingAttachments()
+        verify(audioPlayer).pause()
+    }
+
     private class Fixture(
         private val chatClient: ChatClient = MockChatClientBuilder().build(),
         private val channelId: String = CID,
@@ -259,6 +272,7 @@ internal class MessageListViewModelTest {
             whenever(chatClient.plugins) doReturn listOf(statePlugin)
             whenever(chatClient.pluginFactories) doReturn listOf(statePluginFactory)
             whenever(chatClient.clientState) doReturn clientState
+            whenever(chatClient.audioPlayer) doReturn mock()
         }
 
         fun givenCurrentUser(currentUser: User = user1) = apply {
@@ -328,6 +342,10 @@ internal class MessageListViewModelTest {
                 whenever(it.loadingNewerMessages) doReturn MutableStateFlow(false)
                 whenever(stateRegistry.channel(any(), any())) doReturn it
             }
+        }
+
+        fun givenAudioPlayer(audioPlayer: AudioPlayer) = apply {
+            whenever(chatClient.audioPlayer) doReturn audioPlayer
         }
 
         fun get(): MessageListViewModel {

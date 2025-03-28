@@ -489,6 +489,13 @@ public class MessageListViewModel(
     }
 
     /**
+     * Pauses all running audio recording attachments.
+     */
+    public fun pauseAudioRecordingAttachments() {
+        messageListController.pauseAudioRecordingAttachments()
+    }
+
+    /**
      * Clears the [MessageListController] coroutine scope.
      */
     override fun onCleared() {

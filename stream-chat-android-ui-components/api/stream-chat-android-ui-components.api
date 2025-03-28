@@ -2242,6 +2242,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/MessageLis
 	public final fun setOnMessageLongClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnMessageLongClickListener;)V
 	public final fun setOnMessageRetryListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnMessageRetryListener;)V
 	public final fun setOnModeratedMessageLongClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnModeratedMessageLongClickListener;)V
+	public final fun setOnPauseAudioRecordingAttachmentsHandler (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnPauseAudioRecordingAttachmentsHandler;)V
 	public final fun setOnPollCloseClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnPollCloseClickListener;)V
 	public final fun setOnPollOptionClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnPollOptionClickListener;)V
 	public final fun setOnReactionViewClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnReactionViewClickListener;)V
@@ -2463,6 +2464,10 @@ public abstract interface class io/getstream/chat/android/ui/feature/messages/li
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnModeratedMessageLongClickListener {
 	public abstract fun onModeratedMessageLongClick (Lio/getstream/chat/android/models/Message;)Z
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnPauseAudioRecordingAttachmentsHandler {
+	public abstract fun onPauseAudioRecordingAttachments ()V
 }
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnPollCloseClickListener {
@@ -4583,6 +4588,7 @@ public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListVi
 	public final fun getUnreadLabel ()Landroidx/lifecycle/LiveData;
 	public final fun getUser ()Landroidx/lifecycle/LiveData;
 	public final fun onEvent (Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event;)V
+	public final fun pauseAudioRecordingAttachments ()V
 	public final fun scrollToBottom (ILkotlin/jvm/functions/Function0;)V
 	public static synthetic fun scrollToBottom$default (Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel;ILkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
 	public final fun scrollToFirstUnreadMessage ()V

@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.viewmodel.messages
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Channel
@@ -113,6 +114,19 @@ internal class MessageListViewModelTest {
         verify(chatClient).sendReaction(eq(reaction1), eq(true), eq(CID))
     }
 
+    @Test
+    fun `When calling pauseAudioRecordingAttachments, audioPlayer is invoked`() = runTest {
+        val audioPlayer = mock<AudioPlayer>()
+        val viewModel = Fixture()
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState()
+            .givenAudioPlayer(audioPlayer)
+            .get()
+        viewModel.pauseAudioRecordingAttachments()
+        verify(audioPlayer).pause()
+    }
+
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val channelId: String = CID,
@@ -175,6 +189,10 @@ internal class MessageListViewModelTest {
             whenever(channelState.loadingNewerMessages) doReturn MutableStateFlow(false)
             whenever(channelState.loadingOlderMessages) doReturn MutableStateFlow(false)
             whenever(stateRegistry.channel(any(), any())) doReturn channelState
+        }
+
+        fun givenAudioPlayer(audioPlayer: AudioPlayer) = apply {
+            whenever(chatClient.audioPlayer) doReturn audioPlayer
         }
 
         fun get(): MessageListViewModel {
