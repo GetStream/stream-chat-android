@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
  * Renders the default app bottom bar for switching between chats/threads.
@@ -78,7 +79,7 @@ fun AppBottomBar(
             },
         )
         AppBottomBarOptionTile(
-            icon = R.drawable.ic_mentions,
+            icon = UiCommonR.drawable.stream_compose_ic_mentions,
             text = R.string.app_bottom_bar_mentions,
             isSelected = selectedOption == AppBottomBarOption.MENTIONS,
             onClick = { onOptionSelected(AppBottomBarOption.MENTIONS) },
