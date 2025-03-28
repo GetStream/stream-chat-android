@@ -29,6 +29,9 @@ import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -248,6 +251,7 @@ public class MessageListView : ConstraintLayout {
     private var attachmentDownloadHandler = AttachmentDownloadHandler {
         throw IllegalStateException("onAttachmentDownloadHandler must be set")
     }
+    private var onPauseAudioRecordingAttachmentsHandler: OnPauseAudioRecordingAttachmentsHandler? = null
 
     private var confirmDeleteMessageHandler = ConfirmDeleteMessageHandler { _, confirmCallback ->
         AlertDialog.Builder(context)
@@ -645,6 +649,12 @@ public class MessageListView : ConstraintLayout {
     private var enterThreadListener = defaultEnterThreadListener
     private var userReactionClickListener = defaultUserReactionClickListener
 
+    private val pauseAudioPlayerListener = object : DefaultLifecycleObserver {
+        override fun onPause(owner: LifecycleOwner) {
+            onPauseAudioRecordingAttachmentsHandler?.onPauseAudioRecordingAttachments()
+        }
+    }
+
     private lateinit var messageListItemViewHolderFactory: MessageListItemViewHolderFactory
     private lateinit var messageDateFormatter: DateFormatter
     private lateinit var attachmentFactoryManager: AttachmentFactoryManager
@@ -812,12 +822,14 @@ public class MessageListView : ConstraintLayout {
         activity?.activityResultRegistry?.let { registry ->
             attachmentGalleryDestination.register(registry)
         }
+        findViewTreeLifecycleOwner()?.lifecycle?.addObserver(pauseAudioPlayerListener)
     }
 
     override fun onDetachedFromWindow() {
         if (isAdapterInitialized()) {
             adapter.onDetachedFromRecyclerView(binding.chatMessagesRV)
         }
+        findViewTreeLifecycleOwner()?.lifecycle?.removeObserver(pauseAudioPlayerListener)
         attachmentGalleryDestination.unregister()
         super.onDetachedFromWindow()
     }
@@ -2136,6 +2148,13 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
+     * Sets the handler for pausing the audio recording attachments.
+     */
+    public fun setOnPauseAudioRecordingAttachmentsHandler(handler: OnPauseAudioRecordingAttachmentsHandler) {
+        this.onPauseAudioRecordingAttachmentsHandler = handler
+    }
+
+    /**
      * Sets the handler used when the user interacts with the unread label.
      *
      * @param listener The listener to use.
@@ -2574,6 +2593,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface OnScrollToBottomHandler {
         public fun onScrollToBottom()
+    }
+
+    public fun interface OnPauseAudioRecordingAttachmentsHandler {
+        public fun onPauseAudioRecordingAttachments()
     }
     //endregion
 

@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
-import io.getstream.chat.android.compose.state.messages.attachments.Poll
+import io.getstream.chat.android.compose.util.extensions.isPollEnabled
 import io.getstream.chat.android.models.Channel
 
 /**
@@ -35,9 +35,7 @@ internal class AttachmentsPickerTabFactoryFilter {
         channel: Channel,
     ): List<AttachmentsPickerTabFactory> {
         return factories
-            .filter { factory ->
-                isAllowed(factory, channel)
-            }
+            .filter { factory -> factory.isPickerTabEnabled(channel) }
             .map { factory ->
                 when (factory) {
                     is AttachmentsPickerSystemTabFactory -> adjustSystemFactory(factory, channel)
@@ -46,21 +44,13 @@ internal class AttachmentsPickerTabFactoryFilter {
             }
     }
 
-    private fun isAllowed(factory: AttachmentsPickerTabFactory, channel: Channel): Boolean {
-        return when (factory.attachmentsPickerMode) {
-            is Poll -> channel.config.pollsEnabled
-            else -> true
-        }
-    }
-
     private fun adjustSystemFactory(
         factory: AttachmentsPickerSystemTabFactory,
         channel: Channel,
     ): AttachmentsPickerSystemTabFactory {
         // Adjust pollEnabled based on the channel config
-        val pollsAllowed = channel.config.pollsEnabled
         val config = factory.config.copy(
-            pollAllowed = pollsAllowed && factory.config.pollAllowed,
+            pollAllowed = channel.isPollEnabled() && factory.config.pollAllowed,
         )
         return AttachmentsPickerSystemTabFactory(config)
     }

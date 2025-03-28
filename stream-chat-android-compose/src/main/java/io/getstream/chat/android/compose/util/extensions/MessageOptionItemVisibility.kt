@@ -40,10 +40,12 @@ internal fun MessageOptionItemVisibility.canReplyToMessage(
 )
 
 internal fun MessageOptionItemVisibility.canThreadReplyToMessage(
+    isInThread: Boolean,
     message: Message,
     ownCapabilities: Set<String>,
 ): Boolean = canThreadReplyToMessage(
     threadsEnabled = isThreadReplyVisible,
+    isInThread = isInThread,
     message = message,
     ownCapabilities = ownCapabilities,
 )
