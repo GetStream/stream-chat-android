@@ -55,4 +55,8 @@ public class MentionListViewModel(
     public fun loadMore() {
         controller.loadMore()
     }
+
+    public fun refresh() {
+        controller.refresh()
+    }
 }

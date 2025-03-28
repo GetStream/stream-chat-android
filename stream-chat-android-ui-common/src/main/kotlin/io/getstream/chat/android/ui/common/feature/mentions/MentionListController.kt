@@ -35,8 +35,9 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
@@ -56,7 +57,7 @@ public class MentionListController(
 ) {
     private val logger by taggedLogger("Chat:MentionListController")
 
-    private val loadTrigger = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    private val loadRequests = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
     private val _state = MutableStateFlow(InitialState)
 
@@ -73,8 +74,8 @@ public class MentionListController(
     public val events: SharedFlow<MentionListEvent> = _events.asSharedFlow()
 
     init {
-        loadTrigger.onStart { emit(Unit) } // Triggers the initial load
-            .map { searchMentions() }
+        loadRequests.onStart { emit(Unit) } // Triggers the initial load
+            .flatMapLatest { flowOf(searchMentions()) }
             .onEach { result ->
                 when (result) {
                     is Result.Success -> onSuccessResult(result.value)
@@ -102,7 +103,13 @@ public class MentionListController(
 
         logger.d { "[loadMore] no args" }
         _state.value = currentState.copy(isLoadingMore = true)
-        loadTrigger.tryEmit(Unit)
+        loadRequests.tryEmit(Unit)
+    }
+
+    public fun refresh() {
+        logger.d { "[refresh] no args" }
+        _state.value = InitialState
+        loadRequests.tryEmit(Unit)
     }
 
     private suspend fun searchMentions(): Result<SearchMessagesResult> {

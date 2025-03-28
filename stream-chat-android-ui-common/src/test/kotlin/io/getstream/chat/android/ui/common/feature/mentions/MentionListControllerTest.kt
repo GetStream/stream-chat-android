@@ -24,6 +24,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.test.MockRetrofitCall
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.model.MessageResult
@@ -31,6 +32,11 @@ import io.getstream.chat.android.ui.common.state.mentions.MentionListEvent
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -254,6 +260,73 @@ internal class MentionListControllerTest {
             expectNoEvents()
         }
     }
+
+    @Test
+    fun refresh() = runTest {
+        val sut = Fixture().get(backgroundScope)
+
+        sut.refresh()
+
+        sut.state.test {
+            val actual = awaitItem()
+            assertTrue(actual.isLoading)
+            assertTrue(actual.results.isEmpty())
+            assertNull(actual.nextPage)
+            assertTrue(actual.canLoadMore)
+            assertFalse(actual.isLoadingMore)
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun `refresh right after load more`() = runTest {
+        val channel = Channel(id = CHANNEL_ID, type = CHANNEL_TYPE)
+        val message1 = Message(text = "text1", cid = CID)
+        val message2 = Message(text = "text2", cid = CID)
+        val firstSearchMessagesResult = SearchMessagesResult(
+            messages = listOf(message1, message2),
+            next = "next",
+        )
+        val searchScope = TestScope(StandardTestDispatcher())
+        val sut = Fixture()
+            .givenCurrentUser()
+            .givenChannels(channels = listOf(channel))
+            .givenSearchMessagesResult(scope = searchScope, next = null, result = firstSearchMessagesResult)
+            .givenSearchMessagesResult(scope = searchScope, next = "next", result = SearchMessagesResult())
+            .get(scope = TestScope(UnconfinedTestDispatcher()))
+
+        val expectedFirstPageResults = listOf(
+            MessageResult(message = message1, channel = channel),
+            MessageResult(message = message2, channel = channel),
+        )
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            searchScope.testScheduler.advanceUntilIdle()
+            val initialActual = awaitItem()
+            assertFalse(initialActual.isLoading)
+            assertEquals(expectedFirstPageResults, initialActual.results)
+            assertEquals("next", initialActual.nextPage)
+            assertTrue(initialActual.canLoadMore)
+            assertFalse(initialActual.isLoadingMore)
+
+            sut.loadMore()
+            assertTrue(awaitItem().isLoadingMore)
+
+            sut.refresh()
+            assertTrue(awaitItem().isLoading)
+
+            searchScope.testScheduler.advanceUntilIdle()
+            // Assert that the only results emitted after refresh is the first page results,
+            // as the load more request should be skipped.
+            val finalActual = awaitItem()
+            assertFalse(finalActual.isLoading)
+            assertEquals(expectedFirstPageResults, finalActual.results)
+            assertEquals("next", finalActual.nextPage)
+            assertTrue(finalActual.canLoadMore)
+            assertFalse(finalActual.isLoadingMore)
+        }
+    }
 }
 
 private const val CHANNEL_ID = "123"
@@ -274,6 +347,7 @@ private class Fixture {
     }
 
     fun givenSearchMessagesResult(
+        scope: CoroutineScope? = null,
         next: String?,
         result: SearchMessagesResult? = null,
         error: Error? = null,
@@ -288,7 +362,16 @@ private class Fixture {
                 sort = eq(sort),
             ),
         ) doAnswer {
-            result?.asCall() ?: error?.let { TestCall(Result.Failure(it)) }
+            if (scope != null) {
+                // Mock a asynchronous call
+                MockRetrofitCall(
+                    scope = scope,
+                    result = result?.let { Result.Success(it) } ?: error?.let { Result.Failure(it) }!!,
+                    doWork = { delay(1) },
+                )
+            } else {
+                result?.asCall() ?: error?.let { TestCall(Result.Failure(it)) }
+            }
         }
     }
 
