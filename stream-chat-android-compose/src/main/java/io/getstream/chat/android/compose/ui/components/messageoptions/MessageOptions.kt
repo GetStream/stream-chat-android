@@ -94,6 +94,7 @@ public fun MessageOptions(
  *
  * @param selectedMessage Currently selected message, used to callbacks.
  * @param currentUser Current user, used to expose different states for messages.
+ * @param isInThread If the message is being displayed in a thread.
  * @param ownCapabilities Set of capabilities the user is given for the current channel.
  * For a full list @see [ChannelCapabilities].
  */
@@ -102,6 +103,7 @@ public fun MessageOptions(
 public fun defaultMessageOptionsState(
     selectedMessage: Message,
     currentUser: User?,
+    isInThread: Boolean,
     ownCapabilities: Set<String>,
 ): List<MessageOptionItemState> {
     if (selectedMessage.id.isEmpty()) {
@@ -133,7 +135,7 @@ public fun defaultMessageOptionsState(
         } else {
             null
         },
-        if (visibility.canThreadReplyToMessage(selectedMessage, ownCapabilities)) {
+        if (visibility.canThreadReplyToMessage(isInThread, selectedMessage, ownCapabilities)) {
             MessageOptionItemState(
                 title = R.string.stream_compose_thread_reply,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_thread),
@@ -302,6 +304,7 @@ private fun MessageOptionsPreview(
         val messageOptionsStateList = defaultMessageOptionsState(
             selectedMessage = selectedMMessage,
             currentUser = currentUser,
+            isInThread = false,
             ownCapabilities = ChannelCapabilities.toSet(),
         )
 

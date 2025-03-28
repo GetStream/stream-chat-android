@@ -130,7 +130,7 @@ public open class DefaultMessageOptionItemsFactory(
             } else {
                 null
             },
-            if (style.canThreadReplyToMessage(selectedMessage, ownCapabilities) && !isInThread) {
+            if (style.canThreadReplyToMessage(isInThread, selectedMessage, ownCapabilities)) {
                 MessageOptionItem(
                     optionText = context.getString(R.string.stream_ui_message_list_thread_reply),
                     optionIcon = context.getDrawableCompat(style.threadReplyIcon)!!,
