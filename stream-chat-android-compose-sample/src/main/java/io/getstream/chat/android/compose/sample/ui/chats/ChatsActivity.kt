@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.sample.ui.chats
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Icon
@@ -185,10 +186,15 @@ class ChatsActivity : BaseConnectedActivity() {
                 ListFooterContent(
                     listContentMode = listContentMode,
                     onOptionSelected = { option ->
-                        listContentMode = when (option) {
-                            AppBottomBarOption.CHATS -> ChatListContentMode.Channels
-                            AppBottomBarOption.MENTIONS -> ChatListContentMode.Channels // TODO Support mention list
-                            AppBottomBarOption.THREADS -> ChatListContentMode.Threads
+                        if (option == AppBottomBarOption.MENTIONS) {
+                            Toast.makeText(this, "Mentions are not yey supported", Toast.LENGTH_SHORT)
+                                .show()
+                        } else {
+                            listContentMode = when (option) {
+                                AppBottomBarOption.CHATS -> ChatListContentMode.Channels
+                                AppBottomBarOption.MENTIONS -> ChatListContentMode.Channels
+                                AppBottomBarOption.THREADS -> ChatListContentMode.Threads
+                            }
                         }
                     },
                 )
@@ -212,6 +218,7 @@ class ChatsActivity : BaseConnectedActivity() {
         val unreadThreadsCount by globalState.unreadThreadsCount.collectAsState()
         val selectedOption = when (listContentMode) {
             ChatListContentMode.Channels -> AppBottomBarOption.CHATS
+            ChatListContentMode.Mentions -> AppBottomBarOption.MENTIONS
             ChatListContentMode.Threads -> AppBottomBarOption.THREADS
         }
         AppBottomBar(
