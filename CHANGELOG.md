@@ -54,6 +54,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Introduce `MentionListController` responsible for managing the state of the mention list. [#5692](https://github.com/GetStream/stream-chat-android/pull/5692)
 
 ### ⚠️ Changed
 
@@ -63,10 +64,12 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Enable pagination in `MentionListView`. [#5692](https://github.com/GetStream/stream-chat-android/pull/5692)
 
 ### ✅ Added
 
 ### ⚠️ Changed
+- 🚨Breaking change: Move `MentionListViewModel` logic and its state to a shared component so they can be reused in Compose. [#5692](https://github.com/GetStream/stream-chat-android/pull/5692)
 
 ### ❌ Removed
 

@@ -17,56 +17,55 @@
 package io.getstream.chat.android.ui.feature.mentions.list.internal
 
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.ui.common.model.MessageResult
-import io.getstream.chat.android.ui.databinding.StreamUiItemMentionListBinding
-import io.getstream.chat.android.ui.feature.internal.MessageResultDiffCallback
+import io.getstream.chat.android.ui.feature.mentions.list.MentionListItem
 import io.getstream.chat.android.ui.feature.mentions.list.MentionListView.MentionSelectedListener
-import io.getstream.chat.android.ui.feature.mentions.list.internal.MentionListAdapter.MessagePreviewViewHolder
 import io.getstream.chat.android.ui.feature.messages.preview.MessagePreviewStyle
-import io.getstream.chat.android.ui.feature.messages.preview.internal.MessagePreviewView
-import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
-internal class MentionListAdapter : ListAdapter<MessageResult, MessagePreviewViewHolder>(MessageResultDiffCallback) {
+internal class MentionListAdapter :
+    ListAdapter<MentionListItem, MentionListItemViewHolder<MentionListItem>>(MentionListItemDiffCallback) {
 
-    private var mentionSelectedListener: MentionSelectedListener? = null
+    var mentionSelectedListener: MentionSelectedListener? = null
 
     var previewStyle: MessagePreviewStyle? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessagePreviewViewHolder {
-        return StreamUiItemMentionListBinding
-            .inflate(parent.streamThemeInflater, parent, false)
-            .let { binding ->
-                previewStyle?.let(binding.root::styleView)
-                MessagePreviewViewHolder(binding.root)
-            }
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MentionListItemViewHolder<MentionListItem> =
+        when (viewType) {
+            VIEW_TYPE_MESSAGE -> MentionListItemMessageViewHolder(
+                style = previewStyle,
+                parentView = parent,
+                clickListener = mentionSelectedListener,
+            )
 
-    override fun onBindViewHolder(holder: MessagePreviewViewHolder, position: Int) {
+            VIEW_TYPE_LOADING -> MentionListItemLoadingViewHolder(parent)
+
+            else -> error("Unknown MentionList view type: $viewType")
+        } as MentionListItemViewHolder<MentionListItem>
+
+    override fun getItemViewType(position: Int): Int =
+        if (getItem(position) is MentionListItem.MessageItem) {
+            VIEW_TYPE_MESSAGE
+        } else {
+            VIEW_TYPE_LOADING
+        }
+
+    override fun onBindViewHolder(holder: MentionListItemViewHolder<MentionListItem>, position: Int) {
         holder.bind(getItem(position))
     }
+}
 
-    fun setMentionSelectedListener(mentionSelectedListener: MentionSelectedListener?) {
-        this.mentionSelectedListener = mentionSelectedListener
-    }
+private const val VIEW_TYPE_MESSAGE = 0
+private const val VIEW_TYPE_LOADING = 1
 
-    inner class MessagePreviewViewHolder(
-        private val view: MessagePreviewView,
-    ) : RecyclerView.ViewHolder(view) {
+private object MentionListItemDiffCallback : DiffUtil.ItemCallback<MentionListItem>() {
+    override fun areItemsTheSame(
+        oldItem: MentionListItem,
+        newItem: MentionListItem,
+    ): Boolean = oldItem.id == newItem.id
 
-        private lateinit var message: Message
-
-        init {
-            view.setOnClickListener {
-                mentionSelectedListener?.onMentionSelected(message)
-            }
-        }
-
-        internal fun bind(messageResult: MessageResult) {
-            this.message = messageResult.message
-            view.renderMessageResult(messageResult)
-        }
-    }
+    override fun areContentsTheSame(
+        oldItem: MentionListItem,
+        newItem: MentionListItem,
+    ): Boolean = oldItem == newItem
 }
