@@ -32,6 +32,9 @@ import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.widgets.EndlessScrollListener
 
+/**
+ * View used to display messages that contain a mention.
+ */
 public class MentionListView : ViewFlipper {
 
     private companion object {
@@ -86,36 +89,71 @@ public class MentionListView : ViewFlipper {
         }
     }
 
-    public fun showMessages(messages: List<MessageResult>) {
+    /**
+     * Shows the list of messages that contain the mention.
+     *
+     * @param messages The list of messages that contain the mention.
+     * @param isLoadingMore If there are more messages loading.
+     */
+    public fun showMessages(messages: List<MessageResult>, isLoadingMore: Boolean = false) {
         val isEmpty = messages.isEmpty()
 
         displayedChild = if (isEmpty) Flipper.EMPTY else Flipper.RESULTS
 
-        adapter.submitList(messages)
+        val items = messages.map(MentionListItem::MessageItem) +
+            if (isLoadingMore) listOf(MentionListItem.LoadingItem) else emptyList()
+        adapter.submitList(items)
+        scrollListener.enablePagination()
     }
 
+    /**
+     * Shows the loading UI.
+     */
     public fun showLoading() {
         displayedChild = Flipper.LOADING
         scrollListener.disablePagination()
     }
 
+    /**
+     * Shows a generic error message.
+     */
     public fun showError() {
         Toast.makeText(context, R.string.stream_ui_mention_list_error, Toast.LENGTH_SHORT).show()
     }
 
+    /**
+     * Sets the listener for when a mention is selected.
+     */
     public fun setMentionSelectedListener(mentionSelectedListener: MentionSelectedListener?) {
-        adapter.setMentionSelectedListener(mentionSelectedListener)
+        adapter.mentionSelectedListener = mentionSelectedListener
     }
 
+    /**
+     * Sets the listener for when more messages should be loaded.
+     */
     public fun setLoadMoreListener(loadMoreListener: LoadMoreListener?) {
         this.loadMoreListener = loadMoreListener
     }
 
+    /**
+     * Listener for when a mention is selected.
+     */
     public fun interface MentionSelectedListener {
+        /**
+         * Called when a mention is selected.
+         *
+         * @param message The message that was selected.
+         */
         public fun onMentionSelected(message: Message)
     }
 
+    /**
+     * Listener for when the end of the list is reached and more messages should be loaded.
+     */
     public fun interface LoadMoreListener {
+        /**
+         * Called when more messages should be loaded.
+         */
         public fun onLoadMoreRequested()
     }
 }

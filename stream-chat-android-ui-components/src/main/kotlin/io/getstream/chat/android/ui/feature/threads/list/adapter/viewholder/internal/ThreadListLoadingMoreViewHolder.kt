@@ -17,7 +17,7 @@
 package io.getstream.chat.android.ui.feature.threads.list.adapter.viewholder.internal
 
 import android.view.ViewGroup
-import io.getstream.chat.android.ui.databinding.StreamUiItemThreadListLoadingMoreBinding
+import io.getstream.chat.android.ui.databinding.StreamUiItemListLoadingBinding
 import io.getstream.chat.android.ui.feature.threads.list.adapter.ThreadListItem
 import io.getstream.chat.android.ui.feature.threads.list.adapter.viewholder.BaseThreadListItemViewHolder
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
@@ -28,7 +28,7 @@ import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 internal class ThreadListLoadingMoreViewHolder(
     parentView: ViewGroup,
 ) : BaseThreadListItemViewHolder<ThreadListItem.LoadingMoreItem>(
-    itemView = StreamUiItemThreadListLoadingMoreBinding.inflate(parentView.streamThemeInflater, parentView, false).root,
+    itemView = StreamUiItemListLoadingBinding.inflate(parentView.streamThemeInflater, parentView, false).root,
 ) {
 
     override fun bind(item: ThreadListItem.LoadingMoreItem) = Unit // No-op

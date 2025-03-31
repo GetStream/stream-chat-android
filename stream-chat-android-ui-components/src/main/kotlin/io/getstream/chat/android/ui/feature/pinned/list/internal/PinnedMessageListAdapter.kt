@@ -21,8 +21,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.model.MessageResult
+import io.getstream.chat.android.ui.databinding.StreamUiItemListLoadingBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemMentionListBinding
-import io.getstream.chat.android.ui.databinding.StreamUiPinnedMessageListLoadingMoreViewBinding
 import io.getstream.chat.android.ui.feature.internal.MessageResultDiffCallback
 import io.getstream.chat.android.ui.feature.messages.preview.MessagePreviewStyle
 import io.getstream.chat.android.ui.feature.pinned.list.PinnedMessageListView.PinnedMessageSelectedListener
@@ -44,7 +44,7 @@ internal class PinnedMessageListAdapter :
                     MessagePreviewViewHolder(binding)
                 }
         } else {
-            StreamUiPinnedMessageListLoadingMoreViewBinding
+            StreamUiItemListLoadingBinding
                 .inflate(parent.streamThemeInflater, parent, false)
                 .let { binding ->
                     PinnedMessageLoadingMoreView(binding)
@@ -76,7 +76,7 @@ internal class PinnedMessageListAdapter :
     }
 
     inner class PinnedMessageLoadingMoreView(
-        binding: StreamUiPinnedMessageListLoadingMoreViewBinding,
+        binding: StreamUiItemListLoadingBinding,
     ) : RecyclerView.ViewHolder(binding.root)
 
     inner class MessagePreviewViewHolder(
