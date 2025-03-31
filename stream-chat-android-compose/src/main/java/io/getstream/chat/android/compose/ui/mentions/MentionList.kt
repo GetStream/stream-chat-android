@@ -30,7 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.ui.components.LazyPagingColumn
-import io.getstream.chat.android.compose.ui.components.PullToRefreshContentListBox
+import io.getstream.chat.android.compose.ui.components.PullToRefreshContentBox
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.mentions.MentionListViewModel
 import io.getstream.chat.android.models.Message
@@ -42,6 +42,20 @@ import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.chat.android.ui.common.state.mentions.MentionListState
 import kotlinx.coroutines.flow.collectLatest
 
+/**
+ * The default stateful component that relies on the [MentionListViewModel]
+ * to display a list of mentions for the current user.
+ *
+ * @param viewModel The [MentionListViewModel] instance to use.
+ * @param modifier The modifier to apply to this layout.
+ * @param currentUser The current user to use for the mentions.
+ * @param onItemClick The callback to be called when an item is clicked.
+ * @param onEvent The callback to be called when an event is received.
+ * @param itemContent The content displayed by a single item.
+ * @param loadingIndicator The content displayed by the loading indicator.
+ * @param emptyContent The content displayed when the list is empty.
+ * @param loadingItemContent The content displayed when loading more items.
+ */
 @Composable
 public fun MentionList(
     viewModel: MentionListViewModel,
@@ -70,9 +84,11 @@ public fun MentionList(
             }
         },
     emptyContent: @Composable BoxScope.() -> Unit = {
-        ChatTheme.componentFactory.MentionListEmptyContent(
-            modifier = Modifier,
-        )
+        with(ChatTheme.componentFactory) {
+            MentionListEmptyContent(
+                modifier = Modifier,
+            )
+        }
     },
     loadingItemContent: @Composable LazyItemScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
@@ -100,6 +116,22 @@ public fun MentionList(
     )
 }
 
+/**
+ * The default stateless component that displays a list of mentions for the current user.
+ *
+ * *This component is useful when you want to manage the state of the list yourself.*
+ *
+ * @param state The state of the list to display.
+ * @param modifier The modifier to apply to this layout.
+ * @param currentUser The current user to use for the mentions.
+ * @param onItemClick The callback to be called when an item is clicked.
+ * @param onLoadMore The callback to be called when more items should be loaded.
+ * @param onRefresh The callback to be called when the entire list should be refreshed.
+ * @param itemContent The content displayed by a single item.
+ * @param loadingIndicator The content displayed by the loading indicator.
+ * @param emptyContent The content displayed when the list is empty.
+ * @param loadingItemContent The content displayed when loading more items.
+ */
 @Composable
 public fun MentionList(
     state: MentionListState,
@@ -129,9 +161,11 @@ public fun MentionList(
             }
         },
     emptyContent: @Composable BoxScope.() -> Unit = {
-        ChatTheme.componentFactory.MentionListEmptyContent(
-            modifier = Modifier,
-        )
+        with(ChatTheme.componentFactory) {
+            MentionListEmptyContent(
+                modifier = Modifier,
+            )
+        }
     },
     loadingItemContent: @Composable LazyItemScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
@@ -141,25 +175,24 @@ public fun MentionList(
         }
     },
 ) {
-    PullToRefreshContentListBox(
+    PullToRefreshContentBox(
         modifier = modifier,
         isLoading = state.isLoading,
-        items = state.results,
+        isEmpty = !state.isLoading && state.results.isEmpty(),
         onRefresh = onRefresh,
-        listContent = {
-            LazyPagingColumn(
-                items = state.results,
-                modifier = modifier,
-                itemKey = { item -> item.message.identifierHash() },
-                showLoadingItem = state.isLoadingMore,
-                onLoadMore = onLoadMore,
-                itemContent = itemContent,
-                loadingItem = loadingItemContent,
-            )
-        },
         loadingIndicator = loadingIndicator,
         emptyContent = emptyContent,
-    )
+    ) {
+        LazyPagingColumn(
+            items = state.results,
+            modifier = modifier,
+            itemKey = { item -> item.message.identifierHash() },
+            showLoadingItem = state.isLoadingMore,
+            onLoadMore = onLoadMore,
+            itemContent = itemContent,
+            loadingItem = loadingItemContent,
+        )
+    }
 }
 
 @Preview

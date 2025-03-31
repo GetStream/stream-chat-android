@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.components
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
@@ -27,6 +28,16 @@ import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 
 /**
  * A [LazyColumn] that supports paging, by showing a loading item and notifying when more items should be loaded.
+ *
+ * @param items The list of items to display.
+ * @param modifier The modifier to apply to this layout.
+ * @param itemKey A factory of stable and unique keys representing the item.
+ * @param showLoadingItem If a loading item should be shown at the end of the list.
+ * @param onLoadMore Callback to be called when more items should be loaded.
+ * @param itemContent The content displayed by a single item.
+ * @param loadingItem The content displayed by the loading item.
+ *
+ * @see [LazyListScope.items]
  */
 @Composable
 internal fun <T> LazyPagingColumn(

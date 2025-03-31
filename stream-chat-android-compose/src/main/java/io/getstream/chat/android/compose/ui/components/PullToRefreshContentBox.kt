@@ -30,14 +30,24 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
+/**
+ * A wrapper around a [PullToRefreshBox] that displays an empty content when it is empty.
+ *
+ * @param isLoading If the content is loading.
+ * @param onRefresh The callback to be called when the refresh is requested.
+ * @param modifier The modifier to apply to this layout.
+ * @param isEmpty If the content is empty.
+ * @param loadingIndicator The indicator to display when the content is loading.
+ * @param emptyContent The content to display when the content is empty.
+ * @param content The content to display.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun <T> PullToRefreshContentListBox(
-    modifier: Modifier = Modifier,
+internal fun PullToRefreshContentBox(
     isLoading: Boolean,
-    items: List<T>,
     onRefresh: () -> Unit,
-    listContent: @Composable BoxScope.() -> Unit,
+    modifier: Modifier = Modifier,
+    isEmpty: Boolean = false,
     loadingIndicator: @Composable BoxScope.(pullToRefreshState: PullToRefreshState, isRefreshing: Boolean) -> Unit =
         { pullToRefreshState, isRefreshing ->
             PullToRefreshDefaults.Indicator(
@@ -49,9 +59,9 @@ internal fun <T> PullToRefreshContentListBox(
             )
         },
     emptyContent: @Composable BoxScope.() -> Unit = {},
+    content: @Composable BoxScope.() -> Unit,
 ) {
     val pullToRefreshState = rememberPullToRefreshState()
-    val isEmpty = !isLoading && items.isEmpty()
     PullToRefreshBox(
         state = pullToRefreshState,
         isRefreshing = isLoading,
@@ -71,7 +81,7 @@ internal fun <T> PullToRefreshContentListBox(
                 emptyContent()
             }
         } else {
-            listContent()
+            content()
         }
     }
 }

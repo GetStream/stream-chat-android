@@ -2619,6 +2619,8 @@ public interface ChatComponentFactory {
      * The default loading indicator that is displayed during the initial loading of the mention list.
      *
      * @param modifier Modifier for styling.
+     * @param pullToRefreshState The state of the pull-to-refresh.
+     * @param isRefreshing Whether the mention list is currently refreshing.
      */
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
@@ -2642,7 +2644,7 @@ public interface ChatComponentFactory {
      * @param modifier Modifier for styling.
      */
     @Composable
-    public fun MentionListEmptyContent(modifier: Modifier) {
+    public fun BoxScope.MentionListEmptyContent(modifier: Modifier) {
         EmptyContent(
             text = stringResource(UiCommonR.string.stream_ui_mention_list_empty),
             painter = painterResource(UiCommonR.drawable.stream_compose_ic_mentions),
