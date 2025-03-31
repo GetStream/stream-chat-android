@@ -25,6 +25,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import io.getstream.chat.android.ui.viewmodel.mentions.MentionListViewModel
+import io.getstream.chat.android.ui.viewmodel.mentions.MentionListViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.mentions.bindView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
@@ -33,7 +34,7 @@ import io.getstream.chat.ui.sample.feature.home.HomeFragmentDirections
 
 class MentionsFragment : Fragment() {
 
-    private val viewModel: MentionListViewModel by viewModels()
+    private val viewModel: MentionListViewModel by viewModels { MentionListViewModelFactory() }
 
     private var _binding: FragmentMentionsBinding? = null
     private val binding get() = _binding!!
