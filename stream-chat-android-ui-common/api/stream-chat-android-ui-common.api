@@ -786,6 +786,21 @@ public final class io/getstream/chat/android/ui/common/state/channels/actions/Vi
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface class io/getstream/chat/android/ui/common/state/mentions/MentionListEvent {
+}
+
+public final class io/getstream/chat/android/ui/common/state/mentions/MentionListEvent$Error : io/getstream/chat/android/ui/common/state/mentions/MentionListEvent {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/ui/common/state/mentions/MentionListEvent$Error;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/mentions/MentionListEvent$Error;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/mentions/MentionListEvent$Error;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/common/state/mentions/MentionListState {
 	public static final field $stable I
 	public fun <init> (ZLjava/util/List;Ljava/lang/String;ZZ)V
