@@ -69,7 +69,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
-- Move `MentionListViewModel` logic and its state to a shared component so they can be reused in Compose. [#5692](https://github.com/GetStream/stream-chat-android/pull/5692)
+- 🚨Breaking change: Move `MentionListViewModel` logic and its state to a shared component so they can be reused in Compose. [#5692](https://github.com/GetStream/stream-chat-android/pull/5692)
 
 ### ❌ Removed
 
