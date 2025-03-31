@@ -20,8 +20,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.querysort.QuerySorter
-import io.getstream.chat.android.state.utils.Event
 import io.getstream.chat.android.ui.common.feature.mentions.MentionListController
+import io.getstream.chat.android.ui.common.state.mentions.MentionListEvent
 import io.getstream.chat.android.ui.common.state.mentions.MentionListState
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -47,7 +47,7 @@ public class MentionListViewModel(
     /**
      * One shot events.
      */
-    public val events: SharedFlow<Event<Any>> = controller.events
+    public val events: SharedFlow<MentionListEvent> = controller.events
 
     /**
      * Loads more messages if there are more messages to load.
