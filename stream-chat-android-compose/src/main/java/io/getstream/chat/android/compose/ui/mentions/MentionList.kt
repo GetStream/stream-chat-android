@@ -34,24 +34,28 @@ import io.getstream.chat.android.compose.ui.components.LazyPagingColumn
 import io.getstream.chat.android.compose.ui.components.PullToRefreshContentBox
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.mentions.MentionListViewModel
+import io.getstream.chat.android.compose.viewmodel.mentions.MentionListViewModelFactory
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.model.MessageResult
+import io.getstream.chat.android.ui.common.state.mentions.MentionListEvent
 import io.getstream.chat.android.ui.common.state.mentions.MentionListState
 import kotlinx.coroutines.flow.collectLatest
 
 /**
- * The default stateful component that relies on the [MentionListViewModel]
+ * The default stateful component that is bound to [MentionListViewModel]
  * to display a list of mentions for the current user.
+ *
+ * @see [MentionListViewModelFactory]
  *
  * @param viewModel The [MentionListViewModel] instance to use.
  * @param modifier The modifier to apply to this layout.
  * @param currentUser The current user to use for the mentions.
  * @param onItemClick The callback to be called when an item is clicked.
- * @param onEvent The callback to be called when an event is received.
+ * @param onEvent The callback to be called when an [MentionListEvent] is received from the [viewModel].
  * @param itemContent The content displayed by a single item.
  * @param loadingIndicator The content displayed by the loading indicator.
  * @param emptyContent The content displayed when the list is empty.
