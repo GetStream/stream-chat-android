@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package io.getstream.chat.android.compose.ui.mentions
 
-import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -26,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.ui.components.LazyPagingColumn
+import io.getstream.chat.android.compose.ui.components.PullToRefreshContentListBox
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.mentions.MentionListViewModel
 import io.getstream.chat.android.models.Message
@@ -44,16 +49,6 @@ public fun MentionList(
     currentUser: User? = ChatClient.instance().getCurrentUser(),
     onItemClick: ((message: Message) -> Unit)? = null,
     onEvent: (event: Any) -> Unit = {},
-    loadingContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.MentionListLoadingIndicator(
-            modifier = Modifier,
-        )
-    },
-    emptyContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.MentionListEmptyContent(
-            modifier = Modifier,
-        )
-    },
     itemContent: @Composable LazyItemScope.(MessageResult) -> Unit = { mention ->
         with(ChatTheme.componentFactory) {
             MentionListItem(
@@ -64,9 +59,24 @@ public fun MentionList(
             )
         }
     },
-    loadingMoreContent: @Composable LazyItemScope.() -> Unit = {
+    loadingIndicator: @Composable BoxScope.(pullToRefreshState: PullToRefreshState, isRefreshing: Boolean) -> Unit =
+        { pullToRefreshState, isRefreshing ->
+            with(ChatTheme.componentFactory) {
+                MentionListLoadingIndicator(
+                    modifier = Modifier,
+                    pullToRefreshState = pullToRefreshState,
+                    isRefreshing = isRefreshing,
+                )
+            }
+        },
+    emptyContent: @Composable BoxScope.() -> Unit = {
+        ChatTheme.componentFactory.MentionListEmptyContent(
+            modifier = Modifier,
+        )
+    },
+    loadingItemContent: @Composable LazyItemScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
-            MentionListItemLoadingMoreIndicator(
+            MentionListLoadingItem(
                 modifier = Modifier,
             )
         }
@@ -78,14 +88,15 @@ public fun MentionList(
     }
     MentionList(
         state = state,
-        currentUser = currentUser,
         modifier = modifier,
+        currentUser = currentUser,
         onItemClick = onItemClick,
         onLoadMore = viewModel::loadMore,
-        loadingContent = loadingContent,
-        emptyContent = emptyContent,
+        onRefresh = viewModel::refresh,
         itemContent = itemContent,
-        loadingMoreContent = loadingMoreContent,
+        loadingIndicator = loadingIndicator,
+        emptyContent = emptyContent,
+        loadingItemContent = loadingItemContent,
     )
 }
 
@@ -96,16 +107,7 @@ public fun MentionList(
     currentUser: User? = ChatClient.instance().getCurrentUser(),
     onItemClick: ((message: Message) -> Unit)? = null,
     onLoadMore: () -> Unit = {},
-    loadingContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.MentionListLoadingIndicator(
-            modifier = Modifier,
-        )
-    },
-    emptyContent: @Composable () -> Unit = {
-        ChatTheme.componentFactory.MentionListEmptyContent(
-            modifier = Modifier,
-        )
-    },
+    onRefresh: () -> Unit = {},
     itemContent: @Composable LazyItemScope.(MessageResult) -> Unit = { mention ->
         with(ChatTheme.componentFactory) {
             MentionListItem(
@@ -116,32 +118,48 @@ public fun MentionList(
             )
         }
     },
-    loadingMoreContent: @Composable LazyItemScope.() -> Unit = {
+    loadingIndicator: @Composable BoxScope.(pullToRefreshState: PullToRefreshState, isRefreshing: Boolean) -> Unit =
+        { pullToRefreshState, isRefreshing ->
+            with(ChatTheme.componentFactory) {
+                MentionListLoadingIndicator(
+                    modifier = Modifier,
+                    pullToRefreshState = pullToRefreshState,
+                    isRefreshing = isRefreshing,
+                )
+            }
+        },
+    emptyContent: @Composable BoxScope.() -> Unit = {
+        ChatTheme.componentFactory.MentionListEmptyContent(
+            modifier = Modifier,
+        )
+    },
+    loadingItemContent: @Composable LazyItemScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
-            MentionListItemLoadingMoreIndicator(
+            MentionListLoadingItem(
                 modifier = Modifier,
             )
         }
     },
 ) {
-    Crossfade(
-        targetState = state.isLoading,
+    PullToRefreshContentListBox(
         modifier = modifier,
-    ) { isLoading ->
-        when {
-            isLoading -> loadingContent()
-            state.results.isEmpty() -> emptyContent()
-            else -> LazyPagingColumn(
+        isLoading = state.isLoading,
+        items = state.results,
+        onRefresh = onRefresh,
+        listContent = {
+            LazyPagingColumn(
                 items = state.results,
                 modifier = modifier,
                 itemKey = { item -> item.message.identifierHash() },
-                showFooterContent = state.isLoadingMore,
+                showLoadingItem = state.isLoadingMore,
                 onLoadMore = onLoadMore,
                 itemContent = itemContent,
-                footerContent = loadingMoreContent,
+                loadingItem = loadingItemContent,
             )
-        }
-    }
+        },
+        loadingIndicator = loadingIndicator,
+        emptyContent = emptyContent,
+    )
 }
 
 @Preview

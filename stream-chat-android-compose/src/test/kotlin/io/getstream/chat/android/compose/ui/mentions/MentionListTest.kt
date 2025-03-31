@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package io.getstream.chat.android.compose.ui.mentions
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.ui.Modifier
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
@@ -45,6 +48,7 @@ internal class MentionListTest : SnapshotTest {
                     canLoadMore = true,
                     isLoadingMore = false,
                 ),
+                modifier = Modifier.fillMaxSize(),
                 currentUser = PreviewUserData.user1,
             )
         }
@@ -61,6 +65,7 @@ internal class MentionListTest : SnapshotTest {
                     canLoadMore = true,
                     isLoadingMore = false,
                 ),
+                modifier = Modifier.fillMaxSize(),
                 currentUser = PreviewUserData.user1,
             )
         }

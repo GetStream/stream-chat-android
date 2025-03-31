@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -34,7 +33,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -79,7 +81,6 @@ import io.getstream.chat.android.compose.ui.components.DefaultSearchLabel
 import io.getstream.chat.android.compose.ui.components.DefaultSearchLeadingIcon
 import io.getstream.chat.android.compose.ui.components.EmptyContent
 import io.getstream.chat.android.compose.ui.components.LoadingFooter
-import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptions
@@ -2619,10 +2620,19 @@ public interface ChatComponentFactory {
      *
      * @param modifier Modifier for styling.
      */
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    public fun MentionListLoadingIndicator(modifier: Modifier) {
-        LoadingIndicator(
-            modifier = Modifier.fillMaxSize(),
+    public fun BoxScope.MentionListLoadingIndicator(
+        modifier: Modifier,
+        pullToRefreshState: PullToRefreshState,
+        isRefreshing: Boolean,
+    ) {
+        PullToRefreshDefaults.Indicator(
+            state = pullToRefreshState,
+            isRefreshing = isRefreshing,
+            modifier = modifier.align(Alignment.TopCenter),
+            containerColor = ChatTheme.colors.barsBackground,
+            color = ChatTheme.colors.primaryAccent,
         )
     }
 
@@ -2636,7 +2646,7 @@ public interface ChatComponentFactory {
         EmptyContent(
             text = stringResource(UiCommonR.string.stream_ui_mention_list_empty),
             painter = painterResource(UiCommonR.drawable.stream_compose_ic_mentions),
-            modifier = modifier.fillMaxSize(),
+            modifier = modifier,
         )
     }
 
@@ -2658,7 +2668,7 @@ public interface ChatComponentFactory {
                 )
             },
             currentUser = currentUser,
-            modifier = modifier,
+            modifier = modifier.animateItem(),
             onSearchResultClick = onClick,
         )
     }
@@ -2667,7 +2677,7 @@ public interface ChatComponentFactory {
      * The default loading indicator that is displayed on the bottom of the list when there are more mentions loading.
      */
     @Composable
-    public fun LazyItemScope.MentionListItemLoadingMoreIndicator(modifier: Modifier) {
+    public fun LazyItemScope.MentionListLoadingItem(modifier: Modifier) {
         LoadingFooter(
             modifier = modifier.fillMaxWidth(),
         )
