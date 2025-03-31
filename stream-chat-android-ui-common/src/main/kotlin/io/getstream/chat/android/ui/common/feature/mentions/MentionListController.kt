@@ -22,8 +22,8 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.querysort.QuerySorter
-import io.getstream.chat.android.state.utils.Event
 import io.getstream.chat.android.ui.common.model.MessageResult
+import io.getstream.chat.android.ui.common.state.mentions.MentionListEvent
 import io.getstream.chat.android.ui.common.state.mentions.MentionListState
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
@@ -65,12 +65,12 @@ public class MentionListController(
      */
     public val state: StateFlow<MentionListState> = _state.asStateFlow()
 
-    private val _events = MutableSharedFlow<Event<Any>>(extraBufferCapacity = 1)
+    private val _events = MutableSharedFlow<MentionListEvent>(extraBufferCapacity = 1)
 
     /**
-     * One shot events triggered by the controller. Currently only errors are emitted.
+     * One shot events triggered by the controller.
      */
-    public val events: SharedFlow<Event<Any>> = _events.asSharedFlow()
+    public val events: SharedFlow<MentionListEvent> = _events.asSharedFlow()
 
     init {
         loadTrigger.onStart { emit(Unit) } // Triggers the initial load
@@ -151,7 +151,7 @@ public class MentionListController(
                 isLoadingMore = false,
             )
         }
-        _events.tryEmit(Event(error))
+        _events.tryEmit(MentionListEvent.Error(message = error.message))
     }
 }
 

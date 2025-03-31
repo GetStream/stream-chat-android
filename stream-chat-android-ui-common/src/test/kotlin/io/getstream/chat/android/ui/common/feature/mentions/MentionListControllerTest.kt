@@ -27,6 +27,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.model.MessageResult
+import io.getstream.chat.android.ui.common.state.mentions.MentionListEvent
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.CoroutineScope
@@ -36,6 +37,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertInstanceOf
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.doAnswer
@@ -168,12 +170,12 @@ internal class MentionListControllerTest {
             messages = listOf(message1, message2),
             next = "next",
         )
-        val error = Error.GenericError("error")
+        val searchingError = Error.GenericError("error")
         val sut = Fixture()
             .givenCurrentUser()
             .givenChannels(channels = listOf(channel))
             .givenSearchMessagesResult(next = null, result = firstSearchMessagesResult)
-            .givenSearchMessagesResult(next = "next", error = error)
+            .givenSearchMessagesResult(next = "next", error = searchingError)
             .get(backgroundScope)
 
         val expectedResults = listOf(
@@ -194,7 +196,8 @@ internal class MentionListControllerTest {
 
             sut.events.test {
                 val event = awaitItem()
-                assertEquals(error, event.getContentIfNotHandled())
+                assertInstanceOf<MentionListEvent.Error>(event)
+                assertEquals(searchingError.message, event.message)
             }
 
             val finalActual = awaitItem()
