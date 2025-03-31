@@ -122,6 +122,8 @@ public class MessageComposerController(
         maxAttachmentCount = config.maxAttachmentCount,
     )
 
+    private var currentDraftId: String? = null
+
     /**
      * The logger used to print to errors, warnings, information
      * and other things to log.
@@ -469,6 +471,26 @@ public class MessageComposerController(
                 selectedAttachments.value = selectedAttachments.value + recording.attachment
             }
         }.launchIn(scope)
+
+        if (config.isDraftMessageEnabled) {
+            globalState.channelDraftMessages.onEach {
+                if (it[channelCid] == null &&
+                    currentDraftId != null &&
+                    messageMode.value is MessageMode.Normal
+                ) {
+                    clearData()
+                }
+            }.launchIn(scope)
+
+            globalState.threadDraftMessages.onEach {
+                if (it[parentMessageId] == null &&
+                    currentDraftId != null &&
+                    messageMode.value is MessageMode.MessageThread
+                ) {
+                    clearData()
+                }
+            }.launchIn(scope)
+        }
     }
 
     /**
@@ -488,6 +510,7 @@ public class MessageComposerController(
 
     private suspend fun saveDraftMessage(messageMode: MessageMode) {
         if (!config.isDraftMessageEnabled) return
+        currentDraftId = null
         when (val messageText = messageInput.value.text) {
             "" -> clearDraftMessage(messageMode)
             else -> {
@@ -516,6 +539,7 @@ public class MessageComposerController(
             println("JcLog: draftMessage: ${globalState.threadDraftMessages.value[it.parentMessage.id]}")
         }
         globalState.getDraftMessageOrEmpty(messageMode).let { draftMessage ->
+            currentDraftId = draftMessage.id
             setMessageInputInternal(draftMessage.text, MessageInput.Source.DraftMessage)
             setAlsoSendToChannel(draftMessage.showInChannel)
             draftMessage.replyMessage
@@ -641,6 +665,7 @@ public class MessageComposerController(
      */
     public fun clearData() {
         logger.i { "[clearData]" }
+        dismissMessageActions()
         scope.launch { clearDraftMessage(messageMode.value) }
         messageInput.value = MessageInput()
         selectedAttachments.value = emptyList()
@@ -695,7 +720,6 @@ public class MessageComposerController(
                 }
             }
         }
-        dismissMessageActions()
         clearData()
         sendMessageCall.enqueue(callback)
     }
