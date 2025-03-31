@@ -19,6 +19,7 @@ package io.getstream.chat.android.offline.repository.factory.internal
 import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
+import io.getstream.chat.android.client.persistance.repository.PollRepository
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
 import io.getstream.chat.android.client.persistance.repository.ReactionRepository
 import io.getstream.chat.android.client.persistance.repository.SyncStateRepository
@@ -32,6 +33,7 @@ import io.getstream.chat.android.offline.repository.database.internal.ChatDataba
 import io.getstream.chat.android.offline.repository.domain.channel.internal.DatabaseChannelRepository
 import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.DatabaseChannelConfigRepository
 import io.getstream.chat.android.offline.repository.domain.message.internal.DatabaseMessageRepository
+import io.getstream.chat.android.offline.repository.domain.poll.internal.DatabasePollRepository
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.DatabaseQueryChannelsRepository
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.DatabaseReactionRepository
 import io.getstream.chat.android.offline.repository.domain.syncState.internal.DatabaseSyncStateRepository
@@ -153,6 +155,17 @@ internal class DatabaseRepositoryFactory(
         return databaseSyncStateRepository ?: run {
             DatabaseSyncStateRepository(database.syncStateDao()).also { repository ->
                 repositoriesCache[SyncStateRepository::class.java] = repository
+            }
+        }
+    }
+
+    override fun createPollRepository(): PollRepository {
+        val databasePollRepository =
+            repositoriesCache[PollRepository::class.java] as? DatabasePollRepository?
+
+        return databasePollRepository ?: run {
+            DatabasePollRepository(database.pollDao()).also { repository ->
+                repositoriesCache[PollRepository::class.java] = repository
             }
         }
     }

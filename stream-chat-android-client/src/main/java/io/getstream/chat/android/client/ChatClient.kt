@@ -1615,6 +1615,17 @@ internal constructor(
     }
 
     /**
+     * Deletes a poll.
+     *
+     * @param pollId The ID of the poll to delete.
+     * @return Executable async [Call] responsible for deleting a poll.
+     */
+    @CheckResult
+    public fun deletePoll(pollId: String): Call<Unit> {
+        return api.deletePoll(pollId)
+    }
+
+    /**
      * Retrieves the file attachments from the given channel.
      *
      * @param channelType The channel type. ie messaging.

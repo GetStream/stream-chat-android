@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.persistance.repository.factory
 import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
+import io.getstream.chat.android.client.persistance.repository.PollRepository
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
 import io.getstream.chat.android.client.persistance.repository.ReactionRepository
 import io.getstream.chat.android.client.persistance.repository.SyncStateRepository
@@ -92,6 +93,11 @@ public interface RepositoryFactory {
      * Creates [SyncStateRepository]
      */
     public fun createSyncStateRepository(): SyncStateRepository
+
+    /**
+     * Creates [PollRepository].
+     */
+    public fun createPollRepository(): PollRepository
 
     /**
      * Interface to delegate creation of [RepositoryFactory].

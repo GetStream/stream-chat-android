@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.persistance.repository.noop
 import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
+import io.getstream.chat.android.client.persistance.repository.PollRepository
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
 import io.getstream.chat.android.client.persistance.repository.ReactionRepository
 import io.getstream.chat.android.client.persistance.repository.SyncStateRepository
@@ -55,6 +56,8 @@ internal object NoOpRepositoryFactory : RepositoryFactory {
         getUser: suspend (userId: String) -> User,
         getMessage: suspend (messageId: String) -> Message?,
     ): ChannelRepository = NoOpChannelRepository
+
+    override fun createPollRepository(): PollRepository = NoOpPollRepository
 
     object Provider : RepositoryFactory.Provider {
         override fun createRepositoryFactory(user: User): RepositoryFactory = NoOpRepositoryFactory

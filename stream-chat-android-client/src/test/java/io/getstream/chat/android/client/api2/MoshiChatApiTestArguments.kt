@@ -464,6 +464,9 @@ internal object MoshiChatApiTestArguments {
     fun createPollInput() = pollResponseArguments()
 
     @JvmStatic
+    fun deletePollInput() = completableResponseArguments()
+
+    @JvmStatic
     fun suggestPollOptionInput() = listOf(
         Arguments.of(
             RetroSuccess(

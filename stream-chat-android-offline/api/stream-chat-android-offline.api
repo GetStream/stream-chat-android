@@ -104,6 +104,7 @@ public final class io/getstream/chat/android/offline/repository/domain/message/i
 
 public final class io/getstream/chat/android/offline/repository/domain/message/internal/PollDao_Impl : io/getstream/chat/android/offline/repository/domain/message/internal/PollDao {
 	public fun <init> (Landroidx/room/RoomDatabase;)V
+	public fun deletePoll (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun getPoll (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun getRequiredConverters ()Ljava/util/List;
 	public fun insertPolls (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

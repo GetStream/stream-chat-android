@@ -219,4 +219,29 @@ internal class ChatClientPollsApiTests : BaseChatClientTest() {
         // then
         verifyNetworkError(result, errorCode)
     }
+
+    @Test
+    fun deletePollSuccess() = runTest {
+        // given
+        val pollId = randomString()
+        whenever(api.deletePoll(any()))
+            .thenReturn(RetroSuccess(Unit).toRetrofitCall())
+        // when
+        val result = chatClient.deletePoll(pollId).await()
+        // then
+        verifySuccess(result, Unit)
+    }
+
+    @Test
+    fun deletePollError() = runTest {
+        // given
+        val pollId = randomString()
+        val errorCode = positiveRandomInt()
+        whenever(api.deletePoll(any()))
+            .thenReturn(RetroError<Unit>(errorCode).toRetrofitCall())
+        // when
+        val result = chatClient.deletePoll(pollId).await()
+        // then
+        verifyNetworkError(result, errorCode)
+    }
 }

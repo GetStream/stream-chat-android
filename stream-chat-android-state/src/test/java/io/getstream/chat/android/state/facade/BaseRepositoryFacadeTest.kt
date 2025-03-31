@@ -20,6 +20,7 @@ import androidx.annotation.CallSuper
 import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
+import io.getstream.chat.android.client.persistance.repository.PollRepository
 import io.getstream.chat.android.client.persistance.repository.QueryChannelsRepository
 import io.getstream.chat.android.client.persistance.repository.ReactionRepository
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
@@ -53,6 +54,7 @@ internal open class BaseRepositoryFacadeTest {
     protected lateinit var messages: MessageRepository
     protected lateinit var reactions: ReactionRepository
     protected lateinit var syncState: SyncStateRepository
+    protected lateinit var polls: PollRepository
 
     protected lateinit var sut: RepositoryFacade
 
@@ -67,6 +69,7 @@ internal open class BaseRepositoryFacadeTest {
         messages = mock()
         reactions = mock()
         syncState = mock()
+        polls = mock()
 
         val repositoryFactory = object : RepositoryFactory {
             override fun createUserRepository(): UserRepository = users
@@ -90,6 +93,8 @@ internal open class BaseRepositoryFacadeTest {
                 reactions
 
             override fun createSyncStateRepository(): SyncStateRepository = syncState
+
+            override fun createPollRepository(): PollRepository = polls
         }
         sut = RepositoryFacade.create(repositoryFactory, testCoroutines.scope)
     }
