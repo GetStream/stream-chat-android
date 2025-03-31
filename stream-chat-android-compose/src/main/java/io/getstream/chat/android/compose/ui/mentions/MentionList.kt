@@ -19,6 +19,7 @@
 package io.getstream.chat.android.compose.ui.mentions
 
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.pulltorefresh.PullToRefreshState
@@ -195,10 +196,9 @@ public fun MentionList(
     }
 }
 
-@Preview
 @Composable
-private fun MentionListLoadingPreview() {
-    ChatTheme {
+internal fun MentionListLoading(darkMode: Boolean) {
+    ChatTheme(isInDarkMode = darkMode) {
         MentionList(
             state = MentionListState(
                 isLoading = true,
@@ -207,6 +207,7 @@ private fun MentionListLoadingPreview() {
                 canLoadMore = true,
                 isLoadingMore = false,
             ),
+            modifier = Modifier.fillMaxSize(),
             currentUser = PreviewUserData.user1,
         )
     }
@@ -214,8 +215,13 @@ private fun MentionListLoadingPreview() {
 
 @Preview
 @Composable
-private fun MentionListEmptyPreview() {
-    ChatTheme {
+private fun MentionListLoadingLightPreview() {
+    MentionListLoading(darkMode = false)
+}
+
+@Composable
+internal fun MentionListEmpty(darkMode: Boolean) {
+    ChatTheme(isInDarkMode = darkMode) {
         MentionList(
             state = MentionListState(
                 isLoading = false,
@@ -224,6 +230,7 @@ private fun MentionListEmptyPreview() {
                 canLoadMore = true,
                 isLoadingMore = false,
             ),
+            modifier = Modifier.fillMaxSize(),
             currentUser = PreviewUserData.user1,
         )
     }
@@ -231,8 +238,49 @@ private fun MentionListEmptyPreview() {
 
 @Preview
 @Composable
-private fun MentionListLoadingMorePreview() {
-    ChatTheme {
+private fun MentionListEmptyLightPreview() {
+    MentionListEmpty(darkMode = false)
+}
+
+@Composable
+internal fun MentionListLoaded(darkMode: Boolean) {
+    ChatTheme(isInDarkMode = darkMode) {
+        MentionList(
+            state = MentionListState(
+                isLoading = false,
+                results = listOf(
+                    MessageResult(
+                        message = PreviewMessageData.message1,
+                        channel = PreviewChannelData.channelWithImage,
+                    ),
+                    MessageResult(
+                        message = PreviewMessageData.message2,
+                        channel = PreviewChannelData.channelWithFewMembers,
+                    ),
+                    MessageResult(
+                        message = PreviewMessageData.message3,
+                        channel = PreviewChannelData.channelWithManyMembers,
+                    ),
+                ),
+                nextPage = null,
+                canLoadMore = true,
+                isLoadingMore = false,
+            ),
+            modifier = Modifier.fillMaxSize(),
+            currentUser = PreviewUserData.user1,
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun MentionListLoadedLightPreview() {
+    MentionListLoaded(darkMode = false)
+}
+
+@Composable
+internal fun MentionListLoadingMore(darkMode: Boolean) {
+    ChatTheme(isInDarkMode = darkMode) {
         MentionList(
             state = MentionListState(
                 isLoading = false,
@@ -254,7 +302,14 @@ private fun MentionListLoadingMorePreview() {
                 canLoadMore = true,
                 isLoadingMore = true,
             ),
+            modifier = Modifier.fillMaxSize(),
             currentUser = PreviewUserData.user1,
         )
     }
+}
+
+@Preview
+@Composable
+private fun MentionListLoadingMoreLightPreview() {
+    MentionListLoadingMore(darkMode = false)
 }

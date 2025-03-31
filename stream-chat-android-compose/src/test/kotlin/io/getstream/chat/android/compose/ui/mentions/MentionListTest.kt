@@ -18,17 +18,10 @@
 
 package io.getstream.chat.android.compose.ui.mentions
 
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.ui.Modifier
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.SnapshotTest
-import io.getstream.chat.android.previewdata.PreviewChannelData
-import io.getstream.chat.android.previewdata.PreviewMessageData
-import io.getstream.chat.android.previewdata.PreviewUserData
-import io.getstream.chat.android.ui.common.model.MessageResult
-import io.getstream.chat.android.ui.common.state.mentions.MentionListState
 import org.junit.Rule
 import org.junit.Test
 
@@ -39,95 +32,29 @@ internal class MentionListTest : SnapshotTest {
 
     @Test
     fun `loading mention list`() {
-        snapshotWithDarkMode {
-            MentionList(
-                state = MentionListState(
-                    isLoading = true,
-                    results = emptyList(),
-                    nextPage = null,
-                    canLoadMore = true,
-                    isLoadingMore = false,
-                ),
-                modifier = Modifier.fillMaxSize(),
-                currentUser = PreviewUserData.user1,
-            )
+        snapshotWithDarkMode { darkMode ->
+            MentionListLoading(darkMode = darkMode)
         }
     }
 
     @Test
     fun `empty mention list`() {
-        snapshotWithDarkMode {
-            MentionList(
-                state = MentionListState(
-                    isLoading = false,
-                    results = emptyList(),
-                    nextPage = null,
-                    canLoadMore = true,
-                    isLoadingMore = false,
-                ),
-                modifier = Modifier.fillMaxSize(),
-                currentUser = PreviewUserData.user1,
-            )
+        snapshotWithDarkMode { darkMode ->
+            MentionListEmpty(darkMode = darkMode)
         }
     }
 
     @Test
     fun `loaded mention list`() {
-        snapshotWithDarkMode {
-            MentionList(
-                state = MentionListState(
-                    isLoading = false,
-                    results = listOf(
-                        MessageResult(
-                            message = PreviewMessageData.message1,
-                            channel = PreviewChannelData.channelWithImage,
-                        ),
-                        MessageResult(
-                            message = PreviewMessageData.message2,
-                            channel = PreviewChannelData.channelWithFewMembers,
-                        ),
-                        MessageResult(
-                            message = PreviewMessageData.message3,
-                            channel = PreviewChannelData.channelWithManyMembers,
-                        ),
-                    ),
-                    nextPage = null,
-                    canLoadMore = true,
-                    isLoadingMore = false,
-                ),
-                modifier = Modifier.fillMaxSize(),
-                currentUser = PreviewUserData.user1,
-            )
+        snapshotWithDarkMode { darkMode ->
+            MentionListLoaded(darkMode = darkMode)
         }
     }
 
     @Test
     fun `loading more mention list`() {
-        snapshotWithDarkMode {
-            MentionList(
-                state = MentionListState(
-                    isLoading = false,
-                    results = listOf(
-                        MessageResult(
-                            message = PreviewMessageData.message1,
-                            channel = PreviewChannelData.channelWithImage,
-                        ),
-                        MessageResult(
-                            message = PreviewMessageData.message2,
-                            channel = PreviewChannelData.channelWithFewMembers,
-                        ),
-                        MessageResult(
-                            message = PreviewMessageData.message3,
-                            channel = PreviewChannelData.channelWithManyMembers,
-                        ),
-                    ),
-                    nextPage = null,
-                    canLoadMore = true,
-                    isLoadingMore = true,
-                ),
-                modifier = Modifier.fillMaxSize(),
-                currentUser = PreviewUserData.user1,
-            )
+        snapshotWithDarkMode { darkMode ->
+            MentionListLoadingMore(darkMode = darkMode)
         }
     }
 }

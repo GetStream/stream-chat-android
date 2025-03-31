@@ -49,7 +49,7 @@ internal interface SnapshotTest : ComposeTest {
         }
     }
 
-    fun snapshotWithDarkMode(composable: @Composable () -> Unit) {
+    fun snapshotWithDarkMode(composable: @Composable (darkMode: Boolean) -> Unit) {
         paparazzi.snapshot {
             CompositionLocalProvider(
                 LocalInspectionMode provides true,
@@ -61,7 +61,7 @@ internal interface SnapshotTest : ComposeTest {
                                 .weight(.5f)
                                 .background(ChatTheme.colors.appBackground),
                         ) {
-                            composable.invoke()
+                            composable(true)
                         }
                     }
                     ChatTheme(isInDarkMode = false) {
@@ -70,7 +70,7 @@ internal interface SnapshotTest : ComposeTest {
                                 .weight(.5f)
                                 .background(ChatTheme.colors.appBackground),
                         ) {
-                            composable.invoke()
+                            composable(false)
                         }
                     }
                 }
