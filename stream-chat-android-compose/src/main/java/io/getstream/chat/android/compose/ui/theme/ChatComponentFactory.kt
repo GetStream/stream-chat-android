@@ -922,6 +922,7 @@ public interface ChatComponentFactory {
             modifier = modifier,
             color = color,
             shape = shape,
+            border = border,
             contentPadding = contentPadding,
             content = content,
         )
