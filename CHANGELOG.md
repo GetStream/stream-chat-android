@@ -62,6 +62,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
 
 ### ⬆️ Improved
 - Enable pagination in `MentionListView`. [#5692](https://github.com/GetStream/stream-chat-android/pull/5692)
@@ -85,6 +86,9 @@
 ### ✅ Added
 - Add `MessagesViewModelFactory.isComposerDraftMessageEnabled` property to enable/disable Draft Messages within `MessageComposer`. [#5687](https://github.com/GetStream/stream-chat-android/pull/5687)
 - Add `ChannelViewModelFactory.isDraftMessageEnabled` property to enable/disable Draft Messages within `ChannelList`. [#5687](https://github.com/GetStream/stream-chat-android/pull/5687)
+- Add `MessageBubble` and `MessageFailedIcon` to `ChatComponentFactory` to allow customization of the message bubbles and the failed message icon. [#5688](https://github.com/GetStream/stream-chat-android/pull/5688)
+- Add `errorTextStyle` and `errorBackgroundColor` to `MessageTheme` to allow customization of the error message bubbles and error message text style. [#5688](https://github.com/GetStream/stream-chat-android/pull/5688)
+- ⚠️Add `Message` as an argument of the `textStyle` lambda parameter of the `MessageTextFormatter.defaultFormatter` method to allow customizing the text style based on the `Message`. [#5688](https://github.com/GetStream/stream-chat-android/pull/5688)
 - Create `ChatTheme.dimens.messageComposerShadowElevation` to customize the message composer shadow elevation. [#5697](https://github.com/GetStream/stream-chat-android/pull/5697)
 
 ### ⚠️ Changed

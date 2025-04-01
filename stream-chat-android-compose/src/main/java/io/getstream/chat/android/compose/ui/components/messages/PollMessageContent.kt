@@ -21,6 +21,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -123,11 +124,13 @@ public fun PollMessageContent(
 
     val poll = message.poll
     if (!messageItem.isErrorOrFailed() && poll != null) {
-        MessageBubble(
+        ChatTheme.componentFactory.MessageBubble(
             modifier = modifier,
+            message = message,
             shape = messageBubbleShape,
             color = messageBubbleColor,
             border = if (messageItem.isMine) null else BorderStroke(1.dp, ChatTheme.colors.borders),
+            contentPadding = PaddingValues(),
             content = {
                 PollMessageContent(
                     message = message,
@@ -150,10 +153,13 @@ public fun PollMessageContent(
         )
     } else {
         Box(modifier = modifier) {
-            MessageBubble(
+            ChatTheme.componentFactory.MessageBubble(
                 modifier = Modifier.padding(end = 12.dp),
+                message = message,
                 shape = messageBubbleShape,
                 color = messageBubbleColor,
+                border = BorderStroke(1.dp, ChatTheme.colors.borders),
+                contentPadding = PaddingValues(),
                 content = {
                     MessageContent(
                         message = message,
@@ -166,13 +172,11 @@ public fun PollMessageContent(
                 },
             )
 
-            Icon(
+            ChatTheme.componentFactory.MessageFailedIcon(
                 modifier = Modifier
                     .size(24.dp)
                     .align(Alignment.BottomEnd),
-                painter = painterResource(id = R.drawable.stream_compose_ic_error),
-                contentDescription = null,
-                tint = ChatTheme.colors.errorAccent,
+                message = message,
             )
         }
     }
