@@ -87,4 +87,36 @@ internal class DraftMessageListenerState(
             }
         }
     }
+
+    /**
+     * Updates the [MutableGlobalState] with the [DraftMessage] when the request to create a draft message
+     * is started.
+     *
+     * @param channelType The type of the channel in which message is created.
+     * @param channelId The id of the the channel in which message is created.
+     * @param message [DraftMessage] to be created.
+     */
+    override suspend fun onCreateDraftMessageRequest(
+        channelType: String,
+        channelId: String,
+        message: DraftMessage,
+    ) {
+        mutableGlobalState.updateDraftMessage(message)
+    }
+
+    /**
+     * Removes the reference of the [DraftMessage] from the [MutableGlobalState] when the request to delete
+     * a draft message is started.
+     *
+     * @param channelType The type of the channel in which message is created.
+     * @param channelId The id of the the channel in which message is created.
+     * @param message [DraftMessage] to be created.
+     */
+    override suspend fun onDeleteDraftMessagesRequest(
+        channelType: String,
+        channelId: String,
+        message: DraftMessage,
+    ) {
+        mutableGlobalState.removeDraftMessage(message)
+    }
 }

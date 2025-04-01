@@ -66,4 +66,30 @@ public interface DraftMessageListener {
         offset: Int?,
         limit: Int?,
     )
+
+    /**
+     * Side effect to be invoked before the original request is started.
+     *
+     * @param channelType The type of the channel in which message is created.
+     * @param channelId The id of the the channel in which message is created.
+     * @param message [DraftMessage] to be created.
+     */
+    public suspend fun onCreateDraftMessageRequest(
+        channelType: String,
+        channelId: String,
+        message: DraftMessage,
+    )
+
+    /**
+     * Side effect to be invoked before the original request is started.
+     *
+     * @param channelType The type of the channel in which message is updated.
+     * @param channelId The id of the the channel in which message is updated.
+     * @param message [DraftMessage] to be updated.
+     */
+    public suspend fun onDeleteDraftMessagesRequest(
+        channelType: String,
+        channelId: String,
+        message: DraftMessage,
+    )
 }
