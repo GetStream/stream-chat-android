@@ -82,6 +82,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Create `ChatTheme.dimens.messageComposerShadowElevation` to customize the message composer shadow elevation. [#5697](https://github.com/GetStream/stream-chat-android/pull/5697)
 
 ### ⚠️ Changed
 - `defaultMessageOptionsState()` now accepts an `isInThread` flag to show/hide the "Thread reply" option. [#5683](https://github.com/GetStream/stream-chat-android/pull/5683)
