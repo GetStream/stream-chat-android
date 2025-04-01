@@ -56,12 +56,16 @@ import io.getstream.result.Result
 import io.getstream.result.call.Call
 import io.getstream.result.call.CoroutineCall
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
@@ -89,6 +93,19 @@ public val ChatClient.state: StateRegistry
 public val ChatClient.globalState: GlobalState
     @Throws(IllegalArgumentException::class)
     get() = resolveDependency<StatePlugin, GlobalState>()
+
+/**
+ * Retrieves a [Flow] from the [GlobalState] object which emits only if the user is connected, and the [ChatClient] is
+ * in [InitializationState.COMPLETE] state.
+ *
+ * @param getGlobalStateFlow The function to retrieve the desired [Flow] from the prepared [GlobalState] object.
+ */
+@OptIn(ExperimentalCoroutinesApi::class)
+@InternalStreamChatApi
+public fun <T> ChatClient.safeGlobalStateFlow(getGlobalStateFlow: (GlobalState) -> Flow<T>): Flow<T> =
+    clientState.initializationState
+        .filter { it == InitializationState.COMPLETE }
+        .flatMapLatest { getGlobalStateFlow(globalState) }
 
 /**
  * [StatePluginConfig] instance used to configure [io.getstream.chat.android.state.plugin.internal.StatePlugin].

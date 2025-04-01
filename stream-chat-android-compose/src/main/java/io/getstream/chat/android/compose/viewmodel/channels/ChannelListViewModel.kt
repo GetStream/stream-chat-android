@@ -41,8 +41,8 @@ import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
-import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.state.extensions.queryChannelsAsState
+import io.getstream.chat.android.state.extensions.safeGlobalStateFlow
 import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.ui.common.state.channels.actions.Cancel
@@ -54,12 +54,14 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
@@ -182,7 +184,17 @@ public class ChannelListViewModel(
     /**
      * Gives us the information about the list of channels mutes by the current user.
      */
-    public val channelMutes: StateFlow<List<ChannelMute>> = chatClient.globalState.channelMutes
+    public val channelMutes: StateFlow<List<ChannelMute>> = chatClient
+        .safeGlobalStateFlow { it.channelMutes }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    private val typingChannels: StateFlow<Map<String, TypingEvent>> = chatClient
+        .safeGlobalStateFlow { it.typingChannels }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
+
+    private val channelDraftMessages: StateFlow<Map<String, DraftMessage>> = chatClient
+        .safeGlobalStateFlow { it.channelDraftMessages }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
 
     /**
      * Builds the default channel filter, which represents "messaging" channels that the current user is a part of.
@@ -394,8 +406,8 @@ public class ChannelListViewModel(
                 combine(
                     queryChannelsState.channelsStateData,
                     channelMutes,
-                    chatClient.globalState.typingChannels,
-                    chatClient.globalState.channelDraftMessages,
+                    typingChannels,
+                    channelDraftMessages,
                 ) { state, channelMutes, typingChannels, channelDraftMessages ->
                     when (state) {
                         ChannelsStateData.NoQueryActive,

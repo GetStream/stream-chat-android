@@ -36,8 +36,8 @@ import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
-import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.state.extensions.queryChannelsAsState
+import io.getstream.chat.android.state.extensions.safeGlobalStateFlow
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
@@ -54,11 +54,13 @@ import io.getstream.result.call.enqueue
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
@@ -76,19 +78,16 @@ import kotlinx.coroutines.launch
  * @param isDraftMessagesEnabled Enables or disables draft messages.
  * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] that will be used to create [ChatEventHandler].
  * @param chatClient Entry point for all low-level operations.
- * @param globalState Global state of OfflinePlugin. Contains information
- * such as the current user, connection state, unread counts etc.
  */
 public class ChannelListViewModel(
     private val filter: FilterObject? = null,
     private val sort: QuerySorter<Channel> = DEFAULT_SORT,
-    private val limit: Int = 30,
-    private val messageLimit: Int = 1,
-    private val memberLimit: Int = 30,
+    private val limit: Int = DEFAULT_CHANNEL_LIMIT,
+    private val messageLimit: Int = DEFAULT_MESSAGE_LIMIT,
+    private val memberLimit: Int = DEFAULT_MEMBER_LIMIT,
     private val isDraftMessagesEnabled: Boolean,
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val globalState: GlobalState = chatClient.globalState,
 ) : ViewModel() {
 
     private var queryJob: Job? = null
@@ -109,17 +108,26 @@ public class ChannelListViewModel(
      *
      * @see [GlobalState.typingChannels]
      */
-    public val typingEvents: LiveData<Map<String, TypingEvent>>
-        get() = globalState.typingChannels.asLiveData()
+    public val typingEvents: LiveData<Map<String, TypingEvent>> = chatClient
+        .safeGlobalStateFlow { it.typingChannels }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
+        .asLiveData()
 
     /**
      * Draft messages for channels.
      */
-    public val draftMessages: LiveData<Map<String, DraftMessage>>
-        get() = globalState.channelDraftMessages
-            .takeIf { isDraftMessagesEnabled }
-            ?.asLiveData()
-            ?: MutableLiveData(emptyMap())
+    public val draftMessages: LiveData<Map<String, DraftMessage>> = if (isDraftMessagesEnabled) {
+        chatClient
+            .safeGlobalStateFlow { it.channelDraftMessages }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
+            .asLiveData()
+    } else {
+        MutableLiveData(emptyMap())
+    }
+
+    private val channelMutes: StateFlow<List<ChannelMute>> = chatClient
+        .safeGlobalStateFlow { it.channelMutes }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     /**
      * Represents the current pagination state that is a product
@@ -220,9 +228,9 @@ public class ChannelListViewModel(
                     return@collectLatest
                 }
                 stateMerger.addFlow(queryJob, queryChannelsState.channelsStateData) { channelsState ->
-                    stateMerger.value = handleChannelStateNews(channelsState, globalState.channelMutes.value)
+                    stateMerger.value = handleChannelStateNews(channelsState, channelMutes.value)
                 }
-                stateMerger.addFlow(queryJob, globalState.channelMutes) { channelMutes ->
+                stateMerger.addFlow(queryJob, channelMutes) { channelMutes ->
                     val state = stateMerger.value
 
                     if (state?.channels?.isNotEmpty() == true) {
