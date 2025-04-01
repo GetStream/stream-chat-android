@@ -187,6 +187,7 @@ public final class io/getstream/chat/android/ui/common/feature/messages/list/Mes
 	public static synthetic fun muteUser$default (Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)V
 	public final fun onCleared ()V
 	public final fun openRelatedThread (Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public final fun pauseAudioRecordingAttachments ()V
 	public final fun performGiphyAction (Lio/getstream/chat/android/ui/common/state/messages/list/GiphyAction;)V
 	public final fun performMessageAction (Lio/getstream/chat/android/ui/common/state/messages/MessageAction;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public final fun pinMessage (Lio/getstream/chat/android/models/Message;)V
@@ -785,6 +786,39 @@ public final class io/getstream/chat/android/ui/common/state/channels/actions/Vi
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface class io/getstream/chat/android/ui/common/state/mentions/MentionListEvent {
+}
+
+public final class io/getstream/chat/android/ui/common/state/mentions/MentionListEvent$Error : io/getstream/chat/android/ui/common/state/mentions/MentionListEvent {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/ui/common/state/mentions/MentionListEvent$Error;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/mentions/MentionListEvent$Error;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/mentions/MentionListEvent$Error;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/mentions/MentionListState {
+	public static final field $stable I
+	public fun <init> (ZLjava/util/List;Ljava/lang/String;ZZ)V
+	public final fun component1 ()Z
+	public final fun component2 ()Ljava/util/List;
+	public final fun component4 ()Z
+	public final fun component5 ()Z
+	public final fun copy (ZLjava/util/List;Ljava/lang/String;ZZ)Lio/getstream/chat/android/ui/common/state/mentions/MentionListState;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/mentions/MentionListState;ZLjava/util/List;Ljava/lang/String;ZZILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/mentions/MentionListState;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCanLoadMore ()Z
+	public final fun getResults ()Ljava/util/List;
+	public fun hashCode ()I
+	public final fun isLoading ()Z
+	public final fun isLoadingMore ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/common/state/messages/BlockUser : io/getstream/chat/android/ui/common/state/messages/MessageAction {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/models/Message;)V
@@ -912,6 +946,14 @@ public final class io/getstream/chat/android/ui/common/state/messages/MessageInp
 public final class io/getstream/chat/android/ui/common/state/messages/MessageInput$Source$Default : io/getstream/chat/android/ui/common/state/messages/MessageInput$Source {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/messages/MessageInput$Source$Default;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/MessageInput$Source$DraftMessage : io/getstream/chat/android/ui/common/state/messages/MessageInput$Source$Internal {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/messages/MessageInput$Source$DraftMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -1859,7 +1901,7 @@ public final class io/getstream/chat/android/ui/common/utils/CapabilitiesHelperK
 	public static final fun canPinMessage (ZLio/getstream/chat/android/models/Message;Ljava/util/Set;)Z
 	public static final fun canReplyToMessage (ZLio/getstream/chat/android/models/Message;Ljava/util/Set;)Z
 	public static final fun canRetryMessage (ZLio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Message;)Z
-	public static final fun canThreadReplyToMessage (ZLio/getstream/chat/android/models/Message;Ljava/util/Set;)Z
+	public static final fun canThreadReplyToMessage (ZZLio/getstream/chat/android/models/Message;Ljava/util/Set;)Z
 }
 
 public abstract interface class io/getstream/chat/android/ui/common/utils/ChannelNameFormatter {

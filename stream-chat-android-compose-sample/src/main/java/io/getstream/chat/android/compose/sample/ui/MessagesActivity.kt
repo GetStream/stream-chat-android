@@ -110,6 +110,7 @@ class MessagesActivity : BaseConnectedActivity() {
             deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
             messageId = intent.getStringExtra(KEY_MESSAGE_ID),
             parentMessageId = intent.getStringExtra(KEY_PARENT_MESSAGE_ID),
+            isComposerDraftMessageEnabled = true,
         )
     }
 
@@ -303,6 +304,7 @@ class MessagesActivity : BaseConnectedActivity() {
                             messageOptions = defaultMessageOptionsState(
                                 selectedMessage = selectedMessage,
                                 currentUser = user,
+                                isInThread = listViewModel.isInThread,
                                 ownCapabilities = selectedMessageState.ownCapabilities,
                             ),
                             message = selectedMessage,

@@ -71,6 +71,7 @@ internal object ChannelListItemDiffCallback : DiffUtil.ItemCallback<ChannelListI
             unreadCountChanged = channel.currentUserUnreadCount() != other.channel.currentUserUnreadCount(),
             extraDataChanged = channel.extraData != other.channel.extraData,
             typingUsersChanged = typingUsers != other.typingUsers,
+            draftMessageChanged = draftMessage != other.draftMessage,
         )
     }
 }

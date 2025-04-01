@@ -54,6 +54,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Introduce `MentionListController` responsible for managing the state of the mention list. [#5692](https://github.com/GetStream/stream-chat-android/pull/5692)
 
 ### ⚠️ Changed
 
@@ -64,10 +65,13 @@
 - Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
 
 ### ⬆️ Improved
+- Enable pagination in `MentionListView`. [#5692](https://github.com/GetStream/stream-chat-android/pull/5692)
 
 ### ✅ Added
+- Add `ChatUI.draftMessagesEnabled` property to enable/disable Draft Messages. [#5687](https://github.com/GetStream/stream-chat-android/pull/5687)
 
 ### ⚠️ Changed
+- 🚨Breaking change: Move `MentionListViewModel` logic and its state to a shared component so they can be reused in Compose. [#5692](https://github.com/GetStream/stream-chat-android/pull/5692)
 
 ### ❌ Removed
 
@@ -75,15 +79,19 @@
 ### 🐞 Fixed
 - Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
 - Not show deleted poll messages. [#5689](https://github.com/GetStream/stream-chat-android/pull/5689)
+- Fix "Thread reply" item shown in the message options menu for messages in a Thread. [#5683](https://github.com/GetStream/stream-chat-android/pull/5683)
 
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `MessagesViewModelFactory.isComposerDraftMessageEnabled` property to enable/disable Draft Messages within `MessageComposer`. [#5687](https://github.com/GetStream/stream-chat-android/pull/5687)
+- Add `ChannelViewModelFactory.isDraftMessageEnabled` property to enable/disable Draft Messages within `ChannelList`. [#5687](https://github.com/GetStream/stream-chat-android/pull/5687)
 - Add `MessageBubble` and `MessageFailedIcon` to `ChatComponentFactory` to allow customization of the message bubbles and the failed message icon. [#5688](https://github.com/GetStream/stream-chat-android/pull/5688)
 - Add `errorTextStyle` and `errorBackgroundColor` to `MessageTheme` to allow customization of the error message bubbles and error message text style. [#5688](https://github.com/GetStream/stream-chat-android/pull/5688)
 - ⚠️Add `Message` as an argument of the `textStyle` lambda parameter of the `MessageTextFormatter.defaultFormatter` method to allow customizing the text style based on the `Message`. [#5688](https://github.com/GetStream/stream-chat-android/pull/5688)
 
 ### ⚠️ Changed
+- `defaultMessageOptionsState()` now accepts an `isInThread` flag to show/hide the "Thread reply" option. [#5683](https://github.com/GetStream/stream-chat-android/pull/5683)
 
 ### ❌ Removed
 

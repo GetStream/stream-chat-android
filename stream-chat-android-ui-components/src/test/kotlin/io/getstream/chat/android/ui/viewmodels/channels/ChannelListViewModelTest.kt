@@ -311,6 +311,7 @@ internal class ChannelListViewModelTest {
                 chatClient = chatClient,
                 sort = initialSort,
                 filter = initialFilters,
+                isDraftMessagesEnabled = false,
                 chatEventHandlerFactory = ChatEventHandlerFactory(
                     clientState = clientState,
                 ),

@@ -32,6 +32,7 @@ import com.google.android.material.shape.ShapeAppearanceModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.AudioState
+import io.getstream.chat.android.client.audio.audioHash
 import io.getstream.chat.android.client.extensions.duration
 import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
@@ -403,7 +404,7 @@ private class RecordingFileAttachmentViewHolder(
     ) {
         setOnPlayButtonClickListener {
             val assetUrl = attachment?.assetUrl
-            val audioHash = attachment.hashCode()
+            val audioHash = attachment?.audioHash ?: 0
             logger.d { "[onPlayButtonClick] audioHash: $audioHash, assetUrl: $assetUrl" }
             if (assetUrl != null) {
                 audioPlayer.play(assetUrl, audioHash)
@@ -417,10 +418,10 @@ private class RecordingFileAttachmentViewHolder(
         }
 
         setOnSeekbarMoveListeners({
-            val hash = attachment.hashCode()
+            val hash = attachment?.audioHash ?: 0
             audioPlayer.startSeek(hash)
         }, { progress ->
-            val hash = attachment.hashCode()
+            val hash = attachment?.audioHash ?: 0
             audioPlayer.seekTo(
                 progressToDecimal(progress, attachment?.duration),
                 hash,
@@ -509,7 +510,7 @@ private class RecordingFileAttachmentViewHolder(
         }
 
         val audioPlayer = ChatClient.instance().audioPlayer
-        audioPlayer.registerStateChange(binding.playerView, item.hashCode())
+        audioPlayer.registerStateChange(binding.playerView, item.audioHash)
     }
 
     private fun handleInProgressAttachment(fileSizeView: TextView, bytesRead: Long, totalBytes: Long) {
