@@ -439,7 +439,10 @@ internal class MessageComposerViewModelTest {
                     mediaRecorder = mock(),
                     userLookupHandler = DefaultUserLookupHandler(chatClient, channelId),
                     fileToUri = { it.path },
-                    maxAttachmentCount = maxAttachmentCount,
+                    globalState = globalState,
+                    config = MessageComposerController.Config(
+                        maxAttachmentCount = maxAttachmentCount,
+                    ),
                     channelState = MutableStateFlow(channelState),
                 ),
             )

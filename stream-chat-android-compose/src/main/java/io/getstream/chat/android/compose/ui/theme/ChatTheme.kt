@@ -331,6 +331,7 @@ public fun ChatTheme(
         typography = typography,
         attachmentFactories = attachmentFactories,
         autoTranslationEnabled = autoTranslationEnabled,
+        colors = colors,
     ),
     searchResultNameFormatter: SearchResultNameFormatter = SearchResultNameFormatter.defaultFormatter(),
     imageLoaderFactory: StreamCoilImageLoaderFactory = StreamCoilImageLoaderFactory.defaultFactory(),
