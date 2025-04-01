@@ -34,12 +34,14 @@ import io.getstream.chat.android.compose.ui.theme.messages.list.QuotedMessageSty
  * Represents message theming.
  *
  * @param textStyle The text style for the messages.
+ * @param errorTextStyle The text style for the error messages.
  * @param contentPadding The padding for the message content.
  * @param backgroundColor The background color for the messages.
  * @param backgroundBorder The border for the message background.
  * @param backgroundShapes The shapes for the message background.
  * @param quotedTextStyle The text style for the quoted messages contained in a reply.
  * @param quotedBackgroundColor The background color for the quoted messages.
+ * @param errorBackgroundColor The background color for the error messages.
  * @param deletedBackgroundColor The background color for the deleted messages.
  * @param audioRecording The theming for the audio recording attachment.
  * @param mentionColor The color for the mentions in the messages.
@@ -47,6 +49,7 @@ import io.getstream.chat.android.compose.ui.theme.messages.list.QuotedMessageSty
 @Immutable
 public data class MessageTheme(
     val textStyle: TextStyle,
+    val errorTextStyle: TextStyle,
     val contentPadding: ComponentPadding,
     val backgroundColor: Color,
     val backgroundBorder: BorderStroke?,
@@ -69,6 +72,7 @@ public data class MessageTheme(
         level = DeprecationLevel.WARNING,
     )
     val quotedBackgroundColor: Color,
+    val errorBackgroundColor: Color,
     val deletedBackgroundColor: Color,
     val audioRecording: AudioRecordingAttachmentTheme,
     val fileAttachmentTheme: FileAttachmentTheme,
@@ -131,18 +135,21 @@ public data class MessageTheme(
             shapes: StreamShapes,
             colors: StreamColors,
         ): MessageTheme {
-            return MessageTheme(
-                textStyle = typography.bodyBold.copy(
-                    color = when (own) {
-                        true -> colors.ownMessageText
-                        else -> colors.otherMessageText
-                    },
-                ),
-                contentPadding = ComponentPadding.Zero,
-                backgroundColor = when (own) {
-                    true -> colors.ownMessagesBackground
-                    else -> colors.otherMessagesBackground
+            val textStyle = typography.bodyBold.copy(
+                color = when (own) {
+                    true -> colors.ownMessageText
+                    else -> colors.otherMessageText
                 },
+            )
+            val backgroundColor = when (own) {
+                true -> colors.ownMessagesBackground
+                else -> colors.otherMessagesBackground
+            }
+            return MessageTheme(
+                textStyle = textStyle,
+                errorTextStyle = textStyle,
+                contentPadding = ComponentPadding.Zero,
+                backgroundColor = backgroundColor,
                 backgroundBorder = when (own) {
                     true -> null
                     else -> BorderStroke(1.dp, colors.borders)
@@ -171,6 +178,7 @@ public data class MessageTheme(
                     true -> colors.ownMessageQuotedBackground
                     else -> colors.otherMessageQuotedBackground
                 },
+                errorBackgroundColor = backgroundColor,
                 deletedBackgroundColor = colors.deletedMessagesBackground,
                 audioRecording = AudioRecordingAttachmentTheme.defaultTheme(
                     own = own,
