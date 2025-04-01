@@ -86,6 +86,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import kotlin.math.abs
 
@@ -507,6 +508,25 @@ private fun rememberCompoundComponentFactory(navigator: ThreePaneNavigator): Cha
                             searchResultItem = searchResultItem,
                             currentUser = currentUser,
                             onSearchResultClick = onSearchResultClick,
+                        )
+                    }
+                }
+            }
+
+            @Composable
+            override fun LazyItemScope.MentionListItem(
+                mention: MessageResult,
+                modifier: Modifier,
+                currentUser: User?,
+                onClick: ((message: Message) -> Unit)?
+            ) {
+                EmphasisBox(isEmphasized = mention.message.id == currentSelection?.messageId) {
+                    with(currentComponentFactory) {
+                        MentionListItem(
+                            mention = mention,
+                            modifier = modifier,
+                            currentUser = currentUser,
+                            onClick = onClick,
                         )
                     }
                 }
