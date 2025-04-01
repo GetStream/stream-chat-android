@@ -17,6 +17,7 @@
 package io.getstream.chat.android.offline.repository.domain.message.internal
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -81,6 +82,15 @@ internal interface MessageDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertReactions(reactions: List<ReactionEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertDraftMessages(draftMessage: DraftMessageEntity)
+
+    @Query("SELECT * FROM ${DraftMessageEntity.DRAFT_MESSAGE_ENTITY_TABLE_NAME}")
+    suspend fun selectDraftMessages(): List<DraftMessageEntity>
+
+    @Query("DELETE FROM ${DraftMessageEntity.DRAFT_MESSAGE_ENTITY_TABLE_NAME} WHERE id = :messageId")
+    suspend fun deleteDraftMessage(messageId: String)
 
     @Query(
         "SELECT * from $MESSAGE_ENTITY_TABLE_NAME " +
