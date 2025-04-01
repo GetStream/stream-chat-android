@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
+import io.getstream.chat.android.client.plugin.listeners.DraftMessageListener
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.plugin.listeners.FetchCurrentUserListener
 import io.getstream.chat.android.client.plugin.listeners.GetMessageListener
@@ -35,6 +36,7 @@ import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.offline.plugin.listener.internal.DraftMessageListenerDatabase
 import kotlin.reflect.KClass
 
 /**
@@ -76,6 +78,7 @@ internal class OfflinePlugin(
     private val getMessageListener: GetMessageListener,
     private val fetchCurrentUserListener: FetchCurrentUserListener,
     private val queryThreadsListener: QueryThreadsListener,
+    private val draftMessageListener: DraftMessageListener,
     private val provideDependency: (KClass<*>) -> Any? = { null },
 ) : Plugin,
     QueryChannelListener by queryChannelListener,
@@ -93,7 +96,9 @@ internal class OfflinePlugin(
     SendAttachmentListener by sendAttachmentListener,
     GetMessageListener by getMessageListener,
     FetchCurrentUserListener by fetchCurrentUserListener,
-    QueryThreadsListener by queryThreadsListener {
+    QueryThreadsListener by queryThreadsListener,
+    DraftMessageListener by draftMessageListener
+{
 
     override fun onUserSet(user: User) {
         /* No-Op */
