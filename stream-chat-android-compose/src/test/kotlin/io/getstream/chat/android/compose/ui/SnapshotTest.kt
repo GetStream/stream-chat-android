@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
@@ -55,6 +56,35 @@ internal interface SnapshotTest : ComposeTest {
                 LocalInspectionMode provides true,
             ) {
                 Column {
+                    ChatTheme(isInDarkMode = true) {
+                        Box(
+                            modifier = Modifier
+                                .weight(.5f)
+                                .background(ChatTheme.colors.appBackground),
+                        ) {
+                            composable(true)
+                        }
+                    }
+                    ChatTheme(isInDarkMode = false) {
+                        Box(
+                            modifier = Modifier
+                                .weight(.5f)
+                                .background(ChatTheme.colors.appBackground),
+                        ) {
+                            composable(false)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun snapshotWithDarkModeRow(composable: @Composable (darkMode: Boolean) -> Unit) {
+        paparazzi.snapshot {
+            CompositionLocalProvider(
+                LocalInspectionMode provides true,
+            ) {
+                Row {
                     ChatTheme(isInDarkMode = true) {
                         Box(
                             modifier = Modifier
