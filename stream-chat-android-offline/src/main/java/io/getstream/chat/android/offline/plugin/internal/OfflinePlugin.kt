@@ -36,7 +36,6 @@ import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.offline.plugin.listener.internal.DraftMessageListenerDatabase
 import kotlin.reflect.KClass
 
 /**
@@ -97,8 +96,7 @@ internal class OfflinePlugin(
     GetMessageListener by getMessageListener,
     FetchCurrentUserListener by fetchCurrentUserListener,
     QueryThreadsListener by queryThreadsListener,
-    DraftMessageListener by draftMessageListener
-{
+    DraftMessageListener by draftMessageListener {
 
     override fun onUserSet(user: User) {
         /* No-Op */
