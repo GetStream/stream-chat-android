@@ -71,6 +71,8 @@ import androidx.compose.ui.unit.dp
  * users.
  * @param groupAvatarInitialsYOffset The y offset of the user initials inside avatar when there are more than two
  * users.
+ * @param attachmentsPickerHeight The height of the attachments picker.
+ * @param attachmentsSystemPickerHeight The height of the system attachments picker.
  * @param attachmentsContentImageMaxHeight The maximum height an image attachment will expand to while automatically
  *  re-sizing itself in order to obey its aspect ratio.
  * re-sizing itself in order to obey its aspect ratio.
@@ -87,6 +89,8 @@ import androidx.compose.ui.unit.dp
  * a group in the message list.
  * @param attachmentsContentGroupPreviewHeight The height of the container displaying media previews tiled in
  * a group in the message list.
+ * @param pollOptionInputHeight The height of the poll option input field.
+ * @param messageComposerShadowElevation The elevation of the message composer shadow.
  */
 @Immutable
 public data class StreamDimens(
@@ -145,6 +149,7 @@ public data class StreamDimens(
     public val attachmentsContentGroupPreviewWidth: Dp,
     public val attachmentsContentGroupPreviewHeight: Dp,
     public val pollOptionInputHeight: Dp,
+    public val messageComposerShadowElevation: Dp,
 ) {
 
     public companion object {
@@ -207,6 +212,7 @@ public data class StreamDimens(
             attachmentsContentGroupPreviewWidth = 250.dp,
             attachmentsContentGroupPreviewHeight = 250.dp,
             pollOptionInputHeight = 56.dp,
+            messageComposerShadowElevation = 4.dp,
         )
     }
 }
