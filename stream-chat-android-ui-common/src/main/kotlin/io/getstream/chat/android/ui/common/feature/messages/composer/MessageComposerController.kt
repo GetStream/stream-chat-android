@@ -30,7 +30,7 @@ import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.state.extensions.globalState
+import io.getstream.chat.android.state.extensions.safeGlobalStateFlow
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggester
@@ -107,7 +107,6 @@ import java.util.regex.Pattern
 public class MessageComposerController(
     private val channelCid: String,
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val globalState: GlobalState = ChatClient.instance().globalState,
     public val channelState: StateFlow<ChannelState?>,
     mediaRecorder: StreamMediaRecorder,
     private val userLookupHandler: UserLookupHandler,
@@ -227,6 +226,16 @@ public class MessageComposerController(
             started = SharingStarted.Eagerly,
             initialValue = false,
         )
+
+    /** The flow of channel draft messages from the GlobalState. */
+    private val channelDraftMessages = chatClient
+        .safeGlobalStateFlow(GlobalState::channelDraftMessages)
+        .stateIn(scope, SharingStarted.Eagerly, emptyMap())
+
+    /** The flow of thread draft messages from the GlobalState. */
+    private val threadDraftMessages = chatClient
+        .safeGlobalStateFlow(GlobalState::threadDraftMessages)
+        .stateIn(scope, SharingStarted.Eagerly, emptyMap())
 
     /**
      * Full message composer state holding all the required information.
@@ -473,7 +482,7 @@ public class MessageComposerController(
         }.launchIn(scope)
 
         if (config.isDraftMessageEnabled) {
-            globalState.channelDraftMessages.onEach {
+            channelDraftMessages.onEach {
                 if (it[channelCid] == null &&
                     currentDraftId != null &&
                     messageMode.value is MessageMode.Normal
@@ -482,7 +491,7 @@ public class MessageComposerController(
                 }
             }.launchIn(scope)
 
-            globalState.threadDraftMessages.onEach {
+            threadDraftMessages.onEach {
                 if (it[parentMessageId] == null &&
                     currentDraftId != null &&
                     messageMode.value is MessageMode.MessageThread
@@ -514,7 +523,7 @@ public class MessageComposerController(
         when (val messageText = messageInput.value.text) {
             "" -> clearDraftMessage(messageMode)
             else -> {
-                globalState.getDraftMessageOrEmpty(messageMode).let {
+                getDraftMessageOrEmpty(messageMode).let {
                     chatClient.createDraftMessage(
                         channelType = channelType,
                         channelId = channelId,
@@ -531,7 +540,7 @@ public class MessageComposerController(
 
     private fun fetchDraftMessage(messageMode: MessageMode) {
         if (!config.isDraftMessageEnabled) return
-        globalState.getDraftMessageOrEmpty(messageMode).let { draftMessage ->
+        getDraftMessageOrEmpty(messageMode).let { draftMessage ->
             currentDraftId = draftMessage.id
             setMessageInputInternal(draftMessage.text, MessageInput.Source.DraftMessage)
             setAlsoSendToChannel(draftMessage.showInChannel)
@@ -668,7 +677,7 @@ public class MessageComposerController(
 
     private suspend fun clearDraftMessage(messageMode: MessageMode) {
         if (!config.isDraftMessageEnabled) return
-        globalState.getDraftMessage(messageMode)?.let { draftMessage ->
+        getDraftMessage(messageMode)?.let { draftMessage ->
             chatClient.deleteDraftMessages(
                 channelType = channelType,
                 channelId = channelId,
@@ -1052,6 +1061,13 @@ public class MessageComposerController(
         private const val TEXT_INPUT_DEBOUNCE_TIME = 300L
     }
 
+    /**
+     * Configuration for the message composer controller.
+     *
+     * @param maxAttachmentCount The maximum number of attachments allowed in a message.
+     * @param isLinkPreviewEnabled If link previews are enabled.
+     * @param isDraftMessageEnabled If draft messages are enabled.
+     */
     @InternalStreamChatApi
     public data class Config(
         val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
@@ -1059,10 +1075,10 @@ public class MessageComposerController(
         val isDraftMessageEnabled: Boolean = false,
     )
 
-    private fun GlobalState.getDraftMessageOrEmpty(messageMode: MessageMode): DraftMessage =
+    private fun getDraftMessageOrEmpty(messageMode: MessageMode): DraftMessage =
         getDraftMessage(messageMode) ?: messageMode.emptyDraftMessage()
 
-    private fun GlobalState.getDraftMessage(messageMode: MessageMode): DraftMessage? = when (messageMode) {
+    private fun getDraftMessage(messageMode: MessageMode): DraftMessage? = when (messageMode) {
         is MessageMode.MessageThread -> threadDraftMessages.value[messageMode.parentMessage.id]
         else -> channelDraftMessages.value[channelCid]
     }

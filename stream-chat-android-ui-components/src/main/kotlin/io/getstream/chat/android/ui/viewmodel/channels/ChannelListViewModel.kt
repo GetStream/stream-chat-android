@@ -109,7 +109,7 @@ public class ChannelListViewModel(
      * @see [GlobalState.typingChannels]
      */
     public val typingEvents: LiveData<Map<String, TypingEvent>> = chatClient
-        .safeGlobalStateFlow { it.typingChannels }
+        .safeGlobalStateFlow(GlobalState::typingChannels)
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
         .asLiveData()
 
@@ -118,7 +118,7 @@ public class ChannelListViewModel(
      */
     public val draftMessages: LiveData<Map<String, DraftMessage>> = if (isDraftMessagesEnabled) {
         chatClient
-            .safeGlobalStateFlow { it.channelDraftMessages }
+            .safeGlobalStateFlow(GlobalState::channelDraftMessages)
             .stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
             .asLiveData()
     } else {
@@ -126,7 +126,7 @@ public class ChannelListViewModel(
     }
 
     private val channelMutes: StateFlow<List<ChannelMute>> = chatClient
-        .safeGlobalStateFlow { it.channelMutes }
+        .safeGlobalStateFlow(GlobalState::channelMutes)
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     /**

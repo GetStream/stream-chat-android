@@ -24,8 +24,11 @@ import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Config
+import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -36,7 +39,9 @@ import org.amshove.kluent.`should be`
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.util.Date
@@ -89,6 +94,7 @@ internal class MessageComposerControllerTests {
             .givenAppSettings(mock())
             .givenAudioPlayer(mock())
             .givenClientState(User("uid1"))
+            .givenGlobalState()
             .givenChannelState(configState = configFlow)
             .get()
         // then
@@ -105,6 +111,7 @@ internal class MessageComposerControllerTests {
             .givenAppSettings(mock())
             .givenAudioPlayer(mock())
             .givenClientState(User("uid1"))
+            .givenGlobalState()
             .givenChannelState(configState = configFlow)
             .get()
         // then
@@ -120,6 +127,18 @@ internal class MessageComposerControllerTests {
         private val channelState: ChannelState = mock()
         private val globalState: GlobalState = mock()
 
+        init {
+            // Default mocks
+            // Set clientState to initialized
+            whenever(chatClient.awaitInitializationState(any())) doReturn InitializationState.COMPLETE
+            whenever(clientState.initializationState) doReturn MutableStateFlow(InitializationState.COMPLETE)
+            whenever(chatClient.clientState) doReturn clientState
+            // Initialize statePlugin and globalState
+            val statePlugin: StatePlugin = mock()
+            whenever(statePlugin.resolveDependency(eq(GlobalState::class))) doReturn globalState
+            whenever(chatClient.plugins) doReturn listOf(statePlugin)
+        }
+
         fun givenAppSettings(appSettings: AppSettings) = apply {
             whenever(chatClient.getAppSettings()) doReturn appSettings
         }
@@ -130,7 +149,6 @@ internal class MessageComposerControllerTests {
 
         fun givenClientState(user: User) = apply {
             whenever(clientState.user) doReturn MutableStateFlow(user)
-            whenever(chatClient.clientState) doReturn clientState
         }
 
         fun givenChannelState(
@@ -148,6 +166,14 @@ internal class MessageComposerControllerTests {
             whenever(channelState.lastSentMessageDate) doReturn lastSentMessageDateState
         }
 
+        fun givenGlobalState(
+            channelDrafts: Map<String, DraftMessage> = mapOf(),
+            threadDrafts: Map<String, DraftMessage> = mapOf(),
+        ) = apply {
+            whenever(globalState.channelDraftMessages) doReturn MutableStateFlow(channelDrafts)
+            whenever(globalState.threadDraftMessages) doReturn MutableStateFlow(threadDrafts)
+        }
+
         fun get(): MessageComposerController {
             return MessageComposerController(
                 channelCid = cid,
@@ -156,7 +182,6 @@ internal class MessageComposerControllerTests {
                 mediaRecorder = mock(),
                 userLookupHandler = mock(),
                 fileToUri = mock(),
-                globalState = globalState,
             )
         }
     }

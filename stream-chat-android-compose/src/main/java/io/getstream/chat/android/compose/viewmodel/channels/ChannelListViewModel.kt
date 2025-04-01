@@ -43,6 +43,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.state.extensions.queryChannelsAsState
 import io.getstream.chat.android.state.extensions.safeGlobalStateFlow
+import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.ui.common.state.channels.actions.Cancel
@@ -185,15 +186,15 @@ public class ChannelListViewModel(
      * Gives us the information about the list of channels mutes by the current user.
      */
     public val channelMutes: StateFlow<List<ChannelMute>> = chatClient
-        .safeGlobalStateFlow { it.channelMutes }
+        .safeGlobalStateFlow(GlobalState::channelMutes)
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     private val typingChannels: StateFlow<Map<String, TypingEvent>> = chatClient
-        .safeGlobalStateFlow { it.typingChannels }
+        .safeGlobalStateFlow(GlobalState::typingChannels)
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
 
     private val channelDraftMessages: StateFlow<Map<String, DraftMessage>> = chatClient
-        .safeGlobalStateFlow { it.channelDraftMessages }
+        .safeGlobalStateFlow(GlobalState::channelDraftMessages)
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
 
     /**
