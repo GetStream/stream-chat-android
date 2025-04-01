@@ -210,6 +210,10 @@ internal class DatabaseMessageRepository(
         replyMessageCache.evictAll()
     }
 
+    override suspend fun deletePoll(pollId: String) {
+        pollDao.deletePoll(pollId)
+    }
+
     override suspend fun clear() {
         messageCache.evictAll()
         replyMessageCache.evictAll()

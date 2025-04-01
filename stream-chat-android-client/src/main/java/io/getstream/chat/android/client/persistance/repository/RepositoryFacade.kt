@@ -48,7 +48,6 @@ public class RepositoryFacade private constructor(
     private val messageRepository: MessageRepository,
     private val reactionsRepository: ReactionRepository,
     private val syncStateRepository: SyncStateRepository,
-    private val pollRepository: PollRepository,
     private val scope: CoroutineScope,
     private val defaultConfig: Config,
 ) : UserRepository by userRepository,
@@ -58,8 +57,7 @@ public class RepositoryFacade private constructor(
     ChannelConfigRepository by configsRepository,
     QueryChannelsRepository by queryChannelsRepository,
     ThreadsRepository by threadsRepository,
-    SyncStateRepository by syncStateRepository,
-    PollRepository by pollRepository {
+    SyncStateRepository by syncStateRepository {
 
     private val logger by taggedLogger("Chat:RepositoryFacade")
 
@@ -257,7 +255,6 @@ public class RepositoryFacade private constructor(
                 messageRepository = messageRepository,
                 reactionsRepository = factory.createReactionRepository(getUser),
                 syncStateRepository = factory.createSyncStateRepository(),
-                pollRepository = factory.createPollRepository(),
                 scope = scope,
                 defaultConfig = defaultConfig,
             )

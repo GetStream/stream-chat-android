@@ -17,7 +17,6 @@
 package io.getstream.chat.android.offline.repository
 
 import io.getstream.chat.android.client.api.models.Pagination
-import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.offline.randomMessageEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.DatabaseMessageRepository
@@ -43,7 +42,6 @@ internal class MessageRepositoryTests {
     private val messageDao: MessageDao = mock()
     private val replyMessageDao: ReplyMessageDao = mock()
     private val pollDao: PollDao = mock()
-    private lateinit var sut: MessageRepository
 
     @Test
     fun `when selecting messages for channel, correct messages should be requested to DAO`() = runTest {
@@ -97,5 +95,23 @@ internal class MessageRepositoryTests {
             verify(messageDao).messagesForChannelOlderThan(cid, requestLessOrEqualThan.messageLimit, createdAt)
             verify(messageDao).messagesForChannelEqualOrOlderThan(cid, requestLessThan.messageLimit, createdAt)
         }
+    }
+
+    @Test
+    fun `when calling deletePoll, then deletePoll from PollDao is called`() = runTest {
+        // given
+        val repository = DatabaseMessageRepository(
+            this,
+            messageDao,
+            replyMessageDao,
+            pollDao,
+            ::randomUser,
+            randomUser(id = "currentUserId"),
+        )
+        val pollId = randomString()
+        // when
+        repository.deletePoll(pollId)
+        // then
+        verify(pollDao).deletePoll(pollId)
     }
 }

@@ -2740,6 +2740,7 @@ public abstract interface class io/getstream/chat/android/client/persistance/rep
 	public abstract fun deleteChannelMessage (Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun deleteChannelMessages (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun deleteChannelMessagesBefore (Ljava/lang/String;Ljava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun deletePoll (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun evictMessage (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun evictMessages (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun insertMessage (Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -2751,10 +2752,6 @@ public abstract interface class io/getstream/chat/android/client/persistance/rep
 	public abstract fun selectMessagesForChannel (Ljava/lang/String;Lio/getstream/chat/android/client/query/pagination/AnyChannelPaginationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun selectMessagesForThread (Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun selectMessagesWithPoll (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-}
-
-public abstract interface class io/getstream/chat/android/client/persistance/repository/PollRepository {
-	public abstract fun deletePoll (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/persistance/repository/QueryChannelsRepository {
@@ -2808,7 +2805,6 @@ public abstract interface class io/getstream/chat/android/client/persistance/rep
 	public abstract fun createChannelConfigRepository ()Lio/getstream/chat/android/client/persistance/repository/ChannelConfigRepository;
 	public abstract fun createChannelRepository (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/client/persistance/repository/ChannelRepository;
 	public abstract fun createMessageRepository (Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/client/persistance/repository/MessageRepository;
-	public abstract fun createPollRepository ()Lio/getstream/chat/android/client/persistance/repository/PollRepository;
 	public abstract fun createQueryChannelsRepository ()Lio/getstream/chat/android/client/persistance/repository/QueryChannelsRepository;
 	public abstract fun createReactionRepository (Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/client/persistance/repository/ReactionRepository;
 	public abstract fun createSyncStateRepository ()Lio/getstream/chat/android/client/persistance/repository/SyncStateRepository;
