@@ -214,7 +214,7 @@ internal class DomainMapping(
             attachments = message.attachments?.map { it.toDomain() } ?: emptyList(),
             cid = channel_cid,
             id = message.id,
-            parentId = parent_message?.id,
+            parentId = parent_message?.id ?: parent_id,
             replyMessage = quoted_message?.toDomain(),
             showInChannel = message.show_in_channel,
             mentionedUsersIds = message.mentioned_users?.map { it.id } ?: emptyList(),

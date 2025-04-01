@@ -23,6 +23,7 @@
     <string name="stream_compose_search_input_hint">Search channels by name</string>
 
     <!-- Channel List -->
+    <string name="stream_compose_channel_list_draft">Draft: </string>
     <string name="stream_compose_channel_list_you">You</string>
     <string name="stream_compose_channel_list_empty_channels">No channels available</string>
     <string name="stream_compose_channel_list_empty_search_results">No results for \"%1$s\"</string>

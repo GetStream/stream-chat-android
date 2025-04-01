@@ -107,6 +107,7 @@ internal data class DownstreamDraftDto(
     val message: DownstreamDraftMessageDto,
     val channel_cid: String,
     val quoted_message: DownstreamMessageDto? = null,
+    val parent_id: String? = null,
     val parent_message: DownstreamMessageDto? = null,
 )
 

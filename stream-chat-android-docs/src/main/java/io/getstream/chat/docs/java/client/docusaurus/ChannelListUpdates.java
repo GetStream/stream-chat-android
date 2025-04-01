@@ -109,12 +109,14 @@ public class ChannelListUpdates {
         int limit = 30;
         int messageLimit = 1;
         int memberLimit = 30;
+        boolean isDraftMessagesEnabled = false;
         ChannelListViewModelFactory factory = new ChannelListViewModelFactory(
                 filter,
                 sort,
                 limit,
                 messageLimit,
                 memberLimit,
+                isDraftMessagesEnabled,
                 chatEventHandlerFactory
         );
     }

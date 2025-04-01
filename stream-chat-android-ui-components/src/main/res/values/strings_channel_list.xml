@@ -37,4 +37,5 @@
     <string name="stream_ui_channel_list_error_hide_channel">Failed to hide channel</string>
     <string name="stream_ui_channel_list_error_delete_channel">Failed to delete channel</string>
     <string name="stream_ui_channel_list_error_leave_channel">Failed to leave channel</string>
+    <string name="stream_ui_channel_list_draft_message_label">Draft:</string>
 </resources>

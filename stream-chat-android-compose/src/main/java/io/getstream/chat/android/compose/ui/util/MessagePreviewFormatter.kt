@@ -30,8 +30,10 @@ import io.getstream.chat.android.client.utils.message.isPollClosed
 import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
+import io.getstream.chat.android.compose.ui.theme.StreamColors
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 
@@ -57,6 +59,15 @@ public interface MessagePreviewFormatter {
      */
     public fun formatMessagePreview(message: Message, currentUser: User?): AnnotatedString
 
+    /**
+     * Generates a preview text for the given draft message.
+     * This is used to show a preview of the draft message in the the channel list.
+     *
+     * @param draftMessage The draft message whose data is used to generate the preview text.
+     * @return The formatted text representation for the given draft message.
+     */
+    public fun formatDraftMessagePreview(draftMessage: DraftMessage): AnnotatedString
+
     public companion object {
         /**
          * Builds the default message preview text formatter.
@@ -74,10 +85,12 @@ public interface MessagePreviewFormatter {
             autoTranslationEnabled: Boolean,
             typography: StreamTypography,
             attachmentFactories: List<AttachmentFactory>,
+            colors: StreamColors,
         ): MessagePreviewFormatter {
             return DefaultMessagePreviewFormatter(
                 context = context,
                 autoTranslationEnabled = autoTranslationEnabled,
+                draftMessageLabelTextStyle = typography.footnoteBold.copy(color = colors.primaryAccent),
                 messageTextStyle = typography.bodyBold,
                 senderNameTextStyle = typography.bodyBold,
                 attachmentTextFontStyle = typography.bodyItalic,
@@ -93,9 +106,11 @@ public interface MessagePreviewFormatter {
  *
  * @param context The context to load string resources.
  */
+@Suppress("LongParameterList")
 private class DefaultMessagePreviewFormatter(
     private val context: Context,
     private val autoTranslationEnabled: Boolean,
+    private val draftMessageLabelTextStyle: TextStyle,
     private val messageTextStyle: TextStyle,
     private val senderNameTextStyle: TextStyle,
     private val attachmentTextFontStyle: TextStyle,
@@ -188,6 +203,35 @@ private class DefaultMessagePreviewFormatter(
                     )
                 }
             }
+        }
+    }
+
+    /**
+     * Generates a preview text for the given draft message.
+     * This is used to show a preview of the draft message in the the channel list.
+     *
+     * @param draftMessage The draft message whose data is used to generate the preview text.
+     * @return The formatted text representation for the given draft message.
+     */
+    override fun formatDraftMessagePreview(draftMessage: DraftMessage): AnnotatedString = buildAnnotatedString {
+        withStyle(
+            style = SpanStyle(
+                fontStyle = draftMessageLabelTextStyle.fontStyle,
+                fontFamily = draftMessageLabelTextStyle.fontFamily,
+                color = draftMessageLabelTextStyle.color,
+            ),
+        ) {
+            append(context.getString(R.string.stream_compose_channel_list_draft))
+        }
+        append(SPACE)
+        withStyle(
+            style = SpanStyle(
+                fontStyle = messageTextStyle.fontStyle,
+                fontFamily = messageTextStyle.fontFamily,
+                color = messageTextStyle.color,
+            ),
+        ) {
+            append(draftMessage.text)
         }
     }
 

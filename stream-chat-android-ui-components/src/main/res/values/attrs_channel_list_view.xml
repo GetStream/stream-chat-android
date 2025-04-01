@@ -57,6 +57,8 @@
         <attr name="streamUiLastMessageTextSize" format="dimension|reference" />
         <!-- A color of the last message text -->
         <attr name="streamUiLastMessageTextColor" format="color|reference" />
+        <!-- A color of the draft message label text -->
+        <attr name="streamUiDraftMessageLabelTextColor" format="color|reference" />
         <!-- Font name of the last message text -->
         <attr name="streamUiLastMessageTextFont" format="reference" />
         <!-- Font assets reference for the last message text -->

@@ -33,6 +33,7 @@ import io.getstream.chat.android.core.utils.Debouncer
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
@@ -77,6 +78,7 @@ import kotlin.coroutines.cancellation.CancellationException
  * @param messageLimit How many messages are fetched for each channel item when loading channels.
  * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
  * @param searchDebounceMs The debounce time for search queries.
+ * @param isDraftMessageEnabled If the draft message feature is enabled.
  */
 @Suppress("TooManyFunctions")
 public class ChannelListViewModel(
@@ -88,6 +90,7 @@ public class ChannelListViewModel(
     private val messageLimit: Int = DEFAULT_MESSAGE_LIMIT,
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
     searchDebounceMs: Long = SEARCH_DEBOUNCE_MS,
+    private val isDraftMessageEnabled: Boolean,
 ) : ViewModel() {
 
     private val logger by taggedLogger("Chat:ChannelListVM")
@@ -392,7 +395,8 @@ public class ChannelListViewModel(
                     queryChannelsState.channelsStateData,
                     channelMutes,
                     chatClient.globalState.typingChannels,
-                ) { state, channelMutes, typingChannels ->
+                    chatClient.globalState.channelDraftMessages,
+                ) { state, channelMutes, typingChannels, channelDraftMessages ->
                     when (state) {
                         ChannelsStateData.NoQueryActive,
                         ChannelsStateData.Loading,
@@ -418,6 +422,7 @@ public class ChannelListViewModel(
                                     channels = state.channels,
                                     channelMutes = channelMutes,
                                     typingEvents = typingChannels,
+                                    draftMessages = channelDraftMessages.takeIf { isDraftMessageEnabled } ?: emptyMap(),
                                 ),
                                 isLoadingMore = false,
                                 endOfChannels = queryChannelsState.endOfChannels.value,
@@ -705,6 +710,7 @@ public class ChannelListViewModel(
         channels: List<Channel>,
         channelMutes: List<ChannelMute>,
         typingEvents: Map<String, TypingEvent>,
+        draftMessages: Map<String, DraftMessage>,
     ): List<ItemState.ChannelItemState> {
         val mutedChannelIds = channelMutes.map { channelMute -> channelMute.channel?.cid }.toSet()
         return channels.map {
@@ -712,6 +718,7 @@ public class ChannelListViewModel(
                 channel = it,
                 isMuted = it.cid in mutedChannelIds,
                 typingUsers = typingEvents[it.cid]?.users ?: emptyList(),
+                draftMessage = draftMessages[it.cid],
             )
         }
     }
