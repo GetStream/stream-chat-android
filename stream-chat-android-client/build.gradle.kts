@@ -92,7 +92,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.retrofit)
     implementation(libs.stream.log)
-    implementation(libs.stream.log.android.file)
     implementation(libs.stream.push.delegate)
     api(libs.stream.push.permissions)
     implementation(libs.itu.date.version)

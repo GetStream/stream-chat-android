@@ -196,6 +196,12 @@ public object ChatUI {
     public var videoThumbnailsEnabled: Boolean = true
 
     /**
+     * Whether draft messages are enabled.
+     */
+    @JvmStatic
+    public var draftMessagesEnabled: Boolean = false
+
+    /**
      * Sets the strategy for resizing images hosted on Stream's CDN. Disabled by default,
      * set [StreamCdnImageResizing.imageResizingEnabled] to true if you wish to enable resizing images. Note that
      * resizing applies only to images hosted on Stream's CDN which contain the original width (ow) and height (oh)

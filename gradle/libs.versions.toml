@@ -80,7 +80,7 @@ shot = "6.1.0"
 sonarqube = "6.0.1.5171"
 spotless = "6.20.0"
 streamLog = "1.3.2"
-streamPush = "1.3.0"
+streamPush = "1.3.1"
 streamResult = "1.3.2"
 testParameterInjector = "1.12"
 threetenbp = "1.7.0"
@@ -214,7 +214,6 @@ stream-push-permissions = { module = "io.getstream:stream-android-push-permissio
 stream-push-permissions-snackbar = { module = "io.getstream:stream-android-push-permissions-snackbar", version.ref = "streamPush"}
 stream-push-xiaomi = { module = "io.getstream:stream-android-push-xiaomi", version.ref = "streamPush"}
 stream-log = { module = "io.getstream:stream-log", version.ref = "streamLog"}
-stream-log-android-file = { module = "io.getstream:stream-log-android-file", version.ref = "streamLog"}
 stream-photoview = { module = "io.getstream:photoview", version.ref = "photoview"}
 stream-photoview-dialog = { module = "io.getstream:photoview-dialog", version.ref = "photoview"}
 stream-result = { module = "io.getstream:stream-result", version.ref = "streamResult"}

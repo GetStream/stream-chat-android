@@ -26,6 +26,7 @@ import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -117,6 +118,7 @@ internal class MessageComposerControllerTests {
 
         private val clientState: ClientState = mock()
         private val channelState: ChannelState = mock()
+        private val globalState: GlobalState = mock()
 
         fun givenAppSettings(appSettings: AppSettings) = apply {
             whenever(chatClient.getAppSettings()) doReturn appSettings
@@ -154,6 +156,7 @@ internal class MessageComposerControllerTests {
                 mediaRecorder = mock(),
                 userLookupHandler = mock(),
                 fileToUri = mock(),
+                globalState = globalState,
             )
         }
     }
