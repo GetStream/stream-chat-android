@@ -214,7 +214,6 @@ stream-push-permissions = { module = "io.getstream:stream-android-push-permissio
 stream-push-permissions-snackbar = { module = "io.getstream:stream-android-push-permissions-snackbar", version.ref = "streamPush"}
 stream-push-xiaomi = { module = "io.getstream:stream-android-push-xiaomi", version.ref = "streamPush"}
 stream-log = { module = "io.getstream:stream-log", version.ref = "streamLog"}
-stream-log-android-file = { module = "io.getstream:stream-log-android-file", version.ref = "streamLog"}
 stream-photoview = { module = "io.getstream:photoview", version.ref = "photoview"}
 stream-photoview-dialog = { module = "io.getstream:photoview-dialog", version.ref = "photoview"}
 stream-result = { module = "io.getstream:stream-result", version.ref = "streamResult"}
