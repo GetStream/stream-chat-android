@@ -3,7 +3,6 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>ComplexCondition:AttachmentDestination.kt$AttachmentDestination$attachment.isFile() || attachment.isVideo() || attachment.isAudio() || attachment.mimeType?.contains(VIDEO_MIME_TYPE_PREFIX) == true</ID>
-    <ID>ComplexCondition:ChannelViewHolder.kt$ChannelViewHolder$nameChanged || typingUsersChanged || lastMessageChanged || anonymousNameChanged</ID>
     <ID>ComplexCondition:CreatePollViewModel.kt$CreatePollViewModel$title.isNotBlank() &amp;&amp; options.isNotEmpty() &amp;&amp; options.all { it.text.isNotBlank() &amp;&amp; !it.duplicateError } &amp;&amp; (!allowMultipleVotes || (maxAnswers != null &amp;&amp; maxAnswers > 0 &amp;&amp; maxAnswers &lt;= options.size))</ID>
     <ID>ComplexCondition:FileAttachmentsView.kt$GeneralFileAttachmentViewHolder$item.uploadState is Attachment.UploadState.Idle || item.uploadState is Attachment.UploadState.InProgress || (item.uploadState is Attachment.UploadState.Success &amp;&amp; item.fileSize == 0)</ID>
     <ID>ComplexCondition:FileAttachmentsView.kt$RecordingFileAttachmentViewHolder$item.uploadState is Attachment.UploadState.Idle || item.uploadState is Attachment.UploadState.InProgress || (item.uploadState is Attachment.UploadState.Success &amp;&amp; item.fileSize == 0)</ID>
