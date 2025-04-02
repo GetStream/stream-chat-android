@@ -445,6 +445,7 @@ internal class MessageComposerViewModelTest {
                         maxAttachmentCount = maxAttachmentCount,
                     ),
                     channelState = MutableStateFlow(channelState),
+                    globalState = MutableStateFlow(globalState),
                 ),
             )
         }

@@ -4283,8 +4283,8 @@ public final class io/getstream/chat/android/ui/viewmodel/channels/ChannelListHe
 public final class io/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel : androidx/lifecycle/ViewModel {
 	public static final field Companion Lio/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$Companion;
 	public static final field DEFAULT_SORT Lio/getstream/chat/android/models/querysort/QuerySorter;
-	public fun <init> (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;IIIZLio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;Lio/getstream/chat/android/client/ChatClient;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;IIIZLio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;Lio/getstream/chat/android/client/ChatClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;IIIZLio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;Lio/getstream/chat/android/client/ChatClient;Lkotlinx/coroutines/flow/Flow;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;IIIZLio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;Lio/getstream/chat/android/client/ChatClient;Lkotlinx/coroutines/flow/Flow;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun deleteChannel (Lio/getstream/chat/android/models/Channel;)V
 	public final fun getDraftMessages ()Landroidx/lifecycle/LiveData;
 	public final fun getErrorEvents ()Landroidx/lifecycle/LiveData;

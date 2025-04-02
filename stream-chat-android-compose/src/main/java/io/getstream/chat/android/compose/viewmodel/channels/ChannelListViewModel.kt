@@ -41,8 +41,8 @@ import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
+import io.getstream.chat.android.state.extensions.globalStateFlow
 import io.getstream.chat.android.state.extensions.queryChannelsAsState
-import io.getstream.chat.android.state.extensions.safeGlobalStateFlow
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
@@ -51,6 +51,7 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.uiutils.extension.defaultChannelListFilter
 import io.getstream.log.taggedLogger
 import io.getstream.result.call.toUnitCall
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.Flow
@@ -61,6 +62,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.job
@@ -82,7 +84,9 @@ import kotlin.coroutines.cancellation.CancellationException
  * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
  * @param searchDebounceMs The debounce time for search queries.
  * @param isDraftMessageEnabled If the draft message feature is enabled.
+ * @param globalState A flow emitting the current [GlobalState].
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 @Suppress("TooManyFunctions")
 public class ChannelListViewModel(
     public val chatClient: ChatClient,
@@ -94,6 +98,7 @@ public class ChannelListViewModel(
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
     searchDebounceMs: Long = SEARCH_DEBOUNCE_MS,
     private val isDraftMessageEnabled: Boolean,
+    private val globalState: Flow<GlobalState> = chatClient.globalStateFlow,
 ) : ViewModel() {
 
     private val logger by taggedLogger("Chat:ChannelListVM")
@@ -185,16 +190,16 @@ public class ChannelListViewModel(
     /**
      * Gives us the information about the list of channels mutes by the current user.
      */
-    public val channelMutes: StateFlow<List<ChannelMute>> = chatClient
-        .safeGlobalStateFlow(GlobalState::channelMutes)
+    public val channelMutes: StateFlow<List<ChannelMute>> = globalState
+        .flatMapLatest { it.channelMutes }
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
-    private val typingChannels: StateFlow<Map<String, TypingEvent>> = chatClient
-        .safeGlobalStateFlow(GlobalState::typingChannels)
+    private val typingChannels: StateFlow<Map<String, TypingEvent>> = globalState
+        .flatMapLatest { it.typingChannels }
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
 
-    private val channelDraftMessages: StateFlow<Map<String, DraftMessage>> = chatClient
-        .safeGlobalStateFlow(GlobalState::channelDraftMessages)
+    private val channelDraftMessages: StateFlow<Map<String, DraftMessage>> = globalState
+        .flatMapLatest { it.channelDraftMessages }
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
 
     /**

@@ -30,7 +30,7 @@ import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.state.extensions.safeGlobalStateFlow
+import io.getstream.chat.android.state.extensions.globalStateFlow
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggester
@@ -99,7 +99,7 @@ import java.util.regex.Pattern
  * @param userLookupHandler The handler used to lookup users for mentions.
  * @param fileToUri The function used to convert a file to a URI.
  * @param config The configuration for the message composer.
- *
+ * @param globalState A flow emitting the current [GlobalState].
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @InternalStreamChatApi
@@ -112,6 +112,7 @@ public class MessageComposerController(
     private val userLookupHandler: UserLookupHandler,
     fileToUri: (File) -> String,
     private val config: MessageComposerController.Config = MessageComposerController.Config(),
+    private val globalState: Flow<GlobalState> = chatClient.globalStateFlow,
 ) {
 
     private val channelType = channelCid.cidToTypeAndId().first
@@ -228,13 +229,13 @@ public class MessageComposerController(
         )
 
     /** The flow of channel draft messages from the GlobalState. */
-    private val channelDraftMessages = chatClient
-        .safeGlobalStateFlow(GlobalState::channelDraftMessages)
+    private val channelDraftMessages = globalState
+        .flatMapLatest { it.channelDraftMessages }
         .stateIn(scope, SharingStarted.Eagerly, emptyMap())
 
     /** The flow of thread draft messages from the GlobalState. */
-    private val threadDraftMessages = chatClient
-        .safeGlobalStateFlow(GlobalState::threadDraftMessages)
+    private val threadDraftMessages = globalState
+        .flatMapLatest { it.threadDraftMessages }
         .stateIn(scope, SharingStarted.Eagerly, emptyMap())
 
     /**

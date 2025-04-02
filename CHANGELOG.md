@@ -43,6 +43,7 @@
 
 ### ✅ Added
 - Add `GlobalState.channelDraftMessages` and `GlobalState.threadDraftMessages` properties providing access to the draft messages. [#5682](https://github.com/GetStream/stream-chat-android/pull/5682) 
+- Add `ChatClient.globalStateFlow` flow holding the `GlobalState` object, which emits values only if the user is connected. [#5702](https://github.com/GetStream/stream-chat-android/pull/5702)
 
 ### ⚠️ Changed
 
@@ -81,7 +82,7 @@
 - Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
 - Not show deleted poll messages. [#5689](https://github.com/GetStream/stream-chat-android/pull/5689)
 - Fix "Thread reply" item shown in the message options menu for messages in a Thread. [#5683](https://github.com/GetStream/stream-chat-android/pull/5683)
-- Fix crash happening after process death when accessing `GLobalState` from the UI components. [#5702](https://github.com/GetStream/stream-chat-android/pull/5702)
+- Fix crash happening after process death when accessing `GlobalState` from the UI components. [#5702](https://github.com/GetStream/stream-chat-android/pull/5702)
 
 ### ⬆️ Improved
 

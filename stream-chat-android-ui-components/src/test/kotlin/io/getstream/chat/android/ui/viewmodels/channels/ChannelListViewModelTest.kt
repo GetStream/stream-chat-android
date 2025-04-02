@@ -249,7 +249,6 @@ internal class ChannelListViewModelTest {
             whenever(chatClient.channel(any(), any())) doReturn channelClient
             val statePlugin: StatePlugin = mock()
             whenever(statePlugin.resolveDependency(eq(StateRegistry::class))) doReturn stateRegistry
-            whenever(statePlugin.resolveDependency(eq(GlobalState::class))) doReturn globalState
             whenever(chatClient.plugins) doReturn listOf(statePlugin)
             whenever(chatClient.clientState) doReturn clientState
             whenever(globalState.typingChannels) doReturn MutableStateFlow(emptyMap())
@@ -310,6 +309,7 @@ internal class ChannelListViewModelTest {
                 chatEventHandlerFactory = ChatEventHandlerFactory(
                     clientState = clientState,
                 ),
+                globalState = MutableStateFlow(globalState),
             )
         }
     }

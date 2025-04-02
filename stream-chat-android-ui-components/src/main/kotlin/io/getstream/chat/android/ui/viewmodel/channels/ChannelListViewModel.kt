@@ -36,8 +36,8 @@ import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
+import io.getstream.chat.android.state.extensions.globalStateFlow
 import io.getstream.chat.android.state.extensions.queryChannelsAsState
-import io.getstream.chat.android.state.extensions.safeGlobalStateFlow
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
@@ -51,6 +51,7 @@ import io.getstream.log.TaggedLogger
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.call.enqueue
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -59,6 +60,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.isActive
@@ -78,7 +80,9 @@ import kotlinx.coroutines.launch
  * @param isDraftMessagesEnabled Enables or disables draft messages.
  * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] that will be used to create [ChatEventHandler].
  * @param chatClient Entry point for all low-level operations.
+ * @param globalState A flow emitting the current [GlobalState].
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 public class ChannelListViewModel(
     private val filter: FilterObject? = null,
     private val sort: QuerySorter<Channel> = DEFAULT_SORT,
@@ -88,6 +92,7 @@ public class ChannelListViewModel(
     private val isDraftMessagesEnabled: Boolean,
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(),
     private val chatClient: ChatClient = ChatClient.instance(),
+    private val globalState: Flow<GlobalState> = chatClient.globalStateFlow,
 ) : ViewModel() {
 
     private var queryJob: Job? = null
@@ -108,8 +113,8 @@ public class ChannelListViewModel(
      *
      * @see [GlobalState.typingChannels]
      */
-    public val typingEvents: LiveData<Map<String, TypingEvent>> = chatClient
-        .safeGlobalStateFlow(GlobalState::typingChannels)
+    public val typingEvents: LiveData<Map<String, TypingEvent>> = globalState
+        .flatMapLatest { it.typingChannels }
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
         .asLiveData()
 
@@ -117,16 +122,16 @@ public class ChannelListViewModel(
      * Draft messages for channels.
      */
     public val draftMessages: LiveData<Map<String, DraftMessage>> = if (isDraftMessagesEnabled) {
-        chatClient
-            .safeGlobalStateFlow(GlobalState::channelDraftMessages)
+        globalState
+            .flatMapLatest { it.channelDraftMessages }
             .stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
             .asLiveData()
     } else {
         MutableLiveData(emptyMap())
     }
 
-    private val channelMutes: StateFlow<List<ChannelMute>> = chatClient
-        .safeGlobalStateFlow(GlobalState::channelMutes)
+    private val channelMutes: StateFlow<List<ChannelMute>> = globalState
+        .flatMapLatest { it.channelMutes }
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     /**

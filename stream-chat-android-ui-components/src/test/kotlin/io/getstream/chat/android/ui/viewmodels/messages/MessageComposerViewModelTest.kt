@@ -391,7 +391,6 @@ internal class MessageComposerViewModelTest {
             val statePlugin: StatePlugin = mock()
             val statePluginFactory: StreamStatePluginFactory = mock()
             whenever(statePlugin.resolveDependency(eq(StateRegistry::class))) doReturn stateRegistry
-            whenever(statePlugin.resolveDependency(eq(GlobalState::class))) doReturn globalState
             whenever(statePluginFactory.resolveDependency(eq(StatePluginConfig::class))) doReturn statePluginConfig
             whenever(globalState.channelDraftMessages) doReturn MutableStateFlow(emptyMap())
             whenever(globalState.threadDraftMessages) doReturn MutableStateFlow(emptyMap())
@@ -445,6 +444,7 @@ internal class MessageComposerViewModelTest {
                         maxAttachmentCount = maxAttachmentCount,
                     ),
                     channelState = MutableStateFlow(channelState),
+                    globalState = MutableStateFlow(globalState),
                 ),
             )
         }
