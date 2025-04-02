@@ -1,6 +1,7 @@
 # UNRELEASED CHANGELOG
 ## Common changes for all artifacts
 ### 🐞 Fixed
+- Upgrade StreamPush dependency to V1.3.1 to avoid proguard issues.
 
 ### ⬆️ Improved
 
