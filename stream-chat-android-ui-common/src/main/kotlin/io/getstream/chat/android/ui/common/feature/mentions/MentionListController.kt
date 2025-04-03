@@ -59,7 +59,7 @@ public class MentionListController(
 
     private val loadRequests = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
-    private val _state = MutableStateFlow(InitialState)
+    private val _state = MutableStateFlow(MentionListState())
 
     /**
      * The current state of the mention list.
@@ -163,11 +163,3 @@ public class MentionListController(
 }
 
 private const val QUERY_LIMIT = 30
-
-private val InitialState: MentionListState = MentionListState(
-    isLoading = true,
-    results = emptyList(),
-    nextPage = null,
-    canLoadMore = true,
-    isLoadingMore = false,
-)
