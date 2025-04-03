@@ -29,6 +29,9 @@ import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 
+/**
+ * Enriches the wrapped Message from the [ChatEvent] with the Channel ID.
+ */
 public fun ChatEvent.enrichIfNeeded(): ChatEvent = when (this) {
     is NewMessageEvent -> copy(message = message.enrichWithCid(cid))
     is MessageDeletedEvent -> copy(message = message.enrichWithCid(cid))

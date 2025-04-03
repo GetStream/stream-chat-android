@@ -41,6 +41,10 @@ public fun String.snakeToLowerCamelCase(): String {
     }
 }
 
+/**
+ * Converts a string written in lower camel case to a getter method name.
+ * Ex: "camelCase" -> "getCamelCase".
+ */
 @InternalStreamChatApi
 public fun String.lowerCamelCaseToGetter(): String = "get${this[0].uppercase()}${this.substring(1)}"
 
@@ -52,6 +56,10 @@ internal fun String.camelCaseToSnakeCase(): String {
     return camelRegex.replace(this) { "_${it.value}" }.lowercase()
 }
 
+/**
+ * Checks if the string is a channel id of an anonymous channel.
+ * Checks if the string contains "!members".
+ */
 internal fun String.isAnonymousChannelId(): Boolean = contains("!members")
 
 /**

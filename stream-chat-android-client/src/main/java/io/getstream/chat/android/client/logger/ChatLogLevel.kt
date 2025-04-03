@@ -22,6 +22,9 @@ private const val WARN_SEVERITY = 2
 private const val ERROR_SEVERITY = 3
 private const val NOTHING_SEVERITY = 4
 
+/**
+ * An enumeration used for tracking which logs should be shown.
+ */
 public enum class ChatLogLevel(private val severity: Int) {
     /**
      * Show all Logs.

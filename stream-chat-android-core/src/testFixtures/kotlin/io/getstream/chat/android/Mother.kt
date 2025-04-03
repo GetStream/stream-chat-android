@@ -39,6 +39,10 @@ import io.getstream.chat.android.models.HMSRoom
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageModerationAction
+import io.getstream.chat.android.models.MessageModerationDetails
+import io.getstream.chat.android.models.Moderation
+import io.getstream.chat.android.models.ModerationAction
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
@@ -301,6 +305,8 @@ public fun randomMessage(
     threadParticipants: List<User> = emptyList(),
     restrictedVisibility: List<String> = emptyList(),
     poll: Poll? = null,
+    moderationDetails: MessageModerationDetails? = null,
+    moderation: Moderation? = null,
 ): Message = Message(
     id = id,
     cid = cid,
@@ -341,6 +347,8 @@ public fun randomMessage(
     messageTextUpdatedAt = messageTextUpdatedAt,
     restrictedVisibility = restrictedVisibility,
     poll = poll,
+    moderationDetails = moderationDetails,
+    moderation = moderation,
 )
 
 public fun randomChannelMute(
@@ -381,6 +389,7 @@ public fun randomChannel(
     hiddenMessagesBefore: Date? = randomDate(),
     ownCapabilities: Set<String> = randomChannelCapabilities(),
     extraData: Map<String, Any> = emptyMap(),
+    membership: Member? = randomMember(),
 ): Channel = Channel(
     id = id,
     name = name,
@@ -405,6 +414,7 @@ public fun randomChannel(
     hiddenMessagesBefore = hiddenMessagesBefore,
     ownCapabilities = ownCapabilities,
     extraData = extraData,
+    membership = membership,
 )
 
 public fun randomChannelUserRead(
@@ -436,17 +446,20 @@ public fun randomMessageList(
     size: Int = 10,
     creationFunction: (Int) -> Message = { randomMessage() },
 ): List<Message> = List(size, creationFunction)
+
 public fun randomCommands(size: Int = 10): List<Command> = List(size) { randomCommand() }
 public fun randomMembers(
     size: Int = positiveRandomInt(10),
     creationFunction: (Int) -> Member = { randomMember() },
 ): List<Member> = List(size, creationFunction)
+
 public fun randomCommand(
     name: String = randomString(),
     description: String = randomString(),
     args: String = randomString(),
     set: String = randomString(),
 ): Command = Command(name, description, args, set)
+
 public fun randomConfig(
     createdAt: Date? = randomDate(),
     updatedAt: Date? = randomDate(),
@@ -495,6 +508,7 @@ public fun randomConfig(
 
 public fun randomChannelConfig(type: String = randomString(), config: Config = randomConfig()): ChannelConfig =
     ChannelConfig(type = type, config = config)
+
 public fun randomSyncStatus(exclude: List<SyncStatus> = emptyList()): SyncStatus =
     (SyncStatus.entries - exclude - SyncStatus.AWAITING_ATTACHMENTS).random()
 
@@ -569,6 +583,8 @@ public fun randomMember(
     shadowBanned: Boolean = randomBoolean(),
     banned: Boolean = false,
     banExpires: Date? = null,
+    pinnedAt: Date? = null,
+    archivedAt: Date? = null,
 ): Member = Member(
     user = user,
     createdAt = createdAt,
@@ -579,6 +595,8 @@ public fun randomMember(
     shadowBanned = shadowBanned,
     banned = banned,
     banExpires = banExpires,
+    pinnedAt = pinnedAt,
+    archivedAt = archivedAt,
 )
 
 public fun randomMemberData(
@@ -635,6 +653,7 @@ public fun randomAttachmentsWithFile(
         )
     },
 ): List<Attachment> = (1..size).map(createAttachment)
+
 public fun randomValue(): Any {
     return when (Random.nextInt(0, 5)) {
         0 -> randomString()
@@ -645,6 +664,7 @@ public fun randomValue(): Any {
         else -> randomString()
     }
 }
+
 public fun randomExtraData(maxPossibleEntries: Int = 10): Map<String, Any> {
     val size = positiveRandomInt(maxPossibleEntries)
     return (1..size).associate { randomString() to randomValue() }
@@ -674,6 +694,7 @@ public fun randomChatNetworkError(
     statusCode = statusCode,
     cause = cause,
 )
+
 public fun randomReactionGroup(
     type: String = randomString(),
     sumScore: Int = randomInt(),
@@ -941,4 +962,32 @@ public fun randomFileUploadConfig(
     blockedFileExtensions = blockedFileExtensions,
     blockedMimeTypes = blockedMimeTypes,
     sizeLimitInBytes = sizeLimitInBytes,
+)
+
+public fun randomMessageModerationDetails(
+    originalText: String = randomString(),
+    action: MessageModerationAction = MessageModerationAction(randomString()),
+    errorMsg: String = randomString(),
+): MessageModerationDetails = MessageModerationDetails(
+    originalText = originalText,
+    action = action,
+    errorMsg = errorMsg,
+)
+
+public fun randomModeration(
+    action: ModerationAction = ModerationAction(randomString()),
+    originalText: String = randomString(),
+    textHarms: List<String> = emptyList(),
+    imageHarms: List<String> = emptyList(),
+    blocklistMatched: String = randomString(),
+    semanticFilterMatched: String = randomString(),
+    platformCircumvented: Boolean = randomBoolean(),
+): Moderation = Moderation(
+    action = action,
+    originalText = originalText,
+    textHarms = textHarms,
+    imageHarms = imageHarms,
+    blocklistMatched = blocklistMatched,
+    semanticFilterMatched = semanticFilterMatched,
+    platformCircumvented = platformCircumvented,
 )
