@@ -66,7 +66,7 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
-- Fix crash happening after process death when accessing `GLobalState` from the UI components. [#5702](https://github.com/GetStream/stream-chat-android/pull/5702)
+- Fix crash happening after process death when accessing `GlobalState` from the UI components. [#5702](https://github.com/GetStream/stream-chat-android/pull/5702)
 
 ### ⬆️ Improved
 - Enable pagination in `MentionListView`. [#5692](https://github.com/GetStream/stream-chat-android/pull/5692)
@@ -76,6 +76,7 @@
 
 ### ⚠️ Changed
 - 🚨Breaking change: Move `MentionListViewModel` logic and its state to a shared component so they can be reused in Compose. [#5692](https://github.com/GetStream/stream-chat-android/pull/5692)
+- 🚨Breaking change: `ChannelListViewModel` now accepts a `Flow<GlobalState>` instead of `GlobalState` for the `globalState` constructor parameter.  [#5702](https://github.com/GetStream/stream-chat-android/pull/5702)
 
 ### ❌ Removed
 
