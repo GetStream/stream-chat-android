@@ -97,7 +97,7 @@ internal class DraftMessageListenerDatabaseTest {
     }
 
     @Test
-    fun `onDeleteDraftMessagesResult should not remove message from state on error`() = runTest {
+    fun `onDeleteDraftMessagesResult with a non permanent error should remove message from state`() = runTest {
         val draftMessage = randomDraftMessage()
         listener.onDeleteDraftMessagesResult(
             result = Result.Failure(Error.NetworkError(randomString(), randomInt(), cause = UnknownHostException())),
@@ -110,7 +110,7 @@ internal class DraftMessageListenerDatabaseTest {
     }
 
     @Test
-    fun `onDeleteDraftMessagesResult with a non permanent error should remove message from state`() = runTest {
+    fun `onDeleteDraftMessagesResult should not remove message from state on error`() = runTest {
         listener.onDeleteDraftMessagesResult(
             result = Result.Failure(Error.NetworkError(message = randomString(), 404)),
             channelType = randomString(),
