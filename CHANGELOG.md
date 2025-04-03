@@ -45,6 +45,7 @@
 
 ### ✅ Added
 - Add `GlobalState.channelDraftMessages` and `GlobalState.threadDraftMessages` properties providing access to the draft messages. [#5682](https://github.com/GetStream/stream-chat-android/pull/5682) 
+- Add `ChatClient.globalStateFlow` flow holding the `GlobalState` object, which emits values only if the user is connected. [#5702](https://github.com/GetStream/stream-chat-android/pull/5702)
 
 ### ⚠️ Changed
 
@@ -65,6 +66,7 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
+- Fix crash happening after process death when accessing `GlobalState` from the UI components. [#5702](https://github.com/GetStream/stream-chat-android/pull/5702)
 
 ### ⬆️ Improved
 - Enable pagination in `MentionListView`. [#5692](https://github.com/GetStream/stream-chat-android/pull/5692)
@@ -74,6 +76,7 @@
 
 ### ⚠️ Changed
 - 🚨Breaking change: Move `MentionListViewModel` logic and its state to a shared component so they can be reused in Compose. [#5692](https://github.com/GetStream/stream-chat-android/pull/5692)
+- 🚨Breaking change: `ChannelListViewModel` now accepts a `Flow<GlobalState>` instead of `GlobalState` for the `globalState` constructor parameter.  [#5702](https://github.com/GetStream/stream-chat-android/pull/5702)
 
 ### ❌ Removed
 
@@ -82,6 +85,7 @@
 - Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
 - Not show deleted poll messages. [#5689](https://github.com/GetStream/stream-chat-android/pull/5689)
 - Fix "Thread reply" item shown in the message options menu for messages in a Thread. [#5683](https://github.com/GetStream/stream-chat-android/pull/5683)
+- Fix crash happening after process death when accessing `GlobalState` from the UI components. [#5702](https://github.com/GetStream/stream-chat-android/pull/5702)
 
 ### ⬆️ Improved
 
