@@ -728,12 +728,12 @@ internal class EventHandlerSequential(
                     repos.insertCurrentUser(event.user)
                 }
                 is PollClosedEvent -> batch.addPoll(event.processPoll(batch::getPoll))
-                is PollDeletedEvent -> batch.addPoll(event.poll)
                 is PollUpdatedEvent -> batch.addPoll(event.processPoll(batch::getPoll))
                 is VoteCastedEvent -> batch.addPoll(event.processPoll(currentUserId, batch::getPoll))
                 is VoteChangedEvent -> batch.addPoll(event.processPoll(currentUserId, batch::getPoll))
                 is VoteRemovedEvent -> batch.addPoll(event.processPoll(batch::getPoll))
                 is AnswerCastedEvent -> batch.addPoll(event.processPoll(batch::getPoll))
+                is PollDeletedEvent -> batch.deletePoll(event.poll)
                 else -> Unit
             }
         }
@@ -775,6 +775,9 @@ internal class EventHandlerSequential(
                 }
                 is NotificationRemovedFromChannelEvent -> {
                     repos.evictChannel(event.cid)
+                }
+                is PollDeletedEvent -> {
+                    repos.deletePoll(event.poll.id)
                 }
                 else -> Unit // Ignore other events
             }

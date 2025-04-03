@@ -1435,6 +1435,10 @@ constructor(
         ).mapDomain { it.poll.toDomain() }
     }
 
+    override fun deletePoll(pollId: String): Call<Unit> {
+        return pollsApi.deletePoll(pollId).toUnitCall()
+    }
+
     override fun warmUp() {
         generalApi.warmUp().enqueue()
     }

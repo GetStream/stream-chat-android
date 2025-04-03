@@ -787,6 +787,25 @@ internal class ChannelStateLogic(
         }
     }
 
+    /**
+     * Deletes the given Poll from the state.
+     *
+     * @param poll The Poll to be deleted.
+     */
+    fun deletePoll(poll: Poll) {
+        // remove poll
+        polls.remove(poll.id)
+        // remove poll from each message linked to the poll
+        messageIdsWithPoll[poll.id]?.forEach { messageId ->
+            val message = mutableState.getMessageById(messageId)
+            if (message != null) {
+                mutableState.upsertMessage(message.copy(poll = null))
+            }
+        }
+        // remove the pollId and messageId from the poll map
+        messageIdsWithPoll.remove(poll.id)
+    }
+
     fun getPoll(pollId: String): Poll? = polls[pollId]
 
     private companion object {

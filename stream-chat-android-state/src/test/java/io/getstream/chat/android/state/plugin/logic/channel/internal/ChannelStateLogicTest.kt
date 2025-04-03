@@ -39,6 +39,7 @@ import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMembers
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomPoll
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.message.attachments.internal.AttachmentUrlValidator
@@ -48,6 +49,7 @@ import io.getstream.chat.android.state.plugin.state.global.internal.MutableGloba
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should not be equal to`
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -351,5 +353,32 @@ internal class ChannelStateLogicTest {
 
         /* Then */
         verify(mutableState).upsertMembers(eq(expectedMembers))
+    }
+
+    @Test
+    fun `Given existing poll, When calling upsertPoll for the same poll, Then the poll is updated`() {
+        // given
+        val originalPoll = randomPoll()
+        val message = randomMessage(poll = originalPoll)
+        whenever(mutableState.getMessageById(message.id)) doReturn message
+        channelStateLogic.upsertMessages(listOf(message), true)
+        // when
+        val updatedPoll = randomPoll(id = originalPoll.id)
+        channelStateLogic.upsertPoll(updatedPoll)
+        // then
+        channelStateLogic.getPoll(originalPoll.id) `should be equal to` updatedPoll
+    }
+
+    @Test
+    fun `Given existing poll, When calling deletePoll, Then the poll is removed`() {
+        // given
+        val poll = randomPoll()
+        val message = randomMessage(poll = poll)
+        whenever(mutableState.getMessageById(message.id)) doReturn message
+        channelStateLogic.upsertMessages(listOf(message), true)
+        // when
+        channelStateLogic.deletePoll(poll)
+        // then
+        channelStateLogic.getPoll(poll.id) `should be equal to` null
     }
 }

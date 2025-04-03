@@ -161,6 +161,13 @@ public interface MessageRepository {
     public suspend fun evictMessage(messageId: String)
 
     /**
+     * Deletes a Poll by its ID.
+     *
+     * @param pollId The ID of the Poll to delete.
+     */
+    public suspend fun deletePoll(pollId: String)
+
+    /**
      * Clear messages of this repository.
      */
     public suspend fun clear()

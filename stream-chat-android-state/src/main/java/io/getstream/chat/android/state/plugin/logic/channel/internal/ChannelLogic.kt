@@ -626,8 +626,8 @@ internal class ChannelLogic(
                         )
                     }
                     is PollClosedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
-                    is PollDeletedEvent -> channelStateLogic.upsertPoll(event.poll)
                     is PollUpdatedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
+                    is PollDeletedEvent -> channelStateLogic.deletePoll(event.poll)
                     is VoteCastedEvent ->
                         channelStateLogic.upsertPoll(event.processPoll(currentUserId, channelStateLogic::getPoll))
                     is VoteChangedEvent ->

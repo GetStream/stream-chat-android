@@ -125,6 +125,15 @@ internal class EventBatchUpdate private constructor(
             .forEach { addMessage(it.copy(poll = poll)) }
     }
 
+    /**
+     * Removes the [Poll] from the [Message]s in the cache.
+     */
+    fun deletePoll(poll: Poll) {
+        messageMap.values
+            .filter { it.poll?.id == poll.id }
+            .forEach { addMessage(it.copy(poll = null)) }
+    }
+
     suspend fun execute() {
         // actually insert the data
         currentUserId?.let { userMap -= it }

@@ -542,6 +542,9 @@ internal interface ChatApi {
     @CheckResult
     fun closePoll(pollId: String): Call<Poll>
 
+    @CheckResult
+    fun deletePoll(pollId: String): Call<Unit>
+
     fun warmUp()
 
     fun releaseConnection()

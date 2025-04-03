@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api2.model.requests.PollRequest
 import io.getstream.chat.android.client.api2.model.requests.PollUpdateRequest
 import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
 import io.getstream.chat.android.client.api2.model.requests.SuggestPollOptionRequest
+import io.getstream.chat.android.client.api2.model.response.CompletableResponse
 import io.getstream.chat.android.client.api2.model.response.PollResponse
 import io.getstream.chat.android.client.api2.model.response.PollVoteResponse
 import io.getstream.chat.android.client.api2.model.response.SuggestPollOptionResponse
@@ -103,4 +104,12 @@ internal interface PollsApi {
         @Path("poll_id") pollId: String,
         @Body pollUpdateRequest: PollUpdateRequest,
     ): RetrofitCall<PollResponse>
+
+    /**
+     * Deletes a poll.
+     *
+     * @param pollId The ID of the poll to delete.
+     */
+    @DELETE("/polls/{poll_id}")
+    fun deletePoll(@Path("poll_id") pollId: String): RetrofitCall<CompletableResponse>
 }
