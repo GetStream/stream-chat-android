@@ -14,6 +14,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Ensure `HeadersInterceptor` doesn't use any special character that can come from the customer integration. [#5708](https://github.com/GetStream/stream-chat-android/pull/5708)
 
 ### ⬆️ Improved
 

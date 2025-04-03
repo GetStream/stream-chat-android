@@ -210,4 +210,26 @@ internal class HeadersUtilTest {
 
         assertTrue(result.contains("UnknownApp"))
     }
+
+    @Test
+    fun `given a valid appName with special characters, buildUserAgent should sanitize special characters from app name`() {
+        val appNameWithSpecialChars = "MyβAppName"
+        val sanitizedAppName = "MyAppName"
+
+        val headersUtil = HeadersUtil(context, appName = appNameWithSpecialChars, appVersion = "1.0.0")
+        val userAgent = headersUtil.buildUserAgent()
+
+        assertTrue(userAgent.contains(sanitizedAppName))
+    }
+
+    @Test
+    fun `given a valid appName with special characters, buildSdkTrackingHeaders should sanitize special characters from app name`() {
+        val appNameWithSpecialChars = "MyβAppName"
+        val sanitizedAppName = "MyAppName"
+
+        val headersUtil = HeadersUtil(context, appName = appNameWithSpecialChars, appVersion = "1.0.0")
+        val trackingHeaders = headersUtil.buildSdkTrackingHeaders()
+
+        assertTrue(trackingHeaders.contains("|app=$sanitizedAppName"))
+    }
 }
