@@ -88,6 +88,7 @@
 - Fix crash happening after process death when accessing `GlobalState` from the UI components. [#5702](https://github.com/GetStream/stream-chat-android/pull/5702)
 
 ### ⬆️ Improved
+- Remove dependency on `com.google.accompanist.pager` and `com.google.accompanist.systemuicontroller`. [#5709](https://github.com/GetStream/stream-chat-android/pull/5709)
 
 ### ✅ Added
 - Add `MessagesViewModelFactory.isComposerDraftMessageEnabled` property to enable/disable Draft Messages within `MessageComposer`. [#5687](https://github.com/GetStream/stream-chat-android/pull/5687)
