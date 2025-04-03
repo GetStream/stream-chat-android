@@ -66,6 +66,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -98,6 +99,11 @@ public val ChatClient.globalState: GlobalState
  */
 public val ChatClient.globalStateFlow: Flow<GlobalState>
     get() = clientState.initializationState
+        .onEach {
+            if (it == InitializationState.NOT_INITIALIZED) {
+                StreamLog.w(TAG) { "ChatClient::connectUser() must be called to ensure the globalState is initialized" }
+            }
+        }
         .filter { it == InitializationState.COMPLETE }
         .map { globalState }
 
