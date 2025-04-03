@@ -30,7 +30,7 @@ internal data class DraftMessageEntity(
     val parentId: String? = null,
     val mentionedUsersIds: List<String> = listOf(),
     val silent: Boolean,
-    val showinChannel: Boolean,
+    val showInChannel: Boolean,
     val replyMessageId: String? = null,
     val extraData: Map<String, Any> = mapOf(),
 )
