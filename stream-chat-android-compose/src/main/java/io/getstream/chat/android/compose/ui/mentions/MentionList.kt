@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.pulltorefresh.PullToRefreshState
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -30,8 +31,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.LazyPagingColumn
-import io.getstream.chat.android.compose.ui.components.PullToRefreshContentBox
+import io.getstream.chat.android.compose.ui.components.PullToRefreshBox
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.mentions.MentionListViewModel
 import io.getstream.chat.android.compose.viewmodel.mentions.MentionListViewModelFactory
@@ -56,10 +58,12 @@ import kotlinx.coroutines.flow.collectLatest
  * @param currentUser The current user to use for the mentions.
  * @param onItemClick The callback to be called when an item is clicked.
  * @param onEvent The callback to be called when an [MentionListEvent] is received from the [viewModel].
+ * @param pullToRefreshEnabled If true, the pull-to-refresh functionality is enabled. Defaults to true.
  * @param itemContent The content displayed by a single item.
- * @param loadingIndicator The content displayed by the loading indicator.
+ * @param loadingIndicator The content displayed during the initial loading.
  * @param emptyContent The content displayed when the list is empty.
  * @param loadingItemContent The content displayed when loading more items.
+ * @param pullToRefreshIndicator The custom indicator to be displayed during the pull-to-refresh action.
  */
 @Composable
 public fun MentionList(
@@ -68,6 +72,7 @@ public fun MentionList(
     currentUser: User? = ChatClient.instance().getCurrentUser(),
     onItemClick: ((message: Message) -> Unit)? = null,
     onEvent: (event: Any) -> Unit = {},
+    pullToRefreshEnabled: Boolean = true,
     itemContent: @Composable LazyItemScope.(MessageResult) -> Unit = { mention ->
         with(ChatTheme.componentFactory) {
             MentionListItem(
@@ -78,16 +83,13 @@ public fun MentionList(
             )
         }
     },
-    loadingIndicator: @Composable BoxScope.(pullToRefreshState: PullToRefreshState, isRefreshing: Boolean) -> Unit =
-        { pullToRefreshState, isRefreshing ->
-            with(ChatTheme.componentFactory) {
-                MentionListLoadingIndicator(
-                    modifier = Modifier,
-                    pullToRefreshState = pullToRefreshState,
-                    isRefreshing = isRefreshing,
-                )
-            }
-        },
+    loadingIndicator: @Composable BoxScope.() -> Unit = {
+        with(ChatTheme.componentFactory) {
+            MentionListLoadingIndicator(
+                modifier = Modifier,
+            )
+        }
+    },
     emptyContent: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             MentionListEmptyContent(
@@ -100,6 +102,20 @@ public fun MentionList(
             MentionListLoadingItem(
                 modifier = Modifier,
             )
+        }
+    },
+    pullToRefreshIndicator: @Composable BoxScope.(
+        pullToRefreshState: PullToRefreshState,
+        isRefreshing: Boolean,
+    ) -> Unit = { pullToRefreshState, isRefreshing ->
+        if (pullToRefreshEnabled) {
+            with(ChatTheme.componentFactory) {
+                MentionListPullToRefreshIndicator(
+                    modifier = Modifier,
+                    pullToRefreshState = pullToRefreshState,
+                    isRefreshing = isRefreshing,
+                )
+            }
         }
     },
 ) {
@@ -113,11 +129,13 @@ public fun MentionList(
         currentUser = currentUser,
         onItemClick = onItemClick,
         onLoadMore = viewModel::loadMore,
+        pullToRefreshEnabled = pullToRefreshEnabled,
         onRefresh = viewModel::refresh,
         itemContent = itemContent,
         loadingIndicator = loadingIndicator,
         emptyContent = emptyContent,
         loadingItemContent = loadingItemContent,
+        pullToRefreshIndicator = pullToRefreshIndicator,
     )
 }
 
@@ -131,11 +149,13 @@ public fun MentionList(
  * @param currentUser The current user to use for the mentions.
  * @param onItemClick The callback to be called when an item is clicked.
  * @param onLoadMore The callback to be called when more items should be loaded.
- * @param onRefresh The callback to be called when the entire list should be refreshed.
+ * @param pullToRefreshEnabled If true, the pull-to-refresh functionality is enabled. Defaults to true.
+ * @param onRefresh The callback to be invoked when the user performs a pull-to-refresh action.
  * @param itemContent The content displayed by a single item.
- * @param loadingIndicator The content displayed by the loading indicator.
+ * @param loadingIndicator The content displayed during the initial loading.
  * @param emptyContent The content displayed when the list is empty.
  * @param loadingItemContent The content displayed when loading more items.
+ * @param pullToRefreshIndicator The custom indicator to be displayed during the pull-to-refresh action.
  */
 @Composable
 public fun MentionList(
@@ -144,6 +164,7 @@ public fun MentionList(
     currentUser: User? = ChatClient.instance().getCurrentUser(),
     onItemClick: ((message: Message) -> Unit)? = null,
     onLoadMore: () -> Unit = {},
+    pullToRefreshEnabled: Boolean = true,
     onRefresh: () -> Unit = {},
     itemContent: @Composable LazyItemScope.(MessageResult) -> Unit = { mention ->
         with(ChatTheme.componentFactory) {
@@ -155,16 +176,13 @@ public fun MentionList(
             )
         }
     },
-    loadingIndicator: @Composable BoxScope.(pullToRefreshState: PullToRefreshState, isRefreshing: Boolean) -> Unit =
-        { pullToRefreshState, isRefreshing ->
-            with(ChatTheme.componentFactory) {
-                MentionListLoadingIndicator(
-                    modifier = Modifier,
-                    pullToRefreshState = pullToRefreshState,
-                    isRefreshing = isRefreshing,
-                )
-            }
-        },
+    loadingIndicator: @Composable BoxScope.() -> Unit = {
+        with(ChatTheme.componentFactory) {
+            MentionListLoadingIndicator(
+                modifier = Modifier,
+            )
+        }
+    },
     emptyContent: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             MentionListEmptyContent(
@@ -179,24 +197,47 @@ public fun MentionList(
             )
         }
     },
+    pullToRefreshIndicator: @Composable BoxScope.(
+        pullToRefreshState: PullToRefreshState,
+        isRefreshing: Boolean,
+    ) -> Unit = { pullToRefreshState, isRefreshing ->
+        if (pullToRefreshEnabled) {
+            with(ChatTheme.componentFactory) {
+                MentionListPullToRefreshIndicator(
+                    modifier = Modifier,
+                    pullToRefreshState = pullToRefreshState,
+                    isRefreshing = isRefreshing,
+                )
+            }
+        }
+    },
 ) {
-    PullToRefreshContentBox(
-        modifier = modifier,
+    ContentBox(
         isLoading = state.isLoading,
-        isEmpty = !state.isLoading && state.results.isEmpty(),
-        onRefresh = onRefresh,
+        isEmpty = !state.isRefreshing && state.results.isEmpty(),
+        modifier = modifier,
         loadingIndicator = loadingIndicator,
         emptyContent = emptyContent,
     ) {
-        LazyPagingColumn(
-            items = state.results,
+        val pullToRefreshState = rememberPullToRefreshState()
+        PullToRefreshBox(
+            isRefreshing = state.isRefreshing,
+            onRefresh = onRefresh,
             modifier = modifier,
-            itemKey = { item -> item.message.identifierHash() },
-            showLoadingItem = state.isLoadingMore,
-            onLoadMore = onLoadMore,
-            itemContent = itemContent,
-            loadingItem = loadingItemContent,
-        )
+            state = pullToRefreshState,
+            enabled = pullToRefreshEnabled,
+            indicator = { pullToRefreshIndicator(pullToRefreshState, state.isRefreshing) },
+        ) {
+            LazyPagingColumn(
+                items = state.results,
+                modifier = modifier,
+                itemKey = { item -> item.message.identifierHash() },
+                showLoadingItem = state.isLoadingMore,
+                onLoadMore = onLoadMore,
+                itemContent = itemContent,
+                loadingItem = loadingItemContent,
+            )
+        }
     }
 }
 
@@ -204,13 +245,7 @@ public fun MentionList(
 internal fun MentionListLoading(darkMode: Boolean) {
     ChatTheme(isInDarkMode = darkMode) {
         MentionList(
-            state = MentionListState(
-                isLoading = true,
-                results = emptyList(),
-                nextPage = null,
-                canLoadMore = true,
-                isLoadingMore = false,
-            ),
+            state = MentionListState(),
             modifier = Modifier.fillMaxSize(),
             currentUser = PreviewUserData.user1,
         )
@@ -227,13 +262,7 @@ private fun MentionListLoadingLightPreview() {
 internal fun MentionListEmpty(darkMode: Boolean) {
     ChatTheme(isInDarkMode = darkMode) {
         MentionList(
-            state = MentionListState(
-                isLoading = false,
-                results = emptyList(),
-                nextPage = null,
-                canLoadMore = true,
-                isLoadingMore = false,
-            ),
+            state = MentionListState(isLoading = false),
             modifier = Modifier.fillMaxSize(),
             currentUser = PreviewUserData.user1,
         )
@@ -266,9 +295,6 @@ internal fun MentionListLoaded(darkMode: Boolean) {
                         channel = PreviewChannelData.channelWithManyMembers,
                     ),
                 ),
-                nextPage = null,
-                canLoadMore = true,
-                isLoadingMore = false,
             ),
             modifier = Modifier.fillMaxSize(),
             currentUser = PreviewUserData.user1,
@@ -302,8 +328,6 @@ internal fun MentionListLoadingMore(darkMode: Boolean) {
                         channel = PreviewChannelData.channelWithManyMembers,
                     ),
                 ),
-                nextPage = null,
-                canLoadMore = true,
                 isLoadingMore = true,
             ),
             modifier = Modifier.fillMaxSize(),

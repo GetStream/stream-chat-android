@@ -81,6 +81,7 @@ import io.getstream.chat.android.compose.ui.components.DefaultSearchLabel
 import io.getstream.chat.android.compose.ui.components.DefaultSearchLeadingIcon
 import io.getstream.chat.android.compose.ui.components.EmptyContent
 import io.getstream.chat.android.compose.ui.components.LoadingFooter
+import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptions
@@ -2616,43 +2617,6 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default loading indicator that is displayed during the initial loading of the mention list.
-     *
-     * @param modifier Modifier for styling.
-     * @param pullToRefreshState The state of the pull-to-refresh.
-     * @param isRefreshing Whether the mention list is currently refreshing.
-     */
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    public fun BoxScope.MentionListLoadingIndicator(
-        modifier: Modifier,
-        pullToRefreshState: PullToRefreshState,
-        isRefreshing: Boolean,
-    ) {
-        PullToRefreshDefaults.Indicator(
-            state = pullToRefreshState,
-            isRefreshing = isRefreshing,
-            modifier = modifier.align(Alignment.TopCenter),
-            containerColor = ChatTheme.colors.barsBackground,
-            color = ChatTheme.colors.primaryAccent,
-        )
-    }
-
-    /**
-     * The default empty placeholder that is displayed when the mention list is empty.
-     *
-     * @param modifier Modifier for styling.
-     */
-    @Composable
-    public fun BoxScope.MentionListEmptyContent(modifier: Modifier) {
-        EmptyContent(
-            text = stringResource(UiCommonR.string.stream_ui_mention_list_empty),
-            painter = painterResource(UiCommonR.drawable.stream_compose_ic_mentions),
-            modifier = modifier,
-        )
-    }
-
-    /**
      * The default content of a mention list item.
      */
     @Composable
@@ -2676,12 +2640,63 @@ public interface ChatComponentFactory {
     }
 
     /**
+     * The default loading indicator that is displayed during the initial loading of the mention list.
+     *
+     * @param modifier Modifier for styling.
+     */
+    @Composable
+    public fun BoxScope.MentionListLoadingIndicator(
+        modifier: Modifier,
+    ) {
+        LoadingIndicator(
+            modifier = modifier,
+        )
+    }
+
+    /**
+     * The default empty placeholder that is displayed when the mention list is empty.
+     *
+     * @param modifier Modifier for styling.
+     */
+    @Composable
+    public fun BoxScope.MentionListEmptyContent(modifier: Modifier) {
+        EmptyContent(
+            text = stringResource(UiCommonR.string.stream_ui_mention_list_empty),
+            painter = painterResource(UiCommonR.drawable.stream_compose_ic_mentions),
+            modifier = modifier,
+        )
+    }
+
+    /**
      * The default loading indicator that is displayed on the bottom of the list when there are more mentions loading.
      */
     @Composable
     public fun LazyItemScope.MentionListLoadingItem(modifier: Modifier) {
         LoadingFooter(
             modifier = modifier.fillMaxWidth(),
+        )
+    }
+
+    /**
+     * The default pull-to-refresh indicator for the mention list.
+     *
+     * @param modifier Modifier for styling.
+     * @param pullToRefreshState The state of the pull-to-refresh.
+     * @param isRefreshing Whether the mention list is currently refreshing.
+     */
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    public fun BoxScope.MentionListPullToRefreshIndicator(
+        modifier: Modifier,
+        pullToRefreshState: PullToRefreshState,
+        isRefreshing: Boolean,
+    ) {
+        PullToRefreshDefaults.Indicator(
+            state = pullToRefreshState,
+            isRefreshing = isRefreshing,
+            modifier = modifier.align(Alignment.TopCenter),
+            containerColor = ChatTheme.colors.barsBackground,
+            color = ChatTheme.colors.primaryAccent,
         )
     }
 }

@@ -88,6 +88,7 @@ public class MentionListController(
     /**
      * Loads more mentions if there are more to load.
      */
+    @Suppress("ReturnCount")
     public fun loadMore() {
         val currentState = state.value
 
@@ -101,14 +102,25 @@ public class MentionListController(
             return
         }
 
+        if (currentState.isRefreshing) {
+            logger.d { "[loadMore] already refreshing mentions" }
+            return
+        }
+
         logger.d { "[loadMore] no args" }
         _state.value = currentState.copy(isLoadingMore = true)
         loadRequests.tryEmit(Unit)
     }
 
+    /**
+     * Request to refresh the mention list.
+     */
     public fun refresh() {
         logger.d { "[refresh] no args" }
-        _state.value = InitialState
+        _state.value = MentionListState(
+            isLoading = false,
+            isRefreshing = true,
+        )
         loadRequests.tryEmit(Unit)
     }
 
@@ -135,9 +147,10 @@ public class MentionListController(
         logger.d { "[onSuccessResult] messages: ${messages.size}, next: $next" }
         val channels = chatClient.repositoryFacade.selectChannels(messages.map(Message::cid))
         _state.update { currentState ->
+            val currentResults = if (currentState.isRefreshing) emptyList() else currentState.results
             currentState.copy(
                 isLoading = false,
-                results = currentState.results + messages.map { message ->
+                results = currentResults + messages.map { message ->
                     MessageResult(
                         message = message,
                         channel = channels.firstOrNull { channel -> channel.cid == message.cid },
@@ -146,6 +159,7 @@ public class MentionListController(
                 nextPage = next,
                 canLoadMore = next != null,
                 isLoadingMore = false,
+                isRefreshing = false,
             )
         }
     }
@@ -156,6 +170,7 @@ public class MentionListController(
             currentState.copy(
                 isLoading = false,
                 isLoadingMore = false,
+                isRefreshing = false,
             )
         }
         _events.tryEmit(MentionListEvent.Error(message = error.message))
