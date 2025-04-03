@@ -14,26 +14,33 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.state.plugin.listener.internal
+package io.getstream.chat.android.offline.plugin.listener.internal
 
+import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.randomDraftMessage
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomString
-import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import java.net.UnknownHostException
 
-internal class DraftMessageListenerStateTest {
+internal class DraftMessageListenerDatabaseTest {
 
-    private val mutableGlobalState: MutableGlobalState = mock()
-    private val listener = DraftMessageListenerState(mutableGlobalState)
+    private val messageRepository: MessageRepository = mock()
+    private val listener = DraftMessageListenerDatabase(messageRepository)
+
+    @BeforeEach
+    fun setup() {
+        Mockito.reset(messageRepository)
+    }
 
     @Test
     fun `onCreateDraftMessageResult should update state on success`() = runTest {
@@ -46,7 +53,7 @@ internal class DraftMessageListenerStateTest {
             message = draftMessage,
         )
 
-        verify(mutableGlobalState).updateDraftMessage(draftMessage)
+        verify(messageRepository).insertDraftMessage(draftMessage)
     }
 
     @Test
@@ -60,7 +67,7 @@ internal class DraftMessageListenerStateTest {
             message = draftMessage,
         )
 
-        verify(mutableGlobalState).updateDraftMessage(draftMessage)
+        verify(messageRepository).insertDraftMessage(draftMessage)
     }
 
     @Test
@@ -72,7 +79,7 @@ internal class DraftMessageListenerStateTest {
             message = randomDraftMessage(),
         )
 
-        verify(mutableGlobalState, never()).updateDraftMessage(any())
+        verify(messageRepository, never()).insertDraftMessage(any())
     }
 
     @Test
@@ -86,7 +93,7 @@ internal class DraftMessageListenerStateTest {
             message = draftMessage,
         )
 
-        verify(mutableGlobalState).removeDraftMessage(draftMessage)
+        verify(messageRepository).deleteDraftMessage(draftMessage)
     }
 
     @Test
@@ -99,7 +106,7 @@ internal class DraftMessageListenerStateTest {
             message = draftMessage,
         )
 
-        verify(mutableGlobalState).removeDraftMessage(draftMessage)
+        verify(messageRepository).deleteDraftMessage(draftMessage)
     }
 
     @Test
@@ -111,7 +118,7 @@ internal class DraftMessageListenerStateTest {
             message = randomDraftMessage(),
         )
 
-        verify(mutableGlobalState, never()).removeDraftMessage(any())
+        verify(messageRepository, never()).deleteDraftMessage(any())
     }
 
     @Test
@@ -125,7 +132,7 @@ internal class DraftMessageListenerStateTest {
         )
 
         draftMessages.forEach { message ->
-            verify(mutableGlobalState).updateDraftMessage(message)
+            verify(messageRepository).insertDraftMessage(message)
         }
     }
 
@@ -137,6 +144,6 @@ internal class DraftMessageListenerStateTest {
             randomInt(),
         )
 
-        verify(mutableGlobalState, never()).updateDraftMessage(any())
+        verify(messageRepository, never()).insertDraftMessage(any())
     }
 }
