@@ -16,10 +16,12 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
+import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.plugin.listeners.DraftMessageListener
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.result.Result
+import io.getstream.result.onErrorSuspend
 import io.getstream.result.onSuccessSuspend
 
 internal class DraftMessageListenerDatabase(
@@ -40,9 +42,13 @@ internal class DraftMessageListenerDatabase(
         channelId: String,
         message: DraftMessage,
     ) {
-        result.onSuccessSuspend { draftMessage ->
-            messageRepository.insertDraftMessage(draftMessage)
-        }
+        result
+            .onSuccessSuspend { draftMessage -> messageRepository.insertDraftMessage(draftMessage) }
+            .onErrorSuspend { error ->
+                message.takeUnless { error.isPermanent() }?.let { draftMessage ->
+                    messageRepository.insertDraftMessage(draftMessage)
+                }
+            }
     }
 
     /**
@@ -59,7 +65,13 @@ internal class DraftMessageListenerDatabase(
         channelId: String,
         message: DraftMessage,
     ) {
-        messageRepository.deleteDraftMessage(message)
+        result
+            .onSuccessSuspend { messageRepository.deleteDraftMessage(message) }
+            .onErrorSuspend { error ->
+                message.takeUnless { error.isPermanent() }?.let { draftMessage ->
+                    messageRepository.deleteDraftMessage(draftMessage)
+                }
+            }
     }
 
     /**
@@ -79,35 +91,5 @@ internal class DraftMessageListenerDatabase(
                 messageRepository.insertDraftMessage(draftMessage)
             }
         }
-    }
-
-    /**
-     * Method called when a request to create a draft message in the API happens
-     *
-     * @param channelType The type of the channel
-     * @param channelId The id of the channel
-     * @param message The draft message to be created
-     */
-    override suspend fun onCreateDraftMessageRequest(
-        channelType: String,
-        channelId: String,
-        message: DraftMessage,
-    ) {
-        messageRepository.insertDraftMessage(message)
-    }
-
-    /**
-     * Method called when a request to delete draft messages in the API happens
-     *
-     * @param channelType The type of the channel
-     * @param channelId The id of the channel
-     * @param message The draft message to be deleted
-     */
-    override suspend fun onDeleteDraftMessagesRequest(
-        channelType: String,
-        channelId: String,
-        message: DraftMessage,
-    ) {
-        messageRepository.deleteDraftMessage(message)
     }
 }
