@@ -20,7 +20,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = DraftMessageEntity.DRAFT_MESSAGE_ENTITY_TABLE_NAME,
+    tableName = DRAFT_MESSAGE_ENTITY_TABLE_NAME,
 )
 internal data class DraftMessageEntity(
     @PrimaryKey
@@ -33,8 +33,6 @@ internal data class DraftMessageEntity(
     val showinChannel: Boolean,
     val replyMessageId: String? = null,
     val extraData: Map<String, Any> = mapOf(),
-) {
-    companion object {
-        internal const val DRAFT_MESSAGE_ENTITY_TABLE_NAME = "draft_message_entity"
-    }
-}
+)
+
+internal const val DRAFT_MESSAGE_ENTITY_TABLE_NAME = "stream_chat_draft_message_entity"

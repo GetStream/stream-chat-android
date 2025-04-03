@@ -85,10 +85,10 @@ internal interface MessageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDraftMessages(draftMessage: DraftMessageEntity)
 
-    @Query("SELECT * FROM ${DraftMessageEntity.DRAFT_MESSAGE_ENTITY_TABLE_NAME}")
+    @Query("SELECT * FROM $DRAFT_MESSAGE_ENTITY_TABLE_NAME")
     suspend fun selectDraftMessages(): List<DraftMessageEntity>
 
-    @Query("DELETE FROM ${DraftMessageEntity.DRAFT_MESSAGE_ENTITY_TABLE_NAME} WHERE id = :messageId")
+    @Query("DELETE FROM $DRAFT_MESSAGE_ENTITY_TABLE_NAME WHERE id = :messageId")
     suspend fun deleteDraftMessage(messageId: String)
 
     @Query(
