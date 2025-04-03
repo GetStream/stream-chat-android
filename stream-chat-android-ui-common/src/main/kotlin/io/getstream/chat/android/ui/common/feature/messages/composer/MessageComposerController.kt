@@ -25,10 +25,13 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.state.extensions.globalStateFlow
+import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggester
 import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggestionOptions
@@ -66,6 +69,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -94,9 +98,8 @@ import java.util.regex.Pattern
  * @param mediaRecorder The media recorder used to record audio messages.
  * @param userLookupHandler The handler used to lookup users for mentions.
  * @param fileToUri The function used to convert a file to a URI.
- * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
- * @param isLinkPreviewEnabled If the link preview is enabled in the channel.
- *
+ * @param config The configuration for the message composer.
+ * @param globalState A flow emitting the current [GlobalState].
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @InternalStreamChatApi
@@ -108,14 +111,18 @@ public class MessageComposerController(
     mediaRecorder: StreamMediaRecorder,
     private val userLookupHandler: UserLookupHandler,
     fileToUri: (File) -> String,
-    maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
-    private val isLinkPreviewEnabled: Boolean = false,
+    private val config: MessageComposerController.Config = MessageComposerController.Config(),
+    private val globalState: Flow<GlobalState> = chatClient.globalStateFlow,
 ) {
 
+    private val channelType = channelCid.cidToTypeAndId().first
+    private val channelId = channelCid.cidToTypeAndId().second
     private val messageValidator = MessageValidator(
         appSettings = chatClient.getAppSettings(),
-        maxAttachmentCount = maxAttachmentCount,
+        maxAttachmentCount = config.maxAttachmentCount,
     )
+
+    private var currentDraftId: String? = null
 
     /**
      * The logger used to print to errors, warnings, information
@@ -220,6 +227,16 @@ public class MessageComposerController(
             started = SharingStarted.Eagerly,
             initialValue = false,
         )
+
+    /** The flow of channel draft messages from the GlobalState. */
+    private val channelDraftMessages = globalState
+        .flatMapLatest { it.channelDraftMessages }
+        .stateIn(scope, SharingStarted.Eagerly, emptyMap())
+
+    /** The flow of thread draft messages from the GlobalState. */
+    private val threadDraftMessages = globalState
+        .flatMapLatest { it.threadDraftMessages }
+        .stateIn(scope, SharingStarted.Eagerly, emptyMap())
 
     /**
      * Full message composer state holding all the required information.
@@ -386,7 +403,9 @@ public class MessageComposerController(
      * Sets up the observing operations for various composer states.
      */
     @OptIn(FlowPreview::class)
+    @Suppress("LongMethod")
     private fun setupComposerState() {
+        fetchDraftMessage(messageMode.value)
         messageInput.onEach { value ->
             input.value = value.text
             state.value = state.value.copy(inputValue = value.text)
@@ -429,9 +448,19 @@ public class MessageComposerController(
             state.value = state.value.copy(coolDownTime = cooldownTimer)
         }.launchIn(scope)
 
-        messageMode.onEach { messageMode ->
-            state.value = state.value.copy(messageMode = messageMode)
-        }.launchIn(scope)
+        messageMode
+            .distinctUntilChanged { old, new ->
+                when (old) {
+                    is MessageMode.Normal -> new is MessageMode.Normal
+                    is MessageMode.MessageThread ->
+                        old.parentMessage.id == (new as? MessageMode.MessageThread)?.parentMessage?.id
+                }
+            }
+            .onEach { messageMode ->
+                saveDraftMessage(state.value.messageMode)
+                state.value = state.value.copy(messageMode = messageMode)
+                fetchDraftMessage(messageMode)
+            }.launchIn(scope)
 
         alsoSendToChannel.onEach { alsoSendToChannel ->
             state.value = state.value.copy(alsoSendToChannel = alsoSendToChannel)
@@ -452,6 +481,26 @@ public class MessageComposerController(
                 selectedAttachments.value = selectedAttachments.value + recording.attachment
             }
         }.launchIn(scope)
+
+        if (config.isDraftMessageEnabled) {
+            channelDraftMessages.onEach {
+                if (it[channelCid] == null &&
+                    currentDraftId != null &&
+                    messageMode.value is MessageMode.Normal
+                ) {
+                    clearData()
+                }
+            }.launchIn(scope)
+
+            threadDraftMessages.onEach {
+                if (it[parentMessageId] == null &&
+                    currentDraftId != null &&
+                    messageMode.value is MessageMode.MessageThread
+                ) {
+                    clearData()
+                }
+            }.launchIn(scope)
+        }
     }
 
     /**
@@ -467,6 +516,41 @@ public class MessageComposerController(
     private fun setMessageInputInternal(value: String, source: MessageInput.Source) {
         if (this.messageInput.value.text == value) return
         this.messageInput.value = MessageInput(value, source)
+    }
+
+    private suspend fun saveDraftMessage(messageMode: MessageMode) {
+        if (!config.isDraftMessageEnabled) return
+        currentDraftId = null
+        when (val messageText = messageInput.value.text) {
+            "" -> clearDraftMessage(messageMode)
+            else -> {
+                getDraftMessageOrEmpty(messageMode).let {
+                    chatClient.createDraftMessage(
+                        channelType = channelType,
+                        channelId = channelId,
+                        message = it.copy(
+                            text = messageText,
+                            showInChannel = alsoSendToChannel.value,
+                            replyMessage = (messageActions.value.firstOrNull { it is Reply } as? Reply)?.message,
+                        ),
+                    ).await()
+                }
+            }
+        }
+    }
+
+    private fun fetchDraftMessage(messageMode: MessageMode) {
+        if (!config.isDraftMessageEnabled) return
+        getDraftMessageOrEmpty(messageMode).let { draftMessage ->
+            currentDraftId = draftMessage.id
+            setMessageInputInternal(draftMessage.text, MessageInput.Source.DraftMessage)
+            setAlsoSendToChannel(draftMessage.showInChannel)
+            draftMessage.replyMessage
+                ?.let { performMessageAction(Reply(it)) }
+                ?: run {
+                    messageActions.value = messageActions.value.filterNot { it is Reply }.toSet()
+                }
+        }
     }
 
     /**
@@ -569,14 +653,12 @@ public class MessageComposerController(
      * @param pollConfig Configuration for creating a poll.
      */
     public fun createPoll(pollConfig: PollConfig, onResult: (Result<Message>) -> Unit = {}) {
-        channelCid.cidToTypeAndId().let { (channelType, channelId) ->
-            chatClient.sendPoll(
-                channelType = channelType,
-                channelId = channelId,
-                pollConfig = pollConfig,
-            ).enqueue { response ->
-                onResult(response)
-            }
+        chatClient.sendPoll(
+            channelType = channelType,
+            channelId = channelId,
+            pollConfig = pollConfig,
+        ).enqueue { response ->
+            onResult(response)
         }
     }
 
@@ -586,10 +668,23 @@ public class MessageComposerController(
      */
     public fun clearData() {
         logger.i { "[clearData]" }
+        dismissMessageActions()
+        scope.launch { clearDraftMessage(messageMode.value) }
         messageInput.value = MessageInput()
         selectedAttachments.value = emptyList()
         validationErrors.value = emptyList()
         alsoSendToChannel.value = false
+    }
+
+    private suspend fun clearDraftMessage(messageMode: MessageMode) {
+        if (!config.isDraftMessageEnabled) return
+        getDraftMessage(messageMode)?.let { draftMessage ->
+            chatClient.deleteDraftMessages(
+                channelType = channelType,
+                channelId = channelId,
+                message = draftMessage,
+            ).await()
+        }
     }
 
     /**
@@ -628,7 +723,6 @@ public class MessageComposerController(
                 }
             }
         }
-        dismissMessageActions()
         clearData()
         sendMessageCall.enqueue(callback)
     }
@@ -712,7 +806,10 @@ public class MessageComposerController(
     public fun onCleared() {
         typingUpdatesBuffer.clear()
         audioRecordingController.onCleared()
-        scope.cancel()
+        scope.launch {
+            saveDraftMessage(messageMode.value)
+            scope.cancel()
+        }
     }
 
     /**
@@ -892,7 +989,7 @@ public class MessageComposerController(
      * Shows link previews if necessary.
      */
     private suspend fun handleLinkPreviews() {
-        if (!isLinkPreviewEnabled) return
+        if (!config.isLinkPreviewEnabled) return
         val urls = LinkPattern.findAll(messageText).map {
             it.value
         }.toList()
@@ -926,18 +1023,14 @@ public class MessageComposerController(
      * Makes an API call signaling that a typing event has occurred.
      */
     private fun sendKeystrokeEvent() {
-        val (type, id) = channelCid.cidToTypeAndId()
-
-        chatClient.keystroke(type, id, parentMessageId).enqueue()
+        chatClient.keystroke(channelType, channelId, parentMessageId).enqueue()
     }
 
     /**
      * Makes an API call signaling that a stop typing event has occurred.
      */
     private fun sendStopTypingEvent() {
-        val (type, id) = channelCid.cidToTypeAndId()
-
-        chatClient.stopTyping(type, id, parentMessageId).enqueue()
+        chatClient.stopTyping(channelType, channelId, parentMessageId).enqueue()
     }
 
     private fun ChatClient.enrichPreview(url: String): Call<LinkPreview> {
@@ -967,5 +1060,32 @@ public class MessageComposerController(
          * The amount of time we debounce computing mention suggestions and link previews.
          */
         private const val TEXT_INPUT_DEBOUNCE_TIME = 300L
+    }
+
+    /**
+     * Configuration for the message composer controller.
+     *
+     * @param maxAttachmentCount The maximum number of attachments allowed in a message.
+     * @param isLinkPreviewEnabled If link previews are enabled.
+     * @param isDraftMessageEnabled If draft messages are enabled.
+     */
+    @InternalStreamChatApi
+    public data class Config(
+        val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
+        val isLinkPreviewEnabled: Boolean = false,
+        val isDraftMessageEnabled: Boolean = false,
+    )
+
+    private fun getDraftMessageOrEmpty(messageMode: MessageMode): DraftMessage =
+        getDraftMessage(messageMode) ?: messageMode.emptyDraftMessage()
+
+    private fun getDraftMessage(messageMode: MessageMode): DraftMessage? = when (messageMode) {
+        is MessageMode.MessageThread -> threadDraftMessages.value[messageMode.parentMessage.id]
+        else -> channelDraftMessages.value[channelCid]
+    }
+
+    private fun MessageMode.emptyDraftMessage(): DraftMessage = when (this) {
+        is MessageMode.MessageThread -> DraftMessage(cid = channelCid, parentId = parentMessage.id)
+        else -> DraftMessage(cid = channelCid)
     }
 }

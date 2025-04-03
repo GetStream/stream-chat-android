@@ -75,12 +75,14 @@ public final class io/getstream/chat/android/offline/repository/domain/message/i
 	public fun deleteAttachments (Ljava/util/List;)V
 	public fun deleteAttachmentsChunked (Ljava/util/List;)V
 	public fun deleteChannelMessagesBefore (Ljava/lang/String;Ljava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteDraftMessage (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun deleteMessage (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun deleteMessages (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun getRequiredConverters ()Ljava/util/List;
 	public fun insert (Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun insert (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun insertAttachments (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun insertDraftMessages (Lio/getstream/chat/android/offline/repository/domain/message/internal/DraftMessageEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun insertMessageInnerEntities (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun insertMessageInnerEntity (Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageInnerEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun insertReactions (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -94,6 +96,7 @@ public final class io/getstream/chat/android/offline/repository/domain/message/i
 	public fun select (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectBySyncStatus (Lio/getstream/chat/android/models/SyncStatus;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectChunked (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectDraftMessages (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectIdsBySyncStatus (Lio/getstream/chat/android/models/SyncStatus;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectMessagesWithPoll (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectWaitForAttachments (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

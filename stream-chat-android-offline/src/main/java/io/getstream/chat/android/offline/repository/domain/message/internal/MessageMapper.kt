@@ -17,6 +17,7 @@
 package io.getstream.chat.android.offline.repository.domain.message.internal
 
 import io.getstream.chat.android.models.Answer
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
@@ -314,3 +315,29 @@ private fun String.toVotingVisibility(): VotingVisibility = when (this) {
     "anonymous" -> VotingVisibility.ANONYMOUS
     else -> throw IllegalArgumentException("Unknown voting visibility: $this")
 }
+
+internal fun DraftMessage.toEntity(): DraftMessageEntity = DraftMessageEntity(
+    id = id,
+    cid = cid,
+    parentId = parentId,
+    mentionedUsersIds = mentionedUsersIds,
+    silent = silent,
+    showInChannel = showInChannel,
+    replyMessageId = replyMessage?.id,
+    text = text,
+    extraData = extraData,
+)
+
+internal suspend fun DraftMessageEntity.toModel(
+    getMessage: suspend (messageId: String) -> Message?,
+): DraftMessage = DraftMessage(
+    id = id,
+    cid = cid,
+    parentId = parentId,
+    mentionedUsersIds = mentionedUsersIds,
+    silent = silent,
+    showInChannel = showInChannel,
+    replyMessage = replyMessageId?.let { getMessage(it) },
+    text = text,
+    extraData = extraData,
+)

@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.persistance.repository
 
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import java.util.Date
@@ -128,6 +129,24 @@ public interface MessageRepository {
      * @param syncStatus [SyncStatus]
      */
     public suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message>
+
+    /**
+     * Insert a draft message.
+     *
+     * @param message [DraftMessage] to be inserted.
+     */
+
+    public suspend fun insertDraftMessage(message: DraftMessage)
+
+    /**
+     * Selects all draft messages.
+     */
+    public suspend fun selectDraftMessages(): List<DraftMessage>
+
+    /**
+     * Delete a draft message.
+     */
+    public suspend fun deleteDraftMessage(message: DraftMessage)
 
     /**
      * Evict messages from the repository.

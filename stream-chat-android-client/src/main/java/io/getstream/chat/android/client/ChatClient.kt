@@ -1927,6 +1927,16 @@ internal constructor(
             }
     }
 
+    /**
+     * Create a new draft message.
+     * The call will be retried accordingly to [retryPolicy].
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param message The draft message to create.
+     *
+     * @return Executable async [Call] responsible for creating a draft message.
+     */
     @CheckResult
     public fun createDraftMessage(
         channelType: String,
@@ -1946,6 +1956,16 @@ internal constructor(
         }
     }
 
+    /**
+     * Delete a draft message.
+     * The call will be retried accordingly to [retryPolicy].
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param message The draft message to delete.
+     *
+     * @return Executable async [Call] responsible for deleting a draft message.
+     */
     @CheckResult
     public fun deleteDraftMessages(
         channelType: String,

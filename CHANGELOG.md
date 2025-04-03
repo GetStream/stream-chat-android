@@ -1,6 +1,7 @@
 # UNRELEASED CHANGELOG
 ## Common changes for all artifacts
 ### 🐞 Fixed
+- Upgrade StreamPush dependency to V1.3.1 to avoid proguard issues.
 
 ### ⬆️ Improved
 
@@ -13,6 +14,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Ensure `HeadersInterceptor` doesn't use any special character that can come from the customer integration. [#5708](https://github.com/GetStream/stream-chat-android/pull/5708)
 
 ### ⬆️ Improved
 
@@ -44,6 +46,7 @@
 
 ### ✅ Added
 - Add `GlobalState.channelDraftMessages` and `GlobalState.threadDraftMessages` properties providing access to the draft messages. [#5682](https://github.com/GetStream/stream-chat-android/pull/5682) 
+- Add `ChatClient.globalStateFlow` flow holding the `GlobalState` object, which emits values only if the user is connected. [#5702](https://github.com/GetStream/stream-chat-android/pull/5702)
 
 ### ⚠️ Changed
 
@@ -63,14 +66,18 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
+- Fix crash happening after process death when accessing `GlobalState` from the UI components. [#5702](https://github.com/GetStream/stream-chat-android/pull/5702)
 
 ### ⬆️ Improved
 - Enable pagination in `MentionListView`. [#5692](https://github.com/GetStream/stream-chat-android/pull/5692)
 
 ### ✅ Added
+- Add `ChatUI.draftMessagesEnabled` property to enable/disable Draft Messages. [#5687](https://github.com/GetStream/stream-chat-android/pull/5687)
 
 ### ⚠️ Changed
 - 🚨Breaking change: Move `MentionListViewModel` logic and its state to a shared component so they can be reused in Compose. [#5692](https://github.com/GetStream/stream-chat-android/pull/5692)
+- 🚨Breaking change: `ChannelListViewModel` now accepts a `Flow<GlobalState>` instead of `GlobalState` for the `globalState` constructor parameter.  [#5702](https://github.com/GetStream/stream-chat-android/pull/5702)
 
 ### ❌ Removed
 
@@ -79,10 +86,17 @@
 - Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
 - Not show deleted poll messages. [#5689](https://github.com/GetStream/stream-chat-android/pull/5689)
 - Fix "Thread reply" item shown in the message options menu for messages in a Thread. [#5683](https://github.com/GetStream/stream-chat-android/pull/5683)
+- Fix crash happening after process death when accessing `GlobalState` from the UI components. [#5702](https://github.com/GetStream/stream-chat-android/pull/5702)
 
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `MessagesViewModelFactory.isComposerDraftMessageEnabled` property to enable/disable Draft Messages within `MessageComposer`. [#5687](https://github.com/GetStream/stream-chat-android/pull/5687)
+- Add `ChannelViewModelFactory.isDraftMessageEnabled` property to enable/disable Draft Messages within `ChannelList`. [#5687](https://github.com/GetStream/stream-chat-android/pull/5687)
+- Add `MessageBubble` and `MessageFailedIcon` to `ChatComponentFactory` to allow customization of the message bubbles and the failed message icon. [#5688](https://github.com/GetStream/stream-chat-android/pull/5688)
+- Add `errorTextStyle` and `errorBackgroundColor` to `MessageTheme` to allow customization of the error message bubbles and error message text style. [#5688](https://github.com/GetStream/stream-chat-android/pull/5688)
+- ⚠️Add `Message` as an argument of the `textStyle` lambda parameter of the `MessageTextFormatter.defaultFormatter` method to allow customizing the text style based on the `Message`. [#5688](https://github.com/GetStream/stream-chat-android/pull/5688)
+- Create `ChatTheme.dimens.messageComposerShadowElevation` to customize the message composer shadow elevation. [#5697](https://github.com/GetStream/stream-chat-android/pull/5697)
 
 ### ⚠️ Changed
 - `defaultMessageOptionsState()` now accepts an `isInThread` flag to show/hide the "Thread reply" option. [#5683](https://github.com/GetStream/stream-chat-android/pull/5683)

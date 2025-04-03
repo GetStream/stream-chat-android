@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.state.extensions.globalState
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/channel-components/channel-list-header/#usage)

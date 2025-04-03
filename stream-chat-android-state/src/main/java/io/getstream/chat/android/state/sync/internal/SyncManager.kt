@@ -49,6 +49,7 @@ import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.TimeDuration
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
+import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -83,6 +84,7 @@ internal class SyncManager(
     private val currentUserId: String,
     private val chatClient: ChatClient,
     private val clientState: ClientState,
+    private val mutableGlobalState: MutableGlobalState,
     private val repos: RepositoryFacade,
     private val logicRegistry: LogicRegistry,
     private val stateRegistry: StateRegistry,
@@ -118,6 +120,9 @@ internal class SyncManager(
         if (!isDisposed) return
         eventsDisposable = chatClient.subscribe { event ->
             onEvent(event)
+        }
+        syncScope.launch {
+            syncOfflineDraftMessages()
         }
     }
 
@@ -227,6 +232,12 @@ internal class SyncManager(
         }
         mutex.withLock {
             performSync(cids)
+        }
+    }
+
+    private suspend fun syncOfflineDraftMessages() {
+        repos.selectDraftMessages().forEach { draftMessage ->
+            mutableGlobalState.updateDraftMessage(draftMessage)
         }
     }
 

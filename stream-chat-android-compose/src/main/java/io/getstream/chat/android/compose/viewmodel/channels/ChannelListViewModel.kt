@@ -33,6 +33,7 @@ import io.getstream.chat.android.core.utils.Debouncer
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
@@ -40,8 +41,9 @@ import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
-import io.getstream.chat.android.state.extensions.globalState
+import io.getstream.chat.android.state.extensions.globalStateFlow
 import io.getstream.chat.android.state.extensions.queryChannelsAsState
+import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.state.plugin.state.querychannels.ChannelsStateData
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.ui.common.state.channels.actions.Cancel
@@ -49,16 +51,20 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.uiutils.extension.defaultChannelListFilter
 import io.getstream.log.taggedLogger
 import io.getstream.result.call.toUnitCall
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
@@ -77,7 +83,10 @@ import kotlin.coroutines.cancellation.CancellationException
  * @param messageLimit How many messages are fetched for each channel item when loading channels.
  * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
  * @param searchDebounceMs The debounce time for search queries.
+ * @param isDraftMessageEnabled If the draft message feature is enabled.
+ * @param globalState A flow emitting the current [GlobalState].
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 @Suppress("TooManyFunctions")
 public class ChannelListViewModel(
     public val chatClient: ChatClient,
@@ -88,6 +97,8 @@ public class ChannelListViewModel(
     private val messageLimit: Int = DEFAULT_MESSAGE_LIMIT,
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
     searchDebounceMs: Long = SEARCH_DEBOUNCE_MS,
+    private val isDraftMessageEnabled: Boolean,
+    private val globalState: Flow<GlobalState> = chatClient.globalStateFlow,
 ) : ViewModel() {
 
     private val logger by taggedLogger("Chat:ChannelListVM")
@@ -179,7 +190,17 @@ public class ChannelListViewModel(
     /**
      * Gives us the information about the list of channels mutes by the current user.
      */
-    public val channelMutes: StateFlow<List<ChannelMute>> = chatClient.globalState.channelMutes
+    public val channelMutes: StateFlow<List<ChannelMute>> = globalState
+        .flatMapLatest { it.channelMutes }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    private val typingChannels: StateFlow<Map<String, TypingEvent>> = globalState
+        .flatMapLatest { it.typingChannels }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
+
+    private val channelDraftMessages: StateFlow<Map<String, DraftMessage>> = globalState
+        .flatMapLatest { it.channelDraftMessages }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
 
     /**
      * Builds the default channel filter, which represents "messaging" channels that the current user is a part of.
@@ -391,8 +412,9 @@ public class ChannelListViewModel(
                 combine(
                     queryChannelsState.channelsStateData,
                     channelMutes,
-                    chatClient.globalState.typingChannels,
-                ) { state, channelMutes, typingChannels ->
+                    typingChannels,
+                    channelDraftMessages,
+                ) { state, channelMutes, typingChannels, channelDraftMessages ->
                     when (state) {
                         ChannelsStateData.NoQueryActive,
                         ChannelsStateData.Loading,
@@ -418,6 +440,7 @@ public class ChannelListViewModel(
                                     channels = state.channels,
                                     channelMutes = channelMutes,
                                     typingEvents = typingChannels,
+                                    draftMessages = channelDraftMessages.takeIf { isDraftMessageEnabled } ?: emptyMap(),
                                 ),
                                 isLoadingMore = false,
                                 endOfChannels = queryChannelsState.endOfChannels.value,
@@ -705,6 +728,7 @@ public class ChannelListViewModel(
         channels: List<Channel>,
         channelMutes: List<ChannelMute>,
         typingEvents: Map<String, TypingEvent>,
+        draftMessages: Map<String, DraftMessage>,
     ): List<ItemState.ChannelItemState> {
         val mutedChannelIds = channelMutes.map { channelMute -> channelMute.channel?.cid }.toSet()
         return channels.map {
@@ -712,6 +736,7 @@ public class ChannelListViewModel(
                 channel = it,
                 isMuted = it.cid in mutedChannelIds,
                 typingUsers = typingEvents[it.cid]?.users ?: emptyList(),
+                draftMessage = draftMessages[it.cid],
             )
         }
     }

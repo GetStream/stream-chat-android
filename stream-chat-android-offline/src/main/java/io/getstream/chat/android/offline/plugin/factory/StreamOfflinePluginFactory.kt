@@ -38,6 +38,7 @@ import io.getstream.chat.android.offline.plugin.listener.internal.CreateChannelL
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteChannelListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReactionListenerDatabase
+import io.getstream.chat.android.offline.plugin.listener.internal.DraftMessageListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.EditMessageListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.FetchCurrentUserListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.GetMessageListenerDatabase
@@ -188,6 +189,10 @@ public class StreamOfflinePluginFactory @JvmOverloads constructor(
             threadsRepository = repositoryFacade,
         )
 
+        val draftMessageListener = DraftMessageListenerDatabase(
+            messageRepository = repositoryFacade,
+        )
+
         return OfflinePlugin(
             activeUser = user,
             queryChannelListener = queryChannelListener,
@@ -206,6 +211,7 @@ public class StreamOfflinePluginFactory @JvmOverloads constructor(
             getMessageListener = getMessageListener,
             fetchCurrentUserListener = fetchCurrentUserListener,
             queryThreadsListener = queryThreadsListener,
+            draftMessageListener = draftMessageListener,
         )
     }
 

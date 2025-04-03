@@ -46,6 +46,7 @@ import io.getstream.chat.android.offline.repository.domain.channelconfig.interna
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentDao
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.ReplyAttachmentEntity
+import io.getstream.chat.android.offline.repository.domain.message.internal.DraftMessageEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageDao
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageInnerEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.PollDao
@@ -81,6 +82,7 @@ import io.getstream.chat.android.offline.repository.domain.user.internal.UserEnt
         PollEntity::class,
         ThreadEntity::class,
         ThreadOrderEntity::class,
+        DraftMessageEntity::class,
     ],
     version = 84,
     exportSchema = false,

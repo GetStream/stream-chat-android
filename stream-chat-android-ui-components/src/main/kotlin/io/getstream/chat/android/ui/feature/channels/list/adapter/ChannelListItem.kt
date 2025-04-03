@@ -17,10 +17,15 @@
 package io.getstream.chat.android.ui.feature.channels.list.adapter
 
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.User
 
 public sealed class ChannelListItem {
-    public data class ChannelItem(val channel: Channel, val typingUsers: List<User>) : ChannelListItem()
+    public data class ChannelItem(
+        val channel: Channel,
+        val typingUsers: List<User>,
+        val draftMessage: DraftMessage?,
+    ) : ChannelListItem()
     public object LoadingMoreItem : ChannelListItem() {
         override fun toString(): String = "LoadingMoreItem"
     }

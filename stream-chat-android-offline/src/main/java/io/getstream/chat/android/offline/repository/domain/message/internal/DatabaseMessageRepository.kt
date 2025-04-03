@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.utils.message.isDeleted
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.SyncStatus
@@ -149,6 +150,18 @@ internal class DatabaseMessageRepository(
     override suspend fun insertMessage(message: Message) {
         insertMessages(listOf(message))
     }
+
+    override suspend fun insertDraftMessage(message: DraftMessage) {
+        message.replyMessage?.let { insertMessage(it) }
+        messageDao.insertDraftMessages(message.toEntity())
+    }
+
+    override suspend fun deleteDraftMessage(message: DraftMessage) {
+        messageDao.deleteDraftMessage(message.id)
+    }
+
+    override suspend fun selectDraftMessages(): List<DraftMessage> = messageDao.selectDraftMessages()
+        .map { it.toModel(::selectMessage) }
 
     /**
      * Deletes all messages before a message with passed ID.

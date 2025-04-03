@@ -68,7 +68,8 @@ public fun interface MessageTextFormatter {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
-            textStyle: (isMine: Boolean) -> TextStyle = defaultTextStyle(isInDarkMode, typography, colors),
+            textStyle: (isMine: Boolean, message: Message) -> TextStyle =
+                defaultTextStyle(isInDarkMode, typography, colors),
             mentionColor: (isMine: Boolean) -> Color = defaultMentionColor(isInDarkMode, typography, colors),
             builder: AnnotatedMessageTextBuilder? = null,
         ): MessageTextFormatter {
@@ -132,35 +133,6 @@ public fun interface MessageTextFormatter {
             )
         }
 
-        @Composable
-        private fun defaultTextStyle(
-            isInDarkMode: Boolean,
-            typography: StreamTypography,
-            colors: StreamColors,
-        ): (Boolean) -> TextStyle {
-            val ownTheme = MessageTheme.defaultOwnTheme(
-                isInDarkMode = isInDarkMode,
-                typography = typography,
-                colors = colors,
-            )
-            val otherTheme = MessageTheme.defaultOtherTheme(
-                isInDarkMode = isInDarkMode,
-                typography = typography,
-                colors = colors,
-            )
-            return defaultTextStyle(ownTheme, otherTheme)
-        }
-
-        @Composable
-        private fun defaultTextStyle(ownTheme: MessageTheme, otherTheme: MessageTheme): (Boolean) -> TextStyle {
-            return { isMine ->
-                when (isMine) {
-                    true -> ownTheme.textStyle
-                    else -> otherTheme.textStyle
-                }
-            }
-        }
-
         /**
          * Builds a composite message text formatter.
          *
@@ -203,7 +175,7 @@ private class DefaultMessageTextFormatter(
     private val autoTranslationEnabled: Boolean,
     private val typography: StreamTypography,
     private val colors: StreamColors,
-    private val textStyle: (isMine: Boolean) -> TextStyle,
+    private val textStyle: (isMine: Boolean, message: Message) -> TextStyle,
     private val mentionColor: (isMine: Boolean) -> Color,
     private val builder: AnnotatedMessageTextBuilder? = null,
 ) : MessageTextFormatter {
@@ -216,7 +188,7 @@ private class DefaultMessageTextFormatter(
             else -> message.text
         }
         val mentionedUserNames = message.mentionedUsers.map { it.name.ifEmpty { it.id } }
-        val textColor = textStyle(message.isMine(currentUser)).color
+        val textColor = textStyle(message.isMine(currentUser), message).color
         val mentionColor = mentionColor(message.isMine(currentUser))
         return buildAnnotatedMessageText(
             text = displayedText,
