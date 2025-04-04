@@ -24,6 +24,7 @@ import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Config
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
@@ -89,6 +90,7 @@ internal class MessageComposerControllerTests {
             .givenAppSettings(mock())
             .givenAudioPlayer(mock())
             .givenClientState(User("uid1"))
+            .givenGlobalState()
             .givenChannelState(configState = configFlow)
             .get()
         // then
@@ -105,6 +107,7 @@ internal class MessageComposerControllerTests {
             .givenAppSettings(mock())
             .givenAudioPlayer(mock())
             .givenClientState(User("uid1"))
+            .givenGlobalState()
             .givenChannelState(configState = configFlow)
             .get()
         // then
@@ -148,6 +151,14 @@ internal class MessageComposerControllerTests {
             whenever(channelState.lastSentMessageDate) doReturn lastSentMessageDateState
         }
 
+        fun givenGlobalState(
+            channelDrafts: Map<String, DraftMessage> = mapOf(),
+            threadDrafts: Map<String, DraftMessage> = mapOf(),
+        ) = apply {
+            whenever(globalState.channelDraftMessages) doReturn MutableStateFlow(channelDrafts)
+            whenever(globalState.threadDraftMessages) doReturn MutableStateFlow(threadDrafts)
+        }
+
         fun get(): MessageComposerController {
             return MessageComposerController(
                 channelCid = cid,
@@ -156,7 +167,7 @@ internal class MessageComposerControllerTests {
                 mediaRecorder = mock(),
                 userLookupHandler = mock(),
                 fileToUri = mock(),
-                globalState = globalState,
+                globalState = MutableStateFlow(globalState),
             )
         }
     }

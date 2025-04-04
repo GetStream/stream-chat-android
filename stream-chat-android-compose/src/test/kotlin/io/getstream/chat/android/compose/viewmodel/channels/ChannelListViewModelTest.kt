@@ -420,6 +420,7 @@ internal class ChannelListViewModelTest {
                 initialFilters = initialFilters,
                 isDraftMessageEnabled = false,
                 chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
+                globalState = MutableStateFlow(globalState),
             )
             testScope.advanceUntilIdle()
             return channelListViewModel

@@ -128,6 +128,7 @@ public class StreamStatePluginFactory(
             scope = scope,
             chatClient = chatClient,
             clientState = clientState,
+            mutableGlobalState = mutableGlobalState,
             repos = repositoryFacade,
             logicRegistry = logic,
             stateRegistry = stateRegistry,

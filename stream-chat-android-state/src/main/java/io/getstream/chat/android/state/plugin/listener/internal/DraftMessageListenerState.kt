@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.state.plugin.listener.internal
 
+import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.plugin.listeners.DraftMessageListener
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
@@ -43,9 +44,13 @@ internal class DraftMessageListenerState(
         channelId: String,
         message: DraftMessage,
     ) {
-        result.onSuccess { draftMessage ->
-            mutableGlobalState.updateDraftMessage(draftMessage)
-        }
+        result
+            .onSuccess { draftMessage -> mutableGlobalState.updateDraftMessage(draftMessage) }
+            .onError { error ->
+                message.takeUnless { error.isPermanent() }?.let { draftMessage ->
+                    mutableGlobalState.updateDraftMessage(draftMessage)
+                }
+            }
     }
 
     /**
@@ -63,9 +68,13 @@ internal class DraftMessageListenerState(
         channelId: String,
         message: DraftMessage,
     ) {
-        result.onSuccess {
-            mutableGlobalState.removeDraftMessage(message)
-        }
+        result
+            .onSuccess { mutableGlobalState.removeDraftMessage(message) }
+            .onError { error ->
+                message.takeUnless { error.isPermanent() }?.let { draftMessage ->
+                    mutableGlobalState.removeDraftMessage(draftMessage)
+                }
+            }
     }
 
     /**
