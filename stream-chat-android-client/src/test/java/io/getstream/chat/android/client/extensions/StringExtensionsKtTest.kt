@@ -27,6 +27,7 @@ import io.getstream.chat.android.models.streamcdn.image.StreamCdnResizeImageMode
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
@@ -34,11 +35,43 @@ import org.robolectric.RobolectricTestRunner
 internal class StringExtensionsKtTest {
 
     @Test
+    fun `given a String in snake case, it should be converted to lower cammel case`() {
+        val text = "snake_case"
+        val expected = "snakeCase"
+
+        text.snakeToLowerCamelCase() `should be equal to` expected
+    }
+
+    @Test
     fun `given a String is lower cammel case, it should be parsed to getter`() {
         val text = "cammelCase"
         val expected = "getCammelCase"
 
         text.lowerCamelCaseToGetter() `should be equal to` expected
+    }
+
+    @Test
+    fun `given empty cid, cidToTypeAndId throws exception`() {
+        val cid = ""
+        assertThrows<IllegalStateException> {
+            cid.cidToTypeAndId()
+        }
+    }
+
+    @Test
+    fun `given invalid cid, cidToTypeAndId throws exception`() {
+        val cid = "invalid"
+        assertThrows<IllegalStateException> {
+            cid.cidToTypeAndId()
+        }
+    }
+
+    @Test
+    fun `given a valid cid, cidToTypeAndId returns type and id`() {
+        val cid = "messaging:123"
+        val expected = "messaging" to "123"
+        val result = cid.cidToTypeAndId()
+        result shouldBeEqualTo expected
     }
 
     @Test
