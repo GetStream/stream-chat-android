@@ -414,6 +414,7 @@ internal object EventMappingTestArguments {
         channel_id = CHANNEL_ID,
         user = USER,
         channel_last_message_at = DATE,
+        last_read_message_id = LAST_READ_MESSAGE_ID,
     )
 
     private val messageUpdatedDto = MessageUpdatedEventDto(
@@ -507,6 +508,7 @@ internal object EventMappingTestArguments {
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
         channel_last_message_at = DATE,
+        last_read_message_id = LAST_READ_MESSAGE_ID,
     )
 
     private val notificationMarkUnreadDto = NotificationMarkUnreadEventDto(
@@ -1015,6 +1017,7 @@ internal object EventMappingTestArguments {
         channelId = messageReadDto.channel_id,
         user = with(domainMapping) { messageReadDto.user.toDomain() },
         channelLastMessageAt = messageReadDto.channel_last_message_at,
+        lastReadMessageId = messageReadDto.last_read_message_id,
     )
 
     private val messageUpdated = MessageUpdatedEvent(
@@ -1127,6 +1130,7 @@ internal object EventMappingTestArguments {
         channelType = notificationMarkReadDto.channel_type,
         channelId = notificationMarkReadDto.channel_id,
         channelLastMessageAt = notificationMarkReadDto.channel_last_message_at,
+        lastReadMessageId = notificationMarkReadDto.last_read_message_id,
     )
 
     private val notificationMarkUnread = NotificationMarkUnreadEvent(

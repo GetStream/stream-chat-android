@@ -235,6 +235,7 @@ public fun randomMessageReadEvent(
     channelType: String = randomString(),
     channelId: String = randomString(),
     channelLastMessageAt: Date = randomDate(),
+    lastReadMessageId: String? = randomString(),
 ): MessageReadEvent {
     return MessageReadEvent(
         type = EventType.MESSAGE_READ,
@@ -245,6 +246,7 @@ public fun randomMessageReadEvent(
         channelType = channelType,
         channelId = channelId,
         channelLastMessageAt = channelLastMessageAt,
+        lastReadMessageId = lastReadMessageId,
     )
 }
 
@@ -257,6 +259,7 @@ public fun randomNotificationMarkReadEvent(
     totalUnreadCount: Int = randomInt(),
     unreadChannels: Int = randomInt(),
     channelLastMessageAt: Date = randomDate(),
+    lastReadMessageId: String? = randomString(),
     threadId: String? = randomString(),
     unreadThreads: Int? = randomInt(),
     unreadThreadMessages: Int? = randomInt(),
@@ -271,6 +274,7 @@ public fun randomNotificationMarkReadEvent(
     totalUnreadCount = totalUnreadCount,
     unreadChannels = unreadChannels,
     channelLastMessageAt = channelLastMessageAt,
+    lastReadMessageId = lastReadMessageId,
     threadId = threadId,
     unreadThreads = unreadThreads,
     unreadThreadMessages = unreadThreadMessages,
