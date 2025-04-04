@@ -36,7 +36,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,10 +48,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.channel.subscribeFor
-import io.getstream.chat.android.client.events.MessageReadEvent
-import io.getstream.chat.android.client.events.NotificationMarkReadEvent
-import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
@@ -180,30 +175,6 @@ class ChannelsActivity : BaseConnectedActivity() {
             },
             onHeaderActionClick = ::openAddChannel,
         )
-        LaunchedEffect(Unit) {
-            val chatClient = ChatClient.instance()
-            val channelClient = chatClient.channel(cid = "<channel_cid>")
-
-            // Any member read the channel
-            channelClient.subscribeFor<MessageReadEvent> { event ->
-                println(event.lastReadMessageId)
-                // Unread messages: 0
-            }
-
-            // Connected user read the channel
-            channelClient.subscribeFor<NotificationMarkReadEvent> { event ->
-                println(event.lastReadMessageId)
-                // Unread messages: 0
-            }
-
-            // Connected user marked a message as unread
-            channelClient.subscribeFor<NotificationMarkUnreadEvent> { event ->
-                println(event.lastReadMessageId)
-                // Unread messages
-                println(event.unreadMessages)
-            }
-        }
-
 //                MyCustomUiSimplified()
 //                MyCustomUi()
     }
