@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.uitests.snapshot.compose.messages
 
+import androidx.compose.foundation.lazy.LazyColumn
 import io.getstream.chat.android.compose.ui.messages.list.MessageContainer
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ReactionSortingByCount
@@ -31,25 +32,37 @@ class MessageContainerTest : ComposeScreenshotTest() {
 
     @Test
     fun dateSeparator() = runScreenshotTest {
-        MessageContainer(
-            DateSeparatorItemState(TestData.date1()),
-            reactionSorting = ReactionSortingByCount,
-        )
+        LazyColumn {
+            item {
+                MessageContainer(
+                    DateSeparatorItemState(TestData.date1()),
+                    reactionSorting = ReactionSortingByCount,
+                )
+            }
+        }
     }
 
     @Test
     fun threadSeparator() = runScreenshotTest {
-        MessageContainer(
-            ThreadDateSeparatorItemState(date = Date(), replyCount = 5),
-            reactionSorting = ReactionSortingByCount,
-        )
+        LazyColumn {
+            item {
+                MessageContainer(
+                    ThreadDateSeparatorItemState(date = Date(), replyCount = 5),
+                    reactionSorting = ReactionSortingByCount,
+                )
+            }
+        }
     }
 
     @Test
     fun systemMessage() = runScreenshotTest {
-        MessageContainer(
-            SystemMessageItemState(Message(text = "System message")),
-            reactionSorting = ReactionSortingByCount,
-        )
+        LazyColumn {
+            item {
+                MessageContainer(
+                    SystemMessageItemState(Message(text = "System message")),
+                    reactionSorting = ReactionSortingByCount,
+                )
+            }
+        }
     }
 }
