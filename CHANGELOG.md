@@ -22,6 +22,7 @@
 - Add `ChatClient.createDraftMessage()` method to create a draft message. [#5682](https://github.com/GetStream/stream-chat-android/pull/5682)
 - Add `ChatClient.deleteDraftMessages()` method to delete a draft message. [#5682](https://github.com/GetStream/stream-chat-android/pull/5682)
 - Add `ChatClient.queryDraftMessages()` method to query draft messages. [#5682](https://github.com/GetStream/stream-chat-android/pull/5682)
+- Add `lastReadMessageId` field to `MessageReadEvent` and `NotificationMarkReadEvent`. [#5710](https://github.com/GetStream/stream-chat-android/pull/5710)
 
 ### ⚠️ Changed
 
