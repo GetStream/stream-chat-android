@@ -213,6 +213,8 @@ public fun ChatsScreen(
                             )
                         }
 
+                        ChatListContentMode.Mentions -> Unit // TODO Support mention list
+
                         ChatListContentMode.Threads -> {
                             val viewModel = viewModel(
                                 modelClass = ThreadListViewModel::class.java,
@@ -509,6 +511,8 @@ private fun FirstItemLoadHandler(
             val viewModel = viewModel(ChannelListViewModel::class.java, factory = channelViewModelFactory)
             FirstChannelLoadHandler(viewModel, onLoad)
         }
+
+        ChatListContentMode.Mentions -> Unit // TODO Support mention list
 
         ChatListContentMode.Threads -> {
             val viewModel = viewModel(ThreadListViewModel::class.java, factory = threadsViewModelFactory)
