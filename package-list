@@ -115,6 +115,7 @@ io.getstream.chat.android.compose.ui.theme.messages.composer.attachments
 io.getstream.chat.android.compose.ui.theme.messages.list
 io.getstream.chat.android.compose.ui.threads
 io.getstream.chat.android.compose.ui.util
+io.getstream.chat.android.compose.ui.util.adaptivelayout
 io.getstream.chat.android.compose.util
 io.getstream.chat.android.compose.util.extensions
 io.getstream.chat.android.compose.viewmodel.channels
@@ -165,6 +166,7 @@ io.getstream.chat.android.ui.common
 io.getstream.chat.android.ui.common.contract.internal
 io.getstream.chat.android.ui.common.disposable
 io.getstream.chat.android.ui.common.feature.documents
+io.getstream.chat.android.ui.common.feature.mentions
 io.getstream.chat.android.ui.common.feature.messages.composer
 io.getstream.chat.android.ui.common.feature.messages.composer.mention
 io.getstream.chat.android.ui.common.feature.messages.composer.query.filter
@@ -182,6 +184,7 @@ io.getstream.chat.android.ui.common.model
 io.getstream.chat.android.ui.common.notifications
 io.getstream.chat.android.ui.common.permissions
 io.getstream.chat.android.ui.common.state.channels.actions
+io.getstream.chat.android.ui.common.state.mentions
 io.getstream.chat.android.ui.common.state.messages
 io.getstream.chat.android.ui.common.state.messages.composer
 io.getstream.chat.android.ui.common.state.messages.list
