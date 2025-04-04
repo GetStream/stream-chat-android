@@ -518,7 +518,7 @@ private fun rememberCompoundComponentFactory(navigator: ThreePaneNavigator): Cha
                 mention: MessageResult,
                 modifier: Modifier,
                 currentUser: User?,
-                onClick: ((message: Message) -> Unit)?
+                onClick: ((message: Message) -> Unit)?,
             ) {
                 EmphasisBox(isEmphasized = mention.message.id == currentSelection?.messageId) {
                     with(currentComponentFactory) {
