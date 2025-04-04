@@ -419,6 +419,7 @@ internal class QueryThreadsLogicTest {
             ),
             user = User(id = "usrId2"),
             channelLastMessageAt = Date(),
+            lastReadMessageId = null,
         )
         val stateLogic = mock<QueryThreadsStateLogic>()
         val databaseLogic = mock<QueryThreadsDatabaseLogic>()
@@ -442,6 +443,7 @@ internal class QueryThreadsLogicTest {
             rawCreatedAt = "",
             user = User(id = "usrId2"),
             channelLastMessageAt = Date(),
+            lastReadMessageId = null,
         )
         val stateLogic = mock<QueryThreadsStateLogic>()
         val databaseLogic = mock<QueryThreadsDatabaseLogic>()
