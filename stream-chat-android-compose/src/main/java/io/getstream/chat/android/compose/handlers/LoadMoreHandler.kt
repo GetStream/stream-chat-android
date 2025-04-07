@@ -34,7 +34,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
     message = "This function is deprecated. Use the one with a lambda for loadMoreThreshold instead.",
     replaceWith = ReplaceWith(
         expression = "LoadMoreHandler(listState, { loadMoreThreshold }, loadMore)",
-        imports = ["io.getstream.chat.android.compose.ui.util.LoadMoreHandler"],
+        imports = ["io.getstream.chat.android.compose.handlers.LoadMoreHandler"],
     ),
 )
 @Composable
