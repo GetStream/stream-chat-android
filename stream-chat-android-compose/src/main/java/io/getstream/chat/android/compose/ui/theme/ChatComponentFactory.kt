@@ -86,6 +86,7 @@ import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptions
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
+import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
 import io.getstream.chat.android.compose.ui.components.composer.ComposerLinkPreview
 import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
 import io.getstream.chat.android.compose.ui.components.composer.MessageInputOptions
@@ -442,7 +443,21 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default channel item read status indicator, weather the last message is sent, pending or read.
+     * The default unread count indicator in the channel item.
+     */
+    @Composable
+    public fun ChannelItemUnreadCountIndicator(
+        unreadCount: Int,
+        modifier: Modifier,
+    ) {
+        UnreadCountIndicator(
+            unreadCount = unreadCount,
+            modifier = modifier,
+        )
+    }
+
+    /**
+     * The default read status indicator in the channel item, weather the last message is sent, pending or read.
      */
     @Composable
     public fun ChannelItemReadStatusIndicator(

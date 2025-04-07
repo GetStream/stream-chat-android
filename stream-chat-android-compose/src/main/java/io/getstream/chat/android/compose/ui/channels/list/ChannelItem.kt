@@ -50,7 +50,6 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.TypingIndicator
-import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getLastMessage
 import io.getstream.chat.android.models.Channel
@@ -294,13 +293,14 @@ internal fun RowScope.DefaultChannelItemTrailingContent(
                 .wrapContentHeight()
                 .align(Alignment.Bottom),
             horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             val unreadCount = channel.currentUserUnreadCount(currentUserId = currentUser?.id)
 
             if (unreadCount > 0) {
-                UnreadCountIndicator(
-                    modifier = Modifier.padding(bottom = 4.dp),
+                ChatTheme.componentFactory.ChannelItemUnreadCountIndicator(
                     unreadCount = unreadCount,
+                    modifier = Modifier,
                 )
             }
 
