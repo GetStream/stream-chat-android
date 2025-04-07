@@ -228,7 +228,7 @@ private fun PinnedMessages(
         }
     }
     LoadMoreHandler(
-        listState = listState,
+        lazyListState = listState,
         loadMore = onLoadMore,
     )
 }

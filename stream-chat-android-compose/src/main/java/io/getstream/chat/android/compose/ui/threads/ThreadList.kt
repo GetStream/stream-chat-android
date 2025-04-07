@@ -225,7 +225,7 @@ private fun Threads(
         }
     }
     LoadMoreHandler(
-        listState = listState,
+        lazyListState = listState,
         loadMore = onLoadMore,
     )
 }
