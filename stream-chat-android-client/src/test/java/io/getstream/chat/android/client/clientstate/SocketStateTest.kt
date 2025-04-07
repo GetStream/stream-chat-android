@@ -16,13 +16,14 @@
 
 package io.getstream.chat.android.client.clientstate
 
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 
 internal class SocketStateTest {
 
     @Test
-    fun testConnectionIdOrErrorThrowsErrorForIdle() {
+    fun `connectionIdOrError throws error for idle`() {
         val socketState = SocketState.Idle
         assertThrows(IllegalStateException::class.java) {
             socketState.connectionIdOrError()
@@ -30,7 +31,7 @@ internal class SocketStateTest {
     }
 
     @Test
-    fun testConnectionIdOrErrorThrowsErrorForPending() {
+    fun `connectionIdOrError throws error for pending`() {
         val socketState = SocketState.Pending
         assertThrows(IllegalStateException::class.java) {
             socketState.connectionIdOrError()
@@ -38,14 +39,14 @@ internal class SocketStateTest {
     }
 
     @Test
-    fun testConnectionIdOrErrorReturnsConnectionIdForConnected() {
+    fun `connectionIdOrError returns connection id for connected`() {
         val connectionId = "connectionId"
         val socketState = SocketState.Connected(connectionId)
-        assert(socketState.connectionIdOrError() == connectionId)
+        assertEquals(connectionId, socketState.connectionIdOrError())
     }
 
     @Test
-    fun testConnectionIdOrErrorThrowsErrorForDisconnected() {
+    fun `connectionIdOrError throws error for disconnected`() {
         val socketState = SocketState.Disconnected
         assertThrows(IllegalStateException::class.java) {
             socketState.connectionIdOrError()
