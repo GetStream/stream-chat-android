@@ -53,7 +53,6 @@ import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.TypingIndicator
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
-import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getLastMessage
 import io.getstream.chat.android.models.Channel
@@ -327,75 +326,122 @@ internal fun RowScope.DefaultChannelItemTrailingContent(
     }
 }
 
-/**
- * Preview of the [ChannelItem] component for a channel with unread messages.
- *
- * Should show unread count badge, delivery indicator and timestamp.
- */
-@Preview(showBackground = true, name = "ChannelItem Preview (Channel with unread)")
+@Preview(showBackground = true)
 @Composable
-private fun ChannelItemForChannelWithUnreadMessagesPreview() {
-    ChannelItemPreview(
-        channel = PreviewChannelData.channelWithMessages.copy(
-            messages = PreviewChannelData.channelWithMessages.messages.map { message ->
-                message.copy(user = PreviewUserData.user1)
-            },
-            read = listOf(PreviewChannelUserRead.channelUserRead1),
-        ),
+private fun ChannelItemNoMessagesPreview() {
+    ChannelItemNoMessages()
+}
+
+@Composable
+internal fun ChannelItemNoMessages(darkMode: Boolean = false) {
+    ChannelItem(
+        darkMode = darkMode,
         currentUser = PreviewUserData.user1,
+        channel = PreviewChannelData.channelWithImage,
     )
 }
 
-/**
- * Preview of [ChannelItem] for a muted channel.
- *
- * Should show a muted icon next to the channel name.
- */
-@Preview(showBackground = true, name = "ChannelItem Preview (Muted channel)")
+@Preview(showBackground = true)
 @Composable
-private fun ChannelItemForMutedChannelPreview() {
-    ChannelItemPreview(
-        channel = PreviewChannelData.channelWithMessages,
+private fun ChannelItemMutedPreview() {
+    ChannelItemMuted()
+}
+
+@Composable
+internal fun ChannelItemMuted(darkMode: Boolean = false) {
+    ChannelItem(
+        darkMode = darkMode,
         currentUser = PreviewUserData.user1,
+        channel = PreviewChannelData.channelWithMessages,
         isMuted = true,
     )
 }
 
-/**
- * Preview of [ChannelItem] for a channel without messages.
- *
- * Should show only channel name that is centered vertically.
- */
-@Preview(showBackground = true, name = "ChannelItem Preview (Without messages)")
+@Preview(showBackground = true)
 @Composable
-private fun ChannelItemForChannelWithoutMessagesPreview() {
-    ChannelItemPreview(
-        channel = PreviewChannelData.channelWithImage,
-        isMuted = false,
+private fun ChannelItemUnreadMessagesPreview() {
+    ChannelItemUnreadMessages()
+}
+
+@Composable
+internal fun ChannelItemUnreadMessages(darkMode: Boolean = false) {
+    ChannelItem(
+        darkMode = darkMode,
         currentUser = PreviewUserData.user1,
+        channel = PreviewChannelData.channelWithMessages.copy(
+            read = listOf(PreviewChannelUserRead.channelUserRead1),
+        ),
     )
 }
 
-/**
- * Shows [ChannelItem] preview for the provided parameters.
- *
- * @param channel The channel used to show the preview.
- * @param isMuted If the channel is muted.
- * @param currentUser The currently logged in user.
- */
+@Preview(showBackground = true)
 @Composable
-private fun ChannelItemPreview(
+private fun ChannelItemLastMessageSentStatusPreview() {
+    ChannelItemLastMessageSentStatus()
+}
+
+@Composable
+internal fun ChannelItemLastMessageSentStatus(darkMode: Boolean = false) {
+    ChannelItem(
+        darkMode = darkMode,
+        currentUser = PreviewUserData.user1,
+        channel = PreviewChannelData.channelWithMessages.copy(
+            messages = PreviewChannelData.channelWithMessages.messages.map { message ->
+                message.copy(user = PreviewUserData.user1)
+            },
+        ),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ChannelItemLastMessageSeenStatusPreview() {
+    ChannelItemLastMessageSeenStatus()
+}
+
+@Composable
+internal fun ChannelItemLastMessageSeenStatus(darkMode: Boolean = false) {
+    ChannelItem(
+        darkMode = darkMode,
+        currentUser = PreviewUserData.user1,
+        channel = PreviewChannelData.channelWithMessages.copy(
+            messages = PreviewChannelData.channelWithMessages.messages.map { message ->
+                message.copy(user = PreviewUserData.user1)
+            },
+            read = listOf(PreviewChannelUserRead.channelUserRead2),
+        ),
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ChannelItemDraftMessagePreview() {
+    ChannelItemDraftMessage()
+}
+
+@Composable
+internal fun ChannelItemDraftMessage(darkMode: Boolean = false) {
+    ChannelItem(
+        darkMode = darkMode,
+        currentUser = PreviewUserData.user1,
+        channel = PreviewChannelData.channelWithMessages,
+        draftMessage = DraftMessage(text = "message"),
+    )
+}
+
+@Composable
+private fun ChannelItem(
+    darkMode: Boolean,
+    currentUser: User?,
     channel: Channel,
     isMuted: Boolean = false,
-    currentUser: User? = null,
     draftMessage: DraftMessage? = null,
 ) {
-    ChatPreviewTheme {
+    ChatTheme(isInDarkMode = darkMode) {
         ChannelItem(
             channelItem = ItemState.ChannelItemState(
                 channel = channel,
                 isMuted = isMuted,
-                typingUsers = emptyList(),
                 draftMessage = draftMessage,
             ),
             currentUser = currentUser,
