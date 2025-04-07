@@ -60,6 +60,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewChannelData
+import io.getstream.chat.android.previewdata.PreviewChannelUserRead
 import io.getstream.chat.android.previewdata.PreviewUserData
 
 /**
@@ -297,7 +298,7 @@ internal fun RowScope.DefaultChannelItemTrailingContent(
                 .align(Alignment.Bottom),
             horizontalAlignment = Alignment.End,
         ) {
-            val unreadCount = channel.currentUserUnreadCount()
+            val unreadCount = channel.currentUserUnreadCount(currentUserId = currentUser?.id)
 
             if (unreadCount > 0) {
                 UnreadCountIndicator(
@@ -335,7 +336,12 @@ internal fun RowScope.DefaultChannelItemTrailingContent(
 @Composable
 private fun ChannelItemForChannelWithUnreadMessagesPreview() {
     ChannelItemPreview(
-        channel = PreviewChannelData.channelWithMessages,
+        channel = PreviewChannelData.channelWithMessages.copy(
+            messages = PreviewChannelData.channelWithMessages.messages.map { message ->
+                message.copy(user = PreviewUserData.user1)
+            },
+            read = listOf(PreviewChannelUserRead.channelUserRead1),
+        ),
         currentUser = PreviewUserData.user1,
     )
 }
