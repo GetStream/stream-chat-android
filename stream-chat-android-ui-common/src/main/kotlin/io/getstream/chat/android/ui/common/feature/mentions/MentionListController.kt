@@ -35,8 +35,9 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
@@ -56,9 +57,9 @@ public class MentionListController(
 ) {
     private val logger by taggedLogger("Chat:MentionListController")
 
-    private val loadTrigger = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    private val loadRequests = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
-    private val _state = MutableStateFlow(InitialState)
+    private val _state = MutableStateFlow(MentionListState())
 
     /**
      * The current state of the mention list.
@@ -73,8 +74,8 @@ public class MentionListController(
     public val events: SharedFlow<MentionListEvent> = _events.asSharedFlow()
 
     init {
-        loadTrigger.onStart { emit(Unit) } // Triggers the initial load
-            .map { searchMentions() }
+        loadRequests.onStart { emit(Unit) } // Triggers the initial load
+            .flatMapLatest { flowOf(searchMentions()) }
             .onEach { result ->
                 when (result) {
                     is Result.Success -> onSuccessResult(result.value)
@@ -87,6 +88,7 @@ public class MentionListController(
     /**
      * Loads more mentions if there are more to load.
      */
+    @Suppress("ReturnCount")
     public fun loadMore() {
         val currentState = state.value
 
@@ -100,9 +102,26 @@ public class MentionListController(
             return
         }
 
+        if (currentState.isRefreshing) {
+            logger.d { "[loadMore] already refreshing mentions" }
+            return
+        }
+
         logger.d { "[loadMore] no args" }
         _state.value = currentState.copy(isLoadingMore = true)
-        loadTrigger.tryEmit(Unit)
+        loadRequests.tryEmit(Unit)
+    }
+
+    /**
+     * Request to refresh the mention list.
+     */
+    public fun refresh() {
+        logger.d { "[refresh] no args" }
+        _state.value = MentionListState(
+            isLoading = false,
+            isRefreshing = true,
+        )
+        loadRequests.tryEmit(Unit)
     }
 
     private suspend fun searchMentions(): Result<SearchMessagesResult> {
@@ -128,9 +147,10 @@ public class MentionListController(
         logger.d { "[onSuccessResult] messages: ${messages.size}, next: $next" }
         val channels = chatClient.repositoryFacade.selectChannels(messages.map(Message::cid))
         _state.update { currentState ->
+            val currentResults = if (currentState.isRefreshing) emptyList() else currentState.results
             currentState.copy(
                 isLoading = false,
-                results = currentState.results + messages.map { message ->
+                results = currentResults + messages.map { message ->
                     MessageResult(
                         message = message,
                         channel = channels.firstOrNull { channel -> channel.cid == message.cid },
@@ -139,6 +159,7 @@ public class MentionListController(
                 nextPage = next,
                 canLoadMore = next != null,
                 isLoadingMore = false,
+                isRefreshing = false,
             )
         }
     }
@@ -149,6 +170,7 @@ public class MentionListController(
             currentState.copy(
                 isLoading = false,
                 isLoadingMore = false,
+                isRefreshing = false,
             )
         }
         _events.tryEmit(MentionListEvent.Error(message = error.message))
@@ -156,11 +178,3 @@ public class MentionListController(
 }
 
 private const val QUERY_LIMIT = 30
-
-private val InitialState: MentionListState = MentionListState(
-    isLoading = true,
-    results = emptyList(),
-    nextPage = null,
-    canLoadMore = true,
-    isLoadingMore = false,
-)

@@ -73,9 +73,10 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Introduce `MentionList` to display a list of mentions for the current user. [#5695](https://github.com/GetStream/stream-chat-android/pull/5695)
 
 ### ⚠️ Changed
-- 🚨Breaking change: Change loadMoreThreshold to a lambda for calculating the LoadMoreHandler threshold dynamically. [#5711](https://github.com/GetStream/stream-chat-android/pull/5711)
+- Introduce an overload of LoadMoreHandler with threshold parameter as a lambda for calculating the value dynamically. [#5711](https://github.com/GetStream/stream-chat-android/pull/5711), [#5713](https://github.com/GetStream/stream-chat-android/pull/5713)
 
 ### ❌ Removed
 
@@ -148,6 +149,7 @@
 
 ### ⚠️ Changed
 - `defaultMessageOptionsState()` now accepts an `isInThread` flag to show/hide the "Thread reply" option. [#5683](https://github.com/GetStream/stream-chat-android/pull/5683)
+- Make `onSearchResultClick` optional in `SearchResultItem`, so we don't render a ripple effect if it is not clickable. [#5695](https://github.com/GetStream/stream-chat-android/pull/5695)
 
 # March 14th, 2025 - 6.12.1
 ## Common changes for all artifacts

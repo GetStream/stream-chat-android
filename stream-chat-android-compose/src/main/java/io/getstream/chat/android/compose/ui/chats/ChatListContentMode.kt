@@ -29,6 +29,11 @@ public enum class ChatListContentMode {
     Channels,
 
     /**
+     * Display the list of mentions.
+     */
+    Mentions,
+
+    /**
      * Display the list of threads.
      */
     Threads,
