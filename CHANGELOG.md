@@ -75,6 +75,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- 🚨Breaking change: Change loadMoreThreshold to a lambda for calculating the LoadMoreHandler threshold dynamically. [#5711](https://github.com/GetStream/stream-chat-android/pull/5711)
 
 ### ❌ Removed
 
