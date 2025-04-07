@@ -428,7 +428,7 @@ public interface ChatComponentFactory {
 
     /**
      * The default trailing content of the channel item.
-     * Usually the last message and the number of unread messages.
+     * Usually information about the last message such as its read state, timestamp, and the number of unread messages.
      */
     @Composable
     public fun RowScope.ChannelItemTrailingContent(
@@ -438,6 +438,24 @@ public interface ChatComponentFactory {
         DefaultChannelItemTrailingContent(
             channel = channelItem.channel,
             currentUser = currentUser,
+        )
+    }
+
+    /**
+     * The default channel item read status indicator, weather the last message is sent, pending or read.
+     */
+    @Composable
+    public fun ChannelItemReadStatusIndicator(
+        channel: Channel,
+        message: Message,
+        currentUser: User?,
+        modifier: Modifier,
+    ) {
+        MessageReadStatusIcon(
+            channel = channel,
+            message = message,
+            currentUser = currentUser,
+            modifier = modifier,
         )
     }
 
@@ -1191,7 +1209,7 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * The default status indicator of the message footer, weather the message is sent, pending or read.
+     * The default read status indicator in the message footer, weather the message is sent, pending or read.
      */
     @Composable
     public fun MessageFooterStatusIndicator(

@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -51,7 +50,6 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.TypingIndicator
-import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getLastMessage
@@ -308,15 +306,16 @@ internal fun RowScope.DefaultChannelItemTrailingContent(
 
             val isLastMessageFromCurrentUser = lastMessage.user.id == currentUser?.id
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
                 if (isLastMessageFromCurrentUser) {
-                    MessageReadStatusIcon(
+                    ChatTheme.componentFactory.ChannelItemReadStatusIndicator(
                         channel = channel,
                         message = lastMessage,
                         currentUser = currentUser,
-                        modifier = Modifier
-                            .padding(end = 8.dp)
-                            .heightIn(16.dp),
+                        modifier = Modifier,
                     )
                 }
 
