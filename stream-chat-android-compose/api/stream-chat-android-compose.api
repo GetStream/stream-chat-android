@@ -865,7 +865,7 @@ public final class io/getstream/chat/android/compose/ui/components/OnlineIndicat
 }
 
 public final class io/getstream/chat/android/compose/ui/components/SearchInputKt {
-	public static final fun SearchInput (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+	public static final fun SearchInput (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/SimpleDialogKt {
@@ -2287,6 +2287,7 @@ public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatC
 	public abstract fun ReactionsMenuCenterContent (Landroidx/compose/ui/Modifier;Ljava/util/List;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun ReactionsMenuHeaderContent (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/Message;Ljava/util/Map;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;ILandroidx/compose/runtime/Composer;I)V
 	public abstract fun ScrollToBottomButton (Landroidx/compose/ui/Modifier;ZILkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun SearchInputClearButton (Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun SearchInputLabel (Landroidx/compose/runtime/Composer;I)V
 	public abstract fun SearchInputLeadingIcon (Landroidx/compose/foundation/layout/RowScope;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun SearchResultItemCenterContent (Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
@@ -2424,6 +2425,7 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatComponentFacto
 	public static fun ReactionsMenuCenterContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/ui/Modifier;Ljava/util/List;Landroidx/compose/runtime/Composer;I)V
 	public static fun ReactionsMenuHeaderContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/Message;Ljava/util/Map;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;ILandroidx/compose/runtime/Composer;I)V
 	public static fun ScrollToBottomButton (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/ui/Modifier;ZILkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
+	public static fun SearchInputClearButton (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 	public static fun SearchInputLabel (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/runtime/Composer;I)V
 	public static fun SearchInputLeadingIcon (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/RowScope;Landroidx/compose/runtime/Composer;I)V
 	public static fun SearchResultItemCenterContent (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/layout/RowScope;Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;Lio/getstream/chat/android/models/User;Landroidx/compose/runtime/Composer;I)V
