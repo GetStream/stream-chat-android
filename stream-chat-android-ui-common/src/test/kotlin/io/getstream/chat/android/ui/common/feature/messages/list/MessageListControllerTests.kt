@@ -131,6 +131,7 @@ internal class MessageListControllerTests {
             messageItems = listOf(
                 TypingItemState(listOf(user2)),
             ),
+            newMessageState = Other(ts = null),
         )
 
         controller.messageListState.value `should be equal to` expectedResult
