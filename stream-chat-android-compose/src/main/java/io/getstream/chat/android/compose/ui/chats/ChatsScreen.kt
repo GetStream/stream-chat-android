@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -55,6 +56,7 @@ import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
 import io.getstream.chat.android.compose.ui.channels.SearchMode
 import io.getstream.chat.android.compose.ui.components.EmphasisBox
+import io.getstream.chat.android.compose.ui.mentions.MentionList
 import io.getstream.chat.android.compose.ui.messages.BackAction
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
@@ -71,6 +73,8 @@ import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneRole
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.rememberThreePaneNavigator
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
+import io.getstream.chat.android.compose.viewmodel.mentions.MentionListViewModel
+import io.getstream.chat.android.compose.viewmodel.mentions.MentionListViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
@@ -82,6 +86,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import kotlin.math.abs
 
@@ -94,6 +99,7 @@ import kotlin.math.abs
  * @param navigator The navigator used for managing the navigation between destinations.
  * Defaults to [rememberThreePaneNavigator].
  * @param channelViewModelFactory Factory for creating the [ChannelListViewModel] used for managing channel data.
+ * @param mentionListViewModelFactory Factory for creating the [MentionListViewModel] used for managing mentions data.
  * @param threadsViewModelFactory Factory for creating the [ThreadListViewModel] used for managing thread data.
  * @param messagesViewModelFactoryProvider A lambda function that provides a [MessagesViewModelFactory]
  * for managing messages within a selected channel.
@@ -114,6 +120,7 @@ import kotlin.math.abs
  * @param detailBottomBarContent The content to display at the bottom of the detail pane.
  * @param infoContent The content to display in the optional info pane given the provided arguments.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @ExperimentalStreamChatApi
 @Suppress("LongMethod")
 @Composable
@@ -121,6 +128,7 @@ public fun ChatsScreen(
     modifier: Modifier = Modifier,
     navigator: ThreePaneNavigator = rememberThreePaneNavigator(),
     channelViewModelFactory: ChannelViewModelFactory = ChannelViewModelFactory(),
+    mentionListViewModelFactory: MentionListViewModelFactory = MentionListViewModelFactory(),
     threadsViewModelFactory: ThreadsViewModelFactory = ThreadsViewModelFactory(),
     messagesViewModelFactoryProvider: MessagesViewModelFactoryProvider = DefaultMessagesViewModelFactoryProvider(),
     title: String = "Stream Chat",
@@ -174,6 +182,7 @@ public fun ChatsScreen(
         movableContentOf { modifier: Modifier ->
             Scaffold(
                 modifier = modifier.safeDrawingPadding(),
+                containerColor = ChatTheme.colors.appBackground,
                 topBar = { listTopBarContent() },
                 bottomBar = { listBottomBarContent() },
             ) { padding ->
@@ -213,7 +222,28 @@ public fun ChatsScreen(
                             )
                         }
 
-                        ChatListContentMode.Mentions -> Unit // TODO Support mention list
+                        ChatListContentMode.Mentions -> {
+                            val viewModel = viewModel(
+                                modelClass = MentionListViewModel::class.java,
+                                factory = mentionListViewModelFactory,
+                            )
+                            MentionList(
+                                modifier = Modifier.fillMaxSize(),
+                                viewModel = viewModel,
+                                onItemClick = { message ->
+                                    navigator.navigateTo(
+                                        destination = ThreePaneDestination(
+                                            pane = ThreePaneRole.Detail,
+                                            arguments = ChatMessageSelection(
+                                                channelId = message.cid,
+                                                messageId = message.id,
+                                            ),
+                                        ),
+                                        popUpTo = ThreePaneRole.List,
+                                    )
+                                },
+                            )
+                        }
 
                         ChatListContentMode.Threads -> {
                             val viewModel = viewModel(
@@ -318,6 +348,7 @@ public fun ChatsScreen(
             FirstItemLoadHandler(
                 listContentMode = listContentMode,
                 channelViewModelFactory = channelViewModelFactory,
+                mentionListViewModelFactory = mentionListViewModelFactory,
                 threadsViewModelFactory = threadsViewModelFactory,
             ) { selection ->
                 if (navigator.destinations.none { destination -> destination.pane == ThreePaneRole.Detail }) {
@@ -483,6 +514,25 @@ private fun rememberCompoundComponentFactory(navigator: ThreePaneNavigator): Cha
             }
 
             @Composable
+            override fun LazyItemScope.MentionListItem(
+                mention: MessageResult,
+                modifier: Modifier,
+                currentUser: User?,
+                onClick: ((message: Message) -> Unit)?,
+            ) {
+                EmphasisBox(isEmphasized = mention.message.id == currentSelection?.messageId) {
+                    with(currentComponentFactory) {
+                        MentionListItem(
+                            mention = mention,
+                            modifier = modifier,
+                            currentUser = currentUser,
+                            onClick = onClick,
+                        )
+                    }
+                }
+            }
+
+            @Composable
             override fun ThreadListItem(thread: Thread, currentUser: User?, onThreadClick: (Thread) -> Unit) {
                 EmphasisBox(isEmphasized = thread.parentMessageId == currentSelection?.parentMessageId) {
                     currentComponentFactory.ThreadListItem(
@@ -497,12 +547,13 @@ private fun rememberCompoundComponentFactory(navigator: ThreePaneNavigator): Cha
 }
 
 /**
- * Calls [onLoad] when the first list content item is loaded. It can be a channel or a thread item.
+ * Calls [onLoad] when the first list item is loaded. It can be a channel, a mention, or a thread.
  */
 @Composable
 private fun FirstItemLoadHandler(
     listContentMode: ChatListContentMode,
     channelViewModelFactory: ChannelViewModelFactory,
+    mentionListViewModelFactory: MentionListViewModelFactory,
     threadsViewModelFactory: ThreadsViewModelFactory,
     onLoad: (selection: ChatMessageSelection) -> Unit,
 ) {
@@ -512,7 +563,10 @@ private fun FirstItemLoadHandler(
             FirstChannelLoadHandler(viewModel, onLoad)
         }
 
-        ChatListContentMode.Mentions -> Unit // TODO Support mention list
+        ChatListContentMode.Mentions -> {
+            val viewModel = viewModel(MentionListViewModel::class.java, factory = mentionListViewModelFactory)
+            FirstMentionLoadHandler(viewModel, onLoad)
+        }
 
         ChatListContentMode.Threads -> {
             val viewModel = viewModel(ThreadListViewModel::class.java, factory = threadsViewModelFactory)
@@ -529,25 +583,46 @@ private fun FirstChannelLoadHandler(
     viewModel: ChannelListViewModel,
     onLoad: (selection: ChatMessageSelection) -> Unit,
 ) {
-    val isLoading = viewModel.channelsState.isLoading
-    val itemList = viewModel.channelsState.channelItems
-    LaunchedEffect(isLoading) {
-        if (!isLoading && itemList.isNotEmpty()) {
-            when (val item = itemList.first()) {
+    FirstItemLoadHandler(
+        isLoading = viewModel.channelsState.isLoading,
+        items = viewModel.channelsState.channelItems,
+        toSelection = { item ->
+            when (item) {
                 is ItemState.ChannelItemState ->
-                    onLoad(ChatMessageSelection(channelId = item.channel.cid))
+                    ChatMessageSelection(channelId = item.channel.cid)
 
                 is ItemState.SearchResultItemState ->
-                    onLoad(
-                        ChatMessageSelection(
-                            channelId = item.message.cid,
-                            messageId = item.message.id,
-                            parentMessageId = item.message.parentId,
-                        ),
+                    ChatMessageSelection(
+                        channelId = item.message.cid,
+                        messageId = item.message.id,
+                        parentMessageId = item.message.parentId,
                     )
             }
-        }
-    }
+        },
+        onLoad = onLoad,
+    )
+}
+
+/**
+ * Calls [onLoad] when the first mention item is loaded.
+ */
+@Composable
+private fun FirstMentionLoadHandler(
+    viewModel: MentionListViewModel,
+    onLoad: (selection: ChatMessageSelection) -> Unit,
+) {
+    val state by viewModel.state.collectAsState()
+    FirstItemLoadHandler(
+        isLoading = state.isLoading,
+        items = state.results,
+        toSelection = { item ->
+            ChatMessageSelection(
+                channelId = item.message.cid,
+                messageId = item.message.id,
+            )
+        },
+        onLoad = onLoad,
+    )
 }
 
 /**
@@ -559,17 +634,35 @@ private fun FirstThreadLoadHandler(
     onLoad: (selection: ChatMessageSelection) -> Unit,
 ) {
     val state by viewModel.state.collectAsState()
-    val isLoading = state.isLoading
-    val threadList = state.threads
-    LaunchedEffect(isLoading) {
-        if (!isLoading && threadList.isNotEmpty()) {
-            val thread = threadList.first()
-            onLoad(
-                ChatMessageSelection(
-                    channelId = thread.cid,
-                    parentMessageId = thread.parentMessageId,
-                ),
+    FirstItemLoadHandler(
+        isLoading = state.isLoading,
+        items = state.threads,
+        toSelection = { thread ->
+            ChatMessageSelection(
+                channelId = thread.cid,
+                parentMessageId = thread.parentMessageId,
             )
+        },
+        onLoad = onLoad,
+    )
+}
+
+/**
+ * Generic handler that calls [onLoad] when the first item is loaded from a list.
+ * @param isLoading Whether the data is currently loading
+ * @param items The list of items to check
+ * @param toSelection Function to convert the first item to a [ChatMessageSelection]
+ */
+@Composable
+private fun <T> FirstItemLoadHandler(
+    isLoading: Boolean,
+    items: List<T>,
+    toSelection: (T) -> ChatMessageSelection,
+    onLoad: (selection: ChatMessageSelection) -> Unit,
+) {
+    LaunchedEffect(isLoading) {
+        if (!isLoading && items.isNotEmpty()) {
+            onLoad(toSelection(items.first()))
         }
     }
 }
