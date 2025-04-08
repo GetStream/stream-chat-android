@@ -189,7 +189,7 @@ private fun SearchUserResultList(
         }
     }
     LoadMoreHandler(
-        listState = listState,
+        lazyListState = listState,
         loadMore = onEndReached,
     )
 }

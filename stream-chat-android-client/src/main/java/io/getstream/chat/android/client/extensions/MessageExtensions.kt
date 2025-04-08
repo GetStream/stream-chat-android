@@ -23,6 +23,10 @@ import io.getstream.chat.android.models.SyncStatus
 import io.getstream.result.Error
 import java.util.Date
 
+/**
+ * Enriches the message with the given [newCid].
+ * Sets the [Message.cid] and the [Message.replyTo] cid to the [newCid] value.
+ */
 public fun Message.enrichWithCid(newCid: String): Message = copy(
     replyTo = replyTo?.enrichWithCid(newCid),
     cid = newCid,

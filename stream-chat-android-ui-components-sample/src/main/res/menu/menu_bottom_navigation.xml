@@ -22,7 +22,7 @@
         />
     <item
         android:id="@+id/mentions_fragment"
-        android:icon="@drawable/ic_mentions"
+        android:icon="@drawable/stream_compose_ic_mentions"
         android:title="@string/home_bottom_nav_mentions"
         />
     <item
