@@ -27,23 +27,51 @@ import kotlinx.coroutines.flow.distinctUntilChanged
  * Handler to notify more items should be loaded when the user scrolls to the end of the list.
  *
  * @param listState The state of the list used to control scrolling.
- * @param loadMoreThreshold The number if items before the end of the list. Default is half of the visible items.
+ * @param loadMoreThreshold The number if items before the end of the list. Default is 3.
  * @param loadMore Handler for load more action.
  */
+@Deprecated(
+    message = "This function is deprecated. Use the one with a lambda for loadMoreThreshold instead.",
+    replaceWith = ReplaceWith(
+        expression = "LoadMoreHandler(listState, { loadMoreThreshold }, loadMore)",
+        imports = ["io.getstream.chat.android.compose.handlers.LoadMoreHandler"],
+    ),
+)
 @Composable
 public fun LoadMoreHandler(
     listState: LazyListState,
-    loadMoreThreshold: () -> Int = { listState.layoutInfo.visibleItemsInfo.size / 2 },
+    loadMoreThreshold: Int = 3,
     loadMore: () -> Unit,
 ) {
-    LaunchedEffect(listState) {
+    LoadMoreHandler(
+        lazyListState = listState,
+        threshold = { loadMoreThreshold },
+        loadMore = loadMore,
+    )
+}
+
+/**
+ * Handler to notify that more items should be loaded when the user scrolls to the end of the list.
+ *
+ * @param lazyListState The [LazyListState] used to control scrolling.
+ * @param threshold The number if items to check before reaching the end of the list.
+ * Default is half of the visible items.
+ * @param loadMore The callback to load more items.
+ */
+@Composable
+public fun LoadMoreHandler(
+    lazyListState: LazyListState,
+    threshold: () -> Int = { lazyListState.layoutInfo.visibleItemsInfo.size / 2 },
+    loadMore: () -> Unit,
+) {
+    LaunchedEffect(lazyListState) {
         snapshotFlow {
-            val totalItemsCount = listState.layoutInfo.totalItemsCount
-            val lastVisibleItemIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
+            val totalItemsCount = lazyListState.layoutInfo.totalItemsCount
+            val lastVisibleItemIndex = lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
             shouldLoadMore(
                 totalItemsCount = totalItemsCount,
                 lastVisibleItemIndex = lastVisibleItemIndex,
-                loadMoreThreshold = loadMoreThreshold(),
+                loadMoreThreshold = threshold(),
             )
         }
             .distinctUntilChanged()

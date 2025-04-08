@@ -20,13 +20,31 @@ import io.getstream.chat.android.models.Attachment
 
 internal const val ATTACHMENT_TYPE_IMAGE = "image"
 internal const val ATTACHMENT_TYPE_FILE = "file"
+
+/**
+ * Key identifying the upload ID of the attachment.
+ */
 public const val EXTRA_UPLOAD_ID: String = "uploadId"
+
+/**
+ * Key identifying the duration of the attachment.
+ */
 public const val EXTRA_DURATION: String = "duration"
+
+/**
+ * Key identifying the waveform data of the attachment.
+ */
 public const val EXTRA_WAVEFORM_DATA: String = "waveform_data"
 
+/**
+ * Checks if the attachment is an image.
+ */
 internal val Attachment.isImage: Boolean
     get() = mimeType?.startsWith(ATTACHMENT_TYPE_IMAGE) ?: false
 
+/**
+ * Retrieves the upload ID of the attachment.
+ */
 public val Attachment.uploadId: String?
     get() = extraData[EXTRA_UPLOAD_ID] as String?
 
