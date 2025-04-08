@@ -366,6 +366,7 @@ internal object EventArguments {
         channelType = channelType,
         channelId = channelId,
         channelLastMessageAt = date,
+        lastReadMessageId = message.id,
     )
     private val messageUpdatedEvent = MessageUpdatedEvent(
         type = EventType.MESSAGE_UPDATED,
@@ -457,6 +458,7 @@ internal object EventArguments {
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
         channelLastMessageAt = date,
+        lastReadMessageId = message.id,
     )
     private val notificationMarkUnreadEvent = NotificationMarkUnreadEvent(
         type = EventType.NOTIFICATION_MARK_UNREAD,

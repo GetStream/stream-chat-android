@@ -16,6 +16,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `lastReadMessageId` field to `MessageReadEvent` and `NotificationMarkReadEvent`. [#5710](https://github.com/GetStream/stream-chat-android/pull/5710)
 
 ### ⚠️ Changed
 
