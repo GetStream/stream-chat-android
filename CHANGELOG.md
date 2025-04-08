@@ -70,11 +70,13 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
+- Fix search input paddings on tablet. [#5716](https://github.com/GetStream/stream-chat-android/pull/5716)
 
 ### ⬆️ Improved
 
 ### ✅ Added
 - Introduce `MentionList` to display a list of mentions for the current user. [#5695](https://github.com/GetStream/stream-chat-android/pull/5695)
+- Add `SearchInputClearButton` component factory. [#5716](https://github.com/GetStream/stream-chat-android/pull/5716)
 
 ### ⚠️ Changed
 - Introduce an overload of LoadMoreHandler with threshold parameter as a lambda for calculating the value dynamically. [#5711](https://github.com/GetStream/stream-chat-android/pull/5711), [#5713](https://github.com/GetStream/stream-chat-android/pull/5713)
