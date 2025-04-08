@@ -673,7 +673,7 @@ public class MessageListController(
         val newMessageState = getNewMessageState(
             lastMessage = newLastMessage,
             lastLoadedMessage = lastLoadedMessage,
-            typingItemState = newState.lastItemOrNull<TypingItemState>()
+            typingItemState = newState.lastItemOrNull<TypingItemState>(),
         )
         logger.v {
             "[updateMessageList] #messageList; oldLastMessage: ${oldLastMessage?.text}, " +
@@ -808,7 +808,7 @@ public class MessageListController(
                 val newMessageState = getNewMessageState(
                     lastMessage = newLastMessage,
                     lastLoadedMessage = lastLoadedThreadMessage,
-                    typingItemState = newState.lastItemOrNull<TypingItemState>()
+                    typingItemState = newState.lastItemOrNull<TypingItemState>(),
                 )
 
                 _threadListState.value = newState.copy(newMessageState = newMessageState)
@@ -1038,7 +1038,7 @@ public class MessageListController(
     private fun getNewMessageState(
         lastMessage: Message?,
         lastLoadedMessage: Message?,
-        typingItemState: TypingItemState?
+        typingItemState: TypingItemState?,
     ): NewMessageState? {
         val lastLoadedMessageDate = lastLoadedMessage?.createdAt ?: lastLoadedMessage?.createdLocallyAt
         return when {
