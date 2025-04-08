@@ -199,7 +199,7 @@ public fun Messages(
         }
     }
 
-    LoadMoreHandler(lazyListState) {
+    LoadMoreHandler(lazyListState = lazyListState) {
         if (!endOfMessages) {
             onMessagesStartReached()
         }

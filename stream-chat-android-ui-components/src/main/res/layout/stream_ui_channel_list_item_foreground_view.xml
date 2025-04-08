@@ -75,6 +75,19 @@
         />
 
     <TextView
+        android:id="@+id/draftMessageLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/stream_ui_spacing_tiny"
+        android:text="@string/stream_ui_channel_list_draft_message_label"
+        android:textAppearance="@style/StreamUiTextAppearance.Footnote"
+        android:textDirection="locale"
+        app:layout_constraintStart_toStartOf="@+id/channelNameLabel"
+        app:layout_constraintEnd_toStartOf="@+id/lastMessageLabel"
+        app:layout_constraintTop_toBottomOf="@+id/spacer"
+        />
+
+    <TextView
         android:id="@+id/lastMessageLabel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -83,7 +96,7 @@
         android:maxLines="1"
         android:textAppearance="@style/StreamUiTextAppearance.Footnote"
         android:textDirection="locale"
-        app:layout_constraintStart_toStartOf="@+id/channelNameLabel"
+        app:layout_constraintStart_toEndOf="@+id/draftMessageLabel"
         app:layout_constraintEnd_toStartOf="@+id/messageStatusImageView"
         app:layout_constraintTop_toBottomOf="@+id/spacer"
         tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus a."

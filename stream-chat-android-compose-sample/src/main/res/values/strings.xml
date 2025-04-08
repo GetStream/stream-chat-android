@@ -74,5 +74,6 @@
 
     <!--  App Bottom Bar  -->
     <string name="app_bottom_bar_chats">Chats</string>
+    <string name="app_bottom_bar_mentions">Mentions</string>
     <string name="app_bottom_bar_threads">Threads</string>
 </resources>

@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.persistance.repository.noop
 
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import java.util.Date
@@ -38,6 +39,9 @@ internal object NoOpMessageRepository : MessageRepository {
     override suspend fun selectMessageIdsBySyncState(syncStatus: SyncStatus): List<String> = emptyList()
     override suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message> = emptyList()
     override suspend fun selectMessagesWithPoll(pollId: String): List<Message> = emptyList()
+    override suspend fun deleteDraftMessage(message: DraftMessage) { /* No-Op */ }
+    override suspend fun selectDraftMessages(): List<DraftMessage> = emptyList()
+    override suspend fun insertDraftMessage(message: DraftMessage) { /* No-Op */ }
     override suspend fun evictMessages() { /* No-Op */ }
     override suspend fun evictMessage(messageId: String) { /* No-Op */ }
 

@@ -36,9 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.parseBoldTags
@@ -211,15 +210,6 @@ private fun PinnedMessages(
     onLoadMore: () -> Unit,
 ) {
     val listState = rememberLazyListState()
-    val shouldLoadMore by remember {
-        derivedStateOf {
-            val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
-            val totalItemsCount = listState.layoutInfo.totalItemsCount
-            lastVisibleItem != null &&
-                totalItemsCount - LoadMoreThreshold > 0 &&
-                lastVisibleItem.index >= totalItemsCount - LoadMoreThreshold
-        }
-    }
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -237,12 +227,10 @@ private fun PinnedMessages(
             }
         }
     }
-
-    LaunchedEffect(shouldLoadMore) {
-        if (shouldLoadMore) {
-            onLoadMore()
-        }
-    }
+    LoadMoreHandler(
+        lazyListState = listState,
+        loadMore = onLoadMore,
+    )
 }
 
 /**
@@ -327,12 +315,6 @@ internal fun DefaultPinnedMessageListLoadingMoreContent() {
         LoadingIndicator(modifier = Modifier.size(16.dp))
     }
 }
-
-/**
- * Default load more threshold - Trigger the loading of the next page of items, if the user scrolls to the N-th element
- * from the end of the list.
- */
-private const val LoadMoreThreshold = 10
 
 @Composable
 @Preview

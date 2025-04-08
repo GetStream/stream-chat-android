@@ -28,6 +28,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
+import java.net.UnknownHostException
 
 internal class DraftMessageListenerStateTest {
 
@@ -49,9 +50,23 @@ internal class DraftMessageListenerStateTest {
     }
 
     @Test
+    fun `onCreateDraftMessageResult with a non permanent error should update state`() = runTest {
+        val draftMessage = randomDraftMessage()
+
+        listener.onCreateDraftMessageResult(
+            result = Result.Failure(Error.NetworkError(randomString(), randomInt(), cause = UnknownHostException())),
+            channelType = randomString(),
+            channelId = randomString(),
+            message = draftMessage,
+        )
+
+        verify(mutableGlobalState).updateDraftMessage(draftMessage)
+    }
+
+    @Test
     fun `onCreateDraftMessageResult should not update state on error`() = runTest {
         listener.onCreateDraftMessageResult(
-            result = Result.Failure(Error.GenericError("")),
+            result = Result.Failure(Error.NetworkError(message = randomString(), 404)),
             channelType = randomString(),
             channelId = randomString(),
             message = randomDraftMessage(),
@@ -75,9 +90,22 @@ internal class DraftMessageListenerStateTest {
     }
 
     @Test
+    fun `onDeleteDraftMessagesResult with a non permanent error should remove message from state`() = runTest {
+        val draftMessage = randomDraftMessage()
+        listener.onDeleteDraftMessagesResult(
+            result = Result.Failure(Error.NetworkError(randomString(), randomInt(), cause = UnknownHostException())),
+            channelType = randomString(),
+            channelId = randomString(),
+            message = draftMessage,
+        )
+
+        verify(mutableGlobalState).removeDraftMessage(draftMessage)
+    }
+
+    @Test
     fun `onDeleteDraftMessagesResult should not remove message from state on error`() = runTest {
         listener.onDeleteDraftMessagesResult(
-            result = Result.Failure(Error.GenericError(message = "")),
+            result = Result.Failure(Error.NetworkError(message = randomString(), 404)),
             channelType = randomString(),
             channelId = randomString(),
             message = randomDraftMessage(),

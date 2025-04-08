@@ -354,7 +354,7 @@ public fun MessageComposer(
 
     Surface(
         modifier = modifier,
-        shadowElevation = 4.dp,
+        shadowElevation = ChatTheme.dimens.messageComposerShadowElevation,
         color = ChatTheme.colors.barsBackground,
     ) {
         Column(Modifier.padding(vertical = 4.dp)) {

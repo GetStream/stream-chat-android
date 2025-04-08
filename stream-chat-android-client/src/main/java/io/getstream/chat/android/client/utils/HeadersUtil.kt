@@ -131,7 +131,7 @@ internal class HeadersUtil(var context: Context, private var appName: String?, p
             append("|offline_enabled=$OFFLINE_SUPPORT_ENABLED")
             append("|app=$appNameValue")
             append("|app_version=$appVersionValue")
-        }
+        }.sanitize()
     }
 
     /**

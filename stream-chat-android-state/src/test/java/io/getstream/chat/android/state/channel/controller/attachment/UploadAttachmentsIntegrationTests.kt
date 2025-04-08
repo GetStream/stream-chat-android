@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.attachment.worker.UploadAttachmentsWorke
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.UploadedFile
@@ -271,6 +272,18 @@ internal class MockMessageRepository : MessageRepository {
     }
 
     override suspend fun evictMessage(messageId: String) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun insertDraftMessage(message: DraftMessage) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun selectDraftMessages(): List<DraftMessage> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteDraftMessage(message: DraftMessage) {
         TODO("Not yet implemented")
     }
 

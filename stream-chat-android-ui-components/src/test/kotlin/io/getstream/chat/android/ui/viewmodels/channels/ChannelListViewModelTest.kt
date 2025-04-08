@@ -39,7 +39,6 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.observeAll
 import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
@@ -55,12 +54,7 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class ChannelListViewModelTest {
-
-    @JvmField
-    @RegisterExtension
-    val instantExecutorExtension: InstantTaskExecutorExtension = InstantTaskExecutorExtension()
 
     @Test
     fun `Given channel list in loading state When showing the channel list Should show loading state`() =
@@ -255,9 +249,9 @@ internal class ChannelListViewModelTest {
             whenever(chatClient.channel(any(), any())) doReturn channelClient
             val statePlugin: StatePlugin = mock()
             whenever(statePlugin.resolveDependency(eq(StateRegistry::class))) doReturn stateRegistry
-            whenever(statePlugin.resolveDependency(eq(GlobalState::class))) doReturn globalState
             whenever(chatClient.plugins) doReturn listOf(statePlugin)
             whenever(chatClient.clientState) doReturn clientState
+            whenever(globalState.typingChannels) doReturn MutableStateFlow(emptyMap())
         }
 
         fun givenCurrentUser(currentUser: User = User(id = "Jc")) = apply {
@@ -311,9 +305,11 @@ internal class ChannelListViewModelTest {
                 chatClient = chatClient,
                 sort = initialSort,
                 filter = initialFilters,
+                isDraftMessagesEnabled = false,
                 chatEventHandlerFactory = ChatEventHandlerFactory(
                     clientState = clientState,
                 ),
+                globalState = MutableStateFlow(globalState),
             )
         }
     }
@@ -322,6 +318,10 @@ internal class ChannelListViewModelTest {
         @JvmField
         @RegisterExtension
         val testCoroutines: TestCoroutineExtension = TestCoroutineExtension()
+
+        @JvmField
+        @RegisterExtension
+        val instantExecutorExtension: InstantTaskExecutorExtension = InstantTaskExecutorExtension()
 
         private val queryFilter = Filters.and(
             Filters.eq("type", "messaging"),

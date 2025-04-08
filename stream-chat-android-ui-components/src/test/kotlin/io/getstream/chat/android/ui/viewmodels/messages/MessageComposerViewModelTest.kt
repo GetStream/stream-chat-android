@@ -391,8 +391,9 @@ internal class MessageComposerViewModelTest {
             val statePlugin: StatePlugin = mock()
             val statePluginFactory: StreamStatePluginFactory = mock()
             whenever(statePlugin.resolveDependency(eq(StateRegistry::class))) doReturn stateRegistry
-            whenever(statePlugin.resolveDependency(eq(GlobalState::class))) doReturn globalState
             whenever(statePluginFactory.resolveDependency(eq(StatePluginConfig::class))) doReturn statePluginConfig
+            whenever(globalState.channelDraftMessages) doReturn MutableStateFlow(emptyMap())
+            whenever(globalState.threadDraftMessages) doReturn MutableStateFlow(emptyMap())
             whenever(chatClient.plugins) doReturn listOf(statePlugin)
             whenever(chatClient.pluginFactories) doReturn listOf(statePluginFactory)
             whenever(chatClient.audioPlayer) doReturn mock()
@@ -439,8 +440,11 @@ internal class MessageComposerViewModelTest {
                     mediaRecorder = mock(),
                     userLookupHandler = DefaultUserLookupHandler(chatClient, channelId),
                     fileToUri = { it.path },
-                    maxAttachmentCount = maxAttachmentCount,
+                    config = MessageComposerController.Config(
+                        maxAttachmentCount = maxAttachmentCount,
+                    ),
                     channelState = MutableStateFlow(channelState),
+                    globalState = MutableStateFlow(globalState),
                 ),
             )
         }

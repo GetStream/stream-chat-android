@@ -156,7 +156,7 @@ internal fun DefaultMentionSuggestionItemTrailingContent() {
         modifier = Modifier
             .padding(start = 8.dp)
             .size(24.dp),
-        painter = painterResource(id = R.drawable.stream_compose_ic_mention),
+        painter = painterResource(id = R.drawable.stream_compose_ic_mentions),
         contentDescription = null,
         tint = ChatTheme.colors.primaryAccent,
     )

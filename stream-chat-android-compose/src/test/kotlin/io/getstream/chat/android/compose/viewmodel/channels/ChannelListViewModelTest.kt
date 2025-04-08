@@ -357,6 +357,7 @@ internal class ChannelListViewModelTest {
             whenever(chatClient.channel(any())) doReturn channelClient
             whenever(chatClient.channel(any(), any())) doReturn channelClient
             whenever(chatClient.clientState) doReturn clientState
+            whenever(globalState.channelDraftMessages) doReturn MutableStateFlow(emptyMap())
         }
 
         fun givenCurrentUser(currentUser: User = User(id = "Jc")) = apply {
@@ -417,7 +418,9 @@ internal class ChannelListViewModelTest {
                 chatClient = chatClient,
                 initialSort = initialSort,
                 initialFilters = initialFilters,
+                isDraftMessageEnabled = false,
                 chatEventHandlerFactory = ChatEventHandlerFactory(clientState),
+                globalState = MutableStateFlow(globalState),
             )
             testScope.advanceUntilIdle()
             return channelListViewModel

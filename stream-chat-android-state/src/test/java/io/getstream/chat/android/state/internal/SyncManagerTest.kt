@@ -41,6 +41,7 @@ import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
+import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.sync.internal.SyncManager
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -357,6 +358,7 @@ internal class SyncManagerTest {
             repos = repositoryFacade,
             chatClient = chatClient,
             clientState = clientState,
+            mutableGlobalState = MutableGlobalState(),
             userPresence = true,
             events = _syncEvents,
             syncState = _syncState,
