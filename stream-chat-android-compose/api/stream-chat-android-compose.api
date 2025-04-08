@@ -10,6 +10,7 @@ public final class io/getstream/chat/android/compose/handlers/ClipboardHandlerIm
 }
 
 public final class io/getstream/chat/android/compose/handlers/LoadMoreHandlerKt {
+	public static final fun LoadMoreHandler (Landroidx/compose/foundation/lazy/LazyListState;ILkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 	public static final fun LoadMoreHandler (Landroidx/compose/foundation/lazy/LazyListState;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
 

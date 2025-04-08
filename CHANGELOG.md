@@ -76,7 +76,7 @@
 - Introduce `MentionList` to display a list of mentions for the current user. [#5695](https://github.com/GetStream/stream-chat-android/pull/5695)
 
 ### ⚠️ Changed
-- 🚨Breaking change: Change loadMoreThreshold to a lambda for calculating the LoadMoreHandler threshold dynamically. [#5711](https://github.com/GetStream/stream-chat-android/pull/5711)
+- Introduce an overload of LoadMoreHandler with threshold parameter as a lambda for calculating the value dynamically. [#5711](https://github.com/GetStream/stream-chat-android/pull/5711), [#5713](https://github.com/GetStream/stream-chat-android/pull/5713)
 
 ### ❌ Removed
 

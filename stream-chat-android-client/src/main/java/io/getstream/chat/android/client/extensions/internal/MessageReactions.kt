@@ -20,6 +20,13 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
 
+/**
+ * Add a [Reaction] created by the currently logged user to the given [Message].
+ *
+ * @param reaction The reaction to add.
+ * @param enforceUnique If true, the reaction will be added only if the user hasn't already added a reaction of the same
+ * type.
+ */
 @InternalStreamChatApi
 public fun Message.addMyReaction(reaction: Reaction, enforceUnique: Boolean = false): Message {
     return updateReactions {
@@ -38,6 +45,11 @@ public fun Message.addMyReaction(reaction: Reaction, enforceUnique: Boolean = fa
     }
 }
 
+/**
+ * Remove a [Reaction] created by the currently logged user from the given [Message].
+ *
+ * @param reaction The reaction to remove.
+ */
 @InternalStreamChatApi
 public fun Message.removeMyReaction(reaction: Reaction): Message =
     updateReactions {
