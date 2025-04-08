@@ -16,38 +16,79 @@
 
 package io.getstream.chat.android.compose.handlers
 
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 /**
- * Handler to be used with [LazyColumn] to implement infinite scroll.
+ * Handler to notify more items should be loaded when the user scrolls to the end of the list.
  *
  * @param listState The state of the list used to control scrolling.
- * @param loadMoreThreshold The number if items before the end of the list.
+ * @param loadMoreThreshold The number if items before the end of the list. Default is 3.
  * @param loadMore Handler for load more action.
  */
+@Deprecated(
+    message = "This function is deprecated. Use the one with a lambda for loadMoreThreshold instead.",
+    replaceWith = ReplaceWith(
+        expression = "LoadMoreHandler(listState, { loadMoreThreshold }, loadMore)",
+        imports = ["io.getstream.chat.android.compose.handlers.LoadMoreHandler"],
+    ),
+)
 @Composable
 public fun LoadMoreHandler(
     listState: LazyListState,
     loadMoreThreshold: Int = 3,
     loadMore: () -> Unit,
 ) {
-    val shouldLoadMore by remember {
-        derivedStateOf {
-            val totalItemsCount = listState.layoutInfo.totalItemsCount
-            val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
-                ?: return@derivedStateOf false
+    LoadMoreHandler(
+        lazyListState = listState,
+        threshold = { loadMoreThreshold },
+        loadMore = loadMore,
+    )
+}
 
-            lastVisibleItem.index > (totalItemsCount - loadMoreThreshold - 1)
+/**
+ * Handler to notify that more items should be loaded when the user scrolls to the end of the list.
+ *
+ * @param lazyListState The [LazyListState] used to control scrolling.
+ * @param threshold The number if items to check before reaching the end of the list.
+ * Default is half of the visible items.
+ * @param loadMore The callback to load more items.
+ */
+@Composable
+public fun LoadMoreHandler(
+    lazyListState: LazyListState,
+    threshold: () -> Int = { lazyListState.layoutInfo.visibleItemsInfo.size / 2 },
+    loadMore: () -> Unit,
+) {
+    LaunchedEffect(lazyListState) {
+        snapshotFlow {
+            val totalItemsCount = lazyListState.layoutInfo.totalItemsCount
+            val lastVisibleItemIndex = lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
+            shouldLoadMore(
+                totalItemsCount = totalItemsCount,
+                lastVisibleItemIndex = lastVisibleItemIndex,
+                loadMoreThreshold = threshold(),
+            )
         }
-    }
-
-    LaunchedEffect(shouldLoadMore) {
-        if (shouldLoadMore) { loadMore() }
+            .distinctUntilChanged()
+            .collect { shouldLoadMore ->
+                if (shouldLoadMore) {
+                    loadMore()
+                }
+            }
     }
 }
+
+@VisibleForTesting
+internal fun shouldLoadMore(
+    totalItemsCount: Int,
+    lastVisibleItemIndex: Int,
+    loadMoreThreshold: Int,
+): Boolean =
+    totalItemsCount > 0 && // List isn’t empty
+        totalItemsCount > loadMoreThreshold && // Ensure list is large enough
+        lastVisibleItemIndex > totalItemsCount - loadMoreThreshold - 1
