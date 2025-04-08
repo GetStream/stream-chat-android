@@ -109,9 +109,10 @@ public fun Channels(
         }
 
         if (!endOfChannels && channelItems.isNotEmpty()) {
-            LoadMoreHandler(lazyListState) {
-                onLastItemReached()
-            }
+            LoadMoreHandler(
+                lazyListState = lazyListState,
+                loadMore = onLastItemReached,
+            )
         }
 
         helperContent()

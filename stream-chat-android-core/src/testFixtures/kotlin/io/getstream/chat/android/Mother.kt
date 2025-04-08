@@ -381,6 +381,7 @@ public fun randomChannel(
     hiddenMessagesBefore: Date? = randomDate(),
     ownCapabilities: Set<String> = randomChannelCapabilities(),
     extraData: Map<String, Any> = emptyMap(),
+    membership: Member? = randomMember(),
 ): Channel = Channel(
     id = id,
     name = name,
@@ -405,6 +406,7 @@ public fun randomChannel(
     hiddenMessagesBefore = hiddenMessagesBefore,
     ownCapabilities = ownCapabilities,
     extraData = extraData,
+    membership = membership,
 )
 
 public fun randomChannelUserRead(
@@ -569,6 +571,8 @@ public fun randomMember(
     shadowBanned: Boolean = randomBoolean(),
     banned: Boolean = false,
     banExpires: Date? = null,
+    pinnedAt: Date? = null,
+    archivedAt: Date? = null,
 ): Member = Member(
     user = user,
     createdAt = createdAt,
@@ -579,6 +583,8 @@ public fun randomMember(
     shadowBanned = shadowBanned,
     banned = banned,
     banExpires = banExpires,
+    pinnedAt = pinnedAt,
+    archivedAt = archivedAt,
 )
 
 public fun randomMemberData(

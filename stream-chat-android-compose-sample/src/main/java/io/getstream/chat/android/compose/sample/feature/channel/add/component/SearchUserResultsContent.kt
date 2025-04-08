@@ -41,9 +41,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,6 +50,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.feature.channel.add.SearchUsersViewModel
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
@@ -163,13 +161,6 @@ private fun SearchUserResultList(
     onEndReached: () -> Unit,
 ) {
     val listState = rememberLazyListState()
-    val isEndReached by remember {
-        derivedStateOf {
-            val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
-            val totalItemsCount = listState.layoutInfo.totalItemsCount
-            lastVisibleItem != null && lastVisibleItem.index >= totalItemsCount - 1
-        }
-    }
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -197,11 +188,10 @@ private fun SearchUserResultList(
             }
         }
     }
-    LaunchedEffect(isEndReached) {
-        if (isEndReached) {
-            onEndReached()
-        }
-    }
+    LoadMoreHandler(
+        lazyListState = listState,
+        loadMore = onEndReached,
+    )
 }
 
 /**

@@ -25,6 +25,12 @@ import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Poll
 
+/**
+ * Processes the [VoteChangedEvent] and updates the poll with the new vote.
+ *
+ * @param currentUserId The current user ID.
+ * @param getOldPoll A function to get the old poll by its ID.
+ */
 @InternalStreamChatApi
 public fun VoteChangedEvent.processPoll(
     currentUserId: String?,
@@ -39,6 +45,12 @@ public fun VoteChangedEvent.processPoll(
     )
 }
 
+/**
+ * Processes the [VoteCastedEvent] and updates the poll with the new vote.
+ *
+ * @param currentUserId The current user ID.
+ * @param getOldPoll A function to get the old poll by its ID.
+ */
 @InternalStreamChatApi
 public fun VoteCastedEvent.processPoll(
     currentUserId: String?,
@@ -56,6 +68,11 @@ public fun VoteCastedEvent.processPoll(
     )
 }
 
+/**
+ * Processes the [VoteRemovedEvent] and updates the poll by removing the vote.
+ *
+ * @param getOldPoll A function to get the old poll by its ID.
+ */
 @InternalStreamChatApi
 public fun VoteRemovedEvent.processPoll(
     getOldPoll: (String) -> Poll?,
@@ -68,6 +85,11 @@ public fun VoteRemovedEvent.processPoll(
     )
 }
 
+/**
+ * Processes the [AnswerCastedEvent] and updates the poll with the new answer.
+ *
+ * @param getOldPoll A function to get the old poll by its ID.
+ */
 @InternalStreamChatApi
 public fun AnswerCastedEvent.processPoll(
     getOldPoll: (String) -> Poll?,
@@ -83,12 +105,20 @@ public fun AnswerCastedEvent.processPoll(
     )
 }
 
+/**
+ * Processes the [PollClosedEvent] and updates the poll by marking it as closed.
+ */
 @InternalStreamChatApi
 public fun PollClosedEvent.processPoll(
     getOldPoll: (String) -> Poll?,
 ): Poll =
     getOldPoll(poll.id)?.copy(closed = true) ?: poll
 
+/**
+ * Processes the [PollUpdatedEvent] and updates the poll with the new data.
+ *
+ * @param getOldPoll A function to get the old poll by its ID.
+ */
 @InternalStreamChatApi
 public fun PollUpdatedEvent.processPoll(
     getOldPoll: (String) -> Poll?,

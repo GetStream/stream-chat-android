@@ -16,9 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.channels.list
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,9 +25,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Text
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
@@ -41,6 +36,7 @@ import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.avatar.DefaultOnlineIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndicator
@@ -50,8 +46,8 @@ import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndi
  *
  * @param searchResultItemState The state of the search result item.
  * @param currentUser The currently logged in user.
- * @param onSearchResultClick The action to execute when the item is clicked.
  * @param modifier Modifier for styling.
+ * @param onSearchResultClick The optional action to execute when the item is clicked.
  * @param leadingContent Customizable composable function that represents the leading content of a search result item,
  * usually the avatar that holds an image of the user that sent the message.
  * @param centerContent Customizable composable function that represents the center content of a search result item,
@@ -59,13 +55,12 @@ import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndi
  * @param trailingContent Customizable composable function that represents the trailing content of a search result item,
  * usually information about the date where the message was sent.
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun SearchResultItem(
     searchResultItemState: ItemState.SearchResultItemState,
     currentUser: User?,
-    onSearchResultClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
+    onSearchResultClick: ((Message) -> Unit)? = null,
     leadingContent: @Composable RowScope.(ItemState.SearchResultItemState) -> Unit = {
         with(ChatTheme.componentFactory) {
             SearchResultItemLeadingContent(it, currentUser)
@@ -85,12 +80,13 @@ public fun SearchResultItem(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .wrapContentHeight()
-            .combinedClickable(
-                onClick = { onSearchResultClick(searchResultItemState.message) },
-                indication = ripple(),
-                interactionSource = remember { MutableInteractionSource() },
-            ),
+            .run {
+                if (onSearchResultClick != null) {
+                    clickable { onSearchResultClick(searchResultItemState.message) }
+                } else {
+                    this
+                }
+            },
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),

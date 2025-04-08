@@ -81,29 +81,49 @@ public fun Message.populateMentions(channel: Channel): Message {
     return copy(mentionedUsersIds = mentions.toList())
 }
 
+/**
+ * Internal indicator of a 'never' date.
+ */
 @InternalStreamChatApi
 public val NEVER: Date = Date(0)
 
+/**
+ * Checks if the message was created after or at the given [date].
+ */
 @InternalStreamChatApi
 public fun Message.wasCreatedAfterOrAt(date: Date?): Boolean {
-    return createdAt ?: createdLocallyAt ?: NEVER >= date
+    return (createdAt ?: createdLocallyAt ?: NEVER) >= date
 }
 
+/**
+ * Checks if the message was created after the given [date].
+ */
 @InternalStreamChatApi
 public fun Message.wasCreatedAfter(date: Date?): Boolean {
-    return createdAt ?: createdLocallyAt ?: NEVER > date
+    return (createdAt ?: createdLocallyAt ?: NEVER) > date
 }
 
+/**
+ * Checks if the message was created before the given [date].
+ */
 @InternalStreamChatApi
 public fun Message.wasCreatedBefore(date: Date?): Boolean {
-    return createdAt ?: createdLocallyAt ?: NEVER < date
+    return (createdAt ?: createdLocallyAt ?: NEVER) < date
 }
 
+/**
+ * Checks if the message was created before or at the given [date].
+ */
 @InternalStreamChatApi
 public fun Message.wasCreatedBeforeOrAt(date: Date?): Boolean {
-    return createdAt ?: createdLocallyAt ?: NEVER <= date
+    return (createdAt ?: createdLocallyAt ?: NEVER) <= date
 }
 
+/**
+ * Retrieves all [User]s involved in the message.
+ * Includes the author, reaction authors, original message author (if the message is reply), mentioned users,
+ * thread participants, pinned by user, and poll voters.
+ */
 @InternalStreamChatApi
 public fun Message.users(): List<User> {
     return latestReactions.mapNotNull(Reaction::user) +
@@ -140,6 +160,11 @@ public fun Message.shouldIncrementUnreadCount(
     return user.id != currentUserId && !silent && !shadowed && isMoreRecent
 }
 
+/**
+ * Checks if the given [Message] has pending attachments.
+ * A pending attachment is an attachment that is either in [Attachment.UploadState.InProgress] or
+ * [Attachment.UploadState.Idle].
+ */
 @InternalStreamChatApi
 public fun Message.hasPendingAttachments(): Boolean =
     attachments.any {

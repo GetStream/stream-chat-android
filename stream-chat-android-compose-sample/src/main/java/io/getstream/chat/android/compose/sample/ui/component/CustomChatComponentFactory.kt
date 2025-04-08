@@ -20,7 +20,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import io.getstream.chat.android.client.extensions.isPinned
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
@@ -41,7 +40,7 @@ class CustomChatComponentFactory : ChatComponentFactory {
         ChannelItem(
             modifier = Modifier
                 .animateItem()
-                .composed {
+                .run {
                     // Highlight the item background color if it is pinned
                     if (channelItem.channel.isPinned()) {
                         background(color = ChatTheme.colors.highlight)
