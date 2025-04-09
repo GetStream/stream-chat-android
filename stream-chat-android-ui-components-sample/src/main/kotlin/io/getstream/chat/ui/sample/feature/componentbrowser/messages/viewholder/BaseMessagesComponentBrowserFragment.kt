@@ -21,6 +21,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.model.MessageListItemWrapper
@@ -56,6 +57,7 @@ abstract class BaseMessagesComponentBrowserFragment : Fragment() {
             setModeratedMessageLongClickListener {}
 
             init(Channel())
+            @OptIn(InternalStreamChatApi::class)
             displayNewMessages(MessageListItemWrapper(getItems()))
         }
     }
