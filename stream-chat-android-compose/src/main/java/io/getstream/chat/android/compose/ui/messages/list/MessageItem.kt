@@ -21,6 +21,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -285,6 +286,7 @@ public fun MessageItem(
                 .testTag("Stream_MessageItem")
                 .fillMaxWidth()
                 .wrapContentHeight()
+                .background(color = color)
                 .semantics { contentDescription = description },
             contentAlignment = messageAlignment.itemAlignment,
         ) {
