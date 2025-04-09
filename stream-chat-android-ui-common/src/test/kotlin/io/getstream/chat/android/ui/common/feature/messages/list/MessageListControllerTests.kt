@@ -63,6 +63,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.list.Other
 import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItemState
+import io.getstream.chat.android.ui.common.state.messages.list.Typing
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.result.call.Call
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -114,7 +115,6 @@ internal class MessageListControllerTests {
         controller.messageListState.value `should be equal to` expectedResult
     }
 
-    // test typing indicator logic
     @Test
     fun `Given other users are typing When there are no messages Should return only the typing indicator`() = runTest {
         val controller = Fixture()
@@ -131,7 +131,7 @@ internal class MessageListControllerTests {
             messageItems = listOf(
                 TypingItemState(listOf(user2)),
             ),
-            newMessageState = Other(ts = null),
+            newMessageState = Typing,
         )
 
         controller.messageListState.value `should be equal to` expectedResult

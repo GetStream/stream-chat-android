@@ -105,6 +105,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.ShuffleGiphy
 import io.getstream.chat.android.ui.common.state.messages.list.StartOfTheChannelItemState
 import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparatorItemState
+import io.getstream.chat.android.ui.common.state.messages.list.Typing
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.lastItemOrNull
@@ -1042,7 +1043,7 @@ public class MessageListController(
     ): NewMessageState? {
         val lastLoadedMessageDate = lastLoadedMessage?.createdAt ?: lastLoadedMessage?.createdLocallyAt
         return when {
-            typingItemState != null -> Other(ts = null)
+            typingItemState != null -> Typing
             lastMessage == null -> null
             lastLoadedMessage == null -> getNewMessageStateForMessage(lastMessage)
             lastMessage.wasCreatedAfter(lastLoadedMessageDate) &&
