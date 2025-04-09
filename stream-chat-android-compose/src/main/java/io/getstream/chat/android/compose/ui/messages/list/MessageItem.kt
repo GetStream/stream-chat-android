@@ -21,7 +21,6 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -39,6 +38,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -285,18 +285,20 @@ public fun MessageItem(
                 .testTag("Stream_MessageItem")
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .background(color = color)
                 .semantics { contentDescription = description },
             contentAlignment = messageAlignment.itemAlignment,
         ) {
             Row(
                 modifier
-                    .widthIn(max = 300.dp)
+                    .wrapContentWidth()
                     .then(clickModifier)
                     .testTag("Stream_MessageCell"),
             ) {
                 leadingContent(messageItem)
-                Column(horizontalAlignment = messageAlignment.contentAlignment) {
+                Column(
+                    modifier = Modifier.weight(1f, fill = false),
+                    horizontalAlignment = messageAlignment.contentAlignment,
+                ) {
                     headerContent(messageItem)
                     centerContent(messageItem)
                     footerContent(messageItem)
