@@ -185,7 +185,6 @@ class ChannelsActivity : BaseConnectedActivity() {
             },
             onHeaderActionClick = ::openAddChannel,
         )
-
 //                MyCustomUiSimplified()
 //                MyCustomUi()
     }

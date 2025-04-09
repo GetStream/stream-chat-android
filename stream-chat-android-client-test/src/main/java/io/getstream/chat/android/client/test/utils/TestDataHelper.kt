@@ -588,6 +588,7 @@ public class TestDataHelper {
             channelType = channel1.type,
             channelId = channel1.id,
             channelLastMessageAt = randomDate(),
+            lastReadMessageId = randomString(),
         )
     }
 
@@ -647,6 +648,7 @@ public class TestDataHelper {
             totalUnreadCount = 0,
             unreadChannels = 0,
             channelLastMessageAt = randomDate(),
+            lastReadMessageId = randomString(),
         )
     }
     public val user1Read: MessageReadEvent by lazy {
@@ -661,6 +663,7 @@ public class TestDataHelper {
             channelType = channel2.type,
             channelId = channel2.id,
             channelLastMessageAt = randomDate(),
+            lastReadMessageId = randomString(),
         )
     }
     public val memberAddedToChannelEvent: MemberAddedEvent by lazy {

@@ -183,7 +183,8 @@ internal fun createMessageReadEventStringJson() =
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "watcher_count": 3,
-            "channel_last_message_at": "2020-06-29T06:14:28.000Z"
+            "channel_last_message_at": "2020-06-29T06:14:28.000Z",
+            "last_read_message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755"
         """.trimIndent(),
     )
 
@@ -294,7 +295,8 @@ internal fun createNotificationMarkReadEventStringJson() =
             "watcher_count": 3,
             "total_unread_count": 4,
             "unread_channels": 5,
-            "channel_last_message_at": "2020-06-29T06:14:28.000Z"
+            "channel_last_message_at": "2020-06-29T06:14:28.000Z",
+            "last_read_message_id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755"
         """.trimIndent(),
     )
 

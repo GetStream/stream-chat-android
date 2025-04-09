@@ -118,7 +118,7 @@
   <string name="stream_compose_resend_message">"Reenviar"</string>
   <string name="stream_compose_scroll_to_bottom">"Deslizar hasta el final"</string>
   <string name="stream_compose_search_input_cancel">"Cancelar"</string>
-  <string name="stream_compose_search_input_hint">"Buscar canales por nombre"</string>
+  <string name="stream_compose_search_input_hint">"Buscar"</string>
   <string name="stream_compose_selected_channel_menu_delete_conversation">"Eliminar conversación"</string>
   <string name="stream_compose_selected_channel_menu_delete_conversation_confirmation_message">"¿Quieres eliminar el canal %1$s?"</string>
   <string name="stream_compose_selected_channel_menu_delete_conversation_confirmation_title">"Eliminar conversación"</string>

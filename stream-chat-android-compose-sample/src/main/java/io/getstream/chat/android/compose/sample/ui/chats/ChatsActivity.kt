@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.sample.ui.chats
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.material3.Icon
@@ -186,15 +185,10 @@ class ChatsActivity : BaseConnectedActivity() {
                 ListFooterContent(
                     listContentMode = listContentMode,
                     onOptionSelected = { option ->
-                        if (option == AppBottomBarOption.MENTIONS) {
-                            Toast.makeText(this, "Mentions are not yey supported", Toast.LENGTH_SHORT)
-                                .show()
-                        } else {
-                            listContentMode = when (option) {
-                                AppBottomBarOption.CHATS -> ChatListContentMode.Channels
-                                AppBottomBarOption.MENTIONS -> ChatListContentMode.Channels
-                                AppBottomBarOption.THREADS -> ChatListContentMode.Threads
-                            }
+                        listContentMode = when (option) {
+                            AppBottomBarOption.CHATS -> ChatListContentMode.Channels
+                            AppBottomBarOption.MENTIONS -> ChatListContentMode.Mentions
+                            AppBottomBarOption.THREADS -> ChatListContentMode.Threads
                         }
                     },
                 )
