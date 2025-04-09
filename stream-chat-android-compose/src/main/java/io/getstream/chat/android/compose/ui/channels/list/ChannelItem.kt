@@ -274,7 +274,7 @@ internal fun RowScope.DefaultChannelItemTrailingContent(
     unreadCountIndicator: @Composable (unreadCount: Int) -> Unit,
     readStatusIndicator: @Composable (message: Message) -> Unit,
 ) {
-    val lastMessage = channel.getLastMessage(currentUser)
+    val lastMessage = remember(channel) { channel.getLastMessage(currentUser) }
 
     if (lastMessage != null) {
         Column(
@@ -290,7 +290,7 @@ internal fun RowScope.DefaultChannelItemTrailingContent(
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            val unreadCount = channel.currentUserUnreadCount(currentUserId = currentUser?.id)
+            val unreadCount = remember(channel) { channel.currentUserUnreadCount(currentUserId = currentUser?.id) }
 
             if (unreadCount > 0) {
                 unreadCountIndicator(unreadCount)
