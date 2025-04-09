@@ -80,6 +80,7 @@
 
 ### ⚠️ Changed
 - Introduce an overload of LoadMoreHandler with threshold parameter as a lambda for calculating the value dynamically. [#5711](https://github.com/GetStream/stream-chat-android/pull/5711), [#5713](https://github.com/GetStream/stream-chat-android/pull/5713)
+- Change the default value for the `stream_compose_search_input_hint` text from "Search channels by name" to a more general "Search", to cover the case when searching for messages instead of channels. [#5717](https://github.com/GetStream/stream-chat-android/pull/5717)
 
 ### ❌ Removed
 
