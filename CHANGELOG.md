@@ -71,6 +71,7 @@
 ### 🐞 Fixed
 - Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
 - Fix search input paddings on tablet. [#5716](https://github.com/GetStream/stream-chat-android/pull/5716)
+- Fix `MessageItem` not respecting `ChatTheme.dimens.messageItemMaxWidth`. [#5722](https://github.com/GetStream/stream-chat-android/pull/5722)
 
 ### ⬆️ Improved
 
