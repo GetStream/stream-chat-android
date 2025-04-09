@@ -54,6 +54,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getLastMessage
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.previewdata.PreviewChannelUserRead
@@ -266,18 +267,12 @@ private fun UserTypingIndicator(users: List<User>) {
     }
 }
 
-/**
- * Represents the default trailing content for the channel item. By default it shows
- * the information about the last message for the channel item, such as its read state,
- * timestamp and how many unread messages the user has.
- *
- * @param channel The channel to show the info for.
- * @param currentUser The currently logged in user, used for data handling.
- */
 @Composable
 internal fun RowScope.DefaultChannelItemTrailingContent(
     channel: Channel,
     currentUser: User?,
+    unreadCountIndicator: @Composable (unreadCount: Int) -> Unit,
+    readStatusIndicator: @Composable (message: Message) -> Unit,
 ) {
     val lastMessage = channel.getLastMessage(currentUser)
 
@@ -298,10 +293,7 @@ internal fun RowScope.DefaultChannelItemTrailingContent(
             val unreadCount = channel.currentUserUnreadCount(currentUserId = currentUser?.id)
 
             if (unreadCount > 0) {
-                ChatTheme.componentFactory.ChannelItemUnreadCountIndicator(
-                    unreadCount = unreadCount,
-                    modifier = Modifier,
-                )
+                unreadCountIndicator(unreadCount)
             }
 
             val isLastMessageFromCurrentUser = lastMessage.user.id == currentUser?.id
@@ -311,12 +303,7 @@ internal fun RowScope.DefaultChannelItemTrailingContent(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 if (isLastMessageFromCurrentUser) {
-                    ChatTheme.componentFactory.ChannelItemReadStatusIndicator(
-                        channel = channel,
-                        message = lastMessage,
-                        currentUser = currentUser,
-                        modifier = Modifier,
-                    )
+                    readStatusIndicator(lastMessage)
                 }
 
                 Timestamp(date = channel.lastMessageAt)

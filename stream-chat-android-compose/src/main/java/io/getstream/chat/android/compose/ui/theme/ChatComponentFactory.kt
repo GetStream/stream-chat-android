@@ -440,6 +440,20 @@ public interface ChatComponentFactory {
         DefaultChannelItemTrailingContent(
             channel = channelItem.channel,
             currentUser = currentUser,
+            unreadCountIndicator = { unreadCount ->
+                ChannelItemUnreadCountIndicator(
+                    unreadCount = unreadCount,
+                    modifier = Modifier,
+                )
+            },
+            readStatusIndicator = { message ->
+                ChannelItemReadStatusIndicator(
+                    channel = channelItem.channel,
+                    message = message,
+                    currentUser = currentUser,
+                    modifier = Modifier,
+                )
+            },
         )
     }
 
