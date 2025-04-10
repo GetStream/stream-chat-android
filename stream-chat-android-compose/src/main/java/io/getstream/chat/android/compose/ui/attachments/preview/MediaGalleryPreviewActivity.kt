@@ -1055,19 +1055,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                             .fillMaxSize()
                             .background(color = Color.Black),
                         data = data,
-                    ) { state ->
-                        if (state !is AsyncImagePainter.State.Success) {
-                            ShimmerProgressIndicator(
-                                modifier = Modifier.matchParentSize(),
-                            )
-                        } else {
-                            Image(
-                                modifier = Modifier.matchParentSize(),
-                                painter = state.painter,
-                                contentDescription = null,
-                            )
-                        }
-                    }
+                        contentDescription = null,
+                    )
 
                     if (shouldShowPlayButton) {
                         PlayButton(

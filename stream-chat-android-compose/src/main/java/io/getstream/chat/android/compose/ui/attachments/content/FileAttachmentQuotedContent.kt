@@ -16,14 +16,11 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import coil3.compose.AsyncImagePainter
-import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
@@ -64,18 +61,6 @@ public fun FileAttachmentQuotedContent(
             .size(size),
         data = data,
         contentScale = contentScale,
-    ) { state ->
-        if (state !is AsyncImagePainter.State.Success) {
-            ShimmerProgressIndicator(
-                modifier = Modifier.matchParentSize(),
-            )
-        } else {
-            Image(
-                modifier = Modifier.matchParentSize(),
-                painter = state.painter,
-                contentDescription = null,
-                contentScale = contentScale,
-            )
-        }
-    }
+        contentDescription = null,
+    )
 }

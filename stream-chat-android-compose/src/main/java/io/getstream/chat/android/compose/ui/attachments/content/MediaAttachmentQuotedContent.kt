@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
@@ -33,12 +32,10 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImagePainter
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isImgur
 import io.getstream.chat.android.client.utils.attachment.isVideo
-import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
@@ -95,20 +92,8 @@ public fun MediaAttachmentQuotedContent(
                 .background(backgroundColor),
             data = data,
             contentScale = ContentScale.Crop,
-        ) { state ->
-            if (state !is AsyncImagePainter.State.Success) {
-                ShimmerProgressIndicator(
-                    modifier = Modifier.matchParentSize(),
-                )
-            } else {
-                Image(
-                    modifier = Modifier.matchParentSize(),
-                    painter = state.painter,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                )
-            }
-        }
+            contentDescription = null,
+        )
 
         if (isVideo) {
             PlayButton(

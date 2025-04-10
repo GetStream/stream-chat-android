@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.ui.attachments.content
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -44,14 +43,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImagePainter
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
-import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
@@ -308,20 +305,8 @@ public fun FileAttachmentImage(
         modifier = imageModifier,
         data = data,
         contentScale = contentScale,
-    ) { state ->
-        if (state !is AsyncImagePainter.State.Success) {
-            ShimmerProgressIndicator(
-                modifier = Modifier.matchParentSize(),
-            )
-        } else {
-            Image(
-                modifier = Modifier.matchParentSize(),
-                painter = state.painter,
-                contentDescription = null,
-                contentScale = contentScale,
-            )
-        }
-    }
+        contentDescription = null,
+    )
 }
 
 /**

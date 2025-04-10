@@ -51,6 +51,7 @@ import com.skydoves.landscapist.components.ImageComponent
 import com.skydoves.landscapist.components.rememberImageComponent
 import com.skydoves.landscapist.plugins.ImagePlugin
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
@@ -98,16 +99,84 @@ public fun Modifier.mirrorRtl(layoutDirection: LayoutDirection): Modifier {
 }
 
 /**
+ * It displays a shimmer effect while loading an image asynchronously using `Coil` and the [LocalStreamImageLoader].
+ * It transforms the image URL and provides headers before loading the image.
+ *
+ * @see ImageAssetTransformer
+ * @see ImageHeadersProvider
+ *
+ * @param data The data to load the image from. Can be a URL, URI, resource ID, etc.
+ * @param contentDescription The description to use for the image.
+ * @param modifier Modifier for styling.
+ * @param contentScale The scale to be used for the content.
+ */
+@Composable
+internal fun StreamAsyncImage(
+    data: Any?,
+    contentDescription: String?,
+    modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Fit,
+) {
+    StreamAsyncImage(
+        imageRequest = ImageRequest.Builder(LocalContext.current)
+            .data(data)
+            .build(),
+        modifier = modifier,
+        contentDescription = contentDescription,
+        contentScale = contentScale,
+    )
+}
+
+/**
+ * It displays a shimmer effect while loading an image asynchronously using `Coil` and the [LocalStreamImageLoader].
+ * It transforms the image URL and provides headers before loading the image.
+ *
+ * @see ImageAssetTransformer
+ * @see ImageHeadersProvider
+ *
+ * @param imageRequest The request to load the image.
+ * @param contentDescription The description to use for the image.
+ * @param modifier Modifier for styling.
+ * @param contentScale The scale to be used for the content.
+ */
+@Composable
+internal fun StreamAsyncImage(
+    imageRequest: ImageRequest,
+    contentDescription: String?,
+    modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Fit,
+) {
+    StreamAsyncImage(
+        imageRequest = imageRequest,
+        modifier = modifier,
+        contentScale = contentScale,
+    ) { state ->
+        if (state !is AsyncImagePainter.State.Success) {
+            ShimmerProgressIndicator(
+                modifier = Modifier.matchParentSize(),
+            )
+        } else {
+            Image(
+                modifier = Modifier.matchParentSize(),
+                painter = state.painter,
+                contentDescription = contentDescription,
+                contentScale = contentScale,
+            )
+        }
+    }
+}
+
+/**
  * Displays an image asynchronously using `Coil` and the [LocalStreamImageLoader].
  * It transforms the image URL and provides headers before loading the image.
+ *
+ * @see ImageAssetTransformer
+ * @see ImageHeadersProvider
  *
  * @param data The data to load the image from. Can be a URL, URI, resource ID, etc.
  * @param modifier Modifier for styling.
  * @param contentScale The scale to be used for the content.
  * @param content A composable function that defines the content to be displayed based on the image loading state.
- *
- * @see ImageAssetTransformer
- * @see ImageHeadersProvider
  */
 @Composable
 internal fun StreamAsyncImage(
