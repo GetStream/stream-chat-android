@@ -22,6 +22,7 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -48,10 +49,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import com.skydoves.landscapist.ImageOptions
+import coil3.compose.AsyncImagePainter
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.StreamImage
+import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
@@ -133,15 +135,28 @@ private fun ComposerLinkImagePreview(attachment: Attachment) {
         modifier = Modifier.padding(theme.imagePadding),
         contentAlignment = Alignment.Center,
     ) {
-        StreamImage(
+        StreamAsyncImage(
             data = { imagePreviewUrl },
             modifier = Modifier
                 .height(theme.imageSize.height)
                 .width(theme.imageSize.width)
                 .clip(theme.imageShape)
                 .testTag("Stream_LinkPreviewImage"),
-            imageOptions = ImageOptions(contentScale = ContentScale.Crop),
-        )
+            contentScale = ContentScale.Crop,
+        ) { state ->
+            if (state !is AsyncImagePainter.State.Success) {
+                ShimmerProgressIndicator(
+                    modifier = Modifier.matchParentSize(),
+                )
+            } else {
+                Image(
+                    modifier = Modifier.matchParentSize(),
+                    painter = state.painter,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                )
+            }
+        }
     }
 }
 
