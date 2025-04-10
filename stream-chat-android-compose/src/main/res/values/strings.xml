@@ -20,7 +20,7 @@
 
     <!-- Search Input -->
     <string name="stream_compose_search_input_cancel">Cancel</string>
-    <string name="stream_compose_search_input_hint">Search channels by name</string>
+    <string name="stream_compose_search_input_hint">Search</string>
 
     <!-- Channel List -->
     <string name="stream_compose_channel_list_draft">Draft: </string>
