@@ -87,4 +87,11 @@ internal class StreamLoggerHandlerTest {
         verify(chatLoggerHandler).logE(tag, message, throwable)
         verifyNoMoreInteractions(chatLoggerHandler)
     }
+
+    @Test
+    fun `When logging with null handler Should not call any function`() {
+        val streamLoggerHandler = StreamLoggerHandler(null)
+        streamLoggerHandler.log(Priority.VERBOSE, tag, message, null)
+        verifyNoMoreInteractions(chatLoggerHandler)
+    }
 }
