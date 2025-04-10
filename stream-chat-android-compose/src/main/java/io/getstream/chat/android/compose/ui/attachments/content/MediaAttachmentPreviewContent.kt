@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,12 +32,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import com.skydoves.landscapist.ImageOptions
+import coil3.compose.AsyncImagePainter
 import io.getstream.chat.android.compose.ui.attachments.factory.DefaultPreviewItemOverlayContent
 import io.getstream.chat.android.compose.ui.components.CancelIcon
+import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.StreamImage
+import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
@@ -101,11 +103,24 @@ private fun MediaAttachmentPreviewItem(
             .testTag("Stream_MediaAttachmentPreviewItem"),
         contentAlignment = Alignment.Center,
     ) {
-        StreamImage(
+        StreamAsyncImage(
             modifier = Modifier.fillMaxSize(),
-            data = { data },
-            imageOptions = ImageOptions(contentScale = ContentScale.Crop),
-        )
+            data = data,
+            contentScale = ContentScale.Crop,
+        ) { state ->
+            if (state !is AsyncImagePainter.State.Success) {
+                ShimmerProgressIndicator(
+                    modifier = Modifier.matchParentSize(),
+                )
+            } else {
+                Image(
+                    modifier = Modifier.matchParentSize(),
+                    painter = state.painter,
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                )
+            }
+        }
 
         overlayContent(mediaAttachment.type)
 
