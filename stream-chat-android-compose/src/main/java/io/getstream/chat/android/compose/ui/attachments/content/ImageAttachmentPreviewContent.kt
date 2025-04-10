@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,10 +31,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import com.skydoves.landscapist.ImageOptions
+import coil3.compose.AsyncImagePainter
 import io.getstream.chat.android.compose.ui.components.CancelIcon
+import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
-import io.getstream.chat.android.compose.ui.util.StreamImage
+import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 
@@ -63,11 +65,24 @@ public fun ImageAttachmentPreviewContent(
                     .size(95.dp)
                     .clip(RoundedCornerShape(16.dp)),
             ) {
-                StreamImage(
+                StreamAsyncImage(
                     modifier = Modifier.fillMaxSize(),
-                    data = { data },
-                    imageOptions = ImageOptions(contentScale = ContentScale.Crop),
-                )
+                    data = data,
+                    contentScale = ContentScale.Crop,
+                ) { state ->
+                    if (state !is AsyncImagePainter.State.Success) {
+                        ShimmerProgressIndicator(
+                            modifier = Modifier.matchParentSize(),
+                        )
+                    } else {
+                        Image(
+                            modifier = Modifier.matchParentSize(),
+                            painter = state.painter,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                        )
+                    }
+                }
 
                 CancelIcon(
                     modifier = Modifier
