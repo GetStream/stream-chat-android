@@ -26,7 +26,6 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -37,14 +36,14 @@ import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.LayoutDirection
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
+import coil3.compose.rememberConstraintsSizeResolver
 import coil3.network.httpHeaders
 import coil3.request.ImageRequest
-import coil3.size.Size
+import coil3.size.SizeResolver
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
 import com.skydoves.landscapist.coil3.CoilImageState
@@ -146,37 +145,32 @@ internal fun StreamAsyncImage(
     contentScale: ContentScale = ContentScale.Fit,
     content: @Composable BoxScope.(state: AsyncImagePainter.State) -> Unit,
 ) {
-    var imageSize by remember { mutableStateOf(Size.ORIGINAL) }
+    val sizeResolver = rememberConstraintsSizeResolver()
     Box(
-        modifier = modifier.onSizeChanged { size ->
-            if (size.width > 0 && size.height > 0) {
-                imageSize = Size(size.width, size.height)
-            }
-        },
+        modifier = modifier.then(sizeResolver),
     ) {
-        if (imageSize == Size.ORIGINAL) {
-            content(AsyncImagePainter.State.Empty)
-        } else {
-            val context = LocalContext.current
-            val imageAssetTransformer = ChatTheme.streamImageAssetTransformer
-            val imageHeaderProvider = ChatTheme.streamImageHeadersProvider
-            var fetchRetries by remember { mutableIntStateOf(0) }
-            val asyncImagePainter = rememberAsyncImagePainter(
-                model = imageRequest
-                    .convertUrl(context, imageAssetTransformer)
-                    .provideHeaders(context, imageHeaderProvider)
-                    .size(context, imageSize),
-                imageLoader = LocalStreamImageLoader.current,
-                contentScale = contentScale,
-            )
-            val state by asyncImagePainter.state.collectAsState()
-            LaunchedEffect(state) {
-                if ((state as? AsyncImagePainter.State.Error)?.result?.throwable is SocketTimeoutException) {
-                    if (fetchRetries++ < MaxRetries) {
-                        asyncImagePainter.restart()
-                    }
+        val context = LocalContext.current
+        val imageAssetTransformer = ChatTheme.streamImageAssetTransformer
+        val imageHeaderProvider = ChatTheme.streamImageHeadersProvider
+        var fetchRetries by remember { mutableIntStateOf(0) }
+        val asyncImagePainter = rememberAsyncImagePainter(
+            model = imageRequest
+                .convertUrl(context, imageAssetTransformer)
+                .provideHeaders(context, imageHeaderProvider)
+                .size(sizeResolver),
+            imageLoader = LocalStreamImageLoader.current,
+            contentScale = contentScale,
+        )
+        val state by asyncImagePainter.state.collectAsState()
+        LaunchedEffect(state) {
+            if ((state as? AsyncImagePainter.State.Error)?.result?.throwable is SocketTimeoutException) {
+                if (fetchRetries++ < MaxRetries) {
+                    asyncImagePainter.restart()
                 }
             }
+        }
+        // Skip empty state of first rememberAsyncImagePainter emission
+        if (state !is AsyncImagePainter.State.Empty) {
             content(state)
         }
     }
@@ -449,11 +443,11 @@ private fun ImageRequest.provideHeaders(
     }.build()
 
 /**
- * Set the [Size] as a new build of the [ImageRequest].
+ * Set the [SizeResolver] as a new build of the [ImageRequest].
  */
-private fun ImageRequest.size(context: Context, size: Size): ImageRequest = run {
-    newBuilder(context)
-        .size(size)
+private fun ImageRequest.size(sizeResolver: SizeResolver): ImageRequest = run {
+    newBuilder()
+        .size(sizeResolver)
         .build()
 }
 
