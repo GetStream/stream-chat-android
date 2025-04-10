@@ -52,12 +52,10 @@ import androidx.compose.ui.unit.dp
 import coil3.request.ImageRequest
 import coil3.video.VideoFrameDecoder
 import coil3.video.videoFrameMillis
-import com.skydoves.landscapist.ImageOptions
-import com.skydoves.landscapist.coil3.CoilImage
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
+import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.models.AttachmentType
@@ -137,11 +135,11 @@ internal fun DefaultImagesPickerItem(
             .clickable { onImageSelected(imageItem) }
             .testTag("Stream_AttachmentPickerSampleImage"),
     ) {
-        CoilImage(
-            imageRequest = { imageRequest },
-            imageLoader = { LocalStreamImageLoader.current },
+        StreamAsyncImage(
+            imageRequest = imageRequest,
+            contentDescription = null,
             modifier = Modifier.fillMaxSize(),
-            imageOptions = ImageOptions(contentScale = ContentScale.Crop),
+            contentScale = ContentScale.Crop,
         )
 
         if (imageItem.isSelected) {
