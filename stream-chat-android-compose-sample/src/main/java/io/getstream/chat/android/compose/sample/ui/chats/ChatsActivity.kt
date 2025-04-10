@@ -31,7 +31,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
@@ -76,6 +75,8 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class ChatsActivity : BaseConnectedActivity() {
@@ -173,9 +174,12 @@ class ChatsActivity : BaseConnectedActivity() {
             listContentMode = listContentMode,
             onBackPress = ::finish,
             onListTopBarAvatarClick = {
-                lifecycleScope.launch {
-                    ChatHelper.disconnectUser()
+                GlobalScope.launch {
                     openUserLogin()
+                    // Give time for login activity to start before disconnecting the user,
+                    // so we prevent showing disconnected states.
+                    delay(UserLoginActivity.DELAY_BEFORE_LOGOUT_IN_MILLIS)
+                    ChatHelper.disconnectUser()
                 }
             },
             onListTopBarActionClick = ::openAddChannel,
