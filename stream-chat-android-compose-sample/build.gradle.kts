@@ -152,9 +152,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.google.accompanist.permissions)
 
-    // Coil
-    implementation(libs.skydoves.landscapist.coil)
-
     // Firebase
     implementation(libs.firebase.analytics.ktx)
     implementation(libs.firebase.crashlytics)
