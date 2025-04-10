@@ -16,15 +16,17 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import com.skydoves.landscapist.ImageOptions
+import coil3.compose.AsyncImagePainter
+import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
-import io.getstream.chat.android.compose.ui.util.StreamImage
+import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
@@ -54,12 +56,26 @@ public fun FileAttachmentQuotedContent(
     val startPadding = ChatTheme.dimens.quotedMessageAttachmentStartPadding
     val verticalPadding = ChatTheme.dimens.quotedMessageAttachmentTopPadding
     val size = ChatTheme.dimens.quotedMessageAttachmentPreviewSize
+    val contentScale = if (isImage) ContentScale.Crop else ContentScale.Fit
 
-    StreamImage(
+    StreamAsyncImage(
         modifier = modifier
             .padding(start = startPadding, top = verticalPadding, bottom = verticalPadding)
             .size(size),
-        data = { data },
-        imageOptions = ImageOptions(contentScale = if (isImage) ContentScale.Crop else ContentScale.Fit),
-    )
+        data = data,
+        contentScale = contentScale,
+    ) { state ->
+        if (state !is AsyncImagePainter.State.Success) {
+            ShimmerProgressIndicator(
+                modifier = Modifier.matchParentSize(),
+            )
+        } else {
+            Image(
+                modifier = Modifier.matchParentSize(),
+                painter = state.painter,
+                contentDescription = null,
+                contentScale = contentScale,
+            )
+        }
+    }
 }
