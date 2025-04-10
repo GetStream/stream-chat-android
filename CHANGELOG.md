@@ -24,6 +24,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Store/Obtain `Message::reactionGroups` on the local DB. [#5723](https://github.com/GetStream/stream-chat-android/pull/5723)
 
 ### ⬆️ Improved
 
