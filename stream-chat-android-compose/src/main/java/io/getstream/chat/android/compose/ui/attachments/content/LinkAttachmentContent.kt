@@ -22,6 +22,7 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -46,12 +47,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.skydoves.landscapist.ImageOptions
+import coil3.compose.AsyncImagePainter
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.StreamImage
+import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.uiutils.extension.addSchemeToUrlIfNeeded
@@ -146,15 +148,29 @@ private fun LinkAttachmentImagePreview(attachment: Attachment) {
     val data = attachment.imagePreviewUrl
 
     BoxWithConstraints(modifier = Modifier.wrapContentSize()) {
-        StreamImage(
+        val contentScale = ContentScale.Crop
+        StreamAsyncImage(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(max = 250.dp)
                 .clip(ChatTheme.shapes.attachment)
                 .testTag("Stream_LinkAttachmentPreview"),
-            data = { data },
-            imageOptions = ImageOptions(contentScale = ContentScale.Crop),
-        )
+            data = data,
+            contentScale = contentScale,
+        ) { state ->
+            if (state !is AsyncImagePainter.State.Success) {
+                ShimmerProgressIndicator(
+                    modifier = Modifier.matchParentSize(),
+                )
+            } else {
+                Image(
+                    modifier = Modifier.matchParentSize(),
+                    painter = state.painter,
+                    contentDescription = null,
+                    contentScale = contentScale,
+                )
+            }
+        }
 
         val authorName = attachment.authorName
 
