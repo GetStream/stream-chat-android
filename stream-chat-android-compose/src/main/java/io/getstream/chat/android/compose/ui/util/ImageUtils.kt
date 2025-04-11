@@ -109,14 +109,14 @@ public fun Modifier.mirrorRtl(layoutDirection: LayoutDirection): Modifier {
  * @param data The data to load the image from. Can be a URL, URI, resource ID, etc.
  * @param contentDescription The description to use for the image.
  * @param modifier Modifier for styling.
- * @param contentScale The scale to be used for the content.
+ * @param contentScale The scale to be used for the content. Default is [ContentScale.Crop].
  */
 @Composable
 internal fun StreamAsyncImage(
     data: Any?,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    contentScale: ContentScale = ContentScale.Fit,
+    contentScale: ContentScale = ContentScale.Crop,
 ) {
     StreamAsyncImage(
         imageRequest = ImageRequest.Builder(LocalContext.current)

@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
@@ -91,7 +90,6 @@ public fun MediaAttachmentQuotedContent(
                 .fillMaxSize(1f)
                 .background(backgroundColor),
             data = data,
-            contentScale = ContentScale.Crop,
             contentDescription = null,
         )
 

@@ -39,7 +39,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -145,7 +144,6 @@ private fun LinkAttachmentImagePreview(attachment: Attachment) {
     val data = attachment.imagePreviewUrl
 
     BoxWithConstraints(modifier = Modifier.wrapContentSize()) {
-        val contentScale = ContentScale.Crop
         StreamAsyncImage(
             modifier = Modifier
                 .fillMaxWidth()
@@ -153,7 +151,6 @@ private fun LinkAttachmentImagePreview(attachment: Attachment) {
                 .clip(ChatTheme.shapes.attachment)
                 .testTag("Stream_LinkAttachmentPreview"),
             data = data,
-            contentScale = contentScale,
             contentDescription = null,
         )
 

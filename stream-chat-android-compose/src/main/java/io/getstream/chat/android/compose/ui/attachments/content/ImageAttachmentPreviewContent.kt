@@ -28,7 +28,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.CancelIcon
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
@@ -65,7 +64,6 @@ public fun ImageAttachmentPreviewContent(
                 StreamAsyncImage(
                     modifier = Modifier.fillMaxSize(),
                     data = data,
-                    contentScale = ContentScale.Crop,
                     contentDescription = null,
                 )
 
