@@ -1618,6 +1618,34 @@ public abstract class io/getstream/chat/android/ui/common/state/messages/list/Mo
 	public abstract fun getText ()I
 }
 
+public final class io/getstream/chat/android/ui/common/state/messages/list/MyOwn : io/getstream/chat/android/ui/common/state/messages/list/NewMessageState {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/Long;)V
+	public final fun component1 ()Ljava/lang/Long;
+	public final fun copy (Ljava/lang/Long;)Lio/getstream/chat/android/ui/common/state/messages/list/MyOwn;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/list/MyOwn;Ljava/lang/Long;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/list/MyOwn;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getTs ()Ljava/lang/Long;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class io/getstream/chat/android/ui/common/state/messages/list/NewMessageState {
+	public static final field $stable I
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/list/Other : io/getstream/chat/android/ui/common/state/messages/list/NewMessageState {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/Long;)V
+	public final fun component1 ()Ljava/lang/Long;
+	public final fun copy (Ljava/lang/Long;)Lio/getstream/chat/android/ui/common/state/messages/list/Other;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/list/Other;Ljava/lang/Long;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/list/Other;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getTs ()Ljava/lang/Long;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/common/state/messages/list/SelectedMessageFailedModerationState : io/getstream/chat/android/ui/common/state/messages/list/SelectedMessageState {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/models/Message;Ljava/util/Set;)V
@@ -1745,6 +1773,14 @@ public final class io/getstream/chat/android/ui/common/state/messages/list/Threa
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getDate ()Ljava/util/Date;
 	public final fun getReplyCount ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/list/Typing : io/getstream/chat/android/ui/common/state/messages/list/NewMessageState {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/messages/list/Typing;
+	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

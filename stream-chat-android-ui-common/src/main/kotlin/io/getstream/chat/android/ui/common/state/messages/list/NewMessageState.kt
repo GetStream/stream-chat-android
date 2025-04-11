@@ -16,28 +16,22 @@
 
 package io.getstream.chat.android.ui.common.state.messages.list
 
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
-
 /**
  * Represents the state when a new message arrives to the channel.
  */
-@InternalStreamChatApi
 public sealed class NewMessageState
 
 /**
  * If the message is our own (we sent it), we scroll to the bottom of the list.
  */
-@InternalStreamChatApi
 public data class MyOwn(val ts: Long?) : NewMessageState()
 
 /**
  * If the message is someone else's (we didn't send it), we show a "New message" bubble.
  */
-@InternalStreamChatApi
 public data class Other(val ts: Long?) : NewMessageState()
 
 /**
  * If it is a typing message, we scroll to the bottom of the list.
  */
-@InternalStreamChatApi
 public data object Typing : NewMessageState()
