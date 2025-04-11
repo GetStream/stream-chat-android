@@ -157,6 +157,7 @@ dependencies {
     implementation(libs.firebase.crashlytics)
 
     // Instrumentation tests
+    "e2eImplementation"(libs.okhttp)
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.uiautomator)
     androidTestImplementation(libs.androidx.test.junit.ktx)
