@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -44,6 +45,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -271,7 +273,7 @@ public fun MediaGalleryPreviewScreen(
     onOptionClick: (Attachment, MediaGalleryPreviewOption) -> Unit,
     onShareAttachment: (Attachment) -> Unit,
     modifier: Modifier = Modifier,
-    config: MediaGalleryConfig = MediaGalleryConfig(),
+    config: MediaGalleryConfig = ChatTheme.mediaGalleryConfig,
     onHeaderLeadingContentClick: () -> Unit = {},
     onHeaderTrailingContentClick: () -> Unit = {},
     onFooterLeadingContentClick: (Attachment) -> Unit = onShareAttachment,
@@ -439,6 +441,7 @@ public fun MediaGalleryPreviewScreen(
  * @param modifier The [Modifier] to be applied to the header.
  * @param elevation The elevation of the header.
  * @param backgroundColor The background color of the header.
+ * @param config The configuration for the media gallery.
  * @param leadingContent Composable function to render the leading content. By default, it renders a
  * [MediaGalleryPreviewCloseIcon], and binds it to the [onLeadingContentClick].
  * @param centerContent Composable function to render the center content. By default, it renders a
@@ -455,11 +458,16 @@ public fun MediaGalleryPreviewHeader(
     modifier: Modifier = Modifier,
     elevation: Dp = 4.dp,
     backgroundColor: Color = ChatTheme.colors.barsBackground,
+    config: MediaGalleryConfig = ChatTheme.mediaGalleryConfig,
     leadingContent: @Composable (Modifier) -> Unit = {
-        MediaGalleryPreviewCloseIcon(
-            modifier = it,
-            onClick = onLeadingContentClick,
-        )
+        if (config.isCloseVisible) {
+            MediaGalleryPreviewCloseIcon(
+                modifier = it,
+                onClick = onLeadingContentClick,
+            )
+        } else {
+            Spacer(modifier = Modifier.minimumInteractiveComponentSize())
+        }
     },
     centerContent: @Composable (Modifier) -> Unit = {
         MediaGalleryPreviewTitle(
@@ -469,11 +477,15 @@ public fun MediaGalleryPreviewHeader(
         )
     },
     trailingContent: @Composable (Modifier) -> Unit = {
-        MediaGalleryPreviewOptionsIcon(
-            modifier = it,
-            message = message,
-            onClick = onTrailingContentClick,
-        )
+        if (config.isOptionsVisible) {
+            MediaGalleryPreviewOptionsIcon(
+                modifier = it,
+                message = message,
+                onClick = onTrailingContentClick,
+            )
+        } else {
+            Spacer(modifier = Modifier.minimumInteractiveComponentSize())
+        }
     },
 ) {
     Surface(
@@ -554,6 +566,7 @@ public fun MediaGalleryPager(
  * @param modifier The [Modifier] to be applied to the footer.
  * @param elevation The elevation of the footer.
  * @param backgroundColor The background color of the footer.
+ * @param config The configuration for the media gallery.
  * @param leadingContent Composable function to render the leading content. By default, it renders a
  * [MediaGalleryPreviewShareIcon], and binds it to the [onLeadingContentClick].
  * @param centerContent Composable function to render the center content. By default, it renders a
@@ -575,13 +588,18 @@ public fun MediaGalleryPreviewFooter(
     modifier: Modifier = Modifier,
     elevation: Dp = 4.dp,
     backgroundColor: Color = ChatTheme.colors.barsBackground,
+    config: MediaGalleryConfig = ChatTheme.mediaGalleryConfig,
     leadingContent: @Composable (Modifier) -> Unit = {
-        MediaGalleryPreviewShareIcon(
-            modifier = it,
-            connectionState = connectionState,
-            isSharingInProgress = isSharingInProgress,
-            onClick = { onLeadingContentClick(attachments[currentPage]) },
-        )
+        if (config.isShareVisible) {
+            MediaGalleryPreviewShareIcon(
+                modifier = it,
+                connectionState = connectionState,
+                isSharingInProgress = isSharingInProgress,
+                onClick = { onLeadingContentClick(attachments[currentPage]) },
+            )
+        } else {
+            Spacer(modifier = Modifier.minimumInteractiveComponentSize())
+        }
     },
     centerContent: @Composable (Modifier) -> Unit = {
         if (isSharingInProgress) {
@@ -594,10 +612,14 @@ public fun MediaGalleryPreviewFooter(
         }
     },
     trailingContent: @Composable (Modifier) -> Unit = {
-        MediaGalleryPreviewPhotosIcon(
-            modifier = it,
-            onClick = { onTrailingContentClick(attachments[currentPage]) },
-        )
+        if (config.isGalleryVisible) {
+            MediaGalleryPreviewPhotosIcon(
+                modifier = it,
+                onClick = { onTrailingContentClick(attachments[currentPage]) },
+            )
+        } else {
+            Spacer(modifier = Modifier.minimumInteractiveComponentSize())
+        }
     },
 ) {
     Surface(

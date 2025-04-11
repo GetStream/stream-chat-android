@@ -690,15 +690,23 @@ public final class io/getstream/chat/android/compose/ui/attachments/preview/Medi
 	public static final field $stable I
 	public static final field CREATOR Landroid/os/Parcelable$Creator;
 	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryOptionsConfig;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryOptionsConfig;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Lio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryOptionsConfig;
-	public final fun copy (Lio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryOptionsConfig;)Lio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryConfig;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryConfig;Lio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryOptionsConfig;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryConfig;
+	public fun <init> (ZZZZLio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryOptionsConfig;)V
+	public synthetic fun <init> (ZZZZLio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryOptionsConfig;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Z
+	public final fun component2 ()Z
+	public final fun component3 ()Z
+	public final fun component4 ()Z
+	public final fun component5 ()Lio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryOptionsConfig;
+	public final fun copy (ZZZZLio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryOptionsConfig;)Lio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryConfig;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryConfig;ZZZZLio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryOptionsConfig;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryConfig;
 	public final fun describeContents ()I
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getOptionsConfig ()Lio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryOptionsConfig;
 	public fun hashCode ()I
+	public final fun isCloseVisible ()Z
+	public final fun isGalleryVisible ()Z
+	public final fun isOptionsVisible ()Z
+	public final fun isShareVisible ()Z
 	public fun toString ()Ljava/lang/String;
 	public final fun writeToParcel (Landroid/os/Parcel;I)V
 }
@@ -787,8 +795,8 @@ public final class io/getstream/chat/android/compose/ui/attachments/preview/Medi
 	public static final fun ConfirmShareLargeFileDialog (ILkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 	public static final fun MediaGalleryPager (Landroidx/compose/foundation/pager/PagerState;Ljava/util/List;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 	public static final fun MediaGalleryPreviewCloseIcon (Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
-	public static final fun MediaGalleryPreviewFooter-qSr5FEw (Ljava/util/List;IILio/getstream/chat/android/models/ConnectionState;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;FJLkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
-	public static final fun MediaGalleryPreviewHeader-wK_Y8yA (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/ConnectionState;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;FJLkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MediaGalleryPreviewFooter-QuezbdY (Ljava/util/List;IILio/getstream/chat/android/models/ConnectionState;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;FJLio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryConfig;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
+	public static final fun MediaGalleryPreviewHeader-50rZWIw (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/ConnectionState;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;FJLio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryConfig;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
 	public static final fun MediaGalleryPreviewOptionsIcon (Lio/getstream/chat/android/models/Message;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 	public static final fun MediaGalleryPreviewPageIndicator (IILandroidx/compose/runtime/Composer;I)V
 	public static final fun MediaGalleryPreviewPhotosIcon (Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V

@@ -109,7 +109,6 @@ internal fun MediaGalleryPhotosMenu(
                 .wrapContentHeight()
                 .align(Alignment.BottomCenter),
             shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-            shadowElevation = 4.dp,
             color = ChatTheme.colors.barsBackground,
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {

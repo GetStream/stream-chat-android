@@ -187,11 +187,7 @@ public class MediaGalleryPreviewViewModel(
                 },
                 skipEnrichUrl = skipEnrichUrl,
             )
-            chatClient.updateMessage(message = message).enqueue { result ->
-                if (result is Result.Success) {
-                    message = result.value
-                }
-            }
+            chatClient.updateMessage(message = message).enqueue()
         } else if (message.text.isEmpty() && numberOfAttachments == 1) {
             chatClient.deleteMessage(message.id).enqueue { result ->
                 if (result is Result.Success) {

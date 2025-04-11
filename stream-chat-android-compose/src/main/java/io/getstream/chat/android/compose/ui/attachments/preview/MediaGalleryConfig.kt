@@ -23,10 +23,18 @@ import kotlinx.parcelize.Parcelize
  * Model holding the configuration for the media gallery options.
  * By default, all options are enabled/visible.
  *
+ * @param isCloseVisible If the close button is visible.
+ * @param isOptionsVisible If the options button is visible.
+ * @param isShareVisible If the share button is visible.
+ * @param isGalleryVisible If the gallery button is visible.
  * @param optionsConfig The configuration for the options in the media gallery.
  */
 @Parcelize
 public data class MediaGalleryConfig(
+    val isCloseVisible: Boolean = true,
+    val isOptionsVisible: Boolean = true,
+    val isShareVisible: Boolean = true,
+    val isGalleryVisible: Boolean = true,
     val optionsConfig: MediaGalleryOptionsConfig = MediaGalleryOptionsConfig(),
 ) : Parcelable
 
