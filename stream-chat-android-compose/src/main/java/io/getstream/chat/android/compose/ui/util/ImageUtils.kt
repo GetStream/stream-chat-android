@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.LayoutDirection
 import coil3.compose.AsyncImagePainter
 import coil3.compose.rememberAsyncImagePainter
@@ -238,9 +239,14 @@ internal fun StreamAsyncImage(
                 }
             }
         }
-        // Skip empty state of first rememberAsyncImagePainter emission
-        if (state !is AsyncImagePainter.State.Empty) {
-            content(state)
+        if (LocalInspectionMode.current) {
+            // Send empty state when in preview mode.
+            content(AsyncImagePainter.State.Empty)
+        } else {
+            // Skip empty state of first rememberAsyncImagePainter emission when not in preview mode.
+            if (state !is AsyncImagePainter.State.Empty) {
+                content(state)
+            }
         }
     }
 }
