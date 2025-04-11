@@ -115,7 +115,7 @@ public fun MediaAttachmentContent(
         }
     },
 ) {
-    val (message, isMine, onLongItemClick, onMediaGalleryPreviewResult) = attachmentState
+    val (message, _, onLongItemClick, onMediaGalleryPreviewResult) = attachmentState
     val gridSpacing = ChatTheme.dimens.attachmentsContentMediaGridSpacing
 
     Row(
@@ -415,7 +415,7 @@ internal fun MediaAttachmentContentItem(
         }
 
     val context = LocalContext.current
-    val imageRequest = remember {
+    val imageRequest = remember(data) {
         ImageRequest.Builder(context)
             .data(data)
             .build()
@@ -423,8 +423,9 @@ internal fun MediaAttachmentContentItem(
 
     var imageState by remember { mutableStateOf<AsyncImagePainter.State>(AsyncImagePainter.State.Empty) }
 
+    val config = ChatTheme.mediaGalleryConfig
     val mixedMediaPreviewLauncher = rememberLauncherForActivityResult(
-        contract = MediaGalleryPreviewContract(),
+        contract = MediaGalleryPreviewContract(config),
         onResult = { result -> onMediaGalleryPreviewResult(result) },
     )
 

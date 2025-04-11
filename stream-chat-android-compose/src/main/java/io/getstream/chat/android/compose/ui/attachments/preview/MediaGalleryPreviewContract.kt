@@ -28,9 +28,16 @@ import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizin
 /**
  * The contract used to start the [MediaGalleryPreviewActivity]
  * given a message ID and the position of the clicked attachment.
+ *
+ * @param config The configuration for the media gallery.
  */
-public class MediaGalleryPreviewContract :
+public class MediaGalleryPreviewContract(private val config: MediaGalleryConfig) :
     ActivityResultContract<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>() {
+
+    /**
+     * Creates the contract with the default [MediaGalleryConfig].
+     */
+    public constructor() : this(config = MediaGalleryConfig())
 
     /**
      * Creates the intent to start the [MediaGalleryPreviewActivity].
@@ -48,6 +55,7 @@ public class MediaGalleryPreviewContract :
             videoThumbnailsEnabled = input.videoThumbnailsEnabled,
             streamCdnImageResizing = input.streamCdnImageResizing,
             skipEnrichUrl = input.skipEnrichUrl,
+            config = config,
         )
     }
 
@@ -68,6 +76,7 @@ public class MediaGalleryPreviewContract :
      * @param downloadAttachmentUriGenerator The URI generator for downloading attachments.
      * @param downloadRequestInterceptor The request interceptor for downloading attachments.
      * @param videoThumbnailsEnabled Whether video thumbnails will be displayed in previews or not.
+     * @param streamCdnImageResizing The CDN image resizing strategy.
      * @param skipEnrichUrl If set to true will skip enriching URLs when you update the message
      * by deleting an attachment contained within it. Set to false by default.
      */

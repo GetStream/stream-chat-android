@@ -29,7 +29,7 @@ import androidx.compose.ui.graphics.painter.Painter
  * @param action The action this option represents.
  * @param isEnabled If the action is currently enabled.
  */
-internal data class MediaGalleryPreviewOption(
+public data class MediaGalleryPreviewOption(
     internal val title: String,
     internal val titleColor: Color,
     internal val iconPainter: Painter,
