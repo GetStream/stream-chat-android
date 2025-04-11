@@ -39,6 +39,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -291,12 +292,15 @@ public fun MessageItem(
         ) {
             Row(
                 modifier
-                    .widthIn(max = 300.dp)
+                    .wrapContentWidth()
                     .then(clickModifier)
                     .testTag("Stream_MessageCell"),
             ) {
                 leadingContent(messageItem)
-                Column(horizontalAlignment = messageAlignment.contentAlignment) {
+                Column(
+                    modifier = Modifier.weight(1f, fill = false),
+                    horizontalAlignment = messageAlignment.contentAlignment,
+                ) {
                     headerContent(messageItem)
                     centerContent(messageItem)
                     footerContent(messageItem)
