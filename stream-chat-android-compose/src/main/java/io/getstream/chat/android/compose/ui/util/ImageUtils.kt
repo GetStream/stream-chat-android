@@ -266,6 +266,13 @@ internal fun StreamAsyncImage(
  * @param success Content to be displayed when the request is succeeded.
  * @param failure Content to be displayed when the request is failed.
  */
+@Deprecated(
+    message = "Use Coil SubcomposeAsyncImage instead",
+    replaceWith = ReplaceWith(
+        expression = "SubcomposeAsyncImage(model = data(), imageLoader = LocalStreamImageLoader.current)",
+        imports = arrayOf("coil3.compose.SubcomposeAsyncImage"),
+    ),
+)
 @Composable
 public fun StreamImage(
     data: () -> Any?,
@@ -311,6 +318,13 @@ public fun StreamImage(
  * @param success Content to be displayed when the request is succeeded.
  * @param failure Content to be displayed when the request is failed.
  */
+@Deprecated(
+    message = "Use Coil SubcomposeAsyncImage instead",
+    replaceWith = ReplaceWith(
+        expression = "SubcomposeAsyncImage(model = imageRequest(), imageLoader = LocalStreamImageLoader.current)",
+        imports = arrayOf("coil3.compose.SubcomposeAsyncImage"),
+    ),
+)
 @Composable
 public fun StreamImage(
     imageRequest: () -> ImageRequest,
@@ -361,10 +375,10 @@ public fun StreamImage(
  * @return The [AsyncImagePainter] that remembers the request and the image that we want to show.
  */
 @Deprecated(
-    message = "Use StreamImage instead",
+    message = "Use Coil rememberAsyncImagePainter instead",
     replaceWith = ReplaceWith(
-        expression = "StreamImage(data = { data })",
-        imports = arrayOf("io.getstream.chat.android.compose.ui.util.StreamImage"),
+        expression = "rememberAsyncImagePainter(model = data, imageLoader = LocalStreamImageLoader.current)",
+        imports = arrayOf("coil3.compose.rememberAsyncImagePainter"),
     ),
 )
 @Composable
@@ -409,10 +423,10 @@ public fun rememberStreamImagePainter(
  * @return The [AsyncImagePainter] that remembers the request and the image that we want to show.
  */
 @Deprecated(
-    message = "Use StreamImage instead",
+    message = "Use Coil rememberAsyncImagePainter instead",
     replaceWith = ReplaceWith(
-        expression = "StreamImage(imageRequest = { imageRequest })",
-        imports = arrayOf("io.getstream.chat.android.compose.ui.util.StreamImage"),
+        expression = "rememberAsyncImagePainter(model = model, imageLoader = LocalStreamImageLoader.current)",
+        imports = arrayOf("coil3.compose.rememberAsyncImagePainter"),
     ),
 )
 @Composable
