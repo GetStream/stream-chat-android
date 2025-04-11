@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.ui.attachments.content
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -27,8 +26,8 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
@@ -45,6 +44,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
@@ -75,7 +75,7 @@ public fun LinkAttachmentContent(
     modifier: Modifier = Modifier,
     onItemClick: (context: Context, Url: String) -> Unit = ::onLinkAttachmentContentClick,
 ) {
-    val (message, isMine, onLongItemClick) = attachmentState
+    val (message, _, onLongItemClick) = attachmentState
 
     val context = LocalContext.current
     val attachment = message.attachments.firstOrNull { it.hasLink() && !it.isGiphy() }
@@ -147,7 +147,7 @@ private fun LinkAttachmentImagePreview(attachment: Attachment) {
         StreamAsyncImage(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(max = 250.dp)
+                .aspectRatio(ratio = 1f, matchHeightConstraintsFirst = true)
                 .clip(ChatTheme.shapes.attachment)
                 .testTag("Stream_LinkAttachmentPreview"),
             data = data,
@@ -219,7 +219,7 @@ internal fun onLinkAttachmentContentClick(context: Context, url: String) {
     context.startActivity(
         Intent(
             Intent.ACTION_VIEW,
-            Uri.parse(url),
+            url.toUri(),
         ),
     )
 }
