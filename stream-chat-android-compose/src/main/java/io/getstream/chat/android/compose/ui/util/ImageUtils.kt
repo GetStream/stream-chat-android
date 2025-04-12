@@ -44,6 +44,7 @@ import coil3.compose.rememberAsyncImagePainter
 import coil3.compose.rememberConstraintsSizeResolver
 import coil3.network.httpHeaders
 import coil3.request.ImageRequest
+import coil3.size.Size
 import coil3.size.SizeResolver
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
@@ -152,14 +153,15 @@ internal fun StreamAsyncImage(
         modifier = modifier,
         contentScale = contentScale,
     ) { state ->
-        if (state !is AsyncImagePainter.State.Success) {
+        val painter = state.painter
+        if (painter == null) {
             ShimmerProgressIndicator(
                 modifier = Modifier.matchParentSize(),
             )
         } else {
             Image(
                 modifier = Modifier.matchParentSize(),
-                painter = state.painter,
+                painter = painter,
                 contentDescription = contentDescription,
                 contentScale = contentScale,
             )
@@ -239,14 +241,9 @@ internal fun StreamAsyncImage(
                 }
             }
         }
-        if (LocalInspectionMode.current) {
-            // Send empty state when in preview mode.
-            content(AsyncImagePainter.State.Empty)
-        } else {
-            // Skip empty state of first rememberAsyncImagePainter emission when not in preview mode.
-            if (state !is AsyncImagePainter.State.Empty) {
-                content(state)
-            }
+        // Skip empty state of first rememberAsyncImagePainter emission when not in preview mode.
+        if (LocalInspectionMode.current || state !is AsyncImagePainter.State.Empty) {
+            content(state)
         }
     }
 }
@@ -533,11 +530,17 @@ private fun ImageRequest.provideHeaders(
 
 /**
  * Set the [SizeResolver] as a new build of the [ImageRequest].
+ * Otherwise, set the size to [Size.ORIGINAL] when in preview mode, to fix loading local images.
  */
+@Composable
 private fun ImageRequest.size(sizeResolver: SizeResolver): ImageRequest = run {
-    newBuilder()
-        .size(sizeResolver)
-        .build()
+    newBuilder().run {
+        if (LocalInspectionMode.current) {
+            size(Size.ORIGINAL)
+        } else {
+            size(sizeResolver)
+        }
+    }.build()
 }
 
 /**
