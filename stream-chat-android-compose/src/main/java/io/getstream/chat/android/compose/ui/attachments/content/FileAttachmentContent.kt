@@ -49,7 +49,6 @@ import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
-import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
@@ -58,11 +57,11 @@ import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.util.attachmentDownloadState
 import io.getstream.chat.android.compose.util.onDownloadHandleRequest
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
+import io.getstream.chat.android.uiutils.model.MimeType
 
 /**
  * Builds a file attachment message which shows a list of files.
@@ -323,15 +322,29 @@ internal fun onFileAttachmentContentItemClick(
     previewHandlers.firstOrNull { it.canHandle(attachment) }?.handleAttachmentPreview(attachment)
 }
 
-@Preview(showSystemUi = true, showBackground = true)
+@Preview(showBackground = true)
 @Composable
-internal fun FileAttachmentContentPreview() {
-    val attachment = Attachment(type = AttachmentType.FILE)
-    val attachmentState = AttachmentState(Message(attachments = mutableListOf(attachment)))
+private fun OwnFileAttachmentContentPreview() {
+    FileAttachmentContent(isMine = true)
+}
 
-    ChatPreviewTheme {
+@Preview(showBackground = true)
+@Composable
+private fun OtherFileAttachmentContentPreview() {
+    FileAttachmentContent(isMine = false)
+}
+
+@Composable
+internal fun FileAttachmentContent(
+    darkMode: Boolean = false,
+    isMine: Boolean,
+) {
+    ChatTheme(isInDarkMode = darkMode) {
         FileAttachmentContent(
-            attachmentState = attachmentState,
+            attachmentState = AttachmentState(
+                message = Message(attachments = listOf(Attachment(mimeType = MimeType.MIME_TYPE_PDF))),
+                isMine = isMine
+            ),
         )
     }
 }
