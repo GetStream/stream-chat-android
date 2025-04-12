@@ -39,11 +39,18 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.LayoutDirection
+import coil3.Image
+import coil3.annotation.ExperimentalCoilApi
+import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
+import coil3.compose.AsyncImagePreviewHandler
+import coil3.compose.SubcomposeAsyncImage
+import coil3.compose.asPainter
 import coil3.compose.rememberAsyncImagePainter
 import coil3.compose.rememberConstraintsSizeResolver
 import coil3.network.httpHeaders
 import coil3.request.ImageRequest
+import coil3.request.SuccessResult
 import coil3.size.Size
 import coil3.size.SizeResolver
 import com.skydoves.landscapist.ImageOptions
@@ -530,7 +537,7 @@ private fun ImageRequest.provideHeaders(
 
 /**
  * Set the [SizeResolver] as a new build of the [ImageRequest].
- * Otherwise, set the size to [Size.ORIGINAL] when in preview mode, to fix loading local images.
+ * Otherwise, set the size to [Size.ORIGINAL] in preview mode to fix loading local images.
  */
 @Composable
 private fun ImageRequest.size(sizeResolver: SizeResolver): ImageRequest = run {
@@ -548,3 +555,19 @@ private fun ImageRequest.size(sizeResolver: SizeResolver): ImageRequest = run {
  */
 internal val AsyncImagePainter.State.isCompleted: Boolean
     get() = this is AsyncImagePainter.State.Success || this is AsyncImagePainter.State.Error
+
+/**
+ * Controls what [AsyncImage], [SubcomposeAsyncImage], and [AsyncImagePainter] render
+ * when in preview mode ([LocalInspectionMode] is true).
+ */
+@OptIn(ExperimentalCoilApi::class)
+internal inline fun AsyncImagePreviewHandler(
+    crossinline handle: suspend (request: ImageRequest) -> Image,
+) = AsyncImagePreviewHandler { _, request ->
+    handle(request).let { image ->
+        AsyncImagePainter.State.Success(
+            painter = image.asPainter(request.context),
+            result = SuccessResult(image, request)
+        )
+    }
+}

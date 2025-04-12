@@ -27,4 +27,13 @@ internal class AttachmentsContentTest : SnapshotTest {
             }
         }
     }
+
+    @Test
+    fun `link attachment content`() {
+        snapshotWithDarkMode { darkMode ->
+            LinkAttachmentContent(
+                darkMode = darkMode,
+            )
+        }
+    }
 }

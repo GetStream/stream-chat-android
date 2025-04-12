@@ -21,36 +21,51 @@ import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
+import coil3.ColorImage
+import coil3.compose.LocalAsyncImagePreviewHandler
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.uiutils.extension.addSchemeToUrlIfNeeded
 import io.getstream.chat.android.uiutils.extension.hasLink
@@ -73,7 +88,7 @@ public fun LinkAttachmentContent(
     attachmentState: AttachmentState,
     linkDescriptionMaxLines: Int,
     modifier: Modifier = Modifier,
-    onItemClick: (context: Context, Url: String) -> Unit = ::onLinkAttachmentContentClick,
+    onItemClick: (context: Context, url: String) -> Unit = ::onLinkAttachmentContentClick,
 ) {
     val (message, _, onLongItemClick) = attachmentState
 
@@ -142,17 +157,40 @@ public fun LinkAttachmentContent(
 @Composable
 private fun LinkAttachmentImagePreview(attachment: Attachment) {
     val data = attachment.imagePreviewUrl
+    var maxWidth by remember { mutableStateOf(0.dp) }
 
-    BoxWithConstraints(modifier = Modifier.wrapContentSize()) {
+    Box(
+        modifier = Modifier.onSizeChanged { size -> maxWidth = size.width.dp }
+    ) {
+        val contentScale = ContentScale.FillWidth
         StreamAsyncImage(
             modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(ratio = 1f, matchHeightConstraintsFirst = true)
+                .heightIn(max = 250.dp)
                 .clip(ChatTheme.shapes.attachment)
                 .testTag("Stream_LinkAttachmentPreview"),
             data = data,
-            contentDescription = null,
-        )
+            contentScale = contentScale,
+        ) { state ->
+            val painter = state.painter
+
+            if (painter == null) {
+                ShimmerProgressIndicator(
+                    modifier = Modifier.fillMaxSize(),
+                )
+            } else {
+                val intrinsicSize = painter.intrinsicSize
+                val aspectRatio = intrinsicSize.width / intrinsicSize.height
+
+                Image(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(aspectRatio),
+                    painter = painter,
+                    contentDescription = null,
+                    contentScale = contentScale,
+                )
+            }
+        }
 
         val authorName = attachment.authorName
 
@@ -165,7 +203,6 @@ private fun LinkAttachmentImagePreview(attachment: Attachment) {
                 fontSize = 16.sp,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
-                    .wrapContentWidth()
                     .widthIn(max = maxWidth / 2)
                     .background(
                         color = ChatTheme.colors.linkBackground,
@@ -223,3 +260,36 @@ internal fun onLinkAttachmentContentClick(context: Context, url: String) {
         ),
     )
 }
+
+@Preview(showBackground = true)
+@Composable
+private fun LinkAttachmentContentPreview() {
+    LinkAttachmentContent()
+}
+
+@Composable
+internal fun LinkAttachmentContent(darkMode: Boolean = false) {
+    ChatTheme(isInDarkMode = darkMode) {
+        val previewHandler = AsyncImagePreviewHandler {
+            ColorImage(color = Color.Cyan.toArgb(), width = 200, height = 150)
+        }
+        CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
+            val attachment = Attachment(
+                titleLink = "Link",
+                title = "Title",
+                text = LongDescription,
+                imageUrl = "Image",
+                authorName = "Author",
+            )
+            LinkAttachmentContent(
+                attachmentState = AttachmentState(
+                    message = Message(attachments = listOf(attachment)),
+                ),
+                linkDescriptionMaxLines = 5,
+            )
+        }
+    }
+}
+
+@Suppress("MagicNumber")
+private val LongDescription = (0..50).joinToString { "Lorem ipsum dolor sit amet" }
