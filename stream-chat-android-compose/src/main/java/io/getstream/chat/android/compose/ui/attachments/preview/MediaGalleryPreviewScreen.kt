@@ -74,6 +74,7 @@ import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModel
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
@@ -119,6 +120,7 @@ import java.util.Date
  * @param optionsMenu Composable function to render the options menu. By default, it renders a
  * [MediaGalleryOptionsMenu].
  */
+@ExperimentalStreamChatApi
 @Composable
 public fun MediaGalleryPreviewScreen(
     viewModel: MediaGalleryPreviewViewModel,
@@ -260,6 +262,7 @@ public fun MediaGalleryPreviewScreen(
  * [MediaGalleryOptionsMenu].
  */
 @Suppress("LongParameterList", "LongMethod")
+@ExperimentalStreamChatApi
 @Composable
 public fun MediaGalleryPreviewScreen(
     message: Message,
@@ -441,6 +444,7 @@ public fun MediaGalleryPreviewScreen(
  * @param modifier The [Modifier] to be applied to the header.
  * @param elevation The elevation of the header.
  * @param backgroundColor The background color of the header.
+ * @param contentColor The content color of the header.
  * @param config The configuration for the media gallery.
  * @param leadingContent Composable function to render the leading content. By default, it renders a
  * [MediaGalleryPreviewCloseIcon], and binds it to the [onLeadingContentClick].
@@ -449,6 +453,7 @@ public fun MediaGalleryPreviewScreen(
  * @param trailingContent Composable function to render the trailing content. By default, it renders a
  * [MediaGalleryPreviewOptionsIcon], and binds it to the [onTrailingContentClick].
  */
+@ExperimentalStreamChatApi
 @Composable
 public fun MediaGalleryPreviewHeader(
     message: Message,
@@ -458,6 +463,7 @@ public fun MediaGalleryPreviewHeader(
     modifier: Modifier = Modifier,
     elevation: Dp = 4.dp,
     backgroundColor: Color = ChatTheme.colors.barsBackground,
+    contentColor: Color = ChatTheme.colors.textHighEmphasis,
     config: MediaGalleryConfig = ChatTheme.mediaGalleryConfig,
     leadingContent: @Composable (Modifier) -> Unit = {
         if (config.isCloseVisible) {
@@ -492,6 +498,7 @@ public fun MediaGalleryPreviewHeader(
         modifier = modifier,
         shadowElevation = elevation,
         color = backgroundColor,
+        contentColor = contentColor,
     ) {
         Row(
             modifier = Modifier
@@ -517,6 +524,7 @@ public fun MediaGalleryPreviewHeader(
  * @param onPlaybackError Callback to be invoked when an error during the playing of a video occurs.
  * @param modifier The [Modifier] to be applied to the pager.
  */
+@ExperimentalStreamChatApi
 @Composable
 public fun MediaGalleryPager(
     pagerState: PagerState,
@@ -566,6 +574,7 @@ public fun MediaGalleryPager(
  * @param modifier The [Modifier] to be applied to the footer.
  * @param elevation The elevation of the footer.
  * @param backgroundColor The background color of the footer.
+ * @param contentColor The content color of the footer.
  * @param config The configuration for the media gallery.
  * @param leadingContent Composable function to render the leading content. By default, it renders a
  * [MediaGalleryPreviewShareIcon], and binds it to the [onLeadingContentClick].
@@ -576,6 +585,7 @@ public fun MediaGalleryPager(
  * [MediaGalleryPreviewPhotosIcon], and binds it to the [onTrailingContentClick].
  */
 @Suppress("LongParameterList")
+@ExperimentalStreamChatApi
 @Composable
 public fun MediaGalleryPreviewFooter(
     attachments: List<Attachment>,
@@ -588,6 +598,7 @@ public fun MediaGalleryPreviewFooter(
     modifier: Modifier = Modifier,
     elevation: Dp = 4.dp,
     backgroundColor: Color = ChatTheme.colors.barsBackground,
+    contentColor: Color = ChatTheme.colors.textHighEmphasis,
     config: MediaGalleryConfig = ChatTheme.mediaGalleryConfig,
     leadingContent: @Composable (Modifier) -> Unit = {
         if (config.isShareVisible) {
@@ -626,6 +637,7 @@ public fun MediaGalleryPreviewFooter(
         modifier = modifier,
         shadowElevation = elevation,
         color = backgroundColor,
+        contentColor = contentColor,
     ) {
         Row(
             modifier = Modifier
@@ -647,6 +659,7 @@ public fun MediaGalleryPreviewFooter(
  * @param onClick Callback to be invoked when the close icon is clicked.
  * @param modifier The [Modifier] to be applied to the close icon.
  */
+@ExperimentalStreamChatApi
 @Composable
 public fun MediaGalleryPreviewCloseIcon(
     onClick: () -> Unit,
@@ -659,7 +672,6 @@ public fun MediaGalleryPreviewCloseIcon(
         Icon(
             painter = painterResource(id = R.drawable.stream_compose_ic_close),
             contentDescription = stringResource(id = R.string.stream_compose_cancel),
-            tint = ChatTheme.colors.textHighEmphasis,
         )
     }
 }
@@ -680,6 +692,7 @@ public fun MediaGalleryPreviewCloseIcon(
  * @param connectionState The current network connection state.
  * @param modifier Optional modifier applied to the Column container.
  */
+@ExperimentalStreamChatApi
 @Composable
 public fun MediaGalleryPreviewTitle(
     message: Message,
@@ -692,26 +705,22 @@ public fun MediaGalleryPreviewTitle(
         verticalArrangement = Arrangement.Center,
     ) {
         val textStyle = ChatTheme.typography.title3Bold
-        val textColor = ChatTheme.colors.textHighEmphasis
 
         when (connectionState) {
             is ConnectionState.Connected -> Text(
                 text = message.user.name,
                 style = textStyle,
-                color = textColor,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
 
             is ConnectionState.Connecting -> NetworkLoadingIndicator(
                 textStyle = textStyle,
-                textColor = textColor,
             )
 
             is ConnectionState.Offline -> Text(
                 text = stringResource(id = R.string.stream_compose_disconnected),
                 style = textStyle,
-                color = textColor,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -729,6 +738,7 @@ public fun MediaGalleryPreviewTitle(
  * @param onClick Callback to be invoked when the options icon is clicked.
  * @param modifier The [Modifier] to be applied to the options icon.
  */
+@ExperimentalStreamChatApi
 @Composable
 public fun MediaGalleryPreviewOptionsIcon(
     message: Message,
@@ -744,7 +754,6 @@ public fun MediaGalleryPreviewOptionsIcon(
         Icon(
             painter = painterResource(id = R.drawable.stream_compose_ic_menu_vertical),
             contentDescription = stringResource(R.string.stream_compose_image_options),
-            tint = if (enabled) ChatTheme.colors.textHighEmphasis else ChatTheme.colors.disabled,
         )
     }
 }
@@ -764,6 +773,7 @@ public fun MediaGalleryPreviewOptionsIcon(
  * @param onClick Callback to be invoked when the icon is clicked.
  * @param modifier The [Modifier] to be applied to the icon button.
  */
+@ExperimentalStreamChatApi
 @Composable
 public fun MediaGalleryPreviewShareIcon(
     connectionState: ConnectionState,
@@ -785,7 +795,6 @@ public fun MediaGalleryPreviewShareIcon(
         Icon(
             painter = painterResource(id = painter),
             contentDescription = stringResource(id = R.string.stream_compose_image_preview_share),
-            tint = if (enabled) ChatTheme.colors.textHighEmphasis else ChatTheme.colors.disabled,
         )
     }
 }
@@ -799,6 +808,7 @@ public fun MediaGalleryPreviewShareIcon(
  * @param currentPage Zero-based index of the current page being displayed
  * @param totalPages Total number of pages in the gallery
  */
+@ExperimentalStreamChatApi
 @Composable
 public fun MediaGalleryPreviewPageIndicator(
     currentPage: Int,
@@ -808,7 +818,6 @@ public fun MediaGalleryPreviewPageIndicator(
     Text(
         text = text,
         style = ChatTheme.typography.title3Bold,
-        color = ChatTheme.colors.textHighEmphasis,
     )
 }
 
@@ -818,6 +827,7 @@ public fun MediaGalleryPreviewPageIndicator(
  * Displays a horizontal layout with a circular progress indicator followed by
  * "Preparing..." text, indicating that a media sharing operation is in progress.
  */
+@ExperimentalStreamChatApi
 @Composable
 public fun MediaGalleryPreviewSharingInProgressIndicator() {
     Row {
@@ -831,7 +841,6 @@ public fun MediaGalleryPreviewSharingInProgressIndicator() {
         Text(
             text = stringResource(id = R.string.stream_compose_media_gallery_preview_preparing),
             style = ChatTheme.typography.title3Bold,
-            color = ChatTheme.colors.textHighEmphasis,
         )
     }
 }
@@ -842,6 +851,7 @@ public fun MediaGalleryPreviewSharingInProgressIndicator() {
  * @param onClick Callback to be invoked when the photos icon is clicked.
  * @param modifier The [Modifier] to be applied to the photos icon.
  */
+@ExperimentalStreamChatApi
 @Composable
 public fun MediaGalleryPreviewPhotosIcon(
     onClick: () -> Unit,
@@ -854,7 +864,6 @@ public fun MediaGalleryPreviewPhotosIcon(
         Icon(
             painter = painterResource(id = R.drawable.stream_compose_ic_gallery),
             contentDescription = stringResource(id = R.string.stream_compose_image_preview_photos),
-            tint = ChatTheme.colors.textHighEmphasis,
         )
     }
 }
@@ -871,7 +880,7 @@ public fun MediaGalleryPreviewPhotosIcon(
  * @param onDismiss Callback invoked when the user cancels the sharing operation.
  */
 @Composable
-public fun ConfirmShareLargeFileDialog(
+private fun ConfirmShareLargeFileDialog(
     fileSize: Int,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,

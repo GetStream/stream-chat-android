@@ -49,6 +49,7 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.Reply
 import io.getstream.chat.android.compose.state.mediagallerypreview.SaveMedia
 import io.getstream.chat.android.compose.state.mediagallerypreview.ShowInChat
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
@@ -70,6 +71,7 @@ import io.getstream.chat.android.models.User
  * @param onDismiss Callback invoked when the menu should be dismissed.
  * @param modifier Optional modifier applied to the Surface containing the options.
  */
+@ExperimentalStreamChatApi
 @Composable
 public fun MediaGalleryOptionsMenu(
     attachment: Attachment,
@@ -134,6 +136,7 @@ public fun MediaGalleryOptionsMenu(
  * @param option The configuration for this option item, including title, icons, and enabled state.
  * @param onClick Callback invoked when the option is clicked.
  */
+@ExperimentalStreamChatApi
 @Composable
 public fun MediaGalleryOptionItem(
     option: MediaGalleryPreviewOption,
@@ -191,6 +194,7 @@ public fun MediaGalleryOptionItem(
  * @param config Configuration controlling which options are visible.
  * @return List of [MediaGalleryPreviewOption] items to display in the options menu.
  */
+@ExperimentalStreamChatApi
 @Composable
 public fun defaultMediaOptions(
     currentUser: User?,
