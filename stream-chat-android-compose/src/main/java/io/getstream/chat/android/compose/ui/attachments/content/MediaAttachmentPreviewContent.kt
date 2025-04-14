@@ -127,12 +127,12 @@ private fun MediaAttachmentPreviewItem(
 
 @Preview(showBackground = true)
 @Composable
-private fun MediaAttachmentContentPreview() {
-    MediaAttachmentPreviewContent()
+private fun MediaAttachmentItemsPreview() {
+    MediaAttachmentPreviewItems()
 }
 
 @Composable
-internal fun MediaAttachmentPreviewContent(darkMode: Boolean = false) {
+internal fun MediaAttachmentPreviewItems(darkMode: Boolean = false) {
     ChatTheme(isInDarkMode = darkMode) {
         val previewHandler = AsyncImagePreviewHandler {
             ColorImage(color = Color.Green.toArgb(), width = 200, height = 150)
@@ -142,12 +142,12 @@ internal fun MediaAttachmentPreviewContent(darkMode: Boolean = false) {
                 MediaAttachmentPreviewItem(
                     mediaAttachment = Attachment(imageUrl = "Image"),
                     onAttachmentRemoved = {},
-                    overlayContent = {}
+                    overlayContent = {},
                 )
                 MediaAttachmentPreviewItem(
                     mediaAttachment = Attachment(imageUrl = "Image"),
                     onAttachmentRemoved = {},
-                    overlayContent = { DefaultPreviewItemOverlayContent() }
+                    overlayContent = { DefaultPreviewItemOverlayContent() },
                 )
             }
         }
