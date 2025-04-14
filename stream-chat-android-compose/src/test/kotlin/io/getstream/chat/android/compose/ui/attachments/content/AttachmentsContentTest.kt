@@ -49,4 +49,13 @@ internal class AttachmentsContentTest : SnapshotTest {
             )
         }
     }
+
+    @Test
+    fun `media attachment preview content`() {
+        snapshotWithDarkModeRow { darkMode ->
+            MediaAttachmentPreviewContent(
+                darkMode = darkMode,
+            )
+        }
+    }
 }
