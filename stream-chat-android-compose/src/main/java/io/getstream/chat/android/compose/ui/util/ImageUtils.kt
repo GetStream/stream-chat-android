@@ -109,7 +109,7 @@ public fun Modifier.mirrorRtl(layoutDirection: LayoutDirection): Modifier {
 
 /**
  * It displays a shimmer effect while loading an image asynchronously using `Coil` and the [LocalStreamImageLoader].
- * It transforms the image URL and provides headers before loading the image.
+ * The image URL is transformed and some extra headers are provided before loading the image.
  *
  * @see ImageAssetTransformer
  * @see ImageHeadersProvider
@@ -138,7 +138,7 @@ internal fun StreamAsyncImage(
 
 /**
  * It displays a shimmer effect while loading an image asynchronously using `Coil` and the [LocalStreamImageLoader].
- * It transforms the image URL and provides headers before loading the image.
+ * The image URL is transformed and some extra headers are provided before loading the image.
  *
  * @see ImageAssetTransformer
  * @see ImageHeadersProvider
@@ -178,7 +178,7 @@ internal fun StreamAsyncImage(
 
 /**
  * Displays an image asynchronously using `Coil` and the [LocalStreamImageLoader].
- * It transforms the image URL and provides headers before loading the image.
+ * The image URL is transformed and some extra headers are provided before loading the image.
  *
  * @see ImageAssetTransformer
  * @see ImageHeadersProvider
@@ -207,7 +207,7 @@ internal fun StreamAsyncImage(
 
 /**
  * Displays an image asynchronously using `Coil` and the [LocalStreamImageLoader].
- * It transforms the image URL and provides headers before loading the image.
+ * The image URL is transformed and some extra headers are provided before loading the image.
  *
  * @see ImageAssetTransformer
  * @see ImageHeadersProvider
