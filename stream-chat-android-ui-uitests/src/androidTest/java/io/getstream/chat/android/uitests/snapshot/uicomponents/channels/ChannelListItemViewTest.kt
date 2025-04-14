@@ -100,7 +100,7 @@ class ChannelListItemViewTest : ScreenshotTest {
         val viewHolder = ChannelListItemViewHolderFactory()
             .createViewHolder(FrameLayout(context), ChannelListItemViewType.DEFAULT)
 
-        val channelListItem = ChannelListItem.ChannelItem(channel, emptyList())
+        val channelListItem = ChannelListItem.ChannelItem(channel, emptyList(), draftMessage = null)
         viewHolder.bind(channelListItem, CHANNEL_LIST_PAYLOAD_DIFF)
 
         compareScreenshot(viewHolder.itemView)
@@ -116,6 +116,7 @@ class ChannelListItemViewTest : ScreenshotTest {
             unreadCountChanged = true,
             extraDataChanged = true,
             typingUsersChanged = true,
+            draftMessageChanged = true,
         )
     }
 }
