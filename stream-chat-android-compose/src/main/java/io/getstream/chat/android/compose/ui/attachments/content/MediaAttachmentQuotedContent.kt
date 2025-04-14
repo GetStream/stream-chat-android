@@ -150,11 +150,15 @@ internal fun MediaAttachmentQuotedContent(
         Triple(type, mimeType, thumb)
     }
     val previewHandler = AsyncImagePreviewHandler { request ->
-        if (request.data is String) {
-            ColorImage(color = Color.DarkGray.toArgb(), width = 200, height = 150)
-        } else {
-            ColorImage(color = Color.Red.toArgb(), width = 200, height = 150)
-        }
+        ColorImage(
+            color = if (request.data is String) {
+                Color.DarkGray.toArgb()
+            } else {
+                Color.Red.toArgb()
+            },
+            width = 200,
+            height = 150,
+        )
     }
     CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
         ChatTheme(isInDarkMode = darkMode) {
