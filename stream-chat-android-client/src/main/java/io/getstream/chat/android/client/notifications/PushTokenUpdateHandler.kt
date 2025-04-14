@@ -20,6 +20,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.extensions.getNonNullString
 import io.getstream.chat.android.core.utils.Debouncer
 import io.getstream.chat.android.models.Device
@@ -37,7 +38,6 @@ internal class PushTokenUpdateHandler(context: Context) {
     private val chatClient: ChatClient get() = ChatClient.instance()
 
     private val updateDebouncer = Debouncer(DEBOUNCE_TIMEOUT)
-    private val deleteDebouncer = Debouncer(DEBOUNCE_TIMEOUT)
 
     private var userPushToken: UserPushToken
         set(value) {
@@ -81,24 +81,24 @@ internal class PushTokenUpdateHandler(context: Context) {
     }
 
     suspend fun removeStoredDevice() {
-        deleteDebouncer.submitSuspendable {
-            logger.v { "[removeStoredDevice] no args" }
-            val removed = removeStoredDeviceInternal()
-            logger.i { "[removeStoredDevice] removed: $removed" }
-        }
+        logger.v { "[removeStoredDevice] no args" }
+        val removed = removeStoredDeviceInternal()
+        logger.i { "[removeStoredDevice] removed: $removed" }
     }
 
     private suspend fun removeStoredDeviceInternal(): Boolean {
         val device = userPushToken.toDevice()
             .takeIf { it.isValid() }
             ?: return false
-        val result = chatClient.deleteDevice(device).await()
-        if (result.isSuccess) {
-            userPushToken = UserPushToken("", "", "", null)
-            return true
-        }
-        logger.e { "[removeStoredDeviceInternal] failed: ${result.errorOrNull()}" }
-        return false
+        userPushToken = UserPushToken("", "", "", null)
+        return chatClient.deleteDevice(device).await()
+            .onError {
+                if (!it.isPermanent()) {
+                    userPushToken = device.toUserPushToken()
+                }
+                logger.e { "[removeStoredDeviceInternal] failed: $it" }
+            }
+            .isSuccess
     }
 
     private data class UserPushToken(
