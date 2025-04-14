@@ -30,3 +30,8 @@ public data class MyOwn(val ts: Long?) : NewMessageState()
  * If the message is someone else's (we didn't send it), we show a "New message" bubble.
  */
 public data class Other(val ts: Long?) : NewMessageState()
+
+/**
+ * If it is a typing message, we scroll to the bottom of the list.
+ */
+public data object Typing : NewMessageState()

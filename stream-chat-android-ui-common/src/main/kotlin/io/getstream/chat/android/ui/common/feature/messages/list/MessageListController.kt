@@ -105,6 +105,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.ShuffleGiphy
 import io.getstream.chat.android.ui.common.state.messages.list.StartOfTheChannelItemState
 import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparatorItemState
+import io.getstream.chat.android.ui.common.state.messages.list.Typing
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.lastItemOrNull
@@ -670,7 +671,11 @@ public class MessageListController(
         val oldLastMessage = _messageListState.value.lastItemOrNull<HasMessageListItemState>()?.message
         val newLastMessage = newState.lastItemOrNull<HasMessageListItemState>()?.message
 
-        val newMessageState = getNewMessageState(newLastMessage, lastLoadedMessage)
+        val newMessageState = getNewMessageState(
+            lastMessage = newLastMessage,
+            lastLoadedMessage = lastLoadedMessage,
+            typingItemState = newState.lastItemOrNull<TypingItemState>(),
+        )
         logger.v {
             "[updateMessageList] #messageList; oldLastMessage: ${oldLastMessage?.text}, " +
                 "newLastMessage: ${newLastMessage?.text}, newMessageState: $newMessageState"
@@ -801,7 +806,11 @@ public class MessageListController(
                 val newLastMessage =
                     (newState.messageItems.lastOrNull { it is MessageItemState } as? MessageItemState)?.message
 
-                val newMessageState = getNewMessageState(newLastMessage, lastLoadedThreadMessage)
+                val newMessageState = getNewMessageState(
+                    lastMessage = newLastMessage,
+                    lastLoadedMessage = lastLoadedThreadMessage,
+                    typingItemState = newState.lastItemOrNull<TypingItemState>(),
+                )
 
                 _threadListState.value = newState.copy(newMessageState = newMessageState)
                 if (newMessageState != null) lastLoadedThreadMessage = newLastMessage
@@ -1025,11 +1034,16 @@ public class MessageListController(
      *
      * @param lastMessage The new last message in the list, used for comparison.
      * @param lastLoadedMessage The last currently loaded message, used for comparison.
+     * @param typingItemState The typing item state, used to determine if the other user is currently typing.
      */
-    private fun getNewMessageState(lastMessage: Message?, lastLoadedMessage: Message?): NewMessageState? {
+    private fun getNewMessageState(
+        lastMessage: Message?,
+        lastLoadedMessage: Message?,
+        typingItemState: TypingItemState?,
+    ): NewMessageState? {
         val lastLoadedMessageDate = lastLoadedMessage?.createdAt ?: lastLoadedMessage?.createdLocallyAt
-
         return when {
+            typingItemState != null -> Typing
             lastMessage == null -> null
             lastLoadedMessage == null -> getNewMessageStateForMessage(lastMessage)
             lastMessage.wasCreatedAfter(lastLoadedMessageDate) &&
