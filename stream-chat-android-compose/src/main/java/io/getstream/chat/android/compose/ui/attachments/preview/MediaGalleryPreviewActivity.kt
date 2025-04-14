@@ -70,6 +70,9 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
@@ -115,9 +118,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import coil3.compose.AsyncImagePainter
 import coil3.request.ImageRequest
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.PagerState
-import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import io.getstream.chat.android.client.ChatClient
@@ -321,7 +321,11 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         val startingPosition =
             if (initialAttachmentPosition !in filteredAttachments.indices) 0 else initialAttachmentPosition
 
-        val pagerState = rememberPagerState(initialPage = startingPosition)
+        val pagerState = rememberPagerState(
+            initialPage = startingPosition,
+            pageCount = { filteredAttachments.size },
+        )
+
         val coroutineScope = rememberCoroutineScope()
         val snackbarHostState = remember { SnackbarHostState() }
 
@@ -756,7 +760,6 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         HorizontalPager(
             modifier = Modifier.background(ChatTheme.colors.appBackground),
             state = pagerState,
-            count = attachments.size,
         ) { page ->
             if (attachments[page].isImage()) {
                 ImagePreviewContent(attachment = attachments[page], pagerState = pagerState, page = page)
