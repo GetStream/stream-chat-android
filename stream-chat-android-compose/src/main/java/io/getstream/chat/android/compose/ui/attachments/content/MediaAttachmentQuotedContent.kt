@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.attachments.content
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,21 +26,29 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.ColorImage
+import coil3.compose.LocalAsyncImagePreviewHandler
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isImgur
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
+import io.getstream.chat.android.uiutils.model.MimeType
 
 /**
  * Builds an image attachment for a quoted message which is composed from a singe attachment previewing the attached
@@ -102,6 +111,64 @@ public fun MediaAttachmentQuotedContent(
                     .fillMaxWidth(0.8f)
                     .aspectRatio(1f),
             )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MediaAttachmentQuotedContentPreview() {
+    MediaAttachmentQuotedContent()
+}
+
+@Composable
+internal fun MediaAttachmentQuotedContent(
+    darkMode: Boolean = false,
+) {
+    val types = listOf(
+        AttachmentType.FILE,
+        AttachmentType.FILE,
+        AttachmentType.FILE,
+        AttachmentType.VIDEO,
+        AttachmentType.VIDEO,
+    )
+    val mimeTypes = listOf(
+        MimeType.MIME_TYPE_PDF,
+        MimeType.MIME_TYPE_DOC,
+        MimeType.MIME_TYPE_PPT,
+        MimeType.MIME_TYPE_MP4,
+        MimeType.MIME_TYPE_MOV,
+    )
+    val thumbs = listOf(
+        null,
+        null,
+        null,
+        "thumb",
+        "thumb",
+    )
+    val data = types.zip(mimeTypes).zip(thumbs) { (type, mimeType), thumb ->
+        Triple(type, mimeType, thumb)
+    }
+    val previewHandler = AsyncImagePreviewHandler { request ->
+        if (request.data is String) {
+            ColorImage(color = Color.DarkGray.toArgb(), width = 200, height = 150)
+        } else {
+            ColorImage(color = Color.Red.toArgb(), width = 200, height = 150)
+        }
+    }
+    CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
+        ChatTheme(isInDarkMode = darkMode) {
+            Row {
+                data.forEach { (type, mimeType, thumb) ->
+                    MediaAttachmentQuotedContent(
+                        attachment = Attachment(
+                            type = type,
+                            mimeType = mimeType,
+                            thumbUrl = thumb,
+                        ),
+                    )
+                }
+            }
         }
     }
 }

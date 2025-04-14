@@ -83,4 +83,13 @@ internal class AttachmentsContentTest : SnapshotTest {
             )
         }
     }
+
+    @Test
+    fun `media attachment quoted content`() {
+        snapshotWithDarkMode { darkMode ->
+            MediaAttachmentQuotedContent(
+                darkMode = darkMode,
+            )
+        }
+    }
 }
