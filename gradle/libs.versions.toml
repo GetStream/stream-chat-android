@@ -162,9 +162,7 @@ firebase-messaging = { module = "com.google.firebase:firebase-messaging", versio
 flipper = { module = "com.facebook.flipper:flipper", version.ref = "flipper"}
 flipper-network = { module = "com.facebook.flipper:flipper-network-plugin", version.ref = "flipper"}
 flipper-so-loader = { module = "com.facebook.soloader:soloader", version.ref = "flipperSOLoader"}
-google-accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "composeAccompanist"}
 google-accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "composeAccompanist"}
-google-accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "composeAccompanist"}
 huawei-push = { module = "com.huawei.hms:push", version.ref = "huaweiPush"}
 itu-date-version = { module = "com.ethlo.time:itu", version.ref = "ituDateVersion"}
 json = { module = "org.json:json", version.ref = "json"}

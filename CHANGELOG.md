@@ -58,7 +58,6 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
 
 ### ⬆️ Improved
 
@@ -75,6 +74,7 @@
 - Fix `MessageItem` not respecting `ChatTheme.dimens.messageItemMaxWidth`. [#5722](https://github.com/GetStream/stream-chat-android/pull/5722)
 
 ### ⬆️ Improved
+- Remove dependency on `com.google.accompanist.pager` and `com.google.accompanist.systemuicontroller`. [#5709](https://github.com/GetStream/stream-chat-android/pull/5709)
 
 ### ✅ Added
 - Introduce `MentionList` to display a list of mentions for the current user. [#5695](https://github.com/GetStream/stream-chat-android/pull/5695)

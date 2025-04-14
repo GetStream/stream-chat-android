@@ -54,7 +54,8 @@ class ChannelListViewTest : ScreenshotTest {
                             ),
                             channelLastMessageAt = TestData.date1(),
                         ),
-                        emptyList(),
+                        typingUsers = emptyList(),
+                        draftMessage = null,
                     ),
                     ChannelListItem.ChannelItem(
                         channel = TestData.channel2().copy(
@@ -67,7 +68,8 @@ class ChannelListViewTest : ScreenshotTest {
                             ),
                             channelLastMessageAt = TestData.date2(),
                         ),
-                        emptyList(),
+                        typingUsers = emptyList(),
+                        draftMessage = null,
                     ),
                     ChannelListItem.ChannelItem(
                         channel = TestData.channel3().copy(
@@ -80,7 +82,8 @@ class ChannelListViewTest : ScreenshotTest {
                             ),
                             channelLastMessageAt = TestData.date3(),
                         ),
-                        emptyList(),
+                        typingUsers = emptyList(),
+                        draftMessage = null,
                     ),
                     ChannelListItem.ChannelItem(
                         channel = TestData.channel4().copy(
@@ -93,7 +96,8 @@ class ChannelListViewTest : ScreenshotTest {
                             ),
                             channelLastMessageAt = TestData.date4(),
                         ),
-                        emptyList(),
+                        typingUsers = emptyList(),
+                        draftMessage = null,
                     ),
                     ChannelListItem.LoadingMoreItem,
                 ),
@@ -124,7 +128,8 @@ class ChannelListViewTest : ScreenshotTest {
                             ),
                             channelLastMessageAt = TestData.date1(),
                         ),
-                        emptyList(),
+                        typingUsers = emptyList(),
+                        draftMessage = null,
                     ),
                     ChannelListItem.ChannelItem(
                         channel = TestData.channel2().copy(
@@ -137,7 +142,8 @@ class ChannelListViewTest : ScreenshotTest {
                             ),
                             channelLastMessageAt = TestData.date2(),
                         ),
-                        emptyList(),
+                        typingUsers = emptyList(),
+                        draftMessage = null,
                     ),
                     ChannelListItem.ChannelItem(
                         channel = TestData.channel3().copy(
@@ -150,7 +156,8 @@ class ChannelListViewTest : ScreenshotTest {
                             ),
                             channelLastMessageAt = TestData.date3(),
                         ),
-                        emptyList(),
+                        typingUsers = emptyList(),
+                        draftMessage = null,
                     ),
                     ChannelListItem.ChannelItem(
                         channel = TestData.channel4().copy(
@@ -163,7 +170,8 @@ class ChannelListViewTest : ScreenshotTest {
                             ),
                             channelLastMessageAt = TestData.date4(),
                         ),
-                        emptyList(),
+                        typingUsers = emptyList(),
+                        draftMessage = null,
                     ),
                     ChannelListItem.LoadingMoreItem,
                 ),
