@@ -28,6 +28,7 @@ import io.getstream.chat.android.offline.repository.database.internal.ChatDataba
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageInnerEntity
+import io.getstream.chat.android.offline.repository.domain.message.internal.ReactionGroupEntity
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsEntity
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionEntity
 import io.getstream.chat.android.offline.repository.domain.user.internal.PrivacySettingsEntity
@@ -81,6 +82,7 @@ internal fun randomMessageEntity(
     mentionedUsersId: List<String> = emptyList(),
     reactionCounts: Map<String, Int> = emptyMap(),
     reactionScores: Map<String, Int> = emptyMap(),
+    reactionGroups: Map<String, ReactionGroupEntity> = emptyMap(),
     parentId: String? = randomString(),
     command: String? = randomString(),
     shadowed: Boolean = randomBoolean(),
@@ -110,6 +112,7 @@ internal fun randomMessageEntity(
         mentionedUsersId = mentionedUsersId,
         reactionCounts = reactionCounts,
         reactionScores = reactionScores,
+        reactionGroups = reactionGroups,
         parentId = parentId,
         command = command,
         shadowed = shadowed,
@@ -126,6 +129,22 @@ internal fun randomMessageEntity(
     latestReactions = latestReactions,
     ownReactions = ownReactions,
 )
+
+internal fun randomReactionGroupEntity(
+    type: String = randomString(),
+    count: Int = randomInt(),
+    sumScore: Int = randomInt(),
+    firstReactionAt: Date = randomDate(),
+    lastReactionAt: Date = randomDate(),
+): ReactionGroupEntity {
+    return ReactionGroupEntity(
+        type = type,
+        count = count,
+        sumScore = sumScore,
+        firstReactionAt = firstReactionAt,
+        lastReactionAt = lastReactionAt,
+    )
+}
 
 internal fun randomQueryChannelsEntity(
     id: String = randomString(),

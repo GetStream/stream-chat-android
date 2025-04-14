@@ -60,7 +60,7 @@
   <string name="stream_compose_ok">"OK"</string>
   <string name="stream_compose_reply">"Réponse"</string>
   <string name="stream_compose_search_input_cancel">"Annuler"</string>
-  <string name="stream_compose_search_input_hint">"Rechercher des chaînes par nom"</string>
+  <string name="stream_compose_search_input_hint">"Recherche"</string>
   <string name="stream_compose_selected_channel_menu_delete_conversation">"Supprimer la conversation"</string>
   <string name="stream_compose_selected_channel_menu_delete_conversation_confirmation_message">"Voulez-vous quitter le groupe %1$s?"</string>
   <string name="stream_compose_selected_channel_menu_delete_conversation_confirmation_title">"Supprimer la conversation"</string>
