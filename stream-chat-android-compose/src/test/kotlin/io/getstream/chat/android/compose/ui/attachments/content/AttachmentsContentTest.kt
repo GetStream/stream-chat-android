@@ -3,6 +3,7 @@ package io.getstream.chat.android.compose.ui.attachments.content
 import androidx.compose.foundation.layout.Column
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
+import com.android.ide.common.rendering.api.SessionParams
 import io.getstream.chat.android.compose.ui.SnapshotTest
 import org.junit.Rule
 import org.junit.Test
@@ -10,7 +11,10 @@ import org.junit.Test
 internal class AttachmentsContentTest : SnapshotTest {
 
     @get:Rule
-    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
+    override val paparazzi = Paparazzi(
+        deviceConfig = DeviceConfig.PIXEL_2,
+        renderingMode = SessionParams.RenderingMode.SHRINK
+    )
 
     @Test
     fun `file attachment content`() {
@@ -32,6 +36,15 @@ internal class AttachmentsContentTest : SnapshotTest {
     fun `link attachment content`() {
         snapshotWithDarkMode { darkMode ->
             LinkAttachmentContent(
+                darkMode = darkMode,
+            )
+        }
+    }
+
+    @Test
+    fun `image attachment preview content`() {
+        snapshotWithDarkModeRow { darkMode ->
+            ImageAttachmentPreviewContent(
                 darkMode = darkMode,
             )
         }

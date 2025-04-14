@@ -25,12 +25,20 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.ColorImage
+import coil3.compose.LocalAsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.components.CancelIcon
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
@@ -53,27 +61,59 @@ public fun ImageAttachmentPreviewContent(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
     ) {
-        items(attachments) { image ->
-            val data = image.upload ?: image.imagePreviewUrl
+        items(attachments) { attachment ->
+            ImageAttachmentPreviewContentItem(
+                attachment = attachment,
+                onAttachmentRemoved = onAttachmentRemoved
+            )
+        }
+    }
+}
 
-            Box(
-                modifier = Modifier
-                    .size(95.dp)
-                    .clip(RoundedCornerShape(16.dp)),
-            ) {
-                StreamAsyncImage(
-                    modifier = Modifier.fillMaxSize(),
-                    data = data,
-                    contentDescription = null,
-                )
+@Composable
+private fun ImageAttachmentPreviewContentItem(
+    attachment: Attachment,
+    onAttachmentRemoved: (Attachment) -> Unit,
+) {
+    val data = attachment.upload ?: attachment.imagePreviewUrl
 
-                CancelIcon(
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(4.dp),
-                    onClick = { onAttachmentRemoved(image) },
-                )
-            }
+    Box(
+        modifier = Modifier
+            .size(95.dp)
+            .clip(RoundedCornerShape(16.dp)),
+    ) {
+        StreamAsyncImage(
+            modifier = Modifier.fillMaxSize(),
+            data = data,
+            contentDescription = null,
+        )
+
+        CancelIcon(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(4.dp),
+            onClick = { onAttachmentRemoved(attachment) },
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ImageAttachmentContentPreview() {
+    ImageAttachmentPreviewContent()
+}
+
+@Composable
+internal fun ImageAttachmentPreviewContent(darkMode: Boolean = false) {
+    ChatTheme(isInDarkMode = darkMode) {
+        val previewHandler = AsyncImagePreviewHandler {
+            ColorImage(color = Color.Red.toArgb(), width = 200, height = 150)
+        }
+        CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
+            ImageAttachmentPreviewContentItem(
+                attachment = Attachment(imageUrl = "Image"),
+                onAttachmentRemoved = {},
+            )
         }
     }
 }
