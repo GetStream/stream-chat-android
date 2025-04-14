@@ -18,11 +18,13 @@ package io.getstream.chat.android.ui.viewmodel.channels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
+import io.getstream.chat.android.state.extensions.globalStateFlow
 import io.getstream.chat.android.ui.ChatUI
 
 /**
@@ -66,6 +68,8 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
             memberLimit = memberLimit,
             chatEventHandlerFactory = chatEventHandlerFactory,
             isDraftMessagesEnabled = isDraftMessagesEnabled,
+            chatClient = ChatClient.instance(),
+            globalState = ChatClient.instance().globalStateFlow,
         ) as T
     }
 
