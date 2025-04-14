@@ -343,7 +343,7 @@ internal fun FileAttachmentContent(
         FileAttachmentContent(
             attachmentState = AttachmentState(
                 message = Message(attachments = listOf(Attachment(mimeType = MimeType.MIME_TYPE_PDF))),
-                isMine = isMine
+                isMine = isMine,
             ),
         )
     }

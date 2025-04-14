@@ -160,7 +160,7 @@ private fun LinkAttachmentImagePreview(attachment: Attachment) {
     var maxWidth by remember { mutableStateOf(0.dp) }
 
     Box(
-        modifier = Modifier.onSizeChanged { size -> maxWidth = size.width.dp }
+        modifier = Modifier.onSizeChanged { size -> maxWidth = size.width.dp },
     ) {
         val contentScale = ContentScale.FillWidth
         StreamAsyncImage(

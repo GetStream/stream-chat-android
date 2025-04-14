@@ -64,7 +64,7 @@ public fun ImageAttachmentPreviewContent(
         items(attachments) { attachment ->
             ImageAttachmentPreviewContentItem(
                 attachment = attachment,
-                onAttachmentRemoved = onAttachmentRemoved
+                onAttachmentRemoved = onAttachmentRemoved,
             )
         }
     }

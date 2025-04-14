@@ -567,7 +567,7 @@ internal inline fun AsyncImagePreviewHandler(
     handle(request).let { image ->
         AsyncImagePainter.State.Success(
             painter = image.asPainter(request.context),
-            result = SuccessResult(image, request)
+            result = SuccessResult(image, request),
         )
     }
 }
