@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2025 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.utils.internal
+package io.getstream.chat.android.client.utils.internal
 
-import io.getstream.chat.android.client.utils.internal.validateCid
-import io.getstream.chat.android.client.utils.internal.validateCidWithResult
 import io.getstream.result.Error
 import io.getstream.result.Result
 import org.amshove.kluent.invoking
