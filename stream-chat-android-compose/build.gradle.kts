@@ -119,4 +119,7 @@ dependencies {
     detektPlugins(libs.detekt.formatting)
 
     baselineProfile(project(":stream-chat-android-benchmark"))
+
+    implementation("androidx.media3:media3-exoplayer:1.6.0")
+    implementation("androidx.media3:media3-ui:1.6.0")
 }
