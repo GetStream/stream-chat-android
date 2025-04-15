@@ -48,6 +48,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Return a subtype of `NewMessageState` (`Typing`) for the typing indicator item, so that the UI can behave properly. [#5712](https://github.com/GetStream/stream-chat-android/pull/5712)
 
 ### ⬆️ Improved
 
