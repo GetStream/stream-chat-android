@@ -293,6 +293,7 @@ public data class MessageReadEvent(
     override val channelType: String,
     override val channelId: String,
     override val channelLastMessageAt: Date?,
+    val lastReadMessageId: String?,
     val thread: ThreadInfo? = null,
 ) : CidEvent(), UserEvent
 
@@ -463,6 +464,7 @@ public data class NotificationMarkReadEvent(
     override val totalUnreadCount: Int = 0,
     override val unreadChannels: Int = 0,
     override val channelLastMessageAt: Date?,
+    val lastReadMessageId: String?,
     val threadId: String? = null,
     val thread: ThreadInfo? = null,
     override val unreadThreads: Int? = null,

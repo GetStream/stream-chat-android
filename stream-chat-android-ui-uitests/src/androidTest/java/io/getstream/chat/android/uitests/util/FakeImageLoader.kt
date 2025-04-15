@@ -20,13 +20,13 @@ import android.content.Context
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
-import coil.ComponentRegistry
-import coil.decode.DataSource
-import coil.disk.DiskCache
-import coil.memory.MemoryCache
-import coil.request.DefaultRequestOptions
+import coil3.ComponentRegistry
+import coil3.Image
 import coil3.ImageLoader
-import coil3.request.DefaultRequestOptions
+import coil3.asImage
+import coil3.decode.DataSource
+import coil3.disk.DiskCache
+import coil3.memory.MemoryCache
 import coil3.request.Disposable
 import coil3.request.ErrorResult
 import coil3.request.ImageRequest
@@ -52,15 +52,15 @@ class FakeImageLoader(
     ),
 ) : ImageLoader {
 
-    override val defaults = DefaultRequestOptions()
+    override val defaults = ImageRequest.Defaults()
     override val components = ComponentRegistry()
     override val memoryCache: MemoryCache? get() = null
     override val diskCache: DiskCache? get() = null
 
     override fun enqueue(request: ImageRequest): Disposable {
         // Always call onStart before onSuccess.
-        request.target?.onStart(request.placeholder)
-        val result = createDrawable(context, request)
+        request.target?.onStart(request.placeholder())
+        val result = createDrawableImage(context, request)
         if (result != null) {
             request.target?.onSuccess(result)
         }
@@ -72,19 +72,19 @@ class FakeImageLoader(
     }
 
     override suspend fun execute(request: ImageRequest): ImageResult {
-        return newResult(request, createDrawable(context, request))
+        return newResult(request, createDrawableImage(context, request))
     }
 
-    private fun newResult(request: ImageRequest, drawable: Drawable?): ImageResult {
-        return if (drawable != null) {
+    private fun newResult(request: ImageRequest, image: Image?): ImageResult {
+        return if (image != null) {
             SuccessResult(
-                drawable = drawable,
+                image = image,
                 request = request,
                 dataSource = DataSource.MEMORY_CACHE,
             )
         } else {
             ErrorResult(
-                drawable = null,
+                image = null,
                 request = request,
                 throwable = Exception(),
             )
@@ -95,7 +95,7 @@ class FakeImageLoader(
 
     override fun shutdown() {}
 
-    private fun createDrawable(context: Context, request: ImageRequest): Drawable? {
+    private fun createDrawableImage(context: Context, request: ImageRequest): Image? {
         val avatarUrl = request.data as String
 
         return ContextCompat.getDrawable(
@@ -104,7 +104,7 @@ class FakeImageLoader(
         )!!.apply {
             // Workaround for an issue with black background behind clipped images
             (this as BitmapDrawable).bitmap.setHasAlpha(true)
-        }
+        }.asImage()
     }
 
     companion object {

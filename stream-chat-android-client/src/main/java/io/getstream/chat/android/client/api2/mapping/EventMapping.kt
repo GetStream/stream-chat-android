@@ -419,6 +419,7 @@ internal class EventMapping(
             channelId = channel_id,
             thread = thread?.toDomain(),
             channelLastMessageAt = channel_last_message_at,
+            lastReadMessageId = last_read_message_id,
         )
     }
 
@@ -610,6 +611,7 @@ internal class EventMapping(
             unreadThreads = unread_threads,
             unreadThreadMessages = unread_thread_messages,
             channelLastMessageAt = channel_last_message_at,
+            lastReadMessageId = last_read_message_id,
         )
     }
 

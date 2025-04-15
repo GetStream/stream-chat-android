@@ -151,7 +151,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.google.accompanist.permissions)
-    implementation(libs.google.accompanist.pager)
 
     // Coil
     implementation(libs.skydoves.landscapist.coil)
