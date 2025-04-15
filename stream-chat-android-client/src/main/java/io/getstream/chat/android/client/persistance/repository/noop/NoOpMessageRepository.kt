@@ -44,6 +44,7 @@ internal object NoOpMessageRepository : MessageRepository {
     override suspend fun insertDraftMessage(message: DraftMessage) { /* No-Op */ }
     override suspend fun evictMessages() { /* No-Op */ }
     override suspend fun evictMessage(messageId: String) { /* No-Op */ }
+    override suspend fun deletePoll(pollId: String) { /* No-Op */ }
 
     override suspend fun clear() { /* No-Op */ }
     override suspend fun selectMessagesForChannel(

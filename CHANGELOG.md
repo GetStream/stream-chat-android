@@ -18,6 +18,7 @@
 
 ### ✅ Added
 - Add `lastReadMessageId` field to `MessageReadEvent` and `NotificationMarkReadEvent`. [#5710](https://github.com/GetStream/stream-chat-android/pull/5710)
+- Add `ChatClient.deletePoll(String)` method to delete a Poll by its ID. [#5696](https://github.com/GetStream/stream-chat-android/pull/5696)
 
 ### ⚠️ Changed
 

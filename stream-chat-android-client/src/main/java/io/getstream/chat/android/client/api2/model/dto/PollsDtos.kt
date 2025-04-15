@@ -92,7 +92,7 @@ internal data class DownstreamPollDto(
     val latest_votes_by_option: Map<String, List<DownstreamVoteDto>>?,
     val latest_answers: List<DownstreamVoteDto>?,
     val created_at: Date,
-    val created_by: DownstreamUserDto,
+    val created_by: DownstreamUserDto?,
     val created_by_id: String,
     val own_votes: List<DownstreamVoteDto>,
     val updated_at: Date,
