@@ -14,6 +14,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Remove local device using optimistic behavior. [#5727](https://github.com/GetStream/stream-chat-android/pull/5727)
 
 ### ✅ Added
 - Add `lastReadMessageId` field to `MessageReadEvent` and `NotificationMarkReadEvent`. [#5710](https://github.com/GetStream/stream-chat-android/pull/5710)
