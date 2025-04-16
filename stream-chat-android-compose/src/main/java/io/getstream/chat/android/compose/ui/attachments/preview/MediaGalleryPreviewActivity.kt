@@ -119,6 +119,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
      *
      * Immediately finishes in case the data is invalid.
      */
+    @Suppress("LongMethod")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -185,7 +186,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                             downloadRequestInterceptor::intercept,
                         )
                     },
-                    onShareAttachment = ::onShareAttachment,
+                    onRequestShareAttachment = ::onRequestShareAttachment,
+                    onConfirmShareAttachment = ::shareAttachment,
                 )
             }
         }
@@ -284,7 +286,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun onShareAttachment(attachment: Attachment) {
+    private fun onRequestShareAttachment(attachment: Attachment) {
         when {
             mediaGalleryPreviewViewModel.isSharingInProgress -> {
                 fileSharingJob?.cancel()

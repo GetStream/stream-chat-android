@@ -102,7 +102,8 @@ import java.util.Date
  * @param onHeaderLeadingContentClick Callback to be invoked when the leading content in the header is clicked. Usually
  * closes the screen.
  * @param onOptionClick Callback to be invoked when an option in the options menu is clicked.
- * @param onShareAttachment Callback to be invoked when the share icon in the footer is clicked.
+ * @param onRequestShareAttachment Callback to be invoked when the share icon in the footer is clicked.
+ * @param onConfirmShareAttachment Callback to be invoked when the user confirms sharing an attachment.
  * @param modifier The [Modifier] to be applied to the screen.
  * @param config The configuration for the media gallery.
  * @param onHeaderTrailingContentClick Callback to be invoked when the trailing content in the header is clicked. By
@@ -111,8 +112,7 @@ import java.util.Date
  * default, it shares the attachment.
  * @param onFooterTrailingContentClick Callback to be invoked when the trailing content in the footer is clicked. By
  * default, it shows a bottom sheet gallery with all attachments in the message.
- * @param onConfirmShareLargeFile Callback to be invoked when the user confirms sharing a large file.
- * @param onDismissShareLargeFile Callback to be invoked when the user dismisses the share large file dialog.
+ * @param onDismissShareAttachment Callback to be invoked when the user dismisses the share large file dialog.
  * @param onDismissOptionsMenu Callback to be invoked when the options menu is dismissed.
  * @param onDismissGallery Callback to be invoked when the gallery bottom sheet is dismissed.
  * @param header Composable function to render the header. By default, it renders a [MediaGalleryPreviewHeader].
@@ -121,6 +121,7 @@ import java.util.Date
  * @param optionsMenu Composable function to render the options menu. By default, it renders a
  * [MediaGalleryOptionsMenu].
  */
+@Suppress("LongParameterList")
 @ExperimentalStreamChatApi
 @Composable
 public fun MediaGalleryPreviewScreen(
@@ -128,20 +129,14 @@ public fun MediaGalleryPreviewScreen(
     initialPage: Int,
     onHeaderLeadingContentClick: () -> Unit,
     onOptionClick: (Attachment, MediaGalleryPreviewOption) -> Unit,
-    onShareAttachment: (Attachment) -> Unit,
+    onRequestShareAttachment: (Attachment) -> Unit,
+    onConfirmShareAttachment: (Attachment) -> Unit,
     modifier: Modifier = Modifier,
     config: MediaGalleryConfig = ChatTheme.mediaGalleryConfig,
     onHeaderTrailingContentClick: () -> Unit = { viewModel.toggleMediaOptions(true) },
-    onFooterLeadingContentClick: (Attachment) -> Unit = onShareAttachment,
+    onFooterLeadingContentClick: (Attachment) -> Unit = onRequestShareAttachment,
     onFooterTrailingContentClick: (Attachment) -> Unit = { viewModel.toggleGallery(true) },
-    onConfirmShareLargeFile: () -> Unit = {
-        val promptedAttachment = viewModel.promptedAttachment
-        promptedAttachment?.let {
-            onShareAttachment(it)
-            viewModel.promptedAttachment = null
-        }
-    },
-    onDismissShareLargeFile: () -> Unit = { viewModel.promptedAttachment = null },
+    onDismissShareAttachment: () -> Unit = { viewModel.promptedAttachment = null },
     onDismissOptionsMenu: () -> Unit = { viewModel.toggleMediaOptions(false) },
     onDismissGallery: () -> Unit = { viewModel.toggleGallery(false) },
     header: @Composable (attachments: List<Attachment>, currentPage: Int) -> Unit = { _, _ ->
@@ -210,10 +205,10 @@ public fun MediaGalleryPreviewScreen(
         onHeaderTrailingContentClick = onHeaderTrailingContentClick,
         onFooterLeadingContentClick = onFooterLeadingContentClick,
         onFooterTrailingContentClick = onFooterTrailingContentClick,
-        onConfirmShareLargeFile = onConfirmShareLargeFile,
-        onDismissShareLargeFile = onDismissShareLargeFile,
+        onConfirmShareAttachment = onConfirmShareAttachment,
+        onDismissShareAttachment = onDismissShareAttachment,
         onOptionClick = onOptionClick,
-        onShareAttachment = onShareAttachment,
+        onRequestShareAttachment = onRequestShareAttachment,
         onDismissOptionsMenu = onDismissOptionsMenu,
         onDismissGallery = onDismissGallery,
         header = header,
@@ -243,7 +238,7 @@ public fun MediaGalleryPreviewScreen(
  * @param onHeaderLeadingContentClick Callback to be invoked when the leading content in the header is clicked. Usually
  * closes the screen.
  * @param onOptionClick Callback to be invoked when an option in the options menu is clicked.
- * @param onShareAttachment Callback to be invoked when the share icon in the footer is clicked.
+ * @param onRequestShareAttachment Callback to be invoked when the share icon in the footer is clicked.
  * @param modifier The [Modifier] to be applied to the screen.
  * @param config The configuration for the media gallery.
  * @param onHeaderTrailingContentClick Callback to be invoked when the trailing content in the header is clicked. By
@@ -252,8 +247,8 @@ public fun MediaGalleryPreviewScreen(
  * default, it shares the attachment.
  * @param onFooterTrailingContentClick Callback to be invoked when the trailing content in the footer is clicked. By
  * default, it shows a bottom sheet gallery with all attachments in the message.
- * @param onConfirmShareLargeFile Callback to be invoked when the user confirms sharing a large file.
- * @param onDismissShareLargeFile Callback to be invoked when the user dismisses the share large file dialog.
+ * @param onConfirmShareAttachment Callback to be invoked when the user confirms sharing a large file.
+ * @param onDismissShareAttachment Callback to be invoked when the user dismisses the share large file dialog.
  * @param onDismissOptionsMenu Callback to be invoked when the options menu is dismissed.
  * @param onDismissGallery Callback to be invoked when the gallery bottom sheet is dismissed.
  * @param header Composable function to render the header. By default, it renders a [MediaGalleryPreviewHeader].
@@ -275,15 +270,15 @@ public fun MediaGalleryPreviewScreen(
     isShowingOptions: Boolean,
     isShowingGallery: Boolean,
     onOptionClick: (Attachment, MediaGalleryPreviewOption) -> Unit,
-    onShareAttachment: (Attachment) -> Unit,
+    onRequestShareAttachment: (Attachment) -> Unit,
     modifier: Modifier = Modifier,
     config: MediaGalleryConfig = ChatTheme.mediaGalleryConfig,
     onHeaderLeadingContentClick: () -> Unit = {},
     onHeaderTrailingContentClick: () -> Unit = {},
-    onFooterLeadingContentClick: (Attachment) -> Unit = onShareAttachment,
+    onFooterLeadingContentClick: (Attachment) -> Unit = onRequestShareAttachment,
     onFooterTrailingContentClick: (Attachment) -> Unit = {},
-    onConfirmShareLargeFile: () -> Unit = {},
-    onDismissShareLargeFile: () -> Unit = {},
+    onConfirmShareAttachment: (Attachment) -> Unit = {},
+    onDismissShareAttachment: () -> Unit = {},
     onDismissOptionsMenu: () -> Unit = {},
     onDismissGallery: () -> Unit = {},
     header: @Composable (attachments: List<Attachment>, currentPage: Int) -> Unit = { _, _ ->
@@ -395,9 +390,12 @@ public fun MediaGalleryPreviewScreen(
                 // Prompt the user to share a large file (if needed)
                 if (promptedAttachment != null) {
                     ConfirmShareLargeFileDialog(
-                        fileSize = promptedAttachment.fileSize,
-                        onConfirm = onConfirmShareLargeFile,
-                        onDismiss = onDismissShareLargeFile,
+                        attachment = promptedAttachment,
+                        onConfirm = {
+                            onConfirmShareAttachment(promptedAttachment)
+                            onDismissShareAttachment()
+                        },
+                        onDismiss = onDismissShareAttachment,
                     )
                 }
             }
@@ -883,13 +881,13 @@ public fun MediaGalleryPreviewPhotosIcon(
  * (displayed in MB), allowing them to confirm or cancel the sharing operation. The dialog
  * uses localized strings from resources for the title and message content.
  *
- * @param fileSize The size of the file in bytes.
+ * @param attachment The attachment being shared, used to determine the file size.
  * @param onConfirm Callback invoked when the user confirms they want to share the large file.
  * @param onDismiss Callback invoked when the user cancels the sharing operation.
  */
 @Composable
 private fun ConfirmShareLargeFileDialog(
-    fileSize: Int,
+    attachment: Attachment,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -897,7 +895,7 @@ private fun ConfirmShareLargeFileDialog(
         title = stringResource(R.string.stream_compose_media_gallery_share_large_file_prompt_title),
         message = stringResource(
             R.string.stream_compose_media_gallery_share_large_file_prompt_message,
-            (fileSize.toFloat() / BytesInMegabyte),
+            (attachment.fileSize.toFloat() / BytesInMegabyte),
         ),
         onPositiveAction = onConfirm,
         onDismiss = onDismiss,
@@ -1107,7 +1105,7 @@ internal fun MediaGalleryPreviewScreenPreview() {
                 isShowingGallery = false,
                 isSharingInProgress = false,
                 onOptionClick = { _, _ -> },
-                onShareAttachment = {},
+                onRequestShareAttachment = {},
             )
         }
     }
