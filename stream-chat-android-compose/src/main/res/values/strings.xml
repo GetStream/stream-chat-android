@@ -210,7 +210,7 @@
     <string name="stream_compose_poll_option_description" translatable="false">Add an option</string>
     <string name="stream_compose_poll_option_hint" translatable="false">Add an option</string>
     <string name="stream_compose_poll_option_error_duplicated" translatable="false">This is already an option</string>
-    <string name="stream_compose_poll_option_error_exceed" translatable="false">Type a number between %d and %d</string>
+    <string name="stream_compose_poll_option_error_exceed" translatable="false">Enter an integer between %d and %d</string>
     <string name="stream_compose_poll_option_discard_dialog_title" translatable="false">Discard poll</string>
     <string name="stream_compose_poll_option_discard_dialog_description" translatable="false">Are you sure want to discard your poll?</string>
     <string name="stream_compose_poll_option_discard_dialog_cancel" translatable="false">Keep Editing</string>

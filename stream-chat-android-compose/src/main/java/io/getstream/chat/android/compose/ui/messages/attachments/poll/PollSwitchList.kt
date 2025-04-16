@@ -186,9 +186,7 @@ public fun PollSwitchList(
                             keyboardOptions = KeyboardOptions(keyboardType = switchInput.keyboardType),
                             onValueChange = { newValue ->
                                 switchItemList.toMutableList().apply {
-                                    if (switchInput.keyboardType == KeyboardType.Number ||
-                                        switchInput.keyboardType == KeyboardType.Decimal
-                                    ) {
+                                    if (switchInput.keyboardType == KeyboardType.Number) {
                                         if (newValue.isBlank()) {
                                             // If newValue is empty, don't validate
                                             this[index] = item.copy(
@@ -199,7 +197,7 @@ public fun PollSwitchList(
                                             // Validate min/max range
                                             val min = switchInput.minValue?.toString()?.toIntOrNull() ?: 0
                                             val max = switchInput.maxValue?.toString()?.toIntOrNull() ?: 0
-                                            val value = newValue.toInt() // assume it is always numeric
+                                            val value = newValue.toIntOrNull() ?: 0
                                             if (value < min || value > max) {
                                                 this[index] = item.copy(
                                                     pollSwitchInput = item.pollSwitchInput.copy(value = newValue),
