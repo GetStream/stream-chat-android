@@ -47,6 +47,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -347,6 +348,13 @@ public fun MediaGalleryPreviewScreen(
         initialPage = startingPosition,
         pageCount = { filteredAttachments.size },
     )
+    // Ensure the pager is scrolled to the correct page when the screen is first displayed
+    LaunchedEffect(startingPosition) {
+        if (startingPosition != pagerState.currentPage) {
+            pagerState.scrollToPage(startingPosition)
+        }
+    }
+
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 

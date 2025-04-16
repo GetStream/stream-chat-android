@@ -30,10 +30,10 @@ import androidx.compose.ui.graphics.painter.Painter
  * @param isEnabled If the action is currently enabled.
  */
 public data class MediaGalleryPreviewOption(
-    internal val title: String,
-    internal val titleColor: Color,
-    internal val iconPainter: Painter,
-    internal val iconColor: Color,
-    internal val action: MediaGalleryPreviewAction,
-    internal val isEnabled: Boolean,
+    public val title: String,
+    public val titleColor: Color,
+    public val iconPainter: Painter,
+    public val iconColor: Color,
+    public val action: MediaGalleryPreviewAction,
+    public val isEnabled: Boolean,
 )
