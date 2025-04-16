@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.state.mediagallerypreview
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
 /**
  * Represents the information for media gallery preview options the user can take.
@@ -29,6 +30,7 @@ import androidx.compose.ui.graphics.painter.Painter
  * @param action The action this option represents.
  * @param isEnabled If the action is currently enabled.
  */
+@ExperimentalStreamChatApi
 public data class MediaGalleryPreviewOption(
     public val title: String,
     public val titleColor: Color,
