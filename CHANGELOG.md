@@ -1,18 +1,5 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# April 16th, 2025 - 6.14.0
 ## stream-chat-android-client
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - Remove local device using optimistic behavior. [#5727](https://github.com/GetStream/stream-chat-android/pull/5727)
 
@@ -20,55 +7,13 @@
 - Add `lastReadMessageId` field to `MessageReadEvent` and `NotificationMarkReadEvent`. [#5710](https://github.com/GetStream/stream-chat-android/pull/5710)
 - Add `ChatClient.deletePoll(String)` method to delete a Poll by its ID. [#5696](https://github.com/GetStream/stream-chat-android/pull/5696)
 
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-offline
 ### 🐞 Fixed
 - Store/Obtain `Message::reactionGroups` on the local DB. [#5723](https://github.com/GetStream/stream-chat-android/pull/5723)
 
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
 - Return a subtype of `NewMessageState` (`Typing`) for the typing indicator item, so that the UI can behave properly. [#5712](https://github.com/GetStream/stream-chat-android/pull/5712)
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-ui-components
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -86,19 +31,6 @@
 ### ⚠️ Changed
 - Introduce an overload of LoadMoreHandler with threshold parameter as a lambda for calculating the value dynamically. [#5711](https://github.com/GetStream/stream-chat-android/pull/5711), [#5713](https://github.com/GetStream/stream-chat-android/pull/5713)
 - Change the default value for the `stream_compose_search_input_hint` text from "Search channels by name" to a more general "Search", to cover the case when searching for messages instead of channels. [#5717](https://github.com/GetStream/stream-chat-android/pull/5717)
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # April 04th, 2025 - 6.13.0
 ## Common changes for all artifacts
