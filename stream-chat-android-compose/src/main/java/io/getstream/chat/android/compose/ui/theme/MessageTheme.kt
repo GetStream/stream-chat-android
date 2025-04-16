@@ -24,6 +24,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.AudioRecordingAttachmentTheme
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
@@ -45,6 +46,7 @@ import io.getstream.chat.android.compose.ui.theme.messages.list.QuotedMessageSty
  * @param deletedBackgroundColor The background color for the deleted messages.
  * @param audioRecording The theming for the audio recording attachment.
  * @param mentionColor The color for the mentions in the messages.
+ * @param linkStyle The text style for the links in message components.
  */
 @Immutable
 public data class MessageTheme(
@@ -79,6 +81,7 @@ public data class MessageTheme(
     val quoted: QuotedMessageStyle,
     val poll: PollMessageStyle,
     val mentionColor: Color,
+    val linkStyle: TextStyle,
 ) {
     public companion object {
 
@@ -206,6 +209,10 @@ public data class MessageTheme(
                     colors = colors,
                 ),
                 mentionColor = colors.primaryAccent,
+                linkStyle = TextStyle(
+                    color = colors.primaryAccent,
+                    textDecoration = TextDecoration.Underline,
+                ),
             ).let { theme ->
                 theme.copy(
                     quoted = theme.quoted.copy(

@@ -18,17 +18,15 @@ package io.getstream.chat.android.compose.ui.util
 
 import android.annotation.SuppressLint
 import android.text.util.Linkify
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.core.util.PatternsCompat
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import java.util.regex.Pattern
 
 internal typealias AnnotationTag = String
@@ -48,36 +46,12 @@ internal const val AnnotationTagEmail: AnnotationTag = "EMAIL"
  */
 internal const val AnnotationTagMention: AnnotationTag = "MENTION"
 
-/**
- * Takes the given message text and builds an annotated message text that shows links and allows for clicks,
- * if there are any links available.
- *
- * @param text The message text to style.
- * @param color The color of the message text.
- *
- * @return The annotated String, with clickable links, if applicable.
- */
-@Composable
-@SuppressLint("RestrictedApi")
-internal fun buildAnnotatedMessageText(
-    text: String,
-    color: Color,
-): AnnotatedString {
-    return buildAnnotatedMessageText(
-        text = text,
-        textColor = color,
-        textFontStyle = ChatTheme.typography.body.fontStyle,
-        linkColor = ChatTheme.colors.primaryAccent,
-        mentionsColor = ChatTheme.colors.primaryAccent,
-    )
-}
-
 @SuppressLint("RestrictedApi")
 internal fun buildAnnotatedMessageText(
     text: String,
     textColor: Color,
     textFontStyle: FontStyle?,
-    linkColor: Color,
+    linkStyle: TextStyle,
     mentionsColor: Color,
     mentionedUserNames: List<String> = emptyList(),
     builder: (AnnotatedString.Builder).() -> Unit = {},
@@ -102,14 +76,14 @@ internal fun buildAnnotatedMessageText(
             pattern = PatternsCompat.AUTOLINK_WEB_URL,
             matchFilter = Linkify.sUrlMatchFilter,
             schemes = URL_SCHEMES,
-            linkColor = linkColor,
+            textStyle = linkStyle,
         )
         linkify(
             text = text,
             tag = AnnotationTagEmail,
             pattern = PatternsCompat.AUTOLINK_EMAIL_ADDRESS,
             schemes = EMAIL_SCHEMES,
-            linkColor = linkColor,
+            textStyle = linkStyle,
         )
         tagUser(
             text = text,
@@ -149,7 +123,7 @@ private fun AnnotatedString.Builder.linkify(
     pattern: Pattern,
     matchFilter: Linkify.MatchFilter? = null,
     schemes: List<String>,
-    linkColor: Color,
+    textStyle: TextStyle,
 ) {
     @SuppressLint("RestrictedApi")
     val matcher = pattern.matcher(text)
@@ -162,10 +136,7 @@ private fun AnnotatedString.Builder.linkify(
         }
 
         addStyle(
-            style = SpanStyle(
-                color = linkColor,
-                textDecoration = TextDecoration.Underline,
-            ),
+            style = textStyle.toSpanStyle(),
             start = start,
             end = end,
         )
