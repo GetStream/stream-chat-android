@@ -1777,6 +1777,14 @@ public final class io/getstream/chat/android/ui/common/state/messages/list/Threa
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/ui/common/state/messages/list/Typing : io/getstream/chat/android/ui/common/state/messages/list/NewMessageState {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/messages/list/Typing;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/common/state/messages/list/TypingItemState : io/getstream/chat/android/ui/common/state/messages/list/MessageListItemState {
 	public static final field $stable I
 	public fun <init> (Ljava/util/List;)V

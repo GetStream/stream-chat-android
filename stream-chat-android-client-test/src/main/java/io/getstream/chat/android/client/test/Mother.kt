@@ -38,6 +38,7 @@ import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
+import io.getstream.chat.android.client.events.PollDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
@@ -51,6 +52,7 @@ import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.NeutralFilterObject
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
@@ -62,6 +64,7 @@ import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomPoll
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
@@ -627,6 +630,25 @@ public fun randomChannelUserBannedEvent(
         channelId = id,
         expiration = banExpires,
         shadow = shadow,
+        channelLastMessageAt = channelLastMessageAt,
+    )
+}
+
+public fun randomPollDeletedEvent(
+    createdAt: Date = randomDate(),
+    cid: String = randomCID(),
+    poll: Poll = randomPoll(),
+    channelLastMessageAt: Date = randomDate(),
+): PollDeletedEvent {
+    val (type, id) = cid.cidToTypeAndId()
+    return PollDeletedEvent(
+        type = EventType.POLL_DELETED,
+        createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
+        cid = cid,
+        channelType = type,
+        channelId = id,
+        poll = poll,
         channelLastMessageAt = channelLastMessageAt,
     )
 }

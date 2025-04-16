@@ -28,4 +28,7 @@ internal interface PollDao {
 
     @Query("SELECT * From $POLL_ENTITY_TABLE_NAME  WHERE id = :pollId")
     suspend fun getPoll(pollId: String): PollEntity?
+
+    @Query("DELETE FROM $POLL_ENTITY_TABLE_NAME WHERE id = :pollId")
+    suspend fun deletePoll(pollId: String)
 }

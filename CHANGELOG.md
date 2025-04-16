@@ -14,9 +14,11 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Remove local device using optimistic behavior. [#5727](https://github.com/GetStream/stream-chat-android/pull/5727)
 
 ### ✅ Added
 - Add `lastReadMessageId` field to `MessageReadEvent` and `NotificationMarkReadEvent`. [#5710](https://github.com/GetStream/stream-chat-android/pull/5710)
+- Add `ChatClient.deletePoll(String)` method to delete a Poll by its ID. [#5696](https://github.com/GetStream/stream-chat-android/pull/5696)
 
 ### ⚠️ Changed
 
@@ -47,6 +49,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Return a subtype of `NewMessageState` (`Typing`) for the typing indicator item, so that the UI can behave properly. [#5712](https://github.com/GetStream/stream-chat-android/pull/5712)
 
 ### ⬆️ Improved
 

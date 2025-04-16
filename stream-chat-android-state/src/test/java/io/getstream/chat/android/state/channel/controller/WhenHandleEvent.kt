@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.test.randomMessageReadEvent
 import io.getstream.chat.android.client.test.randomMessageUpdateEvent
 import io.getstream.chat.android.client.test.randomNewMessageEvent
 import io.getstream.chat.android.client.test.randomNotificationMarkReadEvent
+import io.getstream.chat.android.client.test.randomPollDeletedEvent
 import io.getstream.chat.android.client.test.randomReactionNewEvent
 import io.getstream.chat.android.client.test.randomTypingStartEvent
 import io.getstream.chat.android.client.test.randomTypingStopEvent
@@ -31,6 +32,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomPoll
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.event.handler.internal.utils.toChannelUserRead
@@ -217,6 +219,17 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         verify(channelStateLogic).removeMessagesBefore(deleteChannelEvent.createdAt)
         verify(channelStateLogic).deleteChannel(deleteChannelEvent.createdAt)
+    }
+
+    // Poll deleted event
+    @Test
+    fun `when poll is deleted, it is removed from the state`() = runTest {
+        val poll = randomPoll()
+        val pollDeletedEvent = randomPollDeletedEvent(poll = poll)
+
+        channelLogic.handleEvent(pollDeletedEvent)
+
+        verify(channelStateLogic).deletePoll(poll)
     }
 
     private companion object {

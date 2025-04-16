@@ -40,7 +40,6 @@ import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
 import io.getstream.result.Error
 import io.getstream.result.Result
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
@@ -62,7 +61,6 @@ import org.robolectric.Shadows
 import java.io.File
 import java.util.Date
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 internal class UploadAttachmentsIntegrationTests {
 
@@ -285,6 +283,10 @@ internal class MockMessageRepository : MessageRepository {
 
     override suspend fun deleteDraftMessage(message: DraftMessage) {
         TODO("Not yet implemented")
+    }
+
+    override suspend fun deletePoll(pollId: String) {
+        // No-op
     }
 
     override suspend fun clear() {

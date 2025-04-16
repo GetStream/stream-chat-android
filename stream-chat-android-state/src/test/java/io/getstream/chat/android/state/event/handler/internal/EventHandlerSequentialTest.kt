@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.test.randomNotificationMarkReadEvent
 import io.getstream.chat.android.client.test.randomNotificationMarkUnreadEvent
 import io.getstream.chat.android.client.test.randomNotificationMessageNewEvent
 import io.getstream.chat.android.client.test.randomNotificationMutesUpdatedEvent
+import io.getstream.chat.android.client.test.randomPollDeletedEvent
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelMute
@@ -41,7 +42,9 @@ import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomChannelMute
+import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomMute
+import io.getstream.chat.android.randomPoll
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
@@ -53,12 +56,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.stub
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 internal class EventHandlerSequentialTest {
 
@@ -117,6 +124,27 @@ internal class EventHandlerSequentialTest {
         mutableGlobalState.blockedUserIds.value `should be equal to` expectedBlockedUserIds
     }
 
+    @Test
+    fun `When handling PollDeletedEvent, The the poll should be deleted from local storage`() = runTest {
+        // given
+        val deletedPoll = randomPoll()
+        val event = randomPollDeletedEvent(poll = deletedPoll)
+        val message = randomMessage(poll = deletedPoll)
+        val repos: RepositoryFacade = mock()
+        whenever(repos.selectMessages(any())) doReturn listOf(message)
+        whenever(repos.selectMessagesWithPoll(deletedPoll.id)) doReturn listOf(message)
+        whenever(repos.selectChannels(any())) doReturn emptyList()
+        whenever(repos.selectThreads(any())) doReturn emptyList()
+        val handler = Fixture()
+            .withRepositoryFacade(repos)
+            .withMutableGlobalState(MutableGlobalState())
+            .get(this)
+        // when
+        handler.handleEvents(event)
+        // then
+        verify(repos).deletePoll(event.poll.id)
+    }
+
     internal class Fixture {
         private var currentUser = randomUser()
         private val subscribeForEvents: (ChatEventListener<ChatEvent>) -> Disposable =
@@ -127,7 +155,7 @@ internal class EventHandlerSequentialTest {
             on(it.user) doReturn MutableStateFlow(currentUser)
         }
         private var mutableGlobalState: MutableGlobalState? = null
-        private val repos: RepositoryFacade = mock()
+        private var repos: RepositoryFacade = mock()
         private val sideEffect: suspend () -> Unit = {}
         private val syncedEvents: Flow<List<ChatEvent>> = emptyFlow()
 
@@ -145,6 +173,10 @@ internal class EventHandlerSequentialTest {
 
         fun withMutableGlobalState(mutableGlobalState: MutableGlobalState) = apply {
             this.mutableGlobalState = mutableGlobalState
+        }
+
+        fun withRepositoryFacade(repos: RepositoryFacade) = apply {
+            this.repos = repos
         }
 
         fun get(scope: CoroutineScope) = EventHandlerSequential(

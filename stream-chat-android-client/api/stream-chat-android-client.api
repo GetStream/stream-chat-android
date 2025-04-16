@@ -50,6 +50,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun deleteMessage (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun deleteMessage (Ljava/lang/String;Z)Lio/getstream/result/call/Call;
 	public static synthetic fun deleteMessage$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public final fun deletePoll (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun deleteReaction (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public static synthetic fun deleteReaction$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun devToken (Ljava/lang/String;)Ljava/lang/String;
@@ -2744,6 +2745,7 @@ public abstract interface class io/getstream/chat/android/client/persistance/rep
 	public abstract fun deleteChannelMessages (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun deleteChannelMessagesBefore (Ljava/lang/String;Ljava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun deleteDraftMessage (Lio/getstream/chat/android/models/DraftMessage;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun deletePoll (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun evictMessage (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun evictMessages (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun insertDraftMessage (Lio/getstream/chat/android/models/DraftMessage;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
