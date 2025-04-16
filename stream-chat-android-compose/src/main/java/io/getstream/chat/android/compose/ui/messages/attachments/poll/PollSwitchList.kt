@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments.poll
 
+import android.content.Context
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -41,10 +42,8 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -78,7 +77,8 @@ public fun PollSwitchList(
     itemHeightSize: Dp = ChatTheme.dimens.pollOptionInputHeight,
     itemInnerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
 ) {
-    var switchItemList by remember(pollSwitchItems) { mutableStateOf(pollSwitchItems) }
+    @Suppress("SpreadOperator")
+    val switchItemList = remember(pollSwitchItems) { mutableStateListOf(*pollSwitchItems.toTypedArray()) }
     val heightIn = pollSwitchItems.size * (itemHeightSize.value * 2 + 8)
 
     LazyColumn(
@@ -159,23 +159,19 @@ public fun PollSwitchList(
                                 )
                             },
                             checked = item.enabled,
-                            onCheckedChange = {
-                                switchItemList.toMutableList().apply {
-                                    this[index] = item.copy(
-                                        enabled = it,
-                                        pollOptionError = null,
-                                    )
-                                    switchItemList = this
-                                    onSwitchesChanged.invoke(this)
-                                }
+                            onCheckedChange = { checked ->
+                                switchItemList[index] = item.copy(
+                                    enabled = checked,
+                                    pollOptionError = null,
+                                )
+                                onSwitchesChanged(switchItemList)
                             },
                         )
                     }
 
-                    val switchInput = item.pollSwitchInput ?: return@Column
-                    val context = LocalContext.current
-
-                    if (item.enabled) {
+                    if (item.pollSwitchInput != null && item.enabled) {
+                        val switchInput = item.pollSwitchInput
+                        val context = LocalContext.current
                         PollOptionInput(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -185,47 +181,11 @@ public fun PollSwitchList(
                             shape = RoundedCornerShape(0.dp),
                             keyboardOptions = KeyboardOptions(keyboardType = switchInput.keyboardType),
                             onValueChange = { newValue ->
-                                switchItemList.toMutableList().apply {
-                                    if (switchInput.keyboardType == KeyboardType.Number) {
-                                        if (newValue.isBlank()) {
-                                            // If newValue is empty, don't validate
-                                            this[index] = item.copy(
-                                                pollSwitchInput = item.pollSwitchInput.copy(value = newValue),
-                                                pollOptionError = null,
-                                            )
-                                        } else {
-                                            // Validate min/max range
-                                            val min = switchInput.minValue?.toString()?.toIntOrNull() ?: 0
-                                            val max = switchInput.maxValue?.toString()?.toIntOrNull() ?: 0
-                                            val value = newValue.toIntOrNull() ?: 0
-                                            if (value < min || value > max) {
-                                                this[index] = item.copy(
-                                                    pollSwitchInput = item.pollSwitchInput.copy(value = newValue),
-                                                    pollOptionError = PollOptionNumberExceed(
-                                                        context.getString(
-                                                            R.string.stream_compose_poll_option_error_exceed,
-                                                            min,
-                                                            max,
-                                                        ),
-                                                    ),
-                                                )
-                                            } else {
-                                                this[index] = item.copy(
-                                                    pollSwitchInput = item.pollSwitchInput.copy(value = newValue),
-                                                    pollOptionError = null,
-                                                )
-                                            }
-                                        }
-                                    } else {
-                                        this[index] = item.copy(
-                                            pollSwitchInput = item.pollSwitchInput.copy(value = newValue),
-                                            pollOptionError = null,
-                                        )
-                                    }
-
-                                    switchItemList = this
-                                    onSwitchesChanged.invoke(this)
-                                }
+                                switchItemList[index] = item.copy(
+                                    pollSwitchInput = switchInput.copy(value = newValue),
+                                    pollOptionError = switchInput.errorOrNull(context, newValue),
+                                )
+                                onSwitchesChanged(switchItemList)
                             },
                             innerPadding = PaddingValues(vertical = 4.dp),
                             decorationBox = { innerTextField ->
@@ -253,7 +213,49 @@ public fun PollSwitchList(
     }
 }
 
-@Preview(showBackground = true)
+internal fun PollSwitchInput.errorOrNull(
+    context: Context,
+    input: String,
+): PollOptionError? {
+    if (input.isBlank()) return null
+
+    return when (keyboardType) {
+        KeyboardType.Number -> validateRange(
+            context = context,
+            input = input,
+            parse = String::toIntOrNull,
+            defaultValue = -1,
+        )
+        KeyboardType.Decimal -> validateRange(
+            context = context,
+            input = input,
+            parse = String::toFloatOrNull,
+            defaultValue = -1f,
+        )
+        else -> null
+    }
+}
+
+private inline fun <T : Comparable<T>> PollSwitchInput.validateRange(
+    context: Context,
+    input: String,
+    parse: (String) -> T?,
+    defaultValue: T,
+): PollOptionError? {
+    val value = parse(input) ?: defaultValue
+    val min = minValue?.toString()?.let(parse) ?: defaultValue
+    val max = maxValue?.toString()?.let(parse) ?: defaultValue
+
+    return if (value < min || value > max) {
+        PollOptionNumberExceed(
+            message = context.getString(R.string.stream_compose_poll_option_error_exceed, min, max),
+        )
+    } else {
+        null
+    }
+}
+
+@Preview
 @Composable
 private fun PollSwitchListPreview() {
     ChatTheme {
