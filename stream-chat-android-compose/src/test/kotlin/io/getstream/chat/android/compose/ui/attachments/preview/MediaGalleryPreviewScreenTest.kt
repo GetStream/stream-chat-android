@@ -121,7 +121,7 @@ internal class MediaGalleryPreviewScreenTest : SnapshotTest {
             isShowingOptions = false,
             isShowingGallery = false,
             onOptionClick = { _, _ -> },
-            onShareAttachment = {},
+            onRequestShareAttachment = {},
         )
     }
 
@@ -138,7 +138,7 @@ internal class MediaGalleryPreviewScreenTest : SnapshotTest {
             isShowingOptions = false,
             isShowingGallery = false,
             onOptionClick = { _, _ -> },
-            onShareAttachment = {},
+            onRequestShareAttachment = {},
         )
     }
 
@@ -155,7 +155,7 @@ internal class MediaGalleryPreviewScreenTest : SnapshotTest {
             isShowingOptions = true,
             isShowingGallery = false,
             onOptionClick = { _, _ -> },
-            onShareAttachment = {},
+            onRequestShareAttachment = {},
         )
     }
 
@@ -172,7 +172,7 @@ internal class MediaGalleryPreviewScreenTest : SnapshotTest {
             isShowingOptions = false,
             isShowingGallery = false,
             onOptionClick = { _, _ -> },
-            onShareAttachment = {},
+            onRequestShareAttachment = {},
         )
     }
 
@@ -189,7 +189,7 @@ internal class MediaGalleryPreviewScreenTest : SnapshotTest {
             isShowingOptions = false,
             isShowingGallery = true,
             onOptionClick = { _, _ -> },
-            onShareAttachment = {},
+            onRequestShareAttachment = {},
         )
     }
 }
