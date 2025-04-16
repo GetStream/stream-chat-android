@@ -80,11 +80,11 @@ dependencies {
     implementation(libs.stream.log)
 
     // Compose
-    implementation(libs.androidx.compose.ui)
+    // implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.tooling)
-    implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(libs.androidx.compose.foundation)
-    implementation(libs.androidx.compose.constraintlayout.compose)
+    // implementation(libs.androidx.lifecycle.runtime.compose)
+    // implementation(libs.androidx.compose.foundation)
+    // implementation(libs.androidx.compose.constraintlayout.compose)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material3.adaptive)
 
@@ -95,8 +95,8 @@ dependencies {
     // Coil
     implementation(libs.coil.compose)
     implementation(libs.skydoves.landscapist.coil)
-    implementation(libs.skydoves.landscapist.animation)
-    implementation(libs.coil.gif)
+    // implementation(libs.skydoves.landscapist.animation)
+    // implementation(libs.coil.gif)
     implementation(libs.coil.video)
 
     // UI
@@ -120,5 +120,5 @@ dependencies {
 
     baselineProfile(project(":stream-chat-android-benchmark"))
 
-    implementation("androidx.media3:media3-exoplayer:1.6.0")
+    // implementation("androidx.media3:media3-exoplayer:1.6.0")
 }
