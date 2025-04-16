@@ -98,6 +98,7 @@ io.getstream.chat.android.compose.ui.components.suggestions.commands
 io.getstream.chat.android.compose.ui.components.suggestions.mentions
 io.getstream.chat.android.compose.ui.components.userreactions
 io.getstream.chat.android.compose.ui.composables
+io.getstream.chat.android.compose.ui.mentions
 io.getstream.chat.android.compose.ui.messages
 io.getstream.chat.android.compose.ui.messages.attachments
 io.getstream.chat.android.compose.ui.messages.attachments.factory
@@ -120,6 +121,7 @@ io.getstream.chat.android.compose.util
 io.getstream.chat.android.compose.util.extensions
 io.getstream.chat.android.compose.viewmodel.channels
 io.getstream.chat.android.compose.viewmodel.mediapreview
+io.getstream.chat.android.compose.viewmodel.mentions
 io.getstream.chat.android.compose.viewmodel.messages
 io.getstream.chat.android.compose.viewmodel.pinned
 io.getstream.chat.android.compose.viewmodel.threads

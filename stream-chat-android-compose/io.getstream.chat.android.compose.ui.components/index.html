@@ -41,7 +41,7 @@
 <a class="library-name--link" href="../../index.html">
                             stream-chat-android
                     </a>            </div>
-            <div class="library-version">6.13.0
+            <div class="library-version">6.14.0
             </div>
         </div>
         <div class="filter-section" id="filter-section">
@@ -192,12 +192,12 @@
               </div>
             </div>
           </div>
-<a data-name="608566137%2FFunctions%2F29477497" anchor-label="SearchInput" id="608566137%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
+<a data-name="-188159751%2FFunctions%2F29477497" anchor-label="SearchInput" id="-188159751%2FFunctions%2F29477497" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release"></a>
           <div class="table-row" data-filterable-current=":stream-chat-android-compose:dokkaHtmlPartial/release" data-filterable-set=":stream-chat-android-compose:dokkaHtmlPartial/release">
             <div class="main-subrow keyValue ">
               <div class=""><span class="inline-flex">
                   <div><a href="-search-input.html"><span>Search</span><wbr><span><span>Input</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="608566137%2FFunctions%2F29477497"></span>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-188159751%2FFunctions%2F29477497"></span>
                     <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
                   </span></span></div>
               <div>
@@ -208,6 +208,10 @@
         }
     }<span class="token punctuation">, </span></span><span class="parameter ">label<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator"> = </span>{
         ChatTheme.componentFactory.SearchInputLabel()
+    }<span class="token punctuation">, </span></span><span class="parameter ">clearButton<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/foundation/layout/RowScope.html">RowScope</a><span class="token punctuation">.</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator"> = </span>{
+        with(ChatTheme.componentFactory) {
+            SearchInputClearButton(onClick = { onValueChange("") })
+        }
     }</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">The search component that allows the user to fill in a search query and filter their items.</p></div></div></div>
                 </div>
               </div>
