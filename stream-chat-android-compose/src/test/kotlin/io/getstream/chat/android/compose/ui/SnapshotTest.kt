@@ -50,7 +50,7 @@ internal interface SnapshotTest : ComposeTest {
         }
     }
 
-    fun snapshotWithDarkMode(composable: @Composable (darkMode: Boolean) -> Unit) {
+    fun snapshotWithDarkMode(composable: @Composable () -> Unit) {
         paparazzi.snapshot {
             CompositionLocalProvider(
                 LocalInspectionMode provides true,
@@ -62,7 +62,7 @@ internal interface SnapshotTest : ComposeTest {
                                 .weight(.5f)
                                 .background(ChatTheme.colors.appBackground),
                         ) {
-                            composable(true)
+                            composable()
                         }
                     }
                     ChatTheme(isInDarkMode = false) {
@@ -71,7 +71,7 @@ internal interface SnapshotTest : ComposeTest {
                                 .weight(.5f)
                                 .background(ChatTheme.colors.appBackground),
                         ) {
-                            composable(false)
+                            composable()
                         }
                     }
                 }
@@ -79,7 +79,7 @@ internal interface SnapshotTest : ComposeTest {
         }
     }
 
-    fun snapshotWithDarkModeRow(composable: @Composable (darkMode: Boolean) -> Unit) {
+    fun snapshotWithDarkModeRow(composable: @Composable () -> Unit) {
         paparazzi.snapshot {
             CompositionLocalProvider(
                 LocalInspectionMode provides true,
@@ -91,7 +91,7 @@ internal interface SnapshotTest : ComposeTest {
                                 .weight(.5f)
                                 .background(ChatTheme.colors.appBackground),
                         ) {
-                            composable(true)
+                            composable()
                         }
                     }
                     ChatTheme(isInDarkMode = false) {
@@ -100,7 +100,7 @@ internal interface SnapshotTest : ComposeTest {
                                 .weight(.5f)
                                 .background(ChatTheme.colors.appBackground),
                         ) {
-                            composable(false)
+                            composable()
                         }
                     }
                 }
