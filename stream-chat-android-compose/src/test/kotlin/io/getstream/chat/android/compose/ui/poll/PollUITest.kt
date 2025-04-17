@@ -38,7 +38,6 @@ import io.getstream.chat.android.compose.ui.components.poll.pollMoreOptionsConte
 import io.getstream.chat.android.compose.ui.components.poll.pollViewResultContent
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerPollTabFactory
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollCreationDiscardDialog
-import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollCreationHeader
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionDuplicated
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionItem
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionList
@@ -55,18 +54,6 @@ internal class PollUITest : SnapshotTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_4A)
-
-    @Test
-    fun `snapshot PollCreationHeader composable`() {
-        snapshotWithDarkMode {
-            PollCreationHeader(
-                modifier = Modifier.fillMaxWidth(),
-                enabledCreation = true,
-                onPollCreateClicked = { },
-                onBackPressed = {},
-            )
-        }
-    }
 
     @Test
     fun `snapshot PollOptionList composable`() {
