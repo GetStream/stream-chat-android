@@ -29,10 +29,8 @@ internal class FilesPickerTest : SnapshotTest {
 
     @Test
     fun `files picker items`() {
-        snapshotWithDarkMode { darkMode ->
-            FilesPickerItems(
-                darkMode = darkMode,
-            )
+        snapshotWithDarkMode {
+            FilesPickerItems()
         }
     }
 }

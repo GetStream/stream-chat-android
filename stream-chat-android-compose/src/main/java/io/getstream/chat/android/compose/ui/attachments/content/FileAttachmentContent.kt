@@ -86,12 +86,14 @@ public fun FileAttachmentContent(
     val previewHandlers = ChatTheme.attachmentPreviewHandlers
 
     Column(
-        modifier = modifier.combinedClickable(
-            indication = null,
-            interactionSource = remember { MutableInteractionSource() },
-            onClick = {},
-            onLongClick = { onItemLongClick(message) },
-        ).testTag("Stream_MultipleFileAttachmentsColumn"),
+        modifier = modifier
+            .combinedClickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() },
+                onClick = {},
+                onLongClick = { onItemLongClick(message) },
+            )
+            .testTag("Stream_MultipleFileAttachmentsColumn"),
     ) {
         for (attachment in message.attachments) {
             FileAttachmentItem(
@@ -325,26 +327,25 @@ internal fun onFileAttachmentContentItemClick(
 @Preview(showBackground = true)
 @Composable
 private fun OwnFileAttachmentContentPreview() {
-    FileAttachmentContent(isMine = true)
+    ChatTheme {
+        FileAttachmentContent(isMine = true)
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun OtherFileAttachmentContentPreview() {
-    FileAttachmentContent(isMine = false)
+    ChatTheme {
+        FileAttachmentContent(isMine = false)
+    }
 }
 
 @Composable
-internal fun FileAttachmentContent(
-    darkMode: Boolean = false,
-    isMine: Boolean,
-) {
-    ChatTheme(isInDarkMode = darkMode) {
-        FileAttachmentContent(
-            attachmentState = AttachmentState(
-                message = Message(attachments = listOf(Attachment(mimeType = MimeType.MIME_TYPE_PDF))),
-                isMine = isMine,
-            ),
-        )
-    }
+internal fun FileAttachmentContent(isMine: Boolean) {
+    FileAttachmentContent(
+        attachmentState = AttachmentState(
+            message = Message(attachments = listOf(Attachment(mimeType = MimeType.MIME_TYPE_PDF))),
+            isMine = isMine,
+        ),
+    )
 }

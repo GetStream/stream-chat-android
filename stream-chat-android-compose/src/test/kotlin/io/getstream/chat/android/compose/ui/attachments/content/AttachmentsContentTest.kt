@@ -34,62 +34,46 @@ internal class AttachmentsContentTest : SnapshotTest {
 
     @Test
     fun `file attachment content`() {
-        snapshotWithDarkMode { darkMode ->
+        snapshotWithDarkMode {
             Column {
-                FileAttachmentContent(
-                    darkMode = darkMode,
-                    isMine = true,
-                )
-                FileAttachmentContent(
-                    darkMode = darkMode,
-                    isMine = false,
-                )
+                FileAttachmentContent(isMine = true)
+                FileAttachmentContent(isMine = false)
             }
         }
     }
 
     @Test
     fun `link attachment content`() {
-        snapshotWithDarkMode { darkMode ->
-            LinkAttachmentContent(
-                darkMode = darkMode,
-            )
+        snapshotWithDarkMode {
+            LinkAttachmentContent()
         }
     }
 
     @Test
     fun `image attachment preview content`() {
-        snapshotWithDarkModeRow { darkMode ->
-            ImageAttachmentPreviewContent(
-                darkMode = darkMode,
-            )
+        snapshotWithDarkModeRow {
+            ImageAttachmentPreviewContent()
         }
     }
 
     @Test
     fun `media attachment preview items`() {
-        snapshotWithDarkModeRow { darkMode ->
-            MediaAttachmentPreviewItems(
-                darkMode = darkMode,
-            )
+        snapshotWithDarkModeRow {
+            MediaAttachmentPreviewItems()
         }
     }
 
     @Test
     fun `file attachment quoted content`() {
-        snapshotWithDarkMode { darkMode ->
-            FileAttachmentQuotedContent(
-                darkMode = darkMode,
-            )
+        snapshotWithDarkMode {
+            FileAttachmentQuotedContent()
         }
     }
 
     @Test
     fun `media attachment quoted content`() {
-        snapshotWithDarkMode { darkMode ->
-            MediaAttachmentQuotedContent(
-                darkMode = darkMode,
-            )
+        snapshotWithDarkMode {
+            MediaAttachmentQuotedContent()
         }
     }
 }

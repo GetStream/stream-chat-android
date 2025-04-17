@@ -239,28 +239,28 @@ private fun onLinkPreviewClick(context: Context, preview: LinkPreview) {
 @Preview(showBackground = true)
 @Composable
 private fun ComposerLinkContentPreview() {
-    ComposerLinkPreview()
+    ChatTheme {
+        ComposerLinkPreview()
+    }
 }
 
 @Composable
-internal fun ComposerLinkPreview(darkMode: Boolean = false) {
-    ChatTheme(isInDarkMode = darkMode) {
-        val previewHandler = AsyncImagePreviewHandler {
-            ColorImage(color = Color.Magenta.toArgb(), width = 200, height = 150)
-        }
-        CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
-            val attachment = Attachment(
-                titleLink = "Link",
-                title = "Title",
-                text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.",
-                imageUrl = "Image",
-            )
-            ComposerLinkPreview(
-                linkPreview = LinkPreview(
-                    originUrl = "Url",
-                    attachment = attachment,
-                ),
-            )
-        }
+internal fun ComposerLinkPreview() {
+    val previewHandler = AsyncImagePreviewHandler {
+        ColorImage(color = Color.Magenta.toArgb(), width = 200, height = 150)
+    }
+    CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
+        val attachment = Attachment(
+            titleLink = "Link",
+            title = "Title",
+            text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.",
+            imageUrl = "Image",
+        )
+        ComposerLinkPreview(
+            linkPreview = LinkPreview(
+                originUrl = "Url",
+                attachment = attachment,
+            ),
+        )
     }
 }

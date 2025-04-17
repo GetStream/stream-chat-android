@@ -178,27 +178,27 @@ internal fun DefaultFilesPickerItem(
 @Preview(showBackground = true)
 @Composable
 private fun FilesPickerItemsPreview() {
-    FilesPickerItems()
+    ChatTheme {
+        FilesPickerItems()
+    }
 }
 
 @Composable
-internal fun FilesPickerItems(darkMode: Boolean = false) {
-    ChatTheme(isInDarkMode = darkMode) {
-        Column {
-            DefaultFilesPickerItem(
-                fileItem = AttachmentPickerItemState(
-                    attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_PDF),
-                    isSelected = false,
-                ),
-                onItemSelected = {},
-            )
-            DefaultFilesPickerItem(
-                fileItem = AttachmentPickerItemState(
-                    attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_DOC),
-                    isSelected = true,
-                ),
-                onItemSelected = {},
-            )
-        }
+internal fun FilesPickerItems() {
+    Column {
+        DefaultFilesPickerItem(
+            fileItem = AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_PDF),
+                isSelected = false,
+            ),
+            onItemSelected = {},
+        )
+        DefaultFilesPickerItem(
+            fileItem = AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_DOC),
+                isSelected = true,
+            ),
+            onItemSelected = {},
+        )
     }
 }

@@ -118,13 +118,13 @@ public fun MediaAttachmentQuotedContent(
 @Preview(showBackground = true)
 @Composable
 private fun MediaAttachmentQuotedContentPreview() {
-    MediaAttachmentQuotedContent()
+    ChatTheme {
+        MediaAttachmentQuotedContent()
+    }
 }
 
 @Composable
-internal fun MediaAttachmentQuotedContent(
-    darkMode: Boolean = false,
-) {
+internal fun MediaAttachmentQuotedContent() {
     val types = listOf(
         AttachmentType.FILE,
         AttachmentType.FILE,
@@ -161,17 +161,15 @@ internal fun MediaAttachmentQuotedContent(
         )
     }
     CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
-        ChatTheme(isInDarkMode = darkMode) {
-            Row {
-                data.forEach { (type, mimeType, thumb) ->
-                    MediaAttachmentQuotedContent(
-                        attachment = Attachment(
-                            type = type,
-                            mimeType = mimeType,
-                            thumbUrl = thumb,
-                        ),
-                    )
-                }
+        Row {
+            data.forEach { (type, mimeType, thumb) ->
+                MediaAttachmentQuotedContent(
+                    attachment = Attachment(
+                        type = type,
+                        mimeType = mimeType,
+                        thumbUrl = thumb,
+                    ),
+                )
             }
         }
     }

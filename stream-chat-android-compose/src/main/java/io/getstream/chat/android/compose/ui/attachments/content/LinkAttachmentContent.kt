@@ -264,30 +264,30 @@ internal fun onLinkAttachmentContentClick(context: Context, url: String) {
 @Preview(showBackground = true)
 @Composable
 private fun LinkAttachmentContentPreview() {
-    LinkAttachmentContent()
+    ChatTheme {
+        LinkAttachmentContent()
+    }
 }
 
 @Composable
-internal fun LinkAttachmentContent(darkMode: Boolean = false) {
-    ChatTheme(isInDarkMode = darkMode) {
-        val previewHandler = AsyncImagePreviewHandler {
-            ColorImage(color = Color.Cyan.toArgb(), width = 200, height = 150)
-        }
-        CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
-            val attachment = Attachment(
-                titleLink = "Link",
-                title = "Title",
-                text = LongDescription,
-                imageUrl = "Image",
-                authorName = "Author",
-            )
-            LinkAttachmentContent(
-                attachmentState = AttachmentState(
-                    message = Message(attachments = listOf(attachment)),
-                ),
-                linkDescriptionMaxLines = 5,
-            )
-        }
+internal fun LinkAttachmentContent() {
+    val previewHandler = AsyncImagePreviewHandler {
+        ColorImage(color = Color.Cyan.toArgb(), width = 200, height = 150)
+    }
+    CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
+        val attachment = Attachment(
+            titleLink = "Link",
+            title = "Title",
+            text = LongDescription,
+            imageUrl = "Image",
+            authorName = "Author",
+        )
+        LinkAttachmentContent(
+            attachmentState = AttachmentState(
+                message = Message(attachments = listOf(attachment)),
+            ),
+            linkDescriptionMaxLines = 5,
+        )
     }
 }
 

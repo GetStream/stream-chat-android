@@ -73,26 +73,24 @@ public fun FileAttachmentQuotedContent(
 @Preview(showBackground = true)
 @Composable
 private fun FileAttachmentQuotedContentPreview() {
-    FileAttachmentQuotedContent()
+    ChatTheme {
+        FileAttachmentQuotedContent()
+    }
 }
 
 @Composable
-internal fun FileAttachmentQuotedContent(
-    darkMode: Boolean = false,
-) {
+internal fun FileAttachmentQuotedContent() {
     val mimeTypes = listOf(
         MimeType.MIME_TYPE_PDF,
         MimeType.MIME_TYPE_DOC,
         MimeType.MIME_TYPE_PPT,
         MimeType.MIME_TYPE_XLS,
     )
-    ChatTheme(isInDarkMode = darkMode) {
-        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-            mimeTypes.forEach { mimeType ->
-                FileAttachmentQuotedContent(
-                    attachment = Attachment(mimeType = mimeType),
-                )
-            }
+    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        mimeTypes.forEach { mimeType ->
+            FileAttachmentQuotedContent(
+                attachment = Attachment(mimeType = mimeType),
+            )
         }
     }
 }

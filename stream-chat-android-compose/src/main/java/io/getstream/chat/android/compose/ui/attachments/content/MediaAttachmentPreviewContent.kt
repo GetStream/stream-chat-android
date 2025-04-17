@@ -128,28 +128,28 @@ private fun MediaAttachmentPreviewItem(
 @Preview(showBackground = true)
 @Composable
 private fun MediaAttachmentItemsPreview() {
-    MediaAttachmentPreviewItems()
+    ChatTheme {
+        MediaAttachmentPreviewItems()
+    }
 }
 
 @Composable
-internal fun MediaAttachmentPreviewItems(darkMode: Boolean = false) {
-    ChatTheme(isInDarkMode = darkMode) {
-        val previewHandler = AsyncImagePreviewHandler {
-            ColorImage(color = Color.Green.toArgb(), width = 200, height = 150)
-        }
-        CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
-            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                MediaAttachmentPreviewItem(
-                    mediaAttachment = Attachment(imageUrl = "Image"),
-                    onAttachmentRemoved = {},
-                    overlayContent = {},
-                )
-                MediaAttachmentPreviewItem(
-                    mediaAttachment = Attachment(imageUrl = "Image"),
-                    onAttachmentRemoved = {},
-                    overlayContent = { DefaultPreviewItemOverlayContent() },
-                )
-            }
+internal fun MediaAttachmentPreviewItems() {
+    val previewHandler = AsyncImagePreviewHandler {
+        ColorImage(color = Color.Green.toArgb(), width = 200, height = 150)
+    }
+    CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
+        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            MediaAttachmentPreviewItem(
+                mediaAttachment = Attachment(imageUrl = "Image"),
+                onAttachmentRemoved = {},
+                overlayContent = {},
+            )
+            MediaAttachmentPreviewItem(
+                mediaAttachment = Attachment(imageUrl = "Image"),
+                onAttachmentRemoved = {},
+                overlayContent = { DefaultPreviewItemOverlayContent() },
+            )
         }
     }
 }

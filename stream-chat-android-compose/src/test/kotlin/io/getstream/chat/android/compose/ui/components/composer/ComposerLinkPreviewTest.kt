@@ -29,10 +29,8 @@ internal class ComposerLinkPreviewTest : SnapshotTest {
 
     @Test
     fun `composer link preview`() {
-        snapshotWithDarkMode { darkMode ->
-            ComposerLinkPreview(
-                darkMode = darkMode,
-            )
+        snapshotWithDarkMode {
+            ComposerLinkPreview()
         }
     }
 }

@@ -100,20 +100,20 @@ private fun ImageAttachmentPreviewContentItem(
 @Preview(showBackground = true)
 @Composable
 private fun ImageAttachmentContentPreview() {
-    ImageAttachmentPreviewContent()
+    ChatTheme {
+        ImageAttachmentPreviewContent()
+    }
 }
 
 @Composable
-internal fun ImageAttachmentPreviewContent(darkMode: Boolean = false) {
-    ChatTheme(isInDarkMode = darkMode) {
-        val previewHandler = AsyncImagePreviewHandler {
-            ColorImage(color = Color.Red.toArgb(), width = 200, height = 150)
-        }
-        CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
-            ImageAttachmentPreviewContentItem(
-                attachment = Attachment(imageUrl = "Image"),
-                onAttachmentRemoved = {},
-            )
-        }
+internal fun ImageAttachmentPreviewContent() {
+    val previewHandler = AsyncImagePreviewHandler {
+        ColorImage(color = Color.Red.toArgb(), width = 200, height = 150)
+    }
+    CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
+        ImageAttachmentPreviewContentItem(
+            attachment = Attachment(imageUrl = "Image"),
+            onAttachmentRemoved = {},
+        )
     }
 }
