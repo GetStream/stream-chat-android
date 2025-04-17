@@ -31,9 +31,6 @@ import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.SnapshotTest
-import io.getstream.chat.android.compose.ui.components.poll.PollDialogHeader
-import io.getstream.chat.android.compose.ui.components.poll.PollMoreOptionsTitle
-import io.getstream.chat.android.compose.ui.components.poll.pollMoreOptionsContent
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerPollTabFactory
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionNumberExceed
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchInput
@@ -118,68 +115,6 @@ internal class PollUITest : SnapshotTest {
                 onAttachmentsChanged = {},
                 onAttachmentItemSelected = {},
             ) {
-            }
-        }
-    }
-
-    @Test
-    fun `snapshot PollMoreOptionsDialog composable`() {
-        snapshot {
-            val poll = PreviewPollData.poll1
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(ChatTheme.colors.appBackground),
-            ) {
-                item {
-                    PollDialogHeader(
-                        title = stringResource(id = R.string.stream_compose_poll_options),
-                        onBackPressed = {},
-                    )
-                }
-
-                item { PollMoreOptionsTitle(title = poll.name) }
-
-                item { Spacer(modifier = Modifier.height(16.dp)) }
-
-                pollMoreOptionsContent(
-                    poll = poll,
-                    onCastVote = {},
-                    onRemoveVote = {},
-                )
-
-                item { Spacer(modifier = Modifier.height(16.dp)) }
-            }
-        }
-    }
-
-    @Test
-    fun `snapshot PollMoreOptionsDialog composable in dark mode`() {
-        snapshotWithDarkMode {
-            val poll = PreviewPollData.poll1
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(ChatTheme.colors.appBackground),
-            ) {
-                item {
-                    PollDialogHeader(
-                        title = stringResource(id = R.string.stream_compose_poll_options),
-                        onBackPressed = {},
-                    )
-                }
-
-                item { PollMoreOptionsTitle(title = poll.name) }
-
-                item { Spacer(modifier = Modifier.height(16.dp)) }
-
-                pollMoreOptionsContent(
-                    poll = poll,
-                    onCastVote = {},
-                    onRemoveVote = {},
-                )
-
-                item { Spacer(modifier = Modifier.height(16.dp)) }
             }
         }
     }
