@@ -38,9 +38,6 @@ import io.getstream.chat.android.compose.ui.components.poll.pollMoreOptionsConte
 import io.getstream.chat.android.compose.ui.components.poll.pollViewResultContent
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerPollTabFactory
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollCreationDiscardDialog
-import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionDuplicated
-import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionItem
-import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionList
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionNumberExceed
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchInput
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchItem
@@ -54,21 +51,6 @@ internal class PollUITest : SnapshotTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_4A)
-
-    @Test
-    fun `snapshot PollOptionList composable`() {
-        snapshotWithDarkMode {
-            PollOptionList(
-                lazyListState = rememberLazyListState(),
-                optionItems = listOf(
-                    PollOptionItem(title = "Option1"),
-                    PollOptionItem(title = "Option2"),
-                    PollOptionItem(title = "Option2", pollOptionError = PollOptionDuplicated("Duplicated optionø")),
-                ),
-                onQuestionsChanged = {},
-            )
-        }
-    }
 
     @Test
     fun `snapshot Poll SwitchList composable`() {

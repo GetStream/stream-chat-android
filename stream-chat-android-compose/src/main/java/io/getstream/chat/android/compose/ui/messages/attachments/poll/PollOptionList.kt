@@ -224,15 +224,53 @@ public fun PollOptionList(
 
 @Preview
 @Composable
-private fun PollQuestionListPreview() {
+private fun PollOptionListEmptyPreview() {
     ChatTheme {
-        PollOptionList(
-            optionItems = List(5) { PollOptionItem("This is a poll item $it") } +
-                PollOptionItem(
-                    title = "This is a poll item with error",
-                    pollOptionError = PollOptionDuplicated("duplicated!"),
-                ),
-            onQuestionsChanged = {},
-        )
+        PollOptionListEmpty()
     }
+}
+
+@Composable
+internal fun PollOptionListEmpty() {
+    PollOptionList(
+        onQuestionsChanged = {},
+    )
+}
+
+@Preview
+@Composable
+private fun PollOptionListBlankPreview() {
+    ChatTheme {
+        PollOptionListBlank()
+    }
+}
+
+@Composable
+internal fun PollOptionListBlank() {
+    @Suppress("MagicNumber")
+    PollOptionList(
+        optionItems = List(4) { PollOptionItem("") },
+        onQuestionsChanged = {},
+    )
+}
+
+@Preview
+@Composable
+private fun PollOptionListDuplicatedErrorPreview() {
+    ChatTheme {
+        PollOptionListDuplicatedError()
+    }
+}
+
+@Composable
+internal fun PollOptionListDuplicatedError() {
+    @Suppress("MagicNumber")
+    PollOptionList(
+        optionItems = List(3) { PollOptionItem("This is a poll item $it") } +
+            PollOptionItem(
+                title = "This is a poll item with error",
+                pollOptionError = PollOptionDuplicated("duplicated!"),
+            ),
+        onQuestionsChanged = {},
+    )
 }
