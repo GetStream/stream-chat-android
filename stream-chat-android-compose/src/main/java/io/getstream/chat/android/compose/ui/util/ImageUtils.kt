@@ -117,14 +117,14 @@ public fun Modifier.mirrorRtl(layoutDirection: LayoutDirection): Modifier {
  * @param data The data to load the image from. Can be a URL, URI, resource ID, etc.
  * @param contentDescription The description to use for the image.
  * @param modifier Modifier for styling.
- * @param contentScale The scale to be used for the content. Default is [ContentScale.Crop].
+ * @param contentScale The scale to be used for the content. Default is [ContentScale.Fit].
  */
 @Composable
 internal fun StreamAsyncImage(
     data: Any?,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    contentScale: ContentScale = ContentScale.Crop,
+    contentScale: ContentScale = ContentScale.Fit,
 ) {
     StreamAsyncImage(
         imageRequest = ImageRequest.Builder(LocalContext.current)
@@ -146,7 +146,7 @@ internal fun StreamAsyncImage(
  * @param imageRequest The request to load the image.
  * @param contentDescription The description to use for the image.
  * @param modifier Modifier for styling.
- * @param contentScale The scale to be used for the content.
+ * @param contentScale The scale to be used for the content. Default is [ContentScale.Fit].
  */
 @Composable
 internal fun StreamAsyncImage(
@@ -185,7 +185,7 @@ internal fun StreamAsyncImage(
  *
  * @param data The data to load the image from. Can be a URL, URI, resource ID, etc.
  * @param modifier Modifier for styling.
- * @param contentScale The scale to be used for the content.
+ * @param contentScale The scale to be used for the content. Default is [ContentScale.Fit].
  * @param content A composable function that defines the content to be displayed based on the image loading state.
  */
 @Composable
@@ -214,7 +214,7 @@ internal fun StreamAsyncImage(
  *
  * @param imageRequest The request to load the image.
  * @param modifier Modifier for styling.
- * @param contentScale The scale to be used for the content.
+ * @param contentScale The scale to be used for the content. Default is [ContentScale.Fit].
  * @param content A composable function that defines the content to be displayed based on the image loading state.
  */
 @Composable
