@@ -140,7 +140,7 @@ private fun ComposerLinkImagePreview(attachment: Attachment) {
         contentAlignment = Alignment.Center,
     ) {
         StreamAsyncImage(
-            data = { imagePreviewUrl },
+            data = imagePreviewUrl,
             modifier = Modifier
                 .height(theme.imageSize.height)
                 .width(theme.imageSize.width)
