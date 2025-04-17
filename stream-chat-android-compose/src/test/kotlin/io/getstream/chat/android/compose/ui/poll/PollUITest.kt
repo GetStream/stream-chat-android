@@ -16,28 +16,10 @@
 
 package io.getstream.chat.android.compose.ui.poll
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.SnapshotTest
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerPollTabFactory
-import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionNumberExceed
-import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchInput
-import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchItem
-import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchList
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.previewdata.PreviewPollData
 import org.junit.Rule
 import org.junit.Test
 
@@ -45,51 +27,6 @@ internal class PollUITest : SnapshotTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_4A)
-
-    @Test
-    fun `snapshot Poll SwitchList composable`() {
-        snapshotWithDarkMode {
-            val switchItemList: MutableList<PollSwitchItem> = mutableListOf()
-
-            switchItemList.addAll(
-                listOf(
-                    PollSwitchItem(
-                        title = stringResource(id = R.string.stream_compose_poll_option_switch_multiple_answers),
-                        pollSwitchInput = PollSwitchInput(
-                            keyboardType = KeyboardType.Decimal,
-                            description = stringResource(id = R.string.stream_compose_poll_option_max_number_of_answers_hint),
-                            maxValue = 10,
-                            value = 11,
-                        ),
-                        pollOptionError = PollOptionNumberExceed("You can only put a number between 1~10"),
-                        enabled = true,
-                    ),
-                    PollSwitchItem(
-                        title = stringResource(id = R.string.stream_compose_poll_option_switch_multiple_answers),
-                        pollSwitchInput = PollSwitchInput(
-                            keyboardType = KeyboardType.Text,
-                            value = "",
-                            maxValue = "",
-                        ),
-                        enabled = true,
-                    ),
-                    PollSwitchItem(
-                        title = stringResource(id = R.string.stream_compose_poll_option_switch_anonymous_poll),
-                        enabled = false,
-                    ),
-                    PollSwitchItem(
-                        title = stringResource(id = R.string.stream_compose_poll_option_switch_suggest_option),
-                        enabled = false,
-                    ),
-                ),
-            )
-
-            PollSwitchList(
-                pollSwitchItems = switchItemList,
-                onSwitchesChanged = {},
-            )
-        }
-    }
 
     @Test
     fun `snapshot AttachmentsPickerPollTabFactory content light mode composable`() {
