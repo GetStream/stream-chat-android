@@ -14,45 +14,42 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.poll
+package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.SnapshotTest
-import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerPollTabFactory
 import org.junit.Rule
 import org.junit.Test
 
-internal class PollUITest : SnapshotTest {
+internal class AttachmentsPickerPollTabFactoryPickerTabContentTest : SnapshotTest {
 
     @get:Rule
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_4A)
 
     @Test
-    fun `snapshot AttachmentsPickerPollTabFactory content light mode composable`() {
-        snapshot {
-            val pollCreationTabFactory = AttachmentsPickerPollTabFactory()
-            pollCreationTabFactory.PickerTabContent(
+    fun `light mode`() {
+        snapshot(isInDarkMode = false) {
+            AttachmentsPickerPollTabFactory().PickerTabContent(
                 onAttachmentPickerAction = {},
                 attachments = listOf(),
                 onAttachmentsChanged = {},
                 onAttachmentItemSelected = {},
-            ) {
-            }
+                onAttachmentsSubmitted = {},
+            )
         }
     }
 
     @Test
-    fun `snapshot AttachmentsPickerPollTabFactory content dark mode composable`() {
+    fun `dark mode`() {
         snapshot(isInDarkMode = true) {
-            val pollCreationTabFactory = AttachmentsPickerPollTabFactory()
-            pollCreationTabFactory.PickerTabContent(
+            AttachmentsPickerPollTabFactory().PickerTabContent(
                 onAttachmentPickerAction = {},
                 attachments = listOf(),
                 onAttachmentsChanged = {},
                 onAttachmentItemSelected = {},
-            ) {
-            }
+                onAttachmentsSubmitted = {},
+            )
         }
     }
 }
