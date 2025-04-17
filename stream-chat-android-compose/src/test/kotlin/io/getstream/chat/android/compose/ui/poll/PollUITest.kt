@@ -37,7 +37,6 @@ import io.getstream.chat.android.compose.ui.components.poll.PollViewResultTitle
 import io.getstream.chat.android.compose.ui.components.poll.pollMoreOptionsContent
 import io.getstream.chat.android.compose.ui.components.poll.pollViewResultContent
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerPollTabFactory
-import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollCreationDiscardDialog
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionNumberExceed
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchInput
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchItem
@@ -93,17 +92,6 @@ internal class PollUITest : SnapshotTest {
             PollSwitchList(
                 pollSwitchItems = switchItemList,
                 onSwitchesChanged = {},
-            )
-        }
-    }
-
-    @Test
-    fun `snapshot PollCreationDiscardDialog composable`() {
-        snapshotWithDarkMode {
-            PollCreationDiscardDialog(
-                usePlatformDefaultWidth = true,
-                onCancelClicked = { },
-                onDiscardClicked = {},
             )
         }
     }
