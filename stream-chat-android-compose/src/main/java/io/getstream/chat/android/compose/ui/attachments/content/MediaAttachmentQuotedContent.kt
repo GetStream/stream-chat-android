@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.ColorImage
@@ -100,6 +101,7 @@ public fun MediaAttachmentQuotedContent(
                 .background(backgroundColor),
             data = data,
             contentDescription = null,
+            contentScale = ContentScale.Crop,
         )
 
         if (isVideo) {

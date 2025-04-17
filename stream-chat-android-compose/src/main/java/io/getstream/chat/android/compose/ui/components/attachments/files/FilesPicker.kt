@@ -139,13 +139,6 @@ internal fun DefaultFilesPickerItem(
                     disabledIndeterminateColor = ChatTheme.colors.disabled,
                 ),
             )
-
-//            if (fileItem.isSelected && fileItem.attachmentMetaData.selectedPosition != Int.MIN_VALUE) {
-//                Text(
-//                    text = fileItem.attachmentMetaData.selectedPosition.toString(),
-//                    color = Color.White
-//                )
-//            }
         }
 
         FilesPickerItemImage(
