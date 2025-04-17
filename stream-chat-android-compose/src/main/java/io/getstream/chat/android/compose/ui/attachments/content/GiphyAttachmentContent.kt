@@ -84,7 +84,7 @@ public fun GiphyAttachmentContent(
     onItemClick: (context: Context, previewUrl: String) -> Unit = ::onGiphyAttachmentContentClick,
 ) {
     val context = LocalContext.current
-    val (message, isMine, onLongItemClick) = attachmentState
+    val (message, _, onLongItemClick) = attachmentState
     val attachment = message.attachments.firstOrNull(Attachment::isGiphy)
 
     checkNotNull(attachment) {
