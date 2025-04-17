@@ -33,9 +33,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.SnapshotTest
 import io.getstream.chat.android.compose.ui.components.poll.PollDialogHeader
 import io.getstream.chat.android.compose.ui.components.poll.PollMoreOptionsTitle
-import io.getstream.chat.android.compose.ui.components.poll.PollViewResultTitle
 import io.getstream.chat.android.compose.ui.components.poll.pollMoreOptionsContent
-import io.getstream.chat.android.compose.ui.components.poll.pollViewResultContent
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerPollTabFactory
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionNumberExceed
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchInput
@@ -180,60 +178,6 @@ internal class PollUITest : SnapshotTest {
                     onCastVote = {},
                     onRemoveVote = {},
                 )
-
-                item { Spacer(modifier = Modifier.height(16.dp)) }
-            }
-        }
-    }
-
-    @Test
-    fun `snapshot PollViewResultDialog composable`() {
-        val poll = PreviewPollData.poll1
-        snapshot {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(ChatTheme.colors.appBackground),
-            ) {
-                item {
-                    PollDialogHeader(
-                        title = stringResource(id = R.string.stream_compose_poll_results),
-                        onBackPressed = {},
-                    )
-                }
-
-                item { PollViewResultTitle(title = poll.name) }
-
-                item { Spacer(modifier = Modifier.height(16.dp)) }
-
-                pollViewResultContent(poll = poll)
-
-                item { Spacer(modifier = Modifier.height(16.dp)) }
-            }
-        }
-    }
-
-    @Test
-    fun `snapshot PollViewResultDialog composable in dark mode`() {
-        val poll = PreviewPollData.poll1
-        snapshotWithDarkMode {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(ChatTheme.colors.appBackground),
-            ) {
-                item {
-                    PollDialogHeader(
-                        title = stringResource(id = R.string.stream_compose_poll_results),
-                        onBackPressed = {},
-                    )
-                }
-
-                item { PollViewResultTitle(title = poll.name) }
-
-                item { Spacer(modifier = Modifier.height(16.dp)) }
-
-                pollViewResultContent(poll = poll)
 
                 item { Spacer(modifier = Modifier.height(16.dp)) }
             }
