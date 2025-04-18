@@ -5,6 +5,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `teamsRole` field to the `User` model for team-based roles. [#5737](https://github.com/GetStream/stream-chat-android/pull/5737)
 
 ### ⚠️ Changed
 
