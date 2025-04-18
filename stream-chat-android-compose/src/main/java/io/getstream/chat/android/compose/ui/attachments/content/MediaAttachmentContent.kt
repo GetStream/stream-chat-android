@@ -40,6 +40,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -64,8 +65,10 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract
+import io.getstream.chat.android.compose.ui.attachments.preview.internal.MediaGalleryInjector
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
@@ -422,6 +425,12 @@ internal fun MediaAttachmentContentItem(
     }
 
     var imageState by remember { mutableStateOf<AsyncImagePainter.State>(AsyncImagePainter.State.Empty) }
+
+    // Prepare the image loader for the media gallery
+    val imageLoader = LocalStreamImageLoader.current
+    LaunchedEffect(imageLoader) {
+        MediaGalleryInjector.install(imageLoader)
+    }
 
     val mixedMediaPreviewLauncher = rememberLauncherForActivityResult(
         contract = MediaGalleryPreviewContract(),

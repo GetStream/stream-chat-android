@@ -85,6 +85,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -137,6 +138,7 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.ShowInChat
 import io.getstream.chat.android.compose.state.mediagallerypreview.toMediaGalleryPreviewActivityState
 import io.getstream.chat.android.compose.state.mediagallerypreview.toMessage
 import io.getstream.chat.android.compose.ui.attachments.content.PlayButton
+import io.getstream.chat.android.compose.ui.attachments.preview.internal.MediaGalleryInjector
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
@@ -144,6 +146,7 @@ import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.StreamImage
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -266,13 +269,18 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 SetupEdgeToEdge()
 
                 val message = mediaGalleryPreviewViewModel.message
-
                 if (message.isDeleted()) {
                     finish()
                     return@ChatTheme
                 }
 
-                MediaGalleryPreviewContentWrapper(message, attachmentPosition)
+                // Take the imageLoader from the injector, which is populated by the MediaAttachmentContent. This is a
+                // workaround for the fact that the MediaGalleryPreviewActivity is not a part of the composition tree of
+                // the MessageList, so the provided imageLoaderFactory from the MessageList ChatTheme cannot be used.
+                val imageLoader = MediaGalleryInjector.imageLoader ?: LocalStreamImageLoader.current
+                CompositionLocalProvider(LocalStreamImageLoader provides imageLoader) {
+                    MediaGalleryPreviewContentWrapper(message, attachmentPosition)
+                }
             }
         }
     }
