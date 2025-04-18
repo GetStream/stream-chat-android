@@ -73,6 +73,7 @@ internal object UserDtoTestData {
             unread_count = 0,
             mutes = emptyList(),
             teams = emptyList(),
+            teams_role = null,
             channel_mutes = emptyList(),
             blocked_user_ids = null,
             extraData = emptyMap(),
@@ -122,6 +123,7 @@ internal object UserDtoTestData {
             unread_count = 0,
             mutes = emptyList(),
             teams = emptyList(),
+            teams_role = null,
             channel_mutes = emptyList(),
             blocked_user_ids = null,
             extraData = emptyMap(),
@@ -167,6 +169,10 @@ internal object UserDtoTestData {
             }
             ],
             "teams": [ "team1", "team2" ],
+            "teams_role": {
+                "team1": "owner",
+                "team2": "member"
+            },
             "channel_mutes": [],
             "name": "username",
             "image": "image"
@@ -207,6 +213,10 @@ internal object UserDtoTestData {
                 ),
             ),
             teams = listOf("team1", "team2"),
+            teams_role = mapOf(
+                "team1" to "owner",
+                "team2" to "member",
+            ),
             channel_mutes = emptyList(),
             blocked_user_ids = null,
             extraData = emptyMap(),
@@ -237,6 +247,7 @@ internal object UserDtoTestData {
         banned = true,
         devices = emptyList(),
         teams = emptyList(),
+        teams_role = null,
         extraData = emptyMap(),
     )
 
@@ -265,7 +276,11 @@ internal object UserDtoTestData {
               "provider_name": "provider_name"
              }
             ],
-            "teams": [ "team1", "team2"]
+            "teams": [ "team1", "team2"],
+            "teams_role": {
+                "team1": "owner",
+                "team2": "member"
+            }
          }""".withoutWhitespace()
 
     val upstreamUser = UpstreamUserDto(
@@ -283,6 +298,10 @@ internal object UserDtoTestData {
         banned = false,
         devices = listOf(DeviceDto(id = "deviceId", push_provider = "provider", provider_name = "provider_name")),
         teams = listOf("team1", "team2"),
+        teams_role = mapOf(
+            "team1" to "owner",
+            "team2" to "member",
+        ),
         name = "username",
         image = "image",
         language = "language",
