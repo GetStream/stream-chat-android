@@ -1923,7 +1923,7 @@ public class MessageListController(
             voteId = vote.id,
         ).enqueue(onError = { error ->
             onActionResult(error) {
-                ErrorEvent.PollCastingVoteError(it)
+                ErrorEvent.PollRemovingVoteError(it)
             }
         })
     }

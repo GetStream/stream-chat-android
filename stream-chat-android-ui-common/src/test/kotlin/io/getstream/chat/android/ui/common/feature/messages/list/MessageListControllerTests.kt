@@ -36,6 +36,7 @@ import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.randomAttachment
 import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomDate
@@ -44,6 +45,8 @@ import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMembers
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomMessageList
+import io.getstream.chat.android.randomPollOption
+import io.getstream.chat.android.randomPollVote
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
@@ -52,6 +55,7 @@ import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.suspendableRandomMessageList
+import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.test.callFrom
@@ -65,6 +69,8 @@ import io.getstream.chat.android.ui.common.state.messages.list.Other
 import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.Typing
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
+import io.getstream.result.Error
+import io.getstream.result.Result
 import io.getstream.result.call.Call
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -847,6 +853,78 @@ internal class MessageListControllerTests {
         verify(audioPlayer).pause()
     }
 
+    @Test
+    fun `When calling castVote, ChannelClient castPollVote is invoked`() = runTest {
+        val messageId = randomString()
+        val pollId = randomString()
+        val option = randomPollOption()
+        val messagesState = MutableStateFlow(emptyList<Message>())
+        val chatClient = mock<ChatClient>()
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelState(messagesState = messagesState)
+            .givenCastVote(callFrom { randomPollVote() })
+            .get()
+        controller.castVote(messageId, pollId, option)
+
+        verify(chatClient).castPollVote(messageId, pollId, option.id)
+    }
+
+    @Test
+    fun `When castVote fails, errorEvent is emitted`() = runTest {
+        val messageId = randomString()
+        val pollId = randomString()
+        val option = randomPollOption()
+        val messagesState = MutableStateFlow(emptyList<Message>())
+        val error = Error.GenericError("error")
+        val chatClient = mock<ChatClient>()
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelState(messagesState = messagesState)
+            .givenCastVote(TestCall(Result.Failure(error)))
+            .get()
+        controller.castVote(messageId, pollId, option)
+
+        val expectedEvent = MessageListController.ErrorEvent.PollCastingVoteError(error)
+        controller.errorEvents.value `should be equal to` expectedEvent
+    }
+
+    @Test
+    fun `When calling removeVote, ChannelClient removePollVote is invoked`() = runTest {
+        val messageId = randomString()
+        val pollId = randomString()
+        val vote = randomPollVote()
+        val messagesState = MutableStateFlow(emptyList<Message>())
+        val chatClient = mock<ChatClient>()
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelState(messagesState = messagesState)
+            .givenRemoveVote(callFrom { randomPollVote() })
+            .get()
+        controller.removeVote(messageId, pollId, vote)
+
+        verify(chatClient).removePollVote(messageId, pollId, vote.id)
+    }
+
+    @Test
+    fun `When removeVote fails, errorEvent is emitted`() = runTest {
+        val messageId = randomString()
+        val pollId = randomString()
+        val vote = randomPollVote()
+        val messagesState = MutableStateFlow(emptyList<Message>())
+        val error = Error.GenericError("error")
+        val chatClient = mock<ChatClient>()
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelState(messagesState = messagesState)
+            .givenRemoveVote(TestCall(Result.Failure(error)))
+            .get()
+        controller.removeVote(messageId, pollId, vote)
+
+        val expectedEvent = MessageListController.ErrorEvent.PollRemovingVoteError(error)
+        controller.errorEvents.value `should be equal to` expectedEvent
+    }
+
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val cid: String = CID,
@@ -891,6 +969,14 @@ internal class MessageListControllerTests {
 
         fun givenDeleteMessage(message: Call<Message>) = apply {
             whenever(chatClient.deleteMessage(any(), any())) doReturn message
+        }
+
+        fun givenCastVote(vote: Call<Vote>) = apply {
+            whenever(chatClient.castPollVote(any(), any(), any<String>())) doReturn vote
+        }
+
+        fun givenRemoveVote(vote: Call<Vote>) = apply {
+            whenever(chatClient.removePollVote(any(), any(), any<String>())) doReturn vote
         }
 
         fun givenChannelState(
