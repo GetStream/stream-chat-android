@@ -68,6 +68,20 @@ internal fun defaultTextStyle(
     return defaultTextStyle(ownTheme, otherTheme)
 }
 
+@Composable
+internal fun defaultLinkStyle(colors: StreamColors): (isOwnMessage: Boolean) -> TextStyle =
+    defaultLinkStyle(
+        ownTheme = MessageTheme.defaultOwnTheme(colors = colors),
+        otherTheme = MessageTheme.defaultOtherTheme(colors = colors),
+    )
+
+internal fun defaultLinkStyle(
+    ownTheme: MessageTheme,
+    otherTheme: MessageTheme,
+): (isOwnMessage: Boolean) -> TextStyle = { isOwnMessage ->
+    if (isOwnMessage) ownTheme.linkStyle else otherTheme.linkStyle
+}
+
 /**
  * Function that returns the color of the mentions text, depending on whether the message is mine or not.
  *
