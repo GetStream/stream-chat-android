@@ -40,13 +40,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.ui.common.contract.internal.SelectFilesContract
+import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
+import io.getstream.chat.android.uiutils.model.MimeType
 
 /**
  * Shows the UI for files the user can pick for message attachments. Exposes the logic of selecting
@@ -136,13 +139,6 @@ internal fun DefaultFilesPickerItem(
                     disabledIndeterminateColor = ChatTheme.colors.disabled,
                 ),
             )
-
-//            if (fileItem.isSelected && fileItem.attachmentMetaData.selectedPosition != Int.MIN_VALUE) {
-//                Text(
-//                    text = fileItem.attachmentMetaData.selectedPosition.toString(),
-//                    color = Color.White
-//                )
-//            }
         }
 
         FilesPickerItemImage(
@@ -169,5 +165,33 @@ internal fun DefaultFilesPickerItem(
                 color = ChatTheme.colors.textLowEmphasis,
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun FilesPickerItemsPreview() {
+    ChatTheme {
+        FilesPickerItems()
+    }
+}
+
+@Composable
+internal fun FilesPickerItems() {
+    Column {
+        DefaultFilesPickerItem(
+            fileItem = AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_PDF),
+                isSelected = false,
+            ),
+            onItemSelected = {},
+        )
+        DefaultFilesPickerItem(
+            fileItem = AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(mimeType = MimeType.MIME_TYPE_DOC),
+                isSelected = true,
+            ),
+            onItemSelected = {},
+        )
     }
 }
