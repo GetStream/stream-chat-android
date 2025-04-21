@@ -36,6 +36,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,14 +45,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import com.skydoves.landscapist.ImageOptions
+import androidx.compose.ui.tooling.preview.Preview
+import coil3.ColorImage
+import coil3.compose.LocalAsyncImagePreviewHandler
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.StreamImage
+import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
+import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
@@ -133,14 +139,15 @@ private fun ComposerLinkImagePreview(attachment: Attachment) {
         modifier = Modifier.padding(theme.imagePadding),
         contentAlignment = Alignment.Center,
     ) {
-        StreamImage(
-            data = { imagePreviewUrl },
+        StreamAsyncImage(
+            data = imagePreviewUrl,
             modifier = Modifier
                 .height(theme.imageSize.height)
                 .width(theme.imageSize.width)
                 .clip(theme.imageShape)
                 .testTag("Stream_LinkPreviewImage"),
-            imageOptions = ImageOptions(contentScale = ContentScale.Crop),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
         )
     }
 }
@@ -229,4 +236,33 @@ private fun onLinkPreviewClick(context: Context, preview: LinkPreview) {
             Uri.parse(urlWithScheme),
         ),
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ComposerLinkContentPreview() {
+    ChatTheme {
+        ComposerLinkPreview()
+    }
+}
+
+@Composable
+internal fun ComposerLinkPreview() {
+    val previewHandler = AsyncImagePreviewHandler {
+        ColorImage(color = Color.Magenta.toArgb(), width = 200, height = 150)
+    }
+    CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
+        val attachment = Attachment(
+            titleLink = "Link",
+            title = "Title",
+            text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt.",
+            imageUrl = "Image",
+        )
+        ComposerLinkPreview(
+            linkPreview = LinkPreview(
+                originUrl = "Url",
+                attachment = attachment,
+            ),
+        )
+    }
 }

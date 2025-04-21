@@ -80,7 +80,6 @@ dependencies {
 
     // Coil
     androidTestImplementation(libs.coil)
-    androidTestImplementation(libs.skydoves.landscapist.coil)
     androidTestImplementation(libs.coil.gif)
     androidTestImplementation(libs.coil.video)
 

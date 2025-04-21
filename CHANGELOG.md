@@ -64,6 +64,9 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Replace `StreamImage` with `StreamAsyncImage`. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
+- Deprecate landscapist `StreamImage` in favor of coil `SubcomposeAsyncImage`. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
+- Deprecate `rememberStreamImagePainter` in favor of coil `rememberAsyncImagePainter`. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
 
 ### ❌ Removed
 
@@ -72,6 +75,7 @@
 - Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
 
 ### ⬆️ Improved
+- Improve the images loading. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
 
 ### ✅ Added
 
