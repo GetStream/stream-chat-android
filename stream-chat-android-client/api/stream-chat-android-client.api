@@ -22,6 +22,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun blockUser (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun castPollAnswer (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun castPollVote (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Option;)Lio/getstream/result/call/Call;
+	public final fun castPollVote (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun channel (Ljava/lang/String;)Lio/getstream/chat/android/client/channel/ChannelClient;
 	public final fun channel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/channel/ChannelClient;
 	public final fun clearPersistence ()Lio/getstream/result/call/Call;
@@ -152,6 +153,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun removeMembers (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;)Lio/getstream/result/call/Call;
 	public static synthetic fun removeMembers$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun removePollVote (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Vote;)Lio/getstream/result/call/Call;
+	public final fun removePollVote (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun removeShadowBan (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun removeSocketListener (Lio/getstream/chat/android/client/socket/SocketListener;)V
 	public final fun searchMessages (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/FilterObject;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Lio/getstream/chat/android/models/querysort/QuerySorter;)Lio/getstream/result/call/Call;

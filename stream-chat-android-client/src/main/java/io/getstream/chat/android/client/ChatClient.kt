@@ -1549,6 +1549,14 @@ internal constructor(
             }
     }
 
+    /**
+     * Creates a new poll option that can be voted for.
+     *
+     * @param pollId The poll id.
+     * @param option The option to suggest.
+     *
+     * @return Executable async [Call] responsible for suggesting a poll option.
+     */
     @CheckResult
     public fun suggestPollOption(
         pollId: String,
@@ -1566,15 +1574,46 @@ internal constructor(
      *
      * @return Executable async [Call] responsible for casting a vote.
      */
+    @Deprecated(
+        message = "Use castPollVote(String, String, String) instead",
+        replaceWith = ReplaceWith("castPollVote(messageId, pollId, option.id)"),
+    )
     @CheckResult
     public fun castPollVote(
         messageId: String,
         pollId: String,
         option: Option,
     ): Call<Vote> {
-        return api.castPollVote(messageId, pollId, option.id)
+        return castPollVote(messageId, pollId, option.id)
     }
 
+    /**
+     * Cast a vote for a poll in a message.
+     *
+     * @param messageId The message id where the poll is.
+     * @param pollId The poll id.
+     * @param optionId The id of the option to vote for.
+     *
+     * @return Executable async [Call] responsible for casting a vote.
+     */
+    @CheckResult
+    public fun castPollVote(
+        messageId: String,
+        pollId: String,
+        optionId: String,
+    ): Call<Vote> {
+        return api.castPollVote(messageId, pollId, optionId)
+    }
+
+    /**
+     * Casts an answer (comment) for a poll (if the poll is configured to allow answers).
+     *
+     * @param messageId The message id which contains the poll.
+     * @param pollId The poll id.
+     * @param answer The answer to cast.
+     *
+     * @return Executable async [Call] responsible for casting an answer.
+     */
     @CheckResult
     public fun castPollAnswer(
         messageId: String,
@@ -1593,13 +1632,35 @@ internal constructor(
      *
      * @return Executable async [Call] responsible for removing a vote.
      */
+    @Deprecated(
+        message = "Use removePollVote(String, String, String) instead",
+        replaceWith = ReplaceWith("removePollVote(messageId, pollId, vote.id)"),
+    )
     @CheckResult
     public fun removePollVote(
         messageId: String,
         pollId: String,
         vote: Vote,
     ): Call<Vote> {
-        return api.removePollVote(messageId, pollId, vote.id)
+        return removePollVote(messageId, pollId, vote.id)
+    }
+
+    /**
+     * Remove a vote for a poll in a message.
+     *
+     * @param messageId The message id where the poll is.
+     * @param pollId The poll id.
+     * @param voteId The id of the vote to remove.
+     *
+     * @return Executable async [Call] responsible for removing a vote.
+     */
+    @CheckResult
+    public fun removePollVote(
+        messageId: String,
+        pollId: String,
+        voteId: String,
+    ): Call<Vote> {
+        return api.removePollVote(messageId, pollId, voteId)
     }
 
     /**

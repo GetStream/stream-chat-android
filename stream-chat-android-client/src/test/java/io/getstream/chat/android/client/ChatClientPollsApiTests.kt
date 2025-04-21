@@ -136,6 +136,36 @@ internal class ChatClientPollsApiTests : BaseChatClientTest() {
     }
 
     @Test
+    fun castPollVoteByIdSuccess() = runTest {
+        // given
+        val messageId = randomString()
+        val pollId = randomString()
+        val optionId = randomString()
+        val resultVote = randomPollVote()
+        whenever(api.castPollVote(any(), any(), any()))
+            .thenReturn(RetroSuccess(resultVote).toRetrofitCall())
+        // when
+        val result = chatClient.castPollVote(messageId, pollId, optionId).await()
+        // then
+        assert(result.isSuccess)
+    }
+
+    @Test
+    fun castPollVoteByIdError() = runTest {
+        // given
+        val messageId = randomString()
+        val pollId = randomString()
+        val optionId = randomString()
+        val errorCode = positiveRandomInt()
+        whenever(api.castPollVote(any(), any(), any()))
+            .thenReturn(RetroError<Vote>(errorCode).toRetrofitCall())
+        // when
+        val result = chatClient.castPollVote(messageId, pollId, optionId).await()
+        // then
+        verifyNetworkError(result, errorCode)
+    }
+
+    @Test
     fun castPollAnswerSuccess() = runTest {
         // given
         val messageId = randomString()
@@ -190,6 +220,36 @@ internal class ChatClientPollsApiTests : BaseChatClientTest() {
             .thenReturn(RetroError<Vote>(errorCode).toRetrofitCall())
         // when
         val result = chatClient.removePollVote(messageId, pollId, vote).await()
+        // then
+        verifyNetworkError(result, errorCode)
+    }
+
+    @Test
+    fun removePollVoteByIdSuccess() = runTest {
+        // given
+        val messageId = randomString()
+        val pollId = randomString()
+        val voteId = randomString()
+        val vote = randomPollVote()
+        whenever(api.removePollVote(any(), any(), any()))
+            .thenReturn(RetroSuccess(vote).toRetrofitCall())
+        // when
+        val result = chatClient.removePollVote(messageId, pollId, voteId).await()
+        // then
+        assert(result.isSuccess)
+    }
+
+    @Test
+    fun removePollVoteByIdError() = runTest {
+        // given
+        val messageId = randomString()
+        val pollId = randomString()
+        val voteId = randomString()
+        val errorCode = positiveRandomInt()
+        whenever(api.removePollVote(any(), any(), any()))
+            .thenReturn(RetroError<Vote>(errorCode).toRetrofitCall())
+        // when
+        val result = chatClient.removePollVote(messageId, pollId, voteId).await()
         // then
         verifyNetworkError(result, errorCode)
     }

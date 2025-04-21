@@ -1882,7 +1882,7 @@ public class MessageListController(
         chatClient.castPollVote(
             messageId = messageId,
             pollId = pollId,
-            option = option,
+            optionId = option.id,
         ).enqueue(onError = { error ->
             onActionResult(error) {
                 ErrorEvent.PollCastingVoteError(it)
@@ -1920,7 +1920,7 @@ public class MessageListController(
         chatClient.removePollVote(
             messageId = messageId,
             pollId = pollId,
-            vote = vote,
+            voteId = vote.id,
         ).enqueue(onError = { error ->
             onActionResult(error) {
                 ErrorEvent.PollCastingVoteError(it)
@@ -2351,8 +2351,8 @@ public class MessageListController(
         scope.launch {
             (
                 poll.ownVotes.firstOrNull { it.optionId == option.id }
-                    ?.let { chatClient.removePollVote(message.id, poll.id, it) }
-                    ?: chatClient.castPollVote(message.id, poll.id, option)
+                    ?.let { vote -> chatClient.removePollVote(message.id, poll.id, vote.id) }
+                    ?: chatClient.castPollVote(message.id, poll.id, option.id)
                 ).await()
         }
     }
