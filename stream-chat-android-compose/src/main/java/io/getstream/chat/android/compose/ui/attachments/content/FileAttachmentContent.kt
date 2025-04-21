@@ -44,26 +44,24 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.skydoves.landscapist.ImageOptions
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
-import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
-import io.getstream.chat.android.compose.ui.util.StreamImage
+import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.util.attachmentDownloadState
 import io.getstream.chat.android.compose.util.onDownloadHandleRequest
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
+import io.getstream.chat.android.uiutils.model.MimeType
 
 /**
  * Builds a file attachment message which shows a list of files.
@@ -88,12 +86,14 @@ public fun FileAttachmentContent(
     val previewHandlers = ChatTheme.attachmentPreviewHandlers
 
     Column(
-        modifier = modifier.combinedClickable(
-            indication = null,
-            interactionSource = remember { MutableInteractionSource() },
-            onClick = {},
-            onLongClick = { onItemLongClick(message) },
-        ).testTag("Stream_MultipleFileAttachmentsColumn"),
+        modifier = modifier
+            .combinedClickable(
+                indication = null,
+                interactionSource = remember { MutableInteractionSource() },
+                onClick = {},
+                onLongClick = { onItemLongClick(message) },
+            )
+            .testTag("Stream_MultipleFileAttachmentsColumn"),
     ) {
         for (attachment in message.attachments) {
             FileAttachmentItem(
@@ -296,16 +296,17 @@ public fun FileAttachmentImage(
         }
         .testTag("Stream_FileAttachmentImage")
 
-    StreamImage(
+    val contentScale = if (isImage || isVideoWithThumbnails) {
+        ContentScale.Crop
+    } else {
+        ContentScale.Fit
+    }
+
+    StreamAsyncImage(
         modifier = imageModifier,
-        data = { data },
-        imageOptions = ImageOptions(
-            contentScale = if (isImage || isVideoWithThumbnails) {
-                ContentScale.Crop
-            } else {
-                ContentScale.Fit
-            },
-        ),
+        data = data,
+        contentScale = contentScale,
+        contentDescription = null,
     )
 }
 
@@ -323,15 +324,28 @@ internal fun onFileAttachmentContentItemClick(
     previewHandlers.firstOrNull { it.canHandle(attachment) }?.handleAttachmentPreview(attachment)
 }
 
-@Preview(showSystemUi = true, showBackground = true)
+@Preview(showBackground = true)
 @Composable
-internal fun FileAttachmentContentPreview() {
-    val attachment = Attachment(type = AttachmentType.FILE)
-    val attachmentState = AttachmentState(Message(attachments = mutableListOf(attachment)))
-
-    ChatPreviewTheme {
-        FileAttachmentContent(
-            attachmentState = attachmentState,
-        )
+private fun OwnFileAttachmentContentPreview() {
+    ChatTheme {
+        FileAttachmentContent(isMine = true)
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun OtherFileAttachmentContentPreview() {
+    ChatTheme {
+        FileAttachmentContent(isMine = false)
+    }
+}
+
+@Composable
+internal fun FileAttachmentContent(isMine: Boolean) {
+    FileAttachmentContent(
+        attachmentState = AttachmentState(
+            message = Message(attachments = listOf(Attachment(mimeType = MimeType.MIME_TYPE_PDF))),
+            isMine = isMine,
+        ),
+    )
 }

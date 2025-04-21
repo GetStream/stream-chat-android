@@ -26,7 +26,6 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -37,14 +36,23 @@ import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.LayoutDirection
+import coil3.Image
+import coil3.annotation.ExperimentalCoilApi
+import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
+import coil3.compose.AsyncImagePreviewHandler
+import coil3.compose.SubcomposeAsyncImage
+import coil3.compose.asPainter
 import coil3.compose.rememberAsyncImagePainter
+import coil3.compose.rememberConstraintsSizeResolver
 import coil3.network.httpHeaders
 import coil3.request.ImageRequest
+import coil3.request.SuccessResult
 import coil3.size.Size
+import coil3.size.SizeResolver
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil3.CoilImage
 import com.skydoves.landscapist.coil3.CoilImageState
@@ -52,6 +60,7 @@ import com.skydoves.landscapist.components.ImageComponent
 import com.skydoves.landscapist.components.rememberImageComponent
 import com.skydoves.landscapist.plugins.ImagePlugin
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
@@ -99,16 +108,85 @@ public fun Modifier.mirrorRtl(layoutDirection: LayoutDirection): Modifier {
 }
 
 /**
- * Displays an image asynchronously using `Coil` and the [LocalStreamImageLoader].
- * It transforms the image URL and provides headers before loading the image.
- *
- * @param data The data to load the image from. Can be a URL, URI, resource ID, etc.
- * @param modifier Modifier for styling.
- * @param contentScale The scale to be used for the content.
- * @param content A composable function that defines the content to be displayed based on the image loading state.
+ * It displays a shimmer effect while loading an image asynchronously using `Coil` and the [LocalStreamImageLoader].
+ * The image URL is transformed and some extra headers are provided before loading the image.
  *
  * @see ImageAssetTransformer
  * @see ImageHeadersProvider
+ *
+ * @param data The data to load the image from. Can be a URL, URI, resource ID, etc.
+ * @param contentDescription The description to use for the image.
+ * @param modifier Modifier for styling.
+ * @param contentScale The scale to be used for the content. Default is [ContentScale.Fit].
+ */
+@Composable
+internal fun StreamAsyncImage(
+    data: Any?,
+    contentDescription: String?,
+    modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Fit,
+) {
+    StreamAsyncImage(
+        imageRequest = ImageRequest.Builder(LocalContext.current)
+            .data(data)
+            .build(),
+        modifier = modifier,
+        contentDescription = contentDescription,
+        contentScale = contentScale,
+    )
+}
+
+/**
+ * It displays a shimmer effect while loading an image asynchronously using `Coil` and the [LocalStreamImageLoader].
+ * The image URL is transformed and some extra headers are provided before loading the image.
+ *
+ * @see ImageAssetTransformer
+ * @see ImageHeadersProvider
+ *
+ * @param imageRequest The request to load the image.
+ * @param contentDescription The description to use for the image.
+ * @param modifier Modifier for styling.
+ * @param contentScale The scale to be used for the content. Default is [ContentScale.Fit].
+ */
+@Composable
+internal fun StreamAsyncImage(
+    imageRequest: ImageRequest,
+    contentDescription: String?,
+    modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Fit,
+) {
+    StreamAsyncImage(
+        imageRequest = imageRequest,
+        modifier = modifier,
+        contentScale = contentScale,
+    ) { state ->
+        val painter = state.painter
+        if (painter == null) {
+            ShimmerProgressIndicator(
+                modifier = Modifier.matchParentSize(),
+            )
+        } else {
+            Image(
+                modifier = Modifier.matchParentSize(),
+                painter = painter,
+                contentDescription = contentDescription,
+                contentScale = contentScale,
+            )
+        }
+    }
+}
+
+/**
+ * Displays an image asynchronously using `Coil` and the [LocalStreamImageLoader].
+ * The image URL is transformed and some extra headers are provided before loading the image.
+ *
+ * @see ImageAssetTransformer
+ * @see ImageHeadersProvider
+ *
+ * @param data The data to load the image from. Can be a URL, URI, resource ID, etc.
+ * @param modifier Modifier for styling.
+ * @param contentScale The scale to be used for the content. Default is [ContentScale.Fit].
+ * @param content A composable function that defines the content to be displayed based on the image loading state.
  */
 @Composable
 internal fun StreamAsyncImage(
@@ -129,14 +207,14 @@ internal fun StreamAsyncImage(
 
 /**
  * Displays an image asynchronously using `Coil` and the [LocalStreamImageLoader].
- * It transforms the image URL and provides headers before loading the image.
+ * The image URL is transformed and some extra headers are provided before loading the image.
  *
  * @see ImageAssetTransformer
  * @see ImageHeadersProvider
  *
  * @param imageRequest The request to load the image.
  * @param modifier Modifier for styling.
- * @param contentScale The scale to be used for the content.
+ * @param contentScale The scale to be used for the content. Default is [ContentScale.Fit].
  * @param content A composable function that defines the content to be displayed based on the image loading state.
  */
 @Composable
@@ -146,37 +224,32 @@ internal fun StreamAsyncImage(
     contentScale: ContentScale = ContentScale.Fit,
     content: @Composable BoxScope.(state: AsyncImagePainter.State) -> Unit,
 ) {
-    var imageSize by remember { mutableStateOf(Size.ORIGINAL) }
+    val sizeResolver = rememberConstraintsSizeResolver()
     Box(
-        modifier = modifier.onSizeChanged { size ->
-            if (size.width > 0 && size.height > 0) {
-                imageSize = Size(size.width, size.height)
-            }
-        },
+        modifier = modifier.then(sizeResolver),
     ) {
-        if (imageSize == Size.ORIGINAL) {
-            content(AsyncImagePainter.State.Empty)
-        } else {
-            val context = LocalContext.current
-            val imageAssetTransformer = ChatTheme.streamImageAssetTransformer
-            val imageHeaderProvider = ChatTheme.streamImageHeadersProvider
-            var fetchRetries by remember { mutableIntStateOf(0) }
-            val asyncImagePainter = rememberAsyncImagePainter(
-                model = imageRequest
-                    .convertUrl(context, imageAssetTransformer)
-                    .provideHeaders(context, imageHeaderProvider)
-                    .size(context, imageSize),
-                imageLoader = LocalStreamImageLoader.current,
-                contentScale = contentScale,
-            )
-            val state by asyncImagePainter.state.collectAsState()
-            LaunchedEffect(state) {
-                if ((state as? AsyncImagePainter.State.Error)?.result?.throwable is SocketTimeoutException) {
-                    if (fetchRetries++ < MaxRetries) {
-                        asyncImagePainter.restart()
-                    }
+        val context = LocalContext.current
+        val imageAssetTransformer = ChatTheme.streamImageAssetTransformer
+        val imageHeaderProvider = ChatTheme.streamImageHeadersProvider
+        var fetchRetries by remember { mutableIntStateOf(0) }
+        val asyncImagePainter = rememberAsyncImagePainter(
+            model = imageRequest
+                .convertUrl(context, imageAssetTransformer)
+                .provideHeaders(context, imageHeaderProvider)
+                .size(sizeResolver),
+            imageLoader = LocalStreamImageLoader.current,
+            contentScale = contentScale,
+        )
+        val state by asyncImagePainter.state.collectAsState()
+        LaunchedEffect(state) {
+            if ((state as? AsyncImagePainter.State.Error)?.result?.throwable is SocketTimeoutException) {
+                if (fetchRetries++ < MaxRetries) {
+                    asyncImagePainter.restart()
                 }
             }
+        }
+        // Skip empty state of first rememberAsyncImagePainter emission when not in preview mode.
+        if (LocalInspectionMode.current || state !is AsyncImagePainter.State.Empty) {
             content(state)
         }
     }
@@ -197,6 +270,13 @@ internal fun StreamAsyncImage(
  * @param success Content to be displayed when the request is succeeded.
  * @param failure Content to be displayed when the request is failed.
  */
+@Deprecated(
+    message = "Use Coil SubcomposeAsyncImage instead",
+    replaceWith = ReplaceWith(
+        expression = "SubcomposeAsyncImage(model = data(), imageLoader = LocalStreamImageLoader.current)",
+        imports = arrayOf("coil3.compose.SubcomposeAsyncImage"),
+    ),
+)
 @Composable
 public fun StreamImage(
     data: () -> Any?,
@@ -242,6 +322,13 @@ public fun StreamImage(
  * @param success Content to be displayed when the request is succeeded.
  * @param failure Content to be displayed when the request is failed.
  */
+@Deprecated(
+    message = "Use Coil SubcomposeAsyncImage instead",
+    replaceWith = ReplaceWith(
+        expression = "SubcomposeAsyncImage(model = imageRequest(), imageLoader = LocalStreamImageLoader.current)",
+        imports = arrayOf("coil3.compose.SubcomposeAsyncImage"),
+    ),
+)
 @Composable
 public fun StreamImage(
     imageRequest: () -> ImageRequest,
@@ -292,10 +379,10 @@ public fun StreamImage(
  * @return The [AsyncImagePainter] that remembers the request and the image that we want to show.
  */
 @Deprecated(
-    message = "Use StreamImage instead",
+    message = "Use Coil rememberAsyncImagePainter instead",
     replaceWith = ReplaceWith(
-        expression = "StreamImage(data = { data })",
-        imports = arrayOf("io.getstream.chat.android.compose.ui.util.StreamImage"),
+        expression = "rememberAsyncImagePainter(model = data, imageLoader = LocalStreamImageLoader.current)",
+        imports = arrayOf("coil3.compose.rememberAsyncImagePainter"),
     ),
 )
 @Composable
@@ -340,10 +427,10 @@ public fun rememberStreamImagePainter(
  * @return The [AsyncImagePainter] that remembers the request and the image that we want to show.
  */
 @Deprecated(
-    message = "Use StreamImage instead",
+    message = "Use Coil rememberAsyncImagePainter instead",
     replaceWith = ReplaceWith(
-        expression = "StreamImage(imageRequest = { imageRequest })",
-        imports = arrayOf("io.getstream.chat.android.compose.ui.util.StreamImage"),
+        expression = "rememberAsyncImagePainter(model = model, imageLoader = LocalStreamImageLoader.current)",
+        imports = arrayOf("coil3.compose.rememberAsyncImagePainter"),
     ),
 )
 @Composable
@@ -449,12 +536,18 @@ private fun ImageRequest.provideHeaders(
     }.build()
 
 /**
- * Set the [Size] as a new build of the [ImageRequest].
+ * Set the [SizeResolver] as a new build of the [ImageRequest].
+ * Otherwise, set the size to [Size.ORIGINAL] in preview mode to fix loading local images.
  */
-private fun ImageRequest.size(context: Context, size: Size): ImageRequest = run {
-    newBuilder(context)
-        .size(size)
-        .build()
+@Composable
+private fun ImageRequest.size(sizeResolver: SizeResolver): ImageRequest = run {
+    newBuilder().run {
+        if (LocalInspectionMode.current) {
+            size(Size.ORIGINAL)
+        } else {
+            size(sizeResolver)
+        }
+    }.build()
 }
 
 /**
@@ -462,3 +555,19 @@ private fun ImageRequest.size(context: Context, size: Size): ImageRequest = run 
  */
 internal val AsyncImagePainter.State.isCompleted: Boolean
     get() = this is AsyncImagePainter.State.Success || this is AsyncImagePainter.State.Error
+
+/**
+ * Controls what [AsyncImage], [SubcomposeAsyncImage], and [AsyncImagePainter] render
+ * when in preview mode ([LocalInspectionMode] is true).
+ */
+@OptIn(ExperimentalCoilApi::class)
+internal inline fun AsyncImagePreviewHandler(
+    crossinline handle: suspend (request: ImageRequest) -> Image,
+) = AsyncImagePreviewHandler { _, request ->
+    handle(request).let { image ->
+        AsyncImagePainter.State.Success(
+            painter = image.asPainter(request.context),
+            result = SuccessResult(image, request),
+        )
+    }
+}

@@ -42,9 +42,7 @@ import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -421,8 +419,6 @@ internal fun MediaAttachmentContentItem(
             .build()
     }
 
-    var imageState by remember { mutableStateOf<AsyncImagePainter.State>(AsyncImagePainter.State.Empty) }
-
     val mixedMediaPreviewLauncher = rememberLauncherForActivityResult(
         contract = MediaGalleryPreviewContract(),
         onResult = { result -> onMediaGalleryPreviewResult(result) },
@@ -478,8 +474,6 @@ internal fun MediaAttachmentContentItem(
                 .background(backgroundColor),
             contentScale = ContentScale.Crop,
         ) { asyncImageState ->
-            imageState = asyncImageState
-
             Crossfade(targetState = asyncImageState) { state ->
                 when (state) {
                     is AsyncImagePainter.State.Empty,
