@@ -203,7 +203,6 @@ shimmer-compose = { module = "com.valentinilk.shimmer:compose-shimmer", version.
 skydoves-compose-stable-marker = { module = "com.github.skydoves:compose-stable-marker", version.ref = "composeStableMarker"}
 skydoves-landscapist-coil = { module = "com.github.skydoves:landscapist-coil3", version.ref = "landscapist"}
 skydoves-landscapist-placeholder = { module = "com.github.skydoves:landscapist-placeholder", version.ref = "landscapist"}
-skydoves-landscapist-animation = { module = "com.github.skydoves:landscapist-animation", version.ref = "landscapist"}
 stream-android-push = { module = "io.getstream:stream-android-push", version.ref = "streamPush"}
 stream-push-delegate = { module = "io.getstream:stream-android-push-delegate", version.ref = "streamPush"}
 stream-push-firebase = { module = "io.getstream:stream-android-push-firebase", version.ref = "streamPush"}

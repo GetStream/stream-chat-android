@@ -48,19 +48,19 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.request.ImageRequest
 import coil3.video.VideoFrameDecoder
 import coil3.video.videoFrameMillis
-import com.skydoves.landscapist.ImageOptions
-import com.skydoves.landscapist.coil3.CoilImage
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
+import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.models.AttachmentType
+import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 
 private const val DefaultNumberOfPicturesPerRow = 3
@@ -137,11 +137,11 @@ internal fun DefaultImagesPickerItem(
             .clickable { onImageSelected(imageItem) }
             .testTag("Stream_AttachmentPickerSampleImage"),
     ) {
-        CoilImage(
-            imageRequest = { imageRequest },
-            imageLoader = { LocalStreamImageLoader.current },
+        StreamAsyncImage(
+            imageRequest = imageRequest,
+            contentDescription = null,
             modifier = Modifier.fillMaxSize(),
-            imageOptions = ImageOptions(contentScale = ContentScale.Crop),
+            contentScale = ContentScale.Crop,
         )
 
         if (imageItem.isSelected) {
@@ -261,3 +261,43 @@ internal fun DefaultAddMoreItem(onPickMoreClick: () -> Unit) {
  * The time code of the frame to extract from a video.
  */
 private const val VideoFrameMillis: Long = 1000
+
+@Preview(showBackground = true)
+@Composable
+private fun ImagesPickerItemsPreview() {
+    ChatTheme {
+        ImagesPicker(showAddMore = false)
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ImagesPickerAddMorePreview() {
+    ChatTheme {
+        ImagesPicker(showAddMore = true)
+    }
+}
+
+@Composable
+internal fun ImagesPicker(showAddMore: Boolean) {
+    ImagesPicker(
+        images = listOf(
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(),
+                isSelected = false,
+            ),
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(),
+                isSelected = true,
+            ),
+            AttachmentPickerItemState(
+                attachmentMetaData = AttachmentMetaData(type = AttachmentType.VIDEO).apply {
+                    videoLength = VideoFrameMillis
+                },
+                isSelected = false,
+            ),
+        ),
+        onImageSelected = {},
+        showAddMore = showAddMore,
+    )
+}

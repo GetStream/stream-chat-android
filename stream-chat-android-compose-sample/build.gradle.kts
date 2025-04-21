@@ -152,14 +152,12 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.google.accompanist.permissions)
 
-    // Coil
-    implementation(libs.skydoves.landscapist.coil)
-
     // Firebase
     implementation(libs.firebase.analytics.ktx)
     implementation(libs.firebase.crashlytics)
 
     // Instrumentation tests
+    "e2eImplementation"(libs.okhttp)
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.uiautomator)
     androidTestImplementation(libs.androidx.test.junit.ktx)

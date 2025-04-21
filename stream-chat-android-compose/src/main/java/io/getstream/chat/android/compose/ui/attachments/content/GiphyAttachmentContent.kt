@@ -43,11 +43,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImagePainter
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDimens
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
@@ -86,7 +84,7 @@ public fun GiphyAttachmentContent(
     onItemClick: (context: Context, previewUrl: String) -> Unit = ::onGiphyAttachmentContentClick,
 ) {
     val context = LocalContext.current
-    val (message, isMine, onLongItemClick) = attachmentState
+    val (message, _, onLongItemClick) = attachmentState
     val attachment = message.attachments.firstOrNull(Attachment::isGiphy)
 
     checkNotNull(attachment) {
@@ -159,20 +157,10 @@ public fun GiphyAttachmentContent(
     ) {
         StreamAsyncImage(
             data = giphyInfo?.url,
-        ) { state ->
-            if (state !is AsyncImagePainter.State.Success) {
-                ShimmerProgressIndicator(
-                    modifier = Modifier.fillMaxSize(),
-                )
-            } else {
-                Image(
-                    modifier = Modifier.fillMaxSize(),
-                    painter = state.painter,
-                    contentDescription = null,
-                    contentScale = contentScale,
-                )
-            }
-        }
+            modifier = Modifier.fillMaxSize(),
+            contentDescription = null,
+            contentScale = contentScale,
+        )
 
         Image(
             modifier = Modifier

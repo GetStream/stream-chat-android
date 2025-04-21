@@ -20,11 +20,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import com.skydoves.landscapist.ImageOptions
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
-import io.getstream.chat.android.compose.ui.util.StreamImage
+import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 
 /**
  * Represents the image that's shown in file picker items. This can be either an image/icon that represents the file
@@ -52,15 +51,16 @@ public fun FilesPickerItemImage(
         if (shape != null) baseModifier.clip(shape) else baseModifier
     }
 
-    StreamImage(
+    val contentScale = if (isImage) {
+        ContentScale.Crop
+    } else {
+        ContentScale.Fit
+    }
+
+    StreamAsyncImage(
         modifier = imageModifier,
-        data = { data },
-        imageOptions = ImageOptions(
-            contentScale = if (isImage) {
-                ContentScale.Crop
-            } else {
-                ContentScale.Fit
-            },
-        ),
+        data = data,
+        contentScale = contentScale,
+        contentDescription = null,
     )
 }

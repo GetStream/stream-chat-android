@@ -63,6 +63,9 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Replace `StreamImage` with `StreamAsyncImage`. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
+- Deprecate landscapist `StreamImage` in favor of coil `SubcomposeAsyncImage`. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
+- Deprecate `rememberStreamImagePainter` in favor of coil `rememberAsyncImagePainter`. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
 
 ### ❌ Removed
 
@@ -72,6 +75,7 @@
 - Ensure the `ImageLoader` created by a custom `StreamCoilImageLoaderFactory` is passed to the `MediaGalleryPreviewActivity`. [#5736](https://github.com/GetStream/stream-chat-android/pull/5736)
 
 ### ⬆️ Improved
+- Improve the images loading. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
 
 ### ✅ Added
 
