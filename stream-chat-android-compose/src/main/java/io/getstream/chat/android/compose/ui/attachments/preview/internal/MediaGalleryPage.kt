@@ -71,7 +71,6 @@ import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
-import io.getstream.chat.android.compose.ui.util.StreamImage
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
@@ -394,7 +393,7 @@ internal fun MediaGalleryVideoPage(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier.fillMaxSize(),
             ) {
-                StreamImage(
+                StreamAsyncImage(
                     modifier = Modifier
                         .clickable {
                             shouldShowProgressBar = true
@@ -411,7 +410,8 @@ internal fun MediaGalleryVideoPage(
                         }
                         .fillMaxSize()
                         .background(color = Color.Black),
-                    data = { data },
+                    data = data,
+                    contentDescription = null,
                 )
 
                 if (shouldShowPlayButton) {
