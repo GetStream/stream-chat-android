@@ -145,7 +145,6 @@ import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
-import io.getstream.chat.android.compose.ui.util.StreamImage
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.isCompleted
 import io.getstream.chat.android.compose.util.attachmentDownloadState
@@ -1038,7 +1037,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     contentAlignment = Alignment.Center,
                     modifier = Modifier.fillMaxSize(),
                 ) {
-                    StreamImage(
+                    StreamAsyncImage(
                         modifier = Modifier
                             .clickable {
                                 shouldShowProgressBar = true
@@ -1055,7 +1054,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                             }
                             .fillMaxSize()
                             .background(color = Color.Black),
-                        data = { data },
+                        data = data,
+                        contentDescription = null,
                     )
 
                     if (shouldShowPlayButton) {

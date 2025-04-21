@@ -48,7 +48,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.lifecycleScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
@@ -89,6 +88,8 @@ import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.state.extensions.globalState
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class ChannelsActivity : BaseConnectedActivity() {
@@ -179,9 +180,12 @@ class ChannelsActivity : BaseConnectedActivity() {
             onSearchMessageItemClick = ::openMessages,
             onBackPressed = ::finish,
             onHeaderAvatarClick = {
-                lifecycleScope.launch {
-                    ChatHelper.disconnectUser()
+                GlobalScope.launch {
                     openUserLogin()
+                    // Give time for login activity to start before disconnecting the user,
+                    // so we prevent showing disconnected states.
+                    delay(UserLoginActivity.DELAY_BEFORE_LOGOUT_IN_MILLIS)
+                    ChatHelper.disconnectUser()
                 }
             },
             onHeaderActionClick = ::openAddChannel,
@@ -372,9 +376,7 @@ class ChannelsActivity : BaseConnectedActivity() {
     }
 
     private fun openUserLogin() {
-        finish()
         startActivity(UserLoginActivity.createIntent(this))
-        overridePendingTransition(0, 0)
     }
 
     private fun viewChannelInfo(channel: Channel) {
