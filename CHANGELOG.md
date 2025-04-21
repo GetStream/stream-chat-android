@@ -16,8 +16,12 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `ChatClient.castPollVote(messageId: String, pollId: String, optionId: String)` method for casting poll votes by using the option ID. [#5739](https://github.com/GetStream/stream-chat-android/pull/5739)
+- Add `ChatClient.removePollVote(messageId: String, pollId: String, voteId: String)` method for removing poll votes by using the vote ID. [#5739](https://github.com/GetStream/stream-chat-android/pull/5739)
 
 ### ⚠️ Changed
+- Deprecate `ChatClient.castPollVote(messageId: String, pollId: String, option: Option)` method in favor of the method which only uses the `option.id` - `ChatClient.castPollVote(messageId: String, pollId: String, optionId: String)`. [#5739](https://github.com/GetStream/stream-chat-android/pull/5739)
+- Deprecate `ChatClient.removePollVote(messageId: String, pollId: String, vote: Vote)` method in favor of the method which only uses the `vote.id` - `ChatClient.removePollVote(messageId: String, pollId: String, voteId: String)`. [#5739](https://github.com/GetStream/stream-chat-android/pull/5739)
 
 ### ❌ Removed
 
