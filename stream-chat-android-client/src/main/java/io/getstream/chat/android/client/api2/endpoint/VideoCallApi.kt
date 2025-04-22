@@ -29,6 +29,10 @@ import retrofit2.http.Path
 @AuthenticatedApi
 internal interface VideoCallApi {
 
+    @Deprecated(
+        "This third-party library integration is deprecated. Contact to the support team for more information.",
+        level = DeprecationLevel.WARNING,
+    )
     @POST("/channels/{channelType}/{channelId}/call")
     fun createCall(
         @Path("channelType") channelType: String,
@@ -36,6 +40,10 @@ internal interface VideoCallApi {
         @Body request: VideoCallCreateRequest,
     ): RetrofitCall<CreateVideoCallResponse>
 
+    @Deprecated(
+        "This third-party library integration is deprecated. Contact to the support team for more information.",
+        level = DeprecationLevel.WARNING,
+    )
     @POST("/calls/{callId}")
     fun getCallToken(
         @Path("callId") callId: String,
