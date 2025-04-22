@@ -67,8 +67,10 @@ import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewOption
 import io.getstream.chat.android.compose.ui.attachments.preview.internal.MediaGalleryImagePage
+import io.getstream.chat.android.compose.ui.attachments.preview.internal.MediaGalleryOptionsMenu
 import io.getstream.chat.android.compose.ui.attachments.preview.internal.MediaGalleryPhotosMenu
 import io.getstream.chat.android.compose.ui.attachments.preview.internal.MediaGalleryVideoPage
+import io.getstream.chat.android.compose.ui.attachments.preview.internal.defaultMediaOptions
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.Timestamp
@@ -459,9 +461,8 @@ public fun MediaGalleryPreviewScreen(
  * @param trailingContent Composable function to render the trailing content. By default, it renders a
  * [MediaGalleryPreviewOptionsIcon], and binds it to the [onTrailingContentClick].
  */
-@ExperimentalStreamChatApi
 @Composable
-public fun MediaGalleryPreviewHeader(
+internal fun MediaGalleryPreviewHeader(
     message: Message,
     connectionState: ConnectionState,
     onLeadingContentClick: () -> Unit,
@@ -530,9 +531,8 @@ public fun MediaGalleryPreviewHeader(
  * @param onPlaybackError Callback to be invoked when an error during the playing of a video occurs.
  * @param modifier The [Modifier] to be applied to the pager.
  */
-@ExperimentalStreamChatApi
 @Composable
-public fun MediaGalleryPager(
+internal fun MediaGalleryPager(
     pagerState: PagerState,
     attachments: List<Attachment>,
     onPlaybackError: () -> Unit,
@@ -591,9 +591,8 @@ public fun MediaGalleryPager(
  * [MediaGalleryPreviewPhotosIcon], and binds it to the [onTrailingContentClick].
  */
 @Suppress("LongParameterList")
-@ExperimentalStreamChatApi
 @Composable
-public fun MediaGalleryPreviewFooter(
+internal fun MediaGalleryPreviewFooter(
     attachments: List<Attachment>,
     currentPage: Int,
     totalPages: Int,
@@ -665,9 +664,8 @@ public fun MediaGalleryPreviewFooter(
  * @param onClick Callback to be invoked when the close icon is clicked.
  * @param modifier The [Modifier] to be applied to the close icon.
  */
-@ExperimentalStreamChatApi
 @Composable
-public fun MediaGalleryPreviewCloseIcon(
+internal fun MediaGalleryPreviewCloseIcon(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -698,9 +696,8 @@ public fun MediaGalleryPreviewCloseIcon(
  * @param connectionState The current network connection state.
  * @param modifier Optional modifier applied to the Column container.
  */
-@ExperimentalStreamChatApi
 @Composable
-public fun MediaGalleryPreviewTitle(
+internal fun MediaGalleryPreviewTitle(
     message: Message,
     connectionState: ConnectionState,
     modifier: Modifier = Modifier,
@@ -744,9 +741,8 @@ public fun MediaGalleryPreviewTitle(
  * @param onClick Callback to be invoked when the options icon is clicked.
  * @param modifier The [Modifier] to be applied to the options icon.
  */
-@ExperimentalStreamChatApi
 @Composable
-public fun MediaGalleryPreviewOptionsIcon(
+internal fun MediaGalleryPreviewOptionsIcon(
     message: Message,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -779,9 +775,8 @@ public fun MediaGalleryPreviewOptionsIcon(
  * @param onClick Callback to be invoked when the icon is clicked.
  * @param modifier The [Modifier] to be applied to the icon button.
  */
-@ExperimentalStreamChatApi
 @Composable
-public fun MediaGalleryPreviewShareIcon(
+internal fun MediaGalleryPreviewShareIcon(
     connectionState: ConnectionState,
     isSharingInProgress: Boolean,
     onClick: () -> Unit,
@@ -814,9 +809,8 @@ public fun MediaGalleryPreviewShareIcon(
  * @param currentPage Zero-based index of the current page being displayed
  * @param totalPages Total number of pages in the gallery
  */
-@ExperimentalStreamChatApi
 @Composable
-public fun MediaGalleryPreviewPageIndicator(
+internal fun MediaGalleryPreviewPageIndicator(
     currentPage: Int,
     totalPages: Int,
 ) {
@@ -833,9 +827,8 @@ public fun MediaGalleryPreviewPageIndicator(
  * Displays a horizontal layout with a circular progress indicator followed by
  * "Preparing..." text, indicating that a media sharing operation is in progress.
  */
-@ExperimentalStreamChatApi
 @Composable
-public fun MediaGalleryPreviewSharingInProgressIndicator() {
+internal fun MediaGalleryPreviewSharingInProgressIndicator() {
     Row {
         CircularProgressIndicator(
             modifier = Modifier
@@ -857,9 +850,8 @@ public fun MediaGalleryPreviewSharingInProgressIndicator() {
  * @param onClick Callback to be invoked when the photos icon is clicked.
  * @param modifier The [Modifier] to be applied to the photos icon.
  */
-@ExperimentalStreamChatApi
 @Composable
-public fun MediaGalleryPreviewPhotosIcon(
+internal fun MediaGalleryPreviewPhotosIcon(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

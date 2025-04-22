@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.attachments.preview
+package io.getstream.chat.android.compose.ui.attachments.preview.internal
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -48,8 +48,8 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryP
 import io.getstream.chat.android.compose.state.mediagallerypreview.Reply
 import io.getstream.chat.android.compose.state.mediagallerypreview.SaveMedia
 import io.getstream.chat.android.compose.state.mediagallerypreview.ShowInChat
+import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryOptionsConfig
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
@@ -71,9 +71,8 @@ import io.getstream.chat.android.models.User
  * @param onDismiss Callback invoked when the menu should be dismissed.
  * @param modifier Optional modifier applied to the Surface containing the options.
  */
-@ExperimentalStreamChatApi
 @Composable
-public fun MediaGalleryOptionsMenu(
+internal fun MediaGalleryOptionsMenu(
     attachment: Attachment,
     options: List<MediaGalleryPreviewOption>,
     onOptionClick: (Attachment, MediaGalleryPreviewOption) -> Unit,
@@ -136,9 +135,8 @@ public fun MediaGalleryOptionsMenu(
  * @param option The configuration for this option item, including title, icons, and enabled state.
  * @param onClick Callback invoked when the option is clicked.
  */
-@ExperimentalStreamChatApi
 @Composable
-public fun MediaGalleryOptionItem(
+internal fun MediaGalleryOptionItem(
     option: MediaGalleryPreviewOption,
     onClick: () -> Unit,
 ) {
@@ -194,9 +192,8 @@ public fun MediaGalleryOptionItem(
  * @param config Configuration controlling which options are visible.
  * @return List of [MediaGalleryPreviewOption] items to display in the options menu.
  */
-@ExperimentalStreamChatApi
 @Composable
-public fun defaultMediaOptions(
+internal fun defaultMediaOptions(
     currentUser: User?,
     message: Message,
     connectionState: ConnectionState,
