@@ -51,6 +51,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -254,35 +255,50 @@ public fun PollSwitchList(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun PollSwitchListPreview() {
     ChatTheme {
-        Box(modifier = Modifier.background(ChatTheme.colors.appBackground)) {
-            PollSwitchList(
-                modifier = Modifier.fillMaxWidth(),
-                pollSwitchItems = listOf(
-                    PollSwitchItem(title = "title", enabled = true),
-                    PollSwitchItem(title = "title", enabled = true),
-                    PollSwitchItem(title = "title", enabled = false),
-                    PollSwitchItem(
-                        title = "title",
-                        enabled = true,
-                        pollSwitchInput = PollSwitchInput(value = "qwdqdqwd"),
-                    ),
-                    PollSwitchItem(
-                        title = "title",
-                        enabled = true,
-                        pollOptionError = PollOptionNumberExceed("error!"),
-                        pollSwitchInput = PollSwitchInput(
-                            value = 11,
-                            maxValue = 10,
-                            keyboardType = KeyboardType.Decimal,
-                        ),
-                    ),
-                ),
-                onSwitchesChanged = {},
-            )
-        }
+        PollSwitchList()
     }
+}
+
+@Composable
+internal fun PollSwitchList() {
+    PollSwitchList(
+        modifier = Modifier.fillMaxWidth(),
+        pollSwitchItems = listOf(
+            PollSwitchItem(
+                title = stringResource(id = R.string.stream_compose_poll_option_switch_multiple_answers),
+                pollSwitchInput = PollSwitchInput(
+                    keyboardType = KeyboardType.Number,
+                    description = stringResource(id = R.string.stream_compose_poll_option_max_number_of_answers_hint),
+                    maxValue = 10,
+                    value = 11,
+                ),
+                pollOptionError = PollOptionNumberExceed(
+                    message = stringResource(R.string.stream_compose_poll_option_error_exceed),
+                ),
+                enabled = true,
+            ),
+            PollSwitchItem(
+                title = stringResource(id = R.string.stream_compose_poll_option_switch_multiple_answers),
+                pollSwitchInput = PollSwitchInput(
+                    keyboardType = KeyboardType.Text,
+                    value = "",
+                    maxValue = "",
+                ),
+                enabled = true,
+            ),
+            PollSwitchItem(
+                title = stringResource(id = R.string.stream_compose_poll_option_switch_anonymous_poll),
+                enabled = false,
+            ),
+            PollSwitchItem(
+                title = stringResource(id = R.string.stream_compose_poll_option_switch_suggest_option),
+                enabled = false,
+            ),
+        ),
+        onSwitchesChanged = {},
+    )
 }

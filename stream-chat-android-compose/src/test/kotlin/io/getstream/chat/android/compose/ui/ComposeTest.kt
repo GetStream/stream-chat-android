@@ -20,20 +20,22 @@ import io.getstream.chat.android.client.ChatClient
 import org.junit.Before
 import org.mockito.kotlin.mock
 
-/**
- * Mocked [ChatClient] available for configuration whenever needed. e.g.:
- *
- * ```kotlin
- * @Test
- * fun `my test case`() {
- *     whenever(mockClient.getCurrentUser()) doReturn PreviewUserData.user1
- *     // Your test code here
- * }
- * ```
- */
-internal val MockClient: ChatClient = mock<ChatClient>()
+private val MockClient: ChatClient = mock<ChatClient>()
 
 internal interface ComposeTest {
+
+    /**
+     * Mocked [ChatClient] available for configuration whenever needed. e.g.:
+     *
+     * ```kotlin
+     * @Test
+     * fun `my test case`() {
+     *     whenever(chatClient.getCurrentUser()) doReturn PreviewUserData.user1
+     *     // Your test code here
+     * }
+     * ```
+     */
+    val chatClient: ChatClient get() = MockClient
 
     /**
      * Bind the mocked [ChatClient] instance to the singleton before each test case run.
