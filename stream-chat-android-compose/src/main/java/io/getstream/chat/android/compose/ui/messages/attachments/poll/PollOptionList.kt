@@ -222,7 +222,7 @@ public fun PollOptionList(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun PollOptionListEmptyPreview() {
     ChatTheme {
@@ -232,12 +232,14 @@ private fun PollOptionListEmptyPreview() {
 
 @Composable
 internal fun PollOptionListEmpty() {
-    PollOptionList(
-        onQuestionsChanged = {},
-    )
+    Column {
+        PollOptionList(
+            onQuestionsChanged = {},
+        )
+    }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun PollOptionListBlankPreview() {
     ChatTheme {
@@ -247,14 +249,16 @@ private fun PollOptionListBlankPreview() {
 
 @Composable
 internal fun PollOptionListBlank() {
-    @Suppress("MagicNumber")
-    PollOptionList(
-        optionItems = List(4) { PollOptionItem("") },
-        onQuestionsChanged = {},
-    )
+    Column {
+        @Suppress("MagicNumber")
+        PollOptionList(
+            optionItems = List(4) { PollOptionItem("") },
+            onQuestionsChanged = {},
+        )
+    }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun PollOptionListDuplicatedErrorPreview() {
     ChatTheme {
@@ -264,13 +268,15 @@ private fun PollOptionListDuplicatedErrorPreview() {
 
 @Composable
 internal fun PollOptionListDuplicatedError() {
-    @Suppress("MagicNumber")
-    PollOptionList(
-        optionItems = List(3) { PollOptionItem("This is a poll item $it") } +
-            PollOptionItem(
-                title = "This is a poll item with error",
-                pollOptionError = PollOptionDuplicated("duplicated!"),
-            ),
-        onQuestionsChanged = {},
-    )
+    Column {
+        @Suppress("MagicNumber")
+        PollOptionList(
+            optionItems = List(3) { PollOptionItem("This is a poll item $it") } +
+                PollOptionItem(
+                    title = "This is a poll item with error",
+                    pollOptionError = PollOptionDuplicated("duplicated!"),
+                ),
+            onQuestionsChanged = {},
+        )
+    }
 }
