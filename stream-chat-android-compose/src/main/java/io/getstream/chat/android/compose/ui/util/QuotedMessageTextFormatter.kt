@@ -75,23 +75,24 @@ public fun interface QuotedMessageTextFormatter {
             context: Context = LocalContext.current,
             isInDarkMode: Boolean = isSystemInDarkTheme(),
             typography: StreamTypography = StreamTypography.defaultTypography(),
-            colors: StreamColors = when (isSystemInDarkTheme()) {
+            colors: StreamColors = when (isInDarkMode) {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
             shapes: StreamShapes = StreamShapes.defaultShapes(),
             textStyle: (isMine: Boolean) -> TextStyle = defaultTextStyle(isInDarkMode, typography, colors, shapes),
+            linkStyle: (isMine: Boolean) -> TextStyle = defaultLinkStyle(colors),
             mentionColor: (isMine: Boolean) -> Color = defaultMentionColor(isInDarkMode, typography, colors, shapes),
             builder: AnnotatedQuotedMessageTextBuilder? = null,
         ): QuotedMessageTextFormatter {
             return DefaultQuotedMessageTextFormatter(
-                context,
-                autoTranslationEnabled,
-                typography,
-                colors,
-                textStyle,
-                mentionColor,
-                builder,
+                context = context,
+                autoTranslationEnabled = autoTranslationEnabled,
+                typography = typography,
+                textStyle = textStyle,
+                linkStyle = linkStyle,
+                mentionColor = mentionColor,
+                builder = builder,
             )
         }
 
@@ -116,7 +117,7 @@ public fun interface QuotedMessageTextFormatter {
             context: Context = LocalContext.current,
             isInDarkMode: Boolean = isSystemInDarkTheme(),
             typography: StreamTypography = StreamTypography.defaultTypography(),
-            colors: StreamColors = when (isSystemInDarkTheme()) {
+            colors: StreamColors = when (isInDarkMode) {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
@@ -126,17 +127,19 @@ public fun interface QuotedMessageTextFormatter {
             builder: AnnotatedQuotedMessageTextBuilder? = null,
         ): QuotedMessageTextFormatter {
             val textStyle = defaultTextStyle(ownMessageTheme, otherMessageTheme)
+            val linkStyle = defaultLinkStyle(ownMessageTheme, otherMessageTheme)
             val mentionColor = defaultMentionColor(ownMessageTheme, otherMessageTheme)
             return defaultFormatter(
-                autoTranslationEnabled,
-                context,
-                isInDarkMode,
-                typography,
-                colors,
-                shapes,
-                textStyle,
-                mentionColor,
-                builder,
+                autoTranslationEnabled = autoTranslationEnabled,
+                context = context,
+                isInDarkMode = isInDarkMode,
+                typography = typography,
+                colors = colors,
+                shapes = shapes,
+                textStyle = textStyle,
+                linkStyle = linkStyle,
+                mentionColor = mentionColor,
+                builder = builder,
             )
         }
 
@@ -208,8 +211,8 @@ private class DefaultQuotedMessageTextFormatter(
     private val context: Context,
     private val autoTranslationEnabled: Boolean,
     private val typography: StreamTypography,
-    private val colors: StreamColors,
     private val textStyle: (isMine: Boolean) -> TextStyle,
+    private val linkStyle: (isMine: Boolean) -> TextStyle,
     private val mentionColor: (isMine: Boolean) -> Color,
     private val builder: AnnotatedQuotedMessageTextBuilder? = null,
 ) : QuotedMessageTextFormatter {
@@ -243,14 +246,15 @@ private class DefaultQuotedMessageTextFormatter(
             "quotedMessageText is null. Cannot display invalid message title."
         }
 
-        val isMine = replyMessage?.isMine(currentUser) != false
+        val isMine = message.isMine(currentUser)
         val textColor = textStyle(isMine).color
+        val linkStyle = linkStyle(isMine)
         val mentionColor = mentionColor(isMine)
         return buildAnnotatedMessageText(
             text = quotedMessageText,
             textColor = textColor,
             textFontStyle = typography.body.fontStyle,
-            linkColor = colors.primaryAccent,
+            linkStyle = linkStyle,
             mentionsColor = mentionColor,
             builder = {
                 builder?.invoke(this, message, replyMessage, currentUser)
