@@ -125,7 +125,7 @@ import io.getstream.chat.android.ui.common.state.messages.updateMessage
  * If URL is not enriched, it will not be displayed as a link attachment. False by default.
  * @param showAnonymousAvatar If the user avatar should be shown on comments for polls with anonymous voting visibility.
  * @param verticalArrangement Vertical arrangement of the regular message list.
- * Default: [Arrangement.Top].
+ * Default: [Arrangement.Bottom].
  * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
  * Default: [ThreadMessagesStart.BOTTOM].
  * @param topBarContent custom top bar content to be displayed on top of the messages list.
@@ -148,7 +148,7 @@ public fun MessagesScreen(
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
     showAnonymousAvatar: Boolean = false,
-    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
+    verticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
     threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
     topBarContent: @Composable (BackAction) -> Unit = {
         DefaultTopBarContent(

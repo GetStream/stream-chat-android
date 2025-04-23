@@ -259,7 +259,7 @@ private val TwoMessagesListState = MessageListState(
 @Composable
 private fun MessageList(
     messagesLazyListState: MessagesLazyListState = rememberMessagesLazyListState(),
-    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
+    verticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
     messageListState: MessageListState,
 ) {
     MessageList(
