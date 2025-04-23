@@ -35,43 +35,43 @@ internal class ChannelItemTest : SnapshotTest {
 
     @Test
     fun `no messages`() {
-        snapshotWithDarkMode { darkMode ->
-            ChannelItemNoMessages(darkMode = darkMode)
+        snapshotWithDarkMode {
+            ChannelItemNoMessages()
         }
     }
 
     @Test
     fun `muted channel`() {
-        snapshotWithDarkMode { darkMode ->
-            ChannelItemMuted(darkMode = darkMode)
+        snapshotWithDarkMode {
+            ChannelItemMuted()
         }
     }
 
     @Test
     fun `unread messages`() {
-        snapshotWithDarkMode { darkMode ->
-            ChannelItemUnreadMessages(darkMode = darkMode)
+        snapshotWithDarkMode {
+            ChannelItemUnreadMessages()
         }
     }
 
     @Test
     fun `last message sent status`() {
-        snapshotWithDarkMode { darkMode ->
-            ChannelItemLastMessageSentStatus(darkMode = darkMode)
+        snapshotWithDarkMode {
+            ChannelItemLastMessageSentStatus()
         }
     }
 
     @Test
     fun `last message seen status`() {
-        snapshotWithDarkMode { darkMode ->
-            ChannelItemLastMessageSeenStatus(darkMode = darkMode)
+        snapshotWithDarkMode {
+            ChannelItemLastMessageSeenStatus()
         }
     }
 
     @Test
     fun `draft message`() {
-        snapshotWithDarkMode { darkMode ->
-            ChannelItemDraftMessage(darkMode = darkMode)
+        snapshotWithDarkMode {
+            ChannelItemDraftMessage()
         }
     }
 }

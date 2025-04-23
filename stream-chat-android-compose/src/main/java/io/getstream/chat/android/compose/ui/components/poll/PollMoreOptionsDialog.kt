@@ -57,6 +57,9 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.previewdata.PreviewMessageData
+import io.getstream.chat.android.previewdata.PreviewPollData
+import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 
 /**
@@ -95,50 +98,62 @@ public fun PollMoreOptionsDialog(
                 slideOutVertically(animationSpec = tween(400)),
             label = "poll more options dialog",
         ) {
-            if (selectedPoll != null) {
-                val poll = selectedPoll.poll
-                val message = selectedPoll.message
-
-                BackHandler { onBackPressed.invoke() }
-
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(ChatTheme.colors.appBackground),
-                ) {
-                    item {
-                        PollDialogHeader(
-                            title = stringResource(id = R.string.stream_compose_poll_options),
-                            onBackPressed = onBackPressed,
-                        )
-                    }
-
-                    item { PollMoreOptionsTitle(title = poll.name) }
-
-                    item { Spacer(modifier = Modifier.height(16.dp)) }
-
-                    pollMoreOptionsContent(
-                        poll = poll,
-                        onCastVote = { option ->
-                            listViewModel.castVote(
-                                message = message,
-                                poll = poll,
-                                option = option,
-                            )
-                        },
-                        onRemoveVote = { vote ->
-                            listViewModel.removeVote(
-                                message = message,
-                                poll = poll,
-                                vote = vote,
-                            )
-                        },
+            Content(
+                selectedPoll = selectedPoll,
+                onBackPressed = onBackPressed,
+                onCastVote = { option ->
+                    listViewModel.castVote(
+                        message = selectedPoll.message,
+                        poll = selectedPoll.poll,
+                        option = option,
                     )
-
-                    item { Spacer(modifier = Modifier.height(16.dp)) }
-                }
-            }
+                },
+                onRemoveVote = { vote ->
+                    listViewModel.removeVote(
+                        message = selectedPoll.message,
+                        poll = selectedPoll.poll,
+                        vote = vote,
+                    )
+                },
+            )
         }
+    }
+}
+
+@Composable
+private fun Content(
+    selectedPoll: SelectedPoll,
+    onBackPressed: () -> Unit = {},
+    onCastVote: (Option) -> Unit = {},
+    onRemoveVote: (Vote) -> Unit = {},
+) {
+    val poll = selectedPoll.poll
+
+    BackHandler { onBackPressed.invoke() }
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(ChatTheme.colors.appBackground),
+    ) {
+        item {
+            PollDialogHeader(
+                title = stringResource(id = R.string.stream_compose_poll_options),
+                onBackPressed = onBackPressed,
+            )
+        }
+
+        item { PollMoreOptionsTitle(title = poll.name) }
+
+        item { Spacer(modifier = Modifier.height(16.dp)) }
+
+        pollMoreOptionsContent(
+            poll = poll,
+            onCastVote = onCastVote,
+            onRemoveVote = onRemoveVote,
+        )
+
+        item { Spacer(modifier = Modifier.height(16.dp)) }
     }
 }
 
@@ -165,7 +180,7 @@ internal fun PollMoreOptionsTitle(title: String) {
     }
 }
 
-internal fun LazyListScope.pollMoreOptionsContent(
+private fun LazyListScope.pollMoreOptionsContent(
     poll: Poll,
     onCastVote: (Option) -> Unit,
     onRemoveVote: (Vote) -> Unit,
@@ -195,7 +210,7 @@ internal fun LazyListScope.pollMoreOptionsContent(
 }
 
 @Composable
-internal fun PollMoreOptionItem(
+private fun PollMoreOptionItem(
     index: Int,
     poll: Poll,
     option: Option,
@@ -257,32 +272,18 @@ internal fun PollMoreOptionItem(
 @Preview
 @Composable
 private fun PollMoreOptionsDialogPreview() {
-    val poll = io.getstream.chat.android.previewdata.PreviewPollData.poll1
-
     ChatTheme {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(ChatTheme.colors.appBackground),
-        ) {
-            item {
-                PollDialogHeader(
-                    title = stringResource(id = R.string.stream_compose_poll_options),
-                    onBackPressed = {},
-                )
-            }
-
-            item { PollMoreOptionsTitle(title = poll.name) }
-
-            item { Spacer(modifier = Modifier.height(16.dp)) }
-
-            pollMoreOptionsContent(
-                poll = poll,
-                onCastVote = {},
-                onRemoveVote = {},
-            )
-
-            item { Spacer(modifier = Modifier.height(16.dp)) }
-        }
+        PollMoreOptionsDialog()
     }
+}
+
+@Composable
+internal fun PollMoreOptionsDialog() {
+    Content(
+        selectedPoll = SelectedPoll(
+            poll = PreviewPollData.poll1,
+            message = PreviewMessageData.message1,
+            pollSelectionType = PollSelectionType.MoreOption,
+        ),
+    )
 }

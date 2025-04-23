@@ -242,102 +242,102 @@ public fun MentionList(
 }
 
 @Composable
-internal fun MentionListLoading(darkMode: Boolean) {
-    ChatTheme(isInDarkMode = darkMode) {
-        MentionList(
-            state = MentionListState(),
-            modifier = Modifier.fillMaxSize(),
-            currentUser = PreviewUserData.user1,
-        )
-    }
+internal fun MentionListLoading() {
+    MentionList(
+        state = MentionListState(),
+        modifier = Modifier.fillMaxSize(),
+        currentUser = PreviewUserData.user1,
+    )
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun MentionListLoadingLightPreview() {
-    MentionListLoading(darkMode = false)
-}
-
-@Composable
-internal fun MentionListEmpty(darkMode: Boolean) {
-    ChatTheme(isInDarkMode = darkMode) {
-        MentionList(
-            state = MentionListState(isLoading = false),
-            modifier = Modifier.fillMaxSize(),
-            currentUser = PreviewUserData.user1,
-        )
+    ChatTheme {
+        MentionListLoading()
     }
 }
 
-@Preview
+@Composable
+internal fun MentionListEmpty() {
+    MentionList(
+        state = MentionListState(isLoading = false),
+        modifier = Modifier.fillMaxSize(),
+        currentUser = PreviewUserData.user1,
+    )
+}
+
+@Preview(showBackground = true)
 @Composable
 private fun MentionListEmptyLightPreview() {
-    MentionListEmpty(darkMode = false)
-}
-
-@Composable
-internal fun MentionListLoaded(darkMode: Boolean) {
-    ChatTheme(isInDarkMode = darkMode) {
-        MentionList(
-            state = MentionListState(
-                isLoading = false,
-                results = listOf(
-                    MessageResult(
-                        message = PreviewMessageData.message1,
-                        channel = PreviewChannelData.channelWithImage,
-                    ),
-                    MessageResult(
-                        message = PreviewMessageData.message2,
-                        channel = PreviewChannelData.channelWithFewMembers,
-                    ),
-                    MessageResult(
-                        message = PreviewMessageData.message3,
-                        channel = PreviewChannelData.channelWithManyMembers,
-                    ),
-                ),
-            ),
-            modifier = Modifier.fillMaxSize(),
-            currentUser = PreviewUserData.user1,
-        )
+    ChatTheme {
+        MentionListEmpty()
     }
 }
 
-@Preview
+@Composable
+internal fun MentionListLoaded() {
+    MentionList(
+        state = MentionListState(
+            isLoading = false,
+            results = listOf(
+                MessageResult(
+                    message = PreviewMessageData.message1,
+                    channel = PreviewChannelData.channelWithImage,
+                ),
+                MessageResult(
+                    message = PreviewMessageData.message2,
+                    channel = PreviewChannelData.channelWithFewMembers,
+                ),
+                MessageResult(
+                    message = PreviewMessageData.message3,
+                    channel = PreviewChannelData.channelWithManyMembers,
+                ),
+            ),
+        ),
+        modifier = Modifier.fillMaxSize(),
+        currentUser = PreviewUserData.user1,
+    )
+}
+
+@Preview(showBackground = true)
 @Composable
 private fun MentionListLoadedLightPreview() {
-    MentionListLoaded(darkMode = false)
-}
-
-@Composable
-internal fun MentionListLoadingMore(darkMode: Boolean) {
-    ChatTheme(isInDarkMode = darkMode) {
-        MentionList(
-            state = MentionListState(
-                isLoading = false,
-                results = listOf(
-                    MessageResult(
-                        message = PreviewMessageData.message1,
-                        channel = PreviewChannelData.channelWithImage,
-                    ),
-                    MessageResult(
-                        message = PreviewMessageData.message2,
-                        channel = PreviewChannelData.channelWithFewMembers,
-                    ),
-                    MessageResult(
-                        message = PreviewMessageData.message3,
-                        channel = PreviewChannelData.channelWithManyMembers,
-                    ),
-                ),
-                isLoadingMore = true,
-            ),
-            modifier = Modifier.fillMaxSize(),
-            currentUser = PreviewUserData.user1,
-        )
+    ChatTheme {
+        MentionListLoaded()
     }
 }
 
-@Preview
+@Composable
+internal fun MentionListLoadingMore() {
+    MentionList(
+        state = MentionListState(
+            isLoading = false,
+            results = listOf(
+                MessageResult(
+                    message = PreviewMessageData.message1,
+                    channel = PreviewChannelData.channelWithImage,
+                ),
+                MessageResult(
+                    message = PreviewMessageData.message2,
+                    channel = PreviewChannelData.channelWithFewMembers,
+                ),
+                MessageResult(
+                    message = PreviewMessageData.message3,
+                    channel = PreviewChannelData.channelWithManyMembers,
+                ),
+            ),
+            isLoadingMore = true,
+        ),
+        modifier = Modifier.fillMaxSize(),
+        currentUser = PreviewUserData.user1,
+    )
+}
+
+@Preview(showBackground = true)
 @Composable
 private fun MentionListLoadingMoreLightPreview() {
-    MentionListLoadingMore(darkMode = false)
+    ChatTheme {
+        MentionListLoadingMore()
+    }
 }

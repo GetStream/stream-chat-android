@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments.poll
 
-import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -153,14 +152,28 @@ internal fun DefaultPollOptionsHeaderTrailingContent(
     }
 }
 
-@Preview(name = "PollOptionHeader Light Mode")
-@Preview(name = "PollOptionHeader Dark Mode", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview
 @Composable
-private fun PollOptionHeaderPreview() {
+private fun PollCreationHeaderEnabledPreview() {
     ChatTheme {
-        Column {
-            PollCreationHeader(enabledCreation = true, onPollCreateClicked = {})
-            PollCreationHeader(enabledCreation = false, onPollCreateClicked = {})
-        }
+        PollCreationHeaderEnabled()
     }
+}
+
+@Composable
+internal fun PollCreationHeaderEnabled() {
+    PollCreationHeader(enabledCreation = true, onPollCreateClicked = {})
+}
+
+@Preview
+@Composable
+private fun PollCreationHeaderDisabledPreview() {
+    ChatTheme {
+        PollCreationHeaderDisabled()
+    }
+}
+
+@Composable
+internal fun PollCreationHeaderDisabled() {
+    PollCreationHeader(enabledCreation = false, onPollCreateClicked = {})
 }
