@@ -40,7 +40,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.padding
 
 /**
  * A dialog to ask if a user wants to discard the current poll creation information.
@@ -93,7 +92,9 @@ public fun PollCreationDiscardDialog(
                 }
 
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(end = 7.dp, bottom = 7.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = 7.dp, bottom = 7.dp),
                     horizontalArrangement = Arrangement.End,
                 ) {
                     TextButton(onClick = { onCancelClicked() }) {
@@ -123,9 +124,15 @@ public fun PollCreationDiscardDialog(
 @Composable
 private fun PollCreationDiscardDialogPreview() {
     ChatTheme {
-        PollCreationDiscardDialog(
-            onCancelClicked = {},
-            onDiscardClicked = {},
-        )
+        PollCreationDiscardDialog()
     }
+}
+
+@Composable
+internal fun PollCreationDiscardDialog() {
+    PollCreationDiscardDialog(
+        usePlatformDefaultWidth = true,
+        onCancelClicked = {},
+        onDiscardClicked = {},
+    )
 }

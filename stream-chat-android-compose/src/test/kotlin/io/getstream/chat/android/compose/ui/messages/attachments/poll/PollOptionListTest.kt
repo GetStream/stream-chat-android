@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.mentions
+package io.getstream.chat.android.compose.ui.messages.attachments.poll
 
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
@@ -22,36 +22,29 @@ import io.getstream.chat.android.compose.ui.SnapshotTest
 import org.junit.Rule
 import org.junit.Test
 
-internal class MentionListTest : SnapshotTest {
+internal class PollOptionListTest : SnapshotTest {
 
     @get:Rule
-    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_4A)
+    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun `loading mention list`() {
+    fun `empty list`() {
         snapshotWithDarkMode {
-            MentionListLoading()
+            PollOptionListEmpty()
         }
     }
 
     @Test
-    fun `empty mention list`() {
+    fun `blank items`() {
         snapshotWithDarkMode {
-            MentionListEmpty()
+            PollOptionListBlank()
         }
     }
 
     @Test
-    fun `loaded mention list`() {
+    fun `duplicated error`() {
         snapshotWithDarkMode {
-            MentionListLoaded()
-        }
-    }
-
-    @Test
-    fun `loading more mention list`() {
-        snapshotWithDarkMode {
-            MentionListLoadingMore()
+            PollOptionListDuplicatedError()
         }
     }
 }

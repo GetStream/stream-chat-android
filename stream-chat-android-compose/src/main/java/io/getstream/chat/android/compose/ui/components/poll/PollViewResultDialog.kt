@@ -59,6 +59,9 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
+import io.getstream.chat.android.previewdata.PreviewMessageData
+import io.getstream.chat.android.previewdata.PreviewPollData
+import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 import io.getstream.chat.android.ui.common.utils.extensions.initials
 
@@ -95,37 +98,46 @@ public fun PollViewResultDialog(
                 slideOutVertically(animationSpec = tween(400)),
             label = "poll view result dialog",
         ) {
-            if (selectedPoll != null) {
-                val poll = selectedPoll.poll
-
-                BackHandler { onBackPressed.invoke() }
-
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(ChatTheme.colors.appBackground),
-                ) {
-                    item {
-                        PollDialogHeader(
-                            title = stringResource(id = R.string.stream_compose_poll_results),
-                            onBackPressed = onBackPressed,
-                        )
-                    }
-
-                    item { PollViewResultTitle(title = poll.name) }
-
-                    item { Spacer(modifier = Modifier.height(16.dp)) }
-
-                    pollViewResultContent(poll = poll)
-
-                    item { Spacer(modifier = Modifier.height(16.dp)) }
-                }
-            }
+            Content(
+                selectedPoll = selectedPoll,
+                onBackPressed = onBackPressed,
+            )
         }
     }
 }
 
-internal fun LazyListScope.pollViewResultContent(
+@Composable
+private fun Content(
+    selectedPoll: SelectedPoll,
+    onBackPressed: () -> Unit = {},
+) {
+    val poll = selectedPoll.poll
+
+    BackHandler { onBackPressed.invoke() }
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(ChatTheme.colors.appBackground),
+    ) {
+        item {
+            PollDialogHeader(
+                title = stringResource(id = R.string.stream_compose_poll_results),
+                onBackPressed = onBackPressed,
+            )
+        }
+
+        item { PollViewResultTitle(title = poll.name) }
+
+        item { Spacer(modifier = Modifier.height(16.dp)) }
+
+        pollViewResultContent(poll = poll)
+
+        item { Spacer(modifier = Modifier.height(16.dp)) }
+    }
+}
+
+private fun LazyListScope.pollViewResultContent(
     poll: Poll,
 ) {
     val options = poll.options.sortedByDescending { option -> poll.voteCountsByOption[option.id] ?: 0 }
@@ -254,29 +266,19 @@ internal fun PollViewResultTitle(title: String) {
 
 @Preview
 @Composable
-internal fun PollViewResultDialogPreview() {
-    val poll = io.getstream.chat.android.previewdata.PreviewPollData.poll1
-
+private fun PollViewResultDialogPreview() {
     ChatTheme {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(ChatTheme.colors.appBackground),
-        ) {
-            item {
-                PollDialogHeader(
-                    title = stringResource(id = R.string.stream_compose_poll_results),
-                    onBackPressed = {},
-                )
-            }
-
-            item { PollViewResultTitle(title = poll.name) }
-
-            item { Spacer(modifier = Modifier.height(16.dp)) }
-
-            pollViewResultContent(poll = poll)
-
-            item { Spacer(modifier = Modifier.height(16.dp)) }
-        }
+        PollViewResultDialog()
     }
+}
+
+@Composable
+internal fun PollViewResultDialog() {
+    Content(
+        selectedPoll = SelectedPoll(
+            poll = PreviewPollData.poll1,
+            message = PreviewMessageData.message1,
+            pollSelectionType = PollSelectionType.ViewResult,
+        ),
+    )
 }

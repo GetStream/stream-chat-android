@@ -328,13 +328,14 @@ internal fun RowScope.DefaultChannelItemTrailingContent(
 @Preview(showBackground = true)
 @Composable
 private fun ChannelItemNoMessagesPreview() {
-    ChannelItemNoMessages()
+    ChatTheme {
+        ChannelItemNoMessages()
+    }
 }
 
 @Composable
-internal fun ChannelItemNoMessages(darkMode: Boolean = false) {
+internal fun ChannelItemNoMessages() {
     ChannelItem(
-        darkMode = darkMode,
         currentUser = PreviewUserData.user1,
         channel = PreviewChannelData.channelWithImage,
     )
@@ -343,13 +344,14 @@ internal fun ChannelItemNoMessages(darkMode: Boolean = false) {
 @Preview(showBackground = true)
 @Composable
 private fun ChannelItemMutedPreview() {
-    ChannelItemMuted()
+    ChatTheme {
+        ChannelItemMuted()
+    }
 }
 
 @Composable
-internal fun ChannelItemMuted(darkMode: Boolean = false) {
+internal fun ChannelItemMuted() {
     ChannelItem(
-        darkMode = darkMode,
         currentUser = PreviewUserData.user1,
         channel = PreviewChannelData.channelWithMessages,
         isMuted = true,
@@ -359,13 +361,14 @@ internal fun ChannelItemMuted(darkMode: Boolean = false) {
 @Preview(showBackground = true)
 @Composable
 private fun ChannelItemUnreadMessagesPreview() {
-    ChannelItemUnreadMessages()
+    ChatTheme {
+        ChannelItemUnreadMessages()
+    }
 }
 
 @Composable
-internal fun ChannelItemUnreadMessages(darkMode: Boolean = false) {
+internal fun ChannelItemUnreadMessages() {
     ChannelItem(
-        darkMode = darkMode,
         currentUser = PreviewUserData.user1,
         channel = PreviewChannelData.channelWithMessages.copy(
             read = listOf(PreviewChannelUserRead.channelUserRead1),
@@ -376,13 +379,14 @@ internal fun ChannelItemUnreadMessages(darkMode: Boolean = false) {
 @Preview(showBackground = true)
 @Composable
 private fun ChannelItemLastMessageSentStatusPreview() {
-    ChannelItemLastMessageSentStatus()
+    ChatTheme {
+        ChannelItemLastMessageSentStatus()
+    }
 }
 
 @Composable
-internal fun ChannelItemLastMessageSentStatus(darkMode: Boolean = false) {
+internal fun ChannelItemLastMessageSentStatus() {
     ChannelItem(
-        darkMode = darkMode,
         currentUser = PreviewUserData.user1,
         channel = PreviewChannelData.channelWithMessages.copy(
             messages = PreviewChannelData.channelWithMessages.messages.map { message ->
@@ -395,13 +399,14 @@ internal fun ChannelItemLastMessageSentStatus(darkMode: Boolean = false) {
 @Preview(showBackground = true)
 @Composable
 private fun ChannelItemLastMessageSeenStatusPreview() {
-    ChannelItemLastMessageSeenStatus()
+    ChatTheme {
+        ChannelItemLastMessageSeenStatus()
+    }
 }
 
 @Composable
-internal fun ChannelItemLastMessageSeenStatus(darkMode: Boolean = false) {
+internal fun ChannelItemLastMessageSeenStatus() {
     ChannelItem(
-        darkMode = darkMode,
         currentUser = PreviewUserData.user1,
         channel = PreviewChannelData.channelWithMessages.copy(
             messages = PreviewChannelData.channelWithMessages.messages.map { message ->
@@ -415,13 +420,14 @@ internal fun ChannelItemLastMessageSeenStatus(darkMode: Boolean = false) {
 @Preview(showBackground = true)
 @Composable
 private fun ChannelItemDraftMessagePreview() {
-    ChannelItemDraftMessage()
+    ChatTheme {
+        ChannelItemDraftMessage()
+    }
 }
 
 @Composable
-internal fun ChannelItemDraftMessage(darkMode: Boolean = false) {
+internal fun ChannelItemDraftMessage() {
     ChannelItem(
-        darkMode = darkMode,
         currentUser = PreviewUserData.user1,
         channel = PreviewChannelData.channelWithMessages,
         draftMessage = DraftMessage(text = "message"),
@@ -430,22 +436,19 @@ internal fun ChannelItemDraftMessage(darkMode: Boolean = false) {
 
 @Composable
 private fun ChannelItem(
-    darkMode: Boolean,
     currentUser: User?,
     channel: Channel,
     isMuted: Boolean = false,
     draftMessage: DraftMessage? = null,
 ) {
-    ChatTheme(isInDarkMode = darkMode) {
-        ChannelItem(
-            channelItem = ItemState.ChannelItemState(
-                channel = channel,
-                isMuted = isMuted,
-                draftMessage = draftMessage,
-            ),
-            currentUser = currentUser,
-            onChannelClick = {},
-            onChannelLongClick = {},
-        )
-    }
+    ChannelItem(
+        channelItem = ItemState.ChannelItemState(
+            channel = channel,
+            isMuted = isMuted,
+            draftMessage = draftMessage,
+        ),
+        currentUser = currentUser,
+        onChannelClick = {},
+        onChannelLongClick = {},
+    )
 }
