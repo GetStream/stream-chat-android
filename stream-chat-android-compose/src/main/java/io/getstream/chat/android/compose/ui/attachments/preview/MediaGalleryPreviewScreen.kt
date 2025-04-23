@@ -67,10 +67,8 @@ import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewOption
 import io.getstream.chat.android.compose.ui.attachments.preview.internal.MediaGalleryImagePage
-import io.getstream.chat.android.compose.ui.attachments.preview.internal.MediaGalleryOptionsMenu
 import io.getstream.chat.android.compose.ui.attachments.preview.internal.MediaGalleryPhotosMenu
 import io.getstream.chat.android.compose.ui.attachments.preview.internal.MediaGalleryVideoPage
-import io.getstream.chat.android.compose.ui.attachments.preview.internal.defaultMediaOptions
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.Timestamp
@@ -901,7 +899,7 @@ private const val BytesInMegabyte = 1024 * 1024
 
 @Composable
 @Preview
-internal fun MediaGalleryPreviewCloseIconPreview() {
+private fun MediaGalleryPreviewCloseIconPreview() {
     ChatPreviewTheme {
         Surface {
             MediaGalleryPreviewCloseIcon(onClick = {})
@@ -911,7 +909,7 @@ internal fun MediaGalleryPreviewCloseIconPreview() {
 
 @Composable
 @Preview
-internal fun MediaGalleryPreviewOptionsIconPreview() {
+private fun MediaGalleryPreviewOptionsIconPreview() {
     ChatPreviewTheme {
         Surface {
             val message = Message(
@@ -929,7 +927,7 @@ internal fun MediaGalleryPreviewOptionsIconPreview() {
 
 @Composable
 @Preview
-internal fun MediaGalleryPreviewTitlePreview() {
+private fun MediaGalleryPreviewTitlePreview() {
     ChatPreviewTheme {
         Surface {
             val message = Message(
@@ -948,7 +946,7 @@ internal fun MediaGalleryPreviewTitlePreview() {
 
 @Composable
 @Preview
-internal fun MediaGalleryPreviewHeaderPreview() {
+private fun MediaGalleryPreviewHeaderPreview() {
     ChatPreviewTheme {
         Surface {
             val message = Message(
@@ -969,7 +967,7 @@ internal fun MediaGalleryPreviewHeaderPreview() {
 
 @Composable
 @Preview
-internal fun MediaGalleryPreviewShareButtonPreview() {
+private fun MediaGalleryPreviewShareButtonPreview() {
     ChatPreviewTheme {
         Surface {
             Row {
@@ -991,7 +989,7 @@ internal fun MediaGalleryPreviewShareButtonPreview() {
 
 @Composable
 @Preview
-internal fun MediaGalleryPreviewPhotosButtonPreview() {
+private fun MediaGalleryPreviewPhotosButtonPreview() {
     ChatPreviewTheme {
         Surface {
             MediaGalleryPreviewPhotosIcon(onClick = {})
@@ -1001,7 +999,7 @@ internal fun MediaGalleryPreviewPhotosButtonPreview() {
 
 @Composable
 @Preview
-internal fun MediaGalleryPreviewPageIndicatorPreview() {
+private fun MediaGalleryPreviewPageIndicatorPreview() {
     ChatPreviewTheme {
         Surface {
             MediaGalleryPreviewPageIndicator(
@@ -1014,7 +1012,7 @@ internal fun MediaGalleryPreviewPageIndicatorPreview() {
 
 @Composable
 @Preview
-internal fun MediaGalleryPreviewSharingInProgressIndicatorPreview() {
+private fun MediaGalleryPreviewSharingInProgressIndicatorPreview() {
     ChatPreviewTheme {
         Surface {
             MediaGalleryPreviewSharingInProgressIndicator()
@@ -1024,7 +1022,7 @@ internal fun MediaGalleryPreviewSharingInProgressIndicatorPreview() {
 
 @Composable
 @Preview
-internal fun MediaGalleryPreviewFooterPreview() {
+private fun MediaGalleryPreviewFooterPreview() {
     ChatPreviewTheme {
         Surface {
             Column {
@@ -1044,7 +1042,7 @@ internal fun MediaGalleryPreviewFooterPreview() {
 
 @Composable
 @Preview
-internal fun MediaGalleryPreviewFooterSharingInProgressPreview() {
+private fun MediaGalleryPreviewFooterSharingInProgressPreview() {
     ChatPreviewTheme {
         Surface {
             Column {
@@ -1064,7 +1062,7 @@ internal fun MediaGalleryPreviewFooterSharingInProgressPreview() {
 
 @Composable
 @Preview
-internal fun MediaGalleryPreviewScreenPreview() {
+private fun MediaGalleryPreviewScreenPreview() {
     ChatPreviewTheme {
         Surface {
             val user = User(id = "solo", name = "Han Solo")
