@@ -80,6 +80,8 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Define the default `verticalArrangement` of `Messages`, `MessageList`, and `MessageScreen` as `Arrangement.Bottom`. [#5745](https://github.com/GetStream/stream-chat-android/pull/5745)
+- Deprecate `ThreadMessagesStart` in favor of `Arrangement.Vertical`. [#5745](https://github.com/GetStream/stream-chat-android/pull/5745)
 
 ### ❌ Removed
 
