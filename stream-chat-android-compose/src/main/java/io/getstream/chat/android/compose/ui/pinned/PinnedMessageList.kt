@@ -236,19 +236,6 @@ private fun PinnedMessages(
 }
 
 /**
- * The default divider appended after each pinned message.
- */
-@Composable
-internal fun DefaultPinnedMessageListItemDivider() {
-    Spacer(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(0.5.dp)
-            .background(color = ChatTheme.colors.borders),
-    )
-}
-
-/**
  * The default empty placeholder that is displayed when there are no pinned messages.
  *
  * @param modifier Modifier for styling.
