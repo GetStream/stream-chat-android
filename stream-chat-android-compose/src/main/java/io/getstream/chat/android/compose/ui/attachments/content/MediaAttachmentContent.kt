@@ -428,6 +428,7 @@ internal fun MediaAttachmentContentItem(
         MediaGalleryInjector.install(imageLoader)
     }
 
+    val config = ChatTheme.mediaGalleryConfig
     val mixedMediaPreviewLauncher = rememberLauncherForActivityResult(
         contract = MediaGalleryPreviewContract(config),
         onResult = { result -> onMediaGalleryPreviewResult(result) },
