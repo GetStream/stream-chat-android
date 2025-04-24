@@ -73,10 +73,10 @@ internal class AttachmentsPickerPollUtilsTest {
                 title = "Multiple answers",
                 pollSwitchInput = PollSwitchInput(
                     value = "2",
-                    description = "Enter a number between 1 and 2",
+                    description = "Enter an integer between 1 and 2",
                     minValue = 1,
                     maxValue = 2,
-                    keyboardType = KeyboardType.Decimal,
+                    keyboardType = KeyboardType.Number,
                 ),
                 key = PollSwitchItemKeys.MAX_VOTES_ALLOWED,
                 enabled = true,
