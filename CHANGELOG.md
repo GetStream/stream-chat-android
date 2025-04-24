@@ -77,6 +77,7 @@
 
 ### ⬆️ Improved
 - Improve the images loading. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
+- Remove the divider of the last item in the channel list and pinned message list. [#5746](https://github.com/GetStream/stream-chat-android/pull/5746)
 
 ### ✅ Added
 - Introduce `MediaGalleryConfig` for simple configuration(show/hide) of the actions in the `MediaGalleryPreviewActivity`. [#5726](https://github.com/GetStream/stream-chat-android/pull/5726)
