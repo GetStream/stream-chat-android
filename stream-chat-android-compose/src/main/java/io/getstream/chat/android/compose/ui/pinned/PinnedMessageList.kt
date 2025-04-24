@@ -219,10 +219,12 @@ private fun PinnedMessages(
             itemsIndexed(messages) { index, pinnedMessage ->
                 if (pinnedMessage.id.isNotEmpty()) {
                     itemContent(pinnedMessage)
-                    itemDivider(index)
                 } else {
                     // Empty ID represents a 'loading more' item
                     loadingMoreContent()
+                }
+                if (index < messages.lastIndex) {
+                    itemDivider(index)
                 }
             }
         }
