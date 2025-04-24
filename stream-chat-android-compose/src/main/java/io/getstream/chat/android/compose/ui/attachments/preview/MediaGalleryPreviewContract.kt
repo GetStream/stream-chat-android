@@ -31,13 +31,8 @@ import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizin
  *
  * @param config The configuration for the media gallery.
  */
-public class MediaGalleryPreviewContract(private val config: MediaGalleryConfig) :
+public class MediaGalleryPreviewContract(private val config: MediaGalleryConfig = MediaGalleryConfig()) :
     ActivityResultContract<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>() {
-
-    /**
-     * Creates the contract with the default [MediaGalleryConfig].
-     */
-    public constructor() : this(config = MediaGalleryConfig())
 
     /**
      * Creates the intent to start the [MediaGalleryPreviewActivity].

@@ -829,6 +829,7 @@ public final class io/getstream/chat/android/compose/ui/attachments/preview/Medi
 	public static final field $stable I
 	public fun <init> ()V
 	public fun <init> (Lio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryConfig;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryConfig;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun createIntent (Landroid/content/Context;Lio/getstream/chat/android/compose/ui/attachments/preview/MediaGalleryPreviewContract$Input;)Landroid/content/Intent;
 	public synthetic fun createIntent (Landroid/content/Context;Ljava/lang/Object;)Landroid/content/Intent;
 	public fun parseResult (ILandroid/content/Intent;)Lio/getstream/chat/android/compose/state/mediagallerypreview/MediaGalleryPreviewResult;
