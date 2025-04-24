@@ -64,20 +64,21 @@ public fun interface MessageTextFormatter {
             autoTranslationEnabled: Boolean,
             isInDarkMode: Boolean = isSystemInDarkTheme(),
             typography: StreamTypography = StreamTypography.defaultTypography(),
-            colors: StreamColors = when (isSystemInDarkTheme()) {
+            colors: StreamColors = when (isInDarkMode) {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
             textStyle: (isMine: Boolean, message: Message) -> TextStyle =
                 defaultTextStyle(isInDarkMode, typography, colors),
+            linkStyle: (isMine: Boolean) -> TextStyle = defaultLinkStyle(colors),
             mentionColor: (isMine: Boolean) -> Color = defaultMentionColor(isInDarkMode, typography, colors),
             builder: AnnotatedMessageTextBuilder? = null,
         ): MessageTextFormatter {
             return DefaultMessageTextFormatter(
                 autoTranslationEnabled = autoTranslationEnabled,
                 typography = typography,
-                colors = colors,
                 textStyle = textStyle,
+                linkStyle = linkStyle,
                 mentionColor = mentionColor,
                 builder = builder,
             )
@@ -102,7 +103,7 @@ public fun interface MessageTextFormatter {
             isInDarkMode: Boolean = isSystemInDarkTheme(),
             typography: StreamTypography = StreamTypography.defaultTypography(),
             shapes: StreamShapes = StreamShapes.defaultShapes(),
-            colors: StreamColors = when (isSystemInDarkTheme()) {
+            colors: StreamColors = when (isInDarkMode) {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
@@ -121,6 +122,7 @@ public fun interface MessageTextFormatter {
             builder: AnnotatedMessageTextBuilder? = null,
         ): MessageTextFormatter {
             val textStyle = defaultTextStyle(ownMessageTheme, otherMessageTheme)
+            val linkStyle = defaultLinkStyle(ownMessageTheme, otherMessageTheme)
             val mentionColor = defaultMentionColor(ownMessageTheme, otherMessageTheme)
             return defaultFormatter(
                 autoTranslationEnabled = autoTranslationEnabled,
@@ -128,6 +130,7 @@ public fun interface MessageTextFormatter {
                 typography = typography,
                 colors = colors,
                 textStyle = textStyle,
+                linkStyle = linkStyle,
                 mentionColor = mentionColor,
                 builder = builder,
             )
@@ -174,8 +177,8 @@ private class CompositeMessageTextFormatter(
 private class DefaultMessageTextFormatter(
     private val autoTranslationEnabled: Boolean,
     private val typography: StreamTypography,
-    private val colors: StreamColors,
     private val textStyle: (isMine: Boolean, message: Message) -> TextStyle,
+    private val linkStyle: (isMine: Boolean) -> TextStyle,
     private val mentionColor: (isMine: Boolean) -> Color,
     private val builder: AnnotatedMessageTextBuilder? = null,
 ) : MessageTextFormatter {
@@ -188,13 +191,15 @@ private class DefaultMessageTextFormatter(
             else -> message.text
         }
         val mentionedUserNames = message.mentionedUsers.map { it.name.ifEmpty { it.id } }
-        val textColor = textStyle(message.isMine(currentUser), message).color
-        val mentionColor = mentionColor(message.isMine(currentUser))
+        val isMine = message.isMine(currentUser)
+        val textColor = textStyle(isMine, message).color
+        val linkStyle = linkStyle(isMine)
+        val mentionColor = mentionColor(isMine)
         return buildAnnotatedMessageText(
             text = displayedText,
             textColor = textColor,
             textFontStyle = typography.body.fontStyle,
-            linkColor = colors.primaryAccent,
+            linkStyle = linkStyle,
             mentionsColor = mentionColor,
             mentionedUserNames = mentionedUserNames,
             builder = {

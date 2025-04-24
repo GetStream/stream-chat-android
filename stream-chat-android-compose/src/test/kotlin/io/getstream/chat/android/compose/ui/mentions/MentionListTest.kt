@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalMaterial3Api::class)
-
 package io.getstream.chat.android.compose.ui.mentions
 
-import androidx.compose.material3.ExperimentalMaterial3Api
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.SnapshotTest
@@ -32,29 +29,29 @@ internal class MentionListTest : SnapshotTest {
 
     @Test
     fun `loading mention list`() {
-        snapshotWithDarkMode { darkMode ->
-            MentionListLoading(darkMode = darkMode)
+        snapshotWithDarkMode {
+            MentionListLoading()
         }
     }
 
     @Test
     fun `empty mention list`() {
-        snapshotWithDarkMode { darkMode ->
-            MentionListEmpty(darkMode = darkMode)
+        snapshotWithDarkMode {
+            MentionListEmpty()
         }
     }
 
     @Test
     fun `loaded mention list`() {
-        snapshotWithDarkMode { darkMode ->
-            MentionListLoaded(darkMode = darkMode)
+        snapshotWithDarkMode {
+            MentionListLoaded()
         }
     }
 
     @Test
     fun `loading more mention list`() {
-        snapshotWithDarkMode { darkMode ->
-            MentionListLoadingMore(darkMode = darkMode)
+        snapshotWithDarkMode {
+            MentionListLoadingMore()
         }
     }
 }

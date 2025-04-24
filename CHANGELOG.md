@@ -12,6 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fix `NullPointerException` in `SubscriptionImpl` when subscription is disposed concurrently while being filtered. [#5738](https://github.com/GetStream/stream-chat-android/pull/5738)
 
 ### ⬆️ Improved
 
@@ -78,6 +79,8 @@
 - Improve the images loading. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
 
 ### ✅ Added
+- Introduce `MediaGalleryConfig` for simple configuration(show/hide) of the actions in the `MediaGalleryPreviewActivity`. [#5726](https://github.com/GetStream/stream-chat-android/pull/5726)
+- Introduce experimental `MediaGalleryPreviewScreen` composable component which renders a standalone media gallery for a `Message` with media attachments. [#5726](https://github.com/GetStream/stream-chat-android/pull/5726)
 
 ### ⚠️ Changed
 
