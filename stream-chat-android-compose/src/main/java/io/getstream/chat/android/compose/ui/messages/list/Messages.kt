@@ -66,7 +66,7 @@ import kotlin.math.abs
  * @param messagesLazyListState State of the lazy list that represents the list of messages. Useful for controlling the
  * scroll state and focused message offset.
  * @param verticalArrangement Vertical arrangement of the regular message list.
- * Default: [Arrangement.Bottom].
+ * Default: [Arrangement.Top].
  * @param threadsVerticalArrangement Vertical arrangement of the thread message list.
  * Default: [Arrangement.Bottom].
  * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
@@ -90,7 +90,7 @@ import kotlin.math.abs
 public fun Messages(
     messagesState: MessageListState,
     messagesLazyListState: MessagesLazyListState,
-    verticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
+    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     threadsVerticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
     threadMessagesStart: ThreadMessagesStart? = null,
     onMessagesStartReached: () -> Unit,

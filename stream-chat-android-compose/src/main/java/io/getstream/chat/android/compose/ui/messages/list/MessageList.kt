@@ -66,7 +66,7 @@ import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
  * @param messagesLazyListState State of the lazy list that represents the list of messages. Useful for controlling the
  * scroll state and focused message offset.
  * @param verticalArrangement Vertical arrangement of the regular message list.
- * Default: [Arrangement.Bottom].
+ * Default: [Arrangement.Top].
  * @param threadsVerticalArrangement Vertical arrangement of the thread message list.
  * Default: [Arrangement.Bottom].
  * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
@@ -104,7 +104,7 @@ public fun MessageList(
     messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     messagesLazyListState: MessagesLazyListState =
         rememberMessageListState(parentMessageId = viewModel.currentMessagesState.parentMessageId),
-    verticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
+    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     threadsVerticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
     threadMessagesStart: ThreadMessagesStart? = null,
     onThreadClick: (Message) -> Unit = { viewModel.openMessageThread(it) },
@@ -350,7 +350,7 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  *
  * @param currentState The state of the component, represented by [MessageListState].
  * @param verticalArrangement Vertical arrangement of the regular message list.
- * Default: [Arrangement.Bottom].
+ * Default: [Arrangement.Top].
  * @param threadsVerticalArrangement Vertical arrangement of the thread message list.
  * Default: [Arrangement.Bottom].
  * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
@@ -386,7 +386,7 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
 @Composable
 public fun MessageList(
     currentState: MessageListState,
-    verticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
+    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     threadsVerticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
     threadMessagesStart: ThreadMessagesStart? = null,
     reactionSorting: ReactionSorting,

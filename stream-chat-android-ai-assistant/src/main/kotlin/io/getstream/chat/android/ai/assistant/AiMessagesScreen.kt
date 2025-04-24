@@ -106,7 +106,7 @@ import io.getstream.chat.android.ui.common.state.messages.Reply
  * @param skipEnrichUrl If new messages being sent, or existing ones being updated should skip enriching the URL.
  * If URL is not enriched, it will not be displayed as a link attachment. False by default.
  * @param verticalArrangement Vertical arrangement of the regular message list.
- * Default: [Arrangement.Bottom].
+ * Default: [Arrangement.Top].
  * @param threadsVerticalArrangement Vertical arrangement of the thread message list.
  * Default: [Arrangement.Bottom].
  * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
@@ -132,7 +132,7 @@ public fun AiMessagesScreen(
     onUserAvatarClick: (User) -> Unit = {},
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
-    verticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
+    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     threadsVerticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
     threadMessagesStart: ThreadMessagesStart? = null,
     aiStartButton: @Composable BoxScope.() -> Unit = {
