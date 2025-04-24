@@ -42,6 +42,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
+import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryConfig
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactories
@@ -239,6 +240,9 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
 private val LocalKeyboardBehaviour = compositionLocalOf<StreamKeyboardBehaviour> {
     error("No StreamKeyboardBehaviour provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+private val LocalMediaGalleryConfig = compositionLocalOf<MediaGalleryConfig> {
+    error("No MediaGalleryConfig provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
 
 /**
  * Our theme that provides all the important properties for styling to the user.
@@ -293,6 +297,7 @@ private val LocalKeyboardBehaviour = compositionLocalOf<StreamKeyboardBehaviour>
  * @param attachmentPickerTheme Theme of the attachment picker.
  * @param streamMediaRecorder Used for recording audio messages.
  * @param keyboardBehaviour Configuration for different keyboard behaviours.
+ * @param mediaGalleryConfig Configuration for the media gallery screen.
  * @param content The content shown within the theme wrapper.
  */
 @Suppress("LongMethod")
@@ -398,6 +403,7 @@ public fun ChatTheme(
     ),
     streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(LocalContext.current),
     keyboardBehaviour: StreamKeyboardBehaviour = StreamKeyboardBehaviour.defaultBehaviour(),
+    mediaGalleryConfig: MediaGalleryConfig = MediaGalleryConfig(),
     content: @Composable () -> Unit,
 ) {
     LaunchedEffect(Unit) {
@@ -452,6 +458,7 @@ public fun ChatTheme(
         LocalAutoTranslationEnabled provides autoTranslationEnabled,
         LocalComposerLinkPreviewEnabled provides isComposerLinkPreviewEnabled,
         LocalKeyboardBehaviour provides keyboardBehaviour,
+        LocalMediaGalleryConfig provides mediaGalleryConfig,
     ) {
         if (allowUIAutomationTest) {
             Box(
@@ -829,4 +836,12 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalKeyboardBehaviour.current
+
+    /**
+     * Retrieves the current [MediaGalleryConfig] at the call site's position in the hierarchy.
+     */
+    public val mediaGalleryConfig: MediaGalleryConfig
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalMediaGalleryConfig.current
 }
