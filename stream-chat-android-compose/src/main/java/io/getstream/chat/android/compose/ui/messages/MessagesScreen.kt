@@ -230,7 +230,6 @@ public fun MessagesScreen(
                 modifier = Modifier
                     .testTag("Stream_MessagesList")
                     .fillMaxSize()
-                    .background(ChatTheme.colors.appBackground)
                     .padding(it),
                 viewModel = listViewModel,
                 messageContentFactory = messageContentFactory,
