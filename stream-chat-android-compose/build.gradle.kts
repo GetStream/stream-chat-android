@@ -98,6 +98,10 @@ dependencies {
     implementation(libs.coil.gif)
     implementation(libs.coil.video)
 
+    // Media3
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.ui)
+
     // UI
     implementation(libs.reorderable)
     implementation(libs.shimmer.compose)

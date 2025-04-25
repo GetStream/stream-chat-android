@@ -551,9 +551,8 @@ internal fun MediaGalleryPager(
 
             attachments[page].isVideo() -> {
                 MediaGalleryVideoPage(
-                    attachment = attachments[page],
-                    pagerState = pagerState,
-                    page = page,
+                    assetUrl = attachments[page].assetUrl,
+                    thumbnailUrl = attachments[page].thumbUrl,
                     onPlaybackError = onPlaybackError,
                 )
             }

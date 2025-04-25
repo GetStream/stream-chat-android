@@ -16,14 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.attachments.preview.internal
 
-import android.content.Context
-import android.net.Uri
 import android.util.Log
-import android.view.Gravity
-import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.MediaController
-import android.widget.VideoView
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
@@ -42,6 +35,7 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -63,6 +57,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
 import coil3.compose.AsyncImagePainter
 import coil3.request.ImageRequest
 import io.getstream.chat.android.compose.R
@@ -277,180 +274,126 @@ private fun ErrorIcon(modifier: Modifier) {
  * Note: It is assumed that this component is used within a pager.
  *
  * Renders a video player with thumbnail preview, play button, and loading indicators.
- * The video playback begins when the user taps the play button, showing a loading
- * indicator until the video is ready to play. The video player includes standard
- * media controls for playback.
+ * The video playback begins when the user taps the play button. The video player includes
+ * standard media controls for playback. Shows a loading indicator while the video is
+ * buffering. The video is paused when the user navigates away from this page in the pager.
  *
  * This component handles various states:
  * - Initial state with thumbnail and play button
- * - Loading state while preparing the video
+ * - Loading state while the video is buffering
  * - Playback state with media controls
  * - Error state when video playback fails
  *
  * The video playback is automatically paused and the preview is restored when
  * the user navigates away from this page in the pager.
  *
- * @param attachment The attachment containing the video to display
- * @param pagerState The state of the pager containing this video page
- * @param page The page index of this video in the pager
- * @param onPlaybackError Callback invoked when video playback encounters an error
+ * @param assetUrl The url of the video to display.
+ * @param thumbnailUrl The url of the thumbnail to display before the video is played.
+ * @param onPlaybackError Callback invoked when video playback encounters an error.
+ * @param modifier The [Modifier] to be applied to the video player.
  */
-@Suppress("LongMethod")
 @Composable
 internal fun MediaGalleryVideoPage(
-    attachment: Attachment,
-    pagerState: PagerState,
-    page: Int,
+    assetUrl: String?,
+    thumbnailUrl: String?,
     onPlaybackError: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
-
-    var hasPrepared by remember {
-        mutableStateOf(false)
-    }
-
-    var userHasClickedPlay by remember {
-        mutableStateOf(false)
-    }
-
-    var shouldShowProgressBar by remember {
-        mutableStateOf(false)
-    }
-
-    var shouldShowPreview by remember {
-        mutableStateOf(true)
-    }
-
-    var shouldShowPlayButton by remember {
-        mutableStateOf(true)
-    }
-
-    val mediaController = remember {
-        createMediaController(context)
-    }
-
-    val videoView = remember {
-        VideoView(context)
-    }
-
-    val contentView = remember {
-        val frameLayout = FrameLayout(context).apply {
-            layoutParams = FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT,
-            )
-        }
-        videoView.apply {
-            setVideoURI(Uri.parse(attachment.assetUrl))
-            this.setMediaController(mediaController)
-            setOnErrorListener { _, _, _ ->
-                shouldShowProgressBar = false
-                onPlaybackError()
-                true
-            }
-            setOnPreparedListener {
-                // Don't remove the preview unless the user has clicked play previously,
-                // otherwise the preview will be removed whenever the video has finished downloading.
-                if (!hasPrepared && userHasClickedPlay && page == pagerState.currentPage) {
-                    shouldShowProgressBar = false
-                    shouldShowPreview = false
-                    mediaController.show()
-                }
-                hasPrepared = true
-            }
-
-            mediaController.setAnchorView(frameLayout)
-
-            layoutParams = FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT,
-            ).apply {
-                gravity = Gravity.CENTER
-            }
-        }
-
-        frameLayout.apply {
-            addView(videoView)
-        }
-    }
-
-    Box(contentAlignment = Alignment.Center) {
-        AndroidView(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black),
-            factory = { contentView },
+    var showThumbnail by remember { mutableStateOf(true) }
+    var showPlayButton by remember { mutableStateOf(true) }
+    var showBuffering by remember { mutableStateOf(false) }
+    val onBuffering: (Boolean) -> Unit = { showBuffering = it }
+    // Create player
+    var player by remember { mutableStateOf<Player?>(null) }
+    LifecycleResumeEffect(Unit) {
+        player = createPlayer(
+            context = context,
+            onBuffering = onBuffering,
+            onPlaybackError = onPlaybackError,
         )
-
-        if (shouldShowPreview) {
-            val data = if (ChatTheme.videoThumbnailsEnabled) {
-                attachment.thumbUrl
-            } else {
-                null
-            }
-
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                StreamAsyncImage(
-                    modifier = Modifier
-                        .clickable {
-                            shouldShowProgressBar = true
-                            shouldShowPlayButton = false
-                            userHasClickedPlay = true
-                            // Don't remove the preview unless the player
-                            // is ready to play.
-                            if (hasPrepared) {
-                                shouldShowProgressBar = false
-                                shouldShowPreview = false
-                                mediaController.show()
-                            }
-                            videoView.start()
-                        }
-                        .fillMaxSize()
-                        .background(color = Color.Black),
-                    data = data,
-                    contentDescription = null,
-                )
-
-                if (shouldShowPlayButton) {
-                    PlayButton(
-                        modifier = Modifier
-                            .shadow(6.dp, shape = CircleShape)
-                            .background(color = Color.White, shape = CircleShape)
-                            .size(
-                                width = 42.dp,
-                                height = 42.dp,
-                            ),
-                        contentDescription = stringResource(R.string.stream_compose_cd_play_button),
-                    )
-                }
-            }
+        onPauseOrDispose {
+            player?.release()
+            player = null
         }
-
-        if (shouldShowProgressBar) {
-            LoadingIndicator()
+    }
+    LaunchedEffect(player, assetUrl) {
+        if (player != null && assetUrl != null) {
+            player?.setMediaItem(MediaItem.fromUri(assetUrl))
+            player?.prepare()
         }
     }
 
-    if (page != pagerState.currentPage) {
-        shouldShowPlayButton = true
-        shouldShowPreview = true
-        shouldShowProgressBar = false
-        mediaController.hide()
+    player?.let { preparedPlayer ->
+        Box(
+            modifier = modifier,
+            contentAlignment = Alignment.Center,
+        ) {
+            // Video player
+            AndroidView(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black),
+                factory = {
+                    createPlayerView(it, preparedPlayer)
+                },
+            )
+            // Thumbnail
+            if (showThumbnail) {
+                VideoThumbnail(
+                    thumbnailUrl = thumbnailUrl,
+                    showPlayButton = showPlayButton,
+                    onPlayClick = {
+                        showThumbnail = false
+                        showPlayButton = false
+                        preparedPlayer.play()
+                    },
+                )
+            }
+            // Buffering indicator
+            if (showBuffering && !showThumbnail) {
+                LoadingIndicator()
+            }
+        }
     }
 }
 
-/**
- * Creates a custom instance of [MediaController].
- *
- * @param context The Context used to create the [MediaController].
- */
-private fun createMediaController(
-    context: Context,
-): MediaController {
-    return object : MediaController(context) {}
+@Composable
+private fun VideoThumbnail(
+    thumbnailUrl: String?,
+    showPlayButton: Boolean,
+    onPlayClick: () -> Unit,
+) {
+    val data = if (ChatTheme.videoThumbnailsEnabled) {
+        thumbnailUrl
+    } else {
+        null
+    }
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
+    ) {
+        StreamAsyncImage(
+            modifier = Modifier
+                .clickable { onPlayClick() }
+                .fillMaxSize()
+                .background(Color.Black),
+            data = data,
+            contentDescription = null,
+        )
+        if (showPlayButton) {
+            PlayButton(
+                modifier = Modifier
+                    .shadow(6.dp, shape = CircleShape)
+                    .background(color = Color.White, shape = CircleShape)
+                    .size(
+                        width = 42.dp,
+                        height = 42.dp,
+                    ),
+                contentDescription = stringResource(R.string.stream_compose_cd_play_button),
+            )
+        }
+    }
 }
 
 /**
