@@ -1,74 +1,16 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# April 25th, 2025 - 6.14.1
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fix `NullPointerException` in `SubscriptionImpl` when subscription is disposed concurrently while being filtered. [#5738](https://github.com/GetStream/stream-chat-android/pull/5738)
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
 
-### ⬆️ Improved
-
-### ✅ Added
-
 ### ⚠️ Changed
 - Replace `StreamImage` with `StreamAsyncImage`. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
 - Deprecate landscapist `StreamImage` in favor of coil `SubcomposeAsyncImage`. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
 - Deprecate `rememberStreamImagePainter` in favor of coil `rememberAsyncImagePainter`. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
-
-### ❌ Removed
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -81,21 +23,6 @@
 ### ✅ Added
 - Introduce `MediaGalleryConfig` for simple configuration(show/hide) of the actions in the `MediaGalleryPreviewActivity`. [#5726](https://github.com/GetStream/stream-chat-android/pull/5726)
 - Introduce experimental `MediaGalleryPreviewScreen` composable component which renders a standalone media gallery for a `Message` with media attachments. [#5726](https://github.com/GetStream/stream-chat-android/pull/5726)
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # April 16th, 2025 - 6.14.0
 ## stream-chat-android-client
