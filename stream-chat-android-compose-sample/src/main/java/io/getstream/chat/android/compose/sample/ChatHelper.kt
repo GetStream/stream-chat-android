@@ -85,7 +85,7 @@ object ChatHelper {
 
         ChatClient.Builder(apiKey, context)
             .notifications(notificationConfig, notificationHandler)
-            .withPlugins(statePluginFactory)
+            .withPlugins(offlinePlugin, statePluginFactory)
             .logLevel(logLevel)
             .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
             .appName("Chat Sample Compose")
