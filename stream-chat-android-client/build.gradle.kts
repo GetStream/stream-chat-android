@@ -84,6 +84,7 @@ dependencies {
 
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.lifecycle.process)
+    implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.work)
     implementation(libs.retrofit)
     implementation(libs.stream.log)
