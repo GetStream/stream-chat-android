@@ -2,13 +2,12 @@
 allureKotlin = "2.4.0"
 androidGradlePlugin = "8.8.0"
 androidJunit5GradlePlugin = "1.11.2.0"
-androidLegacySupport = "1.0.0"
 androidxActivityCompose = "1.9.3"
 androidxActivityKtx = "1.9.3"
 androidxAnnotations = "1.9.1"
 androidxAppcompat = "1.7.0"
+androidxCollection = "1.5.0"
 androidxCompose = "1.7.5"
-androidxComposeConstraintLayout = "1.1.0"
 androidxComposeMaterial3 = "1.3.1"
 androidxComposeMaterial3Adaptive = "1.0.0"
 androidxCoreTest = "2.2.0"
@@ -51,7 +50,6 @@ ituDateVersion = "1.10.2"
 json = "20240303"
 junit4 = "4.13.2"
 junit5 = "5.11.3"
-keyboardVisibilityEvent = "2.3.0"
 kluent = "1.73"
 kotest = "5.9.1"
 kotlin = "2.0.21"
@@ -99,7 +97,7 @@ androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref
 androidx-annotation = { module = "androidx.annotation:annotation", version.ref = "androidxAnnotations"}
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidxAppcompat"}
 androidx-benchmark-macro-junit4 = { module = "androidx.benchmark:benchmark-macro-junit4", version.ref = "macroBenchmark"}
-androidx-compose-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "androidxComposeConstraintLayout"}
+androidx-collection = { module = "androidx.collection:collection", version.ref = "androidxCollection"}
 androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "androidxCompose"}
 androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "androidxComposeMaterial3"}
 androidx-compose-material3-adaptive = { module = "androidx.compose.material3.adaptive:adaptive", version.ref = "androidxComposeMaterial3Adaptive"}
@@ -114,14 +112,11 @@ androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx
 androidx-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "androidxCoreTest"}
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "androidxFragment"}
 androidx-fragment-testing = { module = "androidx.fragment:fragment-testing", version.ref = "androidxFragment"}
-androidx-legacy-support = { module = "androidx.legacy:legacy-support-v4", version.ref = "androidLegacySupport"}
 androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "androidxLifecycle"}
 androidx-lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "androidxLifecycle"}
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidxLifecycle"}
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidxLifecycle"}
-androidx-lifecycle-runtime-compose-android = { module = "androidx.lifecycle:lifecycle-runtime-compose-android", version.ref = "androidxLifecycle"}
 androidx-lifecycle-runtime-testing = { module = "androidx.lifecycle:lifecycle-runtime-testing", version.ref = "androidxLifecycle"}
-androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidxLifecycle"}
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidxNavigation"}
 androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "androidxNavigation"}
 androidx-navigation-runtime-ktx = { module = "androidx.navigation:navigation-runtime-ktx", version.ref = "androidxNavigation"}
@@ -136,7 +131,6 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "room"}
 androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "androidxStartup"}
 androidx-test-core = { module = "androidx.test:core", version.ref = "androidxTestCore"}
-androidx-test-core-ktx = { module = "androidx.test:core-ktx", version.ref = "androidxTestCore"}
 androidx-test-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso"}
 androidx-test-espresso-contrib = { module = "androidx.test.espresso:espresso-contrib", version.ref = "espresso"}
 androidx-test-espresso-idling-resource = { module = "androidx.test.espresso:espresso-idling-resource", version.ref = "espresso"}
@@ -171,10 +165,8 @@ junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.re
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit5"}
 junit-vintage-engine = { module = "org.junit.vintage:junit-vintage-engine", version.ref = "junit5"}
 junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params", version.ref = "junit5"}
-keyboardvisibilityevent = { module = "net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent", version.ref = "keyboardVisibilityEvent"}
 kluent = { module = "org.amshove.kluent:kluent", version.ref = "kluent"}
 kotest-assertions-json = { module = "io.kotest:kotest-assertions-json", version.ref = "kotest" }
-kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines"}
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines"}
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines"}
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin"}
@@ -191,7 +183,6 @@ moshi-kotlin = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "mosh
 moshi-codegen = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "moshi"}
 ok2curl = { module = "com.github.mrmike:ok2curl", version.ref = "ok2curl"}
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp"}
-okhttp-logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp"}
 okhttp-mockwebserver = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "okhttp"}
 permissionx = { module = "com.guolindev.permissionx:permissionx", version.ref = "permissionx"}
 reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable"}
@@ -203,7 +194,6 @@ shimmer-compose = { module = "com.valentinilk.shimmer:compose-shimmer", version.
 skydoves-compose-stable-marker = { module = "com.github.skydoves:compose-stable-marker", version.ref = "composeStableMarker"}
 skydoves-landscapist-coil = { module = "com.github.skydoves:landscapist-coil3", version.ref = "landscapist"}
 skydoves-landscapist-placeholder = { module = "com.github.skydoves:landscapist-placeholder", version.ref = "landscapist"}
-stream-android-push = { module = "io.getstream:stream-android-push", version.ref = "streamPush"}
 stream-push-delegate = { module = "io.getstream:stream-android-push-delegate", version.ref = "streamPush"}
 stream-push-firebase = { module = "io.getstream:stream-android-push-firebase", version.ref = "streamPush"}
 stream-push-huawei = { module = "io.getstream:stream-android-push-huawei", version.ref = "streamPush"}
@@ -211,13 +201,11 @@ stream-push-permissions = { module = "io.getstream:stream-android-push-permissio
 stream-push-permissions-snackbar = { module = "io.getstream:stream-android-push-permissions-snackbar", version.ref = "streamPush"}
 stream-push-xiaomi = { module = "io.getstream:stream-android-push-xiaomi", version.ref = "streamPush"}
 stream-log = { module = "io.getstream:stream-log", version.ref = "streamLog"}
-stream-photoview = { module = "io.getstream:photoview", version.ref = "photoview"}
 stream-photoview-dialog = { module = "io.getstream:photoview-dialog", version.ref = "photoview"}
 stream-result = { module = "io.getstream:stream-result", version.ref = "streamResult"}
 stream-result-call = { module = "io.getstream:stream-result-call", version.ref = "streamResult"}
 test-parameter-injector = { module = "com.google.testparameterinjector:test-parameter-injector", version.ref = "testParameterInjector"}
 threetenbp = { module = "org.threeten:threetenbp", version.ref = "threetenbp"}
-timber = { module = "com.jakewharton.timber:timber", version.ref = "timber"}
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine"}
 
 [plugins]

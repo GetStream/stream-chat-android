@@ -24,7 +24,6 @@ import android.util.AttributeSet
 import androidx.annotation.DrawableRes
 import com.google.android.material.imageview.ShapeableImageView
 import io.getstream.chat.android.ui.utils.load
-import okhttp3.HttpUrl
 import java.io.File
 import java.nio.ByteBuffer
 

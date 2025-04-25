@@ -84,14 +84,7 @@ dependencies {
     implementation(libs.stream.result)
     implementation(libs.androidx.compose.runtime)
 
-    implementation(libs.androidx.activity.ktx)
-    implementation(libs.androidx.annotation)
     implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.recyclerview)
-    implementation(libs.androidx.startup.runtime)
-    implementation(libs.androidx.constraintlayout)
-    implementation(libs.android.material)
-    implementation(libs.androidx.lifecycle.livedata.ktx)
 
     implementation(libs.coil)
     implementation(libs.coil.network.okhttp)

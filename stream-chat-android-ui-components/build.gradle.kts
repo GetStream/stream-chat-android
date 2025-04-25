@@ -84,7 +84,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.legacy.support)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.android.material)
     implementation(libs.androidx.fragment.ktx)
@@ -94,10 +93,7 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.coil.gif)
     implementation(libs.coil.video)
-    implementation(libs.okhttp)
     implementation(libs.androidx.startup.runtime)
-    implementation(libs.androidx.lifecycle.livedata.ktx)
-    implementation(libs.keyboardvisibilityevent)
     implementation(libs.permissionx)
 
     // Tests

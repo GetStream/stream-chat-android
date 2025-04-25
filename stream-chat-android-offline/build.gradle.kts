@@ -80,23 +80,15 @@ tasks.withType<KotlinCompile>().configureEach {
 
 dependencies {
     api(project(":stream-chat-android-client"))
-
     implementation(libs.stream.log)
-    // Kotlin
-
-    implementation(libs.kotlin.reflect)
-    implementation(libs.kotlinx.coroutines.core)
 
     // Google libs
+    implementation(libs.androidx.collection)
 
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.core.ktx)
-
-    implementation(libs.androidx.lifecycle.livedata.ktx)
+    // Room
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
-    implementation(libs.androidx.work)
 
     // Serialization
     implementation(libs.moshi)

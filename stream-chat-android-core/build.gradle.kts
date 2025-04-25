@@ -41,9 +41,7 @@ tasks.withType<KotlinCompile>().configureEach {
 }
 
 dependencies {
-    implementation(libs.kotlin.reflect)
     implementation(libs.kotlinx.coroutines.core)
-    implementation(libs.androidx.annotation)
     compileOnly(libs.skydoves.compose.stable.marker)
 
     api(libs.stream.result)

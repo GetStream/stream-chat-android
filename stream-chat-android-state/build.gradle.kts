@@ -77,9 +77,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
 
     // Google libs
-    implementation(libs.androidx.activity.ktx)
-    implementation(libs.androidx.annotation)
-    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.collection)
     implementation(libs.androidx.work)
 
     // Tests
