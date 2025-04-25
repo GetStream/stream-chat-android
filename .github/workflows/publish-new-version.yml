@@ -62,6 +62,7 @@ jobs:
       bump: ${{ inputs.bump }}
       file-path: ./buildSrc/src/main/kotlin/io/getstream/chat/android/Configuration.kt
       release-notes: ${{ needs.generate_release_notes.outputs.release_notes }}
+      excluded-modules: "stream-chat-android-ui-components-sample,stream-chat-android-compose-sample,stream-chat-android-docs"
     secrets:
       OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
       OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
