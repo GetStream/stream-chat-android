@@ -37,7 +37,7 @@ internal object MediaGalleryInjector {
      *
      * @param imageLoader The [ImageLoader] instance to set.
      */
-    internal fun install(imageLoader: ImageLoader) {
+    fun install(imageLoader: ImageLoader) {
         this.imageLoader = imageLoader
     }
 }
