@@ -83,6 +83,7 @@
 - Introduce experimental `MediaGalleryPreviewScreen` composable component which renders a standalone media gallery for a `Message` with media attachments. [#5726](https://github.com/GetStream/stream-chat-android/pull/5726)
 
 ### ⚠️ Changed
+- Deprecate `ThreadMessagesStart` in favor of `Arrangement.Vertical`. [#5745](https://github.com/GetStream/stream-chat-android/pull/5745)
 
 ### ❌ Removed
 
