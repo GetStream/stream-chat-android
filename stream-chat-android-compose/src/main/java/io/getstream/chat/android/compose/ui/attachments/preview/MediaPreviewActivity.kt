@@ -206,6 +206,7 @@ public class MediaPreviewActivity : AppCompatActivity() {
                 player = null
             }
         }
+        // Prepare media
         LaunchedEffect(player, url) {
             if (player != null) {
                 player?.setMediaItem(MediaItem.fromUri(url))
@@ -213,9 +214,10 @@ public class MediaPreviewActivity : AppCompatActivity() {
                 player?.playWhenReady = true
             }
         }
-
+        // Draw player
         player?.let { preparedPlayer ->
             Box(contentAlignment = Alignment.Center) {
+                // Video/Audio player
                 AndroidView(
                     modifier = Modifier
                         .fillMaxSize()
@@ -227,6 +229,7 @@ public class MediaPreviewActivity : AppCompatActivity() {
                         playerView
                     },
                 )
+                // Buffering indicator
                 if (showBuffering) {
                     LoadingIndicator()
                 }

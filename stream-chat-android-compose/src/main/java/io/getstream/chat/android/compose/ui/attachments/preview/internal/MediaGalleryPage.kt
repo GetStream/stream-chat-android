@@ -317,13 +317,14 @@ internal fun MediaGalleryVideoPage(
             player = null
         }
     }
+    // Prepare media
     LaunchedEffect(player, assetUrl) {
         if (player != null && assetUrl != null) {
             player?.setMediaItem(MediaItem.fromUri(assetUrl))
             player?.prepare()
         }
     }
-
+    // Draw player
     player?.let { preparedPlayer ->
         Box(
             modifier = modifier,
