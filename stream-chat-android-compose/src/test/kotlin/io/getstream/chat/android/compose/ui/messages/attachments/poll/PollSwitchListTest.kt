@@ -25,7 +25,7 @@ import org.junit.Test
 internal class PollSwitchListTest : SnapshotTest {
 
     @get:Rule
-    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
+    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_4A)
 
     @Test
     fun `list items`() {
