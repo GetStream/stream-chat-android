@@ -77,6 +77,7 @@
 
 ### ⬆️ Improved
 - Improve the images loading. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
+- Improve the performance of playing video/audio attachments by using `ExoPlayer` instead of `VideoView`. [#5749](https://github.com/GetStream/stream-chat-android/pull/5749)
 
 ### ✅ Added
 - Introduce `MediaGalleryConfig` for simple configuration(show/hide) of the actions in the `MediaGalleryPreviewActivity`. [#5726](https://github.com/GetStream/stream-chat-android/pull/5726)
