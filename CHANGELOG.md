@@ -73,11 +73,14 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
+- Fix crash when multiple answers field is not a valid number when creating a poll. [#5733](https://github.com/GetStream/stream-chat-android/pull/5733)
 
 ### ⬆️ Improved
 - Improve the images loading. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
 
 ### ✅ Added
+- Introduce `MediaGalleryConfig` for simple configuration(show/hide) of the actions in the `MediaGalleryPreviewActivity`. [#5726](https://github.com/GetStream/stream-chat-android/pull/5726)
+- Introduce experimental `MediaGalleryPreviewScreen` composable component which renders a standalone media gallery for a `Message` with media attachments. [#5726](https://github.com/GetStream/stream-chat-android/pull/5726)
 
 ### ⚠️ Changed
 - Deprecate `ThreadMessagesStart` in favor of `Arrangement.Vertical`. [#5745](https://github.com/GetStream/stream-chat-android/pull/5745)
