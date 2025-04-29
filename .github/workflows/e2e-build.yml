@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4.2.2
-      - uses: ./.github/actions/setup-java
+      - uses: GetStream/android-ci-actions/actions/setup-java@main
       - uses: ./.github/actions/enable-kvm
       - uses: ./.github/actions/setup-ruby
       - uses: ./.github/actions/gradle-cache
