@@ -119,6 +119,12 @@ public fun MediaAttachmentContent(
     val (message, _, onLongItemClick, onMediaGalleryPreviewResult) = attachmentState
     val gridSpacing = ChatTheme.dimens.attachmentsContentMediaGridSpacing
 
+    // Prepare the image loader for the media gallery
+    val imageLoader = LocalStreamImageLoader.current
+    LaunchedEffect(imageLoader) {
+        MediaGalleryInjector.install(imageLoader)
+    }
+
     Row(
         modifier
             .clip(ChatTheme.shapes.attachment)
@@ -420,12 +426,6 @@ internal fun MediaAttachmentContentItem(
         ImageRequest.Builder(context)
             .data(data)
             .build()
-    }
-
-    // Prepare the image loader for the media gallery
-    val imageLoader = LocalStreamImageLoader.current
-    LaunchedEffect(imageLoader) {
-        MediaGalleryInjector.install(imageLoader)
     }
 
     val config = ChatTheme.mediaGalleryConfig
