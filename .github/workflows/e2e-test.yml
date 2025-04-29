@@ -34,7 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4.1.1
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
-      - uses: ./.github/actions/allure-launch
+      - uses: GetStream/android-ci-actions/actions/allure-launch@main
         if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
         with:
           allure-token: ${{ secrets.ALLURE_TOKEN }}

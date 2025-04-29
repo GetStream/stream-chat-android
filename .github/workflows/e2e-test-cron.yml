@@ -50,7 +50,7 @@ jobs:
       - uses: GetStream/android-ci-actions/actions/setup-java@main
       - uses: ./.github/actions/enable-kvm
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
-      - uses: ./.github/actions/allure-launch
+      - uses: GetStream/android-ci-actions/actions/allure-launch@main
         with:
           allure-token: ${{ secrets.ALLURE_TOKEN }}
           cron: true
