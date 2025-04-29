@@ -62,8 +62,8 @@ import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryInjector
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract
-import io.getstream.chat.android.compose.ui.attachments.preview.internal.MediaGalleryInjector
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader

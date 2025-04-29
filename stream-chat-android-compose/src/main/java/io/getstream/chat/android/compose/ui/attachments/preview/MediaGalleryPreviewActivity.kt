@@ -55,7 +55,6 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.SaveMedia
 import io.getstream.chat.android.compose.state.mediagallerypreview.ShowInChat
 import io.getstream.chat.android.compose.state.mediagallerypreview.toMediaGalleryPreviewActivityState
 import io.getstream.chat.android.compose.state.mediagallerypreview.toMessage
-import io.getstream.chat.android.compose.ui.attachments.preview.internal.MediaGalleryInjector
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.util.attachmentDownloadState

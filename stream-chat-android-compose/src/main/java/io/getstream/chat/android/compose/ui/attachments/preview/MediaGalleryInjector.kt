@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.attachments.preview.internal
+package io.getstream.chat.android.compose.ui.attachments.preview
 
 import coil3.ImageLoader
 
