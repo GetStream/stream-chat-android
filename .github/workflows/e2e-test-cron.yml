@@ -49,7 +49,7 @@ jobs:
           name: apks
       - uses: GetStream/android-ci-actions/actions/setup-java@main
       - uses: ./.github/actions/enable-kvm
-      - uses: ./.github/actions/setup-ruby
+      - uses: GetStream/android-ci-actions/actions/setup-ruby@main
       - uses: ./.github/actions/allure-launch
         with:
           allure-token: ${{ secrets.ALLURE_TOKEN }}

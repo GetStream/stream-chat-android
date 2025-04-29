@@ -75,7 +75,7 @@ jobs:
         with:
           name: testDebugUnitTest
           path: ./**/build/reports/tests/testDebugUnitTest
-      - uses: ./.github/actions/setup-ruby
+      - uses: GetStream/android-ci-actions/actions/setup-ruby@main
       - name: Sonar
         if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
         run: bundle exec fastlane run_sonar_analysis
@@ -87,5 +87,5 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4.2.2
-      - uses: ./.github/actions/setup-ruby
+      - uses: GetStream/android-ci-actions/actions/setup-ruby@main
       - run: bundle exec fastlane rubocop

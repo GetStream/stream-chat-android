@@ -33,7 +33,7 @@ jobs:
       launch_id: ${{ env.LAUNCH_ID }}
     steps:
       - uses: actions/checkout@v4.1.1
-      - uses: ./.github/actions/setup-ruby
+      - uses: GetStream/android-ci-actions/actions/setup-ruby@main
       - uses: ./.github/actions/allure-launch
         if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
         with:
@@ -63,7 +63,7 @@ jobs:
           name: apks
       - uses: GetStream/android-ci-actions/actions/setup-java@main
       - uses: ./.github/actions/enable-kvm
-      - uses: ./.github/actions/setup-ruby
+      - uses: GetStream/android-ci-actions/actions/setup-ruby@main
       - name: Run tests
         uses: reactivecircus/android-emulator-runner@v2
         timeout-minutes: 45

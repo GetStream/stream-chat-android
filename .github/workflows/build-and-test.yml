@@ -46,7 +46,7 @@ jobs:
         with:
           name: testDebugUnitTest
           path: ./**/build/reports/tests/testDebugUnitTest
-      - uses: ./.github/actions/setup-ruby
+      - uses: GetStream/android-ci-actions/actions/setup-ruby@main
       - name: Sonar
         run: bundle exec fastlane run_sonar_analysis
         env:
