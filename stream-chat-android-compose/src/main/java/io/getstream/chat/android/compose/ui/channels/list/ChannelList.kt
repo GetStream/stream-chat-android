@@ -16,13 +16,9 @@
 
 package io.getstream.chat.android.compose.ui.channels.list
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -42,6 +38,7 @@ import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.EmptyContent
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
+import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
@@ -355,14 +352,13 @@ internal fun DefaultChannelSearchEmptyContent(
 /**
  * Represents the default item divider in channel items.
  */
+@Deprecated(
+    message = "This function is deprecated and will be removed in the future.",
+    level = DeprecationLevel.WARNING,
+)
 @Composable
 public fun DefaultChannelItemDivider() {
-    Spacer(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(0.5.dp)
-            .background(color = ChatTheme.colors.borders),
-    )
+    StreamHorizontalDivider()
 }
 
 /**
