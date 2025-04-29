@@ -22,9 +22,9 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3.1.0
       - uses: GetStream/android-ci-actions/actions/setup-java@main
-      - uses: ./.github/actions/gradle-cache
+      - uses: GetStream/android-ci-actions/actions/gradle-cache@main
         with:
-          key-prefix: gradle-lint
+          cache-name: gradle-lint
       - name: spotless
         run: ./gradlew spotlessCheck --scan
       - name: Detekt
@@ -38,9 +38,9 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3.1.0
       - uses: GetStream/android-ci-actions/actions/setup-java@main
-      - uses: ./.github/actions/gradle-cache
+      - uses: GetStream/android-ci-actions/actions/gradle-cache@main
         with:
-          key-prefix: gradle-APICheck
+          cache-name: gradle-APICheck
       - name: API check
         run: ./gradlew apiCheck --scan
 
@@ -51,9 +51,9 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3.1.0
       - uses: GetStream/android-ci-actions/actions/setup-java@main
-      - uses: ./.github/actions/gradle-cache
+      - uses: GetStream/android-ci-actions/actions/gradle-cache@main
         with:
-          key-prefix: gradle-build
+          cache-name: gradle-build
       - name: Build
         run: ./gradlew assembleDebug --scan
 
@@ -64,9 +64,9 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3.1.0
       - uses: GetStream/android-ci-actions/actions/setup-java@main
-      - uses: ./.github/actions/gradle-cache
+      - uses: GetStream/android-ci-actions/actions/gradle-cache@main
         with:
-          key-prefix: gradle-test
+          cache-name: gradle-test
       - name: Unit tests
         run: ./scripts/ci-unit-tests.sh
       - name: Upload testDebugUnitTest results
