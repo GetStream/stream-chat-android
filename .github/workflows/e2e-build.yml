@@ -20,7 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4.2.2
       - uses: GetStream/android-ci-actions/actions/setup-java@main
-      - uses: ./.github/actions/enable-kvm
+      - uses: GetStream/android-ci-actions/actions/enable-kvm@main
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
       - uses: ./.github/actions/gradle-cache
         with:

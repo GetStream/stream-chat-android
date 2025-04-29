@@ -48,7 +48,7 @@ jobs:
         with:
           name: apks
       - uses: GetStream/android-ci-actions/actions/setup-java@main
-      - uses: ./.github/actions/enable-kvm
+      - uses: GetStream/android-ci-actions/actions/enable-kvm@main
       - uses: GetStream/android-ci-actions/actions/setup-ruby@main
       - uses: GetStream/android-ci-actions/actions/allure-launch@main
         with:
