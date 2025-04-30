@@ -230,6 +230,7 @@ internal class DtoMapping(
                     role = role,
                     devices = devices.map { it.toDto() },
                     teams = teams,
+                    teams_role = teamsRole,
                     extraData = extraData,
                 )
             }

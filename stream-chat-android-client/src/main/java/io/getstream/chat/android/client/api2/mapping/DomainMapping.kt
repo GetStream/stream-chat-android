@@ -266,6 +266,7 @@ internal class DomainMapping(
             unreadThreads = unread_threads,
             mutes = mutes.orEmpty().map { it.toDomain() },
             teams = teams,
+            teamsRole = teams_role.orEmpty(),
             channelMutes = channel_mutes.orEmpty().map { it.toDomain() },
             blockedUserIds = blocked_user_ids.orEmpty(),
             extraData = extraData.toMutableMap(),
