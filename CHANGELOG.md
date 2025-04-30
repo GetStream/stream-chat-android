@@ -87,6 +87,8 @@
 ### ✅ Added
 - Introduce `MediaGalleryConfig` for simple configuration(show/hide) of the actions in the `MediaGalleryPreviewActivity`. [#5726](https://github.com/GetStream/stream-chat-android/pull/5726)
 - Introduce experimental `MediaGalleryPreviewScreen` composable component which renders a standalone media gallery for a `Message` with media attachments. [#5726](https://github.com/GetStream/stream-chat-android/pull/5726)
+- Add `ChatComponentFactory.MessageListBackground` method for overriding the default `MessageList` background. [#5750](https://github.com/GetStream/stream-chat-android/pull/5750)
+- Add `background` argument to the `MessageList` composable for overriding the default background. [#5750](https://github.com/GetStream/stream-chat-android/pull/5750)
 
 ### ⚠️ Changed
 - Deprecate `ThreadMessagesStart` in favor of `Arrangement.Vertical`. [#5745](https://github.com/GetStream/stream-chat-android/pull/5745)

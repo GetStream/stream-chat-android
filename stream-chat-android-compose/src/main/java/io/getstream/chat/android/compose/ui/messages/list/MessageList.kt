@@ -332,7 +332,7 @@ internal fun DefaultMessageListLoadingIndicator(modifier: Modifier) {
 @Composable
 internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
     Box(
-        modifier = modifier.background(color = ChatTheme.colors.appBackground),
+        modifier = modifier,
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -374,6 +374,7 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * @param onMessagesPageEndReached Handler for pagination when the end of newest messages have been reached.
  * @param onScrollToBottom Handler when the user requests to scroll to the bottom of the messages list.
  * @param onPauseAudioRecordingAttachments Handler for lifecycle events.
+ * @param background Composable that represents the background of the message list.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based
@@ -418,6 +419,9 @@ public fun MessageList(
     onMessageLinkClick: ((Message, String) -> Unit)? = null,
     onUserMentionClick: (User) -> Unit = { _ -> },
     onReply: (Message) -> Unit = {},
+    background: @Composable () -> Unit = {
+        ChatTheme.componentFactory.MessageListBackground()
+    },
     loadingContent: @Composable () -> Unit = {
         ChatTheme.componentFactory.MessageListLoadingIndicator(modifier)
     },
@@ -497,32 +501,37 @@ public fun MessageList(
     val isLoading = currentState.isLoading
     val messages = currentState.messageItems
 
-    when {
-        isLoading -> loadingContent()
-        messages.isNotEmpty() -> {
-            Messages(
-                modifier = modifier,
-                contentPadding = contentPadding,
-                messagesState = currentState,
-                messagesLazyListState = messagesLazyListState,
-                onMessagesStartReached = onMessagesPageStartReached,
-                verticalArrangement = verticalArrangement,
-                threadsVerticalArrangement = threadsVerticalArrangement,
-                threadMessagesStart = threadMessagesStart,
-                onLastVisibleMessageChanged = onLastVisibleMessageChanged,
-                onScrolledToBottom = onScrolledToBottom,
-                helperContent = helperContent,
-                loadingMoreContent = loadingMoreContent,
-                itemModifier = itemModifier,
-                itemContent = itemContent,
-                onMessagesEndReached = onMessagesPageEndReached,
-                onScrollToBottom = onScrollToBottom,
-            )
+    Box {
+        // Draw background behind the messages list
+        background()
+        // Draw the messages list content
+        when {
+            isLoading -> loadingContent()
+            messages.isNotEmpty() -> {
+                Messages(
+                    modifier = modifier,
+                    contentPadding = contentPadding,
+                    messagesState = currentState,
+                    messagesLazyListState = messagesLazyListState,
+                    onMessagesStartReached = onMessagesPageStartReached,
+                    verticalArrangement = verticalArrangement,
+                    threadsVerticalArrangement = threadsVerticalArrangement,
+                    threadMessagesStart = threadMessagesStart,
+                    onLastVisibleMessageChanged = onLastVisibleMessageChanged,
+                    onScrolledToBottom = onScrolledToBottom,
+                    helperContent = helperContent,
+                    loadingMoreContent = loadingMoreContent,
+                    itemModifier = itemModifier,
+                    itemContent = itemContent,
+                    onMessagesEndReached = onMessagesPageEndReached,
+                    onScrollToBottom = onScrollToBottom,
+                )
 
-            /** Clean up: Pause any playing audio tracks in onPause(). **/
-            LifecycleEventEffect(Lifecycle.Event.ON_PAUSE, onEvent = onPauseAudioRecordingAttachments)
+                /** Clean up: Pause any playing audio tracks in onPause(). **/
+                LifecycleEventEffect(Lifecycle.Event.ON_PAUSE, onEvent = onPauseAudioRecordingAttachments)
+            }
+
+            else -> emptyContent()
         }
-
-        else -> emptyContent()
     }
 }
