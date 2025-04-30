@@ -47,6 +47,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fix `ErrorEvent.PollCastingVoteError` emitted instead of `ErrorEvent.PollRemovingVoteError` when `MessageListController.removeVote` fails. [#5742](https://github.com/GetStream/stream-chat-android/pull/5742)
 
 ### ⬆️ Improved
 
@@ -75,6 +76,7 @@
 ### 🐞 Fixed
 - Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
 - Fix crash when multiple answers field is not a valid number when creating a poll. [#5733](https://github.com/GetStream/stream-chat-android/pull/5733)
+- Ensure the `ImageLoader` created by a custom `StreamCoilImageLoaderFactory` is passed to the `MediaGalleryPreviewActivity`. [#5736](https://github.com/GetStream/stream-chat-android/pull/5736)
 
 ### ⬆️ Improved
 - Improve the images loading. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
