@@ -49,17 +49,17 @@ internal class TokenAuthInterceptor internal constructor(
 
             tokenManager.ensureTokenLoaded()
 
-            val request: Request = addTokenHeader(chain.request(), token = tokenManager.getToken())
+            val request: Request = addTokenHeader(chain.request())
             var response: Response = chain.proceed(request)
 
             if (!response.isSuccessful) {
                 val err = parser.toError(response)
                 if (err.serverErrorCode == ChatErrorCode.TOKEN_EXPIRED.code) {
                     tokenManager.expireToken()
-                    val freshToken = tokenManager.loadSync()
+                    tokenManager.loadSync()
                     response.close()
-                    // Rebuild the request with the new token and retry the request.
-                    val requestWithFreshToken = addTokenHeader(chain.request(), token = freshToken)
+                    // Rebuild the request with the new token (retrieved from the TokenManager) and retry the request.
+                    val requestWithFreshToken = addTokenHeader(chain.request())
                     response = chain.proceed(requestWithFreshToken)
                 } else {
                     throw ChatRequestError(err.message, err.serverErrorCode, err.statusCode, err.cause)
@@ -69,15 +69,17 @@ internal class TokenAuthInterceptor internal constructor(
         }
     }
 
-    private fun addTokenHeader(request: Request, token: String): Request = try {
-        request.newBuilder().header(AUTH_HEADER, token).build()
-    } catch (e: IllegalArgumentException) {
-        throw ChatRequestError(
-            "${ChatErrorCode.INVALID_TOKEN.description}: '$token'",
-            ChatErrorCode.INVALID_TOKEN.code,
-            -1,
-            e,
-        )
+    private fun addTokenHeader(request: Request): Request = tokenManager.getToken().let { token ->
+        try {
+            request.newBuilder().header(AUTH_HEADER, token).build()
+        } catch (e: IllegalArgumentException) {
+            throw ChatRequestError(
+                "${ChatErrorCode.INVALID_TOKEN.description}: '$token'",
+                ChatErrorCode.INVALID_TOKEN.code,
+                -1,
+                e,
+            )
+        }
     }
 
     companion object {
