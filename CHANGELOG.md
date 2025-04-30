@@ -46,6 +46,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fix `ErrorEvent.PollCastingVoteError` emitted instead of `ErrorEvent.PollRemovingVoteError` when `MessageListController.removeVote` fails. [#5742](https://github.com/GetStream/stream-chat-android/pull/5742)
 
 ### ⬆️ Improved
 
@@ -77,6 +78,7 @@
 
 ### ⬆️ Improved
 - Improve the images loading. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
+- Remove the divider of the last item in the channel list and pinned message list. [#5746](https://github.com/GetStream/stream-chat-android/pull/5746)
 
 ### ✅ Added
 - Introduce `MediaGalleryConfig` for simple configuration(show/hide) of the actions in the `MediaGalleryPreviewActivity`. [#5726](https://github.com/GetStream/stream-chat-android/pull/5726)
@@ -85,6 +87,7 @@
 - Add `background` argument to the `MessageList` composable for overriding the default background. [#5750](https://github.com/GetStream/stream-chat-android/pull/5750)
 
 ### ⚠️ Changed
+- Deprecate `ThreadMessagesStart` in favor of `Arrangement.Vertical`. [#5745](https://github.com/GetStream/stream-chat-android/pull/5745)
 
 ### ❌ Removed
 

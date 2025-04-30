@@ -231,10 +231,10 @@ public fun MentionList(
             LazyPagingColumn(
                 items = state.results,
                 modifier = modifier,
-                itemKey = { item -> item.message.identifierHash() },
+                itemKey = { _, item -> item.message.identifierHash() },
                 showLoadingItem = state.isLoadingMore,
                 onLoadMore = onLoadMore,
-                itemContent = itemContent,
+                itemContent = { _, item -> itemContent(item) },
                 loadingItem = loadingItemContent,
             )
         }
