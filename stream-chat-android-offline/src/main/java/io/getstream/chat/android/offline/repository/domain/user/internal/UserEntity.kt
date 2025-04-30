@@ -40,6 +40,8 @@ import java.util.Date
  * @param invisible Determines if the user should share its online status. Can only be changed while connecting the user.
  * @param banned Whether a user is banned or not.
  * @param mutes A list of users muted by the current user.
+ * @param teams A list of teams of which the user is a member of.
+ * @param teamsRole The roles of the user in the teams they are part of
  * @param extraData A map of custom fields for the user.
  */
 @Entity(tableName = USER_ENTITY_TABLE_NAME)
@@ -57,6 +59,8 @@ internal data class UserEntity(
     val privacySettings: PrivacySettingsEntity?,
     val banned: Boolean = false,
     val mutes: List<String> = emptyList(),
+    val teams: List<String> = emptyList(),
+    val teamsRole: Map<String, String> = emptyMap(),
     val extraData: Map<String, Any> = emptyMap(),
 )
 

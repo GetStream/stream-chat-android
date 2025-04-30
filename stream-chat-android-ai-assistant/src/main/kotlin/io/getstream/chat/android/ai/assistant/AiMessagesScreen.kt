@@ -244,7 +244,6 @@ public fun AiMessagesScreen(
                 modifier = Modifier
                     .testTag("Stream_MessagesList")
                     .fillMaxSize()
-                    .background(ChatTheme.colors.appBackground)
                     .padding(it),
                 viewModel = listViewModel,
                 reactionSorting = reactionSorting,

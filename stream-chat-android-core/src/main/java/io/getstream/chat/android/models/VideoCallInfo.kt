@@ -28,6 +28,10 @@ import androidx.compose.runtime.Immutable
  * @property hmsRoom The available room info of HMS.
  * @property videoCallToken The token info of the video call.
  */
+@Deprecated(
+    "This third-party library integration is deprecated. Contact the support team for more information.",
+    level = DeprecationLevel.WARNING,
+)
 @Immutable
 public data class VideoCallInfo(
     val callId: String,
