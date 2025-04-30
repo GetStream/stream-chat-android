@@ -45,6 +45,10 @@ public class ChannelInfoController(
 ) {
     private val logger by taggedLogger("Chat:ChannelInfoController")
 
+    private val channelStateFlow = chatClient
+        .watchChannelAsState(cid = cid, messageLimit = 0, coroutineScope = scope)
+        .filterNotNull()
+
     private val channelClient = chatClient.channel(cid)
 
     private val _state = MutableStateFlow(ChannelInfoViewState())
@@ -54,12 +58,6 @@ public class ChannelInfoController(
     private val _events = MutableSharedFlow<ChannelInfoEvent>(extraBufferCapacity = 1)
 
     public val events: SharedFlow<ChannelInfoEvent> = _events.asSharedFlow()
-
-    private val channelStateFlow = chatClient.watchChannelAsState(
-        cid = cid,
-        messageLimit = 0,
-        coroutineScope = scope,
-    ).filterNotNull()
 
     init {
         channelStateFlow
@@ -99,7 +97,8 @@ public class ChannelInfoController(
                     "[onSuccessContent] name: ${channel.name}, " +
                         "members: ${channelMembers.size}, " +
                         "expanded: ${expandedMembers.size}, " +
-                        "collapsed: ${collapsedMembers.size}"
+                        "collapsed: ${collapsedMembers.size}, " +
+                        "muted: $muted"
                 }
 
                 _state.update { currentState ->
@@ -117,20 +116,32 @@ public class ChannelInfoController(
                             )
                         }
 
-                        is ChannelInfoViewState.Content.Success -> {
-                            currentState.copy(
-                                content = currentState.content.copy(
-                                    expandedMembers = expandedMembers,
-                                    collapsedMembers = collapsedMembers,
-                                    areMembersExpandable = collapsedMemberCount > 0,
-                                    name = channel.name,
-                                    isMuted = muted,
-                                ),
-                            )
-                        }
-
                         else -> currentState
                     }
+                }
+            }
+            .launchIn(scope)
+
+        channelStateFlow.flatMapLatest { channelState -> channelState.channelData }
+            .onEach { channel ->
+                _state.update { currentState ->
+                    (currentState.content as? ChannelInfoViewState.Content.Success)?.let { content ->
+                        currentState.copy(
+                            content = content.copy(name = channel.name),
+                        )
+                    } ?: currentState
+                }
+            }
+            .launchIn(scope)
+
+        channelStateFlow.flatMapLatest { channelState -> channelState.muted }
+            .onEach { muted ->
+                _state.update { currentState ->
+                    (currentState.content as? ChannelInfoViewState.Content.Success)?.let { content ->
+                        currentState.copy(
+                            content = content.copy(isMuted = muted),
+                        )
+                    } ?: currentState
                 }
             }
             .launchIn(scope)
