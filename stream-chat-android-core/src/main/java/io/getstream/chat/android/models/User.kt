@@ -42,6 +42,7 @@ import java.util.Date
  * @param unreadThreads The total number of unread threads for the current user.
  * @param mutes A list of users muted by the current user.
  * @param teams List of teams user is a part of.
+ * @param teamsRole The roles of the user in the teams they are part of. Example: `["teamId": "role"]`.
  * @param channelMutes A list of channels muted by the current user.
  * @param blockedUserIds A list of user ids blocked by the current user.
  * @param extraData A map of custom fields for the user.
@@ -67,6 +68,7 @@ public data class User(
     val unreadThreads: Int = 0,
     val mutes: List<Mute> = listOf(),
     val teams: List<String> = listOf(),
+    val teamsRole: Map<String, String> = emptyMap(),
     val channelMutes: List<ChannelMute> = emptyList(),
     val blockedUserIds: List<String> = emptyList(),
     override val extraData: Map<String, Any> = mapOf(),
@@ -137,6 +139,7 @@ public data class User(
         private var unreadThreads: Int = 0
         private var mutes: List<Mute> = listOf()
         private var teams: List<String> = listOf()
+        private var teamsRole: Map<String, String> = emptyMap()
         private var channelMutes: List<ChannelMute> = emptyList()
         private var blockedUserIds: List<String> = emptyList()
         private var extraData: Map<String, Any> = mutableMapOf()
@@ -161,6 +164,7 @@ public data class User(
             unreadThreads = user.unreadThreads
             mutes = user.mutes
             teams = user.teams
+            teamsRole = user.teamsRole
             channelMutes = user.channelMutes
             blockedUserIds = user.blockedUserIds
             extraData = user.extraData
@@ -187,6 +191,7 @@ public data class User(
         public fun withUnreadThreads(unreadThreads: Int): Builder = apply { this.unreadThreads = unreadThreads }
         public fun withMutes(mutes: List<Mute>): Builder = apply { this.mutes = mutes }
         public fun withTeams(teams: List<String>): Builder = apply { this.teams = teams }
+        public fun withTeamsRole(teamsRole: Map<String, String>): Builder = apply { this.teamsRole = teamsRole }
         public fun withChannelMutes(channelMutes: List<ChannelMute>): Builder = apply {
             this.channelMutes = channelMutes
         }
@@ -216,6 +221,7 @@ public data class User(
                 unreadThreads = unreadThreads,
                 mutes = mutes,
                 teams = teams,
+                teamsRole = teamsRole,
                 channelMutes = channelMutes,
                 blockedUserIds = blockedUserIds,
                 extraData = extraData.toMutableMap(),

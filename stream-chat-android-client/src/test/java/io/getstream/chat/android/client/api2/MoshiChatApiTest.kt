@@ -67,13 +67,10 @@ import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialR
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
 import io.getstream.chat.android.client.api2.model.requests.UpstreamVoteDto
-import io.getstream.chat.android.client.api2.model.requests.VideoCallCreateRequest
-import io.getstream.chat.android.client.api2.model.requests.VideoCallTokenRequest
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.CompletableResponse
-import io.getstream.chat.android.client.api2.model.response.CreateVideoCallResponse
 import io.getstream.chat.android.client.api2.model.response.DevicesResponse
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
@@ -100,7 +97,6 @@ import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequ
 import io.getstream.chat.android.client.api2.model.response.UnblockUserResponse
 import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
 import io.getstream.chat.android.client.api2.model.response.UsersResponse
-import io.getstream.chat.android.client.api2.model.response.VideoCallTokenResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.client.scope.ClientScope
@@ -1762,45 +1758,6 @@ internal class MoshiChatApiTest {
     }
 
     @ParameterizedTest
-    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#createVideoCallInput")
-    fun testCreateVideoCall(call: RetrofitCall<CreateVideoCallResponse>, expected: KClass<*>) = runTest {
-        // given
-        val api = mock<VideoCallApi>()
-        whenever(api.createCall(any(), any(), any())).doReturn(call)
-        val sut = Fixture()
-            .withCallApi(api)
-            .get()
-        // when
-        val channelType = randomString()
-        val channelId = randomString()
-        val callId = randomString()
-        val callType = randomString()
-        val result = sut.createVideoCall(channelId, channelType, callId, callType).await()
-        // then
-        val expectedBody = VideoCallCreateRequest(callId, callType)
-        result `should be instance of` expected
-        verify(api, times(1)).createCall(channelType, channelId, expectedBody)
-    }
-
-    @ParameterizedTest
-    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getVideoCallTokenInput")
-    fun testGetVideoCallToken(call: RetrofitCall<VideoCallTokenResponse>, expected: KClass<*>) = runTest {
-        // given
-        val api = mock<VideoCallApi>()
-        whenever(api.getCallToken(any(), any())).doReturn(call)
-        val sut = Fixture()
-            .withCallApi(api)
-            .get()
-        // when
-        val callId = randomString()
-        val result = sut.getVideoCallToken(callId).await()
-        // then
-        val expectedBody = VideoCallTokenRequest(callId)
-        result `should be instance of` expected
-        verify(api, times(1)).getCallToken(callId, expectedBody)
-    }
-
-    @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#sendEventInput")
     fun testSendEvent(call: RetrofitCall<EventResponse>, expected: KClass<*>) = runTest {
         // given
@@ -2142,10 +2099,6 @@ internal class MoshiChatApiTest {
 
         fun withConfigApi(configApi: ConfigApi) = apply {
             this.configApi = configApi
-        }
-
-        fun withCallApi(callApi: VideoCallApi) = apply {
-            this.callApi = callApi
         }
 
         fun withFileDownloadApi(fileDownloadApi: FileDownloadApi) = apply {

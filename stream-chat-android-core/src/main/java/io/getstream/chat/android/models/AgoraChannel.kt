@@ -23,5 +23,9 @@ import androidx.compose.runtime.Immutable
  *
  * @property channel A new channel.
  */
+@Deprecated(
+    "This third-party library integration is deprecated. Contact the support team for more information.",
+    level = DeprecationLevel.WARNING,
+)
 @Immutable
 public data class AgoraChannel(val channel: String)

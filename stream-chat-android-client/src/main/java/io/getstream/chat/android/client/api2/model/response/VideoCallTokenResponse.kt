@@ -19,6 +19,10 @@ package io.getstream.chat.android.client.api2.model.response
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
+@Deprecated(
+    "This third-party library integration is deprecated. Contact the support team for more information.",
+    level = DeprecationLevel.WARNING,
+)
 @JsonClass(generateAdapter = true)
 internal data class VideoCallTokenResponse(
     val token: String,
