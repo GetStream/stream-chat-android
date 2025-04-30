@@ -25,7 +25,7 @@ import androidx.compose.runtime.Immutable
  * @property roomName A new room name.
  */
 @Deprecated(
-    "This third-party library integration is deprecated. Contact to the support team for more information.",
+    "This third-party library integration is deprecated. Contact the support team for more information.",
     level = DeprecationLevel.WARNING,
 )
 @Immutable

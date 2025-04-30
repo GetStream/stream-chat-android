@@ -1232,7 +1232,7 @@ constructor(
     }
 
     @Deprecated(
-        "This third-party library integration is deprecated. Contact to the support team for more information.",
+        "This third-party library integration is deprecated. Contact the support team for more information.",
         level = DeprecationLevel.WARNING,
     )
     @Suppress("DEPRECATION")
@@ -1250,7 +1250,7 @@ constructor(
     }
 
     @Deprecated(
-        "This third-party library integration is deprecated. Contact to the support team for more information.",
+        "This third-party library integration is deprecated. Contact the support team for more information.",
         level = DeprecationLevel.WARNING,
     )
     @Suppress("DEPRECATION")

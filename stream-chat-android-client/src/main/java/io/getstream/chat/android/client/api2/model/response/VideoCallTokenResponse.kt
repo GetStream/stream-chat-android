@@ -20,7 +20,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @Deprecated(
-    "This third-party library integration is deprecated. Contact to the support team for more information.",
+    "This third-party library integration is deprecated. Contact the support team for more information.",
     level = DeprecationLevel.WARNING,
 )
 @JsonClass(generateAdapter = true)

@@ -26,7 +26,7 @@ import androidx.compose.runtime.Immutable
  * @property agoraAppId The App Id of Agora.
  */
 @Deprecated(
-    "This third-party library integration is deprecated. Contact to the support team for more information.",
+    "This third-party library integration is deprecated. Contact the support team for more information.",
     level = DeprecationLevel.WARNING,
 )
 @Immutable

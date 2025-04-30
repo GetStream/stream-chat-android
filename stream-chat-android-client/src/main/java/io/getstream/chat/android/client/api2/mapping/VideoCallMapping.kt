@@ -26,7 +26,7 @@ import io.getstream.chat.android.models.VideoCallInfo
 import io.getstream.chat.android.models.VideoCallToken
 
 @Deprecated(
-    "This third-party library integration is deprecated. Contact to the support team for more information.",
+    "This third-party library integration is deprecated. Contact the support team for more information.",
     level = DeprecationLevel.WARNING,
 )
 internal fun AgoraDto.toDomain(): AgoraChannel {
@@ -34,7 +34,7 @@ internal fun AgoraDto.toDomain(): AgoraChannel {
 }
 
 @Deprecated(
-    "This third-party library integration is deprecated. Contact to the support team for more information.",
+    "This third-party library integration is deprecated. Contact the support team for more information.",
     level = DeprecationLevel.WARNING,
 )
 internal fun HMSDto.toDomain(): HMSRoom {
@@ -42,7 +42,7 @@ internal fun HMSDto.toDomain(): HMSRoom {
 }
 
 @Deprecated(
-    "This third-party library integration is deprecated. Contact to the support team for more information.",
+    "This third-party library integration is deprecated. Contact the support team for more information.",
     level = DeprecationLevel.WARNING,
 )
 @Suppress("DEPRECATION")
@@ -62,7 +62,7 @@ internal fun CreateVideoCallResponse.toDomain(): VideoCallInfo {
 }
 
 @Deprecated(
-    "This third-party library integration is deprecated. Contact to the support team for more information.",
+    "This third-party library integration is deprecated. Contact the support team for more information.",
     level = DeprecationLevel.WARNING,
 )
 internal fun VideoCallTokenResponse.toDomain(): VideoCallToken {

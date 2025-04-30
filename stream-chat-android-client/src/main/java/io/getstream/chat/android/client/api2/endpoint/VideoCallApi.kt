@@ -30,7 +30,7 @@ import retrofit2.http.Path
 internal interface VideoCallApi {
 
     @Deprecated(
-        "This third-party library integration is deprecated. Contact to the support team for more information.",
+        "This third-party library integration is deprecated. Contact the support team for more information.",
         level = DeprecationLevel.WARNING,
     )
     @POST("/channels/{channelType}/{channelId}/call")
@@ -41,7 +41,7 @@ internal interface VideoCallApi {
     ): RetrofitCall<CreateVideoCallResponse>
 
     @Deprecated(
-        "This third-party library integration is deprecated. Contact to the support team for more information.",
+        "This third-party library integration is deprecated. Contact the support team for more information.",
         level = DeprecationLevel.WARNING,
     )
     @POST("/calls/{callId}")

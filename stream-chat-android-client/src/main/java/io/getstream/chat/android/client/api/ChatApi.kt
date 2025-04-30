@@ -475,14 +475,14 @@ internal interface ChatApi {
     ): Call<List<BannedUser>>
 
     @Deprecated(
-        "This third-party library integration is deprecated. Contact to the support team for more information.",
+        "This third-party library integration is deprecated. Contact the support team for more information.",
         level = DeprecationLevel.WARNING,
     )
     @CheckResult
     fun createVideoCall(channelId: String, channelType: String, callId: String, callType: String): Call<VideoCallInfo>
 
     @Deprecated(
-        "This third-party library integration is deprecated. Contact to the support team for more information.",
+        "This third-party library integration is deprecated. Contact the support team for more information.",
         level = DeprecationLevel.WARNING,
     )
     @CheckResult
