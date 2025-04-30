@@ -46,6 +46,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fix `ErrorEvent.PollCastingVoteError` emitted instead of `ErrorEvent.PollRemovingVoteError` when `MessageListController.removeVote` fails. [#5742](https://github.com/GetStream/stream-chat-android/pull/5742)
 
 ### ⬆️ Improved
 
