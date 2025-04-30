@@ -14,6 +14,7 @@
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fix `NullPointerException` in `SubscriptionImpl` when subscription is disposed concurrently while being filtered. [#5738](https://github.com/GetStream/stream-chat-android/pull/5738)
+- Fix new Stream token not sent with the request after refreshing it. [#5757](https://github.com/GetStream/stream-chat-android/pull/5757)
 
 ### ⬆️ Improved
 
