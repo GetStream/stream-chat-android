@@ -25,7 +25,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -92,17 +92,20 @@ public fun Channels(
                 DummyFirstChannelItem()
             }
 
-            items(
+            itemsIndexed(
                 items = channelItems,
-                key = ItemState::key,
-            ) { item ->
+                key = { _, item -> item.key },
+            ) { index, item ->
                 itemContent(item)
 
-                divider()
+                if (index < channelItems.lastIndex) {
+                    divider()
+                }
             }
 
             if (isLoadingMore) {
                 item {
+                    divider()
                     loadingMoreContent()
                 }
             }
