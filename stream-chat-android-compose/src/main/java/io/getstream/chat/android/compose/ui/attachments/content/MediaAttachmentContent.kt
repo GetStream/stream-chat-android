@@ -40,6 +40,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -61,9 +62,11 @@ import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryInjector
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
@@ -113,8 +116,14 @@ public fun MediaAttachmentContent(
         }
     },
 ) {
-    val (message, isMine, onLongItemClick, onMediaGalleryPreviewResult) = attachmentState
+    val (message, _, onLongItemClick, onMediaGalleryPreviewResult) = attachmentState
     val gridSpacing = ChatTheme.dimens.attachmentsContentMediaGridSpacing
+
+    // Prepare the image loader for the media gallery
+    val imageLoader = LocalStreamImageLoader.current
+    LaunchedEffect(imageLoader) {
+        MediaGalleryInjector.install(imageLoader)
+    }
 
     Row(
         modifier
@@ -413,14 +422,15 @@ internal fun MediaAttachmentContentItem(
         }
 
     val context = LocalContext.current
-    val imageRequest = remember {
+    val imageRequest = remember(data) {
         ImageRequest.Builder(context)
             .data(data)
             .build()
     }
 
+    val config = ChatTheme.mediaGalleryConfig
     val mixedMediaPreviewLauncher = rememberLauncherForActivityResult(
-        contract = MediaGalleryPreviewContract(),
+        contract = MediaGalleryPreviewContract(config),
         onResult = { result -> onMediaGalleryPreviewResult(result) },
     )
 

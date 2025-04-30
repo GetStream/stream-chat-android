@@ -16,11 +16,13 @@
 
 package io.getstream.chat.android.previewdata
 
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.ReactionGroup
+import io.getstream.chat.android.models.User
 import java.util.Date
 
 /**
@@ -106,6 +108,29 @@ public object PreviewMessageData {
         createdAt = Date(),
         type = MessageType.REGULAR,
         mentionedUsers = listOf(PreviewUserData.user7),
+    )
+
+    public val messageWithUserAndAttachment: Message = Message(
+        id = "message-with-user-and-attachment",
+        text = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit.",
+        type = MessageType.REGULAR,
+        user = User(id = "test-user", name = "Test User"),
+        attachments = listOf(
+            Attachment(
+                fileSize = 2000000,
+                type = "image",
+                mimeType = "image/jpeg",
+                imageUrl = "https://example.com/image1.jpg",
+                thumbUrl = "https://example.com/thumb1.jpg",
+            ),
+            Attachment(
+                fileSize = 2000000,
+                type = "video",
+                mimeType = "video/mp4",
+                imageUrl = "https://example.com/image1.jpg",
+                thumbUrl = "https://example.com/thumb1.jpg",
+            ),
+        ),
     )
 
     public val draftMessage: DraftMessage = DraftMessage(

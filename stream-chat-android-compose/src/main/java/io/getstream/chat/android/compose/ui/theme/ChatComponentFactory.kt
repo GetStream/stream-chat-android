@@ -66,7 +66,6 @@ import io.getstream.chat.android.compose.ui.channels.info.DefaultSelectedChannel
 import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
 import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelItemCenterContent
-import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelItemDivider
 import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelItemLeadingContent
 import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelItemTrailingContent
 import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelListEmptyContent
@@ -85,6 +84,7 @@ import io.getstream.chat.android.compose.ui.components.LoadingFooter
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.SearchInput
+import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptions
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
@@ -156,7 +156,6 @@ import io.getstream.chat.android.compose.ui.messages.preview.internal.DefaultMes
 import io.getstream.chat.android.compose.ui.messages.preview.internal.DefaultMessagePreviewItemLeadingContent
 import io.getstream.chat.android.compose.ui.messages.preview.internal.DefaultMessagePreviewItemTrailingContent
 import io.getstream.chat.android.compose.ui.pinned.DefaultPinnedMessageListEmptyContent
-import io.getstream.chat.android.compose.ui.pinned.DefaultPinnedMessageListItemDivider
 import io.getstream.chat.android.compose.ui.pinned.DefaultPinnedMessageListLoadingContent
 import io.getstream.chat.android.compose.ui.pinned.DefaultPinnedMessageListLoadingMoreContent
 import io.getstream.chat.android.compose.ui.pinned.PinnedMessageItem
@@ -395,7 +394,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun LazyItemScope.ChannelListDividerItem() {
-        DefaultChannelItemDivider()
+        StreamHorizontalDivider()
     }
 
     /**
@@ -2597,7 +2596,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun PinnedMessageListItemDivider() {
-        DefaultPinnedMessageListItemDivider()
+        StreamHorizontalDivider()
     }
 
     /**
