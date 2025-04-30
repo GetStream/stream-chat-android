@@ -14,23 +14,17 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.messages.attachments.poll
+package io.getstream.chat.android.compose.ui.components
 
-import app.cash.paparazzi.DeviceConfig
-import app.cash.paparazzi.Paparazzi
-import io.getstream.chat.android.compose.ui.SnapshotTest
-import org.junit.Rule
-import org.junit.Test
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
-internal class PollSwitchListTest : SnapshotTest {
-
-    @get:Rule
-    override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_4A)
-
-    @Test
-    fun `list items`() {
-        snapshotWithDarkMode {
-            PollSwitchList()
-        }
-    }
+@Composable
+internal fun StreamHorizontalDivider() {
+    HorizontalDivider(
+        thickness = .5.dp,
+        color = ChatTheme.colors.borders,
+    )
 }

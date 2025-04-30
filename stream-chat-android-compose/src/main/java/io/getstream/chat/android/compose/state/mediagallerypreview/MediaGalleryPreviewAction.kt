@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.state.mediagallerypreview
 
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Message
 
 /**
@@ -24,7 +25,8 @@ import io.getstream.chat.android.models.Message
  *
  * @property message The message that the action is being performed on.
  */
-internal sealed class MediaGalleryPreviewAction {
+@ExperimentalStreamChatApi
+public sealed class MediaGalleryPreviewAction {
     internal abstract val message: Message
 }
 
@@ -32,19 +34,23 @@ internal sealed class MediaGalleryPreviewAction {
  * Should take the user back to the message list with a pre-packaged
  * quoted reply in the message input.
  */
-internal data class Reply(override val message: Message) : MediaGalleryPreviewAction()
+@ExperimentalStreamChatApi
+public data class Reply(override val message: Message) : MediaGalleryPreviewAction()
 
 /**
  * Should show the message containing the attachments in the message list.
  */
-internal data class ShowInChat(override val message: Message) : MediaGalleryPreviewAction()
+@ExperimentalStreamChatApi
+public data class ShowInChat(override val message: Message) : MediaGalleryPreviewAction()
 
 /**
  * Should save the media to storage.
  */
-internal data class SaveMedia(override val message: Message) : MediaGalleryPreviewAction()
+@ExperimentalStreamChatApi
+public data class SaveMedia(override val message: Message) : MediaGalleryPreviewAction()
 
 /**
  * Should remove the selected media attachment from the original message.
  */
-internal data class Delete(override val message: Message) : MediaGalleryPreviewAction()
+@ExperimentalStreamChatApi
+public data class Delete(override val message: Message) : MediaGalleryPreviewAction()
