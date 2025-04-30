@@ -128,8 +128,10 @@ internal class DatabaseUserRepository(
             invisible = isInvisible,
             privacySettings = privacySettings?.toEntity(),
             banned = isBanned,
-            extraData = extraData,
             mutes = mutes.map { mute -> mute.target?.id.orEmpty() },
+            teams = teams,
+            teamsRole = teamsRole,
+            extraData = extraData,
         )
 
     private fun toModel(userEntity: UserEntity): User = with(userEntity) {
@@ -143,8 +145,10 @@ internal class DatabaseUserRepository(
             lastActive = lastActive,
             invisible = invisible,
             privacySettings = privacySettings?.toModel(),
-            extraData = extraData.toMutableMap(),
             banned = banned,
+            teams = teams,
+            teamsRole = teamsRole,
+            extraData = extraData.toMutableMap(),
         )
     }
 

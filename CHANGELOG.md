@@ -5,6 +5,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `teamsRole` field to the `User` model for team-based roles. [#5737](https://github.com/GetStream/stream-chat-android/pull/5737)
 
 ### ⚠️ Changed
 - Deprecated API endpoints related to third-party video call integrations, which are no longer natively supported. These endpoints will be removed in future releases. [#5740](https://github.com/GetStream/stream-chat-android/pull/5740)
@@ -14,6 +15,7 @@
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fix `NullPointerException` in `SubscriptionImpl` when subscription is disposed concurrently while being filtered. [#5738](https://github.com/GetStream/stream-chat-android/pull/5738)
+- Fix new Stream token not sent with the request after refreshing it. [#5757](https://github.com/GetStream/stream-chat-android/pull/5757)
 
 ### ⬆️ Improved
 
