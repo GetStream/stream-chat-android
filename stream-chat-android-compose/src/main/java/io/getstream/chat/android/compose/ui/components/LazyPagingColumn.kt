@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -43,10 +44,10 @@ import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 internal fun <T> LazyPagingColumn(
     items: List<T>,
     modifier: Modifier = Modifier,
-    itemKey: ((item: T) -> Any)? = null,
+    itemKey: ((index: Int, item: T) -> Any)? = null,
     showLoadingItem: Boolean = false,
     onLoadMore: () -> Unit = {},
-    itemContent: @Composable LazyItemScope.(item: T) -> Unit,
+    itemContent: @Composable LazyItemScope.(index: Int, item: T) -> Unit,
     loadingItem: @Composable LazyItemScope.() -> Unit = {
         LoadingFooter(modifier = modifier.fillMaxWidth())
     },
@@ -56,7 +57,7 @@ internal fun <T> LazyPagingColumn(
         modifier = modifier,
         state = lazyListState,
     ) {
-        items(
+        itemsIndexed(
             items = items,
             key = itemKey,
             itemContent = itemContent,

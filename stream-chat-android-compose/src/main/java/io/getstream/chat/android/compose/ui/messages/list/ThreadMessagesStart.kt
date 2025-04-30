@@ -21,20 +21,49 @@ import androidx.compose.runtime.Stable
 /**
  * Represents where the thread messages start.
  */
+@Deprecated(
+    message = "This class is deprecated and will be removed in the future. " +
+        "Use `threadsVerticalArrangement` parameter with one of `Arrangement.Vertical` instead.",
+    replaceWith = ReplaceWith(
+        expression = "Arrangement.Vertical",
+        imports = ["androidx.compose.foundation.layout.Arrangement"],
+    ),
+    level = DeprecationLevel.WARNING,
+)
 @Stable
 public sealed class ThreadMessagesStart {
 
     /**
      * Thread messages start from the top of the component.
      */
-    @Stable public object TOP : ThreadMessagesStart() {
+    @Stable
+    @Deprecated(
+        message = "This class is deprecated and will be removed in the future. " +
+            "Use `threadsVerticalArrangement` parameter with `Arrangement.Top` instead.",
+        replaceWith = ReplaceWith(
+            expression = "Arrangement.Top",
+            imports = ["androidx.compose.foundation.layout.Arrangement"],
+        ),
+        level = DeprecationLevel.WARNING,
+    )
+    public object TOP : ThreadMessagesStart() {
         override fun toString(): String = "TOP"
     }
 
     /**
      * Thread messages start from the bottom of the component.
      */
-    @Stable public object BOTTOM : ThreadMessagesStart() {
+    @Stable
+    @Deprecated(
+        message = "This class is deprecated and will be removed in the future. " +
+            "Use `threadsVerticalArrangement` parameter with `Arrangement.Bottom` instead.",
+        replaceWith = ReplaceWith(
+            expression = "Arrangement.Bottom",
+            imports = ["androidx.compose.foundation.layout.Arrangement"],
+        ),
+        level = DeprecationLevel.WARNING,
+    )
+    public object BOTTOM : ThreadMessagesStart() {
         override fun toString(): String = "BOTTOM"
     }
 }

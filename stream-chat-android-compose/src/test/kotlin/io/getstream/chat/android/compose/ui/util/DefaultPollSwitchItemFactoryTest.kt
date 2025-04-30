@@ -56,7 +56,7 @@ internal class DefaultPollSwitchItemFactoryTest {
         Assertions.assertEquals(1, items[0].pollSwitchInput?.minValue)
         Assertions.assertEquals(2, items[0].pollSwitchInput?.maxValue)
         Assertions.assertEquals("Max number of answers", items[0].pollSwitchInput?.description)
-        Assertions.assertEquals(KeyboardType.Decimal, items[0].pollSwitchInput?.keyboardType)
+        Assertions.assertEquals(KeyboardType.Number, items[0].pollSwitchInput?.keyboardType)
         Assertions.assertNull(items[0].pollOptionError)
         // Anonymous poll item
         Assertions.assertEquals("Anonymous poll", items[1].title)
