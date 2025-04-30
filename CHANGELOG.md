@@ -1,78 +1,28 @@
-# UNRELEASED CHANGELOG
+# April 30th, 2025 - 6.15.0
 ## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Add `teamsRole` field to the `User` model for team-based roles. [#5737](https://github.com/GetStream/stream-chat-android/pull/5737)
 
 ### ⚠️ Changed
 - Deprecated API endpoints related to third-party video call integrations, which are no longer natively supported. These endpoints will be removed in future releases. [#5740](https://github.com/GetStream/stream-chat-android/pull/5740)
 
-### ❌ Removed
-
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fix `NullPointerException` in `SubscriptionImpl` when subscription is disposed concurrently while being filtered. [#5738](https://github.com/GetStream/stream-chat-android/pull/5738)
 - Fix new Stream token not sent with the request after refreshing it. [#5757](https://github.com/GetStream/stream-chat-android/pull/5757)
 
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
 - Fix `ErrorEvent.PollCastingVoteError` emitted instead of `ErrorEvent.PollRemovingVoteError` when `MessageListController.removeVote` fails. [#5742](https://github.com/GetStream/stream-chat-android/pull/5742)
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
 
-### ⬆️ Improved
-
-### ✅ Added
-
 ### ⚠️ Changed
 - Replace `StreamImage` with `StreamAsyncImage`. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
 - Deprecate landscapist `StreamImage` in favor of coil `SubcomposeAsyncImage`. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
 - Deprecate `rememberStreamImagePainter` in favor of coil `rememberAsyncImagePainter`. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
-
-### ❌ Removed
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -92,19 +42,6 @@
 
 ### ⚠️ Changed
 - Deprecate `ThreadMessagesStart` in favor of `Arrangement.Vertical`. [#5745](https://github.com/GetStream/stream-chat-android/pull/5745)
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # April 16th, 2025 - 6.14.0
 ## stream-chat-android-client
