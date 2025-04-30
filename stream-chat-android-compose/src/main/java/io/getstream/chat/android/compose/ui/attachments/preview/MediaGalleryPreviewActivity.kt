@@ -33,6 +33,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
@@ -55,6 +56,7 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.ShowInChat
 import io.getstream.chat.android.compose.state.mediagallerypreview.toMediaGalleryPreviewActivityState
 import io.getstream.chat.android.compose.state.mediagallerypreview.toMessage
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.util.attachmentDownloadState
 import io.getstream.chat.android.compose.util.onDownloadHandleRequest
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModel
@@ -161,7 +163,6 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 SetupEdgeToEdge()
 
                 val message = mediaGalleryPreviewViewModel.message
-
                 if (message.isDeleted()) {
                     finish()
                     return@ChatTheme
@@ -171,24 +172,30 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 val downloadAttachmentUriGenerator = ChatTheme.streamDownloadAttachmentUriGenerator
                 val downloadRequestInterceptor = ChatTheme.streamDownloadRequestInterceptor
 
-                MediaGalleryPreviewScreen(
-                    modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars),
-                    viewModel = mediaGalleryPreviewViewModel,
-                    initialPage = attachmentPosition,
-                    onHeaderLeadingContentClick = ::finish,
-                    onOptionClick = { attachment, option ->
-                        handleMediaAction(
-                            attachment,
-                            option.action,
-                            writePermissionState,
-                            downloadPayload,
-                            downloadAttachmentUriGenerator::generateDownloadUri,
-                            downloadRequestInterceptor::intercept,
-                        )
-                    },
-                    onRequestShareAttachment = ::onRequestShareAttachment,
-                    onConfirmShareAttachment = ::shareAttachment,
-                )
+                // Take the imageLoader from the injector, which is populated by the MediaAttachmentContent. This is a
+                // workaround for the fact that the MediaGalleryPreviewActivity is not a part of the composition tree of
+                // the MessageList, so the provided imageLoaderFactory from the MessageList ChatTheme cannot be used.
+                val imageLoader = MediaGalleryInjector.imageLoader ?: LocalStreamImageLoader.current
+                CompositionLocalProvider(LocalStreamImageLoader provides imageLoader) {
+                    MediaGalleryPreviewScreen(
+                        modifier = Modifier.windowInsetsPadding(WindowInsets.systemBars),
+                        viewModel = mediaGalleryPreviewViewModel,
+                        initialPage = attachmentPosition,
+                        onHeaderLeadingContentClick = ::finish,
+                        onOptionClick = { attachment, option ->
+                            handleMediaAction(
+                                attachment,
+                                option.action,
+                                writePermissionState,
+                                downloadPayload,
+                                downloadAttachmentUriGenerator::generateDownloadUri,
+                                downloadRequestInterceptor::intercept,
+                            )
+                        },
+                        onRequestShareAttachment = ::onRequestShareAttachment,
+                        onConfirmShareAttachment = ::shareAttachment,
+                    )
+                }
             }
         }
     }
