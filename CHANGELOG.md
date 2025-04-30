@@ -8,6 +8,7 @@
 - Add `teamsRole` field to the `User` model for team-based roles. [#5737](https://github.com/GetStream/stream-chat-android/pull/5737)
 
 ### ⚠️ Changed
+- Deprecated API endpoints related to third-party video call integrations, which are no longer natively supported. These endpoints will be removed in future releases. [#5740](https://github.com/GetStream/stream-chat-android/pull/5740)
 
 ### ❌ Removed
 

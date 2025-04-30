@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.UploadFileResponse
-import io.getstream.chat.android.client.api2.model.dto.AgoraDto
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelInfoDto
 import io.getstream.chat.android.client.api2.model.dto.CommandDto
@@ -53,24 +52,20 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamVoteDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDetailDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorDto
-import io.getstream.chat.android.client.api2.model.dto.HMSDto
 import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
 import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.SearchWarningDto
 import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
-import io.getstream.chat.android.client.api2.model.dto.VideoCallInfoDto
 import io.getstream.chat.android.client.api2.model.response.AppDto
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
 import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
-import io.getstream.chat.android.client.api2.model.response.CreateVideoCallResponse
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.FileUploadConfigDto
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
 import io.getstream.chat.android.client.api2.model.response.TokenResponse
 import io.getstream.chat.android.client.api2.model.response.UnblockUserResponse
-import io.getstream.chat.android.client.api2.model.response.VideoCallTokenResponse
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -1099,53 +1094,6 @@ internal object Mother {
     ): UploadFileResponse = UploadFileResponse(
         file = file,
         thumb_url = thumbUrl,
-    )
-
-    fun randomAgoraDto(channel: String = randomString()): AgoraDto =
-        AgoraDto(channel)
-
-    fun randomHMSDto(
-        roomId: String = randomString(),
-        roomName: String = randomString(),
-    ): HMSDto = HMSDto(
-        roomId = roomId,
-        roomName = roomName,
-    )
-
-    fun randomCreateVideoCallResponse(
-        call: VideoCallInfoDto = randomVideoCallInfoDto(),
-        token: String = randomString(),
-        agoraUid: Int = randomInt(),
-        agoraAppId: String = randomString(),
-    ): CreateVideoCallResponse = CreateVideoCallResponse(
-        call = call,
-        token = token,
-        agoraUid = agoraUid,
-        agoraAppId = agoraAppId,
-    )
-
-    fun randomVideoCallInfoDto(
-        id: String = randomString(),
-        provider: String = randomString(),
-        type: String = randomString(),
-        agora: AgoraDto = randomAgoraDto(),
-        hms: HMSDto = randomHMSDto(),
-    ): VideoCallInfoDto = VideoCallInfoDto(
-        id = id,
-        provider = provider,
-        type = type,
-        agora = agora,
-        hms = hms,
-    )
-
-    fun randomVideoCallTokenResponse(
-        token: String = randomString(),
-        agoraUid: Int = randomInt(),
-        agoraAppId: String = randomString(),
-    ): VideoCallTokenResponse = VideoCallTokenResponse(
-        token = token,
-        agoraUid = agoraUid,
-        agoraAppId = agoraAppId,
     )
 
     fun randomErrorDto(

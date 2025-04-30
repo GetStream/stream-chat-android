@@ -1231,6 +1231,11 @@ constructor(
             }
     }
 
+    @Deprecated(
+        "This third-party library integration is deprecated. Contact the support team for more information.",
+        level = DeprecationLevel.WARNING,
+    )
+    @Suppress("DEPRECATION")
     override fun createVideoCall(
         channelId: String,
         channelType: String,
@@ -1244,6 +1249,11 @@ constructor(
         ).map(CreateVideoCallResponse::toDomain)
     }
 
+    @Deprecated(
+        "This third-party library integration is deprecated. Contact the support team for more information.",
+        level = DeprecationLevel.WARNING,
+    )
+    @Suppress("DEPRECATION")
     override fun getVideoCallToken(callId: String): Call<VideoCallToken> {
         return callApi.getCallToken(callId, VideoCallTokenRequest(callId)).map(VideoCallTokenResponse::toDomain)
     }

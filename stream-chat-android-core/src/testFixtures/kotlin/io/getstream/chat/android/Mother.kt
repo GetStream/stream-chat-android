@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android
 
-import io.getstream.chat.android.models.AgoraChannel
 import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.App
 import io.getstream.chat.android.models.AppSettings
@@ -35,7 +34,6 @@ import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.models.Flag
-import io.getstream.chat.android.models.HMSRoom
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
@@ -57,8 +55,6 @@ import io.getstream.chat.android.models.ThreadParticipant
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
-import io.getstream.chat.android.models.VideoCallInfo
-import io.getstream.chat.android.models.VideoCallToken
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.result.Error
@@ -850,44 +846,6 @@ public fun randomPollAnswer(
     createdAt = createdAt,
     updatedAt = updatedAt,
     user = user,
-)
-
-public fun randomVideoCallInfo(
-    callId: String = randomString(),
-    provider: String = randomString(),
-    type: String = randomString(),
-    agoraChannel: AgoraChannel = randomAgoraChannel(),
-    hmsRoom: HMSRoom = randomHMSRoom(),
-    videoCallToken: VideoCallToken = randomVideoCallToken(),
-): VideoCallInfo = VideoCallInfo(
-    callId = callId,
-    provider = provider,
-    type = type,
-    agoraChannel = agoraChannel,
-    hmsRoom = hmsRoom,
-    videoCallToken = videoCallToken,
-)
-
-public fun randomAgoraChannel(
-    channel: String = randomString(),
-): AgoraChannel = AgoraChannel(channel)
-
-public fun randomHMSRoom(
-    roomId: String = randomString(),
-    roomName: String = randomString(),
-): HMSRoom = HMSRoom(
-    roomId = roomId,
-    roomName = roomName,
-)
-
-public fun randomVideoCallToken(
-    token: String = randomString(),
-    agoraUid: Int = randomInt(),
-    agoraAppId: String = randomString(),
-): VideoCallToken = VideoCallToken(
-    token = token,
-    agoraUid = agoraUid,
-    agoraAppId = agoraAppId,
 )
 
 public fun randomQueryThreadsResult(
