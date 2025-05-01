@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.theme
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -26,6 +27,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -66,7 +68,6 @@ import io.getstream.chat.android.compose.ui.channels.info.DefaultSelectedChannel
 import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
 import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelItemCenterContent
-import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelItemDivider
 import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelItemLeadingContent
 import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelItemTrailingContent
 import io.getstream.chat.android.compose.ui.channels.list.DefaultChannelListEmptyContent
@@ -85,6 +86,7 @@ import io.getstream.chat.android.compose.ui.components.LoadingFooter
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.SearchInput
+import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptions
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
@@ -156,7 +158,6 @@ import io.getstream.chat.android.compose.ui.messages.preview.internal.DefaultMes
 import io.getstream.chat.android.compose.ui.messages.preview.internal.DefaultMessagePreviewItemLeadingContent
 import io.getstream.chat.android.compose.ui.messages.preview.internal.DefaultMessagePreviewItemTrailingContent
 import io.getstream.chat.android.compose.ui.pinned.DefaultPinnedMessageListEmptyContent
-import io.getstream.chat.android.compose.ui.pinned.DefaultPinnedMessageListItemDivider
 import io.getstream.chat.android.compose.ui.pinned.DefaultPinnedMessageListLoadingContent
 import io.getstream.chat.android.compose.ui.pinned.DefaultPinnedMessageListLoadingMoreContent
 import io.getstream.chat.android.compose.ui.pinned.PinnedMessageItem
@@ -395,7 +396,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun LazyItemScope.ChannelListDividerItem() {
-        DefaultChannelItemDivider()
+        StreamHorizontalDivider()
     }
 
     /**
@@ -686,6 +687,18 @@ public interface ChatComponentFactory {
             channel = channel,
             currentUser = currentUser,
             onClick = onClick,
+        )
+    }
+
+    /**
+     * The default background of the message list.
+     */
+    @Composable
+    public fun MessageListBackground() {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(ChatTheme.colors.appBackground),
         )
     }
 
@@ -2597,7 +2610,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun PinnedMessageListItemDivider() {
-        DefaultPinnedMessageListItemDivider()
+        StreamHorizontalDivider()
     }
 
     /**

@@ -58,7 +58,9 @@ internal class TokenAuthInterceptor internal constructor(
                     tokenManager.expireToken()
                     tokenManager.loadSync()
                     response.close()
-                    response = chain.proceed(request)
+                    // Rebuild the request with the new token (retrieved from the TokenManager) and retry the request.
+                    val requestWithFreshToken = addTokenHeader(chain.request())
+                    response = chain.proceed(requestWithFreshToken)
                 } else {
                     throw ChatRequestError(err.message, err.serverErrorCode, err.statusCode, err.cause)
                 }

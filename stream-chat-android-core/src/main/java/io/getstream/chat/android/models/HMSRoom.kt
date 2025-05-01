@@ -24,6 +24,10 @@ import androidx.compose.runtime.Immutable
  * @property roomId A new room id.
  * @property roomName A new room name.
  */
+@Deprecated(
+    "This third-party library integration is deprecated. Contact the support team for more information.",
+    level = DeprecationLevel.WARNING,
+)
 @Immutable
 public data class HMSRoom(
     val roomId: String,

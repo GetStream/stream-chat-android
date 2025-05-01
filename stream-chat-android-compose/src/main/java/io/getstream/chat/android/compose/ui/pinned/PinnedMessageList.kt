@@ -219,10 +219,12 @@ private fun PinnedMessages(
             itemsIndexed(messages) { index, pinnedMessage ->
                 if (pinnedMessage.id.isNotEmpty()) {
                     itemContent(pinnedMessage)
-                    itemDivider(index)
                 } else {
                     // Empty ID represents a 'loading more' item
                     loadingMoreContent()
+                }
+                if (index < messages.lastIndex) {
+                    itemDivider(index)
                 }
             }
         }
@@ -230,19 +232,6 @@ private fun PinnedMessages(
     LoadMoreHandler(
         lazyListState = listState,
         loadMore = onLoadMore,
-    )
-}
-
-/**
- * The default divider appended after each pinned message.
- */
-@Composable
-internal fun DefaultPinnedMessageListItemDivider() {
-    Spacer(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(0.5.dp)
-            .background(color = ChatTheme.colors.borders),
     )
 }
 

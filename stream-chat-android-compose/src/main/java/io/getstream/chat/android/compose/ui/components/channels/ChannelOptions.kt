@@ -16,10 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.components.channels
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -28,11 +25,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.extensions.isArchive
 import io.getstream.chat.android.client.extensions.isPinned
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channels.list.ChannelOptionState
+import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.models.Channel
@@ -71,12 +68,7 @@ public fun ChannelOptions(
             .wrapContentHeight(),
     ) {
         items(options) { option ->
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(0.5.dp)
-                    .background(color = ChatTheme.colors.borders),
-            )
+            StreamHorizontalDivider()
 
             with(ChatTheme.componentFactory) {
                 ChannelOptionsItem(
