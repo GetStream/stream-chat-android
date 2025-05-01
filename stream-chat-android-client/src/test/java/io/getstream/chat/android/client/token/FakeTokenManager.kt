@@ -17,10 +17,14 @@
 package io.getstream.chat.android.client.token
 
 internal class FakeTokenManager(
-    private val token: String,
+    private var token: String,
     private val loadSyncToken: String = token,
 ) : TokenManager {
-    override fun loadSync(): String = loadSyncToken
+
+    override fun loadSync(): String = loadSyncToken.also {
+        token = loadSyncToken
+    }
+
     override fun getToken(): String = token
 
     override fun ensureTokenLoaded() {

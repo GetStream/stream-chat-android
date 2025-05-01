@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.api.interceptor
 
+import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.api.FakeChain
 import io.getstream.chat.android.client.api.FakeResponse
 import io.getstream.chat.android.client.api.FakeResponse.Body
@@ -26,10 +27,16 @@ import io.getstream.chat.android.client.token.CacheableTokenProvider
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.token.FakeTokenProvider
 import io.getstream.chat.android.client.token.TokenManagerImpl
+import okhttp3.Request
 import org.amshove.kluent.invoking
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldThrow
 import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.mockito.Mockito.verify
+import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.spy
+import org.mockito.kotlin.times
 
 internal class TokenAuthInterceptorTests {
 
@@ -100,5 +107,32 @@ internal class TokenAuthInterceptorTests {
         interceptor.intercept(chain)
         chain.processChain()
         interceptor.intercept(chain)
+    }
+
+    @Test
+    fun expiredTokenIsReplacedWithFreshOne() {
+        val tokenManager = FakeTokenManager(
+            token = "expired-token",
+            loadSyncToken = "fresh-token",
+        )
+        val interceptor = TokenAuthInterceptor(tokenManager, parser) { false }
+
+        val request = Mother.randomGetRequest()
+        val response = FakeResponse(401, Body("""{ "code": 40 }""")) // Token expired
+        val chain = spy(FakeChain(response, request = request))
+
+        interceptor.intercept(chain)
+
+        // Use argument captor to verify the actual requests passed to proceed
+        val requestCaptor = argumentCaptor<Request>()
+        verify(chain, times(2)).proceed(requestCaptor.capture())
+
+        // Extract the captured requests
+        val capturedRequests = requestCaptor.allValues
+
+        // Verify the first request has the expired token
+        Assertions.assertEquals("expired-token", capturedRequests[0].header(TokenAuthInterceptor.AUTH_HEADER))
+        // Verify the second request has the fresh token
+        Assertions.assertEquals("fresh-token", capturedRequests[1].header(TokenAuthInterceptor.AUTH_HEADER))
     }
 }

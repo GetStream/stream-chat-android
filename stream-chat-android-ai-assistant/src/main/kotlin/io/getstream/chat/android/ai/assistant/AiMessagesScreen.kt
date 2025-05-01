@@ -89,20 +89,28 @@ import io.getstream.chat.android.ui.common.state.messages.Reply
  * @param viewModelFactory The factory used to build ViewModels and power the behavior.
  * You can customize the behavior of the list through its parameters. For default behavior,
  * simply create an instance and pass in just the channel ID and the context.
+ * @param isAiStarted If the AI assistant is started or not.
+ * @param onStartAiAssistant Handler for when the user taps on the Start AI button.
+ * @param onStopAiAssistant Handler for when the user taps on the Stop AI button.
  * @param showHeader If we're showing the header or not.
+ * @param typingState The current typing state of the channel.
  * @param reactionSorting The sorting type for reactions. Default is [ReactionSortingByFirstReactionAt].
  * @param onBackPressed Handler for when the user taps on the Back button and/or the system
  * back button.
+ * @param onComposerLinkPreviewClick Handler for when the user taps on a link preview in the composer.
  * @param onHeaderTitleClick Handler for when the user taps on the header section.
  * @param onChannelAvatarClick Handler called when the user taps on the channel avatar.
+ * @param onMessageLinkClick Handler for when the user taps on a link in a message.
  * @param onUserAvatarClick Handler when users avatar is clicked.
  * @param skipPushNotification If new messages should skip triggering a push notification when sent. False by default.
  * @param skipEnrichUrl If new messages being sent, or existing ones being updated should skip enriching the URL.
  * If URL is not enriched, it will not be displayed as a link attachment. False by default.
  * @param verticalArrangement Vertical arrangement of the regular message list.
  * Default: [Arrangement.Top].
+ * @param threadsVerticalArrangement Vertical arrangement of the thread message list.
+ * Default: [Arrangement.Bottom].
  * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
- * Default: [ThreadMessagesStart.BOTTOM].
+ * Default: `null`.
  * @param topBarContent custom top bar content to be displayed on top of the messages list.
  * @param bottomBarContent custom bottom bar content to be displayed at the bottom of the messages list.
  */
@@ -125,7 +133,8 @@ public fun AiMessagesScreen(
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
-    threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
+    threadsVerticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
+    threadMessagesStart: ThreadMessagesStart? = null,
     aiStartButton: @Composable BoxScope.() -> Unit = {
         DefaultAiStartButton(
             isAiStarted = isAiStarted,
@@ -235,12 +244,12 @@ public fun AiMessagesScreen(
                 modifier = Modifier
                     .testTag("Stream_MessagesList")
                     .fillMaxSize()
-                    .background(ChatTheme.colors.appBackground)
                     .padding(it),
                 viewModel = listViewModel,
                 reactionSorting = reactionSorting,
                 messagesLazyListState = state,
                 verticalArrangement = verticalArrangement,
+                threadsVerticalArrangement = threadsVerticalArrangement,
                 threadMessagesStart = threadMessagesStart,
                 onThreadClick = remember(composerViewModel, listViewModel) {
                     {

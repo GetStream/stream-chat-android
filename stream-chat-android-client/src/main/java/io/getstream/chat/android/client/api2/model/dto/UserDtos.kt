@@ -40,6 +40,7 @@ internal data class UpstreamUserDto(
     val role: String,
     val devices: List<DeviceDto>,
     val teams: List<String>,
+    val teams_role: Map<String, String>?,
 
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
@@ -74,6 +75,7 @@ internal data class DownstreamUserDto(
     val unread_threads: Int = 0,
     val mutes: List<DownstreamMuteDto>?,
     val teams: List<String> = emptyList(),
+    val teams_role: Map<String, String>?,
     val channel_mutes: List<DownstreamChannelMuteDto>?,
     val blocked_user_ids: List<String>?,
 

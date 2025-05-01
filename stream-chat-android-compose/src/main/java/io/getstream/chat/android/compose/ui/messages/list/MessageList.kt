@@ -67,8 +67,10 @@ import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
  * scroll state and focused message offset.
  * @param verticalArrangement Vertical arrangement of the regular message list.
  * Default: [Arrangement.Top].
+ * @param threadsVerticalArrangement Vertical arrangement of the thread message list.
+ * Default: [Arrangement.Bottom].
  * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
- * Default: [ThreadMessagesStart.BOTTOM].
+ * Default: `null`.
  * @param onThreadClick Handler when the user taps on the message, while there's a thread going.
  * @param onLongItemClick Handler for when the user long taps on a message and selects it.
  * @param onReactionsClick Handler when the user taps on message reactions and selects them.
@@ -103,7 +105,8 @@ public fun MessageList(
     messagesLazyListState: MessagesLazyListState =
         rememberMessageListState(parentMessageId = viewModel.currentMessagesState.parentMessageId),
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
-    threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
+    threadsVerticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
+    threadMessagesStart: ThreadMessagesStart? = null,
     onThreadClick: (Message) -> Unit = { viewModel.openMessageThread(it) },
     onLongItemClick: (Message) -> Unit = { viewModel.selectMessage(it) },
     onReactionsClick: (Message) -> Unit = { viewModel.selectReactions(it) },
@@ -221,6 +224,7 @@ public fun MessageList(
         messagesLazyListState = messagesLazyListState,
         onMessagesPageStartReached = onMessagesPageStartReached,
         verticalArrangement = verticalArrangement,
+        threadsVerticalArrangement = threadsVerticalArrangement,
         threadMessagesStart = threadMessagesStart,
         onLastVisibleMessageChanged = onLastVisibleMessageChanged,
         onLongItemClick = onLongItemClick,
@@ -328,7 +332,7 @@ internal fun DefaultMessageListLoadingIndicator(modifier: Modifier) {
 @Composable
 internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
     Box(
-        modifier = modifier.background(color = ChatTheme.colors.appBackground),
+        modifier = modifier,
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -347,8 +351,10 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * @param currentState The state of the component, represented by [MessageListState].
  * @param verticalArrangement Vertical arrangement of the regular message list.
  * Default: [Arrangement.Top].
+ * @param threadsVerticalArrangement Vertical arrangement of the thread message list.
+ * Default: [Arrangement.Bottom].
  * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
- * Default: [ThreadMessagesStart.BOTTOM].
+ * Default: `null`.
  * @param reactionSorting The sorting of the reactions.
  * @param modifier Modifier for styling.
  * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
@@ -368,6 +374,7 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * @param onMessagesPageEndReached Handler for pagination when the end of newest messages have been reached.
  * @param onScrollToBottom Handler when the user requests to scroll to the bottom of the messages list.
  * @param onPauseAudioRecordingAttachments Handler for lifecycle events.
+ * @param background Composable that represents the background of the message list.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no messages.
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based
@@ -381,7 +388,8 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
 public fun MessageList(
     currentState: MessageListState,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
-    threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
+    threadsVerticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
+    threadMessagesStart: ThreadMessagesStart? = null,
     reactionSorting: ReactionSorting,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
@@ -411,6 +419,9 @@ public fun MessageList(
     onMessageLinkClick: ((Message, String) -> Unit)? = null,
     onUserMentionClick: (User) -> Unit = { _ -> },
     onReply: (Message) -> Unit = {},
+    background: @Composable () -> Unit = {
+        ChatTheme.componentFactory.MessageListBackground()
+    },
     loadingContent: @Composable () -> Unit = {
         ChatTheme.componentFactory.MessageListLoadingIndicator(modifier)
     },
@@ -490,31 +501,37 @@ public fun MessageList(
     val isLoading = currentState.isLoading
     val messages = currentState.messageItems
 
-    when {
-        isLoading -> loadingContent()
-        messages.isNotEmpty() -> {
-            Messages(
-                modifier = modifier,
-                contentPadding = contentPadding,
-                messagesState = currentState,
-                messagesLazyListState = messagesLazyListState,
-                onMessagesStartReached = onMessagesPageStartReached,
-                verticalArrangement = verticalArrangement,
-                threadMessagesStart = threadMessagesStart,
-                onLastVisibleMessageChanged = onLastVisibleMessageChanged,
-                onScrolledToBottom = onScrolledToBottom,
-                helperContent = helperContent,
-                loadingMoreContent = loadingMoreContent,
-                itemModifier = itemModifier,
-                itemContent = itemContent,
-                onMessagesEndReached = onMessagesPageEndReached,
-                onScrollToBottom = onScrollToBottom,
-            )
+    Box {
+        // Draw background behind the messages list
+        background()
+        // Draw the messages list content
+        when {
+            isLoading -> loadingContent()
+            messages.isNotEmpty() -> {
+                Messages(
+                    modifier = modifier,
+                    contentPadding = contentPadding,
+                    messagesState = currentState,
+                    messagesLazyListState = messagesLazyListState,
+                    onMessagesStartReached = onMessagesPageStartReached,
+                    verticalArrangement = verticalArrangement,
+                    threadsVerticalArrangement = threadsVerticalArrangement,
+                    threadMessagesStart = threadMessagesStart,
+                    onLastVisibleMessageChanged = onLastVisibleMessageChanged,
+                    onScrolledToBottom = onScrolledToBottom,
+                    helperContent = helperContent,
+                    loadingMoreContent = loadingMoreContent,
+                    itemModifier = itemModifier,
+                    itemContent = itemContent,
+                    onMessagesEndReached = onMessagesPageEndReached,
+                    onScrollToBottom = onScrollToBottom,
+                )
 
-            /** Clean up: Pause any playing audio tracks in onPause(). **/
-            LifecycleEventEffect(Lifecycle.Event.ON_PAUSE, onEvent = onPauseAudioRecordingAttachments)
+                /** Clean up: Pause any playing audio tracks in onPause(). **/
+                LifecycleEventEffect(Lifecycle.Event.ON_PAUSE, onEvent = onPauseAudioRecordingAttachments)
+            }
+
+            else -> emptyContent()
         }
-
-        else -> emptyContent()
     }
 }

@@ -25,6 +25,10 @@ import androidx.compose.runtime.Immutable
  * @property agoraUid The Uid of Agora.
  * @property agoraAppId The App Id of Agora.
  */
+@Deprecated(
+    "This third-party library integration is deprecated. Contact the support team for more information.",
+    level = DeprecationLevel.WARNING,
+)
 @Immutable
 public data class VideoCallToken(
     val token: String,
