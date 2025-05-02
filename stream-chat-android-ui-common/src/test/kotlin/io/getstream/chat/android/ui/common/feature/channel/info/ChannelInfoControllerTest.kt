@@ -35,7 +35,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -45,8 +44,7 @@ internal class ChannelInfoControllerTest {
 
     @Test
     fun `initial state`() = runTest {
-        val sut = Fixture()
-            .get(backgroundScope)
+        val sut = Fixture().get(backgroundScope)
 
         sut.state.value.let { state ->
             assertEquals(ChannelInfoViewState.Content.Loading, state.content)
@@ -58,17 +56,17 @@ internal class ChannelInfoControllerTest {
         val currentUser = User(id = "1")
         val otherUser = User(id = "2")
         val channel = Channel(
-            name = "name",
             createdBy = otherUser,
             members = listOf(
                 Member(user = currentUser),
                 Member(user = otherUser),
             ),
         )
-        val isMuted = false
         val sut = Fixture()
-            .givenCurrentUser(currentUser)
-            .givenChannel(channel, isMuted)
+            .given(
+                currentUser = currentUser,
+                channel = channel,
+            )
             .get(backgroundScope)
 
         sut.state.test {
@@ -83,8 +81,6 @@ internal class ChannelInfoControllerTest {
                             role = ChannelInfoViewState.Role.Owner,
                         ),
                     ),
-                    name = channel.name,
-                    isMuted = isMuted,
                 ),
                 actual.content,
             )
@@ -102,10 +98,11 @@ internal class ChannelInfoControllerTest {
                 Member(user = User(id = "4")),
             ),
         )
-        val isMuted = false
         val sut = Fixture()
-            .givenCurrentUser(currentUser)
-            .givenChannel(channel, isMuted)
+            .given(
+                currentUser = currentUser,
+                channel = channel,
+            )
             .get(backgroundScope)
 
         sut.state.test {
@@ -122,8 +119,6 @@ internal class ChannelInfoControllerTest {
                                 role = ChannelInfoViewState.Role.Other(""),
                             )
                         },
-                    name = channel.name,
-                    isMuted = isMuted,
                 ),
                 actual.content,
             )
@@ -137,10 +132,11 @@ internal class ChannelInfoControllerTest {
             members = (2..10).map { i -> Member(user = User(id = "$i")) } +
                 Member(user = currentUser),
         )
-        val isMuted = false
         val sut = Fixture()
-            .givenCurrentUser(currentUser)
-            .givenChannel(channel, isMuted)
+            .given(
+                currentUser = currentUser,
+                channel = channel,
+            )
             .get(backgroundScope)
 
         sut.state.test {
@@ -168,8 +164,6 @@ internal class ChannelInfoControllerTest {
                             )
                         },
                     areMembersExpandable = true,
-                    name = channel.name,
-                    isMuted = isMuted,
                 ),
                 actual.content,
             )
@@ -183,10 +177,11 @@ internal class ChannelInfoControllerTest {
             members = (2..10).map { i -> Member(user = User(id = "$i")) } +
                 Member(user = currentUser),
         )
-        val isMuted = false
         val sut = Fixture()
-            .givenCurrentUser(currentUser)
-            .givenChannel(channel, isMuted)
+            .given(
+                currentUser = currentUser,
+                channel = channel,
+            )
             .get(backgroundScope)
 
         sut.state.test {
@@ -213,8 +208,6 @@ internal class ChannelInfoControllerTest {
                             )
                         },
                     areMembersExpandable = true,
-                    name = channel.name,
-                    isMuted = isMuted,
                 ),
                 actual.content,
             )
@@ -242,8 +235,6 @@ internal class ChannelInfoControllerTest {
                         },
                     areMembersExpandable = true,
                     areMembersExpanded = true,
-                    name = channel.name,
-                    isMuted = isMuted,
                 ),
                 expandedState.content,
             )
@@ -252,11 +243,8 @@ internal class ChannelInfoControllerTest {
 
     @Test
     fun `update name`() = runTest {
-        val currentUser = User(id = "1")
         val channel = Channel(name = "name")
-        val fixture = Fixture()
-            .givenCurrentUser(currentUser)
-            .givenChannel(channel)
+        val fixture = Fixture().given(channel = channel)
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
@@ -269,7 +257,7 @@ internal class ChannelInfoControllerTest {
             )
 
             val newName = "newName"
-            fixture.givenNewName(newName)
+            fixture.givenUpdateName(newName)
 
             sut.updateName(newName)
 
@@ -283,20 +271,18 @@ internal class ChannelInfoControllerTest {
 
     @Test
     fun `update name error`() = runTest {
-        val currentUser = User(id = "1")
         val channel = Channel(name = "name")
         val error = Error.GenericError("Error updating channel name")
-        val fixture = Fixture()
-            .givenCurrentUser(currentUser)
-            .givenChannel(channel)
+        val fixture = Fixture().given(channel = channel)
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
             skipItems(2) // Skip initial and loaded state
 
-            fixture.givenNewNameError(error)
+            val newName = "newName"
+            fixture.givenUpdateName(newName, error)
 
-            sut.updateName("newName")
+            sut.updateName(newName)
         }
 
         sut.events.test {
@@ -304,6 +290,58 @@ internal class ChannelInfoControllerTest {
             assertEquals(
                 ChannelInfoEvent.UpdateNameError(message = error.message),
                 actual,
+            )
+        }
+    }
+
+    @Test
+    fun `mute channel`() = runTest {
+        val fixture = Fixture().given(isMuted = false)
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            val actual = awaitItem()
+            assertEquals(
+                ChannelInfoViewState.Content.Success(isMuted = false),
+                actual.content,
+            )
+
+            fixture.givenMuteSuccess()
+
+            sut.mute()
+
+            val updatedState = awaitItem()
+            assertEquals(
+                ChannelInfoViewState.Content.Success(isMuted = true),
+                updatedState.content,
+            )
+        }
+    }
+
+    @Test
+    fun `unmute channel`() = runTest {
+        val fixture = Fixture().given(isMuted = true)
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            val actual = awaitItem()
+            assertEquals(
+                ChannelInfoViewState.Content.Success(isMuted = true),
+                actual.content,
+            )
+
+            fixture.givenUnmuteSuccess()
+
+            sut.unmute()
+
+            val updatedState = awaitItem()
+            assertEquals(
+                ChannelInfoViewState.Content.Success(isMuted = false),
+                updatedState.content,
             )
         }
     }
@@ -323,26 +361,46 @@ private class Fixture {
     private val channelClient: ChannelClient = mock()
     private val chatClient: ChatClient = mock()
 
-    fun givenCurrentUser(user: User) = apply {
-        whenever(chatClient.getCurrentOrStoredUserId()) doReturn user.id
+    fun given(
+        currentUser: User? = null,
+        channel: Channel? = null,
+        isMuted: Boolean? = null,
+    ) = apply {
+        if (currentUser != null) {
+            whenever(chatClient.getCurrentOrStoredUserId()) doReturn currentUser.id
+        }
+        if (channel != null) {
+            channelData.value = channel.toChannelData()
+            channelMembers.value = channel.members
+        }
+        if (isMuted != null) {
+            channelMuted.value = isMuted
+        }
     }
 
-    fun givenChannel(channel: Channel, isMuted: Boolean = false) = apply {
-        channelData.value = channel.toChannelData()
-        channelMembers.value = channel.members
-        channelMuted.value = isMuted
-    }
-
-    fun givenNewName(name: String) = apply {
+    fun givenUpdateName(name: String, error: Error? = null) = apply {
         whenever(channelClient.updatePartial(mapOf("name" to name))) doAnswer {
-            mock<Channel>().asCall().also {
-                channelData.update { channelData -> channelData.copy(name = name) }
+            error?.asCall()
+                ?: mock<Channel>().asCall().also {
+                    channelData.update { channelData -> channelData.copy(name = name) }
+                }
+        }
+    }
+
+    fun givenMuteSuccess() = apply {
+        whenever(channelClient.mute()) doAnswer {
+            Unit.asCall().also {
+                channelMuted.value = true
             }
         }
     }
 
-    fun givenNewNameError(error: Error) = apply {
-        whenever(channelClient.updatePartial(any(), any())) doReturn error.asCall()
+    fun givenUnmuteSuccess() = apply {
+        whenever(channelClient.unmute()) doAnswer {
+            Unit.asCall().also {
+                channelMuted.value = false
+            }
+        }
     }
 
     fun get(scope: CoroutineScope) = ChannelInfoController(

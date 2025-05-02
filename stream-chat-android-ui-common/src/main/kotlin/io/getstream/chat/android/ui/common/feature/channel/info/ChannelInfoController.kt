@@ -155,12 +155,32 @@ public class ChannelInfoController(
 
     public fun updateName(name: String) {
         scope.launch {
-            channelClient
-                .updatePartial(set = mapOf("name" to name))
-                .await()
+            channelClient.updatePartial(set = mapOf("name" to name)).await()
                 .onError { error ->
                     _events.tryEmit(
                         ChannelInfoEvent.UpdateNameError(message = error.message),
+                    )
+                }
+        }
+    }
+
+    public fun mute() {
+        scope.launch {
+            channelClient.mute().await()
+                .onError { error ->
+                    _events.tryEmit(
+                        ChannelInfoEvent.MuteError(message = error.message),
+                    )
+                }
+        }
+    }
+
+    public fun unmute() {
+        scope.launch {
+            channelClient.unmute().await()
+                .onError { error ->
+                    _events.tryEmit(
+                        ChannelInfoEvent.UnmuteError(message = error.message),
                     )
                 }
         }
