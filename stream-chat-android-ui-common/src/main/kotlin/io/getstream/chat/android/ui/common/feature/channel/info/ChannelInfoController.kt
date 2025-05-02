@@ -20,6 +20,9 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.ChannelData
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoEvent
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
@@ -45,7 +48,7 @@ import kotlinx.coroutines.launch
 public class ChannelInfoController(
     cid: String,
     private val scope: CoroutineScope,
-    chatClient: ChatClient = ChatClient.instance(),
+    private val chatClient: ChatClient = ChatClient.instance(),
     channelState: Flow<ChannelState> = chatClient
         .watchChannelAsState(cid = cid, messageLimit = 0, coroutineScope = scope)
         .filterNotNull(),
@@ -64,109 +67,89 @@ public class ChannelInfoController(
     init {
         channelState
             .flatMapLatest { channelState ->
+                println("alor: flatMapLatest")
                 combine(
-                    channelState.channelData,
-                    channelState.members,
-                    channelState.muted,
+                    channelState.channelData.onEach { println("alor: channelData") },
+                    channelState.members.onEach { println("alor: members") },
+                    channelState.muted.onEach { println("alor: muted") },
                 ) { channel, members, muted ->
+                    println("alor: combine")
                     Triple(channel, members, muted)
                 }
             }
             .distinctUntilChanged()
             .onEach { (channel, members, muted) ->
-                val channelMembers = members
-                    .filter { member ->
-                        member.user.id != chatClient.getCurrentOrStoredUserId()
-                    }
-                    .map { member ->
-                        ChannelInfoViewState.Member(
-                            user = member.user,
-                            role = if (channel.createdBy.id == member.user.id) {
-                                ChannelInfoViewState.Role.Owner
-                            } else {
-                                when (member.channelRole) {
-                                    "channel_moderator" -> ChannelInfoViewState.Role.Moderator
-                                    "channel_member" -> ChannelInfoViewState.Role.Member
-                                    else -> ChannelInfoViewState.Role.Other(member.channelRole.orEmpty())
-                                }
-                            },
-                        )
-                    }
-                val expandedMembers = channelMembers.take(EXPANDED_MEMBER_COUNT)
-                val collapsedMemberCount = (channelMembers.size - EXPANDED_MEMBER_COUNT).coerceAtLeast(0)
-                val collapsedMembers = channelMembers.takeLast(collapsedMemberCount)
-
-                logger.d {
-                    "[onSuccessContent] name: ${channel.name}, " +
-                        "members: ${channelMembers.size}, " +
-                        "expanded: ${expandedMembers.size}, " +
-                        "collapsed: ${collapsedMembers.size}, " +
-                        "muted: $muted"
-                }
-
-                _state.update { currentState ->
-                    when (currentState.content) {
-                        is ChannelInfoViewState.Content.Loading -> {
-                            currentState.copy(
-                                content = ChannelInfoViewState.Content.Success(
-                                    expandedMembers = expandedMembers,
-                                    collapsedMembers = collapsedMembers,
-                                    areMembersExpandable = collapsedMemberCount > 0,
-                                    areMembersExpanded = false,
-                                    name = channel.name,
-                                    isMuted = muted,
-                                ),
-                            )
-                        }
-
-                        else -> currentState
-                    }
-                }
-            }
-            .launchIn(scope)
-
-        channelState.flatMapLatest { channelState -> channelState.channelData }
-            .onEach { channel ->
-                _state.update { currentState ->
-                    (currentState.content as? ChannelInfoViewState.Content.Success)?.let { content ->
-                        currentState.copy(
-                            content = content.copy(name = channel.name),
-                        )
-                    } ?: currentState
-                }
-            }
-            .launchIn(scope)
-
-        channelState.flatMapLatest { channelState -> channelState.muted }
-            .onEach { muted ->
-                _state.update { currentState ->
-                    (currentState.content as? ChannelInfoViewState.Content.Success)?.let { content ->
-                        currentState.copy(
-                            content = content.copy(isMuted = muted),
-                        )
-                    } ?: currentState
-                }
+                onChannelState(channel, members, muted)
             }
             .launchIn(scope)
     }
 
-    public fun expandMembers() {
+    private fun onChannelState(channel: ChannelData, members: List<Member>, muted: Boolean) {
+        val channelMembers = members
+            .filterNotCurrentUser()
+            .map { member -> member.toViewState(channel.createdBy) }
+
+        val expandedMembers = channelMembers.take(EXPANDED_MEMBER_COUNT)
+        val collapsedMemberCount = (channelMembers.size - EXPANDED_MEMBER_COUNT).coerceAtLeast(0)
+        val collapsedMembers = channelMembers.takeLast(collapsedMemberCount)
+
+        logger.d {
+            "[onChannelState] name: ${channel.name}, " +
+                "members: ${channelMembers.size}, " +
+                "expanded: ${expandedMembers.size}, " +
+                "collapsed: ${collapsedMembers.size}, " +
+                "muted: $muted"
+        }
+
+        println(
+            "alor name: ${channel.name}, " +
+                "members: ${channelMembers.size}, " +
+                "expanded: ${expandedMembers.size}, " +
+                "collapsed: ${collapsedMembers.size}, " +
+                "muted: $muted"
+        )
+
         _state.update { currentState ->
-            (currentState.content as? ChannelInfoViewState.Content.Success)?.let { content ->
-                currentState.copy(
-                    content = content.copy(areMembersExpanded = true),
-                )
-            } ?: currentState
+            when (currentState.content) {
+                is ChannelInfoViewState.Content.Loading -> {
+                    currentState.copy(
+                        content = ChannelInfoViewState.Content.Success(
+                            expandedMembers = expandedMembers,
+                            collapsedMembers = collapsedMembers,
+                            areMembersExpandable = collapsedMemberCount > 0,
+                            areMembersExpanded = false,
+                            name = channel.name,
+                            isMuted = muted,
+                        ),
+                    )
+                }
+
+                is ChannelInfoViewState.Content.Success -> {
+                    currentState.copy(
+                        content = currentState.content.copy(
+                            expandedMembers = expandedMembers,
+                            collapsedMembers = collapsedMembers,
+                            areMembersExpandable = collapsedMemberCount > 0,
+                            name = channel.name,
+                            isMuted = muted,
+                        ),
+                    )
+                }
+
+                else -> currentState
+            }
+        }
+    }
+
+    public fun expandMembers() {
+        _state.updateOnSuccessContent { content ->
+            content.copy(areMembersExpanded = true)
         }
     }
 
     public fun collapseMembers() {
-        _state.update { currentState ->
-            (currentState.content as? ChannelInfoViewState.Content.Success)?.let { content ->
-                currentState.copy(
-                    content = content.copy(areMembersExpanded = false),
-                )
-            } ?: currentState
+        _state.updateOnSuccessContent { content ->
+            content.copy(areMembersExpanded = false)
         }
     }
 
@@ -182,6 +165,36 @@ public class ChannelInfoController(
                 }
         }
     }
+
+    private fun List<Member>.filterNotCurrentUser() =
+        filter { member -> member.user.id != chatClient.getCurrentOrStoredUserId() }
 }
 
 private const val EXPANDED_MEMBER_COUNT = 5
+
+private fun Member.toViewState(createdBy: User) = ChannelInfoViewState.Member(
+    user = user,
+    role = if (createdBy.id == user.id) {
+        ChannelInfoViewState.Role.Owner
+    } else {
+        when (channelRole) {
+            "channel_moderator" -> ChannelInfoViewState.Role.Moderator
+            "channel_member" -> ChannelInfoViewState.Role.Member
+            else -> ChannelInfoViewState.Role.Other(channelRole.orEmpty())
+        }
+    },
+)
+
+private fun MutableStateFlow<ChannelInfoViewState>.updateOnSuccessContent(
+    transformation: (content: ChannelInfoViewState.Content.Success) -> ChannelInfoViewState.Content,
+) {
+    update { currentState ->
+        if (currentState.content is ChannelInfoViewState.Content.Success) {
+            currentState.copy(
+                content = transformation(currentState.content)
+            )
+        } else {
+            currentState
+        }
+    }
+}
