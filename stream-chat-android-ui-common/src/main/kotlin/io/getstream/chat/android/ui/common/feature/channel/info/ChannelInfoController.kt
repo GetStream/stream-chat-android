@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.extensions.isGroupChannel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
@@ -69,7 +70,7 @@ public class ChannelInfoController(
             .flatMapLatest { channelState ->
                 println("alor: flatMapLatest")
                 combine(
-                    channelState.channelData.onEach { println("alor: channelData") },
+                    channelState.channelData.onEach { println("alor: channelData: cid: ${it.cid}") },
                     channelState.members.onEach { println("alor: members") },
                     channelState.muted.onEach { println("alor: muted") },
                 ) { channel, members, muted ->
@@ -86,7 +87,7 @@ public class ChannelInfoController(
 
     private fun onChannelState(channel: ChannelData, members: List<Member>, muted: Boolean) {
         val channelMembers = members
-            .filterNotCurrentUser()
+            .run { takeIf { channel.isGroupChannel } ?: filterNotCurrentUser() }
             .map { member -> member.toViewState(channel.createdBy) }
 
         val expandedMembers = channelMembers.take(EXPANDED_MEMBER_COUNT)
@@ -106,7 +107,7 @@ public class ChannelInfoController(
                 "members: ${channelMembers.size}, " +
                 "expanded: ${expandedMembers.size}, " +
                 "collapsed: ${collapsedMembers.size}, " +
-                "muted: $muted"
+                "muted: $muted",
         )
 
         _state.update { currentState ->
@@ -211,7 +212,7 @@ private fun MutableStateFlow<ChannelInfoViewState>.updateOnSuccessContent(
     update { currentState ->
         if (currentState.content is ChannelInfoViewState.Content.Success) {
             currentState.copy(
-                content = transformation(currentState.content)
+                content = transformation(currentState.content),
             )
         } else {
             currentState

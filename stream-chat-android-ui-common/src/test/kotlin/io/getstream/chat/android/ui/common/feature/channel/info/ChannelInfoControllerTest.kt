@@ -56,6 +56,7 @@ internal class ChannelInfoControllerTest {
         val currentUser = User(id = "1")
         val otherUser = User(id = "2")
         val channel = Channel(
+            id = "!members-1,2",
             createdBy = otherUser,
             members = listOf(
                 Member(user = currentUser),
@@ -89,20 +90,19 @@ internal class ChannelInfoControllerTest {
 
     @Test
     fun `group channel content`() = runTest {
-        val currentUser = User(id = "1")
+        val owner = User(id = "1")
+        val user2 = User(id = "2")
+        val user3 = User(id = "3")
         val channel = Channel(
+            createdBy = owner,
             members = listOf(
-                Member(user = currentUser),
-                Member(user = User(id = "2")),
-                Member(user = User(id = "3")),
-                Member(user = User(id = "4")),
+                Member(user = owner),
+                Member(user = user2),
+                Member(user = user3),
             ),
         )
         val sut = Fixture()
-            .given(
-                currentUser = currentUser,
-                channel = channel,
-            )
+            .given(channel = channel)
             .get(backgroundScope)
 
         sut.state.test {
@@ -111,14 +111,20 @@ internal class ChannelInfoControllerTest {
             val actual = awaitItem()
             assertEquals(
                 ChannelInfoViewState.Content.Success(
-                    expandedMembers = channel.members
-                        .filter { member -> member.user.id != currentUser.id }
-                        .map { member ->
-                            ChannelInfoViewState.Member(
-                                user = member.user,
-                                role = ChannelInfoViewState.Role.Other(""),
-                            )
-                        },
+                    expandedMembers = listOf(
+                        ChannelInfoViewState.Member(
+                            user = owner,
+                            role = ChannelInfoViewState.Role.Owner,
+                        ),
+                        ChannelInfoViewState.Member(
+                            user = user2,
+                            role = ChannelInfoViewState.Role.Other(""),
+                        ),
+                        ChannelInfoViewState.Member(
+                            user = user3,
+                            role = ChannelInfoViewState.Role.Other(""),
+                        ),
+                    ),
                 ),
                 actual.content,
             )
@@ -127,16 +133,11 @@ internal class ChannelInfoControllerTest {
 
     @Test
     fun `expandable group channel content`() = runTest {
-        val currentUser = User(id = "1")
         val channel = Channel(
-            members = (2..10).map { i -> Member(user = User(id = "$i")) } +
-                Member(user = currentUser),
+            members = (1..10).map { i -> Member(user = User(id = "$i")) },
         )
         val sut = Fixture()
-            .given(
-                currentUser = currentUser,
-                channel = channel,
-            )
+            .given(channel = channel)
             .get(backgroundScope)
 
         sut.state.test {
@@ -146,7 +147,6 @@ internal class ChannelInfoControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content.Success(
                     expandedMembers = channel.members
-                        .filter { it.user.id != currentUser.id }
                         .take(5)
                         .map { member ->
                             ChannelInfoViewState.Member(
@@ -155,8 +155,7 @@ internal class ChannelInfoControllerTest {
                             )
                         },
                     collapsedMembers = channel.members
-                        .filter { it.user.id != currentUser.id }
-                        .takeLast(4)
+                        .takeLast(5)
                         .map { member ->
                             ChannelInfoViewState.Member(
                                 user = member.user,
@@ -172,26 +171,20 @@ internal class ChannelInfoControllerTest {
 
     @Test
     fun `expand group channel content`() = runTest {
-        val currentUser = User(id = "1")
         val channel = Channel(
-            members = (2..10).map { i -> Member(user = User(id = "$i")) } +
-                Member(user = currentUser),
+            members = (1..10).map { i -> Member(user = User(id = "$i")) },
         )
         val sut = Fixture()
-            .given(
-                currentUser = currentUser,
-                channel = channel,
-            )
+            .given(channel = channel)
             .get(backgroundScope)
 
         sut.state.test {
             skipItems(1) // Skip initial state
 
-            val expectedChannelMembers = channel.members.filter { it.user.id != currentUser.id }
             val actual = awaitItem()
             assertEquals(
                 ChannelInfoViewState.Content.Success(
-                    expandedMembers = expectedChannelMembers
+                    expandedMembers = channel.members
                         .take(5)
                         .map { member ->
                             ChannelInfoViewState.Member(
@@ -199,8 +192,8 @@ internal class ChannelInfoControllerTest {
                                 role = ChannelInfoViewState.Role.Other(""),
                             )
                         },
-                    collapsedMembers = expectedChannelMembers
-                        .takeLast(4)
+                    collapsedMembers = channel.members
+                        .takeLast(5)
                         .map { member ->
                             ChannelInfoViewState.Member(
                                 user = member.user,
@@ -217,7 +210,7 @@ internal class ChannelInfoControllerTest {
             val expandedState = awaitItem()
             assertEquals(
                 ChannelInfoViewState.Content.Success(
-                    expandedMembers = expectedChannelMembers
+                    expandedMembers = channel.members
                         .take(5)
                         .map { member ->
                             ChannelInfoViewState.Member(
@@ -225,8 +218,8 @@ internal class ChannelInfoControllerTest {
                                 role = ChannelInfoViewState.Role.Other(""),
                             )
                         },
-                    collapsedMembers = expectedChannelMembers
-                        .takeLast(4)
+                    collapsedMembers = channel.members
+                        .takeLast(5)
                         .map { member ->
                             ChannelInfoViewState.Member(
                                 user = member.user,
