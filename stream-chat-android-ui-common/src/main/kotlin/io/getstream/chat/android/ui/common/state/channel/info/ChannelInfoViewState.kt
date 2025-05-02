@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.common.state.channel.info
 
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.utils.ExpandableList
 
 public data class ChannelInfoViewState(
     val content: Content = Content.Loading,
@@ -26,10 +27,7 @@ public data class ChannelInfoViewState(
         public data object Loading : Content
 
         public data class Success(
-            val expandedMembers: List<Member> = emptyList(),
-            val collapsedMembers: List<Member> = emptyList(),
-            val areMembersExpandable: Boolean = false,
-            val areMembersExpanded: Boolean = false,
+            val members: ExpandableList<Member>,
             val name: String = "",
             val isMuted: Boolean = false,
         ) : Content
