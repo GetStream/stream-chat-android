@@ -17,12 +17,15 @@
 package io.getstream.chat.android.ui.common.feature.channel.info
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.channel.ChannelClient
+import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoEvent
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -30,6 +33,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
@@ -42,14 +46,12 @@ public class ChannelInfoController(
     cid: String,
     private val scope: CoroutineScope,
     chatClient: ChatClient = ChatClient.instance(),
+    channelState: Flow<ChannelState> = chatClient
+        .watchChannelAsState(cid = cid, messageLimit = 0, coroutineScope = scope)
+        .filterNotNull(),
+    private val channelClient: ChannelClient = chatClient.channel(cid),
 ) {
     private val logger by taggedLogger("Chat:ChannelInfoController")
-
-    private val channelStateFlow = chatClient
-        .watchChannelAsState(cid = cid, messageLimit = 0, coroutineScope = scope)
-        .filterNotNull()
-
-    private val channelClient = chatClient.channel(cid)
 
     private val _state = MutableStateFlow(ChannelInfoViewState())
 
@@ -60,7 +62,7 @@ public class ChannelInfoController(
     public val events: SharedFlow<ChannelInfoEvent> = _events.asSharedFlow()
 
     init {
-        channelStateFlow
+        channelState
             .flatMapLatest { channelState ->
                 combine(
                     channelState.channelData,
@@ -70,6 +72,7 @@ public class ChannelInfoController(
                     Triple(channel, members, muted)
                 }
             }
+            .distinctUntilChanged()
             .onEach { (channel, members, muted) ->
                 val channelMembers = members
                     .filter { member ->
@@ -122,7 +125,7 @@ public class ChannelInfoController(
             }
             .launchIn(scope)
 
-        channelStateFlow.flatMapLatest { channelState -> channelState.channelData }
+        channelState.flatMapLatest { channelState -> channelState.channelData }
             .onEach { channel ->
                 _state.update { currentState ->
                     (currentState.content as? ChannelInfoViewState.Content.Success)?.let { content ->
@@ -134,7 +137,7 @@ public class ChannelInfoController(
             }
             .launchIn(scope)
 
-        channelStateFlow.flatMapLatest { channelState -> channelState.muted }
+        channelState.flatMapLatest { channelState -> channelState.muted }
             .onEach { muted ->
                 _state.update { currentState ->
                     (currentState.content as? ChannelInfoViewState.Content.Success)?.let { content ->
