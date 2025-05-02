@@ -26,12 +26,12 @@ public data class ChannelInfoViewState(
         public data object Loading : Content
 
         public data class Success(
-            val expandedMembers: List<Member>,
-            val collapsedMembers: List<Member>,
-            val areMembersExpandable: Boolean,
-            val areMembersExpanded: Boolean,
-            val name: String,
-            val isMuted: Boolean,
+            val expandedMembers: List<Member> = emptyList(),
+            val collapsedMembers: List<Member> = emptyList(),
+            val areMembersExpandable: Boolean = false,
+            val areMembersExpanded: Boolean = false,
+            val name: String = "",
+            val isMuted: Boolean = false,
         ) : Content
 
         public data class Error(val message: String) : Content
