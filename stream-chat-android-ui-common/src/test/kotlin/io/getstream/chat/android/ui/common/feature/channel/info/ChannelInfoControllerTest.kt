@@ -20,29 +20,24 @@ import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelState
-import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.InitializationState
+import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.toChannelData
-import io.getstream.chat.android.state.plugin.config.StatePluginConfig
-import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
-import io.getstream.chat.android.state.plugin.internal.StatePlugin
-import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoEvent
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.result.Error
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
@@ -78,6 +73,7 @@ internal class ChannelInfoControllerTest {
 
         sut.state.test {
             skipItems(1) // Skip initial state
+
             val actual = awaitItem()
             assertEquals(
                 ChannelInfoViewState.Content.Success(
@@ -87,11 +83,8 @@ internal class ChannelInfoControllerTest {
                             role = ChannelInfoViewState.Role.Owner,
                         ),
                     ),
-                    collapsedMembers = emptyList(),
-                    areMembersExpandable = false,
-                    areMembersExpanded = false,
                     name = channel.name,
-                    isMuted = false,
+                    isMuted = isMuted,
                 ),
                 actual.content,
             )
@@ -117,6 +110,7 @@ internal class ChannelInfoControllerTest {
 
         sut.state.test {
             skipItems(1) // Skip initial state
+
             val actual = awaitItem()
             assertEquals(
                 ChannelInfoViewState.Content.Success(
@@ -128,11 +122,8 @@ internal class ChannelInfoControllerTest {
                                 role = ChannelInfoViewState.Role.Other(""),
                             )
                         },
-                    collapsedMembers = emptyList(),
-                    areMembersExpandable = false,
-                    areMembersExpanded = false,
                     name = channel.name,
-                    isMuted = false,
+                    isMuted = isMuted,
                 ),
                 actual.content,
             )
@@ -154,6 +145,7 @@ internal class ChannelInfoControllerTest {
 
         sut.state.test {
             skipItems(1) // Skip initial state
+
             val actual = awaitItem()
             assertEquals(
                 ChannelInfoViewState.Content.Success(
@@ -176,7 +168,6 @@ internal class ChannelInfoControllerTest {
                             )
                         },
                     areMembersExpandable = true,
-                    areMembersExpanded = false,
                     name = channel.name,
                     isMuted = isMuted,
                 ),
@@ -200,6 +191,7 @@ internal class ChannelInfoControllerTest {
 
         sut.state.test {
             skipItems(1) // Skip initial state
+
             val expectedChannelMembers = channel.members.filter { it.user.id != currentUser.id }
             val actual = awaitItem()
             assertEquals(
@@ -221,7 +213,6 @@ internal class ChannelInfoControllerTest {
                             )
                         },
                     areMembersExpandable = true,
-                    areMembersExpanded = false,
                     name = channel.name,
                     isMuted = isMuted,
                 ),
@@ -262,48 +253,29 @@ internal class ChannelInfoControllerTest {
     @Test
     fun `update name`() = runTest {
         val currentUser = User(id = "1")
-        val channel = Channel(
-            name = "name",
-            members = listOf(
-                Member(user = currentUser),
-            ),
-        )
-        val isMuted = false
+        val channel = Channel(name = "name")
         val fixture = Fixture()
-        val sut = fixture
             .givenCurrentUser(currentUser)
-            .givenChannel(channel, isMuted)
-            .get(backgroundScope)
+            .givenChannel(channel)
+        val sut = fixture.get(backgroundScope)
 
         sut.state.test {
             skipItems(1) // Skip initial state
+
             val actual = awaitItem()
             assertEquals(
-                ChannelInfoViewState.Content.Success(
-                    expandedMembers = emptyList(),
-                    collapsedMembers = emptyList(),
-                    areMembersExpandable = false,
-                    areMembersExpanded = false,
-                    name = channel.name,
-                    isMuted = isMuted,
-                ),
+                ChannelInfoViewState.Content.Success(name = channel.name),
                 actual.content,
             )
 
-            fixture.givenNewName("newName", channel)
+            val newName = "newName"
+            fixture.givenNewName(newName)
 
-            sut.updateName("newName")
+            sut.updateName(newName)
 
             val updatedState = awaitItem()
             assertEquals(
-                ChannelInfoViewState.Content.Success(
-                    expandedMembers = emptyList(),
-                    collapsedMembers = emptyList(),
-                    areMembersExpandable = false,
-                    areMembersExpanded = false,
-                    name = "newName",
-                    isMuted = isMuted,
-                ),
+                ChannelInfoViewState.Content.Success(name = newName),
                 updatedState.content,
             )
         }
@@ -312,36 +284,17 @@ internal class ChannelInfoControllerTest {
     @Test
     fun `update name error`() = runTest {
         val currentUser = User(id = "1")
-        val channel = Channel(
-            name = "name",
-            members = listOf(
-                Member(user = currentUser),
-            ),
-        )
+        val channel = Channel(name = "name")
         val error = Error.GenericError("Error updating channel name")
-        val isMuted = false
         val fixture = Fixture()
-        val sut = fixture
             .givenCurrentUser(currentUser)
-            .givenChannel(channel, isMuted)
-            .get(backgroundScope)
+            .givenChannel(channel)
+        val sut = fixture.get(backgroundScope)
 
         sut.state.test {
-            skipItems(1) // Skip initial state
-            val actual = awaitItem()
-            assertEquals(
-                ChannelInfoViewState.Content.Success(
-                    expandedMembers = emptyList(),
-                    collapsedMembers = emptyList(),
-                    areMembersExpandable = false,
-                    areMembersExpanded = false,
-                    name = channel.name,
-                    isMuted = isMuted,
-                ),
-                actual.content,
-            )
+            skipItems(2) // Skip initial and loaded state
 
-            fixture.givenNewNameError("newName", error)
+            fixture.givenNewNameError(error)
 
             sut.updateName("newName")
         }
@@ -356,65 +309,47 @@ internal class ChannelInfoControllerTest {
     }
 }
 
-private const val CHANNEL_TYPE = "messaging"
-private const val CHANNEL_ID = "1"
-private const val CID = "$CHANNEL_TYPE:$CHANNEL_ID"
+private const val CID = "messaging:1"
 
 private class Fixture {
-    private val channelType: String = CHANNEL_TYPE
-    private val channelId: String = CHANNEL_ID
-
-    private val channelFlow = MutableStateFlow(Channel().toChannelData())
+    private val channelData = MutableStateFlow(ChannelData(type = "", id = ""))
+    private val channelMembers = MutableStateFlow(emptyList<Member>())
+    private val channelMuted = MutableStateFlow(false)
     private val channelState: ChannelState = mock {
-        whenever(mock.channelData) doReturn channelFlow
-    }
-    private val clientState: ClientState = mock()
-    private val stateRegistry: StateRegistry = mock {
-        whenever(mock.channel(channelType, channelId)) doReturn channelState
+        on { channelData } doReturn channelData
+        on { members } doReturn channelMembers
+        on { muted } doReturn channelMuted
     }
     private val channelClient: ChannelClient = mock()
-    private val chatClient: ChatClient = mock {
-        val statePlugin: StatePlugin = mock {
-            whenever(mock.resolveDependency(StateRegistry::class)) doReturn stateRegistry
-        }
-        whenever(mock.clientState) doReturn clientState
-        whenever(mock.plugins) doReturn listOf(statePlugin)
-        val statePluginFactory: StreamStatePluginFactory = mock {
-            whenever(mock.resolveDependency(StatePluginConfig::class)) doReturn StatePluginConfig()
-        }
-        whenever(mock.pluginFactories) doReturn listOf(statePluginFactory)
-        whenever(mock.channel(CID)) doReturn channelClient
-    }
+    private val chatClient: ChatClient = mock()
 
     fun givenCurrentUser(user: User) = apply {
-        whenever(clientState.user) doReturn MutableStateFlow(user)
-        whenever(clientState.initializationState) doReturn MutableStateFlow(InitializationState.COMPLETE)
         whenever(chatClient.getCurrentOrStoredUserId()) doReturn user.id
-        whenever(chatClient.awaitInitializationState(any())) doReturn InitializationState.COMPLETE
     }
 
-    fun givenChannel(channel: Channel, isMuted: Boolean) = apply {
-        channelFlow.value = channel.toChannelData()
-        whenever(channelState.members) doReturn MutableStateFlow(channel.members)
-        whenever(channelState.muted) doReturn MutableStateFlow(isMuted)
-        whenever(chatClient.queryChannel(eq(channelType), eq(channelId), any(), any())) doReturn channel.asCall()
+    fun givenChannel(channel: Channel, isMuted: Boolean = false) = apply {
+        channelData.value = channel.toChannelData()
+        channelMembers.value = channel.members
+        channelMuted.value = isMuted
     }
 
-    fun givenNewName(name: String, channel: Channel) = apply {
-        val updatedChannel = channel.copy(name = name)
+    fun givenNewName(name: String) = apply {
         whenever(channelClient.updatePartial(mapOf("name" to name))) doAnswer {
-            channelFlow.value = updatedChannel.toChannelData()
-            updatedChannel.asCall()
+            mock<Channel>().asCall().also {
+                channelData.update { channelData -> channelData.copy(name = name) }
+            }
         }
     }
 
-    fun givenNewNameError(name: String, error: Error) = apply {
-        whenever(channelClient.updatePartial(mapOf("name" to name))) doReturn error.asCall()
+    fun givenNewNameError(error: Error) = apply {
+        whenever(channelClient.updatePartial(any(), any())) doReturn error.asCall()
     }
 
     fun get(scope: CoroutineScope) = ChannelInfoController(
         cid = CID,
         scope = scope,
         chatClient = chatClient,
+        channelState = MutableStateFlow(channelState),
+        channelClient = channelClient,
     )
 }
