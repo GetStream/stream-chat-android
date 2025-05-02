@@ -18,4 +18,6 @@ package io.getstream.chat.android.ui.common.state.channel.info
 
 public sealed interface ChannelInfoEvent {
     public data class UpdateNameError(val message: String) : ChannelInfoEvent
+    public data class MuteError(val message: String) : ChannelInfoEvent
+    public data class UnmuteError(val message: String) : ChannelInfoEvent
 }
