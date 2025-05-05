@@ -32,10 +32,15 @@ public data class ChannelInfoViewState(
             val name: String = "",
             val isMuted: Boolean = false,
             val isHidden: Boolean = false,
+            val capability: Capability = Capability(),
         ) : Content
-
-        public data class Error(val message: String) : Content
     }
+
+    public data class Capability(
+        val canMute: Boolean = false,
+        val canLeave: Boolean = false,
+        val canDelete: Boolean = false,
+    )
 
     public data class Member(
         val user: User,

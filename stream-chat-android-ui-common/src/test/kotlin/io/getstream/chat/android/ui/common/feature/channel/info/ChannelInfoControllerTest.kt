@@ -558,7 +558,10 @@ internal class ChannelInfoControllerTest {
             sut.leave(quitMessage)
 
             sut.events.test {
-                expectNoEvents()
+                assertEquals(
+                    ChannelInfoEvent.LeaveSuccess,
+                    awaitItem(),
+                )
             }
         }
     }
@@ -593,6 +596,65 @@ internal class ChannelInfoControllerTest {
             sut.events.test {
                 assertEquals(
                     ChannelInfoEvent.LeaveError(message = error.message),
+                    awaitItem(),
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `delete channel`() = runTest {
+        val fixture = Fixture()
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            val actual = awaitItem()
+            assertEquals(
+                ChannelInfoViewState.Content.Success(
+                    members = emptyMembers(),
+                ),
+                actual.content,
+            )
+
+            fixture.givenDeleteChannel()
+
+            sut.delete()
+
+            sut.events.test {
+                assertEquals(
+                    ChannelInfoEvent.DeleteSuccess,
+                    awaitItem(),
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `delete channel error`() = runTest {
+        val fixture = Fixture()
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            val actual = awaitItem()
+            assertEquals(
+                ChannelInfoViewState.Content.Success(
+                    members = emptyMembers(),
+                ),
+                actual.content,
+            )
+
+            val error = Error.GenericError("Error deleting channel")
+            fixture.givenDeleteChannel(error)
+
+            sut.delete()
+
+            sut.events.test {
+                assertEquals(
+                    ChannelInfoEvent.DeleteError(message = error.message),
                     awaitItem(),
                 )
             }
@@ -689,6 +751,13 @@ private class Fixture {
                 systemMessage = quitMessage
             )
         ) doAnswer {
+            error?.asCall()
+                ?: mock<Channel>().asCall()
+        }
+    }
+
+    fun givenDeleteChannel(error: Error? = null) = apply {
+        whenever(channelClient.delete()) doAnswer {
             error?.asCall()
                 ?: mock<Channel>().asCall()
         }
