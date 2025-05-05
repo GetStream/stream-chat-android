@@ -230,7 +230,7 @@ internal class ChannelInfoControllerTest {
             val actual = awaitItem()
             assertEquals(
                 ChannelInfoViewState.Content.Success(
-                    members = ExpandableList(items = emptyList(), minimumVisibleItems = 5),
+                    members = emptyMembers(),
                     name = channel.name,
                 ),
                 actual.content,
@@ -244,7 +244,7 @@ internal class ChannelInfoControllerTest {
             val updatedState = awaitItem()
             assertEquals(
                 ChannelInfoViewState.Content.Success(
-                    members = ExpandableList(items = emptyList(), minimumVisibleItems = 5),
+                    members = emptyMembers(),
                     name = newName,
                 ),
                 updatedState.content,
@@ -268,10 +268,9 @@ internal class ChannelInfoControllerTest {
             sut.updateName(newName)
 
             sut.events.test {
-                val actual = awaitItem()
                 assertEquals(
                     ChannelInfoEvent.UpdateNameError(message = error.message),
-                    actual,
+                    awaitItem(),
                 )
             }
         }
@@ -288,7 +287,7 @@ internal class ChannelInfoControllerTest {
             val actual = awaitItem()
             assertEquals(
                 ChannelInfoViewState.Content.Success(
-                    members = ExpandableList(items = emptyList(), minimumVisibleItems = 5),
+                    members = emptyMembers(),
                     isMuted = false,
                 ),
                 actual.content,
@@ -301,7 +300,7 @@ internal class ChannelInfoControllerTest {
             val updatedState = awaitItem()
             assertEquals(
                 ChannelInfoViewState.Content.Success(
-                    members = ExpandableList(items = emptyList(), minimumVisibleItems = 5),
+                    members = emptyMembers(),
                     isMuted = true,
                 ),
                 updatedState.content,
@@ -320,7 +319,7 @@ internal class ChannelInfoControllerTest {
             val actual = awaitItem()
             assertEquals(
                 ChannelInfoViewState.Content.Success(
-                    members = ExpandableList(items = emptyList(), minimumVisibleItems = 5),
+                    members = emptyMembers(),
                     isMuted = false,
                 ),
                 actual.content,
@@ -332,10 +331,9 @@ internal class ChannelInfoControllerTest {
             sut.mute()
 
             sut.events.test {
-                val actual = awaitItem()
                 assertEquals(
                     ChannelInfoEvent.MuteError(message = error.message),
-                    actual,
+                    awaitItem(),
                 )
             }
         }
@@ -352,7 +350,7 @@ internal class ChannelInfoControllerTest {
             val actual = awaitItem()
             assertEquals(
                 ChannelInfoViewState.Content.Success(
-                    members = ExpandableList(items = emptyList(), minimumVisibleItems = 5),
+                    members = emptyMembers(),
                     isMuted = true,
                 ),
                 actual.content,
@@ -365,7 +363,7 @@ internal class ChannelInfoControllerTest {
             val updatedState = awaitItem()
             assertEquals(
                 ChannelInfoViewState.Content.Success(
-                    members = ExpandableList(items = emptyList(), minimumVisibleItems = 5),
+                    members = emptyMembers(),
                     isMuted = false,
                 ),
                 updatedState.content,
@@ -384,7 +382,7 @@ internal class ChannelInfoControllerTest {
             val actual = awaitItem()
             assertEquals(
                 ChannelInfoViewState.Content.Success(
-                    members = ExpandableList(items = emptyList(), minimumVisibleItems = 5),
+                    members = emptyMembers(),
                     isMuted = true,
                 ),
                 actual.content,
@@ -396,10 +394,137 @@ internal class ChannelInfoControllerTest {
             sut.unmute()
 
             sut.events.test {
-                val actual = awaitItem()
                 assertEquals(
                     ChannelInfoEvent.UnmuteError(message = error.message),
-                    actual,
+                    awaitItem(),
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `hide channel`() = runTest {
+        val fixture = Fixture().given(isHidden = false)
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            val actual = awaitItem()
+            assertEquals(
+                ChannelInfoViewState.Content.Success(
+                    members = emptyMembers(),
+                    isHidden = false,
+                ),
+                actual.content,
+            )
+
+            val clearHistory = true
+            fixture.givenHideUpdate(clearHistory)
+
+            sut.hide(clearHistory)
+
+            val updatedState = awaitItem()
+            assertEquals(
+                ChannelInfoViewState.Content.Success(
+                    members = emptyMembers(),
+                    isHidden = true,
+                ),
+                updatedState.content,
+            )
+        }
+    }
+
+    @Test
+    fun `hide channel error`() = runTest {
+        val fixture = Fixture().given(isHidden = false)
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            val actual = awaitItem()
+            assertEquals(
+                ChannelInfoViewState.Content.Success(
+                    members = emptyMembers(),
+                    isHidden = false,
+                ),
+                actual.content,
+            )
+
+            val clearHistory = true
+            val error = Error.GenericError("Error hiding channel")
+            fixture.givenHideUpdate(clearHistory, error)
+
+            sut.hide(clearHistory)
+
+            sut.events.test {
+                assertEquals(
+                    ChannelInfoEvent.HideError(message = error.message),
+                    awaitItem(),
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `unhide channel`() = runTest {
+        val fixture = Fixture().given(isHidden = true)
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            val actual = awaitItem()
+            assertEquals(
+                ChannelInfoViewState.Content.Success(
+                    members = emptyMembers(),
+                    isHidden = true,
+                ),
+                actual.content,
+            )
+
+            fixture.givenUnhideUpdate()
+
+            sut.unhide()
+
+            val updatedState = awaitItem()
+            assertEquals(
+                ChannelInfoViewState.Content.Success(
+                    members = emptyMembers(),
+                    isHidden = false,
+                ),
+                updatedState.content,
+            )
+        }
+    }
+
+    @Test
+    fun `unhide channel error`() = runTest {
+        val fixture = Fixture().given(isHidden = true)
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            val actual = awaitItem()
+            assertEquals(
+                ChannelInfoViewState.Content.Success(
+                    members = emptyMembers(),
+                    isHidden = true,
+                ),
+                actual.content,
+            )
+
+            val error = Error.GenericError("Error unhiding channel")
+            fixture.givenUnhideUpdate(error)
+
+            sut.unhide()
+
+            sut.events.test {
+                assertEquals(
+                    ChannelInfoEvent.UnhideError(message = error.message),
+                    awaitItem(),
                 )
             }
         }
@@ -470,6 +595,24 @@ private class Fixture {
         }
     }
 
+    fun givenHideUpdate(clearHistory: Boolean, error: Error? = null) = apply {
+        whenever(channelClient.hide(clearHistory)) doAnswer {
+            error?.asCall()
+                ?: Unit.asCall().also {
+                    channelHidden.value = true
+                }
+        }
+    }
+
+    fun givenUnhideUpdate(error: Error? = null) = apply {
+        whenever(channelClient.show()) doAnswer {
+            error?.asCall()
+                ?: Unit.asCall().also {
+                    channelHidden.value = false
+                }
+        }
+    }
+
     fun get(scope: CoroutineScope) = ChannelInfoController(
         cid = CID,
         scope = scope,
@@ -478,3 +621,8 @@ private class Fixture {
         channelClient = channelClient,
     )
 }
+
+private fun <T> emptyMembers() = ExpandableList<T>(
+    items = emptyList(),
+    minimumVisibleItems = 5,
+)

@@ -67,6 +67,11 @@ public data class ExpandableList<T>(
 }
 
 /**
+ * Creates an empty read-only [ExpandableList] instance.
+ */
+public fun <T> emptyExpandableList(): ExpandableList<T> = ExpandableList(items = emptyList())
+
+/**
  * Returns `true` if the list has more items than the [minimumVisibleItems],
  * indicating that it is eligible to be collapsed or expanded.
  */
