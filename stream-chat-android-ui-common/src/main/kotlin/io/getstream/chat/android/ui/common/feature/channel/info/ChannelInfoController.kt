@@ -69,39 +69,39 @@ public class ChannelInfoController(
     init {
         channelState
             .flatMapLatest { channelState ->
-                println("alor: flatMapLatest")
+                logger.d { "[onChannelState]" }
                 combine(
-                    channelState.channelData.onEach { println("alor: channelData: cid: ${it.cid}") },
-                    channelState.members.onEach { println("alor: members") },
-                    channelState.muted.onEach { println("alor: muted") },
-                ) { channel, members, muted ->
-                    println("alor: combine")
-                    Triple(channel, members, muted)
-                }
+                    channelState.channelData.onEach { logger.d { "[onChannelData] cid: ${it.cid}, name: ${it.name}" } },
+                    channelState.members.onEach { logger.d { "[onMembers] size: ${it.size}" } },
+                    channelState.muted.onEach { logger.d { "[onMuted] $it" } },
+                    channelState.hidden.onEach { logger.d { "[onHidden] $it" } },
+                    ::ChannelInfoData
+                )
             }
             .distinctUntilChanged()
-            .onEach { (channel, members, muted) ->
-                onChannelState(channel, members, muted)
+            .onEach { (channel, members, isMuted, isHidden) ->
+                onChannelInfoData(channel, members, isMuted, isHidden)
             }
             .launchIn(scope)
     }
 
-    private fun onChannelState(channel: ChannelData, members: List<Member>, muted: Boolean) {
+    private fun onChannelInfoData(
+        channel: ChannelData,
+        members: List<Member>,
+        isMuted: Boolean,
+        isHidden: Boolean,
+    ) {
         logger.d {
-            "[onChannelState] name: ${channel.name}, " +
+            "[onChannelInfoData] cid: ${channel.cid}, " +
+                "name: ${channel.name}, " +
                 "members: ${members.size}, " +
-                "muted: $muted"
+                "isMuted: $isMuted, " +
+                "isHidden: $isHidden"
         }
 
         val channelMembers = members
             .run { takeIf { channel.isGroupChannel } ?: filterNotCurrentUser() }
             .map { member -> member.toViewState(channel.createdBy) }
-
-        println(
-            "alor name: ${channel.name}, " +
-                "members: ${members.size}, " +
-                "muted: $muted",
-        )
 
         _state.update { currentState ->
             currentState.copy(
@@ -110,10 +110,11 @@ public class ChannelInfoController(
                         ChannelInfoViewState.Content.Success(
                             members = ExpandableList(
                                 items = channelMembers,
-                                minimumVisibleItems = MINIMUM_VISIBLE_EXPANDABLE_ITEMS,
+                                minimumVisibleItems = MINIMUM_VISIBLE_MEMBERS,
                             ),
                             name = channel.name,
-                            isMuted = muted,
+                            isMuted = isMuted,
+                            isHidden = isHidden,
                         )
                     }
 
@@ -123,7 +124,8 @@ public class ChannelInfoController(
                                 items = channelMembers,
                             ),
                             name = channel.name,
-                            isMuted = muted,
+                            isMuted = isMuted,
+                            isHidden = isHidden,
                         )
                     }
 
@@ -186,11 +188,40 @@ public class ChannelInfoController(
         }
     }
 
+    public fun hide(clearHistory: Boolean) {
+        scope.launch {
+            channelClient.hide(clearHistory).await()
+                .onError { error ->
+                    _events.tryEmit(
+                        ChannelInfoEvent.HideError(message = error.message),
+                    )
+                }
+        }
+    }
+
+    public fun unhide() {
+        scope.launch {
+            channelClient.show().await()
+                .onError { error ->
+                    _events.tryEmit(
+                        ChannelInfoEvent.UnhideError(message = error.message),
+                    )
+                }
+        }
+    }
+
     private fun List<Member>.filterNotCurrentUser() =
         filter { member -> member.user.id != chatClient.getCurrentOrStoredUserId() }
 }
 
-private const val MINIMUM_VISIBLE_EXPANDABLE_ITEMS = 5
+private const val MINIMUM_VISIBLE_MEMBERS = 5
+
+private data class ChannelInfoData(
+    val channel: ChannelData,
+    val members: List<Member>,
+    val isMuted: Boolean,
+    val isHidden: Boolean,
+)
 
 private fun Member.toViewState(createdBy: User) = ChannelInfoViewState.Member(
     user = user,
