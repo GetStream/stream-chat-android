@@ -237,7 +237,7 @@ internal class ChannelInfoControllerTest {
             )
 
             val newName = "newName"
-            fixture.givenUpdateName(newName)
+            fixture.givenNameUpdate(newName)
 
             sut.updateName(newName)
 
@@ -255,7 +255,6 @@ internal class ChannelInfoControllerTest {
     @Test
     fun `update name error`() = runTest {
         val channel = Channel(name = "name")
-        val error = Error.GenericError("Error updating channel name")
         val fixture = Fixture().given(channel = channel)
         val sut = fixture.get(backgroundScope)
 
@@ -263,17 +262,18 @@ internal class ChannelInfoControllerTest {
             skipItems(2) // Skip initial and loaded state
 
             val newName = "newName"
-            fixture.givenUpdateName(newName, error)
+            val error = Error.GenericError("Error updating channel name")
+            fixture.givenNameUpdate(newName, error)
 
             sut.updateName(newName)
-        }
 
-        sut.events.test {
-            val actual = awaitItem()
-            assertEquals(
-                ChannelInfoEvent.UpdateNameError(message = error.message),
-                actual,
-            )
+            sut.events.test {
+                val actual = awaitItem()
+                assertEquals(
+                    ChannelInfoEvent.UpdateNameError(message = error.message),
+                    actual,
+                )
+            }
         }
     }
 
@@ -294,7 +294,7 @@ internal class ChannelInfoControllerTest {
                 actual.content,
             )
 
-            fixture.givenMuteSuccess()
+            fixture.givenMuteUpdate()
 
             sut.mute()
 
@@ -306,6 +306,38 @@ internal class ChannelInfoControllerTest {
                 ),
                 updatedState.content,
             )
+        }
+    }
+
+    @Test
+    fun `mute channel error`() = runTest {
+        val fixture = Fixture().given(isMuted = false)
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            val actual = awaitItem()
+            assertEquals(
+                ChannelInfoViewState.Content.Success(
+                    members = ExpandableList(items = emptyList(), minimumVisibleItems = 5),
+                    isMuted = false,
+                ),
+                actual.content,
+            )
+
+            val error = Error.GenericError("Error muting channel")
+            fixture.givenMuteUpdate(error)
+
+            sut.mute()
+
+            sut.events.test {
+                val actual = awaitItem()
+                assertEquals(
+                    ChannelInfoEvent.MuteError(message = error.message),
+                    actual,
+                )
+            }
         }
     }
 
@@ -326,7 +358,7 @@ internal class ChannelInfoControllerTest {
                 actual.content,
             )
 
-            fixture.givenUnmuteSuccess()
+            fixture.givenUnmuteUpdate()
 
             sut.unmute()
 
@@ -340,6 +372,38 @@ internal class ChannelInfoControllerTest {
             )
         }
     }
+
+    @Test
+    fun `unmute channel error`() = runTest {
+        val fixture = Fixture().given(isMuted = true)
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            val actual = awaitItem()
+            assertEquals(
+                ChannelInfoViewState.Content.Success(
+                    members = ExpandableList(items = emptyList(), minimumVisibleItems = 5),
+                    isMuted = true,
+                ),
+                actual.content,
+            )
+
+            val error = Error.GenericError("Error unmuting channel")
+            fixture.givenUnmuteUpdate(error)
+
+            sut.unmute()
+
+            sut.events.test {
+                val actual = awaitItem()
+                assertEquals(
+                    ChannelInfoEvent.UnmuteError(message = error.message),
+                    actual,
+                )
+            }
+        }
+    }
 }
 
 private const val CID = "messaging:1"
@@ -348,10 +412,12 @@ private class Fixture {
     private val channelData = MutableStateFlow(ChannelData(type = "", id = ""))
     private val channelMembers = MutableStateFlow(emptyList<Member>())
     private val channelMuted = MutableStateFlow(false)
+    private val channelHidden = MutableStateFlow(false)
     private val channelState: ChannelState = mock {
         on { channelData } doReturn channelData
         on { members } doReturn channelMembers
         on { muted } doReturn channelMuted
+        on { hidden } doReturn channelHidden
     }
     private val channelClient: ChannelClient = mock()
     private val chatClient: ChatClient = mock()
@@ -360,6 +426,7 @@ private class Fixture {
         currentUser: User? = null,
         channel: Channel? = null,
         isMuted: Boolean? = null,
+        isHidden: Boolean? = null,
     ) = apply {
         if (currentUser != null) {
             whenever(chatClient.getCurrentOrStoredUserId()) doReturn currentUser.id
@@ -371,9 +438,12 @@ private class Fixture {
         if (isMuted != null) {
             channelMuted.value = isMuted
         }
+        if (isHidden != null) {
+            channelHidden.value = isHidden
+        }
     }
 
-    fun givenUpdateName(name: String, error: Error? = null) = apply {
+    fun givenNameUpdate(name: String, error: Error? = null) = apply {
         whenever(channelClient.updatePartial(mapOf("name" to name))) doAnswer {
             error?.asCall()
                 ?: mock<Channel>().asCall().also {
@@ -382,19 +452,21 @@ private class Fixture {
         }
     }
 
-    fun givenMuteSuccess() = apply {
+    fun givenMuteUpdate(error: Error? = null) = apply {
         whenever(channelClient.mute()) doAnswer {
-            Unit.asCall().also {
-                channelMuted.value = true
-            }
+            error?.asCall()
+                ?: Unit.asCall().also {
+                    channelMuted.value = true
+                }
         }
     }
 
-    fun givenUnmuteSuccess() = apply {
+    fun givenUnmuteUpdate(error: Error? = null) = apply {
         whenever(channelClient.unmute()) doAnswer {
-            Unit.asCall().also {
-                channelMuted.value = false
-            }
+            error?.asCall()
+                ?: Unit.asCall().also {
+                    channelMuted.value = false
+                }
         }
     }
 
