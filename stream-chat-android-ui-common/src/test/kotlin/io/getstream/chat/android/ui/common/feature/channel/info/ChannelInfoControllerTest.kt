@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.toChannelData
 import io.getstream.chat.android.test.asCall
@@ -237,7 +238,7 @@ internal class ChannelInfoControllerTest {
             )
 
             val newName = "newName"
-            fixture.givenNameUpdate(newName)
+            fixture.givenUpdateChannelName(newName)
 
             sut.updateName(newName)
 
@@ -263,7 +264,7 @@ internal class ChannelInfoControllerTest {
 
             val newName = "newName"
             val error = Error.GenericError("Error updating channel name")
-            fixture.givenNameUpdate(newName, error)
+            fixture.givenUpdateChannelName(newName, error)
 
             sut.updateName(newName)
 
@@ -293,7 +294,7 @@ internal class ChannelInfoControllerTest {
                 actual.content,
             )
 
-            fixture.givenMuteUpdate()
+            fixture.givenMuteChannel()
 
             sut.mute()
 
@@ -326,7 +327,7 @@ internal class ChannelInfoControllerTest {
             )
 
             val error = Error.GenericError("Error muting channel")
-            fixture.givenMuteUpdate(error)
+            fixture.givenMuteChannel(error)
 
             sut.mute()
 
@@ -356,7 +357,7 @@ internal class ChannelInfoControllerTest {
                 actual.content,
             )
 
-            fixture.givenUnmuteUpdate()
+            fixture.givenUnmuteChannel()
 
             sut.unmute()
 
@@ -389,7 +390,7 @@ internal class ChannelInfoControllerTest {
             )
 
             val error = Error.GenericError("Error unmuting channel")
-            fixture.givenUnmuteUpdate(error)
+            fixture.givenUnmuteChannel(error)
 
             sut.unmute()
 
@@ -420,7 +421,7 @@ internal class ChannelInfoControllerTest {
             )
 
             val clearHistory = true
-            fixture.givenHideUpdate(clearHistory)
+            fixture.givenHideChannel(clearHistory)
 
             sut.hide(clearHistory)
 
@@ -454,7 +455,7 @@ internal class ChannelInfoControllerTest {
 
             val clearHistory = true
             val error = Error.GenericError("Error hiding channel")
-            fixture.givenHideUpdate(clearHistory, error)
+            fixture.givenHideChannel(clearHistory, error)
 
             sut.hide(clearHistory)
 
@@ -484,7 +485,7 @@ internal class ChannelInfoControllerTest {
                 actual.content,
             )
 
-            fixture.givenUnhideUpdate()
+            fixture.givenUnhideChannel()
 
             sut.unhide()
 
@@ -517,13 +518,81 @@ internal class ChannelInfoControllerTest {
             )
 
             val error = Error.GenericError("Error unhiding channel")
-            fixture.givenUnhideUpdate(error)
+            fixture.givenUnhideChannel(error)
 
             sut.unhide()
 
             sut.events.test {
                 assertEquals(
                     ChannelInfoEvent.UnhideError(message = error.message),
+                    awaitItem(),
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `leave channel`() = runTest {
+        val currentUser = User(id = "1")
+        val fixture = Fixture()
+            .given(
+                currentUser = currentUser,
+                channel = Channel(id = "!members-1,2"),
+            )
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            val actual = awaitItem()
+            assertEquals(
+                ChannelInfoViewState.Content.Success(
+                    members = emptyMembers(),
+                ),
+                actual.content,
+            )
+
+            val quitMessage = Message(text = "${currentUser.id} left")
+            fixture.givenLeaveChannel(quitMessage)
+
+            sut.leave(quitMessage)
+
+            sut.events.test {
+                expectNoEvents()
+            }
+        }
+    }
+
+    @Test
+    fun `leave channel error`() = runTest {
+        val currentUser = User(id = "1")
+        val fixture = Fixture()
+            .given(
+                currentUser = currentUser,
+                channel = Channel(id = "!members-1,2"),
+            )
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            val actual = awaitItem()
+            assertEquals(
+                ChannelInfoViewState.Content.Success(
+                    members = emptyMembers(),
+                ),
+                actual.content,
+            )
+
+            val quitMessage = Message()
+            val error = Error.GenericError("Error leaving channel")
+            fixture.givenLeaveChannel(quitMessage, error)
+
+            sut.leave(quitMessage)
+
+            sut.events.test {
+                assertEquals(
+                    ChannelInfoEvent.LeaveError(message = error.message),
                     awaitItem(),
                 )
             }
@@ -568,7 +637,7 @@ private class Fixture {
         }
     }
 
-    fun givenNameUpdate(name: String, error: Error? = null) = apply {
+    fun givenUpdateChannelName(name: String, error: Error? = null) = apply {
         whenever(channelClient.updatePartial(mapOf("name" to name))) doAnswer {
             error?.asCall()
                 ?: mock<Channel>().asCall().also {
@@ -577,7 +646,7 @@ private class Fixture {
         }
     }
 
-    fun givenMuteUpdate(error: Error? = null) = apply {
+    fun givenMuteChannel(error: Error? = null) = apply {
         whenever(channelClient.mute()) doAnswer {
             error?.asCall()
                 ?: Unit.asCall().also {
@@ -586,7 +655,7 @@ private class Fixture {
         }
     }
 
-    fun givenUnmuteUpdate(error: Error? = null) = apply {
+    fun givenUnmuteChannel(error: Error? = null) = apply {
         whenever(channelClient.unmute()) doAnswer {
             error?.asCall()
                 ?: Unit.asCall().also {
@@ -595,7 +664,7 @@ private class Fixture {
         }
     }
 
-    fun givenHideUpdate(clearHistory: Boolean, error: Error? = null) = apply {
+    fun givenHideChannel(clearHistory: Boolean, error: Error? = null) = apply {
         whenever(channelClient.hide(clearHistory)) doAnswer {
             error?.asCall()
                 ?: Unit.asCall().also {
@@ -604,12 +673,24 @@ private class Fixture {
         }
     }
 
-    fun givenUnhideUpdate(error: Error? = null) = apply {
+    fun givenUnhideChannel(error: Error? = null) = apply {
         whenever(channelClient.show()) doAnswer {
             error?.asCall()
                 ?: Unit.asCall().also {
                     channelHidden.value = false
                 }
+        }
+    }
+
+    fun givenLeaveChannel(quitMessage: Message, error: Error? = null) = apply {
+        whenever(
+            channelClient.removeMembers(
+                memberIds = listOf(chatClient.getCurrentOrStoredUserId()!!),
+                systemMessage = quitMessage
+            )
+        ) doAnswer {
+            error?.asCall()
+                ?: mock<Channel>().asCall()
         }
     }
 

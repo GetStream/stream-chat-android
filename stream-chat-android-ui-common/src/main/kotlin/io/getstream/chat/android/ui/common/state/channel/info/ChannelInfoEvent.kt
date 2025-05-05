@@ -22,4 +22,5 @@ public sealed interface ChannelInfoEvent {
     public data class UnmuteError(val message: String) : ChannelInfoEvent
     public data class HideError(val message: String) : ChannelInfoEvent
     public data class UnhideError(val message: String) : ChannelInfoEvent
+    public data class LeaveError(val message: String) : ChannelInfoEvent
 }
