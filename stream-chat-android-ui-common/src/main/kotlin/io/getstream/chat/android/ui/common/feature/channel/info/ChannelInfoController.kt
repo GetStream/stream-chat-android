@@ -23,6 +23,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.extensions.isGroupChannel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoEvent
@@ -75,7 +76,7 @@ public class ChannelInfoController(
                     channelState.members.onEach { logger.d { "[onMembers] size: ${it.size}" } },
                     channelState.muted.onEach { logger.d { "[onMuted] $it" } },
                     channelState.hidden.onEach { logger.d { "[onHidden] $it" } },
-                    ::ChannelInfoData
+                    ::ChannelInfoData,
                 )
             }
             .distinctUntilChanged()
@@ -207,6 +208,26 @@ public class ChannelInfoController(
                         ChannelInfoEvent.UnhideError(message = error.message),
                     )
                 }
+        }
+    }
+
+    public fun leave(quitMessage: Message?) {
+        scope.launch {
+            runCatching {
+                val currentUserId = requireNotNull(chatClient.getCurrentOrStoredUserId())
+                channelClient.removeMembers(
+                    memberIds = listOf(currentUserId),
+                    systemMessage = quitMessage,
+                ).await().onError { error ->
+                    _events.tryEmit(
+                        ChannelInfoEvent.LeaveError(message = error.message),
+                    )
+                }
+            }.onFailure { cause ->
+                _events.tryEmit(
+                    ChannelInfoEvent.LeaveError(message = cause.message.orEmpty()),
+                )
+            }
         }
     }
 
