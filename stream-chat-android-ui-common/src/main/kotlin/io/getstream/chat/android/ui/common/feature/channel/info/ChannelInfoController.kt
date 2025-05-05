@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.extensions.isGroupChannel
+import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
@@ -80,29 +81,32 @@ public class ChannelInfoController(
                 )
             }
             .distinctUntilChanged()
-            .onEach { (channel, members, isMuted, isHidden) ->
-                onChannelInfoData(channel, members, isMuted, isHidden)
+            .onEach { (channelData, members, isMuted, isHidden) ->
+                onChannelInfoData(channelData, members, isMuted, isHidden)
             }
             .launchIn(scope)
     }
 
     private fun onChannelInfoData(
-        channel: ChannelData,
+        channelData: ChannelData,
         members: List<Member>,
         isMuted: Boolean,
         isHidden: Boolean,
     ) {
+        val capability = channelData.toCapability()
+
         logger.d {
-            "[onChannelInfoData] cid: ${channel.cid}, " +
-                "name: ${channel.name}, " +
+            "[onChannelInfoData] cid: ${channelData.cid}, " +
+                "name: ${channelData.name}, " +
                 "members: ${members.size}, " +
                 "isMuted: $isMuted, " +
-                "isHidden: $isHidden"
+                "isHidden: $isHidden, " +
+                "$capability"
         }
 
-        val channelMembers = members
-            .run { takeIf { channel.isGroupChannel } ?: filterNotCurrentUser() }
-            .map { member -> member.toViewState(channel.createdBy) }
+        val groupMembers = members
+            .run { takeIf { channelData.isGroupChannel } ?: filterNotCurrentUser() }
+            .map { member -> member.toViewState(channelData.createdBy) }
 
         _state.update { currentState ->
             currentState.copy(
@@ -110,27 +114,27 @@ public class ChannelInfoController(
                     is ChannelInfoViewState.Content.Loading -> {
                         ChannelInfoViewState.Content.Success(
                             members = ExpandableList(
-                                items = channelMembers,
+                                items = groupMembers,
                                 minimumVisibleItems = MINIMUM_VISIBLE_MEMBERS,
                             ),
-                            name = channel.name,
+                            name = channelData.name,
                             isMuted = isMuted,
                             isHidden = isHidden,
+                            capability = capability
                         )
                     }
 
                     is ChannelInfoViewState.Content.Success -> {
                         currentState.content.copy(
                             members = currentState.content.members.copy(
-                                items = channelMembers,
+                                items = groupMembers,
                             ),
-                            name = channel.name,
+                            name = channelData.name,
                             isMuted = isMuted,
                             isHidden = isHidden,
+                            capability = capability
                         )
                     }
-
-                    else -> currentState.content
                 },
             )
         }
@@ -218,16 +222,38 @@ public class ChannelInfoController(
                 channelClient.removeMembers(
                     memberIds = listOf(currentUserId),
                     systemMessage = quitMessage,
-                ).await().onError { error ->
-                    _events.tryEmit(
-                        ChannelInfoEvent.LeaveError(message = error.message),
-                    )
-                }
+                ).await()
+                    .onSuccess {
+                        _events.tryEmit(
+                            ChannelInfoEvent.LeaveSuccess,
+                        )
+                    }
+                    .onError { error ->
+                        _events.tryEmit(
+                            ChannelInfoEvent.LeaveError(message = error.message),
+                        )
+                    }
             }.onFailure { cause ->
                 _events.tryEmit(
                     ChannelInfoEvent.LeaveError(message = cause.message.orEmpty()),
                 )
             }
+        }
+    }
+
+    public fun delete() {
+        scope.launch {
+            channelClient.delete().await()
+                .onSuccess {
+                    _events.tryEmit(
+                        ChannelInfoEvent.DeleteSuccess,
+                    )
+                }
+                .onError { error ->
+                    _events.tryEmit(
+                        ChannelInfoEvent.DeleteError(message = error.message),
+                    )
+                }
         }
     }
 
@@ -238,7 +264,7 @@ public class ChannelInfoController(
 private const val MINIMUM_VISIBLE_MEMBERS = 5
 
 private data class ChannelInfoData(
-    val channel: ChannelData,
+    val channelData: ChannelData,
     val members: List<Member>,
     val isMuted: Boolean,
     val isHidden: Boolean,
@@ -255,6 +281,12 @@ private fun Member.toViewState(createdBy: User) = ChannelInfoViewState.Member(
             else -> ChannelInfoViewState.Role.Other(channelRole.orEmpty())
         }
     },
+)
+
+private fun ChannelData.toCapability() = ChannelInfoViewState.Capability(
+    canMute = ownCapabilities.contains(ChannelCapabilities.MUTE_CHANNEL),
+    canLeave = ownCapabilities.contains(ChannelCapabilities.LEAVE_CHANNEL),
+    canDelete = ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL),
 )
 
 private fun MutableStateFlow<ChannelInfoViewState>.updateOnSuccessContent(
