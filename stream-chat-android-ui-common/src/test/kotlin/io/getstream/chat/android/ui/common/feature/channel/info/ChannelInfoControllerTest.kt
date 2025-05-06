@@ -239,6 +239,8 @@ internal class ChannelInfoControllerTest {
                     members = emptyMembers(),
                     capability = ChannelInfoState.Content.Capability(
                         canAddMember = false,
+                        canRemoveMember = false,
+                        canBanMember = false,
                         canRename = false,
                         canMute = false,
                         canLeave = false,
@@ -252,6 +254,7 @@ internal class ChannelInfoControllerTest {
                 ownCapabilities = setOf(
                     ChannelCapabilities.UPDATE_CHANNEL_MEMBERS,
                     ChannelCapabilities.UPDATE_CHANNEL,
+                    ChannelCapabilities.BAN_CHANNEL_MEMBERS,
                     ChannelCapabilities.MUTE_CHANNEL,
                     ChannelCapabilities.LEAVE_CHANNEL,
                     ChannelCapabilities.DELETE_CHANNEL,
@@ -264,6 +267,8 @@ internal class ChannelInfoControllerTest {
                     members = emptyMembers(),
                     capability = ChannelInfoState.Content.Capability(
                         canAddMember = true,
+                        canRemoveMember = true,
+                        canBanMember = true,
                         canRename = true,
                         canMute = true,
                         canLeave = true,

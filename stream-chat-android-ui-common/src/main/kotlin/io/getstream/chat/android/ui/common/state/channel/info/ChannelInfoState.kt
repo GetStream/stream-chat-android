@@ -36,6 +36,8 @@ public sealed interface ChannelInfoState {
 
         public data class Capability(
             val canAddMember: Boolean = false,
+            val canRemoveMember: Boolean = false,
+            val canBanMember: Boolean = false,
             val canRename: Boolean = false,
             val canMute: Boolean = false,
             val canLeave: Boolean = false,
