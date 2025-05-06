@@ -49,6 +49,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImagePainter
 import coil3.request.ImageRequest
@@ -57,7 +58,6 @@ import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.attachments.content.PlayButton
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
-import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.clickable
@@ -242,7 +242,7 @@ private fun MediaGalleryPhotosMenuItem(
             }
         }
 
-        Avatar(
+        ChatTheme.componentFactory.Avatar(
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .padding(8.dp)
@@ -252,6 +252,11 @@ private fun MediaGalleryPhotosMenuItem(
             imageUrl = user.image,
             initials = user.initials,
             textStyle = ChatTheme.typography.captionBold,
+            shape = ChatTheme.shapes.avatar,
+            placeholderPainter = null,
+            contentDescription = null,
+            initialsAvatarOffset = DpOffset(0.dp, 0.dp),
+            onClick = null,
         )
 
         if (isVideo && imageState.isCompleted) {
