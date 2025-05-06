@@ -28,7 +28,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoEvent
-import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
+import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
@@ -60,9 +60,9 @@ public class ChannelInfoController(
 ) {
     private val logger by taggedLogger("Chat:ChannelInfoController")
 
-    private val _state = MutableStateFlow(ChannelInfoViewState())
+    private val _state = MutableStateFlow(ChannelInfoState())
 
-    public val state: StateFlow<ChannelInfoViewState> = _state.asStateFlow()
+    public val state: StateFlow<ChannelInfoState> = _state.asStateFlow()
 
     private val _events = MutableSharedFlow<ChannelInfoEvent>(extraBufferCapacity = 1)
 
@@ -111,8 +111,8 @@ public class ChannelInfoController(
         _state.update { currentState ->
             currentState.copy(
                 content = when (currentState.content) {
-                    is ChannelInfoViewState.Content.Loading -> {
-                        ChannelInfoViewState.Content.Success(
+                    is ChannelInfoState.Content.Loading -> {
+                        ChannelInfoState.Content.Success(
                             members = ExpandableList(
                                 items = groupMembers,
                                 minimumVisibleItems = MINIMUM_VISIBLE_MEMBERS,
@@ -124,7 +124,7 @@ public class ChannelInfoController(
                         )
                     }
 
-                    is ChannelInfoViewState.Content.Success -> {
+                    is ChannelInfoState.Content.Success -> {
                         currentState.content.copy(
                             members = currentState.content.members.copy(
                                 items = groupMembers,
@@ -270,30 +270,30 @@ private data class ChannelInfoData(
     val isHidden: Boolean,
 )
 
-private fun Member.toViewState(createdBy: User) = ChannelInfoViewState.Member(
+private fun Member.toViewState(createdBy: User) = ChannelInfoState.Member(
     user = user,
     role = if (createdBy.id == user.id) {
-        ChannelInfoViewState.Role.Owner
+        ChannelInfoState.Role.Owner
     } else {
         when (channelRole) {
-            "channel_moderator" -> ChannelInfoViewState.Role.Moderator
-            "channel_member" -> ChannelInfoViewState.Role.Member
-            else -> ChannelInfoViewState.Role.Other(channelRole.orEmpty())
+            "channel_moderator" -> ChannelInfoState.Role.Moderator
+            "channel_member" -> ChannelInfoState.Role.Member
+            else -> ChannelInfoState.Role.Other(channelRole.orEmpty())
         }
     },
 )
 
-private fun ChannelData.toCapability() = ChannelInfoViewState.Capability(
+private fun ChannelData.toCapability() = ChannelInfoState.Capability(
     canMute = ownCapabilities.contains(ChannelCapabilities.MUTE_CHANNEL),
     canLeave = ownCapabilities.contains(ChannelCapabilities.LEAVE_CHANNEL),
     canDelete = ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL),
 )
 
-private fun MutableStateFlow<ChannelInfoViewState>.updateOnSuccessContent(
-    transformation: (content: ChannelInfoViewState.Content.Success) -> ChannelInfoViewState.Content,
+private fun MutableStateFlow<ChannelInfoState>.updateOnSuccessContent(
+    transformation: (content: ChannelInfoState.Content.Success) -> ChannelInfoState.Content,
 ) {
     update { currentState ->
-        if (currentState.content is ChannelInfoViewState.Content.Success) {
+        if (currentState.content is ChannelInfoState.Content.Success) {
             currentState.copy(
                 content = transformation(currentState.content),
             )

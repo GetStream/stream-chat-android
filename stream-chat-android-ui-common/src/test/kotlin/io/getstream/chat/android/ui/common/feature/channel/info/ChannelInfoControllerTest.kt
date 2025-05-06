@@ -28,7 +28,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.toChannelData
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoEvent
-import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
+import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
 import io.getstream.result.Error
 import kotlinx.coroutines.CoroutineScope
@@ -48,7 +48,7 @@ internal class ChannelInfoControllerTest {
     fun `initial state`() = runTest {
         val sut = Fixture().get(backgroundScope)
 
-        assertEquals(ChannelInfoViewState.Content.Loading, sut.state.value.content)
+        assertEquals(ChannelInfoState.Content.Loading, sut.state.value.content)
     }
 
     @Test
@@ -75,12 +75,12 @@ internal class ChannelInfoControllerTest {
 
             val actual = awaitItem()
             assertEquals(
-                ChannelInfoViewState.Content.Success(
+                ChannelInfoState.Content.Success(
                     members = ExpandableList(
                         items = listOf(
-                            ChannelInfoViewState.Member(
+                            ChannelInfoState.Member(
                                 user = otherUser,
-                                role = ChannelInfoViewState.Role.Owner,
+                                role = ChannelInfoState.Role.Owner,
                             ),
                         ),
                         minimumVisibleItems = 5,
@@ -113,20 +113,20 @@ internal class ChannelInfoControllerTest {
 
             val actual = awaitItem()
             assertEquals(
-                ChannelInfoViewState.Content.Success(
+                ChannelInfoState.Content.Success(
                     members = ExpandableList(
                         items = listOf(
-                            ChannelInfoViewState.Member(
+                            ChannelInfoState.Member(
                                 user = owner,
-                                role = ChannelInfoViewState.Role.Owner,
+                                role = ChannelInfoState.Role.Owner,
                             ),
-                            ChannelInfoViewState.Member(
+                            ChannelInfoState.Member(
                                 user = user2,
-                                role = ChannelInfoViewState.Role.Other(""),
+                                role = ChannelInfoState.Role.Other(""),
                             ),
-                            ChannelInfoViewState.Member(
+                            ChannelInfoState.Member(
                                 user = user3,
-                                role = ChannelInfoViewState.Role.Other(""),
+                                role = ChannelInfoState.Role.Other(""),
                             ),
                         ),
                         minimumVisibleItems = 5,
@@ -151,13 +151,13 @@ internal class ChannelInfoControllerTest {
 
             val actual = awaitItem()
             assertEquals(
-                ChannelInfoViewState.Content.Success(
+                ChannelInfoState.Content.Success(
                     members = ExpandableList(
                         items = channel.members
                             .map { member ->
-                                ChannelInfoViewState.Member(
+                                ChannelInfoState.Member(
                                     user = member.user,
-                                    role = ChannelInfoViewState.Role.Other(""),
+                                    role = ChannelInfoState.Role.Other(""),
                                 )
                             },
                         minimumVisibleItems = 5,
@@ -182,13 +182,13 @@ internal class ChannelInfoControllerTest {
 
             val actual = awaitItem()
             assertEquals(
-                ChannelInfoViewState.Content.Success(
+                ChannelInfoState.Content.Success(
                     members = ExpandableList(
                         items = channel.members
                             .map { member ->
-                                ChannelInfoViewState.Member(
+                                ChannelInfoState.Member(
                                     user = member.user,
-                                    role = ChannelInfoViewState.Role.Other(""),
+                                    role = ChannelInfoState.Role.Other(""),
                                 )
                             },
                         minimumVisibleItems = 5,
@@ -201,13 +201,13 @@ internal class ChannelInfoControllerTest {
 
             val expandedState = awaitItem()
             assertEquals(
-                ChannelInfoViewState.Content.Success(
+                ChannelInfoState.Content.Success(
                     members = ExpandableList(
                         items = channel.members
                             .map { member ->
-                                ChannelInfoViewState.Member(
+                                ChannelInfoState.Member(
                                     user = member.user,
-                                    role = ChannelInfoViewState.Role.Other(""),
+                                    role = ChannelInfoState.Role.Other(""),
                                 )
                             },
                         minimumVisibleItems = 5,
@@ -230,7 +230,7 @@ internal class ChannelInfoControllerTest {
 
             val actual = awaitItem()
             assertEquals(
-                ChannelInfoViewState.Content.Success(
+                ChannelInfoState.Content.Success(
                     members = emptyMembers(),
                     name = channel.name,
                 ),
@@ -244,7 +244,7 @@ internal class ChannelInfoControllerTest {
 
             val updatedState = awaitItem()
             assertEquals(
-                ChannelInfoViewState.Content.Success(
+                ChannelInfoState.Content.Success(
                     members = emptyMembers(),
                     name = newName,
                 ),
@@ -287,7 +287,7 @@ internal class ChannelInfoControllerTest {
 
             val actual = awaitItem()
             assertEquals(
-                ChannelInfoViewState.Content.Success(
+                ChannelInfoState.Content.Success(
                     members = emptyMembers(),
                     isMuted = false,
                 ),
@@ -300,7 +300,7 @@ internal class ChannelInfoControllerTest {
 
             val updatedState = awaitItem()
             assertEquals(
-                ChannelInfoViewState.Content.Success(
+                ChannelInfoState.Content.Success(
                     members = emptyMembers(),
                     isMuted = true,
                 ),
@@ -319,7 +319,7 @@ internal class ChannelInfoControllerTest {
 
             val actual = awaitItem()
             assertEquals(
-                ChannelInfoViewState.Content.Success(
+                ChannelInfoState.Content.Success(
                     members = emptyMembers(),
                     isMuted = false,
                 ),
@@ -350,7 +350,7 @@ internal class ChannelInfoControllerTest {
 
             val actual = awaitItem()
             assertEquals(
-                ChannelInfoViewState.Content.Success(
+                ChannelInfoState.Content.Success(
                     members = emptyMembers(),
                     isMuted = true,
                 ),
@@ -363,7 +363,7 @@ internal class ChannelInfoControllerTest {
 
             val updatedState = awaitItem()
             assertEquals(
-                ChannelInfoViewState.Content.Success(
+                ChannelInfoState.Content.Success(
                     members = emptyMembers(),
                     isMuted = false,
                 ),
@@ -382,7 +382,7 @@ internal class ChannelInfoControllerTest {
 
             val actual = awaitItem()
             assertEquals(
-                ChannelInfoViewState.Content.Success(
+                ChannelInfoState.Content.Success(
                     members = emptyMembers(),
                     isMuted = true,
                 ),
@@ -413,7 +413,7 @@ internal class ChannelInfoControllerTest {
 
             val actual = awaitItem()
             assertEquals(
-                ChannelInfoViewState.Content.Success(
+                ChannelInfoState.Content.Success(
                     members = emptyMembers(),
                     isHidden = false,
                 ),
@@ -427,7 +427,7 @@ internal class ChannelInfoControllerTest {
 
             val updatedState = awaitItem()
             assertEquals(
-                ChannelInfoViewState.Content.Success(
+                ChannelInfoState.Content.Success(
                     members = emptyMembers(),
                     isHidden = true,
                 ),
@@ -446,7 +446,7 @@ internal class ChannelInfoControllerTest {
 
             val actual = awaitItem()
             assertEquals(
-                ChannelInfoViewState.Content.Success(
+                ChannelInfoState.Content.Success(
                     members = emptyMembers(),
                     isHidden = false,
                 ),
@@ -478,7 +478,7 @@ internal class ChannelInfoControllerTest {
 
             val actual = awaitItem()
             assertEquals(
-                ChannelInfoViewState.Content.Success(
+                ChannelInfoState.Content.Success(
                     members = emptyMembers(),
                     isHidden = true,
                 ),
@@ -491,7 +491,7 @@ internal class ChannelInfoControllerTest {
 
             val updatedState = awaitItem()
             assertEquals(
-                ChannelInfoViewState.Content.Success(
+                ChannelInfoState.Content.Success(
                     members = emptyMembers(),
                     isHidden = false,
                 ),
@@ -510,7 +510,7 @@ internal class ChannelInfoControllerTest {
 
             val actual = awaitItem()
             assertEquals(
-                ChannelInfoViewState.Content.Success(
+                ChannelInfoState.Content.Success(
                     members = emptyMembers(),
                     isHidden = true,
                 ),
@@ -546,7 +546,7 @@ internal class ChannelInfoControllerTest {
 
             val actual = awaitItem()
             assertEquals(
-                ChannelInfoViewState.Content.Success(
+                ChannelInfoState.Content.Success(
                     members = emptyMembers(),
                 ),
                 actual.content,
@@ -581,7 +581,7 @@ internal class ChannelInfoControllerTest {
 
             val actual = awaitItem()
             assertEquals(
-                ChannelInfoViewState.Content.Success(
+                ChannelInfoState.Content.Success(
                     members = emptyMembers(),
                 ),
                 actual.content,
@@ -612,7 +612,7 @@ internal class ChannelInfoControllerTest {
 
             val actual = awaitItem()
             assertEquals(
-                ChannelInfoViewState.Content.Success(
+                ChannelInfoState.Content.Success(
                     members = emptyMembers(),
                 ),
                 actual.content,
@@ -641,7 +641,7 @@ internal class ChannelInfoControllerTest {
 
             val actual = awaitItem()
             assertEquals(
-                ChannelInfoViewState.Content.Success(
+                ChannelInfoState.Content.Success(
                     members = emptyMembers(),
                 ),
                 actual.content,
