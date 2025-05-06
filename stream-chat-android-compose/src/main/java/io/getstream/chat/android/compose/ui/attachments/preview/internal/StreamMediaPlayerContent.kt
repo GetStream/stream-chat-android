@@ -73,7 +73,7 @@ import io.getstream.chat.android.compose.ui.util.clickable
  */
 @OptIn(UnstableApi::class)
 @Composable
-internal fun StreamVideoPlayerContent(
+internal fun StreamMediaPlayerContent(
     assetUrl: String?,
     playWhenReady: Boolean,
     showControllerInitially: Boolean,

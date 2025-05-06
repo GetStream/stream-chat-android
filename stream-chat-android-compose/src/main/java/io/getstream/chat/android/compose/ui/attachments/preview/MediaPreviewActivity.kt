@@ -48,7 +48,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.attachments.preview.internal.StreamVideoPlayerContent
+import io.getstream.chat.android.compose.ui.attachments.preview.internal.StreamMediaPlayerContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 
@@ -114,7 +114,7 @@ public class MediaPreviewActivity : AppCompatActivity() {
             containerColor = Color.Black,
             topBar = { MediaPreviewToolbar(title, onBackPressed) },
             content = { padding ->
-                StreamVideoPlayerContent(
+                StreamMediaPlayerContent(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(padding),

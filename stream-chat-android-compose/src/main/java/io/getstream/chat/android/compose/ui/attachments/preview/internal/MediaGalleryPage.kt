@@ -286,7 +286,7 @@ internal fun MediaGalleryVideoPage(
     onPlaybackError: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    StreamVideoPlayerContent(
+    StreamMediaPlayerContent(
         modifier = modifier,
         assetUrl = assetUrl,
         thumbnailUrl = thumbnailUrl,
