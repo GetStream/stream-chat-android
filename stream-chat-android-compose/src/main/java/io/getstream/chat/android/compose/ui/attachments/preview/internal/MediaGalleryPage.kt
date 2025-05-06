@@ -30,12 +30,9 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.PagerState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -43,10 +40,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
@@ -55,20 +50,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.compose.LifecycleResumeEffect
-import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
 import coil3.compose.AsyncImagePainter
 import coil3.request.ImageRequest
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.attachments.content.PlayButton
-import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
-import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import kotlinx.coroutines.coroutineScope
@@ -299,104 +286,15 @@ internal fun MediaGalleryVideoPage(
     onPlaybackError: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
-    var showThumbnail by remember { mutableStateOf(true) }
-    var showPlayButton by remember { mutableStateOf(true) }
-    var showBuffering by remember { mutableStateOf(false) }
-    val onBuffering: (Boolean) -> Unit = { showBuffering = it }
-    // Create player
-    var player by remember { mutableStateOf<Player?>(null) }
-    LifecycleResumeEffect(Unit) {
-        player = createPlayer(
-            context = context,
-            onBuffering = onBuffering,
-            onPlaybackError = onPlaybackError,
-        )
-        onPauseOrDispose {
-            player?.release()
-            player = null
-        }
-    }
-    // Prepare media
-    LaunchedEffect(player, assetUrl) {
-        if (player != null && assetUrl != null) {
-            player?.setMediaItem(MediaItem.fromUri(assetUrl))
-            player?.prepare()
-        }
-    }
-    // Draw player
-    player?.let { preparedPlayer ->
-        Box(
-            modifier = modifier,
-            contentAlignment = Alignment.Center,
-        ) {
-            // Video player
-            AndroidView(
-                modifier = Modifier
-                    .matchParentSize()
-                    .background(Color.Black),
-                factory = {
-                    createPlayerView(it, preparedPlayer)
-                },
-            )
-            // Thumbnail
-            if (showThumbnail) {
-                VideoThumbnail(
-                    modifier = Modifier.matchParentSize(),
-                    thumbnailUrl = thumbnailUrl,
-                    showPlayButton = showPlayButton,
-                    onPlayClick = {
-                        showThumbnail = false
-                        showPlayButton = false
-                        preparedPlayer.play()
-                    },
-                )
-            }
-            // Buffering indicator
-            if (showBuffering && !showThumbnail) {
-                LoadingIndicator()
-            }
-        }
-    }
-}
-
-@Composable
-private fun VideoThumbnail(
-    thumbnailUrl: String?,
-    showPlayButton: Boolean,
-    onPlayClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val data = if (ChatTheme.videoThumbnailsEnabled) {
-        thumbnailUrl
-    } else {
-        null
-    }
-    Box(
+    StreamVideoPlayerContent(
         modifier = modifier,
-        contentAlignment = Alignment.Center,
-    ) {
-        StreamAsyncImage(
-            modifier = Modifier
-                .clickable { onPlayClick() }
-                .matchParentSize()
-                .background(Color.Black),
-            data = data,
-            contentDescription = null,
-        )
-        if (showPlayButton) {
-            PlayButton(
-                modifier = Modifier
-                    .shadow(6.dp, shape = CircleShape)
-                    .background(color = Color.White, shape = CircleShape)
-                    .size(
-                        width = 42.dp,
-                        height = 42.dp,
-                    ),
-                contentDescription = stringResource(R.string.stream_compose_cd_play_button),
-            )
-        }
-    }
+        assetUrl = assetUrl,
+        thumbnailUrl = thumbnailUrl,
+        playWhenReady = false,
+        showControllerInitially = false,
+        thumbnailEnabled = true,
+        onPlaybackError = onPlaybackError,
+    )
 }
 
 /**
