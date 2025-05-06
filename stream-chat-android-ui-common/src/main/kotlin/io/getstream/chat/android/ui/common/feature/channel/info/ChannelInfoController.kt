@@ -286,6 +286,8 @@ private fun Member.toContentMember(createdBy: User) = ChannelInfoState.Content.M
 
 private fun ChannelData.toCapability() = ChannelInfoState.Content.Capability(
     canAddMember = ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL_MEMBERS),
+    canRemoveMember = ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL_MEMBERS),
+    canBanMember = ownCapabilities.contains(ChannelCapabilities.BAN_CHANNEL_MEMBERS),
     canRename = ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL),
     canMute = ownCapabilities.contains(ChannelCapabilities.MUTE_CHANNEL),
     canLeave = ownCapabilities.contains(ChannelCapabilities.LEAVE_CHANNEL),
