@@ -16,6 +16,9 @@
 
 package io.getstream.chat.android.ui.common.state.channel.info
 
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
+
+@ExperimentalStreamChatApi
 public sealed interface ChannelInfoEvent {
     public data class UpdateNameError(val message: String) : ChannelInfoEvent
     public data class MuteError(val message: String) : ChannelInfoEvent

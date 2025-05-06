@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.common.feature.channel.info
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.extensions.isGroupChannel
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -48,6 +49,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+@ExperimentalStreamChatApi
 @InternalStreamChatApi
 public class ChannelInfoController(
     cid: String,
