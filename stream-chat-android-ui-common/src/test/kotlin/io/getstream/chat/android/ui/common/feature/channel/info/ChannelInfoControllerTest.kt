@@ -96,12 +96,14 @@ internal class ChannelInfoControllerTest {
         val owner = User(id = "1")
         val user2 = User(id = "2")
         val user3 = User(id = "3")
+        val user4 = User(id = "4")
         val channel = Channel(
             createdBy = owner,
             members = listOf(
                 Member(user = owner),
-                Member(user = user2),
-                Member(user = user3),
+                Member(user = user2, channelRole = "channel_moderator"),
+                Member(user = user3, channelRole = "channel_member"),
+                Member(user = user4, channelRole = "admin"),
             ),
         )
         val sut = Fixture()
@@ -122,11 +124,15 @@ internal class ChannelInfoControllerTest {
                             ),
                             ChannelInfoState.Member(
                                 user = user2,
-                                role = ChannelInfoState.Role.Other(""),
+                                role = ChannelInfoState.Role.Moderator,
                             ),
                             ChannelInfoState.Member(
                                 user = user3,
-                                role = ChannelInfoState.Role.Other(""),
+                                role = ChannelInfoState.Role.Member,
+                            ),
+                            ChannelInfoState.Member(
+                                user = user4,
+                                role = ChannelInfoState.Role.Other("admin"),
                             ),
                         ),
                         minimumVisibleItems = 5,
