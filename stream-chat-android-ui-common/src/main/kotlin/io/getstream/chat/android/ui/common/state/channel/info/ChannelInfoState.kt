@@ -22,37 +22,34 @@ import io.getstream.chat.android.ui.common.utils.ExpandableList
 import io.getstream.chat.android.ui.common.utils.emptyExpandableList
 
 @ExperimentalStreamChatApi
-public data class ChannelInfoState(
-    val content: Content = Content.Loading,
-) {
+public sealed interface ChannelInfoState {
 
-    public sealed interface Content {
-        public data object Loading : Content
+    public data object Loading : ChannelInfoState
 
-        public data class Success(
-            val members: ExpandableList<Member> = emptyExpandableList(),
-            val name: String = "",
-            val isMuted: Boolean = false,
-            val isHidden: Boolean = false,
-            val capability: Capability = Capability(),
-        ) : Content
-    }
+    public data class Content(
+        val members: ExpandableList<Member> = emptyExpandableList(),
+        val name: String = "",
+        val isMuted: Boolean = false,
+        val isHidden: Boolean = false,
+        val capability: Capability = Capability(),
+    ) : ChannelInfoState {
 
-    public data class Capability(
-        val canMute: Boolean = false,
-        val canLeave: Boolean = false,
-        val canDelete: Boolean = false,
-    )
+        public data class Capability(
+            val canMute: Boolean = false,
+            val canLeave: Boolean = false,
+            val canDelete: Boolean = false,
+        )
 
-    public data class Member(
-        val user: User,
-        val role: Role,
-    )
+        public data class Member(
+            val user: User,
+            val role: Role,
+        )
 
-    public sealed interface Role {
-        public data object Owner : Role
-        public data object Moderator : Role
-        public data object Member : Role
-        public data class Other(val value: String) : Role
+        public sealed interface Role {
+            public data object Owner : Role
+            public data object Moderator : Role
+            public data object Member : Role
+            public data class Other(val value: String) : Role
+        }
     }
 }

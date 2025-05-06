@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalStreamChatApi::class)
+
 package io.getstream.chat.android.ui.common.feature.channel.info
 
 import io.getstream.chat.android.client.ChatClient
@@ -49,7 +51,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-@ExperimentalStreamChatApi
 @InternalStreamChatApi
 public class ChannelInfoController(
     cid: String,
@@ -62,7 +63,7 @@ public class ChannelInfoController(
 ) {
     private val logger by taggedLogger("Chat:ChannelInfoController")
 
-    private val _state = MutableStateFlow(ChannelInfoState())
+    private val _state = MutableStateFlow<ChannelInfoState>(ChannelInfoState.Loading)
 
     public val state: StateFlow<ChannelInfoState> = _state.asStateFlow()
 
@@ -111,39 +112,37 @@ public class ChannelInfoController(
             .map { member -> member.toViewState(channelData.createdBy) }
 
         _state.update { currentState ->
-            currentState.copy(
-                content = when (currentState.content) {
-                    is ChannelInfoState.Content.Loading -> {
-                        ChannelInfoState.Content.Success(
-                            members = ExpandableList(
-                                items = groupMembers,
-                                minimumVisibleItems = MINIMUM_VISIBLE_MEMBERS,
-                            ),
-                            name = channelData.name,
-                            isMuted = isMuted,
-                            isHidden = isHidden,
-                            capability = capability
-                        )
-                    }
+            when (currentState) {
+                is ChannelInfoState.Loading -> {
+                    ChannelInfoState.Content(
+                        members = ExpandableList(
+                            items = groupMembers,
+                            minimumVisibleItems = MINIMUM_VISIBLE_MEMBERS,
+                        ),
+                        name = channelData.name,
+                        isMuted = isMuted,
+                        isHidden = isHidden,
+                        capability = capability
+                    )
+                }
 
-                    is ChannelInfoState.Content.Success -> {
-                        currentState.content.copy(
-                            members = currentState.content.members.copy(
-                                items = groupMembers,
-                            ),
-                            name = channelData.name,
-                            isMuted = isMuted,
-                            isHidden = isHidden,
-                            capability = capability
-                        )
-                    }
-                },
-            )
+                is ChannelInfoState.Content -> {
+                    currentState.copy(
+                        members = currentState.members.copy(
+                            items = groupMembers,
+                        ),
+                        name = channelData.name,
+                        isMuted = isMuted,
+                        isHidden = isHidden,
+                        capability = capability
+                    )
+                }
+            }
         }
     }
 
     public fun expandMembers() {
-        _state.updateOnSuccessContent { content ->
+        _state.updateContent { content ->
             content.copy(
                 members = content.members.copy(
                     isCollapsed = false,
@@ -153,7 +152,7 @@ public class ChannelInfoController(
     }
 
     public fun collapseMembers() {
-        _state.updateOnSuccessContent { content ->
+        _state.updateContent { content ->
             content.copy(
                 members = content.members.copy(
                     isCollapsed = true,
@@ -272,33 +271,31 @@ private data class ChannelInfoData(
     val isHidden: Boolean,
 )
 
-private fun Member.toViewState(createdBy: User) = ChannelInfoState.Member(
+private fun Member.toViewState(createdBy: User) = ChannelInfoState.Content.Member(
     user = user,
     role = if (createdBy.id == user.id) {
-        ChannelInfoState.Role.Owner
+        ChannelInfoState.Content.Role.Owner
     } else {
         when (channelRole) {
-            "channel_moderator" -> ChannelInfoState.Role.Moderator
-            "channel_member" -> ChannelInfoState.Role.Member
-            else -> ChannelInfoState.Role.Other(channelRole.orEmpty())
+            "channel_moderator" -> ChannelInfoState.Content.Role.Moderator
+            "channel_member" -> ChannelInfoState.Content.Role.Member
+            else -> ChannelInfoState.Content.Role.Other(channelRole.orEmpty())
         }
     },
 )
 
-private fun ChannelData.toCapability() = ChannelInfoState.Capability(
+private fun ChannelData.toCapability() = ChannelInfoState.Content.Capability(
     canMute = ownCapabilities.contains(ChannelCapabilities.MUTE_CHANNEL),
     canLeave = ownCapabilities.contains(ChannelCapabilities.LEAVE_CHANNEL),
     canDelete = ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL),
 )
 
-private fun MutableStateFlow<ChannelInfoState>.updateOnSuccessContent(
-    transformation: (content: ChannelInfoState.Content.Success) -> ChannelInfoState.Content,
+private fun MutableStateFlow<ChannelInfoState>.updateContent(
+    transformation: (content: ChannelInfoState.Content) -> ChannelInfoState.Content,
 ) {
     update { currentState ->
-        if (currentState.content is ChannelInfoState.Content.Success) {
-            currentState.copy(
-                content = transformation(currentState.content),
-            )
+        if (currentState is ChannelInfoState.Content) {
+            transformation(currentState)
         } else {
             currentState
         }
