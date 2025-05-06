@@ -161,12 +161,12 @@ public class ChannelInfoController(
         }
     }
 
-    public fun updateName(name: String) {
+    public fun rename(name: String) {
         scope.launch {
             channelClient.updatePartial(set = mapOf("name" to name)).await()
                 .onError { error ->
                     _events.tryEmit(
-                        ChannelInfoEvent.UpdateNameError(message = error.message),
+                        ChannelInfoEvent.RenameError(message = error.message),
                     )
                 }
         }
