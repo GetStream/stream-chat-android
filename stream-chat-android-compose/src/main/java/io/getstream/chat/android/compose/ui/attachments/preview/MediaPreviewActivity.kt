@@ -26,10 +26,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,29 +40,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.compose.LifecycleResumeEffect
-import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
-import androidx.media3.common.util.UnstableApi
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.attachments.preview.internal.createPlayer
-import io.getstream.chat.android.compose.ui.attachments.preview.internal.createPlayerView
-import io.getstream.chat.android.compose.ui.components.LoadingIndicator
+import io.getstream.chat.android.compose.ui.attachments.preview.internal.StreamMediaPlayerContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 
@@ -127,7 +113,18 @@ public class MediaPreviewActivity : AppCompatActivity() {
             modifier = modifier,
             containerColor = Color.Black,
             topBar = { MediaPreviewToolbar(title, onBackPressed) },
-            content = { MediaPreviewContent(url, onPlaybackError) },
+            content = { padding ->
+                StreamMediaPlayerContent(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding),
+                    assetUrl = url,
+                    playWhenReady = true,
+                    showControllerInitially = true,
+                    thumbnailEnabled = false,
+                    onPlaybackError = onPlaybackError,
+                )
+            },
         )
     }
 
@@ -176,65 +173,6 @@ public class MediaPreviewActivity : AppCompatActivity() {
                 )
             },
         )
-    }
-
-    /**
-     * Represents a video player with media controls.
-     *
-     * @param url The URL of the stream for playback.
-     * @param onPlaybackError Handler for playback errors.
-     */
-    @androidx.annotation.OptIn(UnstableApi::class)
-    @Composable
-    private fun MediaPreviewContent(
-        url: String,
-        onPlaybackError: () -> Unit,
-    ) {
-        val context = LocalContext.current
-        var showBuffering by remember { mutableStateOf(false) }
-        val onBuffering: (Boolean) -> Unit = { showBuffering = it }
-        // Create player
-        var player by remember { mutableStateOf<Player?>(null) }
-        LifecycleResumeEffect(Unit) {
-            player = createPlayer(
-                context = context,
-                onBuffering = onBuffering,
-                onPlaybackError = onPlaybackError,
-            )
-            onPauseOrDispose {
-                player?.release()
-                player = null
-            }
-        }
-        // Prepare media
-        LaunchedEffect(player, url) {
-            if (player != null) {
-                player?.setMediaItem(MediaItem.fromUri(url))
-                player?.prepare()
-                player?.playWhenReady = true
-            }
-        }
-        // Draw player
-        player?.let { preparedPlayer ->
-            Box(contentAlignment = Alignment.Center) {
-                // Video/Audio player
-                AndroidView(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black),
-                    factory = {
-                        val playerView = createPlayerView(it, preparedPlayer)
-                        // Show controller initially
-                        playerView.showController()
-                        playerView
-                    },
-                )
-                // Buffering indicator
-                if (showBuffering) {
-                    LoadingIndicator()
-                }
-            }
-        }
     }
 
     public companion object {
