@@ -38,10 +38,10 @@ public sealed interface ChannelInfoState {
             val canAddMember: Boolean = false,
             val canRemoveMember: Boolean = false,
             val canBanMember: Boolean = false,
-            val canRename: Boolean = false,
-            val canMute: Boolean = false,
-            val canLeave: Boolean = false,
-            val canDelete: Boolean = false,
+            val canRenameChannel: Boolean = false,
+            val canMuteChannel: Boolean = false,
+            val canLeaveChannel: Boolean = false,
+            val canDeleteChannel: Boolean = false,
         )
 
         public data class Member(

@@ -20,13 +20,13 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
 @ExperimentalStreamChatApi
 public sealed interface ChannelInfoEvent {
-    public data class RenameError(val message: String) : ChannelInfoEvent
-    public data class MuteError(val message: String) : ChannelInfoEvent
-    public data class UnmuteError(val message: String) : ChannelInfoEvent
-    public data class HideError(val message: String) : ChannelInfoEvent
-    public data class UnhideError(val message: String) : ChannelInfoEvent
-    public data object LeaveSuccess : ChannelInfoEvent
-    public data class LeaveError(val message: String) : ChannelInfoEvent
-    public data object DeleteSuccess : ChannelInfoEvent
-    public data class DeleteError(val message: String) : ChannelInfoEvent
+    public data class RenameChannelError(val message: String) : ChannelInfoEvent
+    public data class MuteChannelError(val message: String) : ChannelInfoEvent
+    public data class UnmuteChannelError(val message: String) : ChannelInfoEvent
+    public data class HideChannelError(val message: String) : ChannelInfoEvent
+    public data class UnhideChannelError(val message: String) : ChannelInfoEvent
+    public data object LeaveChannelSuccess : ChannelInfoEvent
+    public data class LeaveChannelError(val message: String) : ChannelInfoEvent
+    public data object DeleteChannelSuccess : ChannelInfoEvent
+    public data class DeleteChannelError(val message: String) : ChannelInfoEvent
 }

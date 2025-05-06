@@ -222,7 +222,7 @@ internal class ChannelInfoControllerTest {
     }
 
     @Test
-    fun capability() = runTest {
+    fun capabilities() = runTest {
         val channel = Channel(
             ownCapabilities = emptySet()
         )
@@ -241,10 +241,10 @@ internal class ChannelInfoControllerTest {
                         canAddMember = false,
                         canRemoveMember = false,
                         canBanMember = false,
-                        canRename = false,
-                        canMute = false,
-                        canLeave = false,
-                        canDelete = false,
+                        canRenameChannel = false,
+                        canMuteChannel = false,
+                        canLeaveChannel = false,
+                        canDeleteChannel = false,
                     ),
                 ),
                 awaitItem(),
@@ -269,10 +269,10 @@ internal class ChannelInfoControllerTest {
                         canAddMember = true,
                         canRemoveMember = true,
                         canBanMember = true,
-                        canRename = true,
-                        canMute = true,
-                        canLeave = true,
-                        canDelete = true,
+                        canRenameChannel = true,
+                        canMuteChannel = true,
+                        canLeaveChannel = true,
+                        canDeleteChannel = true,
                     ),
                 ),
                 awaitItem(),
@@ -281,7 +281,7 @@ internal class ChannelInfoControllerTest {
     }
 
     @Test
-    fun rename() = runTest {
+    fun `rename channel`() = runTest {
         val channel = Channel(name = "name")
         val fixture = Fixture().given(channel = channel)
         val sut = fixture.get(backgroundScope)
@@ -298,9 +298,9 @@ internal class ChannelInfoControllerTest {
             )
 
             val newName = "newName"
-            fixture.givenUpdateChannelName(newName)
+            fixture.givenRenameChannel(newName)
 
-            sut.rename(newName)
+            sut.renameChannel(newName)
 
             assertEquals(
                 ChannelInfoState.Content(
@@ -313,7 +313,7 @@ internal class ChannelInfoControllerTest {
     }
 
     @Test
-    fun `rename error`() = runTest {
+    fun `rename channel error`() = runTest {
         val channel = Channel(name = "name")
         val fixture = Fixture().given(channel = channel)
         val sut = fixture.get(backgroundScope)
@@ -323,13 +323,13 @@ internal class ChannelInfoControllerTest {
 
             val newName = "newName"
             val error = Error.GenericError("Error updating channel name")
-            fixture.givenUpdateChannelName(newName, error)
+            fixture.givenRenameChannel(newName, error)
 
-            sut.rename(newName)
+            sut.renameChannel(newName)
 
             sut.events.test {
                 assertEquals(
-                    ChannelInfoEvent.RenameError(message = error.message),
+                    ChannelInfoEvent.RenameChannelError(message = error.message),
                     awaitItem(),
                 )
             }
@@ -354,7 +354,7 @@ internal class ChannelInfoControllerTest {
 
             fixture.givenMuteChannel()
 
-            sut.mute()
+            sut.muteChannel()
 
             assertEquals(
                 ChannelInfoState.Content(
@@ -385,11 +385,11 @@ internal class ChannelInfoControllerTest {
             val error = Error.GenericError("Error muting channel")
             fixture.givenMuteChannel(error)
 
-            sut.mute()
+            sut.muteChannel()
 
             sut.events.test {
                 assertEquals(
-                    ChannelInfoEvent.MuteError(message = error.message),
+                    ChannelInfoEvent.MuteChannelError(message = error.message),
                     awaitItem(),
                 )
             }
@@ -414,7 +414,7 @@ internal class ChannelInfoControllerTest {
 
             fixture.givenUnmuteChannel()
 
-            sut.unmute()
+            sut.unmuteChannel()
 
             assertEquals(
                 ChannelInfoState.Content(
@@ -445,11 +445,11 @@ internal class ChannelInfoControllerTest {
             val error = Error.GenericError("Error unmuting channel")
             fixture.givenUnmuteChannel(error)
 
-            sut.unmute()
+            sut.unmuteChannel()
 
             sut.events.test {
                 assertEquals(
-                    ChannelInfoEvent.UnmuteError(message = error.message),
+                    ChannelInfoEvent.UnmuteChannelError(message = error.message),
                     awaitItem(),
                 )
             }
@@ -475,7 +475,7 @@ internal class ChannelInfoControllerTest {
             val clearHistory = true
             fixture.givenHideChannel(clearHistory)
 
-            sut.hide(clearHistory)
+            sut.hideChannel(clearHistory)
 
             assertEquals(
                 ChannelInfoState.Content(
@@ -507,11 +507,11 @@ internal class ChannelInfoControllerTest {
             val error = Error.GenericError("Error hiding channel")
             fixture.givenHideChannel(clearHistory, error)
 
-            sut.hide(clearHistory)
+            sut.hideChannel(clearHistory)
 
             sut.events.test {
                 assertEquals(
-                    ChannelInfoEvent.HideError(message = error.message),
+                    ChannelInfoEvent.HideChannelError(message = error.message),
                     awaitItem(),
                 )
             }
@@ -536,7 +536,7 @@ internal class ChannelInfoControllerTest {
 
             fixture.givenUnhideChannel()
 
-            sut.unhide()
+            sut.unhideChannel()
 
             assertEquals(
                 ChannelInfoState.Content(
@@ -567,11 +567,11 @@ internal class ChannelInfoControllerTest {
             val error = Error.GenericError("Error unhiding channel")
             fixture.givenUnhideChannel(error)
 
-            sut.unhide()
+            sut.unhideChannel()
 
             sut.events.test {
                 assertEquals(
-                    ChannelInfoEvent.UnhideError(message = error.message),
+                    ChannelInfoEvent.UnhideChannelError(message = error.message),
                     awaitItem(),
                 )
             }
@@ -601,11 +601,11 @@ internal class ChannelInfoControllerTest {
             val quitMessage = Message(text = "${currentUser.id} left")
             fixture.givenLeaveChannel(quitMessage)
 
-            sut.leave(quitMessage)
+            sut.leaveChannel(quitMessage)
 
             sut.events.test {
                 assertEquals(
-                    ChannelInfoEvent.LeaveSuccess,
+                    ChannelInfoEvent.LeaveChannelSuccess,
                     awaitItem(),
                 )
             }
@@ -636,11 +636,11 @@ internal class ChannelInfoControllerTest {
             val error = Error.GenericError("Error leaving channel")
             fixture.givenLeaveChannel(quitMessage, error)
 
-            sut.leave(quitMessage)
+            sut.leaveChannel(quitMessage)
 
             sut.events.test {
                 assertEquals(
-                    ChannelInfoEvent.LeaveError(message = error.message),
+                    ChannelInfoEvent.LeaveChannelError(message = error.message),
                     awaitItem(),
                 )
             }
@@ -664,11 +664,11 @@ internal class ChannelInfoControllerTest {
 
             fixture.givenDeleteChannel()
 
-            sut.delete()
+            sut.deleteChannel()
 
             sut.events.test {
                 assertEquals(
-                    ChannelInfoEvent.DeleteSuccess,
+                    ChannelInfoEvent.DeleteChannelSuccess,
                     awaitItem(),
                 )
             }
@@ -693,11 +693,11 @@ internal class ChannelInfoControllerTest {
             val error = Error.GenericError("Error deleting channel")
             fixture.givenDeleteChannel(error)
 
-            sut.delete()
+            sut.deleteChannel()
 
             sut.events.test {
                 assertEquals(
-                    ChannelInfoEvent.DeleteError(message = error.message),
+                    ChannelInfoEvent.DeleteChannelError(message = error.message),
                     awaitItem(),
                 )
             }
@@ -742,7 +742,7 @@ private class Fixture {
         }
     }
 
-    fun givenUpdateChannelName(name: String, error: Error? = null) = apply {
+    fun givenRenameChannel(name: String, error: Error? = null) = apply {
         whenever(channelClient.updatePartial(mapOf("name" to name))) doAnswer {
             error?.asCall()
                 ?: mock<Channel>().asCall().also {
