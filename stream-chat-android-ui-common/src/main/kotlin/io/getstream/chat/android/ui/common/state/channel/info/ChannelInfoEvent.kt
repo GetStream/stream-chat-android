@@ -20,7 +20,7 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
 @ExperimentalStreamChatApi
 public sealed interface ChannelInfoEvent {
-    public data class UpdateNameError(val message: String) : ChannelInfoEvent
+    public data class RenameError(val message: String) : ChannelInfoEvent
     public data class MuteError(val message: String) : ChannelInfoEvent
     public data class UnmuteError(val message: String) : ChannelInfoEvent
     public data class HideError(val message: String) : ChannelInfoEvent

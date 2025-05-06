@@ -276,7 +276,7 @@ internal class ChannelInfoControllerTest {
     }
 
     @Test
-    fun `update name`() = runTest {
+    fun rename() = runTest {
         val channel = Channel(name = "name")
         val fixture = Fixture().given(channel = channel)
         val sut = fixture.get(backgroundScope)
@@ -295,7 +295,7 @@ internal class ChannelInfoControllerTest {
             val newName = "newName"
             fixture.givenUpdateChannelName(newName)
 
-            sut.updateName(newName)
+            sut.rename(newName)
 
             assertEquals(
                 ChannelInfoState.Content(
@@ -308,7 +308,7 @@ internal class ChannelInfoControllerTest {
     }
 
     @Test
-    fun `update name error`() = runTest {
+    fun `rename error`() = runTest {
         val channel = Channel(name = "name")
         val fixture = Fixture().given(channel = channel)
         val sut = fixture.get(backgroundScope)
@@ -320,11 +320,11 @@ internal class ChannelInfoControllerTest {
             val error = Error.GenericError("Error updating channel name")
             fixture.givenUpdateChannelName(newName, error)
 
-            sut.updateName(newName)
+            sut.rename(newName)
 
             sut.events.test {
                 assertEquals(
-                    ChannelInfoEvent.UpdateNameError(message = error.message),
+                    ChannelInfoEvent.RenameError(message = error.message),
                     awaitItem(),
                 )
             }
