@@ -161,62 +161,62 @@ public class ChannelInfoController(
         }
     }
 
-    public fun rename(name: String) {
+    public fun renameChannel(name: String) {
         scope.launch {
             channelClient.updatePartial(set = mapOf("name" to name)).await()
                 .onError { error ->
                     _events.tryEmit(
-                        ChannelInfoEvent.RenameError(message = error.message),
+                        ChannelInfoEvent.RenameChannelError(message = error.message),
                     )
                 }
         }
     }
 
-    public fun mute() {
+    public fun muteChannel() {
         scope.launch {
             channelClient.mute().await()
                 .onError { error ->
                     _events.tryEmit(
-                        ChannelInfoEvent.MuteError(message = error.message),
+                        ChannelInfoEvent.MuteChannelError(message = error.message),
                     )
                 }
         }
     }
 
-    public fun unmute() {
+    public fun unmuteChannel() {
         scope.launch {
             channelClient.unmute().await()
                 .onError { error ->
                     _events.tryEmit(
-                        ChannelInfoEvent.UnmuteError(message = error.message),
+                        ChannelInfoEvent.UnmuteChannelError(message = error.message),
                     )
                 }
         }
     }
 
-    public fun hide(clearHistory: Boolean) {
+    public fun hideChannel(clearHistory: Boolean) {
         scope.launch {
             channelClient.hide(clearHistory).await()
                 .onError { error ->
                     _events.tryEmit(
-                        ChannelInfoEvent.HideError(message = error.message),
+                        ChannelInfoEvent.HideChannelError(message = error.message),
                     )
                 }
         }
     }
 
-    public fun unhide() {
+    public fun unhideChannel() {
         scope.launch {
             channelClient.show().await()
                 .onError { error ->
                     _events.tryEmit(
-                        ChannelInfoEvent.UnhideError(message = error.message),
+                        ChannelInfoEvent.UnhideChannelError(message = error.message),
                     )
                 }
         }
     }
 
-    public fun leave(quitMessage: Message?) {
+    public fun leaveChannel(quitMessage: Message?) {
         scope.launch {
             runCatching {
                 val currentUserId = requireNotNull(chatClient.getCurrentOrStoredUserId())
@@ -226,33 +226,33 @@ public class ChannelInfoController(
                 ).await()
                     .onSuccess {
                         _events.tryEmit(
-                            ChannelInfoEvent.LeaveSuccess,
+                            ChannelInfoEvent.LeaveChannelSuccess,
                         )
                     }
                     .onError { error ->
                         _events.tryEmit(
-                            ChannelInfoEvent.LeaveError(message = error.message),
+                            ChannelInfoEvent.LeaveChannelError(message = error.message),
                         )
                     }
             }.onFailure { cause ->
                 _events.tryEmit(
-                    ChannelInfoEvent.LeaveError(message = cause.message.orEmpty()),
+                    ChannelInfoEvent.LeaveChannelError(message = cause.message.orEmpty()),
                 )
             }
         }
     }
 
-    public fun delete() {
+    public fun deleteChannel() {
         scope.launch {
             channelClient.delete().await()
                 .onSuccess {
                     _events.tryEmit(
-                        ChannelInfoEvent.DeleteSuccess,
+                        ChannelInfoEvent.DeleteChannelSuccess,
                     )
                 }
                 .onError { error ->
                     _events.tryEmit(
-                        ChannelInfoEvent.DeleteError(message = error.message),
+                        ChannelInfoEvent.DeleteChannelError(message = error.message),
                     )
                 }
         }
@@ -288,10 +288,10 @@ private fun ChannelData.toCapability() = ChannelInfoState.Content.Capability(
     canAddMember = ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL_MEMBERS),
     canRemoveMember = ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL_MEMBERS),
     canBanMember = ownCapabilities.contains(ChannelCapabilities.BAN_CHANNEL_MEMBERS),
-    canRename = ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL),
-    canMute = ownCapabilities.contains(ChannelCapabilities.MUTE_CHANNEL),
-    canLeave = ownCapabilities.contains(ChannelCapabilities.LEAVE_CHANNEL),
-    canDelete = ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL),
+    canRenameChannel = ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL),
+    canMuteChannel = ownCapabilities.contains(ChannelCapabilities.MUTE_CHANNEL),
+    canLeaveChannel = ownCapabilities.contains(ChannelCapabilities.LEAVE_CHANNEL),
+    canDeleteChannel = ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL),
 )
 
 private fun MutableStateFlow<ChannelInfoState>.updateContent(
