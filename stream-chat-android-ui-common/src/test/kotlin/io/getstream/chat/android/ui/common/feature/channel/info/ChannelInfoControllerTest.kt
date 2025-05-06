@@ -48,7 +48,7 @@ internal class ChannelInfoControllerTest {
     fun `initial state`() = runTest {
         val sut = Fixture().get(backgroundScope)
 
-        assertEquals(ChannelInfoState.Content.Loading, sut.state.value.content)
+        assertEquals(ChannelInfoState.Loading, sut.state.value)
     }
 
     @Test
@@ -73,20 +73,19 @@ internal class ChannelInfoControllerTest {
         sut.state.test {
             skipItems(1) // Skip initial state
 
-            val actual = awaitItem()
             assertEquals(
-                ChannelInfoState.Content.Success(
+                ChannelInfoState.Content(
                     members = ExpandableList(
                         items = listOf(
-                            ChannelInfoState.Member(
+                            ChannelInfoState.Content.Member(
                                 user = otherUser,
-                                role = ChannelInfoState.Role.Owner,
+                                role = ChannelInfoState.Content.Role.Owner,
                             ),
                         ),
                         minimumVisibleItems = 5,
                     ),
                 ),
-                actual.content,
+                awaitItem(),
             )
         }
     }
@@ -113,32 +112,31 @@ internal class ChannelInfoControllerTest {
         sut.state.test {
             skipItems(1) // Skip initial state
 
-            val actual = awaitItem()
             assertEquals(
-                ChannelInfoState.Content.Success(
+                ChannelInfoState.Content(
                     members = ExpandableList(
                         items = listOf(
-                            ChannelInfoState.Member(
+                            ChannelInfoState.Content.Member(
                                 user = owner,
-                                role = ChannelInfoState.Role.Owner,
+                                role = ChannelInfoState.Content.Role.Owner,
                             ),
-                            ChannelInfoState.Member(
+                            ChannelInfoState.Content.Member(
                                 user = user2,
-                                role = ChannelInfoState.Role.Moderator,
+                                role = ChannelInfoState.Content.Role.Moderator,
                             ),
-                            ChannelInfoState.Member(
+                            ChannelInfoState.Content.Member(
                                 user = user3,
-                                role = ChannelInfoState.Role.Member,
+                                role = ChannelInfoState.Content.Role.Member,
                             ),
-                            ChannelInfoState.Member(
+                            ChannelInfoState.Content.Member(
                                 user = user4,
-                                role = ChannelInfoState.Role.Other("admin"),
+                                role = ChannelInfoState.Content.Role.Other("admin"),
                             ),
                         ),
                         minimumVisibleItems = 5,
                     ),
                 ),
-                actual.content,
+                awaitItem(),
             )
         }
     }
@@ -155,21 +153,20 @@ internal class ChannelInfoControllerTest {
         sut.state.test {
             skipItems(1) // Skip initial state
 
-            val actual = awaitItem()
             assertEquals(
-                ChannelInfoState.Content.Success(
+                ChannelInfoState.Content(
                     members = ExpandableList(
                         items = channel.members
                             .map { member ->
-                                ChannelInfoState.Member(
+                                ChannelInfoState.Content.Member(
                                     user = member.user,
-                                    role = ChannelInfoState.Role.Other(""),
+                                    role = ChannelInfoState.Content.Role.Other(""),
                                 )
                             },
                         minimumVisibleItems = 5,
                     ),
                 ),
-                actual.content,
+                awaitItem(),
             )
         }
     }
@@ -186,41 +183,39 @@ internal class ChannelInfoControllerTest {
         sut.state.test {
             skipItems(1) // Skip initial state
 
-            val actual = awaitItem()
             assertEquals(
-                ChannelInfoState.Content.Success(
+                ChannelInfoState.Content(
                     members = ExpandableList(
                         items = channel.members
                             .map { member ->
-                                ChannelInfoState.Member(
+                                ChannelInfoState.Content.Member(
                                     user = member.user,
-                                    role = ChannelInfoState.Role.Other(""),
+                                    role = ChannelInfoState.Content.Role.Other(""),
                                 )
                             },
                         minimumVisibleItems = 5,
                     ),
                 ),
-                actual.content,
+                awaitItem(),
             )
 
             sut.expandMembers()
 
-            val expandedState = awaitItem()
             assertEquals(
-                ChannelInfoState.Content.Success(
+                ChannelInfoState.Content(
                     members = ExpandableList(
                         items = channel.members
                             .map { member ->
-                                ChannelInfoState.Member(
+                                ChannelInfoState.Content.Member(
                                     user = member.user,
-                                    role = ChannelInfoState.Role.Other(""),
+                                    role = ChannelInfoState.Content.Role.Other(""),
                                 )
                             },
                         minimumVisibleItems = 5,
                         isCollapsed = false,
                     ),
                 ),
-                expandedState.content,
+                awaitItem(),
             )
         }
     }
@@ -234,13 +229,12 @@ internal class ChannelInfoControllerTest {
         sut.state.test {
             skipItems(1) // Skip initial state
 
-            val actual = awaitItem()
             assertEquals(
-                ChannelInfoState.Content.Success(
+                ChannelInfoState.Content(
                     members = emptyMembers(),
                     name = channel.name,
                 ),
-                actual.content,
+                awaitItem(),
             )
 
             val newName = "newName"
@@ -248,13 +242,12 @@ internal class ChannelInfoControllerTest {
 
             sut.updateName(newName)
 
-            val updatedState = awaitItem()
             assertEquals(
-                ChannelInfoState.Content.Success(
+                ChannelInfoState.Content(
                     members = emptyMembers(),
                     name = newName,
                 ),
-                updatedState.content,
+                awaitItem(),
             )
         }
     }
@@ -291,26 +284,24 @@ internal class ChannelInfoControllerTest {
         sut.state.test {
             skipItems(1) // Skip initial state
 
-            val actual = awaitItem()
             assertEquals(
-                ChannelInfoState.Content.Success(
+                ChannelInfoState.Content(
                     members = emptyMembers(),
                     isMuted = false,
                 ),
-                actual.content,
+                awaitItem(),
             )
 
             fixture.givenMuteChannel()
 
             sut.mute()
 
-            val updatedState = awaitItem()
             assertEquals(
-                ChannelInfoState.Content.Success(
+                ChannelInfoState.Content(
                     members = emptyMembers(),
                     isMuted = true,
                 ),
-                updatedState.content,
+                awaitItem(),
             )
         }
     }
@@ -323,13 +314,12 @@ internal class ChannelInfoControllerTest {
         sut.state.test {
             skipItems(1) // Skip initial state
 
-            val actual = awaitItem()
             assertEquals(
-                ChannelInfoState.Content.Success(
+                ChannelInfoState.Content(
                     members = emptyMembers(),
                     isMuted = false,
                 ),
-                actual.content,
+                awaitItem(),
             )
 
             val error = Error.GenericError("Error muting channel")
@@ -354,26 +344,24 @@ internal class ChannelInfoControllerTest {
         sut.state.test {
             skipItems(1) // Skip initial state
 
-            val actual = awaitItem()
             assertEquals(
-                ChannelInfoState.Content.Success(
+                ChannelInfoState.Content(
                     members = emptyMembers(),
                     isMuted = true,
                 ),
-                actual.content,
+                awaitItem(),
             )
 
             fixture.givenUnmuteChannel()
 
             sut.unmute()
 
-            val updatedState = awaitItem()
             assertEquals(
-                ChannelInfoState.Content.Success(
+                ChannelInfoState.Content(
                     members = emptyMembers(),
                     isMuted = false,
                 ),
-                updatedState.content,
+                awaitItem(),
             )
         }
     }
@@ -386,13 +374,12 @@ internal class ChannelInfoControllerTest {
         sut.state.test {
             skipItems(1) // Skip initial state
 
-            val actual = awaitItem()
             assertEquals(
-                ChannelInfoState.Content.Success(
+                ChannelInfoState.Content(
                     members = emptyMembers(),
                     isMuted = true,
                 ),
-                actual.content,
+                awaitItem(),
             )
 
             val error = Error.GenericError("Error unmuting channel")
@@ -417,13 +404,12 @@ internal class ChannelInfoControllerTest {
         sut.state.test {
             skipItems(1) // Skip initial state
 
-            val actual = awaitItem()
             assertEquals(
-                ChannelInfoState.Content.Success(
+                ChannelInfoState.Content(
                     members = emptyMembers(),
                     isHidden = false,
                 ),
-                actual.content,
+                awaitItem(),
             )
 
             val clearHistory = true
@@ -431,13 +417,12 @@ internal class ChannelInfoControllerTest {
 
             sut.hide(clearHistory)
 
-            val updatedState = awaitItem()
             assertEquals(
-                ChannelInfoState.Content.Success(
+                ChannelInfoState.Content(
                     members = emptyMembers(),
                     isHidden = true,
                 ),
-                updatedState.content,
+                awaitItem(),
             )
         }
     }
@@ -450,13 +435,12 @@ internal class ChannelInfoControllerTest {
         sut.state.test {
             skipItems(1) // Skip initial state
 
-            val actual = awaitItem()
             assertEquals(
-                ChannelInfoState.Content.Success(
+                ChannelInfoState.Content(
                     members = emptyMembers(),
                     isHidden = false,
                 ),
-                actual.content,
+                awaitItem(),
             )
 
             val clearHistory = true
@@ -482,26 +466,24 @@ internal class ChannelInfoControllerTest {
         sut.state.test {
             skipItems(1) // Skip initial state
 
-            val actual = awaitItem()
             assertEquals(
-                ChannelInfoState.Content.Success(
+                ChannelInfoState.Content(
                     members = emptyMembers(),
                     isHidden = true,
                 ),
-                actual.content,
+                awaitItem(),
             )
 
             fixture.givenUnhideChannel()
 
             sut.unhide()
 
-            val updatedState = awaitItem()
             assertEquals(
-                ChannelInfoState.Content.Success(
+                ChannelInfoState.Content(
                     members = emptyMembers(),
                     isHidden = false,
                 ),
-                updatedState.content,
+                awaitItem(),
             )
         }
     }
@@ -514,13 +496,12 @@ internal class ChannelInfoControllerTest {
         sut.state.test {
             skipItems(1) // Skip initial state
 
-            val actual = awaitItem()
             assertEquals(
-                ChannelInfoState.Content.Success(
+                ChannelInfoState.Content(
                     members = emptyMembers(),
                     isHidden = true,
                 ),
-                actual.content,
+                awaitItem(),
             )
 
             val error = Error.GenericError("Error unhiding channel")
@@ -550,12 +531,11 @@ internal class ChannelInfoControllerTest {
         sut.state.test {
             skipItems(1) // Skip initial state
 
-            val actual = awaitItem()
             assertEquals(
-                ChannelInfoState.Content.Success(
+                ChannelInfoState.Content(
                     members = emptyMembers(),
                 ),
-                actual.content,
+                awaitItem(),
             )
 
             val quitMessage = Message(text = "${currentUser.id} left")
@@ -585,12 +565,11 @@ internal class ChannelInfoControllerTest {
         sut.state.test {
             skipItems(1) // Skip initial state
 
-            val actual = awaitItem()
             assertEquals(
-                ChannelInfoState.Content.Success(
+                ChannelInfoState.Content(
                     members = emptyMembers(),
                 ),
-                actual.content,
+                awaitItem(),
             )
 
             val quitMessage = Message()
@@ -616,12 +595,11 @@ internal class ChannelInfoControllerTest {
         sut.state.test {
             skipItems(1) // Skip initial state
 
-            val actual = awaitItem()
             assertEquals(
-                ChannelInfoState.Content.Success(
+                ChannelInfoState.Content(
                     members = emptyMembers(),
                 ),
-                actual.content,
+                awaitItem(),
             )
 
             fixture.givenDeleteChannel()
@@ -645,12 +623,11 @@ internal class ChannelInfoControllerTest {
         sut.state.test {
             skipItems(1) // Skip initial state
 
-            val actual = awaitItem()
             assertEquals(
-                ChannelInfoState.Content.Success(
+                ChannelInfoState.Content(
                     members = emptyMembers(),
                 ),
-                actual.content,
+                awaitItem(),
             )
 
             val error = Error.GenericError("Error deleting channel")
