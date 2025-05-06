@@ -16,11 +16,13 @@
 
 package io.getstream.chat.android.ui.common.state.channel.info
 
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.utils.ExpandableList
 import io.getstream.chat.android.ui.common.utils.emptyExpandableList
 
-public data class ChannelInfoViewState(
+@ExperimentalStreamChatApi
+public data class ChannelInfoState(
     val content: Content = Content.Loading,
 ) {
 
