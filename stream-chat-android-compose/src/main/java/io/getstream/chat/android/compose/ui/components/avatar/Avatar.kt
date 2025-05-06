@@ -56,6 +56,7 @@ public fun Avatar(
     shape: Shape = ChatTheme.shapes.avatar,
     textStyle: TextStyle = ChatTheme.typography.title3Bold,
     placeholderPainter: Painter? = null,
+    errorPlaceholderPainter: Painter? = null,
     contentDescription: String? = null,
     initialsAvatarOffset: DpOffset = DpOffset(0.dp, 0.dp),
     onClick: (() -> Unit)? = null,
@@ -70,7 +71,7 @@ public fun Avatar(
                 is AsyncImagePainter.State.Empty -> placeholderPainter
                 is AsyncImagePainter.State.Loading -> placeholderPainter
                 is AsyncImagePainter.State.Success -> state.painter
-                is AsyncImagePainter.State.Error -> null
+                is AsyncImagePainter.State.Error -> errorPlaceholderPainter
             }
             Crossfade(targetState = targetPainter) { painter ->
                 if (painter == null) {
