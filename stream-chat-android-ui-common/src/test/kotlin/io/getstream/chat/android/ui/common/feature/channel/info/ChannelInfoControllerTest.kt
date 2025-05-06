@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
@@ -213,6 +214,60 @@ internal class ChannelInfoControllerTest {
                             },
                         minimumVisibleItems = 5,
                         isCollapsed = false,
+                    ),
+                ),
+                awaitItem(),
+            )
+        }
+    }
+
+    @Test
+    fun capability() = runTest {
+        val channel = Channel(
+            ownCapabilities = emptySet()
+        )
+        val fixture = Fixture()
+        val sut = fixture
+            .given(channel = channel)
+            .get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            assertEquals(
+                ChannelInfoState.Content(
+                    members = emptyMembers(),
+                    capability = ChannelInfoState.Content.Capability(
+                        canAddMember = false,
+                        canRename = false,
+                        canMute = false,
+                        canLeave = false,
+                        canDelete = false,
+                    ),
+                ),
+                awaitItem(),
+            )
+
+            val channel = Channel(
+                ownCapabilities = setOf(
+                    ChannelCapabilities.UPDATE_CHANNEL_MEMBERS,
+                    ChannelCapabilities.UPDATE_CHANNEL,
+                    ChannelCapabilities.MUTE_CHANNEL,
+                    ChannelCapabilities.LEAVE_CHANNEL,
+                    ChannelCapabilities.DELETE_CHANNEL,
+                )
+            )
+            fixture.given(channel = channel)
+
+            assertEquals(
+                ChannelInfoState.Content(
+                    members = emptyMembers(),
+                    capability = ChannelInfoState.Content.Capability(
+                        canAddMember = true,
+                        canRename = true,
+                        canMute = true,
+                        canLeave = true,
+                        canDelete = true,
                     ),
                 ),
                 awaitItem(),
