@@ -107,16 +107,16 @@ public class ChannelInfoController(
                 "$capability"
         }
 
-        val groupMembers = members
+        val contentMembers = members
             .run { takeIf { channelData.isGroupChannel } ?: filterNotCurrentUser() }
-            .map { member -> member.toViewState(channelData.createdBy) }
+            .map { member -> member.toContentMember(channelData.createdBy) }
 
         _state.update { currentState ->
             when (currentState) {
                 is ChannelInfoState.Loading -> {
                     ChannelInfoState.Content(
                         members = ExpandableList(
-                            items = groupMembers,
+                            items = contentMembers,
                             minimumVisibleItems = MINIMUM_VISIBLE_MEMBERS,
                         ),
                         name = channelData.name,
@@ -129,7 +129,7 @@ public class ChannelInfoController(
                 is ChannelInfoState.Content -> {
                     currentState.copy(
                         members = currentState.members.copy(
-                            items = groupMembers,
+                            items = contentMembers,
                         ),
                         name = channelData.name,
                         isMuted = isMuted,
@@ -271,7 +271,7 @@ private data class ChannelInfoData(
     val isHidden: Boolean,
 )
 
-private fun Member.toViewState(createdBy: User) = ChannelInfoState.Content.Member(
+private fun Member.toContentMember(createdBy: User) = ChannelInfoState.Content.Member(
     user = user,
     role = if (createdBy.id == user.id) {
         ChannelInfoState.Content.Role.Owner
@@ -285,6 +285,8 @@ private fun Member.toViewState(createdBy: User) = ChannelInfoState.Content.Membe
 )
 
 private fun ChannelData.toCapability() = ChannelInfoState.Content.Capability(
+    canAddMember = ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL_MEMBERS),
+    canRename = ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL),
     canMute = ownCapabilities.contains(ChannelCapabilities.MUTE_CHANNEL),
     canLeave = ownCapabilities.contains(ChannelCapabilities.LEAVE_CHANNEL),
     canDelete = ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL),
