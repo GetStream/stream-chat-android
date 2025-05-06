@@ -74,7 +74,7 @@ public fun Avatar(
             }
             Crossfade(targetState = targetPainter) { painter ->
                 if (painter == null) {
-                    InitialsAvatar(
+                    ChatTheme.componentFactory.FallbackAvatar(
                         modifier = Modifier.fillMaxSize(),
                         initials = initials,
                         shape = shape,

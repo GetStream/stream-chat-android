@@ -87,6 +87,7 @@ import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
+import io.getstream.chat.android.compose.ui.components.avatar.InitialsAvatar
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptions
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
@@ -1759,6 +1760,29 @@ public interface ChatComponentFactory {
             contentDescription = contentDescription,
             initialsAvatarOffset = initialsAvatarOffset,
             onClick = onClick,
+        )
+    }
+
+    /**
+     * The default fallback avatar, which renders initials in a circle.
+     * It is used when the image URL is empty or there is an error loading the image.
+     */
+    @Composable
+    public fun FallbackAvatar(
+        initials: String,
+        modifier: Modifier,
+        shape: Shape,
+        textStyle: TextStyle,
+        avatarOffset: DpOffset,
+        onClick: (() -> Unit)?,
+    ) {
+        InitialsAvatar(
+            modifier = modifier,
+            initials = initials,
+            shape = shape,
+            textStyle = textStyle,
+            onClick = onClick,
+            avatarOffset = avatarOffset,
         )
     }
 
