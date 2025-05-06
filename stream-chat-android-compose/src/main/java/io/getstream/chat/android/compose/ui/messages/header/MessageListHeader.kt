@@ -184,7 +184,7 @@ public fun DefaultMessageListHeaderCenterContent(
     onHeaderTitleClick: (Channel) -> Unit = {},
 ) {
     val title = when (messageMode) {
-        MessageMode.Normal -> ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser)
+        MessageMode.Normal -> ChatTheme.channelNameFormatter.formatChannelName(channel = channel, currentUser = null)
         is MessageMode.MessageThread -> stringResource(id = R.string.stream_compose_thread_title)
     }
 

@@ -36,7 +36,7 @@ public fun MessageListHeaderViewModel.bindView(view: MessageListHeaderView, life
     channel.observe(lifecycle) { channel ->
         val channelName = ChatUI.channelNameFormatter.formatChannelName(
             channel = channel,
-            currentUser = ChatUI.currentUserProvider.getCurrentUser(),
+            currentUser = null,
         )
         view.setTitle(channelName)
         view.setAvatar(channel)
