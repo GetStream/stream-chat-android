@@ -333,7 +333,7 @@ internal fun MediaGalleryVideoPage(
             // Video player
             AndroidView(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .matchParentSize()
                     .background(Color.Black),
                 factory = {
                     createPlayerView(it, preparedPlayer)
@@ -342,6 +342,7 @@ internal fun MediaGalleryVideoPage(
             // Thumbnail
             if (showThumbnail) {
                 VideoThumbnail(
+                    modifier = Modifier.matchParentSize(),
                     thumbnailUrl = thumbnailUrl,
                     showPlayButton = showPlayButton,
                     onPlayClick = {
@@ -364,6 +365,7 @@ private fun VideoThumbnail(
     thumbnailUrl: String?,
     showPlayButton: Boolean,
     onPlayClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val data = if (ChatTheme.videoThumbnailsEnabled) {
         thumbnailUrl
@@ -371,13 +373,13 @@ private fun VideoThumbnail(
         null
     }
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
         contentAlignment = Alignment.Center,
     ) {
         StreamAsyncImage(
             modifier = Modifier
                 .clickable { onPlayClick() }
-                .fillMaxSize()
+                .matchParentSize()
                 .background(Color.Black),
             data = data,
             contentDescription = null,

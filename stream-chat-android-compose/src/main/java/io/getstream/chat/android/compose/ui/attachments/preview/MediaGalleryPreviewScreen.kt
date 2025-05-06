@@ -551,6 +551,7 @@ internal fun MediaGalleryPager(
 
             attachments[page].isVideo() -> {
                 MediaGalleryVideoPage(
+                    modifier = Modifier.fillMaxSize(),
                     assetUrl = attachments[page].assetUrl,
                     thumbnailUrl = attachments[page].thumbUrl,
                     onPlaybackError = onPlaybackError,
