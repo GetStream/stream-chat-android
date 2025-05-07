@@ -39,16 +39,6 @@ object PredefinedUserCredentials {
         UserCredentials(
             apiKey = API_KEY,
             user = User(
-                "dnovak",
-                name = "Daniel Novak",
-                image = "https://ca.slack-edge.com/T02RM6X6B-U05DKELFBB8-a8641b819de8-192",
-            ),
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9" +
-                ".eyJ1c2VyX2lkIjoiZG5vdmFrIn0.HuUyFkiXjHRk7hk4g2FLOg0szEi5Zq1u6CRC9t2Mwj8",
-        ),
-        UserCredentials(
-            apiKey = API_KEY,
-            user = User(
                 id = "jc",
                 name = "Jc Miñarro",
                 image = "https://ca.slack-edge.com/T02RM6X6B-U011KEXDPB2-891dbb8df64f-128",
@@ -58,74 +48,22 @@ object PredefinedUserCredentials {
         UserCredentials(
             apiKey = API_KEY,
             user = User(
-                id = "amit",
-                name = "Amit Kumar",
-                image = "https://ca.slack-edge.com/T02RM6X6B-U027L4AMGQ3-9ca65ea80b60-128",
+                id = "pvelikov",
+                name = "Petar Velikov",
+                image = "https://ca.slack-edge.com/T02RM6X6B-U07LDJZRUTG-a4129fed05b6-512",
             ),
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYW1pdCJ9.MNfrDsGkFINEZ3kCQ9hAqI38lZ6S-miHINAuH3kQy2o",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicHZlbGlrb3YifQ." +
+                "d5eenuTIZD5gZh7rHiv3lYbE8uOqUiHfwULtUr8a-l0",
         ),
         UserCredentials(
             apiKey = API_KEY,
             user = User(
-                id = "belal",
-                name = "Belal Khan",
-                image = "https://ca.slack-edge.com/T02RM6X6B-U02DAP0G2AV-2072330222dc-128",
+                id = "andrerego",
+                name = "André Rêgo",
+                image = "https://ca.slack-edge.com/T02RM6X6B-U083JCB6ZEY-2da235988b74-512",
             ),
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYmVsYWwifQ.a0DwMMb0V1Lona_1dIB7a4GtNl4oQ_WCp-W-UP3_CUQ",
-        ),
-        UserCredentials(
-            apiKey = API_KEY,
-            user = User(
-                id = "dmitrii",
-                name = "Dmitrii Bychkov",
-                image = "https://ca.slack-edge.com/T02RM6X6B-U01CDPY6YE8-b74b0739493e-128",
-            ),
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZG1pdHJpaSJ9._j7pM2kqj46ztls0tG1DiUMl45l54VOLvl8jp5VCmZU",
-        ),
-        UserCredentials(
-            apiKey = API_KEY,
-            user = User(
-                id = "filip",
-                name = "Filip Babić",
-                image = "https://ca.slack-edge.com/T02RM6X6B-U022AFX9D2S-f7bcb3d56180-128",
-            ),
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZmlsaXAifQ.WKqTjU6fHHjtFej-sUqS2ml3Rvdqn4Ptrf7jfKqzFgU",
-        ),
-        UserCredentials(
-            apiKey = API_KEY,
-            user = User(
-                id = "jaewoong",
-                name = "Jaewoong Eum",
-                image = "https://ca.slack-edge.com/T02RM6X6B-U02HU1XR9LM-626fb91c334e-128",
-            ),
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamFld29vbmcifQ.d-7AREGaSirn7TjxwLyAUvOU-nz2_LL5oMTycZvcnQc",
-        ),
-        UserCredentials(
-            apiKey = API_KEY,
-            user = User(
-                id = "oleg",
-                name = "Oleg Kuzmin",
-                image = "https://ca.slack-edge.com/T02RM6X6B-U019BEATNCD-bad2dcf654ef-128",
-            ),
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoib2xlZyJ9.ZucjlxjiNewCORdCLwpKwZw2nNtRC_Bv17TjHlitdLU",
-        ),
-        UserCredentials(
-            apiKey = API_KEY,
-            user = User(
-                id = "rafal",
-                name = "Rafal Adasiewicz",
-                image = "https://ca.slack-edge.com/T02RM6X6B-U0177N46AFN-a4e664d1960d-128",
-            ),
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicmFmYWwifQ.7Y4QCvc42Km8ETLdCQT5ynjiKVbZZbuN0XTiGxJNU6k",
-        ),
-        UserCredentials(
-            apiKey = API_KEY,
-            user = User(
-                id = "samuel",
-                name = "Samuel Urbanowicz",
-                image = "https://ca.slack-edge.com/T02RM6X6B-U011KEXD396-6d3169b36889-128",
-            ),
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic2FtdWVsIn0.SusttZNc2Y0sc-JPEOPCmTa5FuKDHRcWGO_7kYrC1C0",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYW5kcmVyZWdvIn0." +
+                "4sUYJXmz8H0mkClVGGPMN3mUhxg-D9cUDNJeFQ2d82I",
         ),
         UserCredentials(
             apiKey = API_KEY,
@@ -169,29 +107,91 @@ object PredefinedUserCredentials {
         UserCredentials(
             apiKey = API_KEY,
             user = User(
-                id = "pvelikov",
-                name = "Petar Velikov",
-                image = "https://ca.slack-edge.com/T02RM6X6B-U07LDJZRUTG-a4129fed05b6-512",
+                "dnovak",
+                name = "Luke Skywalker",
+                image = "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
             ),
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicHZlbGlrb3YifQ." +
-                "d5eenuTIZD5gZh7rHiv3lYbE8uOqUiHfwULtUr8a-l0",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9" +
+                ".eyJ1c2VyX2lkIjoiZG5vdmFrIn0.HuUyFkiXjHRk7hk4g2FLOg0szEi5Zq1u6CRC9t2Mwj8",
         ),
         UserCredentials(
             apiKey = API_KEY,
             user = User(
-                id = "andrerego",
-                name = "André Rêgo",
-                image = "https://ca.slack-edge.com/T02RM6X6B-U083JCB6ZEY-2da235988b74-512",
+                id = "amit",
+                name = "Leia Organa",
+                image = "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
             ),
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYW5kcmVyZWdvIn0." +
-                "4sUYJXmz8H0mkClVGGPMN3mUhxg-D9cUDNJeFQ2d82I",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYW1pdCJ9.MNfrDsGkFINEZ3kCQ9hAqI38lZ6S-miHINAuH3kQy2o",
+        ),
+        UserCredentials(
+            apiKey = API_KEY,
+            user = User(
+                id = "belal",
+                name = "Han Solo",
+                image = "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
+            ),
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYmVsYWwifQ.a0DwMMb0V1Lona_1dIB7a4GtNl4oQ_WCp-W-UP3_CUQ",
+        ),
+        UserCredentials(
+            apiKey = API_KEY,
+            user = User(
+                id = "dmitrii",
+                name = "Lando Calrissian",
+                image = "https://vignette.wikia.nocookie.net/starwars/images/8/8f/Lando_ROTJ.png",
+            ),
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZG1pdHJpaSJ9._j7pM2kqj46ztls0tG1DiUMl45l54VOLvl8jp5VCmZU",
+        ),
+        UserCredentials(
+            apiKey = API_KEY,
+            user = User(
+                id = "filip",
+                name = "Chewbacca",
+                image = "https://vignette.wikia.nocookie.net/starwars/images/4/48/Chewbacca_TLJ.png",
+            ),
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZmlsaXAifQ.WKqTjU6fHHjtFej-sUqS2ml3Rvdqn4Ptrf7jfKqzFgU",
+        ),
+        UserCredentials(
+            apiKey = API_KEY,
+            user = User(
+                id = "jaewoong",
+                name = "C-3PO",
+                image = "https://vignette.wikia.nocookie.net/starwars/images/3/3f/C-3PO_TLJ_Card_Trader_Award_Card.png",
+            ),
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamFld29vbmcifQ.d-7AREGaSirn7TjxwLyAUvOU-nz2_LL5oMTycZvcnQc",
+        ),
+        UserCredentials(
+            apiKey = API_KEY,
+            user = User(
+                id = "oleg",
+                name = "R2-D2",
+                image = "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
+            ),
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoib2xlZyJ9.ZucjlxjiNewCORdCLwpKwZw2nNtRC_Bv17TjHlitdLU",
+        ),
+        UserCredentials(
+            apiKey = API_KEY,
+            user = User(
+                id = "rafal",
+                name = "Anakin Skywalker",
+                image = "https://vignette.wikia.nocookie.net/starwars/images/6/6f/Anakin_Skywalker_RotS.png",
+            ),
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicmFmYWwifQ.7Y4QCvc42Km8ETLdCQT5ynjiKVbZZbuN0XTiGxJNU6k",
+        ),
+        UserCredentials(
+            apiKey = API_KEY,
+            user = User(
+                id = "samuel",
+                name = "Obi-Wan Kenobi",
+                image = "https://vignette.wikia.nocookie.net/starwars/images/4/4e/ObiWanHS-SWE.jpg",
+            ),
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic2FtdWVsIn0.SusttZNc2Y0sc-JPEOPCmTa5FuKDHRcWGO_7kYrC1C0",
         ),
         UserCredentials(
             apiKey = API_KEY,
             user = User(
                 id = "leandro",
-                name = "Leandro Borges Ferreira",
-                image = "https://ca.slack-edge.com/T02RM6X6B-U01AQ67NJ9Z-2f28d711cae9-128",
+                name = "Padmé Amidala",
+                image = "https://vignette.wikia.nocookie.net/starwars/images/b/b2/Padmegreenscrshot.jpg",
             ),
             token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibGVhbmRybyJ9.CjlYUr79r4GopAhXIbqLBighl3meLsT4dQKzdKX7L3g",
         ),
@@ -199,8 +199,8 @@ object PredefinedUserCredentials {
             apiKey = API_KEY,
             user = User(
                 id = "marton",
-                name = "Márton Braun",
-                image = "https://ca.slack-edge.com/T02RM6X6B-U018YPHEW7L-26ab96fd1ed3-128",
+                name = "Qui-Gon Jinn",
+                image = "https://vignette.wikia.nocookie.net/starwars/images/f/f6/Qui-Gon_Jinn_Headshot_TPM.jpg",
             ),
             token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWFydG9uIn0.22wjzwYCNdaG5FLVeTD49NqVA11UJpEwrNRjZxZrcK8",
         ),
