@@ -121,17 +121,18 @@ internal fun StreamMediaPlayerContent(
             )
             // Thumbnail
             if (showThumbnail) {
-                VideoThumbnail(
-                    modifier = Modifier.matchParentSize(),
+                MediaThumbnail(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .clickable {
+                            showThumbnail = false
+                            preparedPlayer.play()
+                        },
                     thumbnailUrl = thumbnailUrl,
-                    onPlayClick = {
-                        showThumbnail = false
-                        preparedPlayer.play()
-                    },
                 )
             }
             // Buffering indicator
-            if (showBuffering && !showThumbnail) {
+            if (showBuffering) {
                 LoadingIndicator()
             }
         }
@@ -145,36 +146,24 @@ internal fun StreamMediaPlayerContent(
  * to start video playback. The thumbnail image is only displayed if video thumbnails are
  * enabled in the ChatTheme configuration.
  *
- * When clicked, the component triggers the provided [onPlayClick] callback to begin video playback.
- * The thumbnail has a black background to ensure visual consistency when no thumbnail image
- * is available or while it's loading.
- *
  * @param thumbnailUrl The URL of the thumbnail image to display, or null if no thumbnail is available.
- * @param onPlayClick Callback invoked when the user clicks on the thumbnail or play button to start playback.
  * @param modifier Modifier to be applied to the thumbnail container.
  */
 @Composable
-private fun VideoThumbnail(
+private fun MediaThumbnail(
     thumbnailUrl: String?,
-    onPlayClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier,
+        modifier = modifier.background(Color.Black),
         contentAlignment = Alignment.Center,
     ) {
-        val backgroundModifier = Modifier
-            .clickable { onPlayClick() }
-            .matchParentSize()
-            .background(Color.Black)
         if (thumbnailUrl != null) {
             StreamAsyncImage(
-                modifier = backgroundModifier,
+                modifier = modifier.matchParentSize(),
                 data = thumbnailUrl,
                 contentDescription = null,
             )
-        } else {
-            Box(modifier = backgroundModifier)
         }
         PlayButton(
             modifier = Modifier
