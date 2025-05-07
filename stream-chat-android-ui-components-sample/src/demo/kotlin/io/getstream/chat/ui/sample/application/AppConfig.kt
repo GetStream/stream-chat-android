@@ -57,7 +57,7 @@ object AppConfig {
             id = "andrerego",
             name = "André Rêgo",
             image = "https://ca.slack-edge.com/T02RM6X6B-U083JCB6ZEY-2da235988b74-512",
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYW5kcmVyZWdvIn0.4sUYJXmz8H0mkClVGGPMN3mUhxg-D9cUDNJeFQ2d82I"
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYW5kcmVyZWdvIn0.4sUYJXmz8H0mkClVGGPMN3mUhxg-D9cUDNJeFQ2d82I",
         ),
         SampleUser(
             apiKey = apiKey,
