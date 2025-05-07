@@ -3687,6 +3687,10 @@ internal constructor(
      * @param callType Represents call type such as `video` or `audio`.
      * @param callId A unique identifier to assign to the call. The id is case-insensitive.
      */
+    @Deprecated(
+        "This third-party library integration is deprecated. Contact the support team for more information.",
+        level = DeprecationLevel.WARNING,
+    )
     @CheckResult
     public fun createVideoCall(
         channelType: String,
@@ -3707,6 +3711,10 @@ internal constructor(
      *
      * @param callId The call id, which indicates a dedicated video call id on the channel.
      */
+    @Deprecated(
+        "This third-party library integration is deprecated. Contact the support team for more information.",
+        level = DeprecationLevel.WARNING,
+    )
     @CheckResult
     public fun getVideoCallToken(callId: String): Call<VideoCallToken> {
         return api.getVideoCallToken(callId = callId)

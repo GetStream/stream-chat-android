@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.CompletableResponse
-import io.getstream.chat.android.client.api2.model.response.CreateVideoCallResponse
 import io.getstream.chat.android.client.api2.model.response.DevicesResponse
 import io.getstream.chat.android.client.api2.model.response.EventResponse
 import io.getstream.chat.android.client.api2.model.response.FlagResponse
@@ -49,7 +48,6 @@ import io.getstream.chat.android.client.api2.model.response.ThreadResponse
 import io.getstream.chat.android.client.api2.model.response.TokenResponse
 import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
 import io.getstream.chat.android.client.api2.model.response.UsersResponse
-import io.getstream.chat.android.client.api2.model.response.VideoCallTokenResponse
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.models.EventType
@@ -382,18 +380,6 @@ internal object MoshiChatApiTestArguments {
             Result.Success::class,
         ),
         Arguments.of(RetroError<QueryMembersResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
-    )
-
-    @JvmStatic
-    fun createVideoCallInput() = listOf(
-        Arguments.of(RetroSuccess(Mother.randomCreateVideoCallResponse()).toRetrofitCall(), Result.Success::class),
-        Arguments.of(RetroError<CreateVideoCallResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
-    )
-
-    @JvmStatic
-    fun getVideoCallTokenInput() = listOf(
-        Arguments.of(RetroSuccess(Mother.randomVideoCallTokenResponse()).toRetrofitCall(), Result.Success::class),
-        Arguments.of(RetroError<VideoCallTokenResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
     @JvmStatic

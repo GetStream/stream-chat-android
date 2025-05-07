@@ -1,0 +1,101 @@
+name: Publish New Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        type: choice
+        description: "Type of version bump to perform"
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  generate_release_notes:
+    name: Generate Release Notes
+    runs-on: ubuntu-24.04
+    environment: 'publish'
+    outputs:
+      release_notes: ${{ steps.update_release_notes.outputs.release_notes }}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4.2.2
+
+      # Bump the version using our custom action
+      - uses: GetStream/android-ci-actions/actions/bump-version@v0.1
+        id: bump-version
+        with:
+          bump: ${{ inputs.bump }}
+          file-path: ./buildSrc/src/main/kotlin/io/getstream/chat/android/Configuration.kt
+
+      - name: Parse release section in changelog
+        run: ./gradlew changelog-release-section
+
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9.1.4
+        with:
+          add: '["CHANGELOG.md"]'
+          message: "AUTOMATION: CHANGELOG Update"
+          default_author: github_actions
+          push: false
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.8.0
+        with:
+          github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
+          branch: release
+          force: true
+
+      - name: Update release notes
+        id: update_release_notes
+        run: |
+          ./gradlew generate-release
+          echo "release_notes<<EOF" >> $GITHUB_OUTPUT
+          cat build/tmp/CHANGELOG_PARSED.md >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+  publish:
+    needs: generate_release_notes
+    uses: GetStream/android-ci-actions/.github/workflows/release-new-version.yml@v0.1
+    with:
+      ref: "release"
+      bump: ${{ inputs.bump }}
+      file-path: ./buildSrc/src/main/kotlin/io/getstream/chat/android/Configuration.kt
+      release-notes: ${{ needs.generate_release_notes.outputs.release_notes }}
+      excluded-modules: "stream-chat-android-ui-components-sample,stream-chat-android-compose-sample,stream-chat-android-docs"
+    secrets:
+      OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+      OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+      SIGNING_KEY_ID: ${{ secrets.SIGNING_KEY_ID }}
+      SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+      SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+      SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
+      STREAM_PUBLIC_BOT_TOKEN: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
+
+  update_develop_changelog:
+    needs: publish
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4.2.2
+        with:
+          ref: develop
+          fetch-depth: 0
+
+      - name: Update changelog
+        run: ./gradlew changelog-add-model-section
+
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9.1.4
+        with:
+          add: '["CHANGELOG.md"]'
+          message: "AUTOMATION: CHANGELOG Update"
+          default_author: github_actions
+          push: false
+
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.8.0
+        with:
+          github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
+          branch: develop
+          force: true

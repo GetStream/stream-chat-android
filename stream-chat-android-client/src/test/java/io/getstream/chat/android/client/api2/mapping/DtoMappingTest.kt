@@ -264,6 +264,7 @@ internal class DtoMappingTest {
             banned = user.isBanned,
             devices = user.devices.map { with(mapping) { it.toDto() } },
             teams = user.teams,
+            teams_role = user.teamsRole,
             extraData = user.extraData,
         )
 

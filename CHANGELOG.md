@@ -12,7 +12,6 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
-- Fix `NullPointerException` in `SubscriptionImpl` when subscription is disposed concurrently while being filtered. [#5738](https://github.com/GetStream/stream-chat-android/pull/5738)
 
 ### ⬆️ Improved
 
@@ -64,26 +63,18 @@
 ### ✅ Added
 
 ### ⚠️ Changed
-- Replace `StreamImage` with `StreamAsyncImage`. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
-- Deprecate landscapist `StreamImage` in favor of coil `SubcomposeAsyncImage`. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
-- Deprecate `rememberStreamImagePainter` in favor of coil `rememberAsyncImagePainter`. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
 
 ### ❌ Removed
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
-- Fix crash when multiple answers field is not a valid number when creating a poll. [#5733](https://github.com/GetStream/stream-chat-android/pull/5733)
 
 ### ⬆️ Improved
-- Improve the images loading. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
 
 ### ✅ Added
-- Introduce `MediaGalleryConfig` for simple configuration(show/hide) of the actions in the `MediaGalleryPreviewActivity`. [#5726](https://github.com/GetStream/stream-chat-android/pull/5726)
-- Introduce experimental `MediaGalleryPreviewScreen` composable component which renders a standalone media gallery for a `Message` with media attachments. [#5726](https://github.com/GetStream/stream-chat-android/pull/5726)
 
 ### ⚠️ Changed
-- Deprecate `ThreadMessagesStart` in favor of `Arrangement.Vertical`. [#5745](https://github.com/GetStream/stream-chat-android/pull/5745)
 
 ### ❌ Removed
 
@@ -97,6 +88,51 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# April 30th, 2025 - 6.15.0
+## Common changes for all artifacts
+### ✅ Added
+- Add `teamsRole` field to the `User` model for team-based roles. [#5737](https://github.com/GetStream/stream-chat-android/pull/5737)
+
+### ⚠️ Changed
+- Deprecated API endpoints related to third-party video call integrations, which are no longer natively supported. These endpoints will be removed in future releases. [#5740](https://github.com/GetStream/stream-chat-android/pull/5740)
+
+## stream-chat-android-client
+### 🐞 Fixed
+- Fix `NullPointerException` in `SubscriptionImpl` when subscription is disposed concurrently while being filtered. [#5738](https://github.com/GetStream/stream-chat-android/pull/5738)
+- Fix new Stream token not sent with the request after refreshing it. [#5757](https://github.com/GetStream/stream-chat-android/pull/5757)
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+- Fix `ErrorEvent.PollCastingVoteError` emitted instead of `ErrorEvent.PollRemovingVoteError` when `MessageListController.removeVote` fails. [#5742](https://github.com/GetStream/stream-chat-android/pull/5742)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
+
+### ⚠️ Changed
+- Replace `StreamImage` with `StreamAsyncImage`. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
+- Deprecate landscapist `StreamImage` in favor of coil `SubcomposeAsyncImage`. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
+- Deprecate `rememberStreamImagePainter` in favor of coil `rememberAsyncImagePainter`. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
+- Fix crash when multiple answers field is not a valid number when creating a poll. [#5733](https://github.com/GetStream/stream-chat-android/pull/5733)
+- Ensure the `ImageLoader` created by a custom `StreamCoilImageLoaderFactory` is passed to the `MediaGalleryPreviewActivity`. [#5736](https://github.com/GetStream/stream-chat-android/pull/5736)
+
+### ⬆️ Improved
+- Improve the images loading. [#5724](https://github.com/GetStream/stream-chat-android/pull/5724)
+- Remove the divider of the last item in the channel list and pinned message list. [#5746](https://github.com/GetStream/stream-chat-android/pull/5746)
+
+### ✅ Added
+- Introduce `MediaGalleryConfig` for simple configuration(show/hide) of the actions in the `MediaGalleryPreviewActivity`. [#5726](https://github.com/GetStream/stream-chat-android/pull/5726)
+- Introduce experimental `MediaGalleryPreviewScreen` composable component which renders a standalone media gallery for a `Message` with media attachments. [#5726](https://github.com/GetStream/stream-chat-android/pull/5726)
+- Add `ChatComponentFactory.MessageListBackground` method for overriding the default `MessageList` background. [#5750](https://github.com/GetStream/stream-chat-android/pull/5750)
+- Add `background` argument to the `MessageList` composable for overriding the default background. [#5750](https://github.com/GetStream/stream-chat-android/pull/5750)
+
+### ⚠️ Changed
+- Deprecate `ThreadMessagesStart` in favor of `Arrangement.Vertical`. [#5745](https://github.com/GetStream/stream-chat-android/pull/5745)
 
 # April 16th, 2025 - 6.14.0
 ## stream-chat-android-client

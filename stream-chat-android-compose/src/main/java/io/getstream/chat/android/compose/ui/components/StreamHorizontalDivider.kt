@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2025 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.models
+package io.getstream.chat.android.compose.ui.components
 
-import androidx.compose.runtime.Immutable
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
-/**
- * Represents Agora channel information that contains available [channel] in a chat channel.
- *
- * @property channel A new channel.
- */
-@Deprecated(
-    "This third-party library integration is deprecated. Contact the support team for more information.",
-    level = DeprecationLevel.WARNING,
-)
-@Immutable
-public data class AgoraChannel(val channel: String)
+@Composable
+internal fun StreamHorizontalDivider() {
+    HorizontalDivider(
+        thickness = .5.dp,
+        color = ChatTheme.colors.borders,
+    )
+}
