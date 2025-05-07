@@ -254,6 +254,7 @@ private fun MediaGalleryPhotosMenuItem(
             textStyle = ChatTheme.typography.captionBold,
             shape = ChatTheme.shapes.avatar,
             placeholderPainter = null,
+            errorPlaceholderPainter = null,
             contentDescription = null,
             initialsAvatarOffset = DpOffset(0.dp, 0.dp),
             onClick = null,

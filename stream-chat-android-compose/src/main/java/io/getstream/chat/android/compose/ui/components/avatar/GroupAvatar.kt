@@ -88,6 +88,7 @@ public fun GroupAvatar(
                         shape = RectangleShape,
                         textStyle = textStyle,
                         placeholderPainter = null,
+                        errorPlaceholderPainter = null,
                         contentDescription = null,
                         initialsAvatarOffset = getAvatarPositionOffset(
                             dimens = ChatTheme.dimens,
@@ -117,6 +118,7 @@ public fun GroupAvatar(
                         shape = RectangleShape,
                         textStyle = textStyle,
                         placeholderPainter = null,
+                        errorPlaceholderPainter = null,
                         contentDescription = null,
                         initialsAvatarOffset = getAvatarPositionOffset(
                             dimens = ChatTheme.dimens,

@@ -215,6 +215,7 @@ internal fun PollAnswersItem(
                     shape = ChatTheme.shapes.avatar,
                     textStyle = ChatTheme.typography.captionBold,
                     placeholderPainter = null,
+                    errorPlaceholderPainter = null,
                     contentDescription = user.name,
                     initialsAvatarOffset = DpOffset.Zero,
                     onClick = null,

@@ -106,7 +106,7 @@ public fun Avatar(
 @Composable
 private fun AvatarWithImageUrlPreview() {
     AvatarPreview(
-        imageUrl = "https://sample.com/image.png",
+        imageUrl = "https://ca.slack-edge.com/T02RM6X6B-U011KEXDPB2-891dbb8df64f-128",
     )
 }
 
@@ -137,6 +137,7 @@ private fun AvatarPreview(
             modifier = Modifier.size(36.dp),
             imageUrl = imageUrl,
             initials = "JC",
+            errorPlaceholderPainter = null
         )
     }
 }
