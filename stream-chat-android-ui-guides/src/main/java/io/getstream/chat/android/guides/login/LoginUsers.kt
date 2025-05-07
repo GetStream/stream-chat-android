@@ -93,7 +93,8 @@ object LoginUsers {
                 user = User(
                     id = "jaewoong",
                     name = "C-3PO",
-                    image = "https://vignette.wikia.nocookie.net/starwars/images/3/3f/C-3PO_TLJ_Card_Trader_Award_Card.png",
+                    image = "https://vignette.wikia.nocookie.net/starwars/images/3/3f/" +
+                        "C-3PO_TLJ_Card_Trader_Award_Card.png",
                 ),
                 token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamFld29vbmcifQ.d-7AREGaSirn7TjxwLyAUvOU-nz2_LL5oMTycZvcnQc",
             ),
