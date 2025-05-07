@@ -25,10 +25,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - uses: ./.github/actions/setup-java
-      - uses: ./.github/actions/gradle-cache
+      - uses: GetStream/android-ci-actions/actions/setup-java@main
+      - uses: GetStream/android-ci-actions/actions/gradle-cache@main
         with:
-          key-prefix: gradle-build
+          cache-name: gradle-build
 
       - name: Assemble release for metrics
         run: ./gradlew :metrics:$METRICS_PROJECT:assembleRelease
