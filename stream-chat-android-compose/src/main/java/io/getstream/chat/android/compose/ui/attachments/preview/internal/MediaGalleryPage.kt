@@ -289,10 +289,8 @@ internal fun MediaGalleryVideoPage(
     StreamMediaPlayerContent(
         modifier = modifier,
         assetUrl = assetUrl,
-        thumbnailUrl = thumbnailUrl,
+        thumbnailUrl = if (ChatTheme.videoThumbnailsEnabled) thumbnailUrl else null,
         playWhenReady = false,
-        showControllerInitially = false,
-        thumbnailEnabled = true,
         onPlaybackError = onPlaybackError,
     )
 }
