@@ -98,11 +98,6 @@ public final class io/getstream/chat/android/core/utils/Debouncer {
 	public final fun submitSuspendable (Lkotlin/jvm/functions/Function1;)V
 }
 
-public final class io/getstream/chat/android/extensions/ChannelDataExtensionsKt {
-	public static final fun isDistinct (Lio/getstream/chat/android/models/ChannelData;)Z
-	public static final fun isGroupChannel (Lio/getstream/chat/android/models/ChannelData;)Z
-}
-
 public final class io/getstream/chat/android/extensions/IntExtensionsKt {
 	public static final fun limitTo (III)I
 }

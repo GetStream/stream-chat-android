@@ -16,16 +16,19 @@
 
 package io.getstream.chat.android.extensions
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.ChannelData
 
 /**
  * Group channels are channels with more than 2 members or channels that are not distinct.
  */
+@InternalStreamChatApi
 public val ChannelData.isGroupChannel: Boolean
     get() = memberCount > 2 || !isDistinct
 
 /**
  * A distinct channel is a channel created for a particular set of users, usually for one-to-one conversations.
  */
+@InternalStreamChatApi
 public val ChannelData.isDistinct: Boolean
     get() = id.startsWith("!members")
