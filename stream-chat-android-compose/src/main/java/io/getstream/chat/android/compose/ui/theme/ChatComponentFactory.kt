@@ -1740,18 +1740,20 @@ public interface ChatComponentFactory {
     @Deprecated(
         message = "Use the new Avatar function instead.",
         level = DeprecationLevel.WARNING,
-        replaceWith = ReplaceWith(expression = "Avatar(\n" +
-            "modifier = modifier,\n " +
-            "imageUrl = imageUrl,\n " +
-            "initials = initials,\n " +
-            "shape = shape,\n " +
-            "textStyle = textStyle,\n " +
-            "placeholderPainter = placeholderPainter,\n " +
-            "errorPlaceholderPainter = errorPlaceholderPainter,\n " +
-            "contentDescription = contentDescription,\n " +
-            "initialsAvatarOffset = initialsAvatarOffset,\n " +
-            "onClick = onClick,\n" +
-            ")"),
+        replaceWith = ReplaceWith(
+            expression = "Avatar(\n" +
+                "modifier = modifier,\n " +
+                "imageUrl = imageUrl,\n " +
+                "initials = initials,\n " +
+                "shape = shape,\n " +
+                "textStyle = textStyle,\n " +
+                "placeholderPainter = placeholderPainter,\n " +
+                "errorPlaceholderPainter = errorPlaceholderPainter,\n " +
+                "contentDescription = contentDescription,\n " +
+                "initialsAvatarOffset = initialsAvatarOffset,\n " +
+                "onClick = onClick,\n" +
+                ")",
+        ),
     )
     @Suppress("LongParameterList")
     @Composable

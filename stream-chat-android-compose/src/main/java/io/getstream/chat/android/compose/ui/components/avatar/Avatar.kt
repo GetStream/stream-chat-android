@@ -44,6 +44,7 @@ import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageRe
  * @param shape The shape of the avatar.
  * @param textStyle The text style of the [initials] text.
  * @param placeholderPainter The placeholder to render while loading is in progress.
+ * @param errorPlaceholderPainter The placeholder to render in case of an error.
  * @param contentDescription Description of the image.
  * @param initialsAvatarOffset The initials offset to apply to the avatar.
  * @param onClick OnClick action, that can be nullable.
@@ -137,7 +138,7 @@ private fun AvatarPreview(
             modifier = Modifier.size(36.dp),
             imageUrl = imageUrl,
             initials = "JC",
-            errorPlaceholderPainter = null
+            errorPlaceholderPainter = null,
         )
     }
 }

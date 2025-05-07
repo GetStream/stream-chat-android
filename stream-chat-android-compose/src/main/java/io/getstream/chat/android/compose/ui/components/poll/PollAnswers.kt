@@ -173,6 +173,7 @@ public fun PollAnswersDialog(
     }
 }
 
+@Suppress("LongMethod")
 @Composable
 internal fun PollAnswersItem(
     answer: Answer,
