@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalStreamChatApi::class)
+
 package io.getstream.chat.android.ui.common.feature.channel.info
 
 import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelData
@@ -35,14 +38,17 @@ import io.getstream.result.Error
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
 
+@Suppress("LargeClass")
 internal class ChannelInfoControllerTest {
 
     @Test
@@ -224,12 +230,10 @@ internal class ChannelInfoControllerTest {
     @Test
     fun capabilities() = runTest {
         val channel = Channel(
-            ownCapabilities = emptySet()
+            ownCapabilities = emptySet(),
         )
-        val fixture = Fixture()
-        val sut = fixture
-            .given(channel = channel)
-            .get(backgroundScope)
+        val fixture = Fixture().given(channel = channel)
+        val sut = fixture.get(backgroundScope)
 
         sut.state.test {
             skipItems(1) // Skip initial state
@@ -238,9 +242,9 @@ internal class ChannelInfoControllerTest {
                 ChannelInfoState.Content(
                     members = emptyMembers(),
                     capability = ChannelInfoState.Content.Capability(
-                        canAddMember = false,
-                        canRemoveMember = false,
-                        canBanMember = false,
+                        canAddMembers = false,
+                        canRemoveMembers = false,
+                        canBanMembers = false,
                         canRenameChannel = false,
                         canMuteChannel = false,
                         canLeaveChannel = false,
@@ -250,25 +254,26 @@ internal class ChannelInfoControllerTest {
                 awaitItem(),
             )
 
-            val channel = Channel(
-                ownCapabilities = setOf(
-                    ChannelCapabilities.UPDATE_CHANNEL_MEMBERS,
-                    ChannelCapabilities.UPDATE_CHANNEL,
-                    ChannelCapabilities.BAN_CHANNEL_MEMBERS,
-                    ChannelCapabilities.MUTE_CHANNEL,
-                    ChannelCapabilities.LEAVE_CHANNEL,
-                    ChannelCapabilities.DELETE_CHANNEL,
-                )
+            fixture.given(
+                channel = Channel(
+                    ownCapabilities = setOf(
+                        ChannelCapabilities.UPDATE_CHANNEL_MEMBERS,
+                        ChannelCapabilities.UPDATE_CHANNEL,
+                        ChannelCapabilities.BAN_CHANNEL_MEMBERS,
+                        ChannelCapabilities.MUTE_CHANNEL,
+                        ChannelCapabilities.LEAVE_CHANNEL,
+                        ChannelCapabilities.DELETE_CHANNEL,
+                    ),
+                ),
             )
-            fixture.given(channel = channel)
 
             assertEquals(
                 ChannelInfoState.Content(
                     members = emptyMembers(),
                     capability = ChannelInfoState.Content.Capability(
-                        canAddMember = true,
-                        canRemoveMember = true,
-                        canBanMember = true,
+                        canAddMembers = true,
+                        canRemoveMembers = true,
+                        canBanMembers = true,
                         canRenameChannel = true,
                         canMuteChannel = true,
                         canLeaveChannel = true,
@@ -281,8 +286,33 @@ internal class ChannelInfoControllerTest {
     }
 
     @Test
+    fun `rename channel permission error`() = runTest {
+        val fixture = Fixture().given(channel = Channel())
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2) // Skip initial states
+
+            sut.events.test {
+                sut.renameChannel(name = "newName")
+
+                assertEquals(
+                    ChannelInfoEvent.RenameChannelError(message = "User doesn't have permission"),
+                    awaitItem(),
+                )
+            }
+        }
+
+        launch { fixture.verifyNoMoreInteractions() }
+    }
+
+    @Test
     fun `rename channel`() = runTest {
-        val channel = Channel(name = "name")
+        val channel = Channel(
+            name = "name",
+            ownCapabilities = setOf(ChannelCapabilities.UPDATE_CHANNEL),
+        )
+
         val fixture = Fixture().given(channel = channel)
         val sut = fixture.get(backgroundScope)
 
@@ -293,6 +323,7 @@ internal class ChannelInfoControllerTest {
                 ChannelInfoState.Content(
                     members = emptyMembers(),
                     name = channel.name,
+                    capability = ChannelInfoState.Content.Capability(canRenameChannel = true),
                 ),
                 awaitItem(),
             )
@@ -306,6 +337,7 @@ internal class ChannelInfoControllerTest {
                 ChannelInfoState.Content(
                     members = emptyMembers(),
                     name = newName,
+                    capability = ChannelInfoState.Content.Capability(canRenameChannel = true),
                 ),
                 awaitItem(),
             )
@@ -314,7 +346,7 @@ internal class ChannelInfoControllerTest {
 
     @Test
     fun `rename channel error`() = runTest {
-        val channel = Channel(name = "name")
+        val channel = Channel(ownCapabilities = setOf(ChannelCapabilities.UPDATE_CHANNEL))
         val fixture = Fixture().given(channel = channel)
         val sut = fixture.get(backgroundScope)
 
@@ -337,8 +369,30 @@ internal class ChannelInfoControllerTest {
     }
 
     @Test
+    fun `mute channel permission error`() = runTest {
+        val fixture = Fixture().given(channel = Channel())
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2) // Skip initial states
+
+            sut.events.test {
+                sut.muteChannel()
+
+                assertEquals(
+                    ChannelInfoEvent.MuteChannelError(message = "User doesn't have permission"),
+                    awaitItem(),
+                )
+            }
+        }
+
+        launch { fixture.verifyNoMoreInteractions() }
+    }
+
+    @Test
     fun `mute channel`() = runTest {
-        val fixture = Fixture().given(isMuted = false)
+        val channel = Channel(ownCapabilities = setOf(ChannelCapabilities.MUTE_CHANNEL))
+        val fixture = Fixture().given(channel = channel, isMuted = false)
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
@@ -348,6 +402,7 @@ internal class ChannelInfoControllerTest {
                 ChannelInfoState.Content(
                     members = emptyMembers(),
                     isMuted = false,
+                    capability = ChannelInfoState.Content.Capability(canMuteChannel = true),
                 ),
                 awaitItem(),
             )
@@ -360,6 +415,7 @@ internal class ChannelInfoControllerTest {
                 ChannelInfoState.Content(
                     members = emptyMembers(),
                     isMuted = true,
+                    capability = ChannelInfoState.Content.Capability(canMuteChannel = true),
                 ),
                 awaitItem(),
             )
@@ -368,7 +424,8 @@ internal class ChannelInfoControllerTest {
 
     @Test
     fun `mute channel error`() = runTest {
-        val fixture = Fixture().given(isMuted = false)
+        val channel = Channel(ownCapabilities = setOf(ChannelCapabilities.MUTE_CHANNEL))
+        val fixture = Fixture().given(channel = channel, isMuted = false)
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
@@ -378,6 +435,7 @@ internal class ChannelInfoControllerTest {
                 ChannelInfoState.Content(
                     members = emptyMembers(),
                     isMuted = false,
+                    capability = ChannelInfoState.Content.Capability(canMuteChannel = true),
                 ),
                 awaitItem(),
             )
@@ -397,8 +455,30 @@ internal class ChannelInfoControllerTest {
     }
 
     @Test
+    fun `unmute channel permission error`() = runTest {
+        val fixture = Fixture().given(channel = Channel())
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2) // Skip initial states
+
+            sut.events.test {
+                sut.unmuteChannel()
+
+                assertEquals(
+                    ChannelInfoEvent.UnmuteChannelError(message = "User doesn't have permission"),
+                    awaitItem(),
+                )
+            }
+        }
+
+        launch { fixture.verifyNoMoreInteractions() }
+    }
+
+    @Test
     fun `unmute channel`() = runTest {
-        val fixture = Fixture().given(isMuted = true)
+        val channel = Channel(ownCapabilities = setOf(ChannelCapabilities.MUTE_CHANNEL))
+        val fixture = Fixture().given(channel = channel, isMuted = true)
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
@@ -408,6 +488,7 @@ internal class ChannelInfoControllerTest {
                 ChannelInfoState.Content(
                     members = emptyMembers(),
                     isMuted = true,
+                    capability = ChannelInfoState.Content.Capability(canMuteChannel = true),
                 ),
                 awaitItem(),
             )
@@ -420,6 +501,7 @@ internal class ChannelInfoControllerTest {
                 ChannelInfoState.Content(
                     members = emptyMembers(),
                     isMuted = false,
+                    capability = ChannelInfoState.Content.Capability(canMuteChannel = true),
                 ),
                 awaitItem(),
             )
@@ -428,7 +510,8 @@ internal class ChannelInfoControllerTest {
 
     @Test
     fun `unmute channel error`() = runTest {
-        val fixture = Fixture().given(isMuted = true)
+        val channel = Channel(ownCapabilities = setOf(ChannelCapabilities.MUTE_CHANNEL))
+        val fixture = Fixture().given(channel = channel, isMuted = true)
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
@@ -438,6 +521,7 @@ internal class ChannelInfoControllerTest {
                 ChannelInfoState.Content(
                     members = emptyMembers(),
                     isMuted = true,
+                    capability = ChannelInfoState.Content.Capability(canMuteChannel = true),
                 ),
                 awaitItem(),
             )
@@ -579,12 +663,57 @@ internal class ChannelInfoControllerTest {
     }
 
     @Test
+    fun `leave channel permission error`() = runTest {
+        val fixture = Fixture().given(channel = Channel())
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2) // Skip initial states
+
+            sut.events.test {
+                sut.leaveChannel(quitMessage = null)
+
+                assertEquals(
+                    ChannelInfoEvent.LeaveChannelError(message = "User doesn't have permission"),
+                    awaitItem(),
+                )
+            }
+        }
+
+        launch { fixture.verifyNoMoreInteractions() }
+    }
+
+    @Test
+    fun `leave channel not connected user error`() = runTest {
+        val fixture = Fixture().given(channel = Channel(ownCapabilities = setOf(ChannelCapabilities.LEAVE_CHANNEL)))
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2) // Skip initial states
+
+            sut.events.test {
+                sut.leaveChannel(quitMessage = null)
+
+                assertEquals(
+                    ChannelInfoEvent.LeaveChannelError(message = "User not connected"),
+                    awaitItem(),
+                )
+            }
+        }
+
+        launch { fixture.verifyNoMoreInteractions() }
+    }
+
+    @Test
     fun `leave channel`() = runTest {
         val currentUser = User(id = "1")
         val fixture = Fixture()
             .given(
                 currentUser = currentUser,
-                channel = Channel(id = "!members-1,2"),
+                channel = Channel(
+                    id = "!members-1,2",
+                    ownCapabilities = setOf(ChannelCapabilities.LEAVE_CHANNEL),
+                ),
             )
         val sut = fixture.get(backgroundScope)
 
@@ -594,6 +723,7 @@ internal class ChannelInfoControllerTest {
             assertEquals(
                 ChannelInfoState.Content(
                     members = emptyMembers(),
+                    capability = ChannelInfoState.Content.Capability(canLeaveChannel = true),
                 ),
                 awaitItem(),
             )
@@ -618,7 +748,10 @@ internal class ChannelInfoControllerTest {
         val fixture = Fixture()
             .given(
                 currentUser = currentUser,
-                channel = Channel(id = "!members-1,2"),
+                channel = Channel(
+                    id = "!members-1,2",
+                    ownCapabilities = setOf(ChannelCapabilities.LEAVE_CHANNEL),
+                ),
             )
         val sut = fixture.get(backgroundScope)
 
@@ -628,6 +761,7 @@ internal class ChannelInfoControllerTest {
             assertEquals(
                 ChannelInfoState.Content(
                     members = emptyMembers(),
+                    capability = ChannelInfoState.Content.Capability(canLeaveChannel = true),
                 ),
                 awaitItem(),
             )
@@ -648,8 +782,30 @@ internal class ChannelInfoControllerTest {
     }
 
     @Test
+    fun `delete channel permission error`() = runTest {
+        val fixture = Fixture().given(channel = Channel())
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2) // Skip initial states
+
+            sut.events.test {
+                sut.deleteChannel()
+
+                assertEquals(
+                    ChannelInfoEvent.DeleteChannelError(message = "User doesn't have permission"),
+                    awaitItem(),
+                )
+            }
+        }
+
+        launch { fixture.verifyNoMoreInteractions() }
+    }
+
+    @Test
     fun `delete channel`() = runTest {
-        val fixture = Fixture()
+        val channel = Channel(ownCapabilities = setOf(ChannelCapabilities.DELETE_CHANNEL))
+        val fixture = Fixture().given(channel = channel)
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
@@ -658,6 +814,7 @@ internal class ChannelInfoControllerTest {
             assertEquals(
                 ChannelInfoState.Content(
                     members = emptyMembers(),
+                    capability = ChannelInfoState.Content.Capability(canDeleteChannel = true),
                 ),
                 awaitItem(),
             )
@@ -677,7 +834,8 @@ internal class ChannelInfoControllerTest {
 
     @Test
     fun `delete channel error`() = runTest {
-        val fixture = Fixture()
+        val channel = Channel(ownCapabilities = setOf(ChannelCapabilities.DELETE_CHANNEL))
+        val fixture = Fixture().given(channel = channel)
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
@@ -686,6 +844,7 @@ internal class ChannelInfoControllerTest {
             assertEquals(
                 ChannelInfoState.Content(
                     members = emptyMembers(),
+                    capability = ChannelInfoState.Content.Capability(canDeleteChannel = true),
                 ),
                 awaitItem(),
             )
@@ -791,8 +950,8 @@ private class Fixture {
         whenever(
             channelClient.removeMembers(
                 memberIds = listOf(chatClient.getCurrentOrStoredUserId()!!),
-                systemMessage = quitMessage
-            )
+                systemMessage = quitMessage,
+            ),
         ) doAnswer {
             error?.asCall()
                 ?: mock<Channel>().asCall()
@@ -804,6 +963,10 @@ private class Fixture {
             error?.asCall()
                 ?: mock<Channel>().asCall()
         }
+    }
+
+    fun verifyNoMoreInteractions() = apply {
+        verifyNoMoreInteractions(channelClient)
     }
 
     fun get(scope: CoroutineScope) = ChannelInfoController(

@@ -34,6 +34,7 @@ import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoEvent
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
 import io.getstream.log.taggedLogger
+import io.getstream.result.Error
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -196,14 +197,22 @@ public class ChannelInfoController(
      */
     public fun renameChannel(name: String) {
         logger.d { "[renameChannel] name: $name" }
-        scope.launch {
-            channelClient.updatePartial(set = mapOf("name" to name)).await()
-                .onError { error ->
-                    logger.e { "[renameChannel] error: ${error.message}" }
-                    _events.tryEmit(
-                        ChannelInfoEvent.RenameChannelError(message = error.message),
-                    )
-                }
+
+        val onError: (Error) -> Unit = { error ->
+            logger.e { "[renameChannel] error: ${error.message}" }
+            _events.tryEmit(
+                ChannelInfoEvent.RenameChannelError(message = error.message),
+            )
+        }
+
+        requireCapability(
+            permission = { canRenameChannel },
+            onError = onError,
+        ) {
+            scope.launch {
+                channelClient.updatePartial(set = mapOf("name" to name)).await()
+                    .onError(onError)
+            }
         }
     }
 
@@ -212,14 +221,22 @@ public class ChannelInfoController(
      */
     public fun muteChannel() {
         logger.d { "[muteChannel]" }
-        scope.launch {
-            channelClient.mute().await()
-                .onError { error ->
-                    logger.e { "[muteChannel] error: ${error.message}" }
-                    _events.tryEmit(
-                        ChannelInfoEvent.MuteChannelError(message = error.message),
-                    )
-                }
+
+        val onError: (Error) -> Unit = { error ->
+            logger.e { "[muteChannel] error: ${error.message}" }
+            _events.tryEmit(
+                ChannelInfoEvent.MuteChannelError(message = error.message),
+            )
+        }
+
+        requireCapability(
+            permission = { canMuteChannel },
+            onError = onError,
+        ) {
+            scope.launch {
+                channelClient.mute().await()
+                    .onError(onError)
+            }
         }
     }
 
@@ -228,14 +245,22 @@ public class ChannelInfoController(
      */
     public fun unmuteChannel() {
         logger.d { "[unmuteChannel]" }
-        scope.launch {
-            channelClient.unmute().await()
-                .onError { error ->
-                    logger.e { "[unmuteChannel] error: ${error.message}" }
-                    _events.tryEmit(
-                        ChannelInfoEvent.UnmuteChannelError(message = error.message),
-                    )
-                }
+
+        val onError: (Error) -> Unit = { error ->
+            logger.e { "[unmuteChannel] error: ${error.message}" }
+            _events.tryEmit(
+                ChannelInfoEvent.UnmuteChannelError(message = error.message),
+            )
+        }
+
+        requireCapability(
+            permission = { canMuteChannel },
+            onError = onError,
+        ) {
+            scope.launch {
+                channelClient.unmute().await()
+                    .onError(onError)
+            }
         }
     }
 
@@ -280,29 +305,31 @@ public class ChannelInfoController(
      */
     public fun leaveChannel(quitMessage: Message?) {
         logger.d { "[leaveChannel] quitMessage: ${quitMessage?.text}" }
-        scope.launch {
-            runCatching {
-                val currentUserId = requireNotNull(chatClient.getCurrentOrStoredUserId())
-                channelClient.removeMembers(
-                    memberIds = listOf(currentUserId),
-                    systemMessage = quitMessage,
-                ).await()
-                    .onSuccess {
-                        _events.tryEmit(
-                            ChannelInfoEvent.LeaveChannelSuccess,
-                        )
-                    }
-                    .onError { error ->
-                        logger.e { "[leaveChannel] error: ${error.message}" }
-                        _events.tryEmit(
-                            ChannelInfoEvent.LeaveChannelError(message = error.message),
-                        )
-                    }
-            }.onFailure { cause ->
-                logger.e { "[leaveChannel] error: ${cause.message}" }
-                _events.tryEmit(
-                    ChannelInfoEvent.LeaveChannelError(message = cause.message.orEmpty()),
-                )
+
+        val onError: (Error) -> Unit = { error ->
+            logger.e { "[leaveChannel] error: ${error.message}" }
+            _events.tryEmit(
+                ChannelInfoEvent.LeaveChannelError(message = error.message),
+            )
+        }
+
+        requireCapability(
+            permission = { canLeaveChannel },
+            onError = onError,
+        ) {
+            scope.launch {
+                runCatching {
+                    requireNotNull(chatClient.getCurrentOrStoredUserId()) { "User not connected" }
+                }.onSuccess { currentUserId ->
+                    channelClient.removeMembers(
+                        memberIds = listOf(currentUserId),
+                        systemMessage = quitMessage,
+                    ).await()
+                        .onSuccess { _events.tryEmit(ChannelInfoEvent.LeaveChannelSuccess) }
+                        .onError(onError)
+                }.onFailure { cause ->
+                    onError(Error.ThrowableError(message = cause.message.orEmpty(), cause = cause))
+                }
             }
         }
     }
@@ -312,24 +339,40 @@ public class ChannelInfoController(
      */
     public fun deleteChannel() {
         logger.d { "[deleteChannel]" }
-        scope.launch {
-            channelClient.delete().await()
-                .onSuccess {
-                    _events.tryEmit(
-                        ChannelInfoEvent.DeleteChannelSuccess,
-                    )
-                }
-                .onError { error ->
-                    logger.e { "[deleteChannel] error: ${error.message}" }
-                    _events.tryEmit(
-                        ChannelInfoEvent.DeleteChannelError(message = error.message),
-                    )
-                }
+
+        val onError: (Error) -> Unit = { error ->
+            logger.e { "[deleteChannel] error: ${error.message}" }
+            _events.tryEmit(
+                ChannelInfoEvent.DeleteChannelError(message = error.message),
+            )
+        }
+
+        requireCapability(
+            permission = { canDeleteChannel },
+            onError = onError,
+        ) {
+            scope.launch {
+                channelClient.delete().await()
+                    .onSuccess { _events.tryEmit(ChannelInfoEvent.DeleteChannelSuccess) }
+                    .onError(onError)
+            }
         }
     }
 
     private fun List<Member>.filterNotCurrentUser() =
         filter { member -> member.user.id != chatClient.getCurrentOrStoredUserId() }
+
+    private fun requireCapability(
+        permission: ChannelInfoState.Content.Capability.() -> Boolean,
+        onError: (error: Error) -> Unit,
+        onSuccess: () -> Unit,
+    ) {
+        (_state.value as? ChannelInfoState.Content)?.capability?.let { capability ->
+            runCatching { require(permission(capability)) }
+                .onFailure { onError(Error.GenericError("User doesn't have permission")) }
+                .onSuccess { onSuccess() }
+        }
+    }
 }
 
 private const val MINIMUM_VISIBLE_MEMBERS = 5
