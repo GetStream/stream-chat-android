@@ -179,10 +179,8 @@ internal class ChannelInfoControllerTest {
     }
 
     @Test
-    fun `expand group channel content`() = runTest {
-        val channel = Channel(
-            members = (1..10).map { i -> Member(user = User(id = "$i")) },
-        )
+    fun `expand and collapse group channel content`() = runTest {
+        val channel = Channel(members = (1..10).map { i -> Member(user = User(id = "$i")) })
         val sut = Fixture()
             .given(channel = channel)
             .get(backgroundScope)
@@ -220,6 +218,25 @@ internal class ChannelInfoControllerTest {
                             },
                         minimumVisibleItems = 5,
                         isCollapsed = false,
+                    ),
+                ),
+                awaitItem(),
+            )
+
+            sut.collapseMembers()
+
+            assertEquals(
+                ChannelInfoState.Content(
+                    members = ExpandableList(
+                        items = channel.members
+                            .map { member ->
+                                ChannelInfoState.Content.Member(
+                                    user = member.user,
+                                    role = ChannelInfoState.Content.Role.Other(""),
+                                )
+                            },
+                        minimumVisibleItems = 5,
+                        isCollapsed = true,
                     ),
                 ),
                 awaitItem(),
