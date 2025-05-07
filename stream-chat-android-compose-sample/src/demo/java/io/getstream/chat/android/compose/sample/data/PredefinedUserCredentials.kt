@@ -107,7 +107,7 @@ object PredefinedUserCredentials {
         UserCredentials(
             apiKey = API_KEY,
             user = User(
-                "dnovak",
+                id = "dnovak",
                 name = "Luke Skywalker",
                 image = "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
             ),

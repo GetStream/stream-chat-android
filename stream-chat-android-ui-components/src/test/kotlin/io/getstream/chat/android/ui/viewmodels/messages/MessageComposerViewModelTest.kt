@@ -457,8 +457,8 @@ internal class MessageComposerViewModelTest {
             name = "Jc Miñarro",
         )
         val user2 = User(
-            id = "amit",
-            name = "Amit Kumar",
+            id = "leia_organa",
+            name = "Leia Organa",
         )
         val giphyCommand = Command(
             name = "giphy",
