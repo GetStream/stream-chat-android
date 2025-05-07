@@ -809,12 +809,12 @@ public final class io/getstream/chat/android/ui/common/state/channel/info/Channe
 	public final fun copy (ZZZZZZZ)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Capability;
 	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Capability;ZZZZZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Capability;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCanAddMember ()Z
-	public final fun getCanBanMember ()Z
+	public final fun getCanAddMembers ()Z
+	public final fun getCanBanMembers ()Z
 	public final fun getCanDeleteChannel ()Z
 	public final fun getCanLeaveChannel ()Z
 	public final fun getCanMuteChannel ()Z
-	public final fun getCanRemoveMember ()Z
+	public final fun getCanRemoveMembers ()Z
 	public final fun getCanRenameChannel ()Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;

@@ -51,6 +51,19 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+/**
+ * Controller responsible for managing the state and events related to channel information.
+ *
+ * It provides functionality to observe channel data, members, and perform
+ * various channel-related actions such as renaming, muting, hiding, leaving, and deleting the channel.
+ * It also handles state updates and emits events for UI consumption.
+ *
+ * @param cid The unique identifier of the channel.
+ * @param scope The [CoroutineScope] used for launching coroutines.
+ * @param chatClient The [ChatClient] instance used for interacting with the chat API.
+ * @param channelState A [Flow] representing the state of the channel.
+ * @param channelClient The [ChannelClient] instance for performing channel-specific operations.
+ */
 @InternalStreamChatApi
 public class ChannelInfoController(
     cid: String,
@@ -65,21 +78,28 @@ public class ChannelInfoController(
 
     private val _state = MutableStateFlow<ChannelInfoState>(ChannelInfoState.Loading)
 
+    /**
+     * A [StateFlow] representing the current state of the channel info.
+     */
     public val state: StateFlow<ChannelInfoState> = _state.asStateFlow()
 
     private val _events = MutableSharedFlow<ChannelInfoEvent>(extraBufferCapacity = 1)
 
+    /**
+     * A [SharedFlow] that emits one-time events related to channel info, such as errors or success events.
+     */
     public val events: SharedFlow<ChannelInfoEvent> = _events.asSharedFlow()
 
     init {
+        @Suppress("OPT_IN_USAGE")
         channelState
-            .flatMapLatest { channelState ->
+            .flatMapLatest { channel ->
                 logger.d { "[onChannelState]" }
                 combine(
-                    channelState.channelData.onEach { logger.d { "[onChannelData] name: ${it.name}" } },
-                    channelState.members.onEach { logger.d { "[onMembers] size: ${it.size}" } },
-                    channelState.muted.onEach { logger.d { "[onMuted] $it" } },
-                    channelState.hidden.onEach { logger.d { "[onHidden] $it" } },
+                    channel.channelData.onEach { logger.d { "[onChannelData] name: ${it.name}" } },
+                    channel.members.onEach { logger.d { "[onMembers] size: ${it.size}" } },
+                    channel.muted.onEach { logger.d { "[onMuted] $it" } },
+                    channel.hidden.onEach { logger.d { "[onHidden] $it" } },
                     ::ChannelInfoData,
                 )
             }
@@ -122,7 +142,7 @@ public class ChannelInfoController(
                         name = channelData.name,
                         isMuted = isMuted,
                         isHidden = isHidden,
-                        capability = capability
+                        capability = capability,
                     )
                 }
 
@@ -134,13 +154,16 @@ public class ChannelInfoController(
                         name = channelData.name,
                         isMuted = isMuted,
                         isHidden = isHidden,
-                        capability = capability
+                        capability = capability,
                     )
                 }
             }
         }
     }
 
+    /**
+     * Expands the members list.
+     */
     public fun expandMembers() {
         logger.d { "[expandMembers]" }
         _state.updateContent { content ->
@@ -152,6 +175,9 @@ public class ChannelInfoController(
         }
     }
 
+    /**
+     * Collapses the members list.
+     */
     public fun collapseMembers() {
         logger.d { "[collapseMembers]" }
         _state.updateContent { content ->
@@ -163,6 +189,11 @@ public class ChannelInfoController(
         }
     }
 
+    /**
+     * Renames the channel with the given name.
+     *
+     * @param name The new name for the channel.
+     */
     public fun renameChannel(name: String) {
         logger.d { "[renameChannel] name: $name" }
         scope.launch {
@@ -176,6 +207,9 @@ public class ChannelInfoController(
         }
     }
 
+    /**
+     * Mutes the channel for the current user.
+     */
     public fun muteChannel() {
         logger.d { "[muteChannel]" }
         scope.launch {
@@ -189,6 +223,9 @@ public class ChannelInfoController(
         }
     }
 
+    /**
+     * Unmutes the channel for the current user.
+     */
     public fun unmuteChannel() {
         logger.d { "[unmuteChannel]" }
         scope.launch {
@@ -202,6 +239,11 @@ public class ChannelInfoController(
         }
     }
 
+    /**
+     * Hides the channel.
+     *
+     * @param clearHistory If true, the channel history will be cleared.
+     */
     public fun hideChannel(clearHistory: Boolean) {
         logger.d { "[hideChannel] clearHistory: $clearHistory" }
         scope.launch {
@@ -215,6 +257,9 @@ public class ChannelInfoController(
         }
     }
 
+    /**
+     * Unhides the channel.
+     */
     public fun unhideChannel() {
         logger.d { "[unhideChannel]" }
         scope.launch {
@@ -228,6 +273,11 @@ public class ChannelInfoController(
         }
     }
 
+    /**
+     * Leaves the channel with an optional quit message.
+     *
+     * @param quitMessage The system message to send when leaving the channel.
+     */
     public fun leaveChannel(quitMessage: Message?) {
         logger.d { "[leaveChannel] quitMessage: ${quitMessage?.text}" }
         scope.launch {
@@ -257,6 +307,9 @@ public class ChannelInfoController(
         }
     }
 
+    /**
+     * Deletes the channel.
+     */
     public fun deleteChannel() {
         logger.d { "[deleteChannel]" }
         scope.launch {
@@ -302,9 +355,9 @@ private fun Member.toContentMember(createdBy: User) = ChannelInfoState.Content.M
 )
 
 private fun ChannelData.toCapability() = ChannelInfoState.Content.Capability(
-    canAddMember = ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL_MEMBERS),
-    canRemoveMember = ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL_MEMBERS),
-    canBanMember = ownCapabilities.contains(ChannelCapabilities.BAN_CHANNEL_MEMBERS),
+    canAddMembers = ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL_MEMBERS),
+    canRemoveMembers = ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL_MEMBERS),
+    canBanMembers = ownCapabilities.contains(ChannelCapabilities.BAN_CHANNEL_MEMBERS),
     canRenameChannel = ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL),
     canMuteChannel = ownCapabilities.contains(ChannelCapabilities.MUTE_CHANNEL),
     canLeaveChannel = ownCapabilities.contains(ChannelCapabilities.LEAVE_CHANNEL),
