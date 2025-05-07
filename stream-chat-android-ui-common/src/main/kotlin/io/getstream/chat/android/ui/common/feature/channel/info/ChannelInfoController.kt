@@ -76,7 +76,7 @@ public class ChannelInfoController(
             .flatMapLatest { channelState ->
                 logger.d { "[onChannelState]" }
                 combine(
-                    channelState.channelData.onEach { logger.d { "[onChannelData] cid: ${it.cid}, name: ${it.name}" } },
+                    channelState.channelData.onEach { logger.d { "[onChannelData] name: ${it.name}" } },
                     channelState.members.onEach { logger.d { "[onMembers] size: ${it.size}" } },
                     channelState.muted.onEach { logger.d { "[onMuted] $it" } },
                     channelState.hidden.onEach { logger.d { "[onHidden] $it" } },
@@ -142,6 +142,7 @@ public class ChannelInfoController(
     }
 
     public fun expandMembers() {
+        logger.d { "[expandMembers]" }
         _state.updateContent { content ->
             content.copy(
                 members = content.members.copy(
@@ -152,6 +153,7 @@ public class ChannelInfoController(
     }
 
     public fun collapseMembers() {
+        logger.d { "[collapseMembers]" }
         _state.updateContent { content ->
             content.copy(
                 members = content.members.copy(
@@ -162,9 +164,11 @@ public class ChannelInfoController(
     }
 
     public fun renameChannel(name: String) {
+        logger.d { "[renameChannel] name: $name" }
         scope.launch {
             channelClient.updatePartial(set = mapOf("name" to name)).await()
                 .onError { error ->
+                    logger.e { "[renameChannel] error: ${error.message}" }
                     _events.tryEmit(
                         ChannelInfoEvent.RenameChannelError(message = error.message),
                     )
@@ -173,9 +177,11 @@ public class ChannelInfoController(
     }
 
     public fun muteChannel() {
+        logger.d { "[muteChannel]" }
         scope.launch {
             channelClient.mute().await()
                 .onError { error ->
+                    logger.e { "[muteChannel] error: ${error.message}" }
                     _events.tryEmit(
                         ChannelInfoEvent.MuteChannelError(message = error.message),
                     )
@@ -184,9 +190,11 @@ public class ChannelInfoController(
     }
 
     public fun unmuteChannel() {
+        logger.d { "[unmuteChannel]" }
         scope.launch {
             channelClient.unmute().await()
                 .onError { error ->
+                    logger.e { "[unmuteChannel] error: ${error.message}" }
                     _events.tryEmit(
                         ChannelInfoEvent.UnmuteChannelError(message = error.message),
                     )
@@ -195,9 +203,11 @@ public class ChannelInfoController(
     }
 
     public fun hideChannel(clearHistory: Boolean) {
+        logger.d { "[hideChannel] clearHistory: $clearHistory" }
         scope.launch {
             channelClient.hide(clearHistory).await()
                 .onError { error ->
+                    logger.e { "[hideChannel] error: ${error.message}" }
                     _events.tryEmit(
                         ChannelInfoEvent.HideChannelError(message = error.message),
                     )
@@ -206,9 +216,11 @@ public class ChannelInfoController(
     }
 
     public fun unhideChannel() {
+        logger.d { "[unhideChannel]" }
         scope.launch {
             channelClient.show().await()
                 .onError { error ->
+                    logger.e { "[unhideChannel] error: ${error.message}" }
                     _events.tryEmit(
                         ChannelInfoEvent.UnhideChannelError(message = error.message),
                     )
@@ -217,6 +229,7 @@ public class ChannelInfoController(
     }
 
     public fun leaveChannel(quitMessage: Message?) {
+        logger.d { "[leaveChannel] quitMessage: ${quitMessage?.text}" }
         scope.launch {
             runCatching {
                 val currentUserId = requireNotNull(chatClient.getCurrentOrStoredUserId())
@@ -230,11 +243,13 @@ public class ChannelInfoController(
                         )
                     }
                     .onError { error ->
+                        logger.e { "[leaveChannel] error: ${error.message}" }
                         _events.tryEmit(
                             ChannelInfoEvent.LeaveChannelError(message = error.message),
                         )
                     }
             }.onFailure { cause ->
+                logger.e { "[leaveChannel] error: ${cause.message}" }
                 _events.tryEmit(
                     ChannelInfoEvent.LeaveChannelError(message = cause.message.orEmpty()),
                 )
@@ -243,6 +258,7 @@ public class ChannelInfoController(
     }
 
     public fun deleteChannel() {
+        logger.d { "[deleteChannel]" }
         scope.launch {
             channelClient.delete().await()
                 .onSuccess {
@@ -251,6 +267,7 @@ public class ChannelInfoController(
                     )
                 }
                 .onError { error ->
+                    logger.e { "[deleteChannel] error: ${error.message}" }
                     _events.tryEmit(
                         ChannelInfoEvent.DeleteChannelError(message = error.message),
                     )
