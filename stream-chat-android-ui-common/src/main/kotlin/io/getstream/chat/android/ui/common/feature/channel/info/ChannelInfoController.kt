@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.extensions.isGroupChannel
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Member
@@ -200,9 +201,7 @@ public class ChannelInfoController(
 
         val onError: (Error) -> Unit = { error ->
             logger.e { "[renameChannel] error: ${error.message}" }
-            _events.tryEmit(
-                ChannelInfoEvent.RenameChannelError(message = error.message),
-            )
+            _events.tryEmit(ChannelInfoEvent.RenameChannelError)
         }
 
         requireCapability(
@@ -224,9 +223,7 @@ public class ChannelInfoController(
 
         val onError: (Error) -> Unit = { error ->
             logger.e { "[muteChannel] error: ${error.message}" }
-            _events.tryEmit(
-                ChannelInfoEvent.MuteChannelError(message = error.message),
-            )
+            _events.tryEmit(ChannelInfoEvent.MuteChannelError)
         }
 
         requireCapability(
@@ -248,9 +245,7 @@ public class ChannelInfoController(
 
         val onError: (Error) -> Unit = { error ->
             logger.e { "[unmuteChannel] error: ${error.message}" }
-            _events.tryEmit(
-                ChannelInfoEvent.UnmuteChannelError(message = error.message),
-            )
+            _events.tryEmit(ChannelInfoEvent.UnmuteChannelError)
         }
 
         requireCapability(
@@ -275,9 +270,7 @@ public class ChannelInfoController(
             channelClient.hide(clearHistory).await()
                 .onError { error ->
                     logger.e { "[hideChannel] error: ${error.message}" }
-                    _events.tryEmit(
-                        ChannelInfoEvent.HideChannelError(message = error.message),
-                    )
+                    _events.tryEmit(ChannelInfoEvent.HideChannelError)
                 }
         }
     }
@@ -291,9 +284,7 @@ public class ChannelInfoController(
             channelClient.show().await()
                 .onError { error ->
                     logger.e { "[unhideChannel] error: ${error.message}" }
-                    _events.tryEmit(
-                        ChannelInfoEvent.UnhideChannelError(message = error.message),
-                    )
+                    _events.tryEmit(ChannelInfoEvent.UnhideChannelError)
                 }
         }
     }
@@ -308,9 +299,7 @@ public class ChannelInfoController(
 
         val onError: (Error) -> Unit = { error ->
             logger.e { "[leaveChannel] error: ${error.message}" }
-            _events.tryEmit(
-                ChannelInfoEvent.LeaveChannelError(message = error.message),
-            )
+            _events.tryEmit(ChannelInfoEvent.LeaveChannelError)
         }
 
         requireCapability(
@@ -321,17 +310,31 @@ public class ChannelInfoController(
                 runCatching {
                     requireNotNull(chatClient.getCurrentUser()?.id) { "User not connected" }
                 }.onSuccess { currentUserId ->
-                    channelClient.removeMembers(
-                        memberIds = listOf(currentUserId),
+                    removeMemberFromChannel(
+                        memberId = currentUserId,
                         systemMessage = quitMessage,
-                    ).await()
-                        .onSuccess { _events.tryEmit(ChannelInfoEvent.LeaveChannelSuccess) }
-                        .onError(onError)
+                        onSuccess = { _events.tryEmit(ChannelInfoEvent.LeaveChannelSuccess) },
+                        onError = onError,
+                    )
                 }.onFailure { cause ->
                     onError(Error.ThrowableError(message = cause.message.orEmpty(), cause = cause))
                 }
             }
         }
+    }
+
+    private suspend fun removeMemberFromChannel(
+        memberId: String,
+        systemMessage: Message?,
+        onSuccess: (Channel) -> Unit,
+        onError: (Error) -> Unit,
+    ) {
+        channelClient.removeMembers(
+            memberIds = listOf(memberId),
+            systemMessage = systemMessage,
+        ).await()
+            .onSuccess(onSuccess)
+            .onError(onError)
     }
 
     /**
@@ -342,9 +345,7 @@ public class ChannelInfoController(
 
         val onError: (Error) -> Unit = { error ->
             logger.e { "[deleteChannel] error: ${error.message}" }
-            _events.tryEmit(
-                ChannelInfoEvent.DeleteChannelError(message = error.message),
-            )
+            _events.tryEmit(ChannelInfoEvent.DeleteChannelError)
         }
 
         requireCapability(

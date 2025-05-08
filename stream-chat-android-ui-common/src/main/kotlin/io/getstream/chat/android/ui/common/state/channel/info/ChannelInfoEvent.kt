@@ -28,38 +28,28 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 public sealed interface ChannelInfoEvent {
     /**
      * Indicates an error occurred while renaming a channel.
-     *
-     * @param message The error message.
      */
-    public data class RenameChannelError(val message: String) : ChannelInfoEvent
+    public data object RenameChannelError : ChannelInfoEvent
 
     /**
      * Indicates an error occurred while muting a channel.
-     *
-     * @param message The error message.
      */
-    public data class MuteChannelError(val message: String) : ChannelInfoEvent
+    public data object MuteChannelError : ChannelInfoEvent
 
     /**
      * Indicates an error occurred while unmuting a channel.
-     *
-     * @param message The error message.
      */
-    public data class UnmuteChannelError(val message: String) : ChannelInfoEvent
+    public data object UnmuteChannelError : ChannelInfoEvent
 
     /**
      * Indicates an error occurred while hiding a channel.
-     *
-     * @param message The error message.
      */
-    public data class HideChannelError(val message: String) : ChannelInfoEvent
+    public data object HideChannelError : ChannelInfoEvent
 
     /**
      * Indicates an error occurred while unhiding a channel.
-     *
-     * @param message The error message.
      */
-    public data class UnhideChannelError(val message: String) : ChannelInfoEvent
+    public data object UnhideChannelError : ChannelInfoEvent
 
     /**
      * Indicates the user successfully left the channel.
@@ -68,10 +58,8 @@ public sealed interface ChannelInfoEvent {
 
     /**
      * Indicates an error occurred while leaving a channel.
-     *
-     * @param message The error message.
      */
-    public data class LeaveChannelError(val message: String) : ChannelInfoEvent
+    public data object LeaveChannelError : ChannelInfoEvent
 
     /**
      * Indicates the channel was successfully deleted.
@@ -80,8 +68,6 @@ public sealed interface ChannelInfoEvent {
 
     /**
      * Indicates an error occurred while deleting a channel.
-     *
-     * @param message The error message.
      */
-    public data class DeleteChannelError(val message: String) : ChannelInfoEvent
+    public data object DeleteChannelError : ChannelInfoEvent
 }

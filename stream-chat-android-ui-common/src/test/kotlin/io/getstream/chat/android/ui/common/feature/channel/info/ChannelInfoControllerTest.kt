@@ -313,10 +313,7 @@ internal class ChannelInfoControllerTest {
             sut.events.test {
                 sut.renameChannel(name = "newName")
 
-                assertEquals(
-                    ChannelInfoEvent.RenameChannelError(message = "User doesn't have permission"),
-                    awaitItem(),
-                )
+                assertEquals(ChannelInfoEvent.RenameChannelError, awaitItem())
             }
         }
 
@@ -371,16 +368,15 @@ internal class ChannelInfoControllerTest {
             skipItems(2) // Skip initial and loaded state
 
             val newName = "newName"
-            val error = Error.GenericError("Error updating channel name")
-            fixture.givenRenameChannel(newName, error)
+            fixture.givenRenameChannel(
+                name = newName,
+                error = Error.GenericError("Error updating channel name"),
+            )
 
             sut.renameChannel(newName)
 
             sut.events.test {
-                assertEquals(
-                    ChannelInfoEvent.RenameChannelError(message = error.message),
-                    awaitItem(),
-                )
+                assertEquals(ChannelInfoEvent.RenameChannelError, awaitItem())
             }
         }
     }
@@ -396,10 +392,7 @@ internal class ChannelInfoControllerTest {
             sut.events.test {
                 sut.muteChannel()
 
-                assertEquals(
-                    ChannelInfoEvent.MuteChannelError(message = "User doesn't have permission"),
-                    awaitItem(),
-                )
+                assertEquals(ChannelInfoEvent.MuteChannelError, awaitItem())
             }
         }
 
@@ -457,16 +450,12 @@ internal class ChannelInfoControllerTest {
                 awaitItem(),
             )
 
-            val error = Error.GenericError("Error muting channel")
-            fixture.givenMuteChannel(error)
+            fixture.givenMuteChannel(error = Error.GenericError("Error muting channel"))
 
             sut.muteChannel()
 
             sut.events.test {
-                assertEquals(
-                    ChannelInfoEvent.MuteChannelError(message = error.message),
-                    awaitItem(),
-                )
+                assertEquals(ChannelInfoEvent.MuteChannelError, awaitItem())
             }
         }
     }
@@ -482,10 +471,7 @@ internal class ChannelInfoControllerTest {
             sut.events.test {
                 sut.unmuteChannel()
 
-                assertEquals(
-                    ChannelInfoEvent.UnmuteChannelError(message = "User doesn't have permission"),
-                    awaitItem(),
-                )
+                assertEquals(ChannelInfoEvent.UnmuteChannelError, awaitItem())
             }
         }
 
@@ -543,16 +529,12 @@ internal class ChannelInfoControllerTest {
                 awaitItem(),
             )
 
-            val error = Error.GenericError("Error unmuting channel")
-            fixture.givenUnmuteChannel(error)
+            fixture.givenUnmuteChannel(error = Error.GenericError("Error unmuting channel"))
 
             sut.unmuteChannel()
 
             sut.events.test {
-                assertEquals(
-                    ChannelInfoEvent.UnmuteChannelError(message = error.message),
-                    awaitItem(),
-                )
+                assertEquals(ChannelInfoEvent.UnmuteChannelError, awaitItem())
             }
         }
     }
@@ -605,16 +587,15 @@ internal class ChannelInfoControllerTest {
             )
 
             val clearHistory = true
-            val error = Error.GenericError("Error hiding channel")
-            fixture.givenHideChannel(clearHistory, error)
+            fixture.givenHideChannel(
+                clearHistory = clearHistory,
+                error = Error.GenericError("Error hiding channel"),
+            )
 
             sut.hideChannel(clearHistory)
 
             sut.events.test {
-                assertEquals(
-                    ChannelInfoEvent.HideChannelError(message = error.message),
-                    awaitItem(),
-                )
+                assertEquals(ChannelInfoEvent.HideChannelError, awaitItem())
             }
         }
     }
@@ -665,16 +646,12 @@ internal class ChannelInfoControllerTest {
                 awaitItem(),
             )
 
-            val error = Error.GenericError("Error unhiding channel")
-            fixture.givenUnhideChannel(error)
+            fixture.givenUnhideChannel(error = Error.GenericError("Error unhiding channel"))
 
             sut.unhideChannel()
 
             sut.events.test {
-                assertEquals(
-                    ChannelInfoEvent.UnhideChannelError(message = error.message),
-                    awaitItem(),
-                )
+                assertEquals(ChannelInfoEvent.UnhideChannelError, awaitItem())
             }
         }
     }
@@ -690,10 +667,7 @@ internal class ChannelInfoControllerTest {
             sut.events.test {
                 sut.leaveChannel(quitMessage = null)
 
-                assertEquals(
-                    ChannelInfoEvent.LeaveChannelError(message = "User doesn't have permission"),
-                    awaitItem(),
-                )
+                assertEquals(ChannelInfoEvent.LeaveChannelError, awaitItem())
             }
         }
 
@@ -711,10 +685,7 @@ internal class ChannelInfoControllerTest {
             sut.events.test {
                 sut.leaveChannel(quitMessage = null)
 
-                assertEquals(
-                    ChannelInfoEvent.LeaveChannelError(message = "User not connected"),
-                    awaitItem(),
-                )
+                assertEquals(ChannelInfoEvent.LeaveChannelError, awaitItem())
             }
         }
 
@@ -784,16 +755,15 @@ internal class ChannelInfoControllerTest {
             )
 
             val quitMessage = Message()
-            val error = Error.GenericError("Error leaving channel")
-            fixture.givenLeaveChannel(quitMessage, error)
+            fixture.givenLeaveChannel(
+                quitMessage = quitMessage,
+                error = Error.GenericError("Error leaving channel"),
+            )
 
             sut.leaveChannel(quitMessage)
 
             sut.events.test {
-                assertEquals(
-                    ChannelInfoEvent.LeaveChannelError(message = error.message),
-                    awaitItem(),
-                )
+                assertEquals(ChannelInfoEvent.LeaveChannelError, awaitItem())
             }
         }
     }
@@ -809,10 +779,7 @@ internal class ChannelInfoControllerTest {
             sut.events.test {
                 sut.deleteChannel()
 
-                assertEquals(
-                    ChannelInfoEvent.DeleteChannelError(message = "User doesn't have permission"),
-                    awaitItem(),
-                )
+                assertEquals(ChannelInfoEvent.DeleteChannelError, awaitItem())
             }
         }
 
@@ -841,10 +808,7 @@ internal class ChannelInfoControllerTest {
             sut.deleteChannel()
 
             sut.events.test {
-                assertEquals(
-                    ChannelInfoEvent.DeleteChannelSuccess,
-                    awaitItem(),
-                )
+                assertEquals(ChannelInfoEvent.DeleteChannelSuccess, awaitItem())
             }
         }
     }
@@ -866,16 +830,12 @@ internal class ChannelInfoControllerTest {
                 awaitItem(),
             )
 
-            val error = Error.GenericError("Error deleting channel")
-            fixture.givenDeleteChannel(error)
+            fixture.givenDeleteChannel(error = Error.GenericError("Error deleting channel"))
 
             sut.deleteChannel()
 
             sut.events.test {
-                assertEquals(
-                    ChannelInfoEvent.DeleteChannelError(message = error.message),
-                    awaitItem(),
-                )
+                assertEquals(ChannelInfoEvent.DeleteChannelError, awaitItem())
             }
         }
     }
