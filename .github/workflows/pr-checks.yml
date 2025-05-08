@@ -21,10 +21,10 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
-      - uses: ./.github/actions/setup-java
-      - uses: ./.github/actions/gradle-cache
+      - uses: GetStream/android-ci-actions/actions/setup-java@main
+      - uses: GetStream/android-ci-actions/actions/gradle-cache@main
         with:
-          key-prefix: gradle-lint
+          cache-name: gradle-lint
       - name: spotless
         run: ./gradlew spotlessCheck --scan
       - name: Detekt
@@ -37,10 +37,10 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
-      - uses: ./.github/actions/setup-java
-      - uses: ./.github/actions/gradle-cache
+      - uses: GetStream/android-ci-actions/actions/setup-java@main
+      - uses: GetStream/android-ci-actions/actions/gradle-cache@main
         with:
-          key-prefix: gradle-APICheck
+          cache-name: gradle-APICheck
       - name: API check
         run: ./gradlew apiCheck --scan
 
@@ -50,10 +50,10 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
-      - uses: ./.github/actions/setup-java
-      - uses: ./.github/actions/gradle-cache
+      - uses: GetStream/android-ci-actions/actions/setup-java@main
+      - uses: GetStream/android-ci-actions/actions/gradle-cache@main
         with:
-          key-prefix: gradle-build
+          cache-name: gradle-build
       - name: Build
         run: ./gradlew assembleDebug --scan
 
@@ -63,10 +63,10 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
-      - uses: ./.github/actions/setup-java
-      - uses: ./.github/actions/gradle-cache
+      - uses: GetStream/android-ci-actions/actions/setup-java@main
+      - uses: GetStream/android-ci-actions/actions/gradle-cache@main
         with:
-          key-prefix: gradle-test
+          cache-name: gradle-test
       - name: Unit tests
         run: ./scripts/ci-unit-tests.sh
       - name: Upload testDebugUnitTest results
@@ -75,7 +75,7 @@ jobs:
         with:
           name: testDebugUnitTest
           path: ./**/build/reports/tests/testDebugUnitTest
-      - uses: ./.github/actions/setup-ruby
+      - uses: GetStream/android-ci-actions/actions/setup-ruby@main
       - name: Sonar
         if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
         run: bundle exec fastlane run_sonar_analysis
@@ -87,5 +87,5 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4.2.2
-      - uses: ./.github/actions/setup-ruby
+      - uses: GetStream/android-ci-actions/actions/setup-ruby@main
       - run: bundle exec fastlane rubocop

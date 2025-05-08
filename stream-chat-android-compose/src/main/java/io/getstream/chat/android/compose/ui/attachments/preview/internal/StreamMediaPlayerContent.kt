@@ -46,7 +46,6 @@ import androidx.media3.ui.PlayerView
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.attachments.content.PlayButton
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.clickable
 
@@ -65,26 +64,21 @@ import io.getstream.chat.android.compose.ui.util.clickable
  *
  * @param assetUrl The URL of the video to play.
  * @param playWhenReady Whether playback should start automatically after preparation.
- * @param showControllerInitially Whether to show the player controls when first displayed.
  * @param onPlaybackError Callback invoked when video playback encounters an error.
  * @param modifier Modifier to be applied to the player container.
  * @param thumbnailUrl Optional URL of the thumbnail image to display before playback starts.
- * @param thumbnailEnabled Whether to show the thumbnail before playback starts.
  */
 @OptIn(UnstableApi::class)
 @Composable
 internal fun StreamMediaPlayerContent(
     assetUrl: String?,
     playWhenReady: Boolean,
-    showControllerInitially: Boolean,
     onPlaybackError: () -> Unit,
     modifier: Modifier = Modifier,
     thumbnailUrl: String? = null,
-    thumbnailEnabled: Boolean = false,
 ) {
     val context = LocalContext.current
-    var showThumbnail by remember { mutableStateOf(thumbnailEnabled) }
-    var showPlayButton by remember { mutableStateOf(thumbnailEnabled) }
+    var showThumbnail by remember { mutableStateOf(!playWhenReady) }
     var showBuffering by remember { mutableStateOf(true) }
     val onBuffering: (Boolean) -> Unit = { isBuffering -> showBuffering = isBuffering }
     // Create player
@@ -121,25 +115,24 @@ internal fun StreamMediaPlayerContent(
                     .background(Color.Black),
                 factory = {
                     val playerView = createPlayerView(it, preparedPlayer)
-                    if (showControllerInitially) playerView.showController()
+                    if (playWhenReady) playerView.showController()
                     playerView
                 },
             )
             // Thumbnail
-            if (thumbnailEnabled && showThumbnail) {
-                VideoThumbnail(
-                    modifier = Modifier.matchParentSize(),
+            if (showThumbnail) {
+                MediaThumbnail(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .clickable {
+                            showThumbnail = false
+                            preparedPlayer.play()
+                        },
                     thumbnailUrl = thumbnailUrl,
-                    showPlayButton = showPlayButton,
-                    onPlayClick = {
-                        showThumbnail = false
-                        showPlayButton = false
-                        preparedPlayer.play()
-                    },
                 )
             }
             // Buffering indicator
-            if (showBuffering && !showThumbnail) {
+            if (showBuffering) {
                 LoadingIndicator()
             }
         }
@@ -153,51 +146,35 @@ internal fun StreamMediaPlayerContent(
  * to start video playback. The thumbnail image is only displayed if video thumbnails are
  * enabled in the ChatTheme configuration.
  *
- * When clicked, the component triggers the provided [onPlayClick] callback to begin video playback.
- * The thumbnail has a black background to ensure visual consistency when no thumbnail image
- * is available or while it's loading.
- *
  * @param thumbnailUrl The URL of the thumbnail image to display, or null if no thumbnail is available.
- * @param showPlayButton Whether to display the play button overlay on top of the thumbnail.
- * @param onPlayClick Callback invoked when the user clicks on the thumbnail or play button to start playback.
  * @param modifier Modifier to be applied to the thumbnail container.
  */
 @Composable
-private fun VideoThumbnail(
+private fun MediaThumbnail(
     thumbnailUrl: String?,
-    showPlayButton: Boolean,
-    onPlayClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val data = if (ChatTheme.videoThumbnailsEnabled) {
-        thumbnailUrl
-    } else {
-        null
-    }
     Box(
-        modifier = modifier,
+        modifier = modifier.background(Color.Black),
         contentAlignment = Alignment.Center,
     ) {
-        StreamAsyncImage(
-            modifier = Modifier
-                .clickable { onPlayClick() }
-                .matchParentSize()
-                .background(Color.Black),
-            data = data,
-            contentDescription = null,
-        )
-        if (showPlayButton) {
-            PlayButton(
-                modifier = Modifier
-                    .shadow(6.dp, shape = CircleShape)
-                    .background(color = Color.White, shape = CircleShape)
-                    .size(
-                        width = 42.dp,
-                        height = 42.dp,
-                    ),
-                contentDescription = stringResource(R.string.stream_compose_cd_play_button),
+        if (thumbnailUrl != null) {
+            StreamAsyncImage(
+                modifier = modifier.matchParentSize(),
+                data = thumbnailUrl,
+                contentDescription = null,
             )
         }
+        PlayButton(
+            modifier = Modifier
+                .shadow(6.dp, shape = CircleShape)
+                .background(color = Color.White, shape = CircleShape)
+                .size(
+                    width = 42.dp,
+                    height = 42.dp,
+                ),
+            contentDescription = stringResource(R.string.stream_compose_cd_play_button),
+        )
     }
 }
 

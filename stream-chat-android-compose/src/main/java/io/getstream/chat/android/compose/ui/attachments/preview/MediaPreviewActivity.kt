@@ -120,8 +120,6 @@ public class MediaPreviewActivity : AppCompatActivity() {
                         .padding(padding),
                     assetUrl = url,
                     playWhenReady = true,
-                    showControllerInitially = true,
-                    thumbnailEnabled = false,
                     onPlaybackError = onPlaybackError,
                 )
             },
