@@ -8,7 +8,7 @@
     snapshotVersion=$(echo "$artifact" | cut -d: -f3)
 
     # Format the URL for the maven-metadata.xml file in the Nexus repository
-    url="https://oss.sonatype.org/content/repositories/snapshots/$(echo $groupId | tr '.' '/')/$artifactId/$snapshotVersion/maven-metadata.xml"
+    url="https://oss.sonatype.org/content/repositories/snapshots/$(echo "$groupId" | tr '.' '/')/$artifactId/$snapshotVersion/maven-metadata.xml"
 
     # Fetch the maven-metadata.xml using curl and extract the latest release version using sed
     latest_version=$(curl -s "$url" | sed -n 's|.*<value>\(.*\)</value>.*|\1|p' | head -n 1)
