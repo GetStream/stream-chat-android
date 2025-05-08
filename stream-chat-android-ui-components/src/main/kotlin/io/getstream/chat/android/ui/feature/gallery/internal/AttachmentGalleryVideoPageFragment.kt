@@ -64,24 +64,6 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
         )
     }
 
-    /**
-     * If the user has pressed play.
-     *
-     * VideoView does not expose state so we use these to track
-     * state externally.
-     */
-    private var playbackStartRequested = false
-        set(value) {
-            field = value
-            if (playbackStartRequested) {
-                binding.playButtonCardView.visibility = View.GONE
-                binding.thumbnailImageView.visibility = View.GONE
-            } else {
-                binding.playButtonCardView.visibility = View.GONE
-                binding.thumbnailImageView.visibility = View.GONE
-            }
-        }
-
     private var player: Player? = null
 
     /**
@@ -147,7 +129,6 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
      * Resets this video page's state.
      */
     private fun resetState() {
-        playbackStartRequested = false
         binding.thumbnailImageView.visibility = View.VISIBLE
         binding.playButtonCardView.visibility = View.VISIBLE
     }
@@ -205,7 +186,8 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
     private fun setupOnPlayButtonClickedListener() {
         binding.playButtonCardView.setOnClickListener {
             binding.playerView.player?.play()
-            playbackStartRequested = true
+            binding.thumbnailImageView.visibility = View.GONE
+            binding.playButtonCardView.visibility = View.GONE
         }
     }
 
