@@ -904,7 +904,7 @@ private class Fixture {
         isHidden: Boolean? = null,
     ) = apply {
         if (currentUser != null) {
-            whenever(chatClient.getCurrentOrStoredUserId()) doReturn currentUser.id
+            whenever(chatClient.getCurrentUser()) doReturn currentUser
         }
         if (channel != null) {
             channelData.value = channel.toChannelData()
@@ -966,7 +966,7 @@ private class Fixture {
     fun givenLeaveChannel(quitMessage: Message, error: Error? = null) = apply {
         whenever(
             channelClient.removeMembers(
-                memberIds = listOf(chatClient.getCurrentOrStoredUserId()!!),
+                memberIds = listOf(requireNotNull(chatClient.getCurrentUser()?.id)),
                 systemMessage = quitMessage,
             ),
         ) doAnswer {

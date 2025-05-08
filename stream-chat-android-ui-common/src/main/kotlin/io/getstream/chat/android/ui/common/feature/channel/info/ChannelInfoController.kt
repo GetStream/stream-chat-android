@@ -319,7 +319,7 @@ public class ChannelInfoController(
         ) {
             scope.launch {
                 runCatching {
-                    requireNotNull(chatClient.getCurrentOrStoredUserId()) { "User not connected" }
+                    requireNotNull(chatClient.getCurrentUser()?.id) { "User not connected" }
                 }.onSuccess { currentUserId ->
                     channelClient.removeMembers(
                         memberIds = listOf(currentUserId),
@@ -360,7 +360,7 @@ public class ChannelInfoController(
     }
 
     private fun List<Member>.filterNotCurrentUser() =
-        filter { member -> member.user.id != chatClient.getCurrentOrStoredUserId() }
+        filter { member -> member.user.id != chatClient.getCurrentUser()?.id }
 
     private fun requireCapability(
         permission: ChannelInfoState.Content.Capability.() -> Boolean,
