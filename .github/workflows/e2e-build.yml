@@ -19,12 +19,12 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4.2.2
-      - uses: ./.github/actions/setup-java
-      - uses: ./.github/actions/enable-kvm
-      - uses: ./.github/actions/setup-ruby
-      - uses: ./.github/actions/gradle-cache
+      - uses: GetStream/android-ci-actions/actions/setup-java@main
+      - uses: GetStream/android-ci-actions/actions/enable-kvm@main
+      - uses: GetStream/android-ci-actions/actions/setup-ruby@main
+      - uses: GetStream/android-ci-actions/actions/gradle-cache@main
         with:
-          key-prefix: gradle-test
+          cache-name: gradle-test
       - name: Build apks
         run: bundle exec fastlane build_e2e_test
         timeout-minutes: 30
