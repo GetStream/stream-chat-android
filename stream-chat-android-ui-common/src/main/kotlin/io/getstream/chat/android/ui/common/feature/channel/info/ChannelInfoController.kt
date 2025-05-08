@@ -306,35 +306,35 @@ public class ChannelInfoController(
             permission = { canLeaveChannel },
             onError = onError,
         ) {
-            scope.launch {
-                runCatching {
-                    requireNotNull(chatClient.getCurrentUser()?.id) { "User not connected" }
-                }.onSuccess { currentUserId ->
-                    removeMemberFromChannel(
-                        memberId = currentUserId,
-                        systemMessage = quitMessage,
-                        onSuccess = { _events.tryEmit(ChannelInfoEvent.LeaveChannelSuccess) },
-                        onError = onError,
-                    )
-                }.onFailure { cause ->
-                    onError(Error.ThrowableError(message = cause.message.orEmpty(), cause = cause))
-                }
+            runCatching {
+                requireNotNull(chatClient.getCurrentUser()?.id) { "User not connected" }
+            }.onSuccess { currentUserId ->
+                removeMemberFromChannel(
+                    memberId = currentUserId,
+                    systemMessage = quitMessage,
+                    onSuccess = { _events.tryEmit(ChannelInfoEvent.LeaveChannelSuccess) },
+                    onError = onError,
+                )
+            }.onFailure { cause ->
+                onError(Error.ThrowableError(message = cause.message.orEmpty(), cause = cause))
             }
         }
     }
 
-    private suspend fun removeMemberFromChannel(
+    private fun removeMemberFromChannel(
         memberId: String,
         systemMessage: Message?,
         onSuccess: (Channel) -> Unit,
         onError: (Error) -> Unit,
     ) {
-        channelClient.removeMembers(
-            memberIds = listOf(memberId),
-            systemMessage = systemMessage,
-        ).await()
-            .onSuccess(onSuccess)
-            .onError(onError)
+        scope.launch {
+            channelClient.removeMembers(
+                memberIds = listOf(memberId),
+                systemMessage = systemMessage,
+            ).await()
+                .onSuccess(onSuccess)
+                .onError(onError)
+        }
     }
 
     /**
