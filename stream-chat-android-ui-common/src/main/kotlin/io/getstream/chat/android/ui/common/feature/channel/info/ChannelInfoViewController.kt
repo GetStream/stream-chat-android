@@ -32,7 +32,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoEvent
-import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoState
+import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
@@ -67,7 +67,7 @@ import kotlinx.coroutines.launch
  * @param channelClient The [ChannelClient] instance for performing channel-specific operations.
  */
 @InternalStreamChatApi
-public class ChannelInfoController(
+public class ChannelInfoViewController(
     cid: String,
     private val scope: CoroutineScope,
     private val chatClient: ChatClient = ChatClient.instance(),
@@ -78,12 +78,12 @@ public class ChannelInfoController(
 ) {
     private val logger by taggedLogger("Chat:ChannelInfoController")
 
-    private val _state = MutableStateFlow<ChannelInfoState>(ChannelInfoState.Loading)
+    private val _state = MutableStateFlow<ChannelInfoViewState>(ChannelInfoViewState.Loading)
 
     /**
      * A [StateFlow] representing the current state of the channel info.
      */
-    public val state: StateFlow<ChannelInfoState> = _state.asStateFlow()
+    public val state: StateFlow<ChannelInfoViewState> = _state.asStateFlow()
 
     private val _events = MutableSharedFlow<ChannelInfoEvent>(extraBufferCapacity = 1)
 
@@ -135,8 +135,8 @@ public class ChannelInfoController(
 
         _state.update { currentState ->
             when (currentState) {
-                is ChannelInfoState.Loading -> {
-                    ChannelInfoState.Content(
+                is ChannelInfoViewState.Loading -> {
+                    ChannelInfoViewState.Content(
                         members = ExpandableList(
                             items = contentMembers,
                             minimumVisibleItems = MINIMUM_VISIBLE_MEMBERS,
@@ -148,7 +148,7 @@ public class ChannelInfoController(
                     )
                 }
 
-                is ChannelInfoState.Content -> {
+                is ChannelInfoViewState.Content -> {
                     currentState.copy(
                         members = currentState.members.copy(
                             items = contentMembers,
@@ -364,11 +364,11 @@ public class ChannelInfoController(
         filter { member -> member.user.id != chatClient.getCurrentUser()?.id }
 
     private fun requireCapability(
-        permission: ChannelInfoState.Content.Capability.() -> Boolean,
+        permission: ChannelInfoViewState.Content.Capability.() -> Boolean,
         onError: (error: Error) -> Unit,
         onSuccess: () -> Unit,
     ) {
-        (_state.value as? ChannelInfoState.Content)?.capability?.let { capability ->
+        (_state.value as? ChannelInfoViewState.Content)?.capability?.let { capability ->
             runCatching { require(permission(capability)) }
                 .onFailure { onError(Error.GenericError("User doesn't have permission")) }
                 .onSuccess { onSuccess() }
@@ -385,20 +385,20 @@ private data class ChannelInfoData(
     val isHidden: Boolean,
 )
 
-private fun Member.toContentMember(createdBy: User) = ChannelInfoState.Content.Member(
+private fun Member.toContentMember(createdBy: User) = ChannelInfoViewState.Content.Member(
     user = user,
     role = if (createdBy.id == user.id) {
-        ChannelInfoState.Content.Role.Owner
+        ChannelInfoViewState.Content.Role.Owner
     } else {
         when (channelRole) {
-            "channel_moderator" -> ChannelInfoState.Content.Role.Moderator
-            "channel_member" -> ChannelInfoState.Content.Role.Member
-            else -> ChannelInfoState.Content.Role.Other(channelRole.orEmpty())
+            "channel_moderator" -> ChannelInfoViewState.Content.Role.Moderator
+            "channel_member" -> ChannelInfoViewState.Content.Role.Member
+            else -> ChannelInfoViewState.Content.Role.Other(channelRole.orEmpty())
         }
     },
 )
 
-private fun ChannelData.toCapability() = ChannelInfoState.Content.Capability(
+private fun ChannelData.toCapability() = ChannelInfoViewState.Content.Capability(
     canAddMembers = ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL_MEMBERS),
     canRemoveMembers = ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL_MEMBERS),
     canBanMembers = ownCapabilities.contains(ChannelCapabilities.BAN_CHANNEL_MEMBERS),
@@ -408,11 +408,11 @@ private fun ChannelData.toCapability() = ChannelInfoState.Content.Capability(
     canDeleteChannel = ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL),
 )
 
-private fun MutableStateFlow<ChannelInfoState>.updateContent(
-    transformation: (content: ChannelInfoState.Content) -> ChannelInfoState.Content,
+private fun MutableStateFlow<ChannelInfoViewState>.updateContent(
+    transformation: (content: ChannelInfoViewState.Content) -> ChannelInfoViewState.Content,
 ) {
     update { currentState ->
-        if (currentState is ChannelInfoState.Content) {
+        if (currentState is ChannelInfoViewState.Content) {
             transformation(currentState)
         } else {
             currentState

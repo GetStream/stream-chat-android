@@ -741,23 +741,23 @@ public final class io/getstream/chat/android/ui/common/state/channel/info/Channe
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract interface class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState {
+public abstract interface class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState {
 }
 
-public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState {
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState {
 	public static final field $stable I
 	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/ui/common/utils/ExpandableList;Ljava/lang/String;ZZLio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Capability;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/ui/common/utils/ExpandableList;Ljava/lang/String;ZZLio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Capability;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/ui/common/utils/ExpandableList;Ljava/lang/String;ZZLio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Capability;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/ui/common/utils/ExpandableList;Ljava/lang/String;ZZLio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Capability;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/ui/common/utils/ExpandableList;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Z
 	public final fun component4 ()Z
-	public final fun component5 ()Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Capability;
-	public final fun copy (Lio/getstream/chat/android/ui/common/utils/ExpandableList;Ljava/lang/String;ZZLio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Capability;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content;Lio/getstream/chat/android/ui/common/utils/ExpandableList;Ljava/lang/String;ZZLio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Capability;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content;
+	public final fun component5 ()Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Capability;
+	public final fun copy (Lio/getstream/chat/android/ui/common/utils/ExpandableList;Ljava/lang/String;ZZLio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Capability;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content;Lio/getstream/chat/android/ui/common/utils/ExpandableList;Ljava/lang/String;ZZLio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Capability;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCapability ()Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Capability;
+	public final fun getCapability ()Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Capability;
 	public final fun getMembers ()Lio/getstream/chat/android/ui/common/utils/ExpandableList;
 	public final fun getName ()Ljava/lang/String;
 	public fun hashCode ()I
@@ -766,7 +766,7 @@ public final class io/getstream/chat/android/ui/common/state/channel/info/Channe
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Capability {
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Capability {
 	public static final field $stable I
 	public fun <init> ()V
 	public fun <init> (ZZZZZZZ)V
@@ -778,8 +778,8 @@ public final class io/getstream/chat/android/ui/common/state/channel/info/Channe
 	public final fun component5 ()Z
 	public final fun component6 ()Z
 	public final fun component7 ()Z
-	public final fun copy (ZZZZZZZ)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Capability;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Capability;ZZZZZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Capability;
+	public final fun copy (ZZZZZZZ)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Capability;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Capability;ZZZZZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Capability;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCanAddMembers ()Z
 	public final fun getCanBanMembers ()Z
@@ -792,62 +792,62 @@ public final class io/getstream/chat/android/ui/common/state/channel/info/Channe
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Member {
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Member {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Role;)V
+	public fun <init> (Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/User;
-	public final fun component2 ()Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Role;
-	public final fun copy (Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Role;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Member;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Member;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Role;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Member;
+	public final fun component2 ()Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role;
+	public final fun copy (Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Member;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Member;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Member;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getRole ()Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Role;
+	public final fun getRole ()Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role;
 	public final fun getUser ()Lio/getstream/chat/android/models/User;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract interface class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Role {
+public abstract interface class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role {
 }
 
-public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Role$Member : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Role {
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Member : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role {
 	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Role$Member;
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Member;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Role$Moderator : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Role {
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Moderator : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role {
 	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Role$Moderator;
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Moderator;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Role$Other : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Role {
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Other : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role {
 	public static final field $stable I
 	public fun <init> (Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Role$Other;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Role$Other;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Role$Other;
+	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Other;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Other;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Other;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getValue ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Role$Owner : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Role {
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Owner : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role {
 	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Content$Role$Owner;
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Owner;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Loading : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState {
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Loading : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState {
 	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoState$Loading;
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Loading;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;

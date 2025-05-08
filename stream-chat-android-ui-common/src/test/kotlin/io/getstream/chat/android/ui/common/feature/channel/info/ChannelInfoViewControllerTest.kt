@@ -32,7 +32,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.toChannelData
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoEvent
-import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoState
+import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
 import io.getstream.result.Error
 import kotlinx.coroutines.CoroutineScope
@@ -49,13 +49,13 @@ import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
 
 @Suppress("LargeClass")
-internal class ChannelInfoControllerTest {
+internal class ChannelInfoViewControllerTest {
 
     @Test
     fun `initial state`() = runTest {
         val sut = Fixture().get(backgroundScope)
 
-        assertEquals(ChannelInfoState.Loading, sut.state.value)
+        assertEquals(ChannelInfoViewState.Loading, sut.state.value)
     }
 
     @Test
@@ -81,12 +81,12 @@ internal class ChannelInfoControllerTest {
             skipItems(1) // Skip initial state
 
             assertEquals(
-                ChannelInfoState.Content(
+                ChannelInfoViewState.Content(
                     members = ExpandableList(
                         items = listOf(
-                            ChannelInfoState.Content.Member(
+                            ChannelInfoViewState.Content.Member(
                                 user = otherUser,
-                                role = ChannelInfoState.Content.Role.Owner,
+                                role = ChannelInfoViewState.Content.Role.Owner,
                             ),
                         ),
                         minimumVisibleItems = 5,
@@ -120,24 +120,24 @@ internal class ChannelInfoControllerTest {
             skipItems(1) // Skip initial state
 
             assertEquals(
-                ChannelInfoState.Content(
+                ChannelInfoViewState.Content(
                     members = ExpandableList(
                         items = listOf(
-                            ChannelInfoState.Content.Member(
+                            ChannelInfoViewState.Content.Member(
                                 user = owner,
-                                role = ChannelInfoState.Content.Role.Owner,
+                                role = ChannelInfoViewState.Content.Role.Owner,
                             ),
-                            ChannelInfoState.Content.Member(
+                            ChannelInfoViewState.Content.Member(
                                 user = user2,
-                                role = ChannelInfoState.Content.Role.Moderator,
+                                role = ChannelInfoViewState.Content.Role.Moderator,
                             ),
-                            ChannelInfoState.Content.Member(
+                            ChannelInfoViewState.Content.Member(
                                 user = user3,
-                                role = ChannelInfoState.Content.Role.Member,
+                                role = ChannelInfoViewState.Content.Role.Member,
                             ),
-                            ChannelInfoState.Content.Member(
+                            ChannelInfoViewState.Content.Member(
                                 user = user4,
-                                role = ChannelInfoState.Content.Role.Other("admin"),
+                                role = ChannelInfoViewState.Content.Role.Other("admin"),
                             ),
                         ),
                         minimumVisibleItems = 5,
@@ -161,13 +161,13 @@ internal class ChannelInfoControllerTest {
             skipItems(1) // Skip initial state
 
             assertEquals(
-                ChannelInfoState.Content(
+                ChannelInfoViewState.Content(
                     members = ExpandableList(
                         items = channel.members
                             .map { member ->
-                                ChannelInfoState.Content.Member(
+                                ChannelInfoViewState.Content.Member(
                                     user = member.user,
-                                    role = ChannelInfoState.Content.Role.Other(""),
+                                    role = ChannelInfoViewState.Content.Role.Other(""),
                                 )
                             },
                         minimumVisibleItems = 5,
@@ -189,13 +189,13 @@ internal class ChannelInfoControllerTest {
             skipItems(1) // Skip initial state
 
             assertEquals(
-                ChannelInfoState.Content(
+                ChannelInfoViewState.Content(
                     members = ExpandableList(
                         items = channel.members
                             .map { member ->
-                                ChannelInfoState.Content.Member(
+                                ChannelInfoViewState.Content.Member(
                                     user = member.user,
-                                    role = ChannelInfoState.Content.Role.Other(""),
+                                    role = ChannelInfoViewState.Content.Role.Other(""),
                                 )
                             },
                         minimumVisibleItems = 5,
@@ -207,13 +207,13 @@ internal class ChannelInfoControllerTest {
             sut.expandMembers()
 
             assertEquals(
-                ChannelInfoState.Content(
+                ChannelInfoViewState.Content(
                     members = ExpandableList(
                         items = channel.members
                             .map { member ->
-                                ChannelInfoState.Content.Member(
+                                ChannelInfoViewState.Content.Member(
                                     user = member.user,
-                                    role = ChannelInfoState.Content.Role.Other(""),
+                                    role = ChannelInfoViewState.Content.Role.Other(""),
                                 )
                             },
                         minimumVisibleItems = 5,
@@ -226,13 +226,13 @@ internal class ChannelInfoControllerTest {
             sut.collapseMembers()
 
             assertEquals(
-                ChannelInfoState.Content(
+                ChannelInfoViewState.Content(
                     members = ExpandableList(
                         items = channel.members
                             .map { member ->
-                                ChannelInfoState.Content.Member(
+                                ChannelInfoViewState.Content.Member(
                                     user = member.user,
-                                    role = ChannelInfoState.Content.Role.Other(""),
+                                    role = ChannelInfoViewState.Content.Role.Other(""),
                                 )
                             },
                         minimumVisibleItems = 5,
@@ -256,9 +256,9 @@ internal class ChannelInfoControllerTest {
             skipItems(1) // Skip initial state
 
             assertEquals(
-                ChannelInfoState.Content(
+                ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    capability = ChannelInfoState.Content.Capability(
+                    capability = ChannelInfoViewState.Content.Capability(
                         canAddMembers = false,
                         canRemoveMembers = false,
                         canBanMembers = false,
@@ -285,9 +285,9 @@ internal class ChannelInfoControllerTest {
             )
 
             assertEquals(
-                ChannelInfoState.Content(
+                ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    capability = ChannelInfoState.Content.Capability(
+                    capability = ChannelInfoViewState.Content.Capability(
                         canAddMembers = true,
                         canRemoveMembers = true,
                         canBanMembers = true,
@@ -334,10 +334,10 @@ internal class ChannelInfoControllerTest {
             skipItems(1) // Skip initial state
 
             assertEquals(
-                ChannelInfoState.Content(
+                ChannelInfoViewState.Content(
                     members = emptyMembers(),
                     name = channel.name,
-                    capability = ChannelInfoState.Content.Capability(canRenameChannel = true),
+                    capability = ChannelInfoViewState.Content.Capability(canRenameChannel = true),
                 ),
                 awaitItem(),
             )
@@ -348,10 +348,10 @@ internal class ChannelInfoControllerTest {
             sut.renameChannel(newName)
 
             assertEquals(
-                ChannelInfoState.Content(
+                ChannelInfoViewState.Content(
                     members = emptyMembers(),
                     name = newName,
-                    capability = ChannelInfoState.Content.Capability(canRenameChannel = true),
+                    capability = ChannelInfoViewState.Content.Capability(canRenameChannel = true),
                 ),
                 awaitItem(),
             )
@@ -409,10 +409,10 @@ internal class ChannelInfoControllerTest {
             skipItems(1) // Skip initial state
 
             assertEquals(
-                ChannelInfoState.Content(
+                ChannelInfoViewState.Content(
                     members = emptyMembers(),
                     isMuted = false,
-                    capability = ChannelInfoState.Content.Capability(canMuteChannel = true),
+                    capability = ChannelInfoViewState.Content.Capability(canMuteChannel = true),
                 ),
                 awaitItem(),
             )
@@ -422,10 +422,10 @@ internal class ChannelInfoControllerTest {
             sut.muteChannel()
 
             assertEquals(
-                ChannelInfoState.Content(
+                ChannelInfoViewState.Content(
                     members = emptyMembers(),
                     isMuted = true,
-                    capability = ChannelInfoState.Content.Capability(canMuteChannel = true),
+                    capability = ChannelInfoViewState.Content.Capability(canMuteChannel = true),
                 ),
                 awaitItem(),
             )
@@ -442,10 +442,10 @@ internal class ChannelInfoControllerTest {
             skipItems(1) // Skip initial state
 
             assertEquals(
-                ChannelInfoState.Content(
+                ChannelInfoViewState.Content(
                     members = emptyMembers(),
                     isMuted = false,
-                    capability = ChannelInfoState.Content.Capability(canMuteChannel = true),
+                    capability = ChannelInfoViewState.Content.Capability(canMuteChannel = true),
                 ),
                 awaitItem(),
             )
@@ -488,10 +488,10 @@ internal class ChannelInfoControllerTest {
             skipItems(1) // Skip initial state
 
             assertEquals(
-                ChannelInfoState.Content(
+                ChannelInfoViewState.Content(
                     members = emptyMembers(),
                     isMuted = true,
-                    capability = ChannelInfoState.Content.Capability(canMuteChannel = true),
+                    capability = ChannelInfoViewState.Content.Capability(canMuteChannel = true),
                 ),
                 awaitItem(),
             )
@@ -501,10 +501,10 @@ internal class ChannelInfoControllerTest {
             sut.unmuteChannel()
 
             assertEquals(
-                ChannelInfoState.Content(
+                ChannelInfoViewState.Content(
                     members = emptyMembers(),
                     isMuted = false,
-                    capability = ChannelInfoState.Content.Capability(canMuteChannel = true),
+                    capability = ChannelInfoViewState.Content.Capability(canMuteChannel = true),
                 ),
                 awaitItem(),
             )
@@ -521,10 +521,10 @@ internal class ChannelInfoControllerTest {
             skipItems(1) // Skip initial state
 
             assertEquals(
-                ChannelInfoState.Content(
+                ChannelInfoViewState.Content(
                     members = emptyMembers(),
                     isMuted = true,
-                    capability = ChannelInfoState.Content.Capability(canMuteChannel = true),
+                    capability = ChannelInfoViewState.Content.Capability(canMuteChannel = true),
                 ),
                 awaitItem(),
             )
@@ -548,7 +548,7 @@ internal class ChannelInfoControllerTest {
             skipItems(1) // Skip initial state
 
             assertEquals(
-                ChannelInfoState.Content(
+                ChannelInfoViewState.Content(
                     members = emptyMembers(),
                     isHidden = false,
                 ),
@@ -561,7 +561,7 @@ internal class ChannelInfoControllerTest {
             sut.hideChannel(clearHistory)
 
             assertEquals(
-                ChannelInfoState.Content(
+                ChannelInfoViewState.Content(
                     members = emptyMembers(),
                     isHidden = true,
                 ),
@@ -579,7 +579,7 @@ internal class ChannelInfoControllerTest {
             skipItems(1) // Skip initial state
 
             assertEquals(
-                ChannelInfoState.Content(
+                ChannelInfoViewState.Content(
                     members = emptyMembers(),
                     isHidden = false,
                 ),
@@ -609,7 +609,7 @@ internal class ChannelInfoControllerTest {
             skipItems(1) // Skip initial state
 
             assertEquals(
-                ChannelInfoState.Content(
+                ChannelInfoViewState.Content(
                     members = emptyMembers(),
                     isHidden = true,
                 ),
@@ -621,7 +621,7 @@ internal class ChannelInfoControllerTest {
             sut.unhideChannel()
 
             assertEquals(
-                ChannelInfoState.Content(
+                ChannelInfoViewState.Content(
                     members = emptyMembers(),
                     isHidden = false,
                 ),
@@ -639,7 +639,7 @@ internal class ChannelInfoControllerTest {
             skipItems(1) // Skip initial state
 
             assertEquals(
-                ChannelInfoState.Content(
+                ChannelInfoViewState.Content(
                     members = emptyMembers(),
                     isHidden = true,
                 ),
@@ -709,9 +709,9 @@ internal class ChannelInfoControllerTest {
             skipItems(1) // Skip initial state
 
             assertEquals(
-                ChannelInfoState.Content(
+                ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    capability = ChannelInfoState.Content.Capability(canLeaveChannel = true),
+                    capability = ChannelInfoViewState.Content.Capability(canLeaveChannel = true),
                 ),
                 awaitItem(),
             )
@@ -747,9 +747,9 @@ internal class ChannelInfoControllerTest {
             skipItems(1) // Skip initial state
 
             assertEquals(
-                ChannelInfoState.Content(
+                ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    capability = ChannelInfoState.Content.Capability(canLeaveChannel = true),
+                    capability = ChannelInfoViewState.Content.Capability(canLeaveChannel = true),
                 ),
                 awaitItem(),
             )
@@ -796,9 +796,9 @@ internal class ChannelInfoControllerTest {
             skipItems(1) // Skip initial state
 
             assertEquals(
-                ChannelInfoState.Content(
+                ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    capability = ChannelInfoState.Content.Capability(canDeleteChannel = true),
+                    capability = ChannelInfoViewState.Content.Capability(canDeleteChannel = true),
                 ),
                 awaitItem(),
             )
@@ -823,9 +823,9 @@ internal class ChannelInfoControllerTest {
             skipItems(1) // Skip initial state
 
             assertEquals(
-                ChannelInfoState.Content(
+                ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    capability = ChannelInfoState.Content.Capability(canDeleteChannel = true),
+                    capability = ChannelInfoViewState.Content.Capability(canDeleteChannel = true),
                 ),
                 awaitItem(),
             )
@@ -946,7 +946,7 @@ private class Fixture {
         verifyNoMoreInteractions(channelClient)
     }
 
-    fun get(scope: CoroutineScope) = ChannelInfoController(
+    fun get(scope: CoroutineScope) = ChannelInfoViewController(
         cid = CID,
         scope = scope,
         chatClient = chatClient,

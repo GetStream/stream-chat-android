@@ -22,18 +22,18 @@ import io.getstream.chat.android.ui.common.utils.ExpandableList
 import io.getstream.chat.android.ui.common.utils.emptyExpandableList
 
 /**
- * Represents the state of the channel information.
+ * Represents the state of the channel information in the UI.
  *
- * This sealed interface defines the states that the channel information can be in,
- * such as loading, displaying content, or other states that may be added in the future.
+ * This sealed interface is used to model the different states that the channel information
+ * can be in, such as loading or displaying content.
  */
 @ExperimentalStreamChatApi
-public sealed interface ChannelInfoState {
+public sealed interface ChannelInfoViewState {
 
     /**
      * Represents the loading state of the channel information.
      */
-    public data object Loading : ChannelInfoState
+    public data object Loading : ChannelInfoViewState
 
     /**
      * Represents the content state of the channel information.
@@ -50,7 +50,7 @@ public sealed interface ChannelInfoState {
         val isMuted: Boolean = false,
         val isHidden: Boolean = false,
         val capability: Capability = Capability(),
-    ) : ChannelInfoState {
+    ) : ChannelInfoViewState {
 
         /**
          * Represents the capabilities of the current user in the channel.

@@ -49,7 +49,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Introduce internal `ChannelInfoController` and the experimental classes: `ChannelInfoState`, `ChannelInfoEvent`, and `ExpandableList`. [#5764](https://github.com/GetStream/stream-chat-android/pull/5764)
+- Introduce internal `ChannelInfoViewController` and the experimental classes: `ChannelInfoViewState`, `ChannelInfoEvent`, and `ExpandableList`. [#5764](https://github.com/GetStream/stream-chat-android/pull/5764)
 
 ### ⚠️ Changed
 
