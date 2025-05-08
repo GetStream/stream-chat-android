@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v3.1.0
         with:
           fetch-depth: 0
-      - uses: ./.github/actions/setup-java
+      - uses: GetStream/android-ci-actions/actions/setup-java@main
       - name: Find touched DB Entities
         id: touchedEntities
         continue-on-error: true
