@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.extensions.isGroupChannel
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelData
@@ -384,6 +383,18 @@ private data class ChannelInfoData(
     val isMuted: Boolean,
     val isHidden: Boolean,
 )
+
+/**
+ * Group channels are channels with more than 2 members or channels that are not distinct.
+ */
+private val ChannelData.isGroupChannel: Boolean
+    get() = memberCount > 2 || !isDistinct
+
+/**
+ * A distinct channel is a channel created for a particular set of users, usually for one-to-one conversations.
+ */
+private val ChannelData.isDistinct: Boolean
+    get() = id.startsWith("!members")
 
 private fun Member.toContentMember(createdBy: User) = ChannelInfoViewState.Content.Member(
     user = user,
