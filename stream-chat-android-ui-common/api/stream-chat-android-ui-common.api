@@ -666,6 +666,193 @@ public final class io/getstream/chat/android/ui/common/permissions/VisualMediaTy
 	public static fun values ()[Lio/getstream/chat/android/ui/common/permissions/VisualMediaType;
 }
 
+public abstract interface class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent {
+}
+
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$DeleteChannelError : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$DeleteChannelError;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$DeleteChannelSuccess : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$DeleteChannelSuccess;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$HideChannelError : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$HideChannelError;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$LeaveChannelError : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$LeaveChannelError;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$LeaveChannelSuccess : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$LeaveChannelSuccess;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$MuteChannelError : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$MuteChannelError;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$RenameChannelError : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$RenameChannelError;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$UnhideChannelError : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$UnhideChannelError;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$UnmuteChannelError : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$UnmuteChannelError;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState {
+}
+
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (Lio/getstream/chat/android/ui/common/utils/ExpandableList;Ljava/lang/String;ZZLio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Capability;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/ui/common/utils/ExpandableList;Ljava/lang/String;ZZLio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Capability;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/getstream/chat/android/ui/common/utils/ExpandableList;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Z
+	public final fun component4 ()Z
+	public final fun component5 ()Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Capability;
+	public final fun copy (Lio/getstream/chat/android/ui/common/utils/ExpandableList;Ljava/lang/String;ZZLio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Capability;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content;Lio/getstream/chat/android/ui/common/utils/ExpandableList;Ljava/lang/String;ZZLio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Capability;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCapability ()Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Capability;
+	public final fun getMembers ()Lio/getstream/chat/android/ui/common/utils/ExpandableList;
+	public final fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun isHidden ()Z
+	public final fun isMuted ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Capability {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (ZZZZZZZ)V
+	public synthetic fun <init> (ZZZZZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Z
+	public final fun component2 ()Z
+	public final fun component3 ()Z
+	public final fun component4 ()Z
+	public final fun component5 ()Z
+	public final fun component6 ()Z
+	public final fun component7 ()Z
+	public final fun copy (ZZZZZZZ)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Capability;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Capability;ZZZZZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Capability;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCanAddMembers ()Z
+	public final fun getCanBanMembers ()Z
+	public final fun getCanDeleteChannel ()Z
+	public final fun getCanLeaveChannel ()Z
+	public final fun getCanMuteChannel ()Z
+	public final fun getCanRemoveMembers ()Z
+	public final fun getCanRenameChannel ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Member {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/User;
+	public final fun component2 ()Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role;
+	public final fun copy (Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Member;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Member;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Member;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getRole ()Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role;
+	public final fun getUser ()Lio/getstream/chat/android/models/User;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role {
+}
+
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Member : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Member;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Moderator : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Moderator;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Other : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Other;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Other;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Other;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Owner : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Owner;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Loading : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Loading;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/common/state/channels/actions/ArchiveChannel : io/getstream/chat/android/ui/common/state/channels/actions/ChannelAction {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/models/Channel;)V
@@ -1926,6 +2113,55 @@ public final class io/getstream/chat/android/ui/common/utils/ChannelNameFormatte
 	public final fun defaultFormatter (Landroid/content/Context;I)Lio/getstream/chat/android/ui/common/utils/ChannelNameFormatter;
 	public final fun defaultFormatter (Landroid/content/Context;II)Lio/getstream/chat/android/ui/common/utils/ChannelNameFormatter;
 	public static synthetic fun defaultFormatter$default (Lio/getstream/chat/android/ui/common/utils/ChannelNameFormatter$Companion;Landroid/content/Context;IIILjava/lang/Object;)Lio/getstream/chat/android/ui/common/utils/ChannelNameFormatter;
+}
+
+public final class io/getstream/chat/android/ui/common/utils/ExpandableList : java/util/List, kotlin/jvm/internal/markers/KMappedMarker {
+	public static final field $stable I
+	public fun <init> (Ljava/util/List;IZ)V
+	public synthetic fun <init> (Ljava/util/List;IZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun add (ILjava/lang/Object;)V
+	public fun add (Ljava/lang/Object;)Z
+	public fun addAll (ILjava/util/Collection;)Z
+	public fun addAll (Ljava/util/Collection;)Z
+	public fun addFirst (Ljava/lang/Object;)V
+	public fun addLast (Ljava/lang/Object;)V
+	public fun clear ()V
+	public final fun component3 ()Z
+	public fun contains (Ljava/lang/Object;)Z
+	public fun containsAll (Ljava/util/Collection;)Z
+	public final fun copy (Ljava/util/List;IZ)Lio/getstream/chat/android/ui/common/utils/ExpandableList;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/utils/ExpandableList;Ljava/util/List;IZILjava/lang/Object;)Lio/getstream/chat/android/ui/common/utils/ExpandableList;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun get (I)Ljava/lang/Object;
+	public final fun getCanExpand ()Z
+	public final fun getCollapsedCount ()I
+	public fun getSize ()I
+	public fun hashCode ()I
+	public fun indexOf (Ljava/lang/Object;)I
+	public final fun isCollapsed ()Z
+	public fun isEmpty ()Z
+	public fun iterator ()Ljava/util/Iterator;
+	public fun lastIndexOf (Ljava/lang/Object;)I
+	public fun listIterator ()Ljava/util/ListIterator;
+	public fun listIterator (I)Ljava/util/ListIterator;
+	public fun remove (I)Ljava/lang/Object;
+	public fun remove (Ljava/lang/Object;)Z
+	public fun removeAll (Ljava/util/Collection;)Z
+	public fun removeFirst ()Ljava/lang/Object;
+	public fun removeLast ()Ljava/lang/Object;
+	public fun replaceAll (Ljava/util/function/UnaryOperator;)V
+	public fun retainAll (Ljava/util/Collection;)Z
+	public fun set (ILjava/lang/Object;)Ljava/lang/Object;
+	public final fun size ()I
+	public fun sort (Ljava/util/Comparator;)V
+	public fun subList (II)Ljava/util/List;
+	public fun toArray ()[Ljava/lang/Object;
+	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/utils/ExpandableListKt {
+	public static final fun emptyExpandableList ()Lio/getstream/chat/android/ui/common/utils/ExpandableList;
 }
 
 public final class io/getstream/chat/android/ui/common/utils/GiphyInfo {
