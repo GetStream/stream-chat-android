@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.viewmodel.channel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import io.getstream.chat.android.compose.viewmodel.messages.MessageListHeaderViewModel
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
 /**
@@ -28,12 +29,17 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 @ExperimentalStreamChatApi
 public class ChannelInfoViewModelFactory(private val cid: String) : ViewModelProvider.Factory {
 
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        require(modelClass == ChannelInfoViewModel::class.java) {
-            "ChannelInfoViewModelFactory can only create instances of ChannelInfoViewModel"
-        }
+    private val factories: Map<Class<out ViewModel>, () -> ViewModel> = mapOf(
+        MessageListHeaderViewModel::class.java to { MessageListHeaderViewModel(cid) },
+        ChannelInfoViewModel::class.java to { ChannelInfoViewModel(cid) },
+    )
 
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        val factory = factories[modelClass]
+            ?: throw IllegalArgumentException(
+                "ChannelInfoViewModelFactory can only create instances of ${factories.keys.map { it.simpleName }}",
+            )
         @Suppress("UNCHECKED_CAST")
-        return ChannelInfoViewModel(cid) as T
+        return factory() as T
     }
 }
