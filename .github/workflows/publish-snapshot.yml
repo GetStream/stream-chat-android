@@ -9,7 +9,7 @@ on:
 jobs:
   publish:
     name: Snapshot build and publish
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
@@ -28,4 +28,8 @@ jobs:
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
           SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
+          SNAPSHOT: true
+      - name: Show snapshot version
+        run: ./scripts/show-last-snapshot-update.sh
+        env:
           SNAPSHOT: true
