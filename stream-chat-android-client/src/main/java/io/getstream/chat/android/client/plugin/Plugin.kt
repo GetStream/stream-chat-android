@@ -50,9 +50,11 @@ import io.getstream.chat.android.client.plugin.listeners.UnblockUserListener
 import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.models.DraftsSort
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.QueryDraftsResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
@@ -467,6 +469,16 @@ public interface Plugin :
         result: Result<List<DraftMessage>>,
         offset: Int?,
         limit: Int?,
+    ) {
+        /* No-Op */
+    }
+
+    override suspend fun onQueryDraftMessagesResult(
+        result: Result<QueryDraftsResult>,
+        filter: FilterObject,
+        limit: Int,
+        next: String?,
+        sort: QuerySorter<DraftsSort>,
     ) {
         /* No-Op */
     }

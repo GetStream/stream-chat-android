@@ -20,6 +20,10 @@ import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.plugin.listeners.DraftMessageListener
 import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.models.DraftsSort
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.QueryDraftsResult
+import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.result.Result
 import io.getstream.result.onErrorSuspend
 import io.getstream.result.onSuccessSuspend
@@ -88,6 +92,29 @@ internal class DraftMessageListenerDatabase(
     ) {
         result.onSuccessSuspend { draftMessages ->
             draftMessages.forEach { draftMessage ->
+                messageRepository.insertDraftMessage(draftMessage)
+            }
+        }
+    }
+
+    /**
+     * Method called when a request to query draft messages in the API happens
+     *
+     * @param result The result of the query draft messages request
+     * @param filter The filter object used in the query
+     * @param limit The limit of the query
+     * @param next The next page token
+     * @param sort The sorter used in the query
+     */
+    override suspend fun onQueryDraftMessagesResult(
+        result: Result<QueryDraftsResult>,
+        filter: FilterObject,
+        limit: Int,
+        next: String?,
+        sort: QuerySorter<DraftsSort>,
+    ) {
+        result.onSuccessSuspend {
+            it.drafts.forEach { draftMessage ->
                 messageRepository.insertDraftMessage(draftMessage)
             }
         }

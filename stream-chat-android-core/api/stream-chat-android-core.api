@@ -823,6 +823,18 @@ public final class io/getstream/chat/android/models/DraftMessage$Builder {
 	public final fun withText (Ljava/lang/String;)Lio/getstream/chat/android/models/DraftMessage$Builder;
 }
 
+public final class io/getstream/chat/android/models/DraftsSort : io/getstream/chat/android/models/querysort/ComparableFieldProvider {
+	public fun <init> (Ljava/util/Date;)V
+	public final fun component1 ()Ljava/util/Date;
+	public final fun copy (Ljava/util/Date;)Lio/getstream/chat/android/models/DraftsSort;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/DraftsSort;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/models/DraftsSort;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getComparableField (Ljava/lang/String;)Ljava/lang/Comparable;
+	public final fun getCreatedAt ()Ljava/util/Date;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/models/EqualsFilterObject : io/getstream/chat/android/models/FilterObject {
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/Object;
@@ -1623,6 +1635,19 @@ public final class io/getstream/chat/android/models/PushProvider : java/lang/Enu
 
 public final class io/getstream/chat/android/models/PushProvider$Companion {
 	public final fun fromKey (Ljava/lang/String;)Lio/getstream/chat/android/models/PushProvider;
+}
+
+public final class io/getstream/chat/android/models/QueryDraftsResult {
+	public fun <init> (Ljava/util/List;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/util/List;Ljava/lang/String;)Lio/getstream/chat/android/models/QueryDraftsResult;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/QueryDraftsResult;Ljava/util/List;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/models/QueryDraftsResult;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDrafts ()Ljava/util/List;
+	public final fun getNext ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/models/QueryThreadsResult {

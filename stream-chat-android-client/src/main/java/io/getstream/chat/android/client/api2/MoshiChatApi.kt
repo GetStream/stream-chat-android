@@ -66,6 +66,7 @@ import io.getstream.chat.android.client.api2.model.requests.PollUpdateRequest
 import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryDraftsRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
@@ -107,6 +108,7 @@ import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.models.DraftsSort
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.GuestUser
@@ -117,6 +119,7 @@ import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.QueryDraftsResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
@@ -262,6 +265,26 @@ constructor(
             ),
         ).mapDomain { response ->
             response.drafts.map { it.toDomain() }
+        }
+
+    override fun queryDrafts(
+        filter: FilterObject,
+        limit: Int?,
+        next: String?,
+        sort: QuerySorter<DraftsSort>,
+    ): Call<QueryDraftsResult> =
+        messageApi.queryDrafts(
+            body = QueryDraftsRequest(
+                filter = filter.toMap(),
+                limit = limit,
+                next = next,
+                sort = sort.toDto(),
+            ),
+        ).mapDomain { response ->
+            QueryDraftsResult(
+                drafts = response.drafts.map { it.toDomain() },
+                next = response.next,
+            )
         }
 
     override fun updateMessage(
