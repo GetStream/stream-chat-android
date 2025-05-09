@@ -31,7 +31,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.toChannelData
 import io.getstream.chat.android.test.asCall
-import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoEvent
+import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
 import io.getstream.result.Error
@@ -313,7 +313,7 @@ internal class ChannelInfoViewControllerTest {
             sut.events.test {
                 sut.renameChannel(name = "newName")
 
-                assertEquals(ChannelInfoEvent.RenameChannelError, awaitItem())
+                assertEquals(ChannelInfoViewEvent.RenameChannelError, awaitItem())
             }
         }
 
@@ -376,7 +376,7 @@ internal class ChannelInfoViewControllerTest {
             sut.renameChannel(newName)
 
             sut.events.test {
-                assertEquals(ChannelInfoEvent.RenameChannelError, awaitItem())
+                assertEquals(ChannelInfoViewEvent.RenameChannelError, awaitItem())
             }
         }
     }
@@ -392,7 +392,7 @@ internal class ChannelInfoViewControllerTest {
             sut.events.test {
                 sut.muteChannel()
 
-                assertEquals(ChannelInfoEvent.MuteChannelError, awaitItem())
+                assertEquals(ChannelInfoViewEvent.MuteChannelError, awaitItem())
             }
         }
 
@@ -455,7 +455,7 @@ internal class ChannelInfoViewControllerTest {
             sut.muteChannel()
 
             sut.events.test {
-                assertEquals(ChannelInfoEvent.MuteChannelError, awaitItem())
+                assertEquals(ChannelInfoViewEvent.MuteChannelError, awaitItem())
             }
         }
     }
@@ -471,7 +471,7 @@ internal class ChannelInfoViewControllerTest {
             sut.events.test {
                 sut.unmuteChannel()
 
-                assertEquals(ChannelInfoEvent.UnmuteChannelError, awaitItem())
+                assertEquals(ChannelInfoViewEvent.UnmuteChannelError, awaitItem())
             }
         }
 
@@ -534,7 +534,7 @@ internal class ChannelInfoViewControllerTest {
             sut.unmuteChannel()
 
             sut.events.test {
-                assertEquals(ChannelInfoEvent.UnmuteChannelError, awaitItem())
+                assertEquals(ChannelInfoViewEvent.UnmuteChannelError, awaitItem())
             }
         }
     }
@@ -595,7 +595,7 @@ internal class ChannelInfoViewControllerTest {
             sut.hideChannel(clearHistory)
 
             sut.events.test {
-                assertEquals(ChannelInfoEvent.HideChannelError, awaitItem())
+                assertEquals(ChannelInfoViewEvent.HideChannelError, awaitItem())
             }
         }
     }
@@ -651,7 +651,7 @@ internal class ChannelInfoViewControllerTest {
             sut.unhideChannel()
 
             sut.events.test {
-                assertEquals(ChannelInfoEvent.UnhideChannelError, awaitItem())
+                assertEquals(ChannelInfoViewEvent.UnhideChannelError, awaitItem())
             }
         }
     }
@@ -667,7 +667,7 @@ internal class ChannelInfoViewControllerTest {
             sut.events.test {
                 sut.leaveChannel(quitMessage = null)
 
-                assertEquals(ChannelInfoEvent.LeaveChannelError, awaitItem())
+                assertEquals(ChannelInfoViewEvent.LeaveChannelError, awaitItem())
             }
         }
 
@@ -685,7 +685,7 @@ internal class ChannelInfoViewControllerTest {
             sut.events.test {
                 sut.leaveChannel(quitMessage = null)
 
-                assertEquals(ChannelInfoEvent.LeaveChannelError, awaitItem())
+                assertEquals(ChannelInfoViewEvent.LeaveChannelError, awaitItem())
             }
         }
 
@@ -723,7 +723,7 @@ internal class ChannelInfoViewControllerTest {
 
             sut.events.test {
                 assertEquals(
-                    ChannelInfoEvent.LeaveChannelSuccess,
+                    ChannelInfoViewEvent.LeaveChannelSuccess,
                     awaitItem(),
                 )
             }
@@ -763,7 +763,7 @@ internal class ChannelInfoViewControllerTest {
             sut.leaveChannel(quitMessage)
 
             sut.events.test {
-                assertEquals(ChannelInfoEvent.LeaveChannelError, awaitItem())
+                assertEquals(ChannelInfoViewEvent.LeaveChannelError, awaitItem())
             }
         }
     }
@@ -779,7 +779,7 @@ internal class ChannelInfoViewControllerTest {
             sut.events.test {
                 sut.deleteChannel()
 
-                assertEquals(ChannelInfoEvent.DeleteChannelError, awaitItem())
+                assertEquals(ChannelInfoViewEvent.DeleteChannelError, awaitItem())
             }
         }
 
@@ -808,7 +808,7 @@ internal class ChannelInfoViewControllerTest {
             sut.deleteChannel()
 
             sut.events.test {
-                assertEquals(ChannelInfoEvent.DeleteChannelSuccess, awaitItem())
+                assertEquals(ChannelInfoViewEvent.DeleteChannelSuccess, awaitItem())
             }
         }
     }
@@ -835,7 +835,7 @@ internal class ChannelInfoViewControllerTest {
             sut.deleteChannel()
 
             sut.events.test {
-                assertEquals(ChannelInfoEvent.DeleteChannelError, awaitItem())
+                assertEquals(ChannelInfoViewEvent.DeleteChannelError, awaitItem())
             }
         }
     }

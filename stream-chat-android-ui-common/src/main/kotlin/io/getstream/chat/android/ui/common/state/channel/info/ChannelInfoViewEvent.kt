@@ -25,49 +25,49 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
  * including success and error events for specific actions.
  */
 @ExperimentalStreamChatApi
-public sealed interface ChannelInfoEvent {
+public sealed interface ChannelInfoViewEvent {
     /**
      * Indicates an error occurred while renaming a channel.
      */
-    public data object RenameChannelError : ChannelInfoEvent
+    public data object RenameChannelError : ChannelInfoViewEvent
 
     /**
      * Indicates an error occurred while muting a channel.
      */
-    public data object MuteChannelError : ChannelInfoEvent
+    public data object MuteChannelError : ChannelInfoViewEvent
 
     /**
      * Indicates an error occurred while unmuting a channel.
      */
-    public data object UnmuteChannelError : ChannelInfoEvent
+    public data object UnmuteChannelError : ChannelInfoViewEvent
 
     /**
      * Indicates an error occurred while hiding a channel.
      */
-    public data object HideChannelError : ChannelInfoEvent
+    public data object HideChannelError : ChannelInfoViewEvent
 
     /**
      * Indicates an error occurred while unhiding a channel.
      */
-    public data object UnhideChannelError : ChannelInfoEvent
+    public data object UnhideChannelError : ChannelInfoViewEvent
 
     /**
      * Indicates the user successfully left the channel.
      */
-    public data object LeaveChannelSuccess : ChannelInfoEvent
+    public data object LeaveChannelSuccess : ChannelInfoViewEvent
 
     /**
      * Indicates an error occurred while leaving a channel.
      */
-    public data object LeaveChannelError : ChannelInfoEvent
+    public data object LeaveChannelError : ChannelInfoViewEvent
 
     /**
      * Indicates the channel was successfully deleted.
      */
-    public data object DeleteChannelSuccess : ChannelInfoEvent
+    public data object DeleteChannelSuccess : ChannelInfoViewEvent
 
     /**
      * Indicates an error occurred while deleting a channel.
      */
-    public data object DeleteChannelError : ChannelInfoEvent
+    public data object DeleteChannelError : ChannelInfoViewEvent
 }

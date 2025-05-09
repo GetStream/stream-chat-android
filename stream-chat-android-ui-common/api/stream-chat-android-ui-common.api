@@ -666,76 +666,76 @@ public final class io/getstream/chat/android/ui/common/permissions/VisualMediaTy
 	public static fun values ()[Lio/getstream/chat/android/ui/common/permissions/VisualMediaType;
 }
 
-public abstract interface class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent {
+public abstract interface class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent {
 }
 
-public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent$DeleteChannelError : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent {
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$DeleteChannelError : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent {
 	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent$DeleteChannelError;
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$DeleteChannelError;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent$DeleteChannelSuccess : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent {
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$DeleteChannelSuccess : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent {
 	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent$DeleteChannelSuccess;
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$DeleteChannelSuccess;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent$HideChannelError : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent {
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$HideChannelError : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent {
 	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent$HideChannelError;
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$HideChannelError;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent$LeaveChannelError : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent {
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$LeaveChannelError : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent {
 	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent$LeaveChannelError;
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$LeaveChannelError;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent$LeaveChannelSuccess : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent {
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$LeaveChannelSuccess : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent {
 	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent$LeaveChannelSuccess;
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$LeaveChannelSuccess;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent$MuteChannelError : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent {
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$MuteChannelError : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent {
 	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent$MuteChannelError;
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$MuteChannelError;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent$RenameChannelError : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent {
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$RenameChannelError : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent {
 	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent$RenameChannelError;
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$RenameChannelError;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent$UnhideChannelError : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent {
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$UnhideChannelError : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent {
 	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent$UnhideChannelError;
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$UnhideChannelError;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent$UnmuteChannelError : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent {
+public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$UnmuteChannelError : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent {
 	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoEvent$UnmuteChannelError;
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewEvent$UnmuteChannelError;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
