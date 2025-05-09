@@ -76,31 +76,17 @@ public class ChannelInfoViewModel(
     }
 
     /**
-     * @see [ChannelInfoViewController.muteChannel]
+     * @see [ChannelInfoViewController.setChannelMute]
      */
-    public fun muteChannel() {
-        controller.muteChannel()
+    public fun setChannelMute(mute: Boolean) {
+        controller.setChannelMute(mute)
     }
 
     /**
-     * @see [ChannelInfoViewController.unmuteChannel]
+     * @see [ChannelInfoViewController.setChannelHide]
      */
-    public fun unmuteChannel() {
-        controller.unmuteChannel()
-    }
-
-    /**
-     * @see [ChannelInfoViewController.hideChannel]
-     */
-    public fun hideChannel(clearHistory: Boolean) {
-        controller.hideChannel(clearHistory)
-    }
-
-    /**
-     * @see [ChannelInfoViewController.unhideChannel]
-     */
-    public fun unhideChannel() {
-        controller.unhideChannel()
+    public fun setChannelHide(hide: Boolean, clearHistory: Boolean) {
+        controller.setChannelHide(hide, clearHistory)
     }
 
     /**
