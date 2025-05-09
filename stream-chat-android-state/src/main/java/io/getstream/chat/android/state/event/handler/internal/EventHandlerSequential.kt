@@ -58,6 +58,7 @@ import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
+import io.getstream.chat.android.client.events.NotificationReminderDueEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.events.NotificationThreadMessageNewEvent
 import io.getstream.chat.android.client.events.PollClosedEvent
@@ -66,6 +67,9 @@ import io.getstream.chat.android.client.events.PollUpdatedEvent
 import io.getstream.chat.android.client.events.ReactionDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
+import io.getstream.chat.android.client.events.ReminderCreatedEvent
+import io.getstream.chat.android.client.events.ReminderDeletedEvent
+import io.getstream.chat.android.client.events.ReminderUpdatedEvent
 import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
@@ -734,6 +738,18 @@ internal class EventHandlerSequential(
                 is VoteRemovedEvent -> batch.addPoll(event.processPoll(batch::getPoll))
                 is AnswerCastedEvent -> batch.addPoll(event.processPoll(batch::getPoll))
                 is PollDeletedEvent -> batch.deletePoll(event.poll)
+                is ReminderCreatedEvent -> {
+                    // TODO: Enrich message with new reminder
+                }
+                is ReminderUpdatedEvent -> {
+                    // TODO: Update reminder in the message
+                }
+                is ReminderDeletedEvent -> {
+                    // TODO: Remove reminder from the message
+                }
+                is NotificationReminderDueEvent -> {
+                    // TODO: Probably not handled
+                }
                 else -> Unit
             }
         }

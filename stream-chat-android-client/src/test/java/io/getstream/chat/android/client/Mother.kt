@@ -44,6 +44,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamOptionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
@@ -63,6 +64,7 @@ import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.FileUploadConfigDto
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
+import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
 import io.getstream.chat.android.client.api2.model.response.TokenResponse
 import io.getstream.chat.android.client.api2.model.response.UnblockUserResponse
@@ -1086,6 +1088,34 @@ internal object Mother {
         user_id = userId,
         is_answer = true,
         answer_text = answerText,
+    )
+
+    fun randomDownstreamReminderDto(
+        id: String = randomString(),
+        channelCid: String = randomString(),
+        channel: DownstreamChannelDto = randomDownstreamChannelDto(id = channelCid),
+        messageId: String = randomString(),
+        message: DownstreamMessageDto = randomDownstreamMessageDto(id = messageId),
+        remindAt: Date? = randomDateOrNull(),
+        createdAt: Date = randomDate(),
+        updatedAt: Date = randomDate(),
+    ): DownstreamReminderDto = DownstreamReminderDto(
+        id = id,
+        channel_cid = channelCid,
+        channel = channel,
+        message_id = messageId,
+        message = message,
+        remind_at = remindAt,
+        created_at = createdAt,
+        updated_at = updatedAt,
+    )
+
+    fun randomQueryRemindersResponse(
+        reminders: List<DownstreamReminderDto> = listOf(randomDownstreamReminderDto()),
+        next: String? = randomString(),
+    ): QueryRemindersResponse = QueryRemindersResponse(
+        reminders = reminders,
+        next = next,
     )
 
     fun randomUploadFileResponse(

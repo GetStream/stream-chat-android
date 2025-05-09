@@ -599,6 +599,34 @@ internal data class VoteRemovedEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
+internal data class ReminderCreatedEventDto(
+    val type: String,
+    val reminder: DownstreamReminderDto,
+    val created_at: ExactDate,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
+internal data class ReminderUpdatedEventDto(
+    val type: String,
+    val reminder: DownstreamReminderDto,
+    val created_at: ExactDate,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
+internal data class ReminderDeletedEventDto(
+    val type: String,
+    val reminder: DownstreamReminderDto,
+    val created_at: ExactDate,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
+internal data class NotificationReminderDueEventDto(
+    val type: String,
+    val reminder: DownstreamReminderDto,
+    val created_at: ExactDate,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
 internal data class AIIndicatorUpdatedEventDto(
     val type: String,
     val ai_state: String,

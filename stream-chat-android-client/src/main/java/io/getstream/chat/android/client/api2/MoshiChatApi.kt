@@ -34,6 +34,7 @@ import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
 import io.getstream.chat.android.client.api2.endpoint.OpenGraphApi
 import io.getstream.chat.android.client.api2.endpoint.PollsApi
+import io.getstream.chat.android.client.api2.endpoint.RemindersApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.endpoint.VideoCallApi
@@ -66,8 +67,10 @@ import io.getstream.chat.android.client.api2.model.requests.PollUpdateRequest
 import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryRemindersRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
+import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
@@ -113,10 +116,12 @@ import io.getstream.chat.android.models.GuestUser
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
@@ -164,6 +169,7 @@ constructor(
     private val ogApi: OpenGraphApi,
     private val threadsApi: ThreadsApi,
     private val pollsApi: PollsApi,
+    private val remindersApi: RemindersApi,
     private val coroutineScope: CoroutineScope,
     private val userScope: UserScope,
 ) : ChatApi {
@@ -1447,6 +1453,39 @@ constructor(
 
     override fun deletePoll(pollId: String): Call<Unit> {
         return pollsApi.deletePoll(pollId).toUnitCall()
+    }
+
+    override fun createReminder(messageId: String, remindAt: Date?): Call<MessageReminder> {
+        return remindersApi.createReminder(
+            messageId = messageId,
+            body = ReminderRequest(remind_at = remindAt),
+        ).mapDomain { it.toDomain() }
+    }
+
+    override fun updateReminder(messageId: String, remindAt: Date?): Call<MessageReminder> {
+        return remindersApi.updateReminder(
+            messageId = messageId,
+            body = ReminderRequest(remind_at = remindAt),
+        ).mapDomain { it.toDomain() }
+    }
+
+    override fun deleteReminder(messageId: String): Call<Unit> {
+        return remindersApi.deleteReminder(messageId).toUnitCall()
+    }
+
+    override fun queryReminders(
+        filter: FilterObject,
+        limit: Int,
+        next: String?,
+        sort: QuerySorter<MessageReminder>,
+    ): Call<QueryRemindersResult> {
+        val body = QueryRemindersRequest(
+            filter = filter.toMap(),
+            limit = limit,
+            next = next,
+            sort = sort.toDto(),
+        )
+        return remindersApi.queryReminders(body = body).mapDomain { it.toDomain() }
     }
 
     override fun warmUp() {

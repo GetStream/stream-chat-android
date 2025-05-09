@@ -171,11 +171,13 @@ import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PushMessage
+import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
@@ -3802,6 +3804,66 @@ internal constructor(
             set = set,
             unset = unset,
         )
+    }
+
+    /**
+     * Creates a reminder for a message.
+     *
+     * @param messageId The message id.
+     * @param remindAt The date when the reminder should be triggered. If null, this is a bookmark type reminder without
+     * a notification.
+     *
+     * @return Executable async [Call] responsible for creating the reminder.
+     */
+    @CheckResult
+    public fun createReminder(messageId: String, remindAt: Date?): Call<MessageReminder> {
+        return api.createReminder(messageId, remindAt)
+    }
+
+    /**
+     * Updates an existing reminder for a message.
+     *
+     * @param messageId The message id.
+     * @param remindAt The date when the reminder should be triggered. If null, this is a bookmark type reminder without
+     * a notification.
+     *
+     * @return Executable async [Call] responsible for updating the reminder.
+     */
+    @CheckResult
+    public fun updateReminder(messageId: String, remindAt: Date?): Call<MessageReminder> {
+        return api.updateReminder(messageId, remindAt)
+    }
+
+    /**
+     * Deletes a reminder for a message.
+     *
+     * @param messageId The message id whose reminder should be deleted.
+     *
+     * @return Executable async [Call] responsible for deleting the reminder.
+     */
+    @CheckResult
+    public fun deleteReminder(messageId: String): Call<Unit> {
+        return api.deleteReminder(messageId)
+    }
+
+    /**
+     * Queries the message reminders for the current user matching the provided filters.
+     *
+     * @param filter The [FilterObject] to filter the reminders.
+     * @param limit The maximum number of reminders to return.
+     * @param next The pagination token for the next page of results.
+     * @param sort The sorter object to apply to the query.
+     *
+     * @return Executable async [Call] responsible for obtaining the message reminders.
+     */
+    @CheckResult
+    public fun queryReminders(
+        filter: FilterObject,
+        limit: Int,
+        next: String? = null,
+        sort: QuerySorter<MessageReminder> = QuerySortByField(),
+    ): Call<QueryRemindersResult> {
+        return api.queryReminders(filter, limit, next, sort)
     }
 
     private fun warmUp() {

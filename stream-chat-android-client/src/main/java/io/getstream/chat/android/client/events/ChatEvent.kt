@@ -23,6 +23,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.ThreadInfo
@@ -852,6 +853,47 @@ public data class VoteRemovedEvent(
     override val channelLastMessageAt: Date?,
     val removedVote: Vote,
 ) : CidEvent(), HasPoll
+
+/**
+ * Triggered when a message reminder is created.
+ * TODO: Verify the reminder events against the BE.
+ */
+public data class ReminderCreatedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    val reminder: MessageReminder,
+) : ChatEvent()
+
+/**
+ * Triggered when a message reminder is updated.
+ */
+public data class ReminderUpdatedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    val reminder: MessageReminder,
+) : ChatEvent()
+
+/**
+ * Triggered when a message reminder is deleted.
+ */
+public data class ReminderDeletedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    val reminder: MessageReminder,
+) : ChatEvent()
+
+/**
+ * Triggered when a message reminder is due.
+ */
+public data class NotificationReminderDueEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    val reminder: MessageReminder,
+) : ChatEvent()
 
 /**
  * Triggered when an ai indicator is updated.

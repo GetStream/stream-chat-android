@@ -16,19 +16,29 @@
 
 package io.getstream.chat.android.compose.sample.ui.component
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.isPinned
+import io.getstream.chat.android.compose.sample.feature.reminders.MessageRemindersComponentFactory
 import io.getstream.chat.android.compose.state.channels.list.ItemState
+import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.state.messages.MessageAction
+import io.getstream.result.call.enqueue
+import java.util.Date
 
-class CustomChatComponentFactory : ChatComponentFactory {
+class CustomChatComponentFactory(
+    private val messageRemindersComponentFactory: MessageRemindersComponentFactory = MessageRemindersComponentFactory(),
+) : ChatComponentFactory {
 
     @Composable
     override fun LazyItemScope.ChannelListItemContent(
@@ -52,6 +62,39 @@ class CustomChatComponentFactory : ChatComponentFactory {
             currentUser = currentUser,
             onChannelClick = onChannelClick,
             onChannelLongClick = onChannelLongClick,
+        )
+    }
+
+    @Composable
+    override fun MessageMenu(
+        modifier: Modifier,
+        message: Message,
+        messageOptions: List<MessageOptionItemState>,
+        ownCapabilities: Set<String>,
+        onMessageAction: (MessageAction) -> Unit,
+        onShowMore: () -> Unit,
+        onDismiss: () -> Unit,
+    ) {
+        messageRemindersComponentFactory.MessageMenu(
+            modifier = modifier,
+            message = message,
+            messageOptions = messageOptions,
+            ownCapabilities = ownCapabilities,
+            onMessageAction = onMessageAction,
+            onShowMore = onShowMore,
+            onDismiss = onDismiss,
+        )
+    }
+
+    private fun createReminder(messageId: String, remindAt: Date? = null) {
+        val client = ChatClient.instance()
+        client.createReminder(messageId, remindAt).enqueue(
+            onSuccess = { reminder ->
+                Log.d("X_PETAR", "Reminder created: $reminder")
+            },
+            onError = { error ->
+                Log.e("X_PETAR", "Error creating reminder: ${error.message}")
+            },
         )
     }
 }

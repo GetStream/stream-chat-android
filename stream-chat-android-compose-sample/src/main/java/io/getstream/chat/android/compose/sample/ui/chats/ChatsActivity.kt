@@ -193,6 +193,7 @@ class ChatsActivity : BaseConnectedActivity() {
                             AppBottomBarOption.CHATS -> ChatListContentMode.Channels
                             AppBottomBarOption.MENTIONS -> ChatListContentMode.Mentions
                             AppBottomBarOption.THREADS -> ChatListContentMode.Threads
+                            AppBottomBarOption.REMINDERS -> TODO()
                         }
                     },
                 )

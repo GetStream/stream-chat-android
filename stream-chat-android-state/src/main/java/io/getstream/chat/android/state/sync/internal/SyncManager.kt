@@ -55,7 +55,6 @@ import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.call.Call
 import io.getstream.result.call.CoroutineCall
-import io.getstream.result.call.enqueue
 import io.getstream.result.onSuccessSuspend
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope

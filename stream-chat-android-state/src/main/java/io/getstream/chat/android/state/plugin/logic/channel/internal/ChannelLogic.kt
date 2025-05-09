@@ -64,6 +64,7 @@ import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
+import io.getstream.chat.android.client.events.NotificationReminderDueEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.events.NotificationThreadMessageNewEvent
 import io.getstream.chat.android.client.events.PollClosedEvent
@@ -72,6 +73,9 @@ import io.getstream.chat.android.client.events.PollUpdatedEvent
 import io.getstream.chat.android.client.events.ReactionDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
+import io.getstream.chat.android.client.events.ReminderCreatedEvent
+import io.getstream.chat.android.client.events.ReminderDeletedEvent
+import io.getstream.chat.android.client.events.ReminderUpdatedEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.UnknownEvent
@@ -649,6 +653,22 @@ internal class ChannelLogic(
             is NotificationChannelMutesUpdatedEvent -> event.me.channelMutes.any { mute ->
                 mute.channel?.cid == mutableState.cid
             }.let(channelStateLogic::updateMute)
+            is ReminderCreatedEvent -> {
+                // TODO: Verify the data coming from the event (if we get a full message)
+                channelStateLogic.upsertMessage(event.reminder.message)
+            }
+            is ReminderUpdatedEvent -> {
+                // TODO: Verify the data coming from the event (if we get a full message)
+                channelStateLogic.upsertMessage(event.reminder.message)
+            }
+            is ReminderDeletedEvent -> {
+                // TODO: Verify the data coming from the event (if we get a full message)
+                val message = event.reminder.message.copy(reminder = null)
+                channelStateLogic.upsertMessage(message)
+            }
+            is NotificationReminderDueEvent -> {
+                // TODO: probably not handled
+            }
             is ConnectedEvent,
             is ConnectionErrorEvent,
             is ConnectingEvent,

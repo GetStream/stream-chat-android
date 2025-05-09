@@ -95,6 +95,12 @@ fun AppBottomBar(
                 }
             },
         )
+        AppBottomBarOptionTile(
+            icon = R.drawable.ic_bell_24,
+            text = R.string.app_bottom_bar_reminders,
+            isSelected = selectedOption == AppBottomBarOption.REMINDERS,
+            onClick = { onOptionSelected(AppBottomBarOption.REMINDERS) },
+        )
     }
 }
 
@@ -105,6 +111,7 @@ enum class AppBottomBarOption {
     CHATS,
     MENTIONS,
     THREADS,
+    REMINDERS,
 }
 
 @Composable

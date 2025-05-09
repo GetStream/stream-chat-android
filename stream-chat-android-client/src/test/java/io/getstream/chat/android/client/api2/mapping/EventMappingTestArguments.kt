@@ -58,6 +58,7 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationMarkReadEvent
 import io.getstream.chat.android.client.api2.model.dto.NotificationMarkUnreadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMutesUpdatedEventDto
+import io.getstream.chat.android.client.api2.model.dto.NotificationReminderDueEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationThreadMessageNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.PollClosedEventDto
@@ -66,6 +67,9 @@ import io.getstream.chat.android.client.api2.model.dto.PollUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
+import io.getstream.chat.android.client.api2.model.dto.ReminderCreatedEventDto
+import io.getstream.chat.android.client.api2.model.dto.ReminderDeletedEventDto
+import io.getstream.chat.android.client.api2.model.dto.ReminderUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.TypingStartEventDto
 import io.getstream.chat.android.client.api2.model.dto.TypingStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
@@ -119,6 +123,7 @@ import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
+import io.getstream.chat.android.client.events.NotificationReminderDueEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.events.NotificationThreadMessageNewEvent
 import io.getstream.chat.android.client.events.PollClosedEvent
@@ -127,6 +132,9 @@ import io.getstream.chat.android.client.events.PollUpdatedEvent
 import io.getstream.chat.android.client.events.ReactionDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
+import io.getstream.chat.android.client.events.ReminderCreatedEvent
+import io.getstream.chat.android.client.events.ReminderDeletedEvent
+import io.getstream.chat.android.client.events.ReminderUpdatedEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.UnknownEvent
@@ -190,6 +198,7 @@ internal object EventMappingTestArguments {
     private val WATCHER_COUNT = positiveRandomInt()
     private val POLL = Mother.randomDownstreamPollDto()
     private val POLL_VOTE = Mother.randomDownstreamVoteDto()
+    private val REMINDER = Mother.randomDownstreamReminderDto()
     private val AI_MESSAGE_ID = randomString()
     private val AI_STATE = randomString()
 
@@ -732,6 +741,30 @@ internal object EventMappingTestArguments {
         channel_last_message_at = DATE,
         poll = POLL,
         poll_vote = POLL_VOTE,
+    )
+
+    private val reminderCreatedDto = ReminderCreatedEventDto(
+        type = EventType.REMINDER_CREATED,
+        created_at = EXACT_DATE,
+        reminder = REMINDER,
+    )
+
+    private val reminderUpdatedDto = ReminderUpdatedEventDto(
+        type = EventType.REMINDER_UPDATED,
+        created_at = EXACT_DATE,
+        reminder = REMINDER,
+    )
+
+    private val reminderDeletedDto = ReminderDeletedEventDto(
+        type = EventType.REMINDER_DELETED,
+        created_at = EXACT_DATE,
+        reminder = REMINDER,
+    )
+
+    private val notificationReminderDueDto = NotificationReminderDueEventDto(
+        type = EventType.NOTIFICATION_REMINDER_DUE,
+        created_at = EXACT_DATE,
+        reminder = REMINDER,
     )
 
     private val aiIndicatorUpdatedDto = AIIndicatorUpdatedEventDto(
@@ -1401,6 +1434,34 @@ internal object EventMappingTestArguments {
         newAnswer = with(domainMapping) { answerCastedDto.poll_vote.toAnswerDomain() },
     )
 
+    private val reminderCreatedEvent = ReminderCreatedEvent(
+        type = reminderCreatedDto.type,
+        createdAt = reminderCreatedDto.created_at.date,
+        rawCreatedAt = reminderCreatedDto.created_at.rawDate,
+        reminder = with(domainMapping) { reminderCreatedDto.reminder.toDomain() },
+    )
+
+    private val reminderDeletedEvent = ReminderDeletedEvent(
+        type = reminderDeletedDto.type,
+        createdAt = reminderDeletedDto.created_at.date,
+        rawCreatedAt = reminderDeletedDto.created_at.rawDate,
+        reminder = with(domainMapping) { reminderDeletedDto.reminder.toDomain() },
+    )
+
+    private val reminderUpdatedEvent = ReminderUpdatedEvent(
+        type = reminderUpdatedDto.type,
+        createdAt = reminderUpdatedDto.created_at.date,
+        rawCreatedAt = reminderUpdatedDto.created_at.rawDate,
+        reminder = with(domainMapping) { reminderUpdatedDto.reminder.toDomain() },
+    )
+
+    private val notificationReminderDueEvent = NotificationReminderDueEvent(
+        type = notificationReminderDueDto.type,
+        createdAt = notificationReminderDueDto.created_at.date,
+        rawCreatedAt = notificationReminderDueDto.created_at.rawDate,
+        reminder = with(domainMapping) { notificationReminderDueDto.reminder.toDomain() },
+    )
+
     private val aiIndicatorUpdated = AIIndicatorUpdatedEvent(
         type = aiIndicatorUpdatedDto.type,
         createdAt = aiIndicatorUpdatedDto.created_at.date,
@@ -1501,6 +1562,10 @@ internal object EventMappingTestArguments {
         Arguments.of(voteChangedDto, voteChanged),
         Arguments.of(voteRemovedDto, voteRemoved),
         Arguments.of(answerCastedDto, answerCasted),
+        Arguments.of(reminderCreatedDto, reminderCreatedEvent),
+        Arguments.of(reminderUpdatedDto, reminderUpdatedEvent),
+        Arguments.of(reminderDeletedDto, reminderDeletedEvent),
+        Arguments.of(notificationReminderDueDto, notificationReminderDueEvent),
         Arguments.of(aiIndicatorUpdatedDto, aiIndicatorUpdated),
         Arguments.of(aiIndicatorStopDto, aiIndicatorStop),
         Arguments.of(ioIndicatorClearDto, aiIndicatorClear),

@@ -76,4 +76,17 @@
     <string name="app_bottom_bar_chats">Chats</string>
     <string name="app_bottom_bar_mentions">Mentions</string>
     <string name="app_bottom_bar_threads">Threads</string>
+    <string name="app_bottom_bar_reminders">Reminders</string>
+
+    <!--  Message reminders  -->
+    <string name="message_menu_add_reminder">Remind me</string>
+    <string name="message_menu_update_reminder">Update reminder</string>
+    <string name="message_menu_save_for_later">Save for later</string>
+    <string name="message_menu_remove_from_later">Remove from later</string>
+    <string name="reminders_filter_all">All</string>
+    <string name="reminders_filter_overdue">Overdue</string>
+    <string name="reminders_filter_upcoming">Upcoming</string>
+    <string name="reminders_filter_scheduled">Scheduled</string>
+    <string name="reminders_filter_saved_for_later">Saved for later</string>
+    <string name="reminders_no_results">No reminders</string>
 </resources>
