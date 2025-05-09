@@ -390,7 +390,7 @@ internal class ChannelInfoViewControllerTest {
             skipItems(2) // Skip initial states
 
             sut.events.test {
-                sut.muteChannel()
+                sut.setChannelMute(mute = true)
 
                 assertEquals(ChannelInfoViewEvent.MuteChannelError, awaitItem())
             }
@@ -419,7 +419,7 @@ internal class ChannelInfoViewControllerTest {
 
             fixture.givenMuteChannel()
 
-            sut.muteChannel()
+            sut.setChannelMute(mute = true)
 
             assertEquals(
                 ChannelInfoViewState.Content(
@@ -452,30 +452,12 @@ internal class ChannelInfoViewControllerTest {
 
             fixture.givenMuteChannel(error = Error.GenericError("Error muting channel"))
 
-            sut.muteChannel()
+            sut.setChannelMute(mute = true)
 
             sut.events.test {
                 assertEquals(ChannelInfoViewEvent.MuteChannelError, awaitItem())
             }
         }
-    }
-
-    @Test
-    fun `unmute channel permission error`() = runTest {
-        val fixture = Fixture().given(channel = Channel())
-        val sut = fixture.get(backgroundScope)
-
-        sut.state.test {
-            skipItems(2) // Skip initial states
-
-            sut.events.test {
-                sut.unmuteChannel()
-
-                assertEquals(ChannelInfoViewEvent.UnmuteChannelError, awaitItem())
-            }
-        }
-
-        launch { fixture.verifyNoMoreInteractions() }
     }
 
     @Test
@@ -498,7 +480,7 @@ internal class ChannelInfoViewControllerTest {
 
             fixture.givenUnmuteChannel()
 
-            sut.unmuteChannel()
+            sut.setChannelMute(mute = false)
 
             assertEquals(
                 ChannelInfoViewState.Content(
@@ -531,7 +513,7 @@ internal class ChannelInfoViewControllerTest {
 
             fixture.givenUnmuteChannel(error = Error.GenericError("Error unmuting channel"))
 
-            sut.unmuteChannel()
+            sut.setChannelMute(mute = false)
 
             sut.events.test {
                 assertEquals(ChannelInfoViewEvent.UnmuteChannelError, awaitItem())
@@ -558,7 +540,7 @@ internal class ChannelInfoViewControllerTest {
             val clearHistory = true
             fixture.givenHideChannel(clearHistory)
 
-            sut.hideChannel(clearHistory)
+            sut.setChannelHide(hide = true, clearHistory = clearHistory)
 
             assertEquals(
                 ChannelInfoViewState.Content(
@@ -592,7 +574,7 @@ internal class ChannelInfoViewControllerTest {
                 error = Error.GenericError("Error hiding channel"),
             )
 
-            sut.hideChannel(clearHistory)
+            sut.setChannelHide(hide = true, clearHistory = clearHistory)
 
             sut.events.test {
                 assertEquals(ChannelInfoViewEvent.HideChannelError, awaitItem())
@@ -618,7 +600,7 @@ internal class ChannelInfoViewControllerTest {
 
             fixture.givenUnhideChannel()
 
-            sut.unhideChannel()
+            sut.setChannelHide(hide = false)
 
             assertEquals(
                 ChannelInfoViewState.Content(
@@ -648,7 +630,7 @@ internal class ChannelInfoViewControllerTest {
 
             fixture.givenUnhideChannel(error = Error.GenericError("Error unhiding channel"))
 
-            sut.unhideChannel()
+            sut.setChannelHide(hide = false)
 
             sut.events.test {
                 assertEquals(ChannelInfoViewEvent.UnhideChannelError, awaitItem())

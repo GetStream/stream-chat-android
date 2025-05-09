@@ -215,14 +215,20 @@ public class ChannelInfoViewController(
     }
 
     /**
-     * Mutes the channel for the current user.
+     * Sets the mute state of the channel for the current user.
      */
-    public fun muteChannel() {
-        logger.d { "[muteChannel]" }
+    public fun setChannelMute(mute: Boolean) {
+        logger.d { "[setChannelMute] mute: $mute" }
 
         val onError: (Error) -> Unit = { error ->
-            logger.e { "[muteChannel] error: ${error.message}" }
-            _events.tryEmit(ChannelInfoViewEvent.MuteChannelError)
+            logger.e { "[setChannelMute] error: ${error.message}" }
+            _events.tryEmit(
+                if (mute) {
+                    ChannelInfoViewEvent.MuteChannelError
+                } else {
+                    ChannelInfoViewEvent.UnmuteChannelError
+                },
+            )
         }
 
         requireCapability(
@@ -230,61 +236,38 @@ public class ChannelInfoViewController(
             onError = onError,
         ) {
             scope.launch {
-                channelClient.mute().await()
-                    .onError(onError)
+                if (mute) {
+                    channelClient.mute().await()
+                } else {
+                    channelClient.unmute().await()
+                }.onError(onError)
             }
         }
     }
 
     /**
-     * Unmutes the channel for the current user.
+     * Sets the hide state of the channel.
      */
-    public fun unmuteChannel() {
-        logger.d { "[unmuteChannel]" }
+    public fun setChannelHide(hide: Boolean, clearHistory: Boolean = false) {
+        logger.d { "[setChannelHide] hide: $hide" }
 
         val onError: (Error) -> Unit = { error ->
-            logger.e { "[unmuteChannel] error: ${error.message}" }
-            _events.tryEmit(ChannelInfoViewEvent.UnmuteChannelError)
+            logger.e { "[setChannelHide] error: ${error.message}" }
+            _events.tryEmit(
+                if (hide) {
+                    ChannelInfoViewEvent.HideChannelError
+                } else {
+                    ChannelInfoViewEvent.UnhideChannelError
+                },
+            )
         }
 
-        requireCapability(
-            permission = { canMuteChannel },
-            onError = onError,
-        ) {
-            scope.launch {
-                channelClient.unmute().await()
-                    .onError(onError)
-            }
-        }
-    }
-
-    /**
-     * Hides the channel.
-     *
-     * @param clearHistory If true, the channel history will be cleared.
-     */
-    public fun hideChannel(clearHistory: Boolean) {
-        logger.d { "[hideChannel] clearHistory: $clearHistory" }
         scope.launch {
-            channelClient.hide(clearHistory).await()
-                .onError { error ->
-                    logger.e { "[hideChannel] error: ${error.message}" }
-                    _events.tryEmit(ChannelInfoViewEvent.HideChannelError)
-                }
-        }
-    }
-
-    /**
-     * Unhides the channel.
-     */
-    public fun unhideChannel() {
-        logger.d { "[unhideChannel]" }
-        scope.launch {
-            channelClient.show().await()
-                .onError { error ->
-                    logger.e { "[unhideChannel] error: ${error.message}" }
-                    _events.tryEmit(ChannelInfoViewEvent.UnhideChannelError)
-                }
+            if (hide) {
+                channelClient.hide(clearHistory).await()
+            } else {
+                channelClient.show().await()
+            }.onError(onError)
         }
     }
 
