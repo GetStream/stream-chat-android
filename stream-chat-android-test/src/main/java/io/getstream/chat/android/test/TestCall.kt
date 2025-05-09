@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.test
 
+import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.call.Call
 
@@ -37,3 +38,5 @@ public class TestCall<T : Any>(public val result: Result<T>) : Call<T> {
 public fun <T : Any> callFrom(valueProvider: () -> T): Call<T> = TestCall(Result.Success(valueProvider()))
 
 public fun <T : Any> T.asCall(): Call<T> = TestCall(Result.Success(this))
+
+public fun <T : Any> Error.asCall(): Call<T> = TestCall(Result.Failure(this))
