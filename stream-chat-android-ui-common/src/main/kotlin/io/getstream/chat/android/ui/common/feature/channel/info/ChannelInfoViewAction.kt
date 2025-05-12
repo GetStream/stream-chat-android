@@ -53,10 +53,15 @@ public sealed interface ChannelInfoViewAction {
 
     /**
      * Represents the hide channel click action.
-     *
-     * @param clearHistory Whether to clear the channel history when hiding. Defaults to false.
      */
-    public data class HideChannelClick(val clearHistory: Boolean = false) : ChannelInfoViewAction
+    public data object HideChannelClick : ChannelInfoViewAction
+
+    /**
+     * Represents the confirmation click action for hiding a channel.
+     *
+     * @param clearHistory Whether to clear the channel history when hiding.
+     */
+    public data class HideChannelConfirmationClick(val clearHistory: Boolean) : ChannelInfoViewAction
 
     /**
      * Represents the unhide channel click action.
@@ -65,13 +70,23 @@ public sealed interface ChannelInfoViewAction {
 
     /**
      * Represents the leave channel click action.
+     */
+    public data object LeaveChannelClick : ChannelInfoViewAction
+
+    /**
+     * Represents the confirmation click action for leaving a channel.
      *
      * @param quitMessage The system message to send when leaving the channel. Defaults to null.
      */
-    public data class LeaveChannelClick(val quitMessage: Message? = null) : ChannelInfoViewAction
+    public data class LeaveChannelConfirmationClick(val quitMessage: Message?) : ChannelInfoViewAction
 
     /**
      * Represents the delete channel click action.
      */
     public data object DeleteChannelClick : ChannelInfoViewAction
+
+    /**
+     * Represents the confirmation click action for deleting a channel.
+     */
+    public data object DeleteChannelConfirmationClick : ChannelInfoViewAction
 }

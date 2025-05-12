@@ -178,10 +178,13 @@ public class ChannelInfoViewController(
             is ChannelInfoViewAction.RenameChannelClick -> renameChannel(action.name)
             is ChannelInfoViewAction.MuteChannelClick -> setChannelMute(mute = true)
             is ChannelInfoViewAction.UnmuteChannelClick -> setChannelMute(mute = false)
-            is ChannelInfoViewAction.HideChannelClick -> setChannelHide(hide = true, action.clearHistory)
+            is ChannelInfoViewAction.HideChannelClick -> { _events.tryEmit(ChannelInfoViewEvent.HideChannelModal) }
+            is ChannelInfoViewAction.HideChannelConfirmationClick -> setChannelHide(hide = true, action.clearHistory)
             is ChannelInfoViewAction.UnhideChannelClick -> setChannelHide(hide = false)
-            is ChannelInfoViewAction.LeaveChannelClick -> leaveChannel(action.quitMessage)
-            is ChannelInfoViewAction.DeleteChannelClick -> deleteChannel()
+            is ChannelInfoViewAction.LeaveChannelClick -> { _events.tryEmit(ChannelInfoViewEvent.LeaveChannelModal) }
+            is ChannelInfoViewAction.LeaveChannelConfirmationClick -> leaveChannel(action.quitMessage)
+            is ChannelInfoViewAction.DeleteChannelClick -> { _events.tryEmit(ChannelInfoViewEvent.DeleteChannelModal) }
+            is ChannelInfoViewAction.DeleteChannelConfirmationClick -> deleteChannel()
         }
     }
 
@@ -270,7 +273,9 @@ public class ChannelInfoViewController(
 
         scope.launch {
             if (hide) {
-                channelClient.hide(clearHistory).await()
+                channelClient.hide(clearHistory)
+                    .await()
+                    .onSuccess { _events.tryEmit(ChannelInfoViewEvent.HideChannelSuccess) }
             } else {
                 channelClient.show().await()
             }.onError(onError)

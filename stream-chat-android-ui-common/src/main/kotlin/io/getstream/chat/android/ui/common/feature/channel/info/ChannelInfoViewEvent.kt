@@ -25,7 +25,12 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 public sealed interface ChannelInfoViewEvent {
 
     /**
-     * Represents an error event occurred while performing an action.
+     * Represents modal navigation events.
+     */
+    public sealed interface Modal : ChannelInfoViewEvent
+
+    /**
+     * Represents error events occurred while performing an action.
      */
     public sealed interface Error : ChannelInfoViewEvent
 
@@ -45,6 +50,16 @@ public sealed interface ChannelInfoViewEvent {
     public data object UnmuteChannelError : Error
 
     /**
+     * Indicates an event to present a modal for hiding a channel.
+     */
+    public data object HideChannelModal : Modal
+
+    /**
+     * Indicates the channel was successfully hidden.
+     */
+    public data object HideChannelSuccess : ChannelInfoViewEvent
+
+    /**
      * Indicates an error occurred while hiding a channel.
      */
     public data object HideChannelError : Error
@@ -55,14 +70,9 @@ public sealed interface ChannelInfoViewEvent {
     public data object UnhideChannelError : Error
 
     /**
-     * Indicates an error occurred while leaving a channel.
+     * Indicates an event to present a modal for leaving a channel.
      */
-    public data object LeaveChannelError : Error
-
-    /**
-     * Indicates an error occurred while deleting a channel.
-     */
-    public data object DeleteChannelError : Error
+    public data object LeaveChannelModal : Modal
 
     /**
      * Indicates the user successfully left the channel.
@@ -70,7 +80,22 @@ public sealed interface ChannelInfoViewEvent {
     public data object LeaveChannelSuccess : ChannelInfoViewEvent
 
     /**
+     * Indicates an error occurred while leaving a channel.
+     */
+    public data object LeaveChannelError : Error
+
+    /**
+     * Indicates an event to present a modal for deleting a channel.
+     */
+    public data object DeleteChannelModal : Modal
+
+    /**
      * Indicates the channel was successfully deleted.
      */
     public data object DeleteChannelSuccess : ChannelInfoViewEvent
+
+    /**
+     * Indicates an error occurred while deleting a channel.
+     */
+    public data object DeleteChannelError : Error
 }

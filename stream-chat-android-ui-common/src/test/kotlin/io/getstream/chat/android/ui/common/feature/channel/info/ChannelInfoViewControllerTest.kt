@@ -556,7 +556,25 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
-    fun `hide channel`() = runTest {
+    fun `hide channel click`() = runTest {
+        val fixture = Fixture().given(isHidden = false)
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2) // Skip initial states
+
+            sut.events.test {
+                sut.onViewAction(ChannelInfoViewAction.HideChannelClick)
+
+                assertEquals(ChannelInfoViewEvent.HideChannelModal, awaitItem())
+            }
+        }
+
+        launch { fixture.verifyNoMoreInteractions() }
+    }
+
+    @Test
+    fun `hide channel success`() = runTest {
         val fixture = Fixture().given(isHidden = false)
         val sut = fixture.get(backgroundScope)
 
@@ -574,7 +592,7 @@ internal class ChannelInfoViewControllerTest {
             val clearHistory = true
             fixture.givenHideChannel(clearHistory)
 
-            sut.onViewAction(ChannelInfoViewAction.HideChannelClick(clearHistory = clearHistory))
+            sut.onViewAction(ChannelInfoViewAction.HideChannelConfirmationClick(clearHistory = clearHistory))
 
             assertEquals(
                 ChannelInfoViewState.Content(
@@ -608,7 +626,7 @@ internal class ChannelInfoViewControllerTest {
                 error = Error.GenericError("Error hiding channel"),
             )
 
-            sut.onViewAction(ChannelInfoViewAction.HideChannelClick(clearHistory = clearHistory))
+            sut.onViewAction(ChannelInfoViewAction.HideChannelConfirmationClick(clearHistory = clearHistory))
 
             sut.events.test {
                 assertEquals(ChannelInfoViewEvent.HideChannelError, awaitItem())
@@ -673,6 +691,24 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
+    fun `leave channel click`() = runTest {
+        val fixture = Fixture().given(channel = Channel())
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2) // Skip initial states
+
+            sut.events.test {
+                sut.onViewAction(ChannelInfoViewAction.LeaveChannelClick)
+
+                assertEquals(ChannelInfoViewEvent.LeaveChannelModal, awaitItem())
+            }
+        }
+
+        launch { fixture.verifyNoMoreInteractions() }
+    }
+
+    @Test
     fun `leave channel permission error`() = runTest {
         val fixture = Fixture().given(channel = Channel())
         val sut = fixture.get(backgroundScope)
@@ -681,7 +717,7 @@ internal class ChannelInfoViewControllerTest {
             skipItems(2) // Skip initial states
 
             sut.events.test {
-                sut.onViewAction(ChannelInfoViewAction.LeaveChannelClick(quitMessage = null))
+                sut.onViewAction(ChannelInfoViewAction.LeaveChannelConfirmationClick(quitMessage = null))
 
                 assertEquals(ChannelInfoViewEvent.LeaveChannelError, awaitItem())
             }
@@ -699,7 +735,7 @@ internal class ChannelInfoViewControllerTest {
             skipItems(2) // Skip initial states
 
             sut.events.test {
-                sut.onViewAction(ChannelInfoViewAction.LeaveChannelClick(quitMessage = null))
+                sut.onViewAction(ChannelInfoViewAction.LeaveChannelConfirmationClick(quitMessage = null))
 
                 assertEquals(ChannelInfoViewEvent.LeaveChannelError, awaitItem())
             }
@@ -709,7 +745,7 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
-    fun `leave channel`() = runTest {
+    fun `leave channel success`() = runTest {
         val currentUser = User(id = "1")
         val fixture = Fixture()
             .given(
@@ -735,7 +771,7 @@ internal class ChannelInfoViewControllerTest {
             val quitMessage = Message(text = "${currentUser.id} left")
             fixture.givenLeaveChannel(quitMessage)
 
-            sut.onViewAction(ChannelInfoViewAction.LeaveChannelClick(quitMessage))
+            sut.onViewAction(ChannelInfoViewAction.LeaveChannelConfirmationClick(quitMessage))
 
             sut.events.test {
                 assertEquals(
@@ -776,12 +812,30 @@ internal class ChannelInfoViewControllerTest {
                 error = Error.GenericError("Error leaving channel"),
             )
 
-            sut.onViewAction(ChannelInfoViewAction.LeaveChannelClick(quitMessage))
+            sut.onViewAction(ChannelInfoViewAction.LeaveChannelConfirmationClick(quitMessage))
 
             sut.events.test {
                 assertEquals(ChannelInfoViewEvent.LeaveChannelError, awaitItem())
             }
         }
+    }
+
+    @Test
+    fun `delete channel click`() = runTest {
+        val fixture = Fixture().given(channel = Channel())
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2) // Skip initial states
+
+            sut.events.test {
+                sut.onViewAction(ChannelInfoViewAction.DeleteChannelClick)
+
+                assertEquals(ChannelInfoViewEvent.DeleteChannelModal, awaitItem())
+            }
+        }
+
+        launch { fixture.verifyNoMoreInteractions() }
     }
 
     @Test
@@ -793,7 +847,7 @@ internal class ChannelInfoViewControllerTest {
             skipItems(2) // Skip initial states
 
             sut.events.test {
-                sut.onViewAction(ChannelInfoViewAction.DeleteChannelClick)
+                sut.onViewAction(ChannelInfoViewAction.DeleteChannelConfirmationClick)
 
                 assertEquals(ChannelInfoViewEvent.DeleteChannelError, awaitItem())
             }
@@ -803,7 +857,7 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
-    fun `delete channel`() = runTest {
+    fun `delete channel success`() = runTest {
         val channel = Channel(ownCapabilities = setOf(ChannelCapabilities.DELETE_CHANNEL))
         val fixture = Fixture().given(channel = channel)
         val sut = fixture.get(backgroundScope)
@@ -821,7 +875,7 @@ internal class ChannelInfoViewControllerTest {
 
             fixture.givenDeleteChannel()
 
-            sut.onViewAction(ChannelInfoViewAction.DeleteChannelClick)
+            sut.onViewAction(ChannelInfoViewAction.DeleteChannelConfirmationClick)
 
             sut.events.test {
                 assertEquals(ChannelInfoViewEvent.DeleteChannelSuccess, awaitItem())
@@ -848,7 +902,7 @@ internal class ChannelInfoViewControllerTest {
 
             fixture.givenDeleteChannel(error = Error.GenericError("Error deleting channel"))
 
-            sut.onViewAction(ChannelInfoViewAction.DeleteChannelClick)
+            sut.onViewAction(ChannelInfoViewAction.DeleteChannelConfirmationClick)
 
             sut.events.test {
                 assertEquals(ChannelInfoViewEvent.DeleteChannelError, awaitItem())
