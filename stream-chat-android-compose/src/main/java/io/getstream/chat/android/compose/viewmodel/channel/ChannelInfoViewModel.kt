@@ -22,7 +22,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewController
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
@@ -55,51 +55,9 @@ public class ChannelInfoViewModel(
     public val events: SharedFlow<ChannelInfoViewEvent> = controller.events
 
     /**
-     * @see [ChannelInfoViewController.expandMembers]
+     * @see [ChannelInfoViewController.onViewAction]
      */
-    public fun expandMembers() {
-        controller.expandMembers()
-    }
-
-    /**
-     * @see [ChannelInfoViewController.collapseMembers]
-     */
-    public fun collapseMembers() {
-        controller.collapseMembers()
-    }
-
-    /**
-     * @see [ChannelInfoViewController.renameChannel]
-     */
-    public fun renameChannel(name: String) {
-        controller.renameChannel(name)
-    }
-
-    /**
-     * @see [ChannelInfoViewController.setChannelMute]
-     */
-    public fun setChannelMute(mute: Boolean) {
-        controller.setChannelMute(mute)
-    }
-
-    /**
-     * @see [ChannelInfoViewController.setChannelHide]
-     */
-    public fun setChannelHide(hide: Boolean, clearHistory: Boolean) {
-        controller.setChannelHide(hide, clearHistory)
-    }
-
-    /**
-     * @see [ChannelInfoViewController.leaveChannel]
-     */
-    public fun leaveChannel(quitMessage: Message?) {
-        controller.leaveChannel(quitMessage)
-    }
-
-    /**
-     * @see [ChannelInfoViewController.deleteChannel]
-     */
-    public fun deleteChannel() {
-        controller.deleteChannel()
+    public fun onViewAction(action: ChannelInfoViewAction) {
+        controller.onViewAction(action)
     }
 }

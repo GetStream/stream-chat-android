@@ -162,9 +162,28 @@ public class ChannelInfoViewController(
     }
 
     /**
-     * Expands the members list.
+     * Handles actions related to channel information view.
+     *
+     * @param action The [ChannelInfoViewAction] representing the action to be performed.
      */
-    public fun expandMembers() {
+    public fun onViewAction(
+        action: ChannelInfoViewAction,
+    ) {
+        logger.d { "[onViewAction] action: $action" }
+        when (action) {
+            is ChannelInfoViewAction.ExpandMembersClick -> expandMembers()
+            is ChannelInfoViewAction.CollapseMembersClick -> collapseMembers()
+            is ChannelInfoViewAction.RenameChannelClick -> renameChannel(action.name)
+            is ChannelInfoViewAction.MuteChannelClick -> setChannelMute(mute = true)
+            is ChannelInfoViewAction.UnmuteChannelClick -> setChannelMute(mute = false)
+            is ChannelInfoViewAction.HideChannelClick -> setChannelHide(hide = true, action.clearHistory)
+            is ChannelInfoViewAction.UnhideChannelClick -> setChannelHide(hide = false)
+            is ChannelInfoViewAction.LeaveChannelClick -> leaveChannel(action.quitMessage)
+            is ChannelInfoViewAction.DeleteChannelClick -> deleteChannel()
+        }
+    }
+
+    private fun expandMembers() {
         logger.d { "[expandMembers]" }
         _state.updateContent { content ->
             content.copy(
@@ -175,10 +194,7 @@ public class ChannelInfoViewController(
         }
     }
 
-    /**
-     * Collapses the members list.
-     */
-    public fun collapseMembers() {
+    private fun collapseMembers() {
         logger.d { "[collapseMembers]" }
         _state.updateContent { content ->
             content.copy(
@@ -189,12 +205,7 @@ public class ChannelInfoViewController(
         }
     }
 
-    /**
-     * Renames the channel with the given name.
-     *
-     * @param name The new name for the channel.
-     */
-    public fun renameChannel(name: String) {
+    private fun renameChannel(name: String) {
         logger.d { "[renameChannel] name: $name" }
 
         val onError: (Error) -> Unit = { error ->
@@ -213,10 +224,7 @@ public class ChannelInfoViewController(
         }
     }
 
-    /**
-     * Sets the mute state of the channel for the current user.
-     */
-    public fun setChannelMute(mute: Boolean) {
+    private fun setChannelMute(mute: Boolean) {
         logger.d { "[setChannelMute] mute: $mute" }
 
         val onError: (Error) -> Unit = { error ->
@@ -244,11 +252,8 @@ public class ChannelInfoViewController(
         }
     }
 
-    /**
-     * Sets the hide state of the channel.
-     */
-    public fun setChannelHide(hide: Boolean, clearHistory: Boolean = false) {
-        logger.d { "[setChannelHide] hide: $hide" }
+    private fun setChannelHide(hide: Boolean, clearHistory: Boolean = false) {
+        logger.d { "[setChannelHide] hide: $hide, clearHistory: $clearHistory" }
 
         val onError: (Error) -> Unit = { error ->
             logger.e { "[setChannelHide] error: ${error.message}" }
@@ -270,12 +275,7 @@ public class ChannelInfoViewController(
         }
     }
 
-    /**
-     * Leaves the channel with an optional quit message.
-     *
-     * @param quitMessage The system message to send when leaving the channel.
-     */
-    public fun leaveChannel(quitMessage: Message?) {
+    private fun leaveChannel(quitMessage: Message?) {
         logger.d { "[leaveChannel] quitMessage: ${quitMessage?.text}" }
 
         val onError: (Error) -> Unit = { error ->
@@ -318,10 +318,7 @@ public class ChannelInfoViewController(
         }
     }
 
-    /**
-     * Deletes the channel.
-     */
-    public fun deleteChannel() {
+    private fun deleteChannel() {
         logger.d { "[deleteChannel]" }
 
         val onError: (Error) -> Unit = { error ->

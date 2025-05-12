@@ -31,7 +31,6 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.toChannelData
 import io.getstream.chat.android.test.asCall
-import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
 import io.getstream.result.Error
@@ -204,7 +203,7 @@ internal class ChannelInfoViewControllerTest {
                 awaitItem(),
             )
 
-            sut.expandMembers()
+            sut.onViewAction(ChannelInfoViewAction.ExpandMembersClick)
 
             assertEquals(
                 ChannelInfoViewState.Content(
@@ -223,7 +222,7 @@ internal class ChannelInfoViewControllerTest {
                 awaitItem(),
             )
 
-            sut.collapseMembers()
+            sut.onViewAction(ChannelInfoViewAction.CollapseMembersClick)
 
             assertEquals(
                 ChannelInfoViewState.Content(
@@ -311,7 +310,7 @@ internal class ChannelInfoViewControllerTest {
             skipItems(2) // Skip initial states
 
             sut.events.test {
-                sut.renameChannel(name = "newName")
+                sut.onViewAction(ChannelInfoViewAction.RenameChannelClick(name = "newName"))
 
                 assertEquals(ChannelInfoViewEvent.RenameChannelError, awaitItem())
             }
@@ -345,7 +344,7 @@ internal class ChannelInfoViewControllerTest {
             val newName = "newName"
             fixture.givenRenameChannel(newName)
 
-            sut.renameChannel(newName)
+            sut.onViewAction(ChannelInfoViewAction.RenameChannelClick(newName))
 
             assertEquals(
                 ChannelInfoViewState.Content(
@@ -373,7 +372,7 @@ internal class ChannelInfoViewControllerTest {
                 error = Error.GenericError("Error updating channel name"),
             )
 
-            sut.renameChannel(newName)
+            sut.onViewAction(ChannelInfoViewAction.RenameChannelClick(newName))
 
             sut.events.test {
                 assertEquals(ChannelInfoViewEvent.RenameChannelError, awaitItem())
@@ -390,7 +389,7 @@ internal class ChannelInfoViewControllerTest {
             skipItems(2) // Skip initial states
 
             sut.events.test {
-                sut.setChannelMute(mute = true)
+                sut.onViewAction(ChannelInfoViewAction.MuteChannelClick)
 
                 assertEquals(ChannelInfoViewEvent.MuteChannelError, awaitItem())
             }
@@ -419,7 +418,7 @@ internal class ChannelInfoViewControllerTest {
 
             fixture.givenMuteChannel()
 
-            sut.setChannelMute(mute = true)
+            sut.onViewAction(ChannelInfoViewAction.MuteChannelClick)
 
             assertEquals(
                 ChannelInfoViewState.Content(
@@ -452,7 +451,7 @@ internal class ChannelInfoViewControllerTest {
 
             fixture.givenMuteChannel(error = Error.GenericError("Error muting channel"))
 
-            sut.setChannelMute(mute = true)
+            sut.onViewAction(ChannelInfoViewAction.MuteChannelClick)
 
             sut.events.test {
                 assertEquals(ChannelInfoViewEvent.MuteChannelError, awaitItem())
@@ -480,7 +479,7 @@ internal class ChannelInfoViewControllerTest {
 
             fixture.givenUnmuteChannel()
 
-            sut.setChannelMute(mute = false)
+            sut.onViewAction(ChannelInfoViewAction.UnmuteChannelClick)
 
             assertEquals(
                 ChannelInfoViewState.Content(
@@ -513,7 +512,7 @@ internal class ChannelInfoViewControllerTest {
 
             fixture.givenUnmuteChannel(error = Error.GenericError("Error unmuting channel"))
 
-            sut.setChannelMute(mute = false)
+            sut.onViewAction(ChannelInfoViewAction.UnmuteChannelClick)
 
             sut.events.test {
                 assertEquals(ChannelInfoViewEvent.UnmuteChannelError, awaitItem())
@@ -540,7 +539,7 @@ internal class ChannelInfoViewControllerTest {
             val clearHistory = true
             fixture.givenHideChannel(clearHistory)
 
-            sut.setChannelHide(hide = true, clearHistory = clearHistory)
+            sut.onViewAction(ChannelInfoViewAction.HideChannelClick(clearHistory = clearHistory))
 
             assertEquals(
                 ChannelInfoViewState.Content(
@@ -574,7 +573,7 @@ internal class ChannelInfoViewControllerTest {
                 error = Error.GenericError("Error hiding channel"),
             )
 
-            sut.setChannelHide(hide = true, clearHistory = clearHistory)
+            sut.onViewAction(ChannelInfoViewAction.HideChannelClick(clearHistory = clearHistory))
 
             sut.events.test {
                 assertEquals(ChannelInfoViewEvent.HideChannelError, awaitItem())
@@ -600,7 +599,7 @@ internal class ChannelInfoViewControllerTest {
 
             fixture.givenUnhideChannel()
 
-            sut.setChannelHide(hide = false)
+            sut.onViewAction(ChannelInfoViewAction.UnhideChannelClick)
 
             assertEquals(
                 ChannelInfoViewState.Content(
@@ -630,7 +629,7 @@ internal class ChannelInfoViewControllerTest {
 
             fixture.givenUnhideChannel(error = Error.GenericError("Error unhiding channel"))
 
-            sut.setChannelHide(hide = false)
+            sut.onViewAction(ChannelInfoViewAction.UnhideChannelClick)
 
             sut.events.test {
                 assertEquals(ChannelInfoViewEvent.UnhideChannelError, awaitItem())
@@ -647,7 +646,7 @@ internal class ChannelInfoViewControllerTest {
             skipItems(2) // Skip initial states
 
             sut.events.test {
-                sut.leaveChannel(quitMessage = null)
+                sut.onViewAction(ChannelInfoViewAction.LeaveChannelClick(quitMessage = null))
 
                 assertEquals(ChannelInfoViewEvent.LeaveChannelError, awaitItem())
             }
@@ -665,7 +664,7 @@ internal class ChannelInfoViewControllerTest {
             skipItems(2) // Skip initial states
 
             sut.events.test {
-                sut.leaveChannel(quitMessage = null)
+                sut.onViewAction(ChannelInfoViewAction.LeaveChannelClick(quitMessage = null))
 
                 assertEquals(ChannelInfoViewEvent.LeaveChannelError, awaitItem())
             }
@@ -701,7 +700,7 @@ internal class ChannelInfoViewControllerTest {
             val quitMessage = Message(text = "${currentUser.id} left")
             fixture.givenLeaveChannel(quitMessage)
 
-            sut.leaveChannel(quitMessage)
+            sut.onViewAction(ChannelInfoViewAction.LeaveChannelClick(quitMessage))
 
             sut.events.test {
                 assertEquals(
@@ -742,7 +741,7 @@ internal class ChannelInfoViewControllerTest {
                 error = Error.GenericError("Error leaving channel"),
             )
 
-            sut.leaveChannel(quitMessage)
+            sut.onViewAction(ChannelInfoViewAction.LeaveChannelClick(quitMessage))
 
             sut.events.test {
                 assertEquals(ChannelInfoViewEvent.LeaveChannelError, awaitItem())
@@ -759,7 +758,7 @@ internal class ChannelInfoViewControllerTest {
             skipItems(2) // Skip initial states
 
             sut.events.test {
-                sut.deleteChannel()
+                sut.onViewAction(ChannelInfoViewAction.DeleteChannelClick)
 
                 assertEquals(ChannelInfoViewEvent.DeleteChannelError, awaitItem())
             }
@@ -787,7 +786,7 @@ internal class ChannelInfoViewControllerTest {
 
             fixture.givenDeleteChannel()
 
-            sut.deleteChannel()
+            sut.onViewAction(ChannelInfoViewAction.DeleteChannelClick)
 
             sut.events.test {
                 assertEquals(ChannelInfoViewEvent.DeleteChannelSuccess, awaitItem())
@@ -814,7 +813,7 @@ internal class ChannelInfoViewControllerTest {
 
             fixture.givenDeleteChannel(error = Error.GenericError("Error deleting channel"))
 
-            sut.deleteChannel()
+            sut.onViewAction(ChannelInfoViewAction.DeleteChannelClick)
 
             sut.events.test {
                 assertEquals(ChannelInfoViewEvent.DeleteChannelError, awaitItem())

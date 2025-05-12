@@ -19,10 +19,7 @@ package io.getstream.chat.android.ui.common.feature.channel.info
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
 /**
- * Represents events related to channel information actions, such as renaming, muting, hiding, or deleting a channel.
- *
- * This sealed interface defines various event types that can occur during channel operations,
- * including success and error events for specific actions.
+ * Represents side-effect events related to channel information actions.
  */
 @ExperimentalStreamChatApi
 public sealed interface ChannelInfoViewEvent {
