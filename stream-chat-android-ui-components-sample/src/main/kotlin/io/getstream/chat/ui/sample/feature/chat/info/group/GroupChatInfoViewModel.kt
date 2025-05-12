@@ -110,10 +110,13 @@ class GroupChatInfoViewModel(
     }
 
     private fun handleMemberClick(member: Member) {
-        if (member.getUserId() != clientState.user.value?.id) {
-            val currentState = _state.value!!
-            _events.value = Event(UiEvent.ShowMemberOptions(member, currentState.channelName))
+        channelClient.removeMembers(listOf(member.user.id), Message(text = "User ${member.user.name} was removed")).enqueue { result ->
+            println("JcLog: [removeMember] result: $result")
         }
+        // if (member.getUserId() != clientState.user.value?.id) {
+        //     val currentState = _state.value!!
+        //     _events.value = Event(UiEvent.ShowMemberOptions(member, currentState.channelName))
+        // }
     }
 
     private fun changeGroupName(name: String) {
