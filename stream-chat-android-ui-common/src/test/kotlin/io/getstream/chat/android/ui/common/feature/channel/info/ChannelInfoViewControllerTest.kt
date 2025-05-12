@@ -58,6 +58,41 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
+    fun `single-member channel content`() = runTest {
+        val currentUser = User(id = "1")
+        val channel = Channel(
+            id = "!members-1",
+            createdBy = currentUser,
+            members = listOf(Member(user = currentUser)),
+        )
+        val sut = Fixture()
+            .given(
+                currentUser = currentUser,
+                channel = channel,
+            )
+            .get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            assertEquals(
+                ChannelInfoViewState.Content(
+                    members = ExpandableList(
+                        items = listOf(
+                            ChannelInfoViewState.Content.Member(
+                                user = currentUser,
+                                role = ChannelInfoViewState.Content.Role.Owner,
+                            ),
+                        ),
+                        minimumVisibleItems = 5,
+                    ),
+                ),
+                awaitItem(),
+            )
+        }
+    }
+
+    @Test
     fun `direct channel content`() = runTest {
         val currentUser = User(id = "1")
         val otherUser = User(id = "2")

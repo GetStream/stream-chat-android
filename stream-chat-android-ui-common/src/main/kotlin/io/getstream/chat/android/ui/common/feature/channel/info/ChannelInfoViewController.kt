@@ -128,7 +128,9 @@ public class ChannelInfoViewController(
         }
 
         val contentMembers = members
-            .run { takeIf { channelData.isGroupChannel } ?: filterNotCurrentUser() }
+            .run {
+                takeIf { members.size == 1 || channelData.isGroupChannel } ?: filterNotCurrentUser()
+            }
             .map { member -> member.toContentMember(channelData.createdBy) }
 
         _state.update { currentState ->
