@@ -19,6 +19,10 @@ package io.getstream.chat.android.state.plugin.listener.internal
 import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.plugin.listeners.DraftMessageListener
 import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.models.DraftsSort
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.QueryDraftsResult
+import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.result.Result
 
@@ -92,6 +96,30 @@ internal class DraftMessageListenerState(
     ) {
         result.onSuccess { draftMessages ->
             draftMessages.forEach { draftMessage ->
+                mutableGlobalState.updateDraftMessage(draftMessage)
+            }
+        }
+    }
+
+    /**
+     * Updates the [MutableGlobalState] with the list of [DraftMessage] when the request to query draft messages
+     * is successful.
+     *
+     * @param result [Result] response from the original request.
+     * @param filter The filter object used to query draft messages.
+     * @param limit The limit of the query.
+     * @param next The next page token of the query.
+     * @param sort The sorter used to query draft messages.
+     */
+    override suspend fun onQueryDraftMessagesResult(
+        result: Result<QueryDraftsResult>,
+        filter: FilterObject,
+        limit: Int,
+        next: String?,
+        sort: QuerySorter<DraftsSort>,
+    ) {
+        result.onSuccess {
+            it.drafts.forEach { draftMessage ->
                 mutableGlobalState.updateDraftMessage(draftMessage)
             }
         }

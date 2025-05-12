@@ -142,6 +142,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public static synthetic fun queryChannel$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;ZILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun queryChannels (Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;)Lio/getstream/result/call/Call;
 	public final fun queryDraftMessages (Ljava/lang/Integer;Ljava/lang/Integer;)Lio/getstream/result/call/Call;
+	public final fun queryDrafts (Lio/getstream/chat/android/models/FilterObject;ILjava/lang/String;Lio/getstream/chat/android/models/querysort/QuerySorter;)Lio/getstream/result/call/Call;
+	public static synthetic fun queryDrafts$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/FilterObject;ILjava/lang/String;Lio/getstream/chat/android/models/querysort/QuerySorter;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun queryMembers (Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/util/List;)Lio/getstream/result/call/Call;
 	public static synthetic fun queryMembers$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun queryThreads (Lio/getstream/chat/android/client/api/models/QueryThreadsRequest;)Lio/getstream/result/call/Call;
@@ -2866,6 +2868,7 @@ public abstract interface class io/getstream/chat/android/client/plugin/Plugin :
 	public abstract fun onQueryChannelsPrecondition (Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onQueryChannelsRequest (Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onQueryChannelsResult (Lio/getstream/result/Result;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onQueryDraftMessagesResult (Lio/getstream/result/Result;Lio/getstream/chat/android/models/FilterObject;ILjava/lang/String;Lio/getstream/chat/android/models/querysort/QuerySorter;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onQueryDraftMessagesResult (Lio/getstream/result/Result;Ljava/lang/Integer;Ljava/lang/Integer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onQueryMembersResult (Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onQueryThreadsPrecondition (Lio/getstream/chat/android/client/api/models/QueryThreadsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -2927,6 +2930,7 @@ public final class io/getstream/chat/android/client/plugin/Plugin$DefaultImpls {
 	public static fun onQueryChannelsPrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onQueryChannelsRequest (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onQueryChannelsResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/result/Result;Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onQueryDraftMessagesResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/result/Result;Lio/getstream/chat/android/models/FilterObject;ILjava/lang/String;Lio/getstream/chat/android/models/querysort/QuerySorter;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onQueryDraftMessagesResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/result/Result;Ljava/lang/Integer;Ljava/lang/Integer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onQueryMembersResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onQueryThreadsPrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/client/api/models/QueryThreadsRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -2982,6 +2986,7 @@ public abstract interface class io/getstream/chat/android/client/plugin/listener
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/DraftMessageListener {
 	public abstract fun onCreateDraftMessageResult (Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/DraftMessage;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onDeleteDraftMessagesResult (Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/DraftMessage;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onQueryDraftMessagesResult (Lio/getstream/result/Result;Lio/getstream/chat/android/models/FilterObject;ILjava/lang/String;Lio/getstream/chat/android/models/querysort/QuerySorter;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onQueryDraftMessagesResult (Lio/getstream/result/Result;Ljava/lang/Integer;Ljava/lang/Integer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 

@@ -17,6 +17,10 @@
 package io.getstream.chat.android.client.plugin.listeners
 
 import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.models.DraftsSort
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.QueryDraftsResult
+import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.result.Result
 
 /**
@@ -61,9 +65,30 @@ public interface DraftMessageListener {
      * @param offset The offset of the query.
      * @param limit The limit of the query.
      */
+    @Deprecated(
+        message = "The offset param in the onQueryDraftMessagesResult method is not used. Use the " +
+            "onQueryDraftMessagesResult(Result, FilterObject, Int, String?, QuerySorter) method instead.",
+    )
     public suspend fun onQueryDraftMessagesResult(
         result: Result<List<DraftMessage>>,
         offset: Int?,
         limit: Int?,
+    )
+
+    /**
+     * Side effect to be invoked when the original request is completed with a response.
+     *
+     * @param result [Result] response from the original request.
+     * @param filter The filter object used in the query.
+     * @param limit The limit of the query.
+     * @param next The next page token.
+     * @param sort The sorter used in the query.
+     */
+    public suspend fun onQueryDraftMessagesResult(
+        result: Result<QueryDraftsResult>,
+        filter: FilterObject,
+        limit: Int,
+        next: String?,
+        sort: QuerySorter<DraftsSort>,
     )
 }
