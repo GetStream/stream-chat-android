@@ -34,6 +34,7 @@ import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.models.DraftsSort
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.GuestUser
@@ -44,6 +45,7 @@ import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.QueryDraftsResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
@@ -192,6 +194,14 @@ internal interface ChatApi {
         offset: Int?,
         limit: Int?,
     ): Call<List<DraftMessage>>
+
+    @CheckResult
+    fun queryDrafts(
+        filter: FilterObject,
+        limit: Int?,
+        next: String?,
+        sort: QuerySorter<DraftsSort>,
+    ): Call<QueryDraftsResult>
 
     @CheckResult
     fun muteChannel(

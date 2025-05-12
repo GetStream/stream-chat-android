@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryDraftsRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
@@ -73,6 +74,12 @@ internal interface MessageApi {
     fun queryDraftMessages(
         @Body request: QueryDraftMessagesRequest,
     ): RetrofitCall<QueryDraftMessagesResponse>
+
+    /**
+     * Queries draft messages for the current user.
+     */
+    @POST("/drafts/query")
+    fun queryDrafts(@Body body: QueryDraftsRequest): RetrofitCall<QueryDraftMessagesResponse>
 
     @GET("/messages/{id}")
     fun getMessage(@Path("id") messageId: String): RetrofitCall<MessageResponse>
