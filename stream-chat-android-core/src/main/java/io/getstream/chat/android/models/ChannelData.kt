@@ -120,7 +120,6 @@ public data class ChannelData(
         watchers: List<User>,
         watcherCount: Int,
         insideSearch: Boolean,
-        channelLastMessageAt: Date?,
     ): Channel {
         return Channel(
             type = type,
@@ -133,7 +132,6 @@ public data class ChannelData(
             deletedAt = deletedAt,
             extraData = extraData,
             cooldown = cooldown,
-            channelLastMessageAt = channelLastMessageAt,
             createdBy = createdBy,
             messages = messages,
             members = members,
