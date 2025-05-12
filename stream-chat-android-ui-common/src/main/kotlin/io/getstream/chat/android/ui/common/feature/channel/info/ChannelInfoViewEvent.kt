@@ -23,30 +23,46 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
  */
 @ExperimentalStreamChatApi
 public sealed interface ChannelInfoViewEvent {
+
+    /**
+     * Represents an error event occurred while performing an action.
+     */
+    public sealed interface Error : ChannelInfoViewEvent
+
     /**
      * Indicates an error occurred while renaming a channel.
      */
-    public data object RenameChannelError : ChannelInfoViewEvent
+    public data object RenameChannelError : Error
 
     /**
      * Indicates an error occurred while muting a channel.
      */
-    public data object MuteChannelError : ChannelInfoViewEvent
+    public data object MuteChannelError : Error
 
     /**
      * Indicates an error occurred while unmuting a channel.
      */
-    public data object UnmuteChannelError : ChannelInfoViewEvent
+    public data object UnmuteChannelError : Error
 
     /**
      * Indicates an error occurred while hiding a channel.
      */
-    public data object HideChannelError : ChannelInfoViewEvent
+    public data object HideChannelError : Error
 
     /**
      * Indicates an error occurred while unhiding a channel.
      */
-    public data object UnhideChannelError : ChannelInfoViewEvent
+    public data object UnhideChannelError : Error
+
+    /**
+     * Indicates an error occurred while leaving a channel.
+     */
+    public data object LeaveChannelError : Error
+
+    /**
+     * Indicates an error occurred while deleting a channel.
+     */
+    public data object DeleteChannelError : Error
 
     /**
      * Indicates the user successfully left the channel.
@@ -54,17 +70,7 @@ public sealed interface ChannelInfoViewEvent {
     public data object LeaveChannelSuccess : ChannelInfoViewEvent
 
     /**
-     * Indicates an error occurred while leaving a channel.
-     */
-    public data object LeaveChannelError : ChannelInfoViewEvent
-
-    /**
      * Indicates the channel was successfully deleted.
      */
     public data object DeleteChannelSuccess : ChannelInfoViewEvent
-
-    /**
-     * Indicates an error occurred while deleting a channel.
-     */
-    public data object DeleteChannelError : ChannelInfoViewEvent
 }
