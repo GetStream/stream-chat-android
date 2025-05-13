@@ -18,6 +18,7 @@
 
 package io.getstream.chat.android.compose.viewmodel.channel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
@@ -36,9 +37,10 @@ import kotlinx.coroutines.flow.StateFlow
  */
 @ExperimentalStreamChatApi
 public class ChannelInfoViewModel(
+    context: Context,
     private val cid: String,
     controllerProvider: ViewModel.() -> ChannelInfoViewController = {
-        ChannelInfoViewController(cid = cid, scope = viewModelScope)
+        ChannelInfoViewController(context = context, cid = cid, scope = viewModelScope)
     },
 ) : ViewModel() {
 

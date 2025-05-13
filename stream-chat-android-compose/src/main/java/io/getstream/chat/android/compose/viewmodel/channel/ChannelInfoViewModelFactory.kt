@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.viewmodel.channel
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListHeaderViewModel
@@ -24,14 +25,18 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 /**
  * Factory for creating instances of [ChannelInfoViewModel].
  *
+ * @param context The application context.
  * @param cid The full channel identifier (Ex. "messaging:123").
  */
 @ExperimentalStreamChatApi
-public class ChannelInfoViewModelFactory(private val cid: String) : ViewModelProvider.Factory {
+public class ChannelInfoViewModelFactory(
+    private val context: Context,
+    private val cid: String,
+) : ViewModelProvider.Factory {
 
     private val factories: Map<Class<out ViewModel>, () -> ViewModel> = mapOf(
         MessageListHeaderViewModel::class.java to { MessageListHeaderViewModel(cid) },
-        ChannelInfoViewModel::class.java to { ChannelInfoViewModel(cid) },
+        ChannelInfoViewModel::class.java to { ChannelInfoViewModel(context, cid) },
     )
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
