@@ -68,45 +68,22 @@ public fun DirectChannelInfoScreen(
     viewModelKey: String? = null,
     onNavigationIconClick: () -> Unit = {},
     onPinnedMessagesClick: () -> Unit = {},
-    navigationIcon: @Composable () -> Unit = {
-        DefaultChannelInfoScreenNavigationIcon(
-            onClick = onNavigationIconClick,
+    topBar: @Composable () -> Unit = {
+        DirectChannelInfoTopBar(
+            onNavigationIconClick = onNavigationIconClick,
         )
     },
 ) {
     val viewModel = viewModel<ChannelInfoViewModel>(key = viewModelKey, factory = viewModelFactory)
-
-    DirectChannelInfoScreen(
-        viewModel = viewModel,
-        modifier = modifier,
-        onNavigationIconClick = onNavigationIconClick,
-        onPinnedMessagesClick = onPinnedMessagesClick,
-        navigationIcon = navigationIcon,
-    )
-}
-
-@ExperimentalStreamChatApi
-@Composable
-public fun DirectChannelInfoScreen(
-    viewModel: ChannelInfoViewModel,
-    modifier: Modifier = Modifier,
-    onNavigationIconClick: () -> Unit = {},
-    onPinnedMessagesClick: () -> Unit = {},
-    navigationIcon: @Composable () -> Unit = {
-        DefaultChannelInfoScreenNavigationIcon(
-            onClick = onNavigationIconClick,
-        )
-    },
-) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     DirectChannelInfoContent(
         state = state,
         modifier = modifier,
         onNavigationIconClick = onNavigationIconClick,
-        onViewAction = viewModel::onViewAction,
         onPinnedMessagesClick = onPinnedMessagesClick,
-        navigationIcon = navigationIcon,
+        onViewAction = viewModel::onViewAction,
+        topBar = topBar,
     )
 
     var modal by remember { mutableStateOf<ChannelInfoViewEvent.Modal?>(null) }
@@ -127,33 +104,39 @@ public fun DirectChannelInfoScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DirectChannelInfoTopBar(
+    onNavigationIconClick: () -> Unit,
+) {
+    TopAppBar(
+        title = {},
+        navigationIcon = {
+            DefaultChannelInfoScreenNavigationIcon(
+                onClick = onNavigationIconClick,
+            )
+        },
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = ChatTheme.colors.barsBackground),
+    )
+}
+
 @Suppress("LongMethod")
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 private fun DirectChannelInfoContent(
     state: ChannelInfoViewState,
     modifier: Modifier = Modifier,
     onNavigationIconClick: () -> Unit = {},
-    onViewAction: (action: ChannelInfoViewAction) -> Unit = {},
     onPinnedMessagesClick: () -> Unit = {},
-    navigationIcon: @Composable () -> Unit = {
-        DefaultChannelInfoScreenNavigationIcon(
-            onClick = onNavigationIconClick,
+    onViewAction: (action: ChannelInfoViewAction) -> Unit = {},
+    topBar: @Composable () -> Unit = {
+        DirectChannelInfoTopBar(
+            onNavigationIconClick = onNavigationIconClick,
         )
     },
 ) {
     Scaffold(
         modifier = modifier,
-        topBar = {
-            TopAppBar(
-                title = {},
-                navigationIcon = navigationIcon,
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = ChatTheme.colors.barsBackground,
-                    scrolledContainerColor = ChatTheme.colors.barsBackground,
-                ),
-            )
-        },
+        topBar = topBar,
         containerColor = ChatTheme.colors.barsBackground,
     ) { padding ->
         val isLoading = state is ChannelInfoViewState.Loading

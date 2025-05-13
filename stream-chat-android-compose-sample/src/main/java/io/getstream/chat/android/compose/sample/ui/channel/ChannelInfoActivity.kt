@@ -24,16 +24,16 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.lifecycleScope
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
 import io.getstream.chat.android.compose.sample.ui.pinned.PinnedMessagesActivity
+import io.getstream.chat.android.compose.ui.channel.info.DirectChannelInfoScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
+import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
+import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 /**
  * Activity showing information about a 1-to-1 channel (chat).
@@ -42,11 +42,6 @@ class ChannelInfoActivity : BaseConnectedActivity() {
 
     companion object {
         private const val KEY_CHANNEL_ID = "channelId"
-
-        /**
-         * Intent key notifying the caller that the channel was deleted.
-         */
-        const val KEY_CHANNEL_DELETED = "channelDeleted"
 
         /**
          * Creates an [Intent] for starting the [ChannelInfoActivity].
@@ -61,36 +56,39 @@ class ChannelInfoActivity : BaseConnectedActivity() {
 
     private val viewModelFactory by lazy {
         ChannelInfoViewModelFactory(
+            context = applicationContext,
             cid = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)),
         )
     }
 
-    private val viewModel by viewModels<ChannelInfoViewModel>(factoryProducer = { viewModelFactory })
+    private val viewModel by viewModels<ChannelInfoViewModel> { viewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             ChatTheme {
-                val state by viewModel.state.collectAsState()
-                ChannelInfoScreen(
+                DirectChannelInfoScreen(
                     modifier = Modifier.statusBarsPadding(),
-                    state = state,
+                    viewModelFactory = viewModelFactory,
                     onNavigationIconClick = ::finish,
                     onPinnedMessagesClick = ::openPinnedMessages,
-                    onConfirmDelete = viewModel::onDeleteChannel,
                 )
             }
             LaunchedEffect(Unit) {
-                lifecycleScope.launch {
-                    viewModel.error.collectLatest(::showError)
-                }
-            }
-            LaunchedEffect(Unit) {
-                lifecycleScope.launch {
-                    viewModel.channelDeleted.collectLatest {
-                        val data = Intent().putExtra(KEY_CHANNEL_DELETED, true)
-                        setResult(RESULT_OK, data)
-                        finish()
+                viewModel.events.collectLatest { event ->
+                    when (event) {
+                        is ChannelInfoViewEvent.Error ->
+                            showError(event)
+
+                        is ChannelInfoViewEvent.HideChannelSuccess,
+                        is ChannelInfoViewEvent.LeaveChannelSuccess,
+                        is ChannelInfoViewEvent.DeleteChannelSuccess,
+                            -> {
+                            setResult(RESULT_OK)
+                            finish()
+                        }
+
+                        else -> Unit
                     }
                 }
             }
@@ -105,11 +103,21 @@ class ChannelInfoActivity : BaseConnectedActivity() {
         startActivity(intent)
     }
 
-    private fun showError(error: ChannelInfoViewModel.ErrorEvent) {
+    private fun showError(error: ChannelInfoViewEvent.Error) {
         val message = when (error) {
-            ChannelInfoViewModel.ErrorEvent.DeleteError -> R.string.channel_info_error_load_channel_details
-            ChannelInfoViewModel.ErrorEvent.LoadingError -> R.string.channel_info_error_delete_channel
+            ChannelInfoViewEvent.RenameChannelError -> R.string.stream_ui_channel_info_rename_group_error
+
+            ChannelInfoViewEvent.MuteChannelError,
+            ChannelInfoViewEvent.UnmuteChannelError,
+                -> R.string.stream_ui_channel_info_option_mute_conversation_error
+
+            ChannelInfoViewEvent.HideChannelError,
+            ChannelInfoViewEvent.UnhideChannelError,
+                -> R.string.stream_ui_channel_info_option_hide_conversation_error
+
+            ChannelInfoViewEvent.LeaveChannelError -> R.string.stream_ui_channel_info_option_leave_conversation_error
+            ChannelInfoViewEvent.DeleteChannelError -> R.string.stream_ui_channel_info_option_delete_conversation_error
         }
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }
 }

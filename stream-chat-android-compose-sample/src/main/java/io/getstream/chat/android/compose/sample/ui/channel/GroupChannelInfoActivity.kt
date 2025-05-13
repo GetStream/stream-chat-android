@@ -19,15 +19,21 @@ package io.getstream.chat.android.compose.sample.ui.channel
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
 import io.getstream.chat.android.compose.sample.ui.pinned.PinnedMessagesActivity
+import io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
+import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
+import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
+import kotlinx.coroutines.flow.collectLatest
 
 /**
  * Activity showing information about a group channel (chat).
@@ -49,23 +55,41 @@ class GroupChannelInfoActivity : BaseConnectedActivity() {
     }
 
     private val viewModelFactory by lazy {
-        GroupChannelInfoViewModelFactory(
+        ChannelInfoViewModelFactory(
+            context = applicationContext,
             cid = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)),
         )
     }
-    private val viewModel by viewModels<GroupChannelInfoViewModel>(factoryProducer = { viewModelFactory })
+    private val viewModel by viewModels<ChannelInfoViewModel> { viewModelFactory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             ChatTheme {
-                val state by viewModel.state.collectAsState()
                 GroupChannelInfoScreen(
                     modifier = Modifier.statusBarsPadding(),
-                    state = state,
+                    viewModelFactory = viewModelFactory,
                     onNavigationIconClick = ::finish,
                     onPinnedMessagesClick = ::openPinnedMessages,
                 )
+            }
+            LaunchedEffect(Unit) {
+                viewModel.events.collectLatest { event ->
+                    when (event) {
+                        is ChannelInfoViewEvent.Error ->
+                            showError(event)
+
+                        is ChannelInfoViewEvent.HideChannelSuccess,
+                        is ChannelInfoViewEvent.LeaveChannelSuccess,
+                        is ChannelInfoViewEvent.DeleteChannelSuccess,
+                            -> {
+                            setResult(RESULT_OK)
+                            finish()
+                        }
+
+                        else -> Unit
+                    }
+                }
             }
         }
     }
@@ -76,5 +100,23 @@ class GroupChannelInfoActivity : BaseConnectedActivity() {
             channelId = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)),
         )
         startActivity(intent)
+    }
+
+    private fun showError(error: ChannelInfoViewEvent.Error) {
+        val message = when (error) {
+            ChannelInfoViewEvent.RenameChannelError -> R.string.stream_ui_channel_info_rename_group_error
+
+            ChannelInfoViewEvent.MuteChannelError,
+            ChannelInfoViewEvent.UnmuteChannelError,
+                -> R.string.stream_ui_channel_info_option_mute_group_error
+
+            ChannelInfoViewEvent.HideChannelError,
+            ChannelInfoViewEvent.UnhideChannelError,
+                -> R.string.stream_ui_channel_info_option_hide_group_error
+
+            ChannelInfoViewEvent.LeaveChannelError -> R.string.stream_ui_channel_info_option_leave_group_error
+            ChannelInfoViewEvent.DeleteChannelError -> R.string.stream_ui_channel_info_option_delete_group_error
+        }
+        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }
 }

@@ -120,8 +120,7 @@ class MessagesActivity : BaseConnectedActivity() {
     private val composerViewModel by viewModels<MessageComposerViewModel>(factoryProducer = { factory })
 
     private val channelInfoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        val channelDeleted = it.data?.getBooleanExtra(ChannelInfoActivity.KEY_CHANNEL_DELETED, false) == true
-        if (it.resultCode == RESULT_OK && channelDeleted) {
+        if (it.resultCode == RESULT_OK) {
             finish()
         }
     }
@@ -199,13 +198,12 @@ class MessagesActivity : BaseConnectedActivity() {
     }
 
     private fun openChannelInfo(channel: Channel) {
-        if (channel.memberCount > 2 || !channel.isAnonymousChannel()) {
-            val intent = GroupChannelInfoActivity.createIntent(this, channelId = channel.cid)
-            startActivity(intent)
+        val intent = if (channel.memberCount > 2 || !channel.isAnonymousChannel()) {
+            GroupChannelInfoActivity.createIntent(this, channelId = channel.cid)
         } else {
-            val intent = ChannelInfoActivity.createIntent(this, channelId = channel.cid)
-            channelInfoLauncher.launch(intent)
+            ChannelInfoActivity.createIntent(this, channelId = channel.cid)
         }
+        channelInfoLauncher.launch(intent)
     }
 
     @Composable
@@ -426,7 +424,6 @@ class MessagesActivity : BaseConnectedActivity() {
     }
 
     companion object {
-        private const val TAG = "MessagesActivity"
         private const val KEY_CHANNEL_ID = "channelId"
         private const val KEY_MESSAGE_ID = "messageId"
         private const val KEY_PARENT_MESSAGE_ID = "parentMessageId"

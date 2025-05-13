@@ -84,14 +84,12 @@ public fun GroupChannelInfoScreen(
     modifier: Modifier = Modifier,
     viewModelKey: String? = null,
     onNavigationIconClick: () -> Unit = {},
-    onActionIconClick: () -> Unit = {},
     onPinnedMessagesClick: () -> Unit = {},
     topBar: @Composable (elevation: Dp) -> Unit = { elevation ->
         GroupChannelInfoTopBar(
             viewModelFactory = viewModelFactory,
             elevation = elevation,
             onNavigationIconClick = onNavigationIconClick,
-            onActionIconClick = onActionIconClick,
         )
     },
 ) {
@@ -144,16 +142,6 @@ private fun GroupChannelInfoTopBar(
     viewModelFactory: ChannelInfoViewModelFactory,
     elevation: Dp,
     onNavigationIconClick: () -> Unit,
-    navigationIcon: @Composable () -> Unit = {
-        DefaultChannelInfoScreenNavigationIcon(
-            onClick = onNavigationIconClick,
-        )
-    },
-    onActionIconClick: () -> Unit,
-    actionIcon: @Composable () -> Unit = {
-        // Add members button
-        // https://linear.app/stream/issue/AND-537
-    },
 ) {
     val viewModel = viewModel<MessageListHeaderViewModel>(factory = viewModelFactory)
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -164,8 +152,14 @@ private fun GroupChannelInfoTopBar(
         connectionState = state.connectionState,
         elevation = elevation,
         onBackPressed = onNavigationIconClick,
-        leadingContent = { navigationIcon() },
-        trailingContent = { actionIcon() },
+        leadingContent = {
+            DefaultChannelInfoScreenNavigationIcon(
+                onClick = onNavigationIconClick,
+            )
+        },
+        trailingContent = { // Add members button
+            // https://linear.app/stream/issue/AND-537
+        },
     )
 }
 
