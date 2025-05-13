@@ -32,5 +32,5 @@ public interface CreateLocalMessageListener {
     /**
      * Called when a message is created locally.
      */
-    public suspend fun onCreateLocalMessageRequest(channelType: String, channelId: String, message: Message)
+    public suspend fun onCreateLocalMessageRequest(message: Message)
 }

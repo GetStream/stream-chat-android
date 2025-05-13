@@ -25,7 +25,7 @@ import io.getstream.chat.android.models.Message
 internal class CreateLocalMessageListenerDatabase(private val messageRepository: MessageRepository) :
     CreateLocalMessageListener {
 
-    override suspend fun onCreateLocalMessageRequest(channelType: String, channelId: String, message: Message) {
+    override suspend fun onCreateLocalMessageRequest(message: Message) {
         messageRepository.insertMessage(message)
     }
 }

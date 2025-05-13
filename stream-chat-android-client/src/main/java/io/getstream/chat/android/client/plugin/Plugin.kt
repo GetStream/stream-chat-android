@@ -236,7 +236,7 @@ public interface Plugin :
         /* No-Op */
     }
 
-    override suspend fun onCreateLocalMessageRequest(channelType: String, channelId: String, message: Message) {
+    override suspend fun onCreateLocalMessageRequest(message: Message) {
         /* No-Op */
     }
 

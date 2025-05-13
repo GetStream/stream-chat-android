@@ -752,6 +752,20 @@ public class MessageComposerController(
     }
 
     /**
+     * Updates a local message without sending it to the API.
+     *
+     * IMPORTANT: This is an experimental API and is subject to change in the future.
+     *
+     * @param message The message to be updated.
+     * @param withError If true, the message will be marked as failed permanently.
+     */
+    @ExperimentalStreamChatApi
+    public fun updateLocalMessage(
+        message: Message,
+        withError: Boolean = false,
+    ): Unit = chatClient.updateLocalMessage(message, withError)
+
+    /**
      * Builds a new [Message] to send to our API. If [isInEditMode] is true, we use the current
      * action's message and apply the given changes.
      *

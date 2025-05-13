@@ -61,6 +61,7 @@ import org.mockito.kotlin.whenever
 /**
  * Tests for the [ChatClient] message endpoints.
  */
+@Suppress("LargeClass")
 internal class ChatClientMessageApiTests : BaseChatClientTest() {
 
     @Test
@@ -198,7 +199,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
             .setLocalOnly()
             .copy(syncStatus = SyncStatus.SYNC_NEEDED)
         verifySuccess(result, expectedMessage)
-        verify(plugin).onCreateLocalMessageRequest(channelType, channelId, expectedMessage)
+        verify(plugin).onCreateLocalMessageRequest(expectedMessage)
         verify(api, never()).sendMessage(any(), any(), any())
     }
 
@@ -220,8 +221,38 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         val result = sut.createLocalMessage(channelType, channelId, message).await()
         // then
         result `should be equal to` requestResult
-        verify(plugin, never()).onCreateLocalMessageRequest(any(), any(), any())
+        verify(plugin, never()).onCreateLocalMessageRequest(any())
         verify(api, never()).sendMessage(any(), any(), any())
+    }
+
+    @OptIn(ExperimentalStreamChatApi::class)
+    @Test
+    fun updateLocalMessageWithoutError() = runTest {
+        // given
+        val message = randomMessage()
+        val plugin = mock<Plugin>()
+        val sut = Fixture()
+            .givenPlugin(plugin)
+            .get()
+        // when
+        sut.updateLocalMessage(message)
+        // then
+        verify(plugin).onCreateLocalMessageRequest(message)
+    }
+
+    @OptIn(ExperimentalStreamChatApi::class)
+    @Test
+    fun updateLocalMessageWithError() = runTest {
+        // given
+        val message = randomMessage()
+        val plugin = mock<Plugin>()
+        val sut = Fixture()
+            .givenPlugin(plugin)
+            .get()
+        // when
+        sut.updateLocalMessage(message, withError = true)
+        // then
+        verify(plugin).onCreateLocalMessageRequest(any())
     }
 
     @Test

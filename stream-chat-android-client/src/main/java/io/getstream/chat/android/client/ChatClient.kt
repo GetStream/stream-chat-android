@@ -1972,7 +1972,7 @@ internal constructor(
                                 .setLocalOnly()
                                 .copy(syncStatus = SyncStatus.SYNC_NEEDED)
                             plugins.forEach { plugin ->
-                                plugin.onCreateLocalMessageRequest(channelType, channelId, localMessage)
+                                plugin.onCreateLocalMessageRequest(localMessage)
                             }
                             Result.Success(localMessage)
                         }
@@ -1980,6 +1980,34 @@ internal constructor(
                     SendMessageIdentifier(channelType, channelId, processedMessage.id)
                 }
             }
+    }
+
+    /**
+     * Updates a local message without sending it to the API.
+     *
+     * IMPORTANT: This is an experimental API and is subject to change in the future.
+     *
+     * @param message The message to be updated.
+     * @param withError If true, the message will be marked as failed permanently.
+     */
+    @ExperimentalStreamChatApi
+    public fun updateLocalMessage(
+        message: Message,
+        withError: Boolean = false,
+    ) {
+        val updatedMessage = if (withError) {
+            message.copy(
+                syncStatus = SyncStatus.FAILED_PERMANENTLY,
+                updatedLocallyAt = Date(),
+            )
+        } else {
+            message
+        }
+        userScope.launch {
+            plugins.forEach { plugin ->
+                plugin.onCreateLocalMessageRequest(updatedMessage)
+            }
+        }
     }
 
     /**

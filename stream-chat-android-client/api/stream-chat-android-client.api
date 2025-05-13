@@ -218,6 +218,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public static synthetic fun updateChannel$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun updateChannelPartial (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/List;)Lio/getstream/result/call/Call;
 	public static synthetic fun updateChannelPartial$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public final fun updateLocalMessage (Lio/getstream/chat/android/models/Message;Z)V
+	public static synthetic fun updateLocalMessage$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/Message;ZILjava/lang/Object;)V
 	public final fun updateMessage (Lio/getstream/chat/android/models/Message;)Lio/getstream/result/call/Call;
 	public final fun updateUser (Lio/getstream/chat/android/models/User;)Lio/getstream/result/call/Call;
 	public final fun updateUsers (Ljava/util/List;)Lio/getstream/result/call/Call;
@@ -2837,7 +2839,7 @@ public abstract interface class io/getstream/chat/android/client/plugin/Plugin :
 	public abstract fun onCreateChannelRequest (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/Map;Lio/getstream/chat/android/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onCreateChannelResult (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/result/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onCreateDraftMessageResult (Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/DraftMessage;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun onCreateLocalMessageRequest (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onCreateLocalMessageRequest (Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onDeleteChannelPrecondition (Lio/getstream/chat/android/models/User;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onDeleteChannelRequest (Lio/getstream/chat/android/models/User;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun onDeleteChannelResult (Ljava/lang/String;Ljava/lang/String;Lio/getstream/result/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -2899,7 +2901,7 @@ public final class io/getstream/chat/android/client/plugin/Plugin$DefaultImpls {
 	public static fun onCreateChannelRequest (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/Map;Lio/getstream/chat/android/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onCreateChannelResult (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/result/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onCreateDraftMessageResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/result/Result;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/DraftMessage;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static fun onCreateLocalMessageRequest (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onCreateLocalMessageRequest (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onDeleteChannelPrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/models/User;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onDeleteChannelRequest (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/models/User;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onDeleteChannelResult (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Lio/getstream/result/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -2970,7 +2972,7 @@ public abstract interface class io/getstream/chat/android/client/plugin/listener
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/CreateLocalMessageListener {
-	public abstract fun onCreateLocalMessageRequest (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun onCreateLocalMessageRequest (Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/listeners/DeleteChannelListener {

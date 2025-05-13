@@ -24,7 +24,7 @@ import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 @OptIn(ExperimentalStreamChatApi::class)
 internal class CreateLocalMessageListenerState(private val logic: LogicRegistry) : CreateLocalMessageListener {
 
-    override suspend fun onCreateLocalMessageRequest(channelType: String, channelId: String, message: Message) {
+    override suspend fun onCreateLocalMessageRequest(message: Message) {
         logic.channelFromMessage(message)?.upsertMessage(message)
         logic.threads().upsertMessage(message)
         logic.threadFromMessage(message)?.upsertMessage(message)

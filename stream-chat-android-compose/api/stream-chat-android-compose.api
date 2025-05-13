@@ -4434,6 +4434,8 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageC
 	public final fun stopRecording ()V
 	public final fun toggleCommandsVisibility ()V
 	public final fun toggleRecordingPlayback ()V
+	public final fun updateLocalMessage (Lio/getstream/chat/android/models/Message;Z)V
+	public static synthetic fun updateLocalMessage$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;Lio/getstream/chat/android/models/Message;ZILjava/lang/Object;)V
 }
 
 public final class io/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel : androidx/lifecycle/ViewModel {
