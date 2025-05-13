@@ -45,27 +45,44 @@ public fun SimpleDialog(
     modifier: Modifier = Modifier,
     showDismissButton: Boolean = true,
 ) {
+    SimpleDialog(
+        title = title,
+        text = {
+            Text(
+                text = message,
+                style = ChatTheme.typography.body,
+            )
+        },
+        onConfirmClick = onPositiveAction,
+        onDismiss = onDismiss,
+        modifier = modifier,
+        showDismissButton = showDismissButton,
+    )
+}
+
+@Composable
+internal fun SimpleDialog(
+    title: String,
+    text: @Composable () -> Unit,
+    onConfirmClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    onDismiss: () -> Unit = {},
+    showDismissButton: Boolean = true,
+) {
     AlertDialog(
         modifier = modifier,
         onDismissRequest = onDismiss,
         title = {
             Text(
                 text = title,
-                color = ChatTheme.colors.textHighEmphasis,
                 style = ChatTheme.typography.title3Bold,
             )
         },
-        text = {
-            Text(
-                text = message,
-                color = ChatTheme.colors.textHighEmphasis,
-                style = ChatTheme.typography.body,
-            )
-        },
+        text = text,
         confirmButton = {
             TextButton(
                 colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.primaryAccent),
-                onClick = { onPositiveAction() },
+                onClick = onConfirmClick,
             ) {
                 Text(text = stringResource(id = R.string.stream_compose_ok))
             }
@@ -82,6 +99,8 @@ public fun SimpleDialog(
         } else {
             null
         },
+        titleContentColor = ChatTheme.colors.textHighEmphasis,
+        textContentColor = ChatTheme.colors.textHighEmphasis,
         containerColor = ChatTheme.colors.barsBackground,
     )
 }
