@@ -82,7 +82,7 @@ class GroupChannelInfoActivity : BaseConnectedActivity() {
                         is ChannelInfoViewEvent.HideChannelSuccess,
                         is ChannelInfoViewEvent.LeaveChannelSuccess,
                         is ChannelInfoViewEvent.DeleteChannelSuccess,
-                            -> {
+                        -> {
                             setResult(RESULT_OK)
                             finish()
                         }
@@ -108,11 +108,11 @@ class GroupChannelInfoActivity : BaseConnectedActivity() {
 
             ChannelInfoViewEvent.MuteChannelError,
             ChannelInfoViewEvent.UnmuteChannelError,
-                -> R.string.stream_ui_channel_info_option_mute_group_error
+            -> R.string.stream_ui_channel_info_option_mute_group_error
 
             ChannelInfoViewEvent.HideChannelError,
             ChannelInfoViewEvent.UnhideChannelError,
-                -> R.string.stream_ui_channel_info_option_hide_group_error
+            -> R.string.stream_ui_channel_info_option_hide_group_error
 
             ChannelInfoViewEvent.LeaveChannelError -> R.string.stream_ui_channel_info_option_leave_group_error
             ChannelInfoViewEvent.DeleteChannelError -> R.string.stream_ui_channel_info_option_delete_group_error
