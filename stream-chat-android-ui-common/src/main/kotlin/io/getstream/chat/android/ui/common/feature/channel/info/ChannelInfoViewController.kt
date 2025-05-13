@@ -18,6 +18,10 @@
 
 package io.getstream.chat.android.ui.common.feature.channel.info
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import androidx.core.content.getSystemService
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelState
@@ -29,6 +33,7 @@ import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
@@ -66,6 +71,7 @@ import kotlinx.coroutines.launch
  */
 @InternalStreamChatApi
 public class ChannelInfoViewController(
+    private val context: Context,
     cid: String,
     private val scope: CoroutineScope,
     private val chatClient: ChatClient = ChatClient.instance(),
@@ -73,6 +79,7 @@ public class ChannelInfoViewController(
         .watchChannelAsState(cid = cid, messageLimit = 0, coroutineScope = scope)
         .filterNotNull(),
     private val channelClient: ChannelClient = chatClient.channel(cid),
+    private val clipboardManager: ClipboardManager = requireNotNull(context.getSystemService<ClipboardManager>()),
 ) {
     private val logger by taggedLogger("Chat:ChannelInfoViewController")
 
@@ -175,6 +182,7 @@ public class ChannelInfoViewController(
         when (action) {
             is ChannelInfoViewAction.ExpandMembersClick -> expandMembers()
             is ChannelInfoViewAction.CollapseMembersClick -> collapseMembers()
+            is ChannelInfoViewAction.CopyUserIdClick -> copyUserId(action.userId)
             is ChannelInfoViewAction.RenameChannelClick -> renameChannel(action.name)
             is ChannelInfoViewAction.MuteChannelClick -> setChannelMute(mute = true)
             is ChannelInfoViewAction.UnmuteChannelClick -> setChannelMute(mute = false)
@@ -208,6 +216,14 @@ public class ChannelInfoViewController(
                 ),
             )
         }
+    }
+
+    private fun copyUserId(userId: UserId) {
+        logger.d { "[copyUserId] userId: $userId" }
+
+        clipboardManager.setPrimaryClip(
+            ClipData.newPlainText("User ID", userId),
+        )
     }
 
     private fun renameChannel(name: String) {

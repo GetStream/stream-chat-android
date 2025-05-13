@@ -18,6 +18,8 @@
 
 package io.getstream.chat.android.ui.common.feature.channel.info
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.ChannelClient
@@ -29,6 +31,7 @@ import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.toChannelData
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
@@ -44,6 +47,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
 
@@ -334,6 +338,17 @@ internal class ChannelInfoViewControllerTest {
                 awaitItem(),
             )
         }
+    }
+
+    @Test
+    fun `copy user id to clipboard`() = runTest {
+        val userId = "userId"
+        val fixture = Fixture()
+        val sut = fixture.get(backgroundScope)
+
+        sut.onViewAction(ChannelInfoViewAction.CopyUserIdClick(userId))
+
+        fixture.verifyCopiedToClipboard(userId)
     }
 
     @Test
@@ -926,6 +941,7 @@ private class Fixture {
     }
     private val channelClient: ChannelClient = mock()
     private val chatClient: ChatClient = mock()
+    private val clipboardManager: ClipboardManager = mock()
 
     fun given(
         currentUser: User? = null,
@@ -1016,12 +1032,18 @@ private class Fixture {
         verifyNoMoreInteractions(channelClient)
     }
 
+    fun verifyCopiedToClipboard(userId: UserId) = apply {
+        verify(clipboardManager).setPrimaryClip(ClipData.newPlainText("User ID", userId))
+    }
+
     fun get(scope: CoroutineScope) = ChannelInfoViewController(
+        context = mock(),
         cid = CID,
         scope = scope,
         chatClient = chatClient,
         channelState = MutableStateFlow(channelState),
         channelClient = channelClient,
+        clipboardManager = clipboardManager,
     )
 }
 
