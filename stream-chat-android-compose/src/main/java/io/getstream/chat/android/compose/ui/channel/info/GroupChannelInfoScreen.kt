@@ -82,6 +82,7 @@ import java.util.Date
 public fun GroupChannelInfoScreen(
     viewModelFactory: ChannelInfoViewModelFactory,
     modifier: Modifier = Modifier,
+    viewModelKey: String? = null,
     onNavigationIconClick: () -> Unit = {},
     onActionIconClick: () -> Unit = {},
     onPinnedMessagesClick: () -> Unit = {},
@@ -94,7 +95,7 @@ public fun GroupChannelInfoScreen(
         )
     },
 ) {
-    val viewModel = viewModel<ChannelInfoViewModel>(factory = viewModelFactory)
+    val viewModel = viewModel<ChannelInfoViewModel>(key = viewModelKey, factory = viewModelFactory)
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     val listState = rememberLazyListState()
@@ -141,14 +142,14 @@ public fun GroupChannelInfoScreen(
 @Composable
 private fun GroupChannelInfoTopBar(
     viewModelFactory: ChannelInfoViewModelFactory,
-    elevation: Dp = 1.dp,
-    onNavigationIconClick: () -> Unit = {},
+    elevation: Dp,
+    onNavigationIconClick: () -> Unit,
     navigationIcon: @Composable () -> Unit = {
         DefaultChannelInfoScreenNavigationIcon(
             onClick = onNavigationIconClick,
         )
     },
-    onActionIconClick: () -> Unit = {},
+    onActionIconClick: () -> Unit,
     actionIcon: @Composable () -> Unit = {
         // Add members button
         // https://linear.app/stream/issue/AND-537

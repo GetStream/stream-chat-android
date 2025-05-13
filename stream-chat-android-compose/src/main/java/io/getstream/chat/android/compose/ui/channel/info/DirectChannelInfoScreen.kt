@@ -65,6 +65,7 @@ import java.util.Date
 public fun DirectChannelInfoScreen(
     viewModelFactory: ChannelInfoViewModelFactory,
     modifier: Modifier = Modifier,
+    viewModelKey: String? = null,
     onNavigationIconClick: () -> Unit = {},
     onPinnedMessagesClick: () -> Unit = {},
     navigationIcon: @Composable () -> Unit = {
@@ -73,7 +74,7 @@ public fun DirectChannelInfoScreen(
         )
     },
 ) {
-    val viewModel = viewModel<ChannelInfoViewModel>(factory = viewModelFactory)
+    val viewModel = viewModel<ChannelInfoViewModel>(key = viewModelKey, factory = viewModelFactory)
 
     DirectChannelInfoScreen(
         viewModel = viewModel,
