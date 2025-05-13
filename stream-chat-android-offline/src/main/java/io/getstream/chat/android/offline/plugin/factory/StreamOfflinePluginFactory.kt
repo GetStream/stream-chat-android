@@ -35,6 +35,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.plugin.internal.OfflinePlugin
 import io.getstream.chat.android.offline.plugin.listener.internal.CreateChannelListenerDatabase
+import io.getstream.chat.android.offline.plugin.listener.internal.CreateLocalMessageListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteChannelListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReactionListenerDatabase
@@ -150,6 +151,8 @@ public class StreamOfflinePluginFactory @JvmOverloads constructor(
             repositoryFacade,
         )
 
+        val createLocalMessageListener = CreateLocalMessageListenerDatabase(repositoryFacade)
+
         val sendAttachmentListener: SendAttachmentListener = SendAttachmentsListenerDatabase(
             repositoryFacade,
             repositoryFacade,
@@ -203,6 +206,7 @@ public class StreamOfflinePluginFactory @JvmOverloads constructor(
             sendReactionListener = sendReactionListener,
             deleteMessageListener = deleteMessageListener,
             sendMessageListener = sendMessageListener,
+            createLocalMessageListener = createLocalMessageListener,
             sendAttachmentListener = sendAttachmentListener,
             shuffleGiphyListener = shuffleGiphyListener,
             queryMembersListener = queryMembersListener,

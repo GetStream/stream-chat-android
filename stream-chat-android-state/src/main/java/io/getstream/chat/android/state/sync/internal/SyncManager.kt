@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.sync.SyncState
 import io.getstream.chat.android.client.sync.stringify
 import io.getstream.chat.android.client.utils.message.isDeleted
+import io.getstream.chat.android.client.utils.message.isLocalOnly
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.Tube
 import io.getstream.chat.android.core.utils.date.diff
@@ -531,6 +532,7 @@ internal class SyncManager(
         ids.forEach { id ->
             logger.v { "[retryMgsWithSyncedAttachments] message.id: $id" }
             val message = repos.selectMessage(id) ?: return@forEach
+            if (message.isLocalOnly()) return@forEach
             val channelClient = chatClient.channel(message.cid)
             val result = when {
                 message.isDeleted() -> retryDeletionOfMessageWithSyncedAttachments(id, message, channelClient)
@@ -561,7 +563,7 @@ internal class SyncManager(
                 if (message.createdLocallyAt.exceedsSyncThreshold()) {
                     logger.w { "[retryMessagesWithPendingAttachments] outdated sending($id)" }
                     removeMessage(message).await()
-                } else {
+                } else if (!message.isLocalOnly()) {
                     val (channelType, channelId) = message.cid.cidToTypeAndId()
                     chatClient.sendMessage(channelType, channelId, message, true).await()
                 }

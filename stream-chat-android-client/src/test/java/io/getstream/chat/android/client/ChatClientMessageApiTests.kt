@@ -20,13 +20,17 @@ import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.chatclient.BaseChatClientTest
 import io.getstream.chat.android.client.clientstate.UserState
+import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
+import io.getstream.chat.android.client.utils.message.setLocalOnly
 import io.getstream.chat.android.client.utils.verifyNetworkError
 import io.getstream.chat.android.client.utils.verifySuccess
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.positiveRandomInt
@@ -172,6 +176,52 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         // then
         result `should be equal to` requestResult
         verify(plugin, never()).onMessageSendResult(any(), any(), any(), any())
+    }
+
+    @OptIn(ExperimentalStreamChatApi::class)
+    @Test
+    fun createLocalMessageSuccess() = runTest {
+        // given
+        val channelType = randomString()
+        val channelId = randomString()
+        val message = randomMessage()
+        val plugin = mock<Plugin>()
+        val sut = Fixture()
+            .givenPlugin(plugin)
+            .givenSendAttachmentsResult(Result.Success(message))
+            .get()
+        // when
+        val result = sut.createLocalMessage(channelType, channelId, message).await()
+        // then
+        val expectedMessage = message
+            .enrichWithCid("$channelType:$channelId")
+            .setLocalOnly()
+            .copy(syncStatus = SyncStatus.SYNC_NEEDED)
+        verifySuccess(result, expectedMessage)
+        verify(plugin).onCreateLocalMessageRequest(channelType, channelId, expectedMessage)
+        verify(api, never()).sendMessage(any(), any(), any())
+    }
+
+    @OptIn(ExperimentalStreamChatApi::class)
+    @Test
+    fun createLocalMessageError() = runTest {
+        // given
+        val channelType = randomString()
+        val channelId = randomString()
+        val messageText = randomString()
+        val plugin = mock<Plugin>()
+        val message = randomMessage(text = messageText)
+        val requestResult = Result.Failure(Error.GenericError(message = randomString()))
+        val sut = Fixture()
+            .givenPlugin(plugin)
+            .givenSendAttachmentsResult(requestResult)
+            .get()
+        // when
+        val result = sut.createLocalMessage(channelType, channelId, message).await()
+        // then
+        result `should be equal to` requestResult
+        verify(plugin, never()).onCreateLocalMessageRequest(any(), any(), any())
+        verify(api, never()).sendMessage(any(), any(), any())
     }
 
     @Test

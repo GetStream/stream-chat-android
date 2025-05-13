@@ -4398,6 +4398,8 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageC
 	public final fun cancelRecording ()V
 	public final fun clearData ()V
 	public final fun completeRecording ()V
+	public final fun createLocalMessage (Lio/getstream/chat/android/models/Message;Lio/getstream/result/call/Call$Callback;)V
+	public static synthetic fun createLocalMessage$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;Lio/getstream/chat/android/models/Message;Lio/getstream/result/call/Call$Callback;ILjava/lang/Object;)V
 	public final fun createPoll (Lio/getstream/chat/android/models/PollConfig;)V
 	public final fun dismissMessageActions ()V
 	public final fun getAlsoSendToChannel ()Lkotlinx/coroutines/flow/MutableStateFlow;

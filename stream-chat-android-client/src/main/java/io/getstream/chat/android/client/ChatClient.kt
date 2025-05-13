@@ -96,6 +96,7 @@ import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.extractBaseUrl
 import io.getstream.chat.android.client.extensions.internal.isLaterThanDays
 import io.getstream.chat.android.client.header.VersionPrefixHeader
@@ -147,10 +148,12 @@ import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.client.utils.message.ensureId
+import io.getstream.chat.android.client.utils.message.setLocalOnly
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.client.utils.stringify
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.models.AppSettings
@@ -181,6 +184,7 @@ import io.getstream.chat.android.models.QueryDraftsResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.models.UploadedFile
@@ -1922,6 +1926,55 @@ internal constructor(
                                 debugger.onSendStop(result, newMessage)
                                 debugger.onStop(result, newMessage)
                             }
+                        }
+                }.share(userScope) {
+                    SendMessageIdentifier(channelType, channelId, processedMessage.id)
+                }
+            }
+    }
+
+    /**
+     * Creates a local message in the specified channel without sending it to the API.
+     *
+     * This function processes the given message, uploads any attachments, and creates a local copy
+     * with [SyncStatus.SYNC_NEEDED] status. The message is enriched with the channel ID and
+     * marked as local-only.
+     *
+     * The local message can be later synchronized with the server when needed.
+     *
+     * IMPORTANT: This is an experimental API and is subject to change in the future.
+     *
+     * @param channelType The channel type (e.g., "messaging").
+     * @param channelId The channel ID where the message should be created.
+     * @param message The message to be created locally.
+     * @param isRetrying True if this message creation is a retry attempt.
+     *
+     * @return A [Call] that returns the created local message.
+     */
+    @CheckResult
+    @ExperimentalStreamChatApi
+    public fun createLocalMessage(
+        channelType: String,
+        channelId: String,
+        message: Message,
+        isRetrying: Boolean = false,
+    ): Call<Message> {
+        return message.copy(createdLocallyAt = message.createdLocallyAt ?: Date())
+            .ensureId(getCurrentUser() ?: getStoredUser())
+            .let { processedMessage ->
+                CoroutineCall(userScope) {
+                    val debugger = clientDebugger.debugSendMessage(channelType, channelId, processedMessage, isRetrying)
+                    debugger.onStart(processedMessage)
+                    sendAttachments(channelType, channelId, processedMessage, isRetrying, debugger)
+                        .flatMapSuspend { newMessage ->
+                            val localMessage = newMessage
+                                .enrichWithCid("$channelType:$channelId")
+                                .setLocalOnly()
+                                .copy(syncStatus = SyncStatus.SYNC_NEEDED)
+                            plugins.forEach { plugin ->
+                                plugin.onCreateLocalMessageRequest(channelType, channelId, localMessage)
+                            }
+                            Result.Success(localMessage)
                         }
                 }.share(userScope) {
                     SendMessageIdentifier(channelType, channelId, processedMessage.id)

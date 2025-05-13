@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.viewmodel.messages
 
 import androidx.lifecycle.ViewModel
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
@@ -193,6 +194,25 @@ public class MessageComposerViewModel(
         message: Message,
         callback: Call.Callback<Message> = Call.Callback { /* no-op */ },
     ): Unit = messageComposerController.sendMessage(message, callback)
+
+    /**
+     * Creates a message 'locally' to be shown in the UI, without sending it to the Stream backend.
+     * However, it will first upload any attachments in the message to the CDN, and then create the message.
+     * Messages created this way will NOT be synced automatically in the background, so you have to handle failures on
+     * your side. The [callback] will return any errors that occurred during the upload of the attachments.
+     *
+     * It also dismisses any current message actions.
+     *
+     * IMPORTANT: This is an experimental API and is subject to change in the future.
+     *
+     * @param message The message to create.
+     * @param callback The callback to be called when the message is created.
+     */
+    @ExperimentalStreamChatApi
+    public fun createLocalMessage(
+        message: Message,
+        callback: Call.Callback<Message> = Call.Callback { /* no-op */ },
+    ): Unit = messageComposerController.createLocalMessage(message, callback)
 
     /**
      * Builds a new [Message] to send to our API. Based on the internal state, we use the current action's message and

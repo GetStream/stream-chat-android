@@ -18,6 +18,7 @@ package io.getstream.chat.android.offline.plugin.internal
 
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
+import io.getstream.chat.android.client.plugin.listeners.CreateLocalMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
@@ -48,6 +49,7 @@ import kotlin.reflect.KClass
  * @param hideChannelListener [HideChannelListener]
  * @param deleteReactionListener [DeleteReactionListener]
  * @param sendReactionListener [SendReactionListener]
+ * @param createLocalMessageListener [CreateLocalMessageListener]
  * @param deleteMessageListener [DeleteMessageListener]
  * @param sendMessageListener [SendMessageListener]
  * @param queryMembersListener [QueryMembersListener]
@@ -70,6 +72,7 @@ internal class OfflinePlugin(
     private val deleteMessageListener: DeleteMessageListener,
     private val shuffleGiphyListener: ShuffleGiphyListener,
     private val sendMessageListener: SendMessageListener,
+    private val createLocalMessageListener: CreateLocalMessageListener,
     private val sendAttachmentListener: SendAttachmentListener,
     private val queryMembersListener: QueryMembersListener,
     private val createChannelListener: CreateChannelListener,
@@ -89,6 +92,7 @@ internal class OfflinePlugin(
     DeleteMessageListener by deleteMessageListener,
     ShuffleGiphyListener by shuffleGiphyListener,
     SendMessageListener by sendMessageListener,
+    CreateLocalMessageListener by createLocalMessageListener,
     QueryMembersListener by queryMembersListener,
     CreateChannelListener by createChannelListener,
     DeleteChannelListener by deleteChannelListener,

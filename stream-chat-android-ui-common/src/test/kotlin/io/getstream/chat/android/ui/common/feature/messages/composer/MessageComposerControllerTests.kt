@@ -20,28 +20,37 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.chat.android.test.asCall
+import io.getstream.result.Error
+import io.getstream.result.call.Call
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be`
 import org.amshove.kluent.`should be equal to`
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.util.Date
 
+@OptIn(ExperimentalStreamChatApi::class)
 @ExperimentalCoroutinesApi
 internal class MessageComposerControllerTests {
 
@@ -114,6 +123,42 @@ internal class MessageComposerControllerTests {
         controller.state.value.pollsEnabled `should be` true
     }
 
+    @Test
+    fun `test createLocalMessage success`() = runTest {
+        // given
+        val message = randomMessage()
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+            .givenCreateLocalMessage(message.asCall())
+            .get()
+        // when
+        controller.createLocalMessage(message, callback = {
+            Assertions.assertTrue(it.isSuccess)
+        })
+    }
+
+    @Test
+    fun `test createLocalMessage failure`() = runTest {
+        // given
+        val message = randomMessage()
+        val controller = Fixture()
+            .givenAppSettings(mock())
+            .givenAudioPlayer(mock())
+            .givenClientState(User("uid1"))
+            .givenGlobalState()
+            .givenChannelState()
+            .givenCreateLocalMessage(Error.GenericError("error").asCall())
+            .get()
+        // when
+        controller.createLocalMessage(message, callback = {
+            Assertions.assertTrue(it.isFailure)
+        })
+    }
+
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val cid: String = CID,
@@ -157,6 +202,10 @@ internal class MessageComposerControllerTests {
         ) = apply {
             whenever(globalState.channelDraftMessages) doReturn MutableStateFlow(channelDrafts)
             whenever(globalState.threadDraftMessages) doReturn MutableStateFlow(threadDrafts)
+        }
+
+        fun givenCreateLocalMessage(call: Call<Message>) = apply {
+            whenever(chatClient.createLocalMessage(any(), any(), any(), any())) doReturn call
         }
 
         fun get(): MessageComposerController {

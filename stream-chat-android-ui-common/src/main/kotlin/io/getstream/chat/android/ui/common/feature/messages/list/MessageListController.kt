@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isError
 import io.getstream.chat.android.client.utils.message.isGiphy
+import io.getstream.chat.android.client.utils.message.isLocalOnly
 import io.getstream.chat.android.client.utils.message.isModerationBounce
 import io.getstream.chat.android.client.utils.message.isModerationError
 import io.getstream.chat.android.client.utils.message.isSystem
@@ -52,6 +53,7 @@ import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.state.extensions.awaitRepliesAsState
@@ -1447,6 +1449,10 @@ public class MessageListController(
      * @param message The selected message.
      */
     public fun selectMessage(message: Message?) {
+        if (message?.syncStatus == SyncStatus.SYNC_NEEDED && message.isLocalOnly()) {
+            logger.d { "[selectMessage] Preventing message selection because the message is localOnly." }
+            return
+        }
         changeSelectMessageState(
             message?.let {
                 val currentUserId = chatClient.getCurrentUser()?.id

@@ -194,6 +194,21 @@ public fun Message.isModerationFlag(): Boolean =
     moderationDetails?.action == MessageModerationAction.flag || moderation?.action == ModerationAction.flag
 
 /**
+ * Checks if the message is a local-only message.
+ */
+@InternalStreamChatApi
+public fun Message.isLocalOnly(): Boolean = extraData["stream_local_only"] == true
+
+/**
+ * Sets the local-only flag to the message.
+ * Local-only messages are not sent to the server and are only stored locally.
+ *
+ * @return the message with the local-only flag set.
+ */
+@InternalStreamChatApi
+public fun Message.setLocalOnly(): Message = copy(extraData = extraData + ("stream_local_only" to true))
+
+/**
  * @return if the message failed at moderation or not.
  */
 public fun Message.isModerationError(currentUserId: String?): Boolean = isMine(currentUserId) &&

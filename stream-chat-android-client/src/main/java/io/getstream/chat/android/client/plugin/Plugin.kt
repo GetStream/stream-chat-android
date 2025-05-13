@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.plugin.listeners.BlockUserListener
 import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
+import io.getstream.chat.android.client.plugin.listeners.CreateLocalMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
@@ -78,6 +79,7 @@ public interface Plugin :
     DeleteMessageListener,
     DraftMessageListener,
     SendMessageListener,
+    CreateLocalMessageListener,
     SendAttachmentListener,
     EditMessageListener,
     QueryChannelListener,
@@ -231,6 +233,10 @@ public interface Plugin :
         channelId: String,
         message: Message,
     ) {
+        /* No-Op */
+    }
+
+    override suspend fun onCreateLocalMessageRequest(channelType: String, channelId: String, message: Message) {
         /* No-Op */
     }
 

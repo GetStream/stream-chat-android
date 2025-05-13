@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.utils.message.isModerationError
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
@@ -725,6 +726,29 @@ public class MessageComposerController(
         }
         clearData()
         sendMessageCall.enqueue(callback)
+    }
+
+    /**
+     * Creates a message 'locally' to be shown in the UI, without sending it to the Stream backend.
+     * However, it will first upload any attachments in the message to the CDN, and then create the message.
+     * Messages created this way will not be synced automatically in the background, so you have to handle failures on
+     * your side. The [callback] will return any errors that occurred during the upload of the attachments.
+     *
+     * It also dismisses any current message actions.
+     *
+     * IMPORTANT: This is an experimental API and is subject to change in the future.
+     *
+     * @param message The message to create.
+     * @param callback The callback to be called when the message is created.
+     */
+    @ExperimentalStreamChatApi
+    public fun createLocalMessage(message: Message, callback: Call.Callback<Message>) {
+        clearData()
+        chatClient.createLocalMessage(
+            channelType = channelType,
+            channelId = channelId,
+            message = message.copy(showInChannel = isInThread && alsoSendToChannel.value),
+        ).enqueue(callback)
     }
 
     /**
