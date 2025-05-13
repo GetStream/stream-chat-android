@@ -21,16 +21,21 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
@@ -41,22 +46,18 @@ import io.getstream.chat.android.compose.sample.feature.channel.ChannelConstants
 import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelActivity
 import io.getstream.chat.android.compose.sample.feature.channel.list.CustomChatEventHandlerFactory
 import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
-import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoScreen
-import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoViewModel
-import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoViewModelFactory
-import io.getstream.chat.android.compose.sample.ui.channel.DefaultChannelInfoNavigationIcon
-import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoScreen
-import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoViewModel
-import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoViewModelFactory
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBar
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBarOption
 import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponentFactory
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
 import io.getstream.chat.android.compose.sample.ui.pinned.PinnedMessagesScreen
+import io.getstream.chat.android.compose.ui.channel.info.DirectChannelInfoScreen
+import io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoScreen
 import io.getstream.chat.android.compose.ui.channels.SearchMode
 import io.getstream.chat.android.compose.ui.chats.ChatListContentMode
 import io.getstream.chat.android.compose.ui.chats.ChatMessageSelection
 import io.getstream.chat.android.compose.ui.chats.ChatsScreen
+import io.getstream.chat.android.compose.ui.components.BackButton
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptionItemVisibility
 import io.getstream.chat.android.compose.ui.theme.ChannelOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -65,6 +66,8 @@ import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneDestina
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneNavigator
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneRole
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.rememberThreePaneNavigator
+import io.getstream.chat.android.compose.ui.util.mirrorRtl
+import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModel
@@ -212,8 +215,8 @@ class ChatsActivity : BaseConnectedActivity() {
         onOptionSelected: (option: AppBottomBarOption) -> Unit,
     ) {
         val globalState = ChatClient.instance().globalState
-        val unreadChannelsCount by globalState.channelUnreadCount.collectAsState()
-        val unreadThreadsCount by globalState.unreadThreadsCount.collectAsState()
+        val unreadChannelsCount by globalState.channelUnreadCount.collectAsStateWithLifecycle()
+        val unreadThreadsCount by globalState.unreadThreadsCount.collectAsStateWithLifecycle()
         val selectedOption = when (listContentMode) {
             ChatListContentMode.Channels -> AppBottomBarOption.CHATS
             ChatListContentMode.Mentions -> AppBottomBarOption.MENTIONS
@@ -236,7 +239,7 @@ class ChatsActivity : BaseConnectedActivity() {
         BackHandler(enabled = navigator.canNavigateBack()) { navigator.navigateBack() }
 
         when (mode) {
-            is InfoContentMode.SingleChannelInfo -> SingleChannelInfoContent(
+            is InfoContentMode.DirectChannelInfo -> DirectChannelInfoContent(
                 channelId = mode.channelId,
                 onNavigationIconClick = { navigator.navigateBack() },
                 onPinnedMessagesClick = { navigator.navigateToPinnedMessages(mode.channelId) },
@@ -265,29 +268,33 @@ class ChatsActivity : BaseConnectedActivity() {
         }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    private fun SingleChannelInfoContent(
+    private fun DirectChannelInfoContent(
         channelId: String,
         onNavigationIconClick: () -> Unit,
         onPinnedMessagesClick: () -> Unit,
     ) {
-        val viewModel = viewModel(
-            ChannelInfoViewModel::class.java,
-            key = channelId,
-            factory = ChannelInfoViewModelFactory(channelId),
-        )
-        val state by viewModel.state.collectAsState()
-        if (state.member != null) {
-            ChannelInfoScreen(
-                state = state,
+        val viewModelFactory = ChannelInfoViewModelFactory(context = applicationContext, cid = channelId)
+        if (AdaptiveLayoutInfo.singlePaneWindow()) {
+            DirectChannelInfoScreen(
+                viewModelFactory = viewModelFactory,
+                viewModelKey = channelId,
+                onNavigationIconClick = onNavigationIconClick,
                 onPinnedMessagesClick = onPinnedMessagesClick,
-                onConfirmDelete = viewModel::onDeleteChannel,
-                navigationIcon = {
-                    if (AdaptiveLayoutInfo.singlePaneWindow()) {
-                        DefaultChannelInfoNavigationIcon(onClick = onNavigationIconClick)
-                    } else {
-                        CloseButton(onClick = onNavigationIconClick)
-                    }
+            )
+        } else {
+            DirectChannelInfoScreen(
+                viewModelFactory = viewModelFactory,
+                viewModelKey = channelId,
+                onNavigationIconClick = onNavigationIconClick,
+                onPinnedMessagesClick = onPinnedMessagesClick,
+                topBar = {
+                    TopAppBar(
+                        navigationIcon = { CloseButton(onClick = onNavigationIconClick) },
+                        title = {},
+                        colors = TopAppBarDefaults.topAppBarColors(containerColor = ChatTheme.colors.barsBackground),
+                    )
                 },
             )
         }
@@ -299,21 +306,49 @@ class ChatsActivity : BaseConnectedActivity() {
         onNavigationIconClick: () -> Unit,
         onPinnedMessagesClick: () -> Unit,
     ) {
-        val viewModel = viewModel(
-            GroupChannelInfoViewModel::class.java,
-            key = channelId,
-            factory = GroupChannelInfoViewModelFactory(channelId),
-        )
-        val state by viewModel.state.collectAsState()
-        GroupChannelInfoScreen(
-            state = state,
-            onNavigationIconClick = onNavigationIconClick,
-            onPinnedMessagesClick = onPinnedMessagesClick,
-            navigationIcon = if (AdaptiveLayoutInfo.singlePaneWindow()) {
-                null
-            } else {
-                { CloseButton(onClick = onNavigationIconClick) }
-            },
+        val viewModelFactory = ChannelInfoViewModelFactory(context = applicationContext, cid = channelId)
+        if (AdaptiveLayoutInfo.singlePaneWindow()) {
+            GroupChannelInfoScreen(
+                viewModelFactory = viewModelFactory,
+                viewModelKey = channelId,
+                onPinnedMessagesClick = onPinnedMessagesClick,
+                topBar = {
+                    GroupChannelInfoTopBar(
+                        onNavigationIconClick = onNavigationIconClick,
+                    )
+                },
+            )
+        } else {
+            GroupChannelInfoScreen(
+                viewModelFactory = viewModelFactory,
+                viewModelKey = channelId,
+                onPinnedMessagesClick = onPinnedMessagesClick,
+                topBar = {
+                    GroupChannelInfoTopBar(
+                        onNavigationIconClick = onNavigationIconClick,
+                        navigationIcon = { CloseButton(onClick = onNavigationIconClick) },
+                    )
+                },
+            )
+        }
+    }
+
+    @Composable
+    @OptIn(ExperimentalMaterial3Api::class)
+    private fun GroupChannelInfoTopBar(
+        onNavigationIconClick: () -> Unit,
+        navigationIcon: @Composable () -> Unit = {
+            BackButton(
+                modifier = Modifier.mirrorRtl(layoutDirection = LocalLayoutDirection.current),
+                painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
+                onBackPressed = onNavigationIconClick,
+            )
+        },
+    ) {
+        TopAppBar(
+            title = {},
+            navigationIcon = navigationIcon,
+            colors = TopAppBarDefaults.topAppBarColors(containerColor = ChatTheme.colors.barsBackground),
         )
     }
 
@@ -323,8 +358,7 @@ class ChatsActivity : BaseConnectedActivity() {
         onNavigationIconClick: () -> Unit,
         onMessageClick: (message: Message) -> Unit,
     ) {
-        val viewModel = viewModel(
-            PinnedMessageListViewModel::class.java,
+        val viewModel = viewModel<PinnedMessageListViewModel>(
             key = channelId,
             factory = PinnedMessageListViewModelFactory(channelId),
         )
@@ -376,7 +410,7 @@ private fun ThreePaneNavigator.navigateToChannelInfo(channel: Channel) {
             arguments = if (channel.isGroupChannel) {
                 InfoContentMode.GroupChannelInfo(channel.cid)
             } else {
-                InfoContentMode.SingleChannelInfo(channel.cid)
+                InfoContentMode.DirectChannelInfo(channel.cid)
             },
         ),
     )
