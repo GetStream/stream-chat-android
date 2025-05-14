@@ -44,6 +44,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.animation.FadingVisibility
 import io.getstream.chat.android.compose.ui.util.clickable
 
+@Suppress("LongMethod")
 @Composable
 internal fun ChannelInfoNameField(
     name: String,
@@ -58,6 +59,7 @@ internal fun ChannelInfoNameField(
             .fillMaxWidth()
             .onFocusChanged { showEditingButtons = it.isFocused && !readOnly },
         readOnly = readOnly,
+        textStyle = ChatTheme.typography.body,
         prefix = {
             Text(
                 modifier = Modifier.padding(end = 8.dp),
@@ -67,7 +69,10 @@ internal fun ChannelInfoNameField(
             )
         },
         placeholder = {
-            Text(text = stringResource(R.string.stream_ui_channel_info_name_field_placeholder))
+            Text(
+                text = stringResource(R.string.stream_ui_channel_info_name_field_placeholder),
+                style = ChatTheme.typography.body,
+            )
         },
         value = value,
         trailingIcon = {
@@ -101,6 +106,8 @@ internal fun ChannelInfoNameField(
         singleLine = true,
         onValueChange = { value = it },
         colors = OutlinedTextFieldDefaults.colors(
+            focusedTextColor = ChatTheme.colors.textHighEmphasis,
+            unfocusedTextColor = ChatTheme.colors.textHighEmphasis,
             unfocusedBorderColor = Color.Transparent,
             focusedBorderColor = Color.Transparent,
         ),

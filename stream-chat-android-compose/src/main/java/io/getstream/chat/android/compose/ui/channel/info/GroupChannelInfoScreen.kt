@@ -28,9 +28,11 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -276,107 +278,124 @@ private fun GroupChannelInfoExpandMemberButton(
     collapsedCount: Int,
     onClick: () -> Unit,
 ) {
-    ChannelInfoOption(
-        onClick = onClick,
-    ) {
-        Icon(
-            imageVector = Icons.Rounded.KeyboardArrowDown,
-            contentDescription = null,
-        )
-        Text(text = stringResource(R.string.stream_ui_channel_info_expand_button, collapsedCount))
+    CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.textLowEmphasis)) {
+        ChannelInfoOption(
+            onClick = onClick,
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.KeyboardArrowDown,
+                contentDescription = null,
+            )
+            Text(text = stringResource(R.string.stream_ui_channel_info_expand_button, collapsedCount))
+        }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun GroupChannelInfoContentLoadingPreview() {
+private fun GroupChannelInfoLoadingPreview() {
     ChatTheme {
-        GroupChannelInfoContent(
-            state = ChannelInfoViewState.Loading,
-        )
+        GroupChannelInfoLoading()
     }
+}
+
+@Composable
+internal fun GroupChannelInfoLoading() {
+    GroupChannelInfoContent(
+        state = ChannelInfoViewState.Loading,
+    )
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun GroupChannelInfoContentCollapsedPreview() {
+private fun GroupChannelInfoCollapsedMembersPreview() {
     ChatTheme {
-        GroupChannelInfoContent(
-            state = ChannelInfoViewState.Content(
-                members = ExpandableList(
-                    items = listOf(
-                        ChannelInfoViewState.Content.Member(
-                            user = PreviewUserData.user1.copy(lastActive = Date()),
-                            role = ChannelInfoViewState.Content.Role.Owner,
-                        ),
-                        ChannelInfoViewState.Content.Member(
-                            user = PreviewUserData.user2.copy(online = true),
-                            role = ChannelInfoViewState.Content.Role.Owner,
-                        ),
-                        ChannelInfoViewState.Content.Member(
-                            user = PreviewUserData.user3,
-                            role = ChannelInfoViewState.Content.Role.Owner,
-                        ),
-                        ChannelInfoViewState.Content.Member(
-                            user = PreviewUserData.user4,
-                            role = ChannelInfoViewState.Content.Role.Owner,
-                        ),
+        GroupChannelInfoCollapsedMembers()
+    }
+}
+
+@Composable
+internal fun GroupChannelInfoCollapsedMembers() {
+    GroupChannelInfoContent(
+        state = ChannelInfoViewState.Content(
+            members = ExpandableList(
+                items = listOf(
+                    ChannelInfoViewState.Content.Member(
+                        user = PreviewUserData.user1.copy(lastActive = Date()),
+                        role = ChannelInfoViewState.Content.Role.Owner,
                     ),
-                    minimumVisibleItems = 2,
-                    isCollapsed = true,
+                    ChannelInfoViewState.Content.Member(
+                        user = PreviewUserData.user2.copy(online = true),
+                        role = ChannelInfoViewState.Content.Role.Owner,
+                    ),
+                    ChannelInfoViewState.Content.Member(
+                        user = PreviewUserData.user3,
+                        role = ChannelInfoViewState.Content.Role.Owner,
+                    ),
+                    ChannelInfoViewState.Content.Member(
+                        user = PreviewUserData.user4,
+                        role = ChannelInfoViewState.Content.Role.Owner,
+                    ),
                 ),
-                options = listOf(
-                    ChannelInfoViewState.Content.Option.RenameChannel(name = "Group Channel", isReadOnly = false),
-                    ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
-                    ChannelInfoViewState.Content.Option.HideChannel(isHidden = true),
-                    ChannelInfoViewState.Content.Option.PinnedMessages,
-                    ChannelInfoViewState.Content.Option.Separator,
-                    ChannelInfoViewState.Content.Option.LeaveChannel,
-                    ChannelInfoViewState.Content.Option.DeleteChannel,
-                ),
+                minimumVisibleItems = 2,
+                isCollapsed = true,
             ),
-        )
-    }
+            options = listOf(
+                ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = false),
+                ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
+                ChannelInfoViewState.Content.Option.HideChannel(isHidden = true),
+                ChannelInfoViewState.Content.Option.PinnedMessages,
+                ChannelInfoViewState.Content.Option.Separator,
+                ChannelInfoViewState.Content.Option.LeaveChannel,
+                ChannelInfoViewState.Content.Option.DeleteChannel,
+            ),
+        ),
+    )
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun GroupChannelInfoContentExpandedPreview() {
+private fun GroupChannelInfoExpandedMembersPreview() {
     ChatTheme {
-        GroupChannelInfoContent(
-            state = ChannelInfoViewState.Content(
-                members = ExpandableList(
-                    items = listOf(
-                        ChannelInfoViewState.Content.Member(
-                            user = PreviewUserData.user1.copy(lastActive = Date()),
-                            role = ChannelInfoViewState.Content.Role.Owner,
-                        ),
-                        ChannelInfoViewState.Content.Member(
-                            user = PreviewUserData.user2.copy(online = true),
-                            role = ChannelInfoViewState.Content.Role.Owner,
-                        ),
-                        ChannelInfoViewState.Content.Member(
-                            user = PreviewUserData.user3,
-                            role = ChannelInfoViewState.Content.Role.Owner,
-                        ),
-                        ChannelInfoViewState.Content.Member(
-                            user = PreviewUserData.user4,
-                            role = ChannelInfoViewState.Content.Role.Owner,
-                        ),
-                    ),
-                    minimumVisibleItems = 2,
-                    isCollapsed = false,
-                ),
-                options = listOf(
-                    ChannelInfoViewState.Content.Option.RenameChannel(name = "Group Channel", isReadOnly = true),
-                    ChannelInfoViewState.Content.Option.MuteChannel(isMuted = true),
-                    ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
-                    ChannelInfoViewState.Content.Option.PinnedMessages,
-                    ChannelInfoViewState.Content.Option.Separator,
-                    ChannelInfoViewState.Content.Option.LeaveChannel,
-                    ChannelInfoViewState.Content.Option.DeleteChannel,
-                ),
-            ),
-        )
+        GroupChannelInfoExpandedMembers()
     }
+}
+
+@Composable
+internal fun GroupChannelInfoExpandedMembers() {
+    GroupChannelInfoContent(
+        state = ChannelInfoViewState.Content(
+            members = ExpandableList(
+                items = listOf(
+                    ChannelInfoViewState.Content.Member(
+                        user = PreviewUserData.user1.copy(lastActive = Date()),
+                        role = ChannelInfoViewState.Content.Role.Owner,
+                    ),
+                    ChannelInfoViewState.Content.Member(
+                        user = PreviewUserData.user2.copy(online = true),
+                        role = ChannelInfoViewState.Content.Role.Owner,
+                    ),
+                    ChannelInfoViewState.Content.Member(
+                        user = PreviewUserData.user3,
+                        role = ChannelInfoViewState.Content.Role.Owner,
+                    ),
+                    ChannelInfoViewState.Content.Member(
+                        user = PreviewUserData.user4,
+                        role = ChannelInfoViewState.Content.Role.Owner,
+                    ),
+                ),
+                minimumVisibleItems = 2,
+                isCollapsed = false,
+            ),
+            options = listOf(
+                ChannelInfoViewState.Content.Option.RenameChannel(name = "Group Channel", isReadOnly = true),
+                ChannelInfoViewState.Content.Option.MuteChannel(isMuted = true),
+                ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                ChannelInfoViewState.Content.Option.PinnedMessages,
+                ChannelInfoViewState.Content.Option.Separator,
+                ChannelInfoViewState.Content.Option.LeaveChannel,
+                ChannelInfoViewState.Content.Option.DeleteChannel,
+            ),
+        ),
+    )
 }
