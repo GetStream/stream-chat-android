@@ -19,12 +19,14 @@ package io.getstream.chat.android.compose.ui.attachments.factory
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
+import androidx.core.net.toUri
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.AudioRecordAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.AudioRecordAttachmentPreviewContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
+import io.getstream.chat.android.models.Attachment
 import io.getstream.log.StreamLog
 
 /**
@@ -33,6 +35,7 @@ import io.getstream.log.StreamLog
 public class AudioRecordAttachmentFactory(
     private val viewModelFactory: AudioPlayerViewModelFactory,
     private val getCurrentUserId: () -> String?,
+    private val getRecordingUri: (Attachment) -> String? = { it.assetUrl ?: it.upload?.toUri()?.toString() },
 ) : AttachmentFactory(
     type = Type.BuiltIn.AUDIO_RECORD,
     canHandle = { attachments ->
@@ -44,6 +47,7 @@ public class AudioRecordAttachmentFactory(
             attachments = attachments,
             onAttachmentRemoved = onAttachmentRemoved,
             viewModelFactory = viewModelFactory,
+            getRecordingUri = getRecordingUri,
         )
     },
     content = @Composable { modifier, attachmentState ->
@@ -54,6 +58,7 @@ public class AudioRecordAttachmentFactory(
             attachmentState = attachmentState,
             viewModelFactory = viewModelFactory,
             getCurrentUserId = getCurrentUserId,
+            getRecordingUri = getRecordingUri,
         )
     },
 ) {

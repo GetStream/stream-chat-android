@@ -121,9 +121,10 @@ public object StreamAttachmentFactories {
         AudioRecordAttachmentFactory(
             viewModelFactory = AudioPlayerViewModelFactory(
                 getAudioPlayer = { getChatClient().audioPlayer },
-                getRecordingUri = { it.assetUrl ?: it.upload?.toUri()?.toString() },
+                getRecordingUri = AudioRecordingUri,
             ),
             getCurrentUserId = { getChatClient().getCurrentOrStoredUserId() },
+            getRecordingUri = AudioRecordingUri,
         ),
         LinkAttachmentFactory(
             linkDescriptionMaxLines = linkDescriptionMaxLines,
@@ -154,4 +155,8 @@ public object StreamAttachmentFactories {
     public fun defaultQuotedFactories(): List<AttachmentFactory> = listOf(
         QuotedAttachmentFactory,
     )
+}
+
+private val AudioRecordingUri: (Attachment) -> String? = { attachment ->
+    attachment.assetUrl ?: attachment.upload?.toUri()?.toString()
 }

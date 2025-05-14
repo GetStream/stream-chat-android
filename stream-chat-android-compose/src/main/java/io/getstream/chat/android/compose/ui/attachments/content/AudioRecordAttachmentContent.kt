@@ -88,11 +88,13 @@ public fun AudioRecordGroupContent(
     modifier: Modifier = Modifier,
     attachmentState: AttachmentState,
     viewModelFactory: AudioPlayerViewModelFactory,
+    getRecordingUri: (Attachment) -> String? = { it.assetUrl ?: it.upload?.toUri()?.toString() },
 ) {
     AudioRecordAttachmentContent(
         modifier = modifier,
         attachmentState = attachmentState,
         viewModelFactory = viewModelFactory,
+        getRecordingUri = getRecordingUri,
     )
 }
 
@@ -141,6 +143,7 @@ public fun AudioRecordAttachmentContent(
     attachmentState: AttachmentState,
     viewModelFactory: AudioPlayerViewModelFactory,
     getCurrentUserId: () -> String? = { null },
+    getRecordingUri: (Attachment) -> String? = { it.assetUrl ?: it.upload?.toUri()?.toString() },
 ) {
     val viewModel = viewModel(AudioPlayerViewModel::class.java, factory = viewModelFactory)
 
@@ -159,6 +162,7 @@ public fun AudioRecordAttachmentContent(
                 attachment = audioRecording,
                 playerState = playerState,
                 isMine = isMine,
+                getRecordingUri = getRecordingUri,
                 onPlayToggleClick = { attachment ->
                     viewModel.playOrPause(attachment)
                 },
@@ -202,6 +206,7 @@ public fun AudioRecordAttachmentContentItem(
     attachment: Attachment,
     playerState: AudioPlayerState,
     isMine: Boolean = false,
+    getRecordingUri: (Attachment) -> String? = { it.assetUrl ?: it.upload?.toUri()?.toString() },
     onPlayToggleClick: (Attachment) -> Unit = {},
     onPlaySpeedClick: (Attachment) -> Unit = {},
     onThumbDragStart: (Attachment) -> Unit = {},
@@ -221,6 +226,7 @@ public fun AudioRecordAttachmentContentItem(
         playbackToggleStyle = { isPlaying -> if (isPlaying) theme.pauseButton else theme.playButton },
         timerStyle = theme.timerStyle,
         waveformSliderStyle = theme.waveformSliderStyle,
+        getRecordingUri = getRecordingUri,
         onPlayToggleClick = onPlayToggleClick,
         onThumbDragStart = onThumbDragStart,
         onThumbDragStop = onThumbDragStop,
@@ -252,12 +258,13 @@ internal fun AudioRecordAttachmentContentItemBase(
     playbackToggleStyle: (isPlaying: Boolean) -> IconContainerStyle,
     timerStyle: TextContainerStyle,
     waveformSliderStyle: WaveformSliderLayoutStyle,
+    getRecordingUri: (Attachment) -> String?,
     onPlayToggleClick: (Attachment) -> Unit = {},
     onThumbDragStart: (Attachment) -> Unit = {},
     onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
     tailContent: @Composable (isPlaying: Boolean) -> Unit = {},
 ) {
-    val attachmentUrl = attachment.assetUrl ?: attachment.upload?.toUri()?.toString()
+    val attachmentUrl = getRecordingUri(attachment)
     val isCurrentAttachment = attachmentUrl == playerState.current.audioUri
     val trackProgress = playerState.current.playingProgress.takeIf { isCurrentAttachment }
         ?: attachmentUrl?.let { playerState.seekTo.getOrDefault(attachment.audioHash, 0f) } ?: 0f
