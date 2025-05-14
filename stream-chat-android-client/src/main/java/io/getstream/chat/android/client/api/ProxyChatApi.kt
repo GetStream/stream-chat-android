@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.api
 
-import io.getstream.chat.android.client.sender.MessageSender
+import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Message
 import io.getstream.result.call.Call
@@ -28,17 +28,18 @@ import kotlinx.coroutines.CoroutineScope
  *
  * @param delegate The original [ChatApi] instance to delegate calls to.
  * @param scope The [CoroutineScope] used for executing the API calls.
- * @param messageSender An optional [MessageSender] for intercepting and overriding the 'sendMessage' API call.
+ * @param sendMessageInterceptor An optional [SendMessageInterceptor] for intercepting and overriding the 'sendMessage'
+ * API call.
  */
 @OptIn(ExperimentalStreamChatApi::class)
 internal class ProxyChatApi(
     private val delegate: ChatApi,
     private val scope: CoroutineScope,
-    private val messageSender: MessageSender?,
+    private val sendMessageInterceptor: SendMessageInterceptor?,
 ) : ChatApi by delegate {
 
     override fun sendMessage(channelType: String, channelId: String, message: Message): Call<Message> {
-        return messageSender?.let {
+        return sendMessageInterceptor?.let {
             CoroutineCall(scope) {
                 it.sendMessage(channelType, channelId, message)
             }

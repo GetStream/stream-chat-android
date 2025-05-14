@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.sender
+package io.getstream.chat.android.client.interceptor
 
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Message
 import io.getstream.result.Result
 
 /**
- * The MessageSender is responsible for sending messages to the server.
- * Allows overriding the default 'sendMessage' API call.
+ * Interceptor for sending messages in the Stream Chat SDK. Allows overriding the default 'sendMessage' API call.
  */
 @ExperimentalStreamChatApi
-public interface MessageSender {
+public interface SendMessageInterceptor {
 
     /**
      * Sends a message to the server.

@@ -101,6 +101,7 @@ import io.getstream.chat.android.client.extensions.internal.isLaterThanDays
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.client.helpers.AppSettingManager
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
+import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.client.interceptor.message.internal.PrepareMessageLogicImpl
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerConfigImpl
@@ -124,7 +125,6 @@ import io.getstream.chat.android.client.query.AddMembersParams
 import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
-import io.getstream.chat.android.client.sender.MessageSender
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.client.socket.ChatSocket
@@ -3885,7 +3885,7 @@ internal constructor(
         private var notificationsHandler: NotificationHandler? = null
         private var notificationConfig: NotificationConfig = NotificationConfig(pushNotificationsEnabled = false)
         private var fileUploader: FileUploader? = null
-        private var messageSender: MessageSender? = null
+        private var sendMessageInterceptor: SendMessageInterceptor? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
         private var customOkHttpClient: OkHttpClient? = null
         private var userCredentialStorage: UserCredentialStorage? = null
@@ -4000,20 +4000,21 @@ internal constructor(
 
         /**
          * Sets a custom message sender implementation that will be used to send messages to the server.
-         * By providing a custom [MessageSender] you can override the logic for sending messages with your own custom
-         * logic.
+         * By providing a custom [SendMessageInterceptor] you can override the logic for sending messages with your own
+         * custom logic.
+         *
          * Example: You can use this to send any message to your own server (instead of the Stream server), which would
          * later be synced between your own server and the Stream server.
          *
-         * See [MessageSender] for more information.
+         * See [SendMessageInterceptor] for more information.
          *
          * IMPORTANT: This is an experimental API and can be changed or removed in the future.
          *
-         * @param messageSender Your custom implementation of [MessageSender].
+         * @param sendMessageInterceptor Your custom implementation of [SendMessageInterceptor].
          */
         @ExperimentalStreamChatApi
-        public fun messageSender(messageSender: MessageSender): Builder {
-            this.messageSender = messageSender
+        public fun sendMessageInterceptor(sendMessageInterceptor: SendMessageInterceptor): Builder {
+            this.sendMessageInterceptor = sendMessageInterceptor
             return this
         }
 
@@ -4232,7 +4233,7 @@ internal constructor(
                     apiModelTransformers = apiModelTransformers,
                     fileTransformer = fileTransformer,
                     uploader = fileUploader,
-                    messageSender = messageSender,
+                    sendMessageInterceptor = sendMessageInterceptor,
                     tokenManager = tokenManager,
                     customOkHttpClient = customOkHttpClient,
                     clientDebugger = clientDebugger,

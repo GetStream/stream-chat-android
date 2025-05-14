@@ -20,10 +20,10 @@ import android.content.Context
 import androidx.lifecycle.Lifecycle
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.debugger.ChatClientDebugger
+import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
-import io.getstream.chat.android.client.sender.MessageSender
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.transformer.ApiModelTransformers
 import io.getstream.chat.android.client.uploader.FileTransformer
@@ -42,7 +42,7 @@ internal class ChatModule(
     apiModelTransformers: ApiModelTransformers,
     fileTransformer: FileTransformer,
     uploader: FileUploader?,
-    messageSender: MessageSender?,
+    sendMessageInterceptor: SendMessageInterceptor?,
     tokenManager: TokenManager,
     customOkHttpClient: OkHttpClient?,
     clientDebugger: ChatClientDebugger?,
@@ -58,7 +58,7 @@ internal class ChatModule(
     apiModelTransformers,
     fileTransformer,
     uploader,
-    messageSender,
+    sendMessageInterceptor,
     tokenManager,
     customOkHttpClient,
     clientDebugger,

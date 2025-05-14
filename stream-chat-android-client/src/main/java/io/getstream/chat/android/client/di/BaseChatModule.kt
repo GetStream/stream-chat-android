@@ -57,6 +57,7 @@ import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.debugger.ChatClientDebugger
+import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.notifications.ChatNotifications
@@ -69,7 +70,6 @@ import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
-import io.getstream.chat.android.client.sender.MessageSender
 import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketFactory
@@ -101,7 +101,7 @@ constructor(
     private val apiModelTransformers: ApiModelTransformers,
     private val fileTransformer: FileTransformer,
     private val fileUploader: FileUploader? = null,
-    private val messageSender: MessageSender? = null,
+    private val sendMessageInterceptor: SendMessageInterceptor? = null,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val customOkHttpClient: OkHttpClient? = null,
     private val clientDebugger: ChatClientDebugger? = null,
@@ -301,7 +301,7 @@ constructor(
             ExtraDataValidator(userScope, originalApi)
         },
         scope = userScope,
-        messageSender = messageSender,
+        sendMessageInterceptor = sendMessageInterceptor,
     )
 
     private inline fun <reified T> buildRetrofitApi(): T {
