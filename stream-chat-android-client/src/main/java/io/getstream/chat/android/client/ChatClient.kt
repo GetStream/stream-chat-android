@@ -124,6 +124,7 @@ import io.getstream.chat.android.client.query.AddMembersParams
 import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
+import io.getstream.chat.android.client.sender.MessageSender
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.client.socket.ChatSocket
@@ -151,6 +152,7 @@ import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.client.utils.stringify
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.models.AppSettings
@@ -3867,6 +3869,7 @@ internal constructor(
      * [Stream Dashboard](https://dashboard.getstream.io/).
      * @param appContext The application [Context].
      */
+    @OptIn(ExperimentalStreamChatApi::class)
     @Suppress("TooManyFunctions")
     public class Builder(private val apiKey: String, private val appContext: Context) : ChatClientBuilder() {
 
@@ -3882,6 +3885,7 @@ internal constructor(
         private var notificationsHandler: NotificationHandler? = null
         private var notificationConfig: NotificationConfig = NotificationConfig(pushNotificationsEnabled = false)
         private var fileUploader: FileUploader? = null
+        private var messageSender: MessageSender? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
         private var customOkHttpClient: OkHttpClient? = null
         private var userCredentialStorage: UserCredentialStorage? = null
@@ -3991,6 +3995,25 @@ internal constructor(
          */
         public fun fileUploader(fileUploader: FileUploader): Builder {
             this.fileUploader = fileUploader
+            return this
+        }
+
+        /**
+         * Sets a custom message sender implementation that will be used to send messages to the server.
+         * By providing a custom [MessageSender] you can override the logic for sending messages with your own custom
+         * logic.
+         * Example: You can use this to send any message to your own server (instead of the Stream server), which would
+         * later be synced between your own server and the Stream server.
+         *
+         * See [MessageSender] for more information.
+         *
+         * IMPORTANT: This is an experimental API and can be changed or removed in the future.
+         *
+         * @param messageSender Your custom implementation of [MessageSender].
+         */
+        @ExperimentalStreamChatApi
+        public fun messageSender(messageSender: MessageSender): Builder {
+            this.messageSender = messageSender
             return this
         }
 
@@ -4209,6 +4232,7 @@ internal constructor(
                     apiModelTransformers = apiModelTransformers,
                     fileTransformer = fileTransformer,
                     uploader = fileUploader,
+                    messageSender = messageSender,
                     tokenManager = tokenManager,
                     customOkHttpClient = customOkHttpClient,
                     clientDebugger = clientDebugger,

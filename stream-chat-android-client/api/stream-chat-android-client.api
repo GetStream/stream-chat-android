@@ -238,6 +238,7 @@ public final class io/getstream/chat/android/client/ChatClient$Builder : io/gets
 	public final fun forceInsecureConnection ()Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun logLevel (Lio/getstream/chat/android/client/logger/ChatLogLevel;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun loggerHandler (Lio/getstream/chat/android/client/logger/ChatLoggerHandler;)Lio/getstream/chat/android/client/ChatClient$Builder;
+	public final fun messageSender (Lio/getstream/chat/android/client/sender/MessageSender;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun notifications (Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun notifications (Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public static synthetic fun notifications$default (Lio/getstream/chat/android/client/ChatClient$Builder;Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;ILjava/lang/Object;)Lio/getstream/chat/android/client/ChatClient$Builder;
@@ -3176,6 +3177,10 @@ public final class io/getstream/chat/android/client/query/pagination/AnyChannelP
 
 public final class io/getstream/chat/android/client/query/pagination/AnyChannelPaginationRequestKt {
 	public static final fun isRequestingMoreThanLastMessage (Lio/getstream/chat/android/client/query/pagination/AnyChannelPaginationRequest;)Z
+}
+
+public abstract interface class io/getstream/chat/android/client/sender/MessageSender {
+	public abstract fun sendMessage (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;)Lio/getstream/result/Result;
 }
 
 public abstract interface class io/getstream/chat/android/client/setup/state/ClientState {

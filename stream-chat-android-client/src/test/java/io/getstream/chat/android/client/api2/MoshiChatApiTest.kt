@@ -2153,6 +2153,7 @@ internal class MoshiChatApiTest {
                 dtoMapping = dtoMapping,
                 fileUploader = fileUploader,
                 fileTransformer = fileTransformer,
+                messageSender = null,
                 userApi = userApi,
                 guestApi = guestApi,
                 messageApi = messageApi,

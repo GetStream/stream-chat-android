@@ -68,6 +68,7 @@ import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
+import io.getstream.chat.android.client.sender.MessageSender
 import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketFactory
@@ -79,12 +80,14 @@ import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamFileUploader
 import io.getstream.chat.android.client.user.CurrentUserFetcher
 import io.getstream.chat.android.client.utils.HeadersUtil
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.UserId
 import io.getstream.log.StreamLog
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
 
+@OptIn(ExperimentalStreamChatApi::class)
 @Suppress("TooManyFunctions")
 internal open class BaseChatModule
 @Suppress("LongParameterList")
@@ -97,6 +100,7 @@ constructor(
     private val apiModelTransformers: ApiModelTransformers,
     private val fileTransformer: FileTransformer,
     private val fileUploader: FileUploader? = null,
+    private val messageSender: MessageSender?,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val customOkHttpClient: OkHttpClient? = null,
     private val clientDebugger: ChatClientDebugger? = null,
@@ -270,8 +274,9 @@ constructor(
         domainMapping = domainMapping,
         eventMapping = eventMapping,
         dtoMapping = dtoMapping,
-        fileUploader ?: defaultFileUploader,
+        fileUploader = fileUploader ?: defaultFileUploader,
         fileTransformer = fileTransformer,
+        messageSender = messageSender,
         buildRetrofitApi<UserApi>(),
         buildRetrofitApi<GuestApi>(),
         buildRetrofitApi<MessageApi>(),
