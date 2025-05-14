@@ -208,7 +208,7 @@ private fun GroupChannelInfoContent(
             items(content.options) { option ->
                 ChannelInfoContentOption(
                     option = option,
-                    isGroupChannel = false,
+                    isGroupChannel = true,
                     onViewAction = onViewAction,
                     onPinnedMessagesClick = onPinnedMessagesClick,
                 )
