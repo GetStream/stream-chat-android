@@ -104,6 +104,7 @@ internal fun ChannelInfoOptionNavigationButton(
             modifier = Modifier.weight(1f),
             text = text,
             style = ChatTheme.typography.bodyBold,
+            color = ChatTheme.colors.textHighEmphasis,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -136,6 +137,7 @@ internal fun ChannelInfoOptionSwitch(
             modifier = Modifier.weight(1f),
             text = text,
             style = ChatTheme.typography.bodyBold,
+            color = ChatTheme.colors.textHighEmphasis,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )

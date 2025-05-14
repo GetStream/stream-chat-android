@@ -197,36 +197,46 @@ private fun DirectChannelInfoContent(
 @Composable
 private fun DirectChannelInfoContentLoadingPreview() {
     ChatTheme {
-        DirectChannelInfoContent(
-            state = ChannelInfoViewState.Loading,
-        )
+        DirectChannelInfoLoading()
     }
+}
+
+@Composable
+internal fun DirectChannelInfoLoading() {
+    DirectChannelInfoContent(
+        state = ChannelInfoViewState.Loading,
+    )
 }
 
 @Preview
 @Composable
 private fun DirectChannelInfoContentPreview() {
     ChatTheme {
-        DirectChannelInfoContent(
-            state = ChannelInfoViewState.Content(
-                members = ExpandableList(
-                    items = listOf(
-                        ChannelInfoViewState.Content.Member(
-                            user = PreviewUserData.user1.copy(lastActive = Date()),
-                            role = ChannelInfoViewState.Content.Role.Owner,
-                        ),
+        DirectChannelInfoContent()
+    }
+}
+
+@Composable
+internal fun DirectChannelInfoContent() {
+    DirectChannelInfoContent(
+        state = ChannelInfoViewState.Content(
+            members = ExpandableList(
+                items = listOf(
+                    ChannelInfoViewState.Content.Member(
+                        user = PreviewUserData.user1.copy(lastActive = Date()),
+                        role = ChannelInfoViewState.Content.Role.Owner,
                     ),
                 ),
-                options = listOf(
-                    ChannelInfoViewState.Content.Option.UserInfo(id = "userId"),
-                    ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
-                    ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
-                    ChannelInfoViewState.Content.Option.PinnedMessages,
-                    ChannelInfoViewState.Content.Option.Separator,
-                    ChannelInfoViewState.Content.Option.LeaveChannel,
-                    ChannelInfoViewState.Content.Option.DeleteChannel,
-                ),
             ),
-        )
-    }
+            options = listOf(
+                ChannelInfoViewState.Content.Option.UserInfo(id = "userId"),
+                ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
+                ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                ChannelInfoViewState.Content.Option.PinnedMessages,
+                ChannelInfoViewState.Content.Option.Separator,
+                ChannelInfoViewState.Content.Option.LeaveChannel,
+                ChannelInfoViewState.Content.Option.DeleteChannel,
+            ),
+        ),
+    )
 }
