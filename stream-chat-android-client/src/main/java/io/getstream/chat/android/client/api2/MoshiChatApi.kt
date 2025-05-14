@@ -155,7 +155,6 @@ constructor(
     private val dtoMapping: DtoMapping,
     private val fileUploader: FileUploader,
     private val fileTransformer: FileTransformer,
-    private val messageSender: MessageSender?,
     private val userApi: UserApi,
     private val guestApi: GuestApi,
     private val messageApi: MessageApi,
@@ -220,26 +219,16 @@ constructor(
         channelType: String,
         channelId: String,
         message: Message,
-    ): Call<Message> = if (messageSender != null) {
-        CoroutineCall(userScope) {
-            messageSender.sendMessage(
-                channelType = channelType,
-                channelId = channelId,
-                message = message,
-            )
-        }
-    } else {
-        messageApi.sendMessage(
-            channelType = channelType,
-            channelId = channelId,
-            message = SendMessageRequest(
-                message = with(dtoMapping) { message.toDto() },
-                skip_push = message.skipPushNotification,
-                skip_enrich_url = message.skipEnrichUrl,
-            ),
-        ).mapDomain { response ->
-            response.message.toDomain()
-        }
+    ): Call<Message> = messageApi.sendMessage(
+        channelType = channelType,
+        channelId = channelId,
+        message = SendMessageRequest(
+            message = with(dtoMapping) { message.toDto() },
+            skip_push = message.skipPushNotification,
+            skip_enrich_url = message.skipEnrichUrl,
+        ),
+    ).mapDomain { response ->
+        response.message.toDomain()
     }
 
     override fun createDraftMessage(

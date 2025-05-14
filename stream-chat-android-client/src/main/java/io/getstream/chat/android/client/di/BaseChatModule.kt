@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.api.AnonymousApi
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.api.ProxyChatApi
 import io.getstream.chat.android.client.api.RetrofitCallAdapterFactory
 import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api.interceptor.ApiKeyInterceptor
@@ -270,35 +271,39 @@ constructor(
     )
 
     @Suppress("RemoveExplicitTypeArguments")
-    private fun buildApi(chatConfig: ChatClientConfig): ChatApi = MoshiChatApi(
-        domainMapping = domainMapping,
-        eventMapping = eventMapping,
-        dtoMapping = dtoMapping,
-        fileUploader = fileUploader ?: defaultFileUploader,
-        fileTransformer = fileTransformer,
+    private fun buildApi(chatConfig: ChatClientConfig): ChatApi = ProxyChatApi(
+        delegate = MoshiChatApi(
+            domainMapping = domainMapping,
+            eventMapping = eventMapping,
+            dtoMapping = dtoMapping,
+            fileUploader = fileUploader ?: defaultFileUploader,
+            fileTransformer = fileTransformer,
+            buildRetrofitApi<UserApi>(),
+            buildRetrofitApi<GuestApi>(),
+            buildRetrofitApi<MessageApi>(),
+            buildRetrofitApi<ChannelApi>(),
+            buildRetrofitApi<DeviceApi>(),
+            buildRetrofitApi<ModerationApi>(),
+            buildRetrofitApi<GeneralApi>(),
+            buildRetrofitApi<ConfigApi>(),
+            buildRetrofitApi<VideoCallApi>(),
+            buildRetrofitApi<FileDownloadApi>(),
+            buildRetrofitApi<OpenGraphApi>(),
+            buildRetrofitApi<ThreadsApi>(),
+            buildRetrofitApi<PollsApi>(),
+            userScope,
+            userScope,
+        ).let { originalApi ->
+            DistinctChatApiEnabler(DistinctChatApi(userScope, originalApi)) {
+                chatConfig.distinctApiCalls
+            }
+        }.let { originalApi ->
+            ExtraDataValidator(userScope, originalApi)
+        },
+        scope = userScope,
         messageSender = messageSender,
-        buildRetrofitApi<UserApi>(),
-        buildRetrofitApi<GuestApi>(),
-        buildRetrofitApi<MessageApi>(),
-        buildRetrofitApi<ChannelApi>(),
-        buildRetrofitApi<DeviceApi>(),
-        buildRetrofitApi<ModerationApi>(),
-        buildRetrofitApi<GeneralApi>(),
-        buildRetrofitApi<ConfigApi>(),
-        buildRetrofitApi<VideoCallApi>(),
-        buildRetrofitApi<FileDownloadApi>(),
-        buildRetrofitApi<OpenGraphApi>(),
-        buildRetrofitApi<ThreadsApi>(),
-        buildRetrofitApi<PollsApi>(),
-        userScope,
-        userScope,
-    ).let { originalApi ->
-        DistinctChatApiEnabler(DistinctChatApi(userScope, originalApi)) {
-            chatConfig.distinctApiCalls
-        }
-    }.let { originalApi ->
-        ExtraDataValidator(userScope, originalApi)
-    }
+    )
+
 
     private inline fun <reified T> buildRetrofitApi(): T {
         val apiClass = T::class.java
