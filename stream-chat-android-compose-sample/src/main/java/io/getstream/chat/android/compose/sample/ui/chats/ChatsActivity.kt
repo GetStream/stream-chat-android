@@ -38,12 +38,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.feature.channel.ChannelConstants.CHANNEL_ARG_DRAFT
 import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelActivity
+import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
 import io.getstream.chat.android.compose.sample.feature.channel.list.CustomChatEventHandlerFactory
 import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBar
@@ -444,6 +444,3 @@ private fun ThreePaneNavigator.navigateToMessage(
         },
     )
 }
-
-private val Channel.isGroupChannel: Boolean
-    get() = memberCount > 2 || !isAnonymousChannel()

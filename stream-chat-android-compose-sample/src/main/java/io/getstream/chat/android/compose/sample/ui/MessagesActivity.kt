@@ -57,9 +57,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.R
+import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
 import io.getstream.chat.android.compose.sample.ui.channel.DirectChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponentFactory
@@ -198,10 +198,10 @@ class MessagesActivity : BaseConnectedActivity() {
     }
 
     private fun openChannelInfo(channel: Channel) {
-        val intent = if (channel.memberCount > 2 || !channel.isAnonymousChannel()) {
-            GroupChannelInfoActivity.createIntent(this, channelId = channel.cid)
+        val intent = if (channel.isGroupChannel) {
+            GroupChannelInfoActivity.createIntent(applicationContext, channelId = channel.cid)
         } else {
-            DirectChannelInfoActivity.createIntent(this, channelId = channel.cid)
+            DirectChannelInfoActivity.createIntent(applicationContext, channelId = channel.cid)
         }
         channelInfoLauncher.launch(intent)
     }
