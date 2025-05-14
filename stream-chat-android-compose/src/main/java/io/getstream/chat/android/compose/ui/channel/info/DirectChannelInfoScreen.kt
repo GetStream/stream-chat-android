@@ -57,6 +57,17 @@ import io.getstream.chat.android.ui.common.utils.ExpandableList
 import kotlinx.coroutines.flow.collectLatest
 import java.util.Date
 
+/**
+ * A stateful screen component that displays the channel info for a direct channel,
+ * including the options available for the channel.
+ *
+ * @param viewModelFactory The factory used to create the [ChannelInfoViewModel].
+ * @param modifier The [Modifier] to be applied to this screen.
+ * @param viewModelKey Key to differentiate between instances of [ChannelInfoViewModel].
+ * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
+ * @param onPinnedMessagesClick Callback invoked when the pinned messages option is clicked.
+ * @param topBar The top bar to be displayed on the screen.
+ */
 @ExperimentalStreamChatApi
 @Composable
 public fun DirectChannelInfoScreen(
