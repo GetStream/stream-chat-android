@@ -22,8 +22,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -37,14 +37,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -172,34 +169,14 @@ private fun DirectChannelInfoContent(
                     overflow = TextOverflow.Ellipsis,
                 )
                 LazyColumn {
-                    item {
-                        ChannelInfoOption(
-                            onClick = { onViewAction(ChannelInfoViewAction.CopyUserIdClick(user.id)) },
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.stream_compose_ic_person),
-                                contentDescription = null,
-                                tint = ChatTheme.colors.textLowEmphasis,
-                            )
-                            Text(
-                                modifier = Modifier.weight(1f),
-                                text = "@${user.id}",
-                                style = ChatTheme.typography.bodyBold,
-                                color = ChatTheme.colors.textHighEmphasis,
-                            )
-                            Icon(
-                                painter = painterResource(R.drawable.stream_compose_ic_copy),
-                                contentDescription = stringResource(R.string.stream_ui_channel_info_copy_user_id),
-                                tint = ChatTheme.colors.textLowEmphasis,
-                            )
-                        }
+                    items(content.options) { option ->
+                        ChannelInfoContentOption(
+                            option = option,
+                            isGroupChannel = false,
+                            onViewAction = onViewAction,
+                            onPinnedMessagesClick = onPinnedMessagesClick,
+                        )
                     }
-                    channelInfoOptionItems(
-                        content = content,
-                        isGroupChannel = false,
-                        onViewAction = onViewAction,
-                        onPinnedMessagesClick = onPinnedMessagesClick,
-                    )
                 }
             }
         }
@@ -230,13 +207,15 @@ private fun DirectChannelInfoContentPreview() {
                         ),
                     ),
                 ),
-                capability = ChannelInfoViewState.Content.Capability(
-                    canMuteChannel = true,
-                    canLeaveChannel = true,
-                    canDeleteChannel = true,
+                options = listOf(
+                    ChannelInfoViewState.Content.Option.UserInfo(id = "userId"),
+                    ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
+                    ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                    ChannelInfoViewState.Content.Option.PinnedMessages,
+                    ChannelInfoViewState.Content.Option.Separator,
+                    ChannelInfoViewState.Content.Option.LeaveChannel,
+                    ChannelInfoViewState.Content.Option.DeleteChannel,
                 ),
-                isMuted = false,
-                isHidden = false,
             ),
         )
     }

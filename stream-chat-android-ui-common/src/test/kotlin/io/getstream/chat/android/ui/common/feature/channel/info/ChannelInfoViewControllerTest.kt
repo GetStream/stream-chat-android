@@ -90,6 +90,13 @@ internal class ChannelInfoViewControllerTest {
                         ),
                         minimumVisibleItems = 5,
                     ),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.UserInfo(id = currentUser.id),
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -128,6 +135,13 @@ internal class ChannelInfoViewControllerTest {
                             ),
                         ),
                         minimumVisibleItems = 5,
+                    ),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.UserInfo(id = "2"),
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
                     ),
                 ),
                 awaitItem(),
@@ -180,6 +194,12 @@ internal class ChannelInfoViewControllerTest {
                         ),
                         minimumVisibleItems = 5,
                     ),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -210,6 +230,12 @@ internal class ChannelInfoViewControllerTest {
                             },
                         minimumVisibleItems = 5,
                     ),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -219,6 +245,12 @@ internal class ChannelInfoViewControllerTest {
     @Test
     fun `expand and collapse group channel content`() = runTest {
         val channel = Channel(members = (1..10).map { i -> Member(user = User(id = "$i")) })
+        val options = listOf(
+            ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+            ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+            ChannelInfoViewState.Content.Option.PinnedMessages,
+            ChannelInfoViewState.Content.Option.Separator,
+        )
         val sut = Fixture()
             .given(channel = channel)
             .get(backgroundScope)
@@ -238,6 +270,7 @@ internal class ChannelInfoViewControllerTest {
                             },
                         minimumVisibleItems = 5,
                     ),
+                    options = options,
                 ),
                 awaitItem(),
             )
@@ -257,6 +290,7 @@ internal class ChannelInfoViewControllerTest {
                         minimumVisibleItems = 5,
                         isCollapsed = false,
                     ),
+                    options = options,
                 ),
                 awaitItem(),
             )
@@ -276,6 +310,7 @@ internal class ChannelInfoViewControllerTest {
                         minimumVisibleItems = 5,
                         isCollapsed = true,
                     ),
+                    options = options,
                 ),
                 awaitItem(),
             )
@@ -283,7 +318,7 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
-    fun capabilities() = runTest {
+    fun `channel options`() = runTest {
         val channel = Channel(
             ownCapabilities = emptySet(),
         )
@@ -296,14 +331,11 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    capability = ChannelInfoViewState.Content.Capability(
-                        canAddMembers = false,
-                        canRemoveMembers = false,
-                        canBanMembers = false,
-                        canRenameChannel = false,
-                        canMuteChannel = false,
-                        canLeaveChannel = false,
-                        canDeleteChannel = false,
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
                     ),
                 ),
                 awaitItem(),
@@ -325,14 +357,15 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    capability = ChannelInfoViewState.Content.Capability(
-                        canAddMembers = true,
-                        canRemoveMembers = true,
-                        canBanMembers = true,
-                        canRenameChannel = true,
-                        canMuteChannel = true,
-                        canLeaveChannel = true,
-                        canDeleteChannel = true,
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.AddMember,
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = false),
+                        ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                        ChannelInfoViewState.Content.Option.LeaveChannel,
+                        ChannelInfoViewState.Content.Option.DeleteChannel,
                     ),
                 ),
                 awaitItem(),
@@ -352,24 +385,6 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
-    fun `rename channel permission error`() = runTest {
-        val fixture = Fixture().given(channel = Channel())
-        val sut = fixture.get(backgroundScope)
-
-        sut.state.test {
-            skipItems(2) // Skip initial states
-
-            sut.events.test {
-                sut.onViewAction(ChannelInfoViewAction.RenameChannelClick(name = "newName"))
-
-                assertEquals(ChannelInfoViewEvent.RenameChannelError, awaitItem())
-            }
-        }
-
-        launch { fixture.verifyNoMoreInteractions() }
-    }
-
-    @Test
     fun `rename channel`() = runTest {
         val channel = Channel(
             name = "name",
@@ -385,8 +400,12 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    name = channel.name,
-                    capability = ChannelInfoViewState.Content.Capability(canRenameChannel = true),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = false),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -399,8 +418,12 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    name = newName,
-                    capability = ChannelInfoViewState.Content.Capability(canRenameChannel = true),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = newName, isReadOnly = false),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -431,24 +454,6 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
-    fun `mute channel permission error`() = runTest {
-        val fixture = Fixture().given(channel = Channel())
-        val sut = fixture.get(backgroundScope)
-
-        sut.state.test {
-            skipItems(2) // Skip initial states
-
-            sut.events.test {
-                sut.onViewAction(ChannelInfoViewAction.MuteChannelClick)
-
-                assertEquals(ChannelInfoViewEvent.MuteChannelError, awaitItem())
-            }
-        }
-
-        launch { fixture.verifyNoMoreInteractions() }
-    }
-
-    @Test
     fun `mute channel`() = runTest {
         val channel = Channel(ownCapabilities = setOf(ChannelCapabilities.MUTE_CHANNEL))
         val fixture = Fixture().given(channel = channel, isMuted = false)
@@ -460,8 +465,13 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    isMuted = false,
-                    capability = ChannelInfoViewState.Content.Capability(canMuteChannel = true),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -473,8 +483,13 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    isMuted = true,
-                    capability = ChannelInfoViewState.Content.Capability(canMuteChannel = true),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.MuteChannel(isMuted = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -493,8 +508,13 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    isMuted = false,
-                    capability = ChannelInfoViewState.Content.Capability(canMuteChannel = true),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -521,8 +541,13 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    isMuted = true,
-                    capability = ChannelInfoViewState.Content.Capability(canMuteChannel = true),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.MuteChannel(isMuted = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -534,8 +559,13 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    isMuted = false,
-                    capability = ChannelInfoViewState.Content.Capability(canMuteChannel = true),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -554,8 +584,13 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    isMuted = true,
-                    capability = ChannelInfoViewState.Content.Capability(canMuteChannel = true),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.MuteChannel(isMuted = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -599,7 +634,12 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    isHidden = false,
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -612,7 +652,12 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    isHidden = true,
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = true),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -630,7 +675,12 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    isHidden = false,
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -660,7 +710,12 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    isHidden = true,
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = true),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -672,7 +727,12 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    isHidden = false,
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -690,7 +750,12 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    isHidden = true,
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = true),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -717,24 +782,6 @@ internal class ChannelInfoViewControllerTest {
                 sut.onViewAction(ChannelInfoViewAction.LeaveChannelClick)
 
                 assertEquals(ChannelInfoViewEvent.LeaveChannelModal, awaitItem())
-            }
-        }
-
-        launch { fixture.verifyNoMoreInteractions() }
-    }
-
-    @Test
-    fun `leave channel permission error`() = runTest {
-        val fixture = Fixture().given(channel = Channel())
-        val sut = fixture.get(backgroundScope)
-
-        sut.state.test {
-            skipItems(2) // Skip initial states
-
-            sut.events.test {
-                sut.onViewAction(ChannelInfoViewAction.LeaveChannelConfirmationClick(quitMessage = null))
-
-                assertEquals(ChannelInfoViewEvent.LeaveChannelError, awaitItem())
             }
         }
 
@@ -778,7 +825,13 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    capability = ChannelInfoViewState.Content.Capability(canLeaveChannel = true),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                        ChannelInfoViewState.Content.Option.LeaveChannel,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -816,7 +869,13 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    capability = ChannelInfoViewState.Content.Capability(canLeaveChannel = true),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                        ChannelInfoViewState.Content.Option.LeaveChannel,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -854,24 +913,6 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
-    fun `delete channel permission error`() = runTest {
-        val fixture = Fixture().given(channel = Channel())
-        val sut = fixture.get(backgroundScope)
-
-        sut.state.test {
-            skipItems(2) // Skip initial states
-
-            sut.events.test {
-                sut.onViewAction(ChannelInfoViewAction.DeleteChannelConfirmationClick)
-
-                assertEquals(ChannelInfoViewEvent.DeleteChannelError, awaitItem())
-            }
-        }
-
-        launch { fixture.verifyNoMoreInteractions() }
-    }
-
-    @Test
     fun `delete channel success`() = runTest {
         val channel = Channel(ownCapabilities = setOf(ChannelCapabilities.DELETE_CHANNEL))
         val fixture = Fixture().given(channel = channel)
@@ -883,7 +924,13 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    capability = ChannelInfoViewState.Content.Capability(canDeleteChannel = true),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                        ChannelInfoViewState.Content.Option.DeleteChannel,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -910,7 +957,13 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    capability = ChannelInfoViewState.Content.Capability(canDeleteChannel = true),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                        ChannelInfoViewState.Content.Option.DeleteChannel,
+                    ),
                 ),
                 awaitItem(),
             )

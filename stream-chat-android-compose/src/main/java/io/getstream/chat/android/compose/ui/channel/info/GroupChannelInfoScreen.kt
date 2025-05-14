@@ -17,11 +17,8 @@
 package io.getstream.chat.android.compose.ui.channel.info
 
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -29,12 +26,8 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Close
-import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,10 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -62,8 +52,6 @@ import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.animation.FadingVisibility
-import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.getLastSeenText
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
@@ -204,21 +192,14 @@ private fun GroupChannelInfoContent(
             item {
                 StreamHorizontalDivider(thickness = 8.dp)
             }
-            item {
-                ChannelNameField(
-                    name = content.name,
-                    readOnly = !content.capability.canRenameChannel,
-                    onConfirmRenaming = { name ->
-                        onViewAction(ChannelInfoViewAction.RenameChannelClick(name))
-                    },
+            items(content.options) { option ->
+                ChannelInfoContentOption(
+                    option = option,
+                    isGroupChannel = false,
+                    onViewAction = onViewAction,
+                    onPinnedMessagesClick = onPinnedMessagesClick,
                 )
             }
-            channelInfoOptionItems(
-                content = content,
-                isGroupChannel = true,
-                onViewAction = onViewAction,
-                onPinnedMessagesClick = onPinnedMessagesClick,
-            )
         }
     }
 }
@@ -295,69 +276,6 @@ private fun GroupChannelInfoExpandMemberButton(
     }
 }
 
-@Composable
-private fun ChannelNameField(
-    name: String,
-    readOnly: Boolean,
-    onConfirmRenaming: (name: String) -> Unit,
-) {
-    val focusManager = LocalFocusManager.current
-    var value by remember { mutableStateOf(name) }
-    var showEditingButtons by remember { mutableStateOf(false) }
-    OutlinedTextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .onFocusChanged { showEditingButtons = it.isFocused && !readOnly },
-        readOnly = readOnly,
-        prefix = {
-            Text(
-                modifier = Modifier.padding(end = 8.dp),
-                text = stringResource(R.string.stream_ui_channel_info_name_field_label),
-                style = ChatTheme.typography.bodyBold,
-                color = ChatTheme.colors.textLowEmphasis,
-            )
-        },
-        placeholder = {
-            Text(text = stringResource(R.string.stream_ui_channel_info_name_field_placeholder))
-        },
-        value = value,
-        trailingIcon = {
-            FadingVisibility(visible = showEditingButtons) {
-                Row(
-                    modifier = Modifier.padding(end = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Icon(
-                        modifier = Modifier.clickable(bounded = false) {
-                            value = name
-                            focusManager.clearFocus()
-                        },
-                        imageVector = Icons.Rounded.Close,
-                        tint = ChatTheme.colors.textLowEmphasis,
-                        contentDescription = null,
-                    )
-                    Icon(
-                        modifier = Modifier.clickable(bounded = false) {
-                            onConfirmRenaming(value)
-                            focusManager.clearFocus()
-                        },
-                        imageVector = Icons.Rounded.Done,
-                        tint = ChatTheme.colors.primaryAccent,
-                        contentDescription = null,
-                    )
-                }
-            }
-        },
-        singleLine = true,
-        onValueChange = { value = it },
-        colors = OutlinedTextFieldDefaults.colors(
-            unfocusedBorderColor = Color.Transparent,
-            focusedBorderColor = Color.Transparent,
-        ),
-    )
-}
-
 @Preview(showBackground = true)
 @Composable
 private fun GroupChannelInfoContentLoadingPreview() {
@@ -396,15 +314,15 @@ private fun GroupChannelInfoContentCollapsedPreview() {
                     minimumVisibleItems = 2,
                     isCollapsed = true,
                 ),
-                name = "Group Channel",
-                capability = ChannelInfoViewState.Content.Capability(
-                    canRenameChannel = true,
-                    canMuteChannel = true,
-                    canLeaveChannel = true,
-                    canDeleteChannel = true,
+                options = listOf(
+                    ChannelInfoViewState.Content.Option.RenameChannel(name = "Group Channel", isReadOnly = false),
+                    ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
+                    ChannelInfoViewState.Content.Option.HideChannel(isHidden = true),
+                    ChannelInfoViewState.Content.Option.PinnedMessages,
+                    ChannelInfoViewState.Content.Option.Separator,
+                    ChannelInfoViewState.Content.Option.LeaveChannel,
+                    ChannelInfoViewState.Content.Option.DeleteChannel,
                 ),
-                isMuted = false,
-                isHidden = false,
             ),
         )
     }
@@ -438,15 +356,15 @@ private fun GroupChannelInfoContentExpandedPreview() {
                     minimumVisibleItems = 2,
                     isCollapsed = false,
                 ),
-                name = "Group Channel",
-                capability = ChannelInfoViewState.Content.Capability(
-                    canRenameChannel = true,
-                    canMuteChannel = true,
-                    canLeaveChannel = true,
-                    canDeleteChannel = true,
+                options = listOf(
+                    ChannelInfoViewState.Content.Option.RenameChannel(name = "Group Channel", isReadOnly = true),
+                    ChannelInfoViewState.Content.Option.MuteChannel(isMuted = true),
+                    ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                    ChannelInfoViewState.Content.Option.PinnedMessages,
+                    ChannelInfoViewState.Content.Option.Separator,
+                    ChannelInfoViewState.Content.Option.LeaveChannel,
+                    ChannelInfoViewState.Content.Option.DeleteChannel,
                 ),
-                isMuted = false,
-                isHidden = false,
             ),
         )
     }

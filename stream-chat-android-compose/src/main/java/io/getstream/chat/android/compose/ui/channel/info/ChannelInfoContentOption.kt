@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.compose.ui.channel.info
 
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,18 +31,43 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 
-@Suppress("LongMethod")
-internal fun LazyListScope.channelInfoOptionItems(
-    content: ChannelInfoViewState.Content,
+@Composable
+internal fun ChannelInfoContentOption(
+    option: ChannelInfoViewState.Content.Option,
     isGroupChannel: Boolean,
     onViewAction: (action: ChannelInfoViewAction) -> Unit,
     onPinnedMessagesClick: () -> Unit,
 ) {
-    if (content.capability.canMuteChannel) {
-        item {
+    when (option) {
+        is ChannelInfoViewState.Content.Option.Separator -> {
+            StreamHorizontalDivider(thickness = 8.dp)
+        }
+
+        is ChannelInfoViewState.Content.Option.AddMember -> {
+            // Not rendered as an option, but as a button in the top bar
+        }
+
+        is ChannelInfoViewState.Content.Option.UserInfo -> {
+            ChannelInfoUserInfoOption(
+                userId = option.id,
+                onClick = { onViewAction(ChannelInfoViewAction.CopyUserIdClick(option.id)) },
+            )
+        }
+
+        is ChannelInfoViewState.Content.Option.RenameChannel -> {
+            ChannelInfoNameField(
+                name = option.name,
+                readOnly = option.isReadOnly,
+                onConfirmRenaming = { name ->
+                    onViewAction(ChannelInfoViewAction.RenameChannelClick(name))
+                },
+            )
+        }
+
+        is ChannelInfoViewState.Content.Option.MuteChannel -> {
             // The LLC might take a few milliseconds to update the mute state.
             // So update UI immediately to avoid flickering.
-            var muted by remember { mutableStateOf(content.isMuted) }
+            var muted by remember { mutableStateOf(option.isMuted) }
 
             ChannelInfoOptionSwitch(
                 icon = R.drawable.stream_compose_ic_mute,
@@ -62,37 +87,35 @@ internal fun LazyListScope.channelInfoOptionItems(
                 },
             )
         }
-    }
-    item {
-        ChannelInfoOptionSwitch(
-            icon = R.drawable.stream_ic_hide,
-            text = if (isGroupChannel) {
-                stringResource(R.string.stream_ui_channel_info_option_hide_group)
-            } else {
-                stringResource(R.string.stream_ui_channel_info_option_hide_conversation)
-            },
-            checked = content.isHidden,
-            onCheckedChange = { checked ->
-                if (checked) {
-                    onViewAction(ChannelInfoViewAction.HideChannelClick)
+
+        is ChannelInfoViewState.Content.Option.HideChannel -> {
+            ChannelInfoOptionSwitch(
+                icon = R.drawable.stream_ic_hide,
+                text = if (isGroupChannel) {
+                    stringResource(R.string.stream_ui_channel_info_option_hide_group)
                 } else {
-                    onViewAction(ChannelInfoViewAction.UnhideChannelClick)
-                }
-            },
-        )
-    }
-    item {
-        ChannelInfoOptionNavigationButton(
-            icon = R.drawable.stream_compose_ic_message_pinned,
-            text = stringResource(R.string.stream_ui_channel_info_option_pinned_messages),
-            onClick = onPinnedMessagesClick,
-        )
-    }
-    item {
-        StreamHorizontalDivider(thickness = 8.dp)
-    }
-    if (content.capability.canLeaveChannel) {
-        item {
+                    stringResource(R.string.stream_ui_channel_info_option_hide_conversation)
+                },
+                checked = option.isHidden,
+                onCheckedChange = { checked ->
+                    if (checked) {
+                        onViewAction(ChannelInfoViewAction.HideChannelClick)
+                    } else {
+                        onViewAction(ChannelInfoViewAction.UnhideChannelClick)
+                    }
+                },
+            )
+        }
+
+        is ChannelInfoViewState.Content.Option.PinnedMessages -> {
+            ChannelInfoOptionNavigationButton(
+                icon = R.drawable.stream_compose_ic_message_pinned,
+                text = stringResource(R.string.stream_ui_channel_info_option_pinned_messages),
+                onClick = onPinnedMessagesClick,
+            )
+        }
+
+        is ChannelInfoViewState.Content.Option.LeaveChannel -> {
             CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.errorAccent)) {
                 ChannelInfoOptionButton(
                     icon = R.drawable.stream_compose_ic_person_remove,
@@ -105,9 +128,8 @@ internal fun LazyListScope.channelInfoOptionItems(
                 )
             }
         }
-    }
-    if (content.capability.canDeleteChannel) {
-        item {
+
+        is ChannelInfoViewState.Content.Option.DeleteChannel -> {
             CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.errorAccent)) {
                 ChannelInfoOptionButton(
                     icon = R.drawable.stream_compose_ic_delete,
