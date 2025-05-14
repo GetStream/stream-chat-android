@@ -24,6 +24,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -35,6 +36,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
@@ -312,8 +315,9 @@ class ChatsActivity : BaseConnectedActivity() {
                 viewModelFactory = viewModelFactory,
                 viewModelKey = channelId,
                 onPinnedMessagesClick = onPinnedMessagesClick,
-                topBar = {
+                topBar = { elevation ->
                     GroupChannelInfoTopBar(
+                        elevation = elevation,
                         onNavigationIconClick = onNavigationIconClick,
                     )
                 },
@@ -323,8 +327,9 @@ class ChatsActivity : BaseConnectedActivity() {
                 viewModelFactory = viewModelFactory,
                 viewModelKey = channelId,
                 onPinnedMessagesClick = onPinnedMessagesClick,
-                topBar = {
+                topBar = { elevation ->
                     GroupChannelInfoTopBar(
+                        elevation = elevation,
                         onNavigationIconClick = onNavigationIconClick,
                         navigationIcon = { CloseButton(onClick = onNavigationIconClick) },
                     )
@@ -336,6 +341,7 @@ class ChatsActivity : BaseConnectedActivity() {
     @Composable
     @OptIn(ExperimentalMaterial3Api::class)
     private fun GroupChannelInfoTopBar(
+        elevation: Dp,
         onNavigationIconClick: () -> Unit,
         navigationIcon: @Composable () -> Unit = {
             BackButton(
@@ -345,11 +351,14 @@ class ChatsActivity : BaseConnectedActivity() {
             )
         },
     ) {
-        TopAppBar(
-            title = {},
-            navigationIcon = navigationIcon,
-            colors = TopAppBarDefaults.topAppBarColors(containerColor = ChatTheme.colors.barsBackground),
-        )
+        Surface(shadowElevation = elevation.takeIf { it > 1.dp } ?: 0.dp) {
+            TopAppBar(
+                title = {},
+                navigationIcon = navigationIcon,
+                expandedHeight = 56.dp,
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = ChatTheme.colors.barsBackground),
+            )
+        }
     }
 
     @Composable
