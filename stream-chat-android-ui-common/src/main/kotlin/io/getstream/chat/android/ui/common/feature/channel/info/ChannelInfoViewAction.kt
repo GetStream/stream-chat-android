@@ -18,7 +18,6 @@ package io.getstream.chat.android.ui.common.feature.channel.info
 
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.UserId
 
 /**
  * Represents actions that can be performed from the channel information view.
@@ -36,11 +35,11 @@ public sealed interface ChannelInfoViewAction {
     public data object CollapseMembersClick : ChannelInfoViewAction
 
     /**
-     * Represents the copy user ID click action.
+     * Represents the copy user handle click action.
      *
-     * @param userId The ID of the user to be copied.
+     * @param username The user name.
      */
-    public data class CopyUserIdClick(val userId: UserId) : ChannelInfoViewAction
+    public data class CopyUserHandleClick(val username: String) : ChannelInfoViewAction
 
     /**
      * Represents the rename channel click action.

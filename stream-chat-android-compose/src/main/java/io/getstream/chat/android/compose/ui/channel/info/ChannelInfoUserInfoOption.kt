@@ -27,7 +27,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 @Composable
 internal fun ChannelInfoUserInfoOption(
-    userId: String,
+    username: String,
     onClick: () -> Unit,
 ) {
     ChannelInfoOption(onClick = onClick) {
@@ -38,13 +38,13 @@ internal fun ChannelInfoUserInfoOption(
         )
         Text(
             modifier = Modifier.weight(1f),
-            text = "@$userId",
+            text = "@$username",
             style = ChatTheme.typography.bodyBold,
             color = ChatTheme.colors.textHighEmphasis,
         )
         Icon(
             painter = painterResource(R.drawable.stream_compose_ic_copy),
-            contentDescription = stringResource(R.string.stream_ui_channel_info_copy_user_id),
+            contentDescription = stringResource(R.string.stream_ui_channel_info_copy_user_handle),
             tint = ChatTheme.colors.textLowEmphasis,
         )
     }

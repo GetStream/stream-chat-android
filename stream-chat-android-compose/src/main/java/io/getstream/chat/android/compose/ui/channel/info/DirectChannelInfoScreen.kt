@@ -229,7 +229,7 @@ internal fun DirectChannelInfoContent() {
                 ),
             ),
             options = listOf(
-                ChannelInfoViewState.Content.Option.UserInfo(id = "userId"),
+                ChannelInfoViewState.Content.Option.UserInfo(username = PreviewUserData.user1.name),
                 ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
                 ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                 ChannelInfoViewState.Content.Option.PinnedMessages,

@@ -33,7 +33,6 @@ import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
@@ -176,7 +175,7 @@ public class ChannelInfoViewController(
         when (action) {
             is ChannelInfoViewAction.ExpandMembersClick -> expandMembers()
             is ChannelInfoViewAction.CollapseMembersClick -> collapseMembers()
-            is ChannelInfoViewAction.CopyUserIdClick -> copyUserId(action.userId)
+            is ChannelInfoViewAction.CopyUserHandleClick -> copyUserHandle(action.username)
             is ChannelInfoViewAction.RenameChannelClick -> renameChannel(action.name)
             is ChannelInfoViewAction.MuteChannelClick -> setChannelMute(mute = true)
             is ChannelInfoViewAction.UnmuteChannelClick -> setChannelMute(mute = false)
@@ -212,11 +211,11 @@ public class ChannelInfoViewController(
         }
     }
 
-    private fun copyUserId(userId: UserId) {
-        logger.d { "[copyUserId] userId: $userId" }
+    private fun copyUserHandle(username: String) {
+        logger.d { "[copyUserHandle] username: $username" }
 
         clipboardManager.setPrimaryClip(
-            ClipData.newPlainText("User ID", userId),
+            ClipData.newPlainText("User handle", "@$username"),
         )
     }
 
@@ -379,7 +378,8 @@ private fun buildOptionsList(
         add(ChannelInfoViewState.Content.Option.AddMember)
     }
     if (singleMember != null) {
-        add(ChannelInfoViewState.Content.Option.UserInfo(singleMember.user.id))
+        val user = singleMember.user
+        add(ChannelInfoViewState.Content.Option.UserInfo(user.name.takeIf(String::isNotBlank) ?: user.id))
     }
     add(
         ChannelInfoViewState.Content.Option.RenameChannel(

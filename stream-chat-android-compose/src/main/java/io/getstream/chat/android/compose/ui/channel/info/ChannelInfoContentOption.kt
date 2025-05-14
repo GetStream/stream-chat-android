@@ -50,8 +50,8 @@ internal fun ChannelInfoContentOption(
 
         is ChannelInfoViewState.Content.Option.UserInfo -> {
             ChannelInfoUserInfoOption(
-                userId = option.id,
-                onClick = { onViewAction(ChannelInfoViewAction.CopyUserIdClick(option.id)) },
+                username = option.username,
+                onClick = { onViewAction(ChannelInfoViewAction.CopyUserHandleClick(option.username)) },
             )
         }
 

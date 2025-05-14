@@ -63,7 +63,7 @@ internal class ChannelInfoViewControllerTest {
 
     @Test
     fun `single-member channel content`() = runTest {
-        val currentUser = User(id = "1")
+        val currentUser = User(id = "1", name = "username")
         val channel = Channel(
             id = "!members-1",
             createdBy = currentUser,
@@ -91,7 +91,7 @@ internal class ChannelInfoViewControllerTest {
                         minimumVisibleItems = 5,
                     ),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.UserInfo(id = currentUser.id),
+                        ChannelInfoViewState.Content.Option.UserInfo(username = currentUser.name),
                         ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
@@ -106,7 +106,7 @@ internal class ChannelInfoViewControllerTest {
     @Test
     fun `direct channel content`() = runTest {
         val currentUser = User(id = "1")
-        val otherUser = User(id = "2")
+        val otherUser = User(id = "2", name = "username")
         val channel = Channel(
             id = "!members-1,2",
             createdBy = otherUser,
@@ -137,7 +137,7 @@ internal class ChannelInfoViewControllerTest {
                         minimumVisibleItems = 5,
                     ),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.UserInfo(id = "2"),
+                        ChannelInfoViewState.Content.Option.UserInfo(username = otherUser.name),
                         ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
@@ -380,7 +380,7 @@ internal class ChannelInfoViewControllerTest {
         val fixture = Fixture()
         val sut = fixture.get(backgroundScope)
 
-        sut.onViewAction(ChannelInfoViewAction.CopyUserIdClick(userId))
+        sut.onViewAction(ChannelInfoViewAction.CopyUserHandleClick(userId))
 
         fixture.verifyCopiedToClipboard(userId)
     }
