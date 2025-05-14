@@ -242,6 +242,7 @@ internal class ChannelInfoViewControllerTest {
         }
     }
 
+    @Suppress("LongMethod")
     @Test
     fun `expand and collapse group channel content`() = runTest {
         val channel = Channel(members = (1..10).map { i -> Member(user = User(id = "$i")) })

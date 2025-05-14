@@ -31,6 +31,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 
+@Suppress("LongMethod")
 @Composable
 internal fun ChannelInfoContentOption(
     option: ChannelInfoViewState.Content.Option,

@@ -117,7 +117,6 @@ private fun DirectChannelInfoTopBar(
     )
 }
 
-@Suppress("LongMethod")
 @Composable
 private fun DirectChannelInfoContent(
     state: ChannelInfoViewState,
