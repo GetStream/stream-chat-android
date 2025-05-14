@@ -56,7 +56,7 @@ import io.getstream.chat.android.compose.sample.feature.channel.ChannelConstants
 import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelActivity
 import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
 import io.getstream.chat.android.compose.sample.ui.MessagesActivity
-import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoActivity
+import io.getstream.chat.android.compose.sample.ui.channel.DirectChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBar
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBarOption
 import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponentFactory
@@ -380,7 +380,7 @@ class ChannelsActivity : BaseConnectedActivity() {
     }
 
     private fun viewChannelInfo(channel: Channel) {
-        startActivity(ChannelInfoActivity.createIntent(this, channel.cid))
+        startActivity(DirectChannelInfoActivity.createIntent(this, channel.cid))
     }
 
     companion object {

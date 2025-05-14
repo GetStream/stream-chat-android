@@ -60,7 +60,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.R
-import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoActivity
+import io.getstream.chat.android.compose.sample.ui.channel.DirectChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponentFactory
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
@@ -201,7 +201,7 @@ class MessagesActivity : BaseConnectedActivity() {
         val intent = if (channel.memberCount > 2 || !channel.isAnonymousChannel()) {
             GroupChannelInfoActivity.createIntent(this, channelId = channel.cid)
         } else {
-            ChannelInfoActivity.createIntent(this, channelId = channel.cid)
+            DirectChannelInfoActivity.createIntent(this, channelId = channel.cid)
         }
         channelInfoLauncher.launch(intent)
     }

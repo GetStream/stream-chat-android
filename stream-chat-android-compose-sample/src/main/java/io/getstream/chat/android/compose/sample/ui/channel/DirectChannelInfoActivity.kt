@@ -36,21 +36,21 @@ import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewE
 import kotlinx.coroutines.flow.collectLatest
 
 /**
- * Activity showing information about a 1-to-1 channel (chat).
+ * Activity showing information about a 1-to-1 direct channel (chat).
  */
-class ChannelInfoActivity : BaseConnectedActivity() {
+class DirectChannelInfoActivity : BaseConnectedActivity() {
 
     companion object {
         private const val KEY_CHANNEL_ID = "channelId"
 
         /**
-         * Creates an [Intent] for starting the [ChannelInfoActivity].
+         * Creates an [Intent] for starting the [DirectChannelInfoActivity].
          *
          * @param context The calling [Context], used for building the [Intent].
          * @param channelId The ID of the channel for which the pinned messages are shown.
          */
         fun createIntent(context: Context, channelId: String) =
-            Intent(context, ChannelInfoActivity::class.java)
+            Intent(context, DirectChannelInfoActivity::class.java)
                 .putExtra(KEY_CHANNEL_ID, channelId)
     }
 
