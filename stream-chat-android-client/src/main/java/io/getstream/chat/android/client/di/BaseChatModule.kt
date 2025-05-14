@@ -304,7 +304,6 @@ constructor(
         messageSender = messageSender,
     )
 
-
     private inline fun <reified T> buildRetrofitApi(): T {
         val apiClass = T::class.java
         return buildRetrofit(
