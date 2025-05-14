@@ -100,7 +100,7 @@ constructor(
     private val apiModelTransformers: ApiModelTransformers,
     private val fileTransformer: FileTransformer,
     private val fileUploader: FileUploader? = null,
-    private val messageSender: MessageSender?,
+    private val messageSender: MessageSender? = null,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val customOkHttpClient: OkHttpClient? = null,
     private val clientDebugger: ChatClientDebugger? = null,
