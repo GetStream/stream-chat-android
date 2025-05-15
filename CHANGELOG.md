@@ -73,11 +73,13 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
+- Fix `MessageRegularContent` component factory. [5774](https://github.com/GetStream/stream-chat-android/pull/5774)
 
 ### ⬆️ Improved
 - Improve the performance of playing video/audio attachments by using `ExoPlayer` instead of `VideoView`. [#5749](https://github.com/GetStream/stream-chat-android/pull/5749)
 
 ### ✅ Added
+- Introduce an **experimental** `ChatsScreen` supporting adaptive layout for large screen devices. [#5671](https://github.com/GetStream/stream-chat-android/pull/5671) [#5556](https://github.com/GetStream/stream-chat-android/pull/5556)
 
 ### ⚠️ Changed
 
