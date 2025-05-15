@@ -9,11 +9,11 @@ on:
 jobs:
   publish:
     name: Snapshot build and publish
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
-      - uses: ./.github/actions/setup-java
+      - uses: GetStream/android-ci-actions/actions/setup-java@main
       - name: Release build
         # assembleRelease for all modules, excluding non-library modules: samples, docs
         run: ./gradlew assembleRelease -x :stream-chat-android-ui-components-sample:assembleRelease -x :stream-chat-android-compose-sample:assembleRelease -x :stream-chat-android-docs:assembleRelease
@@ -28,4 +28,8 @@ jobs:
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
           SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
+          SNAPSHOT: true
+      - name: Show snapshot version
+        run: ./scripts/show-last-snapshot-update.sh
+        env:
           SNAPSHOT: true

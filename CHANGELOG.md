@@ -17,8 +17,10 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `ChatClient.queryDrafts` method which supports filtering and pagination. [#5759](https://github.com/GetStream/stream-chat-android/pull/5759)
 
 ### ⚠️ Changed
+- Deprecate `ChatClient.queryDraftMessages` because the `offset` argument is not supported. [#5759](https://github.com/GetStream/stream-chat-android/pull/5759)
 
 ### ❌ Removed
 
@@ -35,6 +37,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Fix potential infinite loop during background sync caused by syncing the draft messages. [#5759](https://github.com/GetStream/stream-chat-android/pull/5759)
 
 ### ⬆️ Improved
 
@@ -50,6 +53,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Introduce internal `ChannelInfoViewController` and the experimental classes: `ChannelInfoViewState`, `ChannelInfoViewEvent`, and `ExpandableList`. [#5764](https://github.com/GetStream/stream-chat-android/pull/5764)
 
 ### ⚠️ Changed
 
@@ -72,6 +76,7 @@
 - Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
 
 ### ⬆️ Improved
+- Improve the performance of playing video/audio attachments by using `ExoPlayer` instead of `VideoView`. [#5749](https://github.com/GetStream/stream-chat-android/pull/5749)
 
 ### ✅ Added
 

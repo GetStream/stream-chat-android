@@ -55,7 +55,6 @@ import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.call.Call
 import io.getstream.result.call.CoroutineCall
-import io.getstream.result.call.enqueue
 import io.getstream.result.onSuccessSuspend
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -242,16 +241,17 @@ internal class SyncManager(
     }
 
     private fun syncDraftMessages(
-        offset: Int = 0,
         limit: Int = QUERY_DRAFT_MESSAGES_LIMIT,
+        next: String? = null,
     ) {
-        chatClient.queryDraftMessages(
-            offset = offset,
+        chatClient.queryDrafts(
+            filter = Filters.neutral(),
             limit = limit,
+            next = next,
         ).enqueue {
-            it.onSuccess {
-                if (it.size >= limit) {
-                    syncDraftMessages(offset + limit, limit)
+            it.onSuccess { result ->
+                if (result.next != null) {
+                    syncDraftMessages(limit, result.next)
                 }
             }
         }

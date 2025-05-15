@@ -162,6 +162,7 @@ import io.getstream.chat.android.models.ConnectionData
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.models.DraftsSort
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
@@ -176,6 +177,7 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PushMessage
+import io.getstream.chat.android.models.QueryDraftsResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
@@ -1992,6 +1994,10 @@ internal constructor(
      *
      * @return Executable async [Call] responsible for querying draft messages.
      */
+    @Deprecated(
+        message = "The offset param in the queryDraftMessages method is not used. Use the queryDrafts method instead.",
+        replaceWith = ReplaceWith("queryDrafts(filter, limit, next, sort)"),
+    )
     @CheckResult
     public fun queryDraftMessages(
         offset: Int?,
@@ -2004,6 +2010,31 @@ internal constructor(
                 plugins.forEach { listener ->
                     logger.v { "[queryDraftMessages] #doOnResult; plugin: ${listener::class.qualifiedName}" }
                     listener.onQueryDraftMessagesResult(result, offset, limit)
+                }
+            }
+    }
+
+    /**
+     * Query draft messages for the current user.
+     *
+     * @param filter The filter to apply to the query.
+     * @param limit The number of draft messages to return.
+     * @param next The pagination token for the next page of results.
+     * @param sort The sorting criteria for the results. Possible only the 'created_at' field. By default, draft
+     * messages are returned with the newest first.
+     */
+    @CheckResult
+    public fun queryDrafts(
+        filter: FilterObject,
+        limit: Int,
+        next: String? = null,
+        sort: QuerySorter<DraftsSort> = QuerySortByField.descByName("created_at"),
+    ): Call<QueryDraftsResult> {
+        return api.queryDrafts(filter, limit, next, sort)
+            .retry(userScope, retryPolicy)
+            .doOnResult(userScope) { result ->
+                plugins.forEach { listener ->
+                    listener.onQueryDraftMessagesResult(result, filter, limit, next, sort)
                 }
             }
     }
