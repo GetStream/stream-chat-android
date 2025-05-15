@@ -18,16 +18,8 @@ package io.getstream.chat.android.compose.ui.attachments.preview
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.view.Gravity
-import android.view.KeyEvent
-import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.MediaController
-import android.widget.ProgressBar
 import android.widget.Toast
-import android.widget.VideoView
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -37,6 +29,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -47,18 +40,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.view.isVisible
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.attachments.preview.internal.StreamMediaPlayerContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 
@@ -123,7 +113,16 @@ public class MediaPreviewActivity : AppCompatActivity() {
             modifier = modifier,
             containerColor = Color.Black,
             topBar = { MediaPreviewToolbar(title, onBackPressed) },
-            content = { MediaPreviewContent(url, onBackPressed, onPlaybackError) },
+            content = { padding ->
+                StreamMediaPlayerContent(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(padding),
+                    assetUrl = url,
+                    playWhenReady = true,
+                    onPlaybackError = onPlaybackError,
+                )
+            },
         )
     }
 
@@ -172,100 +171,6 @@ public class MediaPreviewActivity : AppCompatActivity() {
                 )
             },
         )
-    }
-
-    /**
-     * Represents a video player with media controls.
-     *
-     * @param url The URL of the stream for playback.
-     * @param onBackPressed Handler for back press action.
-     * @param onPlaybackError Handler for playback errors.
-     */
-    @Composable
-    private fun MediaPreviewContent(
-        url: String,
-        onBackPressed: () -> Unit = {},
-        onPlaybackError: () -> Unit,
-    ) {
-        val context = LocalContext.current
-
-        val contentView = remember {
-            val mediaController = createMediaController(context, onBackPressed)
-
-            val frameLayout = FrameLayout(context).apply {
-                layoutParams = FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                )
-            }
-
-            val progressBar = ProgressBar(context).apply {
-                layoutParams = FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                ).apply {
-                    gravity = Gravity.CENTER
-                }
-            }
-
-            progressBar.isVisible = true
-
-            val videoView = VideoView(context).apply {
-                setVideoURI(Uri.parse(url))
-                setMediaController(mediaController)
-                setOnErrorListener { _, _, _ ->
-                    progressBar.isVisible = false
-                    onPlaybackError()
-                    true
-                }
-                setOnPreparedListener {
-                    progressBar.isVisible = false
-                    start()
-                    mediaController.show()
-                }
-                mediaController.setAnchorView(frameLayout)
-
-                layoutParams = FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                ).apply {
-                    gravity = Gravity.CENTER
-                }
-            }
-
-            frameLayout.apply {
-                addView(videoView)
-                addView(progressBar)
-            }
-        }
-
-        AndroidView(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black),
-            factory = { contentView },
-        )
-    }
-
-    /**
-     * Creates a custom instance of [MediaController] which no longer intercepts
-     * back press actions to hide media controls.
-     *
-     * @param context The Context used to create the [MediaController].
-     * @param onBackPressed Handler for back press action.
-     */
-    private fun createMediaController(
-        context: Context,
-        onBackPressed: () -> Unit = {},
-    ): MediaController {
-        return object : MediaController(context) {
-            override fun dispatchKeyEvent(event: KeyEvent): Boolean {
-                if (event.keyCode == KeyEvent.KEYCODE_BACK) {
-                    onBackPressed()
-                }
-                return super.dispatchKeyEvent(event)
-            }
-        }
     }
 
     public companion object {

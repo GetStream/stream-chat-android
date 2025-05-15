@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2025 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.response
+package io.getstream.chat.android.client.api2.model.requests
 
 import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 
 @JsonClass(generateAdapter = true)
-internal data class QueryDraftMessagesResponse(
-    val drafts: List<DownstreamDraftDto>,
+internal data class QueryDraftsRequest(
+    val filter: Map<*, *>?,
+    val limit: Int?,
     val next: String?,
+    val sort: List<Map<String, Any>>,
 )

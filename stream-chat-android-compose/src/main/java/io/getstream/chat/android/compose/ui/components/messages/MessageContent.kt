@@ -92,16 +92,28 @@ public fun MessageContent(
         }
     },
     regularMessageContent: @Composable () -> Unit = {
-        DefaultMessageContent(
-            message = message,
-            currentUser = currentUser,
-            onLongItemClick = onLongItemClick,
-            messageContentFactory = messageContentFactory,
-            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-            onQuotedMessageClick = onQuotedMessageClick,
-            onLinkClick = onLinkClick,
-            onUserMentionClick = onUserMentionClick,
-        )
+        if (messageContentFactory == MessageContentFactory.Deprecated) {
+            ChatTheme.componentFactory.MessageRegularContent(
+                message = message,
+                currentUser = currentUser,
+                onLongItemClick = onLongItemClick,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                onQuotedMessageClick = onQuotedMessageClick,
+                onLinkClick = onLinkClick,
+                onUserMentionClick = onUserMentionClick,
+            )
+        } else {
+            DefaultMessageContent(
+                message = message,
+                currentUser = currentUser,
+                onLongItemClick = onLongItemClick,
+                messageContentFactory = messageContentFactory,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                onQuotedMessageClick = onQuotedMessageClick,
+                onLinkClick = onLinkClick,
+                onUserMentionClick = onUserMentionClick,
+            )
+        }
     },
 ) {
     when {

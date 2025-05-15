@@ -47,3 +47,23 @@ nexusPublishing {
 tasks.withType(dokkaHtmlMultiModule.getClass()) {
     includes.from("DokkaRoot.md")
 }
+
+tasks.register("printAllArtifacts") {
+    group = "publishing"
+
+    doLast {
+        subprojects.each { subproject ->
+            subproject.plugins.withId("maven-publish") {
+                def publishingExtension = subproject.extensions.findByType(PublishingExtension)
+                publishingExtension?.publications?.all { publication ->
+                    if (publication instanceof MavenPublication) {
+                        def groupId = publication.groupId
+                        def artifactId = publication.artifactId
+                        def version = publication.version
+                        println("$groupId:$artifactId:$version")
+                    }
+                }
+            }
+        }
+    }
+}
