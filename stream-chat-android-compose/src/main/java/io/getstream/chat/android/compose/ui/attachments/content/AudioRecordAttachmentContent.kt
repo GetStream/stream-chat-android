@@ -88,7 +88,6 @@ public fun AudioRecordGroupContent(
     modifier: Modifier = Modifier,
     attachmentState: AttachmentState,
     viewModelFactory: AudioPlayerViewModelFactory,
-    getRecordingUri: (Attachment) -> String? = { it.assetUrl ?: it.upload?.toUri()?.toString() },
 ) {
     AudioRecordAttachmentContent(
         modifier = modifier,

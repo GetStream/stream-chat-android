@@ -82,7 +82,6 @@ public object StreamAttachmentFactories {
      * @param onFileContentItemClick Lambda called when a file attachment content item gets clicked.
      * @param showFileSize Lambda called to determine if the file size should be shown for a given attachment.
      * @param skipTypes A list of [AttachmentFactory.Type] that should be skipped from the default factories.
-     * @param getAudioRecordingUri Lambda called to get the audio recording URI for a given attachment.
      *
      * @return A [List] of various [AttachmentFactory] instances that provide different attachments support.
      */
