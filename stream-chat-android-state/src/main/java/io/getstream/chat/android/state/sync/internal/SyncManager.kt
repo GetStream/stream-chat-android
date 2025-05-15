@@ -241,16 +241,17 @@ internal class SyncManager(
     }
 
     private fun syncDraftMessages(
-        offset: Int = 0,
         limit: Int = QUERY_DRAFT_MESSAGES_LIMIT,
+        next: String? = null,
     ) {
-        chatClient.queryDraftMessages(
-            offset = offset,
+        chatClient.queryDrafts(
+            filter = Filters.neutral(),
             limit = limit,
+            next = next,
         ).enqueue {
-            it.onSuccess {
-                if (it.size >= limit) {
-                    syncDraftMessages(offset + limit, limit)
+            it.onSuccess { result ->
+                if (result.next != null) {
+                    syncDraftMessages(limit, result.next)
                 }
             }
         }

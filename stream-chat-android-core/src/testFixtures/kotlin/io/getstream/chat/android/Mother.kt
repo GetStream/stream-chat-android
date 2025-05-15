@@ -48,6 +48,7 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PushProvider
+import io.getstream.chat.android.models.QueryDraftsResult
 import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
@@ -265,6 +266,14 @@ public fun randomDraftMessage(
     silent = silent,
     showInChannel = showInChannel,
     replyMessage = replyMessage,
+)
+
+public fun randomQueryDraftsResult(
+    drafts: List<DraftMessage> = listOf(randomDraftMessage()),
+    next: String? = randomString(),
+): QueryDraftsResult = QueryDraftsResult(
+    drafts = drafts,
+    next = next,
 )
 
 public fun randomMessage(

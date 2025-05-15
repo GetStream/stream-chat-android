@@ -245,6 +245,27 @@ internal class MoshiChatApiTest {
     }
 
     @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#queryDraftMessageInput")
+    fun testQueryDrafts(call: RetrofitCall<QueryDraftMessagesResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<MessageApi>()
+        whenever(api.queryDrafts(any())).doReturn(call)
+        val sut = Fixture()
+            .withMessageApi(api)
+            .get()
+        // when
+        val result = sut.queryDrafts(
+            filter = Filters.neutral(),
+            limit = positiveRandomInt(),
+            next = randomString(),
+            sort = QuerySortByField(),
+        ).await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).queryDrafts(any())
+    }
+
+    @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#updateMessageInput")
     fun testUpdateMessage(call: RetrofitCall<MessageResponse>, expected: KClass<*>) = runTest {
         // given
