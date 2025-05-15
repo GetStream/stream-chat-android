@@ -16,7 +16,8 @@
 
 package io.getstream.chat.android.compose.sample.feature.reminders
 
-import android.util.Log
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,16 +29,43 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
+import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.ui.common.state.messages.CustomAction
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
+import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import java.util.Date
 
 /**
  * Factory for creating components related to message reminders.
  */
-class MessageRemindersComponentFactory {
+class MessageRemindersComponentFactory(
+    private val delegate: ChatComponentFactory = object : ChatComponentFactory {},
+) : ChatComponentFactory by delegate {
+
+    /**
+     * Creates a header for the message item, enhancing it with reminder information (if available).
+     */
+    @Composable
+    override fun ColumnScope.MessageItemHeaderContent(
+        messageItem: MessageItemState,
+        reactionSorting: ReactionSorting,
+        onReactionsClick: (Message) -> Unit,
+    ) {
+        with(delegate) {
+            Column {
+                // Add reminder info to the header (if available)
+                val reminder = messageItem.message.reminder
+                if (reminder != null) {
+                    MessageReminderStatusLabel(reminder.remindAt)
+                }
+                // Call the default header content
+                MessageItemHeaderContent(messageItem, reactionSorting, onReactionsClick)
+            }
+        }
+    }
 
     /**
      * Creates a message menu with options for setting reminders and saving messages for later.
@@ -51,7 +79,7 @@ class MessageRemindersComponentFactory {
      * @param onDismiss Callback invoked when the menu is dismissed.
      */
     @Composable
-    fun MessageMenu(
+    override fun MessageMenu(
         modifier: Modifier,
         message: Message,
         messageOptions: List<MessageOptionItemState>,
@@ -70,16 +98,19 @@ class MessageRemindersComponentFactory {
                         ACTION_TYPE_ADD_REMINDER, ACTION_TYPE_UPDATE_REMINDER -> {
                             showReminderTimeDialog = true
                         }
+
                         ACTION_TYPE_SAVE_FOR_LATER -> {
                             saveForLater(message.id)
                             onDismiss()
                         }
+
                         ACTION_TYPE_REMOVE_FROM_LATER -> {
                             removeFromLater(message.id)
                             onDismiss()
                         }
                     }
                 }
+
                 else -> onMessageAction(action)
             }
         }
@@ -167,15 +198,7 @@ class MessageRemindersComponentFactory {
 
     private fun saveForLater(messageId: String) {
         val client = ChatClient.instance()
-        client.createReminder(messageId, remindAt = null).enqueue {
-            it
-                .onSuccess {
-                    Log.d("X_PETAR", "Saved for later: $it")
-                }
-                .onError {
-                    Log.d("X_PETAR", "Error saving for later: $it")
-                }
-        }
+        client.createReminder(messageId, remindAt = null).enqueue()
     }
 
     private fun removeFromLater(messageId: String) {

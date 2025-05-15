@@ -74,13 +74,11 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.User
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import java.util.Date
-import kotlin.math.abs
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.DurationUnit
-import kotlin.time.toDuration
 
 /**
  * Displays the message reminders screen.
@@ -92,11 +90,7 @@ fun MessageRemindersScreen(viewModel: MessageRemindersViewModel = viewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     Scaffold(
         topBar = {
-            AppToolbar(
-                title = "Message Reminders",
-                showBack = false,
-                onBack = { /* not handled */ },
-            )
+            AppToolbar("Message Reminders", showBack = false, onBack = { /* not handled */ })
         },
         content = { padding ->
             var selectedReminder by remember { mutableStateOf<MessageReminder?>(null) }
@@ -149,10 +143,20 @@ fun MessageRemindersScreen(viewModel: MessageRemindersViewModel = viewModel()) {
             }
         },
     )
+    ShowErrorEffect(viewModel.errorEvent)
+}
+
+/**
+ * Displays an error message when an error event occurs.
+ *
+ * @param errorEvent The flow of error events to be displayed.
+ */
+@Composable
+private fun ShowErrorEffect(errorEvent: Flow<MessageRemindersError>) {
     val context = LocalContext.current
     LaunchedEffect(Unit) {
-        viewModel.errorEvent.collectLatest {
-            val errorMessage = context.getString(it.label)
+        errorEvent.collectLatest { error ->
+            val errorMessage = context.getString(error.label)
             Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
         }
     }
@@ -318,25 +322,7 @@ private fun MessageReminderItem(
                 color = ChatTheme.colors.textLowEmphasis,
                 modifier = Modifier,
             )
-            // Due date
-            val remindAt = reminder.remindAt
-            val (text, color) = if (remindAt == null) {
-                stringResource(R.string.reminders_status_save_for_later) to ChatTheme.colors.primaryAccent
-            } else {
-                val delta = (remindAt.time - Date().time) / 1000 / 60
-                val isOverdue = delta < 0
-                val duration = abs(delta).toDuration(DurationUnit.MINUTES)
-                if (isOverdue) {
-                    stringResource(R.string.reminders_status_overdue_by, duration) to ChatTheme.colors.errorAccent
-                } else {
-                    stringResource(R.string.reminders_status_due_in, duration) to ChatTheme.colors.primaryAccent
-                }
-            }
-            Text(
-                text = text,
-                fontSize = 14.sp,
-                color = color,
-            )
+            MessageReminderStatusLabel(reminder.remindAt)
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -429,7 +415,8 @@ private fun MessageRemindersResultListPreview() {
         remindAt = null,
         message = Message(
             id = "id1",
-            text = "Very long and important message that we need to go back to in the future sent by an important channel member.",
+            text = "Very long and important message that we need to go back to in the future sent by an important " +
+                "channel member.",
             user = User(
                 id = "userId",
                 name = "User Name",

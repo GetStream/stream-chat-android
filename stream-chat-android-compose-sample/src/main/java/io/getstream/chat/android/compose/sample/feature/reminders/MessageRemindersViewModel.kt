@@ -24,9 +24,9 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.result.Result
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -59,7 +59,7 @@ class MessageRemindersViewModel(
      * Event triggered when an error occurs while managing message reminders.
      */
     private val _errorEvent: MutableSharedFlow<MessageRemindersError> = MutableSharedFlow(extraBufferCapacity = 1)
-    val errorEvent: SharedFlow<MessageRemindersError>
+    val errorEvent: Flow<MessageRemindersError>
         get() = _errorEvent
 
     private var next: String? = null
