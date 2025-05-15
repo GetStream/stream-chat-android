@@ -115,7 +115,6 @@ public object StreamAttachmentFactories {
             attachment: Attachment,
         ) -> Unit = ::onFileAttachmentContentItemClick,
         skipTypes: List<AttachmentFactory.Type> = emptyList(),
-        getAudioRecordingUri: (Attachment) -> String? = { it.assetUrl ?: it.upload?.toUri()?.toString() },
     ): List<AttachmentFactory> = listOf(
         UploadAttachmentFactory(
             onContentItemClick = onUploadContentItemClick,
@@ -123,7 +122,7 @@ public object StreamAttachmentFactories {
         AudioRecordAttachmentFactory(
             viewModelFactory = AudioPlayerViewModelFactory(
                 getAudioPlayer = { getChatClient().audioPlayer },
-                getRecordingUri = getAudioRecordingUri,
+                getRecordingUri = { it.assetUrl ?: it.upload?.toUri()?.toString() },
             ),
             getCurrentUserId = { getChatClient().getCurrentOrStoredUserId() },
         ),

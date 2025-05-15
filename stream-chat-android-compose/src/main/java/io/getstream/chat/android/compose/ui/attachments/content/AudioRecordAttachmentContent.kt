@@ -63,7 +63,6 @@ import io.getstream.chat.android.compose.ui.theme.ComponentPadding
 import io.getstream.chat.android.compose.ui.theme.ComponentSize
 import io.getstream.chat.android.compose.ui.theme.IconContainerStyle
 import io.getstream.chat.android.compose.ui.theme.IconStyle
-import io.getstream.chat.android.compose.ui.theme.LocalStreamAudioRecordingUriProvider
 import io.getstream.chat.android.compose.ui.theme.TextContainerStyle
 import io.getstream.chat.android.compose.ui.theme.WaveformSliderLayoutStyle
 import io.getstream.chat.android.compose.ui.util.padding
@@ -259,7 +258,7 @@ internal fun AudioRecordAttachmentContentItemBase(
     onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
     tailContent: @Composable (isPlaying: Boolean) -> Unit = {},
 ) {
-    val attachmentUrl = LocalStreamAudioRecordingUriProvider.current.getAudioRecordingUri(attachment)
+    val attachmentUrl = playerState.getRecordingUri(attachment)
     val isCurrentAttachment = attachmentUrl == playerState.current.audioUri
     val trackProgress = playerState.current.playingProgress.takeIf { isCurrentAttachment }
         ?: attachmentUrl?.let { playerState.seekTo.getOrDefault(attachment.audioHash, 0f) } ?: 0f
@@ -408,6 +407,7 @@ internal fun AudioRecordAttachmentContentItemPreview() {
                     audioUri = attachment.assetUrl.orEmpty(),
                     isPlaying = true,
                 ),
+                getRecordingUri = Attachment::assetUrl,
             ),
             onPlayToggleClick = {},
             onPlaySpeedClick = {},

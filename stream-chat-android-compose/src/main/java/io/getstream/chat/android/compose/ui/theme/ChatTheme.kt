@@ -60,7 +60,6 @@ import io.getstream.chat.android.compose.ui.util.ReactionIconFactory
 import io.getstream.chat.android.compose.ui.util.SearchResultNameFormatter
 import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoaderFactory
 import io.getstream.chat.android.ui.common.helper.DateFormatter
-import io.getstream.chat.android.ui.common.helper.DefaultAudioRecordingUriProvider
 import io.getstream.chat.android.ui.common.helper.DefaultDownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DefaultImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.DefaultImageHeadersProvider
@@ -68,7 +67,6 @@ import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
-import io.getstream.chat.android.ui.common.helper.StreamAudioRecordingUriProvider
 import io.getstream.chat.android.ui.common.helper.TimeProvider
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.model.UserPresence
@@ -239,17 +237,6 @@ private val LocalComposerLinkPreviewEnabled = compositionLocalOf<Boolean> {
 private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
     error("No StreamMediaRecorder provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
-
-/**
- * The local composition containing the current [StreamAudioRecordingUriProvider].
- */
-public val LocalStreamAudioRecordingUriProvider: ProvidableCompositionLocal<StreamAudioRecordingUriProvider> =
-    compositionLocalOf {
-        error(
-            "No StreamAudioRecordingUriProvider provided! " +
-                "Make sure to wrap all usages of Stream components in a ChatTheme."
-        )
-    }
 private val LocalKeyboardBehaviour = compositionLocalOf<StreamKeyboardBehaviour> {
     error("No StreamKeyboardBehaviour provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -331,10 +318,7 @@ public fun ChatTheme(
     ),
     userPresence: UserPresence = UserPresence(),
     componentFactory: ChatComponentFactory = DefaultChatComponentFactory(),
-    audioRecordingUriProvider: StreamAudioRecordingUriProvider = DefaultAudioRecordingUriProvider,
-    attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories(
-        getAudioRecordingUri = audioRecordingUriProvider::getAudioRecordingUri
-    ),
+    attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories(),
     messageContentFactory: MessageContentFactory = MessageContentFactory.Deprecated,
     attachmentPreviewHandlers: List<AttachmentPreviewHandler> =
         AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
@@ -471,7 +455,6 @@ public fun ChatTheme(
         LocalStreamCdnImageResizing provides streamCdnImageResizing,
         LocalReadCountEnabled provides readCountEnabled,
         LocalStreamMediaRecorder provides streamMediaRecorder,
-        LocalStreamAudioRecordingUriProvider provides audioRecordingUriProvider,
         LocalAutoTranslationEnabled provides autoTranslationEnabled,
         LocalComposerLinkPreviewEnabled provides isComposerLinkPreviewEnabled,
         LocalKeyboardBehaviour provides keyboardBehaviour,
