@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -49,7 +48,6 @@ public fun AudioRecordAttachmentPreviewContent(
     onAttachmentRemoved: (Attachment) -> Unit,
     modifier: Modifier = Modifier,
     viewModelFactory: AudioPlayerViewModelFactory,
-    getRecordingUri: (Attachment) -> String? = { it.assetUrl ?: it.upload?.toUri()?.toString() },
 ) {
     val viewModel = viewModel(AudioPlayerViewModel::class.java, factory = viewModelFactory)
 
@@ -63,7 +61,6 @@ public fun AudioRecordAttachmentPreviewContent(
             AudioRecordAttachmentPreviewContentItem(
                 attachment = audioRecording,
                 playerState = playerState,
-                getRecordingUri = getRecordingUri,
                 onPlayToggleClick = { attachment ->
                     viewModel.playOrPause(attachment)
                 },
@@ -97,7 +94,6 @@ public fun AudioRecordAttachmentPreviewContentItem(
     modifier: Modifier = Modifier,
     attachment: Attachment,
     playerState: AudioPlayerState,
-    getRecordingUri: (Attachment) -> String? = { it.assetUrl ?: it.upload?.toUri()?.toString() },
     onPlayToggleClick: (Attachment) -> Unit = {},
     onThumbDragStart: (Attachment) -> Unit = {},
     onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
@@ -114,7 +110,6 @@ public fun AudioRecordAttachmentPreviewContentItem(
         playbackToggleStyle = { isPlaying -> if (isPlaying) theme.pauseButton else theme.playButton },
         timerStyle = theme.timerStyle,
         waveformSliderStyle = theme.waveformSliderStyle,
-        getRecordingUri = getRecordingUri,
         onPlayToggleClick = onPlayToggleClick,
         onThumbDragStart = onThumbDragStart,
         onThumbDragStop = onThumbDragStop,

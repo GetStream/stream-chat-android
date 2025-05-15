@@ -82,6 +82,7 @@ public object StreamAttachmentFactories {
      * @param onFileContentItemClick Lambda called when a file attachment content item gets clicked.
      * @param showFileSize Lambda called to determine if the file size should be shown for a given attachment.
      * @param skipTypes A list of [AttachmentFactory.Type] that should be skipped from the default factories.
+     * @param getAudioRecordingUri Lambda called to get the audio recording URI for a given attachment.
      *
      * @return A [List] of various [AttachmentFactory] instances that provide different attachments support.
      */
@@ -97,7 +98,7 @@ public object StreamAttachmentFactories {
             List<AttachmentPreviewHandler>,
         ) -> Unit = ::onFileUploadContentItemClick,
         onLinkContentItemClick: (context: Context, previewUrl: String) -> Unit = ::onLinkAttachmentContentClick,
-        onGiphyContentItemClick: (context: Context, Url: String) -> Unit = ::onGiphyAttachmentContentClick,
+        onGiphyContentItemClick: (context: Context, url: String) -> Unit = ::onGiphyAttachmentContentClick,
         onMediaContentItemClick: (
             mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>,
             message: Message,
@@ -114,6 +115,7 @@ public object StreamAttachmentFactories {
             attachment: Attachment,
         ) -> Unit = ::onFileAttachmentContentItemClick,
         skipTypes: List<AttachmentFactory.Type> = emptyList(),
+        getAudioRecordingUri: (Attachment) -> String? = { it.assetUrl ?: it.upload?.toUri()?.toString() },
     ): List<AttachmentFactory> = listOf(
         UploadAttachmentFactory(
             onContentItemClick = onUploadContentItemClick,
@@ -121,10 +123,9 @@ public object StreamAttachmentFactories {
         AudioRecordAttachmentFactory(
             viewModelFactory = AudioPlayerViewModelFactory(
                 getAudioPlayer = { getChatClient().audioPlayer },
-                getRecordingUri = AudioRecordingUri,
+                getRecordingUri = getAudioRecordingUri,
             ),
             getCurrentUserId = { getChatClient().getCurrentOrStoredUserId() },
-            getRecordingUri = AudioRecordingUri,
         ),
         LinkAttachmentFactory(
             linkDescriptionMaxLines = linkDescriptionMaxLines,
@@ -155,8 +156,4 @@ public object StreamAttachmentFactories {
     public fun defaultQuotedFactories(): List<AttachmentFactory> = listOf(
         QuotedAttachmentFactory,
     )
-}
-
-private val AudioRecordingUri: (Attachment) -> String? = { attachment ->
-    attachment.assetUrl ?: attachment.upload?.toUri()?.toString()
 }

@@ -63,6 +63,7 @@ import io.getstream.chat.android.compose.ui.theme.ComponentPadding
 import io.getstream.chat.android.compose.ui.theme.ComponentSize
 import io.getstream.chat.android.compose.ui.theme.IconContainerStyle
 import io.getstream.chat.android.compose.ui.theme.IconStyle
+import io.getstream.chat.android.compose.ui.theme.LocalStreamAudioRecordingUriProvider
 import io.getstream.chat.android.compose.ui.theme.TextContainerStyle
 import io.getstream.chat.android.compose.ui.theme.WaveformSliderLayoutStyle
 import io.getstream.chat.android.compose.ui.util.padding
@@ -94,7 +95,6 @@ public fun AudioRecordGroupContent(
         modifier = modifier,
         attachmentState = attachmentState,
         viewModelFactory = viewModelFactory,
-        getRecordingUri = getRecordingUri,
     )
 }
 
@@ -143,7 +143,6 @@ public fun AudioRecordAttachmentContent(
     attachmentState: AttachmentState,
     viewModelFactory: AudioPlayerViewModelFactory,
     getCurrentUserId: () -> String? = { null },
-    getRecordingUri: (Attachment) -> String? = { it.assetUrl ?: it.upload?.toUri()?.toString() },
 ) {
     val viewModel = viewModel(AudioPlayerViewModel::class.java, factory = viewModelFactory)
 
@@ -162,7 +161,6 @@ public fun AudioRecordAttachmentContent(
                 attachment = audioRecording,
                 playerState = playerState,
                 isMine = isMine,
-                getRecordingUri = getRecordingUri,
                 onPlayToggleClick = { attachment ->
                     viewModel.playOrPause(attachment)
                 },
@@ -206,7 +204,6 @@ public fun AudioRecordAttachmentContentItem(
     attachment: Attachment,
     playerState: AudioPlayerState,
     isMine: Boolean = false,
-    getRecordingUri: (Attachment) -> String? = { it.assetUrl ?: it.upload?.toUri()?.toString() },
     onPlayToggleClick: (Attachment) -> Unit = {},
     onPlaySpeedClick: (Attachment) -> Unit = {},
     onThumbDragStart: (Attachment) -> Unit = {},
@@ -226,7 +223,6 @@ public fun AudioRecordAttachmentContentItem(
         playbackToggleStyle = { isPlaying -> if (isPlaying) theme.pauseButton else theme.playButton },
         timerStyle = theme.timerStyle,
         waveformSliderStyle = theme.waveformSliderStyle,
-        getRecordingUri = getRecordingUri,
         onPlayToggleClick = onPlayToggleClick,
         onThumbDragStart = onThumbDragStart,
         onThumbDragStop = onThumbDragStop,
@@ -258,13 +254,12 @@ internal fun AudioRecordAttachmentContentItemBase(
     playbackToggleStyle: (isPlaying: Boolean) -> IconContainerStyle,
     timerStyle: TextContainerStyle,
     waveformSliderStyle: WaveformSliderLayoutStyle,
-    getRecordingUri: (Attachment) -> String?,
     onPlayToggleClick: (Attachment) -> Unit = {},
     onThumbDragStart: (Attachment) -> Unit = {},
     onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
     tailContent: @Composable (isPlaying: Boolean) -> Unit = {},
 ) {
-    val attachmentUrl = getRecordingUri(attachment)
+    val attachmentUrl = LocalStreamAudioRecordingUriProvider.current.getAudioRecordingUri(attachment)
     val isCurrentAttachment = attachmentUrl == playerState.current.audioUri
     val trackProgress = playerState.current.playingProgress.takeIf { isCurrentAttachment }
         ?: attachmentUrl?.let { playerState.seekTo.getOrDefault(attachment.audioHash, 0f) } ?: 0f
