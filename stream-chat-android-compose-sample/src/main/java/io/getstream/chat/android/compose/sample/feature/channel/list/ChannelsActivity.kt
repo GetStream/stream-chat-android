@@ -219,7 +219,11 @@ class ChannelsActivity : BaseConnectedActivity() {
 
     @Composable
     private fun RemindersContent() {
-        MessageRemindersScreen()
+        MessageRemindersScreen(
+            onReminderClick = { reminder ->
+                openMessages(reminder.message)
+            }
+        )
     }
 
     /**
