@@ -174,19 +174,5 @@ object AppConfig {
             image = "https://vignette.wikia.nocookie.net/starwars/images/f/f6/Qui-Gon_Jinn_Headshot_TPM.jpg",
             token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWFydG9uIn0.22wjzwYCNdaG5FLVeTD49NqVA11UJpEwrNRjZxZrcK8",
         ),
-        SampleUser(
-            apiKey = apiKey,
-            id = "qatest1",
-            name = "QA Test 1",
-            image = "https://getstream.imgix.net/images/random_svg/QT.png",
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MSJ9.H1nlYibjgp1HfaOd0sA_T4038tjsN61mJWxvUjmRQI0",
-        ),
-        SampleUser(
-            apiKey = apiKey,
-            id = "qatest2",
-            name = "QA Test 2",
-            image = "https://getstream.imgix.net/images/random_svg/QT.png",
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MiJ9.GYp9ikLtU2eG9Mq7tmHThzbV7C8W82j18sExuO7-ogc",
-        ),
     )
 }

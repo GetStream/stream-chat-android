@@ -111,22 +111,6 @@ val userCredentialsList: List<UserCredentials> = listOf(
         ),
         token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicmFmYWwifQ.Fx_BMBwlwbfZzSonziklhGt0KWTKVnLRtXRI5RIuJKU",
     ),
-    UserCredentials(
-        user = User(
-            id = "qatest1",
-            name = "QA Test 1",
-            image = "https://getstream.imgix.net/images/random_svg/QT.png",
-        ),
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MSJ9.T-LLXoVmdX1Huxg-gjUnBJ7TEnlyGSfa9zFw-N50zLY",
-    ),
-    UserCredentials(
-        user = User(
-            id = "qatest2",
-            name = "QA Test 2",
-            image = "https://getstream.imgix.net/images/random_svg/QT.png",
-        ),
-        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MiJ9.EVNBLb7-yR823jv2jtDcjYBQCxBAQnhLDNhpMjcJ1uI",
-    ),
 )
 
 /**

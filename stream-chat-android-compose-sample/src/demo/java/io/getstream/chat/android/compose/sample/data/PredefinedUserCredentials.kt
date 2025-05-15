@@ -204,23 +204,5 @@ object PredefinedUserCredentials {
             ),
             token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWFydG9uIn0.22wjzwYCNdaG5FLVeTD49NqVA11UJpEwrNRjZxZrcK8",
         ),
-        UserCredentials(
-            apiKey = API_KEY,
-            user = User(
-                id = "qatest1",
-                name = "QA Test 1",
-                image = "https://getstream.imgix.net/images/random_svg/QT.png",
-            ),
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MSJ9.H1nlYibjgp1HfaOd0sA_T4038tjsN61mJWxvUjmRQI0",
-        ),
-        UserCredentials(
-            apiKey = API_KEY,
-            user = User(
-                id = "qatest2",
-                name = "QA Test 2",
-                image = "https://getstream.imgix.net/images/random_svg/QT.png",
-            ),
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MiJ9.GYp9ikLtU2eG9Mq7tmHThzbV7C8W82j18sExuO7-ogc",
-        ),
     )
 }
