@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2025 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.sample.feature.reminders
 
 import androidx.lifecycle.ViewModel
@@ -8,7 +24,9 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.result.Result
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -32,10 +50,17 @@ class MessageRemindersViewModel(
             reminders = emptyList(),
             isLoading = true,
             isLoadingMore = false,
-        )
+        ),
     )
     val state: StateFlow<MessageRemindersViewState>
         get() = _state
+
+    /**
+     * Event triggered when an error occurs while managing message reminders.
+     */
+    private val _errorEvent: MutableSharedFlow<MessageRemindersError> = MutableSharedFlow(extraBufferCapacity = 1)
+    val errorEvent: SharedFlow<MessageRemindersError>
+        get() = _errorEvent
 
     private var next: String? = null
 
@@ -68,10 +93,65 @@ class MessageRemindersViewModel(
     /**
      * Called when the end of the list is reached, indicating that more reminders should be loaded.
      */
-    fun onEndOfListReached() {
+    fun onEndReached() {
         if (next == null) return
         _state.update { it.copy(isLoadingMore = true) }
         queryRemainders(_state.value.filter)
+    }
+
+    /**
+     * Called when the user wants to edit a reminder.
+     *
+     * @param id The ID of the reminder to be edited.
+     * @param remindAt The new date and time to set for the reminder.
+     */
+    fun onEditReminder(id: String, remindAt: Date?) {
+        viewModelScope.launch {
+            val result = client.updateReminder(id, remindAt).await()
+            when (result) {
+                is Result.Success -> {
+                    // Update the reminder in the state
+                    _state.update {
+                        it.copy(
+                            reminders = it.reminders.map { reminder ->
+                                if (reminder.id == id) {
+                                    reminder.copy(remindAt = remindAt)
+                                } else {
+                                    reminder
+                                }
+                            },
+                        )
+                    }
+                }
+
+                is Result.Failure -> {
+                    _errorEvent.tryEmit(MessageRemindersError.UPDATE_FAILED)
+                }
+            }
+        }
+    }
+
+    /**
+     * Called when the user wants to delete a reminder.
+     *
+     * @param id The ID of the reminder to be deleted.
+     */
+    fun onDeleteReminder(id: String) {
+        viewModelScope.launch {
+            val result = client.deleteReminder(id).await()
+            when (result) {
+                is Result.Success -> {
+                    // Remove the deleted reminder from the state
+                    _state.update {
+                        it.copy(reminders = it.reminders.filter { reminder -> reminder.id != id })
+                    }
+                }
+
+                is Result.Failure -> {
+                    _errorEvent.tryEmit(MessageRemindersError.DELETE_FAILED)
+                }
+            }
+        }
     }
 
     private fun queryRemainders(filter: MessageRemindersFilter) {
@@ -101,7 +181,7 @@ class MessageRemindersViewModel(
                             isLoadingMore = false,
                         )
                     }
-                    // TODO: Handle error
+                    _errorEvent.tryEmit(MessageRemindersError.QUERY_FAILED)
                 }
             }
         }
@@ -119,11 +199,10 @@ class MessageRemindersViewModel(
         MessageRemindersFilter.ALL,
         MessageRemindersFilter.UPCOMING,
         MessageRemindersFilter.SCHEDULED,
-            -> QuerySortByField.ascByName("remind_at")
-
+        -> QuerySortByField.ascByName("remind_at")
         MessageRemindersFilter.OVERDUE,
         MessageRemindersFilter.SAVED_FOR_LATER,
-            -> QuerySortByField.descByName("remind_at")
+        -> QuerySortByField.descByName("remind_at")
     }
 }
 
@@ -151,4 +230,13 @@ enum class MessageRemindersFilter {
     UPCOMING,
     SCHEDULED,
     SAVED_FOR_LATER,
+}
+
+/**
+ * Represents the different error states that can occur while managing message reminders.
+ */
+enum class MessageRemindersError {
+    QUERY_FAILED,
+    UPDATE_FAILED,
+    DELETE_FAILED,
 }

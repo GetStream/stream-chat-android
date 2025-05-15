@@ -1,24 +1,29 @@
+/*
+ * Copyright (c) 2014-2025 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.sample.feature.reminders
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Text
-import androidx.compose.material3.ripple
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
@@ -28,10 +33,23 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.messages.CustomAction
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import java.util.Date
-import kotlin.time.Duration.Companion.minutes
 
+/**
+ * Factory for creating components related to message reminders.
+ */
 class MessageRemindersComponentFactory {
 
+    /**
+     * Creates a message menu with options for setting reminders and saving messages for later.
+     *
+     * @param modifier Modifier to be applied to the message menu.
+     * @param message The message for which the menu is created.
+     * @param messageOptions List of available message options.
+     * @param ownCapabilities Set of capabilities of the current user.
+     * @param onMessageAction Callback invoked when a message action is selected.
+     * @param onShowMore Callback invoked when the "show more" option is selected.
+     * @param onDismiss Callback invoked when the menu is dismissed.
+     */
     @Composable
     fun MessageMenu(
         modifier: Modifier,
@@ -67,13 +85,13 @@ class MessageRemindersComponentFactory {
         }
 
         if (showReminderTimeDialog) {
-            SelectReminderTimeDialog(
+            CreateReminderDialog(
                 onDismiss = { showReminderTimeDialog = false },
-                onOptionSelected = { minutes ->
-                    addReminder(message.id, minutes)
+                onRemindAtSelected = { remindAt ->
+                    addReminder(message.id, remindAt)
                     showReminderTimeDialog = false
                     onDismiss()
-                }
+                },
             )
         }
 
@@ -142,72 +160,22 @@ class MessageRemindersComponentFactory {
         )
     }
 
-    @Composable
-    private fun SelectReminderTimeDialog(
-        onDismiss: () -> Unit,
-        onOptionSelected: (minutes: Int) -> Unit,
-    ) {
-        Dialog(
-            onDismissRequest = onDismiss,
-        ) {
-            Card(colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.barsBackground)) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        modifier = Modifier.padding(16.dp),
-                        text = "Select Reminder Time",
-                        color = ChatTheme.colors.textHighEmphasis,
-                        style = ChatTheme.typography.title3Bold
-                    )
-                    Text(
-                        modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
-                        text = "When would you like to be reminded?",
-                        color = ChatTheme.colors.textLowEmphasis,
-                        style = ChatTheme.typography.body,
-                    )
-                    HorizontalDivider()
-                    SelectReminderTimeOption("2 Minutes") { onOptionSelected(2) }
-                    SelectReminderTimeOption("5 Minutes") { onOptionSelected(5) }
-                    SelectReminderTimeOption("1 Hour") { onOptionSelected(60) }
-                }
-            }
-        }
-    }
-
-    @Composable
-    private fun SelectReminderTimeOption(
-        text: String,
-        onClick: () -> Unit,
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable(
-                    interactionSource = null,
-                    indication = ripple(),
-                    onClick = onClick,
-                ),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                modifier = Modifier.padding(16.dp),
-                text = text,
-                color = ChatTheme.colors.primaryAccent,
-            )
-            HorizontalDivider()
-        }
-    }
-
-    private fun addReminder(messageId: String, remindAfter: Int) {
-        val remindAt = Date().apply {
-            time += remindAfter.minutes.inWholeMilliseconds
-        }
+    private fun addReminder(messageId: String, remindAt: Date) {
         val client = ChatClient.instance()
         client.createReminder(messageId, remindAt).enqueue()
     }
 
     private fun saveForLater(messageId: String) {
         val client = ChatClient.instance()
-        client.createReminder(messageId, remindAt = null).enqueue()
+        client.createReminder(messageId, remindAt = null).enqueue {
+            it
+                .onSuccess {
+                    Log.d("X_PETAR", "Saved for later: $it")
+                }
+                .onError {
+                    Log.d("X_PETAR", "Error saving for later: $it")
+                }
+        }
     }
 
     private fun removeFromLater(messageId: String) {
