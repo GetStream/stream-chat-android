@@ -76,6 +76,7 @@
 
 ### ⬆️ Improved
 - Improve the performance of playing video/audio attachments by using `ExoPlayer` instead of `VideoView`. [#5749](https://github.com/GetStream/stream-chat-android/pull/5749)
+- Expose audio recording URI mapping to be used by the player UI. [#5776](https://github.com/GetStream/stream-chat-android/pull/5776)
 
 ### ✅ Added
 
