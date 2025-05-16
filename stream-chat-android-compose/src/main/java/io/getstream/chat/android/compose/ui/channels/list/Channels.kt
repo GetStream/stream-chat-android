@@ -115,9 +115,9 @@ public fun Channels(
 
         helperContent()
 
-        // After every recomposition, request that the list scrolls to the currently firstVisibleItemIndex, which overrides
-        // the new first item that would have been calculated after the list was changed. Prevents flickering and jumps
-        // in the list when an item is added or moved.
+        // After every recomposition, request that the list scrolls to the currently firstVisibleItemIndex, which
+        // overrides the new first item that would have been calculated after the list was changed. Prevents flickering
+        // and jumps in the list when an item is added or moved.
         SideEffect {
             lazyListState.requestScrollToItem(
                 index = lazyListState.firstVisibleItemIndex,
