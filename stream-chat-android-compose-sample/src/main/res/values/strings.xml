@@ -89,6 +89,7 @@
     <string name="reminders_remind_in_5_minutes">In 5 minutes</string>
     <string name="reminders_remind_in_1_hour">In 1 hour</string>
     <string name="reminders_remind_in_1_day">In 1 day</string>
+    <string name="reminders_title">Message Reminders</string>
     <string name="reminders_filter_all">All</string>
     <string name="reminders_filter_overdue">Overdue</string>
     <string name="reminders_filter_upcoming">Upcoming</string>
