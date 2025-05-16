@@ -856,7 +856,6 @@ public data class VoteRemovedEvent(
 
 /**
  * Triggered when a message reminder is created.
- * TODO: Verify the reminder events against the BE.
  */
 public data class ReminderCreatedEvent(
     override val type: String,

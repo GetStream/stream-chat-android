@@ -39,13 +39,11 @@ public data class MessageReminder(
 
     /**
      * The message that has been marked for reminder.
-     * TODO: Verify nullability
      */
     public val message: Message,
 
     /**
      * The channel in which the message belongs to.
-     * TODO: Verify nullability
      */
     public val channel: Channel,
 

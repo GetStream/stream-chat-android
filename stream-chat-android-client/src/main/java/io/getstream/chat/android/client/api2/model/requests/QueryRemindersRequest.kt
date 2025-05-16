@@ -26,7 +26,6 @@ import com.squareup.moshi.JsonClass
  * @property sort The sorting criteria for the reminders.
  * @property next The pagination token for fetching the next set of results.
  */
-// TODO: Need to test this
 @JsonClass(generateAdapter = true)
 internal data class QueryRemindersRequest(
     val filter: Map<*, *>,

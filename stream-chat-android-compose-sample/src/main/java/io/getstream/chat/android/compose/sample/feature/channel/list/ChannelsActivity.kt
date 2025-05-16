@@ -222,7 +222,7 @@ class ChannelsActivity : BaseConnectedActivity() {
         MessageRemindersScreen(
             onReminderClick = { reminder ->
                 openMessages(reminder.message)
-            }
+            },
         )
     }
 

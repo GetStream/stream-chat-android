@@ -738,18 +738,10 @@ internal class EventHandlerSequential(
                 is VoteRemovedEvent -> batch.addPoll(event.processPoll(batch::getPoll))
                 is AnswerCastedEvent -> batch.addPoll(event.processPoll(batch::getPoll))
                 is PollDeletedEvent -> batch.deletePoll(event.poll)
-                is ReminderCreatedEvent -> {
-                    // TODO: Enrich message with new reminder
-                }
-                is ReminderUpdatedEvent -> {
-                    // TODO: Update reminder in the message
-                }
-                is ReminderDeletedEvent -> {
-                    // TODO: Remove reminder from the message
-                }
-                is NotificationReminderDueEvent -> {
-                    // TODO: Probably not handled
-                }
+                is ReminderCreatedEvent -> batch.addMessage(event.reminder.message)
+                is ReminderUpdatedEvent -> batch.addMessage(event.reminder.message)
+                is ReminderDeletedEvent -> batch.addMessage(event.reminder.message)
+                is NotificationReminderDueEvent -> batch.addMessage(event.reminder.message)
                 else -> Unit
             }
         }

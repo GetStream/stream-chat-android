@@ -653,22 +653,10 @@ internal class ChannelLogic(
             is NotificationChannelMutesUpdatedEvent -> event.me.channelMutes.any { mute ->
                 mute.channel?.cid == mutableState.cid
             }.let(channelStateLogic::updateMute)
-            is ReminderCreatedEvent -> {
-                // TODO: Verify the data coming from the event (if we get a full message)
-                channelStateLogic.upsertMessage(event.reminder.message)
-            }
-            is ReminderUpdatedEvent -> {
-                // TODO: Verify the data coming from the event (if we get a full message)
-                channelStateLogic.upsertMessage(event.reminder.message)
-            }
-            is ReminderDeletedEvent -> {
-                // TODO: Verify the data coming from the event (if we get a full message)
-                val message = event.reminder.message.copy(reminder = null)
-                channelStateLogic.upsertMessage(message)
-            }
-            is NotificationReminderDueEvent -> {
-                // TODO: probably not handled
-            }
+            is ReminderCreatedEvent -> upsertEventMessage(event.reminder.message)
+            is ReminderUpdatedEvent -> upsertEventMessage(event.reminder.message)
+            is ReminderDeletedEvent -> upsertEventMessage(event.reminder.message)
+            is NotificationReminderDueEvent -> upsertEventMessage(event.reminder.message)
             is ConnectedEvent,
             is ConnectionErrorEvent,
             is ConnectingEvent,
