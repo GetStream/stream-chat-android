@@ -157,7 +157,7 @@ public final class io/getstream/chat/android/ui/common/feature/channel/info/Chan
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$DeleteChannelSuccess : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent {
+public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$DeleteChannelSuccess : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$Success {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$DeleteChannelSuccess;
 	public fun equals (Ljava/lang/Object;)Z
@@ -184,7 +184,7 @@ public final class io/getstream/chat/android/ui/common/feature/channel/info/Chan
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$HideChannelSuccess : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent {
+public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$HideChannelSuccess : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$Success {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$HideChannelSuccess;
 	public fun equals (Ljava/lang/Object;)Z
@@ -208,7 +208,7 @@ public final class io/getstream/chat/android/ui/common/feature/channel/info/Chan
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$LeaveChannelSuccess : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent {
+public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$LeaveChannelSuccess : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$Success {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$LeaveChannelSuccess;
 	public fun equals (Ljava/lang/Object;)Z
@@ -233,6 +233,9 @@ public final class io/getstream/chat/android/ui/common/feature/channel/info/Chan
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$Success : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent {
 }
 
 public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$UnhideChannelError : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$Error {

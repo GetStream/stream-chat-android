@@ -80,10 +80,7 @@ class DirectChannelInfoActivity : BaseConnectedActivity() {
                         is ChannelInfoViewEvent.Error ->
                             showError(event)
 
-                        is ChannelInfoViewEvent.HideChannelSuccess,
-                        is ChannelInfoViewEvent.LeaveChannelSuccess,
-                        is ChannelInfoViewEvent.DeleteChannelSuccess,
-                        -> {
+                        is ChannelInfoViewEvent.Success -> {
                             setResult(RESULT_OK)
                             finish()
                         }

@@ -30,6 +30,41 @@ public sealed interface ChannelInfoViewEvent {
     public sealed interface Modal : ChannelInfoViewEvent
 
     /**
+     * Indicates an event to present a modal for hiding a channel.
+     */
+    public data object HideChannelModal : Modal
+
+    /**
+     * Indicates an event to present a modal for leaving a channel.
+     */
+    public data object LeaveChannelModal : Modal
+
+    /**
+     * Indicates an event to present a modal for deleting a channel.
+     */
+    public data object DeleteChannelModal : Modal
+
+    /**
+     * Represents success events occurred while performing an action.
+     */
+    public sealed interface Success : ChannelInfoViewEvent
+
+    /**
+     * Indicates the channel was successfully hidden.
+     */
+    public data object HideChannelSuccess : Success
+
+    /**
+     * Indicates the user successfully left the channel.
+     */
+    public data object LeaveChannelSuccess : Success
+
+    /**
+     * Indicates the channel was successfully deleted.
+     */
+    public data object DeleteChannelSuccess : Success
+
+    /**
      * Represents error events occurred while performing an action.
      */
     public sealed interface Error : ChannelInfoViewEvent
@@ -50,16 +85,6 @@ public sealed interface ChannelInfoViewEvent {
     public data object UnmuteChannelError : Error
 
     /**
-     * Indicates an event to present a modal for hiding a channel.
-     */
-    public data object HideChannelModal : Modal
-
-    /**
-     * Indicates the channel was successfully hidden.
-     */
-    public data object HideChannelSuccess : ChannelInfoViewEvent
-
-    /**
      * Indicates an error occurred while hiding a channel.
      */
     public data object HideChannelError : Error
@@ -70,29 +95,9 @@ public sealed interface ChannelInfoViewEvent {
     public data object UnhideChannelError : Error
 
     /**
-     * Indicates an event to present a modal for leaving a channel.
-     */
-    public data object LeaveChannelModal : Modal
-
-    /**
-     * Indicates the user successfully left the channel.
-     */
-    public data object LeaveChannelSuccess : ChannelInfoViewEvent
-
-    /**
      * Indicates an error occurred while leaving a channel.
      */
     public data object LeaveChannelError : Error
-
-    /**
-     * Indicates an event to present a modal for deleting a channel.
-     */
-    public data object DeleteChannelModal : Modal
-
-    /**
-     * Indicates the channel was successfully deleted.
-     */
-    public data object DeleteChannelSuccess : ChannelInfoViewEvent
 
     /**
      * Indicates an error occurred while deleting a channel.

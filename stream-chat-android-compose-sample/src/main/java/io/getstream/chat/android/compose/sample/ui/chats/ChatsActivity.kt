@@ -28,6 +28,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -70,6 +71,7 @@ import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneNavigat
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneRole
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.rememberThreePaneNavigator
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
+import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
@@ -80,9 +82,11 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.state.extensions.globalState
+import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class ChatsActivity : BaseConnectedActivity() {
@@ -246,12 +250,14 @@ class ChatsActivity : BaseConnectedActivity() {
                 channelId = mode.channelId,
                 onNavigationIconClick = { navigator.navigateBack() },
                 onPinnedMessagesClick = { navigator.navigateToPinnedMessages(mode.channelId) },
+                onSuccessEvent = { navigator.popUpTo(pane = ThreePaneRole.List) },
             )
 
             is InfoContentMode.GroupChannelInfo -> GroupChannelInfoContent(
                 channelId = mode.channelId,
                 onNavigationIconClick = { navigator.navigateBack() },
                 onPinnedMessagesClick = { navigator.navigateToPinnedMessages(mode.channelId) },
+                onSuccessEvent = { navigator.popUpTo(pane = ThreePaneRole.List) },
             )
 
             is InfoContentMode.PinnedMessages -> PinnedMessagesContent(
@@ -277,8 +283,19 @@ class ChatsActivity : BaseConnectedActivity() {
         channelId: String,
         onNavigationIconClick: () -> Unit,
         onPinnedMessagesClick: () -> Unit,
+        onSuccessEvent: () -> Unit,
     ) {
         val viewModelFactory = ChannelInfoViewModelFactory(context = applicationContext, cid = channelId)
+        val viewModel = viewModel<ChannelInfoViewModel>(key = channelId, factory = viewModelFactory)
+        viewModel.onSuccessEvent(onSuccessEvent)
+        LaunchedEffect(Unit) {
+            viewModel.events.collectLatest { event ->
+                when (event) {
+                    is ChannelInfoViewEvent.Success -> onSuccessEvent()
+                    else -> Unit
+                }
+            }
+        }
         if (AdaptiveLayoutInfo.singlePaneWindow()) {
             DirectChannelInfoScreen(
                 viewModelFactory = viewModelFactory,
@@ -308,8 +325,11 @@ class ChatsActivity : BaseConnectedActivity() {
         channelId: String,
         onNavigationIconClick: () -> Unit,
         onPinnedMessagesClick: () -> Unit,
+        onSuccessEvent: () -> Unit,
     ) {
         val viewModelFactory = ChannelInfoViewModelFactory(context = applicationContext, cid = channelId)
+        val viewModel = viewModel<ChannelInfoViewModel>(key = channelId, factory = viewModelFactory)
+        viewModel.onSuccessEvent(onSuccessEvent)
         if (AdaptiveLayoutInfo.singlePaneWindow()) {
             GroupChannelInfoScreen(
                 viewModelFactory = viewModelFactory,
@@ -335,6 +355,18 @@ class ChatsActivity : BaseConnectedActivity() {
                     )
                 },
             )
+        }
+    }
+
+    @Composable
+    private fun ChannelInfoViewModel.onSuccessEvent(block: () -> Unit) {
+        LaunchedEffect(Unit) {
+            events.collectLatest { event ->
+                when (event) {
+                    is ChannelInfoViewEvent.Success -> block()
+                    else -> Unit
+                }
+            }
         }
     }
 
