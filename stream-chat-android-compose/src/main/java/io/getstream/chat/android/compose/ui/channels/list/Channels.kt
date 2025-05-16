@@ -21,16 +21,15 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
@@ -88,10 +87,6 @@ public fun Channels(
             horizontalAlignment = Alignment.CenterHorizontally,
             contentPadding = contentPadding,
         ) {
-            item {
-                DummyFirstChannelItem()
-            }
-
             itemsIndexed(
                 items = channelItems,
                 key = { _, item -> item.key },
@@ -120,6 +115,16 @@ public fun Channels(
 
         helperContent()
     }
+
+    // After every recomposition, request that the list scrolls to the currently firstVisibleItemIndex, which overrides
+    // the new first item that would have been calculated after the list was changed. Prevents flickering and jumps
+    // in the list when an item is added or moved.
+    SideEffect {
+        lazyListState.requestScrollToItem(
+            index = lazyListState.firstVisibleItemIndex,
+            scrollOffset = lazyListState.firstVisibleItemScrollOffset,
+        )
+    }
 }
 
 /**
@@ -128,19 +133,4 @@ public fun Channels(
 @Composable
 internal fun DefaultChannelsLoadingMoreIndicator() {
     LoadingFooter(modifier = Modifier.fillMaxWidth())
-}
-
-/**
- * Represents an almost invisible dummy item to be added to the top of the list.
- *
- * If the list is scrolled to the top and a channel new item is added or moved
- * to the position above, then the list will automatically autoscroll to it.
- */
-@Composable
-private fun DummyFirstChannelItem() {
-    Box(
-        modifier = Modifier
-            .height(1.dp)
-            .fillMaxWidth(),
-    )
 }
