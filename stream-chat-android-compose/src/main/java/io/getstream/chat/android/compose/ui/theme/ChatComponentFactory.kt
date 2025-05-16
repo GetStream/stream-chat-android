@@ -1821,6 +1821,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun FallbackAvatar(
+        imageUrl: String,
         initials: String,
         modifier: Modifier,
         shape: Shape,
