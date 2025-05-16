@@ -148,6 +148,7 @@ internal fun AudioRecordAttachmentPreviewContentItemPreview() {
                     waveform = waveformData,
                     isPlaying = false,
                 ),
+                getRecordingUri = Attachment::assetUrl,
             ),
         )
     }

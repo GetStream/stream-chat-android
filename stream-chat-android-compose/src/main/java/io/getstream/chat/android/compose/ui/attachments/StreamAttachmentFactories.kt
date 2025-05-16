@@ -97,7 +97,7 @@ public object StreamAttachmentFactories {
             List<AttachmentPreviewHandler>,
         ) -> Unit = ::onFileUploadContentItemClick,
         onLinkContentItemClick: (context: Context, previewUrl: String) -> Unit = ::onLinkAttachmentContentClick,
-        onGiphyContentItemClick: (context: Context, Url: String) -> Unit = ::onGiphyAttachmentContentClick,
+        onGiphyContentItemClick: (context: Context, url: String) -> Unit = ::onGiphyAttachmentContentClick,
         onMediaContentItemClick: (
             mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>,
             message: Message,
