@@ -167,6 +167,7 @@ public class ChannelInfoViewController(
         when (action) {
             is ChannelInfoViewAction.ExpandMembersClick -> expandMembers()
             is ChannelInfoViewAction.CollapseMembersClick -> collapseMembers()
+            is ChannelInfoViewAction.MemberClick -> { _events.tryEmit(ChannelInfoViewEvent.MemberInfoModal(action.user)) }
             is ChannelInfoViewAction.UserInfoClick -> userInfoClick(action.user)
             is ChannelInfoViewAction.RenameChannelClick -> renameChannel(action.name)
             is ChannelInfoViewAction.PinnedMessagesClick ->

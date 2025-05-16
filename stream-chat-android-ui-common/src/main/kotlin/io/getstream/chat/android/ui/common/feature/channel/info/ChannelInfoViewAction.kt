@@ -36,6 +36,13 @@ public sealed interface ChannelInfoViewAction {
     public data object CollapseMembersClick : ChannelInfoViewAction
 
     /**
+     * Represents the click action on a member.
+     *
+     * @param user The user of the clicked member.
+     */
+    public data class MemberClick(val user: User) : ChannelInfoViewAction
+
+    /**
      * Represents the user info click action.
      *
      * @param user The clicked user.

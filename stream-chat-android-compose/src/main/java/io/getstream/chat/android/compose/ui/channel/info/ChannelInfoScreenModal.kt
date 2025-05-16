@@ -19,8 +19,11 @@ package io.getstream.chat.android.compose.ui.channel.info
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -30,15 +33,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.clickable
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 
 @Suppress("LongMethod")
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ChannelInfoScreenModal(
     modal: ChannelInfoViewEvent.Modal?,
@@ -47,6 +54,15 @@ internal fun ChannelInfoScreenModal(
     onDismiss: () -> Unit,
 ) {
     when (modal) {
+        is ChannelInfoViewEvent.MemberInfoModal -> {
+            ModalBottomSheet(
+                containerColor = ChatTheme.colors.barsBackground,
+                onDismissRequest = onDismiss,
+            ) {
+                MemberInfoSheet(user = modal.user)
+            }
+        }
+
         ChannelInfoViewEvent.HideChannelModal -> {
             var clearHistory by remember { mutableStateOf(false) }
             SimpleDialog(
@@ -116,6 +132,23 @@ internal fun ChannelInfoScreenModal(
 }
 
 @Composable
+private fun MemberInfoSheet(user: User) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        ChannelInfoMemberInfo(user = user)
+        ChannelInfoOptionButton(
+            icon = R.drawable.stream_compose_empty_channels,
+            text = stringResource(R.string.stream_ui_channel_info_option_pinned_messages),
+            onClick = {
+                // TODO Copy user handle
+            },
+        )
+    }
+}
+
+@Composable
 private fun HideChannelModalText(
     isGroupChannel: Boolean,
     clearHistory: Boolean,
@@ -154,5 +187,52 @@ private fun HideChannelModalText(
                 style = ChatTheme.typography.body,
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ChannelInfoScreenModalMemberPreview() {
+    ChatTheme {
+        MemberInfoSheet(user = PreviewUserData.user1)
+    }
+}
+
+@Preview
+@Composable
+private fun ChannelInfoScreenModalHideChannelPreview() {
+    ChatTheme {
+        ChannelInfoScreenModal(
+            modal = ChannelInfoViewEvent.HideChannelModal,
+            isGroupChannel = false,
+            onViewAction = {},
+            onDismiss = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ChannelInfoScreenModalLeaveChannelPreview() {
+    ChatTheme {
+        ChannelInfoScreenModal(
+            modal = ChannelInfoViewEvent.LeaveChannelModal,
+            isGroupChannel = false,
+            onViewAction = {},
+            onDismiss = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ChannelInfoScreenModalDeleteChannelPreview() {
+    ChatTheme {
+        ChannelInfoScreenModal(
+            modal = ChannelInfoViewEvent.DeleteChannelModal,
+            isGroupChannel = false,
+            onViewAction = {},
+            onDismiss = {},
+        )
     }
 }

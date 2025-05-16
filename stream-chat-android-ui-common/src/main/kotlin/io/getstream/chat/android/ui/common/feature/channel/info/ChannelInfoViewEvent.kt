@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.common.feature.channel.info
 
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.models.User
 
 /**
  * Represents side-effect events related to channel information actions.
@@ -28,6 +29,13 @@ public sealed interface ChannelInfoViewEvent {
      * Represents modal navigation events.
      */
     public sealed interface Modal : ChannelInfoViewEvent
+
+    /**
+     * Indicates an event to present a member information modal.
+     *
+     * @param user The user whose information is to be displayed.
+     */
+    public data class MemberInfoModal(val user: User) : Modal
 
     /**
      * Indicates an event to present a modal for hiding a channel.

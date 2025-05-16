@@ -196,7 +196,7 @@ private fun GroupChannelInfoContent(
                     modifier = Modifier.animateItem(),
                     member = member,
                     isOwner = content.owner.id == member.getUserId(),
-                    onClick = null, // Membership detail flow https://linear.app/stream/issue/AND-537
+                    onClick = { onViewAction(ChannelInfoViewAction.MemberClick(user = member.user)) },
                 )
             }
             if (content.members.canExpand) {
