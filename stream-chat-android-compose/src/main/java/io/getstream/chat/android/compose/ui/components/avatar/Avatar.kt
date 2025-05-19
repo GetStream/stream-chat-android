@@ -44,6 +44,7 @@ import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageRe
  * @param shape The shape of the avatar.
  * @param textStyle The text style of the [initials] text.
  * @param placeholderPainter The placeholder to render while loading is in progress.
+ * @param errorPlaceholderPainter The placeholder to render in case of an error.
  * @param contentDescription Description of the image.
  * @param initialsAvatarOffset The initials offset to apply to the avatar.
  * @param onClick OnClick action, that can be nullable.
@@ -56,6 +57,7 @@ public fun Avatar(
     shape: Shape = ChatTheme.shapes.avatar,
     textStyle: TextStyle = ChatTheme.typography.title3Bold,
     placeholderPainter: Painter? = null,
+    errorPlaceholderPainter: Painter? = null,
     contentDescription: String? = null,
     initialsAvatarOffset: DpOffset = DpOffset(0.dp, 0.dp),
     onClick: (() -> Unit)? = null,
@@ -70,13 +72,14 @@ public fun Avatar(
                 is AsyncImagePainter.State.Empty -> placeholderPainter
                 is AsyncImagePainter.State.Loading -> placeholderPainter
                 is AsyncImagePainter.State.Success -> state.painter
-                is AsyncImagePainter.State.Error -> null
+                is AsyncImagePainter.State.Error -> errorPlaceholderPainter
             }
             Crossfade(targetState = targetPainter) { painter ->
                 if (painter == null) {
-                    InitialsAvatar(
-                        modifier = Modifier.fillMaxSize(),
+                    ChatTheme.componentFactory.FallbackAvatar(
+                        imageUrl = imageUrl,
                         initials = initials,
+                        modifier = Modifier.fillMaxSize(),
                         shape = shape,
                         textStyle = textStyle,
                         onClick = onClick,
@@ -105,7 +108,7 @@ public fun Avatar(
 @Composable
 private fun AvatarWithImageUrlPreview() {
     AvatarPreview(
-        imageUrl = "https://sample.com/image.png",
+        imageUrl = "https://ca.slack-edge.com/T02RM6X6B-U011KEXDPB2-891dbb8df64f-128",
     )
 }
 
@@ -136,6 +139,7 @@ private fun AvatarPreview(
             modifier = Modifier.size(36.dp),
             imageUrl = imageUrl,
             initials = "JC",
+            errorPlaceholderPainter = null,
         )
     }
 }
