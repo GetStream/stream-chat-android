@@ -38,6 +38,7 @@ import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 
+@Suppress("LongMethod")
 @Composable
 internal fun ChannelInfoScreenModal(
     modal: ChannelInfoViewEvent.Modal?,
@@ -47,15 +48,22 @@ internal fun ChannelInfoScreenModal(
 ) {
     when (modal) {
         ChannelInfoViewEvent.HideChannelModal -> {
+            var clearHistory by remember { mutableStateOf(false) }
             SimpleDialog(
                 title = if (isGroupChannel) {
                     stringResource(R.string.stream_ui_channel_info_option_hide_group)
                 } else {
                     stringResource(R.string.stream_ui_channel_info_option_hide_conversation)
                 },
-                text = { HideChannelModalText(isGroupChannel) },
+                text = {
+                    HideChannelModalText(
+                        isGroupChannel = isGroupChannel,
+                        clearHistory = clearHistory,
+                        onClearHistoryClick = { clearHistory = !clearHistory },
+                    )
+                },
                 onConfirmClick = {
-                    onViewAction(ChannelInfoViewAction.HideChannelConfirmationClick(clearHistory = false))
+                    onViewAction(ChannelInfoViewAction.HideChannelConfirmationClick(clearHistory = clearHistory))
                     onDismiss()
                 },
                 onDismiss = onDismiss,
@@ -108,7 +116,11 @@ internal fun ChannelInfoScreenModal(
 }
 
 @Composable
-private fun HideChannelModalText(isGroupChannel: Boolean) {
+private fun HideChannelModalText(
+    isGroupChannel: Boolean,
+    clearHistory: Boolean,
+    onClearHistoryClick: () -> Unit,
+) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
@@ -121,10 +133,9 @@ private fun HideChannelModalText(isGroupChannel: Boolean) {
             color = ChatTheme.colors.textHighEmphasis,
             style = ChatTheme.typography.body,
         )
-        var clearHistory by remember { mutableStateOf(false) }
         Row(
             modifier = Modifier
-                .clickable { clearHistory = !clearHistory }
+                .clickable(onClick = onClearHistoryClick)
                 .padding(end = 16.dp, top = 8.dp, bottom = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
