@@ -249,15 +249,15 @@ class ChatsActivity : BaseConnectedActivity() {
             is InfoContentMode.DirectChannelInfo -> DirectChannelInfoContent(
                 channelId = mode.channelId,
                 onNavigationIconClick = { navigator.navigateBack() },
-                onPinnedMessagesClick = { navigator.navigateToPinnedMessages(mode.channelId) },
-                onNavigateUpEvent = { navigator.popUpTo(pane = ThreePaneRole.List) },
+                onNavigateUp = { navigator.popUpTo(pane = ThreePaneRole.List) },
+                onNavigateToPinnedMessages = { navigator.navigateToPinnedMessages(mode.channelId) },
             )
 
             is InfoContentMode.GroupChannelInfo -> GroupChannelInfoContent(
                 channelId = mode.channelId,
                 onNavigationIconClick = { navigator.navigateBack() },
-                onPinnedMessagesClick = { navigator.navigateToPinnedMessages(mode.channelId) },
-                onNavigateUpEvent = { navigator.popUpTo(pane = ThreePaneRole.List) },
+                onNavigateUp = { navigator.popUpTo(pane = ThreePaneRole.List) },
+                onNavigateToPinnedMessages = { navigator.navigateToPinnedMessages(mode.channelId) },
             )
 
             is InfoContentMode.PinnedMessages -> PinnedMessagesContent(
@@ -282,33 +282,25 @@ class ChatsActivity : BaseConnectedActivity() {
     private fun DirectChannelInfoContent(
         channelId: String,
         onNavigationIconClick: () -> Unit,
-        onPinnedMessagesClick: () -> Unit,
-        onNavigateUpEvent: () -> Unit,
+        onNavigateUp: () -> Unit,
+        onNavigateToPinnedMessages: () -> Unit,
     ) {
         val viewModelFactory = ChannelInfoViewModelFactory(context = applicationContext, cid = channelId)
         val viewModel = viewModel<ChannelInfoViewModel>(key = channelId, factory = viewModelFactory)
-        viewModel.handleNavigateUpEvent(onNavigateUpEvent)
-        LaunchedEffect(Unit) {
-            viewModel.events.collectLatest { event ->
-                when (event) {
-                    is ChannelInfoViewEvent.NavigateUp -> onNavigateUpEvent()
-                    else -> Unit
-                }
-            }
-        }
+
+        viewModel.handleNavigationEvents(onNavigateUp, onNavigateToPinnedMessages)
+
         if (AdaptiveLayoutInfo.singlePaneWindow()) {
             DirectChannelInfoScreen(
                 viewModelFactory = viewModelFactory,
                 viewModelKey = channelId,
                 onNavigationIconClick = onNavigationIconClick,
-                onPinnedMessagesClick = onPinnedMessagesClick,
             )
         } else {
             DirectChannelInfoScreen(
                 viewModelFactory = viewModelFactory,
                 viewModelKey = channelId,
                 onNavigationIconClick = onNavigationIconClick,
-                onPinnedMessagesClick = onPinnedMessagesClick,
                 topBar = {
                     TopAppBar(
                         navigationIcon = { CloseButton(onClick = onNavigationIconClick) },
@@ -324,17 +316,18 @@ class ChatsActivity : BaseConnectedActivity() {
     private fun GroupChannelInfoContent(
         channelId: String,
         onNavigationIconClick: () -> Unit,
-        onPinnedMessagesClick: () -> Unit,
-        onNavigateUpEvent: () -> Unit,
+        onNavigateUp: () -> Unit,
+        onNavigateToPinnedMessages: () -> Unit,
     ) {
         val viewModelFactory = ChannelInfoViewModelFactory(context = applicationContext, cid = channelId)
         val viewModel = viewModel<ChannelInfoViewModel>(key = channelId, factory = viewModelFactory)
-        viewModel.handleNavigateUpEvent(onNavigateUpEvent)
+
+        viewModel.handleNavigationEvents(onNavigateUp, onNavigateToPinnedMessages)
+
         if (AdaptiveLayoutInfo.singlePaneWindow()) {
             GroupChannelInfoScreen(
                 viewModelFactory = viewModelFactory,
                 viewModelKey = channelId,
-                onPinnedMessagesClick = onPinnedMessagesClick,
                 topBar = { elevation ->
                     GroupChannelInfoTopBar(
                         elevation = elevation,
@@ -346,7 +339,6 @@ class ChatsActivity : BaseConnectedActivity() {
             GroupChannelInfoScreen(
                 viewModelFactory = viewModelFactory,
                 viewModelKey = channelId,
-                onPinnedMessagesClick = onPinnedMessagesClick,
                 topBar = { elevation ->
                     GroupChannelInfoTopBar(
                         elevation = elevation,
@@ -359,11 +351,15 @@ class ChatsActivity : BaseConnectedActivity() {
     }
 
     @Composable
-    private fun ChannelInfoViewModel.handleNavigateUpEvent(block: () -> Unit) {
+    private fun ChannelInfoViewModel.handleNavigationEvents(
+        onNavigateUp: () -> Unit,
+        onNavigateToPinnedMessages: () -> Unit,
+    ) {
         LaunchedEffect(Unit) {
             events.collectLatest { event ->
                 when (event) {
-                    is ChannelInfoViewEvent.NavigateUp -> block()
+                    is ChannelInfoViewEvent.NavigateUp -> onNavigateUp()
+                    is ChannelInfoViewEvent.NavigateToPinnedMessages -> onNavigateToPinnedMessages()
                     else -> Unit
                 }
             }

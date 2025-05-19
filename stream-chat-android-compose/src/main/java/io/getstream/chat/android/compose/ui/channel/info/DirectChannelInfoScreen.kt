@@ -65,7 +65,6 @@ import java.util.Date
  * @param modifier The [Modifier] to be applied to this screen.
  * @param viewModelKey Key to differentiate between instances of [ChannelInfoViewModel].
  * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
- * @param onPinnedMessagesClick Callback invoked when the pinned messages option is clicked.
  * @param topBar The top bar to be displayed on the screen.
  */
 @ExperimentalStreamChatApi
@@ -75,7 +74,6 @@ public fun DirectChannelInfoScreen(
     modifier: Modifier = Modifier,
     viewModelKey: String? = null,
     onNavigationIconClick: () -> Unit = {},
-    onPinnedMessagesClick: () -> Unit = {},
     topBar: @Composable () -> Unit = {
         DirectChannelInfoTopBar(
             onNavigationIconClick = onNavigationIconClick,
@@ -89,7 +87,6 @@ public fun DirectChannelInfoScreen(
         state = state,
         modifier = modifier,
         onNavigationIconClick = onNavigationIconClick,
-        onPinnedMessagesClick = onPinnedMessagesClick,
         onViewAction = viewModel::onViewAction,
         topBar = topBar,
     )
@@ -133,7 +130,6 @@ private fun DirectChannelInfoContent(
     state: ChannelInfoViewState,
     modifier: Modifier = Modifier,
     onNavigationIconClick: () -> Unit = {},
-    onPinnedMessagesClick: () -> Unit = {},
     onViewAction: (action: ChannelInfoViewAction) -> Unit = {},
     topBar: @Composable () -> Unit = {
         DirectChannelInfoTopBar(
@@ -184,7 +180,6 @@ private fun DirectChannelInfoContent(
                             option = option,
                             isGroupChannel = false,
                             onViewAction = onViewAction,
-                            onPinnedMessagesClick = onPinnedMessagesClick,
                         )
                     }
                 }

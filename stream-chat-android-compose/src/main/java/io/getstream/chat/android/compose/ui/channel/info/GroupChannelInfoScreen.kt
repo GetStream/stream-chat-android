@@ -75,7 +75,6 @@ import java.util.Date
  * @param modifier The [Modifier] to be applied to this screen.
  * @param viewModelKey Key to differentiate between instances of [ChannelInfoViewModel].
  * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
- * @param onPinnedMessagesClick Callback invoked when the pinned messages option is clicked.
  * @param topBar The top bar to be displayed on the screen.
  */
 @ExperimentalStreamChatApi
@@ -85,7 +84,6 @@ public fun GroupChannelInfoScreen(
     modifier: Modifier = Modifier,
     viewModelKey: String? = null,
     onNavigationIconClick: () -> Unit = {},
-    onPinnedMessagesClick: () -> Unit = {},
     topBar: @Composable (elevation: Dp) -> Unit = { elevation ->
         GroupChannelInfoTopBar(
             viewModelFactory = viewModelFactory,
@@ -116,7 +114,6 @@ public fun GroupChannelInfoScreen(
             listState = listState,
             state = state,
             onViewAction = viewModel::onViewAction,
-            onPinnedMessagesClick = onPinnedMessagesClick,
         )
     }
 
@@ -170,7 +167,6 @@ private fun GroupChannelInfoContent(
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
     onViewAction: (action: ChannelInfoViewAction) -> Unit = {},
-    onPinnedMessagesClick: () -> Unit = {},
 ) {
     val isLoading = state is ChannelInfoViewState.Loading
     ContentBox(
@@ -210,7 +206,6 @@ private fun GroupChannelInfoContent(
                     option = option,
                     isGroupChannel = true,
                     onViewAction = onViewAction,
-                    onPinnedMessagesClick = onPinnedMessagesClick,
                 )
             }
         }

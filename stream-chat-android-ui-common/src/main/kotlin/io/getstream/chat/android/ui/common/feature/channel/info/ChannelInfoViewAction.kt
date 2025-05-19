@@ -49,6 +49,11 @@ public sealed interface ChannelInfoViewAction {
     public data class RenameChannelClick(val name: String) : ChannelInfoViewAction
 
     /**
+     * Represents the pinned messages click action.
+     */
+    public data object PinnedMessagesClick : ChannelInfoViewAction
+
+    /**
      * Represents the mute channel click action.
      */
     public data object MuteChannelClick : ChannelInfoViewAction

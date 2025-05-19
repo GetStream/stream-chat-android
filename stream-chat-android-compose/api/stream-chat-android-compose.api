@@ -950,11 +950,11 @@ public final class io/getstream/chat/android/compose/ui/channel/info/ComposableS
 }
 
 public final class io/getstream/chat/android/compose/ui/channel/info/DirectChannelInfoScreenKt {
-	public static final fun DirectChannelInfoScreen (Lio/getstream/chat/android/compose/viewmodel/channel/ChannelInfoViewModelFactory;Landroidx/compose/ui/Modifier;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+	public static final fun DirectChannelInfoScreen (Lio/getstream/chat/android/compose/viewmodel/channel/ChannelInfoViewModelFactory;Landroidx/compose/ui/Modifier;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/channel/info/GroupChannelInfoScreenKt {
-	public static final fun GroupChannelInfoScreen (Lio/getstream/chat/android/compose/viewmodel/channel/ChannelInfoViewModelFactory;Landroidx/compose/ui/Modifier;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun GroupChannelInfoScreen (Lio/getstream/chat/android/compose/viewmodel/channel/ChannelInfoViewModelFactory;Landroidx/compose/ui/Modifier;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/channels/ChannelsScreenKt {

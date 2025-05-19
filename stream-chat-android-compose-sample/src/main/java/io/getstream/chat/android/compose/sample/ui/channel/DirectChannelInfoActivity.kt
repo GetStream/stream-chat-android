@@ -71,7 +71,6 @@ class DirectChannelInfoActivity : BaseConnectedActivity() {
                     modifier = Modifier.statusBarsPadding(),
                     viewModelFactory = viewModelFactory,
                     onNavigationIconClick = ::finish,
-                    onPinnedMessagesClick = ::openPinnedMessages,
                 )
             }
             LaunchedEffect(Unit) {
@@ -84,6 +83,9 @@ class DirectChannelInfoActivity : BaseConnectedActivity() {
                             setResult(RESULT_OK)
                             finish()
                         }
+
+                        is ChannelInfoViewEvent.NavigateToPinnedMessages ->
+                            openPinnedMessages()
 
                         else -> Unit
                     }

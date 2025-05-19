@@ -456,6 +456,24 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
+    fun `pinned messages click`() = runTest {
+        val fixture = Fixture().given(channel = Channel())
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2) // Skip initial states
+
+            sut.events.test {
+                sut.onViewAction(ChannelInfoViewAction.PinnedMessagesClick)
+
+                assertEquals(ChannelInfoViewEvent.NavigateToPinnedMessages, awaitItem())
+            }
+        }
+
+        launch { fixture.verifyNoMoreInteractions() }
+    }
+
+    @Test
     fun `mute channel`() = runTest {
         val channel = Channel(ownCapabilities = setOf(ChannelCapabilities.MUTE_CHANNEL))
         val fixture = Fixture().given(channel = channel, isMuted = false)

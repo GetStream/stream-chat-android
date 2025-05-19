@@ -79,6 +79,11 @@ public sealed interface ChannelInfoViewEvent {
     public data class NavigateUp(override val reason: Reason) : Navigation(reason)
 
     /**
+     * Indicates an event to navigate to the pinned messages.
+     */
+    public data object NavigateToPinnedMessages : Navigation(reason = null)
+
+    /**
      * Represents error events occurred while performing an action.
      */
     public sealed interface Error : ChannelInfoViewEvent

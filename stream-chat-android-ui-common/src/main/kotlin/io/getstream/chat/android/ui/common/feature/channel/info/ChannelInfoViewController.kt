@@ -178,6 +178,9 @@ public class ChannelInfoViewController(
             is ChannelInfoViewAction.CollapseMembersClick -> collapseMembers()
             is ChannelInfoViewAction.CopyUserHandleClick -> copyUserHandle(action.username)
             is ChannelInfoViewAction.RenameChannelClick -> renameChannel(action.name)
+            is ChannelInfoViewAction.PinnedMessagesClick ->
+                _events.tryEmit(ChannelInfoViewEvent.NavigateToPinnedMessages)
+
             is ChannelInfoViewAction.MuteChannelClick -> setChannelMute(mute = true)
             is ChannelInfoViewAction.UnmuteChannelClick -> setChannelMute(mute = false)
             is ChannelInfoViewAction.HideChannelClick -> _events.tryEmit(ChannelInfoViewEvent.HideChannelModal)

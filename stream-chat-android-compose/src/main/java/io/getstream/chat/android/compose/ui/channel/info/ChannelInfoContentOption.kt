@@ -37,7 +37,6 @@ internal fun ChannelInfoContentOption(
     option: ChannelInfoViewState.Content.Option,
     isGroupChannel: Boolean,
     onViewAction: (action: ChannelInfoViewAction) -> Unit,
-    onPinnedMessagesClick: () -> Unit,
 ) {
     when (option) {
         is ChannelInfoViewState.Content.Option.Separator -> {
@@ -112,7 +111,7 @@ internal fun ChannelInfoContentOption(
             ChannelInfoOptionNavigationButton(
                 icon = R.drawable.stream_compose_ic_message_pinned,
                 text = stringResource(R.string.stream_ui_channel_info_option_pinned_messages),
-                onClick = onPinnedMessagesClick,
+                onClick = { onViewAction(ChannelInfoViewAction.PinnedMessagesClick) },
             )
         }
 
