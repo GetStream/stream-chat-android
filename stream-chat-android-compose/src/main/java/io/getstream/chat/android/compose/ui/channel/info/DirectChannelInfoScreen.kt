@@ -49,13 +49,13 @@ import io.getstream.chat.android.compose.ui.util.getLastSeenText
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.previewdata.PreviewMembersData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
 import kotlinx.coroutines.flow.collectLatest
-import java.util.Date
 
 /**
  * A stateful screen component that displays the channel info for a direct channel,
@@ -215,13 +215,9 @@ private fun DirectChannelInfoContentPreview() {
 internal fun DirectChannelInfoContent() {
     DirectChannelInfoContent(
         state = ChannelInfoViewState.Content(
+            owner = PreviewUserData.user1,
             members = ExpandableList(
-                items = listOf(
-                    ChannelInfoViewState.Content.Member(
-                        user = PreviewUserData.user1.copy(lastActive = Date()),
-                        role = ChannelInfoViewState.Content.Role.Owner,
-                    ),
-                ),
+                items = listOf(PreviewMembersData.member1),
             ),
             options = listOf(
                 ChannelInfoViewState.Content.Option.UserInfo(username = PreviewUserData.user1.name),

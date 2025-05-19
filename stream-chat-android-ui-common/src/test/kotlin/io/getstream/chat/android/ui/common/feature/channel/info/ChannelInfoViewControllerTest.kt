@@ -82,13 +82,9 @@ internal class ChannelInfoViewControllerTest {
 
             assertEquals(
                 ChannelInfoViewState.Content(
+                    owner = currentUser,
                     members = ExpandableList(
-                        items = listOf(
-                            ChannelInfoViewState.Content.Member(
-                                user = currentUser,
-                                role = ChannelInfoViewState.Content.Role.Owner,
-                            ),
-                        ),
+                        items = channel.members,
                         minimumVisibleItems = 5,
                     ),
                     options = listOf(
@@ -128,13 +124,9 @@ internal class ChannelInfoViewControllerTest {
 
             assertEquals(
                 ChannelInfoViewState.Content(
+                    owner = otherUser,
                     members = ExpandableList(
-                        items = listOf(
-                            ChannelInfoViewState.Content.Member(
-                                user = otherUser,
-                                role = ChannelInfoViewState.Content.Role.Owner,
-                            ),
-                        ),
+                        items = listOf(Member(user = otherUser)),
                         minimumVisibleItems = 5,
                     ),
                     options = listOf(
@@ -174,25 +166,9 @@ internal class ChannelInfoViewControllerTest {
 
             assertEquals(
                 ChannelInfoViewState.Content(
+                    owner = owner,
                     members = ExpandableList(
-                        items = listOf(
-                            ChannelInfoViewState.Content.Member(
-                                user = owner,
-                                role = ChannelInfoViewState.Content.Role.Owner,
-                            ),
-                            ChannelInfoViewState.Content.Member(
-                                user = user2,
-                                role = ChannelInfoViewState.Content.Role.Moderator,
-                            ),
-                            ChannelInfoViewState.Content.Member(
-                                user = user3,
-                                role = ChannelInfoViewState.Content.Role.Member,
-                            ),
-                            ChannelInfoViewState.Content.Member(
-                                user = user4,
-                                role = ChannelInfoViewState.Content.Role.Other("admin"),
-                            ),
-                        ),
+                        items = channel.members,
                         minimumVisibleItems = 5,
                     ),
                     options = listOf(
@@ -222,13 +198,7 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = ExpandableList(
-                        items = channel.members
-                            .map { member ->
-                                ChannelInfoViewState.Content.Member(
-                                    user = member.user,
-                                    role = ChannelInfoViewState.Content.Role.Other(""),
-                                )
-                            },
+                        items = channel.members,
                         minimumVisibleItems = 5,
                     ),
                     options = listOf(
@@ -263,13 +233,7 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = ExpandableList(
-                        items = channel.members
-                            .map { member ->
-                                ChannelInfoViewState.Content.Member(
-                                    user = member.user,
-                                    role = ChannelInfoViewState.Content.Role.Other(""),
-                                )
-                            },
+                        items = channel.members,
                         minimumVisibleItems = 5,
                     ),
                     options = options,
@@ -282,13 +246,7 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = ExpandableList(
-                        items = channel.members
-                            .map { member ->
-                                ChannelInfoViewState.Content.Member(
-                                    user = member.user,
-                                    role = ChannelInfoViewState.Content.Role.Other(""),
-                                )
-                            },
+                        items = channel.members,
                         minimumVisibleItems = 5,
                         isCollapsed = false,
                     ),
@@ -302,13 +260,7 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = ExpandableList(
-                        items = channel.members
-                            .map { member ->
-                                ChannelInfoViewState.Content.Member(
-                                    user = member.user,
-                                    role = ChannelInfoViewState.Content.Role.Other(""),
-                                )
-                            },
+                        items = channel.members,
                         minimumVisibleItems = 5,
                         isCollapsed = true,
                     ),

@@ -32,7 +32,6 @@ import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent.Navigation
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
@@ -132,7 +131,6 @@ public class ChannelInfoViewController(
                 // Do not filter out the current user if the channel is a group channel or if there is only one member
                 takeIf { members.size == 1 || channelData.isGroupChannel } ?: filterNotCurrentUser()
             }
-            .map { member -> member.toContentMember(channelData.createdBy) }
 
         _state.update { currentState ->
             val expandableMembers = when (currentState) {
@@ -148,6 +146,7 @@ public class ChannelInfoViewController(
                 }
             }
             ChannelInfoViewState.Content(
+                owner = channelData.createdBy,
                 members = expandableMembers,
                 options = buildOptionsList(
                     channelData = channelData,
@@ -358,22 +357,9 @@ private val ChannelData.isGroupChannel: Boolean
 private val ChannelData.isDistinct: Boolean
     get() = id.startsWith("!members")
 
-private fun Member.toContentMember(createdBy: User) = ChannelInfoViewState.Content.Member(
-    user = user,
-    role = if (createdBy.id == user.id) {
-        ChannelInfoViewState.Content.Role.Owner
-    } else {
-        when (channelRole) {
-            "channel_moderator" -> ChannelInfoViewState.Content.Role.Moderator
-            "channel_member" -> ChannelInfoViewState.Content.Role.Member
-            else -> ChannelInfoViewState.Content.Role.Other(channelRole.orEmpty())
-        }
-    },
-)
-
 private fun buildOptionsList(
     channelData: ChannelData,
-    singleMember: ChannelInfoViewState.Content.Member?,
+    singleMember: Member?,
     isMuted: Boolean,
     isHidden: Boolean,
 ) = buildList {

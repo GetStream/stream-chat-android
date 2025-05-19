@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.common.state.channel.info
 
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.utils.ExpandableList
 import io.getstream.chat.android.ui.common.utils.emptyExpandableList
@@ -38,10 +39,12 @@ public sealed interface ChannelInfoViewState {
     /**
      * Represents the content state of the channel information.
      *
+     * @param owner The owner of the channel.
      * @param members The list of members in the channel.
      * @param options The list of options available in the channel information UI.
      */
     public data class Content(
+        val owner: User = User(),
         val members: ExpandableList<Member> = emptyExpandableList(),
         val options: List<Option> = emptyList(),
     ) : ChannelInfoViewState {
@@ -104,17 +107,6 @@ public sealed interface ChannelInfoViewState {
              */
             public data object DeleteChannel : Option
         }
-
-        /**
-         * Represents a member of the channel.
-         *
-         * @param user The user object representing the member.
-         * @param role The role of the member in the channel.
-         */
-        public data class Member(
-            val user: User,
-            val role: Role,
-        )
 
         /**
          * Represents the role of a member in the channel.

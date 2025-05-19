@@ -59,6 +59,7 @@ import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListHeaderViewModel
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
@@ -185,6 +186,7 @@ private fun GroupChannelInfoContent(
                 GroupChannelInfoMemberButton(
                     modifier = Modifier.animateItem(),
                     member = member,
+                    isOwner = content.owner.id == member.getUserId(),
                     onClick = null, // Membership detail flow https://linear.app/stream/issue/AND-537
                 )
             }
@@ -214,7 +216,8 @@ private fun GroupChannelInfoContent(
 
 @Composable
 private fun GroupChannelInfoMemberButton(
-    member: ChannelInfoViewState.Content.Member,
+    member: Member,
+    isOwner: Boolean,
     onClick: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
@@ -245,18 +248,14 @@ private fun GroupChannelInfoMemberButton(
                 overflow = TextOverflow.Ellipsis,
             )
         }
-        val role = when (val role = member.role) {
-            is ChannelInfoViewState.Content.Role.Owner ->
-                stringResource(id = R.string.stream_ui_channel_info_member_owner)
-
-            is ChannelInfoViewState.Content.Role.Member ->
-                ""
-
-            is ChannelInfoViewState.Content.Role.Moderator ->
-                stringResource(id = R.string.stream_ui_channel_info_member_moderator)
-
-            is ChannelInfoViewState.Content.Role.Other ->
-                role.value
+        val role = if (isOwner) {
+            stringResource(id = R.string.stream_ui_channel_info_member_owner)
+        } else {
+            when (val role = member.channelRole) {
+                "channel_moderator" -> stringResource(id = R.string.stream_ui_channel_info_member_moderator)
+                "channel_member" -> ""
+                else -> role.orEmpty()
+            }
         }
         Text(
             text = role,
@@ -313,24 +312,13 @@ private fun GroupChannelInfoCollapsedMembersPreview() {
 internal fun GroupChannelInfoCollapsedMembers() {
     GroupChannelInfoContent(
         state = ChannelInfoViewState.Content(
+            owner = PreviewUserData.user1,
             members = ExpandableList(
                 items = listOf(
-                    ChannelInfoViewState.Content.Member(
-                        user = PreviewUserData.user1.copy(lastActive = Date()),
-                        role = ChannelInfoViewState.Content.Role.Owner,
-                    ),
-                    ChannelInfoViewState.Content.Member(
-                        user = PreviewUserData.user2.copy(online = true),
-                        role = ChannelInfoViewState.Content.Role.Owner,
-                    ),
-                    ChannelInfoViewState.Content.Member(
-                        user = PreviewUserData.user3,
-                        role = ChannelInfoViewState.Content.Role.Owner,
-                    ),
-                    ChannelInfoViewState.Content.Member(
-                        user = PreviewUserData.user4,
-                        role = ChannelInfoViewState.Content.Role.Owner,
-                    ),
+                    Member(user = PreviewUserData.user1.copy(lastActive = Date())),
+                    Member(user = PreviewUserData.user2.copy(online = true)),
+                    Member(user = PreviewUserData.user3),
+                    Member(user = PreviewUserData.user4),
                 ),
                 minimumVisibleItems = 2,
                 isCollapsed = true,
@@ -360,24 +348,13 @@ private fun GroupChannelInfoExpandedMembersPreview() {
 internal fun GroupChannelInfoExpandedMembers() {
     GroupChannelInfoContent(
         state = ChannelInfoViewState.Content(
+            owner = PreviewUserData.user1,
             members = ExpandableList(
                 items = listOf(
-                    ChannelInfoViewState.Content.Member(
-                        user = PreviewUserData.user1.copy(lastActive = Date()),
-                        role = ChannelInfoViewState.Content.Role.Owner,
-                    ),
-                    ChannelInfoViewState.Content.Member(
-                        user = PreviewUserData.user2.copy(online = true),
-                        role = ChannelInfoViewState.Content.Role.Owner,
-                    ),
-                    ChannelInfoViewState.Content.Member(
-                        user = PreviewUserData.user3,
-                        role = ChannelInfoViewState.Content.Role.Owner,
-                    ),
-                    ChannelInfoViewState.Content.Member(
-                        user = PreviewUserData.user4,
-                        role = ChannelInfoViewState.Content.Role.Owner,
-                    ),
+                    Member(user = PreviewUserData.user1.copy(lastActive = Date())),
+                    Member(user = PreviewUserData.user2.copy(online = true)),
+                    Member(user = PreviewUserData.user3),
+                    Member(user = PreviewUserData.user4),
                 ),
                 minimumVisibleItems = 2,
                 isCollapsed = false,
