@@ -34,6 +34,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.toChannelData
 import io.getstream.chat.android.test.asCall
+import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent.Navigation
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
 import io.getstream.result.Error
@@ -650,6 +651,13 @@ internal class ChannelInfoViewControllerTest {
 
             sut.onViewAction(ChannelInfoViewAction.HideChannelConfirmationClick(clearHistory = clearHistory))
 
+            sut.events.test {
+                assertEquals(
+                    ChannelInfoViewEvent.NavigateUp(reason = Navigation.Reason.HideChannelSuccess),
+                    awaitItem(),
+                )
+            }
+
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
@@ -844,7 +852,7 @@ internal class ChannelInfoViewControllerTest {
 
             sut.events.test {
                 assertEquals(
-                    ChannelInfoViewEvent.LeaveChannelSuccess,
+                    ChannelInfoViewEvent.NavigateUp(reason = Navigation.Reason.LeaveChannelSuccess),
                     awaitItem(),
                 )
             }
@@ -941,7 +949,10 @@ internal class ChannelInfoViewControllerTest {
             sut.onViewAction(ChannelInfoViewAction.DeleteChannelConfirmationClick)
 
             sut.events.test {
-                assertEquals(ChannelInfoViewEvent.DeleteChannelSuccess, awaitItem())
+                assertEquals(
+                    ChannelInfoViewEvent.NavigateUp(reason = Navigation.Reason.DeleteChannelSuccess),
+                    awaitItem(),
+                )
             }
         }
     }

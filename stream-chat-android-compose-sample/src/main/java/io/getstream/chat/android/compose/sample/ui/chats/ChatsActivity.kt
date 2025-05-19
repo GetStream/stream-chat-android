@@ -250,14 +250,14 @@ class ChatsActivity : BaseConnectedActivity() {
                 channelId = mode.channelId,
                 onNavigationIconClick = { navigator.navigateBack() },
                 onPinnedMessagesClick = { navigator.navigateToPinnedMessages(mode.channelId) },
-                onSuccessEvent = { navigator.popUpTo(pane = ThreePaneRole.List) },
+                onNavigateUpEvent = { navigator.popUpTo(pane = ThreePaneRole.List) },
             )
 
             is InfoContentMode.GroupChannelInfo -> GroupChannelInfoContent(
                 channelId = mode.channelId,
                 onNavigationIconClick = { navigator.navigateBack() },
                 onPinnedMessagesClick = { navigator.navigateToPinnedMessages(mode.channelId) },
-                onSuccessEvent = { navigator.popUpTo(pane = ThreePaneRole.List) },
+                onNavigateUpEvent = { navigator.popUpTo(pane = ThreePaneRole.List) },
             )
 
             is InfoContentMode.PinnedMessages -> PinnedMessagesContent(
@@ -283,15 +283,15 @@ class ChatsActivity : BaseConnectedActivity() {
         channelId: String,
         onNavigationIconClick: () -> Unit,
         onPinnedMessagesClick: () -> Unit,
-        onSuccessEvent: () -> Unit,
+        onNavigateUpEvent: () -> Unit,
     ) {
         val viewModelFactory = ChannelInfoViewModelFactory(context = applicationContext, cid = channelId)
         val viewModel = viewModel<ChannelInfoViewModel>(key = channelId, factory = viewModelFactory)
-        viewModel.onSuccessEvent(onSuccessEvent)
+        viewModel.handleNavigateUpEvent(onNavigateUpEvent)
         LaunchedEffect(Unit) {
             viewModel.events.collectLatest { event ->
                 when (event) {
-                    is ChannelInfoViewEvent.Success -> onSuccessEvent()
+                    is ChannelInfoViewEvent.NavigateUp -> onNavigateUpEvent()
                     else -> Unit
                 }
             }
@@ -325,11 +325,11 @@ class ChatsActivity : BaseConnectedActivity() {
         channelId: String,
         onNavigationIconClick: () -> Unit,
         onPinnedMessagesClick: () -> Unit,
-        onSuccessEvent: () -> Unit,
+        onNavigateUpEvent: () -> Unit,
     ) {
         val viewModelFactory = ChannelInfoViewModelFactory(context = applicationContext, cid = channelId)
         val viewModel = viewModel<ChannelInfoViewModel>(key = channelId, factory = viewModelFactory)
-        viewModel.onSuccessEvent(onSuccessEvent)
+        viewModel.handleNavigateUpEvent(onNavigateUpEvent)
         if (AdaptiveLayoutInfo.singlePaneWindow()) {
             GroupChannelInfoScreen(
                 viewModelFactory = viewModelFactory,
@@ -359,11 +359,11 @@ class ChatsActivity : BaseConnectedActivity() {
     }
 
     @Composable
-    private fun ChannelInfoViewModel.onSuccessEvent(block: () -> Unit) {
+    private fun ChannelInfoViewModel.handleNavigateUpEvent(block: () -> Unit) {
         LaunchedEffect(Unit) {
             events.collectLatest { event ->
                 when (event) {
-                    is ChannelInfoViewEvent.Success -> block()
+                    is ChannelInfoViewEvent.NavigateUp -> block()
                     else -> Unit
                 }
             }

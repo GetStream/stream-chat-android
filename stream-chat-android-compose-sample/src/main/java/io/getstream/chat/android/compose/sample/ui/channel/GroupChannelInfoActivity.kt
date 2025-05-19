@@ -79,7 +79,7 @@ class GroupChannelInfoActivity : BaseConnectedActivity() {
                         is ChannelInfoViewEvent.Error ->
                             showError(event)
 
-                        is ChannelInfoViewEvent.Success -> {
+                        is ChannelInfoViewEvent.NavigateUp -> {
                             setResult(RESULT_OK)
                             finish()
                         }

@@ -34,6 +34,7 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.watchChannelAsState
+import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent.Navigation
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
 import io.getstream.log.taggedLogger
@@ -179,12 +180,12 @@ public class ChannelInfoViewController(
             is ChannelInfoViewAction.RenameChannelClick -> renameChannel(action.name)
             is ChannelInfoViewAction.MuteChannelClick -> setChannelMute(mute = true)
             is ChannelInfoViewAction.UnmuteChannelClick -> setChannelMute(mute = false)
-            is ChannelInfoViewAction.HideChannelClick -> { _events.tryEmit(ChannelInfoViewEvent.HideChannelModal) }
+            is ChannelInfoViewAction.HideChannelClick -> _events.tryEmit(ChannelInfoViewEvent.HideChannelModal)
             is ChannelInfoViewAction.HideChannelConfirmationClick -> setChannelHide(hide = true, action.clearHistory)
             is ChannelInfoViewAction.UnhideChannelClick -> setChannelHide(hide = false)
-            is ChannelInfoViewAction.LeaveChannelClick -> { _events.tryEmit(ChannelInfoViewEvent.LeaveChannelModal) }
+            is ChannelInfoViewAction.LeaveChannelClick -> _events.tryEmit(ChannelInfoViewEvent.LeaveChannelModal)
             is ChannelInfoViewAction.LeaveChannelConfirmationClick -> leaveChannel(action.quitMessage)
-            is ChannelInfoViewAction.DeleteChannelClick -> { _events.tryEmit(ChannelInfoViewEvent.DeleteChannelModal) }
+            is ChannelInfoViewAction.DeleteChannelClick -> _events.tryEmit(ChannelInfoViewEvent.DeleteChannelModal)
             is ChannelInfoViewAction.DeleteChannelConfirmationClick -> deleteChannel()
         }
     }
@@ -270,7 +271,9 @@ public class ChannelInfoViewController(
             if (hide) {
                 channelClient.hide(clearHistory)
                     .await()
-                    .onSuccess { _events.tryEmit(ChannelInfoViewEvent.HideChannelSuccess) }
+                    .onSuccess {
+                        _events.tryEmit(ChannelInfoViewEvent.NavigateUp(reason = Navigation.Reason.HideChannelSuccess))
+                    }
             } else {
                 channelClient.show().await()
             }.onError(onError)
@@ -291,7 +294,9 @@ public class ChannelInfoViewController(
             removeMemberFromChannel(
                 memberId = currentUserId,
                 systemMessage = quitMessage,
-                onSuccess = { _events.tryEmit(ChannelInfoViewEvent.LeaveChannelSuccess) },
+                onSuccess = {
+                    _events.tryEmit(ChannelInfoViewEvent.NavigateUp(reason = Navigation.Reason.LeaveChannelSuccess))
+                },
                 onError = onError,
             )
         }.onFailure { cause ->
@@ -321,7 +326,7 @@ public class ChannelInfoViewController(
         scope.launch {
             channelClient.delete().await()
                 .onSuccess {
-                    _events.tryEmit(ChannelInfoViewEvent.DeleteChannelSuccess)
+                    _events.tryEmit(ChannelInfoViewEvent.NavigateUp(reason = Navigation.Reason.DeleteChannelSuccess))
                 }
                 .onError { error ->
                     logger.e { "[deleteChannel] error: ${error.message}" }

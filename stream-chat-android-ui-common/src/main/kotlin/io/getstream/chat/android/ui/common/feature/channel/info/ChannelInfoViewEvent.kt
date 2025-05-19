@@ -45,24 +45,38 @@ public sealed interface ChannelInfoViewEvent {
     public data object DeleteChannelModal : Modal
 
     /**
-     * Represents success events occurred while performing an action.
+     * Represents navigation events.
+     *
+     * @param reason The reason for navigation or null if not applicable.
      */
-    public sealed interface Success : ChannelInfoViewEvent
+    public sealed class Navigation(public open val reason: Reason?) : ChannelInfoViewEvent {
+        /**
+         * Represents the reason for navigation.
+         */
+        public sealed interface Reason {
+            /**
+             * Indicates the channel was successfully hidden.
+             */
+            public data object HideChannelSuccess : Reason
+
+            /**
+             * Indicates the user successfully left the channel.
+             */
+            public data object LeaveChannelSuccess : Reason
+
+            /**
+             * Indicates the channel was successfully deleted.
+             */
+            public data object DeleteChannelSuccess : Reason
+        }
+    }
 
     /**
-     * Indicates the channel was successfully hidden.
+     * Indicates an event to navigate up in the view hierarchy.
+     *
+     * @param reason The reason for navigation.
      */
-    public data object HideChannelSuccess : Success
-
-    /**
-     * Indicates the user successfully left the channel.
-     */
-    public data object LeaveChannelSuccess : Success
-
-    /**
-     * Indicates the channel was successfully deleted.
-     */
-    public data object DeleteChannelSuccess : Success
+    public data class NavigateUp(override val reason: Reason) : Navigation(reason)
 
     /**
      * Represents error events occurred while performing an action.
