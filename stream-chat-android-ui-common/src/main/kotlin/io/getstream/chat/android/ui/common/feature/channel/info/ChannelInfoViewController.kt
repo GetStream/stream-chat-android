@@ -103,7 +103,11 @@ public class ChannelInfoViewController(
             .flatMapLatest { channel ->
                 logger.d { "[onChannelState]" }
                 combine(
-                    channel.channelData.onEach { logger.d { "[onChannelData] name: ${it.name}" } },
+                    channel.channelData.onEach {
+                        logger.d {
+                            "[onChannelData] cid: ${it.cid}, name: ${it.name}, capabilities: ${it.ownCapabilities}"
+                        }
+                    },
                     channel.members.onEach { logger.d { "[onMembers] size: ${it.size}" } },
                     channel.muted.onEach { logger.d { "[onMuted] $it" } },
                     channel.hidden.onEach { logger.d { "[onHidden] $it" } },
@@ -123,15 +127,6 @@ public class ChannelInfoViewController(
         isMuted: Boolean,
         isHidden: Boolean,
     ) {
-        logger.d {
-            "[onChannelInfoData] cid: ${channelData.cid}, " +
-                "name: ${channelData.name}, " +
-                "members: ${members.size}, " +
-                "isMuted: $isMuted, " +
-                "isHidden: $isHidden, " +
-                "capabilities: ${channelData.ownCapabilities}"
-        }
-
         val contentMembers = members
             .run {
                 // Do not filter out the current user if the channel is a group channel or if there is only one member
