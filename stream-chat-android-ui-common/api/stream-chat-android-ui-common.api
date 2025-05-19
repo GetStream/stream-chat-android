@@ -1817,6 +1817,24 @@ public final class io/getstream/chat/android/ui/common/state/messages/list/Cance
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/ui/common/state/messages/list/ChannelHeaderViewState {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/ConnectionState;Lio/getstream/chat/android/models/Channel;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/ConnectionState;Lio/getstream/chat/android/models/Channel;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/User;
+	public final fun component2 ()Lio/getstream/chat/android/models/ConnectionState;
+	public final fun component3 ()Lio/getstream/chat/android/models/Channel;
+	public final fun copy (Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/ConnectionState;Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/ui/common/state/messages/list/ChannelHeaderViewState;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/list/ChannelHeaderViewState;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/ConnectionState;Lio/getstream/chat/android/models/Channel;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/list/ChannelHeaderViewState;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChannel ()Lio/getstream/chat/android/models/Channel;
+	public final fun getConnectionState ()Lio/getstream/chat/android/models/ConnectionState;
+	public final fun getCurrentUser ()Lio/getstream/chat/android/models/User;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/common/state/messages/list/CustomModerationOption : io/getstream/chat/android/ui/common/state/messages/list/ModeratedMessageOption {
 	public static final field $stable I
 	public fun <init> (ILjava/util/Map;)V
@@ -1969,24 +1987,6 @@ public final class io/getstream/chat/android/ui/common/state/messages/list/Messa
 	public final fun isInThread ()Z
 	public final fun isMessageRead ()Z
 	public final fun isMine ()Z
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/common/state/messages/list/MessageListHeaderViewState {
-	public static final field $stable I
-	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/ConnectionState;Lio/getstream/chat/android/models/Channel;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/ConnectionState;Lio/getstream/chat/android/models/Channel;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Lio/getstream/chat/android/models/User;
-	public final fun component2 ()Lio/getstream/chat/android/models/ConnectionState;
-	public final fun component3 ()Lio/getstream/chat/android/models/Channel;
-	public final fun copy (Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/ConnectionState;Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/ui/common/state/messages/list/MessageListHeaderViewState;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/list/MessageListHeaderViewState;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/ConnectionState;Lio/getstream/chat/android/models/Channel;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/list/MessageListHeaderViewState;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getChannel ()Lio/getstream/chat/android/models/Channel;
-	public final fun getConnectionState ()Lio/getstream/chat/android/models/ConnectionState;
-	public final fun getCurrentUser ()Lio/getstream/chat/android/models/User;
-	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
