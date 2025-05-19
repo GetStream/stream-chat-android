@@ -7,6 +7,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Deprecate `$ne` filter (no longer supported due to performance issues). [#5782](https://github.com/GetStream/stream-chat-android/pull/5782)
 
 ### ❌ Removed
 
