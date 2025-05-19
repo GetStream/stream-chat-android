@@ -22,10 +22,10 @@ import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.User
 
 /**
- * Represents the state of the message list header in the UI.
+ * Represents the state of the channel header in the UI.
  */
 @ExperimentalStreamChatApi
-public data class MessageListHeaderViewState(
+public data class ChannelHeaderViewState(
     /**
      * The current connected user.
      */

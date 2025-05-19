@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.viewmodel.channel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import io.getstream.chat.android.compose.viewmodel.messages.MessageListHeaderViewModel
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
 /**
@@ -35,7 +34,7 @@ public class ChannelInfoViewModelFactory(
 ) : ViewModelProvider.Factory {
 
     private val factories: Map<Class<out ViewModel>, () -> ViewModel> = mapOf(
-        MessageListHeaderViewModel::class.java to { MessageListHeaderViewModel(cid) },
+        ChannelHeaderViewModel::class.java to { ChannelHeaderViewModel(cid) },
         ChannelInfoViewModel::class.java to { ChannelInfoViewModel(context, cid) },
     )
 

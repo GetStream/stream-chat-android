@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.viewmodel.messages
+package io.getstream.chat.android.compose.viewmodel.channel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.ui.common.feature.messages.list.MessageListHeaderViewController
-import io.getstream.chat.android.ui.common.state.messages.list.MessageListHeaderViewState
+import io.getstream.chat.android.ui.common.feature.channel.header.ChannelHeaderViewController
+import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
 import kotlinx.coroutines.flow.StateFlow
 
 /**
- * ViewModel for managing the state of the message list header.
+ * ViewModel for managing the state of the channel header.
  *
  * @param cid The full channel identifier (e.g., "messaging:123
  */
 @ExperimentalStreamChatApi
-public class MessageListHeaderViewModel(
+public class ChannelHeaderViewModel(
     private val cid: String,
-    controllerProvider: ViewModel.() -> MessageListHeaderViewController = {
-        MessageListHeaderViewController(cid = cid, scope = viewModelScope)
+    controllerProvider: ViewModel.() -> ChannelHeaderViewController = {
+        ChannelHeaderViewController(cid = cid, scope = viewModelScope)
     },
 ) : ViewModel() {
 
-    private val controller: MessageListHeaderViewController by lazy { controllerProvider() }
+    private val controller: ChannelHeaderViewController by lazy { controllerProvider() }
 
     /**
-     * @see [MessageListHeaderViewController.state]
+     * @see [ChannelHeaderViewController.state]
      */
-    public val state: StateFlow<MessageListHeaderViewState> = controller.state
+    public val state: StateFlow<ChannelHeaderViewState> = controller.state
 }

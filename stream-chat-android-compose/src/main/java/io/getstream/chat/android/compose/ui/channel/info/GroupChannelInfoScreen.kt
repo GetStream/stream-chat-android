@@ -55,9 +55,9 @@ import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getLastSeenText
+import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
-import io.getstream.chat.android.compose.viewmodel.messages.MessageListHeaderViewModel
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.previewdata.PreviewUserData
@@ -142,7 +142,7 @@ private fun GroupChannelInfoTopBar(
     elevation: Dp,
     onNavigationIconClick: () -> Unit,
 ) {
-    val viewModel = viewModel<MessageListHeaderViewModel>(factory = viewModelFactory)
+    val viewModel = viewModel<ChannelHeaderViewModel>(factory = viewModelFactory)
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     MessageListHeader(

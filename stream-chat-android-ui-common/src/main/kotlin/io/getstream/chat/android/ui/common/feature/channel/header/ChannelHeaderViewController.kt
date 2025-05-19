@@ -16,14 +16,14 @@
 
 @file:OptIn(ExperimentalStreamChatApi::class)
 
-package io.getstream.chat.android.ui.common.feature.messages.list
+package io.getstream.chat.android.ui.common.feature.channel.header
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.state.extensions.watchChannelAsState
-import io.getstream.chat.android.ui.common.state.messages.list.MessageListHeaderViewState
+import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -33,13 +33,13 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 
-// The XML SDk has its own ViewModel for the MessageListHeaderView.
+// The XML SDK has its own ViewModel for the MessageListHeaderView.
 // This class can be later shared after a refactor of the XML SDK.
 /**
- * Controller responsible for managing the state of the message list header.
+ * Controller responsible for managing the state of the channel header.
  */
 @InternalStreamChatApi
-public class MessageListHeaderViewController(
+public class ChannelHeaderViewController(
     cid: String,
     private val scope: CoroutineScope,
     private val chatClient: ChatClient = ChatClient.instance(),
@@ -49,9 +49,9 @@ public class MessageListHeaderViewController(
 ) {
 
     /**
-     * A [StateFlow] representing the current state of the message list header.
+     * A [StateFlow] representing the current state of the channel header.
      */
-    public val state: StateFlow<MessageListHeaderViewState> =
+    public val state: StateFlow<ChannelHeaderViewState> =
         channelState.flatMapLatest { state ->
             combine(
                 chatClient.clientState.connectionState,
@@ -59,7 +59,7 @@ public class MessageListHeaderViewController(
                 state.membersCount,
                 state.watcherCount,
             ) { connectionState, _, _, _ ->
-                MessageListHeaderViewState(
+                ChannelHeaderViewState(
                     currentUser = chatClient.getCurrentUser(),
                     connectionState = connectionState,
                     channel = state.toChannel(),
@@ -68,7 +68,7 @@ public class MessageListHeaderViewController(
         }.stateIn(
             scope = scope,
             started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_IN_MILLIS),
-            initialValue = MessageListHeaderViewState(),
+            initialValue = ChannelHeaderViewState(),
         )
 }
 
