@@ -257,7 +257,7 @@ internal fun AudioRecordAttachmentContentItemBase(
     onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
     tailContent: @Composable (isPlaying: Boolean) -> Unit = {},
 ) {
-    val attachmentUrl = attachment.assetUrl ?: attachment.upload?.toUri()?.toString()
+    val attachmentUrl = playerState.getRecordingUri(attachment)
     val isCurrentAttachment = attachmentUrl == playerState.current.audioUri
     val trackProgress = playerState.current.playingProgress.takeIf { isCurrentAttachment }
         ?: attachmentUrl?.let { playerState.seekTo.getOrDefault(attachment.audioHash, 0f) } ?: 0f
@@ -406,6 +406,7 @@ internal fun AudioRecordAttachmentContentItemPreview() {
                     audioUri = attachment.assetUrl.orEmpty(),
                     isPlaying = true,
                 ),
+                getRecordingUri = Attachment::assetUrl,
             ),
             onPlayToggleClick = {},
             onPlaySpeedClick = {},
