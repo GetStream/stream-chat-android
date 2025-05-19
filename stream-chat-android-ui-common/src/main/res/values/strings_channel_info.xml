@@ -22,11 +22,11 @@
     <string name="stream_ui_channel_info_name_field_label">NAME</string>
     <string name="stream_ui_channel_info_name_field_placeholder">Add a group name</string>
     <string name="stream_ui_channel_info_rename_group_error">Failed to rename group</string>
-    <string name="stream_ui_channel_info_option_mute_conversation">Mute User</string>
+    <string name="stream_ui_channel_info_option_mute_conversation">Mute Conversation</string>
     <string name="stream_ui_channel_info_option_mute_conversation_error">Failed to switch the conversation mute state</string>
     <string name="stream_ui_channel_info_option_mute_group">Mute Group</string>
     <string name="stream_ui_channel_info_option_mute_group_error">Failed to switch the group mute state</string>
-    <string name="stream_ui_channel_info_option_hide_conversation">Hide User</string>
+    <string name="stream_ui_channel_info_option_hide_conversation">Hide Conversation</string>
     <string name="stream_ui_channel_info_option_hide_conversation_confirmation_message">Are you sure you want to hide this conversation?</string>
     <string name="stream_ui_channel_info_option_hide_conversation_confirmation_clear_history">Also clear the conversation history</string>
     <string name="stream_ui_channel_info_option_hide_conversation_error">Failed to switch the conversation hide state</string>
