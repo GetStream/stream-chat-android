@@ -17,7 +17,8 @@
 package io.getstream.chat.android.ui.common.feature.channel.info
 
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 
 /**
  * Represents side-effect events related to channel information actions.
@@ -33,9 +34,13 @@ public sealed interface ChannelInfoViewEvent {
     /**
      * Indicates an event to present a member information modal.
      *
-     * @param user The user whose information is to be displayed.
+     * @param member The member whose information is to be displayed.
+     * @param options The options available in the member information modal.
      */
-    public data class MemberInfoModal(val user: User) : Modal
+    public data class MemberInfoModal(
+        val member: Member,
+        val options: List<ChannelInfoViewState.Content.Option>,
+    ) : Modal
 
     /**
      * Indicates an event to present a modal for hiding a channel.
@@ -92,6 +97,11 @@ public sealed interface ChannelInfoViewEvent {
     public data object NavigateToPinnedMessages : Navigation(reason = null)
 
     /**
+     * Indicates an event to navigate to the channel.
+     */
+    public data class NavigateToChannel(val channelId: String) : Navigation(reason = null)
+
+    /**
      * Represents error events occurred while performing an action.
      */
     public sealed interface Error : ChannelInfoViewEvent
@@ -130,4 +140,14 @@ public sealed interface ChannelInfoViewEvent {
      * Indicates an error occurred while deleting a channel.
      */
     public data object DeleteChannelError : Error
+
+    /**
+     * Indicates an error occurred while banning a member.
+     */
+    public data object BanMemberError : Error
+
+    /**
+     * Indicates an error occurred while unbanning a member.
+     */
+    public data object UnbanMemberError : Error
 }

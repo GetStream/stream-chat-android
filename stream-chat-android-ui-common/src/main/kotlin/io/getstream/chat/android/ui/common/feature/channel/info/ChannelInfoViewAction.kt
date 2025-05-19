@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.common.feature.channel.info
 
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 
@@ -38,9 +39,9 @@ public sealed interface ChannelInfoViewAction {
     /**
      * Represents the click action on a member.
      *
-     * @param user The user of the clicked member.
+     * @param member The member that was clicked.
      */
-    public data class MemberClick(val user: User) : ChannelInfoViewAction
+    public data class MemberClick(val member: Member) : ChannelInfoViewAction
 
     /**
      * Represents the user info click action.
@@ -109,4 +110,32 @@ public sealed interface ChannelInfoViewAction {
      * Represents the confirmation click action for deleting a channel.
      */
     public data object DeleteChannelConfirmationClick : ChannelInfoViewAction
+
+    /**
+     * Represents the click action to message the member.
+     *
+     * @param member The member to message.
+     */
+    public data class MemberMessageClick(val member: Member) : ChannelInfoViewAction
+
+    /**
+     * Represents the click action to remove the member.
+     *
+     * @param member The member to remove.
+     */
+    public data class RemoveMemberClick(val member: Member) : ChannelInfoViewAction
+
+    /**
+     * Represents the click action to ban the member.
+     *
+     * @param member The member to ban.
+     */
+    public data class BanMemberClick(val member: Member) : ChannelInfoViewAction
+
+    /**
+     * Represents the click action to unban the member.
+     *
+     * @param member The member to unban.
+     */
+    public data class UnbanMemberClick(val member: Member) : ChannelInfoViewAction
 }

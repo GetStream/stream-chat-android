@@ -93,6 +93,8 @@ public class ChannelInfoViewController(
      */
     public val events: SharedFlow<ChannelInfoViewEvent> = _events.asSharedFlow()
 
+    private var capabilities = emptySet<String>()
+
     init {
         @Suppress("OPT_IN_USAGE")
         channelState
@@ -123,6 +125,8 @@ public class ChannelInfoViewController(
         isMuted: Boolean,
         isHidden: Boolean,
     ) {
+        capabilities = channelData.ownCapabilities
+
         val contentMembers = members
             .run {
                 // Do not filter out the current user if the channel is a group channel or if there is only one member
@@ -145,7 +149,7 @@ public class ChannelInfoViewController(
             ChannelInfoViewState.Content(
                 owner = channelData.createdBy,
                 members = expandableMembers,
-                options = buildOptionsList(
+                options = buildChannelOptionList(
                     channelData = channelData,
                     singleMember = if (contentMembers.size == 1) contentMembers.first() else null,
                     isMuted = isMuted,
@@ -167,7 +171,7 @@ public class ChannelInfoViewController(
         when (action) {
             is ChannelInfoViewAction.ExpandMembersClick -> expandMembers()
             is ChannelInfoViewAction.CollapseMembersClick -> collapseMembers()
-            is ChannelInfoViewAction.MemberClick -> { _events.tryEmit(ChannelInfoViewEvent.MemberInfoModal(action.user)) }
+            is ChannelInfoViewAction.MemberClick -> memberClick(action)
             is ChannelInfoViewAction.UserInfoClick -> userInfoClick(action.user)
             is ChannelInfoViewAction.RenameChannelClick -> renameChannel(action.name)
             is ChannelInfoViewAction.PinnedMessagesClick ->
@@ -182,6 +186,12 @@ public class ChannelInfoViewController(
             is ChannelInfoViewAction.LeaveChannelConfirmationClick -> leaveChannel(action.quitMessage)
             is ChannelInfoViewAction.DeleteChannelClick -> _events.tryEmit(ChannelInfoViewEvent.DeleteChannelModal)
             is ChannelInfoViewAction.DeleteChannelConfirmationClick -> deleteChannel()
+            is ChannelInfoViewAction.MemberMessageClick ->
+                _events.tryEmit(ChannelInfoViewEvent.NavigateToChannel(channelId = "")) // TODO NavigateToChannel
+
+            is ChannelInfoViewAction.RemoveMemberClick -> removeMember(action.member)
+            is ChannelInfoViewAction.BanMemberClick -> banMember(action.member)
+            is ChannelInfoViewAction.UnbanMemberClick -> unbanMember(action.member)
         }
     }
 
@@ -205,6 +215,20 @@ public class ChannelInfoViewController(
                 ),
             )
         }
+    }
+
+    private fun memberClick(action: ChannelInfoViewAction.MemberClick) {
+        logger.d { "[memberClick] member: ${action.member}" }
+
+        _events.tryEmit(
+            ChannelInfoViewEvent.MemberInfoModal(
+                member = action.member,
+                options = buildMemberOptionList(
+                    member = action.member,
+                    capabilities = capabilities,
+                ),
+            ),
+        )
     }
 
     private fun userInfoClick(user: User) {
@@ -328,6 +352,56 @@ public class ChannelInfoViewController(
         }
     }
 
+    private fun removeMember(member: Member) {
+        logger.d { "[removeMember] member: $member" }
+
+        removeMemberFromChannel(
+            memberId = member.getUserId(),
+            systemMessage = null,
+            onSuccess = {
+                // _events.tryEmit(ChannelInfoViewEvent.MemberRemoveSuccess(user))
+            },
+            onError = { error ->
+                logger.e { "[removeMember] error: ${error.message}" }
+                // _events.tryEmit(ChannelInfoViewEvent.MemberRemoveError(user))
+            },
+        )
+    }
+
+    private fun banMember(member: Member) {
+        logger.d { "[banMember] member: $member" }
+
+        scope.launch {
+            channelClient.banUser(
+                targetId = member.getUserId(),
+                reason = null,
+                timeout = null, // TODO add timeout to ban
+            ).await()
+                .onSuccess {
+                    //     _events.tryEmit(ChannelInfoViewEvent.MemberBanSuccess(user))
+                }
+                .onError { error ->
+                    logger.e { "[banMember] error: ${error.message}" }
+                    _events.tryEmit(ChannelInfoViewEvent.BanMemberError)
+                }
+        }
+    }
+
+    private fun unbanMember(member: Member) {
+        logger.d { "[unbanMember] member: $member" }
+
+        scope.launch {
+            channelClient.unbanUser(member.getUserId()).await()
+                .onSuccess {
+                    //     _events.tryEmit(ChannelInfoViewEvent.MemberUnbanSuccess(user))
+                }
+                .onError { error ->
+                    logger.e { "[unbanMember] error: ${error.message}" }
+                    _events.tryEmit(ChannelInfoViewEvent.UnbanMemberError)
+                }
+        }
+    }
+
     private fun List<Member>.filterNotCurrentUser() =
         filter { member -> member.user.id != chatClient.getCurrentUser()?.id }
 }
@@ -353,7 +427,7 @@ private val ChannelData.isGroupChannel: Boolean
 private val ChannelData.isDistinct: Boolean
     get() = id.startsWith("!members")
 
-private fun buildOptionsList(
+private fun buildChannelOptionList(
     channelData: ChannelData,
     singleMember: Member?,
     isMuted: Boolean,
@@ -383,6 +457,20 @@ private fun buildOptionsList(
     }
     if (channelData.ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)) {
         add(ChannelInfoViewState.Content.Option.DeleteChannel)
+    }
+}
+
+private fun buildMemberOptionList(member: Member, capabilities: Set<String>) = buildList {
+    add(ChannelInfoViewState.Content.Option.MessageMember(member = member))
+    if (capabilities.contains(ChannelCapabilities.UPDATE_CHANNEL_MEMBERS)) {
+        add(ChannelInfoViewState.Content.Option.RemoveMember(member = member))
+    }
+    if (capabilities.contains(ChannelCapabilities.BAN_CHANNEL_MEMBERS)) {
+        if (member.banned) {
+            add(ChannelInfoViewState.Content.Option.UnbanMember(member = member))
+        } else {
+            add(ChannelInfoViewState.Content.Option.BanMember(member = member))
+        }
     }
 }
 

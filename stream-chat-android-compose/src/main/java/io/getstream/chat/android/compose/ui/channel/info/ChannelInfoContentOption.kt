@@ -143,5 +143,41 @@ internal fun ChannelInfoContentOption(
                 )
             }
         }
+
+        is ChannelInfoViewState.Content.Option.MessageMember -> {
+            ChannelInfoOptionNavigationButton(
+                icon = R.drawable.stream_compose_empty_channels,
+                text = stringResource(R.string.stream_ui_channel_info_option_message_member),
+                onClick = { onViewAction(ChannelInfoViewAction.MemberMessageClick(member = option.member)) },
+            )
+        }
+
+        is ChannelInfoViewState.Content.Option.RemoveMember -> {
+            CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.errorAccent)) {
+                ChannelInfoOptionButton(
+                    icon = R.drawable.stream_compose_ic_person_remove,
+                    text = stringResource(R.string.stream_ui_channel_info_option_remove_member),
+                    onClick = { onViewAction(ChannelInfoViewAction.RemoveMemberClick(member = option.member)) },
+                )
+            }
+        }
+
+        is ChannelInfoViewState.Content.Option.BanMember -> {
+            CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.errorAccent)) {
+                ChannelInfoOptionButton(
+                    icon = R.drawable.stream_compose_ic_person_remove,
+                    text = stringResource(R.string.stream_ui_channel_info_option_ban_member),
+                    onClick = { onViewAction(ChannelInfoViewAction.BanMemberClick(member = option.member)) },
+                )
+            }
+        }
+
+        is ChannelInfoViewState.Content.Option.UnbanMember -> {
+            ChannelInfoOptionButton(
+                icon = R.drawable.stream_compose_ic_person_remove,
+                text = stringResource(R.string.stream_ui_channel_info_option_unban_member),
+                onClick = { onViewAction(ChannelInfoViewAction.UnbanMemberClick(member = option.member)) },
+            )
+        }
     }
 }
