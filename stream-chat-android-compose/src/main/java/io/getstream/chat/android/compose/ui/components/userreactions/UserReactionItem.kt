@@ -72,6 +72,7 @@ public fun UserReactionItem(
                 shape = ChatTheme.shapes.avatar,
                 textStyle = ChatTheme.typography.title3Bold,
                 placeholderPainter = null,
+                errorPlaceholderPainter = null,
                 contentDescription = user.name,
                 initialsAvatarOffset = DpOffset.Zero,
                 onClick = null,
