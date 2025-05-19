@@ -107,32 +107,5 @@ public sealed interface ChannelInfoViewState {
              */
             public data object DeleteChannel : Option
         }
-
-        /**
-         * Represents the role of a member in the channel.
-         */
-        public sealed interface Role {
-            /**
-             * Represents the owner role in the channel.
-             */
-            public data object Owner : Role
-
-            /**
-             * Represents the moderator role in the channel.
-             */
-            public data object Moderator : Role
-
-            /**
-             * Represents the member role in the channel.
-             */
-            public data object Member : Role
-
-            /**
-             * Represents other roles in the channel.
-             *
-             * @param value The string value representing the custom role.
-             */
-            public data class Other(val value: String) : Role
-        }
     }
 }
