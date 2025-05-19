@@ -35,7 +35,7 @@ public class ChannelInfoViewModelFactory(
 
     private val factories: Map<Class<out ViewModel>, () -> ViewModel> = mapOf(
         ChannelHeaderViewModel::class.java to { ChannelHeaderViewModel(cid) },
-        ChannelInfoViewModel::class.java to { ChannelInfoViewModel(context, cid) },
+        ChannelInfoViewModel::class.java to { ChannelInfoViewModel(context.applicationContext, cid) },
     )
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
