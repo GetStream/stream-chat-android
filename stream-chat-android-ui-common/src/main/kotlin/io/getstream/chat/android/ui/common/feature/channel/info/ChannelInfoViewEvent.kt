@@ -142,6 +142,11 @@ public sealed interface ChannelInfoViewEvent {
     public data object DeleteChannelError : Error
 
     /**
+     * Indicates an error occurred while removing a member.
+     */
+    public data object RemoveMemberError : Error
+
+    /**
      * Indicates an error occurred while banning a member.
      */
     public data object BanMemberError : Error

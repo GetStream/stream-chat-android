@@ -121,6 +121,9 @@ class DirectChannelInfoActivity : BaseConnectedActivity() {
             ChannelInfoViewEvent.DeleteChannelError,
             -> R.string.stream_ui_channel_info_option_delete_conversation_error
 
+            ChannelInfoViewEvent.RemoveMemberError,
+            -> R.string.stream_ui_channel_info_option_remove_member_error
+
             ChannelInfoViewEvent.BanMemberError,
             -> R.string.stream_ui_channel_info_option_ban_member_error
 

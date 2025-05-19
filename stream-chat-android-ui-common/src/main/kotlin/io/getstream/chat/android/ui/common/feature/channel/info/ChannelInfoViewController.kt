@@ -358,12 +358,10 @@ public class ChannelInfoViewController(
         removeMemberFromChannel(
             memberId = member.getUserId(),
             systemMessage = null,
-            onSuccess = {
-                // _events.tryEmit(ChannelInfoViewEvent.MemberRemoveSuccess(user))
-            },
+            onSuccess = { /* no-op */ },
             onError = { error ->
                 logger.e { "[removeMember] error: ${error.message}" }
-                // _events.tryEmit(ChannelInfoViewEvent.MemberRemoveError(user))
+                _events.tryEmit(ChannelInfoViewEvent.RemoveMemberError)
             },
         )
     }
@@ -377,9 +375,7 @@ public class ChannelInfoViewController(
                 reason = null,
                 timeout = null, // TODO add timeout to ban
             ).await()
-                .onSuccess {
-                    //     _events.tryEmit(ChannelInfoViewEvent.MemberBanSuccess(user))
-                }
+                .onSuccess { /* no-op */ }
                 .onError { error ->
                     logger.e { "[banMember] error: ${error.message}" }
                     _events.tryEmit(ChannelInfoViewEvent.BanMemberError)
@@ -392,9 +388,7 @@ public class ChannelInfoViewController(
 
         scope.launch {
             channelClient.unbanUser(member.getUserId()).await()
-                .onSuccess {
-                    //     _events.tryEmit(ChannelInfoViewEvent.MemberUnbanSuccess(user))
-                }
+                .onSuccess { /* no-op */ }
                 .onError { error ->
                     logger.e { "[unbanMember] error: ${error.message}" }
                     _events.tryEmit(ChannelInfoViewEvent.UnbanMemberError)
