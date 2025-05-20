@@ -62,6 +62,7 @@ import kotlinx.coroutines.launch
  *
  * @param cid The unique identifier of the channel.
  * @param scope The [CoroutineScope] used for launching coroutines.
+ * @param copyToClipboardHandler The [CopyToClipboardHandler] used for copying text to the clipboard.
  * @param chatClient The [ChatClient] instance used for interacting with the chat API.
  * @param channelState A [Flow] representing the state of the channel.
  * @param channelClient The [ChannelClient] instance for performing channel-specific operations.
