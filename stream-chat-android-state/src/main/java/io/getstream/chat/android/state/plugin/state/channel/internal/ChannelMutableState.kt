@@ -234,10 +234,15 @@ internal class ChannelMutableState(
     override val insideSearch: StateFlow<Boolean> = _insideSearch!!
 
     override val lastSentMessageDate: StateFlow<Date?> = combineStates(
+        userFlow,
         channelConfig,
         messages,
-    ) { config, messages ->
-        messages.lastMessageAt(config.skipLastMsgUpdateForSystemMsgs) ?: channelData.value.createdAt
+    ) { user, config, messages ->
+        user?.id?.let { userId ->
+            messages
+                .filter { it.user.id == userId }
+                .lastMessageAt(config.skipLastMsgUpdateForSystemMsgs)
+        }
     }
 
     override fun toChannel(): Channel {
