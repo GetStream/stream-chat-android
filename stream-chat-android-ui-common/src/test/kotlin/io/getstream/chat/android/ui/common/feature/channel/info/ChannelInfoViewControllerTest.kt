@@ -988,48 +988,6 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
-    fun `remove member click`() = runTest {
-        val member = Member(user = User(id = "1"))
-        val fixture = Fixture()
-        val sut = fixture.get(backgroundScope)
-
-        sut.state.test {
-            skipItems(1) // Skip initial state
-
-            fixture.givenRemoveMember(memberId = member.getUserId())
-
-            sut.onViewAction(ChannelInfoViewAction.RemoveMemberClick(member))
-        }
-
-        launch {
-            fixture.verifyMemberRemoved(member)
-            fixture.verifyNoMoreInteractions()
-        }
-    }
-
-    @Test
-    fun `remove member error`() = runTest {
-        val member = Member(user = User(id = "1"))
-        val fixture = Fixture()
-        val sut = fixture.get(backgroundScope)
-
-        sut.state.test {
-            skipItems(1) // Skip initial state
-
-            fixture.givenRemoveMember(
-                memberId = member.getUserId(),
-                error = Error.GenericError("Error removing member"),
-            )
-
-            sut.onViewAction(ChannelInfoViewAction.RemoveMemberClick(member))
-
-            sut.events.test {
-                assertEquals(ChannelInfoViewEvent.RemoveMemberError, awaitItem())
-            }
-        }
-    }
-
-    @Test
     fun `ban member click`() = runTest {
         val member = Member(user = User(id = "1"))
         val fixture = Fixture()
@@ -1109,6 +1067,48 @@ internal class ChannelInfoViewControllerTest {
 
             sut.events.test {
                 assertEquals(ChannelInfoViewEvent.UnbanMemberError, awaitItem())
+            }
+        }
+    }
+
+    @Test
+    fun `remove member click`() = runTest {
+        val member = Member(user = User(id = "1"))
+        val fixture = Fixture()
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            fixture.givenRemoveMember(memberId = member.getUserId())
+
+            sut.onViewAction(ChannelInfoViewAction.RemoveMemberClick(member))
+        }
+
+        launch {
+            fixture.verifyMemberRemoved(member)
+            fixture.verifyNoMoreInteractions()
+        }
+    }
+
+    @Test
+    fun `remove member error`() = runTest {
+        val member = Member(user = User(id = "1"))
+        val fixture = Fixture()
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            fixture.givenRemoveMember(
+                memberId = member.getUserId(),
+                error = Error.GenericError("Error removing member"),
+            )
+
+            sut.onViewAction(ChannelInfoViewAction.RemoveMemberClick(member))
+
+            sut.events.test {
+                assertEquals(ChannelInfoViewEvent.RemoveMemberError, awaitItem())
             }
         }
     }

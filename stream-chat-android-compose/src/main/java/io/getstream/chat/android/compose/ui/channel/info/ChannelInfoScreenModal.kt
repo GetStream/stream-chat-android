@@ -241,8 +241,8 @@ private fun ChannelInfoScreenModalMemberInfoPreview() {
                         member = member,
                         options = listOf(
                             ChannelInfoViewState.Content.Option.MessageMember(member),
-                            ChannelInfoViewState.Content.Option.RemoveMember(member),
                             ChannelInfoViewState.Content.Option.BanMember(member),
+                            ChannelInfoViewState.Content.Option.RemoveMember(member),
                         ),
                     ),
                     onViewAction = {},

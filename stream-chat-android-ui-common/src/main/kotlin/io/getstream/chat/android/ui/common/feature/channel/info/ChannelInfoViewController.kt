@@ -456,15 +456,15 @@ private fun buildChannelOptionList(
 
 private fun buildMemberOptionList(member: Member, capabilities: Set<String>) = buildList {
     add(ChannelInfoViewState.Content.Option.MessageMember(member = member))
-    if (capabilities.contains(ChannelCapabilities.UPDATE_CHANNEL_MEMBERS)) {
-        add(ChannelInfoViewState.Content.Option.RemoveMember(member = member))
-    }
     if (capabilities.contains(ChannelCapabilities.BAN_CHANNEL_MEMBERS)) {
         if (member.banned) {
             add(ChannelInfoViewState.Content.Option.UnbanMember(member = member))
         } else {
             add(ChannelInfoViewState.Content.Option.BanMember(member = member))
         }
+    }
+    if (capabilities.contains(ChannelCapabilities.UPDATE_CHANNEL_MEMBERS)) {
+        add(ChannelInfoViewState.Content.Option.RemoveMember(member = member))
     }
 }
 

@@ -119,13 +119,6 @@ public sealed interface ChannelInfoViewAction {
     public data class MemberMessageClick(val member: Member) : ChannelInfoViewAction
 
     /**
-     * Represents the click action to remove the member.
-     *
-     * @param member The member to remove.
-     */
-    public data class RemoveMemberClick(val member: Member) : ChannelInfoViewAction
-
-    /**
      * Represents the click action to ban the member.
      *
      * @param member The member to ban.
@@ -138,4 +131,11 @@ public sealed interface ChannelInfoViewAction {
      * @param member The member to unban.
      */
     public data class UnbanMemberClick(val member: Member) : ChannelInfoViewAction
+
+    /**
+     * Represents the click action to remove the member.
+     *
+     * @param member The member to remove.
+     */
+    public data class RemoveMemberClick(val member: Member) : ChannelInfoViewAction
 }
