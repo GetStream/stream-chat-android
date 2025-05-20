@@ -86,7 +86,7 @@ internal class ChannelInfoViewControllerTest {
                         minimumVisibleItems = 5,
                     ),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.UserInfo(username = currentUser.name),
+                        ChannelInfoViewState.Content.Option.UserInfo(user = currentUser),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.Separator,
@@ -127,7 +127,7 @@ internal class ChannelInfoViewControllerTest {
                         minimumVisibleItems = 5,
                     ),
                     options = listOf(
-                        ChannelInfoViewState.Content.Option.UserInfo(username = otherUser.name),
+                        ChannelInfoViewState.Content.Option.UserInfo(user = otherUser),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.Separator,
