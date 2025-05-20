@@ -715,6 +715,15 @@ public final class io/getstream/chat/android/ui/common/helper/ClipboardHandlerIm
 	public fun copyMessage (Lio/getstream/chat/android/models/Message;)V
 }
 
+public abstract interface class io/getstream/chat/android/ui/common/helper/CopyToClipboardHandler {
+	public static final field Companion Lio/getstream/chat/android/ui/common/helper/CopyToClipboardHandler$Companion;
+	public abstract fun copy (Ljava/lang/String;)V
+}
+
+public final class io/getstream/chat/android/ui/common/helper/CopyToClipboardHandler$Companion {
+	public final fun invoke (Landroid/content/Context;)Lio/getstream/chat/android/ui/common/helper/CopyToClipboardHandler;
+}
+
 public abstract interface class io/getstream/chat/android/ui/common/helper/DateFormatter {
 	public static final field Companion Lio/getstream/chat/android/ui/common/helper/DateFormatter$Companion;
 	public abstract fun formatDate (Ljava/util/Date;)Ljava/lang/String;
@@ -1049,45 +1058,6 @@ public final class io/getstream/chat/android/ui/common/state/channel/info/Channe
 	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Option$UserInfo;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Option$UserInfo;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getUsername ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public abstract interface class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role {
-}
-
-public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Member : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Member;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Moderator : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Moderator;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Other : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role {
-	public static final field $stable I
-	public fun <init> (Ljava/lang/String;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Other;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Other;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Other;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getValue ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Owner : io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/info/ChannelInfoViewState$Content$Role$Owner;
-	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

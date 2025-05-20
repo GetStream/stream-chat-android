@@ -18,7 +18,6 @@
 
 package io.getstream.chat.android.compose.viewmodel.channel
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
@@ -26,6 +25,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewController
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
+import io.getstream.chat.android.ui.common.helper.CopyToClipboardHandler
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,13 +34,18 @@ import kotlinx.coroutines.flow.StateFlow
  * ViewModel for managing channel information and its actions.
  *
  * @param cid The full channel identifier (e.g., "messaging:123").
+ * @param copyToClipboardHandler The handler for copying text to the clipboard.
  */
 @ExperimentalStreamChatApi
 public class ChannelInfoViewModel(
-    context: Context,
     private val cid: String,
+    private val copyToClipboardHandler: CopyToClipboardHandler,
     controllerProvider: ViewModel.() -> ChannelInfoViewController = {
-        ChannelInfoViewController(context = context, cid = cid, scope = viewModelScope)
+        ChannelInfoViewController(
+            cid = cid,
+            scope = viewModelScope,
+            copyToClipboardHandler = copyToClipboardHandler,
+        )
     },
 ) : ViewModel() {
 

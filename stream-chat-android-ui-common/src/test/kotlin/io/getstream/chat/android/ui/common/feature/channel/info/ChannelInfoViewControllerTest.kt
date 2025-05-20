@@ -18,8 +18,6 @@
 
 package io.getstream.chat.android.ui.common.feature.channel.info
 
-import android.content.ClipData
-import android.content.ClipboardManager
 import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.ChannelClient
@@ -31,10 +29,10 @@ import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.toChannelData
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent.Navigation
+import io.getstream.chat.android.ui.common.helper.CopyToClipboardHandler
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
 import io.getstream.result.Error
@@ -328,14 +326,14 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
-    fun `copy user id to clipboard`() = runTest {
-        val userId = "userId"
+    fun `copy user handle to clipboard`() = runTest {
+        val username = "username"
         val fixture = Fixture()
         val sut = fixture.get(backgroundScope)
 
-        sut.onViewAction(ChannelInfoViewAction.CopyUserHandleClick(userId))
+        sut.onViewAction(ChannelInfoViewAction.CopyUserHandleClick(username))
 
-        fixture.verifyCopiedToClipboard(userId)
+        fixture.verifyCopiedUserHandleToClipboard(text = "@$username")
     }
 
     @Test
@@ -976,7 +974,7 @@ private class Fixture {
     }
     private val channelClient: ChannelClient = mock()
     private val chatClient: ChatClient = mock()
-    private val clipboardManager: ClipboardManager = mock()
+    private val copyToClipboardHandler: CopyToClipboardHandler = mock()
 
     fun given(
         currentUser: User? = null,
@@ -1067,18 +1065,17 @@ private class Fixture {
         verifyNoMoreInteractions(channelClient)
     }
 
-    fun verifyCopiedToClipboard(userId: UserId) = apply {
-        verify(clipboardManager).setPrimaryClip(ClipData.newPlainText("User ID", userId))
+    fun verifyCopiedUserHandleToClipboard(text: String) = apply {
+        verify(copyToClipboardHandler).copy(text = text)
     }
 
     fun get(scope: CoroutineScope) = ChannelInfoViewController(
-        context = mock(),
         cid = CID,
         scope = scope,
         chatClient = chatClient,
         channelState = MutableStateFlow(channelState),
         channelClient = channelClient,
-        clipboardManager = clipboardManager,
+        copyToClipboardHandler = copyToClipboardHandler,
     )
 }
 

@@ -37,7 +37,7 @@ public sealed interface ChannelInfoViewAction {
     /**
      * Represents the copy user handle click action.
      *
-     * @param username The user name.
+     * @param username The username to be copied to the clipboard.
      */
     public data class CopyUserHandleClick(val username: String) : ChannelInfoViewAction
 

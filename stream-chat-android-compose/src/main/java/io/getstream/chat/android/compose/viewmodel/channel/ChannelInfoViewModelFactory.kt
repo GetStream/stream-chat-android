@@ -20,6 +20,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.ui.common.helper.CopyToClipboardHandler
 
 /**
  * Factory for creating instances of [ChannelInfoViewModel].
@@ -35,7 +36,12 @@ public class ChannelInfoViewModelFactory(
 
     private val factories: Map<Class<out ViewModel>, () -> ViewModel> = mapOf(
         ChannelHeaderViewModel::class.java to { ChannelHeaderViewModel(cid) },
-        ChannelInfoViewModel::class.java to { ChannelInfoViewModel(context.applicationContext, cid) },
+        ChannelInfoViewModel::class.java to {
+            ChannelInfoViewModel(
+                cid = cid,
+                copyToClipboardHandler = CopyToClipboardHandler(context = context.applicationContext),
+            )
+        },
     )
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
