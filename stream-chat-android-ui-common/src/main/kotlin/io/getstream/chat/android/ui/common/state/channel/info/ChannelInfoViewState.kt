@@ -66,9 +66,9 @@ public sealed interface ChannelInfoViewState {
             /**
              * Represents an option with user information.
              *
-             * @param username The username.
+             * @param user The user whose information is displayed.
              */
-            public data class UserInfo(val username: String) : Option
+            public data class UserInfo(val user: User) : Option
 
             /**
              * Represents an option to rename the channel.

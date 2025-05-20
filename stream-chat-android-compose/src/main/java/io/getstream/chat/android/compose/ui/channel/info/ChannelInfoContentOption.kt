@@ -48,9 +48,10 @@ internal fun ChannelInfoContentOption(
         }
 
         is ChannelInfoViewState.Content.Option.UserInfo -> {
+            val user = option.user
             ChannelInfoUserInfoOption(
-                username = option.username,
-                onClick = { onViewAction(ChannelInfoViewAction.CopyUserHandleClick(option.username)) },
+                username = user.name.takeIf(String::isNotBlank) ?: user.id,
+                onClick = { onViewAction(ChannelInfoViewAction.UserInfoClick(user)) },
             )
         }
 

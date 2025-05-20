@@ -324,14 +324,14 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
-    fun `copy user handle to clipboard`() = runTest {
-        val username = "username"
+    fun `user info click`() = runTest {
+        val user = User(name = "username")
         val fixture = Fixture()
         val sut = fixture.get(backgroundScope)
 
-        sut.onViewAction(ChannelInfoViewAction.CopyUserHandleClick(username))
+        sut.onViewAction(ChannelInfoViewAction.UserInfoClick(user))
 
-        fixture.verifyCopiedUserHandleToClipboard(text = "@$username")
+        fixture.verifyCopiedUserHandleToClipboard(text = "@${user.name}")
     }
 
     @Test

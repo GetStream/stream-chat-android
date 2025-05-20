@@ -222,7 +222,7 @@ internal fun DirectChannelInfoContent() {
                 items = listOf(member),
             ),
             options = listOf(
-                ChannelInfoViewState.Content.Option.UserInfo(username = PreviewUserData.user1.name),
+                ChannelInfoViewState.Content.Option.UserInfo(user = member.user),
                 ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
                 ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                 ChannelInfoViewState.Content.Option.PinnedMessages,
