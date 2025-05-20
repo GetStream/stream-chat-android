@@ -145,6 +145,7 @@ internal fun DefaultChannelHeaderLeadingContent(
             shape = ChatTheme.shapes.avatar,
             textStyle = ChatTheme.typography.title3Bold,
             placeholderPainter = null,
+            errorPlaceholderPainter = null,
             contentDescription = currentUser.name,
             initialsAvatarOffset = DpOffset.Zero,
             onClick = { onAvatarClick(currentUser) },

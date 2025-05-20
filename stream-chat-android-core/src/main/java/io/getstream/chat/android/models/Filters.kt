@@ -58,6 +58,12 @@ public object Filters {
     public fun eq(fieldName: String, value: Any): FilterObject = EqualsFilterObject(fieldName, value)
 
     @JvmStatic
+    @Deprecated(
+        message = "The notEquals filter is inefficient and causes performance issues. It will not be supported in the" +
+            "future. Feel free to contact our Customer Support to get help finding an appropriate alternative " +
+            "solution for your integration.",
+        level = DeprecationLevel.WARNING,
+    )
     public fun ne(fieldName: String, value: Any): FilterObject = NotEqualsFilterObject(fieldName, value)
 
     @JvmStatic

@@ -24,6 +24,7 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
@@ -45,7 +46,6 @@ import java.io.File
 
 internal class AttachmentsPickerSystemFragment : Fragment() {
 
-    private lateinit var config: AttachmentsPickerSystemConfig
     private var _binding: StreamUiFragmentAttachmentSystemPickerBinding? = null
     private val binding get() = _binding!!
 
@@ -85,7 +85,13 @@ internal class AttachmentsPickerSystemFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupViews()
+        if (savedInstanceState == null && ::style.isInitialized) {
+            setupViews()
+        } else {
+            parentFragmentManager.beginTransaction()
+                .remove(this)
+                .commit()
+        }
     }
 
     override fun onDestroyView() {
@@ -95,23 +101,24 @@ internal class AttachmentsPickerSystemFragment : Fragment() {
         _binding = null
     }
 
+    @Suppress("LongMethod")
     private fun setupViews() {
         // Adjust visibility of the tabs based on the enabled flags
-        if (!config.fileAttachmentsTabEnabled) {
+        if (!requireArguments().getBoolean(ARG_FILE_ATTACHMENTS_TAB_ENABLED)) {
             binding.buttonFiles.visibility = View.GONE
             binding.textFiles.visibility = View.GONE
         }
 
-        if (!config.visualMediaAttachmentsTabEnabled) {
+        if (!requireArguments().getBoolean(ARG_VISUAL_MEDIA_ATTACHMENTS_TAB_ENABLED)) {
             binding.buttonMedia.visibility = View.GONE
             binding.textMedia.visibility = View.GONE
         }
 
-        if (!config.cameraAttachmentsTabEnabled) {
+        if (!requireArguments().getBoolean(ARG_CAMERA_ATTACHMENTS_TAB_ENABLED)) {
             binding.buttonCapture.visibility = View.GONE
             binding.textCapture.visibility = View.GONE
         }
-        if (!config.pollAttachmentsTabEnabled) {
+        if (!requireArguments().getBoolean(ARG_POLL_ATTACHMENTS_TAB_ENABLED)) {
             binding.buttonPolls.visibility = View.GONE
             binding.textPoll.visibility = View.GONE
         }
@@ -126,10 +133,15 @@ internal class AttachmentsPickerSystemFragment : Fragment() {
 
             filePickerLauncher.launch(filePickerIntent)
         }
-        visualMediaPickerLauncher = registerVisualMediaPickerLauncher(config.visualMediaAllowMultiple)
+        visualMediaPickerLauncher = registerVisualMediaPickerLauncher(
+            requireArguments().getBoolean(ARG_VISUAL_MEDIA_ALLOW_MULTIPLE),
+        )
         binding.buttonMedia.setOnClickListener {
             visualMediaPickerLauncher?.launch(
-                input = PickVisualMediaRequest(config.visualMediaType.toContractVisualMediaType()),
+                input = PickVisualMediaRequest(
+                    (requireArguments().getSerializable(ARG_VISUAL_MEDIA_TYPE) as VisualMediaType)
+                        .toContractVisualMediaType(),
+                ),
             )
         }
 
@@ -217,6 +229,12 @@ internal class AttachmentsPickerSystemFragment : Fragment() {
     }
 
     companion object {
+        private const val ARG_VISUAL_MEDIA_ATTACHMENTS_TAB_ENABLED = "visual_media_attachments_tab_enabled"
+        private const val ARG_VISUAL_MEDIA_ALLOW_MULTIPLE = "visual_media_allow_multiple"
+        private const val ARG_VISUAL_MEDIA_TYPE = "visual_media_type"
+        private const val ARG_FILE_ATTACHMENTS_TAB_ENABLED = "file_attachments_tab_enabled"
+        private const val ARG_CAMERA_ATTACHMENTS_TAB_ENABLED = "camera_attachments_tab_enabled"
+        private const val ARG_POLL_ATTACHMENTS_TAB_ENABLED = "poll_attachments_tab_enabled"
 
         fun newInstance(
             style: AttachmentsPickerDialogStyle,
@@ -225,8 +243,17 @@ internal class AttachmentsPickerSystemFragment : Fragment() {
         ): Fragment = AttachmentsPickerSystemFragment().apply {
             this.style = style
             this.attachmentsPickerTabListener = attachmentsPickerTabListener
-            this.config = config
+            arguments = config.toBundle()
         }
+
+        private fun AttachmentsPickerSystemConfig.toBundle() = bundleOf(
+            ARG_VISUAL_MEDIA_ATTACHMENTS_TAB_ENABLED to visualMediaAttachmentsTabEnabled,
+            ARG_VISUAL_MEDIA_ALLOW_MULTIPLE to visualMediaAllowMultiple,
+            ARG_VISUAL_MEDIA_TYPE to visualMediaType,
+            ARG_FILE_ATTACHMENTS_TAB_ENABLED to fileAttachmentsTabEnabled,
+            ARG_CAMERA_ATTACHMENTS_TAB_ENABLED to cameraAttachmentsTabEnabled,
+            ARG_POLL_ATTACHMENTS_TAB_ENABLED to pollAttachmentsTabEnabled,
+        )
     }
 }
 

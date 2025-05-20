@@ -99,7 +99,7 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
     }
 
     override fun onDismiss(dialog: DialogInterface) {
-        if (style.saveAttachmentsOnDismiss) {
+        if (::style.isInitialized && style.saveAttachmentsOnDismiss) {
             attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments)
         }
         super.onDismiss(dialog)
