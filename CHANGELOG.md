@@ -18,6 +18,7 @@
 
 ### ✅ Added
 - Add `ChatClient.queryDrafts` method which supports filtering and pagination. [#5759](https://github.com/GetStream/stream-chat-android/pull/5759)
+- Add `SendMessageInterceptor` and `ChatClient.Builder.sendMessageInteceptor` for overriding the default `sendMessage` operation. [#5775](https://github.com/GetStream/stream-chat-android/pull/5775)
 
 ### ⚠️ Changed
 - Deprecate `ChatClient.queryDraftMessages` because the `offset` argument is not supported. [#5759](https://github.com/GetStream/stream-chat-android/pull/5759)
