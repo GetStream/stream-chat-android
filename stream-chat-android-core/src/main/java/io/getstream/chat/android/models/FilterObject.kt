@@ -40,6 +40,13 @@ public data class AutocompleteFilterObject internal constructor(
 public data class ExistsFilterObject internal constructor(val fieldName: String) : FilterObject()
 public data class NotExistsFilterObject internal constructor(val fieldName: String) : FilterObject()
 public data class EqualsFilterObject internal constructor(val fieldName: String, val value: Any) : FilterObject()
+
+@Deprecated(
+    message = "The notEquals filter is inefficient and causes performance issues. It will not be supported in the" +
+        "future. Feel free to contact our Customer Support to get help finding an appropriate alternative " +
+        "solution for your integration.",
+    level = DeprecationLevel.WARNING,
+)
 public data class NotEqualsFilterObject internal constructor(val fieldName: String, val value: Any) : FilterObject()
 public data class GreaterThanFilterObject internal constructor(val fieldName: String, val value: Any) : FilterObject()
 public data class GreaterThanOrEqualsFilterObject internal constructor(
