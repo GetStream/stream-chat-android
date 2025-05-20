@@ -46,11 +46,13 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.clickable
-import io.getstream.chat.android.previewdata.PreviewMembersData
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import kotlinx.coroutines.launch
+import java.util.Date
 
 @Suppress("LongMethod")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,7 +66,7 @@ internal fun ChannelInfoScreenModal(
     when (modal) {
         is ChannelInfoViewEvent.MemberInfoModal -> {
             val scope = rememberCoroutineScope()
-            val sheetState = rememberModalBottomSheetState()
+            val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
             ModalBottomSheet(
                 sheetState = sheetState,
                 containerColor = ChatTheme.colors.barsBackground,
@@ -162,7 +164,10 @@ private fun MemberInfoSheetContent(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        ChannelInfoMemberInfo(user = modal.member.user)
+        ChannelInfoMemberInfo(
+            user = modal.member.user,
+            avatarAlignment = Alignment.Bottom,
+        )
         LazyColumn {
             items(modal.options) { option ->
                 ChannelInfoContentOption(
@@ -230,12 +235,13 @@ private fun ChannelInfoScreenModalMemberInfoPreview() {
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 BottomSheetDefaults.DragHandle()
-                val member = PreviewMembersData.member1
+                val member = Member(user = PreviewUserData.user1.copy(lastActive = Date()))
                 MemberInfoSheetContent(
                     modal = ChannelInfoViewEvent.MemberInfoModal(
                         member = member,
                         options = listOf(
                             ChannelInfoViewState.Content.Option.MessageMember(member),
+                            ChannelInfoViewState.Content.Option.RemoveMember(member),
                             ChannelInfoViewState.Content.Option.BanMember(member),
                         ),
                     ),

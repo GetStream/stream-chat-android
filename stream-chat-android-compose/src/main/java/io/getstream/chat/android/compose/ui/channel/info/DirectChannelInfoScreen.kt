@@ -150,7 +150,10 @@ private fun DirectChannelInfoContent(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                ChannelInfoMemberInfo(user = content.members.first().user)
+                ChannelInfoMemberInfo(
+                    user = content.members.first().user,
+                    avatarAlignment = Alignment.Top,
+                )
                 LazyColumn {
                     items(content.options) { option ->
                         ChannelInfoContentOption(

@@ -16,9 +16,12 @@
 
 package io.getstream.chat.android.compose.ui.channel.info
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
@@ -29,23 +32,36 @@ import io.getstream.chat.android.compose.ui.util.getLastSeenText
 import io.getstream.chat.android.models.User
 
 @Composable
-internal fun ChannelInfoMemberInfo(user: User) {
-    UserAvatar(
-        modifier = Modifier.size(72.dp),
-        user = user,
-    )
-    Text(
-        text = user.name.takeIf(String::isNotBlank) ?: user.id,
-        style = ChatTheme.typography.title3Bold,
-        color = ChatTheme.colors.textHighEmphasis,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-    )
-    Text(
-        text = user.getLastSeenText(LocalContext.current),
-        style = ChatTheme.typography.footnote,
-        color = ChatTheme.colors.textLowEmphasis,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-    )
+internal fun ChannelInfoMemberInfo(user: User, avatarAlignment: Alignment.Vertical) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        if (avatarAlignment == Alignment.Top) {
+            UserAvatar(
+                modifier = Modifier.size(72.dp),
+                user = user,
+            )
+        }
+        Text(
+            text = user.name.takeIf(String::isNotBlank) ?: user.id,
+            style = ChatTheme.typography.title3Bold,
+            color = ChatTheme.colors.textHighEmphasis,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Text(
+            text = user.getLastSeenText(LocalContext.current),
+            style = ChatTheme.typography.footnote,
+            color = ChatTheme.colors.textLowEmphasis,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        if (avatarAlignment == Alignment.Bottom) {
+            UserAvatar(
+                modifier = Modifier.size(72.dp),
+                user = user,
+            )
+        }
+    }
 }
