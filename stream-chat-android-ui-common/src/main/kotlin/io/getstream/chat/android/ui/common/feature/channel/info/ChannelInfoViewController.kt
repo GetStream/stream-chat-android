@@ -363,13 +363,14 @@ private fun buildOptionsList(
     if (singleMember != null) {
         val user = singleMember.user
         add(ChannelInfoViewState.Content.Option.UserInfo(user.name.takeIf(String::isNotBlank) ?: user.id))
+    } else {
+        add(
+            ChannelInfoViewState.Content.Option.RenameChannel(
+                name = channelData.name,
+                isReadOnly = !channelData.ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL),
+            ),
+        )
     }
-    add(
-        ChannelInfoViewState.Content.Option.RenameChannel(
-            name = channelData.name,
-            isReadOnly = !channelData.ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL),
-        ),
-    )
     if (channelData.ownCapabilities.contains(ChannelCapabilities.MUTE_CHANNEL)) {
         add(ChannelInfoViewState.Content.Option.MuteChannel(isMuted))
     }

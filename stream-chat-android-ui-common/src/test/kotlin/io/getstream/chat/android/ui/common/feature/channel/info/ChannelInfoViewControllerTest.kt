@@ -87,7 +87,6 @@ internal class ChannelInfoViewControllerTest {
                     ),
                     options = listOf(
                         ChannelInfoViewState.Content.Option.UserInfo(username = currentUser.name),
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.Separator,
@@ -129,7 +128,6 @@ internal class ChannelInfoViewControllerTest {
                     ),
                     options = listOf(
                         ChannelInfoViewState.Content.Option.UserInfo(username = otherUser.name),
-                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
                         ChannelInfoViewState.Content.Option.Separator,
