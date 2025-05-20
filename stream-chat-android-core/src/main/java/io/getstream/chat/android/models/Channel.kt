@@ -255,6 +255,14 @@ public data class Channel(
         public fun withIsInsideSearch(isInsideSearch: Boolean): Builder = apply { this.isInsideSearch = isInsideSearch }
         public fun withExtraData(extraData: Map<String, Any>): Builder = apply { this.extraData = extraData }
 
+        @Deprecated(
+            message = "channelLastMessageAt is no longer supported.",
+            replaceWith = ReplaceWith(
+                expression = "",
+            ),
+        )
+        public fun withChannelLastMessageAt(channelLastMessageAt: Date?): Builder = this
+
         public fun build(): Channel = Channel(
             id = id,
             type = type,

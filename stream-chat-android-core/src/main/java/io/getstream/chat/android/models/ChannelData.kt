@@ -100,6 +100,33 @@ public data class ChannelData(
         membership = channel.membership,
     )
 
+    @Deprecated(
+        message = "Use Channel.toChannelData instead",
+        replaceWith = ReplaceWith(
+            "Channel.toChannelData(messages, cachedLatestMessages, members, reads, " +
+                "watchers, watcherCount, insideSearch)",
+        ),
+    )
+    @Suppress("LongParameterList")
+    public fun toChannel(
+        messages: List<Message>,
+        cachedLatestMessages: List<Message>,
+        members: List<Member>,
+        reads: List<ChannelUserRead>,
+        watchers: List<User>,
+        watcherCount: Int,
+        insideSearch: Boolean,
+        channelLastMessageAt: Date?,
+    ): Channel = toChannel(
+        messages = messages,
+        cachedLatestMessages = cachedLatestMessages,
+        members = members,
+        reads = reads,
+        watchers = watchers,
+        watcherCount = watcherCount,
+        insideSearch = insideSearch,
+    )
+
     /**
      * Converts a [ChannelData] entity to a [Channel] based on additional information.
      *

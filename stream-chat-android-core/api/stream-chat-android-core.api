@@ -427,6 +427,7 @@ public final class io/getstream/chat/android/models/Channel$Builder {
 	public fun <init> (Lio/getstream/chat/android/models/Channel;)V
 	public final fun build ()Lio/getstream/chat/android/models/Channel;
 	public final fun withCachedLatestMessages (Ljava/util/List;)Lio/getstream/chat/android/models/Channel$Builder;
+	public final fun withChannelLastMessageAt (Ljava/util/Date;)Lio/getstream/chat/android/models/Channel$Builder;
 	public final fun withConfig (Lio/getstream/chat/android/models/Config;)Lio/getstream/chat/android/models/Channel$Builder;
 	public final fun withCooldown (I)Lio/getstream/chat/android/models/Channel$Builder;
 	public final fun withCreatedAt (Ljava/util/Date;)Lio/getstream/chat/android/models/Channel$Builder;
@@ -547,6 +548,7 @@ public final class io/getstream/chat/android/models/ChannelData {
 	public fun hashCode ()I
 	public final fun isUserAbleTo (Ljava/lang/String;)Z
 	public final fun toChannel (Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;IZ)Lio/getstream/chat/android/models/Channel;
+	public final fun toChannel (Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;IZLjava/util/Date;)Lio/getstream/chat/android/models/Channel;
 	public fun toString ()Ljava/lang/String;
 }
 
