@@ -39,6 +39,7 @@ import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 
+@Suppress("LongMethod")
 @Composable
 internal fun ChannelInfoScreenModal(
     modal: ChannelInfoViewEvent.Modal?,
@@ -166,39 +167,79 @@ private fun HideChannelModalText(
 
 @Preview
 @Composable
-private fun ChannelInfoScreenModalHideChannelPreview() {
+private fun ChannelInfoScreenModalHideDirectChannelPreview() {
     ChatTheme {
         ChannelInfoScreenModal(
             modal = ChannelInfoViewEvent.HideChannelModal,
             isGroupChannel = false,
-            onViewAction = {},
-            onDismiss = {},
         )
     }
 }
 
 @Preview
 @Composable
-private fun ChannelInfoScreenModalLeaveChannelPreview() {
+private fun ChannelInfoScreenModalHideGroupChannelPreview() {
+    ChatTheme {
+        ChannelInfoScreenModal(
+            modal = ChannelInfoViewEvent.HideChannelModal,
+            isGroupChannel = true,
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ChannelInfoScreenModalLeaveDirectChannelPreview() {
     ChatTheme {
         ChannelInfoScreenModal(
             modal = ChannelInfoViewEvent.LeaveChannelModal,
             isGroupChannel = false,
-            onViewAction = {},
-            onDismiss = {},
         )
     }
 }
 
 @Preview
 @Composable
-private fun ChannelInfoScreenModalDeleteChannelPreview() {
+private fun ChannelInfoScreenModalLeaveGroupChannelPreview() {
+    ChatTheme {
+        ChannelInfoScreenModal(
+            modal = ChannelInfoViewEvent.LeaveChannelModal,
+            isGroupChannel = true,
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ChannelInfoScreenModalDeleteDirectChannelPreview() {
     ChatTheme {
         ChannelInfoScreenModal(
             modal = ChannelInfoViewEvent.DeleteChannelModal,
             isGroupChannel = false,
-            onViewAction = {},
-            onDismiss = {},
         )
     }
+}
+
+@Preview
+@Composable
+private fun ChannelInfoScreenModalDeleteGroupChannelPreview() {
+    ChatTheme {
+        ChannelInfoScreenModal(
+            modal = ChannelInfoViewEvent.DeleteChannelModal,
+            isGroupChannel = true,
+        )
+    }
+}
+
+@Composable
+internal fun ChannelInfoScreenModal(
+    modal: ChannelInfoViewEvent.Modal,
+    isGroupChannel: Boolean,
+) {
+    ChannelInfoScreenModal(
+        modal = modal,
+        isGroupChannel = isGroupChannel,
+        onViewAction = {},
+        onDismiss = {},
+    )
 }
