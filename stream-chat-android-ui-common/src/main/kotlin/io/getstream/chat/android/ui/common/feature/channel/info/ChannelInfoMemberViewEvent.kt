@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.common.feature.channel.info
 
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.models.Member
 
 /**
  * Represents side-effect events related to channel member information actions.
@@ -31,8 +32,10 @@ public sealed interface ChannelInfoMemberViewEvent {
 
     /**
      * Indicates an event to present a modal for removing a member.
+     *
+     * @param member The member to be removed.
      */
-    public data object RemoveMemberModal : Modal
+    public data class RemoveMemberModal(val member: Member) : Modal
 
     /**
      * Represents navigation events.

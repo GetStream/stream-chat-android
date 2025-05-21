@@ -97,21 +97,21 @@ internal fun ChannelInfoMemberInfoModalSheet(
         )
     }
 
-    var modal by remember { mutableStateOf<ChannelInfoMemberViewEvent.Modal?>(null) }
+    var memberModal by remember { mutableStateOf<ChannelInfoMemberViewEvent.Modal?>(null) }
 
     LaunchedEffect(Unit) {
         viewModel.events.collectLatest { event ->
             if (event is ChannelInfoMemberViewEvent.Modal) {
-                hideSheet { modal = event }
+                hideSheet { memberModal = event }
             }
         }
     }
 
     ChannelInfoMemberInfoConfirmationModal(
-        modal = modal,
+        modal = memberModal,
         onViewAction = viewModel::onViewAction,
         onDismiss = {
-            modal = null
+            memberModal = null
             onDismiss()
         },
     )

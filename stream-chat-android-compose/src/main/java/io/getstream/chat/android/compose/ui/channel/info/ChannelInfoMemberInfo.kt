@@ -32,7 +32,10 @@ import io.getstream.chat.android.compose.ui.util.getLastSeenText
 import io.getstream.chat.android.models.User
 
 @Composable
-internal fun ChannelInfoMemberInfo(user: User, avatarAlignment: Alignment.Vertical) {
+internal fun ChannelInfoMemberInfo(
+    user: User,
+    avatarAlignment: Alignment.Vertical,
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp),

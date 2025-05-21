@@ -147,7 +147,7 @@ public class ChannelInfoMemberViewController(
             is ChannelInfoMemberViewAction.UnbanMemberClick -> unbanMember(action.member)
 
             is ChannelInfoMemberViewAction.RemoveMemberClick ->
-                _events.tryEmit(ChannelInfoMemberViewEvent.RemoveMemberModal)
+                _events.tryEmit(ChannelInfoMemberViewEvent.RemoveMemberModal(action.member))
 
             is ChannelInfoMemberViewAction.RemoveMemberConfirmationClick -> removeMember(memberId)
         }

@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.previewdata.PreviewMembersData
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewEvent
 
@@ -32,10 +33,14 @@ internal fun ChannelInfoMemberInfoConfirmationModal(
     onDismiss: () -> Unit,
 ) {
     when (modal) {
-        ChannelInfoMemberViewEvent.RemoveMemberModal -> {
+        is ChannelInfoMemberViewEvent.RemoveMemberModal -> {
+            val user = modal.member.user
             SimpleDialog(
-                title = stringResource(R.string.stream_ui_channel_info_option_leave_group),
-                message = stringResource(R.string.stream_ui_channel_info_option_leave_group_confirmation_message),
+                title = stringResource(R.string.stream_ui_channel_info_member_option_remove_member),
+                message = stringResource(
+                    R.string.stream_ui_channel_info_member_option_remove_member_confirmation,
+                    user.name.takeIf(String::isNotBlank) ?: user.id,
+                ),
                 onPositiveAction = {
                     onViewAction(ChannelInfoMemberViewAction.RemoveMemberConfirmationClick)
                     onDismiss()
@@ -53,7 +58,9 @@ internal fun ChannelInfoMemberInfoConfirmationModal(
 private fun ChannelInfoMemberInfoConfirmationModalRemovePreview() {
     ChatTheme {
         ChannelInfoMemberInfoConfirmationModal(
-            modal = ChannelInfoMemberViewEvent.RemoveMemberModal,
+            modal = ChannelInfoMemberViewEvent.RemoveMemberModal(
+                member = PreviewMembersData.member1,
+            ),
             onViewAction = {},
             onDismiss = {},
         )

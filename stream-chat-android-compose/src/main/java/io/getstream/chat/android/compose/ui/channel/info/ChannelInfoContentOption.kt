@@ -147,7 +147,7 @@ internal fun ChannelInfoContentOption(
         is ChannelInfoViewState.Content.Option.MessageMember -> {
             ChannelInfoOptionNavigationButton(
                 icon = R.drawable.stream_compose_empty_channels,
-                text = stringResource(R.string.stream_ui_channel_info_option_message_member),
+                text = stringResource(R.string.stream_ui_channel_info_member_option_message_member),
                 onClick = { onViewAction(ChannelInfoViewAction.MemberMessageClick(member = option.member)) },
             )
         }
@@ -156,7 +156,7 @@ internal fun ChannelInfoContentOption(
             CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.errorAccent)) {
                 ChannelInfoOptionButton(
                     icon = R.drawable.stream_ic_ban,
-                    text = stringResource(R.string.stream_ui_channel_info_option_ban_member),
+                    text = stringResource(R.string.stream_ui_channel_info_member_option_ban_member),
                     onClick = { onViewAction(ChannelInfoViewAction.BanMemberClick(member = option.member)) },
                 )
             }
@@ -165,7 +165,7 @@ internal fun ChannelInfoContentOption(
         is ChannelInfoViewState.Content.Option.UnbanMember -> {
             ChannelInfoOptionButton(
                 icon = R.drawable.stream_compose_ic_person_remove,
-                text = stringResource(R.string.stream_ui_channel_info_option_unban_member),
+                text = stringResource(R.string.stream_ui_channel_info_member_option_unban_member),
                 onClick = { onViewAction(ChannelInfoViewAction.UnbanMemberClick(member = option.member)) },
             )
         }
@@ -174,7 +174,7 @@ internal fun ChannelInfoContentOption(
             CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.errorAccent)) {
                 ChannelInfoOptionButton(
                     icon = R.drawable.stream_compose_ic_person_remove,
-                    text = stringResource(R.string.stream_ui_channel_info_option_remove_member),
+                    text = stringResource(R.string.stream_ui_channel_info_member_option_remove_member),
                     onClick = { onViewAction(ChannelInfoViewAction.RemoveMemberClick(member = option.member)) },
                 )
             }
