@@ -271,7 +271,6 @@ internal class QueryThreadsLogicTest {
             channelType = "messaging",
             channelId = "123",
             channel = Channel(),
-            channelLastMessageAt = Date(),
         )
         val stateLogic = mock<QueryThreadsStateLogic>()
         val databaseLogic = mock<QueryThreadsDatabaseLogic>()
@@ -298,7 +297,6 @@ internal class QueryThreadsLogicTest {
             rawCreatedAt = "",
             unreadThreads = 1,
             unreadThreadMessages = 2,
-            channelLastMessageAt = Date(),
         )
         val stateLogic = mock<QueryThreadsStateLogic>()
         val databaseLogic = mock<QueryThreadsDatabaseLogic>()
@@ -324,7 +322,6 @@ internal class QueryThreadsLogicTest {
             rawCreatedAt = "",
             unreadThreads = 1,
             unreadThreadMessages = 2,
-            channelLastMessageAt = Date(),
         )
         val stateLogic = mock<QueryThreadsStateLogic>()
         val databaseLogic = mock<QueryThreadsDatabaseLogic>()
@@ -352,7 +349,6 @@ internal class QueryThreadsLogicTest {
             firstUnreadMessageId = "mId2",
             threadId = null,
             unreadMessages = 1,
-            channelLastMessageAt = Date(),
         )
         val stateLogic = mock<QueryThreadsStateLogic>()
         doNothing().whenever(stateLogic).markThreadAsUnreadByUser(any(), any(), any())
@@ -380,7 +376,6 @@ internal class QueryThreadsLogicTest {
             firstUnreadMessageId = "mId1",
             threadId = "mId1",
             unreadMessages = 1,
-            channelLastMessageAt = Date(),
         )
         val stateLogic = mock<QueryThreadsStateLogic>()
         doNothing().whenever(stateLogic).markThreadAsUnreadByUser(any(), any(), any())
@@ -418,7 +413,6 @@ internal class QueryThreadsLogicTest {
                 updatedAt = Date(),
             ),
             user = User(id = "usrId2"),
-            channelLastMessageAt = Date(),
             lastReadMessageId = null,
         )
         val stateLogic = mock<QueryThreadsStateLogic>()
@@ -442,7 +436,6 @@ internal class QueryThreadsLogicTest {
             createdAt = Date(),
             rawCreatedAt = "",
             user = User(id = "usrId2"),
-            channelLastMessageAt = Date(),
             lastReadMessageId = null,
         )
         val stateLogic = mock<QueryThreadsStateLogic>()
@@ -467,7 +460,6 @@ internal class QueryThreadsLogicTest {
             channelType = "messaging",
             channelId = "123",
             message = Message(id = "mId4", parentId = "mId1", text = "New reply"),
-            channelLastMessageAt = Date(),
         )
         val stateLogic = mock<QueryThreadsStateLogic>()
         val databaseLogic = mock<QueryThreadsDatabaseLogic>()
@@ -491,7 +483,6 @@ internal class QueryThreadsLogicTest {
             channelType = "messaging",
             channelId = "123",
             message = Message(id = "mId1", text = "Updated thread parent"),
-            channelLastMessageAt = Date(),
         )
         val stateLogic = mock<QueryThreadsStateLogic>()
         val databaseLogic = mock<QueryThreadsDatabaseLogic>()
@@ -517,7 +508,6 @@ internal class QueryThreadsLogicTest {
             channelType = "messaging",
             channelId = "123",
             message = Message(id = "mId2", text = "Updated thread reply"),
-            channelLastMessageAt = Date(),
         )
         val stateLogic = mock<QueryThreadsStateLogic>()
         val databaseLogic = mock<QueryThreadsDatabaseLogic>()
@@ -544,7 +534,6 @@ internal class QueryThreadsLogicTest {
             channelId = "123",
             message = Message(id = "mId1", text = "Deleted thread parent"),
             hardDelete = false,
-            channelLastMessageAt = Date(),
         )
         val stateLogic = mock<QueryThreadsStateLogic>()
         val databaseLogic = mock<QueryThreadsDatabaseLogic>()
@@ -571,7 +560,6 @@ internal class QueryThreadsLogicTest {
             channelId = "123",
             message = Message(id = "mId2", text = "Deleted thread reply"),
             hardDelete = false,
-            channelLastMessageAt = Date(),
         )
         val stateLogic = mock<QueryThreadsStateLogic>()
         val databaseLogic = mock<QueryThreadsDatabaseLogic>()
@@ -598,7 +586,6 @@ internal class QueryThreadsLogicTest {
             channelId = "123",
             message = Message(id = "mId1", text = "Thread parent"),
             reaction = Reaction(),
-            channelLastMessageAt = Date(),
         )
         val stateLogic = mock<QueryThreadsStateLogic>()
         val databaseLogic = mock<QueryThreadsDatabaseLogic>()
@@ -625,7 +612,6 @@ internal class QueryThreadsLogicTest {
             channelId = "123",
             message = Message(id = "mId2", text = "Thread reply"),
             reaction = Reaction(),
-            channelLastMessageAt = Date(),
         )
         val stateLogic = mock<QueryThreadsStateLogic>()
         val databaseLogic = mock<QueryThreadsDatabaseLogic>()
@@ -652,7 +638,6 @@ internal class QueryThreadsLogicTest {
             channelId = "123",
             message = Message(id = "mId1", text = "Thread parent"),
             reaction = Reaction(),
-            channelLastMessageAt = Date(),
         )
         val stateLogic = mock<QueryThreadsStateLogic>()
         val databaseLogic = mock<QueryThreadsDatabaseLogic>()
@@ -679,7 +664,6 @@ internal class QueryThreadsLogicTest {
             channelId = "123",
             message = Message(id = "mId2", text = "Thread reply"),
             reaction = Reaction(),
-            channelLastMessageAt = Date(),
         )
         val stateLogic = mock<QueryThreadsStateLogic>()
         val databaseLogic = mock<QueryThreadsDatabaseLogic>()
@@ -706,7 +690,6 @@ internal class QueryThreadsLogicTest {
             channelId = "123",
             message = Message(id = "mId1", text = "Thread parent"),
             reaction = Reaction(),
-            channelLastMessageAt = Date(),
         )
         val stateLogic = mock<QueryThreadsStateLogic>()
         val databaseLogic = mock<QueryThreadsDatabaseLogic>()
@@ -733,7 +716,6 @@ internal class QueryThreadsLogicTest {
             channelId = "123",
             message = Message(id = "mId2", text = "Thread reply"),
             reaction = Reaction(),
-            channelLastMessageAt = Date(),
         )
         val stateLogic = mock<QueryThreadsStateLogic>()
         val databaseLogic = mock<QueryThreadsDatabaseLogic>()
