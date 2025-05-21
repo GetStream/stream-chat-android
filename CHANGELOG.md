@@ -5,6 +5,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `pendingMessages` field to the `Channel` model. [#5784](https://github.com/GetStream/stream-chat-android/pull/5784)
 
 ### ⚠️ Changed
 - Deprecate `$ne` filter (no longer supported due to performance issues). [#5782](https://github.com/GetStream/stream-chat-android/pull/5782)
@@ -18,6 +19,7 @@
 
 ### ✅ Added
 - Add `ChatClient.queryDrafts` method which supports filtering and pagination. [#5759](https://github.com/GetStream/stream-chat-android/pull/5759)
+- Add `ChatClient.getPendingMessage` to fetch a pending message (and its metadata) by its ID. [#5784](https://github.com/GetStream/stream-chat-android/pull/5784)
 
 ### ⚠️ Changed
 - Deprecate `ChatClient.queryDraftMessages` because the `offset` argument is not supported. [#5759](https://github.com/GetStream/stream-chat-android/pull/5759)
