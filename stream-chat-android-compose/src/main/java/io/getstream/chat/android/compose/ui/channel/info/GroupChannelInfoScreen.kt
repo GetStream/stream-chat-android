@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.ui.channel.info
 
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,7 +41,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -243,13 +241,8 @@ private fun GroupChannelInfoMemberButton(
     onClick: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
-    val bannedColor = ChatTheme.colors.errorAccent
-    val alpha by animateFloatAsState(targetValue = if (member.banned) 0.3f else 0f)
     ChannelInfoOption(
-        modifier = modifier.drawWithContent {
-            drawContent()
-            drawRect(color = bannedColor, alpha = alpha, size = size)
-        },
+        modifier = modifier,
         onClick = onClick,
     ) {
         val user = member.user
@@ -257,20 +250,26 @@ private fun GroupChannelInfoMemberButton(
             modifier = Modifier.size(ChatTheme.dimens.channelAvatarSize),
             user = user,
         )
-        Column(
-            modifier = Modifier.weight(1f),
-        ) {
+        Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = user.name.takeIf(String::isNotBlank) ?: user.id,
-                style = ChatTheme.typography.body,
-                color = ChatTheme.colors.textHighEmphasis,
+                style = ChatTheme.typography.bodyBold,
+                color = if (member.banned) {
+                    ChatTheme.colors.errorAccent
+                } else {
+                    ChatTheme.colors.textHighEmphasis
+                },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
             Text(
                 text = user.getLastSeenText(LocalContext.current),
                 style = ChatTheme.typography.footnote,
-                color = ChatTheme.colors.textLowEmphasis,
+                color = if (member.banned) {
+                    ChatTheme.colors.errorAccent
+                } else {
+                    ChatTheme.colors.textLowEmphasis
+                },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -381,7 +380,7 @@ internal fun GroupChannelInfoExpandedMembers() {
                     Member(user = PreviewUserData.user1.copy(lastActive = Date())),
                     Member(user = PreviewUserData.user2.copy(online = true)),
                     Member(user = PreviewUserData.user3),
-                    Member(user = PreviewUserData.user4, banned = true),
+                    Member(user = PreviewUserData.user4.copy(lastActive = Date()), banned = true),
                 ),
                 minimumVisibleItems = 2,
                 isCollapsed = false,
