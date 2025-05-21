@@ -484,11 +484,6 @@ internal class EventHandlerSequential(
 
         // step 2. second pass through the events, make a list of what we need to update
         for (event in events) {
-            if (event is CidEvent) {
-                batch.getCurrentChannel(event.cid)?.let { channel ->
-                    batch.addChannel(channel.copy(channelLastMessageAt = event.channelLastMessageAt))
-                }
-            }
             when (event) {
                 is ConnectedEvent -> if (batchEvent.isFromSocketConnection) {
                     event.me.id mustBe currentUserId

@@ -93,7 +93,6 @@ import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDate
-import io.getstream.chat.android.randomDateOrNull
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
@@ -187,7 +186,7 @@ internal class DomainMappingTest {
             .get()
 
         val result = with(sut) {
-            randomDownstreamChannelDto().toDomain(randomDateOrNull())
+            randomDownstreamChannelDto().toDomain()
         }
 
         result `should be equal to` transformedChannel
@@ -271,7 +270,7 @@ internal class DomainMappingTest {
         }
         val expected = ChannelMute(
             user = with(sut) { downstreamMuteDto.user?.toDomain() },
-            channel = with(sut) { downstreamMuteDto.channel?.toDomain(null) },
+            channel = with(sut) { downstreamMuteDto.channel?.toDomain() },
             createdAt = downstreamMuteDto.created_at,
             updatedAt = downstreamMuteDto.updated_at,
             expires = downstreamMuteDto.expires,
@@ -485,7 +484,7 @@ internal class DomainMappingTest {
         val expected = BannedUser(
             user = with(sut) { bannedUserResponse.user.toDomain() },
             bannedBy = with(sut) { bannedUserResponse.banned_by?.toDomain() },
-            channel = with(sut) { bannedUserResponse.channel?.toDomain(null) },
+            channel = with(sut) { bannedUserResponse.channel?.toDomain() },
             createdAt = bannedUserResponse.created_at,
             expires = bannedUserResponse.expires,
             shadow = bannedUserResponse.shadow,
@@ -670,7 +669,7 @@ internal class DomainMappingTest {
         val expected = Thread(
             activeParticipantCount = downstreamThreadDto.active_participant_count ?: 0,
             cid = downstreamThreadDto.channel_cid,
-            channel = with(sut) { downstreamThreadDto.channel?.toDomain(null) },
+            channel = with(sut) { downstreamThreadDto.channel?.toDomain() },
             parentMessageId = downstreamThreadDto.parent_message_id,
             parentMessage = with(sut) { downstreamThreadDto.parent_message.toDomain() },
             createdByUserId = downstreamThreadDto.created_by_user_id,
