@@ -95,7 +95,6 @@ internal class PollExtensionsTests {
             channelType = "messaging",
             channelId = "channel1",
             poll = basePoll,
-            channelLastMessageAt = now,
             newVote = newVote,
         )
 
@@ -119,7 +118,6 @@ internal class PollExtensionsTests {
             channelType = "messaging",
             channelId = "channel1",
             poll = basePoll,
-            channelLastMessageAt = now,
             newVote = newVote,
         )
 
@@ -150,7 +148,6 @@ internal class PollExtensionsTests {
             channelType = "messaging",
             channelId = "channel1",
             poll = basePoll,
-            channelLastMessageAt = now,
             newVote = newVote,
         )
 
@@ -174,7 +171,6 @@ internal class PollExtensionsTests {
             channelType = "messaging",
             channelId = "channel1",
             poll = basePoll,
-            channelLastMessageAt = now,
             removedVote = vote1,
         )
 
@@ -205,7 +201,6 @@ internal class PollExtensionsTests {
             channelType = "messaging",
             channelId = "channel1",
             poll = basePoll,
-            channelLastMessageAt = now,
             newAnswer = newAnswer,
         )
 
@@ -229,7 +224,6 @@ internal class PollExtensionsTests {
             channelType = "messaging",
             channelId = "channel1",
             poll = basePoll,
-            channelLastMessageAt = now,
         )
 
         // when
@@ -250,7 +244,6 @@ internal class PollExtensionsTests {
             channelType = "messaging",
             channelId = "channel1",
             poll = basePoll,
-            channelLastMessageAt = now,
         )
 
         // when
@@ -272,7 +265,6 @@ internal class PollExtensionsTests {
             channelType = "messaging",
             channelId = "channel1",
             poll = basePoll,
-            channelLastMessageAt = now,
             newVote = vote1,
         )
 
