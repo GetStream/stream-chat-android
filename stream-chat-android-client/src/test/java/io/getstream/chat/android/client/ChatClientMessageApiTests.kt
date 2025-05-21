@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyNetworkError
 import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
@@ -35,6 +36,7 @@ import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomPendingMessage
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
@@ -91,6 +93,34 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         // then
         verifyNetworkError(result, errorCode)
         verify(plugin).onGetMessageResult(messageId, result)
+    }
+
+    @Test
+    fun getPendingMessageSuccess() = runTest {
+        // given
+        val messageId = randomString()
+        val pendingMessage = randomPendingMessage()
+        val sut = Fixture()
+            .givenGetPendingMessageResult(RetroSuccess(pendingMessage).toRetrofitCall())
+            .get()
+        // when
+        val result = sut.getPendingMessage(messageId).await()
+        // then
+        verifySuccess(result, pendingMessage)
+    }
+
+    @Test
+    fun getPendingMessageError() = runTest {
+        // given
+        val messageId = randomString()
+        val errorCode = positiveRandomInt()
+        val sut = Fixture()
+            .givenGetPendingMessageResult(RetroError<PendingMessage>(errorCode).toRetrofitCall())
+            .get()
+        // when
+        val result = sut.getPendingMessage(messageId).await()
+        // then
+        verifyNetworkError(result, errorCode)
     }
 
     @Test
@@ -773,6 +803,10 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
 
         fun givenGetMessageResult(result: Call<Message>) = apply {
             whenever(api.getMessage(any())).thenReturn(result)
+        }
+
+        fun givenGetPendingMessageResult(result: Call<PendingMessage>) = apply {
+            whenever(api.getPendingMessage(any())).thenReturn(result)
         }
 
         fun givenDeleteMessageResult(result: Call<Message>) = apply {

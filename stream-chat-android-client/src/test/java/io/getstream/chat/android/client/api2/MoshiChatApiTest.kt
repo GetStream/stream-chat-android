@@ -319,6 +319,23 @@ internal class MoshiChatApiTest {
     }
 
     @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getPendingMessageInput")
+    fun testGetPendingMessage(call: RetrofitCall<MessageResponse>, expected: KClass<*>) = runTest {
+        // given
+        val api = mock<MessageApi>()
+        whenever(api.getMessage(any())).doReturn(call)
+        val sut = Fixture()
+            .withMessageApi(api)
+            .get()
+        // when
+        val messageId = randomString()
+        val result = sut.getPendingMessage(messageId).await()
+        // then
+        result `should be instance of` expected
+        verify(api, times(1)).getMessage(messageId)
+    }
+
+    @ParameterizedTest
     @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#deleteMessageInput")
     fun testDeleteMessage(
         hard: Boolean,

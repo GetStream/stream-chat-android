@@ -22,4 +22,5 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 @JsonClass(generateAdapter = true)
 internal data class MessageResponse(
     val message: DownstreamMessageDto,
+    val pending_message_metadata: Map<String, String>? = null,
 )

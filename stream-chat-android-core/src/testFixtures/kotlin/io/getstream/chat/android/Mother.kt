@@ -43,6 +43,7 @@ import io.getstream.chat.android.models.Moderation
 import io.getstream.chat.android.models.ModerationAction
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PushProvider
@@ -358,6 +359,14 @@ public fun randomMessage(
     moderation = moderation,
 )
 
+public fun randomPendingMessage(
+    message: Message = randomMessage(),
+    metadata: Map<String, String> = randomPendingMessageMetadata(),
+): PendingMessage = PendingMessage(
+    message = message,
+    metadata = metadata,
+)
+
 public fun randomChannelMute(
     user: User? = randomUser(),
     channel: Channel? = randomChannel(),
@@ -394,6 +403,7 @@ public fun randomChannel(
     team: String = randomString(),
     hidden: Boolean? = randomBoolean(),
     hiddenMessagesBefore: Date? = randomDate(),
+    pendingMessages: List<PendingMessage> = randomPendingMessageList(),
     ownCapabilities: Set<String> = randomChannelCapabilities(),
     extraData: Map<String, Any> = emptyMap(),
     membership: Member? = randomMember(),
@@ -419,6 +429,7 @@ public fun randomChannel(
     team = team,
     hidden = hidden,
     hiddenMessagesBefore = hiddenMessagesBefore,
+    pendingMessages = pendingMessages,
     ownCapabilities = ownCapabilities,
     extraData = extraData,
     membership = membership,
@@ -453,6 +464,10 @@ public fun randomMessageList(
     size: Int = 10,
     creationFunction: (Int) -> Message = { randomMessage() },
 ): List<Message> = List(size, creationFunction)
+
+public fun randomPendingMessageList(size: Int = 5): List<PendingMessage> = List(size) {
+    randomPendingMessage()
+}
 
 public fun randomCommands(size: Int = 10): List<Command> = List(size) { randomCommand() }
 public fun randomMembers(
@@ -675,6 +690,11 @@ public fun randomValue(): Any {
 public fun randomExtraData(maxPossibleEntries: Int = 10): Map<String, Any> {
     val size = positiveRandomInt(maxPossibleEntries)
     return (1..size).associate { randomString() to randomValue() }
+}
+
+public fun randomPendingMessageMetadata(maxPossibleEntries: Int = 5): Map<String, String> {
+    val size = positiveRandomInt(maxPossibleEntries)
+    return (1..size).associate { randomString() to randomString() }
 }
 
 public fun randomImageFile(): File = randomFile(extension = "jpg")

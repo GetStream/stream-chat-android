@@ -174,6 +174,7 @@ import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PushMessage
@@ -1889,6 +1890,19 @@ internal constructor(
                     listener.onGetMessageResult(messageId, result)
                 }
             }
+            .share(userScope) { GetMessageIdentifier(messageId) }
+    }
+
+    /**
+     * Fetches a single pending message from the backend.
+     *
+     * @param messageId The ID of the pending message we are fetching from the backend.
+     *
+     * @return Executable async [Call] responsible for fetching a pending message.
+     */
+    @CheckResult
+    public fun getPendingMessage(messageId: String): Call<PendingMessage> {
+        return api.getPendingMessage(messageId)
             .share(userScope) { GetMessageIdentifier(messageId) }
     }
 

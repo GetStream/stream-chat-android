@@ -43,6 +43,7 @@ import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.QueryDraftsResult
@@ -167,6 +168,9 @@ internal interface ChatApi {
 
     @CheckResult
     fun getMessage(messageId: String): Call<Message>
+
+    @CheckResult
+    fun getPendingMessage(messageId: String): Call<PendingMessage>
 
     @CheckResult
     fun sendMessage(

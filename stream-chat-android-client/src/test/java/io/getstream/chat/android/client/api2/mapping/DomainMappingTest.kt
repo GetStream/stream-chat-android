@@ -39,6 +39,7 @@ import io.getstream.chat.android.client.Mother.randomDownstreamModerationDetails
 import io.getstream.chat.android.client.Mother.randomDownstreamModerationDto
 import io.getstream.chat.android.client.Mother.randomDownstreamMuteDto
 import io.getstream.chat.android.client.Mother.randomDownstreamOptionDto
+import io.getstream.chat.android.client.Mother.randomDownstreamPendingMessageDto
 import io.getstream.chat.android.client.Mother.randomDownstreamPollDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReactionDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReactionGroupDto
@@ -76,6 +77,7 @@ import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.models.Reaction
@@ -97,6 +99,7 @@ import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldBeEqualTo
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -120,7 +123,7 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `Down is correctly mapped to DraftMessage`() {
+    fun `DownstreamDraftDto is correctly mapped to DraftMessage`() {
         val draftMessageResponse = randomDownstreamDraftDto()
         val sut = Fixture()
             .get()
@@ -144,6 +147,18 @@ internal class DomainMappingTest {
         }
 
         result `should be equal to` expectedMappedDraftMessage
+    }
+
+    @Test
+    fun `DownstreamPendingMessageDto is correctly mapped to PendingMessage`() {
+        val downstreamPendingMessageDto = randomDownstreamPendingMessageDto()
+        val sut = Fixture().get()
+        val expected = PendingMessage(
+            message = with(sut) { downstreamPendingMessageDto.message.toDomain() },
+            metadata = downstreamPendingMessageDto.metadata.orEmpty(),
+        )
+        val result = with(sut) { downstreamPendingMessageDto.toDomain() }
+        Assertions.assertEquals(expected, result)
     }
 
     @Test

@@ -117,6 +117,7 @@ import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.QueryDraftsResult
@@ -339,6 +340,15 @@ constructor(
             messageId = messageId,
         ).mapDomain { response ->
             response.message.toDomain()
+        }
+    }
+
+    override fun getPendingMessage(messageId: String): Call<PendingMessage> {
+        return messageApi.getMessage(messageId).mapDomain {
+            PendingMessage(
+                message = it.message.toDomain(),
+                metadata = it.pending_message_metadata.orEmpty(),
+            )
         }
     }
 
@@ -948,6 +958,7 @@ constructor(
                 messages = response.messages.map {
                     it.toDomain().enrichWithCid(channel.cid)
                 },
+                pendingMessages = response.pending_messages.map { it.toDomain() },
                 pinnedMessages = response.pinned_messages.map {
                     it.toDomain().enrichWithCid(channel.cid)
                 },

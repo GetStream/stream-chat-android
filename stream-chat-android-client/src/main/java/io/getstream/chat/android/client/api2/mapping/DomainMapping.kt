@@ -35,6 +35,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetai
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamOptionDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
@@ -80,6 +81,7 @@ import io.getstream.chat.android.models.Moderation
 import io.getstream.chat.android.models.ModerationAction
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.models.Reaction
@@ -221,6 +223,15 @@ internal class DomainMapping(
             silent = message.silent,
             text = message.text,
             extraData = message.extraData ?: emptyMap(),
+        )
+
+    /**
+     * Transforms [DownstreamPendingMessageDto] to [PendingMessage].
+     */
+    internal fun DownstreamPendingMessageDto.toDomain(): PendingMessage =
+        PendingMessage(
+            message = message.toDomain(),
+            metadata = metadata.orEmpty(),
         )
 
     /**
