@@ -57,12 +57,17 @@ internal fun ChannelInfoMemberInfoConfirmationModal(
 @Composable
 private fun ChannelInfoMemberInfoConfirmationModalRemovePreview() {
     ChatTheme {
-        ChannelInfoMemberInfoConfirmationModal(
-            modal = ChannelInfoMemberViewEvent.RemoveMemberModal(
-                member = PreviewMembersData.member1,
-            ),
-            onViewAction = {},
-            onDismiss = {},
-        )
+        ChannelInfoMemberInfoConfirmationModalRemove()
     }
+}
+
+@Composable
+internal fun ChannelInfoMemberInfoConfirmationModalRemove() {
+    ChannelInfoMemberInfoConfirmationModal(
+        modal = ChannelInfoMemberViewEvent.RemoveMemberModal(
+            member = PreviewMembersData.member1,
+        ),
+        onViewAction = {},
+        onDismiss = {},
+    )
 }
