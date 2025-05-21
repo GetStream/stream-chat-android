@@ -101,5 +101,12 @@
     <string name="stream_ui_channel_info_option_delete_group">Delete Group</string>
     <string name="stream_ui_channel_info_option_delete_group_confirmation">Are you sure you want to delete this group?</string>
     <string name="stream_ui_channel_info_option_delete_group_error">Failed to delete group</string>
+    <string name="stream_ui_channel_info_option_message_member">Message</string>
+    <string name="stream_ui_channel_info_option_remove_member">Remove from group</string>
+    <string name="stream_ui_channel_info_option_remove_member_error">Failed to remove member</string>
+    <string name="stream_ui_channel_info_option_ban_member">Ban</string>
+    <string name="stream_ui_channel_info_option_ban_member_error">Failed to ban member</string>
+    <string name="stream_ui_channel_info_option_unban_member">Unban</string>
+    <string name="stream_ui_channel_info_option_unban_member_error">Failed to unban member</string>
 
 </resources>
