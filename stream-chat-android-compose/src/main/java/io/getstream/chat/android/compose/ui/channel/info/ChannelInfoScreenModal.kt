@@ -19,23 +19,13 @@ package io.getstream.chat.android.compose.ui.channel.info
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.BottomSheetDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,16 +36,9 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.clickable
-import io.getstream.chat.android.models.Member
-import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
-import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
-import kotlinx.coroutines.launch
-import java.util.Date
 
-@Suppress("LongMethod")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ChannelInfoScreenModal(
     modal: ChannelInfoViewEvent.Modal?,
@@ -65,26 +48,10 @@ internal fun ChannelInfoScreenModal(
 ) {
     when (modal) {
         is ChannelInfoViewEvent.MemberInfoModal -> {
-            val scope = rememberCoroutineScope()
-            val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-            ModalBottomSheet(
-                sheetState = sheetState,
-                containerColor = ChatTheme.colors.barsBackground,
-                onDismissRequest = onDismiss,
-            ) {
-                MemberInfoSheetContent(
-                    modal = modal,
-                    onViewAction = { action ->
-                        onViewAction(action)
-                        scope.launch { sheetState.hide() }
-                            .invokeOnCompletion {
-                                if (!sheetState.isVisible) {
-                                    onDismiss()
-                                }
-                            }
-                    },
-                )
-            }
+            ChannelInfoMemberInfoSheet(
+                modal = modal,
+                onDismiss = onDismiss,
+            )
         }
 
         ChannelInfoViewEvent.HideChannelModal -> {
@@ -156,31 +123,6 @@ internal fun ChannelInfoScreenModal(
 }
 
 @Composable
-private fun MemberInfoSheetContent(
-    modal: ChannelInfoViewEvent.MemberInfoModal,
-    onViewAction: (action: ChannelInfoViewAction) -> Unit,
-) {
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        ChannelInfoMemberInfo(
-            user = modal.member.user,
-            avatarAlignment = Alignment.Bottom,
-        )
-        LazyColumn {
-            items(modal.options) { option ->
-                ChannelInfoContentOption(
-                    option = option,
-                    isGroupChannel = false,
-                    onViewAction = onViewAction,
-                )
-            }
-        }
-    }
-}
-
-@Composable
 private fun HideChannelModalText(
     isGroupChannel: Boolean,
     clearHistory: Boolean,
@@ -218,36 +160,6 @@ private fun HideChannelModalText(
                 color = ChatTheme.colors.textLowEmphasis,
                 style = ChatTheme.typography.body,
             )
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview
-@Composable
-private fun ChannelInfoScreenModalMemberInfoPreview() {
-    ChatTheme {
-        Card(
-            shape = BottomSheetDefaults.ExpandedShape,
-            colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.barsBackground),
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                BottomSheetDefaults.DragHandle()
-                val member = Member(user = PreviewUserData.user1.copy(lastActive = Date()))
-                MemberInfoSheetContent(
-                    modal = ChannelInfoViewEvent.MemberInfoModal(
-                        member = member,
-                        options = listOf(
-                            ChannelInfoViewState.Content.Option.MessageMember(member),
-                            ChannelInfoViewState.Content.Option.BanMember(member),
-                            ChannelInfoViewState.Content.Option.RemoveMember(member),
-                        ),
-                    ),
-                    onViewAction = {},
-                )
-            }
         }
     }
 }

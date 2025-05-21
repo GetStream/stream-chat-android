@@ -34,10 +34,12 @@ public sealed interface ChannelInfoViewEvent {
     /**
      * Indicates an event to present a member information modal.
      *
+     * @param cid The full channel identifier (e.g., "messaging:123").
      * @param member The member whose information is to be displayed.
      * @param options The options available in the member information modal.
      */
     public data class MemberInfoModal(
+        val cid: String,
         val member: Member,
         val options: List<ChannelInfoViewState.Content.Option>,
     ) : Modal

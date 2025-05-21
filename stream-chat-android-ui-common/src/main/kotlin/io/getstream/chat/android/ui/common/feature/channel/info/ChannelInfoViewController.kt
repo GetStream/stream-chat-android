@@ -69,7 +69,7 @@ import kotlinx.coroutines.launch
  */
 @InternalStreamChatApi
 public class ChannelInfoViewController(
-    cid: String,
+    private val cid: String,
     private val scope: CoroutineScope,
     private val copyToClipboardHandler: CopyToClipboardHandler,
     private val chatClient: ChatClient = ChatClient.instance(),
@@ -190,9 +190,9 @@ public class ChannelInfoViewController(
             is ChannelInfoViewAction.MemberMessageClick ->
                 _events.tryEmit(ChannelInfoViewEvent.NavigateToChannel(channelId = "")) // TODO NavigateToChannel
 
-            is ChannelInfoViewAction.RemoveMemberClick -> removeMember(action.member)
             is ChannelInfoViewAction.BanMemberClick -> banMember(action.member)
             is ChannelInfoViewAction.UnbanMemberClick -> unbanMember(action.member)
+            is ChannelInfoViewAction.RemoveMemberClick -> removeMember(action.member)
         }
     }
 
@@ -223,6 +223,7 @@ public class ChannelInfoViewController(
 
         _events.tryEmit(
             ChannelInfoViewEvent.MemberInfoModal(
+                cid = cid,
                 member = action.member,
                 options = buildMemberOptionList(
                     member = action.member,
@@ -322,22 +323,6 @@ public class ChannelInfoViewController(
         }
     }
 
-    private fun removeMemberFromChannel(
-        memberId: String,
-        systemMessage: Message?,
-        onSuccess: (Channel) -> Unit,
-        onError: (Error) -> Unit,
-    ) {
-        scope.launch {
-            channelClient.removeMembers(
-                memberIds = listOf(memberId),
-                systemMessage = systemMessage,
-            ).await()
-                .onSuccess(onSuccess)
-                .onError(onError)
-        }
-    }
-
     private fun deleteChannel() {
         logger.d { "[deleteChannel]" }
 
@@ -351,20 +336,6 @@ public class ChannelInfoViewController(
                     _events.tryEmit(ChannelInfoViewEvent.DeleteChannelError)
                 }
         }
-    }
-
-    private fun removeMember(member: Member) {
-        logger.d { "[removeMember] member: $member" }
-
-        removeMemberFromChannel(
-            memberId = member.getUserId(),
-            systemMessage = null,
-            onSuccess = { /* no-op */ },
-            onError = { error ->
-                logger.e { "[removeMember] error: ${error.message}" }
-                _events.tryEmit(ChannelInfoViewEvent.RemoveMemberError)
-            },
-        )
     }
 
     private fun banMember(member: Member) {
@@ -394,6 +365,36 @@ public class ChannelInfoViewController(
                     logger.e { "[unbanMember] error: ${error.message}" }
                     _events.tryEmit(ChannelInfoViewEvent.UnbanMemberError)
                 }
+        }
+    }
+
+    private fun removeMember(member: Member) {
+        logger.d { "[removeMember] member: $member" }
+
+        removeMemberFromChannel(
+            memberId = member.getUserId(),
+            systemMessage = null,
+            onSuccess = { /* no-op */ },
+            onError = { error ->
+                logger.e { "[removeMember] error: ${error.message}" }
+                _events.tryEmit(ChannelInfoViewEvent.RemoveMemberError)
+            },
+        )
+    }
+
+    private fun removeMemberFromChannel(
+        memberId: String,
+        systemMessage: Message?,
+        onSuccess: (Channel) -> Unit,
+        onError: (Error) -> Unit,
+    ) {
+        scope.launch {
+            channelClient.removeMembers(
+                memberIds = listOf(memberId),
+                systemMessage = systemMessage,
+            ).await()
+                .onSuccess(onSuccess)
+                .onError(onError)
         }
     }
 

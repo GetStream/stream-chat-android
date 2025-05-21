@@ -35,6 +35,7 @@ import kotlinx.coroutines.flow.StateFlow
  *
  * @param cid The full channel identifier (e.g., "messaging:123").
  * @param copyToClipboardHandler The handler for copying text to the clipboard.
+ * @param controllerProvider The provider for [ChannelInfoViewController].
  */
 @ExperimentalStreamChatApi
 public class ChannelInfoViewModel(
