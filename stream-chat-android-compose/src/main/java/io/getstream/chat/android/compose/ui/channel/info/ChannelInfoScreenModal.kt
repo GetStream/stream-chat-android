@@ -78,9 +78,9 @@ internal fun ChannelInfoScreenModal(
                     stringResource(R.string.stream_ui_channel_info_option_delete_conversation)
                 },
                 message = if (isGroupChannel) {
-                    stringResource(R.string.stream_ui_channel_info_option_delete_group_confirmation_message)
+                    stringResource(R.string.stream_ui_channel_info_option_delete_group_confirmation)
                 } else {
-                    stringResource(R.string.stream_ui_channel_info_option_delete_conversation_confirmation_message)
+                    stringResource(R.string.stream_ui_channel_info_option_delete_conversation_confirmation)
                 },
                 onPositiveAction = {
                     onViewAction(ChannelInfoViewAction.DeleteChannelConfirmationClick)
@@ -98,9 +98,9 @@ internal fun ChannelInfoScreenModal(
                     stringResource(R.string.stream_ui_channel_info_option_leave_conversation)
                 },
                 message = if (isGroupChannel) {
-                    stringResource(R.string.stream_ui_channel_info_option_leave_group_confirmation_message)
+                    stringResource(R.string.stream_ui_channel_info_option_leave_group_confirmation)
                 } else {
-                    stringResource(R.string.stream_ui_channel_info_option_leave_conversation_confirmation_message)
+                    stringResource(R.string.stream_ui_channel_info_option_leave_conversation_confirmation)
                 },
                 onPositiveAction = {
                     // TODO Get quit message configuration from ChatTheme
@@ -126,9 +126,9 @@ private fun HideChannelModalText(
     ) {
         Text(
             text = if (isGroupChannel) {
-                stringResource(R.string.stream_ui_channel_info_option_hide_group_confirmation_message)
+                stringResource(R.string.stream_ui_channel_info_option_hide_group_confirmation)
             } else {
-                stringResource(R.string.stream_ui_channel_info_option_hide_conversation_confirmation_message)
+                stringResource(R.string.stream_ui_channel_info_option_hide_conversation_confirmation)
             },
             color = ChatTheme.colors.textHighEmphasis,
             style = ChatTheme.typography.body,

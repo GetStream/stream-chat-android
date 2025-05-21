@@ -67,4 +67,39 @@
     <!-- Mention List -->
     <string name="stream_ui_mention_list_empty">No mentions exist yet…</string>
     <string name="stream_ui_mention_list_error">An error occurred</string>
+
+    <!-- Channel Info -->
+    <string name="stream_ui_channel_info_member_owner">Owner</string>
+    <string name="stream_ui_channel_info_member_moderator">Moderator</string>
+    <string name="stream_ui_channel_info_expand_button">%d more</string>
+    <string name="stream_ui_channel_info_copy_user_handle">Copy user handle</string>
+    <string name="stream_ui_channel_info_name_field_label">NAME</string>
+    <string name="stream_ui_channel_info_name_field_placeholder">Add a group name</string>
+    <string name="stream_ui_channel_info_rename_group_error">Failed to rename group</string>
+    <string name="stream_ui_channel_info_option_mute_conversation">Mute Conversation</string>
+    <string name="stream_ui_channel_info_option_mute_conversation_error">Failed to switch the conversation mute state</string>
+    <string name="stream_ui_channel_info_option_mute_group">Mute Group</string>
+    <string name="stream_ui_channel_info_option_mute_group_error">Failed to switch the group mute state</string>
+    <string name="stream_ui_channel_info_option_hide_conversation">Hide Conversation</string>
+    <string name="stream_ui_channel_info_option_hide_conversation_confirmation">Are you sure you want to hide this conversation?</string>
+    <string name="stream_ui_channel_info_option_hide_conversation_confirmation_clear_history">Also clear the conversation history</string>
+    <string name="stream_ui_channel_info_option_hide_conversation_error">Failed to switch the conversation hide state</string>
+    <string name="stream_ui_channel_info_option_hide_group">Hide Group</string>
+    <string name="stream_ui_channel_info_option_hide_group_confirmation">Are you sure you want to hide this group?</string>
+    <string name="stream_ui_channel_info_option_hide_group_confirmation_clear_history">Also clear the group history</string>
+    <string name="stream_ui_channel_info_option_hide_group_error">Failed to switch the group hide state</string>
+    <string name="stream_ui_channel_info_option_pinned_messages">Pinned Messages</string>
+    <string name="stream_ui_channel_info_option_leave_conversation">Leave Conversation</string>
+    <string name="stream_ui_channel_info_option_leave_conversation_confirmation">Are you sure you want to leave this conversation?</string>
+    <string name="stream_ui_channel_info_option_leave_conversation_error">Failed to leave conversation</string>
+    <string name="stream_ui_channel_info_option_leave_group">Leave Group</string>
+    <string name="stream_ui_channel_info_option_leave_group_confirmation">Are you sure you want to leave this group?</string>
+    <string name="stream_ui_channel_info_option_leave_group_error">Failed to leave group</string>
+    <string name="stream_ui_channel_info_option_delete_conversation">Delete Conversation</string>
+    <string name="stream_ui_channel_info_option_delete_conversation_confirmation">Are you sure you want to delete this conversation?</string>
+    <string name="stream_ui_channel_info_option_delete_conversation_error">Failed to delete conversation</string>
+    <string name="stream_ui_channel_info_option_delete_group">Delete Group</string>
+    <string name="stream_ui_channel_info_option_delete_group_confirmation">Are you sure you want to delete this group?</string>
+    <string name="stream_ui_channel_info_option_delete_group_error">Failed to delete group</string>
+
 </resources>
