@@ -54,7 +54,7 @@ import java.util.Date
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun ChannelInfoMemberInfoSheet(
+internal fun ChannelInfoMemberInfoModalSheet(
     modal: ChannelInfoViewEvent.MemberInfoModal,
     onDismiss: () -> Unit,
 ) {
@@ -88,7 +88,7 @@ internal fun ChannelInfoMemberInfoSheet(
     ) {
         val state by viewModel.state.collectAsStateWithLifecycle()
 
-        ChannelInfoMemberInfoSheetContent(
+        ChannelInfoMemberInfoModalSheetContent(
             state = state,
             onViewAction = { action ->
                 viewModel.onViewAction(action)
@@ -118,7 +118,7 @@ internal fun ChannelInfoMemberInfoSheet(
 }
 
 @Composable
-private fun ChannelInfoMemberInfoSheetContent(
+private fun ChannelInfoMemberInfoModalSheetContent(
     state: ChannelInfoMemberViewState,
     onViewAction: (action: ChannelInfoMemberViewAction) -> Unit,
 ) {
@@ -151,8 +151,10 @@ private fun ChannelInfoMemberInfoSheetContent(
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
-private fun ChannelInfoMemberInfoSheetContentPreview() {
+private fun ChannelInfoMemberInfoModalSheetContentPreview() {
     ChatTheme {
+        // Preview doesn't render modal bottom sheet,
+        // so we need to mimic it with a card.
         Card(
             shape = BottomSheetDefaults.ExpandedShape,
             colors = CardDefaults.cardColors(containerColor = ChatTheme.colors.barsBackground),
@@ -161,20 +163,25 @@ private fun ChannelInfoMemberInfoSheetContentPreview() {
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 BottomSheetDefaults.DragHandle()
-                val member = Member(user = PreviewUserData.user1.copy(lastActive = Date()))
-                ChannelInfoMemberInfoSheetContent(
-                    state = ChannelInfoMemberViewState.Content(
-                        member = member,
-                        options = listOf(
-                            ChannelInfoMemberViewState.Content.Option.MessageMember(member),
-                            ChannelInfoMemberViewState.Content.Option.BanMember(member),
-                            ChannelInfoMemberViewState.Content.Option.UnbanMember(member),
-                            ChannelInfoMemberViewState.Content.Option.RemoveMember(member),
-                        ),
-                    ),
-                    onViewAction = {},
-                )
+                ChannelInfoMemberInfoModalSheetContent()
             }
         }
     }
+}
+
+@Composable
+internal fun ChannelInfoMemberInfoModalSheetContent() {
+    val member = Member(user = PreviewUserData.user1.copy(lastActive = Date()))
+    ChannelInfoMemberInfoModalSheetContent(
+        state = ChannelInfoMemberViewState.Content(
+            member = member,
+            options = listOf(
+                ChannelInfoMemberViewState.Content.Option.MessageMember(member),
+                ChannelInfoMemberViewState.Content.Option.BanMember(member),
+                ChannelInfoMemberViewState.Content.Option.UnbanMember(member),
+                ChannelInfoMemberViewState.Content.Option.RemoveMember(member),
+            ),
+        ),
+        onViewAction = {},
+    )
 }

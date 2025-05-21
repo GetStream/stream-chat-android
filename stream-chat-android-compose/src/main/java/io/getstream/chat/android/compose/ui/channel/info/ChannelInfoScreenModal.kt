@@ -49,7 +49,7 @@ internal fun ChannelInfoScreenModal(
 ) {
     when (modal) {
         is ChannelInfoViewEvent.MemberInfoModal -> {
-            ChannelInfoMemberInfoSheet(
+            ChannelInfoMemberInfoModalSheet(
                 modal = modal,
                 onDismiss = onDismiss,
             )
