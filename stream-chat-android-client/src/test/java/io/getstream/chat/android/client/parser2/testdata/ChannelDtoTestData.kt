@@ -61,7 +61,8 @@ internal object ChannelDtoTestData {
             "args": "empty",
             "set": "none"
            }
-          ]
+          ],
+          "mark_messages_pending": false
         }
         """.withoutWhitespace()
 
@@ -95,6 +96,7 @@ internal object ChannelDtoTestData {
                 set = "none",
             ),
         ),
+        mark_messages_pending = false,
     )
 
     @Language("JSON")

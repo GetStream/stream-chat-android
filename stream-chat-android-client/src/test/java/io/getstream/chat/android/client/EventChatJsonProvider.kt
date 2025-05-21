@@ -693,7 +693,8 @@ private fun createConfigJsonString() =
               "args": "[text]",
               "set": "fun_set"
             }
-          ]
+          ],
+          "mark_messages_pending": false
         }
     """.trimIndent()
 

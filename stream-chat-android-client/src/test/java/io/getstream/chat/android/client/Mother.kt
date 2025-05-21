@@ -478,6 +478,7 @@ internal object Mother {
         automod_behavior: String = randomString(),
         blocklist_behavior: String? = randomString(),
         commands: List<CommandDto> = emptyList(),
+        mark_messages_pending: Boolean = randomBoolean(),
     ): ConfigDto = ConfigDto(
         created_at = created_at,
         updated_at = updated_at,
@@ -501,6 +502,7 @@ internal object Mother {
         automod_behavior = automod_behavior,
         blocklist_behavior = blocklist_behavior,
         commands = commands,
+        mark_messages_pending = mark_messages_pending,
     )
 
     /**

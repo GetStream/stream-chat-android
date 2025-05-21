@@ -643,8 +643,8 @@ public final class io/getstream/chat/android/models/Command {
 
 public final class io/getstream/chat/android/models/Config {
 	public fun <init> ()V
-	public fun <init> (Ljava/util/Date;Ljava/util/Date;Ljava/lang/String;ZZZZZZZZZZZZZLjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;)V
-	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Date;Ljava/lang/String;ZZZZZZZZZZZZZLjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/util/Date;Ljava/util/Date;Ljava/lang/String;ZZZZZZZZZZZZZLjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Z)V
+	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Date;Ljava/lang/String;ZZZZZZZZZZZZZLjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
 	public final fun component10 ()Z
 	public final fun component11 ()Z
@@ -660,6 +660,7 @@ public final class io/getstream/chat/android/models/Config {
 	public final fun component20 ()Ljava/lang/String;
 	public final fun component21 ()Ljava/lang/String;
 	public final fun component22 ()Ljava/util/List;
+	public final fun component23 ()Z
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Z
 	public final fun component5 ()Z
@@ -667,8 +668,8 @@ public final class io/getstream/chat/android/models/Config {
 	public final fun component7 ()Z
 	public final fun component8 ()Z
 	public final fun component9 ()Z
-	public final fun copy (Ljava/util/Date;Ljava/util/Date;Ljava/lang/String;ZZZZZZZZZZZZZLjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/models/Config;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/Config;Ljava/util/Date;Ljava/util/Date;Ljava/lang/String;ZZZZZZZZZZZZZLjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/models/Config;
+	public final fun copy (Ljava/util/Date;Ljava/util/Date;Ljava/lang/String;ZZZZZZZZZZZZZLjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Z)Lio/getstream/chat/android/models/Config;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/Config;Ljava/util/Date;Ljava/util/Date;Ljava/lang/String;ZZZZZZZZZZZZZLjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ZILjava/lang/Object;)Lio/getstream/chat/android/models/Config;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAutomod ()Ljava/lang/String;
 	public final fun getAutomodBehavior ()Ljava/lang/String;
@@ -677,6 +678,7 @@ public final class io/getstream/chat/android/models/Config {
 	public final fun getConnectEventsEnabled ()Z
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustomEventsEnabled ()Z
+	public final fun getMarkMessagesPending ()Z
 	public final fun getMaxMessageLength ()I
 	public final fun getMessageRetention ()Ljava/lang/String;
 	public final fun getMuteEnabled ()Z
