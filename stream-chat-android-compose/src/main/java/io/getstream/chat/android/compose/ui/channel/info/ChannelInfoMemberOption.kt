@@ -35,7 +35,7 @@ internal fun ChannelInfoMemberOption(
             ChannelInfoOptionNavigationButton(
                 icon = R.drawable.stream_compose_empty_channels,
                 text = stringResource(R.string.stream_ui_channel_info_member_option_message_member),
-                onClick = { onViewAction(ChannelInfoMemberViewAction.MemberMessageClick(member = option.member)) },
+                onClick = { onViewAction(ChannelInfoMemberViewAction.MemberMessageClick) },
             )
         }
 
@@ -44,7 +44,7 @@ internal fun ChannelInfoMemberOption(
                 ChannelInfoOptionButton(
                     icon = R.drawable.stream_ic_ban,
                     text = stringResource(R.string.stream_ui_channel_info_member_option_ban_member),
-                    onClick = { onViewAction(ChannelInfoMemberViewAction.BanMemberClick(member = option.member)) },
+                    onClick = { onViewAction(ChannelInfoMemberViewAction.BanMemberClick) },
                 )
             }
         }
@@ -54,7 +54,7 @@ internal fun ChannelInfoMemberOption(
                 ChannelInfoOptionButton(
                     icon = R.drawable.stream_ic_ban,
                     text = stringResource(R.string.stream_ui_channel_info_member_option_unban_member),
-                    onClick = { onViewAction(ChannelInfoMemberViewAction.UnbanMemberClick(member = option.member)) },
+                    onClick = { onViewAction(ChannelInfoMemberViewAction.UnbanMemberClick) },
                 )
             }
         }
@@ -64,7 +64,7 @@ internal fun ChannelInfoMemberOption(
                 ChannelInfoOptionButton(
                     icon = R.drawable.stream_compose_ic_person_remove,
                     text = stringResource(R.string.stream_ui_channel_info_member_option_remove_member),
-                    onClick = { onViewAction(ChannelInfoMemberViewAction.RemoveMemberClick(member = option.member)) },
+                    onClick = { onViewAction(ChannelInfoMemberViewAction.RemoveMemberClick) },
                 )
             }
         }

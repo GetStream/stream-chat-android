@@ -63,7 +63,7 @@ internal class ChannelInfoMemberViewControllerTest {
             ownCapabilities = emptySet(),
             members = listOf(member),
         )
-        val fixture = Fixture().given(channel = channel)
+        val fixture = Fixture().given(channel)
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
@@ -119,7 +119,6 @@ internal class ChannelInfoMemberViewControllerTest {
 
     @Test
     fun `member message click`() = runTest {
-        val member = Member(user = User(id = MEMBER_ID))
         val fixture = Fixture()
         val sut = fixture.get(backgroundScope)
 
@@ -127,7 +126,7 @@ internal class ChannelInfoMemberViewControllerTest {
             skipItems(1) // Skip initial state
 
             sut.events.test {
-                sut.onViewAction(ChannelInfoMemberViewAction.MemberMessageClick(member))
+                sut.onViewAction(ChannelInfoMemberViewAction.MemberMessageClick)
 
                 assertEquals(ChannelInfoMemberViewEvent.NavigateToChannel(""), awaitItem())
             }
@@ -139,15 +138,16 @@ internal class ChannelInfoMemberViewControllerTest {
     @Test
     fun `ban member click`() = runTest {
         val member = Member(user = User(id = MEMBER_ID))
-        val fixture = Fixture()
+        val channel = Channel(members = listOf(member))
+        val fixture = Fixture().given(channel)
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
-            skipItems(1) // Skip initial state
+            skipItems(2) // Skip initial states
 
             fixture.givenBanMember(member)
 
-            sut.onViewAction(ChannelInfoMemberViewAction.BanMemberClick(member))
+            sut.onViewAction(ChannelInfoMemberViewAction.BanMemberClick)
         }
 
         launch {
@@ -159,18 +159,19 @@ internal class ChannelInfoMemberViewControllerTest {
     @Test
     fun `ban member error`() = runTest {
         val member = Member(user = User(id = MEMBER_ID))
-        val fixture = Fixture()
+        val channel = Channel(members = listOf(member))
+        val fixture = Fixture().given(channel)
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
-            skipItems(1) // Skip initial state
+            skipItems(2) // Skip initial states
 
             fixture.givenBanMember(
                 member = member,
                 error = Error.GenericError("Error banning member"),
             )
 
-            sut.onViewAction(ChannelInfoMemberViewAction.BanMemberClick(member))
+            sut.onViewAction(ChannelInfoMemberViewAction.BanMemberClick)
 
             sut.events.test {
                 assertEquals(ChannelInfoMemberViewEvent.BanMemberError, awaitItem())
@@ -181,15 +182,16 @@ internal class ChannelInfoMemberViewControllerTest {
     @Test
     fun `unban member click`() = runTest {
         val member = Member(user = User(id = MEMBER_ID))
-        val fixture = Fixture()
+        val channel = Channel(members = listOf(member))
+        val fixture = Fixture().given(channel)
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
-            skipItems(1) // Skip initial state
+            skipItems(2) // Skip initial states
 
             fixture.givenUnbanMember(member)
 
-            sut.onViewAction(ChannelInfoMemberViewAction.UnbanMemberClick(member))
+            sut.onViewAction(ChannelInfoMemberViewAction.UnbanMemberClick)
         }
 
         launch {
@@ -201,18 +203,19 @@ internal class ChannelInfoMemberViewControllerTest {
     @Test
     fun `unban member error`() = runTest {
         val member = Member(user = User(id = MEMBER_ID))
-        val fixture = Fixture()
+        val channel = Channel(members = listOf(member))
+        val fixture = Fixture().given(channel)
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
-            skipItems(1) // Skip initial state
+            skipItems(2) // Skip initial states
 
             fixture.givenUnbanMember(
                 member = member,
                 error = Error.GenericError("Error unbanning member"),
             )
 
-            sut.onViewAction(ChannelInfoMemberViewAction.UnbanMemberClick(member))
+            sut.onViewAction(ChannelInfoMemberViewAction.UnbanMemberClick)
 
             sut.events.test {
                 assertEquals(ChannelInfoMemberViewEvent.UnbanMemberError, awaitItem())
@@ -223,16 +226,17 @@ internal class ChannelInfoMemberViewControllerTest {
     @Test
     fun `remove member click`() = runTest {
         val member = Member(user = User(id = MEMBER_ID))
-        val fixture = Fixture()
+        val channel = Channel(members = listOf(member))
+        val fixture = Fixture().given(channel)
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
-            skipItems(1) // Skip initial state
+            skipItems(2) // Skip initial states
 
             sut.events.test {
-                sut.onViewAction(ChannelInfoMemberViewAction.RemoveMemberClick(member))
+                sut.onViewAction(ChannelInfoMemberViewAction.RemoveMemberClick)
 
-                assertEquals(ChannelInfoMemberViewEvent.RemoveMemberModal, awaitItem())
+                assertEquals(ChannelInfoMemberViewEvent.RemoveMemberModal(member), awaitItem())
             }
         }
 
@@ -291,11 +295,9 @@ internal class ChannelInfoMemberViewControllerTest {
         private val channelClient: ChannelClient = mock()
         private val chatClient: ChatClient = mock()
 
-        fun given(channel: Channel? = null) = apply {
-            if (channel != null) {
-                channelData.value = channel.toChannelData()
-                channelMembers.value = channel.members
-            }
+        fun given(channel: Channel) = apply {
+            channelData.value = channel.toChannelData()
+            channelMembers.value = channel.members
         }
 
         fun givenBanMember(member: Member, error: Error? = null) = apply {

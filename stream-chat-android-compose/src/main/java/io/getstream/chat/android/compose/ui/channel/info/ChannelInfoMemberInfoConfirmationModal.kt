@@ -49,6 +49,8 @@ internal fun ChannelInfoMemberInfoConfirmationModal(
             )
         }
 
+        is ChannelInfoMemberViewEvent.BanMemberModal -> TODO()
+
         null -> Unit
     }
 }

@@ -31,6 +31,13 @@ public sealed interface ChannelInfoMemberViewEvent {
     public sealed interface Modal : ChannelInfoMemberViewEvent
 
     /**
+     * Indicates an event to present a modal for banning a member.
+     *
+     * @param member The member to be banned.
+     */
+    public data class BanMemberModal(val member: Member) : Modal
+
+    /**
      * Indicates an event to present a modal for removing a member.
      *
      * @param member The member to be removed.
