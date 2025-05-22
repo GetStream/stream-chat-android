@@ -10,7 +10,9 @@ jobs:
     name: Download strings from Localazy
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
       - uses: GetStream/android-ci-actions/actions/setup-java@main
       - uses: tibdex/github-app-token@v1.7.0
         id: generate-token
