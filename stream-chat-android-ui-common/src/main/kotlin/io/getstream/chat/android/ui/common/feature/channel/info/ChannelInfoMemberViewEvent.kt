@@ -35,7 +35,41 @@ public sealed interface ChannelInfoMemberViewEvent {
      *
      * @param member The member to be banned.
      */
-    public data class BanMemberModal(val member: Member) : Modal
+    public data class BanMemberModal(val member: Member) : Modal {
+
+        /**
+         * The available timeout options for banning the member.
+         */
+        val timeouts: List<Timeout> = ChannelInfoMemberViewEvent.BanMemberModal.Timeout.entries.toList()
+
+        /**
+         * Represents the available timeout options for banning a member.
+         *
+         * @param valueInMinutes The duration for which the member should be banned, in minutes. Null for no timeout.
+         */
+        @Suppress("MagicNumber")
+        public enum class Timeout(public val valueInMinutes: Int?) {
+            /**
+             * Indicates a timeout of 1 hour for the ban.
+             */
+            OneHour(60),
+
+            /**
+             * Indicates a timeout of 1 day for the ban.
+             */
+            OneDay(1440),
+
+            /**
+             * Indicates a timeout of 1 week for the ban.
+             */
+            OneWeek(10080),
+
+            /**
+             * Indicates no timeout for the ban.
+             */
+            NoTimeout(null),
+        }
+    }
 
     /**
      * Indicates an event to present a modal for removing a member.

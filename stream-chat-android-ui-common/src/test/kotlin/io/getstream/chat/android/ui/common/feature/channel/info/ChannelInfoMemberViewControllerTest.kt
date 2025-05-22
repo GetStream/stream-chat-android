@@ -72,9 +72,7 @@ internal class ChannelInfoMemberViewControllerTest {
             assertEquals(
                 ChannelInfoMemberViewState.Content(
                     member = member,
-                    options = listOf(
-                        ChannelInfoMemberViewState.Content.Option.MessageMember(member),
-                    ),
+                    options = emptyList(),
                 ),
                 awaitItem(),
             )
@@ -91,7 +89,6 @@ internal class ChannelInfoMemberViewControllerTest {
                 ChannelInfoMemberViewState.Content(
                     member = member,
                     options = listOf(
-                        ChannelInfoMemberViewState.Content.Option.MessageMember(member),
                         ChannelInfoMemberViewState.Content.Option.BanMember(member),
                         ChannelInfoMemberViewState.Content.Option.RemoveMember(member),
                     ),
@@ -107,7 +104,6 @@ internal class ChannelInfoMemberViewControllerTest {
                 ChannelInfoMemberViewState.Content(
                     member = member,
                     options = listOf(
-                        ChannelInfoMemberViewState.Content.Option.MessageMember(member),
                         ChannelInfoMemberViewState.Content.Option.UnbanMember(member),
                         ChannelInfoMemberViewState.Content.Option.RemoveMember(member),
                     ),
@@ -145,13 +141,34 @@ internal class ChannelInfoMemberViewControllerTest {
         sut.state.test {
             skipItems(2) // Skip initial states
 
-            fixture.givenBanMember(member)
+            sut.events.test {
+                sut.onViewAction(ChannelInfoMemberViewAction.BanMemberClick)
 
-            sut.onViewAction(ChannelInfoMemberViewAction.BanMemberClick)
+                assertEquals(ChannelInfoMemberViewEvent.BanMemberModal(member), awaitItem())
+            }
+        }
+
+        launch { fixture.verifyNoMoreInteractions() }
+    }
+
+    @Test
+    fun `ban member success`() = runTest {
+        val member = Member(user = User(id = MEMBER_ID))
+        val channel = Channel(members = listOf(member))
+        val timeoutInMinutes = 60
+        val fixture = Fixture().given(channel)
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2) // Skip initial states
+
+            fixture.givenBanMember(member, timeoutInMinutes)
+
+            sut.onViewAction(ChannelInfoMemberViewAction.BanMemberConfirmationClick(timeoutInMinutes))
         }
 
         launch {
-            fixture.verifyMemberBanned(member)
+            fixture.verifyMemberBanned(member, timeoutInMinutes)
             fixture.verifyNoMoreInteractions()
         }
     }
@@ -160,6 +177,7 @@ internal class ChannelInfoMemberViewControllerTest {
     fun `ban member error`() = runTest {
         val member = Member(user = User(id = MEMBER_ID))
         val channel = Channel(members = listOf(member))
+        val timeoutInMinutes = 60
         val fixture = Fixture().given(channel)
         val sut = fixture.get(backgroundScope)
 
@@ -168,10 +186,11 @@ internal class ChannelInfoMemberViewControllerTest {
 
             fixture.givenBanMember(
                 member = member,
+                timeout = timeoutInMinutes,
                 error = Error.GenericError("Error banning member"),
             )
 
-            sut.onViewAction(ChannelInfoMemberViewAction.BanMemberClick)
+            sut.onViewAction(ChannelInfoMemberViewAction.BanMemberConfirmationClick(timeoutInMinutes))
 
             sut.events.test {
                 assertEquals(ChannelInfoMemberViewEvent.BanMemberError, awaitItem())
@@ -195,7 +214,7 @@ internal class ChannelInfoMemberViewControllerTest {
         }
 
         launch {
-            fixture.verifyMemberUnbanned(member)
+            fixture.verifyMemberNotBanned(member)
             fixture.verifyNoMoreInteractions()
         }
     }
@@ -300,8 +319,14 @@ internal class ChannelInfoMemberViewControllerTest {
             channelMembers.value = channel.members
         }
 
-        fun givenBanMember(member: Member, error: Error? = null) = apply {
-            whenever(channelClient.banUser(targetId = member.getUserId(), reason = null, timeout = null)) doAnswer {
+        fun givenBanMember(member: Member, timeout: Int? = null, error: Error? = null) = apply {
+            whenever(
+                channelClient.banUser(
+                    targetId = member.getUserId(),
+                    reason = null,
+                    timeout = timeout,
+                ),
+            ) doAnswer {
                 error?.asCall()
                     ?: Unit.asCall()
             }
@@ -330,15 +355,15 @@ internal class ChannelInfoMemberViewControllerTest {
             verifyNoMoreInteractions(channelClient)
         }
 
-        fun verifyMemberBanned(member: Member) = apply {
+        fun verifyMemberBanned(member: Member, timeout: Int?) = apply {
             verify(channelClient).banUser(
                 targetId = member.getUserId(),
                 reason = null,
-                timeout = null,
+                timeout = timeout,
             )
         }
 
-        fun verifyMemberUnbanned(member: Member) = apply {
+        fun verifyMemberNotBanned(member: Member) = apply {
             verify(channelClient).unbanUser(targetId = member.getUserId())
         }
 

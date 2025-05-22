@@ -32,6 +32,20 @@ internal class ChannelInfoMemberInfoConfirmationModalTest : SnapshotTest {
     )
 
     @Test
+    fun `ban confirmation`() {
+        snapshot {
+            ChannelInfoMemberInfoConfirmationModalBan()
+        }
+    }
+
+    @Test
+    fun `ban confirmation in dark mode`() {
+        snapshot(isInDarkMode = true) {
+            ChannelInfoMemberInfoConfirmationModalBan()
+        }
+    }
+
+    @Test
     fun `remove confirmation`() {
         snapshot {
             ChannelInfoMemberInfoConfirmationModalRemove()

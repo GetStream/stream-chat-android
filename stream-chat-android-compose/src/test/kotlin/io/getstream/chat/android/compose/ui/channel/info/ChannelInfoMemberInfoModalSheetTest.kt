@@ -34,7 +34,7 @@ internal class ChannelInfoMemberInfoModalSheetTest : SnapshotTest {
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
     @Test
-    fun content() {
+    fun `banned member`() {
         snapshot {
             val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
             LaunchedEffect(Unit) {
@@ -45,13 +45,13 @@ internal class ChannelInfoMemberInfoModalSheetTest : SnapshotTest {
                 containerColor = ChatTheme.colors.barsBackground,
                 onDismissRequest = {},
             ) {
-                ChannelInfoMemberInfoModalSheetContent()
+                ChannelInfoMemberInfoModalSheetContent(banned = true)
             }
         }
     }
 
     @Test
-    fun `content in dark mode`() {
+    fun `banned member in dark mode`() {
         snapshot(isInDarkMode = true) {
             val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
             LaunchedEffect(Unit) {
@@ -62,7 +62,41 @@ internal class ChannelInfoMemberInfoModalSheetTest : SnapshotTest {
                 containerColor = ChatTheme.colors.barsBackground,
                 onDismissRequest = {},
             ) {
-                ChannelInfoMemberInfoModalSheetContent()
+                ChannelInfoMemberInfoModalSheetContent(banned = true)
+            }
+        }
+    }
+
+    @Test
+    fun `not banned member`() {
+        snapshot {
+            val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+            LaunchedEffect(Unit) {
+                sheetState.show()
+            }
+            ModalBottomSheet(
+                sheetState = sheetState,
+                containerColor = ChatTheme.colors.barsBackground,
+                onDismissRequest = {},
+            ) {
+                ChannelInfoMemberInfoModalSheetContent(banned = false)
+            }
+        }
+    }
+
+    @Test
+    fun `not banned member in dark mode`() {
+        snapshot(isInDarkMode = true) {
+            val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+            LaunchedEffect(Unit) {
+                sheetState.show()
+            }
+            ModalBottomSheet(
+                sheetState = sheetState,
+                containerColor = ChatTheme.colors.barsBackground,
+                onDismissRequest = {},
+            ) {
+                ChannelInfoMemberInfoModalSheetContent(banned = false)
             }
         }
     }

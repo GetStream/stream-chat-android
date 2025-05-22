@@ -26,7 +26,6 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Member
-import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoMemberViewState
 import io.getstream.log.taggedLogger
@@ -90,7 +89,7 @@ public class ChannelInfoMemberViewController(
      */
     public val events: SharedFlow<ChannelInfoMemberViewEvent> = _events.asSharedFlow()
 
-    private var member = Member(user = User())
+    private lateinit var member: Member
 
     init {
         @Suppress("OPT_IN_USAGE")
@@ -146,7 +145,11 @@ public class ChannelInfoMemberViewController(
             is ChannelInfoMemberViewAction.MemberMessageClick ->
                 _events.tryEmit(ChannelInfoMemberViewEvent.NavigateToChannel(channelId = "")) // TODO NavigateToChannel
 
-            is ChannelInfoMemberViewAction.BanMemberClick -> banMember()
+            is ChannelInfoMemberViewAction.BanMemberClick ->
+                _events.tryEmit(ChannelInfoMemberViewEvent.BanMemberModal(member))
+
+            is ChannelInfoMemberViewAction.BanMemberConfirmationClick -> banMember(action.timeoutInMinutes)
+
             is ChannelInfoMemberViewAction.UnbanMemberClick -> unbanMember()
 
             is ChannelInfoMemberViewAction.RemoveMemberClick ->
@@ -156,14 +159,14 @@ public class ChannelInfoMemberViewController(
         }
     }
 
-    private fun banMember() {
+    private fun banMember(timeout: Int?) {
         logger.d { "[banMember] member: $member" }
 
         scope.launch {
             channelClient.banUser(
                 targetId = member.getUserId(),
                 reason = null,
-                timeout = null, // TODO add timeout to ban
+                timeout = timeout,
             ).await()
                 .onSuccess { /* no-op */ }
                 .onError { error ->
@@ -209,7 +212,8 @@ private data class ChannelInfoMemberData(
 )
 
 private fun buildOptionList(member: Member, capabilities: Set<String>) = buildList {
-    add(ChannelInfoMemberViewState.Content.Option.MessageMember(member = member))
+    // https://linear.app/stream/issue/AND-567/compose-navigate-to-messages-from-the-member-modal-sheet-of-channel
+    // add(ChannelInfoMemberViewState.Content.Option.MessageMember(member = member))
     if (capabilities.contains(ChannelCapabilities.BAN_CHANNEL_MEMBERS)) {
         if (member.banned) {
             add(ChannelInfoMemberViewState.Content.Option.UnbanMember(member = member))
