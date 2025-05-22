@@ -54,7 +54,6 @@ internal class ChatEventEnrichmentsTests {
             user = randomUser(),
             channelType = randomString(),
             channelId = randomString(),
-            channelLastMessageAt = randomDate(),
         )
         val enrichedEvent = event.enrichIfNeeded() as NewMessageEvent
         enrichedEvent.message.cid shouldBeEqualTo cid
@@ -71,7 +70,6 @@ internal class ChatEventEnrichmentsTests {
             user = randomUser(),
             channelType = randomString(),
             channelId = randomString(),
-            channelLastMessageAt = randomDate(),
             hardDelete = randomBoolean(),
         )
         val enrichedEvent = event.enrichIfNeeded() as MessageDeletedEvent
@@ -89,7 +87,6 @@ internal class ChatEventEnrichmentsTests {
             user = randomUser(),
             channelType = randomString(),
             channelId = randomString(),
-            channelLastMessageAt = randomDate(),
         )
         val enrichedEvent = event.enrichIfNeeded() as MessageUpdatedEvent
         enrichedEvent.message.cid shouldBeEqualTo cid
@@ -107,7 +104,6 @@ internal class ChatEventEnrichmentsTests {
             channelType = randomString(),
             channelId = randomString(),
             reaction = randomReaction(),
-            channelLastMessageAt = randomDate(),
         )
         val enrichedEvent = event.enrichIfNeeded() as ReactionNewEvent
         enrichedEvent.message.cid shouldBeEqualTo cid
@@ -125,7 +121,6 @@ internal class ChatEventEnrichmentsTests {
             channelType = randomString(),
             channelId = randomString(),
             reaction = randomReaction(),
-            channelLastMessageAt = randomDate(),
         )
         val enrichedEvent = event.enrichIfNeeded() as ReactionUpdateEvent
         enrichedEvent.message.cid shouldBeEqualTo cid
@@ -143,7 +138,6 @@ internal class ChatEventEnrichmentsTests {
             channelType = randomString(),
             channelId = randomString(),
             reaction = randomReaction(),
-            channelLastMessageAt = randomDate(),
         )
         val enrichedEvent = event.enrichIfNeeded() as ReactionDeletedEvent
         enrichedEvent.message.cid shouldBeEqualTo cid
@@ -160,7 +154,6 @@ internal class ChatEventEnrichmentsTests {
             channelType = randomString(),
             channelId = randomString(),
             channel = randomChannel(),
-            channelLastMessageAt = randomDate(),
         )
         val enrichedEvent = event.enrichIfNeeded() as ChannelUpdatedEvent
         enrichedEvent.message?.cid shouldBeEqualTo cid
@@ -178,7 +171,6 @@ internal class ChatEventEnrichmentsTests {
             channelType = randomString(),
             channelId = randomString(),
             channel = randomChannel(),
-            channelLastMessageAt = randomDate(),
         )
         val enrichedEvent = event.enrichIfNeeded() as ChannelTruncatedEvent
         enrichedEvent.message?.cid shouldBeEqualTo cid
@@ -196,7 +188,6 @@ internal class ChatEventEnrichmentsTests {
             channelType = randomString(),
             channelId = randomString(),
             channel = randomChannel(),
-            channelLastMessageAt = randomDate(),
         )
         val enrichedEvent = event.enrichIfNeeded() as ChannelUpdatedByUserEvent
         enrichedEvent.message?.cid shouldBeEqualTo cid
@@ -213,7 +204,6 @@ internal class ChatEventEnrichmentsTests {
             channelType = randomString(),
             channelId = randomString(),
             channel = randomChannel(),
-            channelLastMessageAt = randomDate(),
         )
         val enrichedEvent = event.enrichIfNeeded() as NotificationMessageNewEvent
         enrichedEvent.message.cid shouldBeEqualTo cid

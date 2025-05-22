@@ -17,7 +17,6 @@
 package io.getstream.chat.android.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.errors.isPermanent
-import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.models.Message
@@ -50,10 +49,7 @@ internal class SendMessageListenerState(private val logic: LogicRegistry) : Send
         channelId: String,
         message: Message,
     ) {
-        handleLastSentMessageDate(result, message)
-
         val cid = "$channelType:$channelId"
-
         if (logic.getMessageById(message.id)?.syncStatus == SyncStatus.COMPLETED) return
 
         when (result) {
@@ -99,25 +95,6 @@ internal class SendMessageListenerState(private val logic: LogicRegistry) : Send
             },
             updatedLocallyAt = Date(),
         ).also(::updateState)
-    }
-
-    /**
-     * Updates the channel state container with the information about the last message send date.
-     *
-     * Note: Sometimes [NewMessageEvent] event arrives faster than [onMessageSendResult] is executed.
-     * As a result, the sync status is already [SyncStatus.COMPLETED] and [handleSendMessageSuccess]
-     * is never executed. That's why this method is executed as early as possible.
-     *
-     * @param result [Result] response from the original request.
-     * @param message [Message] to be sent.
-     */
-    private fun handleLastSentMessageDate(
-        result: Result<Message>,
-        message: Message,
-    ) {
-        if (result is Result.Success) {
-            logic.channelFromMessage(message)?.setLastSentMessageDate(result.value.createdAt)
-        }
     }
 
     /**

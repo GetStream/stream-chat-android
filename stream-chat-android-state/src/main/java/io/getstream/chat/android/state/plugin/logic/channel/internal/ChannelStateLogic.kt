@@ -314,15 +314,6 @@ internal class ChannelStateLogic(
     }
 
     /**
-     * Sets the date of the last message sent by the current user.
-     *
-     * @param lastSentMessageDate The date of the last message.
-     */
-    fun setLastSentMessageDate(lastSentMessageDate: Date?) {
-        mutableState.setLastSentMessageDate(lastSentMessageDate)
-    }
-
-    /**
      * Updates the messages quoting a messages with the new content of the quoted message.
      */
     private fun normalizeReplyMessages(quotedMessage: Message): List<Message>? {

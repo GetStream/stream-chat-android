@@ -230,11 +230,8 @@ internal class EventMapping(
             cid = cid,
             channelType = channel_type,
             channelId = channel_id,
-            channel = channel.toDomain(
-                eventChatLastMessageAt = channel_last_message_at,
-            ),
+            channel = channel.toDomain(),
             user = user?.toDomain(),
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -251,7 +248,6 @@ internal class EventMapping(
             channelId = channel_id,
             user = user.toDomain(),
             clearHistory = clear_history,
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -268,10 +264,7 @@ internal class EventMapping(
             channelId = channel_id,
             user = user?.toDomain(),
             message = message?.toDomain(),
-            channel = channel.toDomain(
-                eventChatLastMessageAt = channel_last_message_at,
-            ),
-            channelLastMessageAt = channel_last_message_at,
+            channel = channel.toDomain(),
         )
     }
 
@@ -287,10 +280,7 @@ internal class EventMapping(
             channelType = channel_type,
             channelId = channel_id,
             message = message?.toDomain(),
-            channel = channel.toDomain(
-                eventChatLastMessageAt = channel_last_message_at,
-            ),
-            channelLastMessageAt = channel_last_message_at,
+            channel = channel.toDomain(),
         )
     }
 
@@ -307,10 +297,7 @@ internal class EventMapping(
             channelId = channel_id,
             user = user.toDomain(),
             message = message?.toDomain(),
-            channel = channel.toDomain(
-                eventChatLastMessageAt = channel_last_message_at,
-            ),
-            channelLastMessageAt = channel_last_message_at,
+            channel = channel.toDomain(),
         )
     }
 
@@ -326,7 +313,6 @@ internal class EventMapping(
             channelType = channel_type,
             channelId = channel_id,
             user = user.toDomain(),
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -352,7 +338,6 @@ internal class EventMapping(
             channelType = channel_type,
             channelId = channel_id,
             member = member.toDomain(),
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -369,7 +354,6 @@ internal class EventMapping(
             channelType = channel_type,
             channelId = channel_id,
             member = member.toDomain(),
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -383,7 +367,6 @@ internal class EventMapping(
             channelType = channel_type,
             channelId = channel_id,
             member = member.toDomain(),
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -401,7 +384,6 @@ internal class EventMapping(
             channelId = channel_id,
             message = message.toDomain(),
             hardDelete = hard_delete ?: false,
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -418,7 +400,6 @@ internal class EventMapping(
             channelType = channel_type,
             channelId = channel_id,
             thread = thread?.toDomain(),
-            channelLastMessageAt = channel_last_message_at,
             lastReadMessageId = last_read_message_id,
         )
     }
@@ -436,7 +417,6 @@ internal class EventMapping(
             channelType = channel_type,
             channelId = channel_id,
             message = message.toDomain(),
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -456,7 +436,6 @@ internal class EventMapping(
             watcherCount = watcher_count,
             totalUnreadCount = total_unread_count,
             unreadChannels = unread_channels,
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -471,13 +450,10 @@ internal class EventMapping(
             cid = cid,
             channelType = channel_type,
             channelId = channel_id,
-            channel = channel.toDomain(
-                eventChatLastMessageAt = channel_last_message_at,
-            ),
+            channel = channel.toDomain(),
             member = member.toDomain(),
             totalUnreadCount = total_unread_count,
             unreadChannels = unread_channels,
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -492,12 +468,9 @@ internal class EventMapping(
             cid = cid,
             channelType = channel_type,
             channelId = channel_id,
-            channel = channel.toDomain(
-                eventChatLastMessageAt = channel_last_message_at,
-            ),
+            channel = channel.toDomain(),
             totalUnreadCount = total_unread_count,
             unreadChannels = unread_channels,
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -526,12 +499,9 @@ internal class EventMapping(
                 cid = cid,
                 channelType = channel_type,
                 channelId = channel_id,
-                channel = channel.toDomain(
-                    eventChatLastMessageAt = channel_last_message_at,
-                ),
+                channel = channel.toDomain(),
                 totalUnreadCount = total_unread_count,
                 unreadChannels = unread_channels,
-                channelLastMessageAt = channel_last_message_at,
             )
         }
 
@@ -548,10 +518,7 @@ internal class EventMapping(
             channelId = channel_id,
             user = user.toDomain(),
             member = member.toDomain(),
-            channel = channel.toDomain(
-                eventChatLastMessageAt = channel_last_message_at,
-            ),
-            channelLastMessageAt = channel_last_message_at,
+            channel = channel.toDomain(),
         )
     }
 
@@ -568,10 +535,7 @@ internal class EventMapping(
             channelId = channel_id,
             user = user.toDomain(),
             member = member.toDomain(),
-            channel = channel.toDomain(
-                eventChatLastMessageAt = channel_last_message_at,
-            ),
-            channelLastMessageAt = channel_last_message_at,
+            channel = channel.toDomain(),
         )
     }
 
@@ -588,7 +552,6 @@ internal class EventMapping(
             channelId = channel_id,
             user = user.toDomain(),
             member = member.toDomain(),
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -610,7 +573,6 @@ internal class EventMapping(
             thread = thread?.toDomain(),
             unreadThreads = unread_threads,
             unreadThreadMessages = unread_thread_messages,
-            channelLastMessageAt = channel_last_message_at,
             lastReadMessageId = last_read_message_id,
         )
     }
@@ -635,7 +597,6 @@ internal class EventMapping(
             unreadMessages = unread_messages,
             threadId = thread_id,
             unreadThreads = unread_threads,
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -664,13 +625,10 @@ internal class EventMapping(
             cid = cid,
             channelType = channel_type,
             channelId = channel_id,
-            channel = channel.toDomain(
-                eventChatLastMessageAt = channel_last_message_at,
-            ),
+            channel = channel.toDomain(),
             message = message.toDomain(),
             totalUnreadCount = total_unread_count,
             unreadChannels = unread_channels,
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -685,14 +643,11 @@ internal class EventMapping(
                 channelId = channel_id,
                 channelType = channel_type,
                 message = message.toDomain(),
-                channel = channel.toDomain(
-                    eventChatLastMessageAt = channel_last_message_at,
-                ),
+                channel = channel.toDomain(),
                 createdAt = created_at.date,
                 rawCreatedAt = created_at.rawDate,
                 unreadThreads = unread_threads,
                 unreadThreadMessages = unread_thread_messages,
-                channelLastMessageAt = channel_last_message_at,
             )
         }
 
@@ -721,11 +676,8 @@ internal class EventMapping(
                 cid = cid,
                 channelType = channel_type,
                 channelId = channel_id,
-                channel = channel.toDomain(
-                    eventChatLastMessageAt = channel_last_message_at,
-                ),
+                channel = channel.toDomain(),
                 member = member.toDomain(),
-                channelLastMessageAt = channel_last_message_at,
             )
         }
 
@@ -743,7 +695,6 @@ internal class EventMapping(
             channelId = channel_id,
             message = message.toDomain(),
             reaction = reaction.toDomain(),
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -761,7 +712,6 @@ internal class EventMapping(
             channelId = channel_id,
             message = message.toDomain(),
             reaction = reaction.toDomain(),
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -779,7 +729,6 @@ internal class EventMapping(
             channelId = channel_id,
             message = message.toDomain(),
             reaction = reaction.toDomain(),
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -796,7 +745,6 @@ internal class EventMapping(
             channelType = channel_type,
             channelId = channel_id,
             parentId = parent_id,
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -813,7 +761,6 @@ internal class EventMapping(
             channelType = channel_type,
             channelId = channel_id,
             parentId = parent_id,
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -831,7 +778,6 @@ internal class EventMapping(
             user = user.toDomain(),
             expiration = expiration,
             shadow = shadow ?: false,
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -884,7 +830,6 @@ internal class EventMapping(
             channelType = channel_type,
             channelId = channel_id,
             user = user.toDomain(),
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -901,7 +846,6 @@ internal class EventMapping(
             channelType = channel_type,
             channelId = channel_id,
             user = user.toDomain(),
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -917,7 +861,6 @@ internal class EventMapping(
             cid = cid,
             channelType = channel_type,
             channelId = channel_id,
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -959,7 +902,6 @@ internal class EventMapping(
             channelType = channelType,
             channelId = channelId,
             poll = newPoll,
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -977,7 +919,6 @@ internal class EventMapping(
             channelType = channelType,
             channelId = channelId,
             poll = newPoll,
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -995,7 +936,6 @@ internal class EventMapping(
             channelType = channelType,
             channelId = channelId,
             poll = newPoll,
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -1024,7 +964,6 @@ internal class EventMapping(
             channelId = channelId,
             poll = newPoll,
             newVote = pollVote,
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -1043,7 +982,6 @@ internal class EventMapping(
             channelId = channelId,
             poll = poll.toDomain(),
             newAnswer = newAnswer,
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -1072,7 +1010,6 @@ internal class EventMapping(
             channelId = channelId,
             poll = newPoll,
             newVote = pollVote,
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -1092,7 +1029,6 @@ internal class EventMapping(
             channelId = channelId,
             poll = newPoll,
             removedVote = removedVote,
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -1133,7 +1069,6 @@ internal class EventMapping(
             user = user.toDomain(),
             channelType = channelType,
             channelId = channelId,
-            channelLastMessageAt = channel_last_message_at,
             aiState = ai_state,
             messageId = message_id,
         )
@@ -1152,7 +1087,6 @@ internal class EventMapping(
             cid = cid,
             channelType = channelType,
             channelId = channelId,
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
@@ -1169,7 +1103,6 @@ internal class EventMapping(
             user = user.toDomain(),
             channelType = channelType,
             channelId = channelId,
-            channelLastMessageAt = channel_last_message_at,
         )
     }
 
