@@ -17,7 +17,7 @@ jobs:
         with:
           app_id: ${{ secrets.APP_ID_OBTAIN_TOKEN }}
           private_key: ${{ secrets.APP_PRIVATE_KEY_OBTAIN_TOKEN }}
-      - uses: localazy/download@v1
+      - uses: localazy/download@v1.1.0
         with:
           read_key: ${{ secrets.LOCALAZY_READ_KEY }}
           write_key: ${{ secrets.LOCALAZY_WRITE_KEY }}
