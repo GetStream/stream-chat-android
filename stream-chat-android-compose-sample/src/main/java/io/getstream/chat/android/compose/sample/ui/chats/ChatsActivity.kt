@@ -328,12 +328,7 @@ class ChatsActivity : BaseConnectedActivity() {
             GroupChannelInfoScreen(
                 viewModelFactory = viewModelFactory,
                 viewModelKey = channelId,
-                topBar = { elevation ->
-                    GroupChannelInfoTopBar(
-                        elevation = elevation,
-                        onNavigationIconClick = onNavigationIconClick,
-                    )
-                },
+                onNavigationIconClick = onNavigationIconClick,
             )
         } else {
             GroupChannelInfoScreen(
