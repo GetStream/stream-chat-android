@@ -21,4 +21,6 @@
   <string name="stream_ui_message_list_attachment_invalid_url">"Le chargement a échoué en raison d\'une URL non valide."</string>
   <string name="stream_ui_message_list_attachment_load_failed">"Le chargement a échoué en raison d\'une erreur inconnue."</string>
   <string name="stream_ui_yesterday">"Hier"</string>
+  <string name="stream_ui_mention_list_empty">"Aucune mention n\'existe encore…"</string>
+  <string name="stream_ui_mention_list_error">"Une erreur est survenue"</string>
 </resources>

@@ -34,4 +34,6 @@
     <string name="stream_ui_message_list_attachment_invalid_url">Data gagal dimuat karena url tidak valid.</string>
     <string name="stream_ui_message_list_attachment_invalid_mime_type">Terjadi kesalahan. Tidak dapat membuka lampiran: %s</string>
     <string name="stream_ui_message_list_attachment_display_error">Terjadi kesalahan. Berkas tidak dapat ditampilkan</string>
+    <string name="stream_ui_mention_list_empty">Belum ada mention…</string>
+    <string name="stream_ui_mention_list_error">Terjadi kesalahan</string>
 </resources>
