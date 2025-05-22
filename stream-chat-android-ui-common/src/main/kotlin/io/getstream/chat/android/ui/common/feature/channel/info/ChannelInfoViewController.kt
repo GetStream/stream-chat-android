@@ -187,12 +187,6 @@ public class ChannelInfoViewController(
             is ChannelInfoViewAction.LeaveChannelConfirmationClick -> leaveChannel(action.quitMessage)
             is ChannelInfoViewAction.DeleteChannelClick -> _events.tryEmit(ChannelInfoViewEvent.DeleteChannelModal)
             is ChannelInfoViewAction.DeleteChannelConfirmationClick -> deleteChannel()
-            is ChannelInfoViewAction.MemberMessageClick ->
-                _events.tryEmit(ChannelInfoViewEvent.NavigateToChannel(channelId = "")) // TODO NavigateToChannel
-
-            is ChannelInfoViewAction.BanMemberClick -> banMember(action.member)
-            is ChannelInfoViewAction.UnbanMemberClick -> unbanMember(action.member)
-            is ChannelInfoViewAction.RemoveMemberClick -> removeMember(action.member)
         }
     }
 
@@ -225,10 +219,6 @@ public class ChannelInfoViewController(
             ChannelInfoViewEvent.MemberInfoModal(
                 cid = cid,
                 member = action.member,
-                options = buildMemberOptionList(
-                    member = action.member,
-                    capabilities = capabilities,
-                ),
             ),
         )
     }
@@ -338,50 +328,6 @@ public class ChannelInfoViewController(
         }
     }
 
-    private fun banMember(member: Member) {
-        logger.d { "[banMember] member: $member" }
-
-        scope.launch {
-            channelClient.banUser(
-                targetId = member.getUserId(),
-                reason = null,
-                timeout = null, // TODO add timeout to ban
-            ).await()
-                .onSuccess { /* no-op */ }
-                .onError { error ->
-                    logger.e { "[banMember] error: ${error.message}" }
-                    _events.tryEmit(ChannelInfoViewEvent.BanMemberError)
-                }
-        }
-    }
-
-    private fun unbanMember(member: Member) {
-        logger.d { "[unbanMember] member: $member" }
-
-        scope.launch {
-            channelClient.unbanUser(member.getUserId()).await()
-                .onSuccess { /* no-op */ }
-                .onError { error ->
-                    logger.e { "[unbanMember] error: ${error.message}" }
-                    _events.tryEmit(ChannelInfoViewEvent.UnbanMemberError)
-                }
-        }
-    }
-
-    private fun removeMember(member: Member) {
-        logger.d { "[removeMember] member: $member" }
-
-        removeMemberFromChannel(
-            memberId = member.getUserId(),
-            systemMessage = null,
-            onSuccess = { /* no-op */ },
-            onError = { error ->
-                logger.e { "[removeMember] error: ${error.message}" }
-                _events.tryEmit(ChannelInfoViewEvent.RemoveMemberError)
-            },
-        )
-    }
-
     private fun removeMemberFromChannel(
         memberId: String,
         systemMessage: Message?,
@@ -453,20 +399,6 @@ private fun buildChannelOptionList(
     }
     if (channelData.ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)) {
         add(ChannelInfoViewState.Content.Option.DeleteChannel)
-    }
-}
-
-private fun buildMemberOptionList(member: Member, capabilities: Set<String>) = buildList {
-    add(ChannelInfoViewState.Content.Option.MessageMember(member = member))
-    if (capabilities.contains(ChannelCapabilities.BAN_CHANNEL_MEMBERS)) {
-        if (member.banned) {
-            add(ChannelInfoViewState.Content.Option.UnbanMember(member = member))
-        } else {
-            add(ChannelInfoViewState.Content.Option.BanMember(member = member))
-        }
-    }
-    if (capabilities.contains(ChannelCapabilities.UPDATE_CHANNEL_MEMBERS)) {
-        add(ChannelInfoViewState.Content.Option.RemoveMember(member = member))
     }
 }
 

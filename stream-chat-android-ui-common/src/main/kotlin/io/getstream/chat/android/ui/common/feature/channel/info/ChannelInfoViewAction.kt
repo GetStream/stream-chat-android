@@ -110,32 +110,4 @@ public sealed interface ChannelInfoViewAction {
      * Represents the confirmation click action for deleting a channel.
      */
     public data object DeleteChannelConfirmationClick : ChannelInfoViewAction
-
-    /**
-     * Represents the click action to message the member.
-     *
-     * @param member The member to message.
-     */
-    public data class MemberMessageClick(val member: Member) : ChannelInfoViewAction
-
-    /**
-     * Represents the click action to ban the member.
-     *
-     * @param member The member to ban.
-     */
-    public data class BanMemberClick(val member: Member) : ChannelInfoViewAction
-
-    /**
-     * Represents the click action to unban the member.
-     *
-     * @param member The member to unban.
-     */
-    public data class UnbanMemberClick(val member: Member) : ChannelInfoViewAction
-
-    /**
-     * Represents the click action to remove the member.
-     *
-     * @param member The member to remove.
-     */
-    public data class RemoveMemberClick(val member: Member) : ChannelInfoViewAction
 }

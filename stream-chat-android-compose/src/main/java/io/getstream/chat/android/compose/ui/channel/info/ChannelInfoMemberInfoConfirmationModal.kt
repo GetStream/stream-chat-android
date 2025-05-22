@@ -39,6 +39,7 @@ import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMembe
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewEvent
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewEvent.BanMemberModal.Timeout
 
+@Suppress("LongMethod")
 @Composable
 internal fun ChannelInfoMemberInfoConfirmationModal(
     modal: ChannelInfoMemberViewEvent.Modal?,

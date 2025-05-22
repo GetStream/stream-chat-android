@@ -224,7 +224,7 @@ private fun GroupChannelInfoContent(
                 StreamHorizontalDivider(thickness = 8.dp)
             }
             items(content.options) { option ->
-                ChannelInfoContentOption(
+                ChannelInfoChannelOption(
                     option = option,
                     isGroupChannel = true,
                     onViewAction = onViewAction,

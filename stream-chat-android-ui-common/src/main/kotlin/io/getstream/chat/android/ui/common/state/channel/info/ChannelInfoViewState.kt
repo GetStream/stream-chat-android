@@ -106,34 +106,6 @@ public sealed interface ChannelInfoViewState {
              * Indicates an option to delete the channel.
              */
             public data object DeleteChannel : Option
-
-            /**
-             * Indicates an option to message the member.
-             *
-             * @param member The member to message.
-             */
-            public data class MessageMember(val member: Member) : Option
-
-            /**
-             * Indicates an option to ban the member.
-             *
-             * @param member The member to ban.
-             */
-            public data class BanMember(val member: Member) : Option
-
-            /**
-             * Indicates an option to unban the member.
-             *
-             * @param member The member to unban.
-             */
-            public data class UnbanMember(val member: Member) : Option
-
-            /**
-             * Indicates an option to remove the member from the channel.
-             *
-             * @param member The member to remove.
-             */
-            public data class RemoveMember(val member: Member) : Option
         }
     }
 }

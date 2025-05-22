@@ -177,7 +177,7 @@ private fun DirectChannelInfoContent(
                 )
                 LazyColumn {
                     items(content.options) { option ->
-                        ChannelInfoContentOption(
+                        ChannelInfoChannelOption(
                             option = option,
                             isGroupChannel = false,
                             onViewAction = onViewAction,
