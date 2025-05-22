@@ -93,9 +93,9 @@ internal fun ChannelInfoScreenModal(
                     stringResource(R.string.stream_ui_channel_info_option_delete_conversation)
                 },
                 message = if (isGroupChannel) {
-                    stringResource(R.string.stream_ui_channel_info_option_delete_group_confirmation)
+                    stringResource(R.string.stream_ui_channel_info_delete_group_modal_message)
                 } else {
-                    stringResource(R.string.stream_ui_channel_info_option_delete_conversation_confirmation)
+                    stringResource(R.string.stream_ui_channel_info_delete_conversation_modal_message)
                 },
                 onPositiveAction = {
                     onViewAction(ChannelInfoViewAction.DeleteChannelConfirmationClick)
@@ -113,9 +113,9 @@ internal fun ChannelInfoScreenModal(
                     stringResource(R.string.stream_ui_channel_info_option_leave_conversation)
                 },
                 message = if (isGroupChannel) {
-                    stringResource(R.string.stream_ui_channel_info_option_leave_group_confirmation)
+                    stringResource(R.string.stream_ui_channel_info_leave_group_modal_message)
                 } else {
-                    stringResource(R.string.stream_ui_channel_info_option_leave_conversation_confirmation)
+                    stringResource(R.string.stream_ui_channel_info_leave_conversation_modal_message)
                 },
                 onPositiveAction = {
                     // TODO Get quit message configuration from ChatTheme
@@ -132,7 +132,7 @@ internal fun ChannelInfoScreenModal(
 
             SimpleDialog(
                 title = stringResource(
-                    R.string.stream_ui_channel_info_member_option_ban_modal_title,
+                    R.string.stream_ui_channel_info_ban_member_modal_title,
                     member.user.name.takeIf(String::isNotBlank) ?: member.user.id,
                 ),
                 text = {
@@ -151,16 +151,16 @@ internal fun ChannelInfoScreenModal(
                                 val label = stringResource(
                                     when (timeout) {
                                         Timeout.OneHour ->
-                                            R.string.stream_ui_channel_info_member_option_ban_modal_timeout_one_hour
+                                            R.string.stream_ui_channel_info_ban_member_modal_timeout_one_hour
 
                                         Timeout.OneDay ->
-                                            R.string.stream_ui_channel_info_member_option_ban_modal_timeout_one_day
+                                            R.string.stream_ui_channel_info_ban_member_modal_timeout_one_day
 
                                         Timeout.OneWeek ->
-                                            R.string.stream_ui_channel_info_member_option_ban_modal_timeout_one_week
+                                            R.string.stream_ui_channel_info_ban_member_modal_timeout_one_week
 
                                         Timeout.NoTimeout ->
-                                            R.string.stream_ui_channel_info_member_option_ban_modal_no_timeout
+                                            R.string.stream_ui_channel_info_ban_member_modal_no_timeout
                                     },
                                 )
                                 Text(text = label)
@@ -184,9 +184,9 @@ internal fun ChannelInfoScreenModal(
         is ChannelInfoViewEvent.RemoveMemberModal -> {
             val member = modal.member
             SimpleDialog(
-                title = stringResource(R.string.stream_ui_channel_info_member_option_remove_member),
+                title = stringResource(R.string.stream_ui_channel_info_member_modal_option_remove_member),
                 message = stringResource(
-                    R.string.stream_ui_channel_info_member_option_remove_member_confirmation,
+                    R.string.stream_ui_channel_info_remove_member_modal_message,
                     member.user.name.takeIf(String::isNotBlank) ?: member.getUserId(),
                 ),
                 onPositiveAction = {
@@ -212,9 +212,9 @@ private fun HideChannelModalText(
     ) {
         Text(
             text = if (isGroupChannel) {
-                stringResource(R.string.stream_ui_channel_info_option_hide_group_confirmation)
+                stringResource(R.string.stream_ui_channel_info_hide_group_modal_message)
             } else {
-                stringResource(R.string.stream_ui_channel_info_option_hide_conversation_confirmation)
+                stringResource(R.string.stream_ui_channel_info_hide_conversation_modal_message)
             },
             color = ChatTheme.colors.textHighEmphasis,
             style = ChatTheme.typography.body,
@@ -232,9 +232,9 @@ private fun HideChannelModalText(
             )
             Text(
                 text = if (isGroupChannel) {
-                    stringResource(R.string.stream_ui_channel_info_option_hide_group_confirmation_clear_history)
+                    stringResource(R.string.stream_ui_channel_info_hide_group_modal_clear_history)
                 } else {
-                    stringResource(R.string.stream_ui_channel_info_option_hide_conversation_confirmation_clear_history)
+                    stringResource(R.string.stream_ui_channel_info_hide_conversation_modal_clear_history)
                 },
                 color = ChatTheme.colors.textLowEmphasis,
                 style = ChatTheme.typography.body,

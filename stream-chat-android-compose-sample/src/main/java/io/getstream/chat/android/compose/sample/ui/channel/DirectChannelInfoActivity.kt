@@ -109,26 +109,26 @@ class DirectChannelInfoActivity : BaseConnectedActivity() {
 
             ChannelInfoViewEvent.MuteChannelError,
             ChannelInfoViewEvent.UnmuteChannelError,
-            -> R.string.stream_ui_channel_info_option_mute_conversation_error
+            -> R.string.stream_ui_channel_info_mute_conversation_error
 
             ChannelInfoViewEvent.HideChannelError,
             ChannelInfoViewEvent.UnhideChannelError,
-            -> R.string.stream_ui_channel_info_option_hide_conversation_error
+            -> R.string.stream_ui_channel_info_hide_conversation_error
 
             ChannelInfoViewEvent.LeaveChannelError,
-            -> R.string.stream_ui_channel_info_option_leave_conversation_error
+            -> R.string.stream_ui_channel_info_leave_conversation_error
 
             ChannelInfoViewEvent.DeleteChannelError,
-            -> R.string.stream_ui_channel_info_option_delete_conversation_error
+            -> R.string.stream_ui_channel_info_delete_conversation_error
 
             ChannelInfoViewEvent.RemoveMemberError,
-            -> R.string.stream_ui_channel_info_member_option_remove_member_error
+            -> R.string.stream_ui_channel_info_remove_member_error
 
             ChannelInfoViewEvent.BanMemberError,
-            -> R.string.stream_ui_channel_info_member_option_ban_member_error
+            -> R.string.stream_ui_channel_info_ban_member_error
 
             ChannelInfoViewEvent.UnbanMemberError,
-            -> R.string.stream_ui_channel_info_member_option_unban_member_error
+            -> R.string.stream_ui_channel_info_unban_member_error
         }
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }

@@ -34,7 +34,7 @@ internal fun ChannelInfoMemberOption(
         is ChannelInfoMemberViewState.Content.Option.MessageMember -> {
             ChannelInfoOptionNavigationButton(
                 icon = R.drawable.stream_compose_empty_channels,
-                text = stringResource(R.string.stream_ui_channel_info_member_option_message_member),
+                text = stringResource(R.string.stream_ui_channel_info_member_modal_option_message_member),
                 onClick = { onViewAction(ChannelInfoMemberViewAction.MessageMemberClick) },
             )
         }
@@ -43,7 +43,7 @@ internal fun ChannelInfoMemberOption(
             CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.errorAccent)) {
                 ChannelInfoOptionButton(
                     icon = R.drawable.stream_ic_ban,
-                    text = stringResource(R.string.stream_ui_channel_info_member_option_ban_member),
+                    text = stringResource(R.string.stream_ui_channel_info_member_modal_option_ban_member),
                     onClick = { onViewAction(ChannelInfoMemberViewAction.BanMemberClick) },
                 )
             }
@@ -53,7 +53,7 @@ internal fun ChannelInfoMemberOption(
             CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.errorAccent)) {
                 ChannelInfoOptionButton(
                     icon = R.drawable.stream_ic_ban,
-                    text = stringResource(R.string.stream_ui_channel_info_member_option_unban_member),
+                    text = stringResource(R.string.stream_ui_channel_info_member_modal_option_unban_member),
                     onClick = { onViewAction(ChannelInfoMemberViewAction.UnbanMemberClick) },
                 )
             }
@@ -63,7 +63,7 @@ internal fun ChannelInfoMemberOption(
             CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.errorAccent)) {
                 ChannelInfoOptionButton(
                     icon = R.drawable.stream_compose_ic_person_remove,
-                    text = stringResource(R.string.stream_ui_channel_info_member_option_remove_member),
+                    text = stringResource(R.string.stream_ui_channel_info_member_modal_option_remove_member),
                     onClick = { onViewAction(ChannelInfoMemberViewAction.RemoveMemberClick) },
                 )
             }

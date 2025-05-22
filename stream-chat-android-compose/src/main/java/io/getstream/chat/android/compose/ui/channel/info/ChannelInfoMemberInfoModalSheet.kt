@@ -183,16 +183,16 @@ private fun ChannelInfoMemberInfoModalSheetContent(
 
 private fun Member.getBanExpirationText(context: Context): String {
     val expires = banExpires
-        ?: return context.getString(R.string.stream_ui_channel_info_member_option_ban_no_expiration)
+        ?: return context.getString(R.string.stream_ui_channel_info_member_modal_ban_no_expiration)
 
     val currentTime = System.currentTimeMillis()
     val diffInMillis = expires.time - currentTime
 
     return if (diffInMillis <= 0) {
-        context.getString(R.string.stream_ui_channel_info_member_option_ban_expired)
+        context.getString(R.string.stream_ui_channel_info_member_modal_ban_expired)
     } else {
         context.getString(
-            R.string.stream_ui_channel_info_member_option_ban_expires_at,
+            R.string.stream_ui_channel_info_member_modal_ban_expires_at,
             DateUtils.getRelativeTimeSpanString(
                 expires.time,
                 currentTime,
