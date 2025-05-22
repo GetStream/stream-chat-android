@@ -189,7 +189,6 @@ internal object EventArguments {
     private val channel = Channel(
         id = channelId,
         type = channelType,
-        channelLastMessageAt = date,
         createdAt = date,
         updatedAt = date,
         createdBy = user,
@@ -227,7 +226,6 @@ internal object EventArguments {
         channelType = channelType,
         channelId = channelId,
         channel = channel,
-        channelLastMessageAt = date,
         user = user,
     )
 
@@ -239,7 +237,6 @@ internal object EventArguments {
         channelType = channelType,
         channelId = channelId,
         user = user,
-        channelLastMessageAt = date,
         clearHistory = true,
     )
 
@@ -251,7 +248,6 @@ internal object EventArguments {
         channelType = channelType,
         channelId = channelId,
         channel = channel,
-        channelLastMessageAt = date,
         user = user,
         message = null,
     )
@@ -263,7 +259,6 @@ internal object EventArguments {
         channelType = channelType,
         channelId = channelId,
         channel = channel,
-        channelLastMessageAt = date,
         user = null,
         message = null,
     )
@@ -276,7 +271,6 @@ internal object EventArguments {
         channelId = channelId,
         message = message,
         channel = channel,
-        channelLastMessageAt = date,
     )
     private val channelUpdatedByUserEvent = ChannelUpdatedByUserEvent(
         type = EventType.CHANNEL_UPDATED,
@@ -287,7 +281,6 @@ internal object EventArguments {
         channelId = channelId,
         user = user,
         channel = channel,
-        channelLastMessageAt = date,
         message = message,
     )
     private val channelVisibleEvent = ChannelVisibleEvent(
@@ -298,7 +291,6 @@ internal object EventArguments {
         channelType = channelType,
         channelId = channelId,
         user = user,
-        channelLastMessageAt = date,
     )
     private val memberAddedEvent = MemberAddedEvent(
         type = EventType.MEMBER_ADDED,
@@ -309,7 +301,6 @@ internal object EventArguments {
         channelType = channelType,
         channelId = channelId,
         member = member,
-        channelLastMessageAt = date,
     )
     private val memberRemovedEvent = MemberRemovedEvent(
         type = EventType.MEMBER_REMOVED,
@@ -320,7 +311,6 @@ internal object EventArguments {
         channelType = channelType,
         channelId = channelId,
         member = member,
-        channelLastMessageAt = date,
     )
     private val memberUpdatedEvent = MemberUpdatedEvent(
         type = EventType.MEMBER_UPDATED,
@@ -331,7 +321,6 @@ internal object EventArguments {
         channelType = channelType,
         channelId = channelId,
         member = member,
-        channelLastMessageAt = date,
     )
     private val messageDeletedEvent = MessageDeletedEvent(
         type = EventType.MESSAGE_DELETED,
@@ -343,7 +332,6 @@ internal object EventArguments {
         channelId = channelId,
         message = message,
         hardDelete = false,
-        channelLastMessageAt = date,
     )
     private val messageDeletedServerSideEvent = MessageDeletedEvent(
         type = EventType.MESSAGE_DELETED,
@@ -355,7 +343,6 @@ internal object EventArguments {
         channelId = channelId,
         message = message,
         hardDelete = true,
-        channelLastMessageAt = date,
     )
     private val messageReadEvent = MessageReadEvent(
         type = EventType.MESSAGE_READ,
@@ -365,7 +352,6 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        channelLastMessageAt = date,
         lastReadMessageId = message.id,
     )
     private val messageUpdatedEvent = MessageUpdatedEvent(
@@ -377,7 +363,6 @@ internal object EventArguments {
         channelType = channelType,
         channelId = channelId,
         message = message,
-        channelLastMessageAt = date,
     )
     private val notificationAddedToChannelEvent = NotificationAddedToChannelEvent(
         type = EventType.NOTIFICATION_ADDED_TO_CHANNEL,
@@ -390,7 +375,6 @@ internal object EventArguments {
         member = member,
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
-        channelLastMessageAt = date,
     )
     private val notificationChannelDeletedEvent = NotificationChannelDeletedEvent(
         type = EventType.NOTIFICATION_CHANNEL_DELETED,
@@ -400,7 +384,6 @@ internal object EventArguments {
         channelType = channelType,
         channelId = channelId,
         channel = channel,
-        channelLastMessageAt = date,
     )
     private val notificationChannelTruncatedEvent = NotificationChannelTruncatedEvent(
         type = EventType.NOTIFICATION_CHANNEL_TRUNCATED,
@@ -410,7 +393,6 @@ internal object EventArguments {
         channelType = channelType,
         channelId = channelId,
         channel = channel,
-        channelLastMessageAt = date,
     )
     private val notificationInviteAcceptedEvent = NotificationInviteAcceptedEvent(
         type = EventType.NOTIFICATION_INVITE_ACCEPTED,
@@ -422,7 +404,6 @@ internal object EventArguments {
         user = user,
         member = member,
         channel = channel,
-        channelLastMessageAt = date,
     )
     private val notificationInviteRejectedEvent = NotificationInviteRejectedEvent(
         type = EventType.NOTIFICATION_INVITE_REJECTED,
@@ -434,7 +415,6 @@ internal object EventArguments {
         user = user,
         member = member,
         channel = channel,
-        channelLastMessageAt = date,
     )
     private val notificationInvitedEvent = NotificationInvitedEvent(
         type = EventType.NOTIFICATION_INVITED,
@@ -445,7 +425,6 @@ internal object EventArguments {
         channelId = channelId,
         user = user,
         member = member,
-        channelLastMessageAt = date,
     )
     private val notificationMarkReadEvent = NotificationMarkReadEvent(
         type = EventType.NOTIFICATION_MARK_READ,
@@ -457,7 +436,6 @@ internal object EventArguments {
         channelId = channelId,
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
-        channelLastMessageAt = date,
         lastReadMessageId = message.id,
     )
     private val notificationMarkUnreadEvent = NotificationMarkUnreadEvent(
@@ -474,7 +452,6 @@ internal object EventArguments {
         firstUnreadMessageId = message.id,
         lastReadMessageAt = date,
         lastReadMessageId = parentMessageId,
-        channelLastMessageAt = date,
     )
     private val notificationMessageNewEvent = NotificationMessageNewEvent(
         type = EventType.NOTIFICATION_MESSAGE_NEW,
@@ -487,7 +464,6 @@ internal object EventArguments {
         message = message,
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
-        channelLastMessageAt = date,
     )
     private val notificationRemovedFromChannelEvent = NotificationRemovedFromChannelEvent(
         type = EventType.NOTIFICATION_REMOVED_FROM_CHANNEL,
@@ -499,7 +475,6 @@ internal object EventArguments {
         channelId = channelId,
         channel = channel,
         member = member,
-        channelLastMessageAt = date,
     )
     private val reactionDeletedEvent = ReactionDeletedEvent(
         type = EventType.REACTION_DELETED,
@@ -511,7 +486,6 @@ internal object EventArguments {
         channelId = channelId,
         message = message,
         reaction = reaction,
-        channelLastMessageAt = date,
     )
     private val reactionNewEvent = ReactionNewEvent(
         type = EventType.REACTION_NEW,
@@ -523,7 +497,6 @@ internal object EventArguments {
         channelId = channelId,
         message = message,
         reaction = reaction,
-        channelLastMessageAt = date,
     )
     private val reactionUpdateEvent = ReactionUpdateEvent(
         type = EventType.REACTION_UPDATED,
@@ -535,7 +508,6 @@ internal object EventArguments {
         channelId = channelId,
         message = message,
         reaction = reaction,
-        channelLastMessageAt = date,
     )
     private val typingStartEvent = TypingStartEvent(
         type = EventType.TYPING_START,
@@ -546,7 +518,6 @@ internal object EventArguments {
         channelType = channelType,
         channelId = channelId,
         parentId = parentMessageId,
-        channelLastMessageAt = date,
     )
     private val typingStopEvent = TypingStopEvent(
         type = EventType.TYPING_STOP,
@@ -557,7 +528,6 @@ internal object EventArguments {
         channelType = channelType,
         channelId = channelId,
         parentId = parentMessageId,
-        channelLastMessageAt = date,
     )
     private val channelUserBannedEvent = ChannelUserBannedEvent(
         type = EventType.USER_BANNED,
@@ -569,7 +539,6 @@ internal object EventArguments {
         user = user,
         expiration = date,
         shadow = false,
-        channelLastMessageAt = date,
     )
     private val globalUserBannedEvent = GlobalUserBannedEvent(
         type = EventType.USER_BANNED,
@@ -598,7 +567,6 @@ internal object EventArguments {
         channelType = channelType,
         channelId = channelId,
         user = user,
-        channelLastMessageAt = date,
     )
     private val userStopWatchingEvent = UserStopWatchingEvent(
         type = EventType.USER_WATCHING_STOP,
@@ -609,7 +577,6 @@ internal object EventArguments {
         channelType = channelType,
         channelId = channelId,
         user = user,
-        channelLastMessageAt = date,
     )
     private val channelUserUnbannedEvent = ChannelUserUnbannedEvent(
         type = EventType.USER_UNBANNED,
@@ -619,7 +586,6 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        channelLastMessageAt = date,
     )
     private val globalUserUnbannedEvent = GlobalUserUnbannedEvent(
         type = EventType.USER_UNBANNED,
@@ -670,7 +636,6 @@ internal object EventArguments {
         watcherCount = watcherCount,
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
-        channelLastMessageAt = date,
     )
     private val newMessageWithoutUnreadCountsEvent = NewMessageEvent(
         type = EventType.MESSAGE_NEW,
@@ -682,7 +647,6 @@ internal object EventArguments {
         channelId = channelId,
         message = message,
         watcherCount = watcherCount,
-        channelLastMessageAt = date,
     )
     private val unknownEvent = UnknownEvent(
         type = EventType.UNKNOWN,

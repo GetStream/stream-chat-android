@@ -47,7 +47,7 @@ internal class WhenUpdateLastMessage : BaseRepositoryFacadeTest() {
         val after = Date(2000)
         val outdatedMessage = randomMessage(id = "messageId1", createdAt = before)
         val newLastMessage = randomMessage(id = "messageId2", createdAt = after)
-        val channel = randomChannel(messages = listOf(newLastMessage), channelLastMessageAt = after)
+        val channel = randomChannel(messages = listOf(newLastMessage))
         whenever(channels.selectChannel(eq("cid"))) doReturn channel
 
         sut.updateLastMessageForChannel("cid", outdatedMessage)
