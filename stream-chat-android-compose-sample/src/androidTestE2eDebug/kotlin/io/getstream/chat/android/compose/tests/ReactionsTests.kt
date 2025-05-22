@@ -219,7 +219,7 @@ class ReactionsTests : StreamTestCase() {
         step("AND user becomes offline") {
             participantRobot.addReaction(type = ReactionType.LIKE, delay)
             device.disableInternetConnection()
-            userRobot.sleep((delay + 1).seconds)
+            userRobot.sleep((delay + delay).seconds)
         }
         step("WHEN participant adds a reaction") {
             // this action has been completed above with given delay,
