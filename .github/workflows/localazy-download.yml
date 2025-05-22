@@ -5,6 +5,8 @@ on:
     # Every midnight
     - cron: "0 0 * * *"
 
+  workflow_dispatch:
+
 jobs:
   localazy-download:
     name: Download strings from Localazy
