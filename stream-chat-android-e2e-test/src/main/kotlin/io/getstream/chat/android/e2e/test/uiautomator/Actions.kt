@@ -16,11 +16,10 @@
 
 package io.getstream.chat.android.compose.uiautomator
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.test.uiautomator.StaleObjectException
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
@@ -99,7 +98,7 @@ public fun UiDevice.disableInternetConnection() {
     executeShellCommand("svc wifi disable")
 }
 
-@RequiresApi(Build.VERSION_CODES.M)
+@SuppressLint("NewApi")
 public fun UiDevice.waitForInternetConnection(timeoutMs: Long = 10000, intervalMs: Long = 500) {
     val connectivityManager = appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
@@ -113,7 +112,7 @@ public fun UiDevice.waitForInternetConnection(timeoutMs: Long = 10000, intervalM
         Thread.sleep(intervalMs)
     }
 
-    throw RuntimeException("There is no internet connection.")
+    throw IllegalStateException("There is no internet connection.")
 }
 
 public fun UiDevice.dumpWindowHierarchy() {
