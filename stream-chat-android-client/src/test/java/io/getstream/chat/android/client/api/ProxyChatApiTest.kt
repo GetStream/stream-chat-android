@@ -20,15 +20,19 @@ import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.utils.RetroSuccess
+import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
+import io.getstream.result.Result
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.never
+import org.mockito.kotlin.spy
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
@@ -46,8 +50,9 @@ internal class ProxyChatApiTest {
             .doReturn(RetroSuccess(message).toRetrofitCall())
         val proxyApi = ProxyChatApi(originalApi, UserScope(ClientScope()), null)
         // When
-        proxyApi.sendMessage(channelType, channelId, message).await()
+        val result = proxyApi.sendMessage(channelType, channelId, message).await()
         // Then
+        verifySuccess(result, message)
         verify(originalApi).sendMessage(channelType, channelId, message)
     }
 
@@ -58,11 +63,16 @@ internal class ProxyChatApiTest {
         val channelId = randomString()
         val message = randomMessage()
         val originalApi = mock<ChatApi>()
-        val sendMessageInterceptor = mock<SendMessageInterceptor>()
+        val sendMessageInterceptor = spy(object : SendMessageInterceptor {
+            override fun sendMessage(channelType: String, channelId: String, message: Message): Result<Message> {
+                return Result.Success(message)
+            }
+        })
         val proxyApi = ProxyChatApi(originalApi, UserScope(ClientScope()), sendMessageInterceptor)
         // When
-        proxyApi.sendMessage(channelType, channelId, message).await()
+        val result = proxyApi.sendMessage(channelType, channelId, message).await()
         // Then
+        verifySuccess(result, message)
         verify(originalApi, never()).sendMessage(any(), any(), any())
         verify(sendMessageInterceptor).sendMessage(channelType, channelId, message)
     }
