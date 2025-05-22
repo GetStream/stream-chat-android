@@ -26,21 +26,9 @@ public final class io/getstream/chat/android/ui/common/feature/channel/info/Chan
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewAction$BanMemberConfirmationClick : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewAction {
+public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewAction$MessageMemberClick : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewAction {
 	public static final field $stable I
-	public fun <init> (Ljava/lang/Integer;)V
-	public final fun component1 ()Ljava/lang/Integer;
-	public final fun copy (Ljava/lang/Integer;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewAction$BanMemberConfirmationClick;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewAction$BanMemberConfirmationClick;Ljava/lang/Integer;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewAction$BanMemberConfirmationClick;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getTimeoutInMinutes ()Ljava/lang/Integer;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewAction$MemberMessageClick : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewAction {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewAction$MemberMessageClick;
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewAction$MessageMemberClick;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -49,14 +37,6 @@ public final class io/getstream/chat/android/ui/common/feature/channel/info/Chan
 public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewAction$RemoveMemberClick : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewAction {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewAction$RemoveMemberClick;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewAction$RemoveMemberConfirmationClick : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewAction {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewAction$RemoveMemberConfirmationClick;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -73,94 +53,69 @@ public final class io/getstream/chat/android/ui/common/feature/channel/info/Chan
 public abstract interface class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent {
 }
 
-public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$BanMemberError : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$Error {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$BanMemberError;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$BanMemberModal : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$Modal {
+public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$BanMember : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/models/Member;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/Member;
-	public final fun copy (Lio/getstream/chat/android/models/Member;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$BanMemberModal;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$BanMemberModal;Lio/getstream/chat/android/models/Member;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$BanMemberModal;
+	public final fun copy (Lio/getstream/chat/android/models/Member;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$BanMember;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$BanMember;Lio/getstream/chat/android/models/Member;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$BanMember;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getMember ()Lio/getstream/chat/android/models/Member;
-	public final fun getTimeouts ()Ljava/util/List;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$BanMemberModal$Timeout : java/lang/Enum {
-	public static final field NoTimeout Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$BanMemberModal$Timeout;
-	public static final field OneDay Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$BanMemberModal$Timeout;
-	public static final field OneHour Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$BanMemberModal$Timeout;
-	public static final field OneWeek Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$BanMemberModal$Timeout;
-	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public final fun getValueInMinutes ()Ljava/lang/Integer;
-	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$BanMemberModal$Timeout;
-	public static fun values ()[Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$BanMemberModal$Timeout;
-}
-
-public abstract interface class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$Error : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent {
-}
-
-public abstract interface class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$Modal : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent {
-}
-
-public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$NavigateToChannel : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$Navigation {
+public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$MessageMember : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent {
 	public static final field $stable I
 	public fun <init> (Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$NavigateToChannel;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$NavigateToChannel;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$NavigateToChannel;
+	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$MessageMember;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$MessageMember;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$MessageMember;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getChannelId ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public abstract class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$Navigation : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent {
-	public static final field $stable I
-	public synthetic fun <init> (Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$Navigation$Reason;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public fun getReason ()Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$Navigation$Reason;
-}
-
-public abstract interface class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$Navigation$Reason {
-}
-
-public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$RemoveMemberError : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$Error {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$RemoveMemberError;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$RemoveMemberModal : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$Modal {
+public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$RemoveMember : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/models/Member;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/Member;
-	public final fun copy (Lio/getstream/chat/android/models/Member;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$RemoveMemberModal;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$RemoveMemberModal;Lio/getstream/chat/android/models/Member;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$RemoveMemberModal;
+	public final fun copy (Lio/getstream/chat/android/models/Member;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$RemoveMember;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$RemoveMember;Lio/getstream/chat/android/models/Member;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$RemoveMember;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getMember ()Lio/getstream/chat/android/models/Member;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$UnbanMemberError : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$Error {
+public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$UnbanMember : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent {
 	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$UnbanMemberError;
+	public fun <init> (Lio/getstream/chat/android/models/Member;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/Member;
+	public final fun copy (Lio/getstream/chat/android/models/Member;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$UnbanMember;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$UnbanMember;Lio/getstream/chat/android/models/Member;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$UnbanMember;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMember ()Lio/getstream/chat/android/models/Member;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
 public abstract interface class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction {
+}
+
+public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction$BanMemberConfirmationClick : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Ljava/lang/Integer;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/Integer;
+	public final fun copy (Ljava/lang/String;Ljava/lang/Integer;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction$BanMemberConfirmationClick;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction$BanMemberConfirmationClick;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction$BanMemberConfirmationClick;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMemberId ()Ljava/lang/String;
+	public final fun getTimeoutInMinutes ()Ljava/lang/Integer;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction$CollapseMembersClick : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction {
@@ -263,6 +218,18 @@ public final class io/getstream/chat/android/ui/common/feature/channel/info/Chan
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction$RemoveMemberConfirmationClick : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction$RemoveMemberConfirmationClick;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction$RemoveMemberConfirmationClick;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction$RemoveMemberConfirmationClick;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMemberId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction$RenameChannelClick : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction {
 	public static final field $stable I
 	public fun <init> (Ljava/lang/String;)V
@@ -312,6 +279,30 @@ public final class io/getstream/chat/android/ui/common/feature/channel/info/Chan
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$BanMemberModal : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$Modal {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/models/Member;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/Member;
+	public final fun copy (Lio/getstream/chat/android/models/Member;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$BanMemberModal;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$BanMemberModal;Lio/getstream/chat/android/models/Member;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$BanMemberModal;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMember ()Lio/getstream/chat/android/models/Member;
+	public final fun getTimeouts ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$BanMemberModal$Timeout : java/lang/Enum {
+	public static final field NoTimeout Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$BanMemberModal$Timeout;
+	public static final field OneDay Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$BanMemberModal$Timeout;
+	public static final field OneHour Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$BanMemberModal$Timeout;
+	public static final field OneWeek Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$BanMemberModal$Timeout;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public final fun getValueInMinutes ()Ljava/lang/Integer;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$BanMemberModal$Timeout;
+	public static fun values ()[Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$BanMemberModal$Timeout;
 }
 
 public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$DeleteChannelError : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$Error {
@@ -447,6 +438,18 @@ public final class io/getstream/chat/android/ui/common/feature/channel/info/Chan
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$RemoveMemberError;
 	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$RemoveMemberModal : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$Modal {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/models/Member;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/Member;
+	public final fun copy (Lio/getstream/chat/android/models/Member;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$RemoveMemberModal;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$RemoveMemberModal;Lio/getstream/chat/android/models/Member;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$RemoveMemberModal;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMember ()Lio/getstream/chat/android/models/Member;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
