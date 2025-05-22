@@ -20,4 +20,6 @@
   <string name="stream_ui_message_list_attachment_invalid_url">"Caricamento non riuscito a causa di un URL non valido."</string>
   <string name="stream_ui_message_list_attachment_load_failed">"Caricamento non riuscito a causa di un errore sconosciuto."</string>
   <string name="stream_ui_yesterday">"Ieri"</string>
+  <string name="stream_ui_mention_list_empty">"Non esistono ancora menzioni…"</string>
+  <string name="stream_ui_mention_list_error">"Si è verificato un errore"</string>
 </resources>
