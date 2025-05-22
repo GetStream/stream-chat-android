@@ -17,8 +17,7 @@
       },
       {
         "pattern": "stream-chat-android-ui-components/src/main/res/values/strings*.xml",
-        "file": "strings-ui-components.xml",
-        "lang": "en"
+        "file": "strings-ui-components.xml"
       },
       {
         "pattern": "stream-chat-android-ui-utils/src/main/res/values/strings.xml",
