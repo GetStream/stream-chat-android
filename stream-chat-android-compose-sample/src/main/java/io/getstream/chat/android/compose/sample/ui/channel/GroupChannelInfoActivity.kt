@@ -120,14 +120,14 @@ class GroupChannelInfoActivity : BaseConnectedActivity() {
             ChannelInfoViewEvent.DeleteChannelError,
             -> R.string.stream_ui_channel_info_option_delete_group_error
 
-            ChannelInfoViewEvent.RemoveMemberError,
-            -> R.string.stream_ui_channel_info_member_option_remove_member_error
-
             ChannelInfoViewEvent.BanMemberError,
             -> R.string.stream_ui_channel_info_member_option_ban_member_error
 
             ChannelInfoViewEvent.UnbanMemberError,
             -> R.string.stream_ui_channel_info_member_option_unban_member_error
+
+            ChannelInfoViewEvent.RemoveMemberError,
+            -> R.string.stream_ui_channel_info_member_option_remove_member_error
         }
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }

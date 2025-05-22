@@ -103,7 +103,9 @@
     <string name="stream_ui_channel_info_option_delete_group_error">Failed to delete group</string>
     <string name="stream_ui_channel_info_member_option_message_member">Message</string>
     <string name="stream_ui_channel_info_member_option_ban_member">Ban</string>
-    <string name="stream_ui_channel_info_member_option_ban_modal_title">Baning %s for:</string>
+    <string name="stream_ui_channel_info_member_option_unban_member">Unban</string>
+    <string name="stream_ui_channel_info_member_option_remove_member">Remove from group</string>
+    <string name="stream_ui_channel_info_member_option_ban_modal_title">Banning %s for:</string>
     <string name="stream_ui_channel_info_member_option_ban_modal_timeout_one_hour">One hour</string>
     <string name="stream_ui_channel_info_member_option_ban_modal_timeout_one_day">One day</string>
     <string name="stream_ui_channel_info_member_option_ban_modal_timeout_one_week">One week</string>
@@ -112,9 +114,7 @@
     <string name="stream_ui_channel_info_member_option_ban_expires_at">Ban expires %s</string>
     <string name="stream_ui_channel_info_member_option_ban_expired">Ban has already expired</string>
     <string name="stream_ui_channel_info_member_option_ban_member_error">Failed to ban member</string>
-    <string name="stream_ui_channel_info_member_option_unban_member">Unban</string>
     <string name="stream_ui_channel_info_member_option_unban_member_error">Failed to unban member</string>
-    <string name="stream_ui_channel_info_member_option_remove_member">Remove from group</string>
     <string name="stream_ui_channel_info_member_option_remove_member_confirmation">Are you sure you want to remove\n%s ?</string>
     <string name="stream_ui_channel_info_member_option_remove_member_error">Failed to remove member</string>
 

@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewEvent
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewController
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
@@ -67,5 +68,12 @@ public class ChannelInfoViewModel(
      */
     public fun onViewAction(action: ChannelInfoViewAction) {
         controller.onViewAction(action)
+    }
+
+    /**
+     * @see [ChannelInfoViewController.onMemberViewEvent]
+     */
+    public fun onMemberViewEvent(event: ChannelInfoMemberViewEvent) {
+        controller.onMemberViewEvent(event)
     }
 }

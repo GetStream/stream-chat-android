@@ -35,7 +35,7 @@ internal fun ChannelInfoMemberOption(
             ChannelInfoOptionNavigationButton(
                 icon = R.drawable.stream_compose_empty_channels,
                 text = stringResource(R.string.stream_ui_channel_info_member_option_message_member),
-                onClick = { onViewAction(ChannelInfoMemberViewAction.MemberMessageClick) },
+                onClick = { onViewAction(ChannelInfoMemberViewAction.MessageMemberClick) },
             )
         }
 

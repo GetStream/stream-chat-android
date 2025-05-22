@@ -106,6 +106,7 @@ public fun DirectChannelInfoScreen(
         modal = modal,
         isGroupChannel = false,
         onViewAction = viewModel::onViewAction,
+        onMemberViewEvent = viewModel::onMemberViewEvent,
         onDismiss = { modal = null },
     )
 }

@@ -187,6 +187,27 @@ public class ChannelInfoViewController(
             is ChannelInfoViewAction.LeaveChannelConfirmationClick -> leaveChannel(action.quitMessage)
             is ChannelInfoViewAction.DeleteChannelClick -> _events.tryEmit(ChannelInfoViewEvent.DeleteChannelModal)
             is ChannelInfoViewAction.DeleteChannelConfirmationClick -> deleteChannel()
+            is ChannelInfoViewAction.BanMemberConfirmationClick -> banMember(action.memberId, action.timeoutInMinutes)
+            is ChannelInfoViewAction.RemoveMemberConfirmationClick -> removeMember(action.memberId)
+        }
+    }
+
+    /**
+     * Propagates events from the [ChannelInfoMemberViewEvent] to the [ChannelInfoViewEvent].
+     */
+    public fun onMemberViewEvent(event: ChannelInfoMemberViewEvent) {
+        logger.d { "[onMemberViewEvent] event: $event" }
+        when (event) {
+            // https://linear.app/stream/issue/AND-567/compose-navigate-to-messages-from-the-member-modal-sheet-of-channel
+            is ChannelInfoMemberViewEvent.MessageMember -> Unit
+
+            is ChannelInfoMemberViewEvent.BanMember ->
+                _events.tryEmit(ChannelInfoViewEvent.BanMemberModal(event.member))
+
+            is ChannelInfoMemberViewEvent.UnbanMember -> unbanMember(event.member.getUserId())
+
+            is ChannelInfoMemberViewEvent.RemoveMember ->
+                _events.tryEmit(ChannelInfoViewEvent.RemoveMemberModal(event.member))
         }
     }
 
@@ -326,6 +347,50 @@ public class ChannelInfoViewController(
                     _events.tryEmit(ChannelInfoViewEvent.DeleteChannelError)
                 }
         }
+    }
+
+    private fun banMember(memberId: String, timeout: Int?) {
+        logger.d { "[banMember] memberId: $memberId" }
+
+        scope.launch {
+            channelClient.banUser(
+                targetId = memberId,
+                reason = null,
+                timeout = timeout,
+            ).await()
+                .onSuccess { /* no-op */ }
+                .onError { error ->
+                    logger.e { "[banMember] error: ${error.message}" }
+                    _events.tryEmit(ChannelInfoViewEvent.BanMemberError)
+                }
+        }
+    }
+
+    private fun unbanMember(memberId: String) {
+        logger.d { "[unbanMember] memberId: $memberId" }
+
+        scope.launch {
+            channelClient.unbanUser(memberId).await()
+                .onSuccess { /* no-op */ }
+                .onError { error ->
+                    logger.e { "[unbanMember] error: ${error.message}" }
+                    _events.tryEmit(ChannelInfoViewEvent.UnbanMemberError)
+                }
+        }
+    }
+
+    private fun removeMember(memberId: String) {
+        logger.d { "[removeMember] memberId: $memberId" }
+
+        removeMemberFromChannel(
+            memberId = memberId,
+            systemMessage = null,
+            onSuccess = { /* no-op */ },
+            onError = { error ->
+                logger.e { "[removeMember] error: ${error.message}" }
+                _events.tryEmit(ChannelInfoViewEvent.RemoveMemberError)
+            },
+        )
     }
 
     private fun removeMemberFromChannel(

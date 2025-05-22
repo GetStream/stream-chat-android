@@ -31,17 +31,6 @@ public sealed interface ChannelInfoViewEvent {
     public sealed interface Modal : ChannelInfoViewEvent
 
     /**
-     * Indicates an event to present a member information modal.
-     *
-     * @param cid The full channel identifier (e.g., "messaging:123").
-     * @param member The member whose information is to be displayed.
-     */
-    public data class MemberInfoModal(
-        val cid: String,
-        val member: Member,
-    ) : Modal
-
-    /**
      * Indicates an event to present a modal for hiding a channel.
      */
     public data object HideChannelModal : Modal
@@ -55,6 +44,65 @@ public sealed interface ChannelInfoViewEvent {
      * Indicates an event to present a modal for deleting a channel.
      */
     public data object DeleteChannelModal : Modal
+
+    /**
+     * Indicates an event to present a member information modal.
+     *
+     * @param cid The full channel identifier (e.g., "messaging:123").
+     * @param member The member whose information is to be displayed.
+     */
+    public data class MemberInfoModal(
+        val cid: String,
+        val member: Member,
+    ) : Modal
+
+    /**
+     * Indicates an event to present a modal for banning a member.
+     *
+     * @param member The member to be banned.
+     */
+    public data class BanMemberModal(val member: Member) : Modal {
+
+        /**
+         * The available timeout options for banning the member.
+         */
+        val timeouts: List<Timeout> = ChannelInfoViewEvent.BanMemberModal.Timeout.entries.toList()
+
+        /**
+         * Represents the available timeout options for banning a member.
+         *
+         * @param valueInMinutes The duration for which the member should be banned, in minutes. Null for no timeout.
+         */
+        @Suppress("MagicNumber")
+        public enum class Timeout(public val valueInMinutes: Int?) {
+            /**
+             * Indicates a timeout of 1 hour for the ban.
+             */
+            OneHour(60),
+
+            /**
+             * Indicates a timeout of 1 day for the ban.
+             */
+            OneDay(1440),
+
+            /**
+             * Indicates a timeout of 1 week for the ban.
+             */
+            OneWeek(10080),
+
+            /**
+             * Indicates no timeout for the ban.
+             */
+            NoTimeout(null),
+        }
+    }
+
+    /**
+     * Indicates an event to present a modal for removing a member.
+     *
+     * @param member The member to be removed.
+     */
+    public data class RemoveMemberModal(val member: Member) : Modal
 
     /**
      * Represents navigation events.
@@ -136,11 +184,6 @@ public sealed interface ChannelInfoViewEvent {
     public data object DeleteChannelError : Error
 
     /**
-     * Indicates an error occurred while removing a member.
-     */
-    public data object RemoveMemberError : Error
-
-    /**
      * Indicates an error occurred while banning a member.
      */
     public data object BanMemberError : Error
@@ -149,4 +192,9 @@ public sealed interface ChannelInfoViewEvent {
      * Indicates an error occurred while unbanning a member.
      */
     public data object UnbanMemberError : Error
+
+    /**
+     * Indicates an error occurred while removing a member.
+     */
+    public data object RemoveMemberError : Error
 }

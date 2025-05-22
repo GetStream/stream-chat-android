@@ -110,4 +110,22 @@ public sealed interface ChannelInfoViewAction {
      * Represents the confirmation click action for deleting a channel.
      */
     public data object DeleteChannelConfirmationClick : ChannelInfoViewAction
+
+    /**
+     * Represents the confirmation click action to ban the member.
+     *
+     * @param memberId The ID of the member to be banned.
+     * @param timeoutInMinutes The duration for which the member should be banned, in minutes. Null for no timeout.
+     */
+    public data class BanMemberConfirmationClick(
+        val memberId: String,
+        val timeoutInMinutes: Int?,
+    ) : ChannelInfoViewAction
+
+    /**
+     * Represents the confirmation click action to remove the member.
+     *
+     * @param memberId The ID of the member to be removed.
+     */
+    public data class RemoveMemberConfirmationClick(val memberId: String) : ChannelInfoViewAction
 }

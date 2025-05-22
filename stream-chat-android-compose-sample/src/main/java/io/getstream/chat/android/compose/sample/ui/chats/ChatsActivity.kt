@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.sample.ui.chats
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -288,7 +289,7 @@ class ChatsActivity : BaseConnectedActivity() {
         val viewModelFactory = ChannelInfoViewModelFactory(context = applicationContext, cid = channelId)
         val viewModel = viewModel<ChannelInfoViewModel>(key = channelId, factory = viewModelFactory)
 
-        viewModel.handleNavigationEvents(onNavigateUp, onNavigateToPinnedMessages)
+        viewModel.handleChannelInfoEvents(onNavigateUp, onNavigateToPinnedMessages)
 
         if (AdaptiveLayoutInfo.singlePaneWindow()) {
             DirectChannelInfoScreen(
@@ -322,7 +323,7 @@ class ChatsActivity : BaseConnectedActivity() {
         val viewModelFactory = ChannelInfoViewModelFactory(context = applicationContext, cid = channelId)
         val viewModel = viewModel<ChannelInfoViewModel>(key = channelId, factory = viewModelFactory)
 
-        viewModel.handleNavigationEvents(onNavigateUp, onNavigateToPinnedMessages)
+        viewModel.handleChannelInfoEvents(onNavigateUp, onNavigateToPinnedMessages)
 
         if (AdaptiveLayoutInfo.singlePaneWindow()) {
             GroupChannelInfoScreen(
@@ -346,7 +347,7 @@ class ChatsActivity : BaseConnectedActivity() {
     }
 
     @Composable
-    private fun ChannelInfoViewModel.handleNavigationEvents(
+    private fun ChannelInfoViewModel.handleChannelInfoEvents(
         onNavigateUp: () -> Unit,
         onNavigateToPinnedMessages: () -> Unit,
     ) {
@@ -355,6 +356,7 @@ class ChatsActivity : BaseConnectedActivity() {
                 when (event) {
                     is ChannelInfoViewEvent.NavigateUp -> onNavigateUp()
                     is ChannelInfoViewEvent.NavigateToPinnedMessages -> onNavigateToPinnedMessages()
+                    is ChannelInfoViewEvent.Error -> showError(event)
                     else -> Unit
                 }
             }
@@ -475,4 +477,35 @@ private fun ThreePaneNavigator.navigateToMessage(
             null
         },
     )
+}
+
+private fun Context.showError(error: ChannelInfoViewEvent.Error) {
+    val message = when (error) {
+        ChannelInfoViewEvent.RenameChannelError,
+        -> R.string.stream_ui_channel_info_rename_group_error
+
+        ChannelInfoViewEvent.MuteChannelError,
+        ChannelInfoViewEvent.UnmuteChannelError,
+        -> R.string.stream_ui_channel_info_option_mute_conversation_error
+
+        ChannelInfoViewEvent.HideChannelError,
+        ChannelInfoViewEvent.UnhideChannelError,
+        -> R.string.stream_ui_channel_info_option_hide_conversation_error
+
+        ChannelInfoViewEvent.LeaveChannelError,
+        -> R.string.stream_ui_channel_info_option_leave_conversation_error
+
+        ChannelInfoViewEvent.DeleteChannelError,
+        -> R.string.stream_ui_channel_info_option_delete_conversation_error
+
+        ChannelInfoViewEvent.BanMemberError,
+        -> R.string.stream_ui_channel_info_member_option_ban_member_error
+
+        ChannelInfoViewEvent.UnbanMemberError,
+        -> R.string.stream_ui_channel_info_member_option_unban_member_error
+
+        ChannelInfoViewEvent.RemoveMemberError,
+        -> R.string.stream_ui_channel_info_member_option_remove_member_error
+    }
+    Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
 }

@@ -19,8 +19,10 @@ package io.getstream.chat.android.compose.ui.channel.info
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,8 +38,11 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.clickable
+import io.getstream.chat.android.previewdata.PreviewMembersData
+import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewEvent
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
+import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent.BanMemberModal.Timeout
 
 @Suppress("LongMethod")
 @Composable
@@ -45,12 +50,14 @@ internal fun ChannelInfoScreenModal(
     modal: ChannelInfoViewEvent.Modal?,
     isGroupChannel: Boolean,
     onViewAction: (action: ChannelInfoViewAction) -> Unit,
+    onMemberViewEvent: (event: ChannelInfoMemberViewEvent) -> Unit,
     onDismiss: () -> Unit,
 ) {
     when (modal) {
         is ChannelInfoViewEvent.MemberInfoModal -> {
             ChannelInfoMemberInfoModalSheet(
                 modal = modal,
+                onMemberViewEvent = onMemberViewEvent,
                 onDismiss = onDismiss,
             )
         }
@@ -113,6 +120,77 @@ internal fun ChannelInfoScreenModal(
                 onPositiveAction = {
                     // TODO Get quit message configuration from ChatTheme
                     onViewAction(ChannelInfoViewAction.LeaveChannelConfirmationClick(quitMessage = null))
+                    onDismiss()
+                },
+                onDismiss = onDismiss,
+            )
+        }
+
+        is ChannelInfoViewEvent.BanMemberModal -> {
+            var selectedTimeout by remember { mutableStateOf(Timeout.OneHour) }
+            val member = modal.member
+
+            SimpleDialog(
+                title = stringResource(
+                    R.string.stream_ui_channel_info_member_option_ban_modal_title,
+                    member.user.name.takeIf(String::isNotBlank) ?: member.user.id,
+                ),
+                text = {
+                    Column {
+                        modal.timeouts.forEach { timeout ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { selectedTimeout = timeout },
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                RadioButton(
+                                    selected = timeout == selectedTimeout,
+                                    onClick = { selectedTimeout = timeout },
+                                )
+                                val label = stringResource(
+                                    when (timeout) {
+                                        Timeout.OneHour ->
+                                            R.string.stream_ui_channel_info_member_option_ban_modal_timeout_one_hour
+
+                                        Timeout.OneDay ->
+                                            R.string.stream_ui_channel_info_member_option_ban_modal_timeout_one_day
+
+                                        Timeout.OneWeek ->
+                                            R.string.stream_ui_channel_info_member_option_ban_modal_timeout_one_week
+
+                                        Timeout.NoTimeout ->
+                                            R.string.stream_ui_channel_info_member_option_ban_modal_no_timeout
+                                    },
+                                )
+                                Text(text = label)
+                            }
+                        }
+                    }
+                },
+                onConfirmClick = {
+                    onViewAction(
+                        ChannelInfoViewAction.BanMemberConfirmationClick(
+                            memberId = member.getUserId(),
+                            timeoutInMinutes = selectedTimeout.valueInMinutes,
+                        ),
+                    )
+                    onDismiss()
+                },
+                onDismiss = onDismiss,
+            )
+        }
+
+        is ChannelInfoViewEvent.RemoveMemberModal -> {
+            val member = modal.member
+            SimpleDialog(
+                title = stringResource(R.string.stream_ui_channel_info_member_option_remove_member),
+                message = stringResource(
+                    R.string.stream_ui_channel_info_member_option_remove_member_confirmation,
+                    member.user.name.takeIf(String::isNotBlank) ?: member.getUserId(),
+                ),
+                onPositiveAction = {
+                    onViewAction(ChannelInfoViewAction.RemoveMemberConfirmationClick(memberId = member.getUserId()))
                     onDismiss()
                 },
                 onDismiss = onDismiss,
@@ -231,6 +309,42 @@ private fun ChannelInfoScreenModalDeleteGroupChannelPreview() {
     }
 }
 
+@Preview
+@Composable
+private fun ChannelInfoScreenModalBanMemberPreview() {
+    ChatTheme {
+        ChannelInfoScreenModalBanMember()
+    }
+}
+
+@Composable
+internal fun ChannelInfoScreenModalBanMember() {
+    ChannelInfoScreenModal(
+        modal = ChannelInfoViewEvent.BanMemberModal(
+            member = PreviewMembersData.member1,
+        ),
+        isGroupChannel = true,
+    )
+}
+
+@Preview
+@Composable
+private fun ChannelInfoScreenModalRemoveMemberPreview() {
+    ChatTheme {
+        ChannelInfoScreenModalRemoveMember()
+    }
+}
+
+@Composable
+internal fun ChannelInfoScreenModalRemoveMember() {
+    ChannelInfoScreenModal(
+        modal = ChannelInfoViewEvent.RemoveMemberModal(
+            member = PreviewMembersData.member1,
+        ),
+        isGroupChannel = true,
+    )
+}
+
 @Composable
 internal fun ChannelInfoScreenModal(
     modal: ChannelInfoViewEvent.Modal,
@@ -240,6 +354,7 @@ internal fun ChannelInfoScreenModal(
         modal = modal,
         isGroupChannel = isGroupChannel,
         onViewAction = {},
+        onMemberViewEvent = {},
         onDismiss = {},
     )
 }

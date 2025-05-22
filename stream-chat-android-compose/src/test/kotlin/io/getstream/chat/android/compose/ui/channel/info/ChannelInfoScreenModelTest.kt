@@ -151,4 +151,32 @@ internal class ChannelInfoScreenModelTest : SnapshotTest {
             )
         }
     }
+
+    @Test
+    fun `ban member`() {
+        snapshot {
+            ChannelInfoScreenModalBanMember()
+        }
+    }
+
+    @Test
+    fun `ban member in dark mode`() {
+        snapshot(isInDarkMode = true) {
+            ChannelInfoScreenModalBanMember()
+        }
+    }
+
+    @Test
+    fun `remove member`() {
+        snapshot {
+            ChannelInfoScreenModalRemoveMember()
+        }
+    }
+
+    @Test
+    fun `remove member in dark mode`() {
+        snapshot(isInDarkMode = true) {
+            ChannelInfoScreenModalRemoveMember()
+        }
+    }
 }

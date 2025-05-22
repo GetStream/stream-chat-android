@@ -26,19 +26,12 @@ public sealed interface ChannelInfoMemberViewAction {
     /**
      * Represents the click action to message the member.
      */
-    public data object MemberMessageClick : ChannelInfoMemberViewAction
+    public data object MessageMemberClick : ChannelInfoMemberViewAction
 
     /**
      * Represents the click action to ban the member.
      */
     public data object BanMemberClick : ChannelInfoMemberViewAction
-
-    /**
-     * Represents the confirmation click action to ban the member.
-     *
-     * @param timeoutInMinutes The duration for which the member should be banned, in minutes. Null for no timeout.
-     */
-    public data class BanMemberConfirmationClick(val timeoutInMinutes: Int?) : ChannelInfoMemberViewAction
 
     /**
      * Represents the click action to unban the member.
@@ -49,9 +42,4 @@ public sealed interface ChannelInfoMemberViewAction {
      * Represents the click action to remove the member.
      */
     public data object RemoveMemberClick : ChannelInfoMemberViewAction
-
-    /**
-     * Represents the confirmation click action to remove the member.
-     */
-    public data object RemoveMemberConfirmationClick : ChannelInfoMemberViewAction
 }

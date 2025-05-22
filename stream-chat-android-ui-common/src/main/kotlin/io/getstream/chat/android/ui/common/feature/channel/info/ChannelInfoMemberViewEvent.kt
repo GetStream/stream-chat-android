@@ -26,92 +26,30 @@ import io.getstream.chat.android.models.Member
 public sealed interface ChannelInfoMemberViewEvent {
 
     /**
-     * Represents modal navigation events.
+     * Indicates an event to proceed with messaging a member.
+     *
+     * @param channelId The ID of the channel to navigate to.
      */
-    public sealed interface Modal : ChannelInfoMemberViewEvent
+    public data class MessageMember(val channelId: String) : ChannelInfoMemberViewEvent
 
     /**
-     * Indicates an event to present a modal for banning a member.
+     * Indicates an event to proceed with banning a member.
      *
      * @param member The member to be banned.
      */
-    public data class BanMemberModal(val member: Member) : Modal {
-
-        /**
-         * The available timeout options for banning the member.
-         */
-        val timeouts: List<Timeout> = ChannelInfoMemberViewEvent.BanMemberModal.Timeout.entries.toList()
-
-        /**
-         * Represents the available timeout options for banning a member.
-         *
-         * @param valueInMinutes The duration for which the member should be banned, in minutes. Null for no timeout.
-         */
-        @Suppress("MagicNumber")
-        public enum class Timeout(public val valueInMinutes: Int?) {
-            /**
-             * Indicates a timeout of 1 hour for the ban.
-             */
-            OneHour(60),
-
-            /**
-             * Indicates a timeout of 1 day for the ban.
-             */
-            OneDay(1440),
-
-            /**
-             * Indicates a timeout of 1 week for the ban.
-             */
-            OneWeek(10080),
-
-            /**
-             * Indicates no timeout for the ban.
-             */
-            NoTimeout(null),
-        }
-    }
+    public data class BanMember(val member: Member) : ChannelInfoMemberViewEvent
 
     /**
-     * Indicates an event to present a modal for removing a member.
+     * Indicates an event to proceed with unbanning a member.
+     *
+     * @param member The member to be unbanned.
+     */
+    public data class UnbanMember(val member: Member) : ChannelInfoMemberViewEvent
+
+    /**
+     * Indicates an event to proceed with removing a member.
      *
      * @param member The member to be removed.
      */
-    public data class RemoveMemberModal(val member: Member) : Modal
-
-    /**
-     * Represents navigation events.
-     *
-     * @param reason The reason for navigation or null if not applicable.
-     */
-    public sealed class Navigation(public open val reason: Reason?) : ChannelInfoMemberViewEvent {
-        /**
-         * Represents the reason for navigation.
-         */
-        public sealed interface Reason
-    }
-
-    /**
-     * Indicates an event to navigate to the channel.
-     */
-    public data class NavigateToChannel(val channelId: String) : Navigation(reason = null)
-
-    /**
-     * Represents error events occurred while performing an action.
-     */
-    public sealed interface Error : ChannelInfoMemberViewEvent
-
-    /**
-     * Indicates an error occurred while banning a member.
-     */
-    public data object BanMemberError : Error
-
-    /**
-     * Indicates an error occurred while unbanning a member.
-     */
-    public data object UnbanMemberError : Error
-
-    /**
-     * Indicates an error occurred while removing a member.
-     */
-    public data object RemoveMemberError : Error
+    public data class RemoveMember(val member: Member) : ChannelInfoMemberViewEvent
 }

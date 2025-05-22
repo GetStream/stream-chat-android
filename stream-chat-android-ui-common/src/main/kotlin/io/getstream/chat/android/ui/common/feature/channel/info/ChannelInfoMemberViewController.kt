@@ -29,7 +29,6 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoMemberViewState
 import io.getstream.log.taggedLogger
-import io.getstream.result.Error
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -46,7 +45,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 /**
  * Controller responsible for managing the state and events related to channel member information.
@@ -142,66 +140,17 @@ public class ChannelInfoMemberViewController(
     ) {
         logger.d { "[onViewAction] action: $action" }
         when (action) {
-            is ChannelInfoMemberViewAction.MemberMessageClick ->
-                _events.tryEmit(ChannelInfoMemberViewEvent.NavigateToChannel(channelId = "")) // TODO NavigateToChannel
+            is ChannelInfoMemberViewAction.MessageMemberClick ->
+                _events.tryEmit(ChannelInfoMemberViewEvent.MessageMember(channelId = "")) // TODO MessageMember
 
             is ChannelInfoMemberViewAction.BanMemberClick ->
-                _events.tryEmit(ChannelInfoMemberViewEvent.BanMemberModal(member))
+                _events.tryEmit(ChannelInfoMemberViewEvent.BanMember(member))
 
-            is ChannelInfoMemberViewAction.BanMemberConfirmationClick -> banMember(action.timeoutInMinutes)
-
-            is ChannelInfoMemberViewAction.UnbanMemberClick -> unbanMember()
+            is ChannelInfoMemberViewAction.UnbanMemberClick ->
+                _events.tryEmit(ChannelInfoMemberViewEvent.UnbanMember(member))
 
             is ChannelInfoMemberViewAction.RemoveMemberClick ->
-                _events.tryEmit(ChannelInfoMemberViewEvent.RemoveMemberModal(member))
-
-            is ChannelInfoMemberViewAction.RemoveMemberConfirmationClick -> removeMember(memberId)
-        }
-    }
-
-    private fun banMember(timeout: Int?) {
-        logger.d { "[banMember] member: $member" }
-
-        scope.launch {
-            channelClient.banUser(
-                targetId = member.getUserId(),
-                reason = null,
-                timeout = timeout,
-            ).await()
-                .onSuccess { /* no-op */ }
-                .onError { error ->
-                    logger.e { "[banMember] error: ${error.message}" }
-                    _events.tryEmit(ChannelInfoMemberViewEvent.BanMemberError)
-                }
-        }
-    }
-
-    private fun unbanMember() {
-        logger.d { "[unbanMember] member: $member" }
-
-        scope.launch {
-            channelClient.unbanUser(member.getUserId()).await()
-                .onSuccess { /* no-op */ }
-                .onError { error ->
-                    logger.e { "[unbanMember] error: ${error.message}" }
-                    _events.tryEmit(ChannelInfoMemberViewEvent.UnbanMemberError)
-                }
-        }
-    }
-
-    private fun removeMember(memberId: String) {
-        logger.d { "[removeMember] memberId: $memberId" }
-
-        scope.launch {
-            channelClient.removeMembers(
-                memberIds = listOf(element = memberId),
-                systemMessage = null,
-            ).await()
-                .onSuccess { /* no-op */ }
-                .onError { error: Error ->
-                    logger.e { "[removeMember] error: ${error.message}" }
-                    _events.tryEmit(ChannelInfoMemberViewEvent.RemoveMemberError)
-                }
+                _events.tryEmit(ChannelInfoMemberViewEvent.RemoveMember(member))
         }
     }
 }

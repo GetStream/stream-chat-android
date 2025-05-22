@@ -34,10 +34,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -68,6 +65,7 @@ import java.util.Date
 @Composable
 internal fun ChannelInfoMemberInfoModalSheet(
     modal: ChannelInfoViewEvent.MemberInfoModal,
+    onMemberViewEvent: (event: ChannelInfoMemberViewEvent) -> Unit,
     onDismiss: () -> Unit,
 ) {
     val viewModelFactory = ChannelInfoMemberViewModelFactory(
@@ -109,24 +107,20 @@ internal fun ChannelInfoMemberInfoModalSheet(
         )
     }
 
-    var memberModal by remember { mutableStateOf<ChannelInfoMemberViewEvent.Modal?>(null) }
-
+    // var memberModal by remember { mutableStateOf<ChannelInfoMemberViewEvent.Modal?>(null) }
+    //
     LaunchedEffect(Unit) {
-        viewModel.events.collectLatest { event ->
-            if (event is ChannelInfoMemberViewEvent.Modal) {
-                hideSheet { memberModal = event }
-            }
-        }
+        viewModel.events.collectLatest(onMemberViewEvent)
     }
 
-    ChannelInfoMemberInfoConfirmationModal(
-        modal = memberModal,
-        onViewAction = viewModel::onViewAction,
-        onDismiss = {
-            memberModal = null
-            onDismiss()
-        },
-    )
+    // ChannelInfoMemberInfoConfirmationModal(
+    //     modal = memberModal,
+    //     onViewAction = viewModel::onViewAction,
+    //     onDismiss = {
+    //         memberModal = null
+    //         onDismiss()
+    //     },
+    // )
 }
 
 @Composable
