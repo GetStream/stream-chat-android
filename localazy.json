@@ -16,12 +16,18 @@
         "file": "strings-ui-common.xml"
       },
       {
-        "pattern": "stream-chat-android-ui-components/src/main/res/values/strings.xml",
-        "file": "strings-ui-components.xml"
+        "pattern": "stream-chat-android-ui-components/src/main/res/values/strings*.xml",
+        "file": "strings-ui-components.xml",
+        "lang": "en"
       },
       {
         "pattern": "stream-chat-android-ui-utils/src/main/res/values/strings.xml",
         "file": "strings-ui-utils.xml"
+      },
+      {
+        "pattern": "stream-chat-android-ui-components/src/main/res/values-*/strings.xml",
+        "lang": "${autodetectLang}",
+        "file": "strings-ui-components.xml"
       },
       {
         "group": "client-all",

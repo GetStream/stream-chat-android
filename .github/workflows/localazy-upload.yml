@@ -10,6 +10,8 @@ on:
       - 'stream-chat-android-ui-components/src/main/res/values/strings.xml'
       - 'stream-chat-android-ui-utils/src/main/res/values/strings.xml'
 
+  workflow_dispatch:
+
 jobs:
   localazy-upload:
     name: Upload strings to Localazy
