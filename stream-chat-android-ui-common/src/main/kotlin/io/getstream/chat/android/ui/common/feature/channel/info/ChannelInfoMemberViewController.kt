@@ -49,10 +49,6 @@ import kotlinx.coroutines.flow.update
 /**
  * Controller responsible for managing the state and events related to channel member information.
  *
- * It provides functionality to observe channel data, members, and perform
- * various channel-related actions such as renaming, muting, hiding, leaving, and deleting the channel.
- * It also handles state updates and emits events for UI consumption.
- *
  * @param cid The full channel identifier (e.g., "messaging:123").
  * @param memberId The member ID of the user whose information is being managed.
  * @param scope The [CoroutineScope] used for launching coroutines.
