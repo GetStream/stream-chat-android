@@ -1,6 +1,7 @@
 # UNRELEASED CHANGELOG
 ## Common changes for all artifacts
 ### 🐞 Fixed
+- Fix adding/removing of message reactions when offline not working. [#5762](https://github.com/GetStream/stream-chat-android/pull/5762)
 
 ### ⬆️ Improved
 
