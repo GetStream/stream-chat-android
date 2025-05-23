@@ -80,13 +80,13 @@ internal fun ChannelInfoMemberInfoModalSheet(
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    fun hideSheet(onHide: () -> Unit) {
+    fun hideSheet() {
         // We need to handle the dismissal of the sheet ourselves
         // because we are hiding it manually.
         scope.launch { sheetState.hide() }
             .invokeOnCompletion {
                 if (!sheetState.isVisible) {
-                    onHide()
+                    onDismiss()
                 }
             }
     }
@@ -102,25 +102,14 @@ internal fun ChannelInfoMemberInfoModalSheet(
             state = state,
             onViewAction = { action ->
                 viewModel.onViewAction(action)
-                hideSheet(onDismiss)
+                hideSheet()
             },
         )
     }
 
-    // var memberModal by remember { mutableStateOf<ChannelInfoMemberViewEvent.Modal?>(null) }
-    //
     LaunchedEffect(Unit) {
         viewModel.events.collectLatest(onMemberViewEvent)
     }
-
-    // ChannelInfoMemberInfoConfirmationModal(
-    //     modal = memberModal,
-    //     onViewAction = viewModel::onViewAction,
-    //     onDismiss = {
-    //         memberModal = null
-    //         onDismiss()
-    //     },
-    // )
 }
 
 @Composable

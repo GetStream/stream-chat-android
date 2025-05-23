@@ -141,7 +141,8 @@ public class ChannelInfoMemberViewController(
         logger.d { "[onViewAction] action: $action" }
         when (action) {
             is ChannelInfoMemberViewAction.MessageMemberClick ->
-                _events.tryEmit(ChannelInfoMemberViewEvent.MessageMember(channelId = "")) // TODO MessageMember
+                // https://linear.app/stream/issue/AND-567/compose-navigate-to-messages-from-the-member-modal-sheet-of-channel
+                _events.tryEmit(ChannelInfoMemberViewEvent.MessageMember(channelId = ""))
 
             is ChannelInfoMemberViewAction.BanMemberClick ->
                 _events.tryEmit(ChannelInfoMemberViewEvent.BanMember(member))

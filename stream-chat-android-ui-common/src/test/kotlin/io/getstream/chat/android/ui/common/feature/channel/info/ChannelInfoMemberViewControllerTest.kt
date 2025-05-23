@@ -117,7 +117,7 @@ internal class ChannelInfoMemberViewControllerTest {
             sut.events.test {
                 sut.onViewAction(ChannelInfoMemberViewAction.MessageMemberClick)
 
-                // TODO MessageMember
+                // https://linear.app/stream/issue/AND-567/compose-navigate-to-messages-from-the-member-modal-sheet-of-channel
                 assertEquals(ChannelInfoMemberViewEvent.MessageMember(channelId = ""), awaitItem())
             }
         }

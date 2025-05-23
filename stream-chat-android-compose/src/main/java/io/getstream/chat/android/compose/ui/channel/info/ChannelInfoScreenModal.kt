@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -78,7 +79,7 @@ internal fun ChannelInfoScreenModal(
                     )
                 },
                 onConfirmClick = {
-                    onViewAction(ChannelInfoViewAction.HideChannelConfirmationClick(clearHistory = clearHistory))
+                    onViewAction(ChannelInfoViewAction.HideChannelConfirmationClick(clearHistory))
                     onDismiss()
                 },
                 onDismiss = onDismiss,
@@ -136,37 +137,11 @@ internal fun ChannelInfoScreenModal(
                     member.user.name.takeIf(String::isNotBlank) ?: member.user.id,
                 ),
                 text = {
-                    Column {
-                        modal.timeouts.forEach { timeout ->
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { selectedTimeout = timeout },
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                RadioButton(
-                                    selected = timeout == selectedTimeout,
-                                    onClick = { selectedTimeout = timeout },
-                                )
-                                val label = stringResource(
-                                    when (timeout) {
-                                        Timeout.OneHour ->
-                                            R.string.stream_ui_channel_info_ban_member_modal_timeout_one_hour
-
-                                        Timeout.OneDay ->
-                                            R.string.stream_ui_channel_info_ban_member_modal_timeout_one_day
-
-                                        Timeout.OneWeek ->
-                                            R.string.stream_ui_channel_info_ban_member_modal_timeout_one_week
-
-                                        Timeout.NoTimeout ->
-                                            R.string.stream_ui_channel_info_ban_member_modal_no_timeout
-                                    },
-                                )
-                                Text(text = label)
-                            }
-                        }
-                    }
+                    BanMemberModalText(
+                        modal = modal,
+                        selectedTimeout = selectedTimeout,
+                        onTimeoutClick = { selectedTimeout = it },
+                    )
                 },
                 onConfirmClick = {
                     onViewAction(
@@ -239,6 +214,48 @@ private fun HideChannelModalText(
                 color = ChatTheme.colors.textLowEmphasis,
                 style = ChatTheme.typography.body,
             )
+        }
+    }
+}
+
+@Composable
+private fun BanMemberModalText(
+    modal: ChannelInfoViewEvent.BanMemberModal,
+    selectedTimeout: Timeout,
+    onTimeoutClick: (timeout: Timeout) -> Unit,
+) {
+    Column {
+        modal.timeouts.forEach { timeout ->
+            Row(
+                modifier = Modifier
+                    .minimumInteractiveComponentSize()
+                    .fillMaxWidth()
+                    .clickable(onClick = { onTimeoutClick(timeout) })
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                RadioButton(
+                    modifier = Modifier.padding(end = 8.dp),
+                    selected = timeout == selectedTimeout,
+                    onClick = null,
+                )
+                val label = stringResource(
+                    when (timeout) {
+                        Timeout.OneHour ->
+                            R.string.stream_ui_channel_info_ban_member_modal_timeout_one_hour
+
+                        Timeout.OneDay ->
+                            R.string.stream_ui_channel_info_ban_member_modal_timeout_one_day
+
+                        Timeout.OneWeek ->
+                            R.string.stream_ui_channel_info_ban_member_modal_timeout_one_week
+
+                        Timeout.NoTimeout ->
+                            R.string.stream_ui_channel_info_ban_member_modal_no_timeout
+                    },
+                )
+                Text(text = label)
+            }
         }
     }
 }
