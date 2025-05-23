@@ -41,7 +41,7 @@
 <a class="library-name--link" href="../../index.html">
                             stream-chat-android
                     </a>            </div>
-            <div class="library-version">6.15.0
+            <div class="library-version">6.16.0
             </div>
         </div>
         <div class="filter-section" id="filter-section">
@@ -148,16 +148,28 @@
             )
         }
     }<span class="token punctuation">, </span></span><span class="parameter ">regularMessageContent<span class="token operator">: </span><span><span class="token annotation builtin">@</span><a href="https://developer.android.com/reference/kotlin/androidx/compose/runtime/Composable.html"><span class="token annotation builtin">Composable</span></a>&nbsp;</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token operator"> -&gt; </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-unit/index.html">Unit</a><span class="token operator"> = </span>{
-        DefaultMessageContent(
-            message = message,
-            currentUser = currentUser,
-            onLongItemClick = onLongItemClick,
-            messageContentFactory = messageContentFactory,
-            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-            onQuotedMessageClick = onQuotedMessageClick,
-            onLinkClick = onLinkClick,
-            onUserMentionClick = onUserMentionClick,
-        )
+        if (messageContentFactory == MessageContentFactory.Deprecated) {
+            ChatTheme.componentFactory.MessageRegularContent(
+                message = message,
+                currentUser = currentUser,
+                onLongItemClick = onLongItemClick,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                onQuotedMessageClick = onQuotedMessageClick,
+                onLinkClick = onLinkClick,
+                onUserMentionClick = onUserMentionClick,
+            )
+        } else {
+            DefaultMessageContent(
+                message = message,
+                currentUser = currentUser,
+                onLongItemClick = onLongItemClick,
+                messageContentFactory = messageContentFactory,
+                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                onQuotedMessageClick = onQuotedMessageClick,
+                onLinkClick = onLinkClick,
+                onUserMentionClick = onUserMentionClick,
+            )
+        }
     }</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Represents the default message content within the bubble that can show different UI based on the message state.</p></div></div></div>
                 </div>
               </div>

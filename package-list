@@ -24,6 +24,7 @@ io.getstream.chat.android.client.extensions
 io.getstream.chat.android.client.extensions.internal
 io.getstream.chat.android.client.header
 io.getstream.chat.android.client.helpers
+io.getstream.chat.android.client.interceptor
 io.getstream.chat.android.client.interceptor.message
 io.getstream.chat.android.client.logger
 io.getstream.chat.android.client.notifications
@@ -167,6 +168,7 @@ module:stream-chat-android-ui-common
 io.getstream.chat.android.ui.common
 io.getstream.chat.android.ui.common.contract.internal
 io.getstream.chat.android.ui.common.disposable
+io.getstream.chat.android.ui.common.feature.channel.info
 io.getstream.chat.android.ui.common.feature.documents
 io.getstream.chat.android.ui.common.feature.mentions
 io.getstream.chat.android.ui.common.feature.messages.composer
@@ -185,6 +187,7 @@ io.getstream.chat.android.ui.common.images.resizing
 io.getstream.chat.android.ui.common.model
 io.getstream.chat.android.ui.common.notifications
 io.getstream.chat.android.ui.common.permissions
+io.getstream.chat.android.ui.common.state.channel.info
 io.getstream.chat.android.ui.common.state.channels.actions
 io.getstream.chat.android.ui.common.state.mentions
 io.getstream.chat.android.ui.common.state.messages
