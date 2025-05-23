@@ -95,6 +95,7 @@ public fun GroupChannelInfoScreen(
     topBar: @Composable (elevation: Dp) -> Unit = { elevation ->
         GroupChannelInfoTopBar(
             viewModelFactory = viewModelFactory,
+            viewModelKey = viewModelKey,
             elevation = elevation,
             onNavigationIconClick = onNavigationIconClick,
         )
@@ -148,10 +149,11 @@ public fun GroupChannelInfoScreen(
 @Composable
 private fun GroupChannelInfoTopBar(
     viewModelFactory: ChannelInfoViewModelFactory,
+    viewModelKey: String?,
     elevation: Dp,
     onNavigationIconClick: () -> Unit,
 ) {
-    val viewModel = viewModel<ChannelHeaderViewModel>(factory = viewModelFactory)
+    val viewModel = viewModel<ChannelHeaderViewModel>(key = viewModelKey, factory = viewModelFactory)
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     when (val content = state) {
