@@ -82,6 +82,7 @@
 - Expose audio recording URI mapping to be used by the player UI. [#5776](https://github.com/GetStream/stream-chat-android/pull/5776)
 - Added `errorPlaceholderPainter` property to Avatar allowing to have a custom Painter used when there is an error fetching the picture. [#5766](https://github.com/GetStream/stream-chat-android/pull/5766)
 - Added `ChatComponentFactory.FallbackAvatar` method for overriding the default `FallbackAvatar`. [#5766](https://github.com/GetStream/stream-chat-android/pull/5766)
+- Remove `DummyFirstChannelItem` from the `Channels` composable and improve animations when adding/moving channels. [#5780](https://github.com/GetStream/stream-chat-android/pull/5780)
 
 ### ✅ Added
 - Introduce an **experimental** `ChatsScreen` supporting adaptive layout for large screen devices. [#5671](https://github.com/GetStream/stream-chat-android/pull/5671) [#5556](https://github.com/GetStream/stream-chat-android/pull/5556)
