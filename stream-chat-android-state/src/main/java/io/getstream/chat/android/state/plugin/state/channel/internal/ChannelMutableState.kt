@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isPinned
+import io.getstream.chat.android.extensions.lastMessageAt
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.ChannelUserRead
@@ -79,7 +80,6 @@ internal class ChannelMutableState(
     private var _insideSearch: MutableStateFlow<Boolean>? = MutableStateFlow(false)
     private var _loadingOlderMessages: MutableStateFlow<Boolean>? = MutableStateFlow(false)
     private var _loadingNewerMessages: MutableStateFlow<Boolean>? = MutableStateFlow(false)
-    private var _lastSentMessageDate: MutableStateFlow<Date?>? = MutableStateFlow(null)
     private val deletedMessagesIds: Set<String>
         get() = _messages
             ?.value
@@ -233,7 +233,17 @@ internal class ChannelMutableState(
 
     override val insideSearch: StateFlow<Boolean> = _insideSearch!!
 
-    override val lastSentMessageDate: StateFlow<Date?> = _lastSentMessageDate!!
+    override val lastSentMessageDate: StateFlow<Date?> = combineStates(
+        userFlow,
+        channelConfig,
+        messages,
+    ) { user, config, messages ->
+        user?.id?.let { userId ->
+            messages
+                .filter { it.user.id == userId }
+                .lastMessageAt(config.skipLastMsgUpdateForSystemMsgs)
+        }
+    }
 
     override fun toChannel(): Channel {
         // recreate a channel object from the various observables.
@@ -246,7 +256,6 @@ internal class ChannelMutableState(
                 watchers = watchers.value,
                 watcherCount = watcherCount.value,
                 insideSearch = insideSearch.value,
-                channelLastMessageAt = lastSentMessageDate.value,
             )
             .copy(
                 config = channelConfig.value,
@@ -358,15 +367,6 @@ internal class ChannelMutableState(
         }
 
         _insideSearch?.value = isInsideSearch
-    }
-
-    /**
-     * Sets the date of the last message sent by the current user.
-     *
-     * @param lastSentMessageDate The date of the last message.
-     */
-    fun setLastSentMessageDate(lastSentMessageDate: Date?) {
-        _lastSentMessageDate?.value = lastSentMessageDate
     }
 
     /**
@@ -622,12 +622,10 @@ internal class ChannelMutableState(
         _insideSearch = null
         _loadingOlderMessages = null
         _loadingNewerMessages = null
-        _lastSentMessageDate = null
         _channelConfig = null
     }
 
     private companion object {
-        private const val OFFSET_EVENT_TIME = 5L
         private val seqGenerator = AtomicInteger()
     }
 }
