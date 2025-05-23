@@ -58,7 +58,10 @@ internal fun ChannelInfoScreenModal(
         is ChannelInfoViewEvent.MemberInfoModal -> {
             ChannelInfoMemberInfoModalSheet(
                 modal = modal,
-                onMemberViewEvent = onMemberViewEvent,
+                onMemberViewEvent = { event ->
+                    onMemberViewEvent(event)
+                    onDismiss()
+                },
                 onDismiss = onDismiss,
             )
         }

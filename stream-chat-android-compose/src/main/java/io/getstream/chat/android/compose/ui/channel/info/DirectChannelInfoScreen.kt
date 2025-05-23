@@ -94,7 +94,7 @@ public fun DirectChannelInfoScreen(
 
     var modal by remember { mutableStateOf<ChannelInfoViewEvent.Modal?>(null) }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(viewModel) {
         viewModel.events.collectLatest { event ->
             if (event is ChannelInfoViewEvent.Modal) {
                 modal = event

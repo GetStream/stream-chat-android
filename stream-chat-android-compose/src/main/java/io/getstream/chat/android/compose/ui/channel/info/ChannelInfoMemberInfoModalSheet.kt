@@ -80,17 +80,6 @@ internal fun ChannelInfoMemberInfoModalSheet(
     val scope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    fun hideSheet() {
-        // We need to handle the dismissal of the sheet ourselves
-        // because we are hiding it manually.
-        scope.launch { sheetState.hide() }
-            .invokeOnCompletion {
-                if (!sheetState.isVisible) {
-                    onDismiss()
-                }
-            }
-    }
-
     ModalBottomSheet(
         sheetState = sheetState,
         containerColor = ChatTheme.colors.barsBackground,
@@ -101,13 +90,19 @@ internal fun ChannelInfoMemberInfoModalSheet(
         ChannelInfoMemberInfoModalSheetContent(
             state = state,
             onViewAction = { action ->
-                viewModel.onViewAction(action)
-                hideSheet()
+                // We need to handle the dismissal of the sheet ourselves
+                // because we are hiding it manually.
+                scope.launch { sheetState.hide() }
+                    .invokeOnCompletion {
+                        if (!sheetState.isVisible) {
+                            viewModel.onViewAction(action)
+                        }
+                    }
             },
         )
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(viewModel) {
         viewModel.events.collectLatest(onMemberViewEvent)
     }
 }

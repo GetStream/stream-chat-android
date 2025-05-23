@@ -73,7 +73,7 @@ class DirectChannelInfoActivity : BaseConnectedActivity() {
                     onNavigationIconClick = ::finish,
                 )
             }
-            LaunchedEffect(Unit) {
+            LaunchedEffect(viewModel) {
                 viewModel.events.collectLatest { event ->
                     when (event) {
                         is ChannelInfoViewEvent.Error ->
