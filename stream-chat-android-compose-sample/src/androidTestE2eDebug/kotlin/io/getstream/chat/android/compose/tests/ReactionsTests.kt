@@ -214,7 +214,9 @@ class ReactionsTests : StreamTestCase() {
             userRobot.login().openChannel()
         }
         step("AND user sends a message") {
-            userRobot.sendMessage(sampleText)
+            userRobot
+                .sendMessage(sampleText)
+                .sleep(500) // to fix flakiness on CI
         }
         step("AND user becomes offline") {
             participantRobot.addReaction(type = ReactionType.LIKE, delay)
