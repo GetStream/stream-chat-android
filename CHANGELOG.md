@@ -72,8 +72,11 @@
 
 ### ✅ Added
 - Introduce **experimental** `DirectChannelInfoScreen` and `GroupChannelInfoScreen` for displaying channel information and the available channel actions. [#5773](https://github.com/GetStream/stream-chat-android/pull/5773)
+- Introduce **internal** `ChannelInfoMemberInfoModalSheet` for displaying channel information and the available channel actions. [#5785](https://github.com/GetStream/stream-chat-android/pull/5785)
 
 ### ⚠️ Changed
+- Deprecate `MessageListHeaderCenterContent` in `ChatComponentFactory` in favor of a version that makes the `onClick` parameter optional. [#5785](https://github.com/GetStream/stream-chat-android/pull/5785)
+- Make the `MessageListHeader` support nullable `onHeaderTitleClick`, so that the ripple effect is not shown when the header is not clickable. [#5785](https://github.com/GetStream/stream-chat-android/pull/5785)
 
 ### ❌ Removed
 
