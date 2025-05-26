@@ -19,15 +19,20 @@
 package io.getstream.chat.android.ui.common.feature.channel.info
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelData
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoMemberViewState
 import io.getstream.log.taggedLogger
+import io.getstream.result.onErrorSuspend
+import io.getstream.result.onSuccessSuspend
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -40,6 +45,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
@@ -81,6 +87,7 @@ public class ChannelInfoMemberViewController(
     public val events: SharedFlow<ChannelInfoMemberViewEvent> = _events.asSharedFlow()
 
     private lateinit var member: Member
+    private var distinctChannelId: String? = null
 
     init {
         @Suppress("OPT_IN_USAGE")
@@ -96,21 +103,55 @@ public class ChannelInfoMemberViewController(
                     channel.members
                         .mapNotNull { members -> members.firstOrNull { it.getUserId() == memberId } }
                         .onEach { logger.d { "[onMember] name: ${it.user.name}" } },
+                    queryDistinctChannel(),
                     ::ChannelInfoMemberData,
                 )
             }
             .distinctUntilChanged()
-            .onEach { (channelData, member) ->
-                onChannelInfoData(channelData, member)
+            .onEach { (channelData, member, distinctChannelId) ->
+                onChannelInfoData(channelData, member, distinctChannelId)
             }
             .launchIn(scope)
     }
 
+    private fun queryDistinctChannel(): Flow<String?> =
+        flow {
+            val currentUserId = requireNotNull(chatClient.getCurrentUser()?.id)
+            logger.d { "[queryDistinctChannel] currentUserId: $currentUserId, memberId: $memberId" }
+            chatClient.queryChannels(
+                request = QueryChannelsRequest(
+                    filter = Filters.and(
+                        Filters.eq("type", "messaging"),
+                        Filters.distinct(listOf(memberId, currentUserId)),
+                    ),
+                    querySort = QuerySortByField.descByName("last_updated"),
+                    messageLimit = 0,
+                    limit = 1,
+                ),
+            ).await()
+                .onSuccessSuspend { channels ->
+                    if (channels.isEmpty()) {
+                        logger.w { "[queryDistinctChannel] No distinct channel found of member: $memberId" }
+                        emit(null)
+                    } else {
+                        val channel = channels.first()
+                        logger.d { "[queryDistinctChannel] Found distinct channel: ${channel.cid}" }
+                        emit(channel.cid)
+                    }
+                }
+                .onErrorSuspend {
+                    logger.e { "[queryDistinctChannel] Error querying distinct channel of member: $memberId" }
+                    emit(null)
+                }
+        }
+
     private fun onChannelInfoData(
         channelData: ChannelData,
         member: Member,
+        distinctChannelId: String?,
     ) {
         this.member = member
+        this.distinctChannelId = distinctChannelId
 
         _state.update {
             ChannelInfoMemberViewState.Content(
@@ -134,8 +175,7 @@ public class ChannelInfoMemberViewController(
         logger.d { "[onViewAction] action: $action" }
         when (action) {
             is ChannelInfoMemberViewAction.MessageMemberClick ->
-                // https://linear.app/stream/issue/AND-567/compose-navigate-to-messages-from-the-member-modal-sheet-of-channel
-                _events.tryEmit(ChannelInfoMemberViewEvent.MessageMember(channelId = ""))
+                _events.tryEmit(ChannelInfoMemberViewEvent.MessageMember(memberId, distinctChannelId))
 
             is ChannelInfoMemberViewAction.BanMemberClick ->
                 _events.tryEmit(ChannelInfoMemberViewEvent.BanMember(member))
@@ -152,11 +192,11 @@ public class ChannelInfoMemberViewController(
 private data class ChannelInfoMemberData(
     val channelData: ChannelData,
     val member: Member,
+    val distinctChannelId: String?,
 )
 
 private fun buildOptionList(member: Member, capabilities: Set<String>) = buildList {
-    // https://linear.app/stream/issue/AND-567/compose-navigate-to-messages-from-the-member-modal-sheet-of-channel
-    // add(ChannelInfoMemberViewState.Content.Option.MessageMember(member = member))
+    add(ChannelInfoMemberViewState.Content.Option.MessageMember(member = member))
     if (capabilities.contains(ChannelCapabilities.BAN_CHANNEL_MEMBERS)) {
         if (member.banned) {
             add(ChannelInfoMemberViewState.Content.Option.UnbanMember(member = member))

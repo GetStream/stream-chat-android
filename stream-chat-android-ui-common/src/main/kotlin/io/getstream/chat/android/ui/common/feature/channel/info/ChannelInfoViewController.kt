@@ -194,8 +194,13 @@ public class ChannelInfoViewController(
     public fun onMemberViewEvent(event: ChannelInfoMemberViewEvent) {
         logger.d { "[onMemberViewEvent] event: $event" }
         when (event) {
-            // https://linear.app/stream/issue/AND-567/compose-navigate-to-messages-from-the-member-modal-sheet-of-channel
-            is ChannelInfoMemberViewEvent.MessageMember -> Unit
+            is ChannelInfoMemberViewEvent.MessageMember -> {
+                event.channelId?.let { channelId ->
+                    _events.tryEmit(ChannelInfoViewEvent.NavigateToChannel(channelId))
+                } ?: {
+                    _events.tryEmit(ChannelInfoViewEvent.NavigateToNewChannel(event.memberId))
+                }
+            }
 
             is ChannelInfoMemberViewEvent.BanMember ->
                 _events.tryEmit(ChannelInfoViewEvent.BanMemberModal(event.member))
