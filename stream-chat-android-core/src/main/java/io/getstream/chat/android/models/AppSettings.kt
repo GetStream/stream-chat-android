@@ -54,7 +54,7 @@ public data class App(
  *
  * @param allowedFileExtensions Allowed file extensions.
  * @param allowedMimeTypes Allowed mime types.
- * @param blockedFileExtensions Blocked mime types.
+ * @param blockedFileExtensions Blocked file extensions.
  * @param blockedMimeTypes Blocked mime types.
  * @param sizeLimitInBytes The size limit of the file in bytes.
  */
