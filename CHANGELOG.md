@@ -71,6 +71,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `FileAttachmentPreviewContent`, `FileAttachmentContent` and `FileAttachmentItem` to `ChatComponentFactiory`. [#5791](https://github.com/GetStream/stream-chat-android/pull/5791)
 
 ### ⚠️ Changed
 
