@@ -59,8 +59,10 @@ import io.getstream.chat.android.compose.state.channels.list.ChannelOptionState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
+import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelHeaderLeadingContent
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderCenterContent
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderTrailingContent
@@ -2831,6 +2833,76 @@ public interface ChatComponentFactory {
             modifier = modifier.align(Alignment.TopCenter),
             containerColor = ChatTheme.colors.barsBackground,
             color = ChatTheme.colors.primaryAccent,
+        )
+    }
+
+    /**
+     * Factory method for creating the preview content of file attachments.
+     *
+     * @param modifier Modifier for styling.
+     * @param attachments List of file attachments to preview.
+     * @param onAttachmentRemoved Lambda invoked when an attachment is removed.
+     */
+    @Composable
+    public fun FileAttachmentPreviewContent(
+        modifier: Modifier,
+        attachments: List<Attachment>,
+        onAttachmentRemoved: (Attachment) -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentPreviewContent(
+            modifier = modifier,
+            attachments = attachments,
+            onAttachmentRemoved = onAttachmentRemoved,
+        )
+    }
+
+    /**
+     * Composable function for rendering the content of a file attachment.
+     *
+     * This function delegates the rendering to the default implementation of
+     * [FileAttachmentContent] provided by the Stream Chat Compose library.
+     *
+     * @param modifier Modifier for styling the composable.
+     * @param attachmentState The state of the attachment, containing information about the file.
+     * @param showFileSize A lambda function that determines whether the file size should be displayed.
+     * @param onItemClick A lambda function invoked when the file attachment is clicked, providing a list of
+     * [AttachmentPreviewHandler] and the clicked [Attachment].
+     */
+    @Composable
+    public fun FileAttachmentContent(
+        modifier: Modifier,
+        attachmentState: AttachmentState,
+        showFileSize: (Attachment) -> Boolean,
+        onItemClick: (List<AttachmentPreviewHandler>, Attachment) -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentContent(
+            modifier = modifier,
+            attachmentState = attachmentState,
+            showFileSize = showFileSize,
+            onItemClick = onItemClick,
+        )
+    }
+
+    /**
+     * Factory method for creating a file attachment item.
+     *
+     * @param modifier Modifier for styling.
+     * @param attachment The file attachment to show.
+     * @param isMine Whether the message is sent by the current user or not.
+     * @param showFileSize Whether to show the file size or not.
+     */
+    @Composable
+    public fun FileAttachmentItem(
+        modifier: Modifier,
+        attachment: Attachment,
+        isMine: Boolean,
+        showFileSize: (Attachment) -> Boolean,
+    ) {
+        io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentItem(
+            modifier = modifier,
+            attachment = attachment,
+            isMine = isMine,
+            showFileSize = showFileSize,
         )
     }
 }
