@@ -19,7 +19,6 @@
 package io.getstream.chat.android.ui.common.feature.channel.info
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -54,7 +53,6 @@ import kotlinx.coroutines.flow.update
  * @param scope The [CoroutineScope] used for launching coroutines.
  * @param chatClient The [ChatClient] instance used for interacting with the chat API.
  * @param channelState A [Flow] representing the state of the channel.
- * @param channelClient The [ChannelClient] instance for performing channel-specific operations.
  */
 @InternalStreamChatApi
 public class ChannelInfoMemberViewController(
@@ -65,7 +63,6 @@ public class ChannelInfoMemberViewController(
     channelState: Flow<ChannelState> = chatClient
         .watchChannelAsState(cid = cid, messageLimit = 0, coroutineScope = scope)
         .filterNotNull(),
-    private val channelClient: ChannelClient = chatClient.channel(cid),
 ) {
     private val logger by taggedLogger("Chat:ChannelInfoMemberViewController")
 

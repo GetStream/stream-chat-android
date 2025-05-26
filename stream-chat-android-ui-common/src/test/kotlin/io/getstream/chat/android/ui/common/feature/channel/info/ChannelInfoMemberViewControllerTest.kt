@@ -20,25 +20,25 @@ package io.getstream.chat.android.ui.common.feature.channel.info
 
 import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Member
-import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.toChannelData
+import io.getstream.chat.android.randomCID
+import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomMember
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoMemberViewState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.verifyNoMoreInteractions
 
 internal class ChannelInfoMemberViewControllerTest {
 
@@ -51,12 +51,12 @@ internal class ChannelInfoMemberViewControllerTest {
 
     @Test
     fun `member options`() = runTest {
-        var member = Member(user = User(id = MEMBER_ID))
-        var channel = Channel(
+        var member = randomMember()
+        var channel = randomChannel(
             ownCapabilities = emptySet(),
             members = listOf(member),
         )
-        val fixture = Fixture().given(channel)
+        val fixture = Fixture().given(channel = channel, memberId = member.getUserId())
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
@@ -121,15 +121,13 @@ internal class ChannelInfoMemberViewControllerTest {
                 assertEquals(ChannelInfoMemberViewEvent.MessageMember(channelId = ""), awaitItem())
             }
         }
-
-        launch { fixture.verifyNoMoreInteractions() }
     }
 
     @Test
     fun `ban member click`() = runTest {
-        val member = Member(user = User(id = MEMBER_ID))
-        val channel = Channel(members = listOf(member))
-        val fixture = Fixture().given(channel)
+        val member = randomMember()
+        val channel = randomChannel(members = listOf(member))
+        val fixture = Fixture().given(channel, memberId = member.getUserId())
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
@@ -141,15 +139,13 @@ internal class ChannelInfoMemberViewControllerTest {
                 assertEquals(ChannelInfoMemberViewEvent.BanMember(member), awaitItem())
             }
         }
-
-        launch { fixture.verifyNoMoreInteractions() }
     }
 
     @Test
     fun `unban member click`() = runTest {
-        val member = Member(user = User(id = MEMBER_ID))
-        val channel = Channel(members = listOf(member))
-        val fixture = Fixture().given(channel)
+        val member = randomMember()
+        val channel = randomChannel(members = listOf(member))
+        val fixture = Fixture().given(channel, memberId = member.getUserId())
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
@@ -161,15 +157,13 @@ internal class ChannelInfoMemberViewControllerTest {
                 assertEquals(ChannelInfoMemberViewEvent.UnbanMember(member), awaitItem())
             }
         }
-
-        launch { fixture.verifyNoMoreInteractions() }
     }
 
     @Test
     fun `remove member click`() = runTest {
-        val member = Member(user = User(id = MEMBER_ID))
-        val channel = Channel(members = listOf(member))
-        val fixture = Fixture().given(channel)
+        val member = randomMember()
+        val channel = randomChannel(members = listOf(member))
+        val fixture = Fixture().given(channel, memberId = member.getUserId())
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
@@ -181,8 +175,6 @@ internal class ChannelInfoMemberViewControllerTest {
                 assertEquals(ChannelInfoMemberViewEvent.RemoveMember(member), awaitItem())
             }
         }
-
-        launch { fixture.verifyNoMoreInteractions() }
     }
 
     private class Fixture {
@@ -192,28 +184,23 @@ internal class ChannelInfoMemberViewControllerTest {
             on { channelData } doReturn channelData
             on { members } doReturn channelMembers
         }
-        private val channelClient: ChannelClient = mock()
         private val chatClient: ChatClient = mock()
+        private var memberId: String = randomString()
 
-        fun given(channel: Channel) = apply {
+        fun given(channel: Channel, memberId: String? = null) = apply {
+            if (memberId != null) {
+                this.memberId = memberId
+            }
             channelData.value = channel.toChannelData()
             channelMembers.value = channel.members
         }
 
-        fun verifyNoMoreInteractions() = apply {
-            verifyNoMoreInteractions(channelClient)
-        }
-
         fun get(scope: CoroutineScope) = ChannelInfoMemberViewController(
-            cid = CID,
-            memberId = MEMBER_ID,
+            cid = randomCID(),
+            memberId = memberId,
             scope = scope,
             chatClient = chatClient,
             channelState = MutableStateFlow(channelState),
-            channelClient = channelClient,
         )
     }
 }
-
-private const val CID = "messaging:1"
-private const val MEMBER_ID = "1"

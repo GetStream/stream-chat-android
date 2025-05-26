@@ -970,7 +970,7 @@ internal class ChannelInfoViewControllerTest {
 
     @Test
     fun `ban member modal`() = runTest {
-        val member = Member(user = User(id = MEMBER_ID))
+        val member = randomMember()
         val fixture = Fixture()
         val sut = fixture.get(backgroundScope)
 
@@ -989,7 +989,7 @@ internal class ChannelInfoViewControllerTest {
 
     @Test
     fun `ban member success`() = runTest {
-        val member = Member(user = User(id = MEMBER_ID))
+        val member = randomMember()
         val timeoutInMinutes = 60
         val fixture = Fixture()
         val sut = fixture.get(backgroundScope)
@@ -1015,7 +1015,7 @@ internal class ChannelInfoViewControllerTest {
 
     @Test
     fun `ban member error`() = runTest {
-        val member = Member(user = User(id = MEMBER_ID))
+        val member = randomMember()
         val timeoutInMinutes = 60
         val fixture = Fixture()
         val sut = fixture.get(backgroundScope)
@@ -1026,7 +1026,7 @@ internal class ChannelInfoViewControllerTest {
             fixture.givenBanMember(
                 member = member,
                 timeout = timeoutInMinutes,
-                error = Error.GenericError("Error banning member"),
+                error = randomGenericError(),
             )
 
             sut.onViewAction(
@@ -1044,7 +1044,7 @@ internal class ChannelInfoViewControllerTest {
 
     @Test
     fun `unban member success`() = runTest {
-        val member = Member(user = User(id = MEMBER_ID))
+        val member = randomMember()
         val fixture = Fixture()
         val sut = fixture.get(backgroundScope)
 
@@ -1064,7 +1064,7 @@ internal class ChannelInfoViewControllerTest {
 
     @Test
     fun `unban member error`() = runTest {
-        val member = Member(user = User(id = MEMBER_ID))
+        val member = randomMember()
         val fixture = Fixture()
         val sut = fixture.get(backgroundScope)
 
@@ -1073,7 +1073,7 @@ internal class ChannelInfoViewControllerTest {
 
             fixture.givenUnbanMember(
                 member = member,
-                error = Error.GenericError("Error unbanning member"),
+                error = randomGenericError(),
             )
 
             sut.onMemberViewEvent(ChannelInfoMemberViewEvent.UnbanMember(member))
@@ -1086,7 +1086,7 @@ internal class ChannelInfoViewControllerTest {
 
     @Test
     fun `remove member modal`() = runTest {
-        val member = Member(user = User(id = MEMBER_ID))
+        val member = randomMember()
         val fixture = Fixture()
         val sut = fixture.get(backgroundScope)
 
@@ -1105,7 +1105,7 @@ internal class ChannelInfoViewControllerTest {
 
     @Test
     fun `remove member success`() = runTest {
-        val member = Member(user = User(id = MEMBER_ID))
+        val member = randomMember()
         val fixture = Fixture()
         val sut = fixture.get(backgroundScope)
 
@@ -1129,7 +1129,7 @@ internal class ChannelInfoViewControllerTest {
 
     @Test
     fun `remove member error`() = runTest {
-        val member = Member(user = User(id = MEMBER_ID))
+        val member = randomMember()
         val fixture = Fixture()
         val sut = fixture.get(backgroundScope)
 
@@ -1138,7 +1138,7 @@ internal class ChannelInfoViewControllerTest {
 
             fixture.givenRemoveMember(
                 memberId = member.getUserId(),
-                error = Error.GenericError("Error removing member"),
+                error = randomGenericError(),
             )
 
             sut.onViewAction(
