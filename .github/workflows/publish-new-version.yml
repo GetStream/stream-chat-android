@@ -83,6 +83,7 @@ jobs:
         with:
           ref: develop
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Update changelog
         run: ./gradlew changelog-add-model-section
