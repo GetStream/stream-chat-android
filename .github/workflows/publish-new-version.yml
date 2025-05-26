@@ -85,7 +85,7 @@ jobs:
           persist-credentials: false
 
       - name: Update changelog
-        run: ./gradlew changelog-add-model-section
+        run: cat CHANGELOG_MODEL.md CHANGELOG.md > newChangelog.md && mv newChangelog.md CHANGELOG.md
 
       - name: Commit changes
         uses: EndBug/add-and-commit@v9.1.4
