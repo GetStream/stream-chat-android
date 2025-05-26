@@ -16,8 +16,6 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4.2.2
-        with:
-          fetch-depth: 0
       - uses: localazy/upload@v1
         with:
           read_key: ${{ secrets.LOCALAZY_READ_KEY }}
