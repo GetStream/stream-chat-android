@@ -108,12 +108,11 @@ private fun ChannelInfoMemberInfoModalSheetContent(
 ) {
     val isLoading = state is ChannelInfoMemberViewState.Loading
     ContentBox(
-        contentAlignment = if (isLoading) Alignment.Center else Alignment.TopCenter,
+        modifier = Modifier.fillMaxWidth(),
         isLoading = isLoading,
     ) {
         val content = state as ChannelInfoMemberViewState.Content
         Column(
-            modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
