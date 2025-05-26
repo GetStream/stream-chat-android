@@ -31,14 +31,18 @@ import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
+import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoMemberViewState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 
 internal class ChannelInfoMemberViewControllerTest {
 
@@ -56,7 +60,7 @@ internal class ChannelInfoMemberViewControllerTest {
             ownCapabilities = emptySet(),
             members = listOf(member),
         )
-        val fixture = Fixture().given(channel = channel, memberId = member.getUserId())
+        val fixture = Fixture().given(channel, memberId = member.getUserId())
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
@@ -65,7 +69,9 @@ internal class ChannelInfoMemberViewControllerTest {
             assertEquals(
                 ChannelInfoMemberViewState.Content(
                     member = member,
-                    options = emptyList(),
+                    options = listOf(
+                        ChannelInfoMemberViewState.Content.Option.MessageMember(member),
+                    ),
                 ),
                 awaitItem(),
             )
@@ -82,6 +88,7 @@ internal class ChannelInfoMemberViewControllerTest {
                 ChannelInfoMemberViewState.Content(
                     member = member,
                     options = listOf(
+                        ChannelInfoMemberViewState.Content.Option.MessageMember(member),
                         ChannelInfoMemberViewState.Content.Option.BanMember(member),
                         ChannelInfoMemberViewState.Content.Option.RemoveMember(member),
                     ),
@@ -97,6 +104,7 @@ internal class ChannelInfoMemberViewControllerTest {
                 ChannelInfoMemberViewState.Content(
                     member = member,
                     options = listOf(
+                        ChannelInfoMemberViewState.Content.Option.MessageMember(member),
                         ChannelInfoMemberViewState.Content.Option.UnbanMember(member),
                         ChannelInfoMemberViewState.Content.Option.RemoveMember(member),
                     ),
@@ -107,8 +115,9 @@ internal class ChannelInfoMemberViewControllerTest {
     }
 
     @Test
-    fun `member message click`() = runTest {
-        val fixture = Fixture()
+    fun `message member click with no distinct channel`() = runTest {
+        val member = randomMember()
+        val fixture = Fixture().given(memberId = member.getUserId())
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
@@ -117,8 +126,42 @@ internal class ChannelInfoMemberViewControllerTest {
             sut.events.test {
                 sut.onViewAction(ChannelInfoMemberViewAction.MessageMemberClick)
 
-                // https://linear.app/stream/issue/AND-567/compose-navigate-to-messages-from-the-member-modal-sheet-of-channel
-                assertEquals(ChannelInfoMemberViewEvent.MessageMember(channelId = ""), awaitItem())
+                assertEquals(
+                    ChannelInfoMemberViewEvent.MessageMember(
+                        memberId = member.getUserId(),
+                        channelId = null,
+                    ),
+                    awaitItem(),
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `message member click with distinct channel`() = runTest {
+        val member = randomMember()
+        val distinctChannel = randomChannel()
+        val fixture = Fixture()
+            .given(
+                channel = randomChannel(members = listOf(member)),
+                memberId = member.getUserId(),
+                distinctChannel = distinctChannel,
+            )
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2) // Skip initial states
+
+            sut.events.test {
+                sut.onViewAction(ChannelInfoMemberViewAction.MessageMemberClick)
+
+                assertEquals(
+                    ChannelInfoMemberViewEvent.MessageMember(
+                        memberId = member.getUserId(),
+                        channelId = distinctChannel.cid,
+                    ),
+                    awaitItem(),
+                )
             }
         }
     }
@@ -184,15 +227,27 @@ internal class ChannelInfoMemberViewControllerTest {
             on { channelData } doReturn channelData
             on { members } doReturn channelMembers
         }
-        private val chatClient: ChatClient = mock()
+        private val chatClient: ChatClient = mock {
+            on { getCurrentUser() } doReturn randomUser()
+            on { queryChannels(any()) } doReturn emptyList<Channel>().asCall()
+        }
         private var memberId: String = randomString()
 
-        fun given(channel: Channel, memberId: String? = null) = apply {
+        fun given(
+            channel: Channel? = null,
+            memberId: String? = null,
+            distinctChannel: Channel? = null,
+        ) = apply {
+            if (channel != null) {
+                channelData.value = channel.toChannelData()
+                channelMembers.value = channel.members
+            }
             if (memberId != null) {
                 this.memberId = memberId
             }
-            channelData.value = channel.toChannelData()
-            channelMembers.value = channel.members
+            if (distinctChannel != null) {
+                whenever(chatClient.queryChannels(any())) doReturn listOf(distinctChannel).asCall()
+            }
         }
 
         fun get(scope: CoroutineScope) = ChannelInfoMemberViewController(

@@ -26,7 +26,9 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.sample.R
+import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelActivity
 import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
+import io.getstream.chat.android.compose.sample.ui.MessagesActivity
 import io.getstream.chat.android.compose.sample.ui.pinned.PinnedMessagesActivity
 import io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -78,17 +80,41 @@ class GroupChannelInfoActivity : BaseConnectedActivity() {
                         is ChannelInfoViewEvent.Error ->
                             showError(event)
 
-                        is ChannelInfoViewEvent.NavigateUp -> {
-                            setResult(RESULT_OK)
-                            finish()
-                        }
-
-                        is ChannelInfoViewEvent.NavigateToPinnedMessages ->
-                            openPinnedMessages()
+                        is ChannelInfoViewEvent.Navigation ->
+                            handleNavigationEvent(event)
 
                         else -> Unit
                     }
                 }
+            }
+        }
+    }
+
+    private fun handleNavigationEvent(event: ChannelInfoViewEvent.Navigation) {
+        when (event) {
+            is ChannelInfoViewEvent.NavigateUp -> {
+                setResult(RESULT_OK)
+                finish()
+            }
+
+            is ChannelInfoViewEvent.NavigateToPinnedMessages ->
+                openPinnedMessages()
+
+            is ChannelInfoViewEvent.NavigateToChannel -> {
+                val intent = MessagesActivity.createIntent(
+                    context = this,
+                    channelId = event.channelId,
+                )
+                startActivity(intent)
+            }
+
+            is ChannelInfoViewEvent.NavigateToNewChannel -> {
+                // TODO NavigateToNewChannel
+                // val intent = AddChannelActivity.createIntent(
+                //     context = this,
+                //     memberId = event.memberId,
+                // )
+                startActivity(Intent(this, AddChannelActivity::class.java))
             }
         }
     }
