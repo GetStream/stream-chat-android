@@ -21,12 +21,14 @@ package io.getstream.chat.android.ui.common.feature.channel.info
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.watchChannelAsState
@@ -194,12 +196,10 @@ public class ChannelInfoViewController(
     public fun onMemberViewEvent(event: ChannelInfoMemberViewEvent) {
         logger.d { "[onMemberViewEvent] event: $event" }
         when (event) {
-            is ChannelInfoMemberViewEvent.MessageMember -> {
-                event.channelId?.let { channelId ->
-                    _events.tryEmit(ChannelInfoViewEvent.NavigateToChannel(channelId))
-                } ?: {
-                    _events.tryEmit(ChannelInfoViewEvent.NavigateToNewChannel(event.memberId))
-                }
+            is ChannelInfoMemberViewEvent.MessageMember -> if (event.channelId != null) {
+                _events.tryEmit(ChannelInfoViewEvent.NavigateToChannel(event.channelId))
+            } else {
+                createDirectChannel(event.memberId)
             }
 
             is ChannelInfoMemberViewEvent.BanMember ->
@@ -412,6 +412,35 @@ public class ChannelInfoViewController(
 
     private fun List<Member>.filterNotCurrentUser() =
         filter { member -> member.user.id != chatClient.getCurrentUser()?.id }
+
+    private fun createDirectChannel(memberId: String) {
+        logger.d { "[createDirectChannel] memberId: $memberId" }
+
+        val onError: (Error) -> Unit = { error ->
+            logger.e { "[createDirectChannel] error: ${error.message}" }
+            _events.tryEmit(ChannelInfoViewEvent.NewDirectChannelError)
+        }
+
+        runCatching {
+            requireNotNull(chatClient.getCurrentUser()?.id) { "User not connected" }
+        }.onSuccess { currentUserId ->
+            scope.launch {
+                val params = CreateChannelParams(
+                    members = listOf(memberId, currentUserId).map(::MemberData),
+                    extraData = emptyMap(),
+                )
+                chatClient
+                    .createChannel(channelType = "messaging", channelId = "", params = params)
+                    .await()
+                    .onSuccess { channel ->
+                        _events.tryEmit(ChannelInfoViewEvent.NavigateToChannel(channel.cid))
+                    }
+                    .onError(onError)
+            }
+        }.onFailure { cause ->
+            onError(Error.ThrowableError(message = cause.message.orEmpty(), cause = cause))
+        }
+    }
 }
 
 private const val MINIMUM_VISIBLE_MEMBERS = 5

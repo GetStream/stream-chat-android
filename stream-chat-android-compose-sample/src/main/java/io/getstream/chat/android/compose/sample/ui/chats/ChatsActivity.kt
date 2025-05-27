@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalStreamChatApi::class)
+
 package io.getstream.chat.android.compose.sample.ui.chats
 
 import android.content.Context
@@ -78,6 +80,7 @@ import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFact
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModelFactory
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
@@ -262,8 +265,7 @@ class ChatsActivity : BaseConnectedActivity() {
                 onNavigateToChannel = { channelId ->
                     navigator.navigateToChannel(
                         channelId = channelId,
-                        replace = !singlePane,
-                        popUp = !singlePane,
+                        singlePane = singlePane,
                     )
                 },
             )
@@ -275,8 +277,7 @@ class ChatsActivity : BaseConnectedActivity() {
                     navigator.navigateToMessage(
                         channelId = message.cid,
                         messageId = message.id,
-                        replace = !singlePane,
-                        popUp = singlePane,
+                        singlePane = singlePane,
                     )
                 },
             )
@@ -331,7 +332,11 @@ class ChatsActivity : BaseConnectedActivity() {
         val viewModelFactory = ChannelInfoViewModelFactory(context = applicationContext, cid = channelId)
         val viewModel = viewModel<ChannelInfoViewModel>(key = channelId, factory = viewModelFactory)
 
-        viewModel.handleChannelInfoEvents(onNavigateUp, onNavigateToPinnedMessages, onNavigateToChannel)
+        viewModel.handleChannelInfoEvents(
+            onNavigateUp = onNavigateUp,
+            onNavigateToPinnedMessages = onNavigateToPinnedMessages,
+            onNavigateToChannel = onNavigateToChannel,
+        )
 
         if (AdaptiveLayoutInfo.singlePaneWindow()) {
             GroupChannelInfoScreen(
@@ -363,11 +368,13 @@ class ChatsActivity : BaseConnectedActivity() {
         LaunchedEffect(this) {
             events.collectLatest { event ->
                 when (event) {
-                    is ChannelInfoViewEvent.NavigateUp -> onNavigateUp()
-                    is ChannelInfoViewEvent.NavigateToPinnedMessages -> onNavigateToPinnedMessages()
-                    is ChannelInfoViewEvent.NavigateToChannel -> onNavigateToChannel(event.channelId)
+                    is ChannelInfoViewEvent.Navigation -> when (event) {
+                        is ChannelInfoViewEvent.NavigateUp -> onNavigateUp()
+                        is ChannelInfoViewEvent.NavigateToPinnedMessages -> onNavigateToPinnedMessages()
+                        is ChannelInfoViewEvent.NavigateToChannel -> onNavigateToChannel(event.channelId)
+                    }
                     is ChannelInfoViewEvent.Error -> showError(event)
-                    else -> Unit
+                    is ChannelInfoViewEvent.Modal -> Unit
                 }
             }
         }
@@ -472,16 +479,15 @@ private fun ThreePaneNavigator.navigateToPinnedMessages(channelId: String) {
 private fun ThreePaneNavigator.navigateToMessage(
     channelId: String,
     messageId: String,
-    replace: Boolean,
-    popUp: Boolean,
+    singlePane: Boolean,
 ) {
     navigateTo(
         destination = ThreePaneDestination(
             pane = ThreePaneRole.Detail,
             arguments = ChatMessageSelection(channelId, messageId),
         ),
-        replace = replace,
-        popUpTo = if (popUp) {
+        replace = !singlePane,
+        popUpTo = if (singlePane) {
             ThreePaneRole.List
         } else {
             null
@@ -491,19 +497,18 @@ private fun ThreePaneNavigator.navigateToMessage(
 
 private fun ThreePaneNavigator.navigateToChannel(
     channelId: String,
-    replace: Boolean,
-    popUp: Boolean,
+    singlePane: Boolean,
 ) {
     navigateTo(
         destination = ThreePaneDestination(
             pane = ThreePaneRole.Detail,
             arguments = ChatMessageSelection(channelId),
         ),
-        replace = replace,
-        popUpTo = if (popUp) {
-            ThreePaneRole.Detail
-        } else {
+        replace = !singlePane,
+        popUpTo = if (singlePane) {
             null
+        } else {
+            ThreePaneRole.Detail
         },
     )
 }
@@ -511,30 +516,33 @@ private fun ThreePaneNavigator.navigateToChannel(
 private fun Context.showError(error: ChannelInfoViewEvent.Error) {
     val message = when (error) {
         ChannelInfoViewEvent.RenameChannelError,
-            -> R.string.stream_ui_channel_info_rename_group_error
+        -> R.string.stream_ui_channel_info_rename_group_error
 
         ChannelInfoViewEvent.MuteChannelError,
         ChannelInfoViewEvent.UnmuteChannelError,
-            -> R.string.stream_ui_channel_info_mute_conversation_error
+        -> R.string.stream_ui_channel_info_mute_conversation_error
 
         ChannelInfoViewEvent.HideChannelError,
         ChannelInfoViewEvent.UnhideChannelError,
-            -> R.string.stream_ui_channel_info_hide_conversation_error
+        -> R.string.stream_ui_channel_info_hide_conversation_error
 
         ChannelInfoViewEvent.LeaveChannelError,
-            -> R.string.stream_ui_channel_info_leave_conversation_error
+        -> R.string.stream_ui_channel_info_leave_conversation_error
 
         ChannelInfoViewEvent.DeleteChannelError,
-            -> R.string.stream_ui_channel_info_delete_conversation_error
+        -> R.string.stream_ui_channel_info_delete_conversation_error
 
         ChannelInfoViewEvent.BanMemberError,
-            -> R.string.stream_ui_channel_info_ban_member_error
+        -> R.string.stream_ui_channel_info_ban_member_error
 
         ChannelInfoViewEvent.UnbanMemberError,
-            -> R.string.stream_ui_channel_info_unban_member_error
+        -> R.string.stream_ui_channel_info_unban_member_error
 
         ChannelInfoViewEvent.RemoveMemberError,
-            -> R.string.stream_ui_channel_info_remove_member_error
+        -> R.string.stream_ui_channel_info_remove_member_error
+
+        ChannelInfoViewEvent.NewDirectChannelError,
+        -> R.string.stream_ui_channel_info_new_direct_channel_error
     }
     Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
 }

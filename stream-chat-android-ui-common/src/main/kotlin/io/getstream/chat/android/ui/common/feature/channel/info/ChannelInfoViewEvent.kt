@@ -151,13 +151,6 @@ public sealed interface ChannelInfoViewEvent {
     public data class NavigateToChannel(val channelId: String) : Navigation(reason = null)
 
     /**
-     * Indicates an event to navigate to a new channel creation.
-     *
-     * @param memberId The ID of the member to be added to the new channel.
-     */
-    public data class NavigateToNewChannel(val memberId: String) : Navigation(reason = null)
-
-    /**
      * Represents error events occurred while performing an action.
      */
     public sealed interface Error : ChannelInfoViewEvent
@@ -211,4 +204,9 @@ public sealed interface ChannelInfoViewEvent {
      * Indicates an error occurred while removing a member.
      */
     public data object RemoveMemberError : Error
+
+    /**
+     * Indicates an error occurred while creating a new direct channel.
+     */
+    public data object NewDirectChannelError : Error
 }
