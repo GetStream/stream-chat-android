@@ -23,21 +23,36 @@ import io.getstream.chat.android.models.User
 
 /**
  * Represents the state of the channel header in the UI.
+ *
+ * This sealed interface is used to model the different states that the channel header
+ * can be in, such as loading or displaying content.
  */
 @ExperimentalStreamChatApi
-public data class ChannelHeaderViewState(
-    /**
-     * The current connected user.
-     */
-    val currentUser: User? = null,
+public sealed interface ChannelHeaderViewState {
 
     /**
-     * The connection state of the chat client.
+     * Represents the loading state of the channel header.
      */
-    val connectionState: ConnectionState = ConnectionState.Offline,
+    public data object Loading : ChannelHeaderViewState
 
     /**
-     * The channel associated with the message list.
+     * Represents the content state of the channel header.
      */
-    val channel: Channel = Channel(),
-)
+    public data class Content(
+        /**
+         * The current connected user.
+         */
+        val currentUser: User?,
+
+        /**
+         * The connection state of the chat client.
+         */
+        val connectionState: ConnectionState,
+
+        /**
+         * The channel associated with the message list.
+         */
+        val channel: Channel,
+
+    ) : ChannelHeaderViewState
+}

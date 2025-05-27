@@ -59,7 +59,7 @@ public class ChannelHeaderViewController(
                 state.membersCount,
                 state.watcherCount,
             ) { connectionState, _, _, _ ->
-                ChannelHeaderViewState(
+                ChannelHeaderViewState.Content(
                     currentUser = chatClient.getCurrentUser(),
                     connectionState = connectionState,
                     channel = state.toChannel(),
@@ -68,7 +68,7 @@ public class ChannelHeaderViewController(
         }.stateIn(
             scope = scope,
             started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_IN_MILLIS),
-            initialValue = ChannelHeaderViewState(),
+            initialValue = ChannelHeaderViewState.Loading,
         )
 }
 

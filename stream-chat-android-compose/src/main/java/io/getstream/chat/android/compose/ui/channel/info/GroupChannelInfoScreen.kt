@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.channel.info
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -50,6 +51,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ContentBox
+import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
@@ -64,6 +66,7 @@ import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
+import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
 import kotlinx.coroutines.flow.collectLatest
 import java.util.Date
@@ -145,21 +148,27 @@ private fun GroupChannelInfoTopBar(
     val viewModel = viewModel<ChannelHeaderViewModel>(factory = viewModelFactory)
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    MessageListHeader(
-        channel = state.channel,
-        currentUser = state.currentUser,
-        connectionState = state.connectionState,
-        elevation = elevation,
-        onBackPressed = onNavigationIconClick,
-        leadingContent = {
-            DefaultChannelInfoScreenNavigationIcon(
-                onClick = onNavigationIconClick,
-            )
-        },
-        trailingContent = { // Add members button
-            // https://linear.app/stream/issue/AND-537
-        },
-    )
+    when (val content = state) {
+        is ChannelHeaderViewState.Loading -> LoadingIndicator(
+            modifier = Modifier.fillMaxWidth(),
+        )
+
+        is ChannelHeaderViewState.Content -> MessageListHeader(
+            channel = content.channel,
+            currentUser = content.currentUser,
+            connectionState = content.connectionState,
+            elevation = elevation,
+            onBackPressed = onNavigationIconClick,
+            leadingContent = {
+                DefaultChannelInfoScreenNavigationIcon(
+                    onClick = onNavigationIconClick,
+                )
+            },
+            trailingContent = { // Add members button
+                // https://linear.app/stream/issue/AND-537
+            },
+        )
+    }
 }
 
 @Composable

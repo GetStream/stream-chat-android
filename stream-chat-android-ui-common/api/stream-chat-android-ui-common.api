@@ -1787,20 +1787,29 @@ public final class io/getstream/chat/android/ui/common/state/messages/list/Cance
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/state/messages/list/ChannelHeaderViewState {
+public abstract interface class io/getstream/chat/android/ui/common/state/messages/list/ChannelHeaderViewState {
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/list/ChannelHeaderViewState$Content : io/getstream/chat/android/ui/common/state/messages/list/ChannelHeaderViewState {
 	public static final field $stable I
-	public fun <init> ()V
 	public fun <init> (Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/ConnectionState;Lio/getstream/chat/android/models/Channel;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/ConnectionState;Lio/getstream/chat/android/models/Channel;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/User;
 	public final fun component2 ()Lio/getstream/chat/android/models/ConnectionState;
 	public final fun component3 ()Lio/getstream/chat/android/models/Channel;
-	public final fun copy (Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/ConnectionState;Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/ui/common/state/messages/list/ChannelHeaderViewState;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/list/ChannelHeaderViewState;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/ConnectionState;Lio/getstream/chat/android/models/Channel;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/list/ChannelHeaderViewState;
+	public final fun copy (Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/ConnectionState;Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/ui/common/state/messages/list/ChannelHeaderViewState$Content;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/list/ChannelHeaderViewState$Content;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/ConnectionState;Lio/getstream/chat/android/models/Channel;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/list/ChannelHeaderViewState$Content;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getChannel ()Lio/getstream/chat/android/models/Channel;
 	public final fun getConnectionState ()Lio/getstream/chat/android/models/ConnectionState;
 	public final fun getCurrentUser ()Lio/getstream/chat/android/models/User;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/list/ChannelHeaderViewState$Loading : io/getstream/chat/android/ui/common/state/messages/list/ChannelHeaderViewState {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/messages/list/ChannelHeaderViewState$Loading;
+	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
