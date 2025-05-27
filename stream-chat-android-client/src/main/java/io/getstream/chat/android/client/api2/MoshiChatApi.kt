@@ -933,9 +933,7 @@ constructor(
     }
 
     private fun flattenChannel(response: ChannelResponse): Channel = with(domainMapping) {
-        return response.channel.toDomain(
-            eventChatLastMessageAt = null,
-        ).let { channel ->
+        return response.channel.toDomain().let { channel ->
             channel.copy(
                 watcherCount = response.watcher_count,
                 read = response.read.map {

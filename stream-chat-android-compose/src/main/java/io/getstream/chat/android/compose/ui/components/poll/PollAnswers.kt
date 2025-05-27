@@ -173,6 +173,7 @@ public fun PollAnswersDialog(
     }
 }
 
+@Suppress("LongMethod")
 @Composable
 internal fun PollAnswersItem(
     answer: Answer,
@@ -215,6 +216,7 @@ internal fun PollAnswersItem(
                     shape = ChatTheme.shapes.avatar,
                     textStyle = ChatTheme.typography.captionBold,
                     placeholderPainter = null,
+                    errorPlaceholderPainter = null,
                     contentDescription = user.name,
                     initialsAvatarOffset = DpOffset.Zero,
                     onClick = null,

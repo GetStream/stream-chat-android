@@ -39,7 +39,9 @@ public class AudioPlayerController(
 
     private val logger by taggedLogger("Chat:PlayerController")
 
-    public val state: MutableStateFlow<AudioPlayerState> = MutableStateFlow(AudioPlayerState())
+    public val state: MutableStateFlow<AudioPlayerState> = MutableStateFlow(
+        AudioPlayerState(getRecordingUri = getRecordingUri),
+    )
 
     public fun resetAudio(attachment: Attachment) {
         if (attachment.isAudioRecording().not()) {
@@ -268,7 +270,7 @@ public class AudioPlayerController(
         val curState = state.value
         logger.d { "[reset] state.playingId: ${curState.current.playingId}" }
         audioPlayer.reset()
-        setState(AudioPlayerState())
+        setState(AudioPlayerState(getRecordingUri = getRecordingUri))
     }
 
     private fun onAudioStateChanged(playbackState: AudioState) {

@@ -21,6 +21,7 @@ import io.getstream.chat.android.models.CustomObject
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.ascByName
 import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomMessage
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -66,7 +67,12 @@ internal class QueryChannelsSortTest {
             ) {
                 randomChannel(
                     createdAt = dateWithOffset(offsetSeconds = -100),
-                    channelLastMessageAt = dateWithOffset(offsetSeconds = it),
+                    messages = listOf(
+                        randomMessage(
+                            createdAt = dateWithOffset(offsetSeconds = it),
+                            parentId = null,
+                        ),
+                    ),
                 )
             },
             sortArguments(
@@ -75,7 +81,12 @@ internal class QueryChannelsSortTest {
             ) {
                 randomChannel(
                     createdAt = dateWithOffset(offsetSeconds = -100),
-                    channelLastMessageAt = dateWithOffset(offsetSeconds = -it),
+                    messages = listOf(
+                        randomMessage(
+                            createdAt = dateWithOffset(offsetSeconds = -it),
+                            parentId = null,
+                        ),
+                    ),
                 )
             },
             sortArguments(
@@ -84,7 +95,12 @@ internal class QueryChannelsSortTest {
             ) {
                 randomChannel(
                     createdAt = dateWithOffset(offsetSeconds = -100),
-                    channelLastMessageAt = dateWithOffset(offsetSeconds = it),
+                    messages = listOf(
+                        randomMessage(
+                            createdAt = dateWithOffset(offsetSeconds = it),
+                            parentId = null,
+                        ),
+                    ),
                 )
             },
             sortArguments(
@@ -93,7 +109,12 @@ internal class QueryChannelsSortTest {
             ) {
                 randomChannel(
                     createdAt = dateWithOffset(offsetSeconds = -100),
-                    channelLastMessageAt = dateWithOffset(offsetSeconds = -it),
+                    messages = listOf(
+                        randomMessage(
+                            createdAt = dateWithOffset(offsetSeconds = -it),
+                            parentId = null,
+                        ),
+                    ),
                 )
             },
         )
@@ -104,25 +125,53 @@ internal class QueryChannelsSortTest {
                 testName = "Sorting by lastMessageAt field reference in ascending order",
                 querySort = QuerySortByField.ascByName("lastMessageAt"),
             ) {
-                randomChannel(channelLastMessageAt = dateWithOffset(offsetSeconds = it))
+                randomChannel(
+                    messages = listOf(
+                        randomMessage(
+                            createdAt = dateWithOffset(offsetSeconds = it),
+                            parentId = null,
+                        ),
+                    ),
+                )
             },
             sortArguments(
                 testName = "Sorting by lastMessageAt field reference in descending order",
                 querySort = QuerySortByField.descByName("lastMessageAt"),
             ) {
-                randomChannel(channelLastMessageAt = dateWithOffset(offsetSeconds = -it))
+                randomChannel(
+                    messages = listOf(
+                        randomMessage(
+                            createdAt = dateWithOffset(offsetSeconds = -it),
+                            parentId = null,
+                        ),
+                    ),
+                )
             },
             sortArguments(
                 testName = "Sorting by last_message_at field name in ascending order",
                 querySort = QuerySortByField.ascByName("last_message_at"),
             ) {
-                randomChannel(channelLastMessageAt = dateWithOffset(offsetSeconds = it))
+                randomChannel(
+                    messages = listOf(
+                        randomMessage(
+                            createdAt = dateWithOffset(offsetSeconds = it),
+                            parentId = null,
+                        ),
+                    ),
+                )
             },
             sortArguments(
                 testName = "Sorting by last_message_at field name in descending order",
                 querySort = QuerySortByField.descByName("last_message_at"),
             ) {
-                randomChannel(channelLastMessageAt = dateWithOffset(offsetSeconds = -it))
+                randomChannel(
+                    messages = listOf(
+                        randomMessage(
+                            createdAt = dateWithOffset(offsetSeconds = -it),
+                            parentId = null,
+                        ),
+                    ),
+                )
             },
         )
 

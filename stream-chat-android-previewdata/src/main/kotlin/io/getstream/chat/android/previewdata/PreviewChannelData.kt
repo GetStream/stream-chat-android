@@ -18,7 +18,6 @@ package io.getstream.chat.android.previewdata
 
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
-import java.util.Date
 
 /**
  * Provides sample channels that will be used to render previews.
@@ -91,6 +90,5 @@ public object PreviewChannelData {
             PreviewMessageData.message1,
             PreviewMessageData.message2,
         ),
-        channelLastMessageAt = Date(),
     )
 }

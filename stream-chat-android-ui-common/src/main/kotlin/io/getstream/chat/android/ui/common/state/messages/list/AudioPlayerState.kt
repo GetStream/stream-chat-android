@@ -20,18 +20,21 @@ import androidx.collection.IntFloatMap
 import androidx.collection.intFloatMapOf
 import androidx.compose.runtime.Immutable
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Attachment
 
 /**
  * Represents the state of the audio player.
  *
  * @property current The ongoing state of the audio player.
  * @property seekTo The seekTo state of the audio player.
+ * @property getRecordingUri A function that returns the URI of the recording.
  */
 @Immutable
 @InternalStreamChatApi
 public data class AudioPlayerState(
     val current: CurrentAudioState = CurrentAudioState(),
     val seekTo: IntFloatMap = intFloatMapOf(),
+    val getRecordingUri: (Attachment) -> String?,
 ) {
 
     /**

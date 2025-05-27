@@ -19,6 +19,8 @@ package io.getstream.chat.android.client.extensions.internal
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.ReactionGroup
+import java.util.Date
 
 /**
  * Add a [Reaction] created by the currently logged user to the given [Message].
@@ -29,20 +31,47 @@ import io.getstream.chat.android.models.Reaction
  */
 @InternalStreamChatApi
 public fun Message.addMyReaction(reaction: Reaction, enforceUnique: Boolean = false): Message {
-    return updateReactions {
-        when (enforceUnique) {
-            true -> clearOwnReactions(reaction.userId)
-            false -> this
-        }.let {
-            it.copy(
-                latestReactions = it.latestReactions + reaction,
-                ownReactions = it.ownReactions + reaction,
-                reactionCounts = it.reactionCounts + (reaction.type to ((reactionCounts[reaction.type] ?: 0) + 1)),
-                reactionScores = it.reactionScores +
-                    (reaction.type to ((reactionScores[reaction.type] ?: 0) + reaction.score)),
-            )
-        }
+    // Remove all previous own reactions if enforceUnique is true
+    val message = if (enforceUnique) {
+        removeReactions(reaction.userId)
+    } else {
+        this
     }
+    // Add the new reaction
+    // Reaction score
+    val currentScore = message.reactionScores[reaction.type] ?: 0
+    val newScore = currentScore + reaction.score
+    val newReactionScores = message.reactionScores + (reaction.type to newScore)
+    // Reaction count
+    val currentCount = message.reactionCounts[reaction.type] ?: 0
+    val newCount = currentCount + 1
+    val newReactionCounts = message.reactionCounts + (reaction.type to newCount)
+    // Reaction groups
+    val currentGroup = message.reactionGroups[reaction.type]
+    val newGroup = currentGroup?.copy(
+        sumScore = currentGroup.sumScore + reaction.score,
+        count = currentGroup.count + 1,
+        lastReactionAt = reaction.createdAt ?: reaction.createdLocallyAt ?: Date(),
+    ) ?: ReactionGroup(
+        type = reaction.type,
+        count = 1,
+        sumScore = reaction.score,
+        firstReactionAt = reaction.createdAt ?: reaction.createdLocallyAt ?: Date(),
+        lastReactionAt = reaction.createdAt ?: reaction.createdLocallyAt ?: Date(),
+    )
+    val newReactionGroups = message.reactionGroups + (reaction.type to newGroup)
+    // Latest reactions
+    val newLatestReactions = message.latestReactions + reaction
+    // Own reactions
+    val newOwnReactions = message.ownReactions + reaction
+    // Return the updated message
+    return message.copy(
+        latestReactions = newLatestReactions,
+        ownReactions = newOwnReactions,
+        reactionCounts = newReactionCounts,
+        reactionScores = newReactionScores,
+        reactionGroups = newReactionGroups,
+    )
 }
 
 /**
@@ -51,65 +80,82 @@ public fun Message.addMyReaction(reaction: Reaction, enforceUnique: Boolean = fa
  * @param reaction The reaction to remove.
  */
 @InternalStreamChatApi
-public fun Message.removeMyReaction(reaction: Reaction): Message =
-    updateReactions {
-        val removed = ownReactions.filter { it.type == reaction.type && it.userId == reaction.userId }.toSet()
-        copy(
-            latestReactions = latestReactions.filterNot { it.type == reaction.type && it.userId == reaction.userId },
-            ownReactions = ownReactions - removed,
-            reactionCounts = reactionCounts.mapNotNull { (type, count) ->
-                when (removed.firstOrNull { it.type == type }) {
-                    null -> type to count
-                    else -> type to (count - 1)
-                }.takeUnless { it.second <= 0 }
-            }.toMap(),
-            reactionScores = reactionScores.mapNotNull { (type, score) ->
-                when (val ownReaction = removed.firstOrNull { it.type == type }) {
-                    null -> type to score
-                    else -> type to (score - ownReaction.score)
-                }.takeUnless { it.second <= 0 }
-            }.toMap(),
-        )
+public fun Message.removeMyReaction(reaction: Reaction): Message {
+    return removeReactions(userId = reaction.userId, type = reaction.type)
+}
+
+/**
+ * Removes reactions from a message.
+ * When [type] is provided, removes reactions for the [userId] from the provided type.
+ * When [type] is null, removes all reactions for the [userId].
+ */
+private fun Message.removeReactions(
+    userId: String,
+    type: String? = null,
+): Message {
+    val reactionsToRemove = if (type != null) {
+        // Remove specific reactions
+        ownReactions
+            .filter { it.type == type && it.userId == userId }
+            .toSet()
+    } else {
+        // Remove all user reactions
+        ownReactions.toSet()
     }
 
-private fun ReactionData.clearOwnReactions(userId: String): ReactionData {
-    val ownReactionsMap = ownReactions.groupBy { it.type }
-    return copy(
-        latestReactions = latestReactions.filterNot { it.userId == userId },
-        reactionCounts = reactionCounts.mapNotNull { (type, count) ->
-            when (val ownReaction = ownReactionsMap[type]) {
-                null -> type to count
-                else -> type to (count - ownReaction.size)
-            }.takeUnless { it.second <= 0 }
-        }.toMap(),
-        reactionScores = reactionScores.mapNotNull { (type, score) ->
-            when (val ownReaction = ownReactionsMap[type]) {
-                null -> type to score
-                else -> type to (score - ownReaction.sumOf { it.score })
-            }.takeUnless { it.second <= 0 }
-        }.toMap(),
-        ownReactions = emptyList(),
+    val newReactionScores = reactionScores.toMutableMap()
+    val newReactionCounts = reactionCounts.toMutableMap()
+    val newReactionGroups = reactionGroups.toMutableMap()
+    reactionsToRemove.forEach { reaction ->
+        // Decrease reaction score
+        reactionScores[reaction.type]?.let { score ->
+            val newScore = score - reaction.score
+            if (newScore > 0) {
+                newReactionScores[reaction.type] = newScore
+            } else {
+                newReactionScores.remove(reaction.type)
+            }
+        }
+        // Decrement reaction count
+        reactionCounts[reaction.type]?.let { count ->
+            val newCount = count - 1
+            if (newCount > 0) {
+                newReactionCounts[reaction.type] = newCount
+            } else {
+                newReactionCounts.remove(reaction.type)
+            }
+        }
+        // Update reaction groups
+        reactionGroups[reaction.type]?.let { group ->
+            val newGroup = group.copy(
+                sumScore = group.sumScore - reaction.score,
+                count = group.count - 1,
+            )
+            if (newGroup.sumScore > 0 && newGroup.count > 0) {
+                newReactionGroups[reaction.type] = newGroup
+            } else {
+                newReactionGroups.remove(reaction.type)
+            }
+        }
+    }
+
+    val newOwnReactions = if (type != null) {
+        ownReactions - reactionsToRemove
+    } else {
+        emptyList() // Clear all when removing all user reactions
+    }
+
+    val newLatestReactions = if (type != null) {
+        latestReactions.filterNot { it.type == type && it.userId == userId }
+    } else {
+        latestReactions.filterNot { it.userId == userId }
+    }
+
+    return this.copy(
+        ownReactions = newOwnReactions,
+        latestReactions = newLatestReactions,
+        reactionCounts = newReactionCounts,
+        reactionScores = newReactionScores,
+        reactionGroups = newReactionGroups,
     )
 }
-
-private inline fun Message.updateReactions(actions: ReactionData.() -> ReactionData): Message {
-    val reactionData = ReactionData(
-        reactionCounts,
-        reactionScores,
-        latestReactions,
-        ownReactions,
-    ).actions()
-    return copy(
-        reactionCounts = reactionData.reactionCounts,
-        reactionScores = reactionData.reactionScores,
-        latestReactions = reactionData.latestReactions,
-        ownReactions = reactionData.ownReactions,
-    )
-}
-
-private data class ReactionData(
-    val reactionCounts: Map<String, Int>,
-    val reactionScores: Map<String, Int>,
-    val latestReactions: List<Reaction>,
-    val ownReactions: List<Reaction>,
-)
