@@ -127,6 +127,11 @@ public fun GroupChannelInfoScreen(
         )
     }
 
+    GroupChannelInfoScreenModal(viewModel)
+}
+
+@Composable
+private fun GroupChannelInfoScreenModal(viewModel: ChannelInfoViewModel) {
     var modal by remember { mutableStateOf<ChannelInfoViewEvent.Modal?>(null) }
 
     LaunchedEffect(viewModel) {

@@ -92,6 +92,11 @@ public fun DirectChannelInfoScreen(
         topBar = topBar,
     )
 
+    DirectChannelInfoScreenModal(viewModel)
+}
+
+@Composable
+private fun DirectChannelInfoScreenModal(viewModel: ChannelInfoViewModel) {
     var modal by remember { mutableStateOf<ChannelInfoViewEvent.Modal?>(null) }
 
     LaunchedEffect(viewModel) {
