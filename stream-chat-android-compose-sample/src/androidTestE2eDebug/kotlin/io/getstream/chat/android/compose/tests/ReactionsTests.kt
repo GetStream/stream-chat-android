@@ -25,7 +25,6 @@ import io.getstream.chat.android.compose.uiautomator.seconds
 import io.getstream.chat.android.e2e.test.mockserver.ReactionType
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
-import org.junit.Ignore
 import org.junit.Test
 
 class ReactionsTests : StreamTestCase() {
@@ -182,7 +181,6 @@ class ReactionsTests : StreamTestCase() {
     }
 
     @AllureId("5714")
-    @Ignore("https://linear.app/stream/issue/AND-247")
     @Test
     fun test_userAddsReactionWhileOffline() {
         step("GIVEN user opens the channel") {
@@ -209,7 +207,6 @@ class ReactionsTests : StreamTestCase() {
     }
 
     @AllureId("6713")
-    @Ignore("https://linear.app/stream/issue/AND-247")
     @Test
     fun test_participantAddsReactionWhileUserIsOffline() {
         val delay = 3
@@ -217,7 +214,9 @@ class ReactionsTests : StreamTestCase() {
             userRobot.login().openChannel()
         }
         step("AND user sends a message") {
-            userRobot.sendMessage(sampleText)
+            userRobot
+                .sendMessage(sampleText)
+                .sleep(500) // to fix flakiness on CI
         }
         step("AND user becomes offline") {
             participantRobot.addReaction(type = ReactionType.LIKE, delay)

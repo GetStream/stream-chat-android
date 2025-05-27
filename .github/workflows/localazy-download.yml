@@ -5,19 +5,21 @@ on:
     # Every midnight
     - cron: "0 0 * * *"
 
+  workflow_dispatch:
+
 jobs:
   localazy-download:
     name: Download strings from Localazy
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3.1.0
+      - uses: actions/checkout@v4.2.2
       - uses: GetStream/android-ci-actions/actions/setup-java@main
       - uses: tibdex/github-app-token@v1.7.0
         id: generate-token
         with:
           app_id: ${{ secrets.APP_ID_OBTAIN_TOKEN }}
           private_key: ${{ secrets.APP_PRIVATE_KEY_OBTAIN_TOKEN }}
-      - uses: localazy/download@v1
+      - uses: localazy/download@v1.1.0
         with:
           read_key: ${{ secrets.LOCALAZY_READ_KEY }}
           write_key: ${{ secrets.LOCALAZY_WRITE_KEY }}

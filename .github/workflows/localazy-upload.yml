@@ -4,18 +4,18 @@ on:
     branches:
       - develop
     paths:
-      - 'stream-chat-android-ui-common/src/main/res/values/strings*.xml'
-      - 'stream-chat-android-client/src/main/res/values/strings*.xml'
-      - 'stream-chat-android-ui-components/src/main/res/values/strings*.xml'
-      - 'stream-chat-android-compose/src/main/res/values/strings*.xml'
+      - 'stream-chat-android-client/src/main/res/values/strings.xml'
+      - 'stream-chat-android-compose/src/main/res/values/strings.xml'
+      - 'stream-chat-android-ui-common/src/main/res/values/strings.xml'
+      - 'stream-chat-android-ui-components/src/main/res/values/strings.xml'
+      - 'stream-chat-android-ui-utils/src/main/res/values/strings.xml'
 
 jobs:
   localazy-upload:
     name: Upload strings to Localazy
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v1
-      - uses: GetStream/android-ci-actions/actions/setup-java@main
+      - uses: actions/checkout@v4.2.2
       - uses: localazy/upload@v1
         with:
           read_key: ${{ secrets.LOCALAZY_READ_KEY }}

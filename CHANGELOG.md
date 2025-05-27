@@ -8,7 +8,6 @@
 - Add `pendingMessages` field to the `Channel` model. [#5784](https://github.com/GetStream/stream-chat-android/pull/5784)
 
 ### ⚠️ Changed
-- Deprecate `$ne` filter (no longer supported due to performance issues). [#5782](https://github.com/GetStream/stream-chat-android/pull/5782)
 
 ### ❌ Removed
 
@@ -18,11 +17,9 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Add `ChatClient.queryDrafts` method which supports filtering and pagination. [#5759](https://github.com/GetStream/stream-chat-android/pull/5759)
 - Add `ChatClient.getPendingMessage` to fetch a pending message (and its metadata) by its ID. [#5784](https://github.com/GetStream/stream-chat-android/pull/5784)
 
 ### ⚠️ Changed
-- Deprecate `ChatClient.queryDraftMessages` because the `offset` argument is not supported. [#5759](https://github.com/GetStream/stream-chat-android/pull/5759)
 
 ### ❌ Removed
 
@@ -39,7 +36,6 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
-- Fix potential infinite loop during background sync caused by syncing the draft messages. [#5759](https://github.com/GetStream/stream-chat-android/pull/5759)
 
 ### ⬆️ Improved
 
@@ -55,7 +51,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Introduce internal `ChannelInfoViewController` and the experimental classes: `ChannelInfoViewState`, `ChannelInfoViewEvent`, and `ExpandableList`. [#5764](https://github.com/GetStream/stream-chat-android/pull/5764)
 
 ### ⚠️ Changed
 
@@ -63,8 +58,6 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
-- Fix `UninitializedPropertyAccessException` in `AttachmentsPickerSystemFragment`. [#5778](https://github.com/GetStream/stream-chat-android/pull/5778)
 
 ### ⬆️ Improved
 
@@ -76,17 +69,10 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
-- Fix `MessageRegularContent` component factory. [5774](https://github.com/GetStream/stream-chat-android/pull/5774)
 
 ### ⬆️ Improved
-- Improve the performance of playing video/audio attachments by using `ExoPlayer` instead of `VideoView`. [#5749](https://github.com/GetStream/stream-chat-android/pull/5749)
-- Expose audio recording URI mapping to be used by the player UI. [#5776](https://github.com/GetStream/stream-chat-android/pull/5776)
-- Added `errorPlaceholderPainter` property to Avatar allowing to have a custom Painter used when there is an error fetching the picture. [#5766](https://github.com/GetStream/stream-chat-android/pull/5766)
-- Added `ChatComponentFactory.FallbackAvatar` method for overriding the default `FallbackAvatar`. [#5766](https://github.com/GetStream/stream-chat-android/pull/5766)
 
 ### ✅ Added
-- Introduce an **experimental** `ChatsScreen` supporting adaptive layout for large screen devices. [#5671](https://github.com/GetStream/stream-chat-android/pull/5671) [#5556](https://github.com/GetStream/stream-chat-android/pull/5556)
 
 ### ⚠️ Changed
 
@@ -102,6 +88,50 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# May 23th, 2025 - 6.16.0
+## Common changes for all artifacts
+### 🐞 Fixed
+- Fix adding/removing of message reactions when offline not working. [#5762](https://github.com/GetStream/stream-chat-android/pull/5762)
+
+### ⚠️ Changed
+- Deprecate `$ne` filter (no longer supported due to performance issues). [#5782](https://github.com/GetStream/stream-chat-android/pull/5782)
+
+## stream-chat-android-client
+### ✅ Added
+- Add `ChatClient.queryDrafts` method which supports filtering and pagination. [#5759](https://github.com/GetStream/stream-chat-android/pull/5759)
+- Add `SendMessageInterceptor` and `ChatClient.Builder.sendMessageInteceptor` for overriding the default `sendMessage` operation. [#5775](https://github.com/GetStream/stream-chat-android/pull/5775)
+
+### ⚠️ Changed
+- Deprecate `ChatClient.queryDraftMessages` because the `offset` argument is not supported. [#5759](https://github.com/GetStream/stream-chat-android/pull/5759)
+
+## stream-chat-android-state
+### 🐞 Fixed
+- Fix potential infinite loop during background sync caused by syncing the draft messages. [#5759](https://github.com/GetStream/stream-chat-android/pull/5759)
+
+## stream-chat-android-ui-common
+### ✅ Added
+- Introduce internal `ChannelInfoViewController` and the experimental classes: `ChannelInfoViewState`, `ChannelInfoViewEvent`, and `ExpandableList`. [#5764](https://github.com/GetStream/stream-chat-android/pull/5764)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
+- Fix `UninitializedPropertyAccessException` in `AttachmentsPickerSystemFragment`. [#5778](https://github.com/GetStream/stream-chat-android/pull/5778)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fix audio recording attachments not paused when the app goes to the background or the screen is covered with another one. [#5685](https://github.com/GetStream/stream-chat-android/pull/5685)
+- Fix `MessageRegularContent` component factory. [5774](https://github.com/GetStream/stream-chat-android/pull/5774)
+
+### ⬆️ Improved
+- Improve the performance of playing video/audio attachments by using `ExoPlayer` instead of `VideoView`. [#5749](https://github.com/GetStream/stream-chat-android/pull/5749)
+- Expose audio recording URI mapping to be used by the player UI. [#5776](https://github.com/GetStream/stream-chat-android/pull/5776)
+- Added `errorPlaceholderPainter` property to Avatar allowing to have a custom Painter used when there is an error fetching the picture. [#5766](https://github.com/GetStream/stream-chat-android/pull/5766)
+- Added `ChatComponentFactory.FallbackAvatar` method for overriding the default `FallbackAvatar`. [#5766](https://github.com/GetStream/stream-chat-android/pull/5766)
+- Remove `DummyFirstChannelItem` from the `Channels` composable and improve animations when adding/moving channels. [#5780](https://github.com/GetStream/stream-chat-android/pull/5780)
+
+### ✅ Added
+- Introduce an **experimental** `ChatsScreen` supporting adaptive layout for large screen devices. [#5671](https://github.com/GetStream/stream-chat-android/pull/5671) [#5556](https://github.com/GetStream/stream-chat-android/pull/5556)
 
 # April 30th, 2025 - 6.15.0
 ## Common changes for all artifacts
