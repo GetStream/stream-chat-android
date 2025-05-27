@@ -351,7 +351,7 @@ class ChatsActivity : BaseConnectedActivity() {
         onNavigateUp: () -> Unit,
         onNavigateToPinnedMessages: () -> Unit,
     ) {
-        LaunchedEffect(Unit) {
+        LaunchedEffect(this) {
             events.collectLatest { event ->
                 when (event) {
                     is ChannelInfoViewEvent.NavigateUp -> onNavigateUp()
