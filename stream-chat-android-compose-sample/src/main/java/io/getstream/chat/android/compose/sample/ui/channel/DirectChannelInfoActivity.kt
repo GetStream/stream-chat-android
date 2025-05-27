@@ -76,21 +76,29 @@ class DirectChannelInfoActivity : BaseConnectedActivity() {
             LaunchedEffect(viewModel) {
                 viewModel.events.collectLatest { event ->
                     when (event) {
-                        is ChannelInfoViewEvent.Error ->
-                            showError(event)
-
-                        is ChannelInfoViewEvent.NavigateUp -> {
-                            setResult(RESULT_OK)
-                            finish()
-                        }
-
-                        is ChannelInfoViewEvent.NavigateToPinnedMessages ->
-                            openPinnedMessages()
-
-                        else -> Unit
+                        is ChannelInfoViewEvent.Error -> showError(event)
+                        is ChannelInfoViewEvent.Navigation -> onNavigationEvent(event)
+                        is ChannelInfoViewEvent.Modal -> Unit
                     }
                 }
             }
+        }
+    }
+
+    private fun onNavigationEvent(event: ChannelInfoViewEvent.Navigation) {
+        when (event) {
+            is ChannelInfoViewEvent.NavigateUp -> {
+                setResult(RESULT_OK)
+                finish()
+            }
+
+            is ChannelInfoViewEvent.NavigateToPinnedMessages ->
+                openPinnedMessages()
+
+            is ChannelInfoViewEvent.NavigateToChannel ->
+                // No need to handle this in DirectChannelInfoActivity,
+                // as it is only applicable for group channels.
+                Unit
         }
     }
 
@@ -129,6 +137,9 @@ class DirectChannelInfoActivity : BaseConnectedActivity() {
 
             ChannelInfoViewEvent.UnbanMemberError,
             -> R.string.stream_ui_channel_info_unban_member_error
+
+            ChannelInfoViewEvent.NewDirectChannelError,
+            -> R.string.stream_ui_channel_info_new_direct_channel_error
         }
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }

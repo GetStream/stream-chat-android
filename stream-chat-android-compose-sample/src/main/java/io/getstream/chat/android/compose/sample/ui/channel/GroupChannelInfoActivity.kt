@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.sample.R
-import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelActivity
 import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
 import io.getstream.chat.android.compose.sample.ui.MessagesActivity
 import io.getstream.chat.android.compose.sample.ui.pinned.PinnedMessagesActivity
@@ -77,20 +76,16 @@ class GroupChannelInfoActivity : BaseConnectedActivity() {
             LaunchedEffect(viewModel) {
                 viewModel.events.collectLatest { event ->
                     when (event) {
-                        is ChannelInfoViewEvent.Error ->
-                            showError(event)
-
-                        is ChannelInfoViewEvent.Navigation ->
-                            handleNavigationEvent(event)
-
-                        else -> Unit
+                        is ChannelInfoViewEvent.Error -> showError(event)
+                        is ChannelInfoViewEvent.Navigation -> onNavigationEvent(event)
+                        is ChannelInfoViewEvent.Modal -> Unit
                     }
                 }
             }
         }
     }
 
-    private fun handleNavigationEvent(event: ChannelInfoViewEvent.Navigation) {
+    private fun onNavigationEvent(event: ChannelInfoViewEvent.Navigation) {
         when (event) {
             is ChannelInfoViewEvent.NavigateUp -> {
                 setResult(RESULT_OK)
@@ -101,20 +96,8 @@ class GroupChannelInfoActivity : BaseConnectedActivity() {
                 openPinnedMessages()
 
             is ChannelInfoViewEvent.NavigateToChannel -> {
-                val intent = MessagesActivity.createIntent(
-                    context = this,
-                    channelId = event.channelId,
-                )
+                val intent = MessagesActivity.createIntent(context = this, channelId = event.channelId)
                 startActivity(intent)
-            }
-
-            is ChannelInfoViewEvent.NavigateToNewChannel -> {
-                // TODO NavigateToNewChannel
-                // val intent = AddChannelActivity.createIntent(
-                //     context = this,
-                //     memberId = event.memberId,
-                // )
-                startActivity(Intent(this, AddChannelActivity::class.java))
             }
         }
     }
@@ -154,6 +137,9 @@ class GroupChannelInfoActivity : BaseConnectedActivity() {
 
             ChannelInfoViewEvent.RemoveMemberError,
             -> R.string.stream_ui_channel_info_remove_member_error
+
+            ChannelInfoViewEvent.NewDirectChannelError,
+            -> R.string.stream_ui_channel_info_new_direct_channel_error
         }
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }

@@ -89,6 +89,7 @@
     <string name="stream_ui_channel_info_ban_member_error">Failed to ban member</string>
     <string name="stream_ui_channel_info_unban_member_error">Failed to unban member</string>
     <string name="stream_ui_channel_info_remove_member_error">Failed to remove member</string>
+    <string name="stream_ui_channel_info_new_direct_channel_error">Failed to create a new direct channel</string>
 
     <string name="stream_ui_channel_info_option_mute_conversation">Mute Conversation</string>
     <string name="stream_ui_channel_info_option_mute_group">Mute Group</string>
