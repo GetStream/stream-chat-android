@@ -62,6 +62,9 @@
     <string name="stream_ui_moderation_dialog_edit">Edit message</string>
     <string name="stream_ui_moderation_dialog_delete">Delete message</string>
 
-
     <string name="stream_ui_channel_list_untitled_channel">Channel without name</string>
+
+    <!-- Mention List -->
+    <string name="stream_ui_mention_list_empty">No mentions exist yet…</string>
+    <string name="stream_ui_mention_list_error">An error occurred</string>
 </resources>
