@@ -1,6 +1,5 @@
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import io.getstream.chat.android.Dependencies
-import io.getstream.chat.android.command.changelog.task.ChangelogAddModelSectionTask
 import io.getstream.chat.android.command.changelog.task.ChangelogReleaseSectionTask
 import io.getstream.chat.android.command.release.task.ReleaseTask
 import io.getstream.chat.android.command.unittest.task.UnitTestsTask
@@ -30,7 +29,6 @@ plugins {
     id("io.getstream.chat.VersionBumpPlugin")
     id("io.getstream.chat.MinorBumpPlugin")
     id("io.getstream.chat.VersionPrintPlugin")
-    id("io.getstream.chat.ChangelogAddModelSectionPlugin")
     alias(libs.plugins.gitversioner)
     alias(libs.plugins.gradle.versions)
     alias(libs.plugins.nexus.publish)
@@ -80,11 +78,6 @@ tasks.withType<ReleaseTask> {
 
 tasks.withType<ChangelogReleaseSectionTask> {
     config.changelogPath = "CHANGELOG.md"
-}
-
-tasks.withType<ChangelogAddModelSectionTask> {
-    config.changelogPath = "CHANGELOG.md"
-    config.changelogModel = "CHANGELOG_MODEL.md"
 }
 
 tasks.withType<Delete> {
