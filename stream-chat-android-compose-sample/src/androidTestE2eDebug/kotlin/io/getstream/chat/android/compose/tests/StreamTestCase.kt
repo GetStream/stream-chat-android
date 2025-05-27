@@ -33,9 +33,6 @@ import io.getstream.chat.android.e2e.test.mockserver.MockServer
 import io.getstream.chat.android.e2e.test.robots.BackendRobot
 import io.getstream.chat.android.e2e.test.robots.ParticipantRobot
 import io.getstream.chat.android.e2e.test.rules.RetryRule
-import io.qameta.allure.android.rules.LogcatRule
-import io.qameta.allure.android.rules.ScreenshotRule
-import io.qameta.allure.android.rules.WindowHierarchyRule
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -50,15 +47,6 @@ abstract class StreamTestCase {
 
     @get:Rule
     var testName: TestName = TestName()
-
-    @get:Rule
-    val screenshotRule = ScreenshotRule(mode = ScreenshotRule.Mode.FAILURE, screenshotName = "screenshot")
-
-    @get:Rule
-    val logcatRule = LogcatRule()
-
-    @get:Rule
-    val windowHierarchyRule = WindowHierarchyRule()
 
     @get:Rule
     val retryRule = RetryRule(3)

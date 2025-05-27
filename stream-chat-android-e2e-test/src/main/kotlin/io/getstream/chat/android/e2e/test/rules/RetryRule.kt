@@ -18,6 +18,10 @@ package io.getstream.chat.android.e2e.test.rules
 
 import android.database.sqlite.SQLiteDatabase
 import androidx.test.platform.app.InstrumentationRegistry
+import io.getstream.chat.android.compose.uiautomator.allureLogcat
+import io.getstream.chat.android.compose.uiautomator.allureScreenshot
+import io.getstream.chat.android.compose.uiautomator.allureWindowHierarchy
+import io.getstream.chat.android.compose.uiautomator.device
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
@@ -31,7 +35,10 @@ public annotation class Retry(val count: Int)
 /** Rule to retry all failed tests. **/
 public class RetryRule(private val count: Int) : TestRule {
 
-    override fun apply(base: Statement, description: Description): Statement = statement(base, description)
+    override fun apply(base: Statement, description: Description): Statement = statement(
+        base,
+        description,
+    )
 
     private fun statement(base: Statement, description: Description): Statement {
         return object : Statement() {
@@ -44,13 +51,17 @@ public class RetryRule(private val count: Int) : TestRule {
 
                 for (i in 0 until retryCount) {
                     try {
-                        System.err.println("${description.displayName}: run #${(i + 1)} started.")
+                        System.err.println("${description.displayName}: run #${i + 1} started.")
+                        device.executeShellCommand("logcat -c")
                         base.evaluate()
                         return
                     } catch (t: Throwable) {
-                        System.err.println("${description.displayName}: run #${(i + 1)} failed.")
+                        System.err.println("${description.displayName}: run #${i + 1} failed.")
                         databaseOperations.clearDatabases()
                         caughtThrowable = t
+                        device.allureLogcat(name = "logcat_${i + 1}")
+                        device.allureScreenshot(name = "screenshot_${i + 1}")
+                        device.allureWindowHierarchy(name = "hierarchy_${i + 1}")
                     }
                 }
 
@@ -64,7 +75,11 @@ public open class DatabaseOperations {
 
     public open fun clearDatabases() {
         val databaseOperations = DatabaseOperations()
-        val dbFiles = databaseOperations.getAllDatabaseFiles().filterNot { shouldIgnoreFile(it.path) }
+        val dbFiles = databaseOperations.getAllDatabaseFiles().filterNot {
+            shouldIgnoreFile(
+                it.path,
+            )
+        }
         dbFiles.forEach { clearDatabase(it, databaseOperations) }
     }
 
@@ -75,7 +90,9 @@ public open class DatabaseOperations {
 
     private fun clearDatabase(dbFile: File, dbOperations: DatabaseOperations) {
         dbOperations.openDatabase(dbFile).use { database ->
-            val tablesToClear = dbOperations.getTableNames(database).filterNot { it == "room_master_table" }
+            val tablesToClear = dbOperations.getTableNames(
+                database,
+            ).filterNot { it == "room_master_table" }
             tablesToClear.forEach { dbOperations.deleteTableContent(database, it) }
         }
     }
@@ -91,7 +108,10 @@ public open class DatabaseOperations {
     }
 
     private fun getTableNames(sqLiteDatabase: SQLiteDatabase): List<String> {
-        sqLiteDatabase.rawQuery("SELECT name FROM sqlite_master WHERE type IN (?, ?)", arrayOf("table", "view"))
+        sqLiteDatabase.rawQuery(
+            "SELECT name FROM sqlite_master WHERE type IN (?, ?)",
+            arrayOf("table", "view"),
+        )
             .use { cursor ->
                 val tableNames = ArrayList<String>()
                 while (cursor.moveToNext()) {

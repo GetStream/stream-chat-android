@@ -18,11 +18,14 @@ package io.getstream.chat.android.compose.uiautomator
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import androidx.test.uiautomator.StaleObjectException
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
+import io.qameta.allure.kotlin.Allure
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
 public fun UiDevice.stopApp() {
@@ -115,10 +118,15 @@ public fun UiDevice.waitForInternetConnection(timeoutMs: Long = 10000, intervalM
     throw IllegalStateException("There is no internet connection.")
 }
 
-public fun UiDevice.dumpWindowHierarchy() {
+public fun UiDevice.dumpWindowHierarchy(print: Boolean = true): String {
     val outputStream = ByteArrayOutputStream()
     device.dumpWindowHierarchy(outputStream)
-    println(outputStream.toString("UTF-8"))
+
+    val outputString = outputStream.toString("UTF-8")
+    if (print) {
+        println(outputString)
+    }
+    return outputString
 }
 
 public fun <T> UiDevice.retryOnStaleObjectException(retries: Int = 3, action: () -> T): T {
@@ -131,4 +139,36 @@ public fun <T> UiDevice.retryOnStaleObjectException(retries: Int = 3, action: ()
         }
     }
     return action()
+}
+public fun UiDevice.allureScreenshot(name: String) {
+    val screenshot: Bitmap? = instrumentation.uiAutomation.takeScreenshot()
+
+    screenshot?.let {
+        val outputStream = ByteArrayOutputStream()
+        it.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        Allure.attachment(
+            name = "$name.png",
+            type = "image/png",
+            fileExtension = ".png",
+            content = ByteArrayInputStream(outputStream.toByteArray()),
+        )
+    }
+}
+
+public fun UiDevice.allureLogcat(name: String) {
+    Allure.attachment(
+        name = "$name.txt",
+        type = "text/plain",
+        fileExtension = ".txt",
+        content = device.executeShellCommand("logcat -d"),
+    )
+}
+
+public fun UiDevice.allureWindowHierarchy(name: String) {
+    Allure.attachment(
+        name = "$name.xml",
+        type = "text/xml",
+        fileExtension = ".xml",
+        content = device.dumpWindowHierarchy(print = false),
+    )
 }
