@@ -2905,4 +2905,41 @@ public interface ChatComponentFactory {
             showFileSize = showFileSize,
         )
     }
+
+    /**
+     * The default file upload content used for displaying uploading attachments.
+     *
+     * @param attachmentState The state of the attachment.
+     * @param modifier Modifier for styling.
+     * @param onItemClick Lambda called when an item gets clicked.
+     */
+    @Composable
+    public fun FileUploadContent(
+        attachmentState: AttachmentState,
+        modifier: Modifier,
+        onItemClick: (Attachment, List<AttachmentPreviewHandler>) -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.attachments.content.FileUploadContent(
+            attachmentState = attachmentState,
+            modifier = modifier,
+            onItemClick = onItemClick,
+        )
+    }
+
+    /**
+     * Factory method for creating a file upload item that shows an uploading attachment with progress.
+     *
+     * @param attachment The attachment that's being uploaded.
+     * @param modifier Modifier for styling.
+     */
+    @Composable
+    public fun FileUploadItem(
+        attachment: Attachment,
+        modifier: Modifier,
+    ) {
+        io.getstream.chat.android.compose.ui.attachments.content.FileUploadItem(
+            attachment = attachment,
+            modifier = modifier,
+        )
+    }
 }
