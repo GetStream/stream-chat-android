@@ -95,7 +95,7 @@ public fun GroupChannelInfoScreen(
     topBar: @Composable (elevation: Dp) -> Unit = { elevation ->
         GroupChannelInfoTopBar(
             viewModelFactory = viewModelFactory,
-            viewModelKey = viewModelKey,
+            viewModelKey = "topBar-$viewModelKey",
             elevation = elevation,
             onNavigationIconClick = onNavigationIconClick,
         )
