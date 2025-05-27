@@ -68,7 +68,7 @@ internal fun ChannelInfoContentOption(
         is ChannelInfoViewState.Content.Option.MuteChannel -> {
             // The LLC might take a few milliseconds to update the mute state.
             // So update UI immediately to avoid flickering.
-            var muted by remember { mutableStateOf(option.isMuted) }
+            var muted by remember(option) { mutableStateOf(option.isMuted) }
 
             ChannelInfoOptionSwitch(
                 icon = R.drawable.stream_compose_ic_mute,
