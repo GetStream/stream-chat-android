@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.uitests.util
 
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
@@ -30,7 +29,6 @@ import java.util.Date
 /**
  * Provides sample users for UI tests.
  */
-@OptIn(InternalStreamChatApi::class)
 object TestData {
 
     fun user1(): User = User().copy(
@@ -41,32 +39,32 @@ object TestData {
     )
 
     fun user2(): User = User().copy(
-        id = "amit",
-        name = "Amit Kumar",
-        image = FakeImageLoader.AVATAR_AMIT,
+        id = "leia_organa",
+        name = "Leia Organa",
+        image = FakeImageLoader.AVATAR_LEIA,
     )
 
     fun user3(): User = User().copy(
-        id = "filip",
-        name = "Filip Babić",
-        image = FakeImageLoader.AVATAR_FILIP,
+        id = "chewbacca",
+        name = "Chewbacca",
+        image = FakeImageLoader.AVATAR_CHEWBACCA,
     )
 
     fun user4(): User = User().copy(
-        id = "rafal",
-        name = "Rafal Adasiewicz",
-        image = FakeImageLoader.AVATAR_RAFAL,
+        id = "anakin_skywalker",
+        name = "Anakin Skywalker",
+        image = FakeImageLoader.AVATAR_ANAKIN,
     )
 
     fun user5(): User = User().copy(
-        id = "belal",
-        name = "Belal Khan",
-        image = FakeImageLoader.AVATAR_BELAL,
+        id = "han_solo",
+        name = "Han Solo",
+        image = FakeImageLoader.AVATAR_HAN,
     )
 
     fun user6(): User = User().copy(
         id = "jake",
-        image = FakeImageLoader.AVATAR_AMIT,
+        image = FakeImageLoader.AVATAR_LEIA,
     )
 
     fun member1() = Member(
@@ -128,7 +126,7 @@ object TestData {
 
     fun message5(): Message = Message().copy(
         id = "message5",
-        text = "tagged @Belal Khan ",
+        text = "tagged @Han Solo ",
         createdAt = date1(),
         type = MessageType.REGULAR,
         user = user4(),

@@ -342,6 +342,7 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
             shape = ChatTheme.shapes.avatar,
             textStyle = ChatTheme.typography.captionBold,
             placeholderPainter = null,
+            errorPlaceholderPainter = null,
             contentDescription = messageItem.message.user.name,
             initialsAvatarOffset = DpOffset.Zero,
             onClick = onUserAvatarClick,

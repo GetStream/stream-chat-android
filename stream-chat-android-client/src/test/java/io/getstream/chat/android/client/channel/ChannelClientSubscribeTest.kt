@@ -59,7 +59,6 @@ internal class ChannelClientSubscribeTest {
             channelType = CHANNEL_TYPE,
             channelId = CHANNEL_ID,
             channel = Channel(),
-            channelLastMessageAt = Date(),
             message = null,
         )
         val OTHER_CHANNEL_EVENT = NewMessageEvent(
@@ -74,7 +73,6 @@ internal class ChannelClientSubscribeTest {
             watcherCount = 0,
             totalUnreadCount = 0,
             unreadChannels = 0,
-            channelLastMessageAt = Date(),
         )
     }
 

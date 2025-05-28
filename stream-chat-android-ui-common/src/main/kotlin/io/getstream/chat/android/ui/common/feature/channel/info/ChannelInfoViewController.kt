@@ -30,7 +30,8 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.watchChannelAsState
-import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewEvent
+import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent.Navigation
+import io.getstream.chat.android.ui.common.helper.CopyToClipboardHandler
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
 import io.getstream.log.taggedLogger
@@ -69,6 +70,7 @@ import kotlinx.coroutines.launch
 public class ChannelInfoViewController(
     cid: String,
     private val scope: CoroutineScope,
+    private val copyToClipboardHandler: CopyToClipboardHandler,
     private val chatClient: ChatClient = ChatClient.instance(),
     channelState: Flow<ChannelState> = chatClient
         .watchChannelAsState(cid = cid, messageLimit = 0, coroutineScope = scope)
@@ -97,7 +99,11 @@ public class ChannelInfoViewController(
             .flatMapLatest { channel ->
                 logger.d { "[onChannelState]" }
                 combine(
-                    channel.channelData.onEach { logger.d { "[onChannelData] name: ${it.name}" } },
+                    channel.channelData.onEach {
+                        logger.d {
+                            "[onChannelData] cid: ${it.cid}, name: ${it.name}, capabilities: ${it.ownCapabilities}"
+                        }
+                    },
                     channel.members.onEach { logger.d { "[onMembers] size: ${it.size}" } },
                     channel.muted.onEach { logger.d { "[onMuted] $it" } },
                     channel.hidden.onEach { logger.d { "[onHidden] $it" } },
@@ -117,55 +123,68 @@ public class ChannelInfoViewController(
         isMuted: Boolean,
         isHidden: Boolean,
     ) {
-        val capability = channelData.toCapability()
-
-        logger.d {
-            "[onChannelInfoData] cid: ${channelData.cid}, " +
-                "name: ${channelData.name}, " +
-                "members: ${members.size}, " +
-                "isMuted: $isMuted, " +
-                "isHidden: $isHidden, " +
-                "$capability"
-        }
-
         val contentMembers = members
-            .run { takeIf { channelData.isGroupChannel } ?: filterNotCurrentUser() }
-            .map { member -> member.toContentMember(channelData.createdBy) }
+            .run {
+                // Do not filter out the current user if the channel is a group channel or if there is only one member
+                takeIf { members.size == 1 || channelData.isGroupChannel } ?: filterNotCurrentUser()
+            }
 
         _state.update { currentState ->
-            when (currentState) {
+            val expandableMembers = when (currentState) {
                 is ChannelInfoViewState.Loading -> {
-                    ChannelInfoViewState.Content(
-                        members = ExpandableList(
-                            items = contentMembers,
-                            minimumVisibleItems = MINIMUM_VISIBLE_MEMBERS,
-                        ),
-                        name = channelData.name,
-                        isMuted = isMuted,
-                        isHidden = isHidden,
-                        capability = capability,
+                    ExpandableList(
+                        items = contentMembers,
+                        minimumVisibleItems = MINIMUM_VISIBLE_MEMBERS,
                     )
                 }
 
                 is ChannelInfoViewState.Content -> {
-                    currentState.copy(
-                        members = currentState.members.copy(
-                            items = contentMembers,
-                        ),
-                        name = channelData.name,
-                        isMuted = isMuted,
-                        isHidden = isHidden,
-                        capability = capability,
-                    )
+                    currentState.members.copy(items = contentMembers)
                 }
             }
+            ChannelInfoViewState.Content(
+                owner = channelData.createdBy,
+                members = expandableMembers,
+                options = buildOptionsList(
+                    channelData = channelData,
+                    singleMember = if (contentMembers.size == 1) contentMembers.first() else null,
+                    isMuted = isMuted,
+                    isHidden = isHidden,
+                ),
+            )
         }
     }
 
     /**
-     * Expands the members list.
+     * Handles actions related to channel information view.
+     *
+     * @param action The [ChannelInfoViewAction] representing the action to be performed.
      */
-    public fun expandMembers() {
+    public fun onViewAction(
+        action: ChannelInfoViewAction,
+    ) {
+        logger.d { "[onViewAction] action: $action" }
+        when (action) {
+            is ChannelInfoViewAction.ExpandMembersClick -> expandMembers()
+            is ChannelInfoViewAction.CollapseMembersClick -> collapseMembers()
+            is ChannelInfoViewAction.UserInfoClick -> userInfoClick(action.user)
+            is ChannelInfoViewAction.RenameChannelClick -> renameChannel(action.name)
+            is ChannelInfoViewAction.PinnedMessagesClick ->
+                _events.tryEmit(ChannelInfoViewEvent.NavigateToPinnedMessages)
+
+            is ChannelInfoViewAction.MuteChannelClick -> setChannelMute(mute = true)
+            is ChannelInfoViewAction.UnmuteChannelClick -> setChannelMute(mute = false)
+            is ChannelInfoViewAction.HideChannelClick -> _events.tryEmit(ChannelInfoViewEvent.HideChannelModal)
+            is ChannelInfoViewAction.HideChannelConfirmationClick -> setChannelHide(hide = true, action.clearHistory)
+            is ChannelInfoViewAction.UnhideChannelClick -> setChannelHide(hide = false)
+            is ChannelInfoViewAction.LeaveChannelClick -> _events.tryEmit(ChannelInfoViewEvent.LeaveChannelModal)
+            is ChannelInfoViewAction.LeaveChannelConfirmationClick -> leaveChannel(action.quitMessage)
+            is ChannelInfoViewAction.DeleteChannelClick -> _events.tryEmit(ChannelInfoViewEvent.DeleteChannelModal)
+            is ChannelInfoViewAction.DeleteChannelConfirmationClick -> deleteChannel()
+        }
+    }
+
+    private fun expandMembers() {
         logger.d { "[expandMembers]" }
         _state.updateContent { content ->
             content.copy(
@@ -176,10 +195,7 @@ public class ChannelInfoViewController(
         }
     }
 
-    /**
-     * Collapses the members list.
-     */
-    public fun collapseMembers() {
+    private fun collapseMembers() {
         logger.d { "[collapseMembers]" }
         _state.updateContent { content ->
             content.copy(
@@ -190,110 +206,73 @@ public class ChannelInfoViewController(
         }
     }
 
-    /**
-     * Renames the channel with the given name.
-     *
-     * @param name The new name for the channel.
-     */
-    public fun renameChannel(name: String) {
+    private fun userInfoClick(user: User) {
+        logger.d { "[userInfoClick] user: $user" }
+
+        copyToClipboardHandler.copy(text = "@${user.name}")
+    }
+
+    private fun renameChannel(name: String) {
         logger.d { "[renameChannel] name: $name" }
 
-        val onError: (Error) -> Unit = { error ->
-            logger.e { "[renameChannel] error: ${error.message}" }
-            _events.tryEmit(ChannelInfoViewEvent.RenameChannelError)
-        }
-
-        requireCapability(
-            permission = { canRenameChannel },
-            onError = onError,
-        ) {
-            scope.launch {
-                channelClient.updatePartial(set = mapOf("name" to name)).await()
-                    .onError(onError)
-            }
+        scope.launch {
+            channelClient.updatePartial(set = mapOf("name" to name)).await()
+                .onError { error ->
+                    logger.e { "[renameChannel] error: ${error.message}" }
+                    _events.tryEmit(ChannelInfoViewEvent.RenameChannelError)
+                }
         }
     }
 
-    /**
-     * Mutes the channel for the current user.
-     */
-    public fun muteChannel() {
-        logger.d { "[muteChannel]" }
+    private fun setChannelMute(mute: Boolean) {
+        logger.d { "[setChannelMute] mute: $mute" }
 
-        val onError: (Error) -> Unit = { error ->
-            logger.e { "[muteChannel] error: ${error.message}" }
-            _events.tryEmit(ChannelInfoViewEvent.MuteChannelError)
-        }
-
-        requireCapability(
-            permission = { canMuteChannel },
-            onError = onError,
-        ) {
-            scope.launch {
+        scope.launch {
+            if (mute) {
                 channelClient.mute().await()
-                    .onError(onError)
+            } else {
+                channelClient.unmute().await()
+            }.onError { error ->
+                logger.e { "[setChannelMute] error: ${error.message}" }
+                _events.tryEmit(
+                    if (mute) {
+                        ChannelInfoViewEvent.MuteChannelError
+                    } else {
+                        ChannelInfoViewEvent.UnmuteChannelError
+                    },
+                )
             }
         }
     }
 
-    /**
-     * Unmutes the channel for the current user.
-     */
-    public fun unmuteChannel() {
-        logger.d { "[unmuteChannel]" }
+    private fun setChannelHide(hide: Boolean, clearHistory: Boolean = false) {
+        logger.d { "[setChannelHide] hide: $hide, clearHistory: $clearHistory" }
 
         val onError: (Error) -> Unit = { error ->
-            logger.e { "[unmuteChannel] error: ${error.message}" }
-            _events.tryEmit(ChannelInfoViewEvent.UnmuteChannelError)
+            logger.e { "[setChannelHide] error: ${error.message}" }
+            _events.tryEmit(
+                if (hide) {
+                    ChannelInfoViewEvent.HideChannelError
+                } else {
+                    ChannelInfoViewEvent.UnhideChannelError
+                },
+            )
         }
 
-        requireCapability(
-            permission = { canMuteChannel },
-            onError = onError,
-        ) {
-            scope.launch {
-                channelClient.unmute().await()
-                    .onError(onError)
-            }
-        }
-    }
-
-    /**
-     * Hides the channel.
-     *
-     * @param clearHistory If true, the channel history will be cleared.
-     */
-    public fun hideChannel(clearHistory: Boolean) {
-        logger.d { "[hideChannel] clearHistory: $clearHistory" }
         scope.launch {
-            channelClient.hide(clearHistory).await()
-                .onError { error ->
-                    logger.e { "[hideChannel] error: ${error.message}" }
-                    _events.tryEmit(ChannelInfoViewEvent.HideChannelError)
-                }
+            if (hide) {
+                channelClient.hide(clearHistory)
+                    .await()
+                    .onSuccess {
+                        _events.tryEmit(ChannelInfoViewEvent.NavigateUp(reason = Navigation.Reason.HideChannelSuccess))
+                    }
+            } else {
+                channelClient.show().await()
+            }.onError(onError)
         }
     }
 
-    /**
-     * Unhides the channel.
-     */
-    public fun unhideChannel() {
-        logger.d { "[unhideChannel]" }
-        scope.launch {
-            channelClient.show().await()
-                .onError { error ->
-                    logger.e { "[unhideChannel] error: ${error.message}" }
-                    _events.tryEmit(ChannelInfoViewEvent.UnhideChannelError)
-                }
-        }
-    }
-
-    /**
-     * Leaves the channel with an optional quit message.
-     *
-     * @param quitMessage The system message to send when leaving the channel.
-     */
-    public fun leaveChannel(quitMessage: Message?) {
+    private fun leaveChannel(quitMessage: Message?) {
         logger.d { "[leaveChannel] quitMessage: ${quitMessage?.text}" }
 
         val onError: (Error) -> Unit = { error ->
@@ -301,22 +280,19 @@ public class ChannelInfoViewController(
             _events.tryEmit(ChannelInfoViewEvent.LeaveChannelError)
         }
 
-        requireCapability(
-            permission = { canLeaveChannel },
-            onError = onError,
-        ) {
-            runCatching {
-                requireNotNull(chatClient.getCurrentUser()?.id) { "User not connected" }
-            }.onSuccess { currentUserId ->
-                removeMemberFromChannel(
-                    memberId = currentUserId,
-                    systemMessage = quitMessage,
-                    onSuccess = { _events.tryEmit(ChannelInfoViewEvent.LeaveChannelSuccess) },
-                    onError = onError,
-                )
-            }.onFailure { cause ->
-                onError(Error.ThrowableError(message = cause.message.orEmpty(), cause = cause))
-            }
+        runCatching {
+            requireNotNull(chatClient.getCurrentUser()?.id) { "User not connected" }
+        }.onSuccess { currentUserId ->
+            removeMemberFromChannel(
+                memberId = currentUserId,
+                systemMessage = quitMessage,
+                onSuccess = {
+                    _events.tryEmit(ChannelInfoViewEvent.NavigateUp(reason = Navigation.Reason.LeaveChannelSuccess))
+                },
+                onError = onError,
+            )
+        }.onFailure { cause ->
+            onError(Error.ThrowableError(message = cause.message.orEmpty(), cause = cause))
         }
     }
 
@@ -336,43 +312,23 @@ public class ChannelInfoViewController(
         }
     }
 
-    /**
-     * Deletes the channel.
-     */
-    public fun deleteChannel() {
+    private fun deleteChannel() {
         logger.d { "[deleteChannel]" }
 
-        val onError: (Error) -> Unit = { error ->
-            logger.e { "[deleteChannel] error: ${error.message}" }
-            _events.tryEmit(ChannelInfoViewEvent.DeleteChannelError)
-        }
-
-        requireCapability(
-            permission = { canDeleteChannel },
-            onError = onError,
-        ) {
-            scope.launch {
-                channelClient.delete().await()
-                    .onSuccess { _events.tryEmit(ChannelInfoViewEvent.DeleteChannelSuccess) }
-                    .onError(onError)
-            }
+        scope.launch {
+            channelClient.delete().await()
+                .onSuccess {
+                    _events.tryEmit(ChannelInfoViewEvent.NavigateUp(reason = Navigation.Reason.DeleteChannelSuccess))
+                }
+                .onError { error ->
+                    logger.e { "[deleteChannel] error: ${error.message}" }
+                    _events.tryEmit(ChannelInfoViewEvent.DeleteChannelError)
+                }
         }
     }
 
     private fun List<Member>.filterNotCurrentUser() =
         filter { member -> member.user.id != chatClient.getCurrentUser()?.id }
-
-    private fun requireCapability(
-        permission: ChannelInfoViewState.Content.Capability.() -> Boolean,
-        onError: (error: Error) -> Unit,
-        onSuccess: () -> Unit,
-    ) {
-        (_state.value as? ChannelInfoViewState.Content)?.capability?.let { capability ->
-            runCatching { require(permission(capability)) }
-                .onFailure { onError(Error.GenericError("User doesn't have permission")) }
-                .onSuccess { onSuccess() }
-        }
-    }
 }
 
 private const val MINIMUM_VISIBLE_MEMBERS = 5
@@ -396,28 +352,38 @@ private val ChannelData.isGroupChannel: Boolean
 private val ChannelData.isDistinct: Boolean
     get() = id.startsWith("!members")
 
-private fun Member.toContentMember(createdBy: User) = ChannelInfoViewState.Content.Member(
-    user = user,
-    role = if (createdBy.id == user.id) {
-        ChannelInfoViewState.Content.Role.Owner
+private fun buildOptionsList(
+    channelData: ChannelData,
+    singleMember: Member?,
+    isMuted: Boolean,
+    isHidden: Boolean,
+) = buildList {
+    if (channelData.ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL_MEMBERS)) {
+        add(ChannelInfoViewState.Content.Option.AddMember)
+    }
+    if (singleMember != null) {
+        add(ChannelInfoViewState.Content.Option.UserInfo(user = singleMember.user))
     } else {
-        when (channelRole) {
-            "channel_moderator" -> ChannelInfoViewState.Content.Role.Moderator
-            "channel_member" -> ChannelInfoViewState.Content.Role.Member
-            else -> ChannelInfoViewState.Content.Role.Other(channelRole.orEmpty())
-        }
-    },
-)
-
-private fun ChannelData.toCapability() = ChannelInfoViewState.Content.Capability(
-    canAddMembers = ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL_MEMBERS),
-    canRemoveMembers = ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL_MEMBERS),
-    canBanMembers = ownCapabilities.contains(ChannelCapabilities.BAN_CHANNEL_MEMBERS),
-    canRenameChannel = ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL),
-    canMuteChannel = ownCapabilities.contains(ChannelCapabilities.MUTE_CHANNEL),
-    canLeaveChannel = ownCapabilities.contains(ChannelCapabilities.LEAVE_CHANNEL),
-    canDeleteChannel = ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL),
-)
+        add(
+            ChannelInfoViewState.Content.Option.RenameChannel(
+                name = channelData.name,
+                isReadOnly = !channelData.ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL),
+            ),
+        )
+    }
+    if (channelData.ownCapabilities.contains(ChannelCapabilities.MUTE_CHANNEL)) {
+        add(ChannelInfoViewState.Content.Option.MuteChannel(isMuted))
+    }
+    add(ChannelInfoViewState.Content.Option.HideChannel(isHidden))
+    add(ChannelInfoViewState.Content.Option.PinnedMessages)
+    add(ChannelInfoViewState.Content.Option.Separator)
+    if (channelData.ownCapabilities.contains(ChannelCapabilities.LEAVE_CHANNEL)) {
+        add(ChannelInfoViewState.Content.Option.LeaveChannel)
+    }
+    if (channelData.ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)) {
+        add(ChannelInfoViewState.Content.Option.DeleteChannel)
+    }
+}
 
 private fun MutableStateFlow<ChannelInfoViewState>.updateContent(
     transformation: (content: ChannelInfoViewState.Content) -> ChannelInfoViewState.Content,

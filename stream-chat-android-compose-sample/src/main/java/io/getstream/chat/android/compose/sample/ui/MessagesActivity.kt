@@ -57,10 +57,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.R
-import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoActivity
+import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
+import io.getstream.chat.android.compose.sample.ui.channel.DirectChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponentFactory
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
@@ -120,8 +120,7 @@ class MessagesActivity : BaseConnectedActivity() {
     private val composerViewModel by viewModels<MessageComposerViewModel>(factoryProducer = { factory })
 
     private val channelInfoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        val channelDeleted = it.data?.getBooleanExtra(ChannelInfoActivity.KEY_CHANNEL_DELETED, false) == true
-        if (it.resultCode == RESULT_OK && channelDeleted) {
+        if (it.resultCode == RESULT_OK) {
             finish()
         }
     }
@@ -199,13 +198,12 @@ class MessagesActivity : BaseConnectedActivity() {
     }
 
     private fun openChannelInfo(channel: Channel) {
-        if (channel.memberCount > 2 || !channel.isAnonymousChannel()) {
-            val intent = GroupChannelInfoActivity.createIntent(this, channelId = channel.cid)
-            startActivity(intent)
+        val intent = if (channel.isGroupChannel) {
+            GroupChannelInfoActivity.createIntent(applicationContext, channelId = channel.cid)
         } else {
-            val intent = ChannelInfoActivity.createIntent(this, channelId = channel.cid)
-            channelInfoLauncher.launch(intent)
+            DirectChannelInfoActivity.createIntent(applicationContext, channelId = channel.cid)
         }
+        channelInfoLauncher.launch(intent)
     }
 
     @Composable
@@ -426,7 +424,6 @@ class MessagesActivity : BaseConnectedActivity() {
     }
 
     companion object {
-        private const val TAG = "MessagesActivity"
         private const val KEY_CHANNEL_ID = "channelId"
         private const val KEY_MESSAGE_ID = "messageId"
         private const val KEY_PARENT_MESSAGE_ID = "parentMessageId"

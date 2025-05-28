@@ -90,6 +90,7 @@ public fun ThreadParticipants(
                 shape = ChatTheme.shapes.avatar,
                 textStyle = ChatTheme.typography.captionBold.copy(fontSize = 7.sp),
                 placeholderPainter = null,
+                errorPlaceholderPainter = null,
                 contentDescription = user.name,
                 initialsAvatarOffset = DpOffset.Zero,
                 onClick = null,

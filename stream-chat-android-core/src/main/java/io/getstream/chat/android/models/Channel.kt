@@ -18,6 +18,7 @@ package io.getstream.chat.android.models
 
 import androidx.compose.runtime.Immutable
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.extensions.lastMessageAt
 import io.getstream.chat.android.models.querysort.ComparableFieldProvider
 import java.util.Date
 
@@ -55,7 +56,6 @@ import java.util.Date
  * @param cachedLatestMessages The list of cached messages if the regular list does not contain the newest messages.
  * @param isInsideSearch When the channel is inside search, eg. searching from the channel list for a message or when
  * hopping to a quoted message a number pages away without retaining the newest messages in the list.
- * @param channelLastMessageAt The date of the last message sent received from the backend.
  */
 @Immutable
 public data class Channel(
@@ -94,20 +94,13 @@ public data class Channel(
     val membership: Member? = null,
     val cachedLatestMessages: List<Message> = emptyList(),
     val isInsideSearch: Boolean = false,
-    internal val channelLastMessageAt: Date? = null,
     override val extraData: Map<String, Any> = mapOf(),
 ) : CustomObject, ComparableFieldProvider {
 
     /**
      * The date of the last message sent.
      */
-    val lastMessageAt: Date? = channelLastMessageAt
-        ?: messages
-            .filterNot { it.shadowed }
-            .filterNot { it.parentId != null && !it.showInChannel }
-            .filterNot { type == MessageType.SYSTEM && config.skipLastMsgUpdateForSystemMsgs }
-            .maxByOrNull { it.createdAt ?: it.createdLocallyAt ?: Date(0) }
-            ?.let { it.createdAt ?: it.createdLocallyAt }
+    val lastMessageAt: Date? = messages.lastMessageAt(config.skipLastMsgUpdateForSystemMsgs)
 
     /**
      * The channel id in the format messaging:123.
@@ -171,7 +164,6 @@ public data class Channel(
         private var image: String = ""
         private var watcherCount: Int = 0
         private var frozen: Boolean = false
-        private var channelLastMessageAt: Date? = null
         private var createdAt: Date? = null
         private var deletedAt: Date? = null
         private var updatedAt: Date? = null
@@ -202,7 +194,6 @@ public data class Channel(
             image = channel.image
             watcherCount = channel.watcherCount
             frozen = channel.frozen
-            channelLastMessageAt = channel.channelLastMessageAt
             createdAt = channel.createdAt
             deletedAt = channel.deletedAt
             updatedAt = channel.updatedAt
@@ -233,9 +224,6 @@ public data class Channel(
         public fun withImage(image: String): Builder = apply { this.image = image }
         public fun withWatcherCount(watcherCount: Int): Builder = apply { this.watcherCount = watcherCount }
         public fun withFrozen(frozen: Boolean): Builder = apply { this.frozen = frozen }
-        public fun withChannelLastMessageAt(channelLastMessageAt: Date?): Builder = apply {
-            this.channelLastMessageAt = channelLastMessageAt
-        }
         public fun withCreatedAt(createdAt: Date?): Builder = apply { this.createdAt = createdAt }
         public fun withDeletedAt(deletedAt: Date?): Builder = apply { this.deletedAt = deletedAt }
         public fun withUpdatedAt(updatedAt: Date?): Builder = apply { this.updatedAt = updatedAt }
@@ -267,6 +255,14 @@ public data class Channel(
         public fun withIsInsideSearch(isInsideSearch: Boolean): Builder = apply { this.isInsideSearch = isInsideSearch }
         public fun withExtraData(extraData: Map<String, Any>): Builder = apply { this.extraData = extraData }
 
+        @Deprecated(
+            message = "channelLastMessageAt is no longer supported.",
+            replaceWith = ReplaceWith(
+                expression = "",
+            ),
+        )
+        public fun withChannelLastMessageAt(channelLastMessageAt: Date?): Builder = this
+
         public fun build(): Channel = Channel(
             id = id,
             type = type,
@@ -274,7 +270,6 @@ public data class Channel(
             image = image,
             watcherCount = watcherCount,
             frozen = frozen,
-            channelLastMessageAt = channelLastMessageAt,
             createdAt = createdAt,
             deletedAt = deletedAt,
             updatedAt = updatedAt,
@@ -320,7 +315,6 @@ public fun Channel.mergeChannelFromEvent(that: Channel): Channel {
         hiddenMessagesBefore = that.hiddenMessagesBefore,
         memberCount = that.memberCount,
         members = that.members,
-        channelLastMessageAt = that.channelLastMessageAt,
         createdAt = that.createdAt,
         updatedAt = that.updatedAt,
         deletedAt = that.deletedAt,

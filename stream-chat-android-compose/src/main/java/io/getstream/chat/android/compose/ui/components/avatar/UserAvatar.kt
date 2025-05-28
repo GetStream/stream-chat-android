@@ -60,6 +60,7 @@ public fun UserAvatar(
     contentDescription: String? = null,
     showOnlineIndicator: Boolean = true,
     placeholderPainter: Painter? = null,
+    errorPlaceholderPainter: Painter? = null,
     onlineIndicatorAlignment: OnlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd,
     initialsAvatarOffset: DpOffset = DpOffset(0.dp, 0.dp),
     onlineIndicator: @Composable BoxScope.() -> Unit = {
@@ -72,9 +73,10 @@ public fun UserAvatar(
             modifier = Modifier.fillMaxSize(),
             imageUrl = user.image,
             initials = user.initials,
-            textStyle = textStyle,
             shape = shape,
+            textStyle = textStyle,
             placeholderPainter = placeholderPainter,
+            errorPlaceholderPainter = errorPlaceholderPainter,
             contentDescription = contentDescription,
             initialsAvatarOffset = initialsAvatarOffset,
             onClick = onClick,
@@ -139,6 +141,7 @@ private fun UserAvatarPreview(user: User) {
             modifier = Modifier.size(36.dp),
             user = user,
             showOnlineIndicator = true,
+            errorPlaceholderPainter = null,
         )
     }
 }

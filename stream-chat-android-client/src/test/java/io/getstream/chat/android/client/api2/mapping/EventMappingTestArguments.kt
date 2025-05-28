@@ -212,7 +212,6 @@ internal object EventMappingTestArguments {
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
         message = MESSAGE,
-        channel_last_message_at = DATE,
     )
 
     private val draftMessageUpdatedDto = DraftMessageUpdatedEventDto(
@@ -235,7 +234,6 @@ internal object EventMappingTestArguments {
         channel_id = CHANNEL_ID,
         channel = CHANNEL,
         user = USER,
-        channel_last_message_at = DATE,
     )
 
     private val channelHiddenDto = ChannelHiddenEventDto(
@@ -245,7 +243,6 @@ internal object EventMappingTestArguments {
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
         user = USER,
-        channel_last_message_at = DATE,
         clear_history = CLEAR_HISTORY,
     )
 
@@ -258,7 +255,6 @@ internal object EventMappingTestArguments {
         user = USER,
         message = MESSAGE,
         channel = CHANNEL,
-        channel_last_message_at = DATE,
     )
 
     private val channelUpdatedByUserDto = ChannelUpdatedByUserEventDto(
@@ -270,7 +266,6 @@ internal object EventMappingTestArguments {
         user = USER,
         message = MESSAGE,
         channel = CHANNEL,
-        channel_last_message_at = DATE,
     )
 
     private val channelUpdatedDto = ChannelUpdatedEventDto(
@@ -281,7 +276,6 @@ internal object EventMappingTestArguments {
         channel_id = CHANNEL_ID,
         message = MESSAGE,
         channel = CHANNEL,
-        channel_last_message_at = DATE,
     )
 
     private val channelUserBannedDto = ChannelUserBannedEventDto(
@@ -291,7 +285,6 @@ internal object EventMappingTestArguments {
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
         user = USER,
-        channel_last_message_at = DATE,
         expiration = DATE,
         shadow = SHADOW_BAN,
     )
@@ -303,7 +296,6 @@ internal object EventMappingTestArguments {
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
         user = USER,
-        channel_last_message_at = DATE,
     )
 
     private val channelVisibleDto = ChannelVisibleEventDto(
@@ -313,7 +305,6 @@ internal object EventMappingTestArguments {
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
         user = USER,
-        channel_last_message_at = DATE,
     )
 
     private val connectedDto = ConnectedEventDto(
@@ -378,7 +369,6 @@ internal object EventMappingTestArguments {
         channel_id = CHANNEL_ID,
         user = USER,
         member = MEMBER,
-        channel_last_message_at = DATE,
     )
 
     private val memberRemovedDto = MemberRemovedEventDto(
@@ -389,7 +379,6 @@ internal object EventMappingTestArguments {
         channel_id = CHANNEL_ID,
         user = USER,
         member = MEMBER,
-        channel_last_message_at = DATE,
     )
 
     private val memberUpdatedDto = MemberUpdatedEventDto(
@@ -400,7 +389,6 @@ internal object EventMappingTestArguments {
         channel_id = CHANNEL_ID,
         user = USER,
         member = MEMBER,
-        channel_last_message_at = DATE,
     )
 
     private val messageDeletedDto = MessageDeletedEventDto(
@@ -411,7 +399,6 @@ internal object EventMappingTestArguments {
         channel_id = CHANNEL_ID,
         user = USER,
         message = MESSAGE,
-        channel_last_message_at = DATE,
         hard_delete = HARD_DELETE,
     )
 
@@ -422,7 +409,6 @@ internal object EventMappingTestArguments {
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
         user = USER,
-        channel_last_message_at = DATE,
         last_read_message_id = LAST_READ_MESSAGE_ID,
     )
 
@@ -434,7 +420,6 @@ internal object EventMappingTestArguments {
         channel_id = CHANNEL_ID,
         user = USER,
         message = MESSAGE,
-        channel_last_message_at = DATE,
     )
 
     private val notificationAddedToChannelDto = NotificationAddedToChannelEventDto(
@@ -445,7 +430,6 @@ internal object EventMappingTestArguments {
         channel_id = CHANNEL_ID,
         channel = CHANNEL,
         member = MEMBER,
-        channel_last_message_at = DATE,
     )
 
     private val notificationChannelDeletedDto = NotificationChannelDeletedEventDto(
@@ -455,7 +439,6 @@ internal object EventMappingTestArguments {
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
         channel = CHANNEL,
-        channel_last_message_at = DATE,
     )
 
     private val notificationChannelMutesUpdatesDto = NotificationChannelMutesUpdatedEventDto(
@@ -471,7 +454,6 @@ internal object EventMappingTestArguments {
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
         channel = CHANNEL,
-        channel_last_message_at = DATE,
     )
 
     private val notificationInviteAcceptedDto = NotificationInviteAcceptedEventDto(
@@ -483,7 +465,6 @@ internal object EventMappingTestArguments {
         user = USER,
         member = MEMBER,
         channel = CHANNEL,
-        channel_last_message_at = DATE,
     )
 
     private val notificationInviteRejectedDto = NotificationInviteRejectedEventDto(
@@ -495,7 +476,6 @@ internal object EventMappingTestArguments {
         user = USER,
         member = MEMBER,
         channel = CHANNEL,
-        channel_last_message_at = DATE,
     )
 
     private val notificationInvitedDto = NotificationInvitedEventDto(
@@ -506,7 +486,6 @@ internal object EventMappingTestArguments {
         channel_id = CHANNEL_ID,
         user = USER,
         member = MEMBER,
-        channel_last_message_at = DATE,
     )
 
     private val notificationMarkReadDto = NotificationMarkReadEventDto(
@@ -516,7 +495,6 @@ internal object EventMappingTestArguments {
         cid = CID,
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
-        channel_last_message_at = DATE,
         last_read_message_id = LAST_READ_MESSAGE_ID,
     )
 
@@ -529,7 +507,6 @@ internal object EventMappingTestArguments {
         channel_id = CHANNEL_ID,
         first_unread_message_id = FIRST_UNREAD_MESSAGE_ID,
         last_read_message_id = LAST_READ_MESSAGE_ID,
-        channel_last_message_at = DATE,
         last_read_at = EXACT_DATE,
         unread_messages = UNREAD_MESSAGES,
         total_unread_count = TOTAL_UNREAD_COUNT,
@@ -544,7 +521,6 @@ internal object EventMappingTestArguments {
         channel_id = CHANNEL_ID,
         message = MESSAGE,
         channel = CHANNEL,
-        channel_last_message_at = DATE,
     )
 
     private val notificationThreadMessageNewDto = NotificationThreadMessageNewEventDto(
@@ -555,7 +531,6 @@ internal object EventMappingTestArguments {
         channel_id = CHANNEL_ID,
         message = MESSAGE,
         channel = CHANNEL,
-        channel_last_message_at = DATE,
         unread_threads = UNREAD_THREADS,
         unread_thread_messages = UNREAD_THREAD_MESSAGES,
     )
@@ -575,7 +550,6 @@ internal object EventMappingTestArguments {
         channel = CHANNEL,
         member = MEMBER,
         user = USER,
-        channel_last_message_at = DATE,
     )
 
     private val reactionDeletedDto = ReactionDeletedEventDto(
@@ -587,7 +561,6 @@ internal object EventMappingTestArguments {
         user = USER,
         reaction = REACTION,
         message = MESSAGE,
-        channel_last_message_at = DATE,
     )
 
     private val reactionNewDto = ReactionNewEventDto(
@@ -599,7 +572,6 @@ internal object EventMappingTestArguments {
         user = USER,
         reaction = REACTION,
         message = MESSAGE,
-        channel_last_message_at = DATE,
     )
 
     private val reactionUpdateDto = ReactionUpdateEventDto(
@@ -611,7 +583,6 @@ internal object EventMappingTestArguments {
         user = USER,
         reaction = REACTION,
         message = MESSAGE,
-        channel_last_message_at = DATE,
     )
 
     private val typingStartDto = TypingStartEventDto(
@@ -622,7 +593,6 @@ internal object EventMappingTestArguments {
         channel_id = CHANNEL_ID,
         user = USER,
         parent_id = randomString(),
-        channel_last_message_at = DATE,
     )
 
     private val typingStopDto = TypingStopEventDto(
@@ -633,7 +603,6 @@ internal object EventMappingTestArguments {
         channel_id = CHANNEL_ID,
         user = USER,
         parent_id = randomString(),
-        channel_last_message_at = DATE,
     )
 
     private val unknownDto = UnknownEventDto(
@@ -663,7 +632,6 @@ internal object EventMappingTestArguments {
         channel_id = CHANNEL_ID,
         user = USER,
         watcher_count = WATCHER_COUNT,
-        channel_last_message_at = DATE,
     )
 
     private val userStopWatchingDto = UserStopWatchingEventDto(
@@ -674,7 +642,6 @@ internal object EventMappingTestArguments {
         channel_id = CHANNEL_ID,
         user = USER,
         watcher_count = WATCHER_COUNT,
-        channel_last_message_at = DATE,
     )
 
     private val userUpdatedDto = UserUpdatedEventDto(
@@ -687,7 +654,6 @@ internal object EventMappingTestArguments {
         type = EventType.POLL_CLOSED,
         created_at = EXACT_DATE,
         cid = CID,
-        channel_last_message_at = DATE,
         poll = POLL,
     )
 
@@ -695,7 +661,6 @@ internal object EventMappingTestArguments {
         type = EventType.POLL_DELETED,
         created_at = EXACT_DATE,
         cid = CID,
-        channel_last_message_at = DATE,
         poll = POLL,
     )
 
@@ -703,7 +668,6 @@ internal object EventMappingTestArguments {
         type = EventType.POLL_UPDATED,
         created_at = EXACT_DATE,
         cid = CID,
-        channel_last_message_at = DATE,
         poll = POLL,
     )
 
@@ -711,7 +675,6 @@ internal object EventMappingTestArguments {
         type = EventType.POLL_VOTE_CASTED,
         created_at = EXACT_DATE,
         cid = CID,
-        channel_last_message_at = DATE,
         poll = POLL,
         poll_vote = POLL_VOTE,
     )
@@ -720,7 +683,6 @@ internal object EventMappingTestArguments {
         type = EventType.POLL_VOTE_CHANGED,
         created_at = EXACT_DATE,
         cid = CID,
-        channel_last_message_at = DATE,
         poll = POLL,
         poll_vote = POLL_VOTE,
     )
@@ -729,7 +691,6 @@ internal object EventMappingTestArguments {
         type = EventType.POLL_VOTE_REMOVED,
         created_at = EXACT_DATE,
         cid = CID,
-        channel_last_message_at = DATE,
         poll = POLL,
         poll_vote = POLL_VOTE,
     )
@@ -738,7 +699,6 @@ internal object EventMappingTestArguments {
         type = EventType.POLL_VOTE_CASTED,
         created_at = EXACT_DATE,
         cid = CID,
-        channel_last_message_at = DATE,
         poll = POLL,
         poll_vote = POLL_VOTE,
     )
@@ -771,7 +731,6 @@ internal object EventMappingTestArguments {
         type = EventType.AI_TYPING_INDICATOR_UPDATED,
         created_at = EXACT_DATE,
         cid = CID,
-        channel_last_message_at = DATE,
         user = USER,
         message_id = AI_MESSAGE_ID,
         ai_state = AI_STATE,
@@ -781,7 +740,6 @@ internal object EventMappingTestArguments {
         type = EventType.AI_TYPING_INDICATOR_STOP,
         created_at = EXACT_DATE,
         cid = CID,
-        channel_last_message_at = DATE,
         user = USER,
     )
 
@@ -789,7 +747,6 @@ internal object EventMappingTestArguments {
         type = EventType.AI_TYPING_INDICATOR_CLEAR,
         created_at = EXACT_DATE,
         cid = CID,
-        channel_last_message_at = DATE,
         user = USER,
     )
 
@@ -809,7 +766,6 @@ internal object EventMappingTestArguments {
         watcherCount = newMessageDto.watcher_count,
         totalUnreadCount = newMessageDto.total_unread_count,
         unreadChannels = newMessageDto.unread_channels,
-        channelLastMessageAt = newMessageDto.channel_last_message_at,
     )
 
     private val draftMessageUpdatedEvent = DraftMessageUpdatedEvent(
@@ -834,8 +790,7 @@ internal object EventMappingTestArguments {
         cid = channelDeletedDto.cid,
         channelType = channelDeletedDto.channel_type,
         channelId = channelDeletedDto.channel_id,
-        channel = with(domainMapping) { channelDeletedDto.channel.toDomain(channelDeletedDto.channel_last_message_at) },
-        channelLastMessageAt = channelDeletedDto.channel_last_message_at,
+        channel = with(domainMapping) { channelDeletedDto.channel.toDomain() },
     )
 
     private val channelHidden = ChannelHiddenEvent(
@@ -847,7 +802,6 @@ internal object EventMappingTestArguments {
         channelType = channelHiddenDto.channel_type,
         channelId = channelHiddenDto.channel_id,
         clearHistory = channelHiddenDto.clear_history,
-        channelLastMessageAt = channelHiddenDto.channel_last_message_at,
     )
 
     private val channelTruncated = ChannelTruncatedEvent(
@@ -860,9 +814,8 @@ internal object EventMappingTestArguments {
         channelId = channelTruncatedDto.channel_id,
         message = with(domainMapping) { channelTruncatedDto.message?.toDomain() },
         channel = with(domainMapping) {
-            channelTruncatedDto.channel.toDomain(channelTruncatedDto.channel_last_message_at)
+            channelTruncatedDto.channel.toDomain()
         },
-        channelLastMessageAt = channelTruncatedDto.channel_last_message_at,
     )
 
     private val channelUpdatedByUser = ChannelUpdatedByUserEvent(
@@ -875,9 +828,8 @@ internal object EventMappingTestArguments {
         channelId = channelUpdatedByUserDto.channel_id,
         message = with(domainMapping) { channelUpdatedByUserDto.message?.toDomain() },
         channel = with(domainMapping) {
-            channelUpdatedByUserDto.channel.toDomain(channelUpdatedByUserDto.channel_last_message_at)
+            channelUpdatedByUserDto.channel.toDomain()
         },
-        channelLastMessageAt = channelUpdatedByUserDto.channel_last_message_at,
     )
 
     private val channelUpdated = ChannelUpdatedEvent(
@@ -889,9 +841,8 @@ internal object EventMappingTestArguments {
         channelId = channelUpdatedDto.channel_id,
         message = with(domainMapping) { channelUpdatedDto.message?.toDomain() },
         channel = with(domainMapping) {
-            channelUpdatedDto.channel.toDomain(channelUpdatedDto.channel_last_message_at)
+            channelUpdatedDto.channel.toDomain()
         },
-        channelLastMessageAt = channelUpdatedDto.channel_last_message_at,
     )
 
     private val channelUserBanned = ChannelUserBannedEvent(
@@ -904,7 +855,6 @@ internal object EventMappingTestArguments {
         channelId = channelUserBannedDto.channel_id,
         expiration = channelUserBannedDto.expiration,
         shadow = channelUserBannedDto.shadow ?: false,
-        channelLastMessageAt = channelUserBannedDto.channel_last_message_at,
     )
 
     private val channelUserUnbanned = ChannelUserUnbannedEvent(
@@ -915,7 +865,6 @@ internal object EventMappingTestArguments {
         cid = channelUserUnbannedDto.cid,
         channelType = channelUserUnbannedDto.channel_type,
         channelId = channelUserUnbannedDto.channel_id,
-        channelLastMessageAt = channelUserUnbannedDto.channel_last_message_at,
     )
 
     private val channelVisible = ChannelVisibleEvent(
@@ -926,7 +875,6 @@ internal object EventMappingTestArguments {
         cid = channelVisibleDto.cid,
         channelType = channelVisibleDto.channel_type,
         channelId = channelVisibleDto.channel_id,
-        channelLastMessageAt = channelVisibleDto.channel_last_message_at,
     )
 
     private val connected = ConnectedEvent(
@@ -1001,7 +949,6 @@ internal object EventMappingTestArguments {
         channelId = memberAddedDto.channel_id,
         user = with(domainMapping) { memberAddedDto.user.toDomain() },
         member = with(domainMapping) { memberAddedDto.member.toDomain() },
-        channelLastMessageAt = memberAddedDto.channel_last_message_at,
     )
 
     private val memberRemoved = MemberRemovedEvent(
@@ -1013,7 +960,6 @@ internal object EventMappingTestArguments {
         channelId = memberRemovedDto.channel_id,
         user = with(domainMapping) { memberRemovedDto.user.toDomain() },
         member = with(domainMapping) { memberRemovedDto.member.toDomain() },
-        channelLastMessageAt = memberRemovedDto.channel_last_message_at,
     )
 
     private val memberUpdated = MemberUpdatedEvent(
@@ -1025,7 +971,6 @@ internal object EventMappingTestArguments {
         channelId = memberUpdatedDto.channel_id,
         user = with(domainMapping) { memberUpdatedDto.user.toDomain() },
         member = with(domainMapping) { memberUpdatedDto.member.toDomain() },
-        channelLastMessageAt = memberUpdatedDto.channel_last_message_at,
     )
 
     private val messageDeleted = MessageDeletedEvent(
@@ -1038,7 +983,6 @@ internal object EventMappingTestArguments {
         user = with(domainMapping) { messageDeletedDto.user?.toDomain() },
         message = with(domainMapping) { messageDeletedDto.message.toDomain() },
         hardDelete = messageDeletedDto.hard_delete ?: false,
-        channelLastMessageAt = messageDeletedDto.channel_last_message_at,
     )
 
     private val messageRead = MessageReadEvent(
@@ -1049,7 +993,6 @@ internal object EventMappingTestArguments {
         channelType = messageReadDto.channel_type,
         channelId = messageReadDto.channel_id,
         user = with(domainMapping) { messageReadDto.user.toDomain() },
-        channelLastMessageAt = messageReadDto.channel_last_message_at,
         lastReadMessageId = messageReadDto.last_read_message_id,
     )
 
@@ -1062,7 +1005,6 @@ internal object EventMappingTestArguments {
         channelId = messageUpdatedDto.channel_id,
         user = with(domainMapping) { messageUpdatedDto.user.toDomain() },
         message = with(domainMapping) { messageUpdatedDto.message.toDomain() },
-        channelLastMessageAt = messageUpdatedDto.channel_last_message_at,
     )
 
     private val notificationAddedToChannel = NotificationAddedToChannelEvent(
@@ -1073,10 +1015,9 @@ internal object EventMappingTestArguments {
         channelType = notificationAddedToChannelDto.channel_type,
         channelId = notificationAddedToChannelDto.channel_id,
         channel = with(domainMapping) {
-            notificationAddedToChannelDto.channel.toDomain(notificationAddedToChannelDto.channel_last_message_at)
+            notificationAddedToChannelDto.channel.toDomain()
         },
         member = with(domainMapping) { notificationAddedToChannelDto.member.toDomain() },
-        channelLastMessageAt = notificationAddedToChannelDto.channel_last_message_at,
     )
 
     private val notificationChannelDeleted = NotificationChannelDeletedEvent(
@@ -1087,9 +1028,8 @@ internal object EventMappingTestArguments {
         channelType = notificationChannelDeletedDto.channel_type,
         channelId = notificationChannelDeletedDto.channel_id,
         channel = with(domainMapping) {
-            notificationChannelDeletedDto.channel.toDomain(notificationChannelDeletedDto.channel_last_message_at)
+            notificationChannelDeletedDto.channel.toDomain()
         },
-        channelLastMessageAt = notificationChannelDeletedDto.channel_last_message_at,
     )
 
     private val notificationChannelMutesUpdates = NotificationChannelMutesUpdatedEvent(
@@ -1107,9 +1047,8 @@ internal object EventMappingTestArguments {
         channelType = notificationChannelTruncatedDto.channel_type,
         channelId = notificationChannelTruncatedDto.channel_id,
         channel = with(domainMapping) {
-            notificationChannelTruncatedDto.channel.toDomain(notificationChannelTruncatedDto.channel_last_message_at)
+            notificationChannelTruncatedDto.channel.toDomain()
         },
-        channelLastMessageAt = notificationChannelTruncatedDto.channel_last_message_at,
     )
 
     private val notificationInviteAccepted = NotificationInviteAcceptedEvent(
@@ -1122,9 +1061,8 @@ internal object EventMappingTestArguments {
         user = with(domainMapping) { notificationInviteAcceptedDto.user.toDomain() },
         member = with(domainMapping) { notificationInviteAcceptedDto.member.toDomain() },
         channel = with(domainMapping) {
-            notificationInviteAcceptedDto.channel.toDomain(notificationInviteAcceptedDto.channel_last_message_at)
+            notificationInviteAcceptedDto.channel.toDomain()
         },
-        channelLastMessageAt = notificationInviteAcceptedDto.channel_last_message_at,
     )
 
     private val notificationInviteRejected = NotificationInviteRejectedEvent(
@@ -1137,9 +1075,8 @@ internal object EventMappingTestArguments {
         user = with(domainMapping) { notificationInviteRejectedDto.user.toDomain() },
         member = with(domainMapping) { notificationInviteRejectedDto.member.toDomain() },
         channel = with(domainMapping) {
-            notificationInviteRejectedDto.channel.toDomain(notificationInviteRejectedDto.channel_last_message_at)
+            notificationInviteRejectedDto.channel.toDomain()
         },
-        channelLastMessageAt = notificationInviteRejectedDto.channel_last_message_at,
     )
 
     private val notificationInvited = NotificationInvitedEvent(
@@ -1151,7 +1088,6 @@ internal object EventMappingTestArguments {
         channelId = notificationInvitedDto.channel_id,
         user = with(domainMapping) { notificationInvitedDto.user.toDomain() },
         member = with(domainMapping) { notificationInvitedDto.member.toDomain() },
-        channelLastMessageAt = notificationInvitedDto.channel_last_message_at,
     )
 
     private val notificationMarkRead = NotificationMarkReadEvent(
@@ -1162,7 +1098,6 @@ internal object EventMappingTestArguments {
         cid = notificationMarkReadDto.cid,
         channelType = notificationMarkReadDto.channel_type,
         channelId = notificationMarkReadDto.channel_id,
-        channelLastMessageAt = notificationMarkReadDto.channel_last_message_at,
         lastReadMessageId = notificationMarkReadDto.last_read_message_id,
     )
 
@@ -1176,7 +1111,6 @@ internal object EventMappingTestArguments {
         channelId = notificationMarkUnreadDto.channel_id,
         firstUnreadMessageId = notificationMarkUnreadDto.first_unread_message_id,
         lastReadMessageId = notificationMarkUnreadDto.last_read_message_id,
-        channelLastMessageAt = notificationMarkUnreadDto.channel_last_message_at,
         lastReadMessageAt = notificationMarkUnreadDto.last_read_at.date,
         unreadMessages = notificationMarkUnreadDto.unread_messages,
         totalUnreadCount = notificationMarkUnreadDto.total_unread_count,
@@ -1192,9 +1126,8 @@ internal object EventMappingTestArguments {
         channelId = notificationMessageNewDto.channel_id,
         message = with(domainMapping) { notificationMessageNewDto.message.toDomain() },
         channel = with(domainMapping) {
-            notificationMessageNewDto.channel.toDomain(notificationMessageNewDto.channel_last_message_at)
+            notificationMessageNewDto.channel.toDomain()
         },
-        channelLastMessageAt = notificationMessageNewDto.channel_last_message_at,
     )
 
     private val notificationThreadMessageNew = NotificationThreadMessageNewEvent(
@@ -1206,9 +1139,8 @@ internal object EventMappingTestArguments {
         channelId = notificationThreadMessageNewDto.channel_id,
         message = with(domainMapping) { notificationThreadMessageNewDto.message.toDomain() },
         channel = with(domainMapping) {
-            notificationThreadMessageNewDto.channel.toDomain(notificationThreadMessageNewDto.channel_last_message_at)
+            notificationThreadMessageNewDto.channel.toDomain()
         },
-        channelLastMessageAt = notificationThreadMessageNewDto.channel_last_message_at,
         unreadThreads = notificationThreadMessageNewDto.unread_threads,
         unreadThreadMessages = notificationThreadMessageNewDto.unread_thread_messages,
     )
@@ -1228,13 +1160,10 @@ internal object EventMappingTestArguments {
         channelType = notificationRemovedFromChannelDto.channel_type,
         channelId = notificationRemovedFromChannelDto.channel_id,
         channel = with(domainMapping) {
-            notificationRemovedFromChannelDto.channel.toDomain(
-                notificationRemovedFromChannelDto.channel_last_message_at,
-            )
+            notificationRemovedFromChannelDto.channel.toDomain()
         },
         member = with(domainMapping) { notificationRemovedFromChannelDto.member.toDomain() },
         user = with(domainMapping) { notificationRemovedFromChannelDto.user?.toDomain() },
-        channelLastMessageAt = notificationRemovedFromChannelDto.channel_last_message_at,
     )
 
     private val reactionDeleted = ReactionDeletedEvent(
@@ -1247,7 +1176,6 @@ internal object EventMappingTestArguments {
         user = with(domainMapping) { reactionDeletedDto.user.toDomain() },
         reaction = with(domainMapping) { reactionDeletedDto.reaction.toDomain() },
         message = with(domainMapping) { reactionDeletedDto.message.toDomain() },
-        channelLastMessageAt = reactionDeletedDto.channel_last_message_at,
     )
 
     private val reactionNew = ReactionNewEvent(
@@ -1260,7 +1188,6 @@ internal object EventMappingTestArguments {
         user = with(domainMapping) { reactionNewDto.user.toDomain() },
         reaction = with(domainMapping) { reactionNewDto.reaction.toDomain() },
         message = with(domainMapping) { reactionNewDto.message.toDomain() },
-        channelLastMessageAt = reactionNewDto.channel_last_message_at,
     )
 
     private val reactionUpdate = ReactionUpdateEvent(
@@ -1273,7 +1200,6 @@ internal object EventMappingTestArguments {
         user = with(domainMapping) { reactionUpdateDto.user.toDomain() },
         reaction = with(domainMapping) { reactionUpdateDto.reaction.toDomain() },
         message = with(domainMapping) { reactionUpdateDto.message.toDomain() },
-        channelLastMessageAt = reactionUpdateDto.channel_last_message_at,
     )
 
     private val typingStart = TypingStartEvent(
@@ -1285,7 +1211,6 @@ internal object EventMappingTestArguments {
         channelId = typingStartDto.channel_id,
         user = with(domainMapping) { typingStartDto.user.toDomain() },
         parentId = typingStartDto.parent_id,
-        channelLastMessageAt = typingStartDto.channel_last_message_at,
     )
 
     private val typingStop = TypingStopEvent(
@@ -1297,7 +1222,6 @@ internal object EventMappingTestArguments {
         channelId = typingStopDto.channel_id,
         user = with(domainMapping) { typingStopDto.user.toDomain() },
         parentId = typingStopDto.parent_id,
-        channelLastMessageAt = typingStopDto.channel_last_message_at,
     )
 
     private val unknown = UnknownEvent(
@@ -1331,7 +1255,6 @@ internal object EventMappingTestArguments {
         channelId = userStartWatchingDto.channel_id,
         user = with(domainMapping) { userStartWatchingDto.user.toDomain() },
         watcherCount = userStartWatchingDto.watcher_count,
-        channelLastMessageAt = userStartWatchingDto.channel_last_message_at,
     )
 
     private val userStopWatching = UserStopWatchingEvent(
@@ -1343,7 +1266,6 @@ internal object EventMappingTestArguments {
         channelId = userStopWatchingDto.channel_id,
         user = with(domainMapping) { userStopWatchingDto.user.toDomain() },
         watcherCount = userStopWatchingDto.watcher_count,
-        channelLastMessageAt = userStopWatchingDto.channel_last_message_at,
     )
 
     private val userUpdated = UserUpdatedEvent(
@@ -1360,7 +1282,6 @@ internal object EventMappingTestArguments {
         cid = pollClosedDto.cid,
         channelType = pollClosedDto.cid.split(":").first(),
         channelId = pollClosedDto.cid.split(":").last(),
-        channelLastMessageAt = pollClosedDto.channel_last_message_at,
         poll = with(domainMapping) { pollClosedDto.poll.toDomain() },
     )
 
@@ -1371,7 +1292,6 @@ internal object EventMappingTestArguments {
         cid = pollDeletedDto.cid,
         channelType = pollDeletedDto.cid.split(":").first(),
         channelId = pollDeletedDto.cid.split(":").last(),
-        channelLastMessageAt = pollDeletedDto.channel_last_message_at,
         poll = with(domainMapping) { pollDeletedDto.poll.toDomain() },
     )
 
@@ -1382,7 +1302,6 @@ internal object EventMappingTestArguments {
         cid = pollUpdatedDto.cid,
         channelType = pollUpdatedDto.cid.split(":").first(),
         channelId = pollUpdatedDto.cid.split(":").last(),
-        channelLastMessageAt = pollUpdatedDto.channel_last_message_at,
         poll = with(domainMapping) { pollUpdatedDto.poll.toDomain() },
     )
 
@@ -1393,7 +1312,6 @@ internal object EventMappingTestArguments {
         cid = voteCastedDto.cid,
         channelType = voteCastedDto.cid.split(":").first(),
         channelId = voteCastedDto.cid.split(":").last(),
-        channelLastMessageAt = voteCastedDto.channel_last_message_at,
         poll = with(domainMapping) { voteCastedDto.poll.toDomain() },
         newVote = with(domainMapping) { voteCastedDto.poll_vote.toDomain() },
     )
@@ -1405,7 +1323,6 @@ internal object EventMappingTestArguments {
         cid = voteChangedDto.cid,
         channelType = voteChangedDto.cid.split(":").first(),
         channelId = voteChangedDto.cid.split(":").last(),
-        channelLastMessageAt = voteChangedDto.channel_last_message_at,
         poll = with(domainMapping) { voteChangedDto.poll.toDomain() },
         newVote = with(domainMapping) { voteChangedDto.poll_vote.toDomain() },
     )
@@ -1417,7 +1334,6 @@ internal object EventMappingTestArguments {
         cid = voteRemovedDto.cid,
         channelType = voteRemovedDto.cid.split(":").first(),
         channelId = voteRemovedDto.cid.split(":").last(),
-        channelLastMessageAt = voteRemovedDto.channel_last_message_at,
         poll = with(domainMapping) { voteRemovedDto.poll.toDomain() },
         removedVote = with(domainMapping) { voteRemovedDto.poll_vote.toDomain() },
     )
@@ -1429,7 +1345,6 @@ internal object EventMappingTestArguments {
         cid = answerCastedDto.cid,
         channelType = answerCastedDto.cid.split(":").first(),
         channelId = answerCastedDto.cid.split(":").last(),
-        channelLastMessageAt = answerCastedDto.channel_last_message_at,
         poll = with(domainMapping) { answerCastedDto.poll.toDomain() },
         newAnswer = with(domainMapping) { answerCastedDto.poll_vote.toAnswerDomain() },
     )
@@ -1469,7 +1384,6 @@ internal object EventMappingTestArguments {
         cid = aiIndicatorUpdatedDto.cid,
         channelType = aiIndicatorUpdatedDto.cid.split(":").first(),
         channelId = aiIndicatorUpdatedDto.cid.split(":").last(),
-        channelLastMessageAt = aiIndicatorUpdatedDto.channel_last_message_at,
         user = with(domainMapping) { aiIndicatorUpdatedDto.user.toDomain() },
         messageId = aiIndicatorUpdatedDto.message_id,
         aiState = aiIndicatorUpdatedDto.ai_state,
@@ -1482,7 +1396,6 @@ internal object EventMappingTestArguments {
         cid = aiIndicatorStopDto.cid,
         channelType = aiIndicatorStopDto.cid.split(":").first(),
         channelId = aiIndicatorStopDto.cid.split(":").last(),
-        channelLastMessageAt = aiIndicatorStopDto.channel_last_message_at,
         user = with(domainMapping) { aiIndicatorStopDto.user.toDomain() },
     )
 
@@ -1493,7 +1406,6 @@ internal object EventMappingTestArguments {
         cid = ioIndicatorClearDto.cid,
         channelType = ioIndicatorClearDto.cid.split(":").first(),
         channelId = ioIndicatorClearDto.cid.split(":").last(),
-        channelLastMessageAt = ioIndicatorClearDto.channel_last_message_at,
         user = with(domainMapping) { ioIndicatorClearDto.user.toDomain() },
     )
 

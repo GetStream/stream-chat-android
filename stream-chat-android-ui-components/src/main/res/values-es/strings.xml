@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2025 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<resources>
+  <string name="stream_ui_attachment_gallery_count">"%1$d de %2$d"</string>
+  <string name="stream_ui_attachment_gallery_date">"Enviado el %1$s a las %2$s"</string>
+  <string name="stream_ui_attachment_gallery_delete">"Eliminar"</string>
+  <string name="stream_ui_attachment_gallery_overview_title">"Fotos"</string>
+  <string name="stream_ui_attachment_gallery_preview_preparing">"Preparando..."</string>
+  <string name="stream_ui_attachment_gallery_reply">"Responder"</string>
+  <string name="stream_ui_attachment_gallery_save_media">"Guardar video"</string>
+  <string name="stream_ui_attachment_gallery_share">"Compartir Imagen"</string>
+  <string name="stream_ui_attachment_gallery_share_error">"No se pudo compartir el archivo adjunto"</string>
+  <string name="stream_ui_attachment_gallery_show_in_chat">"Mostrar en el chat"</string>
+  <string name="stream_ui_attachment_gallery_video_display_error">"Error. No se puede mostrar el vídeo"</string>
+  <string name="stream_ui_attachment_unsupported_attachment">"Archivo adjunto no compatible"</string>
+  <string name="stream_ui_attachment_list_recording">"Grabando"</string>
+  <string name="stream_ui_channel_list_header_connected">"Stream Chat"</string>
+  <string name="stream_ui_channel_list_header_disconnected">"Esperando conexión de red"</string>
+  <string name="stream_ui_channel_list_header_offline">"Sin Conexión"</string>
+  <plurals name="stream_ui_channel_list_member_info">
+    <item quantity="one">"%1$d Miembro, %2$d Conectados"</item>
+    <item quantity="other">"%1$d Miembros, %2$d Conectados"</item>
+  </plurals>
+  <string name="stream_ui_channel_list_delete_channel">"Eliminar conversación"</string>
+  <string name="stream_ui_channel_list_delete_confirmation_message">"¿Estás seguro de que quieres eliminar permanentemente esta conversación?"</string>
+  <string name="stream_ui_channel_list_delete_confirmation_negative_button">"Cancelar"</string>
+  <string name="stream_ui_channel_list_delete_confirmation_positive_button">"Eliminar"</string>
+  <string name="stream_ui_channel_list_delete_confirmation_title">"Eliminar Canal"</string>
+  <string name="stream_ui_channel_list_dismiss_dialog">"Cancelar"</string>
+  <string name="stream_ui_channel_list_empty">"No hay canales disponibles"</string>
+  <string name="stream_ui_channel_list_error_delete_channel">"Fallo al eliminar el canal"</string>
+  <string name="stream_ui_channel_list_error_hide_channel">"Fallo al ocultar el canal"</string>
+  <string name="stream_ui_channel_list_error_leave_channel">"Fallo al salir del canal"</string>
+  <string name="stream_ui_channel_list_leave_channel">"Salir del grupo"</string>
+  <string name="stream_ui_channel_list_view_info">"Ver información"</string>
+  <string name="stream_ui_channel_list_you">"Tú"</string>
+  <string name="stream_ui_message_preview_sender">"&lt;b&gt;%1$s&lt;/b&gt; en &lt;b&gt;%2$s&lt;/b&gt;"</string>
+  <string name="stream_ui_ok">"Ok"</string>
+  <string name="stream_ui_user_status_last_seen">"Ultima vez visto %1$s"</string>
+  <string name="stream_ui_user_status_last_seen_just_now">"Última vez visto justo ahora"</string>
+  <string name="stream_ui_user_status_online">"Conectado"</string>
+  <string name="stream_ui_yesterday">"Ayer"</string>
+  <string name="stream_ui_message_composer_camera_access">"Permitir acceso a la cámara"</string>
+  <string name="stream_ui_message_composer_error_attachment_count">"Número de archivos adjuntos (%d) excedido."</string>
+  <string name="stream_ui_message_composer_error_file_size">"El fichero es demasiado grande - Máximo %s."</string>
+  <string name="stream_ui_message_composer_error_message_length">"Tamaño máximo del mensaje (%d) excedido."</string>
+  <string name="stream_ui_message_composer_file_not_supported">"Tipo de archivo no compatible"</string>
+  <string name="stream_ui_message_composer_files_access">"Permitir acceso a tus ficheros"</string>
+  <string name="stream_ui_message_composer_gallery_access">"Permitir acceso a tu galería"</string>
+  <string name="stream_ui_message_composer_hint_cannot_send_message">"No puedes enviar mensajes en este canal"</string>
+  <string name="stream_ui_message_composer_hint_normal">"Escribe algo aquí"</string>
+  <string name="stream_ui_message_composer_hold_to_record">"Mantén pulsado para empezar, suelta para enviar."</string>
+  <string name="stream_ui_message_composer_instant_commands">"Comandos instantáneos"</string>
+  <string name="stream_ui_message_composer_mode_edit">"Editar Mensaje"</string>
+  <string name="stream_ui_message_composer_mode_reply">"Contestar al mensaje"</string>
+  <string name="stream_ui_message_composer_no_files">"No hay fotos ni vídeos"</string>
+  <string name="stream_ui_message_composer_recent_files">"Ficheros recientes"</string>
+  <string name="stream_ui_message_composer_send_to_channel">"También enviar al canal"</string>
+  <string name="stream_ui_message_composer_sending_links_not_allowed">"No se permite enviar enlaces en esta conversación."</string>
+  <string name="stream_ui_message_composer_slide_to_cancel">"Deslizar para cancelar"</string>
+  <plurals name="stream_ui_message_list_header_member_count">
+    <item quantity="one">"%1d Miembro"</item>
+    <item quantity="other">"%1d Miembros"</item>
+  </plurals>
+  <plurals name="stream_ui_message_list_header_typing_users">
+    <item quantity="one">"%1$s está escribiendo"</item>
+    <item quantity="other">"%1$s y %2$d más están escribiendo"</item>
+  </plurals>
+  <string name="stream_ui_message_list_header_back_button_content_description">"Botón atrás"</string>
+  <string name="stream_ui_message_list_header_disconnected">"Buscando conexión de red"</string>
+  <string name="stream_ui_message_list_header_member_count_online">"%1$s, %2$d Conectados"</string>
+  <string name="stream_ui_message_list_header_offline">"Desconectado"</string>
+  <string name="stream_ui_message_list_header_retry">"Probar de nuevo"</string>
+  <string name="stream_ui_message_list_header_thread_subtitle">"con %1$s"</string>
+  <string name="stream_ui_message_list_header_thread_title">"Respuestas en el hilo"</string>
+  <string name="stream_ui_message_list_header_untitled_channel">"Canal sin nombre"</string>
+  <plurals name="stream_ui_message_list_message_reactions">
+    <item quantity="one">"%d Reación de mensaje"</item>
+    <item quantity="other">"%d Reaciones de mensaje"</item>
+  </plurals>
+  <plurals name="stream_ui_message_list_thread_reply">
+    <item quantity="one">"Respuesta al hilo"</item>
+    <item quantity="other">"%1$d Respuestas en el hilo"</item>
+  </plurals>
+  <plurals name="stream_ui_message_list_thread_separator">
+    <item quantity="one">"%d Respuesta"</item>
+    <item quantity="other">"%d Respuestas"</item>
+  </plurals>
+  <string name="stream_ui_message_audio_reply_info">"Mensaje de voz"</string>
+  <string name="stream_ui_message_list_attachment_display_error">"Error. El fichero no se puede mostrar"</string>
+  <string name="stream_ui_message_list_attachment_invalid_mime_type">"Algo salió mal. No se pudo abrir el archivo adjunto: %1$s"</string>
+  <string name="stream_ui_message_list_attachment_invalid_url">"No se pudo cargar debido a que es una URL invalida."</string>
+  <string name="stream_ui_message_list_attachment_load_failed">"No se pudo cargar debido a un error inesperado."</string>
+  <string name="stream_ui_message_list_attachment_more_count">"+%1$d"</string>
+  <string name="stream_ui_message_list_attachment_upload_complete">"Subida completada, procesando…"</string>
+  <string name="stream_ui_message_list_attachment_upload_progress">"%1$s/%2$s"</string>
+  <string name="stream_ui_message_list_attachment_uploading">"Subiendo %1$d / %2$d …"</string>
+  <string name="stream_ui_message_list_block_user">"Bloquear usuario"</string>
+  <string name="stream_ui_message_list_copy_message">"Copiar Mensaje"</string>
+  <string name="stream_ui_message_list_delete_confirmation_message">"¿Estás seguro de que quieres eliminar permanentemente el mensaje?"</string>
+  <string name="stream_ui_message_list_delete_confirmation_negative_button">"Cancelar"</string>
+  <string name="stream_ui_message_list_delete_confirmation_positive_button">"Eliminar"</string>
+  <string name="stream_ui_message_list_delete_confirmation_title">"Eliminar mensaje"</string>
+  <string name="stream_ui_message_list_delete_message">"Eliminar mensaje"</string>
+  <string name="stream_ui_message_list_deleted_message">"Mensaje eliminado"</string>
+  <string name="stream_ui_message_list_download_started">"Descarga comenzada"</string>
+  <string name="stream_ui_message_list_edit_message">"Editar Mensaje"</string>
+  <string name="stream_ui_message_list_empty">"Sin mensajes"</string>
+  <string name="stream_ui_message_list_ephemeral_message">"Sólo visible para ti"</string>
+  <string name="stream_ui_message_list_error_block_user">"Fallo al bloquear al usuario"</string>
+  <string name="stream_ui_message_list_error_delete_message">"Fallo al eliminar el mensaje"</string>
+  <string name="stream_ui_message_list_error_flag_message">"Fallo al marcar el mensaje"</string>
+  <string name="stream_ui_message_list_error_mute_user">"Fallo al silenciar al usuario"</string>
+  <string name="stream_ui_message_list_error_pin_message">"Fallo al fijar el mensaje"</string>
+  <string name="stream_ui_message_list_error_unmute_user">"Fallo al dejar de silenciar al usuario"</string>
+  <string name="stream_ui_message_list_error_unpin_message">"Fallo al desfijar el mensaje"</string>
+  <string name="stream_ui_message_list_flag_confirmation_message">"¿Quieres enviar una copia de este mensaje al moderador para una mejor investigación?"</string>
+  <string name="stream_ui_message_list_flag_confirmation_negative_button">"Cancelar"</string>
+  <string name="stream_ui_message_list_flag_confirmation_positive_button">"Marcar"</string>
+  <string name="stream_ui_message_list_flag_confirmation_title">"Marcar Mensaje"</string>
+  <string name="stream_ui_message_list_flag_message">"Marcar Mensaje"</string>
+  <string name="stream_ui_message_list_giphy_cancel">"Cancelar"</string>
+  <string name="stream_ui_message_list_giphy_send">"Enviar"</string>
+  <string name="stream_ui_message_list_giphy_shuffle">"Aleatorio"</string>
+  <string name="stream_ui_message_list_giphy_title">"Giphy"</string>
+  <string name="stream_ui_message_list_mute_user">"Silenciar usuario"</string>
+  <string name="stream_ui_message_list_pin_message">"Fijar a la conversación"</string>
+  <string name="stream_ui_message_list_pinned_message">"Fijado por %1$s"</string>
+  <string name="stream_ui_message_list_pinned_message_you">"Tú"</string>
+  <string name="stream_ui_message_list_reply">"Contestar"</string>
+  <string name="stream_ui_message_list_resend_message">"Reenviar"</string>
+  <string name="stream_ui_message_list_thread_reply">"Contestar en el hilo"</string>
+  <string name="stream_ui_message_list_unmute_user">"Dejar de silenciar al usuario"</string>
+  <string name="stream_ui_message_list_unpin_message">"Desfijar de la conversación"</string>
+  <string name="stream_ui_pinned_message_list_empty_description"><![CDATA[Mantenga presionado un mensaje importante y elija <b> Fijar a la conversación </b>]]></string>
+  <string name="stream_ui_pinned_message_list_empty_title">"No hay mensajes fijados"</string>
+  <string name="stream_ui_pinned_message_list_results_error">"Ocurrió un error"</string>
+  <plurals name="stream_ui_search_results_count">
+    <item quantity="one">"1 resultado"</item>
+    <item quantity="other">"%d resultados"</item>
+  </plurals>
+  <string name="stream_ui_search_input_clear_icon_content_description">"Limpiar"</string>
+  <string name="stream_ui_search_input_hint">"Buscar"</string>
+  <string name="stream_ui_search_input_search_icon_content_description">"Buscar"</string>
+  <string name="stream_ui_search_results_empty">"No se encontraron resultados para \"%1$s\""</string>
+  <string name="stream_ui_search_results_error">"Ocurrió un error"</string>
+</resources>

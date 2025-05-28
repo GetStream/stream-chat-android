@@ -32,7 +32,6 @@ internal data class ChannelDeletedEventDto(
     val channel_id: String,
     val channel: DownstreamChannelDto,
     val user: DownstreamUserDto?,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -44,7 +43,6 @@ internal data class ChannelHiddenEventDto(
     val channel_id: String,
     val user: DownstreamUserDto,
     val clear_history: Boolean,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -57,7 +55,6 @@ internal data class ChannelTruncatedEventDto(
     val user: DownstreamUserDto?,
     val message: DownstreamMessageDto?,
     val channel: DownstreamChannelDto,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -69,7 +66,6 @@ internal data class ChannelUpdatedEventDto(
     val channel_id: String,
     val message: DownstreamMessageDto?,
     val channel: DownstreamChannelDto,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -82,7 +78,6 @@ internal data class ChannelUpdatedByUserEventDto(
     val user: DownstreamUserDto,
     val message: DownstreamMessageDto?,
     val channel: DownstreamChannelDto,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -93,7 +88,6 @@ internal data class ChannelVisibleEventDto(
     val channel_type: String,
     val channel_id: String,
     val user: DownstreamUserDto,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -112,7 +106,6 @@ internal data class MemberAddedEventDto(
     val channel_type: String,
     val channel_id: String,
     val member: DownstreamMemberDto,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -124,7 +117,6 @@ internal data class MemberRemovedEventDto(
     val channel_type: String,
     val channel_id: String,
     val member: DownstreamMemberDto,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -136,7 +128,6 @@ internal data class MemberUpdatedEventDto(
     val channel_type: String,
     val channel_id: String,
     val member: DownstreamMemberDto,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -149,7 +140,6 @@ internal data class MessageDeletedEventDto(
     val channel_id: String,
     val message: DownstreamMessageDto,
     val hard_delete: Boolean?,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -161,7 +151,6 @@ internal data class MessageReadEventDto(
     val channel_type: String,
     val channel_id: String,
     val thread: DownstreamThreadInfoDto? = null,
-    val channel_last_message_at: Date?,
     val last_read_message_id: String?,
 ) : ChatEventDto()
 
@@ -174,7 +163,6 @@ internal data class MessageUpdatedEventDto(
     val channel_type: String,
     val channel_id: String,
     val message: DownstreamMessageDto,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -189,7 +177,6 @@ internal data class NewMessageEventDto(
     val watcher_count: Int = 0,
     val total_unread_count: Int = 0,
     val unread_channels: Int = 0,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -217,7 +204,6 @@ internal data class NotificationAddedToChannelEventDto(
     val member: DownstreamMemberDto,
     val total_unread_count: Int = 0,
     val unread_channels: Int = 0,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -230,7 +216,6 @@ internal data class NotificationChannelDeletedEventDto(
     val channel: DownstreamChannelDto,
     val total_unread_count: Int = 0,
     val unread_channels: Int = 0,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -250,7 +235,6 @@ internal data class NotificationChannelTruncatedEventDto(
     val channel: DownstreamChannelDto,
     val total_unread_count: Int = 0,
     val unread_channels: Int = 0,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -263,7 +247,6 @@ internal data class NotificationInviteAcceptedEventDto(
     val user: DownstreamUserDto,
     val member: DownstreamMemberDto,
     val channel: DownstreamChannelDto,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -276,7 +259,6 @@ internal data class NotificationInviteRejectedEventDto(
     val user: DownstreamUserDto,
     val member: DownstreamMemberDto,
     val channel: DownstreamChannelDto,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -288,7 +270,6 @@ internal data class NotificationInvitedEventDto(
     val channel_id: String,
     val user: DownstreamUserDto,
     val member: DownstreamMemberDto,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -305,7 +286,6 @@ internal data class NotificationMarkReadEventDto(
     val thread: DownstreamThreadInfoDto? = null,
     val unread_threads: Int? = null,
     val unread_thread_messages: Int? = null,
-    val channel_last_message_at: Date?,
     val last_read_message_id: String?,
 ) : ChatEventDto()
 
@@ -325,7 +305,6 @@ internal data class NotificationMarkUnreadEventDto(
     val unread_channels: Int,
     val thread_id: String? = null,
     val unread_threads: Int = 0,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -348,7 +327,6 @@ internal data class NotificationMessageNewEventDto(
     val message: DownstreamMessageDto,
     val total_unread_count: Int = 0,
     val unread_channels: Int = 0,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -362,7 +340,6 @@ internal data class NotificationThreadMessageNewEventDto(
     val created_at: ExactDate,
     val unread_threads: Int,
     val unread_thread_messages: Int,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -382,7 +359,6 @@ internal data class NotificationRemovedFromChannelEventDto(
     val channel_id: String,
     val channel: DownstreamChannelDto,
     val member: DownstreamMemberDto,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -395,7 +371,6 @@ internal data class ReactionDeletedEventDto(
     val channel_id: String,
     val message: DownstreamMessageDto,
     val reaction: DownstreamReactionDto,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -408,7 +383,6 @@ internal data class ReactionNewEventDto(
     val channel_id: String,
     val message: DownstreamMessageDto,
     val reaction: DownstreamReactionDto,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -421,7 +395,6 @@ internal data class ReactionUpdateEventDto(
     val channel_id: String,
     val message: DownstreamMessageDto,
     val reaction: DownstreamReactionDto,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -433,7 +406,6 @@ internal data class TypingStartEventDto(
     val channel_type: String,
     val channel_id: String,
     val parent_id: String?,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -445,7 +417,6 @@ internal data class TypingStopEventDto(
     val channel_type: String,
     val channel_id: String,
     val parent_id: String?,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -458,7 +429,6 @@ internal data class ChannelUserBannedEventDto(
     val user: DownstreamUserDto,
     val expiration: Date?,
     val shadow: Boolean?,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -491,7 +461,6 @@ internal data class UserStartWatchingEventDto(
     val channel_type: String,
     val channel_id: String,
     val user: DownstreamUserDto,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -503,7 +472,6 @@ internal data class UserStopWatchingEventDto(
     val channel_type: String,
     val channel_id: String,
     val user: DownstreamUserDto,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -514,7 +482,6 @@ internal data class ChannelUserUnbannedEventDto(
     val cid: String,
     val channel_type: String,
     val channel_id: String,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -537,7 +504,6 @@ internal data class PollUpdatedEventDto(
     val cid: String,
     val poll: DownstreamPollDto,
     val created_at: ExactDate,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -546,7 +512,6 @@ internal data class PollDeletedEventDto(
     val cid: String,
     val created_at: ExactDate,
     val poll: DownstreamPollDto,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -555,7 +520,6 @@ internal data class PollClosedEventDto(
     val cid: String,
     val created_at: ExactDate,
     val poll: DownstreamPollDto,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -565,7 +529,6 @@ internal data class VoteCastedEventDto(
     val created_at: ExactDate,
     val poll: DownstreamPollDto,
     val poll_vote: DownstreamVoteDto,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -575,7 +538,6 @@ internal data class AnswerCastedEventDto(
     val created_at: ExactDate,
     val poll: DownstreamPollDto,
     val poll_vote: DownstreamVoteDto,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -585,7 +547,6 @@ internal data class VoteChangedEventDto(
     val poll: DownstreamPollDto,
     val created_at: ExactDate,
     val poll_vote: DownstreamVoteDto,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -595,7 +556,6 @@ internal data class VoteRemovedEventDto(
     val poll: DownstreamPollDto,
     val created_at: ExactDate,
     val poll_vote: DownstreamVoteDto,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -634,7 +594,6 @@ internal data class AIIndicatorUpdatedEventDto(
     val user: DownstreamUserDto,
     val created_at: ExactDate,
     val message_id: String,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -643,7 +602,6 @@ internal data class AIIndicatorClearEventDto(
     val cid: String,
     val user: DownstreamUserDto,
     val created_at: ExactDate,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -652,7 +610,6 @@ internal data class AIIndicatorStopEventDto(
     val cid: String,
     val user: DownstreamUserDto,
     val created_at: ExactDate,
-    val channel_last_message_at: Date?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
