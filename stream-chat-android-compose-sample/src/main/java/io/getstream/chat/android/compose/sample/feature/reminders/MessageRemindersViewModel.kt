@@ -114,7 +114,7 @@ class MessageRemindersViewModel(
                     _state.update {
                         it.copy(
                             reminders = it.reminders.map { reminder ->
-                                if (reminder.id == id) {
+                                if (reminder.messageId == id) {
                                     reminder.copy(remindAt = remindAt)
                                 } else {
                                     reminder
@@ -143,7 +143,7 @@ class MessageRemindersViewModel(
                 is Result.Success -> {
                     // Remove the deleted reminder from the state
                     _state.update {
-                        it.copy(reminders = it.reminders.filter { reminder -> reminder.id != id })
+                        it.copy(reminders = it.reminders.filter { reminder -> reminder.messageId != id })
                     }
                 }
 

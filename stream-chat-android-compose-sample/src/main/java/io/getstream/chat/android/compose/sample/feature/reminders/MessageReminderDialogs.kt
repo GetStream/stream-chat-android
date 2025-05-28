@@ -34,7 +34,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.models.MessageReminder
 import java.util.Date
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
@@ -129,13 +128,13 @@ fun CreateReminderDialog(
 /**
  * Displays a dialog with options for editing the reminder time.
  *
- * @param reminder The message reminder to be edited.
+ * @param remindAt The current reminder time.
  * @param onRemindAtSelected Callback invoked when the reminder time is changed.
  * @param onDismiss Callback invoked when the dialog is dismissed.
  */
 @Composable
 fun EditReminderDialog(
-    reminder: MessageReminder,
+    remindAt: Date?,
     onRemindAtSelected: (Date?) -> Unit,
     onDismiss: () -> Unit,
 ) {
@@ -167,7 +166,7 @@ fun EditReminderDialog(
                 text = stringResource(R.string.reminders_remind_in_1_day),
                 onClick = { onRemindAtSelected(Date().apply { time += 1.days.inWholeMilliseconds }) },
             )
-            if (reminder.remindAt != null) {
+            if (remindAt != null) {
                 HorizontalDivider(color = ChatTheme.colors.borders)
                 ReminderOptionItem(
                     text = stringResource(R.string.reminders_clear_due_date),

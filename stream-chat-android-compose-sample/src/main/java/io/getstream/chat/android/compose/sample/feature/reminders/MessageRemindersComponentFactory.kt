@@ -90,13 +90,18 @@ class MessageRemindersComponentFactory(
     ) {
         val remindMeOption = remindMeOption(message)
         val saveForLaterOption = saveForLaterOption(message)
-        var showReminderTimeDialog by remember { mutableStateOf(false) }
+        var showCreateReminderDialog by remember { mutableStateOf(false) }
+        var showUpdateReminderDialog by remember { mutableStateOf(false) }
         val extendedAction: (MessageAction) -> Unit = { action ->
             when (action) {
                 is CustomAction -> {
                     when (action.extraProperties[ACTION_TYPE]) {
-                        ACTION_TYPE_ADD_REMINDER, ACTION_TYPE_UPDATE_REMINDER -> {
-                            showReminderTimeDialog = true
+                        ACTION_TYPE_ADD_REMINDER -> {
+                            showCreateReminderDialog = true
+                        }
+
+                        ACTION_TYPE_UPDATE_REMINDER -> {
+                            showUpdateReminderDialog = true
                         }
 
                         ACTION_TYPE_SAVE_FOR_LATER -> {
@@ -115,14 +120,26 @@ class MessageRemindersComponentFactory(
             }
         }
 
-        if (showReminderTimeDialog) {
+        if (showCreateReminderDialog) {
             CreateReminderDialog(
-                onDismiss = { showReminderTimeDialog = false },
+                onDismiss = { showCreateReminderDialog = false },
                 onRemindAtSelected = { remindAt ->
                     addReminder(message.id, remindAt)
-                    showReminderTimeDialog = false
+                    showCreateReminderDialog = false
                     onDismiss()
                 },
+            )
+        }
+
+        if (showUpdateReminderDialog) {
+            EditReminderDialog(
+                remindAt = message.reminder?.remindAt,
+                onRemindAtSelected = { remindAt ->
+                    updateReminder(message.id, remindAt)
+                    showUpdateReminderDialog = false
+                    onDismiss()
+                },
+                onDismiss = { showUpdateReminderDialog = false },
             )
         }
 
@@ -194,6 +211,11 @@ class MessageRemindersComponentFactory(
     private fun addReminder(messageId: String, remindAt: Date) {
         val client = ChatClient.instance()
         client.createReminder(messageId, remindAt).enqueue()
+    }
+
+    private fun updateReminder(messageId: String, remindAt: Date?) {
+        val client = ChatClient.instance()
+        client.updateReminder(messageId, remindAt).enqueue()
     }
 
     private fun saveForLater(messageId: String) {

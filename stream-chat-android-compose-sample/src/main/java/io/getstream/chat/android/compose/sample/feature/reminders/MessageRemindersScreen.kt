@@ -125,16 +125,16 @@ fun MessageRemindersScreen(
                 ReminderOptionsDialog(
                     onEdit = { showEditReminderOptions = true },
                     onDelete = {
-                        viewModel.onDeleteReminder(reminder.id)
+                        viewModel.onDeleteReminder(reminder.messageId)
                         selectedReminder = null
                     },
                     onDismiss = { selectedReminder = null },
                 )
                 if (showEditReminderOptions) {
                     EditReminderDialog(
-                        reminder = reminder,
+                        remindAt = reminder.remindAt,
                         onRemindAtSelected = { remindAt ->
-                            viewModel.onEditReminder(reminder.id, remindAt)
+                            viewModel.onEditReminder(reminder.messageId, remindAt)
                             selectedReminder = null
                             showEditReminderOptions = false
                         },
@@ -321,21 +321,26 @@ private fun MessageReminderItem(
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Text(
-                text = stringResource(R.string.reminders_channel_name, reminder.channel.name),
+                text = stringResource(R.string.reminders_channel_name, reminder.channel?.name ?: ""),
                 fontSize = 14.sp,
                 color = ChatTheme.colors.textLowEmphasis,
-                modifier = Modifier,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f),
             )
+            Spacer(Modifier.width(16.dp))
             MessageReminderStatusLabel(reminder.remindAt)
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            UserAvatar(
-                user = reminder.message.user,
-                modifier = Modifier.size(40.dp),
-            )
+            reminder.message?.user?.let { user ->
+                UserAvatar(
+                    user = user,
+                    modifier = Modifier.size(40.dp),
+                )
+            }
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -344,13 +349,13 @@ private fun MessageReminderItem(
                 verticalArrangement = Arrangement.Center,
             ) {
                 Text(
-                    text = reminder.message.user.name,
+                    text = reminder.message?.user?.name ?: "",
                     fontSize = 16.sp,
                     color = ChatTheme.colors.textHighEmphasis,
                     style = ChatTheme.typography.bodyBold,
                 )
                 Text(
-                    text = reminder.message.text,
+                    text = reminder.message?.text ?: "",
                     fontSize = 14.sp,
                     color = ChatTheme.colors.textHighEmphasis,
                     style = ChatTheme.typography.body,
@@ -415,8 +420,14 @@ private val MessageRemindersError.label: Int
 @Composable
 private fun MessageRemindersResultListPreview() {
     val baseReminder = MessageReminder(
-        id = "id1",
         remindAt = null,
+        cid = "messaging:id1",
+        channel = Channel(
+            type = "messaging",
+            id = "id1",
+            name = "Work discussions",
+        ),
+        messageId = "id1",
         message = Message(
             id = "id1",
             text = "Very long and important message that we need to go back to in the future sent by an important " +
@@ -425,11 +436,6 @@ private fun MessageRemindersResultListPreview() {
                 id = "userId",
                 name = "User Name",
             ),
-        ),
-        channel = Channel(
-            type = "messaging",
-            id = "id1",
-            name = "Work discussions",
         ),
         createdAt = Date(),
         updatedAt = Date(),
