@@ -15,6 +15,40 @@ public abstract interface class io/getstream/chat/android/ui/common/disposable/D
 	public abstract fun isDisposed ()Z
 }
 
+public abstract interface class io/getstream/chat/android/ui/common/feature/channel/draft/DraftChannelViewAction {
+}
+
+public final class io/getstream/chat/android/ui/common/feature/channel/draft/DraftChannelViewAction$MessageSent : io/getstream/chat/android/ui/common/feature/channel/draft/DraftChannelViewAction {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/channel/draft/DraftChannelViewAction$MessageSent;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class io/getstream/chat/android/ui/common/feature/channel/draft/DraftChannelViewEvent {
+}
+
+public final class io/getstream/chat/android/ui/common/feature/channel/draft/DraftChannelViewEvent$DraftChannelError : io/getstream/chat/android/ui/common/feature/channel/draft/DraftChannelViewEvent {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/feature/channel/draft/DraftChannelViewEvent$DraftChannelError;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/feature/channel/draft/DraftChannelViewEvent$NavigateToChannel : io/getstream/chat/android/ui/common/feature/channel/draft/DraftChannelViewEvent {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/ui/common/feature/channel/draft/DraftChannelViewEvent$NavigateToChannel;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/channel/draft/DraftChannelViewEvent$NavigateToChannel;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/channel/draft/DraftChannelViewEvent$NavigateToChannel;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCid ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract interface class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewAction {
 }
 
@@ -73,7 +107,7 @@ public final class io/getstream/chat/android/ui/common/feature/channel/info/Chan
 	public final fun copy (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$MessageMember;
 	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$MessageMember;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent$MessageMember;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getChannelId ()Ljava/lang/String;
+	public final fun getDistinctCid ()Ljava/lang/String;
 	public final fun getMemberId ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -390,17 +424,17 @@ public final class io/getstream/chat/android/ui/common/feature/channel/info/Chan
 	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$NavigateToChannel;
 	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$NavigateToChannel;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$NavigateToChannel;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getChannelId ()Ljava/lang/String;
+	public final fun getCid ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$NavigateToNewChannel : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$Navigation {
+public final class io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$NavigateToDraftChannel : io/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$Navigation {
 	public static final field $stable I
 	public fun <init> (Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$NavigateToNewChannel;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$NavigateToNewChannel;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$NavigateToNewChannel;
+	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$NavigateToDraftChannel;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$NavigateToDraftChannel;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewEvent$NavigateToDraftChannel;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getMemberId ()Ljava/lang/String;
 	public fun hashCode ()I
@@ -1170,6 +1204,29 @@ public final class io/getstream/chat/android/ui/common/permissions/VisualMediaTy
 	public final fun getValue ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/common/permissions/VisualMediaType;
 	public static fun values ()[Lio/getstream/chat/android/ui/common/permissions/VisualMediaType;
+}
+
+public abstract interface class io/getstream/chat/android/ui/common/state/channel/draft/DraftChannelViewState {
+}
+
+public final class io/getstream/chat/android/ui/common/state/channel/draft/DraftChannelViewState$Content : io/getstream/chat/android/ui/common/state/channel/draft/DraftChannelViewState {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/models/Channel;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/Channel;
+	public final fun copy (Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/ui/common/state/channel/draft/DraftChannelViewState$Content;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/channel/draft/DraftChannelViewState$Content;Lio/getstream/chat/android/models/Channel;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/channel/draft/DraftChannelViewState$Content;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChannel ()Lio/getstream/chat/android/models/Channel;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/channel/draft/DraftChannelViewState$Loading : io/getstream/chat/android/ui/common/state/channel/draft/DraftChannelViewState {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/channel/draft/DraftChannelViewState$Loading;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public abstract interface class io/getstream/chat/android/ui/common/state/channel/info/ChannelInfoMemberViewState {
