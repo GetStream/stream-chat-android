@@ -327,7 +327,7 @@ class ChatsActivity : BaseConnectedActivity() {
         onNavigationIconClick: () -> Unit,
         onNavigateUp: () -> Unit,
         onNavigateToPinnedMessages: () -> Unit,
-        onNavigateToChannel: (channelId: String) -> Unit,
+        onNavigateToChannel: (cid: String) -> Unit,
     ) {
         val viewModelFactory = ChannelInfoViewModelFactory(context = applicationContext, cid = channelId)
         val viewModel = viewModel<ChannelInfoViewModel>(key = channelId, factory = viewModelFactory)
@@ -363,7 +363,7 @@ class ChatsActivity : BaseConnectedActivity() {
     private fun ChannelInfoViewModel.handleChannelInfoEvents(
         onNavigateUp: () -> Unit,
         onNavigateToPinnedMessages: () -> Unit,
-        onNavigateToChannel: (channelId: String) -> Unit = {},
+        onNavigateToChannel: (cid: String) -> Unit = {},
     ) {
         LaunchedEffect(this) {
             events.collectLatest { event ->
@@ -371,7 +371,7 @@ class ChatsActivity : BaseConnectedActivity() {
                     is ChannelInfoViewEvent.Navigation -> when (event) {
                         is ChannelInfoViewEvent.NavigateUp -> onNavigateUp()
                         is ChannelInfoViewEvent.NavigateToPinnedMessages -> onNavigateToPinnedMessages()
-                        is ChannelInfoViewEvent.NavigateToChannel -> onNavigateToChannel(event.channelId)
+                        is ChannelInfoViewEvent.NavigateToChannel -> onNavigateToChannel(event.cid)
                     }
                     is ChannelInfoViewEvent.Error -> showError(event)
                     is ChannelInfoViewEvent.Modal -> Unit
