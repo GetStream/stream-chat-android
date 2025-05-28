@@ -223,7 +223,7 @@ class ChannelsActivity : BaseConnectedActivity() {
     private fun RemindersContent() {
         MessageRemindersScreen(
             onReminderClick = { reminder ->
-                openMessages(reminder.message)
+                reminder.message?.let(::openMessages)
             },
         )
     }
