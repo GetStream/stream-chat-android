@@ -56,7 +56,6 @@ import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
-import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomString
 import io.getstream.result.Result
 import java.util.Calendar
@@ -297,7 +296,6 @@ public class TestDataHelper {
             watcherCount = 1,
             totalUnreadCount = 0,
             unreadChannels = 0,
-            channelLastMessageAt = randomDate(),
         )
     }
 
@@ -316,7 +314,6 @@ public class TestDataHelper {
             watcherCount = 1,
             totalUnreadCount = 0,
             unreadChannels = 0,
-            channelLastMessageAt = randomDate(),
         )
     }
     public val newMessageFromUser2: NewMessageEvent by lazy {
@@ -334,7 +331,6 @@ public class TestDataHelper {
             watcherCount = 1,
             totalUnreadCount = 0,
             unreadChannels = 0,
-            channelLastMessageAt = randomDate(),
         )
     }
 
@@ -352,7 +348,6 @@ public class TestDataHelper {
             message = message1WithoutChannelAndCid,
             totalUnreadCount = 0,
             unreadChannels = 0,
-            channelLastMessageAt = randomDate(),
         )
     }
 
@@ -368,7 +363,6 @@ public class TestDataHelper {
             channelType = channel1.type,
             channelId = channel1.id,
             message = message1Updated,
-            channelLastMessageAt = randomDate(),
         )
     }
 
@@ -385,7 +379,6 @@ public class TestDataHelper {
             channelId = channel1.id,
             message = message1Deleted,
             hardDelete = false,
-            channelLastMessageAt = randomDate(),
         )
     }
 
@@ -402,7 +395,6 @@ public class TestDataHelper {
             channelId = channel1.id,
             message = message1Deleted,
             hardDelete = true,
-            channelLastMessageAt = randomDate(),
         )
     }
 
@@ -418,7 +410,6 @@ public class TestDataHelper {
             channelType = channel1.type,
             channelId = channel1.id,
             user = user1,
-            channelLastMessageAt = randomDate(),
         )
     }
     public val reactionEvent: ReactionNewEvent by lazy {
@@ -434,7 +425,6 @@ public class TestDataHelper {
             channelId = channel1.id,
             message = reactionMessage1,
             reaction = reaction1,
-            channelLastMessageAt = randomDate(),
         )
     }
     public val reactionEvent2: ReactionNewEvent by lazy {
@@ -450,7 +440,6 @@ public class TestDataHelper {
             channelId = channel1.id,
             message = reactionMessage2,
             reaction = reaction2,
-            channelLastMessageAt = randomDate(),
         )
     }
 
@@ -465,7 +454,6 @@ public class TestDataHelper {
             channelType = channel1Updated.type,
             channelId = channel1Updated.id,
             channel = channel1Updated,
-            channelLastMessageAt = randomDate(),
             message = null,
         )
     }
@@ -480,7 +468,6 @@ public class TestDataHelper {
             channelType = channel5.type,
             channelId = channel5.id,
             channel = channel5,
-            channelLastMessageAt = randomDate(),
             message = null,
         )
     }
@@ -496,7 +483,6 @@ public class TestDataHelper {
             cid = channel1.cid,
             channelType = channel1.type,
             channelId = channel1.id,
-            channelLastMessageAt = randomDate(),
             parentId = parentMessageId,
         )
     }
@@ -511,7 +497,6 @@ public class TestDataHelper {
             cid = channel1.cid,
             channelType = channel1.type,
             channelId = channel1.id,
-            channelLastMessageAt = randomDate(),
             parentId = parentMessageId,
         )
     }
@@ -527,7 +512,6 @@ public class TestDataHelper {
             channelType = channel2.type,
             channelId = channel2.id,
             user = user1,
-            channelLastMessageAt = randomDate(),
             clearHistory = false,
         )
     }
@@ -542,7 +526,6 @@ public class TestDataHelper {
             channelType = channel2.type,
             channelId = channel2.id,
             user = user1,
-            channelLastMessageAt = randomDate(),
         )
     }
 
@@ -557,7 +540,6 @@ public class TestDataHelper {
             cid = channel2.cid,
             channelType = channel2.type,
             channelId = channel2.id,
-            channelLastMessageAt = randomDate(),
             parentId = parentMessageId,
         )
     }
@@ -572,7 +554,6 @@ public class TestDataHelper {
             cid = channel2.cid,
             channelType = channel2.type,
             channelId = channel2.id,
-            channelLastMessageAt = randomDate(),
             parentId = parentMessageId,
         )
     }
@@ -587,7 +568,6 @@ public class TestDataHelper {
             cid = channel1.cid,
             channelType = channel1.type,
             channelId = channel1.id,
-            channelLastMessageAt = randomDate(),
             lastReadMessageId = randomString(),
         )
     }
@@ -614,7 +594,6 @@ public class TestDataHelper {
             channelType = channel2.type,
             channelId = channel2.id,
             user = user1,
-            channelLastMessageAt = randomDate(),
             expiration = null,
             shadow = false,
         )
@@ -630,7 +609,6 @@ public class TestDataHelper {
             cid = channel2.cid,
             channelType = channel2.type,
             channelId = channel2.id,
-            channelLastMessageAt = randomDate(),
         )
     }
 
@@ -647,7 +625,6 @@ public class TestDataHelper {
             channelId = channel2.id,
             totalUnreadCount = 0,
             unreadChannels = 0,
-            channelLastMessageAt = randomDate(),
             lastReadMessageId = randomString(),
         )
     }
@@ -662,7 +639,6 @@ public class TestDataHelper {
             cid = channel2.cid,
             channelType = channel2.type,
             channelId = channel2.id,
-            channelLastMessageAt = randomDate(),
             lastReadMessageId = randomString(),
         )
     }
@@ -678,7 +654,6 @@ public class TestDataHelper {
             channelType = channel1WithNewMember.type,
             channelId = channel1WithNewMember.id,
             member = member2,
-            channelLastMessageAt = randomDate(),
         )
     }
 
@@ -695,7 +670,6 @@ public class TestDataHelper {
             channelType = channel1.type,
             channelId = channel1.id,
             member = member1,
-            channelLastMessageAt = randomDate(),
         )
     }
 
@@ -706,7 +680,6 @@ public class TestDataHelper {
             type = EventType.NOTIFICATION_REMOVED_FROM_CHANNEL,
             createdAt = createdAt,
             rawCreatedAt = streamFormatter.format(createdAt),
-            channelLastMessageAt = randomDate(),
             cid = channel1.cid,
             channelType = channel1.type,
             channelId = channel1.id,
@@ -731,7 +704,6 @@ public class TestDataHelper {
             member = member1,
             totalUnreadCount = 0,
             unreadChannels = 0,
-            channelLastMessageAt = randomDate(),
         )
     }
     public val notificationAddedToChannel2Event: NotificationAddedToChannelEvent by lazy {
@@ -748,7 +720,6 @@ public class TestDataHelper {
             member = member2,
             totalUnreadCount = 0,
             unreadChannels = 0,
-            channelLastMessageAt = randomDate(),
         )
     }
 
@@ -767,7 +738,6 @@ public class TestDataHelper {
             member = member3,
             totalUnreadCount = 0,
             unreadChannels = 0,
-            channelLastMessageAt = randomDate(),
         )
     }
     public val user1UpdatedEvent: UserUpdatedEvent by lazy {
@@ -789,7 +759,6 @@ public class TestDataHelper {
             channelType = channel1.type,
             channelId = channel1.id,
             channel = channel1,
-            channelLastMessageAt = randomDate(),
             user = user1,
             message = null,
         )
@@ -805,7 +774,6 @@ public class TestDataHelper {
             channelType = channel1.type,
             channelId = channel1.id,
             channel = channel1,
-            channelLastMessageAt = randomDate(),
         )
     }
     public val channelDeletedEvent: ChannelDeletedEvent by lazy {
@@ -819,7 +787,6 @@ public class TestDataHelper {
             channelType = channel1.type,
             channelId = channel1.id,
             channel = channel1,
-            channelLastMessageAt = randomDate(),
             user = null,
         )
     }

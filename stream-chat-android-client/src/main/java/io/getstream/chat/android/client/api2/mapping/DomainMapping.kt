@@ -126,9 +126,8 @@ internal class DomainMapping(
     /**
      * Transforms [DownstreamChannelDto] into [Channel]
      *
-     * @param eventChatLastMessageAt the last message date coming from the event chat.
      */
-    internal fun DownstreamChannelDto.toDomain(eventChatLastMessageAt: Date?): Channel =
+    internal fun DownstreamChannelDto.toDomain(): Channel =
         Channel(
             id = id,
             type = type,
@@ -136,7 +135,6 @@ internal class DomainMapping(
             image = image ?: "",
             watcherCount = watcher_count,
             frozen = frozen,
-            channelLastMessageAt = eventChatLastMessageAt ?: last_message_at,
             createdAt = created_at,
             deletedAt = deleted_at,
             updatedAt = updated_at,
@@ -317,9 +315,7 @@ internal class DomainMapping(
     internal fun DownstreamChannelMuteDto.toDomain(): ChannelMute =
         ChannelMute(
             user = user?.toDomain(),
-            channel = channel?.toDomain(
-                eventChatLastMessageAt = null,
-            ),
+            channel = channel?.toDomain(),
             createdAt = created_at,
             updatedAt = updated_at,
             expires = expires,
@@ -490,9 +486,7 @@ internal class DomainMapping(
         return BannedUser(
             user = user.toDomain(),
             bannedBy = banned_by?.toDomain(),
-            channel = channel?.toDomain(
-                eventChatLastMessageAt = null,
-            ),
+            channel = channel?.toDomain(),
             createdAt = created_at,
             expires = expires,
             shadow = shadow,
@@ -639,9 +633,7 @@ internal class DomainMapping(
         Thread(
             activeParticipantCount = active_participant_count ?: 0,
             cid = channel_cid,
-            channel = channel?.toDomain(
-                eventChatLastMessageAt = null,
-            ),
+            channel = channel?.toDomain(),
             parentMessageId = parent_message_id,
             parentMessage = parent_message.toDomain(),
             createdByUserId = created_by_user_id,

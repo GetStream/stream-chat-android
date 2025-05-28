@@ -30,8 +30,16 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.toChannelData
+import io.getstream.chat.android.randomCID
+import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomGenericError
+import io.getstream.chat.android.randomMember
+import io.getstream.chat.android.randomMembers
+import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.asCall
-import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewEvent
+import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent.Navigation
+import io.getstream.chat.android.ui.common.helper.CopyToClipboardHandler
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
 import io.getstream.result.Error
@@ -45,6 +53,7 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoMoreInteractions
 import org.mockito.kotlin.whenever
 
@@ -59,20 +68,16 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
-    fun `direct channel content`() = runTest {
-        val currentUser = User(id = "1")
-        val otherUser = User(id = "2")
-        val channel = Channel(
-            id = "!members-1,2",
-            createdBy = otherUser,
-            members = listOf(
-                Member(user = currentUser),
-                Member(user = otherUser),
-            ),
+    fun `single-member channel content`() = runTest {
+        val currentMember = randomMember()
+        val channel = randomChannel(
+            createdBy = currentMember.user,
+            members = listOf(currentMember),
+            ownCapabilities = emptySet(),
         )
         val sut = Fixture()
             .given(
-                currentUser = currentUser,
+                currentUser = currentMember.user,
                 channel = channel,
             )
             .get(backgroundScope)
@@ -82,14 +87,56 @@ internal class ChannelInfoViewControllerTest {
 
             assertEquals(
                 ChannelInfoViewState.Content(
+                    owner = currentMember.user,
                     members = ExpandableList(
-                        items = listOf(
-                            ChannelInfoViewState.Content.Member(
-                                user = otherUser,
-                                role = ChannelInfoViewState.Content.Role.Owner,
-                            ),
-                        ),
+                        items = channel.members,
                         minimumVisibleItems = 5,
+                    ),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.UserInfo(user = currentMember.user),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
+                ),
+                awaitItem(),
+            )
+        }
+    }
+
+    @Test
+    fun `direct channel content`() = runTest {
+        val currentMember = randomMember()
+        val otherMember = randomMember()
+        val channel = randomChannel(
+            id = "!members-${currentMember.getUserId()},${otherMember.getUserId()}",
+            createdBy = otherMember.user,
+            members = listOf(currentMember, otherMember),
+            memberCount = 2,
+            ownCapabilities = emptySet(),
+        )
+        val sut = Fixture()
+            .given(
+                currentUser = currentMember.user,
+                channel = channel,
+            )
+            .get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            assertEquals(
+                ChannelInfoViewState.Content(
+                    owner = otherMember.user,
+                    members = ExpandableList(
+                        items = listOf(otherMember),
+                        minimumVisibleItems = 5,
+                    ),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.UserInfo(user = otherMember.user),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
                     ),
                 ),
                 awaitItem(),
@@ -99,18 +146,14 @@ internal class ChannelInfoViewControllerTest {
 
     @Test
     fun `group channel content`() = runTest {
-        val owner = User(id = "1")
-        val user2 = User(id = "2")
-        val user3 = User(id = "3")
-        val user4 = User(id = "4")
-        val channel = Channel(
-            createdBy = owner,
-            members = listOf(
-                Member(user = owner),
-                Member(user = user2, channelRole = "channel_moderator"),
-                Member(user = user3, channelRole = "channel_member"),
-                Member(user = user4, channelRole = "admin"),
-            ),
+        val owner = randomMember()
+        val user2 = randomMember(channelRole = "channel_moderator")
+        val user3 = randomMember(channelRole = "channel_member")
+        val user4 = randomMember()
+        val channel = randomChannel(
+            createdBy = owner.user,
+            members = listOf(owner, user2, user3, user4),
+            ownCapabilities = emptySet(),
         )
         val sut = Fixture()
             .given(channel = channel)
@@ -121,26 +164,16 @@ internal class ChannelInfoViewControllerTest {
 
             assertEquals(
                 ChannelInfoViewState.Content(
+                    owner = owner.user,
                     members = ExpandableList(
-                        items = listOf(
-                            ChannelInfoViewState.Content.Member(
-                                user = owner,
-                                role = ChannelInfoViewState.Content.Role.Owner,
-                            ),
-                            ChannelInfoViewState.Content.Member(
-                                user = user2,
-                                role = ChannelInfoViewState.Content.Role.Moderator,
-                            ),
-                            ChannelInfoViewState.Content.Member(
-                                user = user3,
-                                role = ChannelInfoViewState.Content.Role.Member,
-                            ),
-                            ChannelInfoViewState.Content.Member(
-                                user = user4,
-                                role = ChannelInfoViewState.Content.Role.Other("admin"),
-                            ),
-                        ),
+                        items = channel.members,
                         minimumVisibleItems = 5,
+                    ),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
                     ),
                 ),
                 awaitItem(),
@@ -150,8 +183,42 @@ internal class ChannelInfoViewControllerTest {
 
     @Test
     fun `expandable group channel content`() = runTest {
-        val channel = Channel(
-            members = (1..10).map { i -> Member(user = User(id = "$i")) },
+        val channel = randomChannel(members = randomMembers(10), ownCapabilities = emptySet())
+        val sut = Fixture()
+            .given(channel = channel)
+            .get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            assertEquals(
+                ChannelInfoViewState.Content(
+                    owner = channel.createdBy,
+                    members = ExpandableList(
+                        items = channel.members,
+                        minimumVisibleItems = 5,
+                    ),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
+                ),
+                awaitItem(),
+            )
+        }
+    }
+
+    @Suppress("LongMethod")
+    @Test
+    fun `expand and collapse group channel content`() = runTest {
+        val channel = randomChannel(members = randomMembers(10), ownCapabilities = emptySet())
+        val options = listOf(
+            ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
+            ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+            ChannelInfoViewState.Content.Option.PinnedMessages,
+            ChannelInfoViewState.Content.Option.Separator,
         )
         val sut = Fixture()
             .given(channel = channel)
@@ -162,82 +229,42 @@ internal class ChannelInfoViewControllerTest {
 
             assertEquals(
                 ChannelInfoViewState.Content(
+                    owner = channel.createdBy,
                     members = ExpandableList(
-                        items = channel.members
-                            .map { member ->
-                                ChannelInfoViewState.Content.Member(
-                                    user = member.user,
-                                    role = ChannelInfoViewState.Content.Role.Other(""),
-                                )
-                            },
+                        items = channel.members,
                         minimumVisibleItems = 5,
                     ),
-                ),
-                awaitItem(),
-            )
-        }
-    }
-
-    @Test
-    fun `expand and collapse group channel content`() = runTest {
-        val channel = Channel(members = (1..10).map { i -> Member(user = User(id = "$i")) })
-        val sut = Fixture()
-            .given(channel = channel)
-            .get(backgroundScope)
-
-        sut.state.test {
-            skipItems(1) // Skip initial state
-
-            assertEquals(
-                ChannelInfoViewState.Content(
-                    members = ExpandableList(
-                        items = channel.members
-                            .map { member ->
-                                ChannelInfoViewState.Content.Member(
-                                    user = member.user,
-                                    role = ChannelInfoViewState.Content.Role.Other(""),
-                                )
-                            },
-                        minimumVisibleItems = 5,
-                    ),
+                    options = options,
                 ),
                 awaitItem(),
             )
 
-            sut.expandMembers()
+            sut.onViewAction(ChannelInfoViewAction.ExpandMembersClick)
 
             assertEquals(
                 ChannelInfoViewState.Content(
+                    owner = channel.createdBy,
                     members = ExpandableList(
-                        items = channel.members
-                            .map { member ->
-                                ChannelInfoViewState.Content.Member(
-                                    user = member.user,
-                                    role = ChannelInfoViewState.Content.Role.Other(""),
-                                )
-                            },
+                        items = channel.members,
                         minimumVisibleItems = 5,
                         isCollapsed = false,
                     ),
+                    options = options,
                 ),
                 awaitItem(),
             )
 
-            sut.collapseMembers()
+            sut.onViewAction(ChannelInfoViewAction.CollapseMembersClick)
 
             assertEquals(
                 ChannelInfoViewState.Content(
+                    owner = channel.createdBy,
                     members = ExpandableList(
-                        items = channel.members
-                            .map { member ->
-                                ChannelInfoViewState.Content.Member(
-                                    user = member.user,
-                                    role = ChannelInfoViewState.Content.Role.Other(""),
-                                )
-                            },
+                        items = channel.members,
                         minimumVisibleItems = 5,
                         isCollapsed = true,
                     ),
+                    options = options,
                 ),
                 awaitItem(),
             )
@@ -245,10 +272,8 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
-    fun capabilities() = runTest {
-        val channel = Channel(
-            ownCapabilities = emptySet(),
-        )
+    fun `channel options`() = runTest {
+        val channel = randomChannel(ownCapabilities = emptySet())
         val fixture = Fixture().given(channel = channel)
         val sut = fixture.get(backgroundScope)
 
@@ -257,44 +282,46 @@ internal class ChannelInfoViewControllerTest {
 
             assertEquals(
                 ChannelInfoViewState.Content(
+                    owner = channel.createdBy,
                     members = emptyMembers(),
-                    capability = ChannelInfoViewState.Content.Capability(
-                        canAddMembers = false,
-                        canRemoveMembers = false,
-                        canBanMembers = false,
-                        canRenameChannel = false,
-                        canMuteChannel = false,
-                        canLeaveChannel = false,
-                        canDeleteChannel = false,
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
                     ),
                 ),
                 awaitItem(),
             )
 
-            fixture.given(
-                channel = Channel(
-                    ownCapabilities = setOf(
-                        ChannelCapabilities.UPDATE_CHANNEL_MEMBERS,
-                        ChannelCapabilities.UPDATE_CHANNEL,
-                        ChannelCapabilities.BAN_CHANNEL_MEMBERS,
-                        ChannelCapabilities.MUTE_CHANNEL,
-                        ChannelCapabilities.LEAVE_CHANNEL,
-                        ChannelCapabilities.DELETE_CHANNEL,
-                    ),
+            val updatedChannel = channel.copy(
+                ownCapabilities = setOf(
+                    ChannelCapabilities.UPDATE_CHANNEL_MEMBERS,
+                    ChannelCapabilities.UPDATE_CHANNEL,
+                    ChannelCapabilities.BAN_CHANNEL_MEMBERS,
+                    ChannelCapabilities.MUTE_CHANNEL,
+                    ChannelCapabilities.LEAVE_CHANNEL,
+                    ChannelCapabilities.DELETE_CHANNEL,
                 ),
             )
+            fixture.given(channel = updatedChannel)
 
             assertEquals(
                 ChannelInfoViewState.Content(
+                    owner = updatedChannel.createdBy,
                     members = emptyMembers(),
-                    capability = ChannelInfoViewState.Content.Capability(
-                        canAddMembers = true,
-                        canRemoveMembers = true,
-                        canBanMembers = true,
-                        canRenameChannel = true,
-                        canMuteChannel = true,
-                        canLeaveChannel = true,
-                        canDeleteChannel = true,
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.AddMember,
+                        ChannelInfoViewState.Content.Option.RenameChannel(
+                            name = updatedChannel.name,
+                            isReadOnly = false,
+                        ),
+                        ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                        ChannelInfoViewState.Content.Option.LeaveChannel,
+                        ChannelInfoViewState.Content.Option.DeleteChannel,
                     ),
                 ),
                 awaitItem(),
@@ -303,29 +330,19 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
-    fun `rename channel permission error`() = runTest {
-        val fixture = Fixture().given(channel = Channel())
+    fun `user info click`() = runTest {
+        val user = randomUser()
+        val fixture = Fixture()
         val sut = fixture.get(backgroundScope)
 
-        sut.state.test {
-            skipItems(2) // Skip initial states
+        sut.onViewAction(ChannelInfoViewAction.UserInfoClick(user))
 
-            sut.events.test {
-                sut.renameChannel(name = "newName")
-
-                assertEquals(ChannelInfoViewEvent.RenameChannelError, awaitItem())
-            }
-        }
-
-        launch { fixture.verifyNoMoreInteractions() }
+        fixture.verifyCopiedUserHandleToClipboard(text = "@${user.name}")
     }
 
     @Test
     fun `rename channel`() = runTest {
-        val channel = Channel(
-            name = "name",
-            ownCapabilities = setOf(ChannelCapabilities.UPDATE_CHANNEL),
-        )
+        val channel = randomChannel(ownCapabilities = setOf(ChannelCapabilities.UPDATE_CHANNEL))
 
         val fixture = Fixture().given(channel = channel)
         val sut = fixture.get(backgroundScope)
@@ -335,9 +352,14 @@ internal class ChannelInfoViewControllerTest {
 
             assertEquals(
                 ChannelInfoViewState.Content(
+                    owner = channel.createdBy,
                     members = emptyMembers(),
-                    name = channel.name,
-                    capability = ChannelInfoViewState.Content.Capability(canRenameChannel = true),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = false),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -345,13 +367,18 @@ internal class ChannelInfoViewControllerTest {
             val newName = "newName"
             fixture.givenRenameChannel(newName)
 
-            sut.renameChannel(newName)
+            sut.onViewAction(ChannelInfoViewAction.RenameChannelClick(newName))
 
             assertEquals(
                 ChannelInfoViewState.Content(
+                    owner = channel.createdBy,
                     members = emptyMembers(),
-                    name = newName,
-                    capability = ChannelInfoViewState.Content.Capability(canRenameChannel = true),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = newName, isReadOnly = false),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -360,7 +387,7 @@ internal class ChannelInfoViewControllerTest {
 
     @Test
     fun `rename channel error`() = runTest {
-        val channel = Channel(ownCapabilities = setOf(ChannelCapabilities.UPDATE_CHANNEL))
+        val channel = randomChannel(ownCapabilities = setOf(ChannelCapabilities.UPDATE_CHANNEL))
         val fixture = Fixture().given(channel = channel)
         val sut = fixture.get(backgroundScope)
 
@@ -370,10 +397,10 @@ internal class ChannelInfoViewControllerTest {
             val newName = "newName"
             fixture.givenRenameChannel(
                 name = newName,
-                error = Error.GenericError("Error updating channel name"),
+                error = randomGenericError(),
             )
 
-            sut.renameChannel(newName)
+            sut.onViewAction(ChannelInfoViewAction.RenameChannelClick(newName))
 
             sut.events.test {
                 assertEquals(ChannelInfoViewEvent.RenameChannelError, awaitItem())
@@ -382,17 +409,17 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
-    fun `mute channel permission error`() = runTest {
-        val fixture = Fixture().given(channel = Channel())
+    fun `pinned messages click`() = runTest {
+        val fixture = Fixture().given(channel = randomChannel())
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
             skipItems(2) // Skip initial states
 
             sut.events.test {
-                sut.muteChannel()
+                sut.onViewAction(ChannelInfoViewAction.PinnedMessagesClick)
 
-                assertEquals(ChannelInfoViewEvent.MuteChannelError, awaitItem())
+                assertEquals(ChannelInfoViewEvent.NavigateToPinnedMessages, awaitItem())
             }
         }
 
@@ -401,7 +428,7 @@ internal class ChannelInfoViewControllerTest {
 
     @Test
     fun `mute channel`() = runTest {
-        val channel = Channel(ownCapabilities = setOf(ChannelCapabilities.MUTE_CHANNEL))
+        val channel = randomChannel(ownCapabilities = setOf(ChannelCapabilities.MUTE_CHANNEL))
         val fixture = Fixture().given(channel = channel, isMuted = false)
         val sut = fixture.get(backgroundScope)
 
@@ -410,22 +437,34 @@ internal class ChannelInfoViewControllerTest {
 
             assertEquals(
                 ChannelInfoViewState.Content(
+                    owner = channel.createdBy,
                     members = emptyMembers(),
-                    isMuted = false,
-                    capability = ChannelInfoViewState.Content.Capability(canMuteChannel = true),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
 
             fixture.givenMuteChannel()
 
-            sut.muteChannel()
+            sut.onViewAction(ChannelInfoViewAction.MuteChannelClick)
 
             assertEquals(
                 ChannelInfoViewState.Content(
+                    owner = channel.createdBy,
                     members = emptyMembers(),
-                    isMuted = true,
-                    capability = ChannelInfoViewState.Content.Capability(canMuteChannel = true),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.MuteChannel(isMuted = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -434,7 +473,7 @@ internal class ChannelInfoViewControllerTest {
 
     @Test
     fun `mute channel error`() = runTest {
-        val channel = Channel(ownCapabilities = setOf(ChannelCapabilities.MUTE_CHANNEL))
+        val channel = randomChannel(ownCapabilities = setOf(ChannelCapabilities.MUTE_CHANNEL))
         val fixture = Fixture().given(channel = channel, isMuted = false)
         val sut = fixture.get(backgroundScope)
 
@@ -443,16 +482,22 @@ internal class ChannelInfoViewControllerTest {
 
             assertEquals(
                 ChannelInfoViewState.Content(
+                    owner = channel.createdBy,
                     members = emptyMembers(),
-                    isMuted = false,
-                    capability = ChannelInfoViewState.Content.Capability(canMuteChannel = true),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
 
-            fixture.givenMuteChannel(error = Error.GenericError("Error muting channel"))
+            fixture.givenMuteChannel(error = randomGenericError())
 
-            sut.muteChannel()
+            sut.onViewAction(ChannelInfoViewAction.MuteChannelClick)
 
             sut.events.test {
                 assertEquals(ChannelInfoViewEvent.MuteChannelError, awaitItem())
@@ -461,26 +506,8 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
-    fun `unmute channel permission error`() = runTest {
-        val fixture = Fixture().given(channel = Channel())
-        val sut = fixture.get(backgroundScope)
-
-        sut.state.test {
-            skipItems(2) // Skip initial states
-
-            sut.events.test {
-                sut.unmuteChannel()
-
-                assertEquals(ChannelInfoViewEvent.UnmuteChannelError, awaitItem())
-            }
-        }
-
-        launch { fixture.verifyNoMoreInteractions() }
-    }
-
-    @Test
     fun `unmute channel`() = runTest {
-        val channel = Channel(ownCapabilities = setOf(ChannelCapabilities.MUTE_CHANNEL))
+        val channel = randomChannel(ownCapabilities = setOf(ChannelCapabilities.MUTE_CHANNEL))
         val fixture = Fixture().given(channel = channel, isMuted = true)
         val sut = fixture.get(backgroundScope)
 
@@ -489,22 +516,34 @@ internal class ChannelInfoViewControllerTest {
 
             assertEquals(
                 ChannelInfoViewState.Content(
+                    owner = channel.createdBy,
                     members = emptyMembers(),
-                    isMuted = true,
-                    capability = ChannelInfoViewState.Content.Capability(canMuteChannel = true),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.MuteChannel(isMuted = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
 
             fixture.givenUnmuteChannel()
 
-            sut.unmuteChannel()
+            sut.onViewAction(ChannelInfoViewAction.UnmuteChannelClick)
 
             assertEquals(
                 ChannelInfoViewState.Content(
+                    owner = channel.createdBy,
                     members = emptyMembers(),
-                    isMuted = false,
-                    capability = ChannelInfoViewState.Content.Capability(canMuteChannel = true),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -513,7 +552,7 @@ internal class ChannelInfoViewControllerTest {
 
     @Test
     fun `unmute channel error`() = runTest {
-        val channel = Channel(ownCapabilities = setOf(ChannelCapabilities.MUTE_CHANNEL))
+        val channel = randomChannel(ownCapabilities = setOf(ChannelCapabilities.MUTE_CHANNEL))
         val fixture = Fixture().given(channel = channel, isMuted = true)
         val sut = fixture.get(backgroundScope)
 
@@ -522,16 +561,22 @@ internal class ChannelInfoViewControllerTest {
 
             assertEquals(
                 ChannelInfoViewState.Content(
+                    owner = channel.createdBy,
                     members = emptyMembers(),
-                    isMuted = true,
-                    capability = ChannelInfoViewState.Content.Capability(canMuteChannel = true),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.MuteChannel(isMuted = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
 
-            fixture.givenUnmuteChannel(error = Error.GenericError("Error unmuting channel"))
+            fixture.givenUnmuteChannel(error = randomGenericError())
 
-            sut.unmuteChannel()
+            sut.onViewAction(ChannelInfoViewAction.UnmuteChannelClick)
 
             sut.events.test {
                 assertEquals(ChannelInfoViewEvent.UnmuteChannelError, awaitItem())
@@ -540,7 +585,25 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
-    fun `hide channel`() = runTest {
+    fun `hide channel click`() = runTest {
+        val fixture = Fixture().given(isHidden = false)
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2) // Skip initial states
+
+            sut.events.test {
+                sut.onViewAction(ChannelInfoViewAction.HideChannelClick)
+
+                assertEquals(ChannelInfoViewEvent.HideChannelModal, awaitItem())
+            }
+        }
+
+        launch { fixture.verifyNoMoreInteractions() }
+    }
+
+    @Test
+    fun `hide channel success`() = runTest {
         val fixture = Fixture().given(isHidden = false)
         val sut = fixture.get(backgroundScope)
 
@@ -550,7 +613,12 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    isHidden = false,
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -558,12 +626,24 @@ internal class ChannelInfoViewControllerTest {
             val clearHistory = true
             fixture.givenHideChannel(clearHistory)
 
-            sut.hideChannel(clearHistory)
+            sut.onViewAction(ChannelInfoViewAction.HideChannelConfirmationClick(clearHistory = clearHistory))
+
+            sut.events.test {
+                assertEquals(
+                    ChannelInfoViewEvent.NavigateUp(reason = Navigation.Reason.HideChannelSuccess),
+                    awaitItem(),
+                )
+            }
 
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    isHidden = true,
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = true),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -581,7 +661,12 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    isHidden = false,
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -589,10 +674,10 @@ internal class ChannelInfoViewControllerTest {
             val clearHistory = true
             fixture.givenHideChannel(
                 clearHistory = clearHistory,
-                error = Error.GenericError("Error hiding channel"),
+                error = randomGenericError(),
             )
 
-            sut.hideChannel(clearHistory)
+            sut.onViewAction(ChannelInfoViewAction.HideChannelConfirmationClick(clearHistory = clearHistory))
 
             sut.events.test {
                 assertEquals(ChannelInfoViewEvent.HideChannelError, awaitItem())
@@ -611,19 +696,29 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    isHidden = true,
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = true),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
 
             fixture.givenUnhideChannel()
 
-            sut.unhideChannel()
+            sut.onViewAction(ChannelInfoViewAction.UnhideChannelClick)
 
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    isHidden = false,
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
@@ -641,14 +736,19 @@ internal class ChannelInfoViewControllerTest {
             assertEquals(
                 ChannelInfoViewState.Content(
                     members = emptyMembers(),
-                    isHidden = true,
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = true),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                    ),
                 ),
                 awaitItem(),
             )
 
-            fixture.givenUnhideChannel(error = Error.GenericError("Error unhiding channel"))
+            fixture.givenUnhideChannel(error = randomGenericError())
 
-            sut.unhideChannel()
+            sut.onViewAction(ChannelInfoViewAction.UnhideChannelClick)
 
             sut.events.test {
                 assertEquals(ChannelInfoViewEvent.UnhideChannelError, awaitItem())
@@ -657,17 +757,17 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
-    fun `leave channel permission error`() = runTest {
-        val fixture = Fixture().given(channel = Channel())
+    fun `leave channel click`() = runTest {
+        val fixture = Fixture()
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
             skipItems(2) // Skip initial states
 
             sut.events.test {
-                sut.leaveChannel(quitMessage = null)
+                sut.onViewAction(ChannelInfoViewAction.LeaveChannelClick)
 
-                assertEquals(ChannelInfoViewEvent.LeaveChannelError, awaitItem())
+                assertEquals(ChannelInfoViewEvent.LeaveChannelModal, awaitItem())
             }
         }
 
@@ -676,14 +776,14 @@ internal class ChannelInfoViewControllerTest {
 
     @Test
     fun `leave channel not connected user error`() = runTest {
-        val fixture = Fixture().given(channel = Channel(ownCapabilities = setOf(ChannelCapabilities.LEAVE_CHANNEL)))
+        val fixture = Fixture()
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
             skipItems(2) // Skip initial states
 
             sut.events.test {
-                sut.leaveChannel(quitMessage = null)
+                sut.onViewAction(ChannelInfoViewAction.LeaveChannelConfirmationClick(quitMessage = null))
 
                 assertEquals(ChannelInfoViewEvent.LeaveChannelError, awaitItem())
             }
@@ -693,15 +793,13 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
-    fun `leave channel`() = runTest {
-        val currentUser = User(id = "1")
+    fun `leave channel success`() = runTest {
+        val currentUser = randomUser()
+        val channel = randomChannel(ownCapabilities = setOf(ChannelCapabilities.LEAVE_CHANNEL))
         val fixture = Fixture()
             .given(
                 currentUser = currentUser,
-                channel = Channel(
-                    id = "!members-1,2",
-                    ownCapabilities = setOf(ChannelCapabilities.LEAVE_CHANNEL),
-                ),
+                channel = channel,
             )
         val sut = fixture.get(backgroundScope)
 
@@ -710,20 +808,27 @@ internal class ChannelInfoViewControllerTest {
 
             assertEquals(
                 ChannelInfoViewState.Content(
+                    owner = channel.createdBy,
                     members = emptyMembers(),
-                    capability = ChannelInfoViewState.Content.Capability(canLeaveChannel = true),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                        ChannelInfoViewState.Content.Option.LeaveChannel,
+                    ),
                 ),
                 awaitItem(),
             )
 
-            val quitMessage = Message(text = "${currentUser.id} left")
+            val quitMessage = randomMessage()
             fixture.givenLeaveChannel(quitMessage)
 
-            sut.leaveChannel(quitMessage)
+            sut.onViewAction(ChannelInfoViewAction.LeaveChannelConfirmationClick(quitMessage))
 
             sut.events.test {
                 assertEquals(
-                    ChannelInfoViewEvent.LeaveChannelSuccess,
+                    ChannelInfoViewEvent.NavigateUp(reason = Navigation.Reason.LeaveChannelSuccess),
                     awaitItem(),
                 )
             }
@@ -732,14 +837,12 @@ internal class ChannelInfoViewControllerTest {
 
     @Test
     fun `leave channel error`() = runTest {
-        val currentUser = User(id = "1")
+        val currentUser = randomUser()
+        val channel = randomChannel(ownCapabilities = setOf(ChannelCapabilities.LEAVE_CHANNEL))
         val fixture = Fixture()
             .given(
                 currentUser = currentUser,
-                channel = Channel(
-                    id = "!members-1,2",
-                    ownCapabilities = setOf(ChannelCapabilities.LEAVE_CHANNEL),
-                ),
+                channel = channel,
             )
         val sut = fixture.get(backgroundScope)
 
@@ -748,19 +851,26 @@ internal class ChannelInfoViewControllerTest {
 
             assertEquals(
                 ChannelInfoViewState.Content(
+                    owner = channel.createdBy,
                     members = emptyMembers(),
-                    capability = ChannelInfoViewState.Content.Capability(canLeaveChannel = true),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                        ChannelInfoViewState.Content.Option.LeaveChannel,
+                    ),
                 ),
                 awaitItem(),
             )
 
-            val quitMessage = Message()
+            val quitMessage = randomMessage()
             fixture.givenLeaveChannel(
                 quitMessage = quitMessage,
-                error = Error.GenericError("Error leaving channel"),
+                error = randomGenericError(),
             )
 
-            sut.leaveChannel(quitMessage)
+            sut.onViewAction(ChannelInfoViewAction.LeaveChannelConfirmationClick(quitMessage))
 
             sut.events.test {
                 assertEquals(ChannelInfoViewEvent.LeaveChannelError, awaitItem())
@@ -769,17 +879,17 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
-    fun `delete channel permission error`() = runTest {
-        val fixture = Fixture().given(channel = Channel())
+    fun `delete channel click`() = runTest {
+        val fixture = Fixture()
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
             skipItems(2) // Skip initial states
 
             sut.events.test {
-                sut.deleteChannel()
+                sut.onViewAction(ChannelInfoViewAction.DeleteChannelClick)
 
-                assertEquals(ChannelInfoViewEvent.DeleteChannelError, awaitItem())
+                assertEquals(ChannelInfoViewEvent.DeleteChannelModal, awaitItem())
             }
         }
 
@@ -787,8 +897,8 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
-    fun `delete channel`() = runTest {
-        val channel = Channel(ownCapabilities = setOf(ChannelCapabilities.DELETE_CHANNEL))
+    fun `delete channel success`() = runTest {
+        val channel = randomChannel(ownCapabilities = setOf(ChannelCapabilities.DELETE_CHANNEL))
         val fixture = Fixture().given(channel = channel)
         val sut = fixture.get(backgroundScope)
 
@@ -797,25 +907,35 @@ internal class ChannelInfoViewControllerTest {
 
             assertEquals(
                 ChannelInfoViewState.Content(
+                    owner = channel.createdBy,
                     members = emptyMembers(),
-                    capability = ChannelInfoViewState.Content.Capability(canDeleteChannel = true),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                        ChannelInfoViewState.Content.Option.DeleteChannel,
+                    ),
                 ),
                 awaitItem(),
             )
 
             fixture.givenDeleteChannel()
 
-            sut.deleteChannel()
+            sut.onViewAction(ChannelInfoViewAction.DeleteChannelConfirmationClick)
 
             sut.events.test {
-                assertEquals(ChannelInfoViewEvent.DeleteChannelSuccess, awaitItem())
+                assertEquals(
+                    ChannelInfoViewEvent.NavigateUp(reason = Navigation.Reason.DeleteChannelSuccess),
+                    awaitItem(),
+                )
             }
         }
     }
 
     @Test
     fun `delete channel error`() = runTest {
-        val channel = Channel(ownCapabilities = setOf(ChannelCapabilities.DELETE_CHANNEL))
+        val channel = randomChannel(ownCapabilities = setOf(ChannelCapabilities.DELETE_CHANNEL))
         val fixture = Fixture().given(channel = channel)
         val sut = fixture.get(backgroundScope)
 
@@ -824,15 +944,22 @@ internal class ChannelInfoViewControllerTest {
 
             assertEquals(
                 ChannelInfoViewState.Content(
+                    owner = channel.createdBy,
                     members = emptyMembers(),
-                    capability = ChannelInfoViewState.Content.Capability(canDeleteChannel = true),
+                    options = listOf(
+                        ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
+                        ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
+                        ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.Separator,
+                        ChannelInfoViewState.Content.Option.DeleteChannel,
+                    ),
                 ),
                 awaitItem(),
             )
 
-            fixture.givenDeleteChannel(error = Error.GenericError("Error deleting channel"))
+            fixture.givenDeleteChannel(error = randomGenericError())
 
-            sut.deleteChannel()
+            sut.onViewAction(ChannelInfoViewAction.DeleteChannelConfirmationClick)
 
             sut.events.test {
                 assertEquals(ChannelInfoViewEvent.DeleteChannelError, awaitItem())
@@ -840,8 +967,6 @@ internal class ChannelInfoViewControllerTest {
         }
     }
 }
-
-private const val CID = "messaging:1"
 
 private class Fixture {
     private val channelData = MutableStateFlow(ChannelData(type = "", id = ""))
@@ -856,6 +981,7 @@ private class Fixture {
     }
     private val channelClient: ChannelClient = mock()
     private val chatClient: ChatClient = mock()
+    private val copyToClipboardHandler: CopyToClipboardHandler = mock()
 
     fun given(
         currentUser: User? = null,
@@ -946,12 +1072,17 @@ private class Fixture {
         verifyNoMoreInteractions(channelClient)
     }
 
+    fun verifyCopiedUserHandleToClipboard(text: String) = apply {
+        verify(copyToClipboardHandler).copy(text = text)
+    }
+
     fun get(scope: CoroutineScope) = ChannelInfoViewController(
-        cid = CID,
+        cid = randomCID(),
         scope = scope,
         chatClient = chatClient,
         channelState = MutableStateFlow(channelState),
         channelClient = channelClient,
+        copyToClipboardHandler = copyToClipboardHandler,
     )
 }
 

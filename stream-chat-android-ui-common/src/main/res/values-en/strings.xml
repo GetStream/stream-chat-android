@@ -37,4 +37,7 @@
 
     <!-- Message List -->
     <string name="stream_ui_message_list_message_deleted">This message was deleted.</string>
+
+    <string name="stream_ui_mention_list_empty">No mentions exist yet…</string>
+    <string name="stream_ui_mention_list_error">An error occurred</string>
 </resources>

@@ -391,15 +391,6 @@ internal class ChannelLogic(
     }
 
     /**
-     * Sets the date of the last message sent by the current user.
-     *
-     * @param lastSentMessageDate The date of the last message.
-     */
-    internal fun setLastSentMessageDate(lastSentMessageDate: Date?) {
-        channelStateLogic.setLastSentMessageDate(lastSentMessageDate)
-    }
-
-    /**
      * Returns instance of [WatchChannelRequest] to obtain older messages of a channel.
      *
      * @param limit Message limit in this request.
@@ -528,7 +519,6 @@ internal class ChannelLogic(
         logger.d { "[handleEvent] cid: $cid, currentUserId: $currentUserId, event: $event" }
         when (event) {
             is CidEvent -> {
-                channelStateLogic.setLastSentMessageDate(event.channelLastMessageAt)
                 when (event) {
                     is NewMessageEvent -> {
                         upsertEventMessage(event.message)

@@ -68,7 +68,7 @@
             android:windowSoftInputMode="adjustResize"
             />
         <activity
-            android:name=".ui.channel.ChannelInfoActivity"
+            android:name=".ui.channel.DirectChannelInfoActivity"
             android:exported="false"
             />
         <activity
