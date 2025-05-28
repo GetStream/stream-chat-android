@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.sample.R
+import io.getstream.chat.android.compose.sample.feature.channel.draft.DraftChannelActivity
 import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
 import io.getstream.chat.android.compose.sample.ui.MessagesActivity
 import io.getstream.chat.android.compose.sample.ui.pinned.PinnedMessagesActivity
@@ -95,10 +96,11 @@ class GroupChannelInfoActivity : BaseConnectedActivity() {
             is ChannelInfoViewEvent.NavigateToPinnedMessages ->
                 openPinnedMessages()
 
-            is ChannelInfoViewEvent.NavigateToChannel -> {
-                val intent = MessagesActivity.createIntent(context = this, channelId = event.cid)
-                startActivity(intent)
-            }
+            is ChannelInfoViewEvent.NavigateToChannel ->
+                startActivity(MessagesActivity.createIntent(context = this, channelId = event.cid))
+
+            is ChannelInfoViewEvent.NavigateToDraftChannel ->
+                startActivity(DraftChannelActivity.createIntent(context = this, memberIds = listOf(event.memberId)))
         }
     }
 
@@ -137,9 +139,6 @@ class GroupChannelInfoActivity : BaseConnectedActivity() {
 
             ChannelInfoViewEvent.RemoveMemberError,
             -> R.string.stream_ui_channel_info_remove_member_error
-
-            ChannelInfoViewEvent.NewDirectChannelError,
-            -> R.string.stream_ui_channel_info_new_direct_channel_error
         }
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }
