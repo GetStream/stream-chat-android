@@ -24,6 +24,7 @@ android {
 
 dependencies {
     implementation(libs.okhttp)
+    implementation(libs.allure.kotlin.android)
     implementation(libs.androidx.test.core)
     implementation(libs.androidx.test.uiautomator)
     implementation(libs.androidx.test.monitor)
