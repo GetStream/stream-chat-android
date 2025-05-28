@@ -14,18 +14,10 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.components
+package io.getstream.chat.android.compose.sample.feature.channel
 
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.client.extensions.isAnonymousChannel
+import io.getstream.chat.android.models.Channel
 
-@Composable
-internal fun StreamHorizontalDivider(thickness: Dp = .5.dp) {
-    HorizontalDivider(
-        thickness = thickness,
-        color = ChatTheme.colors.borders,
-    )
-}
+internal val Channel.isGroupChannel: Boolean
+    get() = memberCount > 2 || !isAnonymousChannel()

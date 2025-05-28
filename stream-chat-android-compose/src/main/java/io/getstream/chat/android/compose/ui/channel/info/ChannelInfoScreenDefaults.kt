@@ -14,18 +14,21 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.components
+package io.getstream.chat.android.compose.ui.channel.info
 
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.painterResource
+import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.components.BackButton
+import io.getstream.chat.android.compose.ui.util.mirrorRtl
 
 @Composable
-internal fun StreamHorizontalDivider(thickness: Dp = .5.dp) {
-    HorizontalDivider(
-        thickness = thickness,
-        color = ChatTheme.colors.borders,
+internal fun DefaultChannelInfoScreenNavigationIcon(onClick: () -> Unit) {
+    BackButton(
+        modifier = Modifier.mirrorRtl(layoutDirection = LocalLayoutDirection.current),
+        painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
+        onBackPressed = onClick,
     )
 }

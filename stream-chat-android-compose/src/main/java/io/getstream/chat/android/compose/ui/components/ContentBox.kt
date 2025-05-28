@@ -28,17 +28,18 @@ import androidx.compose.ui.Modifier
  * Uses [Crossfade] to animate the transition.
  *
  * @param isLoading If the content is loading.
- * @param isEmpty If the content is empty.
  * @param modifier The modifier to apply to this layout.
- * @param loadingIndicator The indicator to display when [isLoading] is true.
- * @param emptyContent The content to display when [isEmpty] is true.
+ * @param isEmpty If the content is empty. Defaults to false.
+ * @param contentAlignment The alignment of the content inside the box. Defaults to [Alignment.Center].
+ * @param loadingIndicator The indicator to display when [isLoading] is true. Defaults to [LoadingIndicator].
+ * @param emptyContent The content to display when [isEmpty] is true. Defaults to empty.
  * @param content The content to display when neither [isLoading] nor [isEmpty] is true.
  */
 @Composable
 internal fun ContentBox(
     isLoading: Boolean,
-    isEmpty: Boolean,
     modifier: Modifier = Modifier,
+    isEmpty: Boolean = false,
     contentAlignment: Alignment = Alignment.Center,
     loadingIndicator: @Composable BoxScope.() -> Unit = { LoadingIndicator() },
     emptyContent: @Composable BoxScope.() -> Unit = {},
