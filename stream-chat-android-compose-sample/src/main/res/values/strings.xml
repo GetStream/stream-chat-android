@@ -67,4 +67,7 @@
     <string name="app_bottom_bar_chats">Chats</string>
     <string name="app_bottom_bar_mentions">Mentions</string>
     <string name="app_bottom_bar_threads">Threads</string>
+
+    <!-- Draft Channel -->
+    <string name="draft_channel_error">Failed to draft a channel</string>
 </resources>

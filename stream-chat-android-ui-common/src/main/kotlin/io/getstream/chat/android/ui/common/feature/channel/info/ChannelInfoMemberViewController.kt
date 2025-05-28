@@ -105,7 +105,7 @@ public class ChannelInfoMemberViewController(
     private val _events = MutableSharedFlow<ChannelInfoMemberViewEvent>(extraBufferCapacity = 1)
 
     /**
-     * A [SharedFlow] that emits one-time events related to channel info, such as errors or success events.
+     * A [SharedFlow] that emits one-shot events related to channel info, such as errors or success events.
      */
     public val events: SharedFlow<ChannelInfoMemberViewEvent> = _events.asSharedFlow()
 
@@ -147,7 +147,7 @@ public class ChannelInfoMemberViewController(
     /**
      * Handles actions related to channel member information view.
      *
-     * @param action The [ChannelInfoMemberViewAction] representing the action to be performed.
+     * @param action The [ChannelInfoMemberViewAction] representing the action to be handled.
      */
     public fun onViewAction(
         action: ChannelInfoMemberViewAction,
