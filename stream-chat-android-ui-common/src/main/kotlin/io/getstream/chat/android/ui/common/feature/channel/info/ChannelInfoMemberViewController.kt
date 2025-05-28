@@ -34,22 +34,21 @@ import io.getstream.log.taggedLogger
 import io.getstream.result.onErrorSuspend
 import io.getstream.result.onSuccessSuspend
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.stateIn
 
 /**
  * Controller responsible for managing the state and events related to channel member information.
@@ -72,12 +71,38 @@ public class ChannelInfoMemberViewController(
 ) {
     private val logger by taggedLogger("Chat:ChannelInfoMemberViewController")
 
-    private val _state = MutableStateFlow<ChannelInfoMemberViewState>(ChannelInfoMemberViewState.Loading)
-
     /**
      * A [StateFlow] representing the current state of the channel info.
      */
-    public val state: StateFlow<ChannelInfoMemberViewState> = _state.asStateFlow()
+    @OptIn(ExperimentalCoroutinesApi::class)
+    public val state: StateFlow<ChannelInfoMemberViewState> =
+        channelState
+            .flatMapLatest { channel ->
+                combine(
+                    channel.channelData,
+                    channel.members
+                        .mapNotNull { members -> members.firstOrNull { it.getUserId() == memberId } }
+                        .onEach { logger.d { "[onMember] name: ${it.user.name}" } },
+                    queryDistinctChannel(),
+                    ::ChannelInfoMemberData,
+                )
+            }
+            .map { (channelData, member, distinctChannelId) ->
+                this.member = member
+                this.distinctChannelId = distinctChannelId
+                ChannelInfoMemberViewState.Content(
+                    member = member,
+                    options = buildOptionList(
+                        member = member,
+                        capabilities = channelData.ownCapabilities,
+                    ),
+                )
+            }
+            .stateIn(
+                scope = scope,
+                started = WhileSubscribed(STOP_TIMEOUT_IN_MILLIS),
+                initialValue = ChannelInfoMemberViewState.Loading,
+            )
 
     private val _events = MutableSharedFlow<ChannelInfoMemberViewEvent>(extraBufferCapacity = 1)
 
@@ -88,31 +113,6 @@ public class ChannelInfoMemberViewController(
 
     private lateinit var member: Member
     private var distinctChannelId: String? = null
-
-    init {
-        @Suppress("OPT_IN_USAGE")
-        channelState
-            .flatMapLatest { channel ->
-                logger.d { "[onChannelState]" }
-                combine(
-                    channel.channelData.onEach {
-                        logger.d {
-                            "[onChannelData] cid: ${it.cid}, name: ${it.name}, capabilities: ${it.ownCapabilities}"
-                        }
-                    },
-                    channel.members
-                        .mapNotNull { members -> members.firstOrNull { it.getUserId() == memberId } }
-                        .onEach { logger.d { "[onMember] name: ${it.user.name}" } },
-                    queryDistinctChannel(),
-                    ::ChannelInfoMemberData,
-                )
-            }
-            .distinctUntilChanged()
-            .onEach { (channelData, member, distinctChannelId) ->
-                onChannelInfoData(channelData, member, distinctChannelId)
-            }
-            .launchIn(scope)
-    }
 
     private fun queryDistinctChannel(): Flow<String?> =
         flow {
@@ -145,25 +145,6 @@ public class ChannelInfoMemberViewController(
                 }
         }
 
-    private fun onChannelInfoData(
-        channelData: ChannelData,
-        member: Member,
-        distinctChannelId: String?,
-    ) {
-        this.member = member
-        this.distinctChannelId = distinctChannelId
-
-        _state.update {
-            ChannelInfoMemberViewState.Content(
-                member = member,
-                options = buildOptionList(
-                    member = member,
-                    capabilities = channelData.ownCapabilities,
-                ),
-            )
-        }
-    }
-
     /**
      * Handles actions related to channel member information view.
      *
@@ -188,6 +169,8 @@ public class ChannelInfoMemberViewController(
         }
     }
 }
+
+private const val STOP_TIMEOUT_IN_MILLIS = 5_000L
 
 private data class ChannelInfoMemberData(
     val channelData: ChannelData,
