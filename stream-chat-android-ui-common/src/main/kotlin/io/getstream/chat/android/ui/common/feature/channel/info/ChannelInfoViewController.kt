@@ -196,8 +196,8 @@ public class ChannelInfoViewController(
     public fun onMemberViewEvent(event: ChannelInfoMemberViewEvent) {
         logger.d { "[onMemberViewEvent] event: $event" }
         when (event) {
-            is ChannelInfoMemberViewEvent.MessageMember -> if (event.channelId != null) {
-                _events.tryEmit(ChannelInfoViewEvent.NavigateToChannel(event.channelId))
+            is ChannelInfoMemberViewEvent.MessageMember -> if (event.distinctCid != null) {
+                _events.tryEmit(ChannelInfoViewEvent.NavigateToChannel(event.distinctCid))
             } else {
                 createDirectChannel(event.memberId)
             }

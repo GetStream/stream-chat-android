@@ -29,9 +29,9 @@ public sealed interface ChannelInfoMemberViewEvent {
      * Indicates an event to proceed with messaging a member.
      *
      * @param memberId The ID of the member to message.
-     * @param channelId The ID of the channel to navigate to. Null if there is no distinct channel.
+     * @param distinctCid The full distinct channel ID, if any.
      */
-    public data class MessageMember(val memberId: String, val channelId: String?) : ChannelInfoMemberViewEvent
+    public data class MessageMember(val memberId: String, val distinctCid: String?) : ChannelInfoMemberViewEvent
 
     /**
      * Indicates an event to proceed with banning a member.
