@@ -20,12 +20,16 @@ package io.getstream.chat.android.ui.common.feature.channel.info
 
 import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelData
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.toChannelData
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
@@ -141,11 +145,13 @@ internal class ChannelInfoMemberViewControllerTest {
     fun `message member click with distinct channel`() = runTest {
         val member = randomMember()
         val distinctChannel = randomChannel()
+        val currentUser = randomUser()
         val fixture = Fixture()
             .given(
                 channel = randomChannel(members = listOf(member)),
                 memberId = member.getUserId(),
                 distinctChannel = distinctChannel,
+                currentUser = currentUser,
             )
         val sut = fixture.get(backgroundScope)
 
@@ -237,6 +243,7 @@ internal class ChannelInfoMemberViewControllerTest {
             channel: Channel? = null,
             memberId: String? = null,
             distinctChannel: Channel? = null,
+            currentUser: User? = null,
         ) = apply {
             if (channel != null) {
                 channelData.value = channel.toChannelData()
@@ -246,7 +253,22 @@ internal class ChannelInfoMemberViewControllerTest {
                 this.memberId = memberId
             }
             if (distinctChannel != null) {
-                whenever(chatClient.queryChannels(any())) doReturn listOf(distinctChannel).asCall()
+                whenever(
+                    chatClient.queryChannels(
+                        request = QueryChannelsRequest(
+                            filter = Filters.and(
+                                Filters.eq("type", "messaging"),
+                                Filters.distinct(listOfNotNull(memberId, currentUser?.id)),
+                            ),
+                            querySort = QuerySortByField.descByName("last_updated"),
+                            messageLimit = 0,
+                            limit = 1,
+                        ),
+                    ),
+                ) doReturn listOf(distinctChannel).asCall()
+            }
+            if (currentUser != null) {
+                whenever(chatClient.getCurrentUser()) doReturn currentUser
             }
         }
 

@@ -117,33 +117,34 @@ public class ChannelInfoMemberViewController(
 
     private fun queryDistinctChannel(): Flow<Channel?> =
         flow {
-            val currentUserId = requireNotNull(chatClient.getCurrentUser()?.id)
-            logger.d { "[queryDistinctChannel] currentUserId: $currentUserId, memberId: $memberId" }
-            chatClient.queryChannels(
-                request = QueryChannelsRequest(
-                    filter = Filters.and(
-                        Filters.eq("type", "messaging"),
-                        Filters.distinct(listOf(memberId, currentUserId)),
+            chatClient.getCurrentUser()?.id?.let { currentUserId ->
+                logger.d { "[queryDistinctChannel] currentUserId: $currentUserId, memberId: $memberId" }
+                chatClient.queryChannels(
+                    request = QueryChannelsRequest(
+                        filter = Filters.and(
+                            Filters.eq("type", "messaging"),
+                            Filters.distinct(listOf(memberId, currentUserId)),
+                        ),
+                        querySort = QuerySortByField.descByName("last_updated"),
+                        messageLimit = 0,
+                        limit = 1,
                     ),
-                    querySort = QuerySortByField.descByName("last_updated"),
-                    messageLimit = 0,
-                    limit = 1,
-                ),
-            ).await()
-                .onSuccessSuspend { channels ->
-                    if (channels.isEmpty()) {
-                        logger.w { "[queryDistinctChannel] No distinct channel found of member: $memberId" }
-                        emit(null)
-                    } else {
-                        val channel = channels.first()
-                        logger.d { "[queryDistinctChannel] Found distinct channel: ${channel.cid}" }
-                        emit(channel)
+                ).await()
+                    .onSuccessSuspend { channels ->
+                        if (channels.isEmpty()) {
+                            logger.w { "[queryDistinctChannel] No distinct channel found of member: $memberId" }
+                            emit(null)
+                        } else {
+                            val channel = channels.first()
+                            logger.d { "[queryDistinctChannel] Found distinct channel: ${channel.cid}" }
+                            emit(channel)
+                        }
                     }
-                }
-                .onErrorSuspend {
-                    logger.e { "[queryDistinctChannel] Error querying distinct channel of member: $memberId" }
-                    emit(null)
-                }
+                    .onErrorSuspend {
+                        logger.e { "[queryDistinctChannel] Error querying distinct channel of member: $memberId" }
+                        emit(null)
+                    }
+            }
         }
 
     /**
