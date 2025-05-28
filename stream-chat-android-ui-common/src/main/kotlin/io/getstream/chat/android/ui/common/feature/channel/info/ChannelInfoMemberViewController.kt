@@ -77,33 +77,30 @@ public class ChannelInfoMemberViewController(
      */
     @OptIn(ExperimentalCoroutinesApi::class)
     public val state: StateFlow<ChannelInfoMemberViewState> =
-        channelState
-            .flatMapLatest { channel ->
-                combine(
-                    channel.channelData,
-                    channel.members
-                        .mapNotNull { members -> members.firstOrNull { it.getUserId() == memberId } }
-                        .onEach { logger.d { "[onMember] name: ${it.user.name}" } },
-                    queryDistinctChannel(),
-                    ::ChannelInfoMemberData,
-                )
-            }
-            .map { (channelData, member, distinctChannel) ->
-                this.member = member
-                this.distinctCid = distinctChannel?.cid
-                ChannelInfoMemberViewState.Content(
-                    member = member,
-                    options = buildOptionList(
-                        member = member,
-                        capabilities = channelData.ownCapabilities,
-                    ),
-                )
-            }
-            .stateIn(
-                scope = scope,
-                started = WhileSubscribed(STOP_TIMEOUT_IN_MILLIS),
-                initialValue = ChannelInfoMemberViewState.Loading,
+        channelState.flatMapLatest { channel ->
+            combine(
+                channel.channelData,
+                channel.members
+                    .mapNotNull { members -> members.firstOrNull { it.getUserId() == memberId } }
+                    .onEach { logger.d { "[onMember] name: ${it.user.name}" } },
+                queryDistinctChannel(),
+                ::ChannelInfoMemberData,
             )
+        }.map { (channelData, member, distinctChannel) ->
+            this.member = member
+            this.distinctCid = distinctChannel?.cid
+            ChannelInfoMemberViewState.Content(
+                member = member,
+                options = buildOptionList(
+                    member = member,
+                    capabilities = channelData.ownCapabilities,
+                ),
+            )
+        }.stateIn(
+            scope = scope,
+            started = WhileSubscribed(STOP_TIMEOUT_IN_MILLIS),
+            initialValue = ChannelInfoMemberViewState.Loading,
+        )
 
     private val _events = MutableSharedFlow<ChannelInfoMemberViewEvent>(extraBufferCapacity = 1)
 
