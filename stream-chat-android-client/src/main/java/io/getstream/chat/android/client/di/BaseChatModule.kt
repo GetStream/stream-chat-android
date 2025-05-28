@@ -291,7 +291,7 @@ constructor(
             buildRetrofitApi<OpenGraphApi>(),
             buildRetrofitApi<ThreadsApi>(),
             buildRetrofitApi<PollsApi>(),
-        buildRetrofitApi<RemindersApi>(),
+            buildRetrofitApi<RemindersApi>(),
             userScope,
             userScope,
         ).let { originalApi ->
