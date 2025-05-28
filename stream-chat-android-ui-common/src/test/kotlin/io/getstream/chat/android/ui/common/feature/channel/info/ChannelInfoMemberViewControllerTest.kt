@@ -129,7 +129,7 @@ internal class ChannelInfoMemberViewControllerTest {
                 assertEquals(
                     ChannelInfoMemberViewEvent.MessageMember(
                         memberId = member.getUserId(),
-                        channelId = null,
+                        distinctCid = null,
                     ),
                     awaitItem(),
                 )
@@ -158,7 +158,7 @@ internal class ChannelInfoMemberViewControllerTest {
                 assertEquals(
                     ChannelInfoMemberViewEvent.MessageMember(
                         memberId = member.getUserId(),
-                        channelId = distinctChannel.cid,
+                        distinctCid = distinctChannel.cid,
                     ),
                     awaitItem(),
                 )

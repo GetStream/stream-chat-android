@@ -96,7 +96,7 @@ class GroupChannelInfoActivity : BaseConnectedActivity() {
                 openPinnedMessages()
 
             is ChannelInfoViewEvent.NavigateToChannel -> {
-                val intent = MessagesActivity.createIntent(context = this, channelId = event.channelId)
+                val intent = MessagesActivity.createIntent(context = this, channelId = event.cid)
                 startActivity(intent)
             }
         }

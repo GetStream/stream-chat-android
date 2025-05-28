@@ -144,11 +144,11 @@ public sealed interface ChannelInfoViewEvent {
     public data object NavigateToPinnedMessages : Navigation(reason = null)
 
     /**
-     * Indicates an event to navigate to the channel with the specified [channelId].
+     * Indicates an event to navigate to the channel with the specified [cid].
      *
-     * @param channelId The ID of the channel to navigate to.
+     * @param cid The full channel ID of the channel to navigate to.
      */
-    public data class NavigateToChannel(val channelId: String) : Navigation(reason = null)
+    public data class NavigateToChannel(val cid: String) : Navigation(reason = null)
 
     /**
      * Represents error events occurred while performing an action.
