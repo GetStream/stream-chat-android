@@ -95,10 +95,11 @@ class DirectChannelInfoActivity : BaseConnectedActivity() {
             is ChannelInfoViewEvent.NavigateToPinnedMessages ->
                 openPinnedMessages()
 
-            is ChannelInfoViewEvent.NavigateToChannel ->
-                // No need to handle this in DirectChannelInfoActivity,
-                // as it is only applicable for group channels.
-                Unit
+            // No need to handle these in DirectChannelInfoActivity,
+            // as it is only applicable for group channels.
+            is ChannelInfoViewEvent.NavigateToChannel,
+            is ChannelInfoViewEvent.NavigateToDraftChannel,
+            -> Unit
         }
     }
 
@@ -137,9 +138,6 @@ class DirectChannelInfoActivity : BaseConnectedActivity() {
 
             ChannelInfoViewEvent.UnbanMemberError,
             -> R.string.stream_ui_channel_info_unban_member_error
-
-            ChannelInfoViewEvent.NewDirectChannelError,
-            -> R.string.stream_ui_channel_info_new_direct_channel_error
         }
         Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
     }

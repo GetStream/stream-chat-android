@@ -22,13 +22,11 @@ import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelState
-import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Member
-import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.toChannelData
@@ -995,35 +993,9 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
-    fun `message member with no distinct channel and no connected user`() = runTest {
-        val memberId = randomString()
-        val fixture = Fixture()
-        val sut = fixture.get(backgroundScope)
-
-        sut.state.test {
-            skipItems(1) // Skip initial state
-
-            sut.events.test {
-                sut.onMemberViewEvent(ChannelInfoMemberViewEvent.MessageMember(memberId, distinctCid = null))
-
-                assertEquals(
-                    ChannelInfoViewEvent.NewDirectChannelError,
-                    awaitItem(),
-                )
-            }
-        }
-
-        launch { fixture.verifyNoMoreInteractions() }
-    }
-
-    @Test
     fun `message member with no distinct channel`() = runTest {
-        val currentUser = randomUser()
         val memberId = randomString()
-        val channel = randomChannel()
         val fixture = Fixture()
-            .given(currentUser)
-            .givenCreateDirectChannel(memberId, currentUser.id, channel)
         val sut = fixture.get(backgroundScope)
 
         sut.state.test {
@@ -1033,35 +1005,7 @@ internal class ChannelInfoViewControllerTest {
                 sut.onMemberViewEvent(ChannelInfoMemberViewEvent.MessageMember(memberId, distinctCid = null))
 
                 assertEquals(
-                    ChannelInfoViewEvent.NavigateToChannel(channel.cid),
-                    awaitItem(),
-                )
-            }
-        }
-
-        launch {
-            fixture.verifyChannelCreated(memberId, currentUser.id)
-            fixture.verifyNoMoreInteractions()
-        }
-    }
-
-    @Test
-    fun `message member with no distinct channel and error`() = runTest {
-        val memberId = randomString()
-        val currentUser = randomUser()
-        val fixture = Fixture()
-            .given(currentUser)
-            .givenCreateDirectChannel(memberId, currentUser.id, error = randomGenericError())
-        val sut = fixture.get(backgroundScope)
-
-        sut.state.test {
-            skipItems(1) // Skip initial state
-
-            sut.events.test {
-                sut.onMemberViewEvent(ChannelInfoMemberViewEvent.MessageMember(memberId, distinctCid = null))
-
-                assertEquals(
-                    ChannelInfoViewEvent.NewDirectChannelError,
+                    ChannelInfoViewEvent.NavigateToDraftChannel(memberId),
                     awaitItem(),
                 )
             }
@@ -1354,26 +1298,6 @@ private class Fixture {
         }
     }
 
-    fun givenCreateDirectChannel(
-        memberId: String,
-        currentUserId: String? = null,
-        channel: Channel? = null,
-        error: Error? = null,
-    ) = apply {
-        whenever(
-            chatClient.createChannel(
-                channelType = "messaging",
-                channelId = "",
-                params = CreateChannelParams(
-                    members = listOfNotNull(memberId, currentUserId).map(::MemberData),
-                    extraData = emptyMap(),
-                ),
-            ),
-        ) doAnswer {
-            error?.asCall() ?: channel?.asCall()
-        }
-    }
-
     fun givenBanMember(member: Member, timeout: Int? = null, error: Error? = null) = apply {
         whenever(
             channelClient.banUser(
@@ -1399,17 +1323,6 @@ private class Fixture {
 
     fun verifyCopiedUserHandleToClipboard(text: String) = apply {
         verify(copyToClipboardHandler).copy(text = text)
-    }
-
-    fun verifyChannelCreated(memberId: String, currentUserId: String) = apply {
-        verify(chatClient).createChannel(
-            channelType = "messaging",
-            channelId = "",
-            params = CreateChannelParams(
-                members = listOf(memberId, currentUserId).map(::MemberData),
-                extraData = emptyMap(),
-            ),
-        )
     }
 
     fun verifyMemberBanned(member: Member, timeout: Int?) = apply {

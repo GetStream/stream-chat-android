@@ -372,6 +372,8 @@ class ChatsActivity : BaseConnectedActivity() {
                         is ChannelInfoViewEvent.NavigateUp -> onNavigateUp()
                         is ChannelInfoViewEvent.NavigateToPinnedMessages -> onNavigateToPinnedMessages()
                         is ChannelInfoViewEvent.NavigateToChannel -> onNavigateToChannel(event.cid)
+                        // https://linear.app/stream/issue/AND-582/compose-support-draft-messages-in-chatsactivity
+                        is ChannelInfoViewEvent.NavigateToDraftChannel -> Unit
                     }
                     is ChannelInfoViewEvent.Error -> showError(event)
                     is ChannelInfoViewEvent.Modal -> Unit
@@ -540,9 +542,6 @@ private fun Context.showError(error: ChannelInfoViewEvent.Error) {
 
         ChannelInfoViewEvent.RemoveMemberError,
         -> R.string.stream_ui_channel_info_remove_member_error
-
-        ChannelInfoViewEvent.NewDirectChannelError,
-        -> R.string.stream_ui_channel_info_new_direct_channel_error
     }
     Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
 }
