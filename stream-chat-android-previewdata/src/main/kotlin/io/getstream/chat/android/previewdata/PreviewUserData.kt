@@ -32,30 +32,30 @@ public object PreviewUserData {
         image = "https://ca.slack-edge.com/T02RM6X6B-U011KEXDPB2-891dbb8df64f-128",
     )
     public val user2: User = User(
-        id = "amit",
-        name = "Amit Kumar",
-        image = "https://ca.slack-edge.com/T02RM6X6B-U027L4AMGQ3-9ca65ea80b60-128",
+        id = "leia_organa",
+        name = "Leia Organa",
+        image = "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
     )
     public val user3: User = User(
-        id = "belal",
-        name = "Belal Khan",
-        image = "https://ca.slack-edge.com/T02RM6X6B-U02DAP0G2AV-2072330222dc-128",
+        id = "han_solo",
+        name = "Han Solo",
+        image = "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
     )
     public val user4: User = User(
-        id = "dmitrii",
-        name = "Dmitrii Bychkov",
-        image = "https://ca.slack-edge.com/T02RM6X6B-U01CDPY6YE8-b74b0739493e-128",
+        id = "lando_calrissian",
+        name = "Lando Calrissian",
+        image = "https://vignette.wikia.nocookie.net/starwars/images/8/8f/Lando_ROTJ.png",
     )
     public val user5: User = User(
-        id = "filip",
-        name = "Filip Babić",
-        image = "https://ca.slack-edge.com/T02RM6X6B-U022AFX9D2S-f7bcb3d56180-128",
+        id = "chewbacca",
+        name = "Chewbacca",
+        image = "https://vignette.wikia.nocookie.net/starwars/images/4/48/Chewbacca_TLJ.png",
     )
 
     private val user6: User = User(
-        id = "jaewoong",
-        name = "Jaewoong Eum",
-        image = "https://ca.slack-edge.com/T02RM6X6B-U02HU1XR9LM-626fb91c334e-128",
+        id = "c-3po",
+        name = "C-3PO",
+        image = "https://vignette.wikia.nocookie.net/starwars/images/3/3f/C-3PO_TLJ_Card_Trader_Award_Card.png",
     )
 
     public val user7: User = User(

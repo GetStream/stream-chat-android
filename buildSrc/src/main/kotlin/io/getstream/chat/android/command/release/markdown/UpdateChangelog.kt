@@ -9,26 +9,6 @@ import java.time.format.DateTimeFormatter
 
 private const val DATE_PATTERN = "MMMM dd'th', yyyy"
 
-/**
- * Creates an updated version of the changelog using a [Printer].
- *
- * @param printer the [Printer] that will write the file.
- * @param modelFile the model file that will be used by developers to fill information during the development cycle.
- * @param releaseDocument the [Document] containing the release notes.
- * @param oldReleases all the old releases as a list of lines.
- * @param currentVersion the current version of the SDK.
- */
-fun addModelSection(
-    printer: Printer,
-    modelFile: File,
-    changelogLines: List<String>,
-) {
-    printer.modelHeader(modelFile)
-    printer.printline("")
-
-    changelogLines.forEach(printer::printline)
-}
-
 fun parseReleaseSectionInChangelog(
     printer: Printer,
     releaseDocument: Document,
@@ -37,14 +17,6 @@ fun parseReleaseSectionInChangelog(
 ) {
     printer.releaseSection(releaseDocument, currentVersion)
     printer.printOldReleases(oldReleases)
-}
-
-/**
- * Prints the header of the changelog. That's the unreleased section.
- */
-private fun Printer.modelHeader(modelFile: File) {
-    printline("# UNRELEASED CHANGELOG")
-    modelFile.readLines().forEach(this::printline)
 }
 
 /**

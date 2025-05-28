@@ -40,7 +40,7 @@ public class StreamPayloadParserTest {
         val jsonString = """{
                 "file_type": "file",
                 "message": "Retro",
-                "sender_name": "Dmitrii Bychkov",
+                "sender_name": "Lando Calrissian",
                 "unread_message_count": "8",
                 "nested_object": {
                     "key1": "value1",
@@ -59,7 +59,7 @@ public class StreamPayloadParserTest {
         parsedMap shouldBeEqualTo mapOf(
             "file_type" to "file",
             "message" to "Retro",
-            "sender_name" to "Dmitrii Bychkov",
+            "sender_name" to "Lando Calrissian",
             "unread_message_count" to "8",
             "nested_object" to mapOf(
                 "key1" to "value1",
