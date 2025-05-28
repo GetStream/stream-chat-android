@@ -305,10 +305,10 @@ public class ChannelClient internal constructor(
             is AIIndicatorStopEvent -> event.cid == cid
             is DraftMessageUpdatedEvent -> event.draftMessage.cid == cid
             is DraftMessageDeletedEvent -> event.draftMessage.cid == cid
-            is ReminderCreatedEvent -> event.reminder.channel.id == cid
-            is ReminderUpdatedEvent -> event.reminder.channel.cid == cid
-            is ReminderDeletedEvent -> event.reminder.channel.cid == cid
-            is NotificationReminderDueEvent -> event.reminder.channel.id == cid
+            is ReminderCreatedEvent -> event.cid == cid
+            is ReminderUpdatedEvent -> event.cid == cid
+            is ReminderDeletedEvent -> event.cid == cid
+            is NotificationReminderDueEvent -> event.cid == cid
             is HealthEvent,
             is NotificationChannelMutesUpdatedEvent,
             is NotificationMutesUpdatedEvent,

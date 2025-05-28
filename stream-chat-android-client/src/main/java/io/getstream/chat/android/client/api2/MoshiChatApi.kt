@@ -1480,14 +1480,14 @@ constructor(
         return remindersApi.createReminder(
             messageId = messageId,
             body = ReminderRequest(remind_at = remindAt),
-        ).mapDomain { it.toDomain() }
+        ).mapDomain { it.reminder.toDomain() }
     }
 
     override fun updateReminder(messageId: String, remindAt: Date?): Call<MessageReminder> {
         return remindersApi.updateReminder(
             messageId = messageId,
             body = ReminderRequest(remind_at = remindAt),
-        ).mapDomain { it.toDomain() }
+        ).mapDomain { it.reminder.toDomain() }
     }
 
     override fun deleteReminder(messageId: String): Call<Unit> {

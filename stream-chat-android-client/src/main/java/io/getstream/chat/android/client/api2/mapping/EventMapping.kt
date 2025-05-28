@@ -1072,10 +1072,16 @@ internal class EventMapping(
      * Transforms [ReminderCreatedEventDto] to [ReminderCreatedEvent].
      */
     private fun ReminderCreatedEventDto.toDomain(): ReminderCreatedEvent = with(domainMapping) {
+        val (channelType, channelId) = cid.cidToTypeAndId()
         ReminderCreatedEvent(
             type = type,
             createdAt = created_at.date,
             rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            messageId = message_id,
+            userId = user_id,
             reminder = reminder.toDomain(),
         )
     }
@@ -1084,10 +1090,16 @@ internal class EventMapping(
      * Transforms [ReminderUpdatedEventDto] to [ReminderUpdatedEvent].
      */
     private fun ReminderUpdatedEventDto.toDomain(): ReminderUpdatedEvent = with(domainMapping) {
+        val (channelType, channelId) = cid.cidToTypeAndId()
         ReminderUpdatedEvent(
             type = type,
             createdAt = created_at.date,
             rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            messageId = message_id,
+            userId = user_id,
             reminder = reminder.toDomain(),
         )
     }
@@ -1096,10 +1108,16 @@ internal class EventMapping(
      * Transforms [ReminderDeletedEventDto] to [ReminderDeletedEvent].
      */
     private fun ReminderDeletedEventDto.toDomain(): ReminderDeletedEvent = with(domainMapping) {
+        val (channelType, channelId) = cid.cidToTypeAndId()
         ReminderDeletedEvent(
             type = type,
             createdAt = created_at.date,
             rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            messageId = message_id,
+            userId = user_id,
             reminder = reminder.toDomain(),
         )
     }
@@ -1108,10 +1126,16 @@ internal class EventMapping(
      * Transforms [NotificationReminderDueEventDto] to [NotificationReminderDueEvent].
      */
     private fun NotificationReminderDueEventDto.toDomain(): NotificationReminderDueEvent = with(domainMapping) {
+        val (channelType, channelId) = cid.cidToTypeAndId()
         NotificationReminderDueEvent(
             type = type,
             createdAt = created_at.date,
             rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            messageId = message_id,
+            userId = user_id,
             reminder = reminder.toDomain(),
         )
     }

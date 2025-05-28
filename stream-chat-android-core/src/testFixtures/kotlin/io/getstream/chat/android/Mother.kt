@@ -973,17 +973,19 @@ public fun randomModeration(
 )
 
 public fun randomMessageReminder(
-    id: String = randomString(),
-    remindAt: Date? = randomDateOrNull(),
-    message: Message = randomMessage(),
+    remindAt: Date? = randomDate(),
+    messageId: String = randomString(),
+    message: Message = randomMessage(id = messageId),
+    cid: String = randomCID(),
     channel: Channel = randomChannel(),
     createdAt: Date = randomDate(),
     updatedAt: Date = randomDate(),
 ): MessageReminder = MessageReminder(
-    id = id,
     remindAt = remindAt,
-    message = message,
+    cid = cid,
     channel = channel,
+    messageId = messageId,
+    message = message,
     createdAt = createdAt,
     updatedAt = updatedAt,
 )

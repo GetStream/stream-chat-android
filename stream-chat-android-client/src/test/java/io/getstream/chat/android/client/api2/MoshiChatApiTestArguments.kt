@@ -43,6 +43,7 @@ import io.getstream.chat.android.client.api2.model.response.QueryMembersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryThreadsResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
+import io.getstream.chat.android.client.api2.model.response.ReminderResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SuggestPollOptionResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
@@ -628,7 +629,10 @@ internal object MoshiChatApiTestArguments {
 
     @JvmStatic
     private fun reminderResponseArguments() = listOf(
-        Arguments.of(RetroSuccess(Mother.randomDownstreamReminderDto()).toRetrofitCall(), Result.Success::class),
+        Arguments.of(
+            RetroSuccess(ReminderResponse(Mother.randomDownstreamReminderDto())).toRetrofitCall(),
+            Result.Success::class,
+        ),
         Arguments.of(RetroError<DownstreamReminderDto>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 }

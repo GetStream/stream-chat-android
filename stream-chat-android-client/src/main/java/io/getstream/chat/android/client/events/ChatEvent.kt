@@ -820,8 +820,13 @@ public data class ReminderCreatedEvent(
     override val type: String,
     override val createdAt: Date,
     override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    val messageId: String,
+    val userId: String,
     val reminder: MessageReminder,
-) : ChatEvent()
+) : CidEvent()
 
 /**
  * Triggered when a message reminder is updated.
@@ -830,8 +835,13 @@ public data class ReminderUpdatedEvent(
     override val type: String,
     override val createdAt: Date,
     override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    val messageId: String,
+    val userId: String,
     val reminder: MessageReminder,
-) : ChatEvent()
+) : CidEvent()
 
 /**
  * Triggered when a message reminder is deleted.
@@ -840,8 +850,13 @@ public data class ReminderDeletedEvent(
     override val type: String,
     override val createdAt: Date,
     override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    val messageId: String,
+    val userId: String,
     val reminder: MessageReminder,
-) : ChatEvent()
+) : CidEvent()
 
 /**
  * Triggered when a message reminder is due.
@@ -850,8 +865,13 @@ public data class NotificationReminderDueEvent(
     override val type: String,
     override val createdAt: Date,
     override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    val messageId: String,
+    val userId: String,
     val reminder: MessageReminder,
-) : ChatEvent()
+) : CidEvent()
 
 /**
  * Triggered when an ai indicator is updated.

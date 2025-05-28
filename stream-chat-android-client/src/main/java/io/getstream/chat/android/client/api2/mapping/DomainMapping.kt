@@ -714,10 +714,11 @@ internal class DomainMapping(
      * Transforms a network [DownstreamReminderDto] model to a domain [MessageReminder].
      */
     internal fun DownstreamReminderDto.toDomain(): MessageReminder = MessageReminder(
-        id = id,
         remindAt = remind_at,
-        message = message.toDomain(),
-        channel = channel.toDomain(eventChatLastMessageAt = null),
+        cid = channel_cid,
+        channel = channel?.toDomain(),
+        messageId = message_id,
+        message = message?.toDomain(),
         createdAt = created_at,
         updatedAt = updated_at,
     )

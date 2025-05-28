@@ -1354,21 +1354,23 @@ public final class io/getstream/chat/android/models/MessageModerationDetails {
 }
 
 public final class io/getstream/chat/android/models/MessageReminder : io/getstream/chat/android/models/querysort/ComparableFieldProvider {
-	public fun <init> (Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Channel;Ljava/util/Date;Ljava/util/Date;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/util/Date;
-	public final fun component3 ()Lio/getstream/chat/android/models/Message;
-	public final fun component4 ()Lio/getstream/chat/android/models/Channel;
-	public final fun component5 ()Ljava/util/Date;
+	public fun <init> (Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/models/Channel;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Ljava/util/Date;Ljava/util/Date;)V
+	public final fun component1 ()Ljava/util/Date;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Lio/getstream/chat/android/models/Channel;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Lio/getstream/chat/android/models/Message;
 	public final fun component6 ()Ljava/util/Date;
-	public final fun copy (Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Channel;Ljava/util/Date;Ljava/util/Date;)Lio/getstream/chat/android/models/MessageReminder;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/MessageReminder;Ljava/lang/String;Ljava/util/Date;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Channel;Ljava/util/Date;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/models/MessageReminder;
+	public final fun component7 ()Ljava/util/Date;
+	public final fun copy (Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/models/Channel;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Ljava/util/Date;Ljava/util/Date;)Lio/getstream/chat/android/models/MessageReminder;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/MessageReminder;Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/models/Channel;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Ljava/util/Date;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/models/MessageReminder;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getChannel ()Lio/getstream/chat/android/models/Channel;
+	public final fun getCid ()Ljava/lang/String;
 	public fun getComparableField (Ljava/lang/String;)Ljava/lang/Comparable;
 	public final fun getCreatedAt ()Ljava/util/Date;
-	public final fun getId ()Ljava/lang/String;
 	public final fun getMessage ()Lio/getstream/chat/android/models/Message;
+	public final fun getMessageId ()Ljava/lang/String;
 	public final fun getRemindAt ()Ljava/util/Date;
 	public final fun getUpdatedAt ()Ljava/util/Date;
 	public fun hashCode ()I
@@ -1381,9 +1383,10 @@ public final class io/getstream/chat/android/models/MessageReminder$Builder {
 	public fun <init> (Lio/getstream/chat/android/models/MessageReminder;)V
 	public final fun build ()Lio/getstream/chat/android/models/MessageReminder;
 	public final fun withChannel (Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/models/MessageReminder$Builder;
+	public final fun withCid (Ljava/lang/String;)Lio/getstream/chat/android/models/MessageReminder$Builder;
 	public final fun withCreatedAt (Ljava/util/Date;)Lio/getstream/chat/android/models/MessageReminder$Builder;
-	public final fun withId (Ljava/lang/String;)Lio/getstream/chat/android/models/MessageReminder$Builder;
 	public final fun withMessage (Lio/getstream/chat/android/models/Message;)Lio/getstream/chat/android/models/MessageReminder$Builder;
+	public final fun withMessageId (Ljava/lang/String;)Lio/getstream/chat/android/models/MessageReminder$Builder;
 	public final fun withRemindAt (Ljava/util/Date;)Lio/getstream/chat/android/models/MessageReminder$Builder;
 	public final fun withUpdatedAt (Ljava/util/Date;)Lio/getstream/chat/android/models/MessageReminder$Builder;
 }

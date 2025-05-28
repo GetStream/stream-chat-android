@@ -92,10 +92,12 @@ import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.extensions.internal.applyPagination
 import io.getstream.chat.android.client.extensions.internal.processPoll
+import io.getstream.chat.android.client.extensions.internal.toMessageReminderInfo
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.event.handler.internal.utils.toChannelUserRead
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
@@ -479,6 +481,16 @@ internal class ChannelLogic(
         channelStateLogic.hideMessagesBefore(date)
     }
 
+    private fun upsertReminder(messageId: String, reminder: MessageReminder) {
+        val message = reminder.message ?: mutableState.getMessageById(messageId) ?: return
+        upsertEventMessage(message.copy(reminder = reminder.toMessageReminderInfo()))
+    }
+
+    private fun deleteReminder(messageId: String) {
+        val message = mutableState.getMessageById(messageId) ?: return
+        upsertEventMessage(message.copy(reminder = null))
+    }
+
     private fun upsertEventMessage(message: Message) {
         val ownReactions = getMessage(message.id)?.ownReactions ?: message.ownReactions
         channelStateLogic.upsertMessage(message.copy(ownReactions = ownReactions))
@@ -628,11 +640,15 @@ internal class ChannelLogic(
                         channelStateLogic.upsertPoll(event.processPoll(currentUserId, channelStateLogic::getPoll))
                     is VoteRemovedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
                     is AnswerCastedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
+                    is ReminderCreatedEvent -> upsertReminder(event.messageId, event.reminder)
+                    is ReminderUpdatedEvent -> upsertReminder(event.messageId, event.reminder)
+                    is ReminderDeletedEvent -> deleteReminder(event.messageId)
                     is AIIndicatorUpdatedEvent,
                     is AIIndicatorClearEvent,
                     is AIIndicatorStopEvent,
                     is NotificationChannelDeletedEvent,
                     is NotificationInvitedEvent,
+                    is NotificationReminderDueEvent,
                     -> Unit // Ignore these events
                 }
             }
@@ -643,10 +659,6 @@ internal class ChannelLogic(
             is NotificationChannelMutesUpdatedEvent -> event.me.channelMutes.any { mute ->
                 mute.channel?.cid == mutableState.cid
             }.let(channelStateLogic::updateMute)
-            is ReminderCreatedEvent -> upsertEventMessage(event.reminder.message)
-            is ReminderUpdatedEvent -> upsertEventMessage(event.reminder.message)
-            is ReminderDeletedEvent -> upsertEventMessage(event.reminder.message)
-            is NotificationReminderDueEvent -> upsertEventMessage(event.reminder.message)
             is ConnectedEvent,
             is ConnectionErrorEvent,
             is ConnectingEvent,

@@ -1093,7 +1093,6 @@ internal object Mother {
     )
 
     fun randomDownstreamReminderDto(
-        id: String = randomString(),
         channelCid: String = randomString(),
         channel: DownstreamChannelDto = randomDownstreamChannelDto(id = channelCid),
         messageId: String = randomString(),
@@ -1102,7 +1101,6 @@ internal object Mother {
         createdAt: Date = randomDate(),
         updatedAt: Date = randomDate(),
     ): DownstreamReminderDto = DownstreamReminderDto(
-        id = id,
         channel_cid = channelCid,
         channel = channel,
         message_id = messageId,

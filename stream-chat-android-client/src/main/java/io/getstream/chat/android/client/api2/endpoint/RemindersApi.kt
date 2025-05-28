@@ -17,11 +17,11 @@
 package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
-import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.requests.QueryRemindersRequest
 import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
 import io.getstream.chat.android.client.api2.model.response.CompletableResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
+import io.getstream.chat.android.client.api2.model.response.ReminderResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -55,7 +55,7 @@ internal interface RemindersApi {
     fun createReminder(
         @Path("id") messageId: String,
         @Body body: ReminderRequest,
-    ): RetrofitCall<DownstreamReminderDto>
+    ): RetrofitCall<ReminderResponse>
 
     /**
      * Updates an existing reminder for a message.
@@ -67,7 +67,7 @@ internal interface RemindersApi {
     fun updateReminder(
         @Path("id") messageId: String,
         @Body body: ReminderRequest,
-    ): RetrofitCall<DownstreamReminderDto>
+    ): RetrofitCall<ReminderResponse>
 
     /**
      * Deletes a reminder for a message.

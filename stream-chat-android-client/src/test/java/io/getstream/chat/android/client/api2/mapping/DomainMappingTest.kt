@@ -741,10 +741,11 @@ internal class DomainMappingTest {
         val sut = Fixture().get()
         val messageReminder = with(sut) { downstreamReminderDto.toDomain() }
         val expected = MessageReminder(
-            id = downstreamReminderDto.id,
             remindAt = downstreamReminderDto.remind_at,
-            message = with(sut) { downstreamReminderDto.message.toDomain() },
-            channel = with(sut) { downstreamReminderDto.channel.toDomain(eventChatLastMessageAt = null) },
+            messageId = downstreamReminderDto.message_id,
+            message = with(sut) { downstreamReminderDto.message?.toDomain() },
+            cid = downstreamReminderDto.channel_cid,
+            channel = with(sut) { downstreamReminderDto.channel?.toDomain() },
             createdAt = downstreamReminderDto.created_at,
             updatedAt = downstreamReminderDto.updated_at,
         )

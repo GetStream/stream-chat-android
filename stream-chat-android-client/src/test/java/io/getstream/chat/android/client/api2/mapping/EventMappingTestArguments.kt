@@ -706,24 +706,36 @@ internal object EventMappingTestArguments {
     private val reminderCreatedDto = ReminderCreatedEventDto(
         type = EventType.REMINDER_CREATED,
         created_at = EXACT_DATE,
+        cid = CID,
+        message_id = MESSAGE.id,
+        user_id = USER.id,
         reminder = REMINDER,
     )
 
     private val reminderUpdatedDto = ReminderUpdatedEventDto(
         type = EventType.REMINDER_UPDATED,
         created_at = EXACT_DATE,
+        cid = CID,
+        message_id = MESSAGE.id,
+        user_id = USER.id,
         reminder = REMINDER,
     )
 
     private val reminderDeletedDto = ReminderDeletedEventDto(
         type = EventType.REMINDER_DELETED,
         created_at = EXACT_DATE,
+        cid = CID,
+        message_id = MESSAGE.id,
+        user_id = USER.id,
         reminder = REMINDER,
     )
 
     private val notificationReminderDueDto = NotificationReminderDueEventDto(
         type = EventType.NOTIFICATION_REMINDER_DUE,
         created_at = EXACT_DATE,
+        cid = CID,
+        message_id = MESSAGE.id,
+        user_id = USER.id,
         reminder = REMINDER,
     )
 
@@ -1353,6 +1365,11 @@ internal object EventMappingTestArguments {
         type = reminderCreatedDto.type,
         createdAt = reminderCreatedDto.created_at.date,
         rawCreatedAt = reminderCreatedDto.created_at.rawDate,
+        cid = reminderCreatedDto.cid,
+        channelType = reminderCreatedDto.cid.split(":").first(),
+        channelId = reminderCreatedDto.cid.split(":").last(),
+        messageId = reminderCreatedDto.message_id,
+        userId = reminderCreatedDto.user_id,
         reminder = with(domainMapping) { reminderCreatedDto.reminder.toDomain() },
     )
 
@@ -1360,6 +1377,11 @@ internal object EventMappingTestArguments {
         type = reminderDeletedDto.type,
         createdAt = reminderDeletedDto.created_at.date,
         rawCreatedAt = reminderDeletedDto.created_at.rawDate,
+        cid = reminderCreatedDto.cid,
+        channelType = reminderCreatedDto.cid.split(":").first(),
+        channelId = reminderCreatedDto.cid.split(":").last(),
+        messageId = reminderCreatedDto.message_id,
+        userId = reminderCreatedDto.user_id,
         reminder = with(domainMapping) { reminderDeletedDto.reminder.toDomain() },
     )
 
@@ -1367,6 +1389,11 @@ internal object EventMappingTestArguments {
         type = reminderUpdatedDto.type,
         createdAt = reminderUpdatedDto.created_at.date,
         rawCreatedAt = reminderUpdatedDto.created_at.rawDate,
+        cid = reminderCreatedDto.cid,
+        channelType = reminderCreatedDto.cid.split(":").first(),
+        channelId = reminderCreatedDto.cid.split(":").last(),
+        messageId = reminderCreatedDto.message_id,
+        userId = reminderCreatedDto.user_id,
         reminder = with(domainMapping) { reminderUpdatedDto.reminder.toDomain() },
     )
 
@@ -1374,6 +1401,11 @@ internal object EventMappingTestArguments {
         type = notificationReminderDueDto.type,
         createdAt = notificationReminderDueDto.created_at.date,
         rawCreatedAt = notificationReminderDueDto.created_at.rawDate,
+        cid = reminderCreatedDto.cid,
+        channelType = reminderCreatedDto.cid.split(":").first(),
+        channelId = reminderCreatedDto.cid.split(":").last(),
+        messageId = reminderCreatedDto.message_id,
+        userId = reminderCreatedDto.user_id,
         reminder = with(domainMapping) { notificationReminderDueDto.reminder.toDomain() },
     )
 

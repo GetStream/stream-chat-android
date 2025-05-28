@@ -27,25 +27,30 @@ import java.util.Date
 public data class MessageReminder(
 
     /**
-     * A unique identifier of the reminder, based on the message ID.
-     */
-    public val id: String,
-
-    /**
      * The date when the user should be reminded about this message. If null, this is a bookmark type reminder without a
      * notification.
      */
     public val remindAt: Date?,
 
     /**
-     * The message that has been marked for reminder.
+     * CID of the channel in which the message is.
      */
-    public val message: Message,
+    public val cid: String,
 
     /**
      * The channel in which the message belongs to.
      */
-    public val channel: Channel,
+    public val channel: Channel?,
+
+    /**
+     * ID of the message for which the reminder is set.
+     */
+    public val messageId: String,
+
+    /**
+     * The message that has been marked for reminder.
+     */
+    public val message: Message?,
 
     /**
      * Date when the reminder was created.
@@ -77,10 +82,11 @@ public data class MessageReminder(
      * Builder for [MessageReminder].
      */
     public class Builder() {
-        private var id: String = ""
         private var remindAt: Date? = null
-        private var message: Message? = null
+        private var cid: String = ""
         private var channel: Channel? = null
+        private var messageId: String = ""
+        private var message: Message? = null
         private var createdAt: Date = Date()
         private var updatedAt: Date = Date()
 
@@ -88,7 +94,6 @@ public data class MessageReminder(
          * Creates a [Builder] from the given [MessageReminder].
          */
         public constructor(reminder: MessageReminder) : this() {
-            id = reminder.id
             remindAt = reminder.remindAt
             message = reminder.message
             channel = reminder.channel
@@ -96,17 +101,20 @@ public data class MessageReminder(
             updatedAt = reminder.updatedAt
         }
 
-        /** Sets the unique identifier of the reminder. */
-        public fun withId(id: String): Builder = apply { this.id = id }
-
         /** Sets the date when the user should be reminded about this message. */
         public fun withRemindAt(remindAt: Date?): Builder = apply { this.remindAt = remindAt }
 
-        /** Sets the message that has been marked for reminder. */
-        public fun withMessage(message: Message): Builder = apply { this.message = message }
+        /** Sets the CID of the channel in which the message is. */
+        public fun withCid(cid: String): Builder = apply { this.cid = cid }
 
         /** Sets the channel in which the message belongs to. */
         public fun withChannel(channel: Channel): Builder = apply { this.channel = channel }
+
+        /** Sets the ID of the message for which the reminder is set. */
+        public fun withMessageId(messageId: String): Builder = apply { this.messageId = messageId }
+
+        /** Sets the message that has been marked for reminder. */
+        public fun withMessage(message: Message): Builder = apply { this.message = message }
 
         /** Sets the date when the reminder was created. */
         public fun withCreatedAt(createdAt: Date): Builder = apply { this.createdAt = createdAt }
@@ -120,14 +128,12 @@ public data class MessageReminder(
          * @throws IllegalStateException if any required property is missing.
          */
         public fun build(): MessageReminder {
-            requireNotNull(message) { "Message cannot be null" }
-            requireNotNull(channel) { "Channel cannot be null" }
-
             return MessageReminder(
-                id = id,
                 remindAt = remindAt,
-                message = message!!,
-                channel = channel!!,
+                cid = cid,
+                channel = channel,
+                messageId = messageId,
+                message = message,
                 createdAt = createdAt,
                 updatedAt = updatedAt,
             )
