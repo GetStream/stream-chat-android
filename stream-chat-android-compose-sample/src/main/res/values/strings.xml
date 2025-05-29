@@ -67,7 +67,12 @@
     <string name="app_bottom_bar_chats">Chats</string>
     <string name="app_bottom_bar_mentions">Mentions</string>
     <string name="app_bottom_bar_threads">Threads</string>
-    <string name="app_bottom_bar_reminders">Reminders</string>
+
+    <!--  Navigation drawer  -->
+    <string name="navigation_drawer_new_direct_message">New Direct Message</string>
+    <string name="navigation_drawer_new_group_chat">Create a group</string>
+    <string name="navigation_drawer_later">Later</string>
+    <string name="navigation_drawer_sign_out">Sign out</string>
 
     <!--  Message reminders  -->
     <string name="message_menu_add_reminder">Remind me</string>

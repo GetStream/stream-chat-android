@@ -83,18 +83,23 @@ import kotlin.time.Duration.Companion.minutes
 /**
  * Displays the message reminders screen.
  *
+ * @param modifier The [Modifier] to be applied to the screen.
  * @param viewModel The ViewModel responsible for managing the state of the screen.
  * @param onReminderClick Callback invoked when a reminder is clicked.
+ * @param onBack Callback invoked when the back button is pressed.
  */
 @Composable
 fun MessageRemindersScreen(
+    modifier: Modifier = Modifier,
     viewModel: MessageRemindersViewModel = viewModel(),
     onReminderClick: (MessageReminder) -> Unit,
+    onBack: () -> Unit,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     Scaffold(
+        modifier = modifier,
         topBar = {
-            AppToolbar(stringResource(R.string.reminders_title), showBack = false, onBack = { /* not handled */ })
+            AppToolbar(stringResource(R.string.reminders_title), onBack = onBack)
         },
         content = { padding ->
             var selectedReminder by remember { mutableStateOf<MessageReminder?>(null) }

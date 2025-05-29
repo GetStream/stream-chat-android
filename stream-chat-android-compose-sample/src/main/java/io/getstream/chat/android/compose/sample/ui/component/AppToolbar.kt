@@ -47,14 +47,12 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param title The title to be shown in the toolbar.
  * @param onBack Action to be executed when the back button is clicked.
  * @param elevation The elevation to be applied to the toolbar.
- * @param showBack Whether to show the back button or not.
  */
 @Composable
 fun AppToolbar(
     title: String,
     onBack: () -> Unit,
     elevation: Dp = 2.dp,
-    showBack: Boolean = true,
 ) {
     Surface(
         modifier = Modifier
@@ -70,17 +68,13 @@ fun AppToolbar(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            if (showBack) {
-                IconButton(onClick = onBack) {
-                    Icon(
-                        modifier = Modifier.size(24.dp),
-                        painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
-                        contentDescription = "Back",
-                        tint = ChatTheme.colors.textHighEmphasis,
-                    )
-                }
-            } else {
-                Spacer(modifier = Modifier.size(44.dp))
+            IconButton(onClick = onBack) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
+                    contentDescription = "Back",
+                    tint = ChatTheme.colors.textHighEmphasis,
+                )
             }
             Text(
                 text = title,
