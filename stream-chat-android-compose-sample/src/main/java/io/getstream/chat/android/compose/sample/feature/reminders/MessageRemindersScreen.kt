@@ -98,9 +98,7 @@ fun MessageRemindersScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     Scaffold(
         modifier = modifier,
-        topBar = {
-            AppToolbar(stringResource(R.string.reminders_title), onBack = onBack)
-        },
+        topBar = { AppToolbar(stringResource(R.string.reminders_title), onBack = onBack) },
         content = { padding ->
             var selectedReminder by remember { mutableStateOf<MessageReminder?>(null) }
             var showEditReminderOptions by remember { mutableStateOf(false) }

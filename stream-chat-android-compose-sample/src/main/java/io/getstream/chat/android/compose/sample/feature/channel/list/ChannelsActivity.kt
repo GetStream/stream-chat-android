@@ -126,6 +126,7 @@ class ChannelsActivity : BaseConnectedActivity() {
     private val mentionListViewModel: MentionListViewModel by viewModels { MentionListViewModelFactory() }
     private val threadsViewModel: ThreadListViewModel by viewModels { ThreadsViewModelFactory() }
 
+    @Suppress("LongMethod")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -168,15 +169,7 @@ class ChannelsActivity : BaseConnectedActivity() {
                                 onNewDirectMessageClick = ::openAddChannel,
                                 onNewGroupClick = ::openAddGroupChannel,
                                 onRemindersClick = ::openReminders,
-                                onSignOutClick = {
-                                    GlobalScope.launch {
-                                        openUserLogin()
-                                        // Give time for login activity to start before disconnecting the user,
-                                        // so we prevent showing disconnected states.
-                                        delay(UserLoginActivity.DELAY_BEFORE_LOGOUT_IN_MILLIS)
-                                        ChatHelper.disconnectUser()
-                                    }
-                                }
+                                onSignOutClick = ::signOut,
                             )
                         }
                     },
@@ -193,24 +186,21 @@ class ChannelsActivity : BaseConnectedActivity() {
                             },
                             containerColor = ChatTheme.colors.appBackground,
                         ) { padding ->
-                            Box(
-                                modifier = Modifier.padding(padding),
-                            ) {
+                            Box(modifier = Modifier.padding(padding)) {
                                 when (selectedTab) {
                                     AppBottomBarOption.CHATS -> ChannelsContent(
                                         onHeaderAvatarClick = {
                                             coroutineScope.launch {
                                                 drawerState.open()
                                             }
-                                        }
+                                        },
                                     )
-
                                     AppBottomBarOption.MENTIONS -> MentionsContent()
                                     AppBottomBarOption.THREADS -> ThreadsContent()
                                 }
                             }
                         }
-                    }
+                    },
                 )
             }
         }
@@ -424,6 +414,16 @@ class ChannelsActivity : BaseConnectedActivity() {
 
     private fun openUserLogin() {
         startActivity(UserLoginActivity.createIntent(this))
+    }
+
+    private fun signOut() {
+        GlobalScope.launch {
+            openUserLogin()
+            // Give time for login activity to start before disconnecting the user,
+            // so we prevent showing disconnected states.
+            delay(UserLoginActivity.DELAY_BEFORE_LOGOUT_IN_MILLIS)
+            ChatHelper.disconnectUser()
+        }
     }
 
     private fun viewChannelInfo(channel: Channel) {
