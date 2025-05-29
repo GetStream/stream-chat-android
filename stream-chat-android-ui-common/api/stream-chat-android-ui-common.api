@@ -2454,6 +2454,17 @@ public final class io/getstream/chat/android/ui/common/utils/MediaStringUtil {
 	public static synthetic fun convertVideoLength$default (JLjava/util/Locale;ILjava/lang/Object;)Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/ui/common/utils/MessageOriginalTranslationsStore {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/utils/MessageOriginalTranslationsStore;
+	public final fun clear ()V
+	public final fun getOriginalTextMessageIds ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun hideOriginalText (Ljava/lang/String;)V
+	public final fun shouldShowOriginalText (Ljava/lang/String;)Z
+	public final fun showOriginalText (Ljava/lang/String;)V
+	public final fun toggleOriginalText (Ljava/lang/String;)V
+}
+
 public class io/getstream/chat/android/ui/common/utils/Utils {
 	public static final field locale Ljava/util/Locale;
 	public fun <init> ()V

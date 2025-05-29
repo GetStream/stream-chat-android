@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -44,6 +45,7 @@ import io.getstream.chat.android.compose.ui.util.AnnotationTagUrl
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
 import io.getstream.chat.android.compose.ui.util.isFewEmoji
 import io.getstream.chat.android.compose.ui.util.isSingleEmoji
+import io.getstream.chat.android.compose.ui.util.showOriginalTextAsState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.utils.extensions.getUserByNameOrId
@@ -75,7 +77,11 @@ public fun MessageText(
 ) {
     val context = LocalContext.current
 
-    val styledText = ChatTheme.messageTextFormatter.format(message, currentUser)
+    val showOriginalText by showOriginalTextAsState(message.id)
+    val formatter = ChatTheme.messageTextFormatter
+    val styledText = remember(message, currentUser, showOriginalText) {
+        formatter.format(message, currentUser)
+    }
 
     val annotations = styledText.getStringAnnotations(0, styledText.lastIndex)
 

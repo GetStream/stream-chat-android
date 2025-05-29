@@ -28,6 +28,7 @@ import io.getstream.chat.android.compose.ui.theme.StreamShapes
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.utils.MessageOriginalTranslationsStore
 import io.getstream.chat.android.ui.common.utils.extensions.isMine
 
 /**
@@ -185,9 +186,19 @@ private class DefaultMessageTextFormatter(
 
     override fun format(message: Message, currentUser: User?): AnnotatedString {
         val displayedText = when (autoTranslationEnabled) {
-            true -> currentUser?.language?.let { userLanguage ->
-                message.getTranslation(userLanguage).ifEmpty { message.text }
-            } ?: message.text
+            true -> {
+                // If auto-translation is enabled, we check if the message is showing original text.
+                // If it is, we return the original text, otherwise we return the translated text.
+                if (MessageOriginalTranslationsStore.shouldShowOriginalText(message.id)) {
+                    message.text
+                } else {
+                    // If the message is not showing original text, we check if the current user has a language set.
+                    // If they do, we return the translated text, otherwise we return the original text.
+                    currentUser?.language?.let { userLanguage ->
+                        message.getTranslation(userLanguage).ifEmpty { message.text }
+                    } ?: message.text
+                }
+            }
             else -> message.text
         }
         val mentionedUserNames = message.mentionedUsers.map { it.name.ifEmpty { it.id } }
