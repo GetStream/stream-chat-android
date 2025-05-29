@@ -148,6 +148,7 @@ internal class MessageListTest : SnapshotTest {
                         MessageItemState(
                             message = PreviewMessageData.message1,
                             ownCapabilities = ChannelCapabilities.toSet(),
+                            onToggleOriginalText = {},
                         ),
                     ),
                 ),
@@ -169,6 +170,7 @@ private val LoadedMessageListState = MessageListState(
             isMine = true,
             showMessageFooter = true,
             ownCapabilities = ChannelCapabilities.toSet(),
+            onToggleOriginalText = {},
         ),
         SystemMessageItemState(
             message = PreviewMessageData.message4,
@@ -177,6 +179,7 @@ private val LoadedMessageListState = MessageListState(
             message = PreviewMessageData.messageWithError,
             isMine = true,
             ownCapabilities = ChannelCapabilities.toSet(),
+            onToggleOriginalText = {},
         ),
         MessageItemState(
             message = PreviewMessageData.messageWithPoll,
@@ -188,6 +191,7 @@ private val LoadedMessageListState = MessageListState(
                 PreviewChannelUserRead.channelUserRead2,
             ),
             ownCapabilities = ChannelCapabilities.toSet(),
+            onToggleOriginalText = {},
         ),
         DateSeparatorItemState(Date4),
         MessageItemState(
@@ -200,6 +204,7 @@ private val LoadedMessageListState = MessageListState(
             currentUser = PreviewUserData.user7,
             showMessageFooter = true,
             ownCapabilities = ChannelCapabilities.toSet(),
+            onToggleOriginalText = {},
         ),
         MessageItemState(
             message = PreviewMessageData.messageWithOwnReaction.copy(
@@ -207,11 +212,13 @@ private val LoadedMessageListState = MessageListState(
             ),
             showMessageFooter = true,
             ownCapabilities = ChannelCapabilities.toSet(),
+            onToggleOriginalText = {},
         ),
         MessageItemState(
             message = PreviewMessageData.message3,
             isMine = true,
             ownCapabilities = ChannelCapabilities.toSet(),
+            onToggleOriginalText = {},
         ),
         DateSeparatorItemState(Date3),
         MessageItemState(
@@ -220,6 +227,7 @@ private val LoadedMessageListState = MessageListState(
             ),
             showMessageFooter = true,
             ownCapabilities = ChannelCapabilities.toSet(),
+            onToggleOriginalText = {},
         ),
         DateSeparatorItemState(Date2),
         MessageItemState(
@@ -229,11 +237,13 @@ private val LoadedMessageListState = MessageListState(
             deletedMessageVisibility = DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER,
             showMessageFooter = true,
             ownCapabilities = ChannelCapabilities.toSet(),
+            onToggleOriginalText = {},
         ),
         MessageItemState(
             message = PreviewMessageData.message1,
             groupPosition = listOf(MessagePosition.TOP),
             ownCapabilities = ChannelCapabilities.toSet(),
+            onToggleOriginalText = {},
         ),
         DateSeparatorItemState(Date1),
     ),
@@ -246,12 +256,14 @@ private val TwoMessagesListState = MessageListState(
             isMine = true,
             showMessageFooter = true,
             ownCapabilities = ChannelCapabilities.toSet(),
+            onToggleOriginalText = {},
         ),
         MessageItemState(
             message = PreviewMessageData.message5,
             isMine = false,
             showMessageFooter = true,
             ownCapabilities = ChannelCapabilities.toSet(),
+            onToggleOriginalText = {},
         ),
     ),
 )

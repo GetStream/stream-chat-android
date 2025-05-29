@@ -561,6 +561,7 @@ private fun PollMessageContentPreview() {
                     message = io.getstream.chat.android.previewdata.PreviewMessageData.messageWithPoll,
                     isMine = true,
                     ownCapabilities = ChannelCapabilities.toSet(),
+                    onToggleOriginalText = {},
                 ),
             )
 
@@ -578,6 +579,7 @@ private fun PollMessageContentPreview() {
                     message = io.getstream.chat.android.previewdata.PreviewMessageData.messageWithError,
                     isMine = true,
                     ownCapabilities = ChannelCapabilities.toSet(),
+                    onToggleOriginalText = {},
                 ),
             )
         }

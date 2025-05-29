@@ -42,6 +42,7 @@ internal class RegularMessageContentTest : SnapshotTest {
                         message = io.getstream.chat.android.previewdata.PreviewMessageData.message1,
                         isMine = true,
                         ownCapabilities = ChannelCapabilities.toSet(),
+                        onToggleOriginalText = {},
                     ),
                 )
             }
@@ -57,6 +58,7 @@ internal class RegularMessageContentTest : SnapshotTest {
                         message = io.getstream.chat.android.previewdata.PreviewMessageData.messageWithError,
                         isMine = true,
                         ownCapabilities = ChannelCapabilities.toSet(),
+                        onToggleOriginalText = {},
                     ),
                 )
             }
@@ -72,6 +74,7 @@ internal class RegularMessageContentTest : SnapshotTest {
                         message = io.getstream.chat.android.previewdata.PreviewMessageData.message1,
                         isMine = false,
                         ownCapabilities = ChannelCapabilities.toSet(),
+                        onToggleOriginalText = {},
                     ),
                 )
             }

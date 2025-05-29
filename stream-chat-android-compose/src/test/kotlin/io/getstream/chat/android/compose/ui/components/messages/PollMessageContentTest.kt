@@ -49,6 +49,7 @@ internal class PollMessageContentTest : SnapshotTest {
                         message = io.getstream.chat.android.previewdata.PreviewMessageData.messageWithPoll,
                         isMine = true,
                         ownCapabilities = ChannelCapabilities.toSet(),
+                        onToggleOriginalText = {},
                     ),
                 )
             }
@@ -71,6 +72,7 @@ internal class PollMessageContentTest : SnapshotTest {
                         message = io.getstream.chat.android.previewdata.PreviewMessageData.messageWithError,
                         isMine = true,
                         ownCapabilities = ChannelCapabilities.toSet(),
+                        onToggleOriginalText = {},
                     ),
                 )
             }

@@ -230,6 +230,13 @@ public data class Message(
     val skipEnrichUrl: Boolean = false,
 
     /**
+     * If the message should show the original text.
+     *
+     * Note: This property is local only, it is not sent to the backend.
+     */
+    val showOriginalText: Boolean = false,
+
+    /**
      * Contains moderation details of the message. (used by moderation v1)
      */
     val moderationDetails: MessageModerationDetails? = null,

@@ -40,6 +40,7 @@ internal class EmojiMessageContentTest : SnapshotTest {
                     message = Message(text = "\uD83D\uDE2E"),
                     isMine = true,
                     ownCapabilities = ChannelCapabilities.toSet(),
+                    onToggleOriginalText = {},
                 ),
             )
         }
@@ -53,6 +54,7 @@ internal class EmojiMessageContentTest : SnapshotTest {
                     message = Message(text = "\uD83D\uDE2E", type = MessageType.ERROR),
                     isMine = true,
                     ownCapabilities = ChannelCapabilities.toSet(),
+                    onToggleOriginalText = {},
                 ),
             )
         }

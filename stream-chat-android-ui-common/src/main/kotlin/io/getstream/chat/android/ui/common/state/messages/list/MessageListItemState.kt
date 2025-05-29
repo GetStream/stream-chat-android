@@ -55,6 +55,7 @@ public sealed class HasMessageListItemState : MessageListItemState() {
  * @param focusState The current [MessageFocusState] of the message, used to focus the message in the ui.
  * @param messageReadBy The list of [ChannelUserRead] for the message.
  * @param ownCapabilities The capabilities of the current user in the channel.
+ * @param onToggleOriginalText Callback to toggle the original text of the message.
  */
 public data class MessageItemState(
     public override val message: Message = Message(),
@@ -69,6 +70,7 @@ public data class MessageItemState(
     public val focusState: MessageFocusState? = null,
     public val messageReadBy: List<ChannelUserRead> = emptyList(),
     public val ownCapabilities: Set<String>,
+    public val onToggleOriginalText: (Message) -> Unit,
 ) : HasMessageListItemState()
 
 /**

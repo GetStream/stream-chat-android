@@ -260,6 +260,13 @@ public class MessageListViewModel(
     }
 
     /**
+     * Toggles between the translated and the original text of the message.
+     */
+    public fun toggleOriginalText(messageId: String) {
+        messageListController.toggleOriginalText(messageId)
+    }
+
+    /**
      * Used to dismiss a specific message action, such as delete, reply, edit or something similar.
      *
      * @param messageAction The action to dismiss.
