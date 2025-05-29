@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.messages.list
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -214,6 +213,8 @@ public fun MessageList(
             )
         }
     },
+    leadingMessageContent: (@Composable LazyItemScope.() -> Unit)? = null,
+    trailingMessageContent: (@Composable LazyItemScope.() -> Unit)? = null,
 ) {
     MessageList(
         reactionSorting = reactionSorting,
@@ -244,6 +245,8 @@ public fun MessageList(
         onClosePoll = onClosePoll,
         onAddAnswer = onAddAnswer,
         onReply = onReply,
+        leadingMessageContent = leadingMessageContent,
+        trailingMessageContent = trailingMessageContent,
     )
 }
 
@@ -497,6 +500,8 @@ public fun MessageList(
             )
         }
     },
+    leadingMessageContent: (@Composable LazyItemScope.() -> Unit)? = null,
+    trailingMessageContent: (@Composable LazyItemScope.() -> Unit)? = null,
 ) {
     val isLoading = currentState.isLoading
     val messages = currentState.messageItems
@@ -525,6 +530,8 @@ public fun MessageList(
                     itemContent = itemContent,
                     onMessagesEndReached = onMessagesPageEndReached,
                     onScrollToBottom = onScrollToBottom,
+                    leadingMessageContent = leadingMessageContent,
+                    trailingMessageContent = trailingMessageContent,
                 )
 
                 /** Clean up: Pause any playing audio tracks in onPause(). **/
