@@ -90,14 +90,8 @@ internal fun ChannelInfoMemberInfoModalSheet(
         ChannelInfoMemberInfoModalSheetContent(
             state = state,
             onViewAction = { action ->
-                // We need to handle the dismissal of the sheet ourselves
-                // because we are hiding it manually.
+                viewModel.onViewAction(action)
                 scope.launch { sheetState.hide() }
-                    .invokeOnCompletion {
-                        if (!sheetState.isVisible) {
-                            viewModel.onViewAction(action)
-                        }
-                    }
             },
         )
     }
