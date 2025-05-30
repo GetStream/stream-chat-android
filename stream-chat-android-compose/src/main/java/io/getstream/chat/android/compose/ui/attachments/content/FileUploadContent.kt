@@ -66,7 +66,7 @@ public fun FileUploadContent(
 
     Column(modifier = modifier) {
         for (attachment in message.attachments) {
-            FileUploadItem(
+            ChatTheme.componentFactory.FileUploadItem(
                 modifier = Modifier
                     .padding(2.dp)
                     .fillMaxWidth()

@@ -96,7 +96,7 @@ public fun FileAttachmentContent(
             .testTag("Stream_MultipleFileAttachmentsColumn"),
     ) {
         for (attachment in message.attachments) {
-            FileAttachmentItem(
+            ChatTheme.componentFactory.FileAttachmentItem(
                 modifier = Modifier
                     .padding(2.dp)
                     .fillMaxWidth()
