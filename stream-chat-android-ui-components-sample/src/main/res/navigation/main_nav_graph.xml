@@ -234,15 +234,14 @@
         <argument
             android:name="cid"
             app:argType="string"
-            app:nullable="true"
             />
 
-        <argument
-            android:name="userData"
-            android:defaultValue="@null"
-            app:argType="io.getstream.chat.ui.sample.feature.chat.info.UserData"
-            app:nullable="true"
-            />
+<!--        <argument-->
+<!--            android:name="userData"-->
+<!--            android:defaultValue="@null"-->
+<!--            app:argType="io.getstream.chat.ui.sample.feature.chat.info.UserData"-->
+<!--            app:nullable="true"-->
+<!--            />-->
 
         <action
             android:id="@+id/action_chatInfoFragment_to_chatInfoSharedGroupsFragment"
@@ -359,7 +358,6 @@
         <argument
             android:name="cid"
             app:argType="string"
-            app:nullable="false"
             />
 
         <action
@@ -405,9 +403,15 @@
         android:name="io.getstream.chat.ui.sample.feature.chat.preview.ChatPreviewFragment"
         android:label="ChatPreviewFragment"
         >
+<!--        <argument-->
+<!--            android:name="userData"-->
+<!--            app:argType="io.getstream.chat.ui.sample.feature.chat.info.UserData"-->
+<!--            app:nullable="false"-->
+<!--            />-->
+
         <argument
-            android:name="userData"
-            app:argType="io.getstream.chat.ui.sample.feature.chat.info.UserData"
+            android:name="memberId"
+            app:argType="string"
             app:nullable="false"
             />
 
@@ -483,7 +487,7 @@
 
     <fragment
         android:id="@+id/componentBrowserSearchViewFragment"
-        android:name="io.getstream.chat.ui.uitests.search.ComponentBrowserSearchViewFragment"
+        android:name="io.getstream.chat.ui.sample.feature.componentbrowser.search.ComponentBrowserSearchViewFragment"
         android:label="ComponentBrowserSearchViewFragment"
         />
 
