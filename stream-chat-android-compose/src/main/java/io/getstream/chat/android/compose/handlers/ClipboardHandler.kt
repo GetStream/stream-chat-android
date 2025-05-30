@@ -24,6 +24,11 @@ import io.getstream.chat.android.models.User
 /**
  * Abstraction over the [ClipboardHandlerImpl] that allows users to copy messages.
  */
+@Deprecated(
+    message = "Use `ClipboardHandler` from `ui.common.helper` instead.",
+    replaceWith = ReplaceWith("ClipboardHandler", "io.getstream.chat.android.ui.common.helper"),
+    level = DeprecationLevel.WARNING,
+)
 public fun interface ClipboardHandler {
 
     /**
@@ -38,6 +43,11 @@ public fun interface ClipboardHandler {
  * @param clipboardManager System service that allows for clipboard operations, such as putting
  * new data on the clipboard.
  */
+@Deprecated(
+    message = "Use `ClipboardHandlerImpl` from `ui.common.helper` instead.",
+    replaceWith = ReplaceWith("ClipboardHandlerImpl", "io.getstream.chat.android.ui.common.helper"),
+    level = DeprecationLevel.WARNING,
+)
 public class ClipboardHandlerImpl(
     private val clipboardManager: ClipboardManager,
     private val autoTranslationEnabled: Boolean = false,

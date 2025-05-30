@@ -69,7 +69,10 @@ public class ThreePaneNavigator(
         if (canNavigateBack()) _destinations.removeAt(_destinations.lastIndex)
     }
 
-    internal fun popUpTo(pane: ThreePaneRole) {
+    /**
+     * Pops up to the provided [pane].
+     */
+    public fun popUpTo(pane: ThreePaneRole) {
         while (canNavigateBack() && _destinations[_destinations.lastIndex].pane != pane) {
             _destinations.removeAt(_destinations.lastIndex)
         }

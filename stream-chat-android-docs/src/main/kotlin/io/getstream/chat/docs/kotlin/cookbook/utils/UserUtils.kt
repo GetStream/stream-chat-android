@@ -28,8 +28,8 @@ val userCredentials = UserCredentials(
     apiKey = "qx5us2v6xvmh",
     user = User(
         id = "filip",
-        name = "Filip Babić",
-        image = "https://ca.slack-edge.com/T02RM6X6B-U022AFX9D2S-f7bcb3d56180-128",
+        name = "Chewbacca",
+        image = "https://vignette.wikia.nocookie.net/starwars/images/4/48/Chewbacca_TLJ.png",
     ),
     token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZmlsaXAifQ.WKqTjU6fHHjtFej-sUqS2ml3Rvdqn4Ptrf7jfKqzFgU",
 )

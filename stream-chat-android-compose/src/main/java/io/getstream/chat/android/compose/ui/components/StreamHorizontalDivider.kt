@@ -18,13 +18,14 @@ package io.getstream.chat.android.compose.ui.components
 
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 @Composable
-internal fun StreamHorizontalDivider() {
+internal fun StreamHorizontalDivider(thickness: Dp = .5.dp) {
     HorizontalDivider(
-        thickness = .5.dp,
+        thickness = thickness,
         color = ChatTheme.colors.borders,
     )
 }

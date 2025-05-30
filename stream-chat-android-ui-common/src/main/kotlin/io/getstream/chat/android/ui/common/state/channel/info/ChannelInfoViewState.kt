@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.common.state.channel.info
 
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.utils.ExpandableList
 import io.getstream.chat.android.ui.common.utils.emptyExpandableList
@@ -38,77 +39,73 @@ public sealed interface ChannelInfoViewState {
     /**
      * Represents the content state of the channel information.
      *
+     * @param owner The owner of the channel.
      * @param members The list of members in the channel.
-     * @param name The name of the channel.
-     * @param isMuted Indicates whether the channel is muted.
-     * @param isHidden Indicates whether the channel is hidden.
-     * @param capability The capabilities of the current user in the channel.
+     * @param options The list of options available in the channel information UI.
      */
     public data class Content(
+        val owner: User = User(),
         val members: ExpandableList<Member> = emptyExpandableList(),
-        val name: String = "",
-        val isMuted: Boolean = false,
-        val isHidden: Boolean = false,
-        val capability: Capability = Capability(),
+        val options: List<Option> = emptyList(),
     ) : ChannelInfoViewState {
 
         /**
-         * Represents the capabilities of the current user in the channel.
-         *
-         * @param canAddMembers Indicates if the user can add members to the channel.
-         * @param canRemoveMembers Indicates if the user can remove members from the channel.
-         * @param canBanMembers Indicates if the user can ban members from the channel.
-         * @param canRenameChannel Indicates if the user can rename the channel.
-         * @param canMuteChannel Indicates if the user can mute the channel.
-         * @param canLeaveChannel Indicates if the user can leave the channel.
-         * @param canDeleteChannel Indicates if the user can delete the channel.
+         * Represents the options available in the channel information UI.
          */
-        public data class Capability(
-            val canAddMembers: Boolean = false,
-            val canRemoveMembers: Boolean = false,
-            val canBanMembers: Boolean = false,
-            val canRenameChannel: Boolean = false,
-            val canMuteChannel: Boolean = false,
-            val canLeaveChannel: Boolean = false,
-            val canDeleteChannel: Boolean = false,
-        )
-
-        /**
-         * Represents a member of the channel.
-         *
-         * @param user The user object representing the member.
-         * @param role The role of the member in the channel.
-         */
-        public data class Member(
-            val user: User,
-            val role: Role,
-        )
-
-        /**
-         * Represents the role of a member in the channel.
-         */
-        public sealed interface Role {
+        public sealed interface Option {
             /**
-             * Represents the owner role in the channel.
+             * Represents a separator option in the channel information UI.
              */
-            public data object Owner : Role
+            public data object Separator : Option
 
             /**
-             * Represents the moderator role in the channel.
+             * Represents an option to add a member to the channel.
              */
-            public data object Moderator : Role
+            public data object AddMember : Option
 
             /**
-             * Represents the member role in the channel.
-             */
-            public data object Member : Role
-
-            /**
-             * Represents other roles in the channel.
+             * Represents an option with user information.
              *
-             * @param value The string value representing the custom role.
+             * @param user The user whose information is displayed.
              */
-            public data class Other(val value: String) : Role
+            public data class UserInfo(val user: User) : Option
+
+            /**
+             * Represents an option to rename the channel.
+             *
+             * @param name The current name of the channel.
+             * @param isReadOnly Indicates if the channel is read-only.
+             */
+            public data class RenameChannel(val name: String, val isReadOnly: Boolean) : Option
+
+            /**
+             * Represents an option to mute the channel.
+             *
+             * @param isMuted Indicates if the channel is muted.
+             */
+            public data class MuteChannel(val isMuted: Boolean) : Option
+
+            /**
+             * Represents an option to hide the channel.
+             *
+             * @param isHidden Indicates if the channel is hidden.
+             */
+            public data class HideChannel(val isHidden: Boolean) : Option
+
+            /**
+             * Represents an option to view pinned messages in the channel.
+             */
+            public data object PinnedMessages : Option
+
+            /**
+             * Represents an option to leave the channel.
+             */
+            public data object LeaveChannel : Option
+
+            /**
+             * Represents an option to delete the channel.
+             */
+            public data object DeleteChannel : Option
         }
     }
 }

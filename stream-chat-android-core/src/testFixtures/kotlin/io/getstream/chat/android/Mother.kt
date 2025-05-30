@@ -602,6 +602,7 @@ public fun randomMember(
     inviteRejectedAt: Date? = randomDate(),
     shadowBanned: Boolean = randomBoolean(),
     banned: Boolean = false,
+    channelRole: String = randomString(),
     banExpires: Date? = null,
     pinnedAt: Date? = null,
     archivedAt: Date? = null,
@@ -614,6 +615,7 @@ public fun randomMember(
     inviteRejectedAt = inviteRejectedAt,
     shadowBanned = shadowBanned,
     banned = banned,
+    channelRole = channelRole,
     banExpires = banExpires,
     pinnedAt = pinnedAt,
     archivedAt = archivedAt,
@@ -718,6 +720,12 @@ public fun randomChatNetworkError(
     serverErrorCode = serverErrorCode,
     statusCode = statusCode,
     cause = cause,
+)
+
+public fun randomGenericError(
+    description: String = randomString(),
+): Error.GenericError = Error.GenericError(
+    message = description,
 )
 
 public fun randomReactionGroup(
