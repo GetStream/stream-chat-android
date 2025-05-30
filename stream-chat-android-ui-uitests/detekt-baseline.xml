@@ -17,11 +17,7 @@
     <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamFld29vbmcifQ.SoSQ1zkdpD-xzrdTnNioFOZQ5pKKcLJj4Jw8wAzOhno"</ID>
     <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamMifQ.WtWn2rgZyJNOpg48xUgYoMnG3BvMD5524RND7e7Mmhk"</ID>
     <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibGVhbmRybyJ9.HGQfqwt1Jj2W25QQLO8hbnNeOrUl04q4a_AjHy0sFWM"</ID>
-    <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWFyaW4ifQ.jSLjDAcGcz7hHrDyIU8OaSgRDg63aw2cW4C1nqIsB5c"</ID>
-    <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MSJ9.T-LLXoVmdX1Huxg-gjUnBJ7TEnlyGSfa9zFw-N50zLY"</ID>
-    <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicWF0ZXN0MiJ9.EVNBLb7-yR823jv2jtDcjYBQCxBAQnhLDNhpMjcJ1uI"</ID>
     <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicmFmYWwifQ.Fx_BMBwlwbfZzSonziklhGt0KWTKVnLRtXRI5RIuJKU"</ID>
-    <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidG9taXNsYXYifQ.-n5L1OmG4KpL0O16h8SeqKJID0DzUmy_nilqTgi8EZQ"</ID>
     <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidG9tbWFzbyJ9.1H7yz3CZ_wtSxj0B36tOkfdFtKzULSPwRyesufrTGpM"</ID>
     <ID>MaxLineLength:UserCredentials.kt$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidGhpZXJyeSJ9.pfG5thPeT7ytMSExrg3yoXQ02AqrLj2gIxuBZkTlr_c"</ID>
     <ID>VariableNaming:ComponentBrowserSearchViewFragment.kt$ComponentBrowserSearchViewFragment$private val TAG = ComponentBrowserSearchViewFragment::class.simpleName</ID>

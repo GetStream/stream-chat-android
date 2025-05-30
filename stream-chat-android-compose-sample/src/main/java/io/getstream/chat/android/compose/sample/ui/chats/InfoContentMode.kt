@@ -34,9 +34,9 @@ sealed class InfoContentMode(open val channelId: String) : Serializable {
     data object Hidden : InfoContentMode("")
 
     /**
-     * Display the info for a single channel.
+     * Display the info for a direct channel.
      */
-    data class SingleChannelInfo(override val channelId: String) : InfoContentMode(channelId)
+    data class DirectChannelInfo(override val channelId: String) : InfoContentMode(channelId)
 
     /**
      * Display the info for a group channel.

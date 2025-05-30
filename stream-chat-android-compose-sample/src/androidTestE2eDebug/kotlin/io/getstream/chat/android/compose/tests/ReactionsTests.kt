@@ -25,6 +25,7 @@ import io.getstream.chat.android.compose.uiautomator.seconds
 import io.getstream.chat.android.e2e.test.mockserver.ReactionType
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
+import org.junit.Ignore
 import org.junit.Test
 
 class ReactionsTests : StreamTestCase() {
@@ -181,6 +182,7 @@ class ReactionsTests : StreamTestCase() {
     }
 
     @AllureId("5714")
+    @Ignore("https://linear.app/stream/issue/AND-578")
     @Test
     fun test_userAddsReactionWhileOffline() {
         step("GIVEN user opens the channel") {

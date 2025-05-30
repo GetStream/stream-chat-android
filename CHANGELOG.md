@@ -71,6 +71,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Introduce **experimental** `DirectChannelInfoScreen` and `GroupChannelInfoScreen` for displaying channel information and the available channel actions. [#5773](https://github.com/GetStream/stream-chat-android/pull/5773)
 - Add `FileAttachmentPreviewContent`, `FileAttachmentContent`,`FileAttachmentItem`, `FileUploadContent` and `FileUploadItem` to `ChatComponentFactory`. [#5791](https://github.com/GetStream/stream-chat-android/pull/5791)
 
 ### ⚠️ Changed

@@ -45,10 +45,10 @@ class FakeImageLoader(
     private val context: Context,
     private val userAvatars: Map<String, Int> = mapOf(
         AVATAR_JC to R.drawable.avatar_jc,
-        AVATAR_AMIT to R.drawable.avatar_amit,
-        AVATAR_RAFAL to R.drawable.avatar_rafal,
-        AVATAR_FILIP to R.drawable.avatar_filip,
-        AVATAR_BELAL to R.drawable.avatar_belal,
+        AVATAR_LEIA to R.drawable.avatar_leia,
+        AVATAR_ANAKIN to R.drawable.avatar_anakin,
+        AVATAR_CHEWBACCA to R.drawable.avatar_chewbacca,
+        AVATAR_HAN to R.drawable.avatar_han,
     ),
 ) : ImageLoader {
 
@@ -109,9 +109,9 @@ class FakeImageLoader(
 
     companion object {
         const val AVATAR_JC: String = "https://example.com/jc.jpeg"
-        const val AVATAR_AMIT: String = "https://example.com/amit.jpeg"
-        const val AVATAR_RAFAL: String = "https://example.com/rafal.jpeg"
-        const val AVATAR_FILIP: String = "https://example.com/filip.jpeg"
-        const val AVATAR_BELAL: String = "https://example.com/belal.jpeg"
+        const val AVATAR_LEIA: String = "https://example.com/leia.jpeg"
+        const val AVATAR_ANAKIN: String = "https://example.com/anakin.jpeg"
+        const val AVATAR_CHEWBACCA: String = "https://example.com/chewbacca.jpeg"
+        const val AVATAR_HAN: String = "https://example.com/belal.jpeg"
     }
 }

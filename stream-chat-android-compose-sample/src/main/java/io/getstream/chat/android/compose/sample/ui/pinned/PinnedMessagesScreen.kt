@@ -39,7 +39,7 @@ fun PinnedMessagesScreen(
         modifier = modifier,
         topBar = {
             AppToolbar(
-                title = stringResource(id = R.string.channel_info_option_pinned_messages),
+                title = stringResource(id = R.string.pinned_messages_title),
                 onBack = onNavigationIconClick,
             )
         },
