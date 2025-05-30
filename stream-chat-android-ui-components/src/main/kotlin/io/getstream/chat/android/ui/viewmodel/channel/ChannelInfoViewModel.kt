@@ -27,6 +27,7 @@ import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewC
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.helper.CopyToClipboardHandler
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
+import io.getstream.chat.android.ui.utils.asSingleLiveEvent
 
 /**
  * ViewModel for managing channel information and its actions.
@@ -58,7 +59,7 @@ public class ChannelInfoViewModel(
     /**
      * @see [ChannelInfoViewController.events]
      */
-    public val events: LiveData<ChannelInfoViewEvent> = controller.events.asLiveData()
+    public val events: LiveData<ChannelInfoViewEvent> = controller.events.asSingleLiveEvent()
 
     /**
      * @see [ChannelInfoViewController.onViewAction]
