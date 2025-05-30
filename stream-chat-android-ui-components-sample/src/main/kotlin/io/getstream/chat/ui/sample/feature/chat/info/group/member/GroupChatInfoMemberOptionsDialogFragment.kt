@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalStreamChatApi::class)
+
 package io.getstream.chat.ui.sample.feature.chat.info.group.member
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.text.format.DateUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -24,44 +27,27 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Member
-import io.getstream.chat.android.state.utils.EventObserver
+import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewAction
+import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewEvent
+import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoMemberViewState
 import io.getstream.chat.android.ui.utils.extensions.getLastSeenText
+import io.getstream.chat.android.ui.viewmodel.channel.ChannelInfoMemberViewModel
+import io.getstream.chat.android.ui.viewmodel.channel.ChannelInfoMemberViewModelFactory
 import io.getstream.chat.ui.sample.R
-import io.getstream.chat.ui.sample.common.navigateSafely
-import io.getstream.chat.ui.sample.common.showToast
 import io.getstream.chat.ui.sample.databinding.ChatInfoGroupMemberOptionsFragmentBinding
-import io.getstream.chat.ui.sample.feature.chat.info.MemberData
-import io.getstream.chat.ui.sample.feature.chat.info.group.GroupChatInfoFragmentDirections
-import io.getstream.chat.ui.sample.feature.chat.info.toMember
-import io.getstream.chat.ui.sample.feature.chat.info.toMemberData
-import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
+import kotlinx.parcelize.Parcelize
+import kotlinx.parcelize.RawValue
 import java.util.Date
 
 class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
 
-    private val cid: String by lazy {
-        requireArguments().getString(ARG_CID)!!
-    }
-    private val memberData: MemberData by lazy {
-        requireArguments().getSerializable(ARG_MEMBER_DATA) as MemberData
-    }
-    private val channelName: String by lazy {
-        requireArguments().getString(ARG_CHANNEL_NAME)!!
-    }
-    private val member: Member by lazy {
-        memberData.toMember()
-    }
-    private val ownCapabilities: Set<String> by lazy {
-        requireArguments().getStringArrayList(ARG_OWN_CAPABILITIES)?.toSet() ?: setOf()
-    }
+    private val cid: String by lazy { requireArguments().getString(ARG_CID)!! }
+    private val memberId: String by lazy { requireArguments().getString(ARG_MEMBER_ID)!! }
 
-    private val viewModel: GroupChatInfoMemberOptionsViewModel by viewModels {
-        GroupChatInfoMemberOptionsViewModelFactory(cid, member.user.id)
-    }
+    private val viewModel: ChannelInfoMemberViewModel by viewModels { ChannelInfoMemberViewModelFactory(cid, memberId) }
     private var _binding: ChatInfoGroupMemberOptionsFragmentBinding? = null
     private val binding get() = _binding!!
 
@@ -79,87 +65,18 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
-        binding.apply {
-            userNameTextView.text = member.user.name
-            lastSeenTextView.text = member.user.getLastSeenText(requireContext())
-            banExpiresTextView.isVisible = member.banned
-            banExpiresTextView.text = formatBanExpiry(member.banExpires)
-            userAvatarView.setUser(member.user)
-            optionViewInfo.setOnOptionClickListener {
-                findNavController().navigateSafely(
-                    GroupChatInfoFragmentDirections.actionOpenChatInfo(
-                        userData = memberData.user,
-                        cid = viewModel.state.value!!.directChannelCid,
-                    ),
-                )
-                dismiss()
-            }
-            optionMessage.setOnClickListener {
-                viewModel.onAction(GroupChatInfoMemberOptionsViewModel.Action.MessageClicked)
-            }
-
-            if (isAnonymousChannel(cid) || !ownCapabilities.contains(ChannelCapabilities.BAN_CHANNEL_MEMBERS)) {
-                optionBan.isVisible = false
-            } else {
-                optionBan.setOnOptionText(
-                    getString(
-                        when (member.banned) {
-                            true -> R.string.chat_group_info_user_option_unban
-                            else -> R.string.chat_group_info_user_option_ban
-                        },
-                    ),
-                )
-                optionBan.setOnClickListener {
-                    viewModel.onAction(
-                        when (member.banned) {
-                            true -> GroupChatInfoMemberOptionsViewModel.Action.UnbanMember
-                            else -> GroupChatInfoMemberOptionsViewModel.Action.BanMember()
-                        },
-                    )
-                }
-            }
-
-            if (isAnonymousChannel(cid) || !ownCapabilities.contains(ChannelCapabilities.UPDATE_CHANNEL_MEMBERS)) {
-                optionRemove.isVisible = false
-            } else {
-                optionRemove.setOnClickListener {
-                    ConfirmationDialogFragment.newInstance(
-                        iconResId = R.drawable.ic_delete,
-                        iconTintResId = R.color.red,
-                        title = getString(R.string.chat_group_info_user_remove_title, member.user.name),
-                        description = getString(
-                            R.string.chat_group_info_user_remove_description,
-                            member.user.name,
-                            channelName,
-                        ),
-                        confirmText = getString(R.string.remove),
-                        cancelText = getString(R.string.cancel),
-                    ).apply {
-                        confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener {
-                            val action = GroupChatInfoMemberOptionsViewModel.Action.RemoveFromChannel(member.user.name)
-                            viewModel.onAction(action)
-                        }
-                    }.show(parentFragmentManager, ConfirmationDialogFragment.TAG)
-                }
-            }
-            optionCancel.setOnOptionClickListener {
-                dismiss()
-            }
-        }
     }
 
-    private fun isAnonymousChannel(cid: String): Boolean = cid.contains("!members")
-
     private fun formatBanExpiry(banExpires: Date?): String {
-        if (banExpires == null) return getString(R.string.chat_group_info_user_ban_no_expiry)
+        if (banExpires == null) return getString(R.string.stream_ui_channel_info_member_modal_ban_no_expiration)
         val currentTime = System.currentTimeMillis()
         val diffInMillis = banExpires.time - currentTime
 
         return if (diffInMillis <= 0) {
-            getString(R.string.chat_group_info_user_ban_expired)
+            getString(R.string.stream_ui_channel_info_member_modal_ban_expired)
         } else {
             getString(
-                R.string.chat_group_info_user_ban_expires,
+                R.string.stream_ui_channel_info_member_modal_ban_expires_at,
                 DateUtils.getRelativeTimeSpanString(
                     banExpires.time,
                     currentTime,
@@ -171,44 +88,73 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun initViewModel() {
-        viewModel.state.observe(viewLifecycleOwner) { state ->
-            if (!state.loading) {
-                binding.apply {
-                    optionMessage.isVisible = true
-                    optionViewInfo.isVisible = state.directChannelCid != null
+        viewModel.state.observe(viewLifecycleOwner, ::bindState)
+        viewModel.events.observe(viewLifecycleOwner) { event ->
+            val result = event.asResult()
+            parentFragmentManager.setFragmentResult(REQUEST_KEY, result)
+            dismiss()
+        }
+    }
+
+    private fun bindState(state: ChannelInfoMemberViewState) {
+        binding.apply {
+            optionCancel.setOnOptionClickListener(::dismiss)
+            optionViewInfo.isVisible = false
+            optionMessage.isVisible = false
+            optionBan.isVisible = false
+            optionRemove.isVisible = false
+            when (state) {
+                is ChannelInfoMemberViewState.Loading -> {
+                    // TODO: Show loading state if needed
+                }
+
+                is ChannelInfoMemberViewState.Content -> {
+                    val member = state.member
+                    val user = member.user
+                    userNameTextView.text = user.name
+                    lastSeenTextView.text = user.getLastSeenText(requireContext())
+                    banExpiresTextView.isVisible = member.banned
+                    banExpiresTextView.text = formatBanExpiry(member.banExpires)
+                    userAvatarView.setUser(user)
+
+                    state.options.forEach { option ->
+                        when (option) {
+                            is ChannelInfoMemberViewState.Content.Option.MessageMember -> {
+                                optionMessage.isVisible = true
+                                optionMessage.setOnClickListener {
+                                    viewModel.onViewAction(ChannelInfoMemberViewAction.MessageMemberClick)
+                                }
+                            }
+
+                            is ChannelInfoMemberViewState.Content.Option.BanMember -> {
+                                // TODO
+                                // optionBan.isVisible = true
+                                // optionBan.setOnOptionText(getString(R.string.chat_group_info_user_option_ban))
+                                // optionBan.setOnClickListener {
+                                //     viewModel.onViewAction(ChannelInfoMemberViewAction.BanMemberClick)
+                                // }
+                            }
+
+                            is ChannelInfoMemberViewState.Content.Option.UnbanMember -> {
+                                // TODO
+                                // optionBan.isVisible = true
+                                // optionBan.setOnOptionText(getString(R.string.chat_group_info_user_option_unban))
+                                // optionBan.setOnClickListener {
+                                //     viewModel.onViewAction(ChannelInfoMemberViewAction.UnbanMemberClick)
+                                // }
+                            }
+
+                            is ChannelInfoMemberViewState.Content.Option.RemoveMember -> {
+                                optionRemove.isVisible = true
+                                optionRemove.setOnClickListener {
+                                    viewModel.onViewAction(ChannelInfoMemberViewAction.RemoveMemberClick)
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
-        viewModel.events.observe(
-            viewLifecycleOwner,
-            EventObserver {
-                when (it) {
-                    GroupChatInfoMemberOptionsViewModel.UiEvent.Dismiss -> dismiss()
-                    is GroupChatInfoMemberOptionsViewModel.UiEvent.RedirectToChat -> {
-                        findNavController().navigateSafely(
-                            GroupChatInfoFragmentDirections.actionOpenChat(cid = it.cid),
-                        )
-                        dismiss()
-                    }
-                    GroupChatInfoMemberOptionsViewModel.UiEvent.RedirectToChatPreview -> {
-                        findNavController().navigateSafely(
-                            GroupChatInfoFragmentDirections.actionOpenChatPreview(memberData.user),
-                        )
-                        dismiss()
-                    }
-                }
-            },
-        )
-        viewModel.errorEvents.observe(
-            viewLifecycleOwner,
-            EventObserver {
-                when (it) {
-                    is GroupChatInfoMemberOptionsViewModel.ErrorEvent.RemoveMemberError -> R.string.chat_group_info_error_remove_member
-                    is GroupChatInfoMemberOptionsViewModel.ErrorEvent.BanMemberError -> R.string.chat_group_info_error_ban_member
-                    is GroupChatInfoMemberOptionsViewModel.ErrorEvent.UnbanMemberError -> R.string.chat_group_info_error_unban_member
-                }.let(::showToast)
-            },
-        )
     }
 
     override fun onDestroyView() {
@@ -218,20 +164,44 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
 
     companion object {
         const val TAG = "GroupChatInfoMemberOptionsDialogFragment"
+        const val REQUEST_KEY = "${TAG}_requestKey"
         private const val ARG_CID = "cid"
-        private const val ARG_CHANNEL_NAME = "channel_name"
-        private const val ARG_MEMBER_DATA = "member_data"
-        private const val ARG_OWN_CAPABILITIES = "own_capabilities"
+        private const val ARG_MEMBER_ID = "memberId"
+        private const val RESULT = "event"
 
-        fun newInstance(cid: String, channelName: String, member: Member, ownCapabilities: Set<String>) =
+        fun newInstance(cid: String, memberId: String): GroupChatInfoMemberOptionsDialogFragment =
             GroupChatInfoMemberOptionsDialogFragment().apply {
-                arguments =
-                    bundleOf(
-                        ARG_CID to cid,
-                        ARG_CHANNEL_NAME to channelName,
-                        ARG_MEMBER_DATA to member.toMemberData(),
-                        ARG_OWN_CAPABILITIES to ownCapabilities.toList(),
-                    )
+                arguments = bundleOf(
+                    ARG_CID to cid,
+                    ARG_MEMBER_ID to memberId,
+                )
             }
+
+        fun getEventFromResult(result: Bundle): ChannelInfoMemberViewEvent =
+            when (val option = result.get(RESULT) as FragmentResult) {
+                is FragmentResult.MessageMember ->
+                    ChannelInfoMemberViewEvent.MessageMember(option.memberId, option.distinctCid)
+
+                is FragmentResult.BanMember -> ChannelInfoMemberViewEvent.BanMember(option.member)
+                is FragmentResult.UnbanMember -> ChannelInfoMemberViewEvent.UnbanMember(option.member)
+                is FragmentResult.RemoveMember -> ChannelInfoMemberViewEvent.RemoveMember(option.member)
+            }
+
+        private fun ChannelInfoMemberViewEvent.asResult() = bundleOf(
+            RESULT to when (this) {
+                is ChannelInfoMemberViewEvent.MessageMember -> FragmentResult.MessageMember(memberId, distinctCid)
+                is ChannelInfoMemberViewEvent.BanMember -> FragmentResult.BanMember(member)
+                is ChannelInfoMemberViewEvent.UnbanMember -> FragmentResult.UnbanMember(member)
+                is ChannelInfoMemberViewEvent.RemoveMember -> FragmentResult.RemoveMember(member)
+            },
+        )
     }
+}
+
+@Parcelize
+private sealed interface FragmentResult : Parcelable {
+    data class MessageMember(val memberId: String, val distinctCid: String?) : FragmentResult
+    data class BanMember(val member: @RawValue Member) : FragmentResult
+    data class UnbanMember(val member: @RawValue Member) : FragmentResult
+    data class RemoveMember(val member: @RawValue Member) : FragmentResult
 }

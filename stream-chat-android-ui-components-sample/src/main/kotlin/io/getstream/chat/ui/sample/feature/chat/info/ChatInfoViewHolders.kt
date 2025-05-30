@@ -138,8 +138,7 @@ class ChatInfoGroupMemberViewHolder(
             binding.onlineTextView.text = user.getLastSeenText(itemView.context)
 
             val getString = { resId: Int -> itemView.context.getString(resId) }
-            val isOwner = item.member.user.id == item.createdBy.id
-            binding.channelRoleView.text = when (isOwner) {
+            binding.channelRoleView.text = when (item.isOwner) {
                 true -> getString(R.string.chat_group_info_owner)
                 else -> when (val role = item.member.channelRole) {
                     "channel_member" -> getString(R.string.chat_group_info_member)
@@ -162,7 +161,7 @@ class ChatInfoMembersSeparatorViewHolder(
 
     override fun bind(item: ChatInfoItem.MembersSeparator) {
         binding.membersSeparatorTextView.text =
-            itemView.context.getString(R.string.chat_group_info_option_members_separator_title, item.membersToShow)
+            itemView.context.getString(R.string.stream_ui_channel_info_expand_button, item.membersToShow)
     }
 }
 
