@@ -18,7 +18,6 @@ package io.getstream.chat.android.ui.common.state.channel.info
 
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Member
-import io.getstream.chat.android.models.User
 
 /**
  * Represents the state of the channel member information in the UI.
@@ -41,8 +40,8 @@ public sealed interface ChannelInfoMemberViewState {
      * @param options The list of options available for the member.
      */
     public data class Content(
-        val member: Member = Member(user = User()),
-        val options: List<Option> = emptyList(),
+        val member: Member,
+        val options: List<Option>,
     ) : ChannelInfoMemberViewState {
 
         /**
