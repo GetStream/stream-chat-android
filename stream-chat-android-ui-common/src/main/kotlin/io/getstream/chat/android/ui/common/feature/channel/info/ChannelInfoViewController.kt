@@ -94,8 +94,6 @@ public class ChannelInfoViewController(
      */
     public val events: SharedFlow<ChannelInfoViewEvent> = _events.asSharedFlow()
 
-    private var capabilities = emptySet<String>()
-
     init {
         @Suppress("OPT_IN_USAGE")
         channelState
@@ -126,8 +124,6 @@ public class ChannelInfoViewController(
         isMuted: Boolean,
         isHidden: Boolean,
     ) {
-        capabilities = channelData.ownCapabilities
-
         val contentMembers = members
             .run {
                 // Do not filter out the current user if the channel is a group channel or if there is only one member
