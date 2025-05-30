@@ -22,10 +22,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.MediaController
 import android.widget.Toast
+import androidx.annotation.OptIn
+import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
+import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.datasource.ResolvingDataSource
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.exoplayer.source.MediaSource
+import androidx.media3.ui.PlayerView
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
@@ -53,46 +64,7 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
         )
     }
 
-    /**
-     * If the video has been prepared and the video player
-     * is ready for playback.
-     *
-     * VideoView does not expose state so we use these to track
-     * state externally.
-     */
-    private var playbackPrepared = false
-        set(value) {
-            field = value
-            if (playbackPrepared && playbackStartRequested) {
-                binding.thumbnailImageView.visibility = View.GONE
-                binding.playButtonCardView.visibility = View.GONE
-                binding.progressBar.visibility = View.GONE
-            } else {
-                binding.thumbnailImageView.visibility = View.VISIBLE
-                binding.playButtonCardView.visibility = View.VISIBLE
-                binding.progressBar.visibility = View.GONE
-            }
-        }
-
-    /**
-     * If the user has pressed play.
-     *
-     * VideoView does not expose state so we use these to track
-     * state externally.
-     */
-    private var playbackStartRequested = false
-        set(value) {
-            field = value
-            if (!playbackPrepared && playbackStartRequested) {
-                binding.progressBar.visibility = View.VISIBLE
-                binding.playButtonCardView.visibility = View.GONE
-                binding.thumbnailImageView.visibility = View.GONE
-            } else {
-                binding.playButtonCardView.visibility = View.GONE
-                binding.thumbnailImageView.visibility = View.GONE
-                binding.progressBar.visibility = View.GONE
-            }
-        }
+    private var player: Player? = null
 
     /**
      * Resets the state and hides the controller.
@@ -102,8 +74,8 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
      */
     override fun onPause() {
         super.onPause()
+        player?.pause()
         resetState()
-        mediaController.hide()
     }
 
     /**
@@ -120,10 +92,6 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
         requireArguments().getString(ARG_ASSET_URL)
     }
 
-    private val mediaController: MediaController by lazy {
-        createMediaController(requireContext())
-    }
-
     private var imageClickListener: () -> Unit = {}
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -136,7 +104,19 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupVideoThumbnail()
         setupPlayButton()
-        loadVideo()
+        player = createPlayer()
+            .apply {
+                setMediaItem(MediaItem.fromUri(Uri.parse(assetUrl)))
+                prepare()
+            }
+            .also(::setupPlayerView)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+        player?.release()
+        player = null
     }
 
     private fun setupVideoThumbnail() {
@@ -149,7 +129,6 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
      * Resets this video page's state.
      */
     private fun resetState() {
-        playbackStartRequested = false
         binding.thumbnailImageView.visibility = View.VISIBLE
         binding.playButtonCardView.visibility = View.VISIBLE
     }
@@ -206,50 +185,63 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
 
     private fun setupOnPlayButtonClickedListener() {
         binding.playButtonCardView.setOnClickListener {
-            binding.videoView.start()
-            playbackStartRequested = true
+            binding.playerView.player?.play()
+            binding.thumbnailImageView.visibility = View.GONE
+            binding.playButtonCardView.visibility = View.GONE
         }
     }
 
-    private fun loadVideo() {
-        binding.videoView.apply {
-            setVideoURI(Uri.parse(assetUrl), ChatUI.videoHeadersProvider.getVideoRequestHeaders(assetUrl ?: ""))
-            this.setMediaController(mediaController)
-            setOnErrorListener { _, _, _ ->
+    @OptIn(UnstableApi::class)
+    private fun setupPlayerView(player: Player) {
+        binding.playerView.apply {
+            this.player = player
+            controllerShowTimeoutMs = CONTROLLER_SHOW_TIMEOUT
+            controllerAutoShow = false
+            controllerHideOnTouch = true
+            setShowPreviousButton(false)
+            setShowNextButton(false)
+            setShowBuffering(PlayerView.SHOW_BUFFERING_NEVER)
+        }
+    }
+
+    @OptIn(UnstableApi::class)
+    private fun createPlayer(): Player {
+        val player = ExoPlayer.Builder(requireContext())
+            .setMediaSourceFactory(createMediaSourceFactory())
+            .build()
+        player.addListener(object : Player.Listener {
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                val isBuffering = playbackState == Player.STATE_BUFFERING
+                _binding?.progressBar?.isVisible = isBuffering
+            }
+
+            override fun onPlayerError(error: PlaybackException) {
                 Toast.makeText(
                     requireContext(),
                     requireContext().getString(R.string.stream_ui_attachment_gallery_video_display_error),
                     Toast.LENGTH_SHORT,
                 ).show()
-                true
             }
-            setOnPreparedListener {
-                playbackPrepared = true
-            }
+        })
+        return player
+    }
 
-            mediaController.setAnchorView(binding.root)
+    @OptIn(UnstableApi::class)
+    private fun createMediaSourceFactory(): MediaSource.Factory {
+        val headers = ChatUI.videoHeadersProvider.getVideoRequestHeaders(assetUrl ?: "")
+        val baseDataSourceFactory = DefaultDataSource.Factory(requireContext())
+        val dataSourceFactory = ResolvingDataSource.Factory(baseDataSourceFactory) { dataSpec ->
+            dataSpec.withAdditionalHeaders(headers)
         }
-    }
-
-    /**
-     * Creates a custom instance of [MediaController].
-     *
-     * @param context The Context used to create the [MediaController].
-     */
-    private fun createMediaController(
-        context: Context,
-    ): MediaController {
-        return object : MediaController(context) {}
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+        return DefaultMediaSourceFactory(requireContext())
+            .setDataSourceFactory(dataSourceFactory)
     }
 
     companion object {
         private const val ARG_THUMB_URL = "thumb_url"
         private const val ARG_ASSET_URL = "asset_url"
+
+        private const val CONTROLLER_SHOW_TIMEOUT = 2000
 
         fun create(attachment: Attachment, imageClickListener: () -> Unit = {}): Fragment {
             return AttachmentGalleryVideoPageFragment().apply {

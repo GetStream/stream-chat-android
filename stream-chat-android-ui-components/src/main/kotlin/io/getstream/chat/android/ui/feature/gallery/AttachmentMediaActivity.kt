@@ -20,17 +20,21 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.KeyEvent
-import android.widget.MediaController
 import android.widget.Toast
-import android.widget.VideoView
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
+import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerView
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiActivityAttachmentMediaBinding
@@ -48,6 +52,8 @@ public class AttachmentMediaActivity : AppCompatActivity() {
     private val title: String? by lazy { intent.getStringExtra(KEY_TITLE) }
     private val type: String? by lazy { intent.getStringExtra(KEY_TYPE) }
     private val mimeType: String? by lazy { intent.getStringExtra(KEY_MIME_TYPE) }
+
+    private var player: Player? = null
 
     private val logger by taggedLogger("Chat:AttachmentMediaActivity")
 
@@ -70,7 +76,24 @@ public class AttachmentMediaActivity : AppCompatActivity() {
 
         setupEdgeToEdge()
         setupViews()
-        setupVideoView()
+        player = createPlayer()
+            .apply {
+                setMediaItem(MediaItem.fromUri(Uri.parse(url)))
+                prepare()
+                playWhenReady = true
+            }
+            .also(::setupPlayerView)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        player?.pause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        player?.release()
+        player = null
     }
 
     /**
@@ -98,28 +121,41 @@ public class AttachmentMediaActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * Initializes the [VideoView] with media controls and starts the playback.
-     */
-    private fun setupVideoView() {
-        val mediaController = createMediaController(this)
-        mediaController.setAnchorView(binding.contentContainer)
+    private fun createPlayer(): Player {
+        val player = ExoPlayer.Builder(this).build()
+        player.addListener(object : Player.Listener {
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                val isBuffering = playbackState == Player.STATE_BUFFERING
+                binding.progressBar.isVisible = isBuffering
+            }
 
-        binding.progressBar.isVisible = true
-        binding.videoView.apply {
-            setMediaController(mediaController)
-            setOnPreparedListener {
-                binding.progressBar.isVisible = false
-                start()
-                mediaController.show()
-            }
-            setOnErrorListener { _, _, _ ->
-                binding.progressBar.isVisible = false
+            override fun onPlayerError(error: PlaybackException) {
                 showPlaybackError()
-                true
             }
-            setVideoURI(Uri.parse(url))
+        })
+        return player
+    }
+
+    @OptIn(UnstableApi::class)
+    private fun setupPlayerView(player: Player) {
+        binding.playerView.apply {
+            this.player = player
+            setOnClickListener {
+                if (binding.controls.isVisible) {
+                    binding.controls.hide()
+                } else {
+                    binding.controls.show()
+                }
+            }
+            controllerHideOnTouch = true
+            setShowBuffering(PlayerView.SHOW_BUFFERING_NEVER)
+            artworkDisplayMode = PlayerView.ARTWORK_DISPLAY_MODE_OFF
         }
+        binding.controls.player = player
+        binding.controls.showTimeoutMs = CONTROLLER_SHOW_TIMEOUT
+        binding.controls.setShowNextButton(false)
+        binding.controls.setShowPreviousButton(false)
+        binding.controls.show()
     }
 
     /**
@@ -131,23 +167,6 @@ public class AttachmentMediaActivity : AppCompatActivity() {
             R.string.stream_ui_message_list_attachment_display_error,
             Toast.LENGTH_SHORT,
         ).show()
-    }
-
-    /**
-     * Creates a custom instance of [MediaController] which no longer intercepts
-     * back press actions to hide media controls.
-     *
-     * @param context The Context used to create the [MediaController].
-     */
-    private fun createMediaController(context: Context): MediaController {
-        return object : MediaController(context) {
-            override fun dispatchKeyEvent(event: KeyEvent): Boolean {
-                if (event.keyCode == KeyEvent.KEYCODE_BACK) {
-                    finish()
-                }
-                return super.dispatchKeyEvent(event)
-            }
-        }
     }
 
     public companion object {
@@ -170,6 +189,8 @@ public class AttachmentMediaActivity : AppCompatActivity() {
          * Represents the key for attachment type.
          */
         private const val KEY_TYPE: String = "type"
+
+        private const val CONTROLLER_SHOW_TIMEOUT = 2000
 
         /**
          * Used to build an [Intent] to start the [AttachmentMediaActivity] with the required data.

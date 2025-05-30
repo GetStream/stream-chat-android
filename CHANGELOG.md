@@ -60,6 +60,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improve the performance of playing video/audio attachments by using `ExoPlayer` instead of `VideoView`. [#5749](https://github.com/GetStream/stream-chat-android/pull/5749)
 
 ### ✅ Added
 
