@@ -127,21 +127,23 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
                             }
 
                             is ChannelInfoMemberViewState.Content.Option.BanMember -> {
-                                // TODO
-                                // optionBan.isVisible = true
-                                // optionBan.setOnOptionText(getString(R.string.chat_group_info_user_option_ban))
-                                // optionBan.setOnClickListener {
-                                //     viewModel.onViewAction(ChannelInfoMemberViewAction.BanMemberClick)
-                                // }
+                                optionBan.isVisible = true
+                                optionBan.setOnOptionText(
+                                    getString(R.string.stream_ui_channel_info_member_modal_option_ban_member),
+                                )
+                                optionBan.setOnClickListener {
+                                    viewModel.onViewAction(ChannelInfoMemberViewAction.BanMemberClick)
+                                }
                             }
 
                             is ChannelInfoMemberViewState.Content.Option.UnbanMember -> {
-                                // TODO
-                                // optionBan.isVisible = true
-                                // optionBan.setOnOptionText(getString(R.string.chat_group_info_user_option_unban))
-                                // optionBan.setOnClickListener {
-                                //     viewModel.onViewAction(ChannelInfoMemberViewAction.UnbanMemberClick)
-                                // }
+                                optionBan.isVisible = true
+                                optionBan.setOnOptionText(
+                                    getString(R.string.stream_ui_channel_info_member_modal_option_unban_member),
+                                )
+                                optionBan.setOnClickListener {
+                                    viewModel.onViewAction(ChannelInfoMemberViewAction.UnbanMemberClick)
+                                }
                             }
 
                             is ChannelInfoMemberViewState.Content.Option.RemoveMember -> {

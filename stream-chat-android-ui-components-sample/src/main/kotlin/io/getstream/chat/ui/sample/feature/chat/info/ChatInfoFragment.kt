@@ -200,8 +200,7 @@ class ChatInfoFragment : Fragment() {
                 when (option) {
                     is ChatInfoItem.Option.Stateful.MuteDistinctChannel ->
                         ChannelInfoViewAction.MuteChannelClick
-                    // is ChatInfoItem.Option.Stateful.Block ->
-                    //     ChatInfoViewModel.Action.OptionBlockUserClicked(isChecked)
+
                     else -> throw IllegalStateException("Chat info option $option is not supported!")
                 },
             )
