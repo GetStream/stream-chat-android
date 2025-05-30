@@ -28,6 +28,7 @@ import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMembe
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewController
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewEvent
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoMemberViewState
+import io.getstream.chat.android.ui.utils.asSingleLiveEvent
 
 /**
  * ViewModel for managing channel member information and its actions.
@@ -59,7 +60,7 @@ public class ChannelInfoMemberViewModel(
     /**
      * @see [ChannelInfoMemberViewController.events]
      */
-    public val events: LiveData<ChannelInfoMemberViewEvent> = controller.events.asLiveData()
+    public val events: LiveData<ChannelInfoMemberViewEvent> = controller.events.asSingleLiveEvent()
 
     /**
      * @see [ChannelInfoMemberViewController.onViewAction]
