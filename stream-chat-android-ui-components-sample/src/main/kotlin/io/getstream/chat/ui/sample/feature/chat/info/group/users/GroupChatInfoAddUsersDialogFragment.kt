@@ -18,12 +18,12 @@ package io.getstream.chat.ui.sample.feature.chat.info.group.users
 
 import android.app.Dialog
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
@@ -40,7 +40,7 @@ class GroupChatInfoAddUsersDialogFragment : DialogFragment() {
 
     private val cid: String by lazy { requireArguments().getString(ARG_CID)!! }
     private val adapter: GroupChatInfoAddUsersAdapter = GroupChatInfoAddUsersAdapter()
-    private val viewModel: GroupChatInfoAddUsersViewModel by viewModels { ChatViewModelFactory(cid) }
+    private val viewModel: GroupChatInfoAddUsersViewModel by viewModels { ChatViewModelFactory(requireContext(), cid) }
     private var loadMoreListener: LoadMoreListener? = null
     private val scrollListener = EndlessScrollListener(LOAD_MORE_THRESHOLD) {
         loadMoreListener?.loadMore()
@@ -108,7 +108,7 @@ class GroupChatInfoAddUsersDialogFragment : DialogFragment() {
         super.onStart()
         dialog?.window?.let {
             it.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            it.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            it.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
         }
     }
 

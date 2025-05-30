@@ -96,7 +96,12 @@ class ChatFragment : Fragment() {
             userLookupHandler = defaultUserLookupHandler,
         )
     }
-    private val chatViewModelFactory: ChatViewModelFactory by lazy { ChatViewModelFactory(args.cid) }
+    private val chatViewModelFactory: ChatViewModelFactory by lazy {
+        ChatViewModelFactory(
+            context = requireContext(),
+            cid = args.cid,
+        )
+    }
     private val headerViewModel: MessageListHeaderViewModel by viewModels { factory }
     private val messageListViewModel: MessageListViewModel by viewModels { factory }
     private val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
