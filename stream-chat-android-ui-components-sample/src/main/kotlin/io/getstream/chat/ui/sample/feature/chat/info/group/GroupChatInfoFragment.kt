@@ -27,6 +27,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
@@ -46,11 +47,8 @@ import io.getstream.chat.ui.sample.feature.chat.info.group.users.GroupChatInfoAd
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
 import io.getstream.chat.ui.sample.util.extensions.autoScrollToTop
 import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
-import io.getstream.log.taggedLogger
 
 class GroupChatInfoFragment : Fragment() {
-
-    private val logger by taggedLogger("GroupChatInfo-View")
 
     private val args: GroupChatInfoFragmentArgs by navArgs()
     private val viewModel: ChannelInfoViewModel by viewModels {
@@ -110,32 +108,12 @@ class GroupChatInfoFragment : Fragment() {
         super.onDestroyView()
     }
 
-    // // Distinct channel == channel created without id (based on members).
-    // // There is no possibility to modify distinct channel members.
-    // private fun isAnonymousChannel(): Boolean = args.cid.contains("!members")
-
     private fun bindGroupInfoViewModel() {
         // subscribeForChannelMutesUpdatedEvents()
         // subscribeForChannelVisibilityEvents()
         setOnClickListeners()
 
         viewModel.events.observe(viewLifecycleOwner) { event ->
-            // EventObserver {
-            //     when (it) {
-            //         is GroupChatInfoViewModel.UiEvent.ShowMemberOptions ->
-            //             GroupChatInfoMemberOptionsDialogFragment.newInstance(
-            //                 args.cid,
-            //                 it.channelName,
-            //                 it.member,
-            //                 viewModel.state.value!!.ownCapabilities,
-            //             ).show(parentFragmentManager, GroupChatInfoMemberOptionsDialogFragment.TAG)
-            //
-            //         GroupChatInfoViewModel.UiEvent.RedirectToHome -> findNavController().popBackStack(
-            //             R.id.homeFragment,
-            //             false,
-            //         )
-            //     }
-            // },
             when (event) {
                 is ChannelInfoViewEvent.Error -> showError(event)
                 is ChannelInfoViewEvent.Navigation -> onNavigationEvent(event)
@@ -281,8 +259,37 @@ class GroupChatInfoFragment : Fragment() {
                     memberId = event.member.getUserId(),
                 ).show(parentFragmentManager, GroupChatInfoMemberOptionsDialogFragment.TAG)
 
-            is ChannelInfoViewEvent.BanMemberModal ->
-                TODO()
+            is ChannelInfoViewEvent.BanMemberModal -> {
+                val items = event.timeouts.map { timeout ->
+                    getString(
+                        when (timeout) {
+                            ChannelInfoViewEvent.BanMemberModal.Timeout.OneHour ->
+                                R.string.stream_ui_channel_info_ban_member_modal_timeout_one_hour
+
+                            ChannelInfoViewEvent.BanMemberModal.Timeout.OneDay ->
+                                R.string.stream_ui_channel_info_ban_member_modal_timeout_one_day
+
+                            ChannelInfoViewEvent.BanMemberModal.Timeout.OneWeek ->
+                                R.string.stream_ui_channel_info_ban_member_modal_timeout_one_week
+
+                            ChannelInfoViewEvent.BanMemberModal.Timeout.NoTimeout ->
+                                R.string.stream_ui_channel_info_ban_member_modal_no_timeout
+                        },
+                    )
+                }
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(getString(R.string.stream_ui_channel_info_ban_member_modal_title, event.member.user.name))
+                    .setItems(items.toTypedArray()) { _, which ->
+                        val timeout = event.timeouts[which]
+                        viewModel.onViewAction(
+                            ChannelInfoViewAction.BanMemberConfirmationClick(
+                                memberId = event.member.getUserId(),
+                                timeoutInMinutes = timeout.valueInMinutes,
+                            ),
+                        )
+                    }
+                    .show()
+            }
 
             is ChannelInfoViewEvent.DeleteChannelModal ->
                 ConfirmationDialogFragment.newDeleteChannelInstance(requireContext(), isGroupChannel = true)
@@ -336,8 +343,6 @@ class GroupChatInfoFragment : Fragment() {
 
     private fun setOnClickListeners() {
         adapter.setChatInfoStatefulOptionChangedListener { option, isChecked ->
-            logger.d { "[onStatefulOptionChanged] option: $option, isChecked: $isChecked" }
-
             when (option) {
                 is ChatInfoItem.Option.Stateful.MuteChannel ->
                     viewModel.onViewAction(ChannelInfoViewAction.MuteChannelClick)
