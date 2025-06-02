@@ -101,18 +101,20 @@ class ChatInfoStatefulOptionViewHolder(
 
     private lateinit var option: ChatInfoItem.Option.Stateful
 
-    init {
-        binding.optionSwitch.setOnCheckedChangeListener { _, isChecked ->
-            optionChangedListener?.onClick(option, isChecked)
-        }
-    }
-
     override fun bind(item: ChatInfoItem.Option.Stateful) {
         option = item
         binding.optionTextView.setText(item.textResId)
         binding.optionImageView.setImageResource(item.iconResId)
         binding.optionImageView.setColorFilter(itemView.context.getColorFromRes(item.tintResId))
-        binding.optionSwitch.isChecked = item.isChecked
+        with(binding.optionSwitch) {
+            // Prevent the listener from being called when binding the checked state
+            setOnCheckedChangeListener(null)
+            isChecked = item.isChecked
+            // Restore the listener after binding the checked state
+            setOnCheckedChangeListener { _, isChecked ->
+                optionChangedListener?.onClick(option, isChecked)
+            }
+        }
     }
 }
 
