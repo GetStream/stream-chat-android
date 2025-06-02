@@ -37,9 +37,7 @@ import io.getstream.chat.android.ui.viewmodel.channel.ChannelInfoViewModelFactor
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.common.navigateSafely
-import io.getstream.chat.ui.sample.common.showToast
 import io.getstream.chat.ui.sample.databinding.FragmentChatInfoBinding
-import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
 
 class ChatInfoFragment : Fragment() {
 
@@ -93,41 +91,18 @@ class ChatInfoFragment : Fragment() {
         }
         viewModel.events.observe(viewLifecycleOwner) { event ->
             when (event) {
-                is ChannelInfoViewEvent.Error -> showError(event)
+                is ChannelInfoViewEvent.Error -> showError(event, isGroupChannel = false)
                 is ChannelInfoViewEvent.Navigation -> onNavigationEvent(event)
-                is ChannelInfoViewEvent.Modal -> Unit
+                is ChannelInfoViewEvent.Modal -> showModal(event, viewModel, isGroupChannel = false) { modal ->
+                    if (modal is ChannelInfoViewEvent.HideChannelModal) {
+                        // If the HideChannel modal was dismissed,
+                        // we need to revert the state of the HideChannel option to unchecked,
+                        // as it was checked when the modal was shown.
+                        binding.optionsRecyclerView.adapter?.notifyDataSetChanged()
+                    }
+                }
             }
         }
-    }
-
-    private fun showError(error: ChannelInfoViewEvent.Error) {
-        when (error) {
-            ChannelInfoViewEvent.RenameChannelError,
-            -> R.string.stream_ui_channel_info_rename_group_error
-
-            ChannelInfoViewEvent.MuteChannelError,
-            ChannelInfoViewEvent.UnmuteChannelError,
-            -> R.string.stream_ui_channel_info_mute_conversation_error
-
-            ChannelInfoViewEvent.HideChannelError,
-            ChannelInfoViewEvent.UnhideChannelError,
-            -> R.string.stream_ui_channel_info_hide_conversation_error
-
-            ChannelInfoViewEvent.LeaveChannelError,
-            -> R.string.stream_ui_channel_info_leave_conversation_error
-
-            ChannelInfoViewEvent.DeleteChannelError,
-            -> R.string.stream_ui_channel_info_delete_conversation_error
-
-            ChannelInfoViewEvent.RemoveMemberError,
-            -> R.string.stream_ui_channel_info_remove_member_error
-
-            ChannelInfoViewEvent.BanMemberError,
-            -> R.string.stream_ui_channel_info_ban_member_error
-
-            ChannelInfoViewEvent.UnbanMemberError,
-            -> R.string.stream_ui_channel_info_unban_member_error
-        }.let(::showToast)
     }
 
     private fun onNavigationEvent(event: ChannelInfoViewEvent.Navigation) {
@@ -153,63 +128,32 @@ class ChatInfoFragment : Fragment() {
     ): List<ChatInfoItem> = buildList {
         add(ChatInfoItem.MemberItem(member = member))
         add(ChatInfoItem.Separator)
-
-        options.forEach { option ->
-            when (option) {
-                is ChannelInfoViewState.Content.Option.MuteChannel ->
-                    add(ChatInfoItem.Option.Stateful.MuteDistinctChannel(isChecked = option.isMuted))
-
-                is ChannelInfoViewState.Content.Option.HideChannel ->
-                    add(ChatInfoItem.Option.HideChannel(isHidden = option.isHidden))
-
-                is ChannelInfoViewState.Content.Option.PinnedMessages -> {
-                    add(ChatInfoItem.Option.PinnedMessages)
-                    // These options aren't coming from the ViewModel yet, so we add them manually
-                    add(ChatInfoItem.Option.SharedMedia)
-                    add(ChatInfoItem.Option.SharedFiles)
-                    add(ChatInfoItem.Option.SharedGroups)
-                }
-
-                is ChannelInfoViewState.Content.Option.LeaveChannel ->
-                    add(ChatInfoItem.Option.LeaveGroup)
-
-                is ChannelInfoViewState.Content.Option.DeleteChannel ->
-                    add(ChatInfoItem.Option.DeleteConversation)
-
-                is ChannelInfoViewState.Content.Option.Separator ->
-                    add(ChatInfoItem.Separator)
-
-                // Not applicable in this UI
-                is ChannelInfoViewState.Content.Option.AddMember,
-                is ChannelInfoViewState.Content.Option.UserInfo,
-                is ChannelInfoViewState.Content.Option.RenameChannel,
-                -> Unit
-            }
-        }
-
-        // add(ChatInfoItem.Option.SharedMedia)
-        // add(ChatInfoItem.Option.SharedFiles)
-        // if (content.member != null) {
-        //     add(ChatInfoItem.Option.SharedGroups)
-        // }
+        addAll(options.toChannelInfoItems(isGroupChannel = false))
     }
 
     private fun setOnClickListeners(member: Member) {
         adapter.setChatInfoStatefulOptionChangedListener { option, isChecked ->
             viewModel.onViewAction(
                 when (option) {
-                    is ChatInfoItem.Option.Stateful.MuteDistinctChannel ->
-                        ChannelInfoViewAction.MuteChannelClick
+                    is ChatInfoItem.Option.Stateful.MuteChannel ->
+                        if (isChecked) {
+                            ChannelInfoViewAction.MuteChannelClick
+                        } else {
+                            ChannelInfoViewAction.UnmuteChannelClick
+                        }
 
-                    else -> throw IllegalStateException("Chat info option $option is not supported!")
+                    is ChatInfoItem.Option.Stateful.HideChannel ->
+                        if (isChecked) {
+                            ChannelInfoViewAction.HideChannelClick
+                        } else {
+                            ChannelInfoViewAction.UnhideChannelClick
+                        }
                 },
             )
         }
         adapter.setChatInfoOptionClickListener { option ->
             when (option) {
-                ChatInfoItem.Option.PinnedMessages -> findNavController().navigateSafely(
-                    ChatInfoFragmentDirections.actionChatInfoFragmentToPinnedMessageListFragment(args.cid),
-                )
+                ChatInfoItem.Option.PinnedMessages -> viewModel.onViewAction(ChannelInfoViewAction.PinnedMessagesClick)
 
                 ChatInfoItem.Option.SharedMedia -> findNavController().navigateSafely(
                     ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedMediaFragment(args.cid),
@@ -219,29 +163,23 @@ class ChatInfoFragment : Fragment() {
                     ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedFilesFragment(args.cid),
                 )
 
-                ChatInfoItem.Option.SharedGroups -> {
-                    // Option shouldn't be visible when member is not set
-                    // val member = viewModel.state.value!!.member ?: return@setChatInfoOptionClickListener
-                    findNavController().navigateSafely(
-                        ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedGroupsFragment(
-                            member.getUserId(),
-                            member.user.name,
-                        ),
-                    )
-                }
+                ChatInfoItem.Option.SharedGroups -> findNavController().navigateSafely(
+                    ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedGroupsFragment(
+                        member.getUserId(),
+                        member.user.name,
+                    ),
+                )
 
-                ChatInfoItem.Option.DeleteConversation -> {
-                    ConfirmationDialogFragment.newDeleteChannelInstance(
-                        context = requireContext(),
-                        isGroupChannel = false,
-                    ).apply {
-                        confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener {
-                            viewModel.onViewAction(ChannelInfoViewAction.DeleteChannelConfirmationClick)
-                        }
-                    }.show(parentFragmentManager, ConfirmationDialogFragment.TAG)
-                }
+                is ChatInfoItem.Option.LeaveChannel ->
+                    viewModel.onViewAction(ChannelInfoViewAction.LeaveChannelClick)
 
-                else -> throw IllegalStateException("Chat info option $option is not supported!")
+                is ChatInfoItem.Option.DeleteChannel ->
+                    viewModel.onViewAction(ChannelInfoViewAction.DeleteChannelClick)
+
+                // Already handled
+                is ChatInfoItem.Option.Stateful.MuteChannel,
+                is ChatInfoItem.Option.Stateful.HideChannel,
+                -> Unit
             }
         }
     }
