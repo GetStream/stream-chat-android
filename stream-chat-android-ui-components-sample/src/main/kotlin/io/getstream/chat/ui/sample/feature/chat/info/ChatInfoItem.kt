@@ -85,9 +85,9 @@ sealed class ChatInfoItem {
             override val iconResId: Int
                 get() = R.drawable.ic_delete
             override val tintResId: Int
-                get() = R.color.red
+                get() = R.color.stream_ui_accent_red
             override val textColorResId: Int
-                get() = R.color.red
+                get() = R.color.stream_ui_accent_red
             override val showRightArrow: Boolean = false
         }
 
@@ -95,9 +95,9 @@ sealed class ChatInfoItem {
             override val iconResId: Int
                 get() = R.drawable.ic_leave_group
             override val tintResId: Int
-                get() = R.color.red
+                get() = R.color.stream_ui_accent_red
             override val textColorResId: Int
-                get() = R.color.red
+                get() = R.color.stream_ui_accent_red
             override val showRightArrow: Boolean = false
         }
 

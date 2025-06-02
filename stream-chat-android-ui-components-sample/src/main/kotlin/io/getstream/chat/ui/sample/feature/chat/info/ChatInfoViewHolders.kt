@@ -136,8 +136,22 @@ class ChatInfoGroupMemberViewHolder(
             member = this
             binding.userAvatarView.setUser(user)
             binding.nameTextView.text = user.name
+            binding.nameTextView.setTextColor(
+                if (banned) {
+                    itemView.context.getColorFromRes(R.color.stream_ui_accent_red)
+                } else {
+                    itemView.context.getColorFromRes(R.color.stream_ui_text_color_primary)
+                }
+            )
             binding.mutedIcon.isVisible = notificationsMuted == true
             binding.onlineTextView.text = user.getLastSeenText(itemView.context)
+            binding.onlineTextView.setTextColor(
+                if (banned) {
+                    itemView.context.getColorFromRes(R.color.stream_ui_accent_red)
+                } else {
+                    itemView.context.getColorFromRes(R.color.stream_ui_text_color_secondary)
+                }
+            )
 
             val getString = { resId: Int -> itemView.context.getString(resId) }
             binding.channelRoleView.text = when (item.isOwner) {
