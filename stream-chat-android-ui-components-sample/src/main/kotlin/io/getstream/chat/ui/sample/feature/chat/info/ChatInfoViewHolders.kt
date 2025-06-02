@@ -141,7 +141,7 @@ class ChatInfoGroupMemberViewHolder(
                     itemView.context.getColorFromRes(R.color.stream_ui_accent_red)
                 } else {
                     itemView.context.getColorFromRes(R.color.stream_ui_text_color_primary)
-                }
+                },
             )
             binding.mutedIcon.isVisible = notificationsMuted == true
             binding.onlineTextView.text = user.getLastSeenText(itemView.context)
@@ -150,15 +150,15 @@ class ChatInfoGroupMemberViewHolder(
                     itemView.context.getColorFromRes(R.color.stream_ui_accent_red)
                 } else {
                     itemView.context.getColorFromRes(R.color.stream_ui_text_color_secondary)
-                }
+                },
             )
 
             val getString = { resId: Int -> itemView.context.getString(resId) }
             binding.channelRoleView.text = when (item.isOwner) {
                 true -> getString(R.string.chat_group_info_owner)
                 else -> when (val role = item.member.channelRole) {
-                    "channel_member" -> getString(R.string.chat_group_info_member)
                     "channel_moderator" -> getString(R.string.chat_group_info_moderator)
+                    "channel_member" -> ""
                     else -> role
                 }
             }
