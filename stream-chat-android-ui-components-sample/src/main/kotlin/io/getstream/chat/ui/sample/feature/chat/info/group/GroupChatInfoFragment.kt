@@ -27,7 +27,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
@@ -39,12 +38,13 @@ import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFacto
 import io.getstream.chat.android.ui.viewmodel.messages.bindView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
-import io.getstream.chat.ui.sample.common.showToast
 import io.getstream.chat.ui.sample.databinding.FragmentGroupChatInfoBinding
 import io.getstream.chat.ui.sample.feature.chat.info.ChatInfoItem
 import io.getstream.chat.ui.sample.feature.chat.info.group.member.GroupChatInfoMemberOptionsDialogFragment
 import io.getstream.chat.ui.sample.feature.chat.info.group.users.GroupChatInfoAddUsersDialogFragment
-import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
+import io.getstream.chat.ui.sample.feature.chat.info.showError
+import io.getstream.chat.ui.sample.feature.chat.info.showModal
+import io.getstream.chat.ui.sample.feature.chat.info.toChannelInfoItems
 import io.getstream.chat.ui.sample.util.extensions.autoScrollToTop
 import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
 
@@ -79,15 +79,6 @@ class GroupChatInfoFragment : Fragment() {
         binding.optionsRecyclerView.adapter = adapter
         binding.optionsRecyclerView.autoScrollToTop()
         headerViewModel.bindView(binding.headerView, viewLifecycleOwner)
-        // if (!isAnonymousChannel()) {
-        //     binding.addChannelButton.apply {
-        //         isVisible = true
-        //         setOnClickListener {
-        //             GroupChatInfoAddUsersDialogFragment.newInstance(args.cid)
-        //                 .show(parentFragmentManager, GroupChatInfoAddUsersDialogFragment.TAG)
-        //         }
-        //     }
-        // }
         bindGroupInfoViewModel()
         parentFragmentManager.setFragmentResultListener(
             GroupChatInfoMemberOptionsDialogFragment.REQUEST_KEY,
@@ -109,22 +100,26 @@ class GroupChatInfoFragment : Fragment() {
     }
 
     private fun bindGroupInfoViewModel() {
-        // subscribeForChannelMutesUpdatedEvents()
-        // subscribeForChannelVisibilityEvents()
         setOnClickListeners()
 
         viewModel.events.observe(viewLifecycleOwner) { event ->
             when (event) {
-                is ChannelInfoViewEvent.Error -> showError(event)
+                is ChannelInfoViewEvent.Error -> showError(event, isGroupChannel = true)
                 is ChannelInfoViewEvent.Navigation -> onNavigationEvent(event)
-                is ChannelInfoViewEvent.Modal -> onModalEvent(event)
+                is ChannelInfoViewEvent.Modal -> showModal(event, viewModel, isGroupChannel = true) { modal ->
+                    if (modal is ChannelInfoViewEvent.HideChannelModal) {
+                        // If the HideChannel modal was dismissed,
+                        // we need to revert the state of the HideChannel option to unchecked,
+                        // as it was checked when the modal was shown.
+                        binding.optionsRecyclerView.adapter?.notifyDataSetChanged()
+                    }
+                }
             }
         }
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
-                is ChannelInfoViewState.Loading -> {
-                    // TODO: Show loading state if needed
-                }
+                // Not applicable in this UI
+                is ChannelInfoViewState.Loading -> Unit
 
                 is ChannelInfoViewState.Content -> {
                     if (state.options.contains(ChannelInfoViewState.Content.Option.AddMember)) {
@@ -142,91 +137,18 @@ class GroupChatInfoFragment : Fragment() {
                             isOwner = state.owner.id == member.getUserId(),
                         )
                     }
-                    val options = state.options.mapNotNull { option ->
-                        when (option) {
-                            is ChannelInfoViewState.Content.Option.Separator,
-                            -> ChatInfoItem.Separator
-
-                            is ChannelInfoViewState.Content.Option.AddMember,
-                            -> null // Not rendered as an option item
-
-                            is ChannelInfoViewState.Content.Option.RenameChannel,
-                            -> ChatInfoItem.ChannelName(option.name)
-
-                            is ChannelInfoViewState.Content.Option.MuteChannel,
-                            -> ChatInfoItem.Option.Stateful.MuteChannel(isChecked = option.isMuted)
-
-                            is ChannelInfoViewState.Content.Option.HideChannel,
-                            -> ChatInfoItem.Option.HideChannel(isHidden = option.isHidden)
-
-                            is ChannelInfoViewState.Content.Option.PinnedMessages,
-                            -> ChatInfoItem.Option.PinnedMessages
-
-                            is ChannelInfoViewState.Content.Option.LeaveChannel,
-                            -> ChatInfoItem.Option.LeaveGroup
-
-                            is ChannelInfoViewState.Content.Option.DeleteChannel,
-                            -> ChatInfoItem.Option.DeleteConversation
-
-                            // Not applicable in this UI
-                            is ChannelInfoViewState.Content.Option.UserInfo,
-                            -> null
-                        }
-                    }
-                    val optionsWithExtras = buildList {
-                        val separatorIndex = options.indexOfFirst { it == ChatInfoItem.Separator }
-                        val insertIndex = if (separatorIndex != -1) separatorIndex else options.size
-
-                        addAll(options.subList(0, insertIndex))
-
-                        // These options aren't coming from the ViewModel yet, so we add them manually
-                        add(ChatInfoItem.Option.SharedMedia)
-                        add(ChatInfoItem.Option.SharedFiles)
-
-                        addAll(options.subList(insertIndex, options.size))
-                    }
                     val items = buildList {
                         addAll(members)
                         if (state.members.canExpand && state.members.isCollapsed) {
                             add(ChatInfoItem.MembersSeparator(state.members.collapsedCount))
                         }
                         add(ChatInfoItem.Separator)
-                        addAll(optionsWithExtras)
+                        addAll(state.options.toChannelInfoItems(isGroupChannel = true))
                     }
                     adapter.submitList(items)
                 }
             }
         }
-    }
-
-    private fun showError(error: ChannelInfoViewEvent.Error) {
-        when (error) {
-            ChannelInfoViewEvent.RenameChannelError,
-            -> R.string.stream_ui_channel_info_rename_group_error
-
-            ChannelInfoViewEvent.MuteChannelError,
-            ChannelInfoViewEvent.UnmuteChannelError,
-            -> R.string.stream_ui_channel_info_mute_group_error
-
-            ChannelInfoViewEvent.HideChannelError,
-            ChannelInfoViewEvent.UnhideChannelError,
-            -> R.string.stream_ui_channel_info_hide_group_error
-
-            ChannelInfoViewEvent.LeaveChannelError,
-            -> R.string.stream_ui_channel_info_leave_group_error
-
-            ChannelInfoViewEvent.DeleteChannelError,
-            -> R.string.stream_ui_channel_info_delete_group_error
-
-            ChannelInfoViewEvent.BanMemberError,
-            -> R.string.stream_ui_channel_info_ban_member_error
-
-            ChannelInfoViewEvent.UnbanMemberError,
-            -> R.string.stream_ui_channel_info_unban_member_error
-
-            ChannelInfoViewEvent.RemoveMemberError,
-            -> R.string.stream_ui_channel_info_remove_member_error
-        }.let(::showToast)
     }
 
     private fun onNavigationEvent(event: ChannelInfoViewEvent.Navigation) {
@@ -251,110 +173,29 @@ class GroupChatInfoFragment : Fragment() {
         }
     }
 
-    private fun onModalEvent(event: ChannelInfoViewEvent.Modal) {
-        when (event) {
-            is ChannelInfoViewEvent.MemberInfoModal ->
-                GroupChatInfoMemberOptionsDialogFragment.newInstance(
-                    cid = event.cid,
-                    memberId = event.member.getUserId(),
-                ).show(parentFragmentManager, GroupChatInfoMemberOptionsDialogFragment.TAG)
-
-            is ChannelInfoViewEvent.BanMemberModal -> {
-                val items = event.timeouts.map { timeout ->
-                    getString(
-                        when (timeout) {
-                            ChannelInfoViewEvent.BanMemberModal.Timeout.OneHour ->
-                                R.string.stream_ui_channel_info_ban_member_modal_timeout_one_hour
-
-                            ChannelInfoViewEvent.BanMemberModal.Timeout.OneDay ->
-                                R.string.stream_ui_channel_info_ban_member_modal_timeout_one_day
-
-                            ChannelInfoViewEvent.BanMemberModal.Timeout.OneWeek ->
-                                R.string.stream_ui_channel_info_ban_member_modal_timeout_one_week
-
-                            ChannelInfoViewEvent.BanMemberModal.Timeout.NoTimeout ->
-                                R.string.stream_ui_channel_info_ban_member_modal_no_timeout
-                        },
-                    )
-                }
-                MaterialAlertDialogBuilder(requireContext())
-                    .setTitle(getString(R.string.stream_ui_channel_info_ban_member_modal_title, event.member.user.name))
-                    .setItems(items.toTypedArray()) { _, which ->
-                        val timeout = event.timeouts[which]
-                        viewModel.onViewAction(
-                            ChannelInfoViewAction.BanMemberConfirmationClick(
-                                memberId = event.member.getUserId(),
-                                timeoutInMinutes = timeout.valueInMinutes,
-                            ),
-                        )
-                    }
-                    .show()
-            }
-
-            is ChannelInfoViewEvent.DeleteChannelModal ->
-                ConfirmationDialogFragment.newDeleteChannelInstance(requireContext(), isGroupChannel = true)
-                    .apply {
-                        confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener {
-                            viewModel.onViewAction(ChannelInfoViewAction.DeleteChannelConfirmationClick)
-                        }
-                    }
-                    .show(parentFragmentManager, ConfirmationDialogFragment.TAG)
-
-            is ChannelInfoViewEvent.HideChannelModal ->
-                ConfirmationDialogFragment.newHideChannelInstance(requireContext(), isGroupChannel = true)
-                    .apply {
-                        confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener {
-                            viewModel.onViewAction(
-                                ChannelInfoViewAction.HideChannelConfirmationClick(clearHistory = true),
-                            )
-                        }
-                        cancelClickListener = ConfirmationDialogFragment.CancelClickListener {
-                            viewModel.onViewAction(
-                                ChannelInfoViewAction.HideChannelConfirmationClick(clearHistory = false),
-                            )
-                        }
-                    }
-                    .show(parentFragmentManager, ConfirmationDialogFragment.TAG)
-
-            is ChannelInfoViewEvent.LeaveChannelModal ->
-                ConfirmationDialogFragment.newLeaveChannelInstance(requireContext())
-                    .apply {
-                        confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener {
-                            viewModel.onViewAction(
-                                ChannelInfoViewAction.LeaveChannelConfirmationClick(quitMessage = null),
-                            )
-                        }
-                    }
-                    .show(parentFragmentManager, ConfirmationDialogFragment.TAG)
-
-            is ChannelInfoViewEvent.RemoveMemberModal ->
-                ConfirmationDialogFragment.newRemoveMemberInstance(requireContext(), event.member)
-                    .apply {
-                        confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener {
-                            viewModel.onViewAction(
-                                ChannelInfoViewAction.RemoveMemberConfirmationClick(
-                                    memberId = event.member.getUserId(),
-                                ),
-                            )
-                        }
-                    }.show(parentFragmentManager, ConfirmationDialogFragment.TAG)
-        }
-    }
-
     private fun setOnClickListeners() {
         adapter.setChatInfoStatefulOptionChangedListener { option, isChecked ->
-            when (option) {
-                is ChatInfoItem.Option.Stateful.MuteChannel ->
-                    viewModel.onViewAction(ChannelInfoViewAction.MuteChannelClick)
+            viewModel.onViewAction(
+                when (option) {
+                    is ChatInfoItem.Option.Stateful.MuteChannel ->
+                        if (isChecked) {
+                            ChannelInfoViewAction.MuteChannelClick
+                        } else {
+                            ChannelInfoViewAction.UnmuteChannelClick
+                        }
 
-                else -> throw IllegalStateException("Chat info option $option is not supported!")
-            }
+                    is ChatInfoItem.Option.Stateful.HideChannel ->
+                        if (isChecked) {
+                            ChannelInfoViewAction.HideChannelClick
+                        } else {
+                            ChannelInfoViewAction.UnhideChannelClick
+                        }
+                },
+            )
         }
         adapter.setChatInfoOptionClickListener { option ->
             when (option) {
-                ChatInfoItem.Option.PinnedMessages -> findNavController().navigateSafely(
-                    GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToPinnedMessageListFragment(args.cid),
-                )
+                ChatInfoItem.Option.PinnedMessages -> viewModel.onViewAction(ChannelInfoViewAction.PinnedMessagesClick)
 
                 ChatInfoItem.Option.SharedMedia -> findNavController().navigateSafely(
                     GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToChatInfoSharedMediaFragment(args.cid),
@@ -364,19 +205,18 @@ class GroupChatInfoFragment : Fragment() {
                     GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToChatInfoSharedFilesFragment(args.cid),
                 )
 
-                ChatInfoItem.Option.LeaveGroup ->
+                is ChatInfoItem.Option.LeaveChannel ->
                     viewModel.onViewAction(ChannelInfoViewAction.LeaveChannelClick)
 
-                is ChatInfoItem.Option.HideChannel ->
-                    viewModel.onViewAction(ChannelInfoViewAction.HideChannelClick)
-
-                ChatInfoItem.Option.DeleteConversation ->
+                is ChatInfoItem.Option.DeleteChannel ->
                     viewModel.onViewAction(ChannelInfoViewAction.DeleteChannelClick)
 
-                ChatInfoItem.Option.SharedGroups,
-                is ChatInfoItem.Option.Stateful.Block,
+                // Not applicable in this UI
+                ChatInfoItem.Option.SharedGroups -> Unit
+
+                // Already handled
                 is ChatInfoItem.Option.Stateful.MuteChannel,
-                is ChatInfoItem.Option.Stateful.MuteDistinctChannel,
+                is ChatInfoItem.Option.Stateful.HideChannel,
                 -> Unit
             }
         }

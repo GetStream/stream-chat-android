@@ -17,6 +17,7 @@
 package io.getstream.chat.ui.sample.feature.common
 
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -35,6 +36,7 @@ internal class ConfirmationDialogFragment : BottomSheetDialogFragment() {
 
     var confirmClickListener: ConfirmClickListener? = null
     var cancelClickListener: CancelClickListener? = null
+    var onDismissListener: ((dialog: DialogInterface) -> Unit)? = null
 
     private val iconResId: Int by lazy { requireArguments().getInt(ARG_ICON_RES_ID) }
     private val iconTintResId: Int by lazy { requireArguments().getInt(ARG_ICON_TINT_RES_ID) }
@@ -51,6 +53,7 @@ internal class ConfirmationDialogFragment : BottomSheetDialogFragment() {
         super.onDetach()
         confirmClickListener = null
         cancelClickListener = null
+        onDismissListener = null
     }
 
     override fun onCreateView(
@@ -98,6 +101,10 @@ internal class ConfirmationDialogFragment : BottomSheetDialogFragment() {
         _binding = null
     }
 
+    override fun onCancel(dialog: DialogInterface) {
+        onDismissListener?.invoke(dialog)
+    }
+
     fun interface ConfirmClickListener {
         fun onClick()
     }
@@ -125,31 +132,41 @@ internal class ConfirmationDialogFragment : BottomSheetDialogFragment() {
             cancelText = context.getString(R.string.stream_ui_message_list_delete_confirmation_negative_button),
         )
 
-        fun newDeleteChannelInstance(context: Context, isGroupChannel: Boolean): ConfirmationDialogFragment = newInstance(
-            iconResId = R.drawable.ic_delete,
-            iconTintResId = R.color.red,
-            title = if (isGroupChannel) {
-                context.getString(R.string.stream_ui_channel_info_option_delete_group)
-            } else {
-                context.getString(R.string.stream_ui_channel_info_option_delete_conversation)
-            },
-            description = if (isGroupChannel) {
-                context.getString(R.string.stream_ui_channel_info_delete_group_modal_message)
-            } else {
-                context.getString(R.string.stream_ui_channel_info_delete_conversation_modal_message)
-            },
-            confirmText = context.getString(R.string.delete),
-            cancelText = context.getString(R.string.cancel),
-        )
+        fun newDeleteChannelInstance(context: Context, isGroupChannel: Boolean): ConfirmationDialogFragment =
+            newInstance(
+                iconResId = R.drawable.ic_delete,
+                iconTintResId = R.color.red,
+                title = if (isGroupChannel) {
+                    context.getString(R.string.stream_ui_channel_info_option_delete_group)
+                } else {
+                    context.getString(R.string.stream_ui_channel_info_option_delete_conversation)
+                },
+                description = if (isGroupChannel) {
+                    context.getString(R.string.stream_ui_channel_info_delete_group_modal_message)
+                } else {
+                    context.getString(R.string.stream_ui_channel_info_delete_conversation_modal_message)
+                },
+                confirmText = context.getString(R.string.delete),
+                cancelText = context.getString(R.string.cancel),
+            )
 
-        fun newLeaveChannelInstance(context: Context): ConfirmationDialogFragment = newInstance(
-            iconResId = R.drawable.ic_leave_group,
-            iconTintResId = R.color.red,
-            title = context.getString(R.string.stream_ui_channel_info_option_leave_group),
-            description = context.getString(R.string.stream_ui_channel_info_leave_group_modal_message),
-            confirmText = context.getString(R.string.leave),
-            cancelText = context.getString(R.string.cancel),
-        )
+        fun newLeaveChannelInstance(context: Context, isGroupChannel: Boolean): ConfirmationDialogFragment =
+            newInstance(
+                iconResId = R.drawable.ic_leave_group,
+                iconTintResId = R.color.red,
+                title = if (isGroupChannel) {
+                    context.getString(R.string.stream_ui_channel_info_option_leave_group)
+                } else {
+                    context.getString(R.string.stream_ui_channel_info_option_leave_conversation)
+                },
+                description = if (isGroupChannel) {
+                    context.getString(R.string.stream_ui_channel_info_leave_group_modal_message)
+                } else {
+                    context.getString(R.string.stream_ui_channel_info_leave_conversation_modal_message)
+                },
+                confirmText = context.getString(R.string.leave),
+                cancelText = context.getString(R.string.cancel),
+            )
 
         fun newHideChannelInstance(context: Context, isGroupChannel: Boolean): ConfirmationDialogFragment = newInstance(
             iconResId = R.drawable.stream_ic_hide,

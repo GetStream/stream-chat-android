@@ -96,6 +96,7 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
+    @Suppress("NestedBlockDepth")
     private fun bindState(state: ChannelInfoMemberViewState) {
         binding.apply {
             optionCancel.setOnOptionClickListener(::dismiss)
@@ -104,9 +105,8 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
             optionBan.isVisible = false
             optionRemove.isVisible = false
             when (state) {
-                is ChannelInfoMemberViewState.Loading -> {
-                    // TODO: Show loading state if needed
-                }
+                // Not applicable in this UI
+                is ChannelInfoMemberViewState.Loading -> Unit
 
                 is ChannelInfoMemberViewState.Content -> {
                     val member = state.member

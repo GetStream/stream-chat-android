@@ -81,11 +81,9 @@ sealed class ChatInfoItem {
                 get() = R.string.chat_info_option_shared_groups
         }
 
-        data object DeleteConversation : Option() {
+        data class DeleteChannel(@StringRes override val textResId: Int) : Option() {
             override val iconResId: Int
                 get() = R.drawable.ic_delete
-            override val textResId: Int
-                get() = R.string.stream_ui_channel_info_option_delete_conversation
             override val tintResId: Int
                 get() = R.color.red
             override val textColorResId: Int
@@ -93,48 +91,33 @@ sealed class ChatInfoItem {
             override val showRightArrow: Boolean = false
         }
 
-        data object LeaveGroup : Option() {
+        data class LeaveChannel(@StringRes override val textResId: Int) : Option() {
             override val iconResId: Int
                 get() = R.drawable.ic_leave_group
-            override val textResId: Int
-                get() = R.string.stream_ui_channel_info_option_leave_group
+            override val tintResId: Int
+                get() = R.color.red
+            override val textColorResId: Int
+                get() = R.color.red
             override val showRightArrow: Boolean = false
-        }
-
-        data class HideChannel(var isHidden: Boolean) : Option() {
-            override val iconResId: Int
-                get() = R.drawable.stream_ic_hide
-            override val textResId: Int
-                get() = R.string.stream_ui_channel_info_option_hide_group
-
-            override val showRightArrow: Boolean = false
-
-            override val checkedState: Boolean
-                get() = isHidden
         }
 
         sealed class Stateful : Option() {
             abstract val isChecked: Boolean
 
-            data class MuteDistinctChannel(override val isChecked: Boolean) : Stateful() {
+            data class MuteChannel(
+                @StringRes override val textResId: Int,
+                override val isChecked: Boolean,
+            ) : Stateful() {
                 override val iconResId: Int
                     get() = R.drawable.ic_mute
-                override val textResId: Int
-                    get() = R.string.stream_ui_channel_info_option_mute_conversation
             }
 
-            data class MuteChannel(override val isChecked: Boolean) : Stateful() {
+            data class HideChannel(
+                @StringRes override val textResId: Int,
+                override var isChecked: Boolean,
+            ) : Stateful() {
                 override val iconResId: Int
-                    get() = R.drawable.ic_mute
-                override val textResId: Int
-                    get() = R.string.stream_ui_channel_info_option_mute_group
-            }
-
-            data class Block(override val isChecked: Boolean) : Stateful() {
-                override val iconResId: Int
-                    get() = R.drawable.ic_block
-                override val textResId: Int
-                    get() = R.string.chat_info_option_block_user
+                    get() = R.drawable.stream_ic_hide
             }
         }
     }
