@@ -96,7 +96,6 @@
     <string name="chat_info_option_shared_groups_empty_title">Groups shared with %s will appear here.</string>
 
     <string name="chat_group_info_owner">Owner</string>
-    <string name="chat_group_info_member">Member</string>
     <string name="chat_group_info_moderator">Moderator</string>
     <string name="chat_group_info_user_option_view_info">View Info</string>
     <string name="chat_group_info_error_add_member">Failed to add channel member</string>
