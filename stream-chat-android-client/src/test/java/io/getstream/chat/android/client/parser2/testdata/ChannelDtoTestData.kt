@@ -61,7 +61,8 @@ internal object ChannelDtoTestData {
             "args": "empty",
             "set": "none"
            }
-          ]
+          ],
+          "user_message_reminders": false
         }
         """.withoutWhitespace()
 
@@ -95,6 +96,7 @@ internal object ChannelDtoTestData {
                 set = "none",
             ),
         ),
+        user_message_reminders = false,
     )
 
     @Language("JSON")

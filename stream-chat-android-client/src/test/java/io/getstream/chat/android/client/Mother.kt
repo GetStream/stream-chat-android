@@ -470,6 +470,7 @@ internal object Mother {
         automod_behavior: String = randomString(),
         blocklist_behavior: String? = randomString(),
         commands: List<CommandDto> = emptyList(),
+        user_message_reminders: Boolean? = randomBoolean(),
     ): ConfigDto = ConfigDto(
         created_at = created_at,
         updated_at = updated_at,
@@ -493,6 +494,7 @@ internal object Mother {
         automod_behavior = automod_behavior,
         blocklist_behavior = blocklist_behavior,
         commands = commands,
+        user_message_reminders = user_message_reminders,
     )
 
     /**

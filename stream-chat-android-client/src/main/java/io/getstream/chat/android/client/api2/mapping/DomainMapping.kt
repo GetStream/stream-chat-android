@@ -550,6 +550,7 @@ internal class DomainMapping(
         automodBehavior = automod_behavior,
         blocklistBehavior = blocklist_behavior ?: "",
         commands = commands.map { it.toDomain() },
+        messageRemindersEnabled = user_message_reminders ?: false,
     )
 
     /**

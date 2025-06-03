@@ -85,7 +85,7 @@ import io.getstream.chat.android.offline.repository.domain.user.internal.UserEnt
         ThreadOrderEntity::class,
         DraftMessageEntity::class,
     ],
-    version = 86,
+    version = 87,
     exportSchema = false,
 )
 @TypeConverters(
