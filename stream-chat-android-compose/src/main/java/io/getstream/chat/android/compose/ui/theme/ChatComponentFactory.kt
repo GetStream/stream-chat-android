@@ -274,7 +274,6 @@ public interface ChatComponentFactory {
      * The default header shown above the channel list.
      * Usually contains the current user's avatar, a title or the connected status, and an action button.
      */
-    @Suppress("LongParameterList")
     @Composable
     public fun ChannelListHeader(
         modifier: Modifier,
@@ -614,7 +613,6 @@ public interface ChatComponentFactory {
      * the channel information or the connection status in the bottom center,
      * and the channel avatar as the trailing content.
      */
-    @Suppress("LongParameterList")
     @Composable
     public fun MessageListHeader(
         modifier: Modifier,
@@ -670,7 +668,6 @@ public interface ChatComponentFactory {
         ),
         level = DeprecationLevel.WARNING,
     )
-    @Suppress("LongParameterList")
     @Composable
     public fun RowScope.MessageListHeaderCenterContent(
         modifier: Modifier,
@@ -697,7 +694,6 @@ public interface ChatComponentFactory {
      * Usually shows the channel title in the top and
      * the channel information or the connection status in the bottom.
      */
-    @Suppress("LongParameterList")
     @Composable
     public fun RowScope.MessageListHeaderCenterContent(
         modifier: Modifier,
@@ -822,7 +818,6 @@ public interface ChatComponentFactory {
     /**
      * The default message list item container, which renders each [MessageListItemState]'s subtype.
      */
-    @Suppress("LongParameterList")
     @Composable
     public fun LazyItemScope.MessageListItemContainer(
         messageListItem: MessageListItemState,
@@ -961,7 +956,6 @@ public interface ChatComponentFactory {
     /**
      * The default item content of a regular message.
      */
-    @Suppress("LongParameterList")
     @Composable
     public fun LazyItemScope.MessageListItemContent(
         messageItem: MessageItemState,
@@ -1108,7 +1102,6 @@ public interface ChatComponentFactory {
      * The default center content of the message item.
      * Usually a message bubble with attachments or emoji stickers if the message contains only emoji.
      */
-    @Suppress("LongParameterList")
     @Composable
     public fun ColumnScope.MessageItemCenterContent(
         messageItem: MessageItemState,
@@ -1185,7 +1178,6 @@ public interface ChatComponentFactory {
     /**
      * The default content of a regular message that can contain attachments and text.
      */
-    @Suppress("LongParameterList")
     @Composable
     public fun MessageRegularContent(
         message: Message,
@@ -1233,7 +1225,6 @@ public interface ChatComponentFactory {
      * The default quoted message content.
      * Usually shows only the sender avatar, text and a single attachment preview.
      */
-    @Suppress("LongParameterList")
     @Composable
     public fun MessageQuotedContent(
         modifier: Modifier,
@@ -1799,7 +1790,6 @@ public interface ChatComponentFactory {
                 ")",
         ),
     )
-    @Suppress("LongParameterList")
     @Composable
     public fun Avatar(
         modifier: Modifier,
@@ -1831,7 +1821,6 @@ public interface ChatComponentFactory {
      * In case the image URL is empty or there is an error loading the image,
      * it falls back to an image with initials.
      */
-    @Suppress("LongParameterList")
     @Composable
     public fun Avatar(
         modifier: Modifier,
@@ -1888,7 +1877,6 @@ public interface ChatComponentFactory {
      * It renders the [User] avatar that's shown on the messages screen or in headers of direct messages.
      * If [showOnlineIndicator] is `true` and the user is online, it uses [Avatar] to shows an image or their initials.
      */
-    @Suppress("LongParameterList")
     @Composable
     public fun UserAvatar(
         modifier: Modifier,
