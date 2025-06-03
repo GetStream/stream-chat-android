@@ -63,6 +63,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
+import io.getstream.chat.android.compose.ui.channel.info.DefaultDirectChannelInfoTopBar
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelHeaderLeadingContent
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderCenterContent
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderTrailingContent
@@ -176,6 +177,7 @@ import io.getstream.chat.android.compose.ui.threads.ThreadItemUnreadCountContent
 import io.getstream.chat.android.compose.ui.threads.UnreadThreadsBanner
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
 import io.getstream.chat.android.compose.ui.util.clickable
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Command
@@ -2979,6 +2981,16 @@ public interface ChatComponentFactory {
         io.getstream.chat.android.compose.ui.attachments.content.FileUploadItem(
             attachment = attachment,
             modifier = modifier,
+        )
+    }
+
+    @ExperimentalStreamChatApi
+    @Composable
+    public fun DirectChannelInfoTopBar(
+        onNavigationIconClick: () -> Unit,
+    ) {
+        DefaultDirectChannelInfoTopBar(
+            onNavigationIconClick = onNavigationIconClick,
         )
     }
 }
