@@ -76,7 +76,7 @@ public fun DirectChannelInfoScreen(
     viewModelKey: String? = null,
     onNavigationIconClick: () -> Unit = {},
     topBar: @Composable () -> Unit = {
-        DirectChannelInfoTopBar(
+        ChatTheme.componentFactory.DirectChannelInfoTopBar(
             onNavigationIconClick = onNavigationIconClick,
         )
     },
@@ -118,7 +118,7 @@ private fun DirectChannelInfoScreenModal(viewModel: ChannelInfoViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DirectChannelInfoTopBar(
+internal fun DefaultDirectChannelInfoTopBar(
     onNavigationIconClick: () -> Unit,
 ) {
     TopAppBar(
@@ -139,7 +139,7 @@ private fun DirectChannelInfoContent(
     onNavigationIconClick: () -> Unit = {},
     onViewAction: (action: ChannelInfoViewAction) -> Unit = {},
     topBar: @Composable () -> Unit = {
-        DirectChannelInfoTopBar(
+        ChatTheme.componentFactory.DirectChannelInfoTopBar(
             onNavigationIconClick = onNavigationIconClick,
         )
     },
