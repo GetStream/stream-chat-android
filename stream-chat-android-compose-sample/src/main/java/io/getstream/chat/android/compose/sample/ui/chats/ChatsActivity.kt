@@ -67,7 +67,9 @@ import io.getstream.chat.android.compose.ui.chats.ChatsScreen
 import io.getstream.chat.android.compose.ui.components.BackButton
 import io.getstream.chat.android.compose.ui.components.channels.ChannelOptionItemVisibility
 import io.getstream.chat.android.compose.ui.theme.ChannelOptionsTheme
+import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.CompoundComponentFactory
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.AdaptiveLayoutInfo
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneDestination
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneNavigator
@@ -306,18 +308,28 @@ class ChatsActivity : BaseConnectedActivity() {
                 onNavigationIconClick = onNavigationIconClick,
             )
         } else {
-            DirectChannelInfoScreen(
-                viewModelFactory = viewModelFactory,
-                viewModelKey = channelId,
-                onNavigationIconClick = onNavigationIconClick,
-                topBar = {
-                    TopAppBar(
-                        navigationIcon = { CloseButton(onClick = onNavigationIconClick) },
-                        title = {},
-                        colors = TopAppBarDefaults.topAppBarColors(containerColor = ChatTheme.colors.barsBackground),
-                    )
+            CompoundComponentFactory(
+                factory = {
+                    object : ChatComponentFactory by it {
+                        @Composable
+                        override fun DirectChannelInfoTopBar(onNavigationIconClick: () -> Unit) {
+                            TopAppBar(
+                                navigationIcon = { CloseButton(onClick = onNavigationIconClick) },
+                                title = {},
+                                colors = TopAppBarDefaults.topAppBarColors(
+                                    containerColor = ChatTheme.colors.barsBackground,
+                                ),
+                            )
+                        }
+                    }
                 },
-            )
+            ) {
+                DirectChannelInfoScreen(
+                    viewModelFactory = viewModelFactory,
+                    viewModelKey = channelId,
+                    onNavigationIconClick = onNavigationIconClick,
+                )
+            }
         }
     }
 
@@ -375,6 +387,7 @@ class ChatsActivity : BaseConnectedActivity() {
                         // https://linear.app/stream/issue/AND-582/compose-support-draft-messages-in-chatsactivity
                         is ChannelInfoViewEvent.NavigateToDraftChannel -> Unit
                     }
+
                     is ChannelInfoViewEvent.Error -> showError(event)
                     is ChannelInfoViewEvent.Modal -> Unit
                 }
