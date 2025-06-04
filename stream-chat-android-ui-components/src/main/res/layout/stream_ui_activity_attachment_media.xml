@@ -75,12 +75,23 @@
         app:layout_constraintTop_toBottomOf="@id/header"
         >
 
-        <VideoView
-            android:id="@+id/videoView"
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            />
+            android:layout_height="match_parent" >
+            <androidx.media3.ui.PlayerView
+                android:id="@+id/playerView"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                app:use_controller="false"
+                />
+
+            <androidx.media3.ui.LegacyPlayerControlView
+                android:id="@+id/controls"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
 
         <ImageView
             android:id="@+id/audioImageView"
