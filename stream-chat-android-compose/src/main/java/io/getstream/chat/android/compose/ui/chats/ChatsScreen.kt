@@ -288,9 +288,10 @@ public fun ChatsScreen(
 
     val infoPane = remember {
         movableContentOf { arguments: Any? ->
-            Box(modifier = Modifier.safeDrawingPadding()) {
-                infoContent(arguments)
-            }
+            InfoPane(
+                arguments = arguments,
+                infoContent = infoContent,
+            )
         }
     }
 
@@ -744,10 +745,41 @@ private fun DetailPane(
     bottomBarContent: @Composable (viewModelFactory: MessagesViewModelFactory) -> Unit,
     onBackPress: () -> Unit,
 ) {
+    // Ensure the view models are recreated when the user navigates between channels
+    ViewModelStore(viewModelFactory.channelId, viewModelFactory.messageId, viewModelFactory.parentMessageId) {
+        MessagesScreen(
+            viewModelFactory = viewModelFactory,
+            onBackPressed = onBackPress,
+            topBarContent = { backAction -> topBarContent(viewModelFactory, backAction) },
+            bottomBarContent = { bottomBarContent(viewModelFactory) },
+        )
+    }
+}
+
+@Composable
+private fun InfoPane(
+    arguments: Any?,
+    infoContent: @Composable (arguments: Any?) -> Unit,
+) {
+    // Ensure the view models are recreated when the arguments change
+    ViewModelStore(arguments) {
+        Box(modifier = Modifier.safeDrawingPadding()) {
+            infoContent(arguments)
+        }
+    }
+}
+
+/**
+ * Creates a new [ViewModelStore] whenever the provided keys change.
+ */
+@Composable
+private inline fun ViewModelStore(
+    vararg keys: Any?,
+    crossinline content: @Composable () -> Unit,
+) {
     // Restart composition on every new combination of values
-    key(viewModelFactory.channelId, viewModelFactory.messageId, viewModelFactory.parentMessageId) {
-        // Scope messages view models to a local store
-        // so that they are cleared when the user navigates between channels
+    key(keys) {
+        // Create a fresh ViewModelStore on each new composition
         val viewModelStore = remember { ViewModelStore() }
         val viewModelStoreOwner = remember(viewModelStore) {
             object : ViewModelStoreOwner {
@@ -755,7 +787,7 @@ private fun DetailPane(
             }
         }
 
-        // Ensure the store is cleared when the composable is disposed
+        // Ensure the store is cleared when the composition is disposed
         DisposableEffect(Unit) {
             onDispose {
                 viewModelStore.clear()
@@ -763,12 +795,7 @@ private fun DetailPane(
         }
 
         CompositionLocalProvider(LocalViewModelStoreOwner provides viewModelStoreOwner) {
-            MessagesScreen(
-                viewModelFactory = viewModelFactory,
-                onBackPressed = onBackPress,
-                topBarContent = { backAction -> topBarContent(viewModelFactory, backAction) },
-                bottomBarContent = { bottomBarContent(viewModelFactory) },
-            )
+            content()
         }
     }
 }

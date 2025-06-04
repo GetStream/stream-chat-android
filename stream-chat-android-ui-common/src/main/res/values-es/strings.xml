@@ -39,4 +39,7 @@
   <string name="stream_ui_moderation_dialog_send">"Enviar de todos modos"</string>
   <string name="stream_ui_moderation_dialog_title">"No se pudo enviar el mensaje"</string>
   <string name="stream_ui_yesterday">"Ayer"</string>
+
+  <string name="stream_ui_mention_list_empty">"No hay menciones todavía…"</string>
+  <string name="stream_ui_mention_list_error">"Ocurrió un error"</string>
 </resources>

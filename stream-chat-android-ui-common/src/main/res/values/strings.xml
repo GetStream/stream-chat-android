@@ -62,6 +62,69 @@
     <string name="stream_ui_moderation_dialog_edit">Edit message</string>
     <string name="stream_ui_moderation_dialog_delete">Delete message</string>
 
-
     <string name="stream_ui_channel_list_untitled_channel">Channel without name</string>
+
+    <!-- Mention List -->
+    <string name="stream_ui_mention_list_empty">No mentions exist yet…</string>
+    <string name="stream_ui_mention_list_error">An error occurred</string>
+
+    <!-- Channel Info -->
+
+    <string name="stream_ui_channel_info_member_owner">Owner</string>
+    <string name="stream_ui_channel_info_member_moderator">Moderator</string>
+    <string name="stream_ui_channel_info_expand_button">%d more</string>
+    <string name="stream_ui_channel_info_copy_user_handle">Copy user handle</string>
+    <string name="stream_ui_channel_info_name_field_label">NAME</string>
+    <string name="stream_ui_channel_info_name_field_placeholder">Add a group name</string>
+
+    <string name="stream_ui_channel_info_rename_group_error">Failed to rename group</string>
+    <string name="stream_ui_channel_info_mute_conversation_error">Failed to switch the conversation mute state</string>
+    <string name="stream_ui_channel_info_mute_group_error">Failed to switch the group mute state</string>
+    <string name="stream_ui_channel_info_hide_conversation_error">Failed to switch the conversation hide state</string>
+    <string name="stream_ui_channel_info_hide_group_error">Failed to switch the group hide state</string>
+    <string name="stream_ui_channel_info_leave_conversation_error">Failed to leave conversation</string>
+    <string name="stream_ui_channel_info_leave_group_error">Failed to leave group</string>
+    <string name="stream_ui_channel_info_delete_conversation_error">Failed to delete conversation</string>
+    <string name="stream_ui_channel_info_delete_group_error">Failed to delete group</string>
+    <string name="stream_ui_channel_info_ban_member_error">Failed to ban member</string>
+    <string name="stream_ui_channel_info_unban_member_error">Failed to unban member</string>
+    <string name="stream_ui_channel_info_remove_member_error">Failed to remove member</string>
+
+    <string name="stream_ui_channel_info_option_mute_conversation">Mute Conversation</string>
+    <string name="stream_ui_channel_info_option_mute_group">Mute Group</string>
+    <string name="stream_ui_channel_info_option_hide_conversation">Hide Conversation</string>
+    <string name="stream_ui_channel_info_option_hide_group">Hide Group</string>
+    <string name="stream_ui_channel_info_option_leave_conversation">Leave Conversation</string>
+    <string name="stream_ui_channel_info_option_leave_group">Leave Group</string>
+    <string name="stream_ui_channel_info_option_pinned_messages">Pinned Messages</string>
+    <string name="stream_ui_channel_info_option_delete_conversation">Delete Conversation</string>
+    <string name="stream_ui_channel_info_option_delete_group">Delete Group</string>
+
+    <string name="stream_ui_channel_info_hide_conversation_modal_message">Are you sure you want to hide this conversation?</string>
+    <string name="stream_ui_channel_info_hide_conversation_modal_clear_history">Also clear the conversation history</string>
+    <string name="stream_ui_channel_info_hide_group_modal_message">Are you sure you want to hide this group?</string>
+    <string name="stream_ui_channel_info_hide_group_modal_clear_history">Also clear the group history</string>
+    <string name="stream_ui_channel_info_leave_conversation_modal_message">Are you sure you want to leave this conversation?</string>
+    <string name="stream_ui_channel_info_leave_group_modal_message">Are you sure you want to leave this group?</string>
+    <string name="stream_ui_channel_info_delete_conversation_modal_message">Are you sure you want to delete this conversation?</string>
+    <string name="stream_ui_channel_info_delete_group_modal_message">Are you sure you want to delete this group?</string>
+
+    <!-- Channel Info Member -->
+
+    <string name="stream_ui_channel_info_member_modal_ban_no_expiration">Ban has no expiration</string>
+    <string name="stream_ui_channel_info_member_modal_ban_expires_at">Ban expires %s</string>
+    <string name="stream_ui_channel_info_member_modal_ban_expired">Ban has already expired</string>
+    <string name="stream_ui_channel_info_member_modal_option_message_member">Message</string>
+    <string name="stream_ui_channel_info_member_modal_option_ban_member">Ban</string>
+    <string name="stream_ui_channel_info_member_modal_option_unban_member">Unban</string>
+    <string name="stream_ui_channel_info_member_modal_option_remove_member">Remove from group</string>
+
+    <string name="stream_ui_channel_info_ban_member_modal_title">Banning %s for:</string>
+    <string name="stream_ui_channel_info_ban_member_modal_timeout_one_hour">One hour</string>
+    <string name="stream_ui_channel_info_ban_member_modal_timeout_one_day">One day</string>
+    <string name="stream_ui_channel_info_ban_member_modal_timeout_one_week">One week</string>
+    <string name="stream_ui_channel_info_ban_member_modal_no_timeout">Permanently</string>
+
+    <string name="stream_ui_channel_info_remove_member_modal_message">Are you sure you want to remove\n%s ?</string>
+
 </resources>

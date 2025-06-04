@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2025 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<resources>
+  <string name="stream_ui_attachment_gallery_count">"%1$d / %2$d"</string>
+  <string name="stream_ui_attachment_gallery_date">"%1$s %2$s에 보냈습니다"</string>
+  <string name="stream_ui_attachment_gallery_delete">"삭제"</string>
+  <string name="stream_ui_attachment_gallery_overview_title">"사진"</string>
+  <string name="stream_ui_attachment_gallery_reply">"회신"</string>
+  <string name="stream_ui_attachment_gallery_share">"이미지 공유"</string>
+  <string name="stream_ui_attachment_gallery_show_in_chat">"채팅에서 확인하기"</string>
+  <string name="stream_ui_channel_list_header_connected">"스트림 채팅"</string>
+  <string name="stream_ui_channel_list_header_disconnected">"네트워크를 검색하는 중입니다"</string>
+  <string name="stream_ui_channel_list_header_offline">"연결이 끊어졌습니다"</string>
+  <plurals name="stream_ui_channel_list_member_info">
+    <item quantity="other">"%1d명, %2d명이 온라인"</item>
+  </plurals>
+  <string name="stream_ui_channel_list_delete_channel">"대화 삭제하기"</string>
+  <string name="stream_ui_channel_list_delete_confirmation_message">"대화를 삭제하시겠습니까?"</string>
+  <string name="stream_ui_channel_list_delete_confirmation_negative_button">"취소"</string>
+  <string name="stream_ui_channel_list_delete_confirmation_positive_button">"삭제"</string>
+  <string name="stream_ui_channel_list_delete_confirmation_title">"채널 삭제"</string>
+  <string name="stream_ui_channel_list_dismiss_dialog">"취소"</string>
+  <string name="stream_ui_channel_list_empty">"사용 가능한 채널이 없습니다"</string>
+  <string name="stream_ui_channel_list_error_delete_channel">"채널 삭제 실패"</string>
+  <string name="stream_ui_channel_list_error_hide_channel">"채널을 숨기지 못했습니다"</string>
+  <string name="stream_ui_channel_list_error_leave_channel">"채널을 나가지 못했습니다"</string>
+  <string name="stream_ui_channel_list_leave_channel">"채널 나가기"</string>
+  <string name="stream_ui_channel_list_view_info">"정보 보기"</string>
+  <string name="stream_ui_channel_list_you">"나"</string>
+  <string name="stream_ui_message_preview_sender">"&lt;b&gt;%1$s&lt;/b&gt;에&lt;b&gt;%2$s&lt;/b&gt;"</string>
+  <string name="stream_ui_user_status_last_seen">"마지막 온라인: %s"</string>
+  <string name="stream_ui_user_status_last_seen_just_now">"방금 확인했습니다"</string>
+  <string name="stream_ui_user_status_online">"온라인"</string>
+  <string name="stream_ui_yesterday">"어제"</string>
+    <string name="stream_ui_message_composer_send_to_channel">"채널에도 전송"</string>
+    <string name="stream_ui_message_composer_mode_reply">"답장"</string>
+    <string name="stream_ui_message_composer_mode_edit">"메시지 수정"</string>
+    <string name="stream_ui_message_composer_hint_normal">"메세지 입력"</string>
+    <string name="stream_ui_message_composer_hint_cannot_send_message">You can\'t send messages in this channel</string>
+    <string name="stream_ui_message_composer_instant_commands">"인스턴트 명령어"</string>
+    <string name="stream_ui_message_composer_gallery_access">"갤러리 액세스를 허용"</string>
+    <string name="stream_ui_message_composer_files_access">"파일 액세스 허용"</string>
+    <string name="stream_ui_message_composer_camera_access">"카메라 액세스 허용"</string>
+    <string name="stream_ui_message_composer_recent_files">"최근 파일"</string>
+    <string name="stream_ui_message_composer_no_files">"사진이나 동영상이 없습니다"</string>
+    <string name="stream_ui_message_composer_error_message_length">"최대 메시지 길이(%d)를 초과했습니다"</string>
+    <string name="stream_ui_message_composer_error_file_size">파일이 너무 큽니다 - 최대 %s입니다</string>
+    <string name="stream_ui_message_composer_error_attachment_count">첨부파일 개수가 (%d) 개를 초과하였습니다.</string>
+    <string name="stream_ui_message_composer_sending_links_not_allowed">Sending links is not allowed in this conversation.</string>
+  <plurals name="stream_ui_message_list_header_member_count">
+    <item quantity="other">"%1d명"</item>
+  </plurals>
+  <plurals name="stream_ui_message_list_header_typing_users">
+    <item quantity="one">"%s 입력 중"</item>
+    <item quantity="other">"%s 외 %d명 입력 중"</item>
+  </plurals>
+  <string name="stream_ui_message_list_header_back_button_content_description">"뒤로 가기"</string>
+  <string name="stream_ui_message_list_header_disconnected">"네트워크를 검색하는 중입니다"</string>
+  <string name="stream_ui_message_list_header_member_count_online">"%1$s, %2$d온라인"</string>
+  <string name="stream_ui_message_list_header_offline">"오프라인…"</string>
+  <string name="stream_ui_message_list_header_retry">"재연결"</string>
+  <string name="stream_ui_message_list_header_thread_subtitle">"%s 참여"</string>
+  <string name="stream_ui_message_list_header_thread_title">"스레드 응답"</string>
+  <string name="stream_ui_message_list_header_untitled_channel">"익명의 채널"</string>
+  <plurals name="stream_ui_message_list_message_reactions">
+    <item quantity="other">"%d개의 공감"</item>
+  </plurals>
+  <plurals name="stream_ui_message_list_thread_reply">
+    <item quantity="other">"%d개의 스레드 응답"</item>
+  </plurals>
+  <plurals name="stream_ui_message_list_thread_separator">
+    <item quantity="other">"%d개의 답장"</item>
+  </plurals>
+  <string name="stream_ui_message_audio_reply_info">"음성 메시지"</string>
+  <string name="stream_ui_message_list_attachment_display_error">"알 수 없는 오류로 인해 파일을 표시할 수 없습니다"</string>
+  <string name="stream_ui_message_list_attachment_invalid_mime_type">"문제가 발생했습니다. 첨부 파일을 열 수 없음: %s"</string>
+  <string name="stream_ui_message_list_attachment_invalid_url">"잘못된 URL로 인해 로드에 실패했습니다"</string>
+  <string name="stream_ui_message_list_attachment_load_failed">"알 수 없는 오류로 인해 로드에 실패했습니다"</string>
+  <string name="stream_ui_message_list_attachment_more_count">"+%d"</string>
+  <string name="stream_ui_message_list_attachment_upload_complete">"업로드 완료, 처리 중…"</string>
+  <string name="stream_ui_message_list_attachment_upload_progress">"%1$s / %2$s"</string>
+  <string name="stream_ui_message_list_attachment_uploading">"%1$d / %2$dmb개 업로드 중…"</string>
+  <string name="stream_ui_message_list_block_user">"사용자 차단"</string>
+  <string name="stream_ui_message_list_copy_message">"메세지 복사"</string>
+  <string name="stream_ui_message_list_delete_confirmation_message">"이 메시지를 삭제하시겠습니까?"</string>
+  <string name="stream_ui_message_list_delete_confirmation_negative_button">"취소"</string>
+  <string name="stream_ui_message_list_delete_confirmation_positive_button">"삭제"</string>
+  <string name="stream_ui_message_list_delete_confirmation_title">"메시지를 삭제합니다"</string>
+  <string name="stream_ui_message_list_delete_message">"메시지 삭제"</string>
+  <string name="stream_ui_message_list_deleted_message">"메시지가 삭제되었습니다"</string>
+  <string name="stream_ui_message_list_download_started">"다운로드가 시작되었습니다"</string>
+  <string name="stream_ui_message_list_edit_message">"메시지 수정"</string>
+  <string name="stream_ui_message_list_empty">"메시지 없음"</string>
+  <string name="stream_ui_message_list_ephemeral_message">"나만 볼 수 있습니다"</string>
+  <string name="stream_ui_message_list_error_block_user">"사용자 차단 실패했습니다"</string>
+  <string name="stream_ui_message_list_error_delete_message">"메세지 삭제에 실패했습니다"</string>
+  <string name="stream_ui_message_list_error_flag_message">"메시지를 신고하지 못했습니다"</string>
+  <string name="stream_ui_message_list_error_mute_user">"사용자를 음소거하지 못했습니다"</string>
+  <string name="stream_ui_message_list_error_pin_message">"메시지를 핀하지 못했습니다"</string>
+  <string name="stream_ui_message_list_error_unmute_user">"사용자 음소거를 해제하지 못했습니다"</string>
+  <string name="stream_ui_message_list_error_unpin_message">"메시지를 핀 해제하지 못했습니다"</string>
+  <string name="stream_ui_message_list_flag_confirmation_message">"추가 조사를 위해 관리자에게 이 메시지의 복사본을 전송하시겠습니까?"</string>
+  <string name="stream_ui_message_list_flag_confirmation_negative_button">"취소"</string>
+  <string name="stream_ui_message_list_flag_confirmation_positive_button">"신고"</string>
+  <string name="stream_ui_message_list_flag_confirmation_title">"메시지를 신고합니다"</string>
+  <string name="stream_ui_message_list_flag_message">"메시지 신고"</string>
+  <string name="stream_ui_message_list_giphy_cancel">"취소"</string>
+  <string name="stream_ui_message_list_giphy_send">"보내기"</string>
+  <string name="stream_ui_message_list_giphy_shuffle">"섞기"</string>
+  <string name="stream_ui_message_list_giphy_title">"Giphy"</string>
+  <string name="stream_ui_message_list_mute_user">"사용자 음소거"</string>
+  <string name="stream_ui_message_list_pin_message">"메세지 핀하기"</string>
+  <string name="stream_ui_message_list_pinned_message">"%s의 핀"</string>
+  <string name="stream_ui_message_list_pinned_message_you">"나"</string>
+  <string name="stream_ui_message_list_reply">"답장"</string>
+  <string name="stream_ui_message_list_resend_message">"재전송"</string>
+  <string name="stream_ui_message_list_thread_reply">"스레드 답장"</string>
+  <string name="stream_ui_message_list_unmute_user">"사용자 음소거 해제"</string>
+  <string name="stream_ui_message_list_unpin_message">"핀 해제"</string>
+  <string name="stream_ui_pinned_message_list_empty_description"><![CDATA[중요한 메시지를 길게 누르고 <b>대화에 핀하기</b>을 선택합니다.]]></string>
+  <string name="stream_ui_pinned_message_list_empty_title">"핀된 메시지 없음"</string>
+  <string name="stream_ui_pinned_message_list_results_error">"오류가 발생하였습니다"</string>
+  <plurals name="stream_ui_search_results_count">
+    <item quantity="other">"%d개의 결과"</item>
+  </plurals>
+  <string name="stream_ui_search_input_clear_icon_content_description">"지우기"</string>
+  <string name="stream_ui_search_input_hint">"검색"</string>
+  <string name="stream_ui_search_input_search_icon_content_description">"검색"</string>
+  <string name="stream_ui_search_results_empty">"\"%s\"에 대한 검색결과가 없습니다."</string>
+  <string name="stream_ui_search_results_error">"오류가 발생하였습니다"</string>
+</resources>
