@@ -34,6 +34,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -64,6 +65,7 @@ import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionIte
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.channel.info.DefaultDirectChannelInfoTopBar
+import io.getstream.chat.android.compose.ui.channel.info.DefaultGroupChannelInfoTopBar
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelHeaderLeadingContent
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderCenterContent
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderTrailingContent
@@ -198,6 +200,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.React
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
+import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.EmptyThreadPlaceholderItemState
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
@@ -2869,6 +2872,7 @@ public interface ChatComponentFactory {
     }
 
     /**
+<<<<<<< HEAD
      * Factory method for creating the preview content of file attachments.
      *
      * @param modifier Modifier for styling.
@@ -2972,12 +2976,43 @@ public interface ChatComponentFactory {
         )
     }
 
+=======
+     * Factory method for creating the top bar of the channel info screen.
+     *
+     * @param headerState The state of the channel header.
+     * @param listState The state of the lazy list.
+     * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
+     */
+>>>>>>> 15d62f6c71 (Refactor: Decouple Channel Info top bars from the content)
     @ExperimentalStreamChatApi
     @Composable
     public fun DirectChannelInfoTopBar(
+        headerState: ChannelHeaderViewState,
+        listState: LazyListState,
         onNavigationIconClick: () -> Unit,
     ) {
         DefaultDirectChannelInfoTopBar(
+            onNavigationIconClick = onNavigationIconClick,
+        )
+    }
+
+    /**
+     * Factory method for creating the top bar of the group channel info screen.
+     *
+     * @param headerState The state of the channel header.
+     * @param listState The state of the lazy list.
+     * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
+     */
+    @ExperimentalStreamChatApi
+    @Composable
+    public fun GroupChannelInfoTopBar(
+        headerState: ChannelHeaderViewState,
+        listState: LazyListState,
+        onNavigationIconClick: () -> Unit,
+    ) {
+        DefaultGroupChannelInfoTopBar(
+            headerState = headerState,
+            listState = listState,
             onNavigationIconClick = onNavigationIconClick,
         )
     }

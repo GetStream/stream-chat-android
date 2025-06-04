@@ -44,7 +44,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -61,8 +60,10 @@ import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewMode
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
@@ -78,55 +79,63 @@ import java.util.Date
  *
  * @param viewModelFactory The factory used to create the [ChannelInfoViewModel].
  * @param modifier The [Modifier] to be applied to this screen.
- * @param viewModelKey Key to differentiate between instances of [ChannelInfoViewModel].
  * @param currentUser The current logged-in user. Defaults to the current user from the [ChatClient].
  * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
- * @param topBar The top bar to be displayed on the screen.
  */
 @ExperimentalStreamChatApi
 @Composable
 public fun GroupChannelInfoScreen(
     viewModelFactory: ChannelInfoViewModelFactory,
     modifier: Modifier = Modifier,
-    viewModelKey: String? = null,
     currentUser: User? = ChatClient.instance().getCurrentUser(),
     onNavigationIconClick: () -> Unit = {},
-    topBar: @Composable (elevation: Dp) -> Unit = { elevation ->
-        GroupChannelInfoTopBar(
-            viewModelFactory = viewModelFactory,
-            viewModelKey = "topBar-$viewModelKey",
-            elevation = elevation,
-            onNavigationIconClick = onNavigationIconClick,
-        )
-    },
 ) {
-    val viewModel = viewModel<ChannelInfoViewModel>(key = viewModelKey, factory = viewModelFactory)
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val headerViewModel = viewModel<ChannelHeaderViewModel>(factory = viewModelFactory)
+    val infoViewModel = viewModel<ChannelInfoViewModel>(factory = viewModelFactory)
+    val headerState by headerViewModel.state.collectAsStateWithLifecycle()
+    val infoState by infoViewModel.state.collectAsStateWithLifecycle()
 
-    val listState = rememberLazyListState()
-    val headerElevation by animateDpAsState(
-        targetValue = if (listState.canScrollBackward) {
-            ChatTheme.dimens.headerElevation
-        } else {
-            1.dp
-        },
+    GroupChannelInfoScaffold(
+        modifier = modifier,
+        currentUser = currentUser,
+        headerState = headerState,
+        infoState = infoState,
+        onNavigationIconClick = onNavigationIconClick,
+        onViewAction = infoViewModel::onViewAction,
     )
 
+    GroupChannelInfoScreenModal(infoViewModel)
+}
+
+@Composable
+private fun GroupChannelInfoScaffold(
+    modifier: Modifier,
+    currentUser: User?,
+    headerState: ChannelHeaderViewState,
+    infoState: ChannelInfoViewState,
+    onNavigationIconClick: () -> Unit = {},
+    onViewAction: (action: ChannelInfoViewAction) -> Unit = {},
+) {
+    val listState = rememberLazyListState()
     Scaffold(
         modifier = modifier,
-        topBar = { topBar(headerElevation) },
+        topBar = {
+            ChatTheme.componentFactory.GroupChannelInfoTopBar(
+                headerState = headerState,
+                listState = listState,
+                onNavigationIconClick = onNavigationIconClick,
+            )
+        },
         containerColor = ChatTheme.colors.barsBackground,
     ) { padding ->
         GroupChannelInfoContent(
             modifier = Modifier.padding(padding),
             listState = listState,
-            state = state,
+            state = infoState,
             currentUser = currentUser,
-            onViewAction = viewModel::onViewAction,
+            onViewAction = onViewAction,
         )
     }
-
-    GroupChannelInfoScreenModal(viewModel)
 }
 
 @Composable
@@ -151,24 +160,27 @@ private fun GroupChannelInfoScreenModal(viewModel: ChannelInfoViewModel) {
 }
 
 @Composable
-private fun GroupChannelInfoTopBar(
-    viewModelFactory: ChannelInfoViewModelFactory,
-    viewModelKey: String?,
-    elevation: Dp,
+internal fun DefaultGroupChannelInfoTopBar(
+    headerState: ChannelHeaderViewState,
+    listState: LazyListState,
     onNavigationIconClick: () -> Unit,
 ) {
-    val viewModel = viewModel<ChannelHeaderViewModel>(key = viewModelKey, factory = viewModelFactory)
-    val state by viewModel.state.collectAsStateWithLifecycle()
-
-    when (val content = state) {
+    val elevation by animateDpAsState(
+        targetValue = if (listState.canScrollBackward) {
+            ChatTheme.dimens.headerElevation
+        } else {
+            1.dp
+        },
+    )
+    when (headerState) {
         is ChannelHeaderViewState.Loading -> LoadingIndicator(
             modifier = Modifier.fillMaxWidth(),
         )
 
         is ChannelHeaderViewState.Content -> MessageListHeader(
-            channel = content.channel,
-            currentUser = content.currentUser,
-            connectionState = content.connectionState,
+            channel = headerState.channel,
+            currentUser = headerState.currentUser,
+            connectionState = headerState.connectionState,
             elevation = elevation,
             onBackPressed = onNavigationIconClick,
             leadingContent = {
@@ -186,10 +198,10 @@ private fun GroupChannelInfoTopBar(
 @Composable
 private fun GroupChannelInfoContent(
     state: ChannelInfoViewState,
-    modifier: Modifier = Modifier,
-    currentUser: User? = null,
-    listState: LazyListState = rememberLazyListState(),
-    onViewAction: (action: ChannelInfoViewAction) -> Unit = {},
+    modifier: Modifier,
+    currentUser: User?,
+    listState: LazyListState,
+    onViewAction: (action: ChannelInfoViewAction) -> Unit,
 ) {
     val isLoading = state is ChannelInfoViewState.Loading
     ContentBox(
@@ -328,8 +340,11 @@ private fun GroupChannelInfoLoadingPreview() {
 
 @Composable
 internal fun GroupChannelInfoLoading() {
-    GroupChannelInfoContent(
-        state = ChannelInfoViewState.Loading,
+    GroupChannelInfoScaffold(
+        modifier = Modifier.fillMaxSize(),
+        currentUser = PreviewUserData.user1,
+        headerState = ChannelHeaderViewState.Loading,
+        infoState = ChannelInfoViewState.Loading,
     )
 }
 
@@ -343,8 +358,15 @@ private fun GroupChannelInfoCollapsedMembersPreview() {
 
 @Composable
 internal fun GroupChannelInfoCollapsedMembers() {
-    GroupChannelInfoContent(
-        state = ChannelInfoViewState.Content(
+    GroupChannelInfoScaffold(
+        modifier = Modifier.fillMaxSize(),
+        currentUser = PreviewUserData.user1,
+        headerState = ChannelHeaderViewState.Content(
+            currentUser = PreviewUserData.user1,
+            connectionState = ConnectionState.Connected,
+            channel = PreviewChannelData.channelWithImage,
+        ),
+        infoState = ChannelInfoViewState.Content(
             owner = PreviewUserData.user1,
             members = ExpandableList(
                 items = listOf(
@@ -379,8 +401,15 @@ private fun GroupChannelInfoExpandedMembersPreview() {
 
 @Composable
 internal fun GroupChannelInfoExpandedMembers() {
-    GroupChannelInfoContent(
-        state = ChannelInfoViewState.Content(
+    GroupChannelInfoScaffold(
+        modifier = Modifier.fillMaxSize(),
+        currentUser = PreviewUserData.user1,
+        headerState = ChannelHeaderViewState.Content(
+            currentUser = PreviewUserData.user1,
+            connectionState = ConnectionState.Connected,
+            channel = PreviewChannelData.channelWithImage,
+        ),
+        infoState = ChannelInfoViewState.Content(
             owner = PreviewUserData.user1,
             members = ExpandableList(
                 items = listOf(
