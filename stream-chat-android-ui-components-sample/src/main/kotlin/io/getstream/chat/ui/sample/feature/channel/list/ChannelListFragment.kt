@@ -29,7 +29,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.ui.common.utils.Utils
 import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel
@@ -39,6 +38,7 @@ import io.getstream.chat.android.ui.viewmodel.search.SearchViewModel
 import io.getstream.chat.android.ui.viewmodel.search.bindView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.application.App
+import io.getstream.chat.ui.sample.common.isGroupChannel
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.data.user.SampleUser
 import io.getstream.chat.ui.sample.databinding.FragmentChannelsBinding
@@ -108,17 +108,18 @@ class ChannelListFragment : Fragment() {
             }
 
             setChannelDeleteClickListener { channel ->
-                ConfirmationDialogFragment.newDeleteChannelInstance(requireContext())
-                    .apply {
-                        confirmClickListener =
-                            ConfirmationDialogFragment.ConfirmClickListener { viewModel.deleteChannel(channel) }
-                    }
-                    .show(parentFragmentManager, null)
+                ConfirmationDialogFragment.newDeleteChannelInstance(
+                    context = requireContext(),
+                    isGroupChannel = channel.isGroupChannel,
+                ).apply {
+                    confirmClickListener =
+                        ConfirmationDialogFragment.ConfirmClickListener { viewModel.deleteChannel(channel) }
+                }.show(parentFragmentManager, null)
             }
 
             setChannelInfoClickListener { channel ->
                 val direction = when {
-                    channel.members.size > 2 || channel.isAnonymousChannel() ->
+                    channel.isGroupChannel ->
                         HomeFragmentDirections.actionHomeFragmentToGroupChatInfoFragment(channel.cid)
 
                     else -> HomeFragmentDirections.actionHomeFragmentToChatInfoFragment(channel.cid)

@@ -38,7 +38,7 @@ import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
 class ChatPreviewFragment : Fragment() {
 
     private val args: ChatPreviewFragmentArgs by navArgs()
-    private val viewModel: ChatPreviewViewModel by viewModels { ChatPreviewViewModelFactory(args.userData.id) }
+    private val viewModel: ChatPreviewViewModel by viewModels { ChatPreviewViewModelFactory(args.memberId) }
 
     private var _binding: FragmentChatPreviewBinding? = null
     private val binding get() = _binding!!
@@ -120,7 +120,7 @@ class ChatPreviewFragment : Fragment() {
 
     private fun navigateToChatInfo(cid: String) {
         findNavController().navigateSafely(
-            ChatPreviewFragmentDirections.actionOpenChatInfo(userData = args.userData, cid = cid),
+            ChatPreviewFragmentDirections.actionOpenChatInfo(cid = cid),
         )
     }
 }
