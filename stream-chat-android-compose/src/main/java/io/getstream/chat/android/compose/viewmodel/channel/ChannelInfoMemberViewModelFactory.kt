@@ -17,30 +17,26 @@
 package io.getstream.chat.android.compose.viewmodel.channel
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.ViewModelProvider
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.ui.common.feature.channel.header.ChannelHeaderViewController
-import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
-import kotlinx.coroutines.flow.StateFlow
 
 /**
- * ViewModel for managing the state of the channel header.
+ * Factory for creating instances of [ChannelInfoMemberViewModel].
  *
  * @param cid The full channel identifier (e.g., "messaging:123").
- * @param controllerProvider The provider for [ChannelHeaderViewController].
+ * @param memberId The member ID of the user.
  */
 @ExperimentalStreamChatApi
-public class ChannelHeaderViewModel(
+public class ChannelInfoMemberViewModelFactory(
     private val cid: String,
-    controllerProvider: ViewModel.() -> ChannelHeaderViewController = {
-        ChannelHeaderViewController(cid = cid, scope = viewModelScope)
-    },
-) : ViewModel() {
+    private val memberId: String,
+) : ViewModelProvider.Factory {
 
-    private val controller: ChannelHeaderViewController by lazy { controllerProvider() }
-
-    /**
-     * @see [ChannelHeaderViewController.state]
-     */
-    public val state: StateFlow<ChannelHeaderViewState> = controller.state
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        require(modelClass == ChannelInfoMemberViewModel::class.java) {
+            "ChannelInfoMemberViewModelFactory can only create instances of ChannelInfoMemberViewModel"
+        }
+        @Suppress("UNCHECKED_CAST")
+        return ChannelInfoMemberViewModel(cid, memberId) as T
+    }
 }

@@ -91,7 +91,7 @@ public fun MessageListHeader(
     shape: Shape = ChatTheme.shapes.header,
     elevation: Dp = ChatTheme.dimens.headerElevation,
     onBackPressed: () -> Unit = {},
-    onHeaderTitleClick: (Channel) -> Unit = {},
+    onHeaderTitleClick: ((Channel) -> Unit)? = null,
     onChannelAvatarClick: (() -> Unit)? = null,
     leadingContent: @Composable RowScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
@@ -102,15 +102,27 @@ public fun MessageListHeader(
     },
     centerContent: @Composable RowScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
-            MessageListHeaderCenterContent(
-                modifier = Modifier.weight(1f),
-                channel = channel,
-                currentUser = currentUser,
-                typingUsers = typingUsers,
-                messageMode = messageMode,
-                onHeaderTitleClick = onHeaderTitleClick,
-                connectionState = connectionState,
-            )
+            if (onHeaderTitleClick == null) {
+                MessageListHeaderCenterContent(
+                    modifier = Modifier.weight(1f),
+                    channel = channel,
+                    currentUser = currentUser,
+                    connectionState = connectionState,
+                    typingUsers = typingUsers,
+                    messageMode = messageMode,
+                    onClick = null,
+                )
+            } else {
+                MessageListHeaderCenterContent(
+                    modifier = Modifier.weight(1f),
+                    channel = channel,
+                    currentUser = currentUser,
+                    typingUsers = typingUsers,
+                    messageMode = messageMode,
+                    onHeaderTitleClick = onHeaderTitleClick,
+                    connectionState = connectionState,
+                )
+            }
         }
     },
     trailingContent: @Composable RowScope.() -> Unit = {
@@ -181,7 +193,7 @@ public fun DefaultMessageListHeaderCenterContent(
     modifier: Modifier = Modifier,
     typingUsers: List<User> = emptyList(),
     messageMode: MessageMode = MessageMode.Normal,
-    onHeaderTitleClick: (Channel) -> Unit = {},
+    onHeaderTitleClick: ((Channel) -> Unit)? = null,
 ) {
     val title = when (messageMode) {
         MessageMode.Normal -> ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser)
@@ -194,6 +206,7 @@ public fun DefaultMessageListHeaderCenterContent(
             currentUser = currentUser,
             userPresence = ChatTheme.userPresence,
         )
+
         is MessageMode.MessageThread -> stringResource(
             R.string.stream_compose_thread_subtitle,
             ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser),
@@ -203,7 +216,13 @@ public fun DefaultMessageListHeaderCenterContent(
     Column(
         modifier = modifier
             .height(IntrinsicSize.Max)
-            .clickable { onHeaderTitleClick(channel) },
+            .run {
+                if (onHeaderTitleClick != null) {
+                    clickable { onHeaderTitleClick(channel) }
+                } else {
+                    this
+                }
+            },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
