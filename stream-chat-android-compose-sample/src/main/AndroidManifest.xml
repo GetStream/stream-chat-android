@@ -89,6 +89,10 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
             />
+        <activity
+            android:name=".feature.channel.draft.DraftChannelActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            />
     </application>
-
 </manifest>

@@ -76,21 +76,30 @@ class DirectChannelInfoActivity : BaseConnectedActivity() {
             LaunchedEffect(viewModel) {
                 viewModel.events.collectLatest { event ->
                     when (event) {
-                        is ChannelInfoViewEvent.Error ->
-                            showError(event)
-
-                        is ChannelInfoViewEvent.NavigateUp -> {
-                            setResult(RESULT_OK)
-                            finish()
-                        }
-
-                        is ChannelInfoViewEvent.NavigateToPinnedMessages ->
-                            openPinnedMessages()
-
-                        else -> Unit
+                        is ChannelInfoViewEvent.Error -> showError(event)
+                        is ChannelInfoViewEvent.Navigation -> onNavigationEvent(event)
+                        is ChannelInfoViewEvent.Modal -> Unit
                     }
                 }
             }
+        }
+    }
+
+    private fun onNavigationEvent(event: ChannelInfoViewEvent.Navigation) {
+        when (event) {
+            is ChannelInfoViewEvent.NavigateUp -> {
+                setResult(RESULT_OK)
+                finish()
+            }
+
+            is ChannelInfoViewEvent.NavigateToPinnedMessages ->
+                openPinnedMessages()
+
+            // No need to handle these in DirectChannelInfoActivity,
+            // as it is only applicable for group channels.
+            is ChannelInfoViewEvent.NavigateToChannel,
+            is ChannelInfoViewEvent.NavigateToDraftChannel,
+            -> Unit
         }
     }
 
