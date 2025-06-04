@@ -62,13 +62,14 @@ import kotlinx.coroutines.launch
  *
  * @param cid The unique identifier of the channel.
  * @param scope The [CoroutineScope] used for launching coroutines.
+ * @param copyToClipboardHandler The [CopyToClipboardHandler] used for copying text to the clipboard.
  * @param chatClient The [ChatClient] instance used for interacting with the chat API.
  * @param channelState A [Flow] representing the state of the channel.
  * @param channelClient The [ChannelClient] instance for performing channel-specific operations.
  */
 @InternalStreamChatApi
 public class ChannelInfoViewController(
-    cid: String,
+    private val cid: String,
     private val scope: CoroutineScope,
     private val copyToClipboardHandler: CopyToClipboardHandler,
     private val chatClient: ChatClient = ChatClient.instance(),
@@ -145,7 +146,7 @@ public class ChannelInfoViewController(
             ChannelInfoViewState.Content(
                 owner = channelData.createdBy,
                 members = expandableMembers,
-                options = buildOptionsList(
+                options = buildChannelOptionList(
                     channelData = channelData,
                     singleMember = if (contentMembers.size == 1) contentMembers.first() else null,
                     isMuted = isMuted,
@@ -167,6 +168,7 @@ public class ChannelInfoViewController(
         when (action) {
             is ChannelInfoViewAction.ExpandMembersClick -> expandMembers()
             is ChannelInfoViewAction.CollapseMembersClick -> collapseMembers()
+            is ChannelInfoViewAction.MemberClick -> memberClick(action)
             is ChannelInfoViewAction.UserInfoClick -> userInfoClick(action.user)
             is ChannelInfoViewAction.RenameChannelClick -> renameChannel(action.name)
             is ChannelInfoViewAction.PinnedMessagesClick ->
@@ -181,6 +183,27 @@ public class ChannelInfoViewController(
             is ChannelInfoViewAction.LeaveChannelConfirmationClick -> leaveChannel(action.quitMessage)
             is ChannelInfoViewAction.DeleteChannelClick -> _events.tryEmit(ChannelInfoViewEvent.DeleteChannelModal)
             is ChannelInfoViewAction.DeleteChannelConfirmationClick -> deleteChannel()
+            is ChannelInfoViewAction.BanMemberConfirmationClick -> banMember(action.memberId, action.timeoutInMinutes)
+            is ChannelInfoViewAction.RemoveMemberConfirmationClick -> removeMember(action.memberId)
+        }
+    }
+
+    /**
+     * Propagates events from the [ChannelInfoMemberViewEvent] to the [ChannelInfoViewEvent].
+     */
+    public fun onMemberViewEvent(event: ChannelInfoMemberViewEvent) {
+        logger.d { "[onMemberViewEvent] event: $event" }
+        when (event) {
+            // https://linear.app/stream/issue/AND-567/compose-navigate-to-messages-from-the-member-modal-sheet-of-channel
+            is ChannelInfoMemberViewEvent.MessageMember -> Unit
+
+            is ChannelInfoMemberViewEvent.BanMember ->
+                _events.tryEmit(ChannelInfoViewEvent.BanMemberModal(event.member))
+
+            is ChannelInfoMemberViewEvent.UnbanMember -> unbanMember(event.member.getUserId())
+
+            is ChannelInfoMemberViewEvent.RemoveMember ->
+                _events.tryEmit(ChannelInfoViewEvent.RemoveMemberModal(event.member))
         }
     }
 
@@ -204,6 +227,17 @@ public class ChannelInfoViewController(
                 ),
             )
         }
+    }
+
+    private fun memberClick(action: ChannelInfoViewAction.MemberClick) {
+        logger.d { "[memberClick] member: ${action.member}" }
+
+        _events.tryEmit(
+            ChannelInfoViewEvent.MemberInfoModal(
+                cid = cid,
+                member = action.member,
+            ),
+        )
     }
 
     private fun userInfoClick(user: User) {
@@ -296,6 +330,65 @@ public class ChannelInfoViewController(
         }
     }
 
+    private fun deleteChannel() {
+        logger.d { "[deleteChannel]" }
+
+        scope.launch {
+            channelClient.delete().await()
+                .onSuccess {
+                    _events.tryEmit(ChannelInfoViewEvent.NavigateUp(reason = Navigation.Reason.DeleteChannelSuccess))
+                }
+                .onError { error ->
+                    logger.e { "[deleteChannel] error: ${error.message}" }
+                    _events.tryEmit(ChannelInfoViewEvent.DeleteChannelError)
+                }
+        }
+    }
+
+    private fun banMember(memberId: String, timeout: Int?) {
+        logger.d { "[banMember] memberId: $memberId" }
+
+        scope.launch {
+            channelClient.banUser(
+                targetId = memberId,
+                reason = null,
+                timeout = timeout,
+            ).await()
+                .onSuccess { /* no-op */ }
+                .onError { error ->
+                    logger.e { "[banMember] error: ${error.message}" }
+                    _events.tryEmit(ChannelInfoViewEvent.BanMemberError)
+                }
+        }
+    }
+
+    private fun unbanMember(memberId: String) {
+        logger.d { "[unbanMember] memberId: $memberId" }
+
+        scope.launch {
+            channelClient.unbanUser(memberId).await()
+                .onSuccess { /* no-op */ }
+                .onError { error ->
+                    logger.e { "[unbanMember] error: ${error.message}" }
+                    _events.tryEmit(ChannelInfoViewEvent.UnbanMemberError)
+                }
+        }
+    }
+
+    private fun removeMember(memberId: String) {
+        logger.d { "[removeMember] memberId: $memberId" }
+
+        removeMemberFromChannel(
+            memberId = memberId,
+            systemMessage = null,
+            onSuccess = { /* no-op */ },
+            onError = { error ->
+                logger.e { "[removeMember] error: ${error.message}" }
+                _events.tryEmit(ChannelInfoViewEvent.RemoveMemberError)
+            },
+        )
+    }
+
     private fun removeMemberFromChannel(
         memberId: String,
         systemMessage: Message?,
@@ -309,21 +402,6 @@ public class ChannelInfoViewController(
             ).await()
                 .onSuccess(onSuccess)
                 .onError(onError)
-        }
-    }
-
-    private fun deleteChannel() {
-        logger.d { "[deleteChannel]" }
-
-        scope.launch {
-            channelClient.delete().await()
-                .onSuccess {
-                    _events.tryEmit(ChannelInfoViewEvent.NavigateUp(reason = Navigation.Reason.DeleteChannelSuccess))
-                }
-                .onError { error ->
-                    logger.e { "[deleteChannel] error: ${error.message}" }
-                    _events.tryEmit(ChannelInfoViewEvent.DeleteChannelError)
-                }
         }
     }
 
@@ -352,7 +430,7 @@ private val ChannelData.isGroupChannel: Boolean
 private val ChannelData.isDistinct: Boolean
     get() = id.startsWith("!members")
 
-private fun buildOptionsList(
+private fun buildChannelOptionList(
     channelData: ChannelData,
     singleMember: Member?,
     isMuted: Boolean,
