@@ -301,7 +301,7 @@ class ChatsActivity : BaseConnectedActivity() {
         }
         val viewModel = viewModel<ChannelInfoViewModel>(factory = viewModelFactory)
 
-        viewModel.handleChannelInfoEvents(onNavigateUp, onNavigateToPinnedMessages)
+        viewModel.OnChannelInfoEvents(onNavigateUp, onNavigateToPinnedMessages)
 
         if (AdaptiveLayoutInfo.singlePaneWindow()) {
             DirectChannelInfoScreen(
@@ -351,7 +351,7 @@ class ChatsActivity : BaseConnectedActivity() {
         }
         val viewModel = viewModel<ChannelInfoViewModel>(factory = viewModelFactory)
 
-        viewModel.handleChannelInfoEvents(
+        viewModel.OnChannelInfoEvents(
             onNavigateUp = onNavigateUp,
             onNavigateToPinnedMessages = onNavigateToPinnedMessages,
             onNavigateToChannel = onNavigateToChannel,
@@ -390,7 +390,7 @@ class ChatsActivity : BaseConnectedActivity() {
     }
 
     @Composable
-    private fun ChannelInfoViewModel.handleChannelInfoEvents(
+    private fun ChannelInfoViewModel.OnChannelInfoEvents(
         onNavigateUp: () -> Unit,
         onNavigateToPinnedMessages: () -> Unit,
         onNavigateToChannel: (cid: String) -> Unit = {},
