@@ -148,10 +148,12 @@ private fun ChannelInfoMemberInfoModalSheetContent(
             )
             LazyColumn {
                 items(content.options) { option ->
-                    ChannelInfoMemberOption(
-                        option = option,
-                        onViewAction = onViewAction,
-                    )
+                    with(ChatTheme.componentFactory) {
+                        ChannelInfoMemberOptionItem(
+                            option = option,
+                            onViewAction = onViewAction,
+                        )
+                    }
                 }
             }
         }
