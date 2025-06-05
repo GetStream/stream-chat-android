@@ -70,6 +70,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Use the lambda-based `graphicsLayer` modifier to improve performance by avoiding unnecessary recompositions caused by mutable state in modifiers. [#5800](https://github.com/GetStream/stream-chat-android/pull/5800)
 
 ### ✅ Added
 - Introduce **experimental** `DirectChannelInfoScreen` and `GroupChannelInfoScreen` for displaying channel information and the available channel actions. [#5773](https://github.com/GetStream/stream-chat-android/pull/5773)
