@@ -1,7 +1,11 @@
 name: SDK size checks
 
 on:
-  pull_request:
+  pull_request_target:
+    types: [opened, synchronize] # 'synchronize' is when new commits are pushed to the PR branch
+
+permissions:
+  pull-requests: write # For posting comments
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -17,9 +21,6 @@ env:
   METRICS_FILE: "metrics/size.json"
   MAX_TOLERANCE: 500
   FINE_TOLERANCE: 250
-
-permissions:
-  pull-requests: write # For posting comments
 
 jobs:
   compare-sdk-sizes:
