@@ -213,6 +213,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparat
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
+import io.getstream.chat.android.compose.ui.channel.info.ChannelInfoOptionItem as DefaultChannelInfoOptionItem
 import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
@@ -2916,7 +2917,7 @@ public interface ChatComponentFactory {
      */
     @ExperimentalStreamChatApi
     @Composable
-    public fun ChannelInfoSeparatorItem() {
+    public fun LazyItemScope.ChannelInfoSeparatorItem() {
         StreamHorizontalDivider(thickness = 8.dp)
     }
 
@@ -2929,12 +2930,12 @@ public interface ChatComponentFactory {
      */
     @ExperimentalStreamChatApi
     @Composable
-    public fun ChannelInfoOptionItem(
+    public fun LazyItemScope.ChannelInfoOptionItem(
         option: ChannelInfoViewState.Content.Option,
         isGroupChannel: Boolean,
         onViewAction: (ChannelInfoViewAction) -> Unit,
     ) {
-        io.getstream.chat.android.compose.ui.channel.info.ChannelInfoOptionItem(
+        DefaultChannelInfoOptionItem(
             option = option,
             isGroupChannel = isGroupChannel,
             onViewAction = onViewAction,
@@ -2971,7 +2972,7 @@ public interface ChatComponentFactory {
      */
     @ExperimentalStreamChatApi
     @Composable
-    public fun GroupChannelInfoExpandMemberItem(
+    public fun LazyItemScope.GroupChannelInfoExpandMemberItem(
         collapsedCount: Int,
         onClick: () -> Unit,
     ) {
