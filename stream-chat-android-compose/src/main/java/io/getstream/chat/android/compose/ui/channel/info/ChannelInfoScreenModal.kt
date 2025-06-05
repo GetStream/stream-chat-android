@@ -370,7 +370,7 @@ internal fun ChannelInfoScreenModal(
     modal: ChannelInfoViewEvent.Modal,
     isGroupChannel: Boolean,
 ) {
-    ChannelInfoScreenModal(
+    ChatTheme.componentFactory.ChannelInfoScreenModal(
         modal = modal,
         isGroupChannel = isGroupChannel,
         onViewAction = {},
