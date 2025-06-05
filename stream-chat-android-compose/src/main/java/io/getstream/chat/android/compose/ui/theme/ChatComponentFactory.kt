@@ -3052,6 +3052,9 @@ public interface ChatComponentFactory {
 
     /**
      * Factory method for creating the expand member item in the group channel info screen.
+     *
+     * @param collapsedCount The number of members that are currently collapsed.
+     * @param onClick Callback invoked when the user clicks to expand the member list.
      */
     @ExperimentalStreamChatApi
     @Composable
