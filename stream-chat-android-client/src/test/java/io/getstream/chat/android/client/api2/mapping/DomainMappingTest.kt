@@ -96,6 +96,7 @@ import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldBeEqualTo
+import org.junit.Assert
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -651,12 +652,13 @@ internal class DomainMappingTest {
         )
         val sut = Fixture().get()
         val thread = with(sut) { downstreamThreadDto.toDomain() }
+        val fallbackChannelInfo = with(sut) { downstreamThreadDto.channel?.toChannelInfo() }
         val expected = Thread(
             activeParticipantCount = downstreamThreadDto.active_participant_count ?: 0,
             cid = downstreamThreadDto.channel_cid,
             channel = with(sut) { downstreamThreadDto.channel?.toDomain() },
             parentMessageId = downstreamThreadDto.parent_message_id,
-            parentMessage = with(sut) { downstreamThreadDto.parent_message.toDomain() },
+            parentMessage = with(sut) { downstreamThreadDto.parent_message.toDomain(fallbackChannelInfo) },
             createdByUserId = downstreamThreadDto.created_by_user_id,
             createdBy = with(sut) { downstreamThreadDto.created_by?.toDomain() },
             participantCount = downstreamThreadDto.participant_count,
@@ -670,7 +672,7 @@ internal class DomainMappingTest {
             deletedAt = downstreamThreadDto.deleted_at,
             title = downstreamThreadDto.title,
             latestReplies = with(sut) {
-                downstreamThreadDto.latest_replies.map { it.toDomain() }
+                downstreamThreadDto.latest_replies.map { it.toDomain(fallbackChannelInfo) }
             },
             read = with(sut) {
                 downstreamThreadDto.read.orEmpty().map { it.toDomain(downstreamThreadDto.last_message_at) }
