@@ -202,11 +202,13 @@ private fun DirectChannelInfoContent(
             )
             LazyColumn(state = listState) {
                 items(content.options) { option ->
-                    ChatTheme.componentFactory.ChannelInfoOptionItem(
-                        option = option,
-                        isGroupChannel = false,
-                        onViewAction = onViewAction,
-                    )
+                    with(ChatTheme.componentFactory) {
+                        ChannelInfoOptionItem(
+                            option = option,
+                            isGroupChannel = false,
+                            onViewAction = onViewAction,
+                        )
+                    }
                 }
             }
         }

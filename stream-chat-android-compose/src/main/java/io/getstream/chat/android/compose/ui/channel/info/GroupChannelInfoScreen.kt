@@ -231,21 +231,27 @@ private fun GroupChannelInfoContent(
             }
             if (content.members.canExpand && content.members.isCollapsed) {
                 item {
-                    ChatTheme.componentFactory.GroupChannelInfoExpandMemberItem(
-                        collapsedCount = content.members.collapsedCount,
-                        onClick = { onViewAction(ChannelInfoViewAction.ExpandMembersClick) },
-                    )
+                    with(ChatTheme.componentFactory) {
+                        GroupChannelInfoExpandMemberItem(
+                            collapsedCount = content.members.collapsedCount,
+                            onClick = { onViewAction(ChannelInfoViewAction.ExpandMembersClick) },
+                        )
+                    }
                 }
             }
             item {
-                ChatTheme.componentFactory.ChannelInfoSeparatorItem()
+                with(ChatTheme.componentFactory) {
+                    ChannelInfoSeparatorItem()
+                }
             }
             items(content.options) { option ->
-                ChatTheme.componentFactory.ChannelInfoOptionItem(
-                    option = option,
-                    isGroupChannel = true,
-                    onViewAction = onViewAction,
-                )
+                with(ChatTheme.componentFactory) {
+                    ChannelInfoOptionItem(
+                        option = option,
+                        isGroupChannel = true,
+                        onViewAction = onViewAction,
+                    )
+                }
             }
         }
     }
