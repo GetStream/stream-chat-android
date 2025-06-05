@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.channel.info
 
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -31,14 +32,16 @@ import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewSta
 
 @Suppress("LongMethod")
 @Composable
-internal fun ChannelInfoOptionItem(
+internal fun LazyItemScope.ChannelInfoOptionItem(
     option: ChannelInfoViewState.Content.Option,
     isGroupChannel: Boolean,
     onViewAction: (action: ChannelInfoViewAction) -> Unit,
 ) {
     when (option) {
         is ChannelInfoViewState.Content.Option.Separator -> {
-            ChatTheme.componentFactory.ChannelInfoSeparatorItem()
+            with(ChatTheme.componentFactory) {
+                ChannelInfoSeparatorItem()
+            }
         }
 
         is ChannelInfoViewState.Content.Option.AddMember -> {
