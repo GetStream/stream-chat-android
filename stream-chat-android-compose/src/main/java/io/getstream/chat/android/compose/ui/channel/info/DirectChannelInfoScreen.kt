@@ -54,6 +54,7 @@ import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelF
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
@@ -182,24 +183,7 @@ private fun DirectChannelInfoContent(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             val user = content.members.first().user
-            UserAvatar(
-                modifier = Modifier.size(72.dp),
-                user = user,
-            )
-            Text(
-                text = user.name.takeIf(String::isNotBlank) ?: user.id,
-                style = ChatTheme.typography.title3Bold,
-                color = ChatTheme.colors.textHighEmphasis,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Text(
-                text = user.getLastSeenText(LocalContext.current),
-                style = ChatTheme.typography.footnote,
-                color = ChatTheme.colors.textLowEmphasis,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
+            DirectChannelInfoAvatarContainer(user)
             LazyColumn(state = listState) {
                 items(content.options) { option ->
                     with(ChatTheme.componentFactory) {
@@ -212,6 +196,33 @@ private fun DirectChannelInfoContent(
                 }
             }
         }
+    }
+}
+
+@Composable
+internal fun DirectChannelInfoAvatarContainer(user: User) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        UserAvatar(
+            modifier = Modifier.size(72.dp),
+            user = user,
+        )
+        Text(
+            text = user.name.takeIf(String::isNotBlank) ?: user.id,
+            style = ChatTheme.typography.title3Bold,
+            color = ChatTheme.colors.textHighEmphasis,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Text(
+            text = user.getLastSeenText(LocalContext.current),
+            style = ChatTheme.typography.footnote,
+            color = ChatTheme.colors.textLowEmphasis,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 
