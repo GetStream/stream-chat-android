@@ -149,7 +149,7 @@ private fun DirectChannelInfoScreenModal(viewModel: ChannelInfoViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun DefaultDirectChannelInfoTopBar(
+internal fun DirectChannelInfoTopBar(
     onNavigationIconClick: () -> Unit,
 ) {
     TopAppBar(
@@ -202,7 +202,7 @@ private fun DirectChannelInfoContent(
             )
             LazyColumn(state = listState) {
                 items(content.options) { option ->
-                    ChannelInfoChannelOption(
+                    ChatTheme.componentFactory.ChannelInfoOptionItem(
                         option = option,
                         isGroupChannel = false,
                         onViewAction = onViewAction,
