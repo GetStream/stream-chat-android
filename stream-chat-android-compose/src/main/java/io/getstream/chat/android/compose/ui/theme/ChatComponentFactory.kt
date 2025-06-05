@@ -194,10 +194,12 @@ import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewEvent
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.model.MessageResult
+import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoMemberViewState
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
@@ -3119,6 +3121,24 @@ public interface ChatComponentFactory {
             onViewAction = onViewAction,
             onMemberViewEvent = onMemberViewEvent,
             onDismiss = onDismiss,
+        )
+    }
+
+    /**
+     * Factory method for creating the channel info member option item.
+     *
+     * @param option The channel info member option to display.
+     * @param onViewAction Callback invoked when a view action is triggered.
+     */
+    @ExperimentalStreamChatApi
+    @Composable
+    public fun LazyItemScope.ChannelInfoMemberOptionItem(
+        option: ChannelInfoMemberViewState.Content.Option,
+        onViewAction: (action: ChannelInfoMemberViewAction) -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.channel.info.ChannelInfoMemberOptionItem(
+            option = option,
+            onViewAction = onViewAction,
         )
     }
 }
