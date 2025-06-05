@@ -14,6 +14,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Add `ChannelInfo` fallback to `Message` when parsing from API and/or Events. [#5813](https://github.com/GetStream/stream-chat-android/pull/5813)
 
 ### ✅ Added
 
