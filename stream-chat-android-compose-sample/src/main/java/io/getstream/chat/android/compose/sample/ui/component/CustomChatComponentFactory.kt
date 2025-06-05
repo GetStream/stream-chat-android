@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.client.extensions.isPinned
+import io.getstream.chat.android.compose.sample.feature.reminders.MessageRemindersComponentFactory
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
@@ -28,7 +29,9 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
 
-class CustomChatComponentFactory : ChatComponentFactory {
+class CustomChatComponentFactory(
+    private val delegate: ChatComponentFactory = MessageRemindersComponentFactory(),
+) : ChatComponentFactory by delegate {
 
     @Composable
     override fun LazyItemScope.ChannelListItemContent(

@@ -35,6 +35,7 @@ import io.getstream.chat.android.offline.repository.database.converter.internal.
 import io.getstream.chat.android.offline.repository.database.converter.internal.PrivacySettingsConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.QuerySortConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.ReactionGroupConverter
+import io.getstream.chat.android.offline.repository.database.converter.internal.ReminderInfoConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.SetConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.SyncStatusConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.VoteConverter
@@ -84,7 +85,7 @@ import io.getstream.chat.android.offline.repository.domain.user.internal.UserEnt
         ThreadOrderEntity::class,
         DraftMessageEntity::class,
     ],
-    version = 85,
+    version = 86,
     exportSchema = false,
 )
 @TypeConverters(
@@ -104,6 +105,7 @@ import io.getstream.chat.android.offline.repository.domain.user.internal.UserEnt
     PrivacySettingsConverter::class,
     OptionConverter::class,
     VoteConverter::class,
+    ReminderInfoConverter::class,
 )
 internal abstract class ChatDatabase : RoomDatabase() {
     abstract fun queryChannelsDao(): QueryChannelsDao

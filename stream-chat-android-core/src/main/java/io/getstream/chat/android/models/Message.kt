@@ -253,6 +253,11 @@ public data class Message(
      * List of user ids that are allowed to see the message
      */
     val restrictedVisibility: List<String> = emptyList(),
+
+    /**
+     * The reminder information for this message if it has one set up.
+     */
+    val reminder: MessageReminderInfo? = null,
 ) : CustomObject, ComparableFieldProvider {
     public companion object {
         /**
@@ -425,6 +430,7 @@ public data class Message(
         private var messageTextUpdatedAt: Date? = null
         private var poll: Poll? = null
         private var restrictedVisibility: List<String> = emptyList()
+        private var reminder: MessageReminderInfo? = null
 
         public constructor(message: Message) : this() {
             id = message.id
@@ -471,6 +477,7 @@ public data class Message(
             messageTextUpdatedAt = message.messageTextUpdatedAt
             poll = message.poll
             restrictedVisibility = message.restrictedVisibility
+            reminder = message.reminder
         }
 
         public fun withId(id: String): Builder = apply { this.id = id }
@@ -547,6 +554,7 @@ public data class Message(
         public fun withRestrictedVisibility(restrictedVisibility: List<String>): Builder = apply {
             this.restrictedVisibility = restrictedVisibility
         }
+        public fun withReminder(reminder: MessageReminderInfo?): Builder = apply { this.reminder = reminder }
 
         public fun build(): Message {
             return Message(
@@ -594,6 +602,7 @@ public data class Message(
                 messageTextUpdatedAt = messageTextUpdatedAt,
                 restrictedVisibility = restrictedVisibility,
                 poll = poll,
+                reminder = reminder,
             )
         }
     }
