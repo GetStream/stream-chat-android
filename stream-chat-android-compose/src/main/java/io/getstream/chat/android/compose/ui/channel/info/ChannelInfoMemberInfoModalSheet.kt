@@ -21,6 +21,7 @@ import android.text.format.DateUtils
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -116,36 +117,7 @@ private fun ChannelInfoMemberInfoModalSheetContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            val context = LocalContext.current
-            val member = content.member
-            val user = member.user
-            Text(
-                text = user.name.takeIf(String::isNotBlank) ?: user.id,
-                style = ChatTheme.typography.title3Bold,
-                color = ChatTheme.colors.textHighEmphasis,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Text(
-                text = user.getLastSeenText(context),
-                style = ChatTheme.typography.footnote,
-                color = ChatTheme.colors.textLowEmphasis,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            if (member.banned) {
-                Text(
-                    text = member.getBanExpirationText(context),
-                    style = ChatTheme.typography.footnote,
-                    color = ChatTheme.colors.errorAccent,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-            UserAvatar(
-                modifier = Modifier.size(72.dp),
-                user = user,
-            )
+            ChatTheme.componentFactory.ChannelInfoMemberInfoModalSheetTopBar(content.member)
             LazyColumn {
                 items(content.options) { option ->
                     with(ChatTheme.componentFactory) {
@@ -157,6 +129,46 @@ private fun ChannelInfoMemberInfoModalSheetContent(
                 }
             }
         }
+    }
+}
+
+@Composable
+internal fun ChannelInfoMemberInfoModalSheetTopBar(member: Member) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        val context = LocalContext.current
+        val user = member.user
+        Text(
+            text = user.name.takeIf(String::isNotBlank) ?: user.id,
+            style = ChatTheme.typography.title3Bold,
+            color = ChatTheme.colors.textHighEmphasis,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Text(
+            text = user.getLastSeenText(context),
+            style = ChatTheme.typography.footnote,
+            color = ChatTheme.colors.textLowEmphasis,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        if (member.banned) {
+            Text(
+                text = member.getBanExpirationText(context),
+                style = ChatTheme.typography.footnote,
+                color = ChatTheme.colors.errorAccent,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+        UserAvatar(
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .size(72.dp),
+            user = user,
+        )
     }
 }
 
