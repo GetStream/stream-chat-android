@@ -160,7 +160,7 @@ private fun GroupChannelInfoScreenModal(viewModel: ChannelInfoViewModel) {
 }
 
 @Composable
-internal fun DefaultGroupChannelInfoTopBar(
+internal fun GroupChannelInfoTopBar(
     headerState: ChannelHeaderViewState,
     listState: LazyListState,
     onNavigationIconClick: () -> Unit,
@@ -184,7 +184,7 @@ internal fun DefaultGroupChannelInfoTopBar(
             elevation = elevation,
             onBackPressed = onNavigationIconClick,
             leadingContent = {
-                DefaultChannelInfoScreenNavigationIcon(
+                ChannelInfoNavigationIcon(
                     onClick = onNavigationIconClick,
                 )
             },
@@ -229,21 +229,19 @@ private fun GroupChannelInfoContent(
                     },
                 )
             }
-            if (content.members.canExpand) {
-                if (content.members.isCollapsed) {
-                    item {
-                        GroupChannelInfoExpandMemberButton(
-                            collapsedCount = content.members.collapsedCount,
-                            onClick = { onViewAction(ChannelInfoViewAction.ExpandMembersClick) },
-                        )
-                    }
+            if (content.members.canExpand && content.members.isCollapsed) {
+                item {
+                    GroupChannelInfoExpandMemberButton(
+                        collapsedCount = content.members.collapsedCount,
+                        onClick = { onViewAction(ChannelInfoViewAction.ExpandMembersClick) },
+                    )
                 }
             }
             item {
                 StreamHorizontalDivider(thickness = 8.dp)
             }
             items(content.options) { option ->
-                ChannelInfoChannelOption(
+                ChatTheme.componentFactory.ChannelInfoOptionItem(
                     option = option,
                     isGroupChannel = true,
                     onViewAction = onViewAction,

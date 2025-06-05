@@ -193,7 +193,9 @@ import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.model.MessageResult
+import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
@@ -3014,6 +3016,27 @@ public interface ChatComponentFactory {
             headerState = headerState,
             listState = listState,
             onNavigationIconClick = onNavigationIconClick,
+        )
+    }
+
+    /**
+     * Factory method for creating the channel info option item used in direct and group channel info screens.
+     *
+     * @param option The channel info option to display.
+     * @param isGroupChannel Whether the channel is a group channel.
+     * @param onViewAction Callback invoked when a view action is triggered.
+     */
+    @ExperimentalStreamChatApi
+    @Composable
+    public fun ChannelInfoOptionItem(
+        option: ChannelInfoViewState.Content.Option,
+        isGroupChannel: Boolean,
+        onViewAction: (ChannelInfoViewAction) -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.channel.info.ChannelInfoOptionItem(
+            option = option,
+            isGroupChannel = isGroupChannel,
+            onViewAction = onViewAction,
         )
     }
 }
