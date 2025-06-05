@@ -194,7 +194,9 @@ import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewEvent
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
+import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
@@ -3089,6 +3091,34 @@ public interface ChatComponentFactory {
         io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoExpandMemberItem(
             collapsedCount = collapsedCount,
             onClick = onClick,
+        )
+    }
+
+    /**
+     * Factory method for creating the channel info screen modal.
+     *
+     * @param modal Which modal to display.
+     * @param isGroupChannel Whether the channel is a group channel.
+     * @param onViewAction Callback invoked when a view action is triggered.
+     * Applicable for all modals except [ChannelInfoViewEvent.MemberInfoModal].
+     * @param onMemberViewEvent Callback invoked when a member view event is triggered.
+     * Only applicable for [ChannelInfoViewEvent.MemberInfoModal].
+     */
+    @ExperimentalStreamChatApi
+    @Composable
+    public fun ChannelInfoScreenModal(
+        modal: ChannelInfoViewEvent.Modal?,
+        isGroupChannel: Boolean,
+        onViewAction: (action: ChannelInfoViewAction) -> Unit,
+        onMemberViewEvent: (event: ChannelInfoMemberViewEvent) -> Unit,
+        onDismiss: () -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.channel.info.ChannelInfoScreenModal(
+            modal = modal,
+            isGroupChannel = isGroupChannel,
+            onViewAction = onViewAction,
+            onMemberViewEvent = onMemberViewEvent,
+            onDismiss = onDismiss,
         )
     }
 }
