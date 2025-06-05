@@ -138,7 +138,7 @@ private fun DirectChannelInfoScreenModal(viewModel: ChannelInfoViewModel) {
         }
     }
 
-    ChannelInfoScreenModal(
+    ChatTheme.componentFactory.ChannelInfoScreenModal(
         modal = modal,
         isGroupChannel = false,
         onViewAction = viewModel::onViewAction,
