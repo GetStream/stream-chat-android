@@ -37,7 +37,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -60,7 +59,6 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewPinnedMessageData
 import io.getstream.chat.android.ui.common.state.pinned.PinnedMessageListState
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 /**
  * Default 'Pinned Messages List' component, which relies on [PinnedMessageListViewModel] to show and allow interactions
@@ -119,14 +117,11 @@ public fun PinnedMessageList(
     )
 
     // Error emissions
-    val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     LaunchedEffect(Unit) {
-        coroutineScope.launch {
-            viewModel.errorEvents.collectLatest {
-                val errorMessage = context.getString(R.string.stream_compose_pinned_message_list_results_error)
-                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-            }
+        viewModel.errorEvents.collectLatest {
+            val errorMessage = context.getString(R.string.stream_compose_pinned_message_list_results_error)
+            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
         }
     }
 }

@@ -80,6 +80,7 @@
 - Make the `MessageListHeader` support nullable `onHeaderTitleClick`, so that the ripple effect is not shown when the header is not clickable. [#5785](https://github.com/GetStream/stream-chat-android/pull/5785)
 
 ### ❌ Removed
+- Remove redundant use of coroutineScope inside of `LaunchedEffect`. [#5811](https://github.com/GetStream/stream-chat-android/pull/5811)
 
 ## stream-chat-android-markdown-transformer
 ### 🐞 Fixed
