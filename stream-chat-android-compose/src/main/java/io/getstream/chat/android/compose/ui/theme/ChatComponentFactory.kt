@@ -3125,6 +3125,19 @@ public interface ChatComponentFactory {
     }
 
     /**
+     * Factory method for creating the top bar of the member info modal sheet in the group channel info screen.
+     *
+     * @param member The member to display in the top bar.
+     */
+    @ExperimentalStreamChatApi
+    @Composable
+    public fun ChannelInfoMemberInfoModalSheetTopBar(member: Member) {
+        io.getstream.chat.android.compose.ui.channel.info.ChannelInfoMemberInfoModalSheetTopBar(
+            member = member,
+        )
+    }
+
+    /**
      * Factory method for creating the channel info member option item.
      *
      * @param option The channel info member option to display.
