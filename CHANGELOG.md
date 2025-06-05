@@ -79,6 +79,7 @@
 - Add `FileAttachmentPreviewContent`, `FileAttachmentContent`,`FileAttachmentItem`, `FileUploadContent` and `FileUploadItem` to `ChatComponentFactory`. [#5791](https://github.com/GetStream/stream-chat-android/pull/5791)
 - Introduce internal `DraftChannelViewController` and experimental classes `DraftChannelViewState`, `DraftChannelViewAction`, and `DraftChannelViewEvent`. [#5797](https://github.com/GetStream/stream-chat-android/pull/5797)
 - Message member from the member bottom sheet of the channel info screen. [#5797](https://github.com/GetStream/stream-chat-android/pull/5797)
+- Introduce **experimental** factory methods for the channel info screens. [#5812](https://github.com/GetStream/stream-chat-android/pull/5812)
 
 ### ⚠️ Changed
 
