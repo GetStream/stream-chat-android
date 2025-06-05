@@ -51,7 +51,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
-import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -238,7 +237,7 @@ private fun GroupChannelInfoContent(
                 }
             }
             item {
-                StreamHorizontalDivider(thickness = 8.dp)
+                ChatTheme.componentFactory.ChannelInfoSeparatorItem()
             }
             items(content.options) { option ->
                 ChatTheme.componentFactory.ChannelInfoOptionItem(
