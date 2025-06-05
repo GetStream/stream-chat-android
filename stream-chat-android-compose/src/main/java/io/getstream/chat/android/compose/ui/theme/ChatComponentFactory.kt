@@ -3005,6 +3005,19 @@ public interface ChatComponentFactory {
     }
 
     /**
+     * Factory method for creating the avatar container in the direct channel info screen.
+     *
+     * @param user The user whose avatar is displayed.
+     */
+    @ExperimentalStreamChatApi
+    @Composable
+    public fun DirectChannelInfoAvatarContainer(user: User) {
+        io.getstream.chat.android.compose.ui.channel.info.DirectChannelInfoAvatarContainer(
+            user = user,
+        )
+    }
+
+    /**
      * Factory method for creating the top bar of the group channel info screen.
      *
      * @param headerState The state of the channel header.
