@@ -62,8 +62,6 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryP
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
-import io.getstream.chat.android.compose.ui.channel.info.DefaultDirectChannelInfoTopBar
-import io.getstream.chat.android.compose.ui.channel.info.DefaultGroupChannelInfoTopBar
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelHeaderLeadingContent
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderCenterContent
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderTrailingContent
@@ -2885,7 +2883,7 @@ public interface ChatComponentFactory {
         listState: LazyListState,
         onNavigationIconClick: () -> Unit,
     ) {
-        DefaultDirectChannelInfoTopBar(
+        io.getstream.chat.android.compose.ui.channel.info.DirectChannelInfoTopBar(
             onNavigationIconClick = onNavigationIconClick,
         )
     }
@@ -2904,7 +2902,7 @@ public interface ChatComponentFactory {
         listState: LazyListState,
         onNavigationIconClick: () -> Unit,
     ) {
-        DefaultGroupChannelInfoTopBar(
+        io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoTopBar(
             headerState = headerState,
             listState = listState,
             onNavigationIconClick = onNavigationIconClick,
