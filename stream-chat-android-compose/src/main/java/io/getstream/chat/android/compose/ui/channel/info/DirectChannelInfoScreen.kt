@@ -155,7 +155,7 @@ internal fun DirectChannelInfoTopBar(
     TopAppBar(
         title = {},
         navigationIcon = {
-            DefaultChannelInfoScreenNavigationIcon(
+            ChannelInfoNavigationIcon(
                 onClick = onNavigationIconClick,
             )
         },

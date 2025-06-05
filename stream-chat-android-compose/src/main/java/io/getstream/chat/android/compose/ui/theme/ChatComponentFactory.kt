@@ -2993,7 +2993,7 @@ public interface ChatComponentFactory {
         listState: LazyListState,
         onNavigationIconClick: () -> Unit,
     ) {
-        DefaultDirectChannelInfoTopBar(
+        io.getstream.chat.android.compose.ui.channel.info.DirectChannelInfoTopBar(
             onNavigationIconClick = onNavigationIconClick,
         )
     }
@@ -3012,7 +3012,7 @@ public interface ChatComponentFactory {
         listState: LazyListState,
         onNavigationIconClick: () -> Unit,
     ) {
-        DefaultGroupChannelInfoTopBar(
+        io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoTopBar(
             headerState = headerState,
             listState = listState,
             onNavigationIconClick = onNavigationIconClick,
