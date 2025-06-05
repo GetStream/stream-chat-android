@@ -2929,4 +2929,19 @@ public interface ChatComponentFactory {
             onViewAction = onViewAction,
         )
     }
+
+    /**
+     * Factory method for creating the expand member item in the group channel info screen.
+     */
+    @ExperimentalStreamChatApi
+    @Composable
+    public fun GroupChannelInfoExpandMemberItem(
+        collapsedCount: Int,
+        onClick: () -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoExpandMemberItem(
+            collapsedCount = collapsedCount,
+            onClick = onClick,
+        )
+    }
 }
