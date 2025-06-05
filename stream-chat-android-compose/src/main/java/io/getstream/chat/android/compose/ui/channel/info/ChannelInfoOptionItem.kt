@@ -24,9 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
@@ -40,7 +38,7 @@ internal fun ChannelInfoOptionItem(
 ) {
     when (option) {
         is ChannelInfoViewState.Content.Option.Separator -> {
-            StreamHorizontalDivider(thickness = 8.dp)
+            ChatTheme.componentFactory.ChannelInfoSeparatorItem()
         }
 
         is ChannelInfoViewState.Content.Option.AddMember -> {

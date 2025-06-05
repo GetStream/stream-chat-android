@@ -3020,6 +3020,16 @@ public interface ChatComponentFactory {
     }
 
     /**
+     * Factory method for creating the channel info separator item.
+     * This is used to visually separate different sections in the channel info screens.
+     */
+    @ExperimentalStreamChatApi
+    @Composable
+    public fun ChannelInfoSeparatorItem() {
+        StreamHorizontalDivider(thickness = 8.dp)
+    }
+
+    /**
      * Factory method for creating the channel info option item used in direct and group channel info screens.
      *
      * @param option The channel info option to display.
