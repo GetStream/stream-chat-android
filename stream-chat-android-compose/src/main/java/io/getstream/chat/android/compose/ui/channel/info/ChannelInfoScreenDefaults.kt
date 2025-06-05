@@ -25,7 +25,7 @@ import io.getstream.chat.android.compose.ui.components.BackButton
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 
 @Composable
-internal fun DefaultChannelInfoScreenNavigationIcon(onClick: () -> Unit) {
+internal fun ChannelInfoNavigationIcon(onClick: () -> Unit) {
     BackButton(
         modifier = Modifier.mirrorRtl(layoutDirection = LocalLayoutDirection.current),
         painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
