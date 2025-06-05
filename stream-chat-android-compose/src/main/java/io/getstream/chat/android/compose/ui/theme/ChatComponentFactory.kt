@@ -181,6 +181,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.LinkPreview
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
@@ -2937,6 +2938,28 @@ public interface ChatComponentFactory {
             option = option,
             isGroupChannel = isGroupChannel,
             onViewAction = onViewAction,
+        )
+    }
+
+    /**
+     * Factory method for creating the member item in the group channel info screen.
+     *
+     * @param member The member to display.
+     * @param isOwner Whether the member is the owner of the channel.
+     * @param onClick Callback invoked when the user clicks on the member item.
+     */
+    @ExperimentalStreamChatApi
+    @Composable
+    public fun LazyItemScope.GroupChannelInfoMemberItem(
+        member: Member,
+        isOwner: Boolean,
+        onClick: (() -> Unit)?,
+    ) {
+        io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoMemberItem(
+            modifier = Modifier.animateItem(),
+            member = member,
+            isOwner = isOwner,
+            onClick = onClick,
         )
     }
 

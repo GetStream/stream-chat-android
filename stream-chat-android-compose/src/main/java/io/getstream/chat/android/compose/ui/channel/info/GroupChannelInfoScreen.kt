@@ -217,16 +217,17 @@ private fun GroupChannelInfoContent(
                 key = Member::getUserId,
             ) { member ->
                 val isCurrentUserMember = member.getUserId() == currentUser?.id
-                GroupChannelInfoMemberButton(
-                    modifier = Modifier.animateItem(),
-                    member = member,
-                    isOwner = content.owner.id == member.getUserId(),
-                    onClick = if (isCurrentUserMember) {
-                        null
-                    } else {
-                        { onViewAction(ChannelInfoViewAction.MemberClick(member = member)) }
-                    },
-                )
+                with(ChatTheme.componentFactory) {
+                    GroupChannelInfoMemberItem(
+                        member = member,
+                        isOwner = content.owner.id == member.getUserId(),
+                        onClick = if (isCurrentUserMember) {
+                            null
+                        } else {
+                            { onViewAction(ChannelInfoViewAction.MemberClick(member = member)) }
+                        },
+                    )
+                }
             }
             if (content.members.canExpand && content.members.isCollapsed) {
                 item {
@@ -251,11 +252,11 @@ private fun GroupChannelInfoContent(
 }
 
 @Composable
-internal fun GroupChannelInfoMemberButton(
+internal fun GroupChannelInfoMemberItem(
+    modifier: Modifier,
     member: Member,
     isOwner: Boolean,
     onClick: (() -> Unit)?,
-    modifier: Modifier = Modifier,
 ) {
     ChannelInfoOption(
         modifier = modifier,
