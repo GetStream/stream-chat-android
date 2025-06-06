@@ -141,6 +141,7 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Date
 import io.getstream.chat.android.ui.common.state.messages.Flag as FlagMessage
@@ -734,17 +735,19 @@ public class MessageListController(
     ) {
         threadJob = scope.launch {
             user.onEach {
-                _threadListState.value = _threadListState.value.copy(currentUser = it)
+                _threadListState.update { state -> state.copy(currentUser = it) }
             }.launchIn(this)
 
             endOfOlderMessages.onEach {
-                _threadListState.value = _threadListState.value.copy(
-                    endOfOldMessagesReached = it,
-                    isLoadingOlderMessages = when {
-                        it -> false
-                        else -> _threadListState.value.isLoadingOlderMessages
-                    },
-                )
+                _threadListState.update { state ->
+                    state.copy(
+                        endOfOldMessagesReached = it,
+                        isLoadingOlderMessages = when {
+                            it -> false
+                            else -> state.isLoadingOlderMessages
+                        },
+                    )
+                }
             }.launchIn(this)
 
             combine(
@@ -1190,13 +1193,13 @@ public class MessageListController(
             return
         }
 
-        _threadListState.value = _threadListState.value.copy(isLoadingOlderMessages = true)
+        _threadListState.update { state -> state.copy(isLoadingOlderMessages = true) }
         chatClient.getRepliesMore(
             messageId = threadMode.parentMessage.id,
             firstId = threadMode.threadState.oldestInThread.value?.id ?: threadMode.parentMessage.id,
             limit = messageLimit,
         ).enqueue {
-            _threadListState.value = _threadListState.value.copy(isLoadingOlderMessages = false)
+            _threadListState.update { state -> state.copy(isLoadingOlderMessages = false) }
         }
     }
 
@@ -1293,7 +1296,7 @@ public class MessageListController(
      */
     public fun enterNormalMode() {
         _mode.value = MessageMode.Normal
-        _threadListState.value = MessageListState()
+        _threadListState.update { MessageListState() }
         lastLoadedThreadMessage = null
         threadJob?.cancel()
     }
@@ -1505,7 +1508,7 @@ public class MessageListController(
      */
     private fun changeSelectMessageState(selectedMessageState: SelectedMessageState?) {
         if (isInThread) {
-            _threadListState.value = _threadListState.value.copy(selectedMessageState = selectedMessageState)
+            _threadListState.update { state -> state.copy(selectedMessageState = selectedMessageState) }
         } else {
             setMessageListState(_messageListState.value.copy(selectedMessageState = selectedMessageState))
         }
@@ -1601,7 +1604,7 @@ public class MessageListController(
      */
     public fun removeOverlay() {
         logger.v { "[removeOverlay] no args" }
-        _threadListState.value = _threadListState.value.copy(selectedMessageState = null)
+        _threadListState.update { state -> state.copy(selectedMessageState = null) }
         setMessageListState(_messageListState.value.copy(selectedMessageState = null))
     }
 
@@ -2008,7 +2011,7 @@ public class MessageListController(
     public fun clearNewMessageState() {
         logger.d { "[clearNewMessageState] no args" }
         if (!messagesState.endOfNewMessagesReached) return
-        _threadListState.value = _threadListState.value.copy(newMessageState = null, unreadCount = 0)
+        _threadListState.update { state -> state.copy(newMessageState = null, unreadCount = 0) }
         setMessageListState(_messageListState.value.copy(newMessageState = null, unreadCount = 0))
     }
 
