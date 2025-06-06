@@ -224,7 +224,7 @@ public fun MessagesScreen(
                 bottomBarContent()
             },
         ) {
-            val currentState = listViewModel.currentMessagesState
+            val currentState by listViewModel.currentMessagesState
 
             MessageList(
                 modifier = Modifier
@@ -406,7 +406,8 @@ public fun BoxScope.MessageMenus(
     skipPushNotification: Boolean,
     skipEnrichUrl: Boolean,
 ) {
-    val selectedMessageState = listViewModel.currentMessagesState.selectedMessageState
+    val messagesState by listViewModel.currentMessagesState
+    val selectedMessageState = messagesState.selectedMessageState
 
     val selectedMessage = selectedMessageState?.message ?: Message()
 
@@ -730,7 +731,8 @@ public fun MessageModerationDialog(
     skipPushNotification: Boolean,
     skipEnrichUrl: Boolean,
 ) {
-    val selectedMessageState = listViewModel.currentMessagesState.selectedMessageState
+    val currentMessagesState by listViewModel.currentMessagesState
+    val selectedMessageState = currentMessagesState.selectedMessageState
 
     val selectedMessage = selectedMessageState?.message ?: Message()
 
