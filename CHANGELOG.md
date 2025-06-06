@@ -15,6 +15,7 @@
 
 ### ⬆️ Improved
 - Add `ChannelInfo` fallback to `Message` when parsing from API and/or Events. [#5813](https://github.com/GetStream/stream-chat-android/pull/5813)
+- Refresh token only during WS reconnection when the reconnection is triggered by a token issue. [#5816](https://github.com/GetStream/stream-chat-android/pull/5816)
 
 ### ✅ Added
 
