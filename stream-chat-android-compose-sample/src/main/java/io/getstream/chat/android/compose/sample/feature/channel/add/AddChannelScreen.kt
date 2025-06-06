@@ -108,6 +108,7 @@ fun AddChannelScreen(
                 }
                 MessageComposer(
                     viewModel = viewModel,
+                    integrations = {},
                     onSendMessage = {
                         viewModel.sendMessage(it)
                         onMessageSent()
