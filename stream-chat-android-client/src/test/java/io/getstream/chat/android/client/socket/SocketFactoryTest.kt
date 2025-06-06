@@ -73,7 +73,6 @@ internal class SocketFactoryTest {
 
         fun withExpire(expire: Boolean): Fixture = apply {
             tokenManager.takeIf { expire }?.expireToken()
-            return this
         }
 
         fun get() = SocketFactory(
