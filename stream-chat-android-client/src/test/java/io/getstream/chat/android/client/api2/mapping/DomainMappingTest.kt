@@ -96,7 +96,6 @@ import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldBeEqualTo
-import org.junit.Assert
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 

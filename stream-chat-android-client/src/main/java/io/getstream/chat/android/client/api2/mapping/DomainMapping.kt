@@ -219,7 +219,6 @@ internal class DomainMapping(
             ).let(messageTransformer::transform)
         }
 
-
     internal fun DownstreamDraftDto.toDomain(fallbackChannelInfo: ChannelInfo? = null): DraftMessage =
         DraftMessage(
             attachments = message.attachments?.map { it.toDomain() } ?: emptyList(),
