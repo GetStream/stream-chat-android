@@ -79,6 +79,7 @@ internal data class ChannelEntity(
     val team: String,
     val ownCapabilities: Set<String>,
     val membership: MemberEntity?,
+    val test: String? = null,
 ) {
     /**
      * The channel id in the format messaging:123.

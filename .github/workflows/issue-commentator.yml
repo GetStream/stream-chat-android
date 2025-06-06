@@ -1,0 +1,62 @@
+name: Issue Commentator
+
+on:
+  workflow_call:
+    inputs:
+      issue_number:
+        description: 'The number of the issue or pull request to comment on.'
+        required: true
+        type: number
+      comment_title:
+        description: 'A unique string (e.g., a markdown header) to identify the comment.'
+        required: true
+        type: string
+      comment_body:
+        description: 'The full markdown body of the comment to post.'
+        required: true
+        type: string
+    
+permissions:
+  issues: write # Permissions needed to read/write comments on issues and PRs
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Find existing comment and update, or create new one
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const issue_number = ${{ inputs.issue_number }};
+            const comment_title = "${{ inputs.comment_title }}";
+            const body = `${{ inputs.comment_body }}`;
+
+            console.log(`Searching for comment with title "${comment_title}" on issue #${issue_number}.`);
+
+            // Find an existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner,
+              repo,
+              issue_number,
+            });
+
+            const existing_comment = comments.find(c => c.body.includes(comment_title));
+
+            if (existing_comment) {
+              console.log(`Found existing comment with ID ${existing_comment.id}. Updating it.`);
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existing_comment.id,
+                body,
+              });
+            } else {
+              console.log("No existing comment found. Creating a new one.");
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body,
+              });
+            }

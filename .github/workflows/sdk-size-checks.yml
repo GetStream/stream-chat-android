@@ -1,7 +1,11 @@
 name: SDK size checks
 
 on:
-  pull_request:
+  pull_request_target:
+    types: [opened, synchronize] # 'synchronize' is when new commits are pushed to the PR branch
+
+permissions:
+  pull-requests: write # For posting comments
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -63,6 +67,7 @@ jobs:
       - name: Post comment on PR
         uses: actions/github-script@v6
         with:
+          # github-token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
           script: |
             const maxTolerance = process.env.MAX_TOLERANCE
             const fineTolerance = process.env.FINE_TOLERANCE
