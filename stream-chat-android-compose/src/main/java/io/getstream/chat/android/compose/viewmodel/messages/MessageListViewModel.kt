@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.viewmodel.messages
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -44,6 +45,7 @@ import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -62,22 +64,12 @@ public class MessageListViewModel(
     /**
      * State handler for the UI, which holds all the information the UI needs to render messages.
      *
-     * It chooses between [threadMessagesState] and [messagesState] based on if we're in a thread or not.
+     * It chooses between threadListState and messageListState based on if we're in a thread or not.
      */
-    public val currentMessagesState: MessageListState
-        get() = if (isInThread) threadMessagesState else messagesState
-
-    /**
-     * State of the screen, for [MessageMode.Normal].
-     */
-    private val messagesState: MessageListState by messageListController.messageListState
-        .map { it.copy(messageItems = it.messageItems.reversed()) }
-        .asState(viewModelScope, MessageListState())
-
-    /**
-     * State of the screen, for [MessageMode.MessageThread].
-     */
-    private val threadMessagesState: MessageListState by messageListController.threadListState
+    public val currentMessagesState: State<MessageListState> = combine(
+        messageListController.messageListState,
+        messageListController.threadListState,
+    ) { messageListState, threadListState -> if (isInThread) threadListState else messageListState }
         .map { it.copy(messageItems = it.messageItems.reversed()) }
         .asState(viewModelScope, MessageListState())
 
@@ -122,7 +114,7 @@ public class MessageListViewModel(
      * Gives us information if we have selected a message.
      */
     public val isShowingOverlay: Boolean
-        get() = currentMessagesState.selectedMessageState != null
+        get() = currentMessagesState.value.selectedMessageState != null
 
     /**
      * Whether is the poll option details should be shown or not.

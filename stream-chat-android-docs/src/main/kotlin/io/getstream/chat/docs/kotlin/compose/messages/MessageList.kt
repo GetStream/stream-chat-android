@@ -126,7 +126,7 @@ private object MessageListControllingScrollStateSnippet {
             setContent {
                 ChatTheme {
                     val state = listViewModel.currentMessagesState
-                    val myListState = rememberMessageListState(parentMessageId = state.parentMessageId)
+                    val myListState = rememberMessageListState(parentMessageId = state.value.parentMessageId)
 
                     MessageList(
                         viewModel = listViewModel,

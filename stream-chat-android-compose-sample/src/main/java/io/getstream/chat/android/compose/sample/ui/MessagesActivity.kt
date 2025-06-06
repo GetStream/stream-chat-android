@@ -209,7 +209,8 @@ class MessagesActivity : BaseConnectedActivity() {
     @Composable
     fun MyCustomUi() {
         val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
-        val selectedMessageState = listViewModel.currentMessagesState.selectedMessageState
+        val currentMessagesState by listViewModel.currentMessagesState
+        val selectedMessageState = currentMessagesState.selectedMessageState
         val user by listViewModel.user.collectAsState()
         val lazyListState = rememberMessageListState()
 
