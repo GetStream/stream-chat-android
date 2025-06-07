@@ -5,6 +5,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `pendingMessages` field to the `Channel` model. [#5784](https://github.com/GetStream/stream-chat-android/pull/5784)
 
 ### ⚠️ Changed
 
@@ -18,6 +19,7 @@
 - Refresh token only during WS reconnection when the reconnection is triggered by a token issue. [#5816](https://github.com/GetStream/stream-chat-android/pull/5816)
 
 ### ✅ Added
+- Add `ChatClient.getPendingMessage` to fetch a pending message (and its metadata) by its ID. [#5784](https://github.com/GetStream/stream-chat-android/pull/5784)
 
 ### ⚠️ Changed
 

@@ -83,6 +83,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun getNewerReplies (Ljava/lang/String;ILjava/lang/String;)Lio/getstream/result/call/Call;
 	public static synthetic fun getNewerReplies$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ILjava/lang/String;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public static final fun getOFFLINE_SUPPORT_ENABLED ()Z
+	public final fun getPendingMessage (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun getPinnedMessages (Ljava/lang/String;Ljava/lang/String;ILio/getstream/chat/android/models/querysort/QuerySorter;Lio/getstream/chat/android/client/api/models/PinnedMessagesPagination;)Lio/getstream/result/call/Call;
 	public final fun getReactions (Ljava/lang/String;II)Lio/getstream/result/call/Call;
 	public final fun getReplies (Ljava/lang/String;I)Lio/getstream/result/call/Call;
