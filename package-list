@@ -73,6 +73,7 @@ io.getstream.chat.android.compose.ui.attachments.content
 io.getstream.chat.android.compose.ui.attachments.factory
 io.getstream.chat.android.compose.ui.attachments.preview
 io.getstream.chat.android.compose.ui.attachments.preview.handler
+io.getstream.chat.android.compose.ui.channel.info
 io.getstream.chat.android.compose.ui.channels
 io.getstream.chat.android.compose.ui.channels.header
 io.getstream.chat.android.compose.ui.channels.info
@@ -120,6 +121,7 @@ io.getstream.chat.android.compose.ui.util
 io.getstream.chat.android.compose.ui.util.adaptivelayout
 io.getstream.chat.android.compose.util
 io.getstream.chat.android.compose.util.extensions
+io.getstream.chat.android.compose.viewmodel.channel
 io.getstream.chat.android.compose.viewmodel.channels
 io.getstream.chat.android.compose.viewmodel.mediapreview
 io.getstream.chat.android.compose.viewmodel.mentions
@@ -168,6 +170,7 @@ module:stream-chat-android-ui-common
 io.getstream.chat.android.ui.common
 io.getstream.chat.android.ui.common.contract.internal
 io.getstream.chat.android.ui.common.disposable
+io.getstream.chat.android.ui.common.feature.channel.header
 io.getstream.chat.android.ui.common.feature.channel.info
 io.getstream.chat.android.ui.common.feature.documents
 io.getstream.chat.android.ui.common.feature.mentions
