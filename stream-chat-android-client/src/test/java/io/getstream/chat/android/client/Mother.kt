@@ -247,7 +247,7 @@ internal object Mother {
 
     fun randomDownstreamMessageDto(
         attachments: List<AttachmentDto> = emptyList(),
-        channel: ChannelInfoDto? = null,
+        channel: ChannelInfoDto? = randomChannelInfoDto(),
         cid: String = randomString(),
         command: String? = randomString(),
         created_at: Date = randomDate(),

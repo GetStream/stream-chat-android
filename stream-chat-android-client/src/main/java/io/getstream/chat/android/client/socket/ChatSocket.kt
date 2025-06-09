@@ -138,6 +138,7 @@ internal open class ChatSocket(
                     is State.Disconnected -> {
                         when (state) {
                             is State.Disconnected.DisconnectedByRequest -> {
+                                tokenManager.expireToken()
                                 streamWebSocket?.close()
                                 healthMonitor.stop()
                                 userScope.launch { disposeObservers() }
@@ -152,6 +153,7 @@ internal open class ChatSocket(
                                 disposeNetworkStateObserver()
                             }
                             is State.Disconnected.DisconnectedPermanently -> {
+                                tokenManager.expireToken()
                                 streamWebSocket?.close()
                                 healthMonitor.stop()
                                 userScope.launch { disposeObservers() }
@@ -160,6 +162,7 @@ internal open class ChatSocket(
                                 healthMonitor.onDisconnected()
                             }
                             is State.Disconnected.WebSocketEventLost -> {
+                                tokenManager.expireToken()
                                 streamWebSocket?.close()
                                 connectionConf?.let { chatSocketStateService.onReconnect(it, false) }
                             }

@@ -92,9 +92,14 @@ public fun DirectChannelInfoScreen(
         topBar = topBar,
     )
 
+    DirectChannelInfoScreenModal(viewModel)
+}
+
+@Composable
+private fun DirectChannelInfoScreenModal(viewModel: ChannelInfoViewModel) {
     var modal by remember { mutableStateOf<ChannelInfoViewEvent.Modal?>(null) }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(viewModel) {
         viewModel.events.collectLatest { event ->
             if (event is ChannelInfoViewEvent.Modal) {
                 modal = event
@@ -106,6 +111,7 @@ public fun DirectChannelInfoScreen(
         modal = modal,
         isGroupChannel = false,
         onViewAction = viewModel::onViewAction,
+        onMemberViewEvent = viewModel::onMemberViewEvent,
         onDismiss = { modal = null },
     )
 }
@@ -177,7 +183,7 @@ private fun DirectChannelInfoContent(
                 )
                 LazyColumn {
                     items(content.options) { option ->
-                        ChannelInfoContentOption(
+                        ChannelInfoChannelOption(
                             option = option,
                             isGroupChannel = false,
                             onViewAction = onViewAction,

@@ -20,8 +20,8 @@
     android:background="@color/stream_ui_literal_black"
     >
 
-    <VideoView
-        android:id="@+id/videoView"
+    <androidx.media3.ui.PlayerView
+        android:id="@+id/playerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
@@ -32,6 +32,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
+        android:background="@color/stream_ui_literal_black"
         />
 
     <androidx.cardview.widget.CardView

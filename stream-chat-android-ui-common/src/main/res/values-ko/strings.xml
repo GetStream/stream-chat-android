@@ -20,6 +20,4 @@
   <string name="stream_ui_message_list_attachment_invalid_url">"잘못된 URL로 인해 로드에 실패했습니다."</string>
   <string name="stream_ui_message_list_attachment_load_failed">"알 수 없는 오류로 인해 로드에 실패했습니다."</string>
   <string name="stream_ui_yesterday">"어제"</string>
-  <string name="stream_ui_mention_list_empty">"아직 언급이 없습니다."</string>
-  <string name="stream_ui_mention_list_error">"오류가 발생하였습니다."</string>
 </resources>
