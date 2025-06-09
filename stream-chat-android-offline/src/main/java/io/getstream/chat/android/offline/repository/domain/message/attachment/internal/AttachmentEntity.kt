@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.offline.repository.domain.message.attachment.internal
 
-import androidx.room.ColumnInfo
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -39,7 +38,6 @@ import io.getstream.chat.android.offline.repository.domain.message.internal.Mess
     indices = [Index("messageId")],
 )
 internal data class AttachmentEntity(
-    @ColumnInfo(index = true)
     @PrimaryKey
     val id: String,
     val messageId: String,
