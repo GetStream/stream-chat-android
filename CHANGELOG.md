@@ -1,6 +1,7 @@
 # UNRELEASED CHANGELOG
 ## Common changes for all artifacts
 ### 🐞 Fixed
+- Fix JSON parsing of `Device.providerName` when calling `ChatClient.getDevices()`. [#5821](https://github.com/GetStream/stream-chat-android/pull/5821)
 
 ### ⬆️ Improved
 
