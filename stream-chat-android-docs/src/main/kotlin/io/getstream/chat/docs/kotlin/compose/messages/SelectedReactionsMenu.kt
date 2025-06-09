@@ -44,7 +44,8 @@ private object SelectedReactionsMenuUsageSnippet {
 
             setContent {
                 ChatTheme {
-                    val selectedMessageState = listViewModel.currentMessagesState.selectedMessageState
+                    val currentMessagesState by listViewModel.currentMessagesState
+                    val selectedMessageState = currentMessagesState.selectedMessageState
                     val user by listViewModel.user.collectAsState()
 
                     Box(modifier = Modifier.fillMaxSize()) {
@@ -100,7 +101,8 @@ private object SelectedReactionsMenuHandlingActionsSnippet {
 
             setContent {
                 ChatTheme {
-                    val selectedMessageState = listViewModel.currentMessagesState.selectedMessageState
+                    val currentMessagesState by listViewModel.currentMessagesState
+                    val selectedMessageState = currentMessagesState.selectedMessageState
                     val user by listViewModel.user.collectAsState()
 
                     Box(modifier = Modifier.fillMaxSize()) {
@@ -154,7 +156,8 @@ private object SelectedReactionsMenuCustomizationSnippet {
 
             setContent {
                 ChatTheme {
-                    val selectedMessageState = listViewModel.currentMessagesState.selectedMessageState
+                    val currentMessagesState by listViewModel.currentMessagesState
+                    val selectedMessageState = currentMessagesState.selectedMessageState
                     val user by listViewModel.user.collectAsState()
 
                     Box(modifier = Modifier.fillMaxSize()) {

@@ -69,7 +69,7 @@ internal class MessageListViewModelTest {
             .get()
 
         // Avoid counting date separators
-        val messageItemCount = viewModel.currentMessagesState
+        val messageItemCount = viewModel.currentMessagesState.value
             .messageItems
             .count { it is MessageItemState }
         messageItemCount `should be equal to` 2
@@ -86,7 +86,7 @@ internal class MessageListViewModelTest {
 
         viewModel.selectMessage(message1)
 
-        val selectedMessageState = viewModel.currentMessagesState.selectedMessageState
+        val selectedMessageState = viewModel.currentMessagesState.value.selectedMessageState
         selectedMessageState `should not be` null
         selectedMessageState?.message `should be equal to` message1
         viewModel.isShowingOverlay `should be equal to` true
@@ -104,7 +104,7 @@ internal class MessageListViewModelTest {
             .get()
 
         // Avoid counting date separators
-        val messageItemCount = viewModel.currentMessagesState
+        val messageItemCount = viewModel.currentMessagesState.value
             .messageItems
             .count { it is MessageItemState }
         messageItemCount `should be equal to` 2
