@@ -1,76 +1,14 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# June 09th, 2025 - 6.17.0
 ## stream-chat-android-client
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - Add `ChannelInfo` fallback to `Message` when parsing from API and/or Events. [#5813](https://github.com/GetStream/stream-chat-android/pull/5813)
 - Refresh token only during WS reconnection when the reconnection is triggered by a token issue. [#5816](https://github.com/GetStream/stream-chat-android/pull/5816)
 
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-components
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - Improve the performance of playing video/audio attachments by using `ExoPlayer` instead of `VideoView`. [#5749](https://github.com/GetStream/stream-chat-android/pull/5749)
 
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-compose
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - Use the lambda-based `graphicsLayer` modifier to improve performance by avoiding unnecessary recompositions caused by mutable state in modifiers. [#5800](https://github.com/GetStream/stream-chat-android/pull/5800)
 - Mark the bottom-most item as seen only if app is in foreground. [#5814](https://github.com/GetStream/stream-chat-android/pull/5814)
@@ -82,19 +20,6 @@
 ### ⚠️ Changed
 - Deprecate `MessageListHeaderCenterContent` in `ChatComponentFactory` in favor of a version that makes the `onClick` parameter optional. [#5785](https://github.com/GetStream/stream-chat-android/pull/5785)
 - Make the `MessageListHeader` support nullable `onHeaderTitleClick`, so that the ripple effect is not shown when the header is not clickable. [#5785](https://github.com/GetStream/stream-chat-android/pull/5785)
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # May 23th, 2025 - 6.16.0
 ## Common changes for all artifacts
