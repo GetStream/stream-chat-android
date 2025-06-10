@@ -64,7 +64,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -242,6 +244,13 @@ public class MessageComposerController(
      * Full message composer state holding all the required information.
      */
     public val state: MutableStateFlow<MessageComposerState> = MutableStateFlow(MessageComposerState())
+
+    /**
+     * Emits one-shot focus events used to request focus on the message input field.
+     */
+    private val _focusRequestFlow: MutableSharedFlow<Unit> = MutableSharedFlow()
+    public val focusRequestFlow: SharedFlow<Unit>
+        get() = _focusRequestFlow
 
     /**
      * UI state of the current composer input.
@@ -598,6 +607,10 @@ public class MessageComposerController(
             else -> {
                 // no op, custom user action
             }
+        }
+
+        scope.launch {
+            _focusRequestFlow.emit(Unit)
         }
     }
 
