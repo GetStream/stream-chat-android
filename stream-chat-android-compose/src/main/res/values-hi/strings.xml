@@ -94,7 +94,7 @@
   <string name="stream_compose_reply_to_message">"मैसेज का जवाब दें"</string>
   <string name="stream_compose_scroll_to_bottom">"नीचे तक स्क्रॉल करें"</string>
   <string name="stream_compose_search_input_cancel">"रद्द करें"</string>
-  <string name="stream_compose_search_input_hint">"खोजें"</string>
+  <string name="stream_compose_search_input_hint">"नाम से चैनल खोजें"</string>
   <string name="stream_compose_selected_channel_menu_delete_conversation">"बातचीत मिटायें"</string>
   <string name="stream_compose_selected_channel_menu_delete_conversation_confirmation_message">"क्या आप %1$s . चैनल को हटाना चाहते हैं"</string>
   <string name="stream_compose_selected_channel_menu_delete_conversation_confirmation_title">"बातचीत मिटायें"</string>

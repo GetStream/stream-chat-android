@@ -108,6 +108,7 @@ import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelInfo
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.EventType
@@ -198,6 +199,15 @@ internal object EventArguments {
         config = config,
     )
 
+    private val channelInfo = ChannelInfo(
+        cid = channel.cid,
+        memberCount = channel.memberCount,
+        id = channel.id,
+        type = channel.type,
+        name = "Channel Name",
+        image = "https://domain.io/avatars/285/channel.png",
+    )
+
     private val message = Message(
         id = "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
         text = "Hello",
@@ -207,6 +217,7 @@ internal object EventArguments {
         updatedAt = date,
         cid = channel.cid,
         type = "regular",
+        channelInfo = channelInfo,
     )
 
     private val reaction = Reaction(

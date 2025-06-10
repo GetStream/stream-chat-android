@@ -4586,7 +4586,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public static synthetic fun flagUser$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)V
 	public final fun getChannel ()Lio/getstream/chat/android/models/Channel;
 	public final fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
-	public final fun getCurrentMessagesState ()Lio/getstream/chat/android/ui/common/state/messages/list/MessageListState;
+	public final fun getCurrentMessagesState ()Landroidx/compose/runtime/State;
 	public final fun getDeletedMessageVisibilityState ()Lio/getstream/chat/android/ui/common/state/messages/list/DeletedMessageVisibility;
 	public final fun getMessageActions ()Ljava/util/Set;
 	public final fun getMessageById (Ljava/lang/String;)Lio/getstream/chat/android/models/Message;

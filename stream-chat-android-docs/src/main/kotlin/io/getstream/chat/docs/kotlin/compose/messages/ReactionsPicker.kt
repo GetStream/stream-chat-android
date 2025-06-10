@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -45,7 +46,8 @@ private object ReactionsPickerUsageSnippet {
 
             setContent {
                 ChatTheme {
-                    val selectedMessageState = listViewModel.currentMessagesState.selectedMessageState
+                    val currentMessagesState by listViewModel.currentMessagesState
+                    val selectedMessageState = currentMessagesState.selectedMessageState
 
                     Box(modifier = Modifier.fillMaxSize()) {
 
@@ -96,7 +98,8 @@ private object ReactionsPickerHandlingActionsSnippet {
 
             setContent {
                 ChatTheme {
-                    val selectedMessageState = listViewModel.currentMessagesState.selectedMessageState
+                    val currentMessagesState by listViewModel.currentMessagesState
+                    val selectedMessageState = currentMessagesState.selectedMessageState
 
                     Box(modifier = Modifier.fillMaxSize()) {
 
@@ -148,7 +151,8 @@ private object ReactionsPickerCustomizationSnippet {
 
             setContent {
                 ChatTheme {
-                    val selectedMessageState = listViewModel.currentMessagesState.selectedMessageState
+                    val currentMessagesState by listViewModel.currentMessagesState
+                    val selectedMessageState = currentMessagesState.selectedMessageState
 
                     Box(modifier = Modifier.fillMaxSize()) {
 
