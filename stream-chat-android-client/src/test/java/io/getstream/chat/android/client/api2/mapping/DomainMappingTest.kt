@@ -548,7 +548,7 @@ internal class DomainMappingTest {
         val expected = Device(
             token = deviceDto.id,
             pushProvider = PushProvider.fromKey(deviceDto.id),
-            providerName = deviceDto.provider_name,
+            providerName = deviceDto.push_provider_name,
         )
         device shouldBeEqualTo expected
     }

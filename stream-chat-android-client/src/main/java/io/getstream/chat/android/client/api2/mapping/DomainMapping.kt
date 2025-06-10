@@ -563,7 +563,7 @@ internal class DomainMapping(
     internal fun DeviceDto.toDomain(): Device = Device(
         token = id,
         pushProvider = PushProvider.fromKey(push_provider),
-        providerName = provider_name,
+        providerName = push_provider_name,
     )
 
     /**

@@ -79,7 +79,7 @@ internal class DtoMapping(
     internal fun Device.toDto(): DeviceDto = DeviceDto(
         id = token,
         push_provider = pushProvider.key,
-        provider_name = providerName,
+        push_provider_name = providerName,
     )
 
     /**

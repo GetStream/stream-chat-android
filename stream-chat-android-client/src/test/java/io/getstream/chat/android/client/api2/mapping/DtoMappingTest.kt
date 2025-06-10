@@ -89,7 +89,7 @@ internal class DtoMappingTest {
         val expected = DeviceDto(
             id = device.token,
             push_provider = device.pushProvider.key,
-            provider_name = device.providerName,
+            push_provider_name = device.providerName,
         )
         dto shouldBeEqualTo expected
     }
