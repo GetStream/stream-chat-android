@@ -135,12 +135,12 @@ internal fun MediaGalleryImagePage(
             StreamAsyncImage(
                 imageRequest = imageRequest,
                 modifier = transformModifier
-                    .graphicsLayer(
-                        scaleY = scale,
-                        scaleX = scale,
-                        translationX = translation.x,
-                        translationY = translation.y,
-                    )
+                    .graphicsLayer {
+                        scaleY = scale
+                        scaleX = scale
+                        translationX = translation.x
+                        translationY = translation.y
+                    }
                     .onGloballyPositioned {
                         imageSize = Size(it.size.width.toFloat(), it.size.height.toFloat())
                     }
