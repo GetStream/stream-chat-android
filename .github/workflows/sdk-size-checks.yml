@@ -1,8 +1,7 @@
 name: SDK size checks
 
 on:
-  pull_request_target:
-    types: [opened, synchronize] # 'synchronize' is when new commits are pushed to the PR branch
+  [pull_request]
 
 permissions:
   pull-requests: write # For posting comments
