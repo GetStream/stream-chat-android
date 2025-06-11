@@ -180,6 +180,7 @@ internal suspend fun ReplyMessageEntity.toModel(
             messageTextUpdatedAt = messageTextUpdatedAt,
             poll = pollId?.let { getPoll(it) },
             restrictedVisibility = restrictedVisibility,
+            channelInfo = channelInfo?.toModel(),
             reminder = reminder?.toModel(),
         )
     }

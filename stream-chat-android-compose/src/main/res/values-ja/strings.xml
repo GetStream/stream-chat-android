@@ -48,7 +48,7 @@
   <string name="stream_compose_ok">"よし"</string>
   <string name="stream_compose_reply">"返信"</string>
   <string name="stream_compose_search_input_cancel">"キャンセル"</string>
-  <string name="stream_compose_search_input_hint">"検索"</string>
+  <string name="stream_compose_search_input_hint">"名前でチャンネルを検索"</string>
   <string name="stream_compose_selected_channel_menu_delete_conversation">"会話を削除する"</string>
   <string name="stream_compose_selected_channel_menu_delete_conversation_confirmation_message">"チャネル ％1$s を削除しますか"</string>
   <string name="stream_compose_selected_channel_menu_delete_conversation_confirmation_title">"会話を削除する"</string>

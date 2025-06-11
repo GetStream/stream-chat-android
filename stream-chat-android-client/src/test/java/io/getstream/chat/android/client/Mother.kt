@@ -249,7 +249,7 @@ internal object Mother {
 
     fun randomDownstreamMessageDto(
         attachments: List<AttachmentDto> = emptyList(),
-        channel: ChannelInfoDto? = null,
+        channel: ChannelInfoDto? = randomChannelInfoDto(),
         cid: String = randomString(),
         command: String? = randomString(),
         created_at: Date = randomDate(),
@@ -762,11 +762,11 @@ internal object Mother {
     fun randomDeviceDto(
         id: String = randomString(),
         pushProvider: String = randomString(),
-        providerName: String = randomString(),
+        pushProviderName: String = randomString(),
     ): DeviceDto = DeviceDto(
         id = id,
         push_provider = pushProvider,
-        provider_name = providerName,
+        push_provider_name = pushProviderName,
     )
 
     fun randomDownstreamFlagDto(

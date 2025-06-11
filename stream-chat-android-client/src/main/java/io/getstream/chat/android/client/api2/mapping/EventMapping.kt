@@ -275,7 +275,7 @@ internal class EventMapping(
             channelType = channel_type,
             channelId = channel_id,
             user = user?.toDomain(),
-            message = message?.toDomain(),
+            message = message?.toDomain(channel.toChannelInfo()),
             channel = channel.toDomain(),
         )
     }
@@ -291,7 +291,7 @@ internal class EventMapping(
             cid = cid,
             channelType = channel_type,
             channelId = channel_id,
-            message = message?.toDomain(),
+            message = message?.toDomain(channel.toChannelInfo()),
             channel = channel.toDomain(),
         )
     }
@@ -308,7 +308,7 @@ internal class EventMapping(
             channelType = channel_type,
             channelId = channel_id,
             user = user.toDomain(),
-            message = message?.toDomain(),
+            message = message?.toDomain(channel.toChannelInfo()),
             channel = channel.toDomain(),
         )
     }
@@ -638,7 +638,7 @@ internal class EventMapping(
             channelType = channel_type,
             channelId = channel_id,
             channel = channel.toDomain(),
-            message = message.toDomain(),
+            message = message.toDomain(channel.toChannelInfo()),
             totalUnreadCount = total_unread_count,
             unreadChannels = unread_channels,
         )
@@ -654,7 +654,7 @@ internal class EventMapping(
                 cid = cid,
                 channelId = channel_id,
                 channelType = channel_type,
-                message = message.toDomain(),
+                message = message.toDomain(channel.toChannelInfo()),
                 channel = channel.toDomain(),
                 createdAt = created_at.date,
                 rawCreatedAt = created_at.rawDate,

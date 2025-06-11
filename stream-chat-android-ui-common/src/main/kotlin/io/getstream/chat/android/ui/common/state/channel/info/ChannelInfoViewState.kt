@@ -54,24 +54,24 @@ public sealed interface ChannelInfoViewState {
          */
         public sealed interface Option {
             /**
-             * Represents a separator option in the channel information UI.
+             * Indicates a separator option in the channel information UI.
              */
             public data object Separator : Option
 
             /**
-             * Represents an option to add a member to the channel.
+             * Indicates an option to add a member to the channel.
              */
             public data object AddMember : Option
 
             /**
-             * Represents an option with user information.
+             * Indicates an option with user information.
              *
              * @param user The user whose information is displayed.
              */
             public data class UserInfo(val user: User) : Option
 
             /**
-             * Represents an option to rename the channel.
+             * Indicates an option to rename the channel.
              *
              * @param name The current name of the channel.
              * @param isReadOnly Indicates if the channel is read-only.
@@ -79,31 +79,31 @@ public sealed interface ChannelInfoViewState {
             public data class RenameChannel(val name: String, val isReadOnly: Boolean) : Option
 
             /**
-             * Represents an option to mute the channel.
+             * Indicates an option to mute the channel.
              *
              * @param isMuted Indicates if the channel is muted.
              */
             public data class MuteChannel(val isMuted: Boolean) : Option
 
             /**
-             * Represents an option to hide the channel.
+             * Indicates an option to hide the channel.
              *
              * @param isHidden Indicates if the channel is hidden.
              */
             public data class HideChannel(val isHidden: Boolean) : Option
 
             /**
-             * Represents an option to view pinned messages in the channel.
+             * Indicates an option to view pinned messages in the channel.
              */
             public data object PinnedMessages : Option
 
             /**
-             * Represents an option to leave the channel.
+             * Indicates an option to leave the channel.
              */
             public data object LeaveChannel : Option
 
             /**
-             * Represents an option to delete the channel.
+             * Indicates an option to delete the channel.
              */
             public data object DeleteChannel : Option
         }

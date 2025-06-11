@@ -653,6 +653,21 @@ public interface ChatComponentFactory {
      * Usually shows the channel title in the top and
      * the channel information or the connection status in the bottom.
      */
+    @Deprecated(
+        message = "Use the new version of MessageListHeaderCenterContent with a nullable onClick.",
+        replaceWith = ReplaceWith(
+            "MessageListHeaderCenterContent(\n" +
+                "modifier = modifier,\n" +
+                "channel = channel,\n" +
+                "currentUser = currentUser,\n" +
+                "connectionState = connectionState,\n" +
+                "typingUsers = typingUsers,\n" +
+                "messageMode = messageMode,\n" +
+                "onClick = onHeaderTitleClick,\n" +
+                ")",
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @Suppress("LongParameterList")
     @Composable
     public fun RowScope.MessageListHeaderCenterContent(
@@ -664,14 +679,41 @@ public interface ChatComponentFactory {
         onHeaderTitleClick: (Channel) -> Unit,
         connectionState: ConnectionState,
     ) {
+        MessageListHeaderCenterContent(
+            modifier = modifier,
+            channel = channel,
+            currentUser = currentUser,
+            connectionState = connectionState,
+            typingUsers = typingUsers,
+            messageMode = messageMode,
+            onClick = onHeaderTitleClick,
+        )
+    }
+
+    /**
+     * The default center content of the message list header.
+     * Usually shows the channel title in the top and
+     * the channel information or the connection status in the bottom.
+     */
+    @Suppress("LongParameterList")
+    @Composable
+    public fun RowScope.MessageListHeaderCenterContent(
+        modifier: Modifier,
+        channel: Channel,
+        currentUser: User?,
+        connectionState: ConnectionState,
+        typingUsers: List<User>,
+        messageMode: MessageMode,
+        onClick: ((Channel) -> Unit)?,
+    ) {
         DefaultMessageListHeaderCenterContent(
             modifier = modifier,
             channel = channel,
             currentUser = currentUser,
+            connectionState = connectionState,
             typingUsers = typingUsers,
             messageMode = messageMode,
-            onHeaderTitleClick = onHeaderTitleClick,
-            connectionState = connectionState,
+            onHeaderTitleClick = onClick,
         )
     }
 
