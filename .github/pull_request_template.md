@@ -74,6 +74,7 @@ Provide the patch code here
 - [ ] New feature tested and works
 - [ ] Release notes and docs clearly describe changes
 - [ ] All code we touched has new or updated KDocs
+- [ ] Check the SDK Size Comparison table in the CI logs
 
 ### 🎉 GIF
 
