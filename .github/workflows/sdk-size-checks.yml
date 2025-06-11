@@ -1,10 +1,7 @@
 name: SDK size checks
 
 on:
-  [pull_request]
-
-permissions:
-  pull-requests: write # For posting comments
+  pull_request
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -105,10 +102,21 @@ jobs:
             });
 
             return commentBody;
-            
-      - name: Post or update comment
+
+      - name: Post Comment for Internal PR
+        # This step only runs if the PR is NOT from a fork
+        if: github.event.pull_request.head.repo.fork == false
         uses: ./.github/workflows/issue-commentator.yml
         with:
-          issue_number: ${{ github.event.workflow_run.pull_requests[0].number }}
+          issue_number: ${{ github.event.pull_request.number }}
           comment_title: '## SDK Size Comparison 📏'
           comment_body: ${{ steps.build_comment.outputs.result }}
+
+      - name: Print Results for Fork PR
+        # This step only runs if the PR IS from a fork
+        if: github.event.pull_request.head.repo.fork == true
+        run: |
+          echo "Pull Request is from a fork. Printing size comparison to the log instead of commenting."
+          echo "------------------------------------------------------------------------------------"
+          echo "${{ steps.build_comment.outputs.result }}"
+          echo "------------------------------------------------------------------------------------"
