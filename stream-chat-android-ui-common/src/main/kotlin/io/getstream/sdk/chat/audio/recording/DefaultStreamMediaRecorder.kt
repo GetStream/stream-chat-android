@@ -46,7 +46,7 @@ import kotlin.math.log10
 public class DefaultStreamMediaRecorder(
     private val context: Context,
     private val audioSource: Int = MediaRecorder.AudioSource.MIC,
-    private val outputFormat: Int = MediaRecorder.OutputFormat.MPEG_4,
+    private val outputFormat: Int = MediaRecorder.OutputFormat.AAC_ADTS,
     private val audioEncoder: Int = MediaRecorder.AudioEncoder.AAC,
     private val audioSamplingRate: Int = SAMPLING_RATE_16KHZ,
     private val audioEncodingBitRate: Int = ENCODING_BIT_RATE_32KBPS,
