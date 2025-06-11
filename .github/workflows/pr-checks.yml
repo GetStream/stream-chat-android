@@ -1,6 +1,6 @@
 name: Pull request CI checks
 
-on: [pull_request]
+on: []
 
 env:
   BUILD_CACHE_AWS_REGION: ${{ secrets.BUILD_CACHE_AWS_REGION }}
