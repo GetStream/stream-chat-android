@@ -107,7 +107,7 @@ jobs:
             return commentBody;
             
       - name: Post or update comment
-        uses: ./.github/workflows/issue-commentator.yml@patch-1
+        uses: ./.github/workflows/issue-commentator.yml
         with:
           issue_number: ${{ github.event.workflow_run.pull_requests[0].number }}
           comment_title: '## SDK Size Comparison 📏'
