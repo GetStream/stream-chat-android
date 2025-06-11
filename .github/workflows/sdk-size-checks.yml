@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - uses: GetStream/android-ci-actions/actions/setup-java@main
       - uses: GetStream/android-ci-actions/actions/gradle-cache@main
         with:
@@ -60,24 +60,17 @@ jobs:
 
           echo "PR_SDK_SIZES=$(cat pr_sdk_sizes.json)" >> $GITHUB_ENV
 
-      - name: Post comment on PR
-        uses: actions/github-script@v6
+      - name: Post a comment or print size comparison
+        uses: actions/github-script@v7
         with:
           script: |
-            const maxTolerance = process.env.MAX_TOLERANCE
-            const fineTolerance = process.env.FINE_TOLERANCE
+            const maxTolerance = process.env.MAX_TOLERANCE;
+            const fineTolerance = process.env.FINE_TOLERANCE;
             const currentSdkSizes = process.env.CURRENT_SDK_SIZES ? JSON.parse(process.env.CURRENT_SDK_SIZES) : {};
             const prSdkSizes = JSON.parse(process.env.PR_SDK_SIZES);
             const commentHeader = '## SDK Size Comparison 📏';
-
-            // Prepare the comparison table
-
-            let commentBody = `
-            ${commentHeader}
-
-            | SDK | Before | After | Difference | Status |
-            |-|-|-|-|-|
-            `;
+            
+            let commentBody = `${commentHeader}\n\n| SDK | Before | After | Difference | Status |\n|-|-|-|-|-|\n`;
             
             Object.keys(prSdkSizes).forEach(sdk => {
               const currentSize = currentSdkSizes[sdk] || 0;
@@ -88,42 +81,48 @@ jobs:
               const diffInMb = (diff / 1024).toFixed(2);
 
               let status = "🟢";
-              if (diff < 0) {
-                status = "🚀";
-              } else if (diff >= maxTolerance) {
-                status = "🔴";
-              } else if (diff >= fineTolerance) {
-                status = "🟡";
-              }
-
+              if (diff < 0) { status = "🚀"; }
+              else if (diff >= maxTolerance) { status = "🔴"; }
+              else if (diff >= fineTolerance) { status = "🟡"; }
+            
               commentBody += `| ${sdk} | ${currentSizeInMb} MB | ${prSizeInMb} MB | ${diffInMb} MB | ${status} |\n`;
             });
-            
-            // Post or update the PR comment
 
-            // Find existing comment
+            const isFork = context.payload.pull_request.head.repo.fork;
+            
+            if (isFork) {
+              console.log("Pull Request is from a fork. Printing size comparison to the log instead of commenting.");
+              console.log("------------------------------------------------------------------------------------");
+              console.log(commentBody);
+              console.log("------------------------------------------------------------------------------------");
+              return;
+            }
+
+            const issue_number = context.issue.number;
+            const { owner, repo } = context.repo;
+
             const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.payload.pull_request.number,
+              owner,
+              repo,
+              issue_number,
             });
 
-            const comment = comments.find(c => c.body.includes(commentHeader));
+            const existingComment = comments.find(c => c.body.includes(commentHeader));
 
-            if (comment) {
-              // Update the existing comment
+            if (existingComment) {
+              console.log(`Found existing comment with ID ${existingComment.id}. Updating it.`);
               await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: comment.id,
+                owner,
+                repo,
+                comment_id: existingComment.id,
                 body: commentBody,
               });
             } else {
-              // Create a new comment
+              console.log("No existing comment found. Creating a new one.");
               await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.payload.pull_request.number,
+                owner,
+                repo,
+                issue_number,
                 body: commentBody,
               });
             }
