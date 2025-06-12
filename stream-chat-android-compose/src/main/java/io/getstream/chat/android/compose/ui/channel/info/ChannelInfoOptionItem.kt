@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.channel.info
 
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -24,23 +25,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 
 @Suppress("LongMethod")
 @Composable
-internal fun ChannelInfoChannelOption(
+internal fun LazyItemScope.ChannelInfoOptionItem(
     option: ChannelInfoViewState.Content.Option,
     isGroupChannel: Boolean,
     onViewAction: (action: ChannelInfoViewAction) -> Unit,
 ) {
     when (option) {
         is ChannelInfoViewState.Content.Option.Separator -> {
-            StreamHorizontalDivider(thickness = 8.dp)
+            with(ChatTheme.componentFactory) {
+                ChannelInfoSeparatorItem()
+            }
         }
 
         is ChannelInfoViewState.Content.Option.AddMember -> {
