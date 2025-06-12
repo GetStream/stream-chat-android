@@ -39,6 +39,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,6 +63,7 @@ import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
+import kotlinx.coroutines.launch
 
 private const val DefaultNumberOfPicturesPerRow = 3
 
@@ -119,6 +121,7 @@ internal fun DefaultImagesPickerItem(
 ) {
     val attachmentMetaData = imageItem.attachmentMetaData
     val isVideo = attachmentMetaData.type == AttachmentType.VIDEO
+    val scope = rememberCoroutineScope()
 
     val imageRequest = ImageRequest.Builder(LocalContext.current)
         .data(attachmentMetaData.uri.toString())
@@ -134,7 +137,11 @@ internal fun DefaultImagesPickerItem(
         modifier = Modifier
             .height(125.dp)
             .padding(2.dp)
-            .clickable { onImageSelected(imageItem) }
+            .clickable {
+                scope.launch {
+                    onImageSelected(imageItem)
+                }
+            }
             .testTag("Stream_AttachmentPickerSampleImage"),
     ) {
         StreamAsyncImage(
