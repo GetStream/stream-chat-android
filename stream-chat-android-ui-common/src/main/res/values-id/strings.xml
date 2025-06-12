@@ -21,6 +21,4 @@
   <string name="stream_ui_message_list_attachment_invalid_url">"Data gagal dimuat karena url tidak valid."</string>
   <string name="stream_ui_message_list_attachment_load_failed">"Data gagal dimuat karena kesalahan yang tidak diketahui."</string>
   <string name="stream_ui_yesterday">"Kemarin"</string>
-  <string name="stream_ui_mention_list_empty">"Belum ada mention…"</string>
-  <string name="stream_ui_mention_list_error">"Terjadi kesalahan"</string>
 </resources>

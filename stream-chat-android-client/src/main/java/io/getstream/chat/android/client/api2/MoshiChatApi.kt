@@ -934,6 +934,7 @@ constructor(
 
     private fun flattenChannel(response: ChannelResponse): Channel = with(domainMapping) {
         return response.channel.toDomain().let { channel ->
+            val channelInfo = response.channel.toChannelInfo()
             channel.copy(
                 watcherCount = response.watcher_count,
                 read = response.read.map {
@@ -944,10 +945,10 @@ constructor(
                 members = response.members.map { it.toDomain() },
                 membership = response.membership?.toDomain(),
                 messages = response.messages.map {
-                    it.toDomain().enrichWithCid(channel.cid)
+                    it.toDomain(channelInfo).enrichWithCid(channel.cid)
                 },
                 pinnedMessages = response.pinned_messages.map {
-                    it.toDomain().enrichWithCid(channel.cid)
+                    it.toDomain(channelInfo).enrichWithCid(channel.cid)
                 },
                 watchers = response.watchers.map {
                     it.toDomain()

@@ -33,7 +33,7 @@ import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewSta
 
 @Suppress("LongMethod")
 @Composable
-internal fun ChannelInfoContentOption(
+internal fun ChannelInfoChannelOption(
     option: ChannelInfoViewState.Content.Option,
     isGroupChannel: Boolean,
     onViewAction: (action: ChannelInfoViewAction) -> Unit,

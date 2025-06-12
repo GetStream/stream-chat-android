@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.parser2.ParserFactory
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.utils.HeadersUtil
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import okhttp3.OkHttpClient
@@ -45,17 +46,18 @@ internal class SocketFactoryTest {
         whenever(this.newWebSocket(any(), any())) doReturn mock()
     }
 
-    private val socketFactory = SocketFactory(
-        chatParser,
-        FakeTokenManager(token, loadSyncToken),
-        headersUtil,
-        httpClient,
-    )
-
     /** [arguments] */
     @ParameterizedTest
     @MethodSource("arguments")
-    internal fun testCreateSocket(connectionConf: SocketFactory.ConnectionConf, expectedUrl: String) {
+    internal fun testCreateSocket(
+        expireToken: Boolean,
+        connectionConf: SocketFactory.ConnectionConf,
+        expectedUrl: String,
+    ) {
+        val socketFactory = Fixture(httpClient)
+            .withExpire(expireToken)
+            .get()
+
         socketFactory.createSocket(connectionConf)
 
         verify(httpClient, only()).newWebSocket(
@@ -63,6 +65,21 @@ internal class SocketFactoryTest {
                 it.url.toString() `should be equal to` expectedUrl
             },
             any<WebSocketListener>(),
+        )
+    }
+
+    private class Fixture(val httpClient: OkHttpClient) {
+        private val tokenManager = FakeTokenManager(token, loadSyncToken)
+
+        fun withExpire(expire: Boolean): Fixture = apply {
+            tokenManager.takeIf { expire }?.expireToken()
+        }
+
+        fun get() = SocketFactory(
+            chatParser,
+            tokenManager,
+            headersUtil,
+            httpClient,
         )
     }
 
@@ -81,24 +98,42 @@ internal class SocketFactoryTest {
         fun arguments() = listOf(
             randomUser(image = randomString(), name = randomString(), language = randomString()).let {
                 Arguments.of(
+                    false,
                     SocketFactory.ConnectionConf.UserConnectionConf(endpoint, apiKey, it),
                     "${endpoint}connect?json=${buildFullUserJson(it, it.id)}&api_key=$apiKey&X-Stream-Client=${headersUtil.buildSdkTrackingHeaders()}&authorization=$token&stream-auth-type=jwt",
                 )
             },
             randomUser().let {
                 Arguments.of(
+                    false,
+                    SocketFactory.ConnectionConf.UserConnectionConf(endpoint, apiKey, it).asReconnectionConf(),
+                    "${endpoint}connect?json=${buildMinimumUserJson(it.id)}&api_key=$apiKey&X-Stream-Client=${headersUtil.buildSdkTrackingHeaders()}&authorization=$token&stream-auth-type=jwt",
+                )
+            },
+            randomUser(image = randomString(), name = randomString(), language = randomString()).let {
+                Arguments.of(
+                    true,
+                    SocketFactory.ConnectionConf.UserConnectionConf(endpoint, apiKey, it),
+                    "${endpoint}connect?json=${buildFullUserJson(it, it.id)}&api_key=$apiKey&X-Stream-Client=${headersUtil.buildSdkTrackingHeaders()}&authorization=$loadSyncToken&stream-auth-type=jwt",
+                )
+            },
+            randomUser().let {
+                Arguments.of(
+                    true,
                     SocketFactory.ConnectionConf.UserConnectionConf(endpoint, apiKey, it).asReconnectionConf(),
                     "${endpoint}connect?json=${buildMinimumUserJson(it.id)}&api_key=$apiKey&X-Stream-Client=${headersUtil.buildSdkTrackingHeaders()}&authorization=$loadSyncToken&stream-auth-type=jwt",
                 )
             },
             User("anon").let {
                 Arguments.of(
+                    randomBoolean(),
                     SocketFactory.ConnectionConf.AnonymousConnectionConf(endpoint, apiKey, it).asReconnectionConf(),
                     "${endpoint}connect?json=${buildMinimumUserJson(it.id)}&api_key=$apiKey&X-Stream-Client=${headersUtil.buildSdkTrackingHeaders()}&stream-auth-type=anonymous",
                 )
             },
             User("!anon").let {
                 Arguments.of(
+                    randomBoolean(),
                     SocketFactory.ConnectionConf.AnonymousConnectionConf(endpoint, apiKey, it).asReconnectionConf(),
                     "${endpoint}connect?json=${buildMinimumUserJson("anon")}&api_key=$apiKey&X-Stream-Client=${headersUtil.buildSdkTrackingHeaders()}&stream-auth-type=anonymous",
                 )

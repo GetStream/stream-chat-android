@@ -51,7 +51,7 @@
   <string name="stream_compose_ok">"확인"</string>
   <string name="stream_compose_reply">"답장"</string>
   <string name="stream_compose_search_input_cancel">"취소"</string>
-  <string name="stream_compose_search_input_hint">"검색"</string>
+  <string name="stream_compose_search_input_hint">"이름으로 채널 검색"</string>
   <string name="stream_compose_selected_channel_menu_delete_conversation">"대화 삭제하기"</string>
   <string name="stream_compose_selected_channel_menu_delete_conversation_confirmation_message">"%1$s 채널을 삭제하시겠습니까"</string>
   <string name="stream_compose_selected_channel_menu_delete_conversation_confirmation_title">"대화 삭제하기"</string>

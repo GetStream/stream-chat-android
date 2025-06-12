@@ -22,5 +22,5 @@ import com.squareup.moshi.JsonClass
 internal data class DeviceDto(
     val id: String,
     val push_provider: String,
-    val provider_name: String?,
+    val push_provider_name: String?,
 )

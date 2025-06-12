@@ -230,7 +230,7 @@ public fun AiMessagesScreen(
                 }
             },
         ) {
-            val currentState = listViewModel.currentMessagesState
+            val currentState by listViewModel.currentMessagesState
             val state = rememberMessageListState(parentMessageId = currentState.parentMessageId)
 
             LaunchedEffect(key1 = typingState) {
