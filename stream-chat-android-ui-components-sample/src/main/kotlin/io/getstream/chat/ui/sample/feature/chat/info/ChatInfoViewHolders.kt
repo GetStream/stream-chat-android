@@ -101,18 +101,20 @@ class ChatInfoStatefulOptionViewHolder(
 
     private lateinit var option: ChatInfoItem.Option.Stateful
 
-    init {
-        binding.optionSwitch.setOnCheckedChangeListener { _, isChecked ->
-            optionChangedListener?.onClick(option, isChecked)
-        }
-    }
-
     override fun bind(item: ChatInfoItem.Option.Stateful) {
         option = item
         binding.optionTextView.setText(item.textResId)
         binding.optionImageView.setImageResource(item.iconResId)
         binding.optionImageView.setColorFilter(itemView.context.getColorFromRes(item.tintResId))
-        binding.optionSwitch.isChecked = item.isChecked
+        with(binding.optionSwitch) {
+            // Prevent the listener from being called when binding the checked state
+            setOnCheckedChangeListener(null)
+            isChecked = item.isChecked
+            // Restore the listener after binding the checked state
+            setOnCheckedChangeListener { _, isChecked ->
+                optionChangedListener?.onClick(option, isChecked)
+            }
+        }
     }
 }
 
@@ -134,16 +136,29 @@ class ChatInfoGroupMemberViewHolder(
             member = this
             binding.userAvatarView.setUser(user)
             binding.nameTextView.text = user.name
+            binding.nameTextView.setTextColor(
+                if (banned) {
+                    itemView.context.getColorFromRes(R.color.stream_ui_accent_red)
+                } else {
+                    itemView.context.getColorFromRes(R.color.stream_ui_text_color_primary)
+                },
+            )
             binding.mutedIcon.isVisible = notificationsMuted == true
             binding.onlineTextView.text = user.getLastSeenText(itemView.context)
+            binding.onlineTextView.setTextColor(
+                if (banned) {
+                    itemView.context.getColorFromRes(R.color.stream_ui_accent_red)
+                } else {
+                    itemView.context.getColorFromRes(R.color.stream_ui_text_color_secondary)
+                },
+            )
 
             val getString = { resId: Int -> itemView.context.getString(resId) }
-            val isOwner = item.member.user.id == item.createdBy.id
-            binding.channelRoleView.text = when (isOwner) {
+            binding.channelRoleView.text = when (item.isOwner) {
                 true -> getString(R.string.chat_group_info_owner)
                 else -> when (val role = item.member.channelRole) {
-                    "channel_member" -> getString(R.string.chat_group_info_member)
                     "channel_moderator" -> getString(R.string.chat_group_info_moderator)
+                    "channel_member" -> ""
                     else -> role
                 }
             }
@@ -162,7 +177,7 @@ class ChatInfoMembersSeparatorViewHolder(
 
     override fun bind(item: ChatInfoItem.MembersSeparator) {
         binding.membersSeparatorTextView.text =
-            itemView.context.getString(R.string.chat_group_info_option_members_separator_title, item.membersToShow)
+            itemView.context.getString(R.string.stream_ui_channel_info_expand_button, item.membersToShow)
     }
 }
 
