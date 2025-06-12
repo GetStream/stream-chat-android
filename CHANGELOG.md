@@ -73,6 +73,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `FileAttachmentPreviewContent`, `FileAttachmentContent`,`FileAttachmentItem`, `FileUploadContent` and `FileUploadItem` to `ChatComponentFactory`. [#5791](https://github.com/GetStream/stream-chat-android/pull/5791)
 
 ### ⚠️ Changed
 
