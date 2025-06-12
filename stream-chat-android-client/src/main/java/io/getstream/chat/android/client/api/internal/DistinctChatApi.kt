@@ -33,6 +33,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.log.StreamLog
@@ -104,6 +105,14 @@ internal class DistinctChatApi(
         StreamLog.d(TAG) { "[getMessage] messageId: $messageId, uniqueKey: $uniqueKey" }
         return getOrCreate(uniqueKey) {
             delegate.getMessage(messageId)
+        }
+    }
+
+    override fun getPendingMessage(messageId: String): Call<PendingMessage> {
+        val uniqueKey = messageId.hashCode()
+        StreamLog.d(TAG) { "[getPendingMessage] messageId: $messageId, uniqueKey: $uniqueKey" }
+        return getOrCreate(uniqueKey) {
+            delegate.getPendingMessage(messageId)
         }
     }
 

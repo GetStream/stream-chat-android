@@ -7,6 +7,7 @@
 - Use `AAC_ADTS` as default audio recording output format. [#5825](https://github.com/GetStream/stream-chat-android/pull/5825)
 
 ### ✅ Added
+- Add `pendingMessages` field to the `Channel` model. [#5784](https://github.com/GetStream/stream-chat-android/pull/5784)
 
 ### ⚠️ Changed
 
@@ -18,6 +19,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `ChatClient.getPendingMessage` to fetch a pending message (and its metadata) by its ID. [#5784](https://github.com/GetStream/stream-chat-android/pull/5784)
 
 ### ⚠️ Changed
 

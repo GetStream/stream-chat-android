@@ -56,6 +56,7 @@ import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomDateOrNull
+import io.getstream.chat.android.randomPendingMessageMetadata
 import io.getstream.chat.android.randomString
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -94,6 +95,9 @@ internal object MoshiChatApiTestArguments {
 
     @JvmStatic
     fun getMessageInput() = messageResponseArguments()
+
+    @JvmStatic
+    fun getPendingMessageInput() = messageResponseArguments()
 
     @JvmStatic
     fun deleteMessageInput() = listOf(
@@ -520,7 +524,12 @@ internal object MoshiChatApiTestArguments {
 
     private fun messageResponseArguments() = listOf(
         Arguments.of(
-            RetroSuccess(MessageResponse(Mother.randomDownstreamMessageDto())).toRetrofitCall(),
+            RetroSuccess(
+                MessageResponse(
+                    message = Mother.randomDownstreamMessageDto(),
+                    pending_message_metadata = randomPendingMessageMetadata(),
+                ),
+            ).toRetrofitCall(),
             Result.Success::class,
         ),
         Arguments.of(RetroError<MessageResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
