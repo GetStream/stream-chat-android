@@ -33,6 +33,13 @@ internal class AttachmentsContentTest : SnapshotTest {
     )
 
     @Test
+    fun `file attachment preview content`() {
+        snapshotWithDarkMode {
+            FileAttachmentPreviewContent()
+        }
+    }
+
+    @Test
     fun `file attachment content`() {
         snapshotWithDarkMode {
             Column {
@@ -74,6 +81,13 @@ internal class AttachmentsContentTest : SnapshotTest {
     fun `media attachment quoted content`() {
         snapshotWithDarkMode {
             MediaAttachmentQuotedContent()
+        }
+    }
+
+    @Test
+    fun `file upload content`() {
+        snapshotWithDarkMode {
+            FileUploadContent()
         }
     }
 }
