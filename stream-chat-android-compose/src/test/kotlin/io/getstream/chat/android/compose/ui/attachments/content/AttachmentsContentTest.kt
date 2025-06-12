@@ -34,7 +34,7 @@ internal class AttachmentsContentTest : SnapshotTest {
 
     @Test
     fun `file attachment preview content`() {
-        snapshotWithDarkMode {
+        snapshotWithDarkModeRow {
             FileAttachmentPreviewContent()
         }
     }
@@ -86,7 +86,7 @@ internal class AttachmentsContentTest : SnapshotTest {
 
     @Test
     fun `file upload content`() {
-        snapshotWithDarkMode {
+        snapshotWithDarkModeRow {
             FileUploadContent()
         }
     }
