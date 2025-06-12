@@ -2899,10 +2899,7 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * Composable function for rendering the content of a file attachment.
-     *
-     * This function delegates the rendering to the default implementation of
-     * [FileAttachmentContent] provided by the Stream Chat Compose library.
+     * Factory method for creating the content of a file attachment.
      *
      * @param modifier Modifier for styling the composable.
      * @param attachmentState The state of the attachment, containing information about the file.
