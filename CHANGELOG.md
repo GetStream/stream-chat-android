@@ -33,6 +33,7 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Removed duplicate Index creation on PrimaryKey of `ReplyAttachmentEntity` and `AttachmentEntity`.[#5820](https://github.com/GetStream/stream-chat-android/pull/5820)
 
 ## stream-chat-android-state
 ### 🐞 Fixed
