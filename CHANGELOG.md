@@ -64,6 +64,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Refactor the XML sample view models and UI components to use ChannelInfoViewController. [#5801](https://github.com/GetStream/stream-chat-android/pull/5801)
 
 ### ❌ Removed
 
