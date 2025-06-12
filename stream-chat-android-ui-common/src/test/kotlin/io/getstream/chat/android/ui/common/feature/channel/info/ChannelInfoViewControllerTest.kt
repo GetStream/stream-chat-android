@@ -36,6 +36,7 @@ import io.getstream.chat.android.randomGenericError
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMembers
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent.Navigation
@@ -969,6 +970,51 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
+    fun `message member with distinct channel`() = runTest {
+        val memberId = randomString()
+        val cid = randomCID()
+        val fixture = Fixture()
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            sut.events.test {
+                sut.onMemberViewEvent(ChannelInfoMemberViewEvent.MessageMember(memberId, cid))
+
+                assertEquals(
+                    ChannelInfoViewEvent.NavigateToChannel(cid),
+                    awaitItem(),
+                )
+            }
+        }
+
+        launch { fixture.verifyNoMoreInteractions() }
+    }
+
+    @Test
+    fun `message member with no distinct channel`() = runTest {
+        val memberId = randomString()
+        val fixture = Fixture()
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            sut.events.test {
+                sut.onMemberViewEvent(ChannelInfoMemberViewEvent.MessageMember(memberId, distinctCid = null))
+
+                assertEquals(
+                    ChannelInfoViewEvent.NavigateToDraftChannel(memberId),
+                    awaitItem(),
+                )
+            }
+        }
+
+        launch { fixture.verifyNoMoreInteractions() }
+    }
+
+    @Test
     fun `ban member modal`() = runTest {
         val member = randomMember()
         val fixture = Fixture()
@@ -1242,15 +1288,13 @@ private class Fixture {
                 systemMessage = systemMessage,
             ),
         ) doAnswer {
-            error?.asCall()
-                ?: mock<Channel>().asCall()
+            error?.asCall() ?: mock<Channel>().asCall()
         }
     }
 
     fun givenDeleteChannel(error: Error? = null) = apply {
         whenever(channelClient.delete()) doAnswer {
-            error?.asCall()
-                ?: mock<Channel>().asCall()
+            error?.asCall() ?: mock<Channel>().asCall()
         }
     }
 
@@ -1262,8 +1306,7 @@ private class Fixture {
                 timeout = timeout,
             ),
         ) doAnswer {
-            error?.asCall()
-                ?: Unit.asCall()
+            error?.asCall() ?: Unit.asCall()
         }
     }
 

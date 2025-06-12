@@ -26,7 +26,9 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.sample.R
+import io.getstream.chat.android.compose.sample.feature.channel.draft.DraftChannelActivity
 import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
+import io.getstream.chat.android.compose.sample.ui.MessagesActivity
 import io.getstream.chat.android.compose.sample.ui.pinned.PinnedMessagesActivity
 import io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -75,21 +77,30 @@ class GroupChannelInfoActivity : BaseConnectedActivity() {
             LaunchedEffect(viewModel) {
                 viewModel.events.collectLatest { event ->
                     when (event) {
-                        is ChannelInfoViewEvent.Error ->
-                            showError(event)
-
-                        is ChannelInfoViewEvent.NavigateUp -> {
-                            setResult(RESULT_OK)
-                            finish()
-                        }
-
-                        is ChannelInfoViewEvent.NavigateToPinnedMessages ->
-                            openPinnedMessages()
-
-                        else -> Unit
+                        is ChannelInfoViewEvent.Error -> showError(event)
+                        is ChannelInfoViewEvent.Navigation -> onNavigationEvent(event)
+                        is ChannelInfoViewEvent.Modal -> Unit
                     }
                 }
             }
+        }
+    }
+
+    private fun onNavigationEvent(event: ChannelInfoViewEvent.Navigation) {
+        when (event) {
+            is ChannelInfoViewEvent.NavigateUp -> {
+                setResult(RESULT_OK)
+                finish()
+            }
+
+            is ChannelInfoViewEvent.NavigateToPinnedMessages ->
+                openPinnedMessages()
+
+            is ChannelInfoViewEvent.NavigateToChannel ->
+                startActivity(MessagesActivity.createIntent(context = this, channelId = event.cid))
+
+            is ChannelInfoViewEvent.NavigateToDraftChannel ->
+                startActivity(DraftChannelActivity.createIntent(context = this, memberIds = listOf(event.memberId)))
         }
     }
 
