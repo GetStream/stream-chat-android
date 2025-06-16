@@ -73,10 +73,12 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `FileAttachmentPreviewContent`, `FileAttachmentContent`,`FileAttachmentItem`, `FileUploadContent` and `FileUploadItem` to `ChatComponentFactory`. [#5791](https://github.com/GetStream/stream-chat-android/pull/5791)
 
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Remove redundant use of coroutineScope inside of `LaunchedEffect`. [#5811](https://github.com/GetStream/stream-chat-android/pull/5811)
 
 ## stream-chat-android-markdown-transformer
 ### 🐞 Fixed
