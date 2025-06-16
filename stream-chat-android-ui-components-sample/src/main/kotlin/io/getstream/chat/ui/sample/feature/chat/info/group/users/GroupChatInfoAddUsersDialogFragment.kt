@@ -40,7 +40,7 @@ class GroupChatInfoAddUsersDialogFragment : DialogFragment() {
 
     private val cid: String by lazy { requireArguments().getString(ARG_CID)!! }
     private val adapter: GroupChatInfoAddUsersAdapter = GroupChatInfoAddUsersAdapter()
-    private val viewModel: GroupChatInfoAddUsersViewModel by viewModels { ChatViewModelFactory(requireContext(), cid) }
+    private val viewModel: GroupChatInfoAddUsersViewModel by viewModels { ChatViewModelFactory(cid) }
     private var loadMoreListener: LoadMoreListener? = null
     private val scrollListener = EndlessScrollListener(LOAD_MORE_THRESHOLD) {
         loadMoreListener?.loadMore()

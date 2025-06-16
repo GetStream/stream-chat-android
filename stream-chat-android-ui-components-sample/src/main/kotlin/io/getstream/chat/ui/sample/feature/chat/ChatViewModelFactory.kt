@@ -14,25 +14,15 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalStreamChatApi::class)
-
 package io.getstream.chat.ui.sample.feature.chat
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.ui.sample.feature.chat.info.group.users.GroupChatInfoAddUsersViewModel
 
-class ChatViewModelFactory(private val context: Context, private val cid: String) : ViewModelProvider.Factory {
+class ChatViewModelFactory(private val cid: String) : ViewModelProvider.Factory {
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
         ChatViewModel::class.java to { ChatViewModel(cid) },
-        // ChannelInfoViewModel::class.java to {
-        //     ChannelInfoViewModel(
-        //         cid = cid,
-        //         copyToClipboardHandler = CopyToClipboardHandler(context = context.applicationContext),
-        //     )
-        // },
         GroupChatInfoAddUsersViewModel::class.java to { GroupChatInfoAddUsersViewModel(cid) },
     )
 
