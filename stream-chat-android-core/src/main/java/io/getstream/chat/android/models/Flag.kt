@@ -24,7 +24,7 @@ import java.util.Date
  *
  * @param user The user who created the flag.
  * @param targetUser The user who was flagged.
- * @param targetMessageId The ID of the message that was flagged.
+ * @param targetMessageId The ID of the message that was flagged (empty if the flag target is a user).
  * @param reviewedBy The user who reviewed the flag.
  * @param createdByAutomod True if the flag was created by the automod.
  * @param createdAt The date when the flag was created.
