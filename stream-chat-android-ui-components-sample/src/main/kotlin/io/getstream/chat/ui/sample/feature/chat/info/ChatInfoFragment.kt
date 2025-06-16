@@ -93,14 +93,7 @@ class ChatInfoFragment : Fragment() {
             when (event) {
                 is ChannelInfoViewEvent.Error -> showError(event, isGroupChannel = false)
                 is ChannelInfoViewEvent.Navigation -> onNavigationEvent(event)
-                is ChannelInfoViewEvent.Modal -> showModal(event, viewModel, isGroupChannel = false) { modal ->
-                    if (modal is ChannelInfoViewEvent.HideChannelModal) {
-                        // If the HideChannel modal was dismissed,
-                        // we need to revert the state of the HideChannel option to unchecked,
-                        // as it was checked when the modal was shown.
-                        binding.optionsRecyclerView.adapter?.notifyDataSetChanged()
-                    }
-                }
+                is ChannelInfoViewEvent.Modal -> showModal(event, viewModel, isGroupChannel = false)
             }
         }
     }
@@ -141,13 +134,6 @@ class ChatInfoFragment : Fragment() {
                         } else {
                             ChannelInfoViewAction.UnmuteChannelClick
                         }
-
-                    is ChatInfoItem.Option.Stateful.HideChannel ->
-                        if (isChecked) {
-                            ChannelInfoViewAction.HideChannelClick
-                        } else {
-                            ChannelInfoViewAction.UnhideChannelClick
-                        }
                 },
             )
         }
@@ -176,10 +162,16 @@ class ChatInfoFragment : Fragment() {
                 is ChatInfoItem.Option.DeleteChannel ->
                     viewModel.onViewAction(ChannelInfoViewAction.DeleteChannelClick)
 
+                is ChatInfoItem.Option.HideChannel -> viewModel.onViewAction(
+                    if (option.isChecked) {
+                        ChannelInfoViewAction.UnhideChannelClick
+                    } else {
+                        ChannelInfoViewAction.HideChannelClick
+                    },
+                )
+
                 // Already handled
-                is ChatInfoItem.Option.Stateful.MuteChannel,
-                is ChatInfoItem.Option.Stateful.HideChannel,
-                -> Unit
+                is ChatInfoItem.Option.Stateful.MuteChannel -> Unit
             }
         }
     }

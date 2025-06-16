@@ -58,7 +58,7 @@ internal fun List<ChannelInfoViewState.Content.Option>.toChannelInfoItems(
             )
 
             is ChannelInfoViewState.Content.Option.HideChannel -> add(
-                ChatInfoItem.Option.Stateful.HideChannel(
+                ChatInfoItem.Option.HideChannel(
                     textResId = if (isGroupChannel) {
                         R.string.stream_ui_channel_info_option_hide_group
                     } else {

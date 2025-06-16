@@ -106,14 +106,7 @@ class GroupChatInfoFragment : Fragment() {
             when (event) {
                 is ChannelInfoViewEvent.Error -> showError(event, isGroupChannel = true)
                 is ChannelInfoViewEvent.Navigation -> onNavigationEvent(event)
-                is ChannelInfoViewEvent.Modal -> showModal(event, viewModel, isGroupChannel = true) { modal ->
-                    if (modal is ChannelInfoViewEvent.HideChannelModal) {
-                        // If the HideChannel modal was dismissed,
-                        // we need to revert the state of the HideChannel option to unchecked,
-                        // as it was checked when the modal was shown.
-                        binding.optionsRecyclerView.adapter?.notifyDataSetChanged()
-                    }
-                }
+                is ChannelInfoViewEvent.Modal -> showModal(event, viewModel, isGroupChannel = true)
             }
         }
         viewModel.state.observe(viewLifecycleOwner) { state ->
@@ -183,13 +176,6 @@ class GroupChatInfoFragment : Fragment() {
                         } else {
                             ChannelInfoViewAction.UnmuteChannelClick
                         }
-
-                    is ChatInfoItem.Option.Stateful.HideChannel ->
-                        if (isChecked) {
-                            ChannelInfoViewAction.HideChannelClick
-                        } else {
-                            ChannelInfoViewAction.UnhideChannelClick
-                        }
                 },
             )
         }
@@ -200,7 +186,6 @@ class GroupChatInfoFragment : Fragment() {
                 ChatInfoItem.Option.SharedMedia -> findNavController().navigateSafely(
                     GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToChatInfoSharedMediaFragment(args.cid),
                 )
-
                 ChatInfoItem.Option.SharedFiles -> findNavController().navigateSafely(
                     GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToChatInfoSharedFilesFragment(args.cid),
                 )
@@ -211,13 +196,19 @@ class GroupChatInfoFragment : Fragment() {
                 is ChatInfoItem.Option.DeleteChannel ->
                     viewModel.onViewAction(ChannelInfoViewAction.DeleteChannelClick)
 
+                is ChatInfoItem.Option.HideChannel -> viewModel.onViewAction(
+                    if (option.isChecked) {
+                        ChannelInfoViewAction.UnhideChannelClick
+                    } else {
+                        ChannelInfoViewAction.HideChannelClick
+                    },
+                )
+
                 // Not applicable in this UI
                 ChatInfoItem.Option.SharedGroups -> Unit
 
                 // Already handled
-                is ChatInfoItem.Option.Stateful.MuteChannel,
-                is ChatInfoItem.Option.Stateful.HideChannel,
-                -> Unit
+                is ChatInfoItem.Option.Stateful.MuteChannel -> Unit
             }
         }
         adapter.setMemberClickListener { viewModel.onViewAction(ChannelInfoViewAction.MemberClick(it)) }
