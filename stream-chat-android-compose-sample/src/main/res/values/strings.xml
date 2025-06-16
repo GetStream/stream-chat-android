@@ -78,7 +78,7 @@
     <string name="message_menu_add_reminder">Remind me</string>
     <string name="message_menu_update_reminder">Update reminder</string>
     <string name="message_menu_save_for_later">Save for later</string>
-    <string name="message_menu_remove_from_later">Remove from later</string>
+    <string name="message_menu_remove_reminder">Remove reminder</string>
     <string name="reminders_select_reminder_time_title">Select reminder time</string>
     <string name="reminders_select_reminder_time_description">When would you like to be reminded?</string>
     <string name="reminders_remind_in_2_minutes">In 2 minutes</string>

@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.sample.feature.reminders
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.events.NotificationReminderDueEvent
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.MessageReminder
@@ -67,6 +68,18 @@ class MessageRemindersViewModel(
     init {
         // Load the initial reminders when the ViewModel is created
         queryRemainders(_state.value.filter)
+        // Refresh the reminders when a reminder due event is received (the current view could be outdated)
+        client.subscribeFor(NotificationReminderDueEvent::class.java) {
+            next = null
+            _state.update {
+                it.copy(
+                    reminders = emptyList(),
+                    isLoading = true,
+                    isLoadingMore = false,
+                )
+            }
+            queryRemainders(_state.value.filter)
+        }
     }
 
     /**

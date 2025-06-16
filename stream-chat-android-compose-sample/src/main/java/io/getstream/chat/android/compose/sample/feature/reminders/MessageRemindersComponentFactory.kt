@@ -109,8 +109,8 @@ class MessageRemindersComponentFactory(
                             onDismiss()
                         }
 
-                        ACTION_TYPE_REMOVE_FROM_LATER -> {
-                            removeFromLater(message.id)
+                        ACTION_TYPE_REMOVE_REMINDER -> {
+                            removeReminder(message.id)
                             onDismiss()
                         }
                     }
@@ -185,7 +185,7 @@ class MessageRemindersComponentFactory(
     private fun saveForLaterOption(message: Message): MessageOptionItemState {
         val hasReminder = message.reminder != null
         val title = if (hasReminder) {
-            R.string.message_menu_remove_from_later
+            R.string.message_menu_remove_reminder
         } else {
             R.string.message_menu_save_for_later
         }
@@ -195,7 +195,7 @@ class MessageRemindersComponentFactory(
             R.drawable.ic_bookmark_24
         }
         val actionType = if (hasReminder) {
-            ACTION_TYPE_REMOVE_FROM_LATER
+            ACTION_TYPE_REMOVE_REMINDER
         } else {
             ACTION_TYPE_SAVE_FOR_LATER
         }
@@ -223,7 +223,7 @@ class MessageRemindersComponentFactory(
         client.createReminder(messageId, remindAt = null).enqueue()
     }
 
-    private fun removeFromLater(messageId: String) {
+    private fun removeReminder(messageId: String) {
         val client = ChatClient.instance()
         client.deleteReminder(messageId).enqueue()
     }
@@ -233,6 +233,6 @@ class MessageRemindersComponentFactory(
         private const val ACTION_TYPE_ADD_REMINDER = "add_reminder"
         private const val ACTION_TYPE_UPDATE_REMINDER = "update_reminder"
         private const val ACTION_TYPE_SAVE_FOR_LATER = "save_for_later"
-        private const val ACTION_TYPE_REMOVE_FROM_LATER = "remove_from_later"
+        private const val ACTION_TYPE_REMOVE_REMINDER = "remove_reminder"
     }
 }
