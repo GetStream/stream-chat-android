@@ -236,13 +236,6 @@
             app:argType="string"
             />
 
-<!--        <argument-->
-<!--            android:name="userData"-->
-<!--            android:defaultValue="@null"-->
-<!--            app:argType="io.getstream.chat.ui.sample.feature.chat.info.UserData"-->
-<!--            app:nullable="true"-->
-<!--            />-->
-
         <action
             android:id="@+id/action_chatInfoFragment_to_chatInfoSharedGroupsFragment"
             app:destination="@id/chatInfoSharedGroupsFragment"
@@ -403,11 +396,6 @@
         android:name="io.getstream.chat.ui.sample.feature.chat.preview.ChatPreviewFragment"
         android:label="ChatPreviewFragment"
         >
-<!--        <argument-->
-<!--            android:name="userData"-->
-<!--            app:argType="io.getstream.chat.ui.sample.feature.chat.info.UserData"-->
-<!--            app:nullable="false"-->
-<!--            />-->
 
         <argument
             android:name="memberId"
