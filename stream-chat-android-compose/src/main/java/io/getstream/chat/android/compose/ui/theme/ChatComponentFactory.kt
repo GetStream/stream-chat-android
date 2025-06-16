@@ -64,8 +64,6 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
-import io.getstream.chat.android.compose.ui.channel.info.DefaultDirectChannelInfoTopBar
-import io.getstream.chat.android.compose.ui.channel.info.DefaultGroupChannelInfoTopBar
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelHeaderLeadingContent
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderCenterContent
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderTrailingContent
@@ -2984,14 +2982,13 @@ public interface ChatComponentFactory {
         )
     }
 
-=======
+    /**
      * Factory method for creating the top bar of the channel info screen.
      *
      * @param headerState The state of the channel header.
      * @param listState The state of the lazy list.
      * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
      */
->>>>>>> 15d62f6c71 (Refactor: Decouple Channel Info top bars from the content)
     @ExperimentalStreamChatApi
     @Composable
     public fun DirectChannelInfoTopBar(
