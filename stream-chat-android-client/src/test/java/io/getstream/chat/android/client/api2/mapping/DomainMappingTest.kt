@@ -551,7 +551,7 @@ internal class DomainMappingTest {
             automodBehavior = configDto.automod_behavior,
             blocklistBehavior = configDto.blocklist_behavior ?: "",
             commands = configDto.commands.map { with(sut) { it.toDomain() } },
-            markMessagesPending = config.markMessagesPending,
+            markMessagesPending = configDto.mark_messages_pending,
         )
         config shouldBeEqualTo expected
     }
