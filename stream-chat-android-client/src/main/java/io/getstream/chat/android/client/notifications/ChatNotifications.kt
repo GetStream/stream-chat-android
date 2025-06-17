@@ -135,7 +135,7 @@ internal class ChatNotificationsImpl constructor(
     }
 
     private fun handlePushMessage(message: PushMessage) {
-        val type = message.type ?: return
+        val type = message.type.orEmpty()
         obtainNotificationData(type, message.channelId, message.channelType, message.messageId)
     }
 
