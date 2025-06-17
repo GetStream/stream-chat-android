@@ -128,3 +128,15 @@ val Channel.isDraft: Boolean
 
 val Context.appThemeContext: Context
     get() = ContextThemeWrapper(this, R.style.AppTheme)
+
+/**
+ * Group channels are channels with more than 2 members or channels that are not distinct.
+ */
+val Channel.isGroupChannel: Boolean
+    get() = memberCount > 2 || !isDistinct
+
+/**
+ * A distinct channel is a channel created for a particular set of users, usually for one-to-one conversations.
+ */
+private val Channel.isDistinct: Boolean
+    get() = id.startsWith("!members")

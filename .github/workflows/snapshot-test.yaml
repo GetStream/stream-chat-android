@@ -36,7 +36,7 @@ jobs:
           disable-animations: true
           profile: pixel
           arch : x86_64
-          emulator-options: ${{ vars.EMULATOR_OPTIONS }}
+          emulator-options: -no-snapshot-save -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect -camera-back none -camera-front none
           script: bundle exec fastlane run_snapshot_test record:${{ github.event.inputs.record }}
 
       - name: Upload test results

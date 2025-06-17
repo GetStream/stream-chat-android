@@ -4268,6 +4268,33 @@ public final class io/getstream/chat/android/ui/utils/extensions/UserKt {
 	public static final fun getLastSeenText (Lio/getstream/chat/android/models/User;Landroid/content/Context;)Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/ui/viewmodel/channel/ChannelInfoMemberViewModel : androidx/lifecycle/ViewModel {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getEvents ()Landroidx/lifecycle/LiveData;
+	public final fun getState ()Landroidx/lifecycle/LiveData;
+	public final fun onViewAction (Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewAction;)V
+}
+
+public final class io/getstream/chat/android/ui/viewmodel/channel/ChannelInfoMemberViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
+}
+
+public final class io/getstream/chat/android/ui/viewmodel/channel/ChannelInfoViewModel : androidx/lifecycle/ViewModel {
+	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/ui/common/helper/CopyToClipboardHandler;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Ljava/lang/String;Lio/getstream/chat/android/ui/common/helper/CopyToClipboardHandler;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getEvents ()Landroidx/lifecycle/LiveData;
+	public final fun getState ()Landroidx/lifecycle/LiveData;
+	public final fun onMemberViewEvent (Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoMemberViewEvent;)V
+	public final fun onViewAction (Lio/getstream/chat/android/ui/common/feature/channel/info/ChannelInfoViewAction;)V
+}
+
+public final class io/getstream/chat/android/ui/viewmodel/channel/ChannelInfoViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
+	public fun <init> (Landroid/content/Context;Ljava/lang/String;)V
+	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
+}
+
 public final class io/getstream/chat/android/ui/viewmodel/channels/ChannelListHeaderViewModel : androidx/lifecycle/ViewModel {
 	public fun <init> ()V
 	public fun <init> (Lio/getstream/chat/android/client/setup/state/ClientState;)V

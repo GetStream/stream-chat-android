@@ -612,6 +612,7 @@ private fun createMessageJsonString() =
         {
             "id": "09afcd85-9dbb-4da8-8d85-5a6b4268d755",
             "text": "Hello",
+            "channel": ${createChannelInfoJsonString()},
             "user": ${createUserJsonString()},
             "html": "<p>Hello</p>",
             "attachments": [ ],
@@ -627,6 +628,19 @@ private fun createMessageJsonString() =
             "silent": false,
             "type": "regular",
             "cid": ""
+        }
+    """.trimIndent()
+
+@Language("JSON")
+private fun createChannelInfoJsonString() =
+    """
+        {
+            "id": "channelId",
+            "type": "channelType",
+            "cid": "channelType:channelId",
+            "member_count": 1,
+            "name": "Channel Name",
+            "image": "https://domain.io/avatars/285/channel.png"
         }
     """.trimIndent()
 

@@ -16,8 +16,8 @@
 
 ![stream-chat-android-client](https://img.shields.io/badge/stream--chat--android--client-3.16%20MB-lightgreen)
 ![stream-chat-android-offline](https://img.shields.io/badge/stream--chat--android--offline-3.37%20MB-lightgreen)
-![stream-chat-android-ui-components](https://img.shields.io/badge/stream--chat--android--ui--components-10.39%20MB-lightgreen)
-![stream-chat-android-compose](https://img.shields.io/badge/stream--chat--android--compose-12.46%20MB-lightgreen)
+![stream-chat-android-ui-components](https://img.shields.io/badge/stream--chat--android--ui--components-10.42%20MB-lightgreen)
+![stream-chat-android-compose](https://img.shields.io/badge/stream--chat--android--compose-12.51%20MB-lightgreen)
 
 </div>
 
@@ -36,7 +36,7 @@ The Android SDK supports both Kotlin and Java, but *we strongly recommend using 
 ### 🔗 Quick Links
 
 * [Register](https://getstream.io/chat/trial/): Create an account and get an API key for Stream Chat
-* [Chat Tutorial](https://getstream.io/tutorials/android-chat/#kotlin): Learn the basics of the SDK by by building a simple messaging app (Kotlin or Java)
+* [Chat Tutorial](https://getstream.io/tutorials/android-chat/#kotlin): Learn the basics of the SDK by building a simple messaging app (Kotlin or Java)
 * [UI Components sample app](/stream-chat-android-ui-components-sample): Full messaging app with threads, reactions, optimistic UI updates and offline storage
 * [Compose UI Components sample app](/stream-chat-android-compose-sample): Messaging sample app built with Jetpack Compose!
 * [Client Documentation](https://getstream.io/chat/docs/android/?language=kotlin)

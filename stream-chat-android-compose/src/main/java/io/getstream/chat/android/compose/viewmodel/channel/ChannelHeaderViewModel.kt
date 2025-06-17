@@ -26,7 +26,8 @@ import kotlinx.coroutines.flow.StateFlow
 /**
  * ViewModel for managing the state of the channel header.
  *
- * @param cid The full channel identifier (e.g., "messaging:123
+ * @param cid The full channel identifier (e.g., "messaging:123").
+ * @param controllerProvider The provider for [ChannelHeaderViewController].
  */
 @ExperimentalStreamChatApi
 public class ChannelHeaderViewModel(

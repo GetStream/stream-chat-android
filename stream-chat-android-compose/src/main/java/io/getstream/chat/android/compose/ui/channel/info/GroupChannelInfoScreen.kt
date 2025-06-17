@@ -39,7 +39,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -49,6 +48,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
@@ -62,6 +62,7 @@ import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
@@ -78,6 +79,7 @@ import java.util.Date
  * @param viewModelFactory The factory used to create the [ChannelInfoViewModel].
  * @param modifier The [Modifier] to be applied to this screen.
  * @param viewModelKey Key to differentiate between instances of [ChannelInfoViewModel].
+ * @param currentUser The current logged-in user. Defaults to the current user from the [ChatClient].
  * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
  * @param topBar The top bar to be displayed on the screen.
  */
@@ -87,10 +89,12 @@ public fun GroupChannelInfoScreen(
     viewModelFactory: ChannelInfoViewModelFactory,
     modifier: Modifier = Modifier,
     viewModelKey: String? = null,
+    currentUser: User? = ChatClient.instance().getCurrentUser(),
     onNavigationIconClick: () -> Unit = {},
     topBar: @Composable (elevation: Dp) -> Unit = { elevation ->
         GroupChannelInfoTopBar(
             viewModelFactory = viewModelFactory,
+            viewModelKey = "topBar-$viewModelKey",
             elevation = elevation,
             onNavigationIconClick = onNavigationIconClick,
         )
@@ -117,13 +121,19 @@ public fun GroupChannelInfoScreen(
             modifier = Modifier.padding(padding),
             listState = listState,
             state = state,
+            currentUser = currentUser,
             onViewAction = viewModel::onViewAction,
         )
     }
 
+    GroupChannelInfoScreenModal(viewModel)
+}
+
+@Composable
+private fun GroupChannelInfoScreenModal(viewModel: ChannelInfoViewModel) {
     var modal by remember { mutableStateOf<ChannelInfoViewEvent.Modal?>(null) }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(viewModel) {
         viewModel.events.collectLatest { event ->
             if (event is ChannelInfoViewEvent.Modal) {
                 modal = event
@@ -135,6 +145,7 @@ public fun GroupChannelInfoScreen(
         modal = modal,
         isGroupChannel = true,
         onViewAction = viewModel::onViewAction,
+        onMemberViewEvent = viewModel::onMemberViewEvent,
         onDismiss = { modal = null },
     )
 }
@@ -142,10 +153,11 @@ public fun GroupChannelInfoScreen(
 @Composable
 private fun GroupChannelInfoTopBar(
     viewModelFactory: ChannelInfoViewModelFactory,
+    viewModelKey: String?,
     elevation: Dp,
     onNavigationIconClick: () -> Unit,
 ) {
-    val viewModel = viewModel<ChannelHeaderViewModel>(factory = viewModelFactory)
+    val viewModel = viewModel<ChannelHeaderViewModel>(key = viewModelKey, factory = viewModelFactory)
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     when (val content = state) {
@@ -175,28 +187,34 @@ private fun GroupChannelInfoTopBar(
 private fun GroupChannelInfoContent(
     state: ChannelInfoViewState,
     modifier: Modifier = Modifier,
+    currentUser: User? = null,
     listState: LazyListState = rememberLazyListState(),
     onViewAction: (action: ChannelInfoViewAction) -> Unit = {},
 ) {
     val isLoading = state is ChannelInfoViewState.Loading
     ContentBox(
         modifier = modifier.fillMaxSize(),
-        contentAlignment = if (isLoading) Alignment.Center else Alignment.TopCenter,
         isLoading = isLoading,
     ) {
         val content = state as ChannelInfoViewState.Content
         LazyColumn(
+            modifier = Modifier.matchParentSize(),
             state = listState,
         ) {
             items(
                 items = content.members,
-                key = { it.user.id },
+                key = Member::getUserId,
             ) { member ->
+                val isCurrentUserMember = member.getUserId() == currentUser?.id
                 GroupChannelInfoMemberButton(
                     modifier = Modifier.animateItem(),
                     member = member,
                     isOwner = content.owner.id == member.getUserId(),
-                    onClick = null, // Membership detail flow https://linear.app/stream/issue/AND-537
+                    onClick = if (isCurrentUserMember) {
+                        null
+                    } else {
+                        { onViewAction(ChannelInfoViewAction.MemberClick(member = member)) }
+                    },
                 )
             }
             if (content.members.canExpand) {
@@ -213,7 +231,7 @@ private fun GroupChannelInfoContent(
                 StreamHorizontalDivider(thickness = 8.dp)
             }
             items(content.options) { option ->
-                ChannelInfoContentOption(
+                ChannelInfoChannelOption(
                     option = option,
                     isGroupChannel = true,
                     onViewAction = onViewAction,
@@ -239,20 +257,26 @@ private fun GroupChannelInfoMemberButton(
             modifier = Modifier.size(ChatTheme.dimens.channelAvatarSize),
             user = user,
         )
-        Column(
-            modifier = Modifier.weight(1f),
-        ) {
+        Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = user.name.takeIf(String::isNotBlank) ?: user.id,
-                style = ChatTheme.typography.body,
-                color = ChatTheme.colors.textHighEmphasis,
+                style = ChatTheme.typography.bodyBold,
+                color = if (member.banned) {
+                    ChatTheme.colors.errorAccent
+                } else {
+                    ChatTheme.colors.textHighEmphasis
+                },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
             Text(
                 text = user.getLastSeenText(LocalContext.current),
                 style = ChatTheme.typography.footnote,
-                color = ChatTheme.colors.textLowEmphasis,
+                color = if (member.banned) {
+                    ChatTheme.colors.errorAccent
+                } else {
+                    ChatTheme.colors.textLowEmphasis
+                },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -363,7 +387,7 @@ internal fun GroupChannelInfoExpandedMembers() {
                     Member(user = PreviewUserData.user1.copy(lastActive = Date())),
                     Member(user = PreviewUserData.user2.copy(online = true)),
                     Member(user = PreviewUserData.user3),
-                    Member(user = PreviewUserData.user4),
+                    Member(user = PreviewUserData.user4.copy(lastActive = Date()), banned = true),
                 ),
                 minimumVisibleItems = 2,
                 isCollapsed = false,

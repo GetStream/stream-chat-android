@@ -1,8 +1,10 @@
 # UNRELEASED CHANGELOG
 ## Common changes for all artifacts
 ### 🐞 Fixed
+- Fix JSON parsing of `Device.providerName` when calling `ChatClient.getDevices()`. [#5821](https://github.com/GetStream/stream-chat-android/pull/5821)
 
 ### ⬆️ Improved
+- Use `AAC_ADTS` as default audio recording output format. [#5825](https://github.com/GetStream/stream-chat-android/pull/5825)
 
 ### ✅ Added
 - Add `pendingMessages` field to the `Channel` model. [#5784](https://github.com/GetStream/stream-chat-android/pull/5784)
@@ -60,11 +62,12 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Improve the performance of playing video/audio attachments by using `ExoPlayer` instead of `VideoView`. [#5749](https://github.com/GetStream/stream-chat-android/pull/5749)
 
 ### ✅ Added
+- Introduce experimental classes: `ChannelInfoViewModel`, `ChannelInfoViewModelFactory`, `ChannelInfoMemberViewModel`, and `ChannelInfoMemberViewModelFactory`. [#5801](https://github.com/GetStream/stream-chat-android/pull/5801) 
 
 ### ⚠️ Changed
+- Refactor the XML sample view models and UI components to use ChannelInfoViewController. [#5801](https://github.com/GetStream/stream-chat-android/pull/5801)
 
 ### ❌ Removed
 
@@ -74,11 +77,14 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Introduce **experimental** `DirectChannelInfoScreen` and `GroupChannelInfoScreen` for displaying channel information and the available channel actions. [#5773](https://github.com/GetStream/stream-chat-android/pull/5773)
+- Add `FileAttachmentPreviewContent`, `FileAttachmentContent`,`FileAttachmentItem`, `FileUploadContent` and `FileUploadItem` to `ChatComponentFactory`. [#5791](https://github.com/GetStream/stream-chat-android/pull/5791)
+- Introduce internal `DraftChannelViewController` and experimental classes `DraftChannelViewState`, `DraftChannelViewAction`, and `DraftChannelViewEvent`. [#5797](https://github.com/GetStream/stream-chat-android/pull/5797)
+- Message member from the member bottom sheet of the channel info screen. [#5797](https://github.com/GetStream/stream-chat-android/pull/5797)
 
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Remove redundant use of coroutineScope inside of `LaunchedEffect`. [#5811](https://github.com/GetStream/stream-chat-android/pull/5811)
 
 ## stream-chat-android-markdown-transformer
 ### 🐞 Fixed
@@ -90,6 +96,29 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# June 09th, 2025 - 6.17.0
+## stream-chat-android-client
+### ⬆️ Improved
+- Add `ChannelInfo` fallback to `Message` when parsing from API and/or Events. [#5813](https://github.com/GetStream/stream-chat-android/pull/5813)
+- Refresh token only during WS reconnection when the reconnection is triggered by a token issue. [#5816](https://github.com/GetStream/stream-chat-android/pull/5816)
+
+## stream-chat-android-ui-components
+### ⬆️ Improved
+- Improve the performance of playing video/audio attachments by using `ExoPlayer` instead of `VideoView`. [#5749](https://github.com/GetStream/stream-chat-android/pull/5749)
+
+## stream-chat-android-compose
+### ⬆️ Improved
+- Use the lambda-based `graphicsLayer` modifier to improve performance by avoiding unnecessary recompositions caused by mutable state in modifiers. [#5800](https://github.com/GetStream/stream-chat-android/pull/5800)
+- Mark the bottom-most item as seen only if app is in foreground. [#5814](https://github.com/GetStream/stream-chat-android/pull/5814)
+
+### ✅ Added
+- Introduce **experimental** `DirectChannelInfoScreen` and `GroupChannelInfoScreen` for displaying channel information and the available channel actions. [#5773](https://github.com/GetStream/stream-chat-android/pull/5773)
+- Introduce **internal** `ChannelInfoMemberInfoModalSheet` for displaying channel information and the available channel actions. [#5785](https://github.com/GetStream/stream-chat-android/pull/5785)
+
+### ⚠️ Changed
+- Deprecate `MessageListHeaderCenterContent` in `ChatComponentFactory` in favor of a version that makes the `onClick` parameter optional. [#5785](https://github.com/GetStream/stream-chat-android/pull/5785)
+- Make the `MessageListHeader` support nullable `onHeaderTitleClick`, so that the ripple effect is not shown when the header is not clickable. [#5785](https://github.com/GetStream/stream-chat-android/pull/5785)
 
 # May 23th, 2025 - 6.16.0
 ## Common changes for all artifacts

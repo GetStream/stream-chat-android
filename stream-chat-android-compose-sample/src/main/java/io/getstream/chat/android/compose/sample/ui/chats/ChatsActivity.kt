@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalStreamChatApi::class)
+
 package io.getstream.chat.android.compose.sample.ui.chats
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -77,6 +80,7 @@ import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFact
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModelFactory
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
@@ -258,6 +262,12 @@ class ChatsActivity : BaseConnectedActivity() {
                 onNavigationIconClick = { navigator.navigateBack() },
                 onNavigateUp = { navigator.popUpTo(pane = ThreePaneRole.List) },
                 onNavigateToPinnedMessages = { navigator.navigateToPinnedMessages(mode.channelId) },
+                onNavigateToChannel = { channelId ->
+                    navigator.navigateToChannel(
+                        channelId = channelId,
+                        singlePane = singlePane,
+                    )
+                },
             )
 
             is InfoContentMode.PinnedMessages -> PinnedMessagesContent(
@@ -267,8 +277,7 @@ class ChatsActivity : BaseConnectedActivity() {
                     navigator.navigateToMessage(
                         channelId = message.cid,
                         messageId = message.id,
-                        replace = !singlePane,
-                        popUp = singlePane,
+                        singlePane = singlePane,
                     )
                 },
             )
@@ -288,7 +297,7 @@ class ChatsActivity : BaseConnectedActivity() {
         val viewModelFactory = ChannelInfoViewModelFactory(context = applicationContext, cid = channelId)
         val viewModel = viewModel<ChannelInfoViewModel>(key = channelId, factory = viewModelFactory)
 
-        viewModel.handleNavigationEvents(onNavigateUp, onNavigateToPinnedMessages)
+        viewModel.handleChannelInfoEvents(onNavigateUp, onNavigateToPinnedMessages)
 
         if (AdaptiveLayoutInfo.singlePaneWindow()) {
             DirectChannelInfoScreen(
@@ -318,22 +327,22 @@ class ChatsActivity : BaseConnectedActivity() {
         onNavigationIconClick: () -> Unit,
         onNavigateUp: () -> Unit,
         onNavigateToPinnedMessages: () -> Unit,
+        onNavigateToChannel: (cid: String) -> Unit,
     ) {
         val viewModelFactory = ChannelInfoViewModelFactory(context = applicationContext, cid = channelId)
         val viewModel = viewModel<ChannelInfoViewModel>(key = channelId, factory = viewModelFactory)
 
-        viewModel.handleNavigationEvents(onNavigateUp, onNavigateToPinnedMessages)
+        viewModel.handleChannelInfoEvents(
+            onNavigateUp = onNavigateUp,
+            onNavigateToPinnedMessages = onNavigateToPinnedMessages,
+            onNavigateToChannel = onNavigateToChannel,
+        )
 
         if (AdaptiveLayoutInfo.singlePaneWindow()) {
             GroupChannelInfoScreen(
                 viewModelFactory = viewModelFactory,
                 viewModelKey = channelId,
-                topBar = { elevation ->
-                    GroupChannelInfoTopBar(
-                        elevation = elevation,
-                        onNavigationIconClick = onNavigationIconClick,
-                    )
-                },
+                onNavigationIconClick = onNavigationIconClick,
             )
         } else {
             GroupChannelInfoScreen(
@@ -351,16 +360,23 @@ class ChatsActivity : BaseConnectedActivity() {
     }
 
     @Composable
-    private fun ChannelInfoViewModel.handleNavigationEvents(
+    private fun ChannelInfoViewModel.handleChannelInfoEvents(
         onNavigateUp: () -> Unit,
         onNavigateToPinnedMessages: () -> Unit,
+        onNavigateToChannel: (cid: String) -> Unit = {},
     ) {
-        LaunchedEffect(Unit) {
+        LaunchedEffect(this) {
             events.collectLatest { event ->
                 when (event) {
-                    is ChannelInfoViewEvent.NavigateUp -> onNavigateUp()
-                    is ChannelInfoViewEvent.NavigateToPinnedMessages -> onNavigateToPinnedMessages()
-                    else -> Unit
+                    is ChannelInfoViewEvent.Navigation -> when (event) {
+                        is ChannelInfoViewEvent.NavigateUp -> onNavigateUp()
+                        is ChannelInfoViewEvent.NavigateToPinnedMessages -> onNavigateToPinnedMessages()
+                        is ChannelInfoViewEvent.NavigateToChannel -> onNavigateToChannel(event.cid)
+                        // https://linear.app/stream/issue/AND-582/compose-support-draft-messages-in-chatsactivity
+                        is ChannelInfoViewEvent.NavigateToDraftChannel -> Unit
+                    }
+                    is ChannelInfoViewEvent.Error -> showError(event)
+                    is ChannelInfoViewEvent.Modal -> Unit
                 }
             }
         }
@@ -465,19 +481,67 @@ private fun ThreePaneNavigator.navigateToPinnedMessages(channelId: String) {
 private fun ThreePaneNavigator.navigateToMessage(
     channelId: String,
     messageId: String,
-    replace: Boolean,
-    popUp: Boolean,
+    singlePane: Boolean,
 ) {
     navigateTo(
         destination = ThreePaneDestination(
             pane = ThreePaneRole.Detail,
             arguments = ChatMessageSelection(channelId, messageId),
         ),
-        replace = replace,
-        popUpTo = if (popUp) {
+        replace = !singlePane,
+        popUpTo = if (singlePane) {
             ThreePaneRole.List
         } else {
             null
         },
     )
+}
+
+private fun ThreePaneNavigator.navigateToChannel(
+    channelId: String,
+    singlePane: Boolean,
+) {
+    navigateTo(
+        destination = ThreePaneDestination(
+            pane = ThreePaneRole.Detail,
+            arguments = ChatMessageSelection(channelId),
+        ),
+        replace = !singlePane,
+        popUpTo = if (singlePane) {
+            null
+        } else {
+            ThreePaneRole.Detail
+        },
+    )
+}
+
+private fun Context.showError(error: ChannelInfoViewEvent.Error) {
+    val message = when (error) {
+        ChannelInfoViewEvent.RenameChannelError,
+        -> R.string.stream_ui_channel_info_rename_group_error
+
+        ChannelInfoViewEvent.MuteChannelError,
+        ChannelInfoViewEvent.UnmuteChannelError,
+        -> R.string.stream_ui_channel_info_mute_conversation_error
+
+        ChannelInfoViewEvent.HideChannelError,
+        ChannelInfoViewEvent.UnhideChannelError,
+        -> R.string.stream_ui_channel_info_hide_conversation_error
+
+        ChannelInfoViewEvent.LeaveChannelError,
+        -> R.string.stream_ui_channel_info_leave_conversation_error
+
+        ChannelInfoViewEvent.DeleteChannelError,
+        -> R.string.stream_ui_channel_info_delete_conversation_error
+
+        ChannelInfoViewEvent.BanMemberError,
+        -> R.string.stream_ui_channel_info_ban_member_error
+
+        ChannelInfoViewEvent.UnbanMemberError,
+        -> R.string.stream_ui_channel_info_unban_member_error
+
+        ChannelInfoViewEvent.RemoveMemberError,
+        -> R.string.stream_ui_channel_info_remove_member_error
+    }
+    Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
 }

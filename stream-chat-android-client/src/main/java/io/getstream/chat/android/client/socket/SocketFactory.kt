@@ -65,9 +65,8 @@ internal class SocketFactory(
             when (connectionConf) {
                 is ConnectionConf.AnonymousConnectionConf -> "$baseWsUrl&stream-auth-type=anonymous"
                 is ConnectionConf.UserConnectionConf -> {
+                    tokenManager.ensureTokenLoaded()
                     val token = tokenManager.getToken()
-                        .takeUnless { connectionConf.isReconnection }
-                        ?: tokenManager.loadSync()
                     "$baseWsUrl&authorization=$token&stream-auth-type=jwt"
                 }
             }

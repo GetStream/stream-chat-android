@@ -98,11 +98,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:visibility="gone"
+        app:layout_goneMarginTop="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/optionViewInfo"
         app:optionIcon="@drawable/ic_chats"
-        app:optionText="@string/chat_group_info_user_option_message"
+        app:optionText="@string/stream_ui_channel_info_member_modal_option_message_member"
         tools:visibility="visible"
         />
 
@@ -115,7 +116,7 @@
         app:layout_constraintTop_toBottomOf="@id/optionMessage"
         app:optionIcon="@drawable/ic_block"
         app:optionIconTint="@color/red"
-        app:optionText="@string/chat_group_info_user_option_ban"
+        app:optionText="@string/stream_ui_channel_info_member_modal_option_ban_member"
         app:optionTextColor="@color/red"
         />
 
@@ -128,7 +129,7 @@
         app:layout_constraintTop_toBottomOf="@id/optionBan"
         app:optionIcon="@drawable/ic_leave_group"
         app:optionIconTint="@color/red"
-        app:optionText="@string/chat_group_info_user_option_remove"
+        app:optionText="@string/stream_ui_channel_info_member_modal_option_remove_member"
         app:optionTextColor="@color/red"
         />
 

@@ -59,8 +59,10 @@ import io.getstream.chat.android.compose.state.channels.list.ChannelOptionState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
+import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
+import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelHeaderLeadingContent
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderCenterContent
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderTrailingContent
@@ -653,6 +655,21 @@ public interface ChatComponentFactory {
      * Usually shows the channel title in the top and
      * the channel information or the connection status in the bottom.
      */
+    @Deprecated(
+        message = "Use the new version of MessageListHeaderCenterContent with a nullable onClick.",
+        replaceWith = ReplaceWith(
+            "MessageListHeaderCenterContent(\n" +
+                "modifier = modifier,\n" +
+                "channel = channel,\n" +
+                "currentUser = currentUser,\n" +
+                "connectionState = connectionState,\n" +
+                "typingUsers = typingUsers,\n" +
+                "messageMode = messageMode,\n" +
+                "onClick = onHeaderTitleClick,\n" +
+                ")",
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     @Suppress("LongParameterList")
     @Composable
     public fun RowScope.MessageListHeaderCenterContent(
@@ -664,14 +681,41 @@ public interface ChatComponentFactory {
         onHeaderTitleClick: (Channel) -> Unit,
         connectionState: ConnectionState,
     ) {
+        MessageListHeaderCenterContent(
+            modifier = modifier,
+            channel = channel,
+            currentUser = currentUser,
+            connectionState = connectionState,
+            typingUsers = typingUsers,
+            messageMode = messageMode,
+            onClick = onHeaderTitleClick,
+        )
+    }
+
+    /**
+     * The default center content of the message list header.
+     * Usually shows the channel title in the top and
+     * the channel information or the connection status in the bottom.
+     */
+    @Suppress("LongParameterList")
+    @Composable
+    public fun RowScope.MessageListHeaderCenterContent(
+        modifier: Modifier,
+        channel: Channel,
+        currentUser: User?,
+        connectionState: ConnectionState,
+        typingUsers: List<User>,
+        messageMode: MessageMode,
+        onClick: ((Channel) -> Unit)?,
+    ) {
         DefaultMessageListHeaderCenterContent(
             modifier = modifier,
             channel = channel,
             currentUser = currentUser,
+            connectionState = connectionState,
             typingUsers = typingUsers,
             messageMode = messageMode,
-            onHeaderTitleClick = onHeaderTitleClick,
-            connectionState = connectionState,
+            onHeaderTitleClick = onClick,
         )
     }
 
@@ -2831,6 +2875,110 @@ public interface ChatComponentFactory {
             modifier = modifier.align(Alignment.TopCenter),
             containerColor = ChatTheme.colors.barsBackground,
             color = ChatTheme.colors.primaryAccent,
+        )
+    }
+
+    /**
+     * Factory method for creating the preview content of file attachments.
+     *
+     * @param modifier Modifier for styling.
+     * @param attachments List of file attachments to preview.
+     * @param onAttachmentRemoved Lambda invoked when an attachment is removed.
+     */
+    @Composable
+    public fun FileAttachmentPreviewContent(
+        modifier: Modifier,
+        attachments: List<Attachment>,
+        onAttachmentRemoved: (Attachment) -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentPreviewContent(
+            modifier = modifier,
+            attachments = attachments,
+            onAttachmentRemoved = onAttachmentRemoved,
+        )
+    }
+
+    /**
+     * Factory method for creating the content of a file attachment.
+     *
+     * @param modifier Modifier for styling the composable.
+     * @param attachmentState The state of the attachment, containing information about the file.
+     * @param showFileSize A lambda function that determines whether the file size should be displayed.
+     * @param onItemClick A lambda function invoked when the file attachment is clicked, providing a list of
+     * [AttachmentPreviewHandler] and the clicked [Attachment].
+     */
+    @Composable
+    public fun FileAttachmentContent(
+        modifier: Modifier,
+        attachmentState: AttachmentState,
+        showFileSize: (Attachment) -> Boolean,
+        onItemClick: (List<AttachmentPreviewHandler>, Attachment) -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentContent(
+            modifier = modifier,
+            attachmentState = attachmentState,
+            showFileSize = showFileSize,
+            onItemClick = onItemClick,
+        )
+    }
+
+    /**
+     * Factory method for creating a file attachment item.
+     *
+     * @param modifier Modifier for styling.
+     * @param attachment The file attachment to show.
+     * @param isMine Whether the message is sent by the current user or not.
+     * @param showFileSize Whether to show the file size or not.
+     */
+    @Composable
+    public fun FileAttachmentItem(
+        modifier: Modifier,
+        attachment: Attachment,
+        isMine: Boolean,
+        showFileSize: (Attachment) -> Boolean,
+    ) {
+        io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentItem(
+            modifier = modifier,
+            attachment = attachment,
+            isMine = isMine,
+            showFileSize = showFileSize,
+        )
+    }
+
+    /**
+     * The default file upload content used for displaying uploading attachments.
+     *
+     * @param attachmentState The state of the attachment.
+     * @param modifier Modifier for styling.
+     * @param onItemClick Lambda called when an item gets clicked.
+     */
+    @Composable
+    public fun FileUploadContent(
+        attachmentState: AttachmentState,
+        modifier: Modifier,
+        onItemClick: (Attachment, List<AttachmentPreviewHandler>) -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.attachments.content.FileUploadContent(
+            attachmentState = attachmentState,
+            modifier = modifier,
+            onItemClick = onItemClick,
+        )
+    }
+
+    /**
+     * Factory method for creating a file upload item that shows an uploading attachment with progress.
+     *
+     * @param attachment The attachment that's being uploaded.
+     * @param modifier Modifier for styling.
+     */
+    @Composable
+    public fun FileUploadItem(
+        attachment: Attachment,
+        modifier: Modifier,
+    ) {
+        io.getstream.chat.android.compose.ui.attachments.content.FileUploadItem(
+            attachment = attachment,
+            modifier = modifier,
         )
     }
 }

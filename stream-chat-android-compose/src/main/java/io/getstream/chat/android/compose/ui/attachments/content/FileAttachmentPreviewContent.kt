@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.CancelIcon
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
@@ -118,4 +119,26 @@ public fun FileAttachmentPreviewContent(
             }
         }
     }
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun FileAttachmentPreviewContentPreview() {
+    ChatTheme {
+        FileAttachmentPreviewContent()
+    }
+}
+
+@Composable
+internal fun FileAttachmentPreviewContent() {
+    val attachment = Attachment(
+        type = "file",
+        name = "test_document.pdf",
+        fileSize = 1024 * 1024,
+        mimeType = "application/pdf",
+    )
+    FileAttachmentPreviewContent(
+        attachments = listOf(attachment),
+        onAttachmentRemoved = {},
+    )
 }
