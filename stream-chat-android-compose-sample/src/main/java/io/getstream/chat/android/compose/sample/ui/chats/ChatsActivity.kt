@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalStreamChatApi::class)
+
 package io.getstream.chat.android.compose.sample.ui.chats
 
 import android.content.Context
@@ -78,6 +80,7 @@ import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFact
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModelFactory
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
@@ -259,6 +262,12 @@ class ChatsActivity : BaseConnectedActivity() {
                 onNavigationIconClick = { navigator.navigateBack() },
                 onNavigateUp = { navigator.popUpTo(pane = ThreePaneRole.List) },
                 onNavigateToPinnedMessages = { navigator.navigateToPinnedMessages(mode.channelId) },
+                onNavigateToChannel = { channelId ->
+                    navigator.navigateToChannel(
+                        channelId = channelId,
+                        singlePane = singlePane,
+                    )
+                },
             )
 
             is InfoContentMode.PinnedMessages -> PinnedMessagesContent(
@@ -268,8 +277,7 @@ class ChatsActivity : BaseConnectedActivity() {
                     navigator.navigateToMessage(
                         channelId = message.cid,
                         messageId = message.id,
-                        replace = !singlePane,
-                        popUp = singlePane,
+                        singlePane = singlePane,
                     )
                 },
             )
@@ -319,11 +327,16 @@ class ChatsActivity : BaseConnectedActivity() {
         onNavigationIconClick: () -> Unit,
         onNavigateUp: () -> Unit,
         onNavigateToPinnedMessages: () -> Unit,
+        onNavigateToChannel: (cid: String) -> Unit,
     ) {
         val viewModelFactory = ChannelInfoViewModelFactory(context = applicationContext, cid = channelId)
         val viewModel = viewModel<ChannelInfoViewModel>(key = channelId, factory = viewModelFactory)
 
-        viewModel.handleChannelInfoEvents(onNavigateUp, onNavigateToPinnedMessages)
+        viewModel.handleChannelInfoEvents(
+            onNavigateUp = onNavigateUp,
+            onNavigateToPinnedMessages = onNavigateToPinnedMessages,
+            onNavigateToChannel = onNavigateToChannel,
+        )
 
         if (AdaptiveLayoutInfo.singlePaneWindow()) {
             GroupChannelInfoScreen(
@@ -350,14 +363,20 @@ class ChatsActivity : BaseConnectedActivity() {
     private fun ChannelInfoViewModel.handleChannelInfoEvents(
         onNavigateUp: () -> Unit,
         onNavigateToPinnedMessages: () -> Unit,
+        onNavigateToChannel: (cid: String) -> Unit = {},
     ) {
         LaunchedEffect(this) {
             events.collectLatest { event ->
                 when (event) {
-                    is ChannelInfoViewEvent.NavigateUp -> onNavigateUp()
-                    is ChannelInfoViewEvent.NavigateToPinnedMessages -> onNavigateToPinnedMessages()
+                    is ChannelInfoViewEvent.Navigation -> when (event) {
+                        is ChannelInfoViewEvent.NavigateUp -> onNavigateUp()
+                        is ChannelInfoViewEvent.NavigateToPinnedMessages -> onNavigateToPinnedMessages()
+                        is ChannelInfoViewEvent.NavigateToChannel -> onNavigateToChannel(event.cid)
+                        // https://linear.app/stream/issue/AND-582/compose-support-draft-messages-in-chatsactivity
+                        is ChannelInfoViewEvent.NavigateToDraftChannel -> Unit
+                    }
                     is ChannelInfoViewEvent.Error -> showError(event)
-                    else -> Unit
+                    is ChannelInfoViewEvent.Modal -> Unit
                 }
             }
         }
@@ -462,19 +481,36 @@ private fun ThreePaneNavigator.navigateToPinnedMessages(channelId: String) {
 private fun ThreePaneNavigator.navigateToMessage(
     channelId: String,
     messageId: String,
-    replace: Boolean,
-    popUp: Boolean,
+    singlePane: Boolean,
 ) {
     navigateTo(
         destination = ThreePaneDestination(
             pane = ThreePaneRole.Detail,
             arguments = ChatMessageSelection(channelId, messageId),
         ),
-        replace = replace,
-        popUpTo = if (popUp) {
+        replace = !singlePane,
+        popUpTo = if (singlePane) {
             ThreePaneRole.List
         } else {
             null
+        },
+    )
+}
+
+private fun ThreePaneNavigator.navigateToChannel(
+    channelId: String,
+    singlePane: Boolean,
+) {
+    navigateTo(
+        destination = ThreePaneDestination(
+            pane = ThreePaneRole.Detail,
+            arguments = ChatMessageSelection(channelId),
+        ),
+        replace = !singlePane,
+        popUpTo = if (singlePane) {
+            null
+        } else {
+            ThreePaneRole.Detail
         },
     )
 }

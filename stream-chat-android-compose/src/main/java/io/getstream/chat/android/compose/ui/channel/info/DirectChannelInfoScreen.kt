@@ -154,11 +154,11 @@ private fun DirectChannelInfoContent(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize(),
-            contentAlignment = if (isLoading) Alignment.Center else Alignment.TopCenter,
             isLoading = isLoading,
         ) {
             val content = state as ChannelInfoViewState.Content
             Column(
+                modifier = Modifier.matchParentSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
