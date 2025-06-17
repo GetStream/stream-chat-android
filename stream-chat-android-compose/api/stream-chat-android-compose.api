@@ -4388,6 +4388,12 @@ public final class io/getstream/chat/android/compose/viewmodel/channel/ChannelHe
 	public final fun getState ()Lkotlinx/coroutines/flow/StateFlow;
 }
 
+public final class io/getstream/chat/android/compose/viewmodel/channel/ChannelHeaderViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;)V
+	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
+}
+
 public final class io/getstream/chat/android/compose/viewmodel/channel/ChannelInfoMemberViewModel : androidx/lifecycle/ViewModel {
 	public static final field $stable I
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V

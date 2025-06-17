@@ -33,7 +33,7 @@
     <string name="custom_login_hint_user_id">User ID</string>
     <string name="custom_login_hint_user_token">User Token</string>
     <string name="custom_login_hint_user_name">Username (optional)</string>
-    <string name="custom_login_enable_adaptive_layout">Enable adaptive layout</string>
+    <string name="custom_login_enable_adaptive_layout">Enable adaptive layout (Experimental)</string>
     <string name="custom_login_enable_adaptive_layout_description">Adjust layout based on screen sizes</string>
 
     <!-- Pinned Messages -->
@@ -67,4 +67,7 @@
     <string name="app_bottom_bar_chats">Chats</string>
     <string name="app_bottom_bar_mentions">Mentions</string>
     <string name="app_bottom_bar_threads">Threads</string>
+
+    <!-- Draft Channel -->
+    <string name="draft_channel_error">Failed to draft a channel</string>
 </resources>

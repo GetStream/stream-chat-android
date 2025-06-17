@@ -144,6 +144,20 @@ public sealed interface ChannelInfoViewEvent {
     public data object NavigateToPinnedMessages : Navigation(reason = null)
 
     /**
+     * Indicates an event to navigate to the channel with the specified [cid].
+     *
+     * @param cid The full channel ID of the channel to navigate to.
+     */
+    public data class NavigateToChannel(val cid: String) : Navigation(reason = null)
+
+    /**
+     * Indicates an event to navigate to draft a channel with the specified [memberId].
+     *
+     * @param memberId The ID of the member to whom the draft channel belongs.
+     */
+    public data class NavigateToDraftChannel(val memberId: String) : Navigation(reason = null)
+
+    /**
      * Represents error events occurred while performing an action.
      */
     public sealed interface Error : ChannelInfoViewEvent
