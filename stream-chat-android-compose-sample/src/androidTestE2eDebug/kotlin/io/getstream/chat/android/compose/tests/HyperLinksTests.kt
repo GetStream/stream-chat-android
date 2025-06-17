@@ -179,7 +179,7 @@ class HyperLinksTests : StreamTestCase() {
             userRobot.login().openChannel()
         }
         step("WHEN participant sends an unsplash url") {
-            userRobot.sendMessage(unsplashImageLink)
+            participantRobot.sendMessage(unsplashImageLink)
         }
         step("THEN user observes a message with link preview") {
             userRobot
@@ -195,7 +195,7 @@ class HyperLinksTests : StreamTestCase() {
             userRobot.login().openChannel()
         }
         step("WHEN participant sends a youtube url") {
-            userRobot.sendMessage(youtubeVideoLink)
+            participantRobot.sendMessage(youtubeVideoLink)
         }
         step("THEN user observes a message with link preview") {
             userRobot
@@ -211,7 +211,7 @@ class HyperLinksTests : StreamTestCase() {
             userRobot.login().openChannel()
         }
         step("WHEN participant sends a giphy url") {
-            userRobot.sendMessage(giphyGifLink)
+            participantRobot.sendMessage(giphyGifLink)
         }
         step("THEN user observes a message with link preview") {
             userRobot
