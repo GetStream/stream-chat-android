@@ -55,7 +55,6 @@ class HyperLinksTests : StreamTestCase() {
     }
 
     @AllureId("6830")
-    @Ignore("https://linear.app/stream/issue/AND-309")
     @Test
     fun test_unsplashLinkWithoutPreview() {
         step("GIVEN user opens the channel") {
@@ -103,7 +102,6 @@ class HyperLinksTests : StreamTestCase() {
     }
 
     @AllureId("6831")
-    @Ignore("https://linear.app/stream/issue/AND-309")
     @Test
     fun test_youtubeLinkWithoutPreview() {
         step("GIVEN user opens the channel") {
@@ -151,7 +149,6 @@ class HyperLinksTests : StreamTestCase() {
     }
 
     @AllureId("6833")
-    @Ignore("https://linear.app/stream/issue/AND-309")
     @Test
     fun test_giphyLinkWithoutPreview() {
         step("GIVEN user opens the channel") {
