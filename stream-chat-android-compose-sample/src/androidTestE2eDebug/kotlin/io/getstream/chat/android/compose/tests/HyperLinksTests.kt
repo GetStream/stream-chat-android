@@ -22,7 +22,6 @@ import io.getstream.chat.android.compose.robots.assertMessage
 import io.getstream.chat.android.compose.sample.ui.InitTestActivity
 import io.qameta.allure.kotlin.Allure.step
 import io.qameta.allure.kotlin.AllureId
-import org.junit.Ignore
 import org.junit.Test
 
 class HyperLinksTests : StreamTestCase() {
@@ -72,7 +71,7 @@ class HyperLinksTests : StreamTestCase() {
         step("WHEN user taps on the send button") {
             userRobot.tapOnSendButton()
         }
-        step("THEN user observes a message with link preview") {
+        step("THEN user observes a message without link preview") {
             userRobot
                 .assertMessage(unsplashImageLink, isClickable = true)
                 .assertLinkPreviewInMessageList(isDisplayed = false)
@@ -119,7 +118,7 @@ class HyperLinksTests : StreamTestCase() {
         step("WHEN user taps on the send button") {
             userRobot.tapOnSendButton()
         }
-        step("THEN user observes a message with link preview") {
+        step("THEN user observes a message without link preview") {
             userRobot
                 .assertMessage(youtubeVideoLink, isClickable = true)
                 .assertLinkPreviewInMessageList(isDisplayed = false)
@@ -166,7 +165,7 @@ class HyperLinksTests : StreamTestCase() {
         step("WHEN user taps on the send button") {
             userRobot.tapOnSendButton()
         }
-        step("THEN user observes a message with link preview") {
+        step("THEN user observes a message without link preview") {
             userRobot
                 .assertMessage(giphyGifLink, isClickable = true)
                 .assertLinkPreviewInMessageList(isDisplayed = false)
