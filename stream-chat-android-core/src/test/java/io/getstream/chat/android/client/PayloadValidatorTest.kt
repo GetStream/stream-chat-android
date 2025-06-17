@@ -355,7 +355,7 @@ internal class PayloadValidatorTest {
         )
 
         @JvmStatic
-        private fun isValidPayloadArguments() =
+        fun isValidPayloadArguments() =
             isValidNewMessageV2Arguments() +
                 Arguments.of(
                     mapOf(
