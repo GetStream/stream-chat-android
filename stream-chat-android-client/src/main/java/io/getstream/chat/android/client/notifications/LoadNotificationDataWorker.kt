@@ -45,6 +45,7 @@ internal class LoadNotificationDataWorker(
     private val logger by taggedLogger(TAG)
 
     override suspend fun doWork(): Result {
+        val type = inputData.getString(DATA_TYPE)!!
         val channelId: String = inputData.getString(DATA_CHANNEL_ID)!!
         val channelType: String = inputData.getString(DATA_CHANNEL_TYPE)!!
         val messageId: String = inputData.getString(DATA_MESSAGE_ID)!!
@@ -74,7 +75,7 @@ internal class LoadNotificationDataWorker(
                         logger.v { "[doWork] fetching thread parent message." }
                         client.getMessage(messageParentId).await()
                     }
-                    ChatClient.displayNotification(channel = channel, message = message)
+                    ChatClient.displayNotification(type = type, channel = channel, message = message)
                     logger.v { "[doWork] completed" }
                     Result.success()
                 }
@@ -138,6 +139,7 @@ internal class LoadNotificationDataWorker(
 
     internal companion object {
         private const val TAG = "Chat:Notifications-Loader"
+        private const val DATA_TYPE = "DATA_TYPE"
         private const val DATA_CHANNEL_TYPE = "DATA_CHANNEL_TYPE"
         private const val DATA_CHANNEL_ID = "DATA_CHANNEL_ID"
         private const val DATA_MESSAGE_ID = "DATA_MESSAGE_ID"
@@ -147,6 +149,7 @@ internal class LoadNotificationDataWorker(
 
         fun start(
             context: Context,
+            type: String,
             channelId: String,
             channelType: String,
             messageId: String,
@@ -155,6 +158,7 @@ internal class LoadNotificationDataWorker(
             val syncMessagesWork = OneTimeWorkRequestBuilder<LoadNotificationDataWorker>()
                 .setInputData(
                     workDataOf(
+                        DATA_TYPE to type,
                         DATA_CHANNEL_ID to channelId,
                         DATA_CHANNEL_TYPE to channelType,
                         DATA_MESSAGE_ID to messageId,

@@ -113,6 +113,7 @@ import io.getstream.chat.android.client.notifications.PushNotificationReceivedLi
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
+import io.getstream.chat.android.client.notifications.handler.NotificationType
 import io.getstream.chat.android.client.parser2.adapters.CustomObjectDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
@@ -4468,7 +4469,10 @@ internal constructor(
         @JvmOverloads
         public fun handlePushMessage(pushMessage: PushMessage) {
             ensureClientInitialized().run {
-                if (!config.notificationConfig.ignorePushMessagesWhenUserOnline || !isSocketConnected()) {
+                val shouldHandle = !config.notificationConfig.ignorePushMessagesWhenUserOnline ||
+                    !isSocketConnected() ||
+                    pushMessage.type == NotificationType.NOTIFICATION_REMINDER_DUE
+                if (shouldHandle) {
                     clientScope.launch {
                         setUserWithoutConnectingIfNeeded()
                         notifications.onPushMessage(pushMessage, pushNotificationReceivedListener)
@@ -4483,10 +4487,12 @@ internal constructor(
 
         @Throws(IllegalStateException::class)
         internal fun displayNotification(
+            type: String,
             channel: Channel,
             message: Message,
         ) {
             ensureClientInitialized().notifications.displayNotification(
+                type = type,
                 channel = channel,
                 message = message,
             )

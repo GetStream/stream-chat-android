@@ -54,11 +54,23 @@ public interface NotificationHandler {
     }
 
     /**
+     * Show a notification of [type] for the given [channel] and [message].
+     *
+     * @param type String that represents the type of the notification. For supported types, see [NotificationType].
+     * @param channel The channel where the new message was posted.
+     * @param message The message for which the notification is being shown.
+     */
+    public fun showNotification(type: String, channel: Channel, message: Message) {
+        showNotification(channel, message)
+    }
+
+    /**
      * Show a notification for the given [channel] and [message]
      *
      * @param channel where the new message was posted
      * @param message was received
      */
+    @Deprecated("Use showNotification(type: String, channel: Channel, message: Message) instead.")
     public fun showNotification(channel: Channel, message: Message)
 
     /**

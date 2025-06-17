@@ -223,7 +223,8 @@ internal class DomainMapping(
                 restrictedVisibility = emptyList(),
                 reminder = reminder?.toDomain(),
                 extraData = extraData.toMutableMap(),
-        ).let(messageTransformer::transform)}
+            ).let(messageTransformer::transform)
+        }
 
     internal fun DownstreamDraftDto.toDomain(fallbackChannelInfo: ChannelInfo? = null): DraftMessage =
         DraftMessage(
