@@ -80,6 +80,7 @@
 - Message member from the member bottom sheet of the channel info screen. [#5797](https://github.com/GetStream/stream-chat-android/pull/5797)
 
 ### ⚠️ Changed
+- Rearrange the `MessageList` params to have mandatory params at top and `Modifier` as first optional parameter. [#5834](https://github.com/GetStream/stream-chat-android/pull/5834)
 
 ### ❌ Removed
 - Remove redundant use of coroutineScope inside of `LaunchedEffect`. [#5811](https://github.com/GetStream/stream-chat-android/pull/5811)
