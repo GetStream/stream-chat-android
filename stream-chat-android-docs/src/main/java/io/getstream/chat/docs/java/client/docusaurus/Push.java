@@ -17,6 +17,8 @@ import com.xiaomi.mipush.sdk.MiPushCommandMessage;
 import com.xiaomi.mipush.sdk.MiPushMessage;
 import com.xiaomi.mipush.sdk.PushMessageReceiver;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -111,6 +113,11 @@ public class Push {
                         // invoked when POST_NOTIFICATIONS permission requires rationale
                         break;
                 }
+            }
+
+            @Override
+            public void showNotification(@NotNull String type, @NotNull Channel channel, @NotNull Message message) {
+                showNotification(channel, message);
             }
 
             @Override
