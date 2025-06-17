@@ -1403,6 +1403,7 @@ public interface ChatComponentFactory {
         onAttachmentRemoved: (Attachment) -> Unit,
         onCancelAction: () -> Unit,
         onLinkPreviewClick: ((LinkPreview) -> Unit)?,
+        onCancelLinkPreviewClick: () -> Unit,
         onMentionSelected: (User) -> Unit,
         onCommandSelected: (Command) -> Unit,
         onAlsoSendToChannelSelected: (Boolean) -> Unit,
@@ -1427,6 +1428,7 @@ public interface ChatComponentFactory {
             onAttachmentRemoved = onAttachmentRemoved,
             onCancelAction = onCancelAction,
             onLinkPreviewClick = onLinkPreviewClick,
+            onCancelLinkPreviewClick = onCancelLinkPreviewClick,
             onMentionSelected = onMentionSelected,
             onCommandSelected = onCommandSelected,
             onAlsoSendToChannelSelected = onAlsoSendToChannelSelected,
@@ -1457,9 +1459,15 @@ public interface ChatComponentFactory {
         state: MessageComposerState,
         onCancel: () -> Unit,
         onLinkPreviewClick: ((LinkPreview) -> Unit)?,
+        onCancelLinkPreviewClick: () -> Unit,
     ) {
         Column(modifier = Modifier.animateContentSize()) {
-            DefaultMessageComposerHeaderContent(state, onCancel, onLinkPreviewClick)
+            DefaultMessageComposerHeaderContent(
+                messageComposerState = state,
+                onCancelAction = onCancel,
+                onLinkPreviewClick = onLinkPreviewClick,
+                onCancelLinkPreviewClick = onCancelLinkPreviewClick,
+            )
         }
     }
 
@@ -1499,8 +1507,14 @@ public interface ChatComponentFactory {
         modifier: Modifier,
         linkPreview: LinkPreview,
         onClick: ((LinkPreview) -> Unit)?,
+        onCancel: () -> Unit,
     ) {
-        ComposerLinkPreview(modifier, linkPreview, onClick)
+        ComposerLinkPreview(
+            modifier = modifier,
+            linkPreview = linkPreview,
+            onClick = onClick,
+            onCancel = onCancel,
+        )
     }
 
     /**
