@@ -566,7 +566,7 @@ internal class DomainMappingTest {
         val expected = Flag(
             user = with(sut) { downstreamFlagDto.user.toDomain() },
             targetUser = with(sut) { downstreamFlagDto.target_user?.toDomain() },
-            targetMessageId = downstreamFlagDto.target_message_id,
+            targetMessageId = downstreamFlagDto.target_message_id.orEmpty(),
             reviewedBy = downstreamFlagDto.created_at,
             createdByAutomod = downstreamFlagDto.created_by_automod,
             createdAt = downstreamFlagDto.approved_at,
