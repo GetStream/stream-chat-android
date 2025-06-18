@@ -2,6 +2,7 @@
 ## Common changes for all artifacts
 ### 🐞 Fixed
 - Fix JSON parsing of `Device.providerName` when calling `ChatClient.getDevices()`. [#5821](https://github.com/GetStream/stream-chat-android/pull/5821)
+- Fix JSON parsing of `Flag.targetMessageId` when calling `ChatClient.flagUser()`. [#5829](https://github.com/GetStream/stream-chat-android/pull/5829)
 
 ### ⬆️ Improved
 - Use `AAC_ADTS` as default audio recording output format. [#5825](https://github.com/GetStream/stream-chat-android/pull/5825)
@@ -62,8 +63,10 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Introduce experimental classes: `ChannelInfoViewModel`, `ChannelInfoViewModelFactory`, `ChannelInfoMemberViewModel`, and `ChannelInfoMemberViewModelFactory`. [#5801](https://github.com/GetStream/stream-chat-android/pull/5801) 
 
 ### ⚠️ Changed
+- Refactor the XML sample view models and UI components to use ChannelInfoViewController. [#5801](https://github.com/GetStream/stream-chat-android/pull/5801)
 
 ### ❌ Removed
 
@@ -73,6 +76,9 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `FileAttachmentPreviewContent`, `FileAttachmentContent`,`FileAttachmentItem`, `FileUploadContent` and `FileUploadItem` to `ChatComponentFactory`. [#5791](https://github.com/GetStream/stream-chat-android/pull/5791)
+- Introduce internal `DraftChannelViewController` and experimental classes `DraftChannelViewState`, `DraftChannelViewAction`, and `DraftChannelViewEvent`. [#5797](https://github.com/GetStream/stream-chat-android/pull/5797)
+- Message member from the member bottom sheet of the channel info screen. [#5797](https://github.com/GetStream/stream-chat-android/pull/5797)
 
 ### ⚠️ Changed
 

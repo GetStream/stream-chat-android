@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
@@ -44,6 +45,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Attachment.UploadState.Idle
 import io.getstream.chat.android.models.Attachment.UploadState.InProgress
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 import io.getstream.chat.android.uiutils.extension.isUploading
 
@@ -66,7 +68,7 @@ public fun FileUploadContent(
 
     Column(modifier = modifier) {
         for (attachment in message.attachments) {
-            FileUploadItem(
+            ChatTheme.componentFactory.FileUploadItem(
                 modifier = Modifier
                     .padding(2.dp)
                     .fillMaxWidth()
@@ -191,4 +193,34 @@ internal fun onFileUploadContentItemClick(
             .firstOrNull { it.canHandle(attachment) }
             ?.handleAttachmentPreview(attachment)
     }
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun FileUploadContentPreview() {
+    ChatTheme {
+        FileUploadContent()
+    }
+}
+
+@Composable
+internal fun FileUploadContent() {
+    val uploadingAttachment = Attachment(
+        type = "file",
+        name = "test_document.pdf",
+        fileSize = 1024 * 1024,
+        mimeType = "application/pdf",
+        uploadState = Attachment.UploadState.InProgress(
+            bytesUploaded = 512 * 1024, // 512KB uploaded
+            totalBytes = 1024 * 1024, // 1MB total
+        ),
+    )
+    val attachmentState = AttachmentState(
+        message = Message(
+            id = "message-id",
+            text = "This is a message with an uploading attachment.",
+            attachments = mutableListOf(uploadingAttachment),
+        ),
+    )
+    FileUploadContent(attachmentState = attachmentState)
 }

@@ -39,7 +39,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -195,11 +194,11 @@ private fun GroupChannelInfoContent(
     val isLoading = state is ChannelInfoViewState.Loading
     ContentBox(
         modifier = modifier.fillMaxSize(),
-        contentAlignment = if (isLoading) Alignment.Center else Alignment.TopCenter,
         isLoading = isLoading,
     ) {
         val content = state as ChannelInfoViewState.Content
         LazyColumn(
+            modifier = Modifier.matchParentSize(),
             state = listState,
         ) {
             items(
