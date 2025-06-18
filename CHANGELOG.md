@@ -72,6 +72,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Use the same text style in `DefaultComposerLabel` and `MessageInput` so that typing `MessageComposer` doesn't cause any glitches. [#5838](https://github.com/GetStream/stream-chat-android/pull/5838)
 
 ### ⬆️ Improved
 
