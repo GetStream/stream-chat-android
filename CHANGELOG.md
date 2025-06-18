@@ -83,6 +83,7 @@
 - Introduce **experimental** factory methods for the channel info screens. [#5812](https://github.com/GetStream/stream-chat-android/pull/5812)
 
 ### ⚠️ Changed
+- Rearrange the `MessageList` params to have mandatory params at top and `Modifier` as first optional parameter. [#5834](https://github.com/GetStream/stream-chat-android/pull/5834)
 
 ### ❌ Removed
 - Remove redundant use of coroutineScope inside of `LaunchedEffect`. [#5811](https://github.com/GetStream/stream-chat-android/pull/5811)
