@@ -179,7 +179,12 @@ public fun MessagesScreen(
     }
 
     val isImeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
-    val backAction: BackAction = remember(listViewModel, composerViewModel, attachmentsPickerViewModel) {
+    val backAction: BackAction = remember(
+        listViewModel,
+        composerViewModel,
+        attachmentsPickerViewModel,
+        isImeVisible,
+    ) {
         {
             val isStartedForThread = listViewModel.isStartedForThread
             val isInThread = listViewModel.isInThread
