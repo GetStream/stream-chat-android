@@ -18,7 +18,7 @@ jobs:
       modules: "stream-chat-android-client stream-chat-android-offline stream-chat-android-ui-components stream-chat-android-compose"
       metrics-project: "stream-chat-android-metrics"
     secrets:
-      GITHUB_TOKEN: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
+      GITHUB_PAT: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
       BUILD_CACHE_AWS_REGION: ${{ secrets.BUILD_CACHE_AWS_REGION }}
       BUILD_CACHE_AWS_BUCKET: ${{ secrets.BUILD_CACHE_AWS_BUCKET }}
       BUILD_CACHE_AWS_ACCESS_KEY_ID: ${{ secrets.BUILD_CACHE_AWS_ACCESS_KEY_ID }}
