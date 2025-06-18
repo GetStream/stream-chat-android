@@ -26,6 +26,7 @@ import java.util.Date
  * @property lastReceivedEventDate The time of the event that updated this [ChannelUserRead] object.
  * @property lastRead The time of the last read message.
  * @property unreadMessages How many messages are unread.
+ * @property unreadThreads How many threads are unread. Optional and may be null.
  * @property lastReadMessageId The ID of the last read message.
  */
 @Immutable
@@ -33,6 +34,7 @@ public data class ChannelUserRead(
     override val user: User,
     val lastReceivedEventDate: Date,
     val unreadMessages: Int,
+    val unreadThreads: Int? = null,
     val lastRead: Date,
     val lastReadMessageId: String?,
 ) : UserEntity

@@ -201,9 +201,9 @@ internal class ChannelMutableState(
     override val read: StateFlow<ChannelUserRead?> =
         combineStates(rawReads, userFlow) { readsMap, user -> user?.id?.let { readsMap[it] } }
 
-    val lastMarkReadEvent: StateFlow<Date?> = read.mapState { it?.lastRead }
-
-    override val unreadCount: StateFlow<Int> = read.mapState { it?.unreadMessages ?: 0 }
+    override val unreadCount: StateFlow<Int> = read.mapState {
+        it?.run { unreadThreads ?: unreadMessages } ?: 0
+    }
 
     override val members: StateFlow<List<Member>> =
         combineStates(_members!!, latestUsers) { membersMap, usersMap -> membersMap.values.updateUsers(usersMap) }
