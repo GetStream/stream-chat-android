@@ -34,6 +34,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -176,11 +177,13 @@ import io.getstream.chat.android.compose.ui.threads.ThreadItemUnreadCountContent
 import io.getstream.chat.android.compose.ui.threads.UnreadThreadsBanner
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
 import io.getstream.chat.android.compose.ui.util.clickable
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.LinkPreview
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
@@ -189,13 +192,20 @@ import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewAction
+import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewEvent
+import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
+import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.model.MessageResult
+import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoMemberViewState
+import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.React
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
+import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.EmptyThreadPlaceholderItemState
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
@@ -209,6 +219,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparat
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
+import io.getstream.chat.android.compose.ui.channel.info.ChannelInfoOptionItem as DefaultChannelInfoOptionItem
 import io.getstream.chat.android.ui.common.R as UiCommonR
 
 /**
@@ -274,7 +285,6 @@ public interface ChatComponentFactory {
      * The default header shown above the channel list.
      * Usually contains the current user's avatar, a title or the connected status, and an action button.
      */
-    @Suppress("LongParameterList")
     @Composable
     public fun ChannelListHeader(
         modifier: Modifier,
@@ -614,7 +624,6 @@ public interface ChatComponentFactory {
      * the channel information or the connection status in the bottom center,
      * and the channel avatar as the trailing content.
      */
-    @Suppress("LongParameterList")
     @Composable
     public fun MessageListHeader(
         modifier: Modifier,
@@ -670,7 +679,6 @@ public interface ChatComponentFactory {
         ),
         level = DeprecationLevel.WARNING,
     )
-    @Suppress("LongParameterList")
     @Composable
     public fun RowScope.MessageListHeaderCenterContent(
         modifier: Modifier,
@@ -697,7 +705,6 @@ public interface ChatComponentFactory {
      * Usually shows the channel title in the top and
      * the channel information or the connection status in the bottom.
      */
-    @Suppress("LongParameterList")
     @Composable
     public fun RowScope.MessageListHeaderCenterContent(
         modifier: Modifier,
@@ -822,7 +829,6 @@ public interface ChatComponentFactory {
     /**
      * The default message list item container, which renders each [MessageListItemState]'s subtype.
      */
-    @Suppress("LongParameterList")
     @Composable
     public fun LazyItemScope.MessageListItemContainer(
         messageListItem: MessageListItemState,
@@ -961,7 +967,6 @@ public interface ChatComponentFactory {
     /**
      * The default item content of a regular message.
      */
-    @Suppress("LongParameterList")
     @Composable
     public fun LazyItemScope.MessageListItemContent(
         messageItem: MessageItemState,
@@ -1108,7 +1113,6 @@ public interface ChatComponentFactory {
      * The default center content of the message item.
      * Usually a message bubble with attachments or emoji stickers if the message contains only emoji.
      */
-    @Suppress("LongParameterList")
     @Composable
     public fun ColumnScope.MessageItemCenterContent(
         messageItem: MessageItemState,
@@ -1185,7 +1189,6 @@ public interface ChatComponentFactory {
     /**
      * The default content of a regular message that can contain attachments and text.
      */
-    @Suppress("LongParameterList")
     @Composable
     public fun MessageRegularContent(
         message: Message,
@@ -1233,7 +1236,6 @@ public interface ChatComponentFactory {
      * The default quoted message content.
      * Usually shows only the sender avatar, text and a single attachment preview.
      */
-    @Suppress("LongParameterList")
     @Composable
     public fun MessageQuotedContent(
         modifier: Modifier,
@@ -1799,7 +1801,6 @@ public interface ChatComponentFactory {
                 ")",
         ),
     )
-    @Suppress("LongParameterList")
     @Composable
     public fun Avatar(
         modifier: Modifier,
@@ -1831,7 +1832,6 @@ public interface ChatComponentFactory {
      * In case the image URL is empty or there is an error loading the image,
      * it falls back to an image with initials.
      */
-    @Suppress("LongParameterList")
     @Composable
     public fun Avatar(
         modifier: Modifier,
@@ -1888,7 +1888,6 @@ public interface ChatComponentFactory {
      * It renders the [User] avatar that's shown on the messages screen or in headers of direct messages.
      * If [showOnlineIndicator] is `true` and the user is online, it uses [Avatar] to shows an image or their initials.
      */
-    @Suppress("LongParameterList")
     @Composable
     public fun UserAvatar(
         modifier: Modifier,
@@ -2879,6 +2878,7 @@ public interface ChatComponentFactory {
     }
 
     /**
+<<<<<<< HEAD
      * Factory method for creating the preview content of file attachments.
      *
      * @param modifier Modifier for styling.
@@ -2979,6 +2979,192 @@ public interface ChatComponentFactory {
         io.getstream.chat.android.compose.ui.attachments.content.FileUploadItem(
             attachment = attachment,
             modifier = modifier,
+        )
+    }
+
+    /**
+     * Factory method for creating the top bar of the channel info screen.
+     *
+     * @param headerState The state of the channel header.
+     * @param listState The state of the lazy list.
+     * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
+     */
+    @ExperimentalStreamChatApi
+    @Composable
+    public fun DirectChannelInfoTopBar(
+        headerState: ChannelHeaderViewState,
+        listState: LazyListState,
+        onNavigationIconClick: () -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.channel.info.DirectChannelInfoTopBar(
+            onNavigationIconClick = onNavigationIconClick,
+        )
+    }
+
+    /**
+     * Factory method for creating the avatar container in the direct channel info screen.
+     *
+     * @param user The user whose avatar is displayed.
+     */
+    @ExperimentalStreamChatApi
+    @Composable
+    public fun DirectChannelInfoAvatarContainer(user: User) {
+        io.getstream.chat.android.compose.ui.channel.info.DirectChannelInfoAvatarContainer(
+            user = user,
+        )
+    }
+
+    /**
+     * Factory method for creating the top bar of the group channel info screen.
+     *
+     * @param headerState The state of the channel header.
+     * @param listState The state of the lazy list.
+     * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
+     */
+    @ExperimentalStreamChatApi
+    @Composable
+    public fun GroupChannelInfoTopBar(
+        headerState: ChannelHeaderViewState,
+        listState: LazyListState,
+        onNavigationIconClick: () -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoTopBar(
+            headerState = headerState,
+            listState = listState,
+            onNavigationIconClick = onNavigationIconClick,
+        )
+    }
+
+    /**
+     * Factory method for creating the channel info separator item.
+     * This is used to visually separate different sections in the channel info screens.
+     */
+    @ExperimentalStreamChatApi
+    @Composable
+    public fun LazyItemScope.ChannelInfoSeparatorItem() {
+        StreamHorizontalDivider(thickness = 8.dp)
+    }
+
+    /**
+     * Factory method for creating the channel info option item used in direct and group channel info screens.
+     *
+     * @param option The channel info option to display.
+     * @param isGroupChannel Whether the channel is a group channel.
+     * @param onViewAction Callback invoked when a view action is triggered.
+     */
+    @ExperimentalStreamChatApi
+    @Composable
+    public fun LazyItemScope.ChannelInfoOptionItem(
+        option: ChannelInfoViewState.Content.Option,
+        isGroupChannel: Boolean,
+        onViewAction: (ChannelInfoViewAction) -> Unit,
+    ) {
+        DefaultChannelInfoOptionItem(
+            option = option,
+            isGroupChannel = isGroupChannel,
+            onViewAction = onViewAction,
+        )
+    }
+
+    /**
+     * Factory method for creating the member item in the group channel info screen.
+     *
+     * @param currentUser The currently logged-in user.
+     * @param member The member to display.
+     * @param isOwner Whether the member is the owner of the channel.
+     * @param onClick Callback invoked when the user clicks on the member item.
+     */
+    @ExperimentalStreamChatApi
+    @Composable
+    public fun LazyItemScope.GroupChannelInfoMemberItem(
+        currentUser: User?,
+        member: Member,
+        isOwner: Boolean,
+        onClick: (() -> Unit)?,
+    ) {
+        io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoMemberItem(
+            modifier = Modifier.animateItem(),
+            currentUser = currentUser,
+            member = member,
+            isOwner = isOwner,
+            onClick = onClick,
+        )
+    }
+
+    /**
+     * Factory method for creating the expand members item in the group channel info screen.
+     *
+     * @param collapsedCount The number of members that are currently collapsed.
+     * @param onClick Callback invoked when the user clicks to expand the member list.
+     */
+    @ExperimentalStreamChatApi
+    @Composable
+    public fun LazyItemScope.GroupChannelInfoExpandMembersItem(
+        collapsedCount: Int,
+        onClick: () -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoExpandMembersItem(
+            collapsedCount = collapsedCount,
+            onClick = onClick,
+        )
+    }
+
+    /**
+     * Factory method for creating the channel info screen modal.
+     *
+     * @param modal Which modal to display.
+     * @param isGroupChannel Whether the channel is a group channel.
+     * @param onViewAction Callback invoked when a view action is triggered.
+     * Applicable for all modals except [ChannelInfoViewEvent.MemberInfoModal].
+     * @param onMemberViewEvent Callback invoked when a member view event is triggered.
+     * Only applicable for [ChannelInfoViewEvent.MemberInfoModal].
+     */
+    @ExperimentalStreamChatApi
+    @Composable
+    public fun ChannelInfoScreenModal(
+        modal: ChannelInfoViewEvent.Modal?,
+        isGroupChannel: Boolean,
+        onViewAction: (action: ChannelInfoViewAction) -> Unit,
+        onMemberViewEvent: (event: ChannelInfoMemberViewEvent) -> Unit,
+        onDismiss: () -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.channel.info.ChannelInfoScreenModal(
+            modal = modal,
+            isGroupChannel = isGroupChannel,
+            onViewAction = onViewAction,
+            onMemberViewEvent = onMemberViewEvent,
+            onDismiss = onDismiss,
+        )
+    }
+
+    /**
+     * Factory method for creating the top bar of the member info modal sheet in the group channel info screen.
+     *
+     * @param member The member to display in the top bar.
+     */
+    @ExperimentalStreamChatApi
+    @Composable
+    public fun ChannelInfoMemberInfoModalSheetTopBar(member: Member) {
+        io.getstream.chat.android.compose.ui.channel.info.ChannelInfoMemberInfoModalSheetTopBar(
+            member = member,
+        )
+    }
+
+    /**
+     * Factory method for creating the channel info member option item.
+     *
+     * @param option The channel info member option to display.
+     * @param onViewAction Callback invoked when a view action is triggered.
+     */
+    @ExperimentalStreamChatApi
+    @Composable
+    public fun LazyItemScope.ChannelInfoMemberOptionItem(
+        option: ChannelInfoMemberViewState.Content.Option,
+        onViewAction: (action: ChannelInfoMemberViewAction) -> Unit,
+    ) {
+        io.getstream.chat.android.compose.ui.channel.info.ChannelInfoMemberOptionItem(
+            option = option,
+            onViewAction = onViewAction,
         )
     }
 }
