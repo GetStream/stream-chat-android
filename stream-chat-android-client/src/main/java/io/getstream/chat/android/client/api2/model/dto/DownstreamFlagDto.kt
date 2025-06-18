@@ -23,7 +23,7 @@ import java.util.Date
 internal data class DownstreamFlagDto(
     val user: DownstreamUserDto,
     val target_user: DownstreamUserDto?,
-    val target_message_id: String,
+    val target_message_id: String?,
     val created_at: String,
     val created_by_automod: Boolean,
     val approved_at: Date?,
