@@ -20,7 +20,21 @@ import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.User
 
 internal fun ChannelUserRead.toEntity(): ChannelUserReadEntity =
-    ChannelUserReadEntity(getUserId(), lastReceivedEventDate, unreadMessages, lastRead, lastReadMessageId)
+    ChannelUserReadEntity(
+        userId = getUserId(),
+        lastReceivedEventDate = lastReceivedEventDate,
+        unreadMessages = unreadMessages,
+        unreadThreads = unreadThreads,
+        lastRead = lastRead,
+        lastReadMessageId = lastReadMessageId,
+    )
 
 internal suspend fun ChannelUserReadEntity.toModel(getUser: suspend (userId: String) -> User): ChannelUserRead =
-    ChannelUserRead(getUser(userId), lastReceivedEventDate, unreadMessages, lastRead, lastReadMessageId)
+    ChannelUserRead(
+        user = getUser(userId),
+        lastReceivedEventDate = lastReceivedEventDate,
+        unreadMessages = unreadMessages,
+        unreadThreads = unreadThreads,
+        lastRead = lastRead,
+        lastReadMessageId = lastReadMessageId,
+    )
