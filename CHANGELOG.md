@@ -2,6 +2,7 @@
 ## Common changes for all artifacts
 ### 🐞 Fixed
 - Fix JSON parsing of `Device.providerName` when calling `ChatClient.getDevices()`. [#5821](https://github.com/GetStream/stream-chat-android/pull/5821)
+- Fix JSON parsing of `Flag.targetMessageId` when calling `ChatClient.flagUser()`. [#5829](https://github.com/GetStream/stream-chat-android/pull/5829)
 
 ### ⬆️ Improved
 - Use `AAC_ADTS` as default audio recording output format. [#5825](https://github.com/GetStream/stream-chat-android/pull/5825)

@@ -573,7 +573,7 @@ internal class DomainMapping(
         return Flag(
             user = user.toDomain(),
             targetUser = target_user?.toDomain(),
-            targetMessageId = target_message_id,
+            targetMessageId = target_message_id.orEmpty(),
             reviewedBy = created_at,
             createdByAutomod = created_by_automod,
             createdAt = approved_at,
