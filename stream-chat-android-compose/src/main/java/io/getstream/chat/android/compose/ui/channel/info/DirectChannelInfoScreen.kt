@@ -44,8 +44,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
 import io.getstream.chat.android.compose.ui.components.ContentBox
-import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
+import io.getstream.chat.android.compose.ui.components.avatar.DefaultOnlineIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getLastSeenText
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewModel
@@ -62,6 +63,7 @@ import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewE
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
+import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndicator
 import kotlinx.coroutines.flow.collectLatest
 import java.util.Date
 
@@ -183,7 +185,7 @@ private fun DirectChannelInfoContent(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             val user = content.members.first().user
-            DirectChannelInfoAvatarContainer(user)
+            ChatTheme.componentFactory.DirectChannelInfoAvatarContainer(user)
             LazyColumn(state = listState) {
                 items(content.options) { option ->
                     with(ChatTheme.componentFactory) {
@@ -205,9 +207,16 @@ internal fun DirectChannelInfoAvatarContainer(user: User) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        UserAvatar(
+        ChatTheme.componentFactory.UserAvatar(
             modifier = Modifier.size(72.dp),
             user = user,
+            textStyle = ChatTheme.typography.title3Bold,
+            showOnlineIndicator = user.shouldShowOnlineIndicator(
+                userPresence = ChatTheme.userPresence,
+                currentUser = null,
+            ),
+            onlineIndicator = { DefaultOnlineIndicator(onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd) },
+            onClick = null,
         )
         Text(
             text = user.name.takeIf(String::isNotBlank) ?: user.id,

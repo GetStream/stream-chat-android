@@ -3069,6 +3069,7 @@ public interface ChatComponentFactory {
     /**
      * Factory method for creating the member item in the group channel info screen.
      *
+     * @param currentUser The currently logged-in user.
      * @param member The member to display.
      * @param isOwner Whether the member is the owner of the channel.
      * @param onClick Callback invoked when the user clicks on the member item.
@@ -3076,12 +3077,14 @@ public interface ChatComponentFactory {
     @ExperimentalStreamChatApi
     @Composable
     public fun LazyItemScope.GroupChannelInfoMemberItem(
+        currentUser: User?,
         member: Member,
         isOwner: Boolean,
         onClick: (() -> Unit)?,
     ) {
         io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoMemberItem(
             modifier = Modifier.animateItem(),
+            currentUser = currentUser,
             member = member,
             isOwner = isOwner,
             onClick = onClick,

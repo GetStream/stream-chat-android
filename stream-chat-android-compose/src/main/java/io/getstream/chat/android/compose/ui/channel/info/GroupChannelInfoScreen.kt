@@ -49,9 +49,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
-import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
+import io.getstream.chat.android.compose.ui.components.avatar.DefaultOnlineIndicator
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getLastSeenText
@@ -69,6 +70,7 @@ import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewE
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
+import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndicator
 import kotlinx.coroutines.flow.collectLatest
 import java.util.Date
 
@@ -219,6 +221,7 @@ private fun GroupChannelInfoContent(
                 val isCurrentUserMember = member.getUserId() == currentUser?.id
                 with(ChatTheme.componentFactory) {
                     GroupChannelInfoMemberItem(
+                        currentUser = currentUser,
                         member = member,
                         isOwner = content.owner.id == member.getUserId(),
                         onClick = if (isCurrentUserMember) {
@@ -260,6 +263,7 @@ private fun GroupChannelInfoContent(
 @Composable
 internal fun GroupChannelInfoMemberItem(
     modifier: Modifier,
+    currentUser: User?,
     member: Member,
     isOwner: Boolean,
     onClick: (() -> Unit)?,
@@ -269,9 +273,16 @@ internal fun GroupChannelInfoMemberItem(
         onClick = onClick,
     ) {
         val user = member.user
-        UserAvatar(
+        ChatTheme.componentFactory.UserAvatar(
             modifier = Modifier.size(ChatTheme.dimens.channelAvatarSize),
             user = user,
+            textStyle = ChatTheme.typography.title3Bold,
+            showOnlineIndicator = user.shouldShowOnlineIndicator(
+                userPresence = ChatTheme.userPresence,
+                currentUser = currentUser,
+            ),
+            onlineIndicator = { DefaultOnlineIndicator(onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd) },
+            onClick = null,
         )
         Column(modifier = Modifier.weight(1f)) {
             Text(
