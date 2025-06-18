@@ -8,7 +8,6 @@
     <ID>LongMethod:ChatInitializer.kt$ChatInitializer$@Suppress("UNUSED_VARIABLE") fun init(apiKey: String)</ID>
     <ID>LongMethod:ComponentBrowserAvatarViewFragment.kt$ComponentBrowserAvatarViewFragment$override fun onViewCreated(view: View, savedInstanceState: Bundle?)</ID>
     <ID>LongMethod:ComponentBrowserViewReactionsFragment.kt$ComponentBrowserViewReactionsFragment$override fun onViewCreated(view: View, savedInstanceState: Bundle?)</ID>
-    <ID>LongMethod:GroupChatInfoMemberOptionsDialogFragment.kt$GroupChatInfoMemberOptionsDialogFragment$override fun onViewCreated(view: View, savedInstanceState: Bundle?)</ID>
     <ID>LongMethod:OnlyMediaAttachmentsMessagesComponentBrowserFragment.kt$OnlyMediaAttachmentsMessagesComponentBrowserFragment$override fun getItems(): List&lt;MessageListItem.MessageItem></ID>
     <ID>LongMethod:PlainTextMessagesComponentBrowserFragment.kt$PlainTextMessagesComponentBrowserFragment$override fun getItems(): List&lt;MessageListItem.MessageItem></ID>
     <ID>LongMethod:PlainTextWithFileAttachmentsMessagesComponentBrowserFragment.kt$PlainTextWithFileAttachmentsMessagesComponentBrowserFragment$@OptIn(InternalStreamChatApi::class) override fun getItems(): List&lt;MessageListItem.MessageItem></ID>
@@ -26,7 +25,6 @@
     <ID>MaxLineLength:AddChannelFragment.kt$AddChannelFragment$is AddChannelViewModel.ErrorEvent.CreateChannelError -> R.string.add_channel_error_create_channel</ID>
     <ID>MaxLineLength:AddGroupChannelMembersAdapter.kt$AddGroupChannelMembersAdapter.MemberViewHolder$inner</ID>
     <ID>MaxLineLength:AddGroupChannelSelectNameFragment.kt$AddGroupChannelSelectNameFragment$is AddGroupChannelSelectNameViewModel.ErrorEvent.CreateChannelError -> R.string.add_group_channel_error_create_channel</ID>
-    <ID>MaxLineLength:ChatInfoFragment.kt$ChatInfoFragment$is ChatInfoItem.Option.Stateful.MuteDistinctChannel -> ChatInfoViewModel.Action.OptionMuteDistinctChannelClicked(isChecked)</ID>
     <ID>MaxLineLength:ChatInfoSharedAttachmentsViewModel.kt$private</ID>
     <ID>MaxLineLength:ChatViewModelFactory.kt$ChatViewModelFactory$?:</ID>
     <ID>MaxLineLength:ComponentBrowserHomeFragment.kt$ComponentBrowserHomeFragment$findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserAvatarViewFragment)</ID>
@@ -40,16 +38,7 @@
     <ID>MaxLineLength:ComponentBrowserHomeFragment.kt$ComponentBrowserHomeFragment$findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserViewReactionsFragment)</ID>
     <ID>MaxLineLength:CustomLoginViewModel.kt$CustomLoginViewModel$image = "https://getstream.io/random_png?id=${loginCredentials.userId}&amp;name=${loginCredentials.userName}&amp;size=200"</ID>
     <ID>MaxLineLength:GroupChatInfoAddUsersDialogFragment.kt$GroupChatInfoAddUsersDialogFragment$is GroupChatInfoAddUsersViewModel.ErrorEvent.AddMemberError -> R.string.chat_group_info_error_add_member</ID>
-    <ID>MaxLineLength:GroupChatInfoFragment.kt$GroupChatInfoFragment$.</ID>
-    <ID>MaxLineLength:GroupChatInfoFragment.kt$GroupChatInfoFragment$adapter.setMembersSeparatorClickListener { viewModel.onAction(GroupChatInfoViewModel.Action.MembersSeparatorClicked) }</ID>
-    <ID>MaxLineLength:GroupChatInfoFragment.kt$GroupChatInfoFragment$is GroupChatInfoViewModel.ErrorEvent.ChangeGroupNameError -> R.string.chat_group_info_error_change_name</ID>
-    <ID>MaxLineLength:GroupChatInfoFragment.kt$GroupChatInfoFragment$is GroupChatInfoViewModel.ErrorEvent.LeaveChannelError -> R.string.chat_group_info_error_leave_channel</ID>
     <ID>MaxLineLength:GroupChatInfoMemberOptionView.kt$GroupChatInfoMemberOptionView$typedArray.getResourceId(R.styleable.GroupChatInfoMemberOptionView_optionIcon, R.drawable.ic_cancel)</ID>
-    <ID>MaxLineLength:GroupChatInfoMemberOptionsDialogFragment.kt$GroupChatInfoMemberOptionsDialogFragment$is GroupChatInfoMemberOptionsViewModel.ErrorEvent.BanMemberError -> R.string.chat_group_info_error_ban_member</ID>
-    <ID>MaxLineLength:GroupChatInfoMemberOptionsDialogFragment.kt$GroupChatInfoMemberOptionsDialogFragment$is GroupChatInfoMemberOptionsViewModel.ErrorEvent.RemoveMemberError -> R.string.chat_group_info_error_remove_member</ID>
-    <ID>MaxLineLength:GroupChatInfoMemberOptionsDialogFragment.kt$GroupChatInfoMemberOptionsDialogFragment$is GroupChatInfoMemberOptionsViewModel.ErrorEvent.UnbanMemberError -> R.string.chat_group_info_error_unban_member</ID>
-    <ID>MaxLineLength:GroupChatInfoMemberOptionsViewModel.kt$GroupChatInfoMemberOptionsViewModelFactory$"GroupChatInfoMemberOptionsViewModelFactory can only create instances of GroupChatInfoMemberOptionsViewModel"</ID>
-    <ID>MaxLineLength:GroupChatInfoViewModel.kt$GroupChatInfoViewModel$shouldExpandMembers = currentState.shouldExpandMembers ?: false || members.size &lt;= COLLAPSED_MEMBERS_COUNT</ID>
     <ID>MaxLineLength:MessageListComponentBrowserFragment.kt$MessageListComponentBrowserFragment$findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserDateDividerFragment)</ID>
     <ID>MaxLineLength:MessageListComponentBrowserFragment.kt$MessageListComponentBrowserFragment$findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserDeletedMessages)</ID>
     <ID>MaxLineLength:MessageListComponentBrowserFragment.kt$MessageListComponentBrowserFragment$findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserOnlyFileAttachmentsMessages)</ID>
