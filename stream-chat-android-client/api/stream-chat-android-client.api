@@ -2707,6 +2707,7 @@ public abstract interface class io/getstream/chat/android/client/notifications/h
 	public abstract fun dismissChannelNotifications (Ljava/lang/String;Ljava/lang/String;)V
 	public abstract fun onChatEvent (Lio/getstream/chat/android/client/events/NewMessageEvent;)Z
 	public abstract fun onNotificationPermissionStatus (Lio/getstream/android/push/permissions/NotificationPermissionStatus;)V
+	public abstract fun onNotificationReminderDueEvent (Lio/getstream/chat/android/client/events/NotificationReminderDueEvent;)Z
 	public abstract fun onPushMessage (Lio/getstream/chat/android/models/PushMessage;)Z
 	public abstract fun showNotification (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/Message;)V
 	public abstract fun showNotification (Ljava/lang/String;Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/Message;)V
@@ -2714,6 +2715,7 @@ public abstract interface class io/getstream/chat/android/client/notifications/h
 
 public final class io/getstream/chat/android/client/notifications/handler/NotificationHandler$DefaultImpls {
 	public static fun onChatEvent (Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;Lio/getstream/chat/android/client/events/NewMessageEvent;)Z
+	public static fun onNotificationReminderDueEvent (Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;Lio/getstream/chat/android/client/events/NotificationReminderDueEvent;)Z
 	public static fun onPushMessage (Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;Lio/getstream/chat/android/models/PushMessage;)Z
 	public static fun showNotification (Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;Ljava/lang/String;Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/Message;)V
 }

@@ -20,7 +20,9 @@ import android.app.Application
 import android.content.Context
 import io.getstream.android.push.permissions.NotificationPermissionManager
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.events.NotificationReminderDueEvent
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationType
@@ -37,7 +39,7 @@ internal interface ChatNotifications {
     fun onSetUser()
     fun setDevice(device: Device)
     fun onPushMessage(message: PushMessage, pushNotificationReceivedListener: PushNotificationReceivedListener)
-    fun onNewMessageEvent(newMessageEvent: NewMessageEvent)
+    fun onChatEvent(event: ChatEvent)
     suspend fun onLogout(flushPersistence: Boolean)
     fun displayNotification(type: String, channel: Channel, message: Message)
     fun dismissChannelNotifications(channelType: String, channelId: String)
@@ -100,27 +102,25 @@ internal class ChatNotificationsImpl constructor(
         }
     }
 
-    override fun onNewMessageEvent(newMessageEvent: NewMessageEvent) {
-        val currentUserId = ChatClient.instance().getCurrentUser()?.id
-        if (newMessageEvent.message.user.id == currentUserId) return
-
-        logger.d { "[onNewMessageEvent] event: $newMessageEvent" }
-        if (!handler.onChatEvent(newMessageEvent)) {
-            logger.i { "[onNewMessageEvent] handle event internally" }
-            handleEvent(newMessageEvent)
+    override fun onChatEvent(event: ChatEvent) {
+        logger.d { "[onChatEvent] event: $event" }
+        when (event) {
+            is NewMessageEvent -> onNewMessageEvent(event)
+            is NotificationReminderDueEvent -> onNotificationReminderDueEvent(event)
+            else -> {
+                logger.d { "[onChatEvent] ChatEvent not supported: $event" }
+            }
         }
     }
 
     override suspend fun onLogout(flushPersistence: Boolean) {
-        logger.i { "[onLogout] flusPersistence: $flushPersistence" }
+        logger.i { "[onLogout] flushPersistence: $flushPersistence" }
         permissionManager.stop()
         handler.dismissAllNotifications()
         cancelLoadDataWork()
-        if (flushPersistence) { removeStoredDevice() }
-    }
-
-    private fun cancelLoadDataWork() {
-        LoadNotificationDataWorker.cancel(context)
+        if (flushPersistence) {
+            removeStoredDevice()
+        }
     }
 
     /**
@@ -150,8 +150,27 @@ internal class ChatNotificationsImpl constructor(
         )
     }
 
-    private fun handleEvent(event: NewMessageEvent) {
-        obtainNotificationData(event.type, event.channelId, event.channelType, event.message.id)
+    private fun onNewMessageEvent(event: NewMessageEvent) {
+        val currentUserId = ChatClient.instance().getCurrentUser()?.id
+        if (event.message.user.id == currentUserId) return
+
+        logger.d { "[onNewMessageEvent] event: $event" }
+        if (!handler.onChatEvent(event)) {
+            logger.i { "[onNewMessageEvent] handle event internally" }
+            obtainNotificationData(event.type, event.channelId, event.channelType, event.message.id)
+        }
+    }
+
+    private fun onNotificationReminderDueEvent(event: NotificationReminderDueEvent) {
+        logger.d { "[onNotificationReminderDueEvent] event: $event" }
+        if (!handler.onNotificationReminderDueEvent(event)) {
+            logger.i { "[onNotificationReminderDueEvent] handle event internally" }
+            obtainNotificationData(event.type, event.channelId, event.channelType, event.messageId)
+        }
+    }
+
+    private fun cancelLoadDataWork() {
+        LoadNotificationDataWorker.cancel(context)
     }
 
     private fun wasNotificationDisplayed(messageId: String) = showedMessages.contains(messageId)
@@ -184,7 +203,7 @@ internal object NoOpChatNotifications : ChatNotifications {
         pushNotificationReceivedListener: PushNotificationReceivedListener,
     ) = Unit
 
-    override fun onNewMessageEvent(newMessageEvent: NewMessageEvent) = Unit
+    override fun onChatEvent(event: ChatEvent) = Unit
     override suspend fun onLogout(flushPersistence: Boolean) = Unit
     override fun displayNotification(type: String, channel: Channel, message: Message) = Unit
     override fun dismissChannelNotifications(channelType: String, channelId: String) = Unit

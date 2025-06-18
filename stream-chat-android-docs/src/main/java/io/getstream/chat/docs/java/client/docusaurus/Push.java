@@ -17,8 +17,6 @@ import com.xiaomi.mipush.sdk.MiPushCommandMessage;
 import com.xiaomi.mipush.sdk.MiPushMessage;
 import com.xiaomi.mipush.sdk.PushMessageReceiver;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +31,7 @@ import io.getstream.android.push.xiaomi.XiaomiMessagingDelegate;
 import io.getstream.android.push.xiaomi.XiaomiPushDeviceGenerator;
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.events.NewMessageEvent;
+import io.getstream.chat.android.client.events.NotificationReminderDueEvent;
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig;
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler;
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory;
@@ -116,7 +115,7 @@ public class Push {
             }
 
             @Override
-            public void showNotification(@NotNull String type, @NotNull Channel channel, @NotNull Message message) {
+            public void showNotification(@NonNull String type, @NonNull Channel channel, @NonNull Message message) {
                 showNotification(channel, message);
             }
 
@@ -140,6 +139,11 @@ public class Push {
             @Override
             public boolean onChatEvent(@NonNull NewMessageEvent event) {
                 return true;
+            }
+
+            @Override
+            public boolean onNotificationReminderDueEvent(@NonNull NotificationReminderDueEvent event) {
+                return false;
             }
 
             @Override

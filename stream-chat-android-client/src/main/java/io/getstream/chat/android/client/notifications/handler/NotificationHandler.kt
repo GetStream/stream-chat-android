@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.notifications.handler
 import io.getstream.android.push.permissions.NotificationPermissionStatus
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.events.NotificationReminderDueEvent
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PushMessage
@@ -40,6 +41,18 @@ public interface NotificationHandler {
      */
     public fun onChatEvent(event: NewMessageEvent): Boolean {
         return true
+    }
+
+    /**
+     * Handles showing notification after receiving [NotificationReminderDueEvent].
+     * Default implementation of the method doesn't handle this event, so it is delegated to the [showNotification]
+     * method.
+     *
+     * @param event The [NotificationReminderDueEvent] to handle.
+     * @return True if the event was handled in the method, false if it should be handled internally.
+     */
+    public fun onNotificationReminderDueEvent(event: NotificationReminderDueEvent): Boolean {
+        return false
     }
 
     /**

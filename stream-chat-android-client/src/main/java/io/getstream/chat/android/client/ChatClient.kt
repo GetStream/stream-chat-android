@@ -91,6 +91,7 @@ import io.getstream.chat.android.client.events.HasOwnUser
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
+import io.getstream.chat.android.client.events.NotificationReminderDueEvent
 import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
@@ -113,7 +114,6 @@ import io.getstream.chat.android.client.notifications.PushNotificationReceivedLi
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
-import io.getstream.chat.android.client.notifications.handler.NotificationType
 import io.getstream.chat.android.client.parser2.adapters.CustomObjectDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
@@ -437,8 +437,11 @@ internal constructor(
                 mutableClientState.setUser(user)
             }
 
-            is NewMessageEvent -> {
-                notifications.onNewMessageEvent(event)
+            is NewMessageEvent,
+            is NotificationReminderDueEvent,
+            -> {
+                // No other events should potentially show notifications
+                notifications.onChatEvent(event)
             }
 
             is ConnectingEvent -> {
@@ -4469,10 +4472,7 @@ internal constructor(
         @JvmOverloads
         public fun handlePushMessage(pushMessage: PushMessage) {
             ensureClientInitialized().run {
-                val shouldHandle = !config.notificationConfig.ignorePushMessagesWhenUserOnline ||
-                    !isSocketConnected() ||
-                    pushMessage.type == NotificationType.NOTIFICATION_REMINDER_DUE
-                if (shouldHandle) {
+                if (!config.notificationConfig.ignorePushMessagesWhenUserOnline || !isSocketConnected()) {
                     clientScope.launch {
                         setUserWithoutConnectingIfNeeded()
                         notifications.onPushMessage(pushMessage, pushNotificationReceivedListener)
