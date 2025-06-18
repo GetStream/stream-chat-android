@@ -235,7 +235,7 @@ private fun GroupChannelInfoContent(
             if (content.members.canExpand && content.members.isCollapsed) {
                 item {
                     with(ChatTheme.componentFactory) {
-                        GroupChannelInfoExpandMemberItem(
+                        GroupChannelInfoExpandMembersItem(
                             collapsedCount = content.members.collapsedCount,
                             onClick = { onViewAction(ChannelInfoViewAction.ExpandMembersClick) },
                         )
@@ -328,7 +328,7 @@ internal fun GroupChannelInfoMemberItem(
 }
 
 @Composable
-internal fun GroupChannelInfoExpandMemberItem(
+internal fun GroupChannelInfoExpandMembersItem(
     collapsedCount: Int,
     onClick: () -> Unit,
 ) {

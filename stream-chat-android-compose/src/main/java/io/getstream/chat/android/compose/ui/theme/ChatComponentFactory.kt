@@ -3092,18 +3092,18 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * Factory method for creating the expand member item in the group channel info screen.
+     * Factory method for creating the expand members item in the group channel info screen.
      *
      * @param collapsedCount The number of members that are currently collapsed.
      * @param onClick Callback invoked when the user clicks to expand the member list.
      */
     @ExperimentalStreamChatApi
     @Composable
-    public fun LazyItemScope.GroupChannelInfoExpandMemberItem(
+    public fun LazyItemScope.GroupChannelInfoExpandMembersItem(
         collapsedCount: Int,
         onClick: () -> Unit,
     ) {
-        io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoExpandMemberItem(
+        io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoExpandMembersItem(
             collapsedCount = collapsedCount,
             onClick = onClick,
         )
