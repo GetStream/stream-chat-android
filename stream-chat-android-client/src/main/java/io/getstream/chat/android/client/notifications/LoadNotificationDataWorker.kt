@@ -33,6 +33,9 @@ import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.notifications.handler.ChatNotification
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
 import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
 import io.getstream.result.call.zipWith
@@ -75,7 +78,7 @@ internal class LoadNotificationDataWorker(
                         logger.v { "[doWork] fetching thread parent message." }
                         client.getMessage(messageParentId).await()
                     }
-                    ChatClient.displayNotification(type = type, channel = channel, message = message)
+                    createNotification(type, channel, message)?.let(ChatClient::displayNotification)
                     logger.v { "[doWork] completed" }
                     Result.success()
                 }
@@ -135,6 +138,12 @@ internal class LoadNotificationDataWorker(
                 context.getSystemService(NotificationManager::class.java).createNotificationChannel(this)
             }
         }
+    }
+
+    private fun createNotification(type: String, channel: Channel, message: Message): ChatNotification? = when (type) {
+        ChatNotification.TYPE_MESSAGE_NEW -> ChatNotification.MessageNew(channel, message)
+        ChatNotification.TYPE_NOTIFICATION_REMINDER_DUE -> ChatNotification.NotificationReminderDue(channel, message)
+        else -> null
     }
 
     internal companion object {

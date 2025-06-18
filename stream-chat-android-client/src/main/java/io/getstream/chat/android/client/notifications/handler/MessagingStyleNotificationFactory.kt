@@ -58,61 +58,58 @@ internal class MessagingStyleNotificationFactory(
 ) {
 
     /**
-     * Creates a unique notification ID based on the type, channel type, channel ID, and message ID.
-     *
-     * @param type The type of notification. See [NotificationType].
-     * @param channelType The type of the channel.
-     * @param channelId The ID of the channel.
-     * @param messageId The ID of the message.
+     * Creates a unique notification ID based on the provided [ChatNotification].
      */
-    internal fun createNotificationId(
-        type: String,
-        channelType: String,
-        channelId: String,
-        messageId: String,
-    ): Int = when (type) {
-        NotificationType.NOTIFICATION_REMINDER_DUE -> "$channelType:$channelId:$messageId".hashCode()
-        else -> "$channelType:$channelId".hashCode()
+    internal fun createNotificationId(notification: ChatNotification): Int = when (notification) {
+        is ChatNotification.MessageNew ->
+            createChannelNotificationId(notification.channel.type, notification.channel.id)
+
+        is ChatNotification.NotificationReminderDue ->
+            "${notification.channel.type}:${notification.channel.id}:${notification.message.id}".hashCode()
     }
 
     /**
-     * Creates a notification based on the provided type, channel, and message.
+     * Creates a unique notification ID for a channel based on its type and ID.
      *
-     * @param type The type of notification to create. See [NotificationType].
-     * @param channel The channel associated with the notification.
-     * @param message The message associated with the notification.
+     * @param channelType The type of the channel.
+     * @param channelId The ID of the channel.
+     * @return A unique notification ID for the channel.
+     */
+    internal fun createChannelNotificationId(channelType: String, channelId: String): Int =
+        "$channelType:$channelId".hashCode()
+
+    /**
+     * Creates a notification based on the provided [ChatNotification].
+     *
      * @return A [Notification] object if the current user is available, otherwise null.
      */
-    internal suspend fun createNotification(type: String, channel: Channel, message: Message): Notification? {
+    internal suspend fun createNotification(notification: ChatNotification): Notification? {
         val currentUser = ChatClient.instance().getCurrentUser()
             ?: ChatClient.instance().getStoredUser()
             ?: return null
-        val notificationId = createNotificationId(
-            type = type,
-            channelType = channel.type,
-            channelId = channel.id,
-            messageId = message.id,
-        )
+        val notificationId = createNotificationId(notification)
         // Base builder
         val builder = NotificationCompat.Builder(context, notificationChannelId)
             .setSmallIcon(R.drawable.stream_ic_notification)
             .setColor(ContextCompat.getColor(context, R.color.stream_ic_notification))
-            .setContentIntent(createContentIntent(notificationId, channel, message))
         // Customize the notification based on the type
-        when (type) {
-            NotificationType.NOTIFICATION_REMINDER_DUE -> {
+        when (notification) {
+            is ChatNotification.MessageNew -> {
+                val channel = notification.channel
+                val message = notification.message
+                val style = restoreMessagingStyle(channel) ?: createMessagingStyle(currentUser, channel)
                 builder
-                    .setContentTitle(context.getString(R.string.stream_chat_notification_reminder_due_title))
-                    .setContentText(notificationTextFormatter(currentUser, message))
-                    .setAutoCancel(true)
-            }
-
-            else -> {
-                val style = restoreMessagingStyle(type, channel, message)
-                    ?: createMessagingStyle(currentUser, channel)
-                builder
+                    .setContentIntent(createContentIntent(notificationId, channel, message))
                     .setStyle(style.addMessage(message.toMessagingStyleMessage(context, currentUser)))
                     .apply { actionsProvider(notificationId, channel, message).forEach(::addAction) }
+            }
+
+            is ChatNotification.NotificationReminderDue -> {
+                builder
+                    .setContentTitle(context.getString(R.string.stream_chat_notification_reminder_due_title))
+                    .setContentText(notificationTextFormatter(currentUser, notification.message))
+                    .setContentIntent(createContentIntent(notificationId, notification.channel, notification.message))
+                    .setAutoCancel(true)
             }
         }
         return builder.build()
@@ -126,13 +123,9 @@ internal class MessagingStyleNotificationFactory(
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
 
-    private fun restoreMessagingStyle(
-        type: String,
-        channel: Channel,
-        message: Message,
-    ): NotificationCompat.MessagingStyle? =
+    private fun restoreMessagingStyle(channel: Channel): NotificationCompat.MessagingStyle? =
         notificationManager.activeNotifications
-            .firstOrNull { it.id == createNotificationId(type, channel.type, channel.id, message.id) }
+            .firstOrNull { it.id == createChannelNotificationId(channel.type, channel.id) }
             ?.notification
             ?.let(NotificationCompat.MessagingStyle::extractMessagingStyleFromNotification)
 

@@ -111,6 +111,7 @@ import io.getstream.chat.android.client.logger.StreamLogLevelValidator
 import io.getstream.chat.android.client.logger.StreamLoggerHandler
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.PushNotificationReceivedListener
+import io.getstream.chat.android.client.notifications.handler.ChatNotification
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
@@ -4486,16 +4487,8 @@ internal constructor(
         }
 
         @Throws(IllegalStateException::class)
-        internal fun displayNotification(
-            type: String,
-            channel: Channel,
-            message: Message,
-        ) {
-            ensureClientInitialized().notifications.displayNotification(
-                type = type,
-                channel = channel,
-                message = message,
-            )
+        internal fun displayNotification(notification: ChatNotification) {
+            ensureClientInitialized().notifications.displayNotification(notification)
         }
 
         /**

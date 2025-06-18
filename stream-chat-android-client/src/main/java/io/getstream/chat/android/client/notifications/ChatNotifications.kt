@@ -23,13 +23,11 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationReminderDueEvent
+import io.getstream.chat.android.client.notifications.handler.ChatNotification
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
-import io.getstream.chat.android.client.notifications.handler.NotificationType
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Device
-import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PushMessage
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
@@ -41,7 +39,7 @@ internal interface ChatNotifications {
     fun onPushMessage(message: PushMessage, pushNotificationReceivedListener: PushNotificationReceivedListener)
     fun onChatEvent(event: ChatEvent)
     suspend fun onLogout(flushPersistence: Boolean)
-    fun displayNotification(type: String, channel: Channel, message: Message)
+    fun displayNotification(notification: ChatNotification)
     fun dismissChannelNotifications(channelType: String, channelId: String)
 }
 
@@ -175,17 +173,17 @@ internal class ChatNotificationsImpl constructor(
 
     private fun wasNotificationDisplayed(messageId: String) = showedMessages.contains(messageId)
 
-    override fun displayNotification(type: String, channel: Channel, message: Message) {
-        logger.d { "[displayNotification] type: $type, channel.cid: ${channel.cid}, message.cid: ${message.cid}" }
-        when (type) {
-            NotificationType.NOTIFICATION_REMINDER_DUE -> {
-                handler.showNotification(type, channel, message)
-            }
-            else -> {
-                if (!wasNotificationDisplayed(message.id)) {
-                    showedMessages.add(message.id)
-                    handler.showNotification(type, channel, message)
+    override fun displayNotification(notification: ChatNotification) {
+        logger.d { "[displayNotification] type: ${notification.type}" }
+        when (notification) {
+            is ChatNotification.MessageNew -> {
+                if (!wasNotificationDisplayed(notification.message.id)) {
+                    showedMessages.add(notification.message.id)
+                    handler.showNotification(notification)
                 }
+            }
+            is ChatNotification.NotificationReminderDue -> {
+                handler.showNotification(notification)
             }
         }
     }
@@ -205,6 +203,6 @@ internal object NoOpChatNotifications : ChatNotifications {
 
     override fun onChatEvent(event: ChatEvent) = Unit
     override suspend fun onLogout(flushPersistence: Boolean) = Unit
-    override fun displayNotification(type: String, channel: Channel, message: Message) = Unit
+    override fun displayNotification(notification: ChatNotification) = Unit
     override fun dismissChannelNotifications(channelType: String, channelId: String) = Unit
 }

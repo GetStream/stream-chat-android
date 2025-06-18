@@ -85,20 +85,19 @@ internal class MessagingStyleNotificationHandler(
         }
     }
 
-    override fun showNotification(type: String, channel: Channel, message: Message) {
-        logger.d { "[showNotification] type: $type, channel.cid: ${channel.cid}, message.cid: ${message.cid}" }
-        showNotificationInternal(type, channel, message)
+    override fun showNotification(notification: ChatNotification) {
+        logger.d { "[showNotification] notification: $notification" }
+        showNotificationInternal(notification)
     }
 
     override fun showNotification(channel: Channel, message: Message) {
         logger.d { "[showNotification] channel.cid: ${channel.cid}, message.cid: ${message.cid}" }
-        // Only possible type is MESSAGE_NEW
-        showNotificationInternal(NotificationType.MESSAGE_NEW, channel, message)
+        // Only possible type is message.new
+        showNotificationInternal(ChatNotification.MessageNew(channel, message))
     }
 
     override fun dismissChannelNotifications(channelType: String, channelId: String) {
-        // type/messageId are not used for channel notifications, so we pass empty strings
-        val notificationId = factory.createNotificationId("", channelType, channelId, "")
+        val notificationId = factory.createChannelNotificationId(channelType, channelId)
         dismissNotification(notificationId)
     }
 
@@ -106,18 +105,15 @@ internal class MessagingStyleNotificationHandler(
         getShownNotifications().forEach(::dismissNotification)
     }
 
-    private fun showNotificationInternal(type: String, channel: Channel, message: Message) {
+    private fun showNotificationInternal(chatNotification: ChatNotification) {
         ChatClient.instance().launch {
-            val notificationId = factory.createNotificationId(type, channel.type, channel.id, message.id)
-            val notification = factory.createNotification(type, channel, message)
+            val notificationId = factory.createNotificationId(chatNotification)
+            val notification = factory.createNotification(chatNotification)
             if (notification != null) {
                 addNotificationId(notificationId)
                 notificationManager.notify(notificationId, notification)
             } else {
-                logger.w {
-                    "[showNotificationInternal] Failed to create notification for type: $type, " +
-                        "channel: ${channel.cid}, message: ${message.cid}"
-                }
+                logger.w { "[showNotificationInternal] Failed to create notification for: $chatNotification" }
             }
         }
     }

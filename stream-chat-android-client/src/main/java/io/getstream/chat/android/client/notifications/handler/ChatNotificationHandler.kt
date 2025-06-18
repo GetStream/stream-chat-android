@@ -74,14 +74,25 @@ internal class ChatNotificationHandler(
 
     override fun onNotificationPermissionStatus(status: NotificationPermissionStatus) { /* no-op */ }
 
-    override fun showNotification(type: String, channel: Channel, message: Message) {
-        when (type) {
-            NotificationType.NOTIFICATION_REMINDER_DUE -> showReminderDueNotification(channel, message)
-            else -> showNotification(channel, message)
-        }
+    override fun showNotification(notification: ChatNotification) {
+        showNotificationInternal(notification)
     }
 
     override fun showNotification(channel: Channel, message: Message) {
+        // Only possible type is message.new
+        showNotificationInternal(ChatNotification.MessageNew(channel, message))
+    }
+
+    private fun showNotificationInternal(chatNotification: ChatNotification) {
+        when (chatNotification) {
+            is ChatNotification.MessageNew ->
+                showMessageNewNotification(chatNotification.channel, chatNotification.message)
+            is ChatNotification.NotificationReminderDue ->
+                showReminderDueNotification(chatNotification.channel, chatNotification.message)
+        }
+    }
+
+    private fun showMessageNewNotification(channel: Channel, message: Message) {
         val notificationId: Int = System.nanoTime().toInt()
         val notificationSummaryId = getNotificationGroupSummaryId(channel.type, channel.id)
         addNotificationId(notificationId, notificationSummaryId)

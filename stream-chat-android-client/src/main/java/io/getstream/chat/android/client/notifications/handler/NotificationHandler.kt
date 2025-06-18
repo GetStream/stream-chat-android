@@ -67,14 +67,17 @@ public interface NotificationHandler {
     }
 
     /**
-     * Show a notification of [type] for the given [channel] and [message].
+     * Show a notification for the given [ChatNotification].
      *
-     * @param type String that represents the type of the notification. For supported types, see [NotificationType].
-     * @param channel The channel where the new message was posted.
-     * @param message The message for which the notification is being shown.
+     * @param notification The notification to be shown.
      */
-    public fun showNotification(type: String, channel: Channel, message: Message) {
-        showNotification(channel, message)
+    public fun showNotification(notification: ChatNotification) {
+        when (notification) {
+            is ChatNotification.MessageNew ->
+                showNotification(notification.channel, notification.message)
+            is ChatNotification.NotificationReminderDue ->
+                showNotification(notification.channel, notification.message)
+        }
     }
 
     /**
