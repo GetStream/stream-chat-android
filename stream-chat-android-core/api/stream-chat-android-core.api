@@ -43,6 +43,7 @@ public final class io/getstream/chat/android/client/PayloadValidator {
 	public static final field INSTANCE Lio/getstream/chat/android/client/PayloadValidator;
 	public final fun isFromStreamServer (Ljava/util/Map;)Z
 	public final fun isValidNewMessage (Ljava/util/Map;)Z
+	public final fun isValidPayload (Ljava/util/Map;)Z
 }
 
 public final class io/getstream/chat/android/client/errors/ChatErrorCode : java/lang/Enum {
@@ -1680,6 +1681,7 @@ public final class io/getstream/chat/android/models/PushMessage {
 	public final fun getGetstream ()Ljava/util/Map;
 	public final fun getMessageId ()Ljava/lang/String;
 	public final fun getMetadata ()Ljava/util/Map;
+	public final fun getType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

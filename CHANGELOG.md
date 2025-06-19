@@ -19,8 +19,11 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add default handling for `notification.reminder_due` push notification. [#5833](https://github.com/GetStream/stream-chat-android/pull/5833)
+- Add `NotificationHandler.showNotification(ChatNotification)` message method for showing a notification of a specific type. [#5833](https://github.com/GetStream/stream-chat-android/pull/5833)
 
 ### ⚠️ Changed
+- Deprecate `NotificationHandler.showNotification(Channel, Message)` in favor of `NotificationHandler.showNotification(ChatNotification)`. [#5833](https://github.com/GetStream/stream-chat-android/pull/5833)
 
 ### ❌ Removed
 

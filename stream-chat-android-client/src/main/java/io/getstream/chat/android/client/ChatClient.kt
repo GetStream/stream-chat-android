@@ -91,6 +91,7 @@ import io.getstream.chat.android.client.events.HasOwnUser
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
+import io.getstream.chat.android.client.events.NotificationReminderDueEvent
 import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
@@ -110,6 +111,7 @@ import io.getstream.chat.android.client.logger.StreamLogLevelValidator
 import io.getstream.chat.android.client.logger.StreamLoggerHandler
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.PushNotificationReceivedListener
+import io.getstream.chat.android.client.notifications.handler.ChatNotification
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
@@ -436,8 +438,11 @@ internal constructor(
                 mutableClientState.setUser(user)
             }
 
-            is NewMessageEvent -> {
-                notifications.onNewMessageEvent(event)
+            is NewMessageEvent,
+            is NotificationReminderDueEvent,
+            -> {
+                // No other events should potentially show notifications
+                notifications.onChatEvent(event)
             }
 
             is ConnectingEvent -> {
@@ -4482,14 +4487,8 @@ internal constructor(
         }
 
         @Throws(IllegalStateException::class)
-        internal fun displayNotification(
-            channel: Channel,
-            message: Message,
-        ) {
-            ensureClientInitialized().notifications.displayNotification(
-                channel = channel,
-                message = message,
-            )
+        internal fun displayNotification(notification: ChatNotification) {
+            ensureClientInitialized().notifications.displayNotification(notification)
         }
 
         /**
