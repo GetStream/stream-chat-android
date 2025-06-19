@@ -123,6 +123,8 @@ public fun Messages(
         }
     },
     itemContent: @Composable LazyItemScope.(MessageListItemState) -> Unit,
+    leadingMessageContent: (@Composable LazyItemScope.() -> Unit)? = null,
+    trailingMessageContent: (@Composable LazyItemScope.() -> Unit)? = null,
 ) {
     val lazyListState = messagesLazyListState.lazyListState
     val messages = messagesState.messageItems
@@ -162,6 +164,13 @@ public fun Messages(
             reverseLayout = true,
             contentPadding = contentPadding,
         ) {
+
+            leadingMessageContent?.let { leadingMessageContent ->
+                item {
+                    leadingMessageContent()
+                }
+            }
+
             if (isLoadingMoreNewMessages && !startOfMessages) {
                 item {
                     loadingMoreContent()
@@ -193,6 +202,12 @@ public fun Messages(
             if (isLoadingMoreOldMessages && !endOfMessages) {
                 item {
                     loadingMoreContent()
+                }
+            }
+
+            trailingMessageContent?.let { trailingMessageContent ->
+                item {
+                    trailingMessageContent()
                 }
             }
         }
