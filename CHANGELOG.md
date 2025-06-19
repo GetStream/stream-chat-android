@@ -73,6 +73,7 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Use the same text style in `DefaultComposerLabel` and `MessageInput` so that typing `MessageComposer` doesn't cause any glitches. [#5838](https://github.com/GetStream/stream-chat-android/pull/5838)
+- Fix ExoPlayer crash when playing a video, happening when the integration app is using the legacy `com.google.android.exoplayer` library. [#5841](https://github.com/GetStream/stream-chat-android/pull/5841)
 
 ### ⬆️ Improved
 
