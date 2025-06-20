@@ -70,4 +70,8 @@
 
     <!-- Draft Channel -->
     <string name="draft_channel_error">Failed to draft a channel</string>
+
+    <!-- Show original translation -->
+    <string name="show_original">Show original</string>
+    <string name="show_translation">Show translation</string>
 </resources>
