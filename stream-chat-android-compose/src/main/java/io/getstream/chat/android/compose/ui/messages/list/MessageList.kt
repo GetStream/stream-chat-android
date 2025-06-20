@@ -102,7 +102,7 @@ public fun MessageList(
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     messagesLazyListState: MessagesLazyListState =
-        rememberMessageListState(parentMessageId = viewModel.currentMessagesState.parentMessageId),
+        rememberMessageListState(parentMessageId = viewModel.currentMessagesState.value.parentMessageId),
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     threadsVerticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
     threadMessagesStart: ThreadMessagesStart? = null,
@@ -177,7 +177,7 @@ public fun MessageList(
     helperContent: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             MessageListHelperContent(
-                messageListState = viewModel.currentMessagesState,
+                messageListState = viewModel.currentMessagesState.value,
                 messagesLazyListState = messagesLazyListState,
                 onScrollToBottomClick = onScrollToBottomClicked,
             )
@@ -219,7 +219,7 @@ public fun MessageList(
         modifier = modifier,
         messageContentFactory = messageContentFactory,
         contentPadding = contentPadding,
-        currentState = viewModel.currentMessagesState,
+        currentState = viewModel.currentMessagesState.value,
         messagesLazyListState = messagesLazyListState,
         onMessagesPageStartReached = onMessagesPageStartReached,
         verticalArrangement = verticalArrangement,

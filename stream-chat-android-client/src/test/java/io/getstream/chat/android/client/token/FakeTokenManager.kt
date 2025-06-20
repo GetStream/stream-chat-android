@@ -21,6 +21,8 @@ internal class FakeTokenManager(
     private val loadSyncToken: String = token,
 ) : TokenManager {
 
+    private var expired = false
+
     override fun loadSync(): String = loadSyncToken.also {
         token = loadSyncToken
     }
@@ -28,7 +30,10 @@ internal class FakeTokenManager(
     override fun getToken(): String = token
 
     override fun ensureTokenLoaded() {
-        // empty
+        if (expired) {
+            loadSync()
+        }
+        expired = false
     }
 
     override fun setTokenProvider(provider: CacheableTokenProvider) {
@@ -44,6 +49,6 @@ internal class FakeTokenManager(
     }
 
     override fun expireToken() {
-        // empty
+        expired = true
     }
 }

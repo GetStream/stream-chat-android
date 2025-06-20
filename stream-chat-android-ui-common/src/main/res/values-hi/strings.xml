@@ -20,6 +20,4 @@
   <string name="stream_ui_message_list_attachment_invalid_url">"अमान्य यूआरएल के कारण लोड विफल रहा।"</string>
   <string name="stream_ui_message_list_attachment_load_failed">"अज्ञात त्रुटि के कारण लोड विफल हो गया।"</string>
   <string name="stream_ui_yesterday">"कल"</string>
-  <string name="stream_ui_mention_list_empty">"अभी तक कोई उल्लेख मौजूद नहीं है…"</string>
-  <string name="stream_ui_mention_list_error">"एक त्रुटि पाई गई"</string>
 </resources>

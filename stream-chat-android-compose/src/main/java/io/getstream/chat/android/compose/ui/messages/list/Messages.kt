@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,6 +33,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.util.isAppInForegroundAsState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.messages.list.HasMessageListItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
@@ -51,6 +52,8 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
 import io.getstream.chat.android.ui.common.state.messages.list.NewMessageState
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.launch
 import kotlin.math.abs
 
@@ -228,12 +231,14 @@ public fun Messages(
         }
     }
 
-    /** Marks the bottom most item as read every time it changes. **/
-    OnLastVisibleItemChanged(lazyListState) { messageIndex ->
-        val message = messagesState.messageItems.getOrNull(messageIndex)
-
-        if (message is HasMessageListItemState) {
-            onLastVisibleMessageChanged(message.message)
+    // Notifies the bottom-most item every time it changes, and the app is in the foreground.
+    val isAppInForeground by isAppInForegroundAsState()
+    LaunchedEffect(lazyListState, messages, isAppInForeground) {
+        if (isAppInForeground) {
+            snapshotFlow { messages.getOrNull(lazyListState.firstVisibleItemIndex) }
+                .filterIsInstance<HasMessageListItemState>()
+                .distinctUntilChanged()
+                .collect { item -> onLastVisibleMessageChanged(item.message) }
         }
     }
 }
@@ -256,15 +261,6 @@ private fun MessageListState.getVerticalArrangement(
 
         false -> messagesVerticalArrangement
     }
-
-/**
- * Used to hoist state in a way that defers reads to a lambda,
- * hence skipping unnecessary recomposition of the parent composable.
- */
-@Composable
-private fun OnLastVisibleItemChanged(lazyListState: LazyListState, onChanged: (firstVisibleItemIndex: Int) -> Unit) {
-    onChanged(lazyListState.firstVisibleItemIndex)
-}
 
 /**
  * Represents the default scrolling behavior and UI for [Messages], based on the state of messages and the scroll state.
