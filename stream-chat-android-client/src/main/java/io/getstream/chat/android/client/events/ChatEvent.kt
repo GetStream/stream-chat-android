@@ -23,6 +23,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.ThreadInfo
@@ -811,6 +812,66 @@ public data class VoteRemovedEvent(
     override val poll: Poll,
     val removedVote: Vote,
 ) : CidEvent(), HasPoll
+
+/**
+ * Triggered when a message reminder is created.
+ */
+public data class ReminderCreatedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    val messageId: String,
+    val userId: String,
+    val reminder: MessageReminder,
+) : CidEvent()
+
+/**
+ * Triggered when a message reminder is updated.
+ */
+public data class ReminderUpdatedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    val messageId: String,
+    val userId: String,
+    val reminder: MessageReminder,
+) : CidEvent()
+
+/**
+ * Triggered when a message reminder is deleted.
+ */
+public data class ReminderDeletedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    val messageId: String,
+    val userId: String,
+    val reminder: MessageReminder,
+) : CidEvent()
+
+/**
+ * Triggered when a message reminder is due.
+ */
+public data class NotificationReminderDueEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    val messageId: String,
+    val userId: String,
+    val reminder: MessageReminder,
+) : CidEvent()
 
 /**
  * Triggered when an ai indicator is updated.
