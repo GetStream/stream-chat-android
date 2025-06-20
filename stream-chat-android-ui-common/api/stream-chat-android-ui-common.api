@@ -959,6 +959,21 @@ public abstract interface class io/getstream/chat/android/ui/common/feature/mess
 public final class io/getstream/chat/android/ui/common/feature/messages/list/MessagePositionHandler$Companion {
 }
 
+public final class io/getstream/chat/android/ui/common/feature/messages/translations/MessageOriginalTranslationsStore {
+	public static final field $stable I
+	public static final field Companion Lio/getstream/chat/android/ui/common/feature/messages/translations/MessageOriginalTranslationsStore$Companion;
+	public final fun clear ()V
+	public final fun getOriginalTextMessageIds ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun hideOriginalText (Ljava/lang/String;)V
+	public final fun shouldShowOriginalText (Ljava/lang/String;)Z
+	public final fun showOriginalText (Ljava/lang/String;)V
+	public final fun toggleOriginalText (Ljava/lang/String;)V
+}
+
+public final class io/getstream/chat/android/ui/common/feature/messages/translations/MessageOriginalTranslationsStore$Companion {
+	public final fun forChannel (Ljava/lang/String;)Lio/getstream/chat/android/ui/common/feature/messages/translations/MessageOriginalTranslationsStore;
+}
+
 public final class io/getstream/chat/android/ui/common/feature/threads/ThreadListController$Companion {
 }
 
@@ -2809,17 +2824,6 @@ public final class io/getstream/chat/android/ui/common/utils/MediaStringUtil {
 	public static final fun convertFileSizeByteCount (J)Ljava/lang/String;
 	public static final fun convertVideoLength (JLjava/util/Locale;)Ljava/lang/String;
 	public static synthetic fun convertVideoLength$default (JLjava/util/Locale;ILjava/lang/Object;)Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/common/utils/MessageOriginalTranslationsStore {
-	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/utils/MessageOriginalTranslationsStore;
-	public final fun clear ()V
-	public final fun getOriginalTextMessageIds ()Lkotlinx/coroutines/flow/StateFlow;
-	public final fun hideOriginalText (Ljava/lang/String;)V
-	public final fun shouldShowOriginalText (Ljava/lang/String;)Z
-	public final fun showOriginalText (Ljava/lang/String;)V
-	public final fun toggleOriginalText (Ljava/lang/String;)V
 }
 
 public class io/getstream/chat/android/ui/common/utils/Utils {

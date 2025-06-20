@@ -20,8 +20,9 @@ import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.SnapshotTest
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.ui.common.utils.MessageOriginalTranslationsStore
+import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
 import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
@@ -30,17 +31,26 @@ internal class ToggleableTranslatedLabelTest : SnapshotTest {
     @get:Rule
     override val paparazzi = Paparazzi(deviceConfig = DeviceConfig.PIXEL_2)
 
+    private val cid = "cid"
+    private lateinit var translationsStore: MessageOriginalTranslationsStore
+
+    @Before
+    fun setUpStore() {
+        translationsStore = MessageOriginalTranslationsStore.forChannel(cid)
+    }
+
     @After
-    fun tearDown() {
-        MessageOriginalTranslationsStore.clear()
+    fun tearDownStore() {
+        translationsStore.clear()
     }
 
     @Test
     fun `show translation label when showOriginalText is true`() {
         val messageId = "message-id"
-        MessageOriginalTranslationsStore.showOriginalText(messageId)
+        translationsStore.showOriginalText(messageId)
         val message = Message(
             id = messageId,
+            cid = cid,
             text = "Original text",
             i18n = mapOf("en" to "Translated text"),
         )
@@ -55,8 +65,10 @@ internal class ToggleableTranslatedLabelTest : SnapshotTest {
     @Test
     fun `show original label and translated label when showOriginalText is false`() {
         val messageId = "message-id"
-        MessageOriginalTranslationsStore.hideOriginalText(messageId)
+        translationsStore.hideOriginalText(messageId)
         val message = Message(
+            id = messageId,
+            cid = cid,
             text = "Original text",
             i18n = mapOf("en" to "Translated text"),
         )

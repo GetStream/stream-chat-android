@@ -4246,7 +4246,7 @@ public final class io/getstream/chat/android/compose/ui/util/MessageTextFormatte
 }
 
 public final class io/getstream/chat/android/compose/ui/util/MessageUtilsKt {
-	public static final fun showOriginalTextAsState (Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Landroidx/compose/runtime/State;
+	public static final fun showOriginalTextAsState (Ljava/lang/String;Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Landroidx/compose/runtime/State;
 }
 
 public abstract interface class io/getstream/chat/android/compose/ui/util/PollSwitchItemFactory {

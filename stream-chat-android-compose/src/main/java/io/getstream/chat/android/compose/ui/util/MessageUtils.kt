@@ -23,7 +23,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.common.utils.MessageOriginalTranslationsStore
+import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
 import io.getstream.chat.android.uiutils.extension.isUploading
 import io.getstream.chat.android.uiutils.util.EmojiUtil
 import kotlinx.coroutines.flow.map
@@ -35,8 +35,9 @@ import kotlinx.coroutines.flow.map
  * @return A [State] that contains true if the original text should be shown, false otherwise.
  */
 @Composable
-public fun showOriginalTextAsState(messageId: String): State<Boolean> {
-    return MessageOriginalTranslationsStore.originalTextMessageIds
+public fun showOriginalTextAsState(cid: String, messageId: String): State<Boolean> {
+    return MessageOriginalTranslationsStore.forChannel(cid)
+        .originalTextMessageIds
         .map { it.contains(messageId) }
         .collectAsStateWithLifecycle(false)
 }

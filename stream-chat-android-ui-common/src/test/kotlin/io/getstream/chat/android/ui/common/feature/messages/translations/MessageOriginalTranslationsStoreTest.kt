@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.utils
+package io.getstream.chat.android.ui.common.feature.messages.translations
 
 import app.cash.turbine.test
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.After
+import org.junit.Before
 import org.junit.Test
 import org.junit.jupiter.api.Assertions
 import kotlin.time.ExperimentalTime
@@ -31,15 +32,23 @@ internal class MessageOriginalTranslationsStoreTest {
     private val testMessageId1 = "test-message-id-1"
     private val testMessageId2 = "test-message-id-2"
 
+    private lateinit var translationsStore: MessageOriginalTranslationsStore
+
+    @Before
+    fun setUp() {
+        // Initialize the store before each test
+        translationsStore = MessageOriginalTranslationsStore.forChannel("cid")
+    }
+
     @After
     fun tearDown() {
         // Clear the store after each test to ensure a clean state
-        MessageOriginalTranslationsStore.clear()
+        translationsStore.clear()
     }
 
     @Test
     fun `originalTextMessageIds should initially contain an empty set`() = runTest {
-        MessageOriginalTranslationsStore.originalTextMessageIds.test {
+        translationsStore.originalTextMessageIds.test {
             Assertions.assertEquals(emptySet<String>(), awaitItem())
             cancelAndIgnoreRemainingEvents()
         }
@@ -47,17 +56,17 @@ internal class MessageOriginalTranslationsStoreTest {
 
     @Test
     fun `shouldShowOriginalText should return false for a message that is not in the store`() {
-        Assertions.assertFalse(MessageOriginalTranslationsStore.shouldShowOriginalText(testMessageId1))
+        Assertions.assertFalse(translationsStore.shouldShowOriginalText(testMessageId1))
     }
 
     @Test
     fun `showOriginalText should add the message ID to the store`() = runTest {
-        MessageOriginalTranslationsStore.originalTextMessageIds.test {
+        translationsStore.originalTextMessageIds.test {
             // Initial state is empty
             Assertions.assertEquals(emptySet<String>(), awaitItem())
 
             // Show original text for a message
-            MessageOriginalTranslationsStore.showOriginalText(testMessageId1)
+            translationsStore.showOriginalText(testMessageId1)
 
             // Verify that the message ID was added
             Assertions.assertEquals(setOf(testMessageId1), awaitItem())
@@ -68,14 +77,14 @@ internal class MessageOriginalTranslationsStoreTest {
     @Test
     fun `hideOriginalText should remove the message ID from the store`() = runTest {
         // First add the message ID
-        MessageOriginalTranslationsStore.showOriginalText(testMessageId1)
+        translationsStore.showOriginalText(testMessageId1)
 
-        MessageOriginalTranslationsStore.originalTextMessageIds.test {
+        translationsStore.originalTextMessageIds.test {
             // Verify initial state
             Assertions.assertEquals(setOf(testMessageId1), awaitItem())
 
             // Hide original text for the message
-            MessageOriginalTranslationsStore.hideOriginalText(testMessageId1)
+            translationsStore.hideOriginalText(testMessageId1)
 
             // Verify that the message ID was removed
             Assertions.assertEquals(emptySet<String>(), awaitItem())
@@ -85,12 +94,12 @@ internal class MessageOriginalTranslationsStoreTest {
 
     @Test
     fun `hideOriginalText should do nothing if the message ID is not in the store`() = runTest {
-        MessageOriginalTranslationsStore.originalTextMessageIds.test {
+        translationsStore.originalTextMessageIds.test {
             // Initial state is empty
             Assertions.assertEquals(emptySet<String>(), awaitItem())
 
             // Try to hide original text for a message that's not in the store
-            MessageOriginalTranslationsStore.hideOriginalText(testMessageId1)
+            translationsStore.hideOriginalText(testMessageId1)
 
             // Verify that the state did not change
             expectNoEvents()
@@ -100,12 +109,12 @@ internal class MessageOriginalTranslationsStoreTest {
 
     @Test
     fun `toggleOriginalText should add the message ID if it's not in the store`() = runTest {
-        MessageOriginalTranslationsStore.originalTextMessageIds.test {
+        translationsStore.originalTextMessageIds.test {
             // Initial state is empty
             Assertions.assertEquals(emptySet<String>(), awaitItem())
 
             // Toggle original text for a message
-            MessageOriginalTranslationsStore.toggleOriginalText(testMessageId1)
+            translationsStore.toggleOriginalText(testMessageId1)
 
             // Verify that the message ID was added
             Assertions.assertEquals(setOf(testMessageId1), awaitItem())
@@ -116,14 +125,14 @@ internal class MessageOriginalTranslationsStoreTest {
     @Test
     fun `toggleOriginalText should remove the message ID if it's already in the store`() = runTest {
         // First add the message ID
-        MessageOriginalTranslationsStore.showOriginalText(testMessageId1)
+        translationsStore.showOriginalText(testMessageId1)
 
-        MessageOriginalTranslationsStore.originalTextMessageIds.test {
+        translationsStore.originalTextMessageIds.test {
             // Verify initial state
             Assertions.assertEquals(setOf(testMessageId1), awaitItem())
 
             // Toggle original text for the message
-            MessageOriginalTranslationsStore.toggleOriginalText(testMessageId1)
+            translationsStore.toggleOriginalText(testMessageId1)
 
             // Verify that the message ID was removed
             Assertions.assertEquals(emptySet<String>(), awaitItem())
@@ -134,29 +143,29 @@ internal class MessageOriginalTranslationsStoreTest {
     @Test
     fun `shouldShowOriginalText should return true for a message that is in the store`() = runTest {
         // Add the message ID to the store
-        MessageOriginalTranslationsStore.showOriginalText(testMessageId1)
+        translationsStore.showOriginalText(testMessageId1)
 
         // Verify that shouldShowOriginalText returns true for the message
-        Assertions.assertTrue(MessageOriginalTranslationsStore.shouldShowOriginalText(testMessageId1))
+        Assertions.assertTrue(translationsStore.shouldShowOriginalText(testMessageId1))
     }
 
     @Test
     fun `store should handle multiple message IDs correctly`() = runTest {
         // Add the first message ID
-        MessageOriginalTranslationsStore.showOriginalText(testMessageId1)
+        translationsStore.showOriginalText(testMessageId1)
 
-        MessageOriginalTranslationsStore.originalTextMessageIds.test {
+        translationsStore.originalTextMessageIds.test {
             // Verify initial state
             Assertions.assertEquals(setOf(testMessageId1), awaitItem())
 
             // Add another message ID
-            MessageOriginalTranslationsStore.showOriginalText(testMessageId2)
+            translationsStore.showOriginalText(testMessageId2)
 
             // Verify that both message IDs are in the store
             Assertions.assertEquals(setOf(testMessageId1, testMessageId2), awaitItem())
 
             // Remove one message ID
-            MessageOriginalTranslationsStore.hideOriginalText(testMessageId1)
+            translationsStore.hideOriginalText(testMessageId1)
 
             // Verify that only the second message ID remains
             Assertions.assertEquals(setOf(testMessageId2), awaitItem())
@@ -167,15 +176,15 @@ internal class MessageOriginalTranslationsStoreTest {
     @Test
     fun `clear should remove all message IDs from the store`() = runTest {
         // Add some message IDs
-        MessageOriginalTranslationsStore.showOriginalText(testMessageId1)
-        MessageOriginalTranslationsStore.showOriginalText(testMessageId2)
+        translationsStore.showOriginalText(testMessageId1)
+        translationsStore.showOriginalText(testMessageId2)
 
-        MessageOriginalTranslationsStore.originalTextMessageIds.test {
+        translationsStore.originalTextMessageIds.test {
             // Verify initial state
             Assertions.assertEquals(setOf(testMessageId1, testMessageId2), awaitItem())
 
             // Clear the store
-            MessageOriginalTranslationsStore.clear()
+            translationsStore.clear()
 
             // Verify that all message IDs were removed
             Assertions.assertEquals(emptySet<String>(), awaitItem())

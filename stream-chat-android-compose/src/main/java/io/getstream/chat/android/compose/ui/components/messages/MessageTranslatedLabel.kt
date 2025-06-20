@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import io.getstream.chat.android.client.utils.message.isDeleted
@@ -31,8 +32,8 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.showOriginalTextAsState
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
-import io.getstream.chat.android.ui.common.utils.MessageOriginalTranslationsStore
 
 /**
  * A composable function that displays a label indicating that a message has been translated.
@@ -74,11 +75,14 @@ internal fun ToggleableTranslatedLabel(
     message: Message,
     translatedTo: String,
 ) {
-    val showOriginalText by showOriginalTextAsState(message.id)
+    val showOriginalText by showOriginalTextAsState(message.cid, message.id)
+    val translationsStore = remember(message.cid) {
+        MessageOriginalTranslationsStore.forChannel(message.cid)
+    }
     if (showOriginalText) {
         ShowTranslationLabel(
             onToggleOriginalText = {
-                MessageOriginalTranslationsStore.toggleOriginalText(message.id)
+                translationsStore.toggleOriginalText(message.id)
             },
         )
     } else {
@@ -86,7 +90,7 @@ internal fun ToggleableTranslatedLabel(
             TranslatedLabel(translatedTo)
             ShowOriginalLabel(
                 onToggleOriginalText = {
-                    MessageOriginalTranslationsStore.toggleOriginalText(message.id)
+                    translationsStore.toggleOriginalText(message.id)
                 },
             )
         }

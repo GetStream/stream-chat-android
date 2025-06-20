@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.utils
+package io.getstream.chat.android.ui.common.feature.messages.translations
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.StateFlow
  * This store keeps track of which messages have their original text translations shown or hidden.
  * It provides methods to toggle, show, hide, and check the visibility of original text translations.
  */
-public object MessageOriginalTranslationsStore {
+public class MessageOriginalTranslationsStore private constructor() {
 
     /**
      * A [StateFlow] that holds the set of message IDs for which the original text translation is shown.
@@ -81,5 +81,20 @@ public object MessageOriginalTranslationsStore {
      */
     public fun clear() {
         _originalTextMessageIds.value = emptySet()
+    }
+
+    public companion object {
+
+        private val stores = mutableMapOf<String, MessageOriginalTranslationsStore>()
+
+        /**
+         * Retrieves the [MessageOriginalTranslationsStore] for a given channel ID.
+         *
+         * @param channelId The ID of the channel for which to retrieve the store.
+         * @return The [MessageOriginalTranslationsStore] associated with the specified channel ID.
+         */
+        public fun forChannel(channelId: String): MessageOriginalTranslationsStore {
+            return stores.getOrPut(channelId) { MessageOriginalTranslationsStore() }
+        }
     }
 }
