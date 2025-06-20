@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.attachments.preview.internal
 
 import android.content.Context
+import android.view.LayoutInflater
 import androidx.annotation.OptIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -48,6 +49,7 @@ import io.getstream.chat.android.compose.ui.attachments.content.PlayButton
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.clickable
+import io.getstream.chat.android.core.internal.StreamHandsOff
 
 /**
  * A Composable that displays a video player with support for thumbnails, play controls, and buffering indicators.
@@ -216,9 +218,19 @@ private fun createPlayer(
  * @param player The [Player] instance to be associated with the view.
  * @return A configured [PlayerView] instance.
  */
+@StreamHandsOff(
+    "This method manually inflates the PlayerView layout, because we are overriding the default " +
+        "root layout (player_layout_id) and the default controller layout (controller_layout_id). These layouts are " +
+        "just copies of the 'exo_player_view.xml' and the 'exo_player_control_view.xml' from the ExoPlayer " +
+        "library. They only have a different name (layout ID) to avoid being overridden by layouts with the same " +
+        "name from different versions of the ExoPlayer library (included in integration projects). This ensures that " +
+        "we always use the correct layout for our version of the ExoPlayer library",
+)
 @OptIn(UnstableApi::class)
 private fun createPlayerView(context: Context, player: Player): PlayerView {
-    return PlayerView(context).apply {
+    val playerView = LayoutInflater.from(context)
+        .inflate(R.layout.stream_compose_player_view, null) as PlayerView
+    return playerView.apply {
         this.player = player
         controllerShowTimeoutMs = ControllerShowTimeout
         controllerAutoShow = false
