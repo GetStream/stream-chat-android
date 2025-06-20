@@ -77,10 +77,16 @@ public fun MessageText(
 ) {
     val context = LocalContext.current
 
-    val showOriginalText by showOriginalTextAsState(message.cid, message.id)
     val formatter = ChatTheme.messageTextFormatter
-    val styledText = remember(message, currentUser, showOriginalText) {
-        formatter.format(message, currentUser)
+    val styledText = if (ChatTheme.autoTranslationEnabled) {
+        val showOriginalText by showOriginalTextAsState(message.cid, message.id)
+        remember(message, currentUser, showOriginalText) {
+            formatter.format(message, currentUser)
+        }
+    } else {
+        remember(message, currentUser) {
+            formatter.format(message, currentUser)
+        }
     }
 
     val annotations = styledText.getStringAnnotations(0, styledText.lastIndex)
