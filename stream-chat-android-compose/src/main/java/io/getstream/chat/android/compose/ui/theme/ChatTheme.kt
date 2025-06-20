@@ -228,6 +228,12 @@ private val LocalAutoTranslationEnabled = compositionLocalOf<Boolean> {
             "Make sure to wrap all usages of Stream components in a ChatTheme.",
     )
 }
+private val LocalShowOriginalTranslationEnabled = compositionLocalOf<Boolean> {
+    error(
+        "No ShowOriginalTranslationEnabled Boolean provided! " +
+            "Make sure to wrap all usages of Stream components in a ChatTheme.",
+    )
+}
 private val LocalComposerLinkPreviewEnabled = compositionLocalOf<Boolean> {
     error(
         "No ComposerLinkPreviewEnabled Boolean provided! " +
@@ -250,6 +256,7 @@ private val LocalMediaGalleryConfig = compositionLocalOf<MediaGalleryConfig> {
  * @param isInDarkMode If we're currently in the dark mode or not. Affects only the default color palette that's
  * provided. If you customize [colors], make sure to add your own logic for dark/light colors.
  * @param autoTranslationEnabled Whether messages auto translation is enabled or not.
+ * @param showOriginalTranslationEnabled Whether the option to show the original translation is enabled or not.
  * @param isComposerLinkPreviewEnabled Whether the composer link preview is enabled or not.
  * @param useDefaultSystemMediaPicker Flag that determines which attachment picker should be used. If true, the system
  * attachments picker which doesn't use storage permissions will be used. If false, the default attachments picker which
@@ -305,6 +312,7 @@ private val LocalMediaGalleryConfig = compositionLocalOf<MediaGalleryConfig> {
 public fun ChatTheme(
     isInDarkMode: Boolean = isSystemInDarkTheme(),
     autoTranslationEnabled: Boolean = false,
+    showOriginalTranslationEnabled: Boolean = false,
     isComposerLinkPreviewEnabled: Boolean = false,
     useDefaultSystemMediaPicker: Boolean = false,
     systemAttachmentsPickerConfig: SystemAttachmentsPickerConfig = SystemAttachmentsPickerConfig(),
@@ -456,6 +464,7 @@ public fun ChatTheme(
         LocalReadCountEnabled provides readCountEnabled,
         LocalStreamMediaRecorder provides streamMediaRecorder,
         LocalAutoTranslationEnabled provides autoTranslationEnabled,
+        LocalShowOriginalTranslationEnabled provides showOriginalTranslationEnabled,
         LocalComposerLinkPreviewEnabled provides isComposerLinkPreviewEnabled,
         LocalKeyboardBehaviour provides keyboardBehaviour,
         LocalMediaGalleryConfig provides mediaGalleryConfig,
@@ -812,6 +821,14 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalAutoTranslationEnabled.current
+
+    /**
+     * Retrieves the current [showOriginalTranslationEnabled] value at the call site's position in the hierarchy.
+     */
+    public val showOriginalTranslationEnabled: Boolean
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalShowOriginalTranslationEnabled.current
 
     /**
      * Retrieves the current [isComposerLinkPreviewEnabled] value at the call site's position in the hierarchy.
