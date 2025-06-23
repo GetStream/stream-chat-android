@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.common.feature.messages.list
 
+import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.AudioState
@@ -88,6 +89,7 @@ import org.amshove.kluent.shouldBeFalse
 import org.amshove.kluent.shouldBeNull
 import org.amshove.kluent.shouldBeTrue
 import org.amshove.kluent.shouldNotBeNull
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
@@ -923,6 +925,41 @@ internal class MessageListControllerTests {
 
         val expectedEvent = MessageListController.ErrorEvent.PollRemovingVoteError(error)
         controller.errorEvents.value `should be equal to` expectedEvent
+    }
+
+    @Test
+    fun `When toggleOriginalText, the message translation is toggled`() = runTest {
+        val messageId = randomString()
+        val message = randomMessage(
+            id = messageId,
+            text = "Original text",
+            i18n = mapOf("fr" to "Texte original"),
+        )
+        val user = randomUser(language = "fr")
+        val controller = Fixture()
+            .givenCurrentUser(user)
+            .givenChannelState(messagesState = MutableStateFlow(listOf(message)))
+            .get(dateSeparatorHandler = { _, _ -> false })
+        controller.messageListState.test {
+            // Verify messageItem.showOriginalText is false initially
+            val initialState = awaitItem()
+            val initialMessageItem = initialState.messageItems.first() as MessageItemState
+            Assertions.assertFalse(initialMessageItem.showOriginalText)
+            // Toggle original text
+            controller.toggleOriginalText(messageId)
+            // Verify messageItem.showOriginalText is true after toggling
+            val toggledState = awaitItem()
+            val toggledMessageItem = toggledState.messageItems.first() as MessageItemState
+            Assertions.assertTrue(toggledMessageItem.showOriginalText)
+            // Toggle original text again
+            controller.toggleOriginalText(messageId)
+            // Verify messageItem.showOriginalText is false after toggling again
+            val toggledBackState = awaitItem()
+            val toggledBackMessageItem = toggledBackState.messageItems.first() as MessageItemState
+            Assertions.assertFalse(toggledBackMessageItem.showOriginalText)
+
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     private class Fixture(

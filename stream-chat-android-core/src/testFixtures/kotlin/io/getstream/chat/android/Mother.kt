@@ -314,6 +314,7 @@ public fun randomMessage(
     poll: Poll? = null,
     moderationDetails: MessageModerationDetails? = null,
     moderation: Moderation? = null,
+    i18n: Map<String, String> = emptyMap(),
 ): Message = Message(
     id = id,
     cid = cid,
@@ -356,6 +357,7 @@ public fun randomMessage(
     poll = poll,
     moderationDetails = moderationDetails,
     moderation = moderation,
+    i18n = i18n,
 )
 
 public fun randomChannelMute(
