@@ -39,21 +39,20 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
-import io.getstream.chat.android.compose.ui.components.StreamHorizontalDivider
-import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
+import io.getstream.chat.android.compose.ui.components.avatar.DefaultOnlineIndicator
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getLastSeenText
@@ -61,13 +60,17 @@ import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewMode
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
+import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndicator
 import kotlinx.coroutines.flow.collectLatest
 import java.util.Date
 
@@ -77,53 +80,70 @@ import java.util.Date
  *
  * @param viewModelFactory The factory used to create the [ChannelInfoViewModel].
  * @param modifier The [Modifier] to be applied to this screen.
- * @param viewModelKey Key to differentiate between instances of [ChannelInfoViewModel].
+ * @param currentUser The current logged-in user. Defaults to the current user from the [ChatClient].
  * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
- * @param topBar The top bar to be displayed on the screen.
  */
 @ExperimentalStreamChatApi
 @Composable
 public fun GroupChannelInfoScreen(
     viewModelFactory: ChannelInfoViewModelFactory,
     modifier: Modifier = Modifier,
-    viewModelKey: String? = null,
+    currentUser: User? = ChatClient.instance().getCurrentUser(),
     onNavigationIconClick: () -> Unit = {},
-    topBar: @Composable (elevation: Dp) -> Unit = { elevation ->
-        GroupChannelInfoTopBar(
-            viewModelFactory = viewModelFactory,
-            elevation = elevation,
-            onNavigationIconClick = onNavigationIconClick,
-        )
-    },
 ) {
-    val viewModel = viewModel<ChannelInfoViewModel>(key = viewModelKey, factory = viewModelFactory)
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val headerViewModel = viewModel<ChannelHeaderViewModel>(factory = viewModelFactory)
+    val infoViewModel = viewModel<ChannelInfoViewModel>(factory = viewModelFactory)
+    val headerState by headerViewModel.state.collectAsStateWithLifecycle()
+    val infoState by infoViewModel.state.collectAsStateWithLifecycle()
 
-    val listState = rememberLazyListState()
-    val headerElevation by animateDpAsState(
-        targetValue = if (listState.canScrollBackward) {
-            ChatTheme.dimens.headerElevation
-        } else {
-            1.dp
-        },
+    GroupChannelInfoScaffold(
+        modifier = modifier,
+        currentUser = currentUser,
+        headerState = headerState,
+        infoState = infoState,
+        onNavigationIconClick = onNavigationIconClick,
+        onViewAction = infoViewModel::onViewAction,
     )
 
+    GroupChannelInfoScreenModal(infoViewModel)
+}
+
+@Composable
+private fun GroupChannelInfoScaffold(
+    modifier: Modifier,
+    currentUser: User?,
+    headerState: ChannelHeaderViewState,
+    infoState: ChannelInfoViewState,
+    onNavigationIconClick: () -> Unit = {},
+    onViewAction: (action: ChannelInfoViewAction) -> Unit = {},
+) {
+    val listState = rememberLazyListState()
     Scaffold(
         modifier = modifier,
-        topBar = { topBar(headerElevation) },
+        topBar = {
+            ChatTheme.componentFactory.GroupChannelInfoTopBar(
+                headerState = headerState,
+                listState = listState,
+                onNavigationIconClick = onNavigationIconClick,
+            )
+        },
         containerColor = ChatTheme.colors.barsBackground,
     ) { padding ->
         GroupChannelInfoContent(
             modifier = Modifier.padding(padding),
             listState = listState,
-            state = state,
-            onViewAction = viewModel::onViewAction,
+            state = infoState,
+            currentUser = currentUser,
+            onViewAction = onViewAction,
         )
     }
+}
 
+@Composable
+private fun GroupChannelInfoScreenModal(viewModel: ChannelInfoViewModel) {
     var modal by remember { mutableStateOf<ChannelInfoViewEvent.Modal?>(null) }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(viewModel) {
         viewModel.events.collectLatest { event ->
             if (event is ChannelInfoViewEvent.Modal) {
                 modal = event
@@ -131,36 +151,41 @@ public fun GroupChannelInfoScreen(
         }
     }
 
-    ChannelInfoScreenModal(
+    ChatTheme.componentFactory.ChannelInfoScreenModal(
         modal = modal,
         isGroupChannel = true,
         onViewAction = viewModel::onViewAction,
+        onMemberViewEvent = viewModel::onMemberViewEvent,
         onDismiss = { modal = null },
     )
 }
 
 @Composable
-private fun GroupChannelInfoTopBar(
-    viewModelFactory: ChannelInfoViewModelFactory,
-    elevation: Dp,
+internal fun GroupChannelInfoTopBar(
+    headerState: ChannelHeaderViewState,
+    listState: LazyListState,
     onNavigationIconClick: () -> Unit,
 ) {
-    val viewModel = viewModel<ChannelHeaderViewModel>(factory = viewModelFactory)
-    val state by viewModel.state.collectAsStateWithLifecycle()
-
-    when (val content = state) {
+    val elevation by animateDpAsState(
+        targetValue = if (listState.canScrollBackward) {
+            ChatTheme.dimens.headerElevation
+        } else {
+            1.dp
+        },
+    )
+    when (headerState) {
         is ChannelHeaderViewState.Loading -> LoadingIndicator(
             modifier = Modifier.fillMaxWidth(),
         )
 
         is ChannelHeaderViewState.Content -> MessageListHeader(
-            channel = content.channel,
-            currentUser = content.currentUser,
-            connectionState = content.connectionState,
+            channel = headerState.channel,
+            currentUser = headerState.currentUser,
+            connectionState = headerState.connectionState,
             elevation = elevation,
             onBackPressed = onNavigationIconClick,
             leadingContent = {
-                DefaultChannelInfoScreenNavigationIcon(
+                ChannelInfoNavigationIcon(
                     onClick = onNavigationIconClick,
                 )
             },
@@ -174,35 +199,43 @@ private fun GroupChannelInfoTopBar(
 @Composable
 private fun GroupChannelInfoContent(
     state: ChannelInfoViewState,
-    modifier: Modifier = Modifier,
-    listState: LazyListState = rememberLazyListState(),
-    onViewAction: (action: ChannelInfoViewAction) -> Unit = {},
+    modifier: Modifier,
+    currentUser: User?,
+    listState: LazyListState,
+    onViewAction: (action: ChannelInfoViewAction) -> Unit,
 ) {
     val isLoading = state is ChannelInfoViewState.Loading
     ContentBox(
         modifier = modifier.fillMaxSize(),
-        contentAlignment = if (isLoading) Alignment.Center else Alignment.TopCenter,
         isLoading = isLoading,
     ) {
         val content = state as ChannelInfoViewState.Content
         LazyColumn(
+            modifier = Modifier.matchParentSize(),
             state = listState,
         ) {
             items(
                 items = content.members,
-                key = { it.user.id },
+                key = Member::getUserId,
             ) { member ->
-                GroupChannelInfoMemberButton(
-                    modifier = Modifier.animateItem(),
-                    member = member,
-                    isOwner = content.owner.id == member.getUserId(),
-                    onClick = null, // Membership detail flow https://linear.app/stream/issue/AND-537
-                )
+                val isCurrentUserMember = member.getUserId() == currentUser?.id
+                with(ChatTheme.componentFactory) {
+                    GroupChannelInfoMemberItem(
+                        currentUser = currentUser,
+                        member = member,
+                        isOwner = content.owner.id == member.getUserId(),
+                        onClick = if (isCurrentUserMember) {
+                            null
+                        } else {
+                            { onViewAction(ChannelInfoViewAction.MemberClick(member = member)) }
+                        },
+                    )
+                }
             }
-            if (content.members.canExpand) {
-                if (content.members.isCollapsed) {
-                    item {
-                        GroupChannelInfoExpandMemberButton(
+            if (content.members.canExpand && content.members.isCollapsed) {
+                item {
+                    with(ChatTheme.componentFactory) {
+                        GroupChannelInfoExpandMembersItem(
                             collapsedCount = content.members.collapsedCount,
                             onClick = { onViewAction(ChannelInfoViewAction.ExpandMembersClick) },
                         )
@@ -210,49 +243,67 @@ private fun GroupChannelInfoContent(
                 }
             }
             item {
-                StreamHorizontalDivider(thickness = 8.dp)
+                with(ChatTheme.componentFactory) {
+                    ChannelInfoSeparatorItem()
+                }
             }
             items(content.options) { option ->
-                ChannelInfoContentOption(
-                    option = option,
-                    isGroupChannel = true,
-                    onViewAction = onViewAction,
-                )
+                with(ChatTheme.componentFactory) {
+                    ChannelInfoOptionItem(
+                        option = option,
+                        isGroupChannel = true,
+                        onViewAction = onViewAction,
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-private fun GroupChannelInfoMemberButton(
+internal fun GroupChannelInfoMemberItem(
+    modifier: Modifier,
+    currentUser: User?,
     member: Member,
     isOwner: Boolean,
     onClick: (() -> Unit)?,
-    modifier: Modifier = Modifier,
 ) {
     ChannelInfoOption(
         modifier = modifier,
         onClick = onClick,
     ) {
         val user = member.user
-        UserAvatar(
+        ChatTheme.componentFactory.UserAvatar(
             modifier = Modifier.size(ChatTheme.dimens.channelAvatarSize),
             user = user,
+            textStyle = ChatTheme.typography.title3Bold,
+            showOnlineIndicator = user.shouldShowOnlineIndicator(
+                userPresence = ChatTheme.userPresence,
+                currentUser = currentUser,
+            ),
+            onlineIndicator = { DefaultOnlineIndicator(onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd) },
+            onClick = null,
         )
-        Column(
-            modifier = Modifier.weight(1f),
-        ) {
+        Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = user.name.takeIf(String::isNotBlank) ?: user.id,
-                style = ChatTheme.typography.body,
-                color = ChatTheme.colors.textHighEmphasis,
+                style = ChatTheme.typography.bodyBold,
+                color = if (member.banned) {
+                    ChatTheme.colors.errorAccent
+                } else {
+                    ChatTheme.colors.textHighEmphasis
+                },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
             Text(
                 text = user.getLastSeenText(LocalContext.current),
                 style = ChatTheme.typography.footnote,
-                color = ChatTheme.colors.textLowEmphasis,
+                color = if (member.banned) {
+                    ChatTheme.colors.errorAccent
+                } else {
+                    ChatTheme.colors.textLowEmphasis
+                },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -277,7 +328,7 @@ private fun GroupChannelInfoMemberButton(
 }
 
 @Composable
-private fun GroupChannelInfoExpandMemberButton(
+internal fun GroupChannelInfoExpandMembersItem(
     collapsedCount: Int,
     onClick: () -> Unit,
 ) {
@@ -304,8 +355,11 @@ private fun GroupChannelInfoLoadingPreview() {
 
 @Composable
 internal fun GroupChannelInfoLoading() {
-    GroupChannelInfoContent(
-        state = ChannelInfoViewState.Loading,
+    GroupChannelInfoScaffold(
+        modifier = Modifier.fillMaxSize(),
+        currentUser = PreviewUserData.user1,
+        headerState = ChannelHeaderViewState.Loading,
+        infoState = ChannelInfoViewState.Loading,
     )
 }
 
@@ -319,8 +373,15 @@ private fun GroupChannelInfoCollapsedMembersPreview() {
 
 @Composable
 internal fun GroupChannelInfoCollapsedMembers() {
-    GroupChannelInfoContent(
-        state = ChannelInfoViewState.Content(
+    GroupChannelInfoScaffold(
+        modifier = Modifier.fillMaxSize(),
+        currentUser = PreviewUserData.user1,
+        headerState = ChannelHeaderViewState.Content(
+            currentUser = PreviewUserData.user1,
+            connectionState = ConnectionState.Connected,
+            channel = PreviewChannelData.channelWithImage,
+        ),
+        infoState = ChannelInfoViewState.Content(
             owner = PreviewUserData.user1,
             members = ExpandableList(
                 items = listOf(
@@ -355,15 +416,22 @@ private fun GroupChannelInfoExpandedMembersPreview() {
 
 @Composable
 internal fun GroupChannelInfoExpandedMembers() {
-    GroupChannelInfoContent(
-        state = ChannelInfoViewState.Content(
+    GroupChannelInfoScaffold(
+        modifier = Modifier.fillMaxSize(),
+        currentUser = PreviewUserData.user1,
+        headerState = ChannelHeaderViewState.Content(
+            currentUser = PreviewUserData.user1,
+            connectionState = ConnectionState.Connected,
+            channel = PreviewChannelData.channelWithImage,
+        ),
+        infoState = ChannelInfoViewState.Content(
             owner = PreviewUserData.user1,
             members = ExpandableList(
                 items = listOf(
                     Member(user = PreviewUserData.user1.copy(lastActive = Date())),
                     Member(user = PreviewUserData.user2.copy(online = true)),
                     Member(user = PreviewUserData.user3),
-                    Member(user = PreviewUserData.user4),
+                    Member(user = PreviewUserData.user4.copy(lastActive = Date()), banned = true),
                 ),
                 minimumVisibleItems = 2,
                 isCollapsed = false,

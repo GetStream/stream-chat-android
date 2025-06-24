@@ -39,7 +39,7 @@ public class UploadAttachmentFactory(
     type = Type.BuiltIn.UPLOAD,
     canHandle = { attachments -> attachments.any { it.isUploading() } },
     content = @Composable { modifier, state ->
-        FileUploadContent(
+        ChatTheme.componentFactory.FileUploadContent(
             modifier = modifier
                 .wrapContentHeight()
                 .width(ChatTheme.dimens.attachmentsContentFileUploadWidth),

@@ -36,6 +36,7 @@ import io.getstream.chat.android.randomGenericError
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMembers
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent.Navigation
@@ -822,7 +823,7 @@ internal class ChannelInfoViewControllerTest {
             )
 
             val quitMessage = randomMessage()
-            fixture.givenLeaveChannel(quitMessage)
+            fixture.givenRemoveMember(memberId = currentUser.id, systemMessage = quitMessage)
 
             sut.onViewAction(ChannelInfoViewAction.LeaveChannelConfirmationClick(quitMessage))
 
@@ -865,8 +866,9 @@ internal class ChannelInfoViewControllerTest {
             )
 
             val quitMessage = randomMessage()
-            fixture.givenLeaveChannel(
-                quitMessage = quitMessage,
+            fixture.givenRemoveMember(
+                memberId = currentUser.id,
+                systemMessage = quitMessage,
                 error = randomGenericError(),
             )
 
@@ -966,6 +968,236 @@ internal class ChannelInfoViewControllerTest {
             }
         }
     }
+
+    @Test
+    fun `message member with distinct channel`() = runTest {
+        val memberId = randomString()
+        val cid = randomCID()
+        val fixture = Fixture()
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            sut.events.test {
+                sut.onMemberViewEvent(ChannelInfoMemberViewEvent.MessageMember(memberId, cid))
+
+                assertEquals(
+                    ChannelInfoViewEvent.NavigateToChannel(cid),
+                    awaitItem(),
+                )
+            }
+        }
+
+        launch { fixture.verifyNoMoreInteractions() }
+    }
+
+    @Test
+    fun `message member with no distinct channel`() = runTest {
+        val memberId = randomString()
+        val fixture = Fixture()
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            sut.events.test {
+                sut.onMemberViewEvent(ChannelInfoMemberViewEvent.MessageMember(memberId, distinctCid = null))
+
+                assertEquals(
+                    ChannelInfoViewEvent.NavigateToDraftChannel(memberId),
+                    awaitItem(),
+                )
+            }
+        }
+
+        launch { fixture.verifyNoMoreInteractions() }
+    }
+
+    @Test
+    fun `ban member modal`() = runTest {
+        val member = randomMember()
+        val fixture = Fixture()
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2) // Skip initial states
+
+            sut.events.test {
+                sut.onMemberViewEvent(ChannelInfoMemberViewEvent.BanMember(member))
+
+                assertEquals(ChannelInfoViewEvent.BanMemberModal(member), awaitItem())
+            }
+        }
+
+        launch { fixture.verifyNoMoreInteractions() }
+    }
+
+    @Test
+    fun `ban member success`() = runTest {
+        val member = randomMember()
+        val timeoutInMinutes = 60
+        val fixture = Fixture()
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2) // Skip initial states
+
+            fixture.givenBanMember(member, timeoutInMinutes)
+
+            sut.onViewAction(
+                ChannelInfoViewAction.BanMemberConfirmationClick(
+                    memberId = member.getUserId(),
+                    timeoutInMinutes = timeoutInMinutes,
+                ),
+            )
+        }
+
+        launch {
+            fixture.verifyMemberBanned(member, timeoutInMinutes)
+            fixture.verifyNoMoreInteractions()
+        }
+    }
+
+    @Test
+    fun `ban member error`() = runTest {
+        val member = randomMember()
+        val timeoutInMinutes = 60
+        val fixture = Fixture()
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2) // Skip initial states
+
+            fixture.givenBanMember(
+                member = member,
+                timeout = timeoutInMinutes,
+                error = randomGenericError(),
+            )
+
+            sut.onViewAction(
+                ChannelInfoViewAction.BanMemberConfirmationClick(
+                    memberId = member.getUserId(),
+                    timeoutInMinutes = timeoutInMinutes,
+                ),
+            )
+
+            sut.events.test {
+                assertEquals(ChannelInfoViewEvent.BanMemberError, awaitItem())
+            }
+        }
+    }
+
+    @Test
+    fun `unban member success`() = runTest {
+        val member = randomMember()
+        val fixture = Fixture()
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2) // Skip initial states
+
+            fixture.givenUnbanMember(member)
+
+            sut.onMemberViewEvent(ChannelInfoMemberViewEvent.UnbanMember(member))
+        }
+
+        launch {
+            fixture.verifyMemberNotBanned(member)
+            fixture.verifyNoMoreInteractions()
+        }
+    }
+
+    @Test
+    fun `unban member error`() = runTest {
+        val member = randomMember()
+        val fixture = Fixture()
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2) // Skip initial states
+
+            fixture.givenUnbanMember(
+                member = member,
+                error = randomGenericError(),
+            )
+
+            sut.onMemberViewEvent(ChannelInfoMemberViewEvent.UnbanMember(member))
+
+            sut.events.test {
+                assertEquals(ChannelInfoViewEvent.UnbanMemberError, awaitItem())
+            }
+        }
+    }
+
+    @Test
+    fun `remove member modal`() = runTest {
+        val member = randomMember()
+        val fixture = Fixture()
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            sut.events.test {
+                sut.onMemberViewEvent(ChannelInfoMemberViewEvent.RemoveMember(member))
+
+                assertEquals(ChannelInfoViewEvent.RemoveMemberModal(member), awaitItem())
+            }
+        }
+
+        launch { fixture.verifyNoMoreInteractions() }
+    }
+
+    @Test
+    fun `remove member success`() = runTest {
+        val member = randomMember()
+        val fixture = Fixture()
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            fixture.givenRemoveMember(memberId = member.getUserId())
+
+            sut.onViewAction(
+                ChannelInfoViewAction.RemoveMemberConfirmationClick(
+                    memberId = member.getUserId(),
+                ),
+            )
+        }
+
+        launch {
+            fixture.verifyMemberRemoved(member)
+            fixture.verifyNoMoreInteractions()
+        }
+    }
+
+    @Test
+    fun `remove member error`() = runTest {
+        val member = randomMember()
+        val fixture = Fixture()
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            fixture.givenRemoveMember(
+                memberId = member.getUserId(),
+                error = randomGenericError(),
+            )
+
+            sut.onViewAction(
+                ChannelInfoViewAction.RemoveMemberConfirmationClick(
+                    memberId = member.getUserId(),
+                ),
+            )
+
+            sut.events.test {
+                assertEquals(ChannelInfoViewEvent.RemoveMemberError, awaitItem())
+            }
+        }
+    }
 }
 
 private class Fixture {
@@ -1049,22 +1281,39 @@ private class Fixture {
         }
     }
 
-    fun givenLeaveChannel(quitMessage: Message, error: Error? = null) = apply {
+    fun givenRemoveMember(memberId: String, systemMessage: Message? = null, error: Error? = null) = apply {
         whenever(
             channelClient.removeMembers(
-                memberIds = listOf(requireNotNull(chatClient.getCurrentUser()?.id)),
-                systemMessage = quitMessage,
+                memberIds = listOf(memberId),
+                systemMessage = systemMessage,
             ),
         ) doAnswer {
-            error?.asCall()
-                ?: mock<Channel>().asCall()
+            error?.asCall() ?: mock<Channel>().asCall()
         }
     }
 
     fun givenDeleteChannel(error: Error? = null) = apply {
         whenever(channelClient.delete()) doAnswer {
+            error?.asCall() ?: mock<Channel>().asCall()
+        }
+    }
+
+    fun givenBanMember(member: Member, timeout: Int? = null, error: Error? = null) = apply {
+        whenever(
+            channelClient.banUser(
+                targetId = member.getUserId(),
+                reason = null,
+                timeout = timeout,
+            ),
+        ) doAnswer {
+            error?.asCall() ?: Unit.asCall()
+        }
+    }
+
+    fun givenUnbanMember(member: Member, error: Error? = null) = apply {
+        whenever(channelClient.unbanUser(targetId = member.getUserId())) doAnswer {
             error?.asCall()
-                ?: mock<Channel>().asCall()
+                ?: Unit.asCall()
         }
     }
 
@@ -1074,6 +1323,26 @@ private class Fixture {
 
     fun verifyCopiedUserHandleToClipboard(text: String) = apply {
         verify(copyToClipboardHandler).copy(text = text)
+    }
+
+    fun verifyMemberBanned(member: Member, timeout: Int?) = apply {
+        verify(channelClient).banUser(
+            targetId = member.getUserId(),
+            reason = null,
+            timeout = timeout,
+        )
+    }
+
+    fun verifyMemberNotBanned(member: Member) = apply {
+        verify(channelClient).unbanUser(targetId = member.getUserId())
+    }
+
+    fun verifyMemberRemoved(member: Member) = apply {
+        verify(channelClient).removeMembers(
+            memberIds = listOf(member.getUserId()),
+            systemMessage = null,
+            skipPush = null,
+        )
     }
 
     fun get(scope: CoroutineScope) = ChannelInfoViewController(

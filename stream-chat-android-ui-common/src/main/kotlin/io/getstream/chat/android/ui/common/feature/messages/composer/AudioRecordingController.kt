@@ -165,7 +165,7 @@ internal class AudioRecordingController(
             return
         }
         logger.i { "[startRecording] state: $state" }
-        val recordingName = "audio_recording_${Date()}"
+        val recordingName = "audio_recording_${Date()}.aac"
         mediaRecorder.startAudioRecording(recordingName, realPollingInterval.toLong())
         setState(RecordingState.Hold(offset = offset ?: RecordingState.Hold.ZeroOffset))
     }

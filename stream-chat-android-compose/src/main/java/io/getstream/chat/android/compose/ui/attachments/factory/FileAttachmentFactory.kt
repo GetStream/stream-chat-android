@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentContent
-import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentPreviewContent
 import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -46,14 +45,14 @@ public class FileAttachmentFactory(
         attachments.any { it.isAnyFileType() }
     },
     previewContent = @Composable { modifier, attachments, onAttachmentRemoved ->
-        FileAttachmentPreviewContent(
+        ChatTheme.componentFactory.FileAttachmentPreviewContent(
             modifier = modifier,
             attachments = attachments,
             onAttachmentRemoved = onAttachmentRemoved,
         )
     },
     content = @Composable { modifier, state ->
-        FileAttachmentContent(
+        ChatTheme.componentFactory.FileAttachmentContent(
             modifier = modifier
                 .wrapContentHeight()
                 .width(ChatTheme.dimens.attachmentsContentFileWidth),
