@@ -65,6 +65,7 @@ import io.getstream.chat.android.state.extensions.loadNewerMessages
 import io.getstream.chat.android.state.extensions.loadNewestMessages
 import io.getstream.chat.android.state.extensions.loadOlderMessages
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
+import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
 import io.getstream.chat.android.ui.common.helper.ClipboardHandler
 import io.getstream.chat.android.ui.common.state.messages.BlockUser
 import io.getstream.chat.android.ui.common.state.messages.Copy
@@ -2356,6 +2357,8 @@ public class MessageListController(
      * Cancels any pending work when the parent ViewModel is about to be destroyed.
      */
     public fun onCleared() {
+        // Clear any messages for which the original text was shown
+        MessageOriginalTranslationsStore.forChannel(cid).clear()
         scope.cancel()
     }
 
