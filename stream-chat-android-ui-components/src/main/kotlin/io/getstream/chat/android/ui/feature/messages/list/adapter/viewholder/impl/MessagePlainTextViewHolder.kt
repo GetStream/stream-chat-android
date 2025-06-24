@@ -58,6 +58,9 @@ public class MessagePlainTextViewHolder internal constructor(
                 footnote.setOnThreadClickListener {
                     container.threadClickListener.onThreadClick(data.message)
                 }
+                footnote.setOnTranslatedLabelClickListener {
+                    container.translatedLabelClickListener.onTranslatedLabelClick(data.message)
+                }
                 messageContainer.setOnLongClickListener {
                     container.messageLongClickListener.onMessageLongClick(data.message)
                     true
@@ -84,7 +87,8 @@ public class MessagePlainTextViewHolder internal constructor(
         super.bindData(data, diff)
         val textUnchanged = !diff.text
         val mentionsUnchanged = !diff.mentions
-        if (textUnchanged && mentionsUnchanged) return
+        val showOriginalTextUnchanged = !diff.showOriginalText
+        if (textUnchanged && mentionsUnchanged && showOriginalTextUnchanged) return
 
         with(binding) {
             messageTextTransformer.transformAndApply(messageText, data)

@@ -264,6 +264,8 @@ internal class FootnoteDecorator(
     }
 
     private fun setupSimpleFootnote(footnoteView: FootnoteView, data: MessageListItem.MessageItem) {
+        // Show the "Translated to ..." label always, even if the message footer is not shown.
+        setupMessageFooterTranslatedLabel(footnoteView, data)
         if (data.showMessageFooter) {
             footnoteView.showSimpleFootnote()
         } else {
@@ -272,7 +274,6 @@ internal class FootnoteDecorator(
         }
         setupMessageFooterLabel(footnoteView.footerTextLabel, data, listViewStyle.itemStyle)
         setupMessageFooterTime(footnoteView, data)
-        setupMessageFooterTranslatedLabel(footnoteView, data)
         setupMessageFooterStatusIndicator(footnoteView, data)
         setupMessageFooterReadCounter(footnoteView, data)
     }
@@ -365,7 +366,12 @@ internal class FootnoteDecorator(
         val translatedText = data.message.getTranslation(userLanguage).ifEmpty { data.message.text }
         if (!isGiphy && !isDeleted && userLanguage != i18nLanguage && translatedText != data.message.text) {
             val languageDisplayName = getLanguageDisplayName(userLanguage)
-            footnoteView.showTranslatedLabel(languageDisplayName, listViewStyle.itemStyle)
+            footnoteView.showTranslatedLabel(
+                languageName = languageDisplayName,
+                style = listViewStyle.itemStyle,
+                showOriginalTranslationEnabled = ChatUI.showOriginalTranslationEnabled,
+                showOriginalText = data.showOriginalText,
+            )
         } else {
             footnoteView.hideTranslatedLabel()
         }

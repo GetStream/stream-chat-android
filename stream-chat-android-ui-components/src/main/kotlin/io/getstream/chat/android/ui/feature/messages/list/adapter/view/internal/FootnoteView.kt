@@ -219,16 +219,43 @@ internal class FootnoteView : LinearLayoutCompat {
     }
 
     /**
+     * Sets the click listener for the "Translated to ..." label.
+     *
+     * @param onClick The click listener to be set.
+     */
+    fun setOnTranslatedLabelClickListener(onClick: (View) -> Unit) {
+        translatedLabel.setOnClickListener(onClick)
+    }
+
+    /**
      * Shows the translated label.
      *
      * @param languageName The name of the language to be shown.
      * @param style [MessageListItemStyle] The style of the MessageListItem and its items.
+     * @param showOriginalTranslationEnabled If the "Show original" option should be enabled.
+     * @param showOriginalText If the original text of the message should be shown in the UI instead of its translation.
+     * (if [showOriginalTranslationEnabled] is true).
      */
-    fun showTranslatedLabel(languageName: String, style: MessageListItemStyle) {
+    fun showTranslatedLabel(
+        languageName: String,
+        style: MessageListItemStyle,
+        showOriginalTranslationEnabled: Boolean = false,
+        showOriginalText: Boolean = false,
+    ) {
         translatedLabel.apply {
             isVisible = true
-            text = context.getString(R.string.stream_ui_message_list_translated, languageName)
             setTextStyle(style.textStyleMessageLanguage)
+        }
+        if (showOriginalTranslationEnabled) {
+            val label = if (showOriginalText) {
+                context.getString(R.string.stream_ui_message_list_show_translation)
+            } else {
+                context.getString(R.string.stream_ui_message_list_translated, languageName) +
+                    context.getString(R.string.stream_ui_message_list_show_original)
+            }
+            translatedLabel.text = label
+        } else {
+            translatedLabel.text = context.getString(R.string.stream_ui_message_list_translated, languageName)
         }
     }
 

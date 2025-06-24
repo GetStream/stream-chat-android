@@ -29,6 +29,7 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnPoll
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnReactionViewClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnShowAllPollOptionClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnThreadClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnTranslatedLabelClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnUnreadLabelReachedListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnUserClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnViewPollResultClickListener
@@ -39,8 +40,13 @@ internal class MessageListListenerContainerImpl(
     messageLongClickListener: OnMessageLongClickListener = OnMessageLongClickListener(EmptyFunctions.ONE_PARAM),
     messageRetryListener: OnMessageRetryListener = OnMessageRetryListener(EmptyFunctions.ONE_PARAM),
     threadClickListener: OnThreadClickListener = OnThreadClickListener(EmptyFunctions.ONE_PARAM),
+    translatedLabelClickListener: OnTranslatedLabelClickListener = OnTranslatedLabelClickListener(
+        EmptyFunctions.ONE_PARAM,
+    ),
     attachmentClickListener: OnAttachmentClickListener = OnAttachmentClickListener(EmptyFunctions.TWO_PARAM),
-    attachmentDownloadClickListener: OnAttachmentDownloadClickListener = OnAttachmentDownloadClickListener(EmptyFunctions.ONE_PARAM),
+    attachmentDownloadClickListener: OnAttachmentDownloadClickListener = OnAttachmentDownloadClickListener(
+        EmptyFunctions.ONE_PARAM,
+    ),
     reactionViewClickListener: OnReactionViewClickListener = OnReactionViewClickListener(EmptyFunctions.ONE_PARAM),
     userClickListener: OnUserClickListener = OnUserClickListener(EmptyFunctions.ONE_PARAM),
     mentionClickListener: OnMentionClickListener = OnMentionClickListener(EmptyFunctions.ONE_PARAM),
@@ -86,6 +92,14 @@ internal class MessageListListenerContainerImpl(
     ) { realListener ->
         OnThreadClickListener { message ->
             realListener().onThreadClick(message)
+        }
+    }
+
+    override val translatedLabelClickListener: OnTranslatedLabelClickListener by ListenerDelegate(
+        translatedLabelClickListener,
+    ) { realListener ->
+        OnTranslatedLabelClickListener { message ->
+            realListener().onTranslatedLabelClick(message)
         }
     }
 

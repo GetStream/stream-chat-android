@@ -21,6 +21,7 @@ import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.SnapshotTest
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
+import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -54,10 +55,16 @@ internal class ToggleableTranslatedLabelTest : SnapshotTest {
             text = "Original text",
             i18n = mapOf("en" to "Translated text"),
         )
+        val messageItem = MessageItemState(
+            message = message,
+            showOriginalText = true,
+            ownCapabilities = emptySet(),
+        )
         snapshotWithDarkModeRow {
             ToggleableTranslatedLabel(
-                message = message,
-                translatedTo = "en",
+                messageItem = messageItem,
+                translatedTo = "English",
+                onToggleOriginalText = {},
             )
         }
     }
@@ -72,10 +79,16 @@ internal class ToggleableTranslatedLabelTest : SnapshotTest {
             text = "Original text",
             i18n = mapOf("en" to "Translated text"),
         )
+        val messageItem = MessageItemState(
+            message = message,
+            showOriginalText = false,
+            ownCapabilities = emptySet(),
+        )
         snapshotWithDarkModeRow {
             ToggleableTranslatedLabel(
-                message = message,
-                translatedTo = "en",
+                messageItem = messageItem,
+                translatedTo = "English",
+                onToggleOriginalText = {},
             )
         }
     }

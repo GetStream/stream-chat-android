@@ -20,8 +20,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import io.getstream.chat.android.client.utils.message.isDeleted
@@ -30,9 +28,6 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.TranslatedLabel
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.clickable
-import io.getstream.chat.android.compose.ui.util.showOriginalTextAsState
-import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 
 /**
@@ -43,10 +38,12 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
  *
  * @param messageItem The state of the message item which contains details about the message,
  * the original language, and the user's current language.
+ * @param onToggleOriginalText Called when the user taps on the "Show Original" or "Show Translation" label.
  */
 @Composable
 public fun MessageTranslatedLabel(
     messageItem: MessageItemState,
+    onToggleOriginalText: () -> Unit = {},
 ) {
     if (!ChatTheme.autoTranslationEnabled) {
         return
@@ -60,8 +57,9 @@ public fun MessageTranslatedLabel(
         if (ChatTheme.showOriginalTranslationEnabled) {
             // Toggle-able label to show original text or translated text
             ToggleableTranslatedLabel(
-                message = messageItem.message,
+                messageItem = messageItem,
                 translatedTo = userLanguage,
+                onToggleOriginalText = onToggleOriginalText,
             )
         } else {
             // Always show the 'translated' label
@@ -72,27 +70,16 @@ public fun MessageTranslatedLabel(
 
 @Composable
 internal fun ToggleableTranslatedLabel(
-    message: Message,
+    messageItem: MessageItemState,
     translatedTo: String,
+    onToggleOriginalText: () -> Unit,
 ) {
-    val showOriginalText by showOriginalTextAsState(message.cid, message.id)
-    val translationsStore = remember(message.cid) {
-        MessageOriginalTranslationsStore.forChannel(message.cid)
-    }
-    if (showOriginalText) {
-        ShowTranslationLabel(
-            onToggleOriginalText = {
-                translationsStore.toggleOriginalText(message.id)
-            },
-        )
+    if (messageItem.showOriginalText) {
+        ShowTranslationLabel(onToggleOriginalText = onToggleOriginalText)
     } else {
         Row {
             TranslatedLabel(translatedTo)
-            ShowOriginalLabel(
-                onToggleOriginalText = {
-                    translationsStore.toggleOriginalText(message.id)
-                },
-            )
+            ShowOriginalLabel(onToggleOriginalText = onToggleOriginalText)
         }
     }
 }

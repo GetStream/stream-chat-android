@@ -52,6 +52,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `MessageOriginalTranslationsStore`: In-memory storage for keeping track of all auto-translated messages which have been manually converted to their original text. [#5845](https://github.com/GetStream/stream-chat-android/pull/5845)
+- Add `MessageListController.toggleOriginalText()` method for toggling between the original and translated text of the given message. [#5843](https://github.com/GetStream/stream-chat-android/pull/5843)
 
 ### ⚠️ Changed
 
@@ -64,6 +66,8 @@
 
 ### ✅ Added
 - Introduce experimental classes: `ChannelInfoViewModel`, `ChannelInfoViewModelFactory`, `ChannelInfoMemberViewModel`, and `ChannelInfoMemberViewModelFactory`. [#5801](https://github.com/GetStream/stream-chat-android/pull/5801) 
+- Add `ChatUI.showOriginalTranslationEnabled` flag for enabling/disabling the "Show original" translation label in the message list. [#5843](https://github.com/GetStream/stream-chat-android/pull/5843)
+- Add `MessageListViewModel.Event.ToggleOriginalText` for toggling between the original and translated text of the given message. [#5843](https://github.com/GetStream/stream-chat-android/pull/5843)
 
 ### ⚠️ Changed
 - Refactor the XML sample view models and UI components to use ChannelInfoViewController. [#5801](https://github.com/GetStream/stream-chat-android/pull/5801)
@@ -81,6 +85,8 @@
 - Introduce internal `DraftChannelViewController` and experimental classes `DraftChannelViewState`, `DraftChannelViewAction`, and `DraftChannelViewEvent`. [#5797](https://github.com/GetStream/stream-chat-android/pull/5797)
 - Message member from the member bottom sheet of the channel info screen. [#5797](https://github.com/GetStream/stream-chat-android/pull/5797)
 - Introduce **experimental** factory methods for the channel info screens. [#5812](https://github.com/GetStream/stream-chat-android/pull/5812)
+- Add `ChatTheme.showOriginalTranslationEnabled` flag for enabling/disabling the "Show original" translation label in the message list. [#5845](https://github.com/GetStream/stream-chat-android/pull/5845)
+- Add `MessageListViewModel.toggleOriginalText()` method for toggling between the original and translated text of the given message. [#5845](https://github.com/GetStream/stream-chat-android/pull/5845)
 
 ### ⚠️ Changed
 

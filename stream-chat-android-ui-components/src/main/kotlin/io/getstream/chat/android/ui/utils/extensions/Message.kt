@@ -146,3 +146,39 @@ internal inline fun Message.getTranslatedText(getCurrentUser: () -> User?): Stri
 internal fun Message.getTranslatedText(currentUserProvider: CurrentUserProvider = ChatUI.currentUserProvider): String {
     return getTranslatedText(currentUserProvider::getCurrentUser)
 }
+
+/**
+ * Returns the appropriate message text based on auto-translation settings and the user's preference.
+ *
+ * If auto-translation is enabled:
+ * - Returns the original text if [showOriginalText] is true.
+ * - Otherwise, returns the translated text for the current user's language, or the original text if no translation
+ * is available or the user has no language set.
+ *
+ * If auto-translation is disabled, always returns the original message text.
+ *
+ * @param showOriginalText Whether to show the original message text instead of the translation.
+ * @param currentUserProvider Provider for the current user, used to determine the preferred language for translation.
+ * @return The text to display for the message, either original or translated.
+ */
+internal fun Message.getToggleableTranslatedText(
+    showOriginalText: Boolean,
+    currentUserProvider: CurrentUserProvider = ChatUI.currentUserProvider,
+): String {
+    return when (ChatUI.autoTranslationEnabled) {
+        true -> {
+            // If auto-translation is enabled, we check if the message is showing original text.
+            // If it is, we return the original text, otherwise we return the translated text.
+            if (showOriginalText) {
+                text
+            } else {
+                // If the message is not showing original text, we check if the current user has a language set.
+                // If they do, we return the translated text, otherwise we return the original text.
+                currentUserProvider.getCurrentUser()?.language?.let { userLanguage ->
+                    getTranslation(userLanguage).ifEmpty { text }
+                } ?: text
+            }
+        }
+        else -> text
+    }
+}

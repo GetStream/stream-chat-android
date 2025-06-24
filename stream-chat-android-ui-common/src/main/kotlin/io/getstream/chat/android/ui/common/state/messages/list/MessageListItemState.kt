@@ -54,6 +54,8 @@ public sealed class HasMessageListItemState : MessageListItemState() {
  * the UI.
  * @param focusState The current [MessageFocusState] of the message, used to focus the message in the ui.
  * @param messageReadBy The list of [ChannelUserRead] for the message.
+ * @param showOriginalText If the original text of the message should be shown in the UI instead of its translation (if
+ * the message was auto-translated).
  * @param ownCapabilities The capabilities of the current user in the channel.
  */
 public data class MessageItemState(
@@ -68,6 +70,7 @@ public data class MessageItemState(
     public val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_HIDDEN,
     public val focusState: MessageFocusState? = null,
     public val messageReadBy: List<ChannelUserRead> = emptyList(),
+    public val showOriginalText: Boolean = false,
     public val ownCapabilities: Set<String>,
 ) : HasMessageListItemState()
 

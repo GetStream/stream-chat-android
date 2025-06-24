@@ -49,6 +49,7 @@ public fun MessageListItemCommon.toUiMessageListItem(): MessageListItem {
             isThreadMode = isInThread,
             isMessageRead = isMessageRead,
             showMessageFooter = showMessageFooter,
+            showOriginalText = showOriginalText,
         )
         is EmptyThreadPlaceholderItemState -> MessageListItem.ThreadPlaceholderItem
         is UnreadSeparatorItemState -> MessageListItem.UnreadSeparatorItem(unreadCount = unreadCount)

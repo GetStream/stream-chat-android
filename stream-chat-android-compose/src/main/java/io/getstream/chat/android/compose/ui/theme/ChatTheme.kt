@@ -256,7 +256,7 @@ private val LocalMediaGalleryConfig = compositionLocalOf<MediaGalleryConfig> {
  * @param isInDarkMode If we're currently in the dark mode or not. Affects only the default color palette that's
  * provided. If you customize [colors], make sure to add your own logic for dark/light colors.
  * @param autoTranslationEnabled Whether messages auto translation is enabled or not.
- * @param showOriginalTranslationEnabled Whether the options to show the original translation is enabled or not.
+ * @param showOriginalTranslationEnabled Whether the option to show the original translation is enabled or not.
  * @param isComposerLinkPreviewEnabled Whether the composer link preview is enabled or not.
  * @param useDefaultSystemMediaPicker Flag that determines which attachment picker should be used. If true, the system
  * attachments picker which doesn't use storage permissions will be used. If false, the default attachments picker which
