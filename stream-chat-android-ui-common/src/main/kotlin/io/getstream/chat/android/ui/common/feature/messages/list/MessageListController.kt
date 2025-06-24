@@ -142,7 +142,6 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Date
 import io.getstream.chat.android.ui.common.state.messages.Flag as FlagMessage
@@ -225,7 +224,7 @@ public class MessageListController(
     public val unreadLabelState: MutableStateFlow<UnreadLabel?> = MutableStateFlow(null)
     private val showUnreadButtonState = MutableSharedFlow<Boolean>(extraBufferCapacity = 1)
     private val updateUnreadLabelState = MutableStateFlow(true)
-    private val messagesInOriginalLanguage = MutableStateFlow<Set<String>>(emptySet())
+    private val originalTranslationsStore by lazy { MessageOriginalTranslationsStore.forChannel(cid) }
 
     /**
      * Holds information about the abilities the current user is able to exercise in the given channel.
@@ -472,7 +471,7 @@ public class MessageListController(
                 unreadLabelState,
                 channelState.members,
                 channelState.endOfOlderMessages,
-                messagesInOriginalLanguage,
+                originalTranslationsStore.originalTextMessageIds,
             ) { data ->
                 val state = data[0] as MessagesState
                 val reads = data[1] as List<ChannelUserRead>
@@ -765,7 +764,7 @@ public class MessageListController(
                 focusedMessage,
                 members,
                 ownCapabilities,
-                messagesInOriginalLanguage,
+                originalTranslationsStore.originalTextMessageIds,
             ) { data ->
                 val messages = data[0] as List<Message>
                 val reads = data[1] as List<ChannelUserRead>
@@ -1247,16 +1246,12 @@ public class MessageListController(
     }
 
     /**
-     * Toggles between the translated and the original text of the message.
+     * Toggles between the translated and the original text of the message (if the message was auto-translated).
+     *
+     * @param messageId The ID of the message for which to toggle the original text.
      */
     public fun toggleOriginalText(messageId: String) {
-        messagesInOriginalLanguage.update { it ->
-            if (it.contains(messageId)) {
-                it - messageId
-            } else {
-                it + messageId
-            }
-        }
+        originalTranslationsStore.toggleOriginalText(messageId)
     }
 
     /**
@@ -2358,7 +2353,7 @@ public class MessageListController(
      */
     public fun onCleared() {
         // Clear any messages for which the original text was shown
-        MessageOriginalTranslationsStore.forChannel(cid).clear()
+        originalTranslationsStore.clear()
         scope.cancel()
     }
 

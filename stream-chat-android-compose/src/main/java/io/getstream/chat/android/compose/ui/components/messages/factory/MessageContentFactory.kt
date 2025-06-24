@@ -28,6 +28,7 @@ import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.UploadingFooter
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 
@@ -144,6 +145,14 @@ public open class MessageContentFactory {
     public open fun MessageFooterContent(
         messageItem: MessageItemState,
     ) {
-        MessageFooter(messageItem = messageItem)
+        MessageFooter(
+            messageItem = messageItem,
+            onToggleOriginalText = {
+                // Important: This is a workaround to avoid a breaking change in the MessageContentFactory API.
+                // In the next major version, this callback should be passed as a parameter to the MessageFooterContent.
+                val translationsStore = MessageOriginalTranslationsStore.forChannel(messageItem.message.cid)
+                translationsStore.toggleOriginalText(messageItem.message.id)
+            },
+        )
     }
 }

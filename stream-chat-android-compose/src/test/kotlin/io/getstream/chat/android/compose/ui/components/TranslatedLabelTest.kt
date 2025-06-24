@@ -34,7 +34,7 @@ internal class TranslatedLabelTest : SnapshotTest {
         snapshotWithDarkModeRow {
             TranslatedLabel(
                 modifier = Modifier.wrapContentHeight(),
-                translatedTo = "en",
+                translatedTo = "English",
             )
         }
     }

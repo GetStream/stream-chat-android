@@ -1602,7 +1602,7 @@ public final class io/getstream/chat/android/compose/ui/components/messages/Mess
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/MessageFooterKt {
-	public static final fun MessageFooter (Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Landroidx/compose/runtime/Composer;I)V
+	public static final fun MessageFooter (Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/MessageHeaderLabelKt {
@@ -1628,7 +1628,7 @@ public final class io/getstream/chat/android/compose/ui/components/messages/Mess
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/MessageTranslatedLabelKt {
-	public static final fun MessageTranslatedLabel (Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Landroidx/compose/runtime/Composer;I)V
+	public static final fun MessageTranslatedLabel (Lio/getstream/chat/android/ui/common/state/messages/list/MessageItemState;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/messages/OwnedMessageVisibilityContentKt {
@@ -4695,6 +4695,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public final fun setThreadDateSeparatorHandler (Lio/getstream/chat/android/ui/common/feature/messages/list/DateSeparatorHandler;)V
 	public final fun shadowBanUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)V
 	public static synthetic fun shadowBanUser$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)V
+	public final fun toggleOriginalText (Ljava/lang/String;)V
 	public final fun unbanUser (Ljava/lang/String;)V
 	public final fun unflagUser (Ljava/lang/String;)V
 	public final fun unmuteUser (Ljava/lang/String;)V
