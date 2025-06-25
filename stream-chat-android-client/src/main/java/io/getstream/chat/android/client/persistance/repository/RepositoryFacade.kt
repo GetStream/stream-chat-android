@@ -26,6 +26,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelConfig
 import io.getstream.chat.android.models.Config
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
@@ -101,11 +102,13 @@ public class RepositoryFacade private constructor(
 
     override suspend fun insertChannel(channel: Channel) {
         insertUsers(channel.let(Channel::users))
+        channel.draftMessage?.let { insertDraftMessage(it) }
         channelsRepository.insertChannel(channel)
     }
 
     override suspend fun insertChannels(channels: Collection<Channel>) {
         insertUsers(channels.flatMap(Channel::users))
+        channels.forEach { it.draftMessage?.let { insertDraftMessage(it) } }
         channelsRepository.insertChannels(channels)
     }
 

@@ -120,9 +120,6 @@ internal class SyncManager(
         eventsDisposable = chatClient.subscribe { event ->
             onEvent(event)
         }
-        syncScope.launch {
-            syncOfflineDraftMessages()
-        }
     }
 
     override fun stop() {
@@ -224,36 +221,12 @@ internal class SyncManager(
 
     private suspend fun performSync() {
         logger.i { "[performSync] no args" }
-        syncDraftMessages()
         val cids = logicRegistry.getActiveChannelsLogic().map { it.cid }.ifEmpty {
             logger.w { "[performSync] no active cids found" }
             repos.selectSyncState(currentUserId)?.activeChannelIds ?: emptyList()
         }
         mutex.withLock {
             performSync(cids)
-        }
-    }
-
-    private suspend fun syncOfflineDraftMessages() {
-        repos.selectDraftMessages().forEach { draftMessage ->
-            mutableGlobalState.updateDraftMessage(draftMessage)
-        }
-    }
-
-    private fun syncDraftMessages(
-        limit: Int = QUERY_DRAFT_MESSAGES_LIMIT,
-        next: String? = null,
-    ) {
-        chatClient.queryDrafts(
-            filter = Filters.neutral(),
-            limit = limit,
-            next = next,
-        ).enqueue {
-            it.onSuccess { result ->
-                if (result.next != null) {
-                    syncDraftMessages(limit, result.next)
-                }
-            }
         }
     }
 

@@ -144,6 +144,11 @@ public interface MessageRepository {
     public suspend fun selectDraftMessages(): List<DraftMessage>
 
     /**
+     * Selects a draft message by its channel ID.
+     */
+    public suspend fun selectDraftMessagesByCid(cid: String): DraftMessage?
+
+    /**
      * Delete a draft message.
      */
     public suspend fun deleteDraftMessage(message: DraftMessage)

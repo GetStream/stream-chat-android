@@ -163,6 +163,9 @@ internal class DatabaseMessageRepository(
     override suspend fun selectDraftMessages(): List<DraftMessage> = messageDao.selectDraftMessages()
         .map { it.toModel(::selectMessage) }
 
+    override suspend fun selectDraftMessagesByCid(cid: String): DraftMessage? = messageDao.selectDraftMessage(cid)
+        ?.toModel(::selectMessage)
+
     /**
      * Deletes all messages before a message with passed ID.
      *

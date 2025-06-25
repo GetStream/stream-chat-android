@@ -88,6 +88,9 @@ internal interface MessageDao {
     @Query("SELECT * FROM $DRAFT_MESSAGE_ENTITY_TABLE_NAME")
     suspend fun selectDraftMessages(): List<DraftMessageEntity>
 
+    @Query("SELECT * FROM $DRAFT_MESSAGE_ENTITY_TABLE_NAME WHERE cid = :cid")
+    suspend fun selectDraftMessage(cid: String): DraftMessageEntity?
+
     @Query("DELETE FROM $DRAFT_MESSAGE_ENTITY_TABLE_NAME WHERE id = :messageId")
     suspend fun deleteDraftMessage(messageId: String)
 

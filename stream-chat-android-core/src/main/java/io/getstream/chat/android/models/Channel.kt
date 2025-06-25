@@ -94,6 +94,7 @@ public data class Channel(
     val membership: Member? = null,
     val cachedLatestMessages: List<Message> = emptyList(),
     val isInsideSearch: Boolean = false,
+    val draftMessage: DraftMessage? = null,
     override val extraData: Map<String, Any> = mapOf(),
 ) : CustomObject, ComparableFieldProvider {
 
@@ -185,6 +186,7 @@ public data class Channel(
         private var membership: Member? = null
         private var cachedLatestMessages: List<Message> = emptyList()
         private var isInsideSearch: Boolean = false
+        private var draftMessage: DraftMessage? = null
         private var extraData: Map<String, Any> = mapOf()
 
         public constructor(channel: Channel) : this() {
@@ -215,6 +217,7 @@ public data class Channel(
             membership = channel.membership
             cachedLatestMessages = channel.cachedLatestMessages
             isInsideSearch = channel.isInsideSearch
+            draftMessage = channel.draftMessage
             extraData = channel.extraData
         }
 
@@ -291,6 +294,7 @@ public data class Channel(
             membership = membership,
             cachedLatestMessages = cachedLatestMessages,
             isInsideSearch = isInsideSearch,
+            draftMessage = draftMessage,
             extraData = extraData,
         )
     }
@@ -350,5 +354,6 @@ public fun Channel.toChannelData(): ChannelData {
         team = team,
         ownCapabilities = ownCapabilities,
         membership = membership,
+        draftMessage = draftMessage,
     )
 }
