@@ -250,6 +250,11 @@ public data class Message(
     val poll: Poll? = null,
 
     /**
+     * Location shared by the user in the message.
+     */
+    val sharedLocation: Location? = null,
+
+    /**
      * List of user ids that are allowed to see the message
      */
     val restrictedVisibility: List<String> = emptyList(),
@@ -425,6 +430,7 @@ public data class Message(
         private var messageTextUpdatedAt: Date? = null
         private var poll: Poll? = null
         private var restrictedVisibility: List<String> = emptyList()
+        private var sharedLocation: Location? = null
 
         public constructor(message: Message) : this() {
             id = message.id
@@ -471,6 +477,7 @@ public data class Message(
             messageTextUpdatedAt = message.messageTextUpdatedAt
             poll = message.poll
             restrictedVisibility = message.restrictedVisibility
+            sharedLocation = message.sharedLocation
         }
 
         public fun withId(id: String): Builder = apply { this.id = id }
@@ -547,6 +554,9 @@ public data class Message(
         public fun withRestrictedVisibility(restrictedVisibility: List<String>): Builder = apply {
             this.restrictedVisibility = restrictedVisibility
         }
+        public fun withSharedLocation(sharedLocation: Location?): Builder = apply {
+            this.sharedLocation = sharedLocation
+        }
 
         public fun build(): Message {
             return Message(
@@ -594,6 +604,7 @@ public data class Message(
                 messageTextUpdatedAt = messageTextUpdatedAt,
                 restrictedVisibility = restrictedVisibility,
                 poll = poll,
+                sharedLocation = sharedLocation,
             )
         }
     }
