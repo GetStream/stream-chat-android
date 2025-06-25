@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.feature.channel.draft
-
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
+package io.getstream.chat.android.compose.sample.feature.channel.draft
 
 /**
  * Represents actions that can be performed in the draft channel view.
  */
-@ExperimentalStreamChatApi
-public sealed interface DraftChannelViewAction {
+sealed interface DraftChannelViewAction {
 
     /**
      * Represents the action of sending a message in the draft channel.
      */
-    public data object MessageSent : DraftChannelViewAction
+    data object MessageSent : DraftChannelViewAction
 }
