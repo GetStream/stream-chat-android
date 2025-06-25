@@ -34,6 +34,7 @@ import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.models.Flag
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
@@ -396,6 +397,7 @@ public fun randomChannel(
     ownCapabilities: Set<String> = randomChannelCapabilities(),
     extraData: Map<String, Any> = emptyMap(),
     membership: Member? = randomMember(),
+    activeLiveLocations: List<Location> = emptyList(),
 ): Channel = Channel(
     id = id,
     name = name,
@@ -420,6 +422,7 @@ public fun randomChannel(
     ownCapabilities = ownCapabilities,
     extraData = extraData,
     membership = membership,
+    activeLiveLocations = activeLiveLocations,
 )
 
 public fun randomChannelUserRead(
