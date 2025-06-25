@@ -466,7 +466,7 @@ class ChatsActivity : BaseConnectedActivity() {
                             onClick = onAddMembersClick,
                         )
                     }
-                }
+                },
             )
         }
     }
