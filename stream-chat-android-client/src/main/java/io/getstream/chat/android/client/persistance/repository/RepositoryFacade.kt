@@ -201,6 +201,7 @@ public class RepositoryFacade private constructor(
         val threadUsers = threads.mapNotNull(Thread::createdBy)
         val users = threadUsers + messages.flatMap(Message::users)
         insertUsers(users)
+        threads.forEach { it.draft?.let { insertDraftMessage(it) } }
         messageRepository.insertMessages(messages)
         threadsRepository.insertThreads(threads)
     }

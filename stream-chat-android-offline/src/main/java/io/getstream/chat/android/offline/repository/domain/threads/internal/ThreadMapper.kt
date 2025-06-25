@@ -18,6 +18,7 @@ package io.getstream.chat.android.offline.repository.domain.threads.internal
 
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelUserRead
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadParticipant
@@ -51,6 +52,7 @@ internal suspend fun ThreadEntity.toModel(
     getUser: suspend (userId: String) -> User,
     getMessage: suspend (messageId: String) -> Message?,
     getChannel: suspend (cid: String) -> Channel?,
+    getDraftMessage: suspend (messageId: String) -> DraftMessage?,
 ) = Thread(
     parentMessageId = parentMessageId,
     parentMessage = getMessage(parentMessageId) ?: Message(),
@@ -70,4 +72,5 @@ internal suspend fun ThreadEntity.toModel(
     title = title,
     read = read.map { it.toModel(getUser) },
     latestReplies = latestReplyIds.mapNotNull { getMessage(it) },
+    draft = getDraftMessage(parentMessageId)
 )

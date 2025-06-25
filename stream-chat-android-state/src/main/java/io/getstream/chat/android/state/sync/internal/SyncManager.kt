@@ -120,6 +120,9 @@ internal class SyncManager(
         eventsDisposable = chatClient.subscribe { event ->
             onEvent(event)
         }
+        syncScope.launch {
+            syncOfflineDraftMessages()
+        }
     }
 
     override fun stop() {
@@ -168,6 +171,12 @@ internal class SyncManager(
                 updateAllReadStateForDate(event.user.id, event.createdAt)
             }
             else -> Unit
+        }
+    }
+
+    private suspend fun syncOfflineDraftMessages() {
+        repos.selectDraftMessages().forEach { draftMessage ->
+            mutableGlobalState.updateDraftMessage(draftMessage)
         }
     }
 

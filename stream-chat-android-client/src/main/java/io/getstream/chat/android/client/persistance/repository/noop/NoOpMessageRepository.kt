@@ -42,6 +42,7 @@ internal object NoOpMessageRepository : MessageRepository {
     override suspend fun deleteDraftMessage(message: DraftMessage) { /* No-Op */ }
     override suspend fun selectDraftMessages(): List<DraftMessage> = emptyList()
     override suspend fun selectDraftMessagesByCid(cid: String): DraftMessage? = null
+    override suspend fun selectDraftMessageByParentId(parentId: String): DraftMessage? = null
     override suspend fun insertDraftMessage(message: DraftMessage) { /* No-Op */ }
     override suspend fun evictMessages() { /* No-Op */ }
     override suspend fun evictMessage(messageId: String) { /* No-Op */ }

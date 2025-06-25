@@ -59,6 +59,7 @@ public data class Thread(
     val title: String,
     val latestReplies: List<Message>,
     val read: List<ChannelUserRead>,
+    val draft: DraftMessage?,
 ) {
 
     /**
