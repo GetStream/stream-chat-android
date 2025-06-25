@@ -22,7 +22,6 @@ import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.query.AddMembersParams
-import io.getstream.chat.android.compose.sample.feature.channel.add.SearchUsersViewModel
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
@@ -48,8 +47,9 @@ import kotlinx.coroutines.launch
 
 class AddMembersViewModel(
     private val cid: String,
+    private val resultLimit: Int,
     private val chatClient: ChatClient = ChatClient.instance(),
-) : SearchUsersViewModel(chatClient) {
+) : ViewModel() {
 
     private val channelMembers = chatClient
         .watchChannelAsState(cid, messageLimit = 0, viewModelScope)
@@ -142,7 +142,7 @@ class AddMembersViewModel(
         return QueryUsersRequest(
             filter = Filters.and(currentMembersFilter, nameFilter),
             offset = 0,
-            limit = 9,
+            limit = resultLimit,
             querySort = QuerySortByField.ascByName("name"),
             presence = true,
         )
@@ -171,6 +171,8 @@ sealed class AddMembersViewEvent {
 
 class AddMembersViewModelFactory(
     private val cid: String,
+    private val resultLimit: Int = 6,
+    private val chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -178,6 +180,6 @@ class AddMembersViewModelFactory(
             "AddMembersViewModelFactory can only create instances of AddMembersViewModel"
         }
         @Suppress("UNCHECKED_CAST")
-        return AddMembersViewModel(cid) as T
+        return AddMembersViewModel(cid, resultLimit, chatClient) as T
     }
 }

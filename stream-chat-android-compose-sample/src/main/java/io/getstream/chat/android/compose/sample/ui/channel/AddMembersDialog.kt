@@ -60,20 +60,24 @@ import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.adaptivelayout.AdaptiveLayoutInfo
 import io.getstream.chat.android.models.User
 import kotlinx.coroutines.flow.collectLatest
 import java.util.UUID
 
 @Composable
-internal fun AddMembersDialog(
+fun AddMembersDialog(
     cid: String,
     onDismiss: () -> Unit,
 ) {
     val viewModelKey by remember { mutableStateOf(UUID.randomUUID().toString()) }
+
+    @Suppress("MagicNumber")
+    val resultLimit = if (AdaptiveLayoutInfo.singlePaneWindow()) 6 else 10
     val viewModel = viewModel(
         AddMembersViewModel::class,
         key = viewModelKey,
-        factory = AddMembersViewModelFactory(cid),
+        factory = AddMembersViewModelFactory(cid, resultLimit),
     )
     val state by viewModel.state.collectAsStateWithLifecycle()
     AlertDialog(
@@ -135,7 +139,7 @@ private fun AddMembersContent(
             contentAlignment = Alignment.Center,
         ) {
             LazyVerticalGrid(
-                columns = GridCells.Fixed(GridColumnCount),
+                columns = GridCells.Adaptive(64.dp),
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(24.dp),
@@ -154,7 +158,7 @@ private fun AddMembersContent(
             if (state.isLoading) {
                 LoadingIndicator(
                     modifier = Modifier
-                        .size(160.dp),
+                        .size(172.dp),
                 )
             }
         }
