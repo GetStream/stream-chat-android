@@ -59,6 +59,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix quoted poll messages showing an empty message preview. [#5849](https://github.com/GetStream/stream-chat-android/pull/5849)
 
 ### ⬆️ Improved
 
@@ -73,6 +74,7 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Use the same text style in `DefaultComposerLabel` and `MessageInput` so that typing `MessageComposer` doesn't cause any glitches. [#5838](https://github.com/GetStream/stream-chat-android/pull/5838)
+- Fix quoted poll messages showing an empty message preview. [#5849](https://github.com/GetStream/stream-chat-android/pull/5849)
 
 ### ⬆️ Improved
 
