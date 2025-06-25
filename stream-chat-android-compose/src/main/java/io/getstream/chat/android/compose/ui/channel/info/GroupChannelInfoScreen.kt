@@ -90,6 +90,7 @@ public fun GroupChannelInfoScreen(
     modifier: Modifier = Modifier,
     currentUser: User? = ChatClient.instance().getCurrentUser(),
     onNavigationIconClick: () -> Unit = {},
+    onAddMembersClick: () -> Unit = {},
 ) {
     val headerViewModel = viewModel<ChannelHeaderViewModel>(factory = viewModelFactory)
     val infoViewModel = viewModel<ChannelInfoViewModel>(factory = viewModelFactory)
@@ -102,6 +103,7 @@ public fun GroupChannelInfoScreen(
         headerState = headerState,
         infoState = infoState,
         onNavigationIconClick = onNavigationIconClick,
+        onAddMembersClick = onAddMembersClick,
         onViewAction = infoViewModel::onViewAction,
     )
 
@@ -115,6 +117,7 @@ private fun GroupChannelInfoScaffold(
     headerState: ChannelHeaderViewState,
     infoState: ChannelInfoViewState,
     onNavigationIconClick: () -> Unit = {},
+    onAddMembersClick: () -> Unit = {},
     onViewAction: (action: ChannelInfoViewAction) -> Unit = {},
 ) {
     val listState = rememberLazyListState()
@@ -123,8 +126,10 @@ private fun GroupChannelInfoScaffold(
         topBar = {
             ChatTheme.componentFactory.GroupChannelInfoTopBar(
                 headerState = headerState,
+                infoState = infoState,
                 listState = listState,
                 onNavigationIconClick = onNavigationIconClick,
+                onAddMembersClick = onAddMembersClick,
             )
         },
         containerColor = ChatTheme.colors.barsBackground,
@@ -163,8 +168,10 @@ private fun GroupChannelInfoScreenModal(viewModel: ChannelInfoViewModel) {
 @Composable
 internal fun GroupChannelInfoTopBar(
     headerState: ChannelHeaderViewState,
+    infoState: ChannelInfoViewState,
     listState: LazyListState,
     onNavigationIconClick: () -> Unit,
+    onAddMembersClick: () -> Unit,
 ) {
     val elevation by animateDpAsState(
         targetValue = if (listState.canScrollBackward) {
@@ -189,8 +196,14 @@ internal fun GroupChannelInfoTopBar(
                     onClick = onNavigationIconClick,
                 )
             },
-            trailingContent = { // Add members button
-                // https://linear.app/stream/issue/AND-537
+            trailingContent = {
+                if (infoState is ChannelInfoViewState.Content &&
+                    infoState.options.contains(ChannelInfoViewState.Content.Option.AddMember)
+                ) {
+                    ChatTheme.componentFactory.GroupChannelInfoAddMembersButton(
+                        onClick = onAddMembersClick,
+                    )
+                }
             },
         )
     }
