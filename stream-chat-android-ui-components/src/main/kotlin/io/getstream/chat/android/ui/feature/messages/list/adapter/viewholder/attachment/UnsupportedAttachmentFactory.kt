@@ -98,7 +98,6 @@ public class UnsupportedAttachmentFactory : AttachmentFactory {
             AttachmentType.VIDEO,
             AttachmentType.AUDIO,
             AttachmentType.FILE,
-            AttachmentType.LINK,
             AttachmentType.AUDIO_RECORDING,
         )
     }

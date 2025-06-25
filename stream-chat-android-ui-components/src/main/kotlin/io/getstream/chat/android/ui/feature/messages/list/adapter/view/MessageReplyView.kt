@@ -28,7 +28,7 @@ import com.google.android.material.shape.MaterialShapeDrawable
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.duration
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
-import io.getstream.chat.android.client.utils.attachment.isLink
+import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.ChatUI
@@ -183,7 +183,8 @@ public class MessageReplyView : FrameLayout {
     }
 
     private fun isLink(message: Message) = message.attachments.run {
-        size == 1 && last().isLink()
+        // Link messages have an image attachment with title_link or og_scrape_url set.
+        size == 1 && last().isImage() && (last().titleLink != null || last().ogUrl != null)
     }
 
     private fun setAttachmentImage(message: Message) {
@@ -223,9 +224,7 @@ public class MessageReplyView : FrameLayout {
                 displayedText
             }
         } else {
-            if (attachment.isLink()) {
-                attachment.titleLink ?: attachment.ogUrl
-            } else if (attachment.isAudioRecording()) {
+            if (attachment.isAudioRecording()) {
                 context.getString(R.string.stream_ui_message_audio_reply_info)
             } else {
                 attachment.title ?: attachment.name
