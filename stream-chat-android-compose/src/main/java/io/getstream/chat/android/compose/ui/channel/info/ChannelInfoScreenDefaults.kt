@@ -18,8 +18,10 @@ package io.getstream.chat.android.compose.ui.channel.info
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.BackButton
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
@@ -28,7 +30,8 @@ import io.getstream.chat.android.compose.ui.util.mirrorRtl
 internal fun ChannelInfoNavigationIcon(onClick: () -> Unit) {
     BackButton(
         modifier = Modifier.mirrorRtl(layoutDirection = LocalLayoutDirection.current),
-        painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
+        imageVector = ImageVector.vectorResource(id = R.drawable.stream_compose_ic_arrow_back),
+        contentDescription = stringResource(id = R.string.stream_compose_back_button_content_description),
         onBackPressed = onClick,
     )
 }

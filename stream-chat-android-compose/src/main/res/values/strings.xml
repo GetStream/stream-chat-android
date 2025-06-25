@@ -201,6 +201,7 @@
     <string name="stream_compose_cd_send_button" translatable="false">Send button</string>
     <string name="stream_compose_cd_play_button" translatable="false">Play button</string>
     <string name="stream_compose_cd_record_audio_message" translatable="false">Record audio message</string>
+    <string name="stream_compose_back_button_content_description" translatable="false">Back</string>
 
     <!--  Poll  -->
     <string name="stream_compose_poll_title" translatable="false">Create Poll</string>
