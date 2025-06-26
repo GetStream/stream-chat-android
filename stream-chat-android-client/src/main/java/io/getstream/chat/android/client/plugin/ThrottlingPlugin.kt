@@ -16,25 +16,56 @@
 
 package io.getstream.chat.android.client.plugin
 
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlin.reflect.KClass
 
-internal class ThrottlingPlugin : Plugin {
+internal class ThrottlingPlugin(
+    private val now: () -> Long = { System.currentTimeMillis() },
+) : Plugin {
+    private val logger by taggedLogger("ThrottlingPlugin")
     private val lastMarkReadMap: MutableMap<String, Long> = mutableMapOf()
+    private val liveLocationMap: MutableMap<String, Long> = mutableMapOf()
 
-    override suspend fun onChannelMarkReadPrecondition(channelType: String, channelId: String): Result<Unit> {
-        val now = System.currentTimeMillis()
-        val deltaLastMarkReadAt = now - (lastMarkReadMap[channelId] ?: 0)
+    override suspend fun onChannelMarkReadPrecondition(channelType: String, channelId: String): Result<Unit> =
+        checkThrottling(
+            lastUpdateProvider = lastMarkReadMap,
+            key = channelId,
+            throttleMs = MARK_READ_THROTTLE_MS,
+        ) {
+            logger.w { "[onChannelMarkReadPrecondition] read is ignored ($channelId)" }
+            Error.GenericError("Mark read throttled")
+        }
+
+    override suspend fun onUpdateLiveLocationPrecondition(
+        location: Location,
+    ): Result<Unit> =
+        checkThrottling(
+            lastUpdateProvider = liveLocationMap,
+            key = location.messageId,
+            throttleMs = LIVE_LOCATION_THROTTLE_MS,
+        ) {
+            logger.w { "[onUpdateLiveLocationPrecondition] live location update is ignored (${location.messageId})" }
+            Error.GenericError("Live location update throttled")
+        }
+
+    private fun checkThrottling(
+        lastUpdateProvider: MutableMap<String, Long>,
+        key: String,
+        throttleMs: Long,
+        failureGenerator: () -> Error.GenericError,
+    ): Result<Unit> {
+        val now = now()
+        val lastUpdateAt = lastUpdateProvider[key] ?: 0
+        val deltaLastUpdateAt = now - lastUpdateAt
+
         return when {
-            deltaLastMarkReadAt > MARK_READ_THROTTLE_MS -> Result.Success(Unit)
-                .also { lastMarkReadMap[channelId] = now }
-            else -> Result.Failure(Error.GenericError("Mark read throttled")).also {
-                StreamLog.w("ThrottlingPlugin") { "[onChannelMarkReadPrecondition] read is ignored ($channelId)" }
-            }
+            deltaLastUpdateAt > throttleMs -> Result.Success(Unit).also { lastUpdateProvider[key] = now }
+            else -> Result.Failure(failureGenerator())
         }
     }
 
@@ -53,5 +84,6 @@ internal class ThrottlingPlugin : Plugin {
 
     companion object {
         const val MARK_READ_THROTTLE_MS = 3000L
+        const val LIVE_LOCATION_THROTTLE_MS = 3000L
     }
 }

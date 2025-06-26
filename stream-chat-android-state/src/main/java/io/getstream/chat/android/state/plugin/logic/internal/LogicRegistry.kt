@@ -85,6 +85,7 @@ internal class LogicRegistry internal constructor(
         return queryChannels.getOrPut(filter to sort) {
             val queryChannelsStateLogic = QueryChannelsStateLogic(
                 stateRegistry.queryChannels(filter, sort).toMutableState(),
+                mutableGlobalState,
                 stateRegistry,
                 this,
                 coroutineScope,

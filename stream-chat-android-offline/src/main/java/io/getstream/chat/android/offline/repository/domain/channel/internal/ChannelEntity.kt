@@ -22,6 +22,7 @@ import androidx.room.PrimaryKey
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.MemberEntity
 import io.getstream.chat.android.offline.repository.domain.channel.userread.internal.ChannelUserReadEntity
+import io.getstream.chat.android.offline.repository.domain.message.internal.LocationEntity
 import java.util.Date
 
 /**
@@ -52,6 +53,7 @@ import java.util.Date
  * @param team Team the channel belongs to (multi-tenant only).
  * @param ownCapabilities Channel's capabilities available for the current user. Note that the field is not provided in the events.
  * @param membership Represents relationship of the current user to this channel.
+ * @param activeLiveLocations List of active live locations in the channel.
  */
 @Entity(tableName = CHANNEL_ENTITY_TABLE_NAME, indices = [Index(value = ["syncStatus"])])
 internal data class ChannelEntity(
@@ -79,6 +81,7 @@ internal data class ChannelEntity(
     val team: String,
     val ownCapabilities: Set<String>,
     val membership: MemberEntity?,
+    val activeLiveLocations: List<LocationEntity>,
 ) {
     /**
      * The channel id in the format messaging:123.

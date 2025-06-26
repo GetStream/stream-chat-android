@@ -29,6 +29,8 @@ import io.getstream.chat.android.offline.repository.domain.channel.member.intern
 import io.getstream.chat.android.offline.repository.domain.channel.userread.internal.ChannelUserReadEntity
 import io.getstream.chat.android.offline.repository.domain.channel.userread.internal.toEntity
 import io.getstream.chat.android.offline.repository.domain.channel.userread.internal.toModel
+import io.getstream.chat.android.offline.repository.domain.message.internal.toEntity
+import io.getstream.chat.android.offline.repository.domain.message.internal.toModel
 
 internal fun Channel.toEntity(): ChannelEntity {
     return ChannelEntity(
@@ -56,6 +58,7 @@ internal fun Channel.toEntity(): ChannelEntity {
         team = team,
         ownCapabilities = ownCapabilities,
         membership = membership?.toEntity(),
+        activeLiveLocations = activeLiveLocations.map { it.toEntity() },
     )
 }
 
@@ -86,4 +89,5 @@ internal suspend fun ChannelEntity.toModel(
     team = team,
     ownCapabilities = ownCapabilities,
     membership = membership?.toModel(getUser),
+    activeLiveLocations = activeLiveLocations.map { it.toModel() },
 ).syncUnreadCountWithReads()

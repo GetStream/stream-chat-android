@@ -171,6 +171,7 @@ public data class ChannelData(
             membership = membership,
             cachedLatestMessages = cachedLatestMessages,
             isInsideSearch = insideSearch,
+            activeLiveLocations = emptyList(),
         )
     }
 

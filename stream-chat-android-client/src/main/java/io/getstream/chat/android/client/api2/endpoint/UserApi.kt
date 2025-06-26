@@ -19,12 +19,15 @@ package io.getstream.chat.android.client.api2.endpoint
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.UrlQueryPayload
+import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.requests.BlockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.UnblockUserRequest
+import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
+import io.getstream.chat.android.client.api2.model.response.LiveLocationsResponse
 import io.getstream.chat.android.client.api2.model.response.QueryBlockedUsersResponse
 import io.getstream.chat.android.client.api2.model.response.UnblockUserResponse
 import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
@@ -34,10 +37,12 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Query
 
 @AuthenticatedApi
 internal interface UserApi {
+
     @POST("/users")
     fun updateUsers(
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
@@ -66,4 +71,12 @@ internal interface UserApi {
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @UrlQueryPayload @Query("payload") payload: QueryUsersRequest,
     ): RetrofitCall<UsersResponse>
+
+    @GET("/users/live_locations")
+    fun liveLocations(): RetrofitCall<LiveLocationsResponse>
+
+    @PUT("/users/live_locations")
+    fun updateLiveLocation(
+        @Body body: UpdateLiveLocationRequest,
+    ): RetrofitCall<DownstreamLocationDto>
 }

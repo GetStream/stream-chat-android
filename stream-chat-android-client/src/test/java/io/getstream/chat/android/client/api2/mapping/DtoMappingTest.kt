@@ -156,6 +156,7 @@ internal class DtoMappingTest {
             text = message.text,
             thread_participants = emptyList(),
             restricted_visibility = emptyList(),
+            shared_location = null,
             extraData = message.extraData,
         )
         dto shouldBeEqualTo expected
@@ -189,6 +190,7 @@ internal class DtoMappingTest {
             text = message.text,
             thread_participants = message.threadParticipants.map { with(mapping) { it.toDto() } },
             restricted_visibility = message.restrictedVisibility,
+            shared_location = message.sharedLocation?.let { with(mapping) { it.toDto() } },
             extraData = message.extraData,
         )
 
