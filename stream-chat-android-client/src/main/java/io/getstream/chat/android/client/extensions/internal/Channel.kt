@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelUserRead
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -271,3 +272,10 @@ internal fun Channel.updateUsers(users: Map<String, User>): Channel {
         this
     }
 }
+
+/**
+ * Updates the live locations of the channels with the provided [locations].
+ */
+@InternalStreamChatApi
+public fun Collection<Channel>.updateLiveLocations(locations: List<Location>): Collection<Channel> =
+    map { channel -> channel.copy(activeLiveLocations = locations.filter { it.cid == channel.cid }) }

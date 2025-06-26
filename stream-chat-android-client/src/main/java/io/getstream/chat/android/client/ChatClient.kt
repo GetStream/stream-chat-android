@@ -172,6 +172,7 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.GuestUser
 import io.getstream.chat.android.models.InitializationState
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
@@ -1554,10 +1555,104 @@ internal constructor(
                 sendMessage(
                     channelType = channelType,
                     channelId = channelId,
-                    Message(extraData = mapOf("poll_id" to poll.id)),
+                    Message(
+                        extraData = mapOf("poll_id" to poll.id),
+                    ),
                 )
             }
     }
+
+    @CheckResult
+    @ExperimentalStreamChatApi
+    public fun sendStaticLocation(
+        channelType: String,
+        channelId: String,
+        location: Location,
+    ): Call<Location> = sendLocation(
+        channelType,
+        channelId,
+        location = location.copy(endAt = null),
+    )
+
+    @CheckResult
+    @ExperimentalStreamChatApi
+    public fun startLiveLocation(
+        channelType: String,
+        channelId: String,
+        location: Location,
+        endAt: Date,
+    ): Call<Location> = sendLocation(
+        channelType,
+        channelId,
+        location = location.copy(endAt = endAt),
+    )
+        .doOnResult(userScope) { result ->
+            plugins.forEach { plugin ->
+                logger.v { "[startLiveLocation] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                plugin.onStartLiveLocationResult(
+                    result,
+                    channelType,
+                    channelId,
+                    location,
+                )
+            }
+        }
+
+    @CheckResult
+    private fun sendLocation(
+        channelType: String,
+        channelId: String,
+        location: Location,
+    ): Call<Location> =
+        sendMessage(
+            channelType = channelType,
+            channelId = channelId,
+            message = Message(sharedLocation = location),
+        ).flatMap { message ->
+            message.sharedLocation?.let { sharedLocation ->
+                CoroutineCall(scope = userScope) { Result.Success(sharedLocation) }
+            } ?: ErrorCall<Location>(
+                userScope,
+                Error.GenericError("Location was not sent."),
+            ).also {
+                logger.e { "Location was not sent" }
+            }
+        }
+
+    @CheckResult
+    @ExperimentalStreamChatApi
+    public fun queryActiveLocations(): Call<List<Location>> = api.queryActiveLocations()
+        .doOnResult(userScope) { result ->
+            plugins.forEach { plugin ->
+                logger.v { "[queryActiveLocations] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                plugin.onQueryActiveLocationsResult(result)
+            }
+        }
+
+    @CheckResult
+    @ExperimentalStreamChatApi
+    public fun updateLiveLocation(
+        location: Location,
+    ): Call<Location> = api.updateLiveLocation(location.copy(endAt = null))
+        .precondition(plugins) { onUpdateLiveLocationPrecondition(location) }
+        .doOnResult(userScope) { result ->
+            plugins.forEach { plugin ->
+                logger.v { "[updateLiveLocation] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                plugin.onUpdateLiveLocationResult(result, location)
+            }
+        }
+
+    @CheckResult
+    @ExperimentalStreamChatApi
+    public fun endLiveLocation(
+        location: Location,
+    ): Call<Location> = api.updateLiveLocation(location.copy(endAt = Date()))
+        .doOnResult(userScope) { result ->
+            plugins.forEach { plugin ->
+                logger.v { "[endLiveLocation] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                plugin.onEndLiveLocationResult(result, location)
+            }
+        }
 
     @CheckResult
     public fun suggestPollOption(
