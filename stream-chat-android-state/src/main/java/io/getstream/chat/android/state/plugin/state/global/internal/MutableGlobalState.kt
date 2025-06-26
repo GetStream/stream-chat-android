@@ -18,17 +18,24 @@ package io.getstream.chat.android.state.plugin.state.global.internal
 
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.TypingEvent
+import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
+import io.getstream.chat.android.state.utils.internal.mapState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import java.util.Date
 
 /**
  * Mutable global state of [StatePlugin].
  */
-internal class MutableGlobalState : GlobalState {
+internal class MutableGlobalState(
+    private val userId: UserId,
+    private val now: () -> Long = System::currentTimeMillis,
+) : GlobalState {
 
     private var _totalUnreadCount: MutableStateFlow<Int>? = MutableStateFlow(0)
     private var _channelUnreadCount: MutableStateFlow<Int>? = MutableStateFlow(0)
@@ -40,6 +47,7 @@ internal class MutableGlobalState : GlobalState {
     private var _typingChannels: MutableStateFlow<Map<String, TypingEvent>>? = MutableStateFlow(emptyMap())
     private var _channelDraftMessages: MutableStateFlow<Map<String, DraftMessage>>? = MutableStateFlow(emptyMap())
     private var _threadDraftMessages: MutableStateFlow<Map<String, DraftMessage>>? = MutableStateFlow(emptyMap())
+    private var _activeLiveLocations: MutableStateFlow<List<Location>>? = MutableStateFlow(emptyList())
 
     override val totalUnreadCount: StateFlow<Int> = _totalUnreadCount!!
     override val channelUnreadCount: StateFlow<Int> = _channelUnreadCount!!
@@ -51,6 +59,10 @@ internal class MutableGlobalState : GlobalState {
     override val typingChannels: StateFlow<Map<String, TypingEvent>> = _typingChannels!!
     override val channelDraftMessages: StateFlow<Map<String, DraftMessage>> = _channelDraftMessages!!
     override val threadDraftMessages: StateFlow<Map<String, DraftMessage>> = _threadDraftMessages!!
+    override val activeLiveLocations: StateFlow<List<Location>> = _activeLiveLocations!!
+    override val currentUserActiveLiveLocations: StateFlow<List<Location>> = activeLiveLocations.mapState {
+        it.filter { location -> location.userId == userId }
+    }
 
     /**
      * Destroys the state.
@@ -137,6 +149,46 @@ internal class MutableGlobalState : GlobalState {
                     }
                 },
             )
+        }
+    }
+
+    @Synchronized
+    private fun updateActiveLiveLocations(
+        transform: (List<Location>) -> List<Location>,
+    ) {
+        _activeLiveLocations?.let {
+            it.tryEmit(
+                it.value.let(transform),
+            )
+        }
+    }
+
+    fun addLiveLocation(location: Location) {
+        addLiveLocations(listOf(location))
+    }
+
+    fun addLiveLocations(locations: List<Location>) {
+        updateActiveLiveLocations { currentLocations ->
+            (
+                currentLocations.filterNot { location ->
+                    locations.any { it.messageId == location.messageId }
+                } + locations
+                )
+                .removeExpired()
+        }
+    }
+
+    fun removeExpiredLiveLocations() {
+        updateActiveLiveLocations { locations ->
+            locations.removeExpired()
+        }
+    }
+
+    private fun List<Location>.removeExpired(): List<Location> {
+        val currentDate = Date(now())
+        return filter { location ->
+            println("JcLogLocations: location.endAt: ${location.endAt}, currentDate: $currentDate")
+            location.endAt?.after(currentDate) ?: false
         }
     }
 }
