@@ -124,6 +124,7 @@ public fun MessageComposer(
     onAttachmentRemoved: (Attachment) -> Unit = { viewModel.removeSelectedAttachment(it) },
     onCancelAction: () -> Unit = { viewModel.dismissMessageActions() },
     onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
+    onCancelLinkPreviewClick: () -> Unit = { viewModel.cancelLinkPreview() },
     onMentionSelected: (User) -> Unit = { viewModel.selectMention(it) },
     onCommandSelected: (Command) -> Unit = { viewModel.selectCommand(it) },
     onAlsoSendToChannelSelected: (Boolean) -> Unit = { viewModel.setAlsoSendToChannel(it) },
@@ -134,6 +135,7 @@ public fun MessageComposer(
                 state = it,
                 onCancel = onCancelAction,
                 onLinkPreviewClick = onLinkPreviewClick,
+                onCancelLinkPreviewClick = onCancelLinkPreviewClick,
             )
         }
     },
@@ -226,6 +228,7 @@ public fun MessageComposer(
         onValueChange = onValueChange,
         onAttachmentRemoved = onAttachmentRemoved,
         onLinkPreviewClick = onLinkPreviewClick,
+        onCancelLinkPreviewClick = onCancelLinkPreviewClick,
         label = label,
     )
 }
@@ -271,6 +274,7 @@ public fun MessageComposer(
     onAttachmentRemoved: (Attachment) -> Unit = {},
     onCancelAction: () -> Unit = {},
     onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
+    onCancelLinkPreviewClick: () -> Unit = {},
     onMentionSelected: (User) -> Unit = {},
     onCommandSelected: (Command) -> Unit = {},
     onAlsoSendToChannelSelected: (Boolean) -> Unit = {},
@@ -281,6 +285,7 @@ public fun MessageComposer(
                 state = it,
                 onCancel = onCancelAction,
                 onLinkPreviewClick = onLinkPreviewClick,
+                onCancelLinkPreviewClick = onCancelLinkPreviewClick,
             )
         }
     },
@@ -410,6 +415,7 @@ public fun DefaultMessageComposerHeaderContent(
     messageComposerState: MessageComposerState,
     onCancelAction: () -> Unit,
     onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
+    onCancelLinkPreviewClick: () -> Unit = {},
 ) {
     val activeAction = messageComposerState.action
 
@@ -427,6 +433,7 @@ public fun DefaultMessageComposerHeaderContent(
             modifier = Modifier,
             linkPreview = messageComposerState.linkPreviews.first(),
             onClick = onLinkPreviewClick,
+            onCancel = onCancelLinkPreviewClick,
         )
     }
 }
