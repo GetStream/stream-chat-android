@@ -101,14 +101,8 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
      */
     public open fun handleChannelEvent(event: HasChannel, filter: FilterObject): EventHandlingResult {
         return when (event) {
-            is ChannelDeletedEvent -> {
-                println("JcLog:[handleChannelEvent(ChannelDeletedEvent)] removing channel: ${event.cid}")
-                EventHandlingResult.Remove(event.cid)
-            }
-            is NotificationChannelDeletedEvent -> {
-                println("JcLog:[handleChannelEvent(NotificationChannelDeletedEvent)] removing channel: ${event.cid}")
-                EventHandlingResult.Remove(event.cid)
-            }
+            is ChannelDeletedEvent -> EventHandlingResult.Remove(event.cid)
+            is NotificationChannelDeletedEvent ->EventHandlingResult.Remove(event.cid)
             else -> EventHandlingResult.Skip
         }
     }
@@ -128,10 +122,7 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
         cachedChannel: Channel?,
     ): EventHandlingResult {
         return when (event) {
-            is ChannelHiddenEvent -> {
-                println("JcLog:[handleCidEvent(ChannelHiddenEvent)] removing channel: ${event.cid}")
-                EventHandlingResult.Remove(event.cid)
-            }
+            is ChannelHiddenEvent -> EventHandlingResult.Remove(event.cid)
             is ChannelVisibleEvent -> EventHandlingResult.WatchAndAdd(event.cid)
             else -> EventHandlingResult.Skip
         }
