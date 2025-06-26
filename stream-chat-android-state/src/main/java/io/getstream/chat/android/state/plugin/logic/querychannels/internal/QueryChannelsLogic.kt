@@ -214,7 +214,6 @@ internal class QueryChannelsLogic(
                     val remoteCids = getRemoteCids(request.filter, request.limit, request.limit, existingChannels.size)
                     val cidsToRemove = localCids - remoteCids.toSet()
                     logger.v { "[updateOnlineChannels] cidsToRemove.size: ${cidsToRemove.size}" }
-                    println("JcLog: [updateOnlineChannels] cidsToRemove: $cidsToRemove")
                     removeChannels(cidsToRemove)
                     newChannelsOffset += remoteCids.size
                 }

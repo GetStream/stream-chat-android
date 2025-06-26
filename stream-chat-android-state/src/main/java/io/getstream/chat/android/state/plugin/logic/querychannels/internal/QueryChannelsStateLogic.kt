@@ -203,7 +203,6 @@ internal class QueryChannelsStateLogic(
             return
         }
         mutableState.queryChannelsSpec.cids = mutableState.queryChannelsSpec.cids - cidSet
-        println("JcLog:[removeChannels] removing channels: $cidSet")
         mutableState.setChannels(existingChannels - cidSet)
     }
 
@@ -213,7 +212,6 @@ internal class QueryChannelsStateLogic(
      */
     internal fun initializeChannelsIfNeeded() {
         if (mutableState.rawChannels == null) {
-            println("JcLog:[initializeChannelsIfNeeded] initializing rawChannels with empty map")
             mutableState.setChannels(emptyMap())
         }
     }
@@ -248,7 +246,6 @@ internal class QueryChannelsStateLogic(
                 ).toChannel()
             }
 
-        println("JcLog:[refreshChannels] newChannels: $newChannels")
         mutableState.setChannels(newChannels)
     }
 
@@ -276,7 +273,6 @@ internal class QueryChannelsStateLogic(
                 )
             }
 
-        println("JcLog:[refreshMembersStateForUser] affectedChannels: $affectedChannels")
         mutableState.setChannels(existingChannels + affectedChannels)
     }
 }
