@@ -59,8 +59,8 @@ import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
  * @param viewModel The ViewModel that stores all the data and business logic required to show a
  * list of messages. The user has to provide one in this case, as we require the channelId to start
  * the operations.
- * @param reactionSorting The sorting of the reactions. Default: [ReactionSortingByFirstReactionAt].
  * @param modifier Modifier for styling.
+ * @param reactionSorting The sorting of the reactions. Default: [ReactionSortingByFirstReactionAt].
  * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
  * @param messagesLazyListState State of the lazy list that represents the list of messages. Useful for controlling the
  * scroll state and focused message offset.
@@ -97,8 +97,8 @@ import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 @Composable
 public fun MessageList(
     viewModel: MessageListViewModel,
-    reactionSorting: ReactionSorting = ReactionSortingByFirstReactionAt,
     modifier: Modifier = Modifier,
+    reactionSorting: ReactionSorting = ReactionSortingByFirstReactionAt,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     messagesLazyListState: MessagesLazyListState =
@@ -348,14 +348,14 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * users to connect the UI to their own data providers, as it relies on pure state.
  *
  * @param currentState The state of the component, represented by [MessageListState].
+ * @param reactionSorting The sorting of the reactions.
+ * @param modifier Modifier for styling.
  * @param verticalArrangement Vertical arrangement of the regular message list.
  * Default: [Arrangement.Top].
  * @param threadsVerticalArrangement Vertical arrangement of the thread message list.
  * Default: [Arrangement.Bottom].
  * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
  * Default: `null`.
- * @param reactionSorting The sorting of the reactions.
- * @param modifier Modifier for styling.
  * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
  * @param messagesLazyListState State of the lazy list that represents the list of messages. Useful for controlling the
  * scroll state and focused message offset.
@@ -386,11 +386,11 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
 @Composable
 public fun MessageList(
     currentState: MessageListState,
+    reactionSorting: ReactionSorting,
+    modifier: Modifier = Modifier,
     verticalArrangement: Arrangement.Vertical = Arrangement.Top,
     threadsVerticalArrangement: Arrangement.Vertical = Arrangement.Bottom,
     threadMessagesStart: ThreadMessagesStart? = null,
-    reactionSorting: ReactionSorting,
-    modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     messageContentFactory: MessageContentFactory = ChatTheme.messageContentFactory,
     messagesLazyListState: MessagesLazyListState =
