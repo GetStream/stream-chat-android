@@ -122,3 +122,9 @@ internal data class DownstreamDraftMessageDto(
 
     val extraData: Map<String, Any>? = null,
 )
+
+@JsonClass(generateAdapter = true)
+internal data class DownstreamPendingMessageDto(
+    val message: DownstreamMessageDto,
+    val metadata: Map<String, String>?,
+)
