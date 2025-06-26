@@ -224,7 +224,7 @@ public class MessageListController(
     public val unreadLabelState: MutableStateFlow<UnreadLabel?> = MutableStateFlow(null)
     private val showUnreadButtonState = MutableSharedFlow<Boolean>(extraBufferCapacity = 1)
     private val updateUnreadLabelState = MutableStateFlow(true)
-    private val messagesInOriginalLanguage = MutableStateFlow<Set<String>>(emptySet())
+    private val messagesInOriginalLanguageIds = MutableStateFlow<Set<String>>(emptySet())
 
     /**
      * Holds information about the abilities the current user is able to exercise in the given channel.
@@ -471,7 +471,7 @@ public class MessageListController(
                 unreadLabelState,
                 channelState.members,
                 channelState.endOfOlderMessages,
-                messagesInOriginalLanguage,
+                messagesInOriginalLanguageIds,
             ) { data ->
                 val state = data[0] as MessagesState
                 val reads = data[1] as List<ChannelUserRead>
@@ -764,7 +764,7 @@ public class MessageListController(
                 focusedMessage,
                 members,
                 ownCapabilities,
-                messagesInOriginalLanguage,
+                messagesInOriginalLanguageIds,
             ) { data ->
                 val messages = data[0] as List<Message>
                 val reads = data[1] as List<ChannelUserRead>
@@ -1249,7 +1249,7 @@ public class MessageListController(
      * Toggles between the translated and the original text of the message.
      */
     public fun toggleOriginalText(messageId: String) {
-        messagesInOriginalLanguage.update { it ->
+        messagesInOriginalLanguageIds.update { it ->
             if (it.contains(messageId)) {
                 it - messageId
             } else {
