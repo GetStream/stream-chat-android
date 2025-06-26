@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.plugin.listeners.FetchCurrentUserListener
 import io.getstream.chat.android.client.plugin.listeners.GetMessageListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
+import io.getstream.chat.android.client.plugin.listeners.LiveLocationListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.plugin.listeners.QueryBlockedUsersListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
@@ -52,6 +53,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.DraftsSort
 import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.QueryDraftsResult
@@ -93,7 +95,8 @@ public interface Plugin :
     QueryThreadsListener,
     BlockUserListener,
     UnblockUserListener,
-    QueryBlockedUsersListener {
+    QueryBlockedUsersListener,
+    LiveLocationListener {
 
     public fun getErrorHandler(): ErrorHandler? = null
 
@@ -479,6 +482,29 @@ public interface Plugin :
         limit: Int,
         next: String?,
         sort: QuerySorter<DraftsSort>,
+    ) {
+        /* No-Op */
+    }
+
+    override suspend fun onUpdateLiveLocationPrecondition(location: Location): Result<Unit> = Result.Success(Unit)
+
+    override suspend fun onQueryActiveLocationsResult(result: Result<List<Location>>) {
+        /* No-Op */
+    }
+
+    override suspend fun onUpdateLiveLocationResult(result: Result<Location>, inputLocation: Location) {
+        /* No-Op */
+    }
+
+    override suspend fun onEndLiveLocationResult(result: Result<Location>, inputLocation: Location) {
+        /* No-Op */
+    }
+
+    override suspend fun onStartLiveLocationResult(
+        result: Result<Location>,
+        channelType: String,
+        channelId: String,
+        location: Location,
     ) {
         /* No-Op */
     }
