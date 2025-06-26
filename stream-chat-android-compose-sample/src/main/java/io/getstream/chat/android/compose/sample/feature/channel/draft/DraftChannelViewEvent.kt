@@ -14,25 +14,22 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.feature.channel.draft
-
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
+package io.getstream.chat.android.compose.sample.feature.channel.draft
 
 /**
  * Represents side-effect events related to draft channel actions.
  */
-@ExperimentalStreamChatApi
-public sealed interface DraftChannelViewEvent {
+sealed interface DraftChannelViewEvent {
 
     /**
      * Indicates an event to navigate to a specific channel.
      *
      * @param cid The full channel identifier (e.g., "messaging:123").
      */
-    public data class NavigateToChannel(val cid: String) : DraftChannelViewEvent
+    data class NavigateToChannel(val cid: String) : DraftChannelViewEvent
 
     /**
      * Indicates an error when trying to create a draft channel.
      */
-    public data object DraftChannelError : DraftChannelViewEvent
+    data object DraftChannelError : DraftChannelViewEvent
 }

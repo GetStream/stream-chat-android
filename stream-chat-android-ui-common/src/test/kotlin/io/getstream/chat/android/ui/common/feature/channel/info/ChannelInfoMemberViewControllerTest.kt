@@ -256,10 +256,7 @@ internal class ChannelInfoMemberViewControllerTest {
                 whenever(
                     chatClient.queryChannels(
                         request = QueryChannelsRequest(
-                            filter = Filters.and(
-                                Filters.eq("type", "messaging"),
-                                Filters.distinct(listOfNotNull(memberId, currentUser?.id)),
-                            ),
+                            filter = Filters.distinct(listOfNotNull(memberId, currentUser?.id)),
                             querySort = QuerySortByField.descByName("last_updated"),
                             messageLimit = 0,
                             limit = 1,
