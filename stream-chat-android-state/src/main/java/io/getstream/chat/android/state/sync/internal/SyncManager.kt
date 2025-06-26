@@ -60,6 +60,7 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
@@ -123,6 +124,7 @@ internal class SyncManager(
         syncScope.launch {
             syncOfflineDraftMessages()
         }
+        syncScope.launch { scheduleLiveLocationExpiration() }
     }
 
     override fun stop() {
@@ -145,6 +147,13 @@ internal class SyncManager(
         logger.i { "[awaitSyncing] no args" }
         state.first { it == State.Idle }
         logger.v { "[awaitSyncing] completed" }
+    }
+
+    private suspend fun scheduleLiveLocationExpiration() {
+        println("JcLogLocations: scheduleLiveLocationExpiration")
+        mutableGlobalState.removeExpiredLiveLocations()
+        delay(LIVE_LOCATION_EXPIRATION_WAIT_TIME)
+        scheduleLiveLocationExpiration()
     }
 
     @VisibleForTesting
@@ -688,5 +697,9 @@ internal class SyncManager(
 
     private enum class State {
         Idle, Syncing
+    }
+
+    companion object {
+        const val LIVE_LOCATION_EXPIRATION_WAIT_TIME = 1000L
     }
 }
