@@ -82,6 +82,7 @@ import java.util.Date
  * @param modifier The [Modifier] to be applied to this screen.
  * @param currentUser The current logged-in user. Defaults to the current user from the [ChatClient].
  * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
+ * @param onAddMembersClick Callback invoked when the "Add Members" button is clicked.
  */
 @ExperimentalStreamChatApi
 @Composable
