@@ -73,14 +73,15 @@ class AddMembersViewModel(
                         isLoading = true,
                     )
                 }
-                val currentMembers = channelMembers.firstOrNull() ?: emptyList()
-                chatClient.queryUsers(query.toRequest(currentMembers))
+                val channelMemberIds = (channelMembers.firstOrNull() ?: emptyList()).map(Member::getUserId)
+                chatClient.queryUsers(query.toRequest())
                     .await()
                     .onSuccess { users ->
+                        val searchResult = users.filterNot { it.id in channelMemberIds }
                         _state.update { currentState ->
                             currentState.copy(
                                 isLoading = false,
-                                searchResult = users,
+                                searchResult = searchResult,
                             )
                         }
                     }
@@ -132,15 +133,14 @@ class AddMembersViewModel(
         }
     }
 
-    private fun String.toRequest(currentMembers: List<Member>): QueryUsersRequest {
-        val currentMembersFilter = Filters.nin("id", currentMembers.map(Member::getUserId))
-        val nameFilter = if (isEmpty()) {
+    private fun String.toRequest(): QueryUsersRequest {
+        val filter = if (isEmpty()) {
             Filters.neutral()
         } else {
             Filters.autocomplete("name", this)
         }
         return QueryUsersRequest(
-            filter = Filters.and(currentMembersFilter, nameFilter),
+            filter = filter,
             offset = 0,
             limit = resultLimit,
             querySort = QuerySortByField.ascByName("name"),
