@@ -354,7 +354,7 @@ internal object MoshiChatApiTestArguments {
                             hidden = randomBoolean(),
                             membership = Mother.randomDownstreamMemberDto(),
                             hide_messages_before = randomDateOrNull(),
-                            draft = randomDownstreamDraftDto()
+                            draft = randomDownstreamDraftDto(),
                         ),
                     ),
                 ),

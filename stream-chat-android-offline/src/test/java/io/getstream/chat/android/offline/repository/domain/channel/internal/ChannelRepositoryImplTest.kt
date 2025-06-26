@@ -56,7 +56,7 @@ internal class ChannelRepositoryImplTest {
             channelDao,
             { randomUser() },
             { randomMessage() },
-            { randomDraftMessageOrNull() }
+            { randomDraftMessageOrNull() },
         )
 
     @BeforeEach
