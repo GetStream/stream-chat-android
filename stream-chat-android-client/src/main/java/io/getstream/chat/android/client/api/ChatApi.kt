@@ -38,6 +38,7 @@ import io.getstream.chat.android.models.DraftsSort
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.GuestUser
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
@@ -562,6 +563,12 @@ internal interface ChatApi {
 
     @CheckResult
     fun deletePoll(pollId: String): Call<Unit>
+
+    @CheckResult
+    fun queryActiveLocations(): Call<List<Location>>
+
+    @CheckResult
+    fun updateLiveLocation(location: Location): Call<Location>
 
     fun warmUp()
 
