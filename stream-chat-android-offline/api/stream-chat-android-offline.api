@@ -96,6 +96,8 @@ public final class io/getstream/chat/android/offline/repository/domain/message/i
 	public fun select (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectBySyncStatus (Lio/getstream/chat/android/models/SyncStatus;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectChunked (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectDraftMessage (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectDraftMessageByParentId (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectDraftMessages (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectIdsBySyncStatus (Lio/getstream/chat/android/models/SyncStatus;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectMessagesWithPoll (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

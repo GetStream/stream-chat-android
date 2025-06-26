@@ -240,7 +240,6 @@ public fun randomReaction(
     enforceUnique = enforceUnique,
 )
 
-
 public fun randomDraftMessageOrNull(): DraftMessage? = randomDraftMessage().takeIf { randomBoolean() }
 public fun randomDraftMessage(
     id: String = randomString(),
@@ -398,7 +397,7 @@ public fun randomChannel(
     ownCapabilities: Set<String> = randomChannelCapabilities(),
     extraData: Map<String, Any> = emptyMap(),
     membership: Member? = randomMember(),
-    draftMessage: DraftMessage? = randomDraftMessageOrNull()
+    draftMessage: DraftMessage? = randomDraftMessageOrNull(),
 ): Channel = Channel(
     id = id,
     name = name,
