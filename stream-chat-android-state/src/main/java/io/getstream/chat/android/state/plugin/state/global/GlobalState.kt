@@ -16,9 +16,11 @@
 
 package io.getstream.chat.android.state.plugin.state.global
 
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
@@ -84,4 +86,16 @@ public interface GlobalState {
      * Use the parentId to access draft message for a particular thread.
      */
     public val threadDraftMessages: StateFlow<Map<String, DraftMessage>>
+
+    /**
+     * Active live locations that are being shared in the app.
+     */
+    @ExperimentalStreamChatApi
+    public val activeLiveLocations: StateFlow<List<Location>>
+
+    /**
+     * List of live locations that are currently being shared by the current user.
+     */
+    @ExperimentalStreamChatApi
+    public val currentUserActiveLiveLocations: StateFlow<List<Location>>
 }
