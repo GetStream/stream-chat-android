@@ -84,6 +84,7 @@ internal class QueryThreadsLogicTest {
                 ),
             ),
             read = emptyList(),
+            draftMessage = null,
         ),
     )
 

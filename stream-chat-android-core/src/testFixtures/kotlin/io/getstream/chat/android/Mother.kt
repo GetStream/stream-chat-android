@@ -894,6 +894,7 @@ public fun randomThread(
     title: String = randomString(),
     latestReplies: List<Message> = List(positiveRandomInt(5)) { randomMessage() },
     read: List<ChannelUserRead> = List(positiveRandomInt(5)) { randomChannelUserRead() },
+    draftMessage: DraftMessage? = randomDraftMessageOrNull(),
 ): Thread = Thread(
     activeParticipantCount = activeParticipantCount,
     cid = cid,
@@ -911,6 +912,7 @@ public fun randomThread(
     title = title,
     latestReplies = latestReplies,
     read = read,
+    draftMessage = draftMessage,
 )
 
 public fun randomAppSettings(

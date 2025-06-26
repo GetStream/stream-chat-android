@@ -546,7 +546,6 @@ internal class ChannelStateLogic(
 
         mutableState.setLoadingOlderMessages(false)
         mutableState.setLoadingNewerMessages(false)
-        channel.draftMessage?.let(globalMutableState::updateDraftMessage)
     }
 
     private fun upsertCachedMessages(messages: List<Message>) {

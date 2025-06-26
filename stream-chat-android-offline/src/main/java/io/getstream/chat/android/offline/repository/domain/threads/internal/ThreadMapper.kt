@@ -72,5 +72,5 @@ internal suspend fun ThreadEntity.toModel(
     title = title,
     read = read.map { it.toModel(getUser) },
     latestReplies = latestReplyIds.mapNotNull { getMessage(it) },
-    draft = getDraftMessage(parentMessageId)
+    draftMessage = getDraftMessage(parentMessageId)
 )

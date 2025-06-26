@@ -102,7 +102,7 @@ internal class QueryThreadsStateLogic(
 
     private fun upsertDraftMessages(threads: List<Thread>) {
         threads.forEach { thread ->
-            thread.draft?.let { draft ->
+            thread.draftMessage?.let { draft ->
                 mutableGlobalState.updateDraftMessage(draft)
             }
         }
