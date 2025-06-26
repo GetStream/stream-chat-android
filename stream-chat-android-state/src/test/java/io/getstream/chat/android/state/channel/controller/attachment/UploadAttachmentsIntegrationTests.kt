@@ -281,6 +281,14 @@ internal class MockMessageRepository : MessageRepository {
         TODO("Not yet implemented")
     }
 
+    override suspend fun selectDraftMessagesByCid(cid: String): DraftMessage? {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun selectDraftMessageByParentId(parentId: String): DraftMessage? {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun deleteDraftMessage(message: DraftMessage) {
         TODO("Not yet implemented")
     }

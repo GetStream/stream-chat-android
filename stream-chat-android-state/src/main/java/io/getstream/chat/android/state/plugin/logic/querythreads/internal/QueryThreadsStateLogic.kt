@@ -24,6 +24,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.plugin.state.querythreads.internal.QueryThreadsMutableState
 import java.util.Date
 
@@ -33,7 +34,10 @@ import java.util.Date
  * @param mutableState Reference to the global [QueryThreadsMutableState].
  */
 @Suppress("TooManyFunctions")
-internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMutableState) {
+internal class QueryThreadsStateLogic(
+    private val mutableState: QueryThreadsMutableState,
+    private val mutableGlobalState: MutableGlobalState,
+) {
 
     /**
      * Retrieves the current state of the 'loading' indicator from the [mutableState].
@@ -71,24 +75,38 @@ internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMuta
      *
      * @param threads The new threads state.
      */
-    internal fun setThreads(threads: List<Thread>) =
+    internal fun setThreads(threads: List<Thread>) {
+        upsertDraftMessages(threads)
         mutableState.setThreads(threads)
+    }
 
     /**
      * Inserts all [Thread]s that aren't already loaded into the [mutableState].
      *
      * @param threads The batch of [Thread]s to insert (if they don't already exist).
      */
-    internal fun insertThreadsIfAbsent(threads: List<Thread>) =
+    internal fun insertThreadsIfAbsent(threads: List<Thread>) {
+        upsertDraftMessages(threads)
         mutableState.insertThreadsIfAbsent(threads)
+    }
 
     /**
      * Upsert a list of threads in the [mutableState].
      *
      * @param threads The threads to upsert.
      */
-    internal fun upsertThreads(threads: List<Thread>) =
+    internal fun upsertThreads(threads: List<Thread>) {
+        upsertDraftMessages(threads)
         mutableState.upsertThreads(threads)
+    }
+
+    private fun upsertDraftMessages(threads: List<Thread>) {
+        threads.forEach { thread ->
+            thread.draft?.let { draft ->
+                mutableGlobalState.updateDraftMessage(draft)
+            }
+        }
+    }
 
     /**
      * Clears all [Thread]s in the [mutableState].
