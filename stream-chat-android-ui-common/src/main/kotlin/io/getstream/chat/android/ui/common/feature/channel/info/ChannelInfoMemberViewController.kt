@@ -83,7 +83,7 @@ public class ChannelInfoMemberViewController(
                 channel.members
                     .mapNotNull { members -> members.firstOrNull { it.getUserId() == memberId } }
                     .onEach { logger.d { "[onMember] name: ${it.user.name}" } },
-                queryDistinctChannel(type = channel.channelType),
+                queryDistinctChannel(),
                 ::ChannelInfoMemberData,
             )
         }.map { (channelData, member, distinctChannel) ->
@@ -112,16 +112,13 @@ public class ChannelInfoMemberViewController(
     private lateinit var member: Member
     private var distinctCid: String? = null
 
-    private fun queryDistinctChannel(type: String): Flow<Channel?> =
+    private fun queryDistinctChannel(): Flow<Channel?> =
         flow {
             chatClient.getCurrentUser()?.id?.let { currentUserId ->
                 logger.d { "[queryDistinctChannel] currentUserId: $currentUserId, memberId: $memberId" }
                 chatClient.queryChannels(
                     request = QueryChannelsRequest(
-                        filter = Filters.and(
-                            Filters.eq("type", type),
-                            Filters.distinct(listOf(memberId, currentUserId)),
-                        ),
+                        filter = Filters.distinct(listOf(memberId, currentUserId)),
                         querySort = QuerySortByField.descByName("last_updated"),
                         messageLimit = 0,
                         limit = 1,

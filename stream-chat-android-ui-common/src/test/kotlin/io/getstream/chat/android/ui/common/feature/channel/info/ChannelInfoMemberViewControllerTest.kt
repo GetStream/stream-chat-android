@@ -229,11 +229,9 @@ internal class ChannelInfoMemberViewControllerTest {
     private class Fixture {
         private val channelData = MutableStateFlow(ChannelData(type = "", id = ""))
         private val channelMembers = MutableStateFlow(emptyList<Member>())
-        private val channelType = randomString()
         private val channelState: ChannelState = mock {
             on { channelData } doReturn channelData
             on { members } doReturn channelMembers
-            on { channelType } doReturn channelType
         }
         private val chatClient: ChatClient = mock {
             on { getCurrentUser() } doReturn randomUser()
@@ -258,10 +256,7 @@ internal class ChannelInfoMemberViewControllerTest {
                 whenever(
                     chatClient.queryChannels(
                         request = QueryChannelsRequest(
-                            filter = Filters.and(
-                                Filters.eq("type", channelType),
-                                Filters.distinct(listOfNotNull(memberId, currentUser?.id)),
-                            ),
+                            filter = Filters.distinct(listOfNotNull(memberId, currentUser?.id)),
                             querySort = QuerySortByField.descByName("last_updated"),
                             messageLimit = 0,
                             limit = 1,
