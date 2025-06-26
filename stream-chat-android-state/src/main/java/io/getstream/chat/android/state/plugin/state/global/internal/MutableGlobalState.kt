@@ -187,7 +187,6 @@ internal class MutableGlobalState(
     private fun List<Location>.removeExpired(): List<Location> {
         val currentDate = Date(now())
         return filter { location ->
-            println("JcLogLocations: location.endAt: ${location.endAt}, currentDate: $currentDate")
             location.endAt?.after(currentDate) ?: false
         }
     }

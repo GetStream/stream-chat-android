@@ -130,7 +130,6 @@ public open class DefaultChatEventHandler(
         return if (member.getUserId() != clientState.user.value?.id) {
             EventHandlingResult.Skip
         } else {
-            println("JcLog: [removeIfCurrentUserLeftChannel] removing channel with cid: $cid")
             removeIfChannelExists(cid)
         }
     }
@@ -148,10 +147,7 @@ public open class DefaultChatEventHandler(
 
         return when {
             channelsMap == null -> EventHandlingResult.Skip
-            channelsMap.containsKey(cid) -> {
-                println("JcLog: [removeIfChannelExists] removing channel with cid: $cid")
-                EventHandlingResult.Remove(cid)
-            }
+            channelsMap.containsKey(cid) -> EventHandlingResult.Remove(cid)
             else -> EventHandlingResult.Skip
         }
     }

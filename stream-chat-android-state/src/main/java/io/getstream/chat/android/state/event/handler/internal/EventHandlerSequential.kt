@@ -236,10 +236,7 @@ internal class EventHandlerSequential(
             when (result) {
                 is EventHandlingResult.Add -> queryChannelsLogic.addChannel(result.channel)
                 is EventHandlingResult.WatchAndAdd -> queryChannelsLogic.watchAndAddChannel(result.cid)
-                is EventHandlingResult.Remove -> {
-                    println("JcLog: [handleChatEvents] removing channel: ${result.cid}")
-                    queryChannelsLogic.removeChannel(result.cid)
-                }
+                is EventHandlingResult.Remove -> queryChannelsLogic.removeChannel(result.cid)
                 is EventHandlingResult.Skip -> Unit
             }
         }

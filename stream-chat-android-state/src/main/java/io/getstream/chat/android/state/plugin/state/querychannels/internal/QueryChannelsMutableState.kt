@@ -53,7 +53,6 @@ internal class QueryChannelsMutableState(
     internal var rawChannels: Map<String, Channel>?
         get() = _channels?.value
         private set(value) {
-            println("JcLog: setting rawChannels: $value")
             _channels?.value = value
         }
 
@@ -114,7 +113,6 @@ internal class QueryChannelsMutableState(
     override val channels: StateFlow<List<Channel>?> = sortedChannels
     override val channelsStateData: StateFlow<ChannelsStateData> =
         loading.combine(sortedChannels) { loading: Boolean, channels: List<Channel>? ->
-            println("JcLog: channelStateData: $channels")
             when {
                 loading || channels == null -> ChannelsStateData.Loading
                 channels.isEmpty() -> ChannelsStateData.OfflineNoResults

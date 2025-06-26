@@ -150,7 +150,6 @@ internal class SyncManager(
     }
 
     private suspend fun scheduleLiveLocationExpiration() {
-        println("JcLogLocations: scheduleLiveLocationExpiration")
         mutableGlobalState.removeExpiredLiveLocations()
         delay(LIVE_LOCATION_EXPIRATION_WAIT_TIME)
         scheduleLiveLocationExpiration()
