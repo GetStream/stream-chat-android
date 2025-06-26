@@ -26,7 +26,7 @@ import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMembe
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoMemberViewState
 
 @Composable
-internal fun ChannelInfoMemberOption(
+internal fun ChannelInfoMemberOptionItem(
     option: ChannelInfoMemberViewState.Content.Option,
     onViewAction: (action: ChannelInfoMemberViewAction) -> Unit,
 ) {

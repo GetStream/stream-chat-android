@@ -62,6 +62,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix quoted poll messages showing an empty message preview. [#5849](https://github.com/GetStream/stream-chat-android/pull/5849)
 
 ### ⬆️ Improved
 
@@ -76,6 +77,8 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Use the same text style in `DefaultComposerLabel` and `MessageInput` so that typing `MessageComposer` doesn't cause any glitches. [#5838](https://github.com/GetStream/stream-chat-android/pull/5838)
+- Fix quoted poll messages showing an empty message preview. [#5849](https://github.com/GetStream/stream-chat-android/pull/5849)
+- Fix ExoPlayer crash when playing a video, happening when the integration app is using the legacy `com.google.android.exoplayer` library. [#5841](https://github.com/GetStream/stream-chat-android/pull/5841)
 
 ### ⬆️ Improved
 
@@ -83,6 +86,8 @@
 - Add `FileAttachmentPreviewContent`, `FileAttachmentContent`,`FileAttachmentItem`, `FileUploadContent` and `FileUploadItem` to `ChatComponentFactory`. [#5791](https://github.com/GetStream/stream-chat-android/pull/5791)
 - Introduce internal `DraftChannelViewController` and experimental classes `DraftChannelViewState`, `DraftChannelViewAction`, and `DraftChannelViewEvent`. [#5797](https://github.com/GetStream/stream-chat-android/pull/5797)
 - Message member from the member bottom sheet of the channel info screen. [#5797](https://github.com/GetStream/stream-chat-android/pull/5797)
+- Introduce **experimental** factory methods for the channel info screens. [#5812](https://github.com/GetStream/stream-chat-android/pull/5812)
+- Support adding members to group in the channel info screen. [#5850](https://github.com/GetStream/stream-chat-android/pull/5850)
 
 ### ⚠️ Changed
 
