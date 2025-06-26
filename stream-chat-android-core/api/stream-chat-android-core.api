@@ -435,6 +435,7 @@ public final class io/getstream/chat/android/models/Channel$Builder {
 	public final fun withCreatedAt (Ljava/util/Date;)Lio/getstream/chat/android/models/Channel$Builder;
 	public final fun withCreatedBy (Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/models/Channel$Builder;
 	public final fun withDeletedAt (Ljava/util/Date;)Lio/getstream/chat/android/models/Channel$Builder;
+	public final fun withDraftMessage (Lio/getstream/chat/android/models/DraftMessage;)Lio/getstream/chat/android/models/Channel$Builder;
 	public final fun withExtraData (Ljava/util/Map;)Lio/getstream/chat/android/models/Channel$Builder;
 	public final fun withFrozen (Z)Lio/getstream/chat/android/models/Channel$Builder;
 	public final fun withHidden (Ljava/lang/Boolean;)Lio/getstream/chat/android/models/Channel$Builder;
@@ -537,7 +538,7 @@ public final class io/getstream/chat/android/models/ChannelData {
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCreatedBy ()Lio/getstream/chat/android/models/User;
 	public final fun getDeletedAt ()Ljava/util/Date;
-	public final fun getDraftMessage ()Lio/getstream/chat/android/models/DraftMessage;
+	public final fun getDraft ()Lio/getstream/chat/android/models/DraftMessage;
 	public final fun getExtraData ()Ljava/util/Map;
 	public final fun getFrozen ()Z
 	public final fun getId ()Ljava/lang/String;
@@ -1880,7 +1881,7 @@ public final class io/getstream/chat/android/models/Thread {
 	public final fun getCreatedBy ()Lio/getstream/chat/android/models/User;
 	public final fun getCreatedByUserId ()Ljava/lang/String;
 	public final fun getDeletedAt ()Ljava/util/Date;
-	public final fun getDraftMessage ()Lio/getstream/chat/android/models/DraftMessage;
+	public final fun getDraft ()Lio/getstream/chat/android/models/DraftMessage;
 	public final fun getLastMessageAt ()Ljava/util/Date;
 	public final fun getLatestReplies ()Ljava/util/List;
 	public final fun getParentMessage ()Lio/getstream/chat/android/models/Message;
