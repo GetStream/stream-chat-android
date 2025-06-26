@@ -2675,8 +2675,6 @@ public abstract class io/getstream/chat/android/client/notifications/handler/Cha
 	public static final field Companion Lio/getstream/chat/android/client/notifications/handler/ChatNotification$Companion;
 	public static final field TYPE_MESSAGE_NEW Ljava/lang/String;
 	public static final field TYPE_NOTIFICATION_REMINDER_DUE Ljava/lang/String;
-	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getType ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/notifications/handler/ChatNotification$Companion {
@@ -2684,14 +2682,28 @@ public final class io/getstream/chat/android/client/notifications/handler/ChatNo
 
 public final class io/getstream/chat/android/client/notifications/handler/ChatNotification$MessageNew : io/getstream/chat/android/client/notifications/handler/ChatNotification {
 	public fun <init> (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/Message;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/Channel;
+	public final fun component2 ()Lio/getstream/chat/android/models/Message;
+	public final fun copy (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/Message;)Lio/getstream/chat/android/client/notifications/handler/ChatNotification$MessageNew;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/notifications/handler/ChatNotification$MessageNew;Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/client/notifications/handler/ChatNotification$MessageNew;
+	public fun equals (Ljava/lang/Object;)Z
 	public final fun getChannel ()Lio/getstream/chat/android/models/Channel;
 	public final fun getMessage ()Lio/getstream/chat/android/models/Message;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/notifications/handler/ChatNotification$NotificationReminderDue : io/getstream/chat/android/client/notifications/handler/ChatNotification {
 	public fun <init> (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/Message;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/Channel;
+	public final fun component2 ()Lio/getstream/chat/android/models/Message;
+	public final fun copy (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/Message;)Lio/getstream/chat/android/client/notifications/handler/ChatNotification$NotificationReminderDue;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/notifications/handler/ChatNotification$NotificationReminderDue;Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/client/notifications/handler/ChatNotification$NotificationReminderDue;
+	public fun equals (Ljava/lang/Object;)Z
 	public final fun getChannel ()Lio/getstream/chat/android/models/Channel;
 	public final fun getMessage ()Lio/getstream/chat/android/models/Message;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/notifications/handler/NotificationConfig {

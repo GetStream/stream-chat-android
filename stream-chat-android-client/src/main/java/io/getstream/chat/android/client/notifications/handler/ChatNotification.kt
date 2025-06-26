@@ -21,10 +21,8 @@ import io.getstream.chat.android.models.Message
 
 /**
  * Represents a chat notification with a specific type.
- *
- * @property type The type of the notification.
  */
-public sealed class ChatNotification(public val type: String) {
+public sealed class ChatNotification {
 
     /**
      * Notification for a new message in a channel.
@@ -32,10 +30,10 @@ public sealed class ChatNotification(public val type: String) {
      * @property channel The channel where the new message was sent.
      * @property message The new message that triggered the notification.
      */
-    public class MessageNew(
+    public data class MessageNew(
         public val channel: Channel,
         public val message: Message,
-    ) : ChatNotification(TYPE_MESSAGE_NEW)
+    ) : ChatNotification()
 
     /**
      * Notification for a reminder due in a channel.
@@ -43,10 +41,10 @@ public sealed class ChatNotification(public val type: String) {
      * @property channel The channel where the message was sent.
      * @property message The message associated with the reminder.
      */
-    public class NotificationReminderDue(
+    public data class NotificationReminderDue(
         public val channel: Channel,
         public val message: Message,
-    ) : ChatNotification(TYPE_NOTIFICATION_REMINDER_DUE)
+    ) : ChatNotification()
 
     public companion object {
 

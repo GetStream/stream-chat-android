@@ -174,7 +174,7 @@ internal class ChatNotificationsImpl constructor(
     private fun wasNotificationDisplayed(messageId: String) = showedMessages.contains(messageId)
 
     override fun displayNotification(notification: ChatNotification) {
-        logger.d { "[displayNotification] type: ${notification.type}" }
+        logger.d { "[displayNotification] notification: $notification" }
         when (notification) {
             is ChatNotification.MessageNew -> {
                 if (!wasNotificationDisplayed(notification.message.id)) {
