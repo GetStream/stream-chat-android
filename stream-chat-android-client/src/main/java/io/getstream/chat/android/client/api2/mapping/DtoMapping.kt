@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
 import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
+import io.getstream.chat.android.client.api2.model.dto.UpstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDataDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
@@ -35,6 +36,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
@@ -137,9 +139,17 @@ internal class DtoMapping(
                     text = text,
                     thread_participants = threadParticipants.map { it.toDto() },
                     restricted_visibility = restrictedVisibility,
+                    shared_location = sharedLocation?.toDto(),
                     extraData = extraData,
                 )
             }
+
+    internal fun Location.toDto(): UpstreamLocationDto = UpstreamLocationDto(
+        latitude = latitude,
+        longitude = longitude,
+        created_by_device_id = device,
+        end_at = endAt,
+    )
 
     internal fun DraftMessage.toDto(): UpstreamMessageDto = UpstreamMessageDto(
         attachments = attachments.map { it.toDto() },
@@ -161,6 +171,7 @@ internal class DtoMapping(
         type = "regular",
         thread_participants = emptyList(),
         restricted_visibility = emptyList(),
+        shared_location = null,
         extraData = extraData,
     )
 
