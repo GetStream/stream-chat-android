@@ -75,7 +75,7 @@ public object PreviewThreadData {
                 lastReadMessageId = null,
             ),
         ),
-        draftMessage = null,
+        draft = null,
     )
 
     /**
@@ -114,7 +114,7 @@ public object PreviewThreadData {
                 lastReadMessageId = null,
             ),
         ),
-        draftMessage = null,
+        draft = null,
     )
 
     /**

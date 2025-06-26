@@ -689,8 +689,4 @@ internal class SyncManager(
     private enum class State {
         Idle, Syncing
     }
-
-    companion object {
-        const val QUERY_DRAFT_MESSAGES_LIMIT = 100
-    }
 }

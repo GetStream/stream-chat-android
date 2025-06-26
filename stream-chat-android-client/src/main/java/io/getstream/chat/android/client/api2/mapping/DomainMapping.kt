@@ -663,7 +663,7 @@ internal class DomainMapping(
                     lastReceivedEventDate = last_message_at,
                 )
             },
-            draftMessage = draft?.toDomain(channel?.toChannelInfo()),
+            draft = draft?.toDomain(channel?.toChannelInfo()),
         )
 
     /**

@@ -911,7 +911,7 @@ public fun randomThread(
     title = title,
     latestReplies = latestReplies,
     read = read,
-    draftMessage = draftMessage,
+    draft = draftMessage,
 )
 
 public fun randomAppSettings(

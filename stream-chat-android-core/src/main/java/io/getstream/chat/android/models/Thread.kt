@@ -40,7 +40,7 @@ import java.util.Date
  * @param title The title of the thread.
  * @param latestReplies The list of latest replies in the thread.
  * @param read Information about the read status for the participants in the thread.
- * @param draftMessage The draft message in the thread, if any.
+ * @param draft The draft message in the thread, if any.
  */
 @Immutable
 public data class Thread(
@@ -60,7 +60,7 @@ public data class Thread(
     val title: String,
     val latestReplies: List<Message>,
     val read: List<ChannelUserRead>,
-    val draftMessage: DraftMessage?,
+    val draft: DraftMessage?,
 ) {
 
     /**

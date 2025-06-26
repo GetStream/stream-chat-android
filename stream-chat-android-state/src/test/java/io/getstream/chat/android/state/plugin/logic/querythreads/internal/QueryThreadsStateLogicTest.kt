@@ -89,7 +89,7 @@ internal class QueryThreadsStateLogicTest {
                     lastReadMessageId = null,
                 ),
             ),
-            draftMessage = null,
+            draft = null,
         ),
     )
     val mutableGlobalState = MutableGlobalState()

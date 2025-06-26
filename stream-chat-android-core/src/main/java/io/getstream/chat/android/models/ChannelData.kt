@@ -58,7 +58,7 @@ public data class ChannelData(
     val extraData: Map<String, Any> = mapOf(),
     val ownCapabilities: Set<String> = setOf(),
     val membership: Member? = null,
-    val draftMessage: DraftMessage? = null,
+    val draft: DraftMessage? = null,
 ) {
 
     /**
@@ -99,7 +99,7 @@ public data class ChannelData(
         ownCapabilities = channel.ownCapabilities.takeIf { ownCapabilities -> ownCapabilities.isNotEmpty() }
             ?: currentOwnCapabilities,
         membership = channel.membership,
-        draftMessage = channel.draftMessage,
+        draft = channel.draftMessage,
     )
 
     @Deprecated(
@@ -174,7 +174,7 @@ public data class ChannelData(
             membership = membership,
             cachedLatestMessages = cachedLatestMessages,
             isInsideSearch = insideSearch,
-            draftMessage = draftMessage,
+            draftMessage = draft,
         )
     }
 

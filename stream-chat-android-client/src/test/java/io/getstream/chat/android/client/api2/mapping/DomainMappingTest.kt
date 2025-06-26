@@ -683,7 +683,7 @@ internal class DomainMappingTest {
             read = with(sut) {
                 downstreamThreadDto.read.orEmpty().map { it.toDomain(downstreamThreadDto.last_message_at) }
             },
-            draftMessage = with(sut) {
+            draft = with(sut) {
                 downstreamThreadDto.draft?.toDomain()
             },
         )

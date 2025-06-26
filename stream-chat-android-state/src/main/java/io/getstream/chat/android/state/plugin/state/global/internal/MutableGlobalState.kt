@@ -112,7 +112,6 @@ internal class MutableGlobalState : GlobalState {
     }
 
     fun removeDraftMessage(draftMessage: DraftMessage) {
-        println("JcLog: removeDraftMessage: $draftMessage")
         draftMessage.parentId?.let { parentId ->
             _threadDraftMessages?.let { it.value -= parentId }
         }
