@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.state.channel.draft
+package io.getstream.chat.android.compose.sample.feature.channel.draft
 
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Channel
 
 /**
@@ -25,18 +24,17 @@ import io.getstream.chat.android.models.Channel
  * This interface defines the possible states of the draft channel view,
  * including loading and content states.
  */
-@ExperimentalStreamChatApi
-public sealed interface DraftChannelViewState {
+sealed interface DraftChannelViewState {
 
     /**
      * Represents the loading state of the draft channel.
      */
-    public data object Loading : DraftChannelViewState
+    data object Loading : DraftChannelViewState
 
     /**
      * Represents the content state of the draft channel.
      *
      * @param channel The [Channel] object representing the direct channel being previewed.
      */
-    public data class Content(val channel: Channel) : DraftChannelViewState
+    data class Content(val channel: Channel) : DraftChannelViewState
 }

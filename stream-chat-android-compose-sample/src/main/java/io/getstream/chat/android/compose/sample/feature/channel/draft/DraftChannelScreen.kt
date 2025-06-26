@@ -34,8 +34,6 @@ import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewMode
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
-import io.getstream.chat.android.ui.common.feature.channel.draft.DraftChannelViewAction
-import io.getstream.chat.android.ui.common.state.channel.draft.DraftChannelViewState
 import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
 
 @Composable
