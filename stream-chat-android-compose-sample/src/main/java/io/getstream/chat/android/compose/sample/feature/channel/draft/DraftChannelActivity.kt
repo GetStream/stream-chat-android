@@ -29,7 +29,6 @@ import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
 import io.getstream.chat.android.compose.sample.ui.MessagesActivity
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.ui.common.feature.channel.draft.DraftChannelViewEvent
 import kotlinx.coroutines.flow.collectLatest
 
 class DraftChannelActivity : BaseConnectedActivity() {

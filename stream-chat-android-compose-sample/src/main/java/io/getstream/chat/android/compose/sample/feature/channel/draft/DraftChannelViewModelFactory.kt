@@ -18,10 +18,8 @@ package io.getstream.chat.android.compose.sample.feature.channel.draft
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 class DraftChannelViewModelFactory(private val memberIds: List<String>) : ViewModelProvider.Factory {
-    @OptIn(InternalStreamChatApi::class)
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         require(modelClass == DraftChannelViewModel::class.java) {
             "DraftChannelViewModelFactory can only create instances of DraftChannelViewModel"
