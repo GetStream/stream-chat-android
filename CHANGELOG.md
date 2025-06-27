@@ -1,11 +1,8 @@
 # UNRELEASED CHANGELOG
 ## Common changes for all artifacts
 ### 🐞 Fixed
-- Fix JSON parsing of `Device.providerName` when calling `ChatClient.getDevices()`. [#5821](https://github.com/GetStream/stream-chat-android/pull/5821)
-- Fix JSON parsing of `Flag.targetMessageId` when calling `ChatClient.flagUser()`. [#5829](https://github.com/GetStream/stream-chat-android/pull/5829)
 
 ### ⬆️ Improved
-- Use `AAC_ADTS` as default audio recording output format. [#5825](https://github.com/GetStream/stream-chat-android/pull/5825)
 
 ### ✅ Added
 
@@ -15,8 +12,11 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fix JSON parsing of `Device.providerName` when calling `ChatClient.getDevices()`. [#5821](https://github.com/GetStream/stream-chat-android/pull/5821)
+- Fix JSON parsing of `Flag.targetMessageId` when calling `ChatClient.flagUser()`. [#5829](https://github.com/GetStream/stream-chat-android/pull/5829)
 
 ### ⬆️ Improved
+- Refactor how Draft Messages are queried to avoid potential issues on the sync process. [#5847](https://github.com/GetStream/stream-chat-android/pull/5847)
 
 ### ✅ Added
 
@@ -50,6 +50,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Use `AAC_ADTS` as default audio recording output format. [#5825](https://github.com/GetStream/stream-chat-android/pull/5825)
 
 ### ✅ Added
 - Add `MessageOriginalTranslationsStore`: In-memory storage for keeping track of all auto-translated messages which have been manually converted to their original text. [#5845](https://github.com/GetStream/stream-chat-android/pull/5845)
@@ -61,6 +62,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix quoted poll messages showing an empty message preview. [#5849](https://github.com/GetStream/stream-chat-android/pull/5849)
 
 ### ⬆️ Improved
 
@@ -77,6 +79,8 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Use the same text style in `DefaultComposerLabel` and `MessageInput` so that typing `MessageComposer` doesn't cause any glitches. [#5838](https://github.com/GetStream/stream-chat-android/pull/5838)
+- Fix quoted poll messages showing an empty message preview. [#5849](https://github.com/GetStream/stream-chat-android/pull/5849)
+- Fix ExoPlayer crash when playing a video, happening when the integration app is using the legacy `com.google.android.exoplayer` library. [#5841](https://github.com/GetStream/stream-chat-android/pull/5841)
 
 ### ⬆️ Improved
 
@@ -87,6 +91,7 @@
 - Introduce **experimental** factory methods for the channel info screens. [#5812](https://github.com/GetStream/stream-chat-android/pull/5812)
 - Add `ChatTheme.showOriginalTranslationEnabled` flag for enabling/disabling the "Show original" translation label in the message list. [#5845](https://github.com/GetStream/stream-chat-android/pull/5845)
 - Add `MessageListViewModel.toggleOriginalText()` method for toggling between the original and translated text of the given message. [#5845](https://github.com/GetStream/stream-chat-android/pull/5845)
+- Support adding members to group in the channel info screen. [#5850](https://github.com/GetStream/stream-chat-android/pull/5850)
 
 ### ⚠️ Changed
 
@@ -3483,7 +3488,9 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Rtl support was added. If the app has `android:supportsRtl="true"` and the locale of the device needs Rtl support, the SDK will draw the components from the right-to-left instead the default way (left-to-right) [#2799](https://github.com/GetStream/stream-chat-android/pull/2799)
 
 ### ⚠️ Changed
-- Constructor of `ChannelListViewModel` and `ChannelListViewModelFactory` changed. Now they ask for `ChatEventHandlerFactory` instead `ChatEventHandler`, so users can use `StateFlow<List<Channel>>` in their implementations of `ChatEventHandler`, which can make implementation smarter with resources (don't try to add a channel that is already there, for example) [#2747](https://github.com/GetStream/stream-chat-android/pull/2747)
+- Constructor of `ChannelListViewModel` and `ChannelListViewModelFactory` changed. Now they ask for `ChatEventHandlerFactory` instead `ChatEventHandler`, so users can use `StateFlow<List<Channel
+
+` in their implementations of `ChatEventHandler`, which can make implementation smarter with resources (don't try to add a channel that is already there, for example) [#2747](https://github.com/GetStream/stream-chat-android/pull/2747)
 
 ### ❌ Removed
 

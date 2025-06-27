@@ -71,7 +71,7 @@
     <!-- Channel Info -->
 
     <string name="stream_ui_channel_info_group_title">Group info</string>
-
+    <string name="stream_ui_channel_info_member_add_button">Add member</string>
     <string name="stream_ui_channel_info_member_owner">Owner</string>
     <string name="stream_ui_channel_info_member_moderator">Moderator</string>
     <string name="stream_ui_channel_info_expand_button">%d more</string>

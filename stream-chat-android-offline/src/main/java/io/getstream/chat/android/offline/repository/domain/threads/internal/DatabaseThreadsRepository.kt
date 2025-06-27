@@ -20,6 +20,7 @@ import android.util.LruCache
 import io.getstream.chat.android.client.extensions.internal.upsertReply
 import io.getstream.chat.android.client.persistance.repository.ThreadsRepository
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
@@ -32,6 +33,7 @@ import io.getstream.chat.android.models.User
  * @param getUser Logic for retrieving a [User] by its ID.
  * @param getMessage Logic for retrieving a [Message] by its ID.
  * @param getChannel Logic for retrieving a [Channel] by its ID.
+ * @param getDraftMessage Logic for retrieving a [DraftMessage] by the Message ID it belongs to.
  * @param cacheSize The number of threads to cache.
  */
 internal class DatabaseThreadsRepository(
@@ -40,6 +42,7 @@ internal class DatabaseThreadsRepository(
     private val getUser: suspend (userId: String) -> User,
     private val getMessage: suspend (messageId: String) -> Message?,
     private val getChannel: suspend (cid: String) -> Channel?,
+    private val getDraftMessage: suspend (messageId: String) -> DraftMessage?,
     cacheSize: Int = 1000,
 ) : ThreadsRepository {
 
@@ -67,7 +70,7 @@ internal class DatabaseThreadsRepository(
         val threadId = message.parentId ?: return
         // Check cache first, then read from DB
         val thread = cache[threadId]
-            ?: threadDao.selectThread(threadId)?.toModel(getUser, getMessage, getChannel)
+            ?: threadDao.selectThread(threadId)?.toModel(getUser, getMessage, getChannel, getDraftMessage)
             ?: return
         val updatedThread = thread.upsertReply(message)
         // Update cache
@@ -86,7 +89,9 @@ internal class DatabaseThreadsRepository(
         val databaseThreads = if (dbThreadIds.isEmpty()) {
             emptyList() // Prevent access to DB if all threads are cached
         } else {
-            threadDao.selectThreads(dbThreadIds).map { thread -> thread.toModel(getUser, getMessage, getChannel) }
+            threadDao.selectThreads(dbThreadIds).map { thread ->
+                thread.toModel(getUser, getMessage, getChannel, getDraftMessage)
+            }
         }
         // Group messages by their thread (parentId)
         val replies = messages
@@ -114,7 +119,7 @@ internal class DatabaseThreadsRepository(
     override suspend fun selectThread(id: String): Thread? {
         // Check cache first, then read from DB
         val thread = cache[id]
-            ?: threadDao.selectThread(id)?.toModel(getUser, getMessage, getChannel)
+            ?: threadDao.selectThread(id)?.toModel(getUser, getMessage, getChannel, getDraftMessage)
             ?: return null
         // Update cache
         cache.put(id, thread)
@@ -125,7 +130,7 @@ internal class DatabaseThreadsRepository(
         // Important: Fetch threads sequentially so that their order is preserved (as the [ids] are ordered).
         val threads = ids.mapNotNull { id ->
             // Check cache first, then read from DB
-            cache[id] ?: threadDao.selectThread(id)?.toModel(getUser, getMessage, getChannel)
+            cache[id] ?: threadDao.selectThread(id)?.toModel(getUser, getMessage, getChannel, getDraftMessage)
         }.onEach { thread ->
             // Update cache
             cache.put(thread.parentMessageId, thread)

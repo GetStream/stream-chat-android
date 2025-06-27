@@ -92,6 +92,7 @@
     <string name="stream_compose_quoted_message_image_tag">Picture</string>
     <string name="stream_compose_quoted_message_giphy_tag">Giphy</string>
     <string name="stream_compose_quoted_message_file_tag">File</string>
+    <string name="stream_compose_quoted_message_poll" translatable="false">📊 %s</string>
 
     <!-- Selected Message Menu -->
     <string name="stream_compose_block_user">Block user</string>

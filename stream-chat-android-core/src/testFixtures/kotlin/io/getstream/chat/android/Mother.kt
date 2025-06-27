@@ -240,6 +240,7 @@ public fun randomReaction(
     enforceUnique = enforceUnique,
 )
 
+public fun randomDraftMessageOrNull(): DraftMessage? = randomDraftMessage().takeIf { randomBoolean() }
 public fun randomDraftMessage(
     id: String = randomString(),
     cid: String = randomCID(),
@@ -398,6 +399,7 @@ public fun randomChannel(
     ownCapabilities: Set<String> = randomChannelCapabilities(),
     extraData: Map<String, Any> = emptyMap(),
     membership: Member? = randomMember(),
+    draftMessage: DraftMessage? = randomDraftMessageOrNull(),
 ): Channel = Channel(
     id = id,
     name = name,
@@ -422,6 +424,7 @@ public fun randomChannel(
     ownCapabilities = ownCapabilities,
     extraData = extraData,
     membership = membership,
+    draftMessage = draftMessage,
 )
 
 public fun randomChannelUserRead(
@@ -892,6 +895,7 @@ public fun randomThread(
     title: String = randomString(),
     latestReplies: List<Message> = List(positiveRandomInt(5)) { randomMessage() },
     read: List<ChannelUserRead> = List(positiveRandomInt(5)) { randomChannelUserRead() },
+    draftMessage: DraftMessage? = randomDraftMessageOrNull(),
 ): Thread = Thread(
     activeParticipantCount = activeParticipantCount,
     cid = cid,
@@ -909,6 +913,7 @@ public fun randomThread(
     title = title,
     latestReplies = latestReplies,
     read = read,
+    draft = draftMessage,
 )
 
 public fun randomAppSettings(
