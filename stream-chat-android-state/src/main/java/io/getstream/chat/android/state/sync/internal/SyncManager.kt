@@ -174,6 +174,12 @@ internal class SyncManager(
         }
     }
 
+    private suspend fun syncOfflineDraftMessages() {
+        repos.selectDraftMessages().forEach { draftMessage ->
+            mutableGlobalState.updateDraftMessage(draftMessage)
+        }
+    }
+
     private fun setSyncState(state: SyncState?) {
         logger.v { "[setSyncState] state: ${state?.stringify()}" }
         this.syncState.value = state
@@ -224,36 +230,12 @@ internal class SyncManager(
 
     private suspend fun performSync() {
         logger.i { "[performSync] no args" }
-        syncDraftMessages()
         val cids = logicRegistry.getActiveChannelsLogic().map { it.cid }.ifEmpty {
             logger.w { "[performSync] no active cids found" }
             repos.selectSyncState(currentUserId)?.activeChannelIds ?: emptyList()
         }
         mutex.withLock {
             performSync(cids)
-        }
-    }
-
-    private suspend fun syncOfflineDraftMessages() {
-        repos.selectDraftMessages().forEach { draftMessage ->
-            mutableGlobalState.updateDraftMessage(draftMessage)
-        }
-    }
-
-    private fun syncDraftMessages(
-        limit: Int = QUERY_DRAFT_MESSAGES_LIMIT,
-        next: String? = null,
-    ) {
-        chatClient.queryDrafts(
-            filter = Filters.neutral(),
-            limit = limit,
-            next = next,
-        ).enqueue {
-            it.onSuccess { result ->
-                if (result.next != null) {
-                    syncDraftMessages(limit, result.next)
-                }
-            }
         }
     }
 
@@ -706,9 +688,5 @@ internal class SyncManager(
 
     private enum class State {
         Idle, Syncing
-    }
-
-    companion object {
-        const val QUERY_DRAFT_MESSAGES_LIMIT = 100
     }
 }

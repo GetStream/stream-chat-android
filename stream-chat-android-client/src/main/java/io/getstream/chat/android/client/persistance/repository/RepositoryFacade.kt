@@ -101,11 +101,13 @@ public class RepositoryFacade private constructor(
 
     override suspend fun insertChannel(channel: Channel) {
         insertUsers(channel.let(Channel::users))
+        channel.draftMessage?.let { insertDraftMessage(it) }
         channelsRepository.insertChannel(channel)
     }
 
     override suspend fun insertChannels(channels: Collection<Channel>) {
         insertUsers(channels.flatMap(Channel::users))
+        channels.forEach { it.draftMessage?.let { insertDraftMessage(it) } }
         channelsRepository.insertChannels(channels)
     }
 
@@ -198,6 +200,7 @@ public class RepositoryFacade private constructor(
         val threadUsers = threads.mapNotNull(Thread::createdBy)
         val users = threadUsers + messages.flatMap(Message::users)
         insertUsers(users)
+        threads.forEach { it.draft?.let { insertDraftMessage(it) } }
         messageRepository.insertMessages(messages)
         threadsRepository.insertThreads(threads)
     }

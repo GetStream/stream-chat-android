@@ -76,9 +76,17 @@ internal class DatabaseRepositoryFactory(
         getMessage: suspend (messageId: String) -> Message?,
     ): ChannelRepository {
         val databaseChannelRepository = repositoriesCache[ChannelRepository::class.java] as? DatabaseChannelRepository?
+        val messageRepository = createMessageRepository(getUser)
 
         return databaseChannelRepository ?: run {
-            DatabaseChannelRepository(scope, database.channelStateDao(), getUser, getMessage, now)
+            DatabaseChannelRepository(
+                scope,
+                database.channelStateDao(),
+                getUser,
+                getMessage,
+                messageRepository::selectDraftMessagesByCid,
+                now,
+            )
                 .also { repository ->
                     repositoriesCache[ChannelRepository::class.java] = repository
                 }
@@ -102,6 +110,8 @@ internal class DatabaseRepositoryFactory(
         getChannel: suspend (cid: String) -> Channel?,
     ): ThreadsRepository {
         val repository = repositoriesCache[ThreadsRepository::class.java] as? ThreadsRepository?
+        val messageRepository = createMessageRepository(getUser)
+
         return repository ?: run {
             DatabaseThreadsRepository(
                 threadDao = database.threadDao(),
@@ -109,6 +119,7 @@ internal class DatabaseRepositoryFactory(
                 getUser = getUser,
                 getMessage = getMessage,
                 getChannel = getChannel,
+                getDraftMessage = messageRepository::selectDraftMessageByParentId,
             ).also {
                 repositoriesCache[ThreadsRepository::class.java] = it
             }

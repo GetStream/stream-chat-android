@@ -102,6 +102,7 @@ internal class MutableGlobalState : GlobalState {
     }
 
     fun updateDraftMessage(draftMessage: DraftMessage) {
+        println("JcLog: updateDraftMessage: $draftMessage")
         draftMessage.parentId?.let { parentId ->
             _threadDraftMessages?.let { it.value += (parentId to draftMessage) }
         }
