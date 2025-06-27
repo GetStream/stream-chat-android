@@ -632,6 +632,8 @@ public class MessageListController(
         scope.launch {
             listState
                 .onCompletion {
+                    // Prevent focusing if the list is empty (if the listState flow is cancelled)
+                    if (listState.value.messageItems.isEmpty()) return@onCompletion
                     logger.v { "[initialFocusMessage] mode: ${_mode.value}" }
                     when {
                         _mode.value is MessageMode.Normal -> focusChannelMessage(messageId)
