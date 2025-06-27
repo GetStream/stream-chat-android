@@ -180,6 +180,7 @@ io.getstream.chat.android.ui.common.feature.messages.composer.query.filter
 io.getstream.chat.android.ui.common.feature.messages.composer.query.formatter
 io.getstream.chat.android.ui.common.feature.messages.composer.transliteration
 io.getstream.chat.android.ui.common.feature.messages.list
+io.getstream.chat.android.ui.common.feature.messages.translations
 io.getstream.chat.android.ui.common.feature.pinned
 io.getstream.chat.android.ui.common.feature.threads
 io.getstream.chat.android.ui.common.helper
@@ -264,6 +265,7 @@ io.getstream.chat.android.ui.navigation
 io.getstream.chat.android.ui.navigation.destinations
 io.getstream.chat.android.ui.utils
 io.getstream.chat.android.ui.utils.extensions
+io.getstream.chat.android.ui.viewmodel.channel
 io.getstream.chat.android.ui.viewmodel.channels
 io.getstream.chat.android.ui.viewmodel.mentions
 io.getstream.chat.android.ui.viewmodel.messages
