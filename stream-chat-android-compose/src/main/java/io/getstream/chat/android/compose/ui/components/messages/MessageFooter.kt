@@ -47,11 +47,14 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
  * holds the sender name and the timestamp.
  *
  * @param messageItem Message to show.
+ * @param onToggleOriginalText Called when the user taps on the "Show Original" or "Show Translation" label.
+ *
  */
 @Composable
 @Suppress("LongMethod")
 public fun MessageFooter(
     messageItem: MessageItemState,
+    onToggleOriginalText: () -> Unit = {},
 ) {
     val message = messageItem.message
     val alignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
@@ -73,7 +76,7 @@ public fun MessageFooter(
     }
 
     Column(horizontalAlignment = alignment.contentAlignment) {
-        MessageTranslatedLabel(messageItem)
+        MessageTranslatedLabel(messageItem, onToggleOriginalText)
         if (messageItem.showMessageFooter) {
             val showEditLabel = message.messageTextUpdatedAt != null
             var showEditInfo by remember { mutableStateOf(false) }
