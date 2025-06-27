@@ -54,6 +54,7 @@
 - Use `AAC_ADTS` as default audio recording output format. [#5825](https://github.com/GetStream/stream-chat-android/pull/5825)
 
 ### ✅ Added
+- Add `MessageOriginalTranslationsStore`: In-memory storage for keeping track of all auto-translated messages which have been manually converted to their original text. [#5845](https://github.com/GetStream/stream-chat-android/pull/5845)
 - Add `MessageListController.toggleOriginalText()` method for toggling between the original and translated text of the given message. [#5843](https://github.com/GetStream/stream-chat-android/pull/5843)
 
 ### ⚠️ Changed
@@ -89,6 +90,8 @@
 - Introduce internal `DraftChannelViewController` and experimental classes `DraftChannelViewState`, `DraftChannelViewAction`, and `DraftChannelViewEvent`. [#5797](https://github.com/GetStream/stream-chat-android/pull/5797)
 - Message member from the member bottom sheet of the channel info screen. [#5797](https://github.com/GetStream/stream-chat-android/pull/5797)
 - Introduce **experimental** factory methods for the channel info screens. [#5812](https://github.com/GetStream/stream-chat-android/pull/5812)
+- Add `ChatTheme.showOriginalTranslationEnabled` flag for enabling/disabling the "Show original" translation label in the message list. [#5845](https://github.com/GetStream/stream-chat-android/pull/5845)
+- Add `MessageListViewModel.toggleOriginalText()` method for toggling between the original and translated text of the given message. [#5845](https://github.com/GetStream/stream-chat-android/pull/5845)
 - Support adding members to group in the channel info screen. [#5850](https://github.com/GetStream/stream-chat-android/pull/5850)
 
 ### ⚠️ Changed
@@ -3486,7 +3489,9 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Rtl support was added. If the app has `android:supportsRtl="true"` and the locale of the device needs Rtl support, the SDK will draw the components from the right-to-left instead the default way (left-to-right) [#2799](https://github.com/GetStream/stream-chat-android/pull/2799)
 
 ### ⚠️ Changed
-- Constructor of `ChannelListViewModel` and `ChannelListViewModelFactory` changed. Now they ask for `ChatEventHandlerFactory` instead `ChatEventHandler`, so users can use `StateFlow<List<Channel>>` in their implementations of `ChatEventHandler`, which can make implementation smarter with resources (don't try to add a channel that is already there, for example) [#2747](https://github.com/GetStream/stream-chat-android/pull/2747)
+- Constructor of `ChannelListViewModel` and `ChannelListViewModelFactory` changed. Now they ask for `ChatEventHandlerFactory` instead `ChatEventHandler`, so users can use `StateFlow<List<Channel
+
+` in their implementations of `ChatEventHandler`, which can make implementation smarter with resources (don't try to add a channel that is already there, for example) [#2747](https://github.com/GetStream/stream-chat-android/pull/2747)
 
 ### ❌ Removed
 
