@@ -591,7 +591,9 @@ internal class ChannelLogic(
                     is MessageReadEvent -> if (event.thread == null) {
                         channelStateLogic.updateRead(event.toChannelUserRead())
                     }
-                    is NotificationMarkReadEvent -> channelStateLogic.updateRead(event.toChannelUserRead())
+                    is NotificationMarkReadEvent -> if (event.thread == null) {
+                        channelStateLogic.updateRead(event.toChannelUserRead())
+                    }
                     is NotificationMarkUnreadEvent -> channelStateLogic.updateRead(event.toChannelUserRead())
                     is NotificationInviteAcceptedEvent -> {
                         channelStateLogic.addMember(event.member)

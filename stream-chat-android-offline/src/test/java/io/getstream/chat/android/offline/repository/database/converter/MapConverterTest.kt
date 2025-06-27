@@ -39,16 +39,7 @@ internal class MapConverterTest {
     @Test
     fun testEncoding() {
         val converter = MapConverter()
-        val readMap = mutableMapOf(
-            data.user1.id to ChannelUserReadEntity(
-                userId = data.user1.id,
-                lastReceivedEventDate = Date(),
-                unreadMessages = 0,
-                unreadThreads = null,
-                lastRead = Date(),
-                lastReadMessageId = null,
-            ),
-        )
+        val readMap = mutableMapOf(data.user1.id to ChannelUserReadEntity(data.user1.id, Date(), 0, Date(), null))
         val output = converter.readMapToString(readMap)
         val converted = converter.stringToReadMap(output)
         converted shouldBeEqualTo readMap
