@@ -48,6 +48,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Prevent calling `focusMessage` from the `MessageListController` after closing the `MessageList`. [#5854](https://github.com/GetStream/stream-chat-android/pull/5854)
 
 ### ⬆️ Improved
 - Use `AAC_ADTS` as default audio recording output format. [#5825](https://github.com/GetStream/stream-chat-android/pull/5825)
