@@ -37,6 +37,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Unread message count should not be reset on entering a thread. [#5836](https://github.com/GetStream/stream-chat-android/pull/5836)
 
 ### ⬆️ Improved
 
