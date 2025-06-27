@@ -44,7 +44,8 @@ internal fun NotificationMarkReadEvent.toChannelUserRead() = ChannelUserRead(
     lastRead = createdAt,
 // TODO: remove this once the backend is fixed and is sending us the number of unread messages
     unreadMessages = 0,
-    lastReadMessageId = lastReadMessageId,
+// TODO: Backend should send us the last read message id
+    lastReadMessageId = null,
 )
 
 internal fun NotificationMarkUnreadEvent.toChannelUserRead() = ChannelUserRead(
