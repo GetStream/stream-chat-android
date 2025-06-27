@@ -48,6 +48,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -178,8 +179,10 @@ public fun MessagesScreen(
         composerViewModel.setMessageMode(messageMode)
     }
 
-    val isImeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
-    val backAction: BackAction = remember(listViewModel, composerViewModel, attachmentsPickerViewModel) {
+    val isImeVisible by rememberUpdatedState(
+        WindowInsets.ime.getBottom(LocalDensity.current) > 0,
+    )
+    val backAction: BackAction =
         {
             val isStartedForThread = listViewModel.isStartedForThread
             val isInThread = listViewModel.isInThread
@@ -201,7 +204,6 @@ public fun MessagesScreen(
                 else -> onBackPressed()
             }
         }
-    }
 
     BackHandler(enabled = true, onBack = backAction)
 

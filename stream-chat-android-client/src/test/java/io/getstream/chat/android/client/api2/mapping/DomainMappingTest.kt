@@ -32,6 +32,7 @@ import io.getstream.chat.android.client.Mother.randomDownstreamChannelDto
 import io.getstream.chat.android.client.Mother.randomDownstreamChannelMuteDto
 import io.getstream.chat.android.client.Mother.randomDownstreamChannelUserRead
 import io.getstream.chat.android.client.Mother.randomDownstreamDraftDto
+import io.getstream.chat.android.client.Mother.randomDownstreamDraftMessageDto
 import io.getstream.chat.android.client.Mother.randomDownstreamFlagDto
 import io.getstream.chat.android.client.Mother.randomDownstreamMemberDto
 import io.getstream.chat.android.client.Mother.randomDownstreamMessageDto
@@ -577,7 +578,7 @@ internal class DomainMappingTest {
         val expected = Flag(
             user = with(sut) { downstreamFlagDto.user.toDomain() },
             targetUser = with(sut) { downstreamFlagDto.target_user?.toDomain() },
-            targetMessageId = downstreamFlagDto.target_message_id,
+            targetMessageId = downstreamFlagDto.target_message_id.orEmpty(),
             reviewedBy = downstreamFlagDto.created_at,
             createdByAutomod = downstreamFlagDto.created_by_automod,
             createdAt = downstreamFlagDto.approved_at,
@@ -664,6 +665,12 @@ internal class DomainMappingTest {
                     user_id = user2.id,
                 ),
             ),
+            draft = randomDownstreamDraftDto(
+                message = randomDownstreamDraftMessageDto(
+                    text = "Draft message",
+                ),
+                channelCid = "messaging:123",
+            ),
         )
         val sut = Fixture().get()
         val thread = with(sut) { downstreamThreadDto.toDomain() }
@@ -691,6 +698,9 @@ internal class DomainMappingTest {
             },
             read = with(sut) {
                 downstreamThreadDto.read.orEmpty().map { it.toDomain(downstreamThreadDto.last_message_at) }
+            },
+            draft = with(sut) {
+                downstreamThreadDto.draft?.toDomain()
             },
         )
         thread shouldBeEqualTo expected

@@ -934,6 +934,7 @@ internal object Mother {
         title: String = randomString(),
         latestReplies: List<DownstreamMessageDto> = listOf(randomDownstreamMessageDto()),
         read: List<DownstreamChannelUserRead> = listOf(randomDownstreamChannelUserRead()),
+        draft: DownstreamDraftDto? = randomDownstreamDraftDto(),
     ): DownstreamThreadDto = DownstreamThreadDto(
         active_participant_count = activeParticipantCount,
         channel_cid = channelCid,
@@ -951,6 +952,7 @@ internal object Mother {
         title = title,
         latest_replies = latestReplies,
         read = read,
+        draft = draft,
     )
 
     fun randomDownstreamThreadInfoDto(
