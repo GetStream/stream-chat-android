@@ -29,6 +29,7 @@ import io.getstream.chat.android.offline.repository.domain.message.attachment.in
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageInnerEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.ReactionGroupEntity
+import io.getstream.chat.android.offline.repository.domain.message.internal.ReminderInfoEntity
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsEntity
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionEntity
 import io.getstream.chat.android.offline.repository.domain.user.internal.PrivacySettingsEntity
@@ -36,6 +37,7 @@ import io.getstream.chat.android.offline.repository.domain.user.internal.UserEnt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomDate
+import io.getstream.chat.android.randomDateOrNull
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomString
 import kotlinx.coroutines.Dispatchers
@@ -109,6 +111,7 @@ internal fun randomMessageEntity(
     pinnedByUserId: String? = randomString(),
     threadParticipantsIds: List<String> = emptyList(),
     pollId: String? = null,
+    reminder: ReminderInfoEntity = randomReminderInfoEntity(),
 ) = MessageEntity(
     messageInnerEntity = MessageInnerEntity(
         id = id,
@@ -139,10 +142,21 @@ internal fun randomMessageEntity(
         pinnedByUserId = pinnedByUserId,
         threadParticipantsIds = threadParticipantsIds,
         pollId = pollId,
+        reminder = reminder,
     ),
     attachments = attachments,
     latestReactions = latestReactions,
     ownReactions = ownReactions,
+)
+
+internal fun randomReminderInfoEntity(
+    remindAt: Date? = randomDateOrNull(),
+    createdAt: Date = randomDate(),
+    updatedAt: Date = randomDate(),
+): ReminderInfoEntity = ReminderInfoEntity(
+    remindAt = remindAt,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
 )
 
 internal fun randomReactionGroupEntity(

@@ -31,5 +31,6 @@
     <string name="stream_chat_error_notification_group_summary_title">Chat messages</string>
     <string name="stream_chat_error_notification_group_summary_content_text">You\'ve received new messages</string>
     <string name="stream_chat_notification_empty_username">User without name</string>
+    <string name="stream_chat_notification_reminder_due_title">You asked me to remind you about this message</string>
     <string name="stream_ui_message_input_permission_notifications_message">Notifications blocked</string>
 </resources>

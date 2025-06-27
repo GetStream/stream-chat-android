@@ -22,6 +22,10 @@ import io.getstream.chat.android.models.Device
 /**
  * Generator responsible for providing information needed to register the push notifications provider
  */
+@Deprecated(
+    "This class is no longer used and will be removed in the next major release. " +
+        "Use `io.getstream.android.push.PushDeviceGenerator` instead.",
+)
 public interface PushDeviceGenerator {
     /**
      * Checks if push notification provider is valid for this device

@@ -43,12 +43,14 @@ import io.getstream.chat.android.client.Mother.randomDownstreamOptionDto
 import io.getstream.chat.android.client.Mother.randomDownstreamPollDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReactionDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReactionGroupDto
+import io.getstream.chat.android.client.Mother.randomDownstreamReminderDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadInfoDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserBlockDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserDto
 import io.getstream.chat.android.client.Mother.randomDownstreamVoteDto
 import io.getstream.chat.android.client.Mother.randomPrivacySettingsDto
+import io.getstream.chat.android.client.Mother.randomQueryRemindersResponse
 import io.getstream.chat.android.client.Mother.randomSearchWarningDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
 import io.getstream.chat.android.models.Answer
@@ -69,6 +71,7 @@ import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MessageModerationAction
 import io.getstream.chat.android.models.MessageModerationDetails
+import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.Moderation
 import io.getstream.chat.android.models.ModerationAction
@@ -79,6 +82,7 @@ import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PushProvider
+import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.ReactionGroup
 import io.getstream.chat.android.models.SearchWarning
@@ -537,6 +541,7 @@ internal class DomainMappingTest {
             automodBehavior = configDto.automod_behavior,
             blocklistBehavior = configDto.blocklist_behavior ?: "",
             commands = configDto.commands.map { with(sut) { it.toDomain() } },
+            messageRemindersEnabled = configDto.user_message_reminders ?: false,
         )
         config shouldBeEqualTo expected
     }
@@ -740,6 +745,35 @@ internal class DomainMappingTest {
             blockedAt = blockUserResponse.created_at,
         )
         userBlock shouldBeEqualTo expected
+    }
+
+    @Test
+    fun `DownstreamReminderDto is correctly mapped to MessageReminder`() {
+        val downstreamReminderDto = randomDownstreamReminderDto()
+        val sut = Fixture().get()
+        val messageReminder = with(sut) { downstreamReminderDto.toDomain() }
+        val expected = MessageReminder(
+            remindAt = downstreamReminderDto.remind_at,
+            messageId = downstreamReminderDto.message_id,
+            message = with(sut) { downstreamReminderDto.message?.toDomain() },
+            cid = downstreamReminderDto.channel_cid,
+            channel = with(sut) { downstreamReminderDto.channel?.toDomain() },
+            createdAt = downstreamReminderDto.created_at,
+            updatedAt = downstreamReminderDto.updated_at,
+        )
+        messageReminder shouldBeEqualTo expected
+    }
+
+    @Test
+    fun `QueryRemindersResponse is correctly mapped to QueryMessageRemindersResult`() {
+        val input = randomQueryRemindersResponse()
+        val sut = Fixture().get()
+        val result = with(sut) { input.toDomain() }
+        val expected = QueryRemindersResult(
+            reminders = input.reminders.map { with(sut) { it.toDomain() } },
+            next = input.next,
+        )
+        result shouldBeEqualTo expected
     }
 
     internal class Fixture {
