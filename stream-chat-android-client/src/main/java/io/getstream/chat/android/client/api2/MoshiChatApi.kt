@@ -961,6 +961,7 @@ constructor(
                 },
                 hidden = response.hidden,
                 hiddenMessagesBefore = response.hide_messages_before,
+                draftMessage = response.draft?.toDomain(),
             ).syncUnreadCountWithReads(domainMapping.currentUserIdProvider())
         }
     }

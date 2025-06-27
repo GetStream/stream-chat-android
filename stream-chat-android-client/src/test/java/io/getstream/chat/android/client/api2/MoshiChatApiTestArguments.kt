@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.api2
 
 import io.getstream.chat.android.client.Mother
+import io.getstream.chat.android.client.Mother.randomDownstreamDraftDto
 import io.getstream.chat.android.client.api.FakeResponse
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
@@ -356,6 +357,7 @@ internal object MoshiChatApiTestArguments {
                             hidden = randomBoolean(),
                             membership = Mother.randomDownstreamMemberDto(),
                             hide_messages_before = randomDateOrNull(),
+                            draft = randomDownstreamDraftDto(),
                         ),
                     ),
                 ),
@@ -532,6 +534,7 @@ internal object MoshiChatApiTestArguments {
                     hidden = randomBoolean(),
                     membership = Mother.randomDownstreamMemberDto(),
                     hide_messages_before = randomDateOrNull(),
+                    draft = randomDownstreamDraftDto(),
                 ),
             ).toRetrofitCall(),
             Result.Success::class,
