@@ -44,7 +44,7 @@ import io.getstream.chat.android.ui.helper.SupportedReactions
 import io.getstream.chat.android.ui.helper.transformer.AutoLinkableTextTransformer
 import io.getstream.chat.android.ui.helper.transformer.ChatMessageTextTransformer
 import io.getstream.chat.android.ui.navigation.ChatNavigator
-import io.getstream.chat.android.ui.utils.extensions.getTranslatedText
+import io.getstream.chat.android.ui.utils.extensions.getToggleableTranslatedText
 import io.getstream.chat.android.ui.utils.lazyVar
 import io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarRenderer
 import io.getstream.chat.android.ui.widgets.avatar.UserAvatarRenderer
@@ -115,7 +115,7 @@ public object ChatUI {
     public var messageTextTransformer: ChatMessageTextTransformer by lazyVar {
         AutoLinkableTextTransformer { textView, messageItem ->
             // Customize the transformer if needed
-            val displayedText = messageItem.message.getTranslatedText()
+            val displayedText = messageItem.message.getToggleableTranslatedText(messageItem.showOriginalText)
             textView.text = displayedText
         }
     }
@@ -215,6 +215,12 @@ public object ChatUI {
      */
     @JvmStatic
     public var autoTranslationEnabled: Boolean = false
+
+    /**
+     * Whether the option to show the original translation is enabled or not.
+     */
+    @JvmStatic
+    public var showOriginalTranslationEnabled: Boolean = false
 
     /**
      * Provides a custom renderer for user avatars.

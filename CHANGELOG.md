@@ -54,6 +54,7 @@
 - Use `AAC_ADTS` as default audio recording output format. [#5825](https://github.com/GetStream/stream-chat-android/pull/5825)
 
 ### ✅ Added
+- Add `MessageListController.toggleOriginalText()` method for toggling between the original and translated text of the given message. [#5843](https://github.com/GetStream/stream-chat-android/pull/5843)
 
 ### ⚠️ Changed
 
@@ -67,6 +68,8 @@
 
 ### ✅ Added
 - Introduce experimental classes: `ChannelInfoViewModel`, `ChannelInfoViewModelFactory`, `ChannelInfoMemberViewModel`, and `ChannelInfoMemberViewModelFactory`. [#5801](https://github.com/GetStream/stream-chat-android/pull/5801) 
+- Add `ChatUI.showOriginalTranslationEnabled` flag for enabling/disabling the "Show original" translation label in the message list. [#5843](https://github.com/GetStream/stream-chat-android/pull/5843)
+- Add `MessageListViewModel.Event.ToggleOriginalText` for toggling between the original and translated text of the given message. [#5843](https://github.com/GetStream/stream-chat-android/pull/5843)
 
 ### ⚠️ Changed
 - Refactor the XML sample view models and UI components to use ChannelInfoViewController. [#5801](https://github.com/GetStream/stream-chat-android/pull/5801)
