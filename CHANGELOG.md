@@ -69,6 +69,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Add bottom padding to unread message separator. [#5855](https://github.com/GetStream/stream-chat-android/pull/5855)
 
 ### ✅ Added
 
