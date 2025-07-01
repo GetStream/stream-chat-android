@@ -368,8 +368,8 @@ internal class DomainMapping(
 
     internal fun DownstreamLocationDto.toDomain(): Location =
         Location(
-            messageId = message_id,
             cid = channel_cid,
+            messageId = message_id,
             userId = user_id,
             latitude = latitude,
             longitude = longitude,

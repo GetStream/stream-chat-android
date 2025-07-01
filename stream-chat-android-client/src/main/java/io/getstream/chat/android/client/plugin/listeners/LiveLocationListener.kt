@@ -35,9 +35,7 @@ public interface LiveLocationListener {
      * @return [Result.Success] if precondition passes, otherwise [Result.Failure].
      */
     @ExperimentalStreamChatApi
-    public suspend fun onUpdateLiveLocationPrecondition(
-        location: Location,
-    ): Result<Unit>
+    public suspend fun onUpdateLiveLocationPrecondition(location: Location): Result<Unit>
 
     /**
      * Called when the result of [ChatClient.queryActiveLocations] is received.
@@ -50,34 +48,27 @@ public interface LiveLocationListener {
     /**
      * Called when the result of [ChatClient.updateLiveLocation] is received.
      *
-     * @param result The result of the update request.
-     * @param inputLocation The location used in the update request.
+     * @param location The location used in the request.
+     * @param result The result of the request.
      */
     @ExperimentalStreamChatApi
-    public suspend fun onUpdateLiveLocationResult(result: Result<Location>, inputLocation: Location)
+    public suspend fun onUpdateLiveLocationResult(location: Location, result: Result<Location>)
 
     /**
-     * Called when the result of [ChatClient.endLiveLocation] is received.
+     * Called when the result of [ChatClient.stopLiveLocationSharing] is received.
      *
-     * @param result The result of the end live location request.
-     * @param inputLocation The location used in the update request.
+     * @param location The location used in request.
+     * @param result The result of the request.
      */
     @ExperimentalStreamChatApi
-    public suspend fun onEndLiveLocationResult(result: Result<Location>, inputLocation: Location)
+    public suspend fun onStopLiveLocationSharingResult(location: Location, result: Result<Location>)
 
     /**
-     * Called when the result of [ChatClient.startLiveLocation] is received.
+     * Called when the result of [ChatClient.startLiveLocationSharing] is received.
      *
-     * @param result The result of the start live location request.
-     * @param channelType The type of the channel where the live location is started.
-     * @param channelId The ID of the channel where the live location is started.
-     * @param location The location used in the start live location request.
+     * @param location The location used in the request.
+     * @param result The result of the request.
      */
     @ExperimentalStreamChatApi
-    public suspend fun onStartLiveLocationResult(
-        result: Result<Location>,
-        channelType: String,
-        channelId: String,
-        location: Location,
-    )
+    public suspend fun onStartLiveLocationSharingResult(location: Location, result: Result<Location>)
 }

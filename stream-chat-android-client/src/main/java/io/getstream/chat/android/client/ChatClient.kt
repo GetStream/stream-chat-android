@@ -1564,47 +1564,29 @@ internal constructor(
 
     @CheckResult
     @ExperimentalStreamChatApi
-    public fun sendStaticLocation(
-        channelType: String,
-        channelId: String,
-        location: Location,
-    ): Call<Location> = sendLocation(
-        channelType,
-        channelId,
-        location = location.copy(endAt = null),
-    )
+    public fun sendStaticLocation(location: Location): Call<Location> =
+        sendLocation(location = location.copy(endAt = null))
 
     @CheckResult
     @ExperimentalStreamChatApi
-    public fun startLiveLocation(
-        channelType: String,
-        channelId: String,
+    public fun startLiveLocationSharing(
         location: Location,
         endAt: Date,
-    ): Call<Location> = sendLocation(
-        channelType,
-        channelId,
-        location = location.copy(endAt = endAt),
-    )
+    ): Call<Location> = sendLocation(location = location.copy(endAt = endAt))
         .doOnResult(userScope) { result ->
             plugins.forEach { plugin ->
-                logger.v { "[startLiveLocation] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
-                plugin.onStartLiveLocationResult(
-                    result,
-                    channelType,
-                    channelId,
-                    location,
+                logger.v { "[startLiveLocationSharing] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                plugin.onStartLiveLocationSharingResult(
+                    location = location,
+                    result = result,
                 )
             }
         }
 
     @CheckResult
-    private fun sendLocation(
-        channelType: String,
-        channelId: String,
-        location: Location,
-    ): Call<Location> =
-        sendMessage(
+    private fun sendLocation(location: Location): Call<Location> {
+        val (channelType, channelId) = location.cid.cidToTypeAndId()
+        return sendMessage(
             channelType = channelType,
             channelId = channelId,
             message = Message(sharedLocation = location),
@@ -1618,6 +1600,7 @@ internal constructor(
                 logger.e { "Location was not sent" }
             }
         }
+    }
 
     @CheckResult
     @ExperimentalStreamChatApi
@@ -1638,19 +1621,19 @@ internal constructor(
         .doOnResult(userScope) { result ->
             plugins.forEach { plugin ->
                 logger.v { "[updateLiveLocation] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
-                plugin.onUpdateLiveLocationResult(result, location)
+                plugin.onUpdateLiveLocationResult(location, result)
             }
         }
 
     @CheckResult
     @ExperimentalStreamChatApi
-    public fun endLiveLocation(
+    public fun stopLiveLocationSharing(
         location: Location,
     ): Call<Location> = api.updateLiveLocation(location.copy(endAt = Date()))
         .doOnResult(userScope) { result ->
             plugins.forEach { plugin ->
-                logger.v { "[endLiveLocation] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
-                plugin.onEndLiveLocationResult(result, location)
+                logger.v { "[stopLiveLocationSharing] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                plugin.onStopLiveLocationSharingResult(location, result)
             }
         }
 

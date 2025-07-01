@@ -486,26 +486,22 @@ public interface Plugin :
         /* No-Op */
     }
 
-    override suspend fun onUpdateLiveLocationPrecondition(location: Location): Result<Unit> = Result.Success(Unit)
+    override suspend fun onUpdateLiveLocationPrecondition(location: Location): Result<Unit> =
+        Result.Success(Unit)
 
     override suspend fun onQueryActiveLocationsResult(result: Result<List<Location>>) {
         /* No-Op */
     }
 
-    override suspend fun onUpdateLiveLocationResult(result: Result<Location>, inputLocation: Location) {
+    override suspend fun onUpdateLiveLocationResult(location: Location, result: Result<Location>) {
         /* No-Op */
     }
 
-    override suspend fun onEndLiveLocationResult(result: Result<Location>, inputLocation: Location) {
+    override suspend fun onStopLiveLocationSharingResult(location: Location, result: Result<Location>) {
         /* No-Op */
     }
 
-    override suspend fun onStartLiveLocationResult(
-        result: Result<Location>,
-        channelType: String,
-        channelId: String,
-        location: Location,
-    ) {
+    override suspend fun onStartLiveLocationSharingResult(location: Location, result: Result<Location>) {
         /* No-Op */
     }
 }
