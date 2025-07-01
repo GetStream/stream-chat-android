@@ -12,11 +12,8 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
-- Fix JSON parsing of `Device.providerName` when calling `ChatClient.getDevices()`. [#5821](https://github.com/GetStream/stream-chat-android/pull/5821)
-- Fix JSON parsing of `Flag.targetMessageId` when calling `ChatClient.flagUser()`. [#5829](https://github.com/GetStream/stream-chat-android/pull/5829)
 
 ### ⬆️ Improved
-- Refactor how Draft Messages are queried to avoid potential issues on the sync process. [#5847](https://github.com/GetStream/stream-chat-android/pull/5847)
 
 ### ✅ Added
 
@@ -51,11 +48,8 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Use `AAC_ADTS` as default audio recording output format. [#5825](https://github.com/GetStream/stream-chat-android/pull/5825)
 
 ### ✅ Added
-- Add `MessageOriginalTranslationsStore`: In-memory storage for keeping track of all auto-translated messages which have been manually converted to their original text. [#5845](https://github.com/GetStream/stream-chat-android/pull/5845)
-- Add `MessageListController.toggleOriginalText()` method for toggling between the original and translated text of the given message. [#5843](https://github.com/GetStream/stream-chat-android/pull/5843)
 
 ### ⚠️ Changed
 
@@ -63,41 +57,26 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fix quoted poll messages showing an empty message preview. [#5849](https://github.com/GetStream/stream-chat-android/pull/5849)
 
 ### ⬆️ Improved
 
 ### ✅ Added
-- Introduce experimental classes: `ChannelInfoViewModel`, `ChannelInfoViewModelFactory`, `ChannelInfoMemberViewModel`, and `ChannelInfoMemberViewModelFactory`. [#5801](https://github.com/GetStream/stream-chat-android/pull/5801) 
-- Add `ChatUI.showOriginalTranslationEnabled` flag for enabling/disabling the "Show original" translation label in the message list. [#5843](https://github.com/GetStream/stream-chat-android/pull/5843)
-- Add `MessageListViewModel.Event.ToggleOriginalText` for toggling between the original and translated text of the given message. [#5843](https://github.com/GetStream/stream-chat-android/pull/5843)
 
 ### ⚠️ Changed
-- Refactor the XML sample view models and UI components to use ChannelInfoViewController. [#5801](https://github.com/GetStream/stream-chat-android/pull/5801)
 
 ### ❌ Removed
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Use the same text style in `DefaultComposerLabel` and `MessageInput` so that typing `MessageComposer` doesn't cause any glitches. [#5838](https://github.com/GetStream/stream-chat-android/pull/5838)
-- Fix quoted poll messages showing an empty message preview. [#5849](https://github.com/GetStream/stream-chat-android/pull/5849)
-- Fix ExoPlayer crash when playing a video, happening when the integration app is using the legacy `com.google.android.exoplayer` library. [#5841](https://github.com/GetStream/stream-chat-android/pull/5841)
 
 ### ⬆️ Improved
+- Add bottom padding to unread message separator. [#5855](https://github.com/GetStream/stream-chat-android/pull/5855)
 
 ### ✅ Added
-- Add `FileAttachmentPreviewContent`, `FileAttachmentContent`,`FileAttachmentItem`, `FileUploadContent` and `FileUploadItem` to `ChatComponentFactory`. [#5791](https://github.com/GetStream/stream-chat-android/pull/5791)
-- Introduce internal `DraftChannelViewController` and experimental classes `DraftChannelViewState`, `DraftChannelViewAction`, and `DraftChannelViewEvent`. [#5797](https://github.com/GetStream/stream-chat-android/pull/5797)
-- Message member from the member bottom sheet of the channel info screen. [#5797](https://github.com/GetStream/stream-chat-android/pull/5797)
-- Introduce **experimental** factory methods for the channel info screens. [#5812](https://github.com/GetStream/stream-chat-android/pull/5812)
-- Add `ChatTheme.showOriginalTranslationEnabled` flag for enabling/disabling the "Show original" translation label in the message list. [#5845](https://github.com/GetStream/stream-chat-android/pull/5845)
-- Add `MessageListViewModel.toggleOriginalText()` method for toggling between the original and translated text of the given message. [#5845](https://github.com/GetStream/stream-chat-android/pull/5845)
-- Support adding members to group in the channel info screen. [#5850](https://github.com/GetStream/stream-chat-android/pull/5850)
 
 ### ⚠️ Changed
 
 ### ❌ Removed
-- Remove redundant use of coroutineScope inside of `LaunchedEffect`. [#5811](https://github.com/GetStream/stream-chat-android/pull/5811)
 
 ## stream-chat-android-markdown-transformer
 ### 🐞 Fixed
@@ -109,6 +88,53 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# June 27th, 2025 - 6.18.0
+## stream-chat-android-client
+### 🐞 Fixed
+- Fix JSON parsing of `Device.providerName` when calling `ChatClient.getDevices()`. [#5821](https://github.com/GetStream/stream-chat-android/pull/5821)
+- Fix JSON parsing of `Flag.targetMessageId` when calling `ChatClient.flagUser()`. [#5829](https://github.com/GetStream/stream-chat-android/pull/5829)
+
+### ⬆️ Improved
+- Refactor how Draft Messages are queried to avoid potential issues on the sync process. [#5847](https://github.com/GetStream/stream-chat-android/pull/5847)
+
+## stream-chat-android-ui-common
+### ⬆️ Improved
+- Use `AAC_ADTS` as default audio recording output format. [#5825](https://github.com/GetStream/stream-chat-android/pull/5825)
+
+### ✅ Added
+- Add `MessageOriginalTranslationsStore`: In-memory storage for keeping track of all auto-translated messages which have been manually converted to their original text. [#5845](https://github.com/GetStream/stream-chat-android/pull/5845)
+- Add `MessageListController.toggleOriginalText()` method for toggling between the original and translated text of the given message. [#5843](https://github.com/GetStream/stream-chat-android/pull/5843)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fix quoted poll messages showing an empty message preview. [#5849](https://github.com/GetStream/stream-chat-android/pull/5849)
+
+### ✅ Added
+- Introduce experimental classes: `ChannelInfoViewModel`, `ChannelInfoViewModelFactory`, `ChannelInfoMemberViewModel`, and `ChannelInfoMemberViewModelFactory`. [#5801](https://github.com/GetStream/stream-chat-android/pull/5801) 
+- Add `ChatUI.showOriginalTranslationEnabled` flag for enabling/disabling the "Show original" translation label in the message list. [#5843](https://github.com/GetStream/stream-chat-android/pull/5843)
+- Add `MessageListViewModel.Event.ToggleOriginalText` for toggling between the original and translated text of the given message. [#5843](https://github.com/GetStream/stream-chat-android/pull/5843)
+
+### ⚠️ Changed
+- Refactor the XML sample view models and UI components to use ChannelInfoViewController. [#5801](https://github.com/GetStream/stream-chat-android/pull/5801)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Use the same text style in `DefaultComposerLabel` and `MessageInput` so that typing `MessageComposer` doesn't cause any glitches. [#5838](https://github.com/GetStream/stream-chat-android/pull/5838)
+- Fix quoted poll messages showing an empty message preview. [#5849](https://github.com/GetStream/stream-chat-android/pull/5849)
+- Fix ExoPlayer crash when playing a video, happening when the integration app is using the legacy `com.google.android.exoplayer` library. [#5841](https://github.com/GetStream/stream-chat-android/pull/5841)
+
+### ✅ Added
+- Add `FileAttachmentPreviewContent`, `FileAttachmentContent`,`FileAttachmentItem`, `FileUploadContent` and `FileUploadItem` to `ChatComponentFactory`. [#5791](https://github.com/GetStream/stream-chat-android/pull/5791)
+- Introduce internal `DraftChannelViewController` and experimental classes `DraftChannelViewState`, `DraftChannelViewAction`, and `DraftChannelViewEvent`. [#5797](https://github.com/GetStream/stream-chat-android/pull/5797)
+- Message member from the member bottom sheet of the channel info screen. [#5797](https://github.com/GetStream/stream-chat-android/pull/5797)
+- Introduce **experimental** factory methods for the channel info screens. [#5812](https://github.com/GetStream/stream-chat-android/pull/5812)
+- Add `ChatTheme.showOriginalTranslationEnabled` flag for enabling/disabling the "Show original" translation label in the message list. [#5845](https://github.com/GetStream/stream-chat-android/pull/5845)
+- Add `MessageListViewModel.toggleOriginalText()` method for toggling between the original and translated text of the given message. [#5845](https://github.com/GetStream/stream-chat-android/pull/5845)
+- Support adding members to group in the channel info screen. [#5850](https://github.com/GetStream/stream-chat-android/pull/5850)
+
+### ❌ Removed
+- Remove redundant use of coroutineScope inside of `LaunchedEffect`. [#5811](https://github.com/GetStream/stream-chat-android/pull/5811)
 
 # June 09th, 2025 - 6.17.0
 ## stream-chat-android-client
