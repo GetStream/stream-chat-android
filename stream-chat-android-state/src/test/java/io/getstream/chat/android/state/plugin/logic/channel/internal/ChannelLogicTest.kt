@@ -25,22 +25,32 @@ import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
+import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import kotlinx.coroutines.test.TestScope
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 internal class ChannelLogicTest {
 
+    private val cid = randomCID()
     private val currentUserId = randomString()
     private lateinit var channelStateLogic: ChannelStateLogic
     private lateinit var channelLogic: ChannelLogic
 
     @BeforeEach
     fun setUp() {
+        // Channel mutable state
+        val mutableState = mock<ChannelMutableState>()
+        whenever(mutableState.cid).doReturn(cid)
+        // Channel state logic
         channelStateLogic = mock()
+        whenever(channelStateLogic.writeChannelState()).doReturn(mutableState)
+        // Channel logic
         channelLogic = ChannelLogic(
             repos = mock(),
             userPresence = false,
