@@ -174,6 +174,7 @@ internal class TypingEventsTest {
             now = { System.currentTimeMillis() },
             userStateFlow = MutableStateFlow(user),
             latestUsers = MutableStateFlow(emptyMap()),
+            activeLiveLocations = MutableStateFlow(emptyList()),
         )
 
         fun givenTypingEventsDisabled(channelType: String, channelId: String): Fixture {

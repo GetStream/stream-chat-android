@@ -102,7 +102,7 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
     public open fun handleChannelEvent(event: HasChannel, filter: FilterObject): EventHandlingResult {
         return when (event) {
             is ChannelDeletedEvent -> EventHandlingResult.Remove(event.cid)
-            is NotificationChannelDeletedEvent ->EventHandlingResult.Remove(event.cid)
+            is NotificationChannelDeletedEvent -> EventHandlingResult.Remove(event.cid)
             else -> EventHandlingResult.Skip
         }
     }

@@ -43,13 +43,16 @@ internal class ChannelMutableStateTests {
     @BeforeEach
     fun setUp() {
         channelState = ChannelMutableState(
-            CHANNEL_TYPE,
-            CHANNEL_ID,
-            userFlow,
-            MutableStateFlow(
+            channelType = CHANNEL_TYPE,
+            channelId = CHANNEL_ID,
+            userFlow = userFlow,
+            latestUsers = MutableStateFlow(
                 mapOf(currentUser.id to currentUser),
             ),
-            ChannelMutableStateTests::currentTime,
+            activeLiveLocations = MutableStateFlow(
+                emptyList(),
+            ),
+            now = ChannelMutableStateTests::currentTime,
         )
     }
 
