@@ -612,9 +612,10 @@ internal class EventHandlerSequential(
                 }
                 is MemberAddedEvent -> {
                     batch.getCurrentChannel(event.cid)?.let { channel ->
-                        batch.addChannel(
-                            channel.addMember(event.member),
-                        )
+                        val enrichedChannel = channel
+                            .addMember(event.member)
+                            .addMembership(currentUserId, event.member)
+                        batch.addChannel(enrichedChannel)
                     }
                 }
                 is MemberUpdatedEvent -> {

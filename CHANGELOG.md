@@ -34,6 +34,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Ensure `Channel.membership` is updated when the current user joins a channel. [#5857](https://github.com/GetStream/stream-chat-android/pull/5857)
 
 ### ⬆️ Improved
 

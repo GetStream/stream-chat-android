@@ -150,6 +150,26 @@ internal class ChannelStateLogic(
     }
 
     /**
+     * Adds new membership to the channel. Used when the current user joins the channel.
+     *
+     * @param member The [Member] to be added as a membership to the channel.
+     */
+    fun addMembership(member: Member) {
+        mutableState.updateChannelData { data ->
+            data?.copy(membership = member)
+        }
+    }
+
+    /**
+     * Removes the membership from the channel. Used when the current user leaves the channel.
+     */
+    fun removeMembership() {
+        mutableState.updateChannelData { data ->
+            data?.copy(membership = null)
+        }
+    }
+
+    /**
      * Updates the channel data of the state of the SDK.
      *
      * @param event The event containing the channel data.
