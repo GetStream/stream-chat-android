@@ -17,16 +17,11 @@
 package io.getstream.chat.android.compose.sample.ui.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyItemScope
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import coil3.compose.AsyncImage
 import io.getstream.chat.android.client.extensions.isPinned
 import io.getstream.chat.android.compose.sample.feature.reminders.MessageRemindersComponentFactory
 import io.getstream.chat.android.client.utils.message.hasSharedLocation
@@ -39,7 +34,6 @@ import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageItemCent
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
@@ -95,12 +89,14 @@ class CustomChatComponentFactory(
         onUserMentionClick: (User) -> Unit,
         onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit,
     ) {
-        if (messageItem.message.hasSharedLocation() && !messageItem.message.isDeleted()) {
-            val location = requireNotNull(messageItem.message.sharedLocation)
-            LocationContent(
+        val message = messageItem.message
+        if (message.hasSharedLocation() && !message.isDeleted()) {
+            val location = requireNotNull(message.sharedLocation)
+            SharedLocationItem(
                 modifier = Modifier.widthIn(max = ChatTheme.dimens.messageItemMaxWidth),
+                message = message,
                 location = location,
-                onClick = { link -> onLinkClick?.invoke(messageItem.message, link) },
+                onMapClick = { url -> onLinkClick?.invoke(message, url) },
             )
         } else {
             DefaultMessageItemCenterContent(
@@ -122,33 +118,4 @@ class CustomChatComponentFactory(
             )
         }
     }
-}
-
-@Composable
-private fun LocationContent(
-    modifier: Modifier,
-    location: Location,
-    onClick: (link: String) -> Unit,
-) {
-    val data = "https://static-maps.yandex.ru/1.x/?lang=en-US&" +
-        "ll=${location.longitude},${location.latitude}&" +
-        "z=15&size=450,450&l=map&pt=${location.longitude},${location.latitude},vkbkm"
-    AsyncImage(
-        modifier = modifier
-            .clip(ChatTheme.shapes.attachment)
-            .aspectRatio(1f)
-            .clickable(
-                interactionSource = null,
-                indication = ripple(),
-                onClick = {
-                    onClick(
-                        "https://www.openstreetmap.org/?" +
-                            "mlat=${location.latitude}&mlon=${location.longitude}#" +
-                            "map=15/${location.latitude}/${location.longitude}",
-                    )
-                },
-            ),
-        model = data,
-        contentDescription = "Map with user's location",
-    )
 }
