@@ -358,7 +358,7 @@ internal class SyncManagerTest {
             repos = repositoryFacade,
             chatClient = chatClient,
             clientState = clientState,
-            mutableGlobalState = MutableGlobalState(),
+            mutableGlobalState = MutableGlobalState(user.id),
             userPresence = true,
             events = _syncEvents,
             syncState = _syncState,

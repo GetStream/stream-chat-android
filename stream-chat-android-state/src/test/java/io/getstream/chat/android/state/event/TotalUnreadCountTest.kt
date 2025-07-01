@@ -70,7 +70,7 @@ internal class TotalUnreadCountTest {
     @Test
     fun `When new message event is received for channel with read capability Should properly update total unread counts`() = runTest {
         val channelWithReadCapability = data.channel1.copy(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS))
-        val mutableGlobalState = MutableGlobalState()
+        val mutableGlobalState = MutableGlobalState(data.user1.id)
         val sut = Fixture(data.user1, clientMutableState, mutableGlobalState)
             .givenMockedRepositories()
             .givenChannel(channelWithReadCapability)
@@ -91,7 +91,7 @@ internal class TotalUnreadCountTest {
     @Test
     fun `When mark read event is received for channel with read capability Should properly update total unread counts`() = runTest {
         val channelWithReadCapability = data.channel1.copy(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS))
-        val mutableGlobalState = MutableGlobalState().apply {
+        val mutableGlobalState = MutableGlobalState(data.user1.id).apply {
             setTotalUnreadCount(5)
             setChannelUnreadCount(2)
         }
@@ -113,7 +113,7 @@ internal class TotalUnreadCountTest {
 
     // @Test
     fun `when connected event is received, current user should be updated`() = runTest {
-        val mutableGlobalState = MutableGlobalState()
+        val mutableGlobalState = MutableGlobalState(data.user1.id)
         val sut = Fixture(data.user1, clientMutableState, mutableGlobalState)
             .givenMockedRepositories()
             .get()

@@ -79,7 +79,7 @@ internal class EventHandlerSequentialTest {
         expectedTotalUnreadCount: Int,
         expectedChannelUnreadCount: Int,
     ) = runTest {
-        val mutableGlobalState = MutableGlobalState().apply {
+        val mutableGlobalState = MutableGlobalState(currentUser.id).apply {
             setTotalUnreadCount(initialTotalunreadCount)
             setChannelUnreadCount(initialChannelUnreadCount)
         }
@@ -104,7 +104,7 @@ internal class EventHandlerSequentialTest {
         expectedChannelMutes: List<ChannelMute>,
         expectedBlockedUserIds: List<String>,
     ) = runTest {
-        val mutableGlobalState = MutableGlobalState().apply {
+        val mutableGlobalState = MutableGlobalState(currentUser.id).apply {
             setBanned(false)
             setMutedUsers(emptyList())
             setChannelMutes(emptyList())
@@ -137,7 +137,7 @@ internal class EventHandlerSequentialTest {
         whenever(repos.selectThreads(any())) doReturn emptyList()
         val handler = Fixture()
             .withRepositoryFacade(repos)
-            .withMutableGlobalState(MutableGlobalState())
+            .withMutableGlobalState(MutableGlobalState(currentUser.id))
             .get(this)
         // when
         handler.handleEvents(event)
@@ -185,7 +185,7 @@ internal class EventHandlerSequentialTest {
             logicRegistry = logicRegistry,
             stateRegistry = stateRegistry,
             clientState = clientState,
-            mutableGlobalState = mutableGlobalState ?: MutableGlobalState(),
+            mutableGlobalState = mutableGlobalState ?: MutableGlobalState(currentUser.id),
             repos = repos,
             sideEffect = sideEffect,
             syncedEvents = syncedEvents,
