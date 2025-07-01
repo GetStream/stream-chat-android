@@ -21,8 +21,8 @@ import java.util.Date
 
 @JsonClass(generateAdapter = true)
 internal data class UpstreamLocationDto(
-    val message_id: String,
     val channel_cid: String,
+    val message_id: String,
     val user_id: String,
     val latitude: Double,
     val longitude: Double,
@@ -32,8 +32,8 @@ internal data class UpstreamLocationDto(
 
 @JsonClass(generateAdapter = true)
 internal data class DownstreamLocationDto(
-    val message_id: String,
     val channel_cid: String,
+    val message_id: String,
     val user_id: String,
     val latitude: Double,
     val longitude: Double,

@@ -145,8 +145,8 @@ internal class DtoMapping(
             }
 
     internal fun Location.toDto(): UpstreamLocationDto = UpstreamLocationDto(
-        message_id = messageId,
         channel_cid = cid,
+        message_id = messageId,
         user_id = userId,
         latitude = latitude,
         longitude = longitude,
