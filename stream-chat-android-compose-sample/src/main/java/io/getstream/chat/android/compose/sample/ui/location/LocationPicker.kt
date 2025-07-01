@@ -77,11 +77,11 @@ private fun LocationPickerContent(
     onStartLiveLocationSharing: (latitude: Double, longitude: Double, endAt: Date) -> Unit = { _, _, _ -> },
     onDismiss: () -> Unit = {},
 ) {
+    var location by remember { mutableStateOf<Location?>(null) }
     Column(
         modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        var location by remember { mutableStateOf<Location?>(null) }
         LocationContent(
             modifier = Modifier
                 .weight(1f)
@@ -98,7 +98,7 @@ private fun LocationPickerContent(
                 onStartLiveLocationSharing(
                     location?.latitude ?: 0.0,
                     location?.longitude ?: 0.0,
-                    Calendar.getInstance().apply { add(Calendar.MINUTE, 15) }.time,
+                    Calendar.getInstance().apply { add(Calendar.MINUTE, 15) }.time, // Share for 15 minutes
                 )
                 onDismiss()
             },
@@ -206,7 +206,7 @@ private fun LocationButton(
 
 @Preview(showBackground = true)
 @Composable
-private fun AttachmentsPickerLocationTabFactoryContentPreview() {
+private fun LocationPickerContentPreview() {
     ChatTheme {
         LocationPickerContent()
     }

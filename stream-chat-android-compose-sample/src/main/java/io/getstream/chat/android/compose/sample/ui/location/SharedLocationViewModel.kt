@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.Location
+import io.getstream.chat.android.models.User
 import kotlinx.coroutines.launch
 import java.util.Date
 
@@ -28,6 +29,9 @@ class SharedLocationViewModel(
     private val cid: String,
     private val chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
+
+    private val device = "my_device" // Replace with actual device name
+    val currentUser: User? = chatClient.getCurrentUser()
 
     fun sendStaticLocation(
         latitude: Double,
@@ -39,7 +43,7 @@ class SharedLocationViewModel(
                     cid = cid,
                     latitude = latitude,
                     longitude = longitude,
-                    device = "my_device", // Replace with actual device name
+                    device = device,
                 ),
             ).await()
                 .onSuccess {
@@ -62,7 +66,7 @@ class SharedLocationViewModel(
                     cid = cid,
                     latitude = latitude,
                     longitude = longitude,
-                    device = "my_device", // Replace with actual device name
+                    device = device,
                 ),
                 endAt = endAt,
             ).await()
@@ -71,6 +75,18 @@ class SharedLocationViewModel(
                 }
                 .onError {
                     println("[startLiveLocationSharing] Fail")
+                }
+        }
+    }
+
+    fun stopLiveLocationSharing(location: Location) {
+        viewModelScope.launch {
+            chatClient.stopLiveLocationSharing(location).await()
+                .onSuccess {
+                    println("[stopLiveLocationSharing] Success")
+                }
+                .onError {
+                    println("[stopLiveLocationSharing] Fail")
                 }
         }
     }

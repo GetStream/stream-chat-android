@@ -1,0 +1,286 @@
+/*
+ * Copyright (c) 2014-2025 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.getstream.chat.android.compose.sample.ui.component
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.LocationOn
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.ripple
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil3.compose.AsyncImage
+import io.getstream.chat.android.compose.sample.ui.location.SharedLocationViewModel
+import io.getstream.chat.android.compose.sample.ui.location.SharedLocationViewModelFactory
+import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.models.Location
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
+import java.util.Calendar
+import java.util.Date
+
+@Composable
+internal fun SharedLocationItem(
+    modifier: Modifier,
+    message: Message,
+    location: Location,
+    onMapClick: (url: String) -> Unit = {},
+) {
+    if (location.endAt == null) {
+        StaticSharedLocation(
+            modifier = modifier,
+            message = message,
+            location = location,
+            onMapClick = onMapClick,
+        )
+    } else {
+        val viewModel = viewModel(
+            SharedLocationViewModel::class,
+            factory = SharedLocationViewModelFactory(location.cid),
+        )
+        LiveLocationSharing(
+            modifier = modifier,
+            currentUser = viewModel.currentUser,
+            message = message,
+            location = location,
+            onMapClick = onMapClick,
+            onStopSharingClick = { viewModel.stopLiveLocationSharing(location) },
+        )
+    }
+}
+
+@Composable
+private fun StaticSharedLocation(
+    modifier: Modifier,
+    message: Message,
+    location: Location,
+    onMapClick: (url: String) -> Unit = {},
+) {
+    MapBox(
+        modifier = modifier,
+        latitude = location.latitude,
+        longitude = location.longitude,
+        contentDescription = "Map with ${message.user.name}'s last location",
+        onClick = onMapClick,
+    ) {
+        Icon(
+            modifier = Modifier.align(Alignment.Center),
+            imageVector = Icons.Rounded.LocationOn,
+            contentDescription = null,
+            tint = Color.Red,
+        )
+    }
+}
+
+@Composable
+private fun LiveLocationSharing(
+    modifier: Modifier,
+    currentUser: User?,
+    message: Message,
+    location: Location,
+    onMapClick: (url: String) -> Unit = {},
+    onStopSharingClick: () -> Unit = {},
+) {
+    val isOwnMessage = message.user.id == currentUser?.id
+    Column(
+        modifier = modifier
+            .clip(ChatTheme.shapes.attachment)
+            .background(
+                color = if (isOwnMessage) {
+                    ChatTheme.ownMessageTheme.backgroundColor
+                } else {
+                    ChatTheme.otherMessageTheme.backgroundColor
+                },
+            ),
+    ) {
+        MapBox(
+            modifier = Modifier,
+            latitude = location.latitude,
+            longitude = location.longitude,
+            contentDescription = "Map with ${message.user.name}'s live location",
+            onClick = onMapClick,
+        ) {
+            UserAvatar(
+                modifier = Modifier
+                    .size(ChatTheme.dimens.channelAvatarSize)
+                    .align(Alignment.Center),
+                user = message.user,
+                showOnlineIndicator = false,
+            )
+        }
+        val endAt = requireNotNull(location.endAt)
+        if (endAt.after(Date())) {
+            Column {
+                Text(
+                    modifier = Modifier.padding(8.dp),
+                    text = "Sharing live location until ${ChatTheme.dateFormatter.formatDate(location.endAt)}",
+                    style = ChatTheme.typography.footnote,
+                    color = ChatTheme.colors.textLowEmphasis,
+                )
+                if (isOwnMessage) {
+                    TextButton(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.errorAccent),
+                        onClick = onStopSharingClick,
+                    ) {
+                        Text(text = "Stop Sharing")
+                    }
+                }
+            }
+        } else {
+            Text(
+                modifier = Modifier.padding(8.dp),
+                text = "Live location sharing ended",
+                style = ChatTheme.typography.footnote,
+                color = ChatTheme.colors.textLowEmphasis,
+            )
+        }
+    }
+}
+
+@Suppress("LongParameterList")
+@Composable
+private fun MapBox(
+    modifier: Modifier,
+    latitude: Double,
+    longitude: Double,
+    contentDescription: String,
+    onClick: (url: String) -> Unit,
+    content: @Composable BoxScope.() -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .aspectRatio(1f)
+            .clip(ChatTheme.shapes.attachment)
+            .clickable(
+                interactionSource = null,
+                indication = ripple(),
+                onClick = {
+                    onClick(
+                        "https://www.openstreetmap.org/?" +
+                            "mlat=$latitude&mlon=$longitude#" +
+                            "map=15/$latitude/$longitude",
+                    )
+                },
+            ),
+    ) {
+        val data = "https://static-maps.yandex.ru/1.x/?lang=en-US&" +
+            "ll=$longitude,$latitude&" +
+            "z=15&size=450,450&l=map"
+        AsyncImage(
+            modifier = Modifier.matchParentSize(),
+            model = data,
+            contentDescription = contentDescription,
+        )
+        content()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun StaticSharedLocationItemPreview() {
+    ChatTheme {
+        StaticSharedLocation(
+            modifier = Modifier.fillMaxWidth(),
+            message = Message(),
+            location = Location(
+                cid = "cid",
+                latitude = 37.7749,
+                longitude = -122.4194,
+                device = "device",
+            ),
+        )
+    }
+}
+
+@Suppress("MagicNumber")
+@Preview(showBackground = true)
+@Composable
+private fun MyLiveLocationSharingItemPreview() {
+    ChatTheme {
+        val currentUser = User(id = "userId", online = true)
+        LiveLocationSharing(
+            modifier = Modifier.fillMaxWidth(),
+            currentUser = currentUser,
+            message = Message(user = currentUser),
+            location = Location(
+                cid = "cid",
+                latitude = 37.7749,
+                longitude = -122.4194,
+                device = "device",
+                endAt = Calendar.getInstance().apply { add(Calendar.MINUTE, 15) }.time,
+            ),
+        )
+    }
+}
+
+@Suppress("MagicNumber")
+@Preview(showBackground = true)
+@Composable
+private fun OtherLiveLocationSharingItemPreview() {
+    ChatTheme {
+        LiveLocationSharing(
+            modifier = Modifier.fillMaxWidth(),
+            currentUser = null,
+            message = Message(),
+            location = Location(
+                cid = "cid",
+                latitude = 37.7749,
+                longitude = -122.4194,
+                device = "device",
+                endAt = Calendar.getInstance().apply { add(Calendar.MINUTE, 15) }.time,
+            ),
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun OtherEndedLiveLocationSharingItemPreview() {
+    ChatTheme {
+        LiveLocationSharing(
+            modifier = Modifier.fillMaxWidth(),
+            currentUser = null,
+            message = Message(),
+            location = Location(
+                cid = "cid",
+                latitude = 37.7749,
+                longitude = -122.4194,
+                device = "device",
+                endAt = Date(),
+            ),
+        )
+    }
+}
