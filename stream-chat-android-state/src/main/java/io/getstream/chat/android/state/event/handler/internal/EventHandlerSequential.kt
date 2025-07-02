@@ -793,8 +793,8 @@ internal class EventHandlerSequential(
      * Checks if unread counts should be updated for particular channel.
      * It initially checks the offline storage for the channel's capabilities.
      * If the channel is not found (not stored in the DB, or there is no offline support), it checks the local state.
-     * The unread counts should not be updated if channel in the DB/state
-     * does not contain [ChannelCapabilities.READ_EVENTS] capability.
+     * The unread counts should not be updated if the channel in the DB/state does not contain
+     * the [ChannelCapabilities.READ_EVENTS] capability.
      *
      * @param cid CID of the channel.
      *
