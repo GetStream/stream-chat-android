@@ -632,25 +632,23 @@ public class MessageListController(
         disableUnreadLabelButton()
     }
 
-    private fun initialFocusMessage() {
+    private suspend fun initialFocusMessage() {
         messageId ?: return // No initial focus if no message id is provided
-        scope.launch {
-            listState
-                .onCompletion {
-                    // Prevent focusing if the list is empty (if the listState flow is cancelled)
-                    if (listState.value.messageItems.isEmpty()) return@onCompletion
-                    logger.v { "[initialFocusMessage] mode: ${_mode.value}" }
-                    when {
-                        _mode.value is MessageMode.Normal -> focusChannelMessage(messageId)
-                        _mode.value is MessageMode.MessageThread && parentMessageId != null ->
-                            focusThreadMessage(
-                                threadMessageId = messageId,
-                                parentMessageId = parentMessageId,
-                            )
-                    }
+        listState
+            .onCompletion {
+                // Prevent focusing if the list is empty (if the listState flow is cancelled)
+                if (listState.value.messageItems.isEmpty()) return@onCompletion
+                logger.v { "[initialFocusMessage] mode: ${_mode.value}" }
+                when {
+                    _mode.value is MessageMode.Normal -> focusChannelMessage(messageId)
+                    _mode.value is MessageMode.MessageThread && parentMessageId != null ->
+                        focusThreadMessage(
+                            threadMessageId = messageId,
+                            parentMessageId = parentMessageId,
+                        )
                 }
-                .first { it.messageItems.isNotEmpty() }
-        }
+            }
+            .first { it.messageItems.isNotEmpty() }
     }
 
     private fun List<Message>.focusUnreadMessage(lastReadMessageId: String) {
