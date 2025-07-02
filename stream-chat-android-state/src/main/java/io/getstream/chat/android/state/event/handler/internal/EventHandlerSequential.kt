@@ -295,7 +295,7 @@ internal class EventHandlerSequential(
 
         val hasReadEventsCapability = parameterizedLazy<String, Boolean> { cid ->
             // can we somehow get rid of repos usage here?
-            repos.hasReadEventsCapability(cid)
+            hasReadEventsCapability(cid)
         }
 
         val modifyValuesFromEvent: suspend (HasUnreadCounts) -> Unit = {
@@ -791,24 +791,25 @@ internal class EventHandlerSequential(
 
     /**
      * Checks if unread counts should be updated for particular channel.
-     * The unread counts should not be updated if channel in the DB
+     * It initially checks the offline storage for the channel's capabilities.
+     * If the channel is not found (not stored in the DB, or there is no offline support), it checks the local state.
+     * The unread counts should not be updated if channel in the DB/state
      * does not contain [ChannelCapabilities.READ_EVENTS] capability.
      *
      * @param cid CID of the channel.
      *
      * @return True if unread counts should be updated
      */
-    private suspend fun RepositoryFacade.hasReadEventsCapability(cid: String): Boolean {
-        return selectChannels(listOf(cid)).let { channels ->
-            val channel = channels.firstOrNull()
-            if (channel?.ownCapabilities?.contains(ChannelCapabilities.READ_EVENTS) == true) {
-                true
-            } else {
-                logger.d {
-                    "Skipping unread counts update for channel: $cid. ${ChannelCapabilities.READ_EVENTS} capability is missing."
-                }
-                false
-            }
+    private suspend fun hasReadEventsCapability(cid: String): Boolean {
+        // Check offline storage first
+        val offlineChannel = repos.selectChannel(cid)
+        return if (offlineChannel != null) {
+            offlineChannel.ownCapabilities.contains(ChannelCapabilities.READ_EVENTS)
+        } else {
+            // Check local state if channel is not found in offline storage
+            val (type, id) = cid.cidToTypeAndId()
+            val channelData = stateRegistry.channel(type, id).channelData.value
+            channelData.ownCapabilities.contains(ChannelCapabilities.READ_EVENTS)
         }
     }
 

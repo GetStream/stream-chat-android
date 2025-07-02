@@ -158,8 +158,8 @@ internal class TotalUnreadCountTest {
 
         fun givenChannel(channel: Channel) = apply {
             runTest {
-                whenever(repos.selectChannels(eq(listOf(channel.cid)), any())) doReturn listOf(channel)
-                whenever(repos.selectChannels(eq(listOf(channel.cid)))) doReturn listOf(channel)
+                whenever(repos.selectChannel(eq(channel.cid))) doReturn channel
+                whenever(repos.selectChannel(eq(channel.cid))) doReturn channel
             }
         }
 
