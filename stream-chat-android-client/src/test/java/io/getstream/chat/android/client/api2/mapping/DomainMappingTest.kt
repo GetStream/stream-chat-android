@@ -537,6 +537,7 @@ internal class DomainMappingTest {
             automodBehavior = configDto.automod_behavior,
             blocklistBehavior = configDto.blocklist_behavior ?: "",
             commands = configDto.commands.map { with(sut) { it.toDomain() } },
+            sharedLocationsEnabled = configDto.shared_locations ?: false,
         )
         config shouldBeEqualTo expected
     }

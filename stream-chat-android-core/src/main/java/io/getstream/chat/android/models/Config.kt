@@ -134,4 +134,9 @@ public data class Config(
      * The commands that are available on this channel type, e.g. /giphy.
      */
     val commands: List<Command> = mutableListOf(),
+
+    /**
+     * Determines if shared locations are enabled. Disabled by default.
+     */
+    val sharedLocationsEnabled: Boolean = false,
 )
