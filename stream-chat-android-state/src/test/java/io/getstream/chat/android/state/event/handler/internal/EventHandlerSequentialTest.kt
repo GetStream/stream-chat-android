@@ -162,8 +162,8 @@ internal class EventHandlerSequentialTest {
         fun withReadEventsCapability(cid: String) = apply {
             repos.stub {
                 onBlocking {
-                    selectChannels(listOf(cid))
-                } doReturn listOf(randomChannel(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS)))
+                    selectChannel(cid)
+                } doReturn randomChannel(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS))
             }
         }
 
