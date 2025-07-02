@@ -29,8 +29,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.Send
 import androidx.compose.material.icons.rounded.LocationOn
+import androidx.compose.material.icons.rounded.NearMe
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
@@ -90,7 +90,8 @@ private fun LocationPickerContent(
             location = foundLocation
         }
         LocationButton(
-            icon = Icons.Rounded.LocationOn,
+            enabled = location != null,
+            icon = Icons.Rounded.NearMe,
             label = "Share Live Location",
             description = "Share your location in real-time",
             isPrimary = true,
@@ -104,7 +105,8 @@ private fun LocationPickerContent(
             },
         )
         LocationButton(
-            icon = Icons.AutoMirrored.Rounded.Send,
+            enabled = location != null,
+            icon = Icons.Rounded.LocationOn,
             label = "Send Current Location",
             description = "Share your current location",
             onClick = {
@@ -169,6 +171,7 @@ private fun LocationContent(
 @Composable
 private fun LocationButton(
     modifier: Modifier = Modifier,
+    enabled: Boolean,
     icon: ImageVector,
     label: String,
     description: String,
@@ -177,10 +180,19 @@ private fun LocationButton(
 ) {
     OutlinedButton(
         modifier = modifier,
+        enabled = enabled,
         shape = RoundedCornerShape(7.dp),
         border = BorderStroke(
             width = 1.dp,
-            color = if (isPrimary) ChatTheme.colors.primaryAccent else ChatTheme.colors.borders,
+            color = if (isPrimary) {
+                if (enabled) {
+                    ChatTheme.colors.primaryAccent
+                } else {
+                    ChatTheme.colors.disabled
+                }
+            } else {
+                ChatTheme.colors.borders
+            },
         ),
         colors = ButtonDefaults.outlinedButtonColors(contentColor = ChatTheme.colors.textHighEmphasis),
         onClick = onClick,
@@ -193,12 +205,24 @@ private fun LocationButton(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
+                tint = if (enabled) {
+                    ChatTheme.colors.primaryAccent
+                } else {
+                    ChatTheme.colors.disabled
+                },
             )
             Column(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                Text(text = label, style = ChatTheme.typography.title3Bold)
-                Text(text = description, style = ChatTheme.typography.footnote)
+                Text(
+                    text = label,
+                    style = ChatTheme.typography.title3Bold,
+                )
+                Text(
+                    text = description,
+                    style = ChatTheme.typography.footnote,
+                    color = ChatTheme.colors.textLowEmphasis,
+                )
             }
         }
     }
