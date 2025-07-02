@@ -295,7 +295,7 @@ internal class EventHandlerSequential(
 
         val hasReadEventsCapability = parameterizedLazy<String, Boolean> { cid ->
             // can we somehow get rid of repos usage here?
-            hasReadEventsCapability(cid)
+            checkReadEventsCapability(cid)
         }
 
         val modifyValuesFromEvent: suspend (HasUnreadCounts) -> Unit = {
@@ -800,7 +800,7 @@ internal class EventHandlerSequential(
      *
      * @return True if unread counts should be updated
      */
-    private suspend fun hasReadEventsCapability(cid: String): Boolean {
+    private suspend fun checkReadEventsCapability(cid: String): Boolean {
         // Check offline storage first
         val offlineChannel = repos.selectChannel(cid)
         return if (offlineChannel != null) {
