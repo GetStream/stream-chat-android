@@ -578,6 +578,7 @@ internal class DomainMapping(
         blocklistBehavior = blocklist_behavior ?: "",
         commands = commands.map { it.toDomain() },
         messageRemindersEnabled = user_message_reminders ?: false,
+        sharedLocationsEnabled = shared_locations ?: false,
     )
 
     /**
