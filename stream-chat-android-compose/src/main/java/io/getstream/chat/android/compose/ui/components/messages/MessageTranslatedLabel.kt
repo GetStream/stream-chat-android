@@ -16,11 +16,18 @@
 
 package io.getstream.chat.android.compose.ui.components.messages
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isGiphy
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.TranslatedLabel
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 
 /**
@@ -31,10 +38,12 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
  *
  * @param messageItem The state of the message item which contains details about the message,
  * the original language, and the user's current language.
+ * @param onToggleOriginalText Called when the user taps on the "Show Original" or "Show Translation" label.
  */
 @Composable
 public fun MessageTranslatedLabel(
     messageItem: MessageItemState,
+    onToggleOriginalText: () -> Unit = {},
 ) {
     if (!ChatTheme.autoTranslationEnabled) {
         return
@@ -45,6 +54,56 @@ public fun MessageTranslatedLabel(
     val isDeleted = messageItem.message.isDeleted()
     val translatedText = messageItem.message.getTranslation(userLanguage).ifEmpty { messageItem.message.text }
     if (!isGiphy && !isDeleted && userLanguage != i18nLanguage && translatedText != messageItem.message.text) {
-        TranslatedLabel(translatedTo = userLanguage)
+        if (ChatTheme.showOriginalTranslationEnabled) {
+            // Toggle-able label to show original text or translated text
+            ToggleableTranslatedLabel(
+                messageItem = messageItem,
+                translatedTo = userLanguage,
+                onToggleOriginalText = onToggleOriginalText,
+            )
+        } else {
+            // Always show the 'translated' label
+            TranslatedLabel(translatedTo = userLanguage)
+        }
     }
+}
+
+@Composable
+internal fun ToggleableTranslatedLabel(
+    messageItem: MessageItemState,
+    translatedTo: String,
+    onToggleOriginalText: () -> Unit,
+) {
+    if (messageItem.showOriginalText) {
+        ShowTranslationLabel(onToggleOriginalText = onToggleOriginalText)
+    } else {
+        Row {
+            TranslatedLabel(translatedTo)
+            ShowOriginalLabel(onToggleOriginalText = onToggleOriginalText)
+        }
+    }
+}
+
+@Composable
+private fun ShowTranslationLabel(onToggleOriginalText: () -> Unit) {
+    Text(
+        modifier = Modifier.clickable { onToggleOriginalText() },
+        text = stringResource(R.string.stream_compose_message_list_show_translation),
+        style = ChatTheme.typography.footnote,
+        color = ChatTheme.colors.textLowEmphasis,
+    )
+}
+
+@Composable
+private fun ShowOriginalLabel(onToggleOriginalText: () -> Unit) {
+    Text(
+        modifier = Modifier.clickable(
+            interactionSource = null,
+            indication = null,
+            onClick = onToggleOriginalText,
+        ),
+        text = stringResource(R.string.stream_compose_message_list_show_original),
+        style = ChatTheme.typography.footnote,
+        color = ChatTheme.colors.textLowEmphasis,
+    )
 }

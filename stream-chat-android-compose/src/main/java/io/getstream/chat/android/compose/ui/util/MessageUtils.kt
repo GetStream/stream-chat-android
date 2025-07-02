@@ -17,11 +17,30 @@
 package io.getstream.chat.android.compose.ui.util
 
 import android.content.Context
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
 import io.getstream.chat.android.uiutils.extension.isUploading
 import io.getstream.chat.android.uiutils.util.EmojiUtil
+import kotlinx.coroutines.flow.map
+
+/**
+ * Returns a [State] that indicates whether the original text of the message should be shown or not.
+ *
+ * @param messageId The ID of the message to check.
+ * @return A [State] that contains true if the original text should be shown, false otherwise.
+ */
+@Composable
+public fun showOriginalTextAsState(cid: String, messageId: String): State<Boolean> {
+    return MessageOriginalTranslationsStore.forChannel(cid)
+        .originalTextMessageIds
+        .map { it.contains(messageId) }
+        .collectAsStateWithLifecycle(false)
+}
 
 /**
  * Takes the current message and returns the sender display name.

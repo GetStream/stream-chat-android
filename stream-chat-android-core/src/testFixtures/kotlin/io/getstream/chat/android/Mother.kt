@@ -318,6 +318,7 @@ public fun randomMessage(
     poll: Poll? = null,
     moderationDetails: MessageModerationDetails? = null,
     moderation: Moderation? = null,
+    i18n: Map<String, String> = emptyMap(),
     reminder: MessageReminderInfo? = randomMessageReminderInfo(),
 ): Message = Message(
     id = id,
@@ -361,6 +362,7 @@ public fun randomMessage(
     poll = poll,
     moderationDetails = moderationDetails,
     moderation = moderation,
+    i18n = i18n,
     reminder = reminder,
 )
 
