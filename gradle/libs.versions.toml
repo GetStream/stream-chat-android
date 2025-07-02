@@ -106,6 +106,7 @@ androidx-compose-foundation = { module = "androidx.compose.foundation:foundation
 androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "androidxComposeMaterial3"}
 androidx-compose-material3-adaptive = { module = "androidx.compose.material3.adaptive:adaptive", version.ref = "androidxComposeMaterial3Adaptive"}
 androidx-compose-material-icons-core = { module = "androidx.compose.material:material-icons-core", version.ref = "androidxCompose"}
+androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "androidxCompose"}
 androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "androidxCompose"}
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "androidxCompose"}
 androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidxCompose"}

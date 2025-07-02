@@ -17,7 +17,7 @@
 package io.getstream.chat.android.compose.sample.ui.location
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.LocationOn
+import androidx.compose.material.icons.rounded.ShareLocation
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
@@ -27,19 +27,24 @@ import io.getstream.chat.android.compose.ui.messages.attachments.factory.Attachm
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerBack
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
 internal class LocationPickerTabFactory(
     private val viewModelFactory: SharedLocationViewModelFactory,
 ) : AttachmentsPickerTabFactory {
 
-    override val attachmentsPickerMode: AttachmentsPickerMode = CustomPickerMode()
+    override val attachmentsPickerMode: AttachmentsPickerMode =
+        CustomPickerMode()
+
+    override fun isPickerTabEnabled(channel: Channel): Boolean =
+        channel.config.sharedLocationsEnabled
 
     @Composable
     override fun PickerTabIcon(isEnabled: Boolean, isSelected: Boolean) {
         Icon(
-            imageVector = Icons.Rounded.LocationOn,
-            contentDescription = "Location",
+            imageVector = Icons.Rounded.ShareLocation,
+            contentDescription = "Share Location",
             tint = when {
                 isEnabled -> ChatTheme.colors.textLowEmphasis
                 else -> ChatTheme.colors.disabled
