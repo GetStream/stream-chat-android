@@ -622,6 +622,15 @@ public class MessageListViewModel(
     }
 
     /**
+     * Toggles between the translated and the original text of the message (if the message was auto-translated).
+     *
+     * @param messageId The ID of the message for which to toggle the original text.
+     */
+    public fun toggleOriginalText(messageId: String) {
+        messageListController.toggleOriginalText(messageId)
+    }
+
+    /**
      * Clears the [MessageListController] coroutine scope.
      */
     override fun onCleared() {

@@ -65,6 +65,7 @@ import io.getstream.chat.android.state.extensions.loadNewerMessages
 import io.getstream.chat.android.state.extensions.loadNewestMessages
 import io.getstream.chat.android.state.extensions.loadOlderMessages
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
+import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
 import io.getstream.chat.android.ui.common.helper.ClipboardHandler
 import io.getstream.chat.android.ui.common.state.messages.BlockUser
 import io.getstream.chat.android.ui.common.state.messages.Copy
@@ -141,7 +142,6 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Date
 import io.getstream.chat.android.ui.common.state.messages.Flag as FlagMessage
@@ -224,7 +224,7 @@ public class MessageListController(
     public val unreadLabelState: MutableStateFlow<UnreadLabel?> = MutableStateFlow(null)
     private val showUnreadButtonState = MutableSharedFlow<Boolean>(extraBufferCapacity = 1)
     private val updateUnreadLabelState = MutableStateFlow(true)
-    private val messagesInOriginalLanguageIds = MutableStateFlow<Set<String>>(emptySet())
+    private val originalTranslationsStore by lazy { MessageOriginalTranslationsStore.forChannel(cid) }
 
     /**
      * Holds information about the abilities the current user is able to exercise in the given channel.
@@ -471,7 +471,7 @@ public class MessageListController(
                 unreadLabelState,
                 channelState.members,
                 channelState.endOfOlderMessages,
-                messagesInOriginalLanguageIds,
+                originalTranslationsStore.originalTextMessageIds,
             ) { data ->
                 val state = data[0] as MessagesState
                 val reads = data[1] as List<ChannelUserRead>
@@ -766,7 +766,7 @@ public class MessageListController(
                 focusedMessage,
                 members,
                 ownCapabilities,
-                messagesInOriginalLanguageIds,
+                originalTranslationsStore.originalTextMessageIds,
             ) { data ->
                 val messages = data[0] as List<Message>
                 val reads = data[1] as List<ChannelUserRead>
@@ -1248,16 +1248,12 @@ public class MessageListController(
     }
 
     /**
-     * Toggles between the translated and the original text of the message.
+     * Toggles between the translated and the original text of the message (if the message was auto-translated).
+     *
+     * @param messageId The ID of the message for which to toggle the original text.
      */
     public fun toggleOriginalText(messageId: String) {
-        messagesInOriginalLanguageIds.update { it ->
-            if (it.contains(messageId)) {
-                it - messageId
-            } else {
-                it + messageId
-            }
-        }
+        originalTranslationsStore.toggleOriginalText(messageId)
     }
 
     /**
@@ -2358,6 +2354,8 @@ public class MessageListController(
      * Cancels any pending work when the parent ViewModel is about to be destroyed.
      */
     public fun onCleared() {
+        // Clear any messages for which the original text was shown
+        originalTranslationsStore.clear()
         scope.cancel()
     }
 
