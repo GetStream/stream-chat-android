@@ -47,6 +47,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Prevent calling `focusMessage` from the `MessageListController` after closing the `MessageList`. [#5854](https://github.com/GetStream/stream-chat-android/pull/5854)
 
 ### ⬆️ Improved
 
