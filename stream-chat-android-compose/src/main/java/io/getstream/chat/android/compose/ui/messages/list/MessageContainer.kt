@@ -250,6 +250,7 @@ internal fun DefaultMessageUnreadSeparatorContent(unreadSeparatorItemState: Unre
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .padding(bottom = 8.dp)
             .background(ChatTheme.messageUnreadSeparatorTheme.backgroundColor)
             .testTag("Stream_UnreadMessagesBadge"),
         contentAlignment = Alignment.Center,

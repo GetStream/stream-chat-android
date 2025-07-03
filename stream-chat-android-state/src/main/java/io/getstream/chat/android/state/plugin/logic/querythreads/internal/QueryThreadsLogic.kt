@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
+import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationThreadMessageNewEvent
 import io.getstream.chat.android.client.events.ReactionDeletedEvent
@@ -161,6 +162,7 @@ internal class QueryThreadsLogic(
             is NotificationMarkUnreadEvent -> markThreadAsUnread(event)
             // (Potentially) Informs about reading of a thread
             is MessageReadEvent -> markThreadAsRead(event)
+            is NotificationMarkReadEvent -> markThreadAsRead(event)
             // (Potentially) Updates/Inserts a message in a thread
             is NewMessageEvent -> updateParentOrReply(event.message)
             is MessageUpdatedEvent -> updateParentOrReply(event.message)
@@ -205,6 +207,15 @@ internal class QueryThreadsLogic(
      * @param event The [MessageReadEvent] informing about the read state change.
      */
     private fun markThreadAsRead(event: MessageReadEvent) {
+        val threadInfo = event.thread ?: return
+        stateLogic.markThreadAsReadByUser(
+            threadInfo = threadInfo,
+            user = event.user,
+            createdAt = event.createdAt,
+        )
+    }
+
+    private fun markThreadAsRead(event: NotificationMarkReadEvent) {
         val threadInfo = event.thread ?: return
         stateLogic.markThreadAsReadByUser(
             threadInfo = threadInfo,

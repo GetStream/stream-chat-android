@@ -82,27 +82,6 @@ import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryItem
 import io.getstream.chat.android.ui.feature.gallery.toAttachment
 import io.getstream.chat.android.ui.feature.messages.dialog.ModeratedMessageDialogFragment
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.AttachmentDownloadHandler
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.BottomEndRegionReachedHandler
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.ConfirmDeleteMessageHandler
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.ConfirmFlagMessageHandler
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.CustomActionHandler
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.EndRegionReachedHandler
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.ErrorEventHandler
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.FlagMessageResultHandler
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.GiphySendHandler
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.LastMessageReadHandler
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.MessageDeleteHandler
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.MessageEditHandler
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.MessageFlagHandler
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.MessageListItemTransformer
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.MessagePinHandler
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.MessageReactionHandler
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.MessageReplyHandler
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.MessageRetryHandler
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.MessageUnpinHandler
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.ModeratedMessageOptionHandler
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.ThreadStartHandler
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainerImpl
@@ -207,6 +186,10 @@ public class MessageListView : ConstraintLayout {
     }
     private var openThreadHandler = OpenThreadHandler {
         throw IllegalStateException("onStartThreadHandler must be set.")
+    }
+    private var toggleOriginalTextHandler = ToggleOriginalTextHandler {
+        // no-op
+        false
     }
     private var replyMessageClickListener = OnReplyMessageClickListener {
         // no-op
@@ -474,6 +457,12 @@ public class MessageListView : ConstraintLayout {
                 .also { if (it) openThreadHandler.onOpenThread(message) }
         }
 
+    private val defaultTranslatedLabelClickListener =
+        OnTranslatedLabelClickListener { message ->
+            toggleOriginalTextHandler.onToggleOriginalText(message)
+            true
+        }
+
     private val attachmentGalleryDestination =
         AttachmentGalleryDestination(
             context,
@@ -635,6 +624,7 @@ public class MessageListView : ConstraintLayout {
         messageLongClickListener = defaultMessageLongClickListener,
         messageRetryListener = defaultMessageRetryListener,
         threadClickListener = defaultThreadClickListener,
+        translatedLabelClickListener = defaultTranslatedLabelClickListener,
         attachmentClickListener = defaultAttachmentClickListener,
         attachmentDownloadClickListener = defaultAttachmentDownloadClickListener,
         reactionViewClickListener = defaultReactionViewClickListener,
@@ -1935,6 +1925,15 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
+     * Sets the handler used when the message translation is toggled.
+     *
+     * @param toggleOriginalTextHandler The handler to use.
+     */
+    public fun setToggleOriginalTextHandler(toggleOriginalTextHandler: ToggleOriginalTextHandler) {
+        this.toggleOriginalTextHandler = toggleOriginalTextHandler
+    }
+
+    /**
      * Sets the handler used when the message is going to be flagged.
      *
      * @param messageFlagHandler The handler to use.
@@ -2376,6 +2375,10 @@ public class MessageListView : ConstraintLayout {
         public fun onThreadClick(message: Message): Boolean
     }
 
+    public fun interface OnTranslatedLabelClickListener {
+        public fun onTranslatedLabelClick(message: Message): Boolean
+    }
+
     @Deprecated(
         message = "Use OnAttachmentClickListener instead",
         replaceWith = ReplaceWith("OnAttachmentClickListener"),
@@ -2569,6 +2572,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface OpenThreadHandler {
         public fun onOpenThread(message: Message)
+    }
+
+    public fun interface ToggleOriginalTextHandler {
+        public fun onToggleOriginalText(message: Message)
     }
 
     public fun interface GiphySendHandler {

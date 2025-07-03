@@ -213,10 +213,13 @@ public class MessageReplyView : FrameLayout {
     }
 
     private fun setReplyText(message: Message, isMine: Boolean, style: MessageReplyStyle?) {
+        val poll = message.poll
         val attachment = message.attachments.lastOrNull()
         val displayedText = message.getTranslatedText()
         binding.replyText.text = if (message.isDeleted()) {
             context.getString(R.string.stream_ui_message_list_message_deleted)
+        } else if (poll != null) {
+            context.getString(R.string.stream_ui_quoted_message_poll, poll.name)
         } else if (attachment == null || displayedText.isNotBlank()) {
             if (ellipsize) {
                 ellipsize(displayedText)

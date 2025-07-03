@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.utils.message.isPinned
 import io.getstream.chat.android.core.utils.date.minOf
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -41,6 +42,7 @@ internal class DatabaseChannelRepository(
     private val channelDao: ChannelDao,
     private val getUser: suspend (userId: String) -> User,
     private val getMessage: suspend (messageId: String) -> Message?,
+    private val getDraftMessage: suspend (cid: String) -> DraftMessage?,
     private val now: () -> Long = { System.currentTimeMillis() },
     cacheSize: Int = 1000,
 ) : ChannelRepository {
@@ -129,7 +131,7 @@ internal class DatabaseChannelRepository(
      * @param cid String
      */
     override suspend fun selectChannel(cid: String): Channel? =
-        channelCache[cid] ?: channelDao.select(cid = cid)?.toModel(getUser, getMessage)
+        channelCache[cid] ?: channelDao.select(cid = cid)?.toModel(getUser, getMessage, getDraftMessage)
             ?.also { cacheChannel(it) }
 
     /**
@@ -142,7 +144,7 @@ internal class DatabaseChannelRepository(
         val missingChannelIds = cids.minus(cachedChannels.map(Channel::cid).toSet())
         return cachedChannels +
             channelDao.select(missingChannelIds)
-                .map { it.toModel(getUser, getMessage) }
+                .map { it.toModel(getUser, getMessage, getDraftMessage) }
                 .also { cacheChannel(it) }
     }
 
@@ -164,7 +166,7 @@ internal class DatabaseChannelRepository(
      * Read which channels need sync.
      */
     override suspend fun selectChannelsSyncNeeded(limit: Int): List<Channel> {
-        return channelDao.selectSyncNeeded(limit = limit).map { it.toModel(getUser, getMessage) }
+        return channelDao.selectSyncNeeded(limit = limit).map { it.toModel(getUser, getMessage, getDraftMessage) }
     }
 
     /**

@@ -118,10 +118,7 @@ public class ChannelInfoMemberViewController(
                 logger.d { "[queryDistinctChannel] currentUserId: $currentUserId, memberId: $memberId" }
                 chatClient.queryChannels(
                     request = QueryChannelsRequest(
-                        filter = Filters.and(
-                            Filters.eq("type", "messaging"),
-                            Filters.distinct(listOf(memberId, currentUserId)),
-                        ),
+                        filter = Filters.distinct(listOf(memberId, currentUserId)),
                         querySort = QuerySortByField.descByName("last_updated"),
                         messageLimit = 0,
                         limit = 1,

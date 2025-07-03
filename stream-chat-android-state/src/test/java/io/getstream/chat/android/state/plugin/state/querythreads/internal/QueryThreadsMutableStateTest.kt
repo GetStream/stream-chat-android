@@ -54,6 +54,7 @@ internal class QueryThreadsMutableStateTest {
             title = "Thread 1",
             latestReplies = listOf(Message(id = "mId1")),
             read = emptyList(),
+            draft = null,
         ),
     )
 
@@ -78,6 +79,7 @@ internal class QueryThreadsMutableStateTest {
             title = "Thread 2",
             latestReplies = listOf(Message()),
             read = emptyList(),
+            draft = null,
         ),
     )
 

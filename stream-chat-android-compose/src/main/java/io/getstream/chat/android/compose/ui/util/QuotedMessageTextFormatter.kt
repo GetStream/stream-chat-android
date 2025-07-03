@@ -226,9 +226,11 @@ private class DefaultQuotedMessageTextFormatter(
             else -> message.text
         }
 
+        val poll = message.poll
         val attachment = message.attachments.firstOrNull()
         val quotedMessageText = when {
             message.isDeleted() -> context.getString(R.string.stream_ui_message_list_message_deleted)
+            poll != null -> context.getString(R.string.stream_compose_quoted_message_poll, poll.name)
             displayedText.isNotBlank() -> displayedText
             attachment != null -> when {
                 attachment.name != null -> attachment.name

@@ -22,11 +22,6 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
-import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem.DateSeparatorItem
-import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem.LoadingMoreIndicatorItem
-import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem.MessageItem
-import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem.ThreadSeparatorItem
-import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem.TypingItem
 import java.util.Date
 
 /**
@@ -82,6 +77,9 @@ public sealed class MessageListItem {
      * @property isMessageRead True if the message has been read or not.
      * @property showMessageFooter True if the message footer should be displayed, otherwise false.
      * @property isTheirs True if the message is sent by another user, otherwise false.
+     * @property showMessageFooter True if the message footer should be displayed, otherwise false.
+     * @property showOriginalText If the original text of the message should be shown in the UI instead of its
+     * translation (if the message was auto-translated).
      */
     public data class MessageItem(
         val message: Message,
@@ -91,6 +89,7 @@ public sealed class MessageListItem {
         val isThreadMode: Boolean = false,
         val isMessageRead: Boolean = true,
         val showMessageFooter: Boolean = false,
+        val showOriginalText: Boolean = false,
     ) : MessageListItem() {
         public val isTheirs: Boolean
             get() = !isMine

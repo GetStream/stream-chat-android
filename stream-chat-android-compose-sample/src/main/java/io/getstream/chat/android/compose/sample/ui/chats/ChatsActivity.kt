@@ -55,6 +55,7 @@ import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelAc
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
 import io.getstream.chat.android.compose.sample.feature.channel.list.CustomChatEventHandlerFactory
 import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
+import io.getstream.chat.android.compose.sample.ui.channel.AddMembersDialog
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBar
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBarOption
 import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponentFactory
@@ -89,6 +90,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
+import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import kotlinx.coroutines.GlobalScope
@@ -357,10 +359,13 @@ class ChatsActivity : BaseConnectedActivity() {
             onNavigateToChannel = onNavigateToChannel,
         )
 
+        var showAddMembers by remember { mutableStateOf(false) }
+
         if (AdaptiveLayoutInfo.singlePaneWindow()) {
             GroupChannelInfoScreen(
                 viewModelFactory = viewModelFactory,
                 onNavigationIconClick = onNavigationIconClick,
+                onAddMembersClick = { showAddMembers = true },
             )
         } else {
             CompoundComponentFactory(
@@ -369,13 +374,17 @@ class ChatsActivity : BaseConnectedActivity() {
                         @Composable
                         override fun GroupChannelInfoTopBar(
                             headerState: ChannelHeaderViewState,
+                            infoState: ChannelInfoViewState,
                             listState: LazyListState,
                             onNavigationIconClick: () -> Unit,
+                            onAddMembersClick: () -> Unit,
                         ) {
                             GroupChannelInfoTopBar(
                                 headerState = headerState,
+                                infoState = infoState,
                                 listState = listState,
                                 navigationIcon = { CloseButton(onClick = onNavigationIconClick) },
+                                onAddMembersClick = onAddMembersClick,
                             )
                         }
                     }
@@ -384,8 +393,16 @@ class ChatsActivity : BaseConnectedActivity() {
                 GroupChannelInfoScreen(
                     viewModelFactory = viewModelFactory,
                     onNavigationIconClick = onNavigationIconClick,
+                    onAddMembersClick = { showAddMembers = true },
                 )
             }
+        }
+
+        if (showAddMembers) {
+            AddMembersDialog(
+                cid = channelId,
+                onDismiss = { showAddMembers = false },
+            )
         }
     }
 
@@ -417,8 +434,10 @@ class ChatsActivity : BaseConnectedActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     private fun GroupChannelInfoTopBar(
         headerState: ChannelHeaderViewState,
+        infoState: ChannelInfoViewState,
         listState: LazyListState,
         navigationIcon: @Composable () -> Unit,
+        onAddMembersClick: () -> Unit,
     ) {
         val elevation by animateDpAsState(
             targetValue = if (listState.canScrollBackward) {
@@ -451,6 +470,15 @@ class ChatsActivity : BaseConnectedActivity() {
                 navigationIcon = navigationIcon,
                 expandedHeight = 56.dp,
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = ChatTheme.colors.barsBackground),
+                actions = {
+                    if (infoState is ChannelInfoViewState.Content &&
+                        infoState.options.contains(ChannelInfoViewState.Content.Option.AddMember)
+                    ) {
+                        ChatTheme.componentFactory.GroupChannelInfoAddMembersButton(
+                            onClick = onAddMembersClick,
+                        )
+                    }
+                },
             )
         }
     }
