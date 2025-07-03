@@ -34,27 +34,35 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.feature.channel.ChannelConstants.CHANNEL_ARG_DRAFT
 import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelActivity
+import io.getstream.chat.android.compose.sample.feature.channel.add.group.AddGroupChannelActivity
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
+import io.getstream.chat.android.compose.sample.feature.reminders.MessageRemindersActivity
 import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
 import io.getstream.chat.android.compose.sample.ui.MessagesActivity
 import io.getstream.chat.android.compose.sample.ui.channel.DirectChannelInfoActivity
@@ -118,6 +126,7 @@ class ChannelsActivity : BaseConnectedActivity() {
     private val mentionListViewModel: MentionListViewModel by viewModels { MentionListViewModelFactory() }
     private val threadsViewModel: ThreadListViewModel by viewModels { ThreadsViewModelFactory() }
 
+    @Suppress("LongMethod")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -145,34 +154,69 @@ class ChannelsActivity : BaseConnectedActivity() {
                     ),
                 ),
             ) {
-                Scaffold(
-                    modifier = Modifier.systemBarsPadding(),
-                    bottomBar = {
-                        AppBottomBar(
-                            unreadChannelsCount = unreadChannelsCount,
-                            unreadThreadsCount = unreadThreadsCount,
-                            selectedOption = selectedTab,
-                            onOptionSelected = { selectedTab = it },
-                        )
-                    },
-                    containerColor = ChatTheme.colors.appBackground,
-                ) { padding ->
-                    Box(
-                        modifier = Modifier.padding(padding),
-                    ) {
-                        when (selectedTab) {
-                            AppBottomBarOption.CHATS -> ChannelsContent()
-                            AppBottomBarOption.MENTIONS -> MentionsContent()
-                            AppBottomBarOption.THREADS -> ThreadsContent()
+                val user by channelsViewModel.user.collectAsStateWithLifecycle()
+                val drawerState = rememberDrawerState(DrawerValue.Closed)
+                val coroutineScope = rememberCoroutineScope()
+                ModalNavigationDrawer(
+                    drawerState = drawerState,
+                    drawerContent = {
+                        ModalDrawerSheet(
+                            modifier = Modifier.width(300.dp),
+                            drawerContainerColor = ChatTheme.colors.barsBackground,
+                        ) {
+                            ChannelsScreenNavigationDrawer(
+                                currentUser = user,
+                                onNewDirectMessageClick = {
+                                    openAddChannel()
+                                    coroutineScope.launch { drawerState.close() }
+                                },
+                                onNewGroupClick = {
+                                    openAddGroupChannel()
+                                    coroutineScope.launch { drawerState.close() }
+                                },
+                                onRemindersClick = {
+                                    openReminders()
+                                    coroutineScope.launch { drawerState.close() }
+                                },
+                                onSignOutClick = ::signOut,
+                            )
                         }
-                    }
-                }
+                    },
+                    content = {
+                        Scaffold(
+                            modifier = Modifier.systemBarsPadding(),
+                            bottomBar = {
+                                AppBottomBar(
+                                    unreadChannelsCount = unreadChannelsCount,
+                                    unreadThreadsCount = unreadThreadsCount,
+                                    selectedOption = selectedTab,
+                                    onOptionSelected = { selectedTab = it },
+                                )
+                            },
+                            containerColor = ChatTheme.colors.appBackground,
+                        ) { padding ->
+                            Box(modifier = Modifier.padding(padding)) {
+                                when (selectedTab) {
+                                    AppBottomBarOption.CHATS -> ChannelsContent(
+                                        onHeaderAvatarClick = {
+                                            coroutineScope.launch {
+                                                drawerState.open()
+                                            }
+                                        },
+                                    )
+                                    AppBottomBarOption.MENTIONS -> MentionsContent()
+                                    AppBottomBarOption.THREADS -> ThreadsContent()
+                                }
+                            }
+                        }
+                    },
+                )
             }
         }
     }
 
     @Composable
-    private fun ChannelsContent() {
+    private fun ChannelsContent(onHeaderAvatarClick: () -> Unit) {
         ChannelsScreen(
             viewModelFactory = channelsViewModelFactory,
             title = stringResource(id = R.string.app_name),
@@ -181,20 +225,12 @@ class ChannelsActivity : BaseConnectedActivity() {
             onChannelClick = ::openMessages,
             onSearchMessageItemClick = ::openMessages,
             onBackPressed = ::finish,
-            onHeaderAvatarClick = {
-                GlobalScope.launch {
-                    openUserLogin()
-                    // Give time for login activity to start before disconnecting the user,
-                    // so we prevent showing disconnected states.
-                    delay(UserLoginActivity.DELAY_BEFORE_LOGOUT_IN_MILLIS)
-                    ChatHelper.disconnectUser()
-                }
-            },
+            onHeaderAvatarClick = onHeaderAvatarClick,
             onHeaderActionClick = ::openAddChannel,
             onViewChannelInfoAction = ::viewChannelInfo,
         )
-//                MyCustomUiSimplified()
-//                MyCustomUi()
+        // MyCustomUiSimplified()
+        // MyCustomUi()
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -377,8 +413,26 @@ class ChannelsActivity : BaseConnectedActivity() {
         startActivity(Intent(this, AddChannelActivity::class.java))
     }
 
+    private fun openAddGroupChannel() {
+        startActivity(Intent(this, AddGroupChannelActivity::class.java))
+    }
+
+    private fun openReminders() {
+        startActivity(Intent(this, MessageRemindersActivity::class.java))
+    }
+
     private fun openUserLogin() {
         startActivity(UserLoginActivity.createIntent(this))
+    }
+
+    private fun signOut() {
+        GlobalScope.launch {
+            openUserLogin()
+            // Give time for login activity to start before disconnecting the user,
+            // so we prevent showing disconnected states.
+            delay(UserLoginActivity.DELAY_BEFORE_LOGOUT_IN_MILLIS)
+            ChatHelper.disconnectUser()
+        }
     }
 
     private fun viewChannelInfo(channel: Channel) {

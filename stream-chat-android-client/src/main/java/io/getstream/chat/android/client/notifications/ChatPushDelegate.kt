@@ -55,7 +55,7 @@ internal class ChatPushDelegate : PushDelegate() {
 
     private fun Map<String, Any?>.ifValid(effect: () -> Unit): Boolean {
         val isValid = PayloadValidator.isFromStreamServer(this) &&
-            PayloadValidator.isValidNewMessage(this)
+            PayloadValidator.isValidPayload(this)
         effect.takeIf { isValid }?.invoke()
         return isValid
     }

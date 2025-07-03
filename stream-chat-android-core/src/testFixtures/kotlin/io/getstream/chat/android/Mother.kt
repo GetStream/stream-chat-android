@@ -39,6 +39,8 @@ import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageModerationAction
 import io.getstream.chat.android.models.MessageModerationDetails
+import io.getstream.chat.android.models.MessageReminder
+import io.getstream.chat.android.models.MessageReminderInfo
 import io.getstream.chat.android.models.Moderation
 import io.getstream.chat.android.models.ModerationAction
 import io.getstream.chat.android.models.Mute
@@ -47,6 +49,7 @@ import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.models.QueryDraftsResult
+import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.ReactionGroup
@@ -316,6 +319,7 @@ public fun randomMessage(
     moderationDetails: MessageModerationDetails? = null,
     moderation: Moderation? = null,
     i18n: Map<String, String> = emptyMap(),
+    reminder: MessageReminderInfo? = randomMessageReminderInfo(),
 ): Message = Message(
     id = id,
     cid = cid,
@@ -359,6 +363,7 @@ public fun randomMessage(
     moderationDetails = moderationDetails,
     moderation = moderation,
     i18n = i18n,
+    reminder = reminder,
 )
 
 public fun randomChannelMute(
@@ -972,4 +977,40 @@ public fun randomModeration(
     blocklistMatched = blocklistMatched,
     semanticFilterMatched = semanticFilterMatched,
     platformCircumvented = platformCircumvented,
+)
+
+public fun randomMessageReminder(
+    remindAt: Date? = randomDate(),
+    messageId: String = randomString(),
+    message: Message = randomMessage(id = messageId),
+    cid: String = randomCID(),
+    channel: Channel = randomChannel(),
+    createdAt: Date = randomDate(),
+    updatedAt: Date = randomDate(),
+): MessageReminder = MessageReminder(
+    remindAt = remindAt,
+    cid = cid,
+    channel = channel,
+    messageId = messageId,
+    message = message,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+)
+
+public fun randomQueryMessageRemindersResult(
+    reminders: List<MessageReminder> = List(positiveRandomInt(5)) { randomMessageReminder() },
+    next: String? = randomString(),
+): QueryRemindersResult = QueryRemindersResult(
+    reminders = reminders,
+    next = next,
+)
+
+public fun randomMessageReminderInfo(
+    remindAt: Date? = randomDateOrNull(),
+    createdAt: Date = randomDate(),
+    updatedAt: Date = randomDate(),
+): MessageReminderInfo = MessageReminderInfo(
+    remindAt = remindAt,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
 )

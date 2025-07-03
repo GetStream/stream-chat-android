@@ -91,6 +91,7 @@ internal class MessageMapperTest {
             messageTextUpdatedAt = messageEntity.messageInnerEntity.messageTextUpdatedAt,
             restrictedVisibility = messageEntity.messageInnerEntity.restrictedVisibility,
             poll = null,
+            reminder = messageEntity.messageInnerEntity.reminder?.toModel(),
         )
 
         val result = messageEntity.toModel(
@@ -149,6 +150,7 @@ internal class MessageMapperTest {
                 moderation = message.moderation?.toEntity(),
                 messageTextUpdatedAt = message.messageTextUpdatedAt,
                 pollId = message.poll?.id,
+                reminder = message.reminder?.toEntity(),
             ),
             attachments = message.attachments.mapIndexed { index, attachment ->
                 attachment.toEntity(

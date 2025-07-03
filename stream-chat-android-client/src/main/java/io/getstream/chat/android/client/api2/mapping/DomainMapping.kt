@@ -38,6 +38,8 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamOptionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
@@ -53,6 +55,7 @@ import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
 import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.client.api2.model.response.FileUploadConfigDto
+import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.models.Answer
@@ -75,6 +78,8 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageModerationAction
 import io.getstream.chat.android.models.MessageModerationDetails
+import io.getstream.chat.android.models.MessageReminder
+import io.getstream.chat.android.models.MessageReminderInfo
 import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.Moderation
 import io.getstream.chat.android.models.ModerationAction
@@ -82,6 +87,7 @@ import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PushProvider
+import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.ReactionGroup
 import io.getstream.chat.android.models.SearchWarning
@@ -215,6 +221,7 @@ internal class DomainMapping(
                 messageTextUpdatedAt = message_text_updated_at,
                 poll = poll?.toDomain(),
                 restrictedVisibility = emptyList(),
+                reminder = reminder?.toDomain(),
                 extraData = extraData.toMutableMap(),
             ).let(messageTransformer::transform)
         }
@@ -555,6 +562,7 @@ internal class DomainMapping(
         automodBehavior = automod_behavior,
         blocklistBehavior = blocklist_behavior ?: "",
         commands = commands.map { it.toDomain() },
+        messageRemindersEnabled = user_message_reminders ?: false,
     )
 
     /**
@@ -714,5 +722,35 @@ internal class DomainMapping(
         blockedBy = blocked_by_user_id,
         userId = blocked_user_id,
         blockedAt = created_at,
+    )
+
+    /**
+     * Transforms a network [DownstreamReminderDto] model to a domain [MessageReminder].
+     */
+    internal fun DownstreamReminderDto.toDomain(): MessageReminder = MessageReminder(
+        remindAt = remind_at,
+        cid = channel_cid,
+        channel = channel?.toDomain(),
+        messageId = message_id,
+        message = message?.toDomain(),
+        createdAt = created_at,
+        updatedAt = updated_at,
+    )
+
+    /**
+     * Transforms a network [DownstreamReminderInfoDto] model to a domain [MessageReminderInfo].
+     */
+    internal fun DownstreamReminderInfoDto.toDomain(): MessageReminderInfo = MessageReminderInfo(
+        remindAt = remind_at,
+        createdAt = created_at,
+        updatedAt = updated_at,
+    )
+
+    /**
+     * Transforms a network [QueryRemindersResponse] model to a domain [QueryRemindersResult].
+     */
+    internal fun QueryRemindersResponse.toDomain(): QueryRemindersResult = QueryRemindersResult(
+        reminders = reminders.map { it.toDomain() },
+        next = next,
     )
 }
