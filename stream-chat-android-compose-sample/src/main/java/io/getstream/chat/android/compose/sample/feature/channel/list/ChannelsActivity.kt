@@ -166,9 +166,18 @@ class ChannelsActivity : BaseConnectedActivity() {
                         ) {
                             ChannelsScreenNavigationDrawer(
                                 currentUser = user,
-                                onNewDirectMessageClick = ::openAddChannel,
-                                onNewGroupClick = ::openAddGroupChannel,
-                                onRemindersClick = ::openReminders,
+                                onNewDirectMessageClick = {
+                                    openAddChannel()
+                                    coroutineScope.launch { drawerState.close() }
+                                },
+                                onNewGroupClick = {
+                                    openAddGroupChannel()
+                                    coroutineScope.launch { drawerState.close() }
+                                },
+                                onRemindersClick = {
+                                    openReminders()
+                                    coroutineScope.launch { drawerState.close() }
+                                },
                                 onSignOutClick = ::signOut,
                             )
                         }
