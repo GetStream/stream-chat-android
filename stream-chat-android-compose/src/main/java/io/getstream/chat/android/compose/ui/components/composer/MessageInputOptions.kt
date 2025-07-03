@@ -24,9 +24,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -49,10 +50,14 @@ public fun MessageInputOptions(
     onCancelAction: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val optionImage =
-        painterResource(
-            id = if (activeAction is Reply) R.drawable.stream_compose_ic_reply else R.drawable.stream_compose_ic_edit,
-        )
+    val optionImage = ImageVector.vectorResource(
+        if (activeAction is Reply) {
+            R.drawable.stream_compose_ic_reply
+        } else {
+            R.drawable.stream_compose_ic_edit
+        }
+    )
+
     val title = stringResource(
         id = if (activeAction is Reply) {
             R.string.stream_compose_reply_to_message
@@ -62,14 +67,14 @@ public fun MessageInputOptions(
     )
 
     Row(
-        modifier,
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Icon(
             modifier = Modifier.padding(4.dp),
-            painter = optionImage,
-            contentDescription = null,
+            imageVector = optionImage,
+            contentDescription = title,
             tint = ChatTheme.colors.textLowEmphasis,
         )
 
@@ -87,7 +92,7 @@ public fun MessageInputOptions(
                     bounded = false,
                 )
                 .testTag("Stream_ComposerCancelButton"),
-            painter = painterResource(id = R.drawable.stream_compose_ic_close),
+            imageVector = ImageVector.vectorResource(id = R.drawable.stream_compose_ic_close),
             contentDescription = stringResource(id = R.string.stream_compose_cancel),
             tint = ChatTheme.colors.textLowEmphasis,
         )
