@@ -23,6 +23,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -55,7 +56,6 @@ import com.google.android.gms.location.Priority
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import kotlinx.coroutines.tasks.await
-import java.util.Calendar
 import java.util.Date
 
 @Composable
@@ -78,6 +78,7 @@ private fun LocationPickerContent(
     onDismiss: () -> Unit = {},
 ) {
     var location by remember { mutableStateOf<Location?>(null) }
+    var showDurationDropdownMenu by remember { mutableStateOf(false) }
     Column(
         modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -89,21 +90,29 @@ private fun LocationPickerContent(
         ) { foundLocation ->
             location = foundLocation
         }
-        LocationButton(
-            enabled = location != null,
-            icon = Icons.Rounded.NearMe,
-            label = "Share Live Location",
-            description = "Share your location in real-time",
-            isPrimary = true,
-            onClick = {
-                onStartLiveLocationSharing(
-                    location!!.latitude,
-                    location!!.longitude,
-                    Calendar.getInstance().apply { add(Calendar.MINUTE, 15) }.time, // Share for 15 minutes
-                )
-                onDismiss()
-            },
-        )
+
+        Box {
+            LocationButton(
+                enabled = location != null,
+                icon = Icons.Rounded.NearMe,
+                label = "Share Live Location",
+                description = "Share your location in real-time",
+                isPrimary = true,
+                onClick = { showDurationDropdownMenu = true },
+            )
+            DurationDropdownMenu(
+                expanded = showDurationDropdownMenu,
+                onSelect = { duration ->
+                    onStartLiveLocationSharing(
+                        location!!.latitude,
+                        location!!.longitude,
+                        duration.asDate(),
+                    )
+                    onDismiss()
+                },
+                onDismiss = { showDurationDropdownMenu = false },
+            )
+        }
         LocationButton(
             enabled = location != null,
             icon = Icons.Rounded.LocationOn,
@@ -117,6 +126,20 @@ private fun LocationPickerContent(
                 onDismiss()
             },
         )
+    }
+
+    if (showDurationDropdownMenu) {
+        // LocationSharingDurationPicker(
+        //     onSelectDuration = { duration ->
+        //         onStartLiveLocationSharing(
+        //             location!!.latitude,
+        //             location!!.longitude,
+        //             duration.asDate(),
+        //         )
+        //         onDismiss()
+        //     },
+        //     onDismiss = { showDurationPicker = false },
+        // )
     }
 }
 

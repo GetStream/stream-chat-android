@@ -16,23 +16,32 @@
 
 package io.getstream.chat.android.compose.sample.ui.component
 
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.LocationOn
+import androidx.compose.material.icons.rounded.NearMeDisabled
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -114,6 +123,8 @@ private fun LiveLocationSharing(
     onStopSharingClick: () -> Unit = {},
 ) {
     val isOwnMessage = message.user.id == currentUser?.id
+    val endAt = requireNotNull(location.endAt)
+    val isLiveLocationEnded = !endAt.after(Date())
     Column(
         modifier = modifier
             .clip(ChatTheme.shapes.attachment)
@@ -132,16 +143,51 @@ private fun LiveLocationSharing(
             contentDescription = "Map with ${message.user.name}'s live location",
             onClick = onMapClick,
         ) {
+            val animatedPadding by rememberInfiniteTransition().animateFloat(
+                initialValue = 0f,
+                targetValue = if (isLiveLocationEnded) 0f else 6f,
+                animationSpec = infiniteRepeatable(animation = tween(AnimationDurationMillis)),
+            )
+            val animatedColor by rememberInfiniteTransition().animateColor(
+                initialValue = ChatTheme.colors.primaryAccent,
+                targetValue = if (isLiveLocationEnded) {
+                    ChatTheme.colors.primaryAccent
+                } else {
+                    ChatTheme.colors.primaryAccent.copy(alpha = 0f)
+                },
+                animationSpec = infiniteRepeatable(animation = tween(AnimationDurationMillis)),
+            )
             UserAvatar(
                 modifier = Modifier
-                    .size(ChatTheme.dimens.channelAvatarSize)
-                    .align(Alignment.Center),
+                    .align(Alignment.Center)
+                    .background(
+                        color = animatedColor,
+                        shape = ChatTheme.shapes.avatar,
+                    )
+                    .padding(animatedPadding.dp)
+                    .size(32.dp),
                 user = message.user,
                 showOnlineIndicator = false,
             )
         }
-        val endAt = requireNotNull(location.endAt)
-        if (endAt.after(Date())) {
+        if (isLiveLocationEnded) {
+            Row(
+                modifier = Modifier.padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.NearMeDisabled,
+                    contentDescription = null,
+                    tint = ChatTheme.colors.textLowEmphasis,
+                )
+                Text(
+                    text = "Live location sharing ended",
+                    style = ChatTheme.typography.footnote,
+                    color = ChatTheme.colors.textLowEmphasis,
+                )
+            }
+        } else {
             Column {
                 Text(
                     modifier = Modifier.padding(8.dp),
@@ -159,16 +205,11 @@ private fun LiveLocationSharing(
                     }
                 }
             }
-        } else {
-            Text(
-                modifier = Modifier.padding(8.dp),
-                text = "Live location sharing ended",
-                style = ChatTheme.typography.footnote,
-                color = ChatTheme.colors.textLowEmphasis,
-            )
         }
     }
 }
+
+private const val AnimationDurationMillis = 2000
 
 @Suppress("LongParameterList")
 @Composable
@@ -217,6 +258,7 @@ private fun StaticSharedLocationItemPreview() {
             message = Message(),
             location = Location(
                 cid = "cid",
+                messageId = "messageId",
                 latitude = 37.7749,
                 longitude = -122.4194,
                 device = "device",
@@ -237,6 +279,7 @@ private fun MyLiveLocationSharingItemPreview() {
             message = Message(user = currentUser),
             location = Location(
                 cid = "cid",
+                messageId = "messageId",
                 latitude = 37.7749,
                 longitude = -122.4194,
                 device = "device",
@@ -257,6 +300,7 @@ private fun OtherLiveLocationSharingItemPreview() {
             message = Message(),
             location = Location(
                 cid = "cid",
+                messageId = "messageId",
                 latitude = 37.7749,
                 longitude = -122.4194,
                 device = "device",
@@ -276,6 +320,7 @@ private fun OtherEndedLiveLocationSharingItemPreview() {
             message = Message(),
             location = Location(
                 cid = "cid",
+                messageId = "messageId",
                 latitude = 37.7749,
                 longitude = -122.4194,
                 device = "device",
