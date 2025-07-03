@@ -97,8 +97,8 @@ private fun LocationPickerContent(
             isPrimary = true,
             onClick = {
                 onStartLiveLocationSharing(
-                    location?.latitude ?: 0.0,
-                    location?.longitude ?: 0.0,
+                    location!!.latitude,
+                    location!!.longitude,
                     Calendar.getInstance().apply { add(Calendar.MINUTE, 15) }.time, // Share for 15 minutes
                 )
                 onDismiss()
@@ -111,8 +111,8 @@ private fun LocationPickerContent(
             description = "Share your current location",
             onClick = {
                 onSendStaticLocation(
-                    location?.latitude ?: 0.0,
-                    location?.longitude ?: 0.0,
+                    location!!.latitude,
+                    location!!.longitude,
                 )
                 onDismiss()
             },
@@ -149,11 +149,13 @@ private fun LocationContent(
         } else {
             val fusedClient = LocationServices.getFusedLocationProviderClient(context)
 
-            val lastLocation = fusedClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null)
-                .await()
-
+            val lastLocation = fusedClient.lastLocation.await()
             location = lastLocation
             onLocationFound(lastLocation)
+
+            val currentLocation = fusedClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null).await()
+            location = currentLocation
+            onLocationFound(currentLocation)
         }
     }
 
