@@ -101,15 +101,14 @@ private fun mapHtml(
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
-        var redIcon = L.icon({
-          iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
-          shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-          iconSize:     [25, 41], // size of the icon
-          iconAnchor:   [12, 41], // point of the icon which will correspond to marker's location
-          popupAnchor:  [1, -34],
-          shadowSize:   [41, 41]
-        });
-        L.marker([$latitude, $longitude], {icon: redIcon}).addTo(map);
+        L.circleMarker([$latitude, $longitude], {
+          radius: 8,            // size of the dot
+          fillColor: "#3388ff", // blue color
+          color: "#ffffff",     // border color
+          weight: 2,
+          opacity: 1,
+          fillOpacity: 1
+        }).addTo(map);
     </script>
     </body>
     </html>
