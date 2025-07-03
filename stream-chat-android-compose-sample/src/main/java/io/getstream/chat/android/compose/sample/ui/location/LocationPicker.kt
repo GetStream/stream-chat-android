@@ -36,6 +36,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -47,14 +48,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.uiutils.util.openSystemSettings
 import kotlinx.coroutines.tasks.await
 import java.util.Date
 
@@ -127,20 +132,6 @@ private fun LocationPickerContent(
             },
         )
     }
-
-    if (showDurationDropdownMenu) {
-        // LocationSharingDurationPicker(
-        //     onSelectDuration = { duration ->
-        //         onStartLiveLocationSharing(
-        //             location!!.latitude,
-        //             location!!.longitude,
-        //             duration.asDate(),
-        //         )
-        //         onDismiss()
-        //     },
-        //     onDismiss = { showDurationPicker = false },
-        // )
-    }
 }
 
 @Composable
@@ -152,12 +143,15 @@ private fun LocationContent(
     var location by remember { mutableStateOf<Location?>(null) }
 
     var locationPermissionTrigger by remember { mutableIntStateOf(0) }
+    var showRequiredPermissionMissing by remember { mutableStateOf(false) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = { granted ->
             if (granted) {
                 locationPermissionTrigger++
+            } else {
+                showRequiredPermissionMissing = true
             }
         },
     )
@@ -188,8 +182,48 @@ private fun LocationContent(
             latitude = location!!.latitude,
             longitude = location!!.longitude,
         )
+    } else if (showRequiredPermissionMissing) {
+        MissingPermission(modifier = modifier)
     } else {
         LoadingIndicator(modifier = modifier)
+    }
+}
+
+@Composable
+private fun MissingPermission(
+    modifier: Modifier,
+) {
+    val title = "Location Permission Required"
+    val message = "Location permission is needed in order to find your current location"
+
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Text(
+            modifier = Modifier.padding(bottom = 8.dp),
+            style = ChatTheme.typography.title3Bold,
+            text = title,
+            textAlign = TextAlign.Center,
+            color = ChatTheme.colors.textHighEmphasis,
+        )
+
+        Text(
+            style = ChatTheme.typography.body,
+            text = message,
+            textAlign = TextAlign.Center,
+            color = ChatTheme.colors.textLowEmphasis,
+        )
+
+        val context = LocalContext.current
+
+        TextButton(
+            colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.primaryAccent),
+            onClick = { context.openSystemSettings() },
+        ) {
+            Text(stringResource(id = R.string.stream_compose_grant_permission))
+        }
     }
 }
 
