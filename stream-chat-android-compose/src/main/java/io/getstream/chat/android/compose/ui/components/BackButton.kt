@@ -21,6 +21,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
@@ -30,12 +31,14 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param painter The icon or image to show.
  * @param onBackPressed Handler for the back action.
  * @param modifier Modifier for styling.
+ * @param contentDescription Description of the icon.
  */
 @Composable
 public fun BackButton(
     painter: Painter,
     onBackPressed: () -> Unit,
     modifier: Modifier = Modifier,
+    contentDescription: String? = null,
 ) {
     IconButton(
         modifier = modifier.testTag("Stream_BackButton"),
@@ -43,7 +46,34 @@ public fun BackButton(
     ) {
         Icon(
             painter = painter,
-            contentDescription = null,
+            contentDescription = contentDescription,
+            tint = ChatTheme.colors.textHighEmphasis,
+        )
+    }
+}
+
+/**
+ * Basic back button, that shows an icon and calls [onBackPressed] when tapped.
+ *
+ * @param imageVector The icon or image to show.
+ * @param onBackPressed Handler for the back action.
+ * @param modifier Modifier for styling.
+ * @param contentDescription Description of the icon.
+ */
+@Composable
+public fun BackButton(
+    imageVector: ImageVector,
+    onBackPressed: () -> Unit,
+    modifier: Modifier = Modifier,
+    contentDescription: String? = null,
+) {
+    IconButton(
+        modifier = modifier.testTag("Stream_BackButton"),
+        onClick = onBackPressed,
+    ) {
+        Icon(
+            imageVector = imageVector,
+            contentDescription = contentDescription,
             tint = ChatTheme.colors.textHighEmphasis,
         )
     }

@@ -34,9 +34,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -111,7 +113,8 @@ internal fun DefaultPollOptionsHeaderLeadingContent(onBackPressed: () -> Unit) {
         modifier = Modifier
             .mirrorRtl(layoutDirection = layoutDirection)
             .padding(end = 32.dp),
-        painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
+        imageVector = ImageVector.vectorResource(id = R.drawable.stream_compose_ic_arrow_back),
+        contentDescription = stringResource(id = R.string.stream_compose_back_button_content_description),
         onBackPressed = onBackPressed,
     )
 }
