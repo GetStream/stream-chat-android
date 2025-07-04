@@ -44,7 +44,7 @@ class SharedLocationViewModel(
                 cid = cid,
                 latitude = latitude,
                 longitude = longitude,
-                device = ChatApp.sharedLocationService.currentDeviceId,
+                deviceId = ChatApp.sharedLocationService.currentDeviceId,
             ).await()
                 .onSuccess {
                     logger.d { "[sendStaticLocation] Success" }
@@ -65,7 +65,7 @@ class SharedLocationViewModel(
                 cid = cid,
                 latitude = latitude,
                 longitude = longitude,
-                device = ChatApp.sharedLocationService.currentDeviceId,
+                deviceId = ChatApp.sharedLocationService.currentDeviceId,
                 endAt = endAt,
             ).await()
                 .onSuccess {

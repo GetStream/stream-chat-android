@@ -366,7 +366,7 @@ internal class DomainMapping(
             userId = user_id,
             latitude = latitude,
             longitude = longitude,
-            device = created_by_device_id,
+            deviceId = created_by_device_id,
             endAt = end_at,
         )
 
