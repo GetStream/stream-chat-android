@@ -85,11 +85,14 @@
     <string name="stream_compose_message_list_error_cannot_open_link">There is no app to view this url:\n%s</string>
     <string name="stream_compose_message_list_unsupported_attachment">Unsupported attachment</string>
     <string name="stream_compose_message_list_translated">Translated to %s</string>
+    <string name="stream_compose_message_list_show_original">&#160;· Show original</string>
+    <string name="stream_compose_message_list_show_translation">Show translation</string>
 
     <!--  Quoted Message  -->
     <string name="stream_compose_quoted_message_image_tag">Picture</string>
     <string name="stream_compose_quoted_message_giphy_tag">Giphy</string>
     <string name="stream_compose_quoted_message_file_tag">File</string>
+    <string name="stream_compose_quoted_message_poll" translatable="false">📊 %s</string>
 
     <!-- Selected Message Menu -->
     <string name="stream_compose_block_user">Block user</string>

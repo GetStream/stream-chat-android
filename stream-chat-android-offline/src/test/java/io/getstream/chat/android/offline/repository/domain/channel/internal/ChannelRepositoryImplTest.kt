@@ -21,6 +21,7 @@ package io.getstream.chat.android.offline.repository.domain.channel.internal
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.offline.MockChatClientBuilder
 import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomDraftMessageOrNull
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineRule
@@ -55,6 +56,7 @@ internal class ChannelRepositoryImplTest {
             channelDao,
             { randomUser() },
             { randomMessage() },
+            { randomDraftMessageOrNull() },
         )
 
     @BeforeEach

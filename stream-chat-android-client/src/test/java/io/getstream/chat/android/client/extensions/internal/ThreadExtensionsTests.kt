@@ -78,6 +78,7 @@ internal class ThreadExtensionsTests {
         title = "Test Thread",
         latestReplies = listOf(replyMessage),
         read = listOf(channelUserRead1, channelUserRead2),
+        draft = null,
     )
 
     @Test

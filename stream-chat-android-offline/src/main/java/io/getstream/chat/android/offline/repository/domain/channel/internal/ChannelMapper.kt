@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.extensions.internal.lastMessage
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelUserRead
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -62,6 +63,7 @@ internal fun Channel.toEntity(): ChannelEntity {
 internal suspend fun ChannelEntity.toModel(
     getUser: suspend (userId: String) -> User,
     getMessage: suspend (messageId: String) -> Message?,
+    getDraftMessage: suspend (cid: String) -> DraftMessage?,
 ): Channel = Channel(
     cooldown = cooldown,
     type = type,
@@ -86,4 +88,5 @@ internal suspend fun ChannelEntity.toModel(
     team = team,
     ownCapabilities = ownCapabilities,
     membership = membership?.toModel(getUser),
+    draftMessage = getDraftMessage(channelId),
 ).syncUnreadCountWithReads()

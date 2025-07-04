@@ -141,6 +141,12 @@
     </plurals>
     <string name="stream_ui_message_list_unread_separator">Unread Messages</string>
     <string name="stream_ui_message_list_translated">Translated to %s</string>
+    <string name="stream_ui_message_list_show_original">&#160;· Show original</string>
+    <string name="stream_ui_message_list_show_translation">Show translation</string>
+
+    <!--  Quoted Message  -->
+    <string name="stream_ui_quoted_message_poll" translatable="false">📊 %s</string>
+
     <!-- Message Actions Dialog -->
     <string name="stream_ui_message_list_reply">Reply</string>
     <string name="stream_ui_message_list_thread_reply">Thread reply</string>

@@ -127,7 +127,6 @@
     <ID>MaxLineLength:MessageListItemStyle.kt$MessageListItemStyle.Builder$require(messageMaxWidthFactorMine in 0.75..1.0) { "messageMaxWidthFactorMine cannot be lower than 0.75 and greater than 1! Current value: $messageMaxWidthFactorMine" }</ID>
     <ID>MaxLineLength:MessageListItemStyle.kt$MessageListItemStyle.Builder$require(messageMaxWidthFactorTheirs in 0.75..1.0) { "messageMaxWidthFactorTheirs cannot be lower than 0.75 and greater than 1! Current value: $messageMaxWidthFactorTheirs" }</ID>
     <ID>MaxLineLength:MessageListItemViewHolderFactory.kt$MessageListItemViewHolderFactory$*</ID>
-    <ID>MaxLineLength:MessageListListenerContainerImpl.kt$MessageListListenerContainerImpl$attachmentDownloadClickListener: OnAttachmentDownloadClickListener = OnAttachmentDownloadClickListener(EmptyFunctions.ONE_PARAM)</ID>
     <ID>MaxLineLength:MessageListView.kt$MessageListView.MessagesStart.Companion$?:</ID>
     <ID>MaxLineLength:MessageListView.kt$MessageListView.NewMessagesBehaviour.Companion$?:</ID>
     <ID>MaxLineLength:MessageListViewModelFactory.kt$MessageListViewModelFactory$?:</ID>

@@ -38,6 +38,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.runtime.Composable
@@ -196,6 +197,7 @@ import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMembe
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewEvent
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
+import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
 import io.getstream.chat.android.ui.common.model.MessageResult
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoMemberViewState
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
@@ -1291,7 +1293,15 @@ public interface ChatComponentFactory {
     public fun MessageFooterContent(
         messageItem: MessageItemState,
     ) {
-        MessageFooter(messageItem = messageItem)
+        MessageFooter(
+            messageItem = messageItem,
+            onToggleOriginalText = {
+                // Important: This is a workaround to avoid a breaking change in the ChatComponentFactory API.
+                // In the next major version, this callback should be passed as a parameter to the MessageFooterContent.
+                val translationsStore = MessageOriginalTranslationsStore.forChannel(messageItem.message.cid)
+                translationsStore.toggleOriginalText(messageItem.message.id)
+            },
+        )
     }
 
     /**
@@ -3018,21 +3028,45 @@ public interface ChatComponentFactory {
      * Factory method for creating the top bar of the group channel info screen.
      *
      * @param headerState The state of the channel header.
+     * @param infoState The state of the channel info.
      * @param listState The state of the lazy list.
      * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
+     * @param onAddMembersClick Callback invoked when the "Add members" button is clicked.
      */
     @ExperimentalStreamChatApi
     @Composable
     public fun GroupChannelInfoTopBar(
         headerState: ChannelHeaderViewState,
+        infoState: ChannelInfoViewState,
         listState: LazyListState,
         onNavigationIconClick: () -> Unit,
+        onAddMembersClick: () -> Unit,
     ) {
         io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoTopBar(
             headerState = headerState,
+            infoState = infoState,
             listState = listState,
             onNavigationIconClick = onNavigationIconClick,
+            onAddMembersClick = onAddMembersClick,
         )
+    }
+
+    /**
+     * Factory method for creating the "Add members" button of the group channel info screen.
+     *
+     * @param onClick Callback invoked when button is clicked.
+     */
+    @ExperimentalStreamChatApi
+    @Composable
+    public fun GroupChannelInfoAddMembersButton(
+        onClick: () -> Unit,
+    ) {
+        IconButton(onClick = onClick) {
+            Icon(
+                painter = painterResource(R.drawable.stream_ic_member_add),
+                contentDescription = stringResource(R.string.stream_ui_channel_info_member_add_button),
+            )
+        }
     }
 
     /**

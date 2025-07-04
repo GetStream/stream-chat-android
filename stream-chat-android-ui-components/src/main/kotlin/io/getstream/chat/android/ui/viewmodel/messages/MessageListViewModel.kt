@@ -229,6 +229,7 @@ public class MessageListViewModel(
             is Event.LastMessageRead -> messageListController.markLastMessageRead()
             is Event.ThreadModeEntered -> onThreadModeEntered(event.parentMessage)
             is Event.OpenThread -> onOpenThread(event.message)
+            is Event.ToggleOriginalText -> messageListController.toggleOriginalText(event.message.id)
             is Event.BackButtonPressed -> onBackButtonPressed()
             is Event.MarkAsUnreadMessage -> messageListController.markUnread(event.message)
             is Event.DeleteMessage -> messageListController.deleteMessage(event.message, event.hard)
@@ -561,9 +562,18 @@ public class MessageListViewModel(
         public data class ThreadModeEntered(val parentMessage: Message) : Event()
 
         /**
-         * When the user
+         * When the user opens an existing thread.
+         *
+         * @param message The original message the thread was spun off from.
          */
         public data class OpenThread(val message: Message) : Event()
+
+        /**
+         * When the user wants to toggle the original text of a message (if auto-translation is enabled).
+         *
+         * @param message The message whose original text will be toggled.
+         */
+        public data class ToggleOriginalText(val message: Message) : Event()
 
         /**
          * When the user deletes a message.

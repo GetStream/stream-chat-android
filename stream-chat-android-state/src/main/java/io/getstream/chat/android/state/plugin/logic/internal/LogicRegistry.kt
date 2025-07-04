@@ -74,6 +74,7 @@ internal class LogicRegistry internal constructor(
     private val queryThreads: QueryThreadsLogic = QueryThreadsLogic(
         stateLogic = QueryThreadsStateLogic(
             mutableState = stateRegistry.mutableQueryThreads(),
+            mutableGlobalState = mutableGlobalState,
         ),
         databaseLogic = QueryThreadsDatabaseLogic(
             repository = repos,

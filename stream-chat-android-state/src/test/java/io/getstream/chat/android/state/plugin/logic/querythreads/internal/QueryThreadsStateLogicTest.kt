@@ -22,6 +22,7 @@ import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
 import io.getstream.chat.android.models.ThreadParticipant
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.plugin.state.querythreads.internal.QueryThreadsMutableState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
@@ -88,15 +89,17 @@ internal class QueryThreadsStateLogicTest {
                     lastReadMessageId = null,
                 ),
             ),
+            draft = null,
         ),
     )
+    val mutableGlobalState = MutableGlobalState()
 
     @Test
     fun `Given QueryThreadsStateLogic When getting isLoading Should return isLoading from mutableState`() {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
         whenever(mutableState.loading) doReturn MutableStateFlow(true)
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         // when
         val isLoading = logic.isLoading()
         // then
@@ -109,7 +112,7 @@ internal class QueryThreadsStateLogicTest {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
         doNothing().whenever(mutableState).setLoading(any())
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         // when
         logic.setLoading(true)
         // then
@@ -121,7 +124,7 @@ internal class QueryThreadsStateLogicTest {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
         whenever(mutableState.loadingMore) doReturn MutableStateFlow(true)
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         // when
         val isLoading = logic.isLoadingMore()
         // then
@@ -134,7 +137,7 @@ internal class QueryThreadsStateLogicTest {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
         doNothing().whenever(mutableState).setLoadingMore(any())
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         // when
         logic.setLoadingMore(true)
         // then
@@ -146,7 +149,7 @@ internal class QueryThreadsStateLogicTest {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
         whenever(mutableState.threads) doReturn MutableStateFlow(emptyList())
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         // when
         val threads = logic.getThreads()
         // then
@@ -159,7 +162,7 @@ internal class QueryThreadsStateLogicTest {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
         doNothing().whenever(mutableState).setThreads(any())
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         // when
         logic.setThreads(emptyList())
         // then
@@ -171,7 +174,7 @@ internal class QueryThreadsStateLogicTest {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
         doNothing().whenever(mutableState).upsertThreads(any())
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         // when
         logic.insertThreadsIfAbsent(emptyList())
         // then
@@ -183,7 +186,7 @@ internal class QueryThreadsStateLogicTest {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
         doNothing().whenever(mutableState).upsertThreads(any())
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         // when
         logic.upsertThreads(emptyList())
         // then
@@ -195,7 +198,7 @@ internal class QueryThreadsStateLogicTest {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
         doNothing().whenever(mutableState).upsertThreads(any())
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         // when
         logic.clearThreads()
         // then
@@ -207,7 +210,7 @@ internal class QueryThreadsStateLogicTest {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
         doNothing().whenever(mutableState).setNext(any())
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         // when
         logic.setNext("nextCursor")
         // then
@@ -219,7 +222,7 @@ internal class QueryThreadsStateLogicTest {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
         whenever(mutableState.unseenThreadIds) doReturn MutableStateFlow(setOf("mId1"))
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         // when
         val unseenThreadIds = logic.getUnseenThreadIds()
         // then
@@ -232,7 +235,7 @@ internal class QueryThreadsStateLogicTest {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
         doNothing().whenever(mutableState).addUnseenThreadId(any())
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         // when
         logic.addUnseenThreadId("threadId")
         // then
@@ -244,7 +247,7 @@ internal class QueryThreadsStateLogicTest {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
         doNothing().whenever(mutableState).clearUnseenThreadIds()
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         // when
         logic.clearUnseenThreadIds()
         // then
@@ -256,7 +259,7 @@ internal class QueryThreadsStateLogicTest {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
         whenever(mutableState.threadMap) doReturn mapOf("mId1" to threadList[0])
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         // when
         val message = logic.getMessage("mId1")
         // then
@@ -268,7 +271,7 @@ internal class QueryThreadsStateLogicTest {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
         whenever(mutableState.threadMap) doReturn mapOf("mId1" to threadList[0])
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         // when
         val message = logic.getMessage("mId2")
         // then
@@ -280,7 +283,7 @@ internal class QueryThreadsStateLogicTest {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
         whenever(mutableState.threadMap) doReturn mapOf("mId1" to threadList[0])
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         // when
         val message = logic.getMessage("mId3")
         // then
@@ -293,7 +296,7 @@ internal class QueryThreadsStateLogicTest {
         val mutableState = mock<QueryThreadsMutableState>()
         whenever(mutableState.threadMap) doReturn mapOf("mId1" to threadList[0])
         doNothing().whenever(mutableState).deleteThread(any())
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         // when
         val messageToDelete = threadList[0].parentMessage
         logic.deleteMessage(messageToDelete)
@@ -307,7 +310,7 @@ internal class QueryThreadsStateLogicTest {
         val mutableState = mock<QueryThreadsMutableState>()
         whenever(mutableState.threadMap) doReturn mapOf("mId1" to threadList[0])
         doNothing().whenever(mutableState).deleteMessageFromThread(any(), any())
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         // when
         val messageToDelete = threadList[0].latestReplies[0]
         logic.deleteMessage(messageToDelete)
@@ -322,7 +325,7 @@ internal class QueryThreadsStateLogicTest {
         whenever(mutableState.threadMap) doReturn mapOf("mId1" to threadList[0])
         doNothing().whenever(mutableState).deleteThread(any())
         doNothing().whenever(mutableState).deleteMessageFromThread(any(), any())
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         // when
         val messageToDelete = Message()
         logic.deleteMessage(messageToDelete)
@@ -337,7 +340,7 @@ internal class QueryThreadsStateLogicTest {
             // given
             val mutableState = mock<QueryThreadsMutableState>()
             whenever(mutableState.threads) doReturn MutableStateFlow(threadList)
-            val logic = QueryThreadsStateLogic(mutableState)
+            val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
             val parent = Message(
                 id = "mId3",
                 cid = "messaging:123",
@@ -354,7 +357,7 @@ internal class QueryThreadsStateLogicTest {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
         whenever(mutableState.threadMap) doReturn threadList.associateBy(Thread::parentMessageId)
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         val parent = Message(
             id = "mId1",
             cid = "messaging:123",
@@ -379,7 +382,7 @@ internal class QueryThreadsStateLogicTest {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
         whenever(mutableState.threads) doReturn MutableStateFlow(threadList)
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         val reply = Message(
             id = "mId3",
             cid = "messaging:123",
@@ -398,7 +401,7 @@ internal class QueryThreadsStateLogicTest {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
         whenever(mutableState.threadMap) doReturn threadList.associateBy(Thread::parentMessageId)
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         val reply = Message(
             id = "mId3",
             cid = "messaging:123",
@@ -417,7 +420,7 @@ internal class QueryThreadsStateLogicTest {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
         whenever(mutableState.threadMap) doReturn threadList.associateBy(Thread::parentMessageId)
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         val reply = Message(
             id = "mId2",
             cid = "messaging:123",
@@ -437,7 +440,7 @@ internal class QueryThreadsStateLogicTest {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
         whenever(mutableState.threadMap) doReturn threadList.associateBy(Thread::parentMessageId)
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         val reply = Message(
             id = "mId3",
             cid = "messaging:123",
@@ -465,7 +468,7 @@ internal class QueryThreadsStateLogicTest {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
         whenever(mutableState.threadMap) doReturn threadList.associateBy(Thread::parentMessageId)
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         val reply = Message(
             id = "mId3",
             cid = "messaging:123",
@@ -495,7 +498,7 @@ internal class QueryThreadsStateLogicTest {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
         whenever(mutableState.threadMap) doReturn threadList.associateBy(Thread::parentMessageId)
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         // when
         logic.markThreadAsReadByUser(
             threadInfo = ThreadInfo(
@@ -525,7 +528,7 @@ internal class QueryThreadsStateLogicTest {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
         whenever(mutableState.threadMap) doReturn threadList.associateBy(Thread::parentMessageId)
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         // when
         val threadInfo = ThreadInfo(
             activeParticipantCount = 2,
@@ -571,7 +574,7 @@ internal class QueryThreadsStateLogicTest {
         // given
         val mutableState = mock<QueryThreadsMutableState>()
         whenever(mutableState.threadMap) doReturn threadList.associateBy(Thread::parentMessageId)
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         // when
         val threadId = "mId2"
         val user = User(id = "usrId2")
@@ -587,7 +590,7 @@ internal class QueryThreadsStateLogicTest {
         val mutableState = mock<QueryThreadsMutableState>()
         whenever(mutableState.threadMap) doReturn threadList.associateBy(Thread::parentMessageId)
         doNothing().whenever(mutableState).upsertThreads(any())
-        val logic = QueryThreadsStateLogic(mutableState)
+        val logic = QueryThreadsStateLogic(mutableState, mutableGlobalState)
         // when
         val threadId = "mId1"
         val user = User(id = "usrId2")
