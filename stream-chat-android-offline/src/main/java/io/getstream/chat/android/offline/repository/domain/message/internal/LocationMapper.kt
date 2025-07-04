@@ -26,7 +26,7 @@ internal fun LocationEntity.toModel(): Location {
         endAt = endAt,
         latitude = latitude,
         longitude = longitude,
-        device = device,
+        deviceId = deviceId,
     )
 }
 
@@ -38,6 +38,6 @@ internal fun Location.toEntity(): LocationEntity {
         endAt = endAt,
         latitude = latitude,
         longitude = longitude,
-        device = device,
+        deviceId = deviceId,
     )
 }

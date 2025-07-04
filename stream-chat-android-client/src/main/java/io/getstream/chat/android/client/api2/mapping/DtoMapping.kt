@@ -150,7 +150,7 @@ internal class DtoMapping(
         user_id = userId,
         latitude = latitude,
         longitude = longitude,
-        created_by_device_id = device,
+        created_by_device_id = deviceId,
         end_at = endAt,
     )
 

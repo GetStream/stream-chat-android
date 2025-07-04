@@ -27,7 +27,7 @@ import java.util.Date
  * @property endAt The date and time when the location sharing ends.
  * @property latitude The latitude of the user's location.
  * @property longitude The longitude of the user's location.
- * @property device The device from which the location is shared.
+ * @property deviceId The device ID from which the location is shared.
  */
 public data class Location(
     val cid: String = "",
@@ -36,5 +36,5 @@ public data class Location(
     val endAt: Date? = null,
     val latitude: Double = 0.0,
     val longitude: Double = 0.0,
-    val device: String = "",
+    val deviceId: String = "",
 )

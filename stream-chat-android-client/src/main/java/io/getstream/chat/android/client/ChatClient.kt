@@ -1568,7 +1568,7 @@ internal constructor(
      * @param cid The full channel id, i.e. "messaging:123" to which the location will be sent.
      * @param latitude The latitude of the location.
      * @param longitude The longitude of the location.
-     * @param device The device from which the location is sent.
+     * @param deviceId The device ID from which the location is sent.
      */
     @CheckResult
     @ExperimentalStreamChatApi
@@ -1576,13 +1576,13 @@ internal constructor(
         cid: String,
         latitude: Double,
         longitude: Double,
-        device: String,
+        deviceId: String,
     ): Call<Location> = sendLocationMessage(
         location = Location(
             cid = cid,
             latitude = latitude,
             longitude = longitude,
-            device = device,
+            deviceId = deviceId,
         ),
     )
 
@@ -1592,7 +1592,7 @@ internal constructor(
      * @param cid The full channel id, i.e. "messaging:123" to which the live location will be shared.
      * @param latitude The latitude of the location.
      * @param longitude The longitude of the location.
-     * @param device The device from which the location is shared.
+     * @param deviceId The device ID from which the location is shared.
      * @param endAt The date when the live location sharing will end.
      */
     @CheckResult
@@ -1601,13 +1601,13 @@ internal constructor(
         cid: String,
         latitude: Double,
         longitude: Double,
-        device: String,
+        deviceId: String,
         endAt: Date,
     ): Call<Location> = Location(
         cid = cid,
         latitude = latitude,
         longitude = longitude,
-        device = device,
+        deviceId = deviceId,
         endAt = endAt,
     ).let { location ->
         sendLocationMessage(location).doOnResult(userScope) { result ->
@@ -1659,7 +1659,7 @@ internal constructor(
      * @param messageId The ID of the message to update.
      * @param latitude The latitude of the new location.
      * @param longitude The longitude of the new location.
-     * @param device The device from which the location is shared.
+     * @param deviceId The device ID from which the location is shared.
      */
     @CheckResult
     @ExperimentalStreamChatApi
@@ -1667,12 +1667,12 @@ internal constructor(
         messageId: String,
         latitude: Double,
         longitude: Double,
-        device: String,
+        deviceId: String,
     ): Call<Location> = Location(
         messageId = messageId,
         latitude = latitude,
         longitude = longitude,
-        device = device,
+        deviceId = deviceId,
     ).let { location ->
         api.updateLiveLocation(location)
             .precondition(plugins) { onUpdateLiveLocationPrecondition(location) }

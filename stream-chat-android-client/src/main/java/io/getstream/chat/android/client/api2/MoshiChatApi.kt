@@ -1531,7 +1531,7 @@ constructor(
                 message_id = location.messageId,
                 latitude = location.latitude,
                 longitude = location.longitude,
-                created_by_device_id = location.device,
+                created_by_device_id = location.deviceId,
                 end_at = location.endAt,
             ),
         ).mapDomain { response ->

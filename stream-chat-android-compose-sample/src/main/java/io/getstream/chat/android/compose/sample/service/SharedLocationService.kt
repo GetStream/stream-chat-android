@@ -126,7 +126,7 @@ class SharedLocationService(private val context: Context) : LocationCallback() {
                     messageId = activeLiveLocation.messageId,
                     latitude = location.latitude,
                     longitude = location.longitude,
-                    device = currentDeviceId,
+                    deviceId = currentDeviceId,
                 ).enqueue { result ->
                     if (result is Result.Success) {
                         logger.d { "Live location updated successfully: ${result.value}" }
