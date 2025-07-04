@@ -266,6 +266,7 @@ internal constructor(
     private val repositoryFactoryProvider: RepositoryFactory.Provider,
     @InternalStreamChatApi
     public val audioPlayer: AudioPlayer,
+    private val now: () -> Date = ::Date,
 ) {
     private val logger by taggedLogger(TAG)
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
@@ -1115,7 +1116,7 @@ internal constructor(
     @JvmOverloads
     public fun sendReaction(reaction: Reaction, enforceUnique: Boolean, cid: String? = null): Call<Reaction> {
         val currentUser = getCurrentUser()
-        val finalReaction = reaction.copy(createdLocallyAt = Date())
+        val finalReaction = reaction.copy(createdLocallyAt = now())
         return api.sendReaction(finalReaction, enforceUnique)
             .retry(scope = userScope, retryPolicy = retryPolicy)
             .doOnStart(userScope) {
@@ -1694,7 +1695,7 @@ internal constructor(
     public fun stopLiveLocationSharing(messageId: String): Call<Location> =
         Location(
             messageId = messageId,
-            endAt = Date(),
+            endAt = now(),
         ).let { location ->
             api.updateLiveLocation(location)
                 .doOnResult(userScope) { result ->
@@ -2063,7 +2064,7 @@ internal constructor(
         message: Message,
         isRetrying: Boolean = false,
     ): Call<Message> {
-        return message.copy(createdLocallyAt = message.createdLocallyAt ?: Date())
+        return message.copy(createdLocallyAt = message.createdLocallyAt ?: now())
             .ensureId(getCurrentUser() ?: getStoredUser())
             .let { processedMessage ->
                 CoroutineCall(userScope) {
@@ -3785,7 +3786,7 @@ internal constructor(
         val extraData: Map<Any, Any> = parentId?.let {
             mapOf(ARG_TYPING_PARENT_ID to parentId)
         } ?: emptyMap()
-        val eventTime = Date()
+        val eventTime = now()
         val eventType = EventType.TYPING_START
         return api.sendEvent(
             eventType = eventType,
@@ -3834,7 +3835,7 @@ internal constructor(
         val extraData: Map<Any, Any> = parentId?.let {
             mapOf(ARG_TYPING_PARENT_ID to parentId)
         } ?: emptyMap()
-        val eventTime = Date()
+        val eventTime = now()
         val eventType = EventType.TYPING_STOP
         return api.sendEvent(
             eventType = eventType,

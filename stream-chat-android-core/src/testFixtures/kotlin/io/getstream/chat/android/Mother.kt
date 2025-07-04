@@ -78,6 +78,7 @@ public fun positiveRandomLong(maxLong: Long = Long.MAX_VALUE - 1): Long =
     Random.nextLong(1, maxLong + 1)
 
 public fun randomFloat(): Float = Random.nextFloat()
+public fun randomDouble(): Double = Random.nextDouble()
 public fun randomInt(): Int = Random.nextInt()
 public fun randomIntBetween(min: Int, max: Int): Int = Random.nextInt(min, max + 1)
 public fun randomLong(): Long = Random.nextLong()
@@ -1029,8 +1030,8 @@ public fun randomLocation(
     messageId: String = randomString(),
     userId: String = randomString(),
     endAt: Date = randomDate(),
-    latitude: Double = randomFloat().toDouble(),
-    longitude: Double = randomFloat().toDouble(),
+    latitude: Double = randomDouble(),
+    longitude: Double = randomDouble(),
     deviceId: String = randomString(),
 ): Location = Location(
     cid = cid,
