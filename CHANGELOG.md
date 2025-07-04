@@ -76,6 +76,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Rearrange the `MessageList` params to have mandatory params at top and `Modifier` as first optional parameter. [#5834](https://github.com/GetStream/stream-chat-android/pull/5834)
 
 ### ❌ Removed
 
