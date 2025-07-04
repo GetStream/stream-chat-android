@@ -976,3 +976,21 @@ public fun randomModeration(
     semanticFilterMatched = semanticFilterMatched,
     platformCircumvented = platformCircumvented,
 )
+
+public fun randomLocation(
+    cid: String = randomCID(),
+    messageId: String = randomString(),
+    userId: String = randomString(),
+    endAt: Date = randomDate(),
+    latitude: Double = randomFloat().toDouble(),
+    longitude: Double = randomFloat().toDouble(),
+    deviceId: String = randomString(),
+): Location = Location(
+    cid = cid,
+    messageId = messageId,
+    userId = userId,
+    endAt = endAt,
+    latitude = latitude,
+    longitude = longitude,
+    deviceId = deviceId,
+)
