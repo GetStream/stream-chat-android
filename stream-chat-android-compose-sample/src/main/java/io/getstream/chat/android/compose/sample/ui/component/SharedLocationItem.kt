@@ -50,8 +50,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
-import io.getstream.chat.android.compose.sample.ui.location.SharedLocationViewModel
-import io.getstream.chat.android.compose.sample.ui.location.SharedLocationViewModelFactory
+import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModel
+import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Location
@@ -113,6 +113,7 @@ private fun StaticSharedLocation(
     }
 }
 
+@Suppress("LongMethod")
 @Composable
 private fun LiveLocationSharing(
     modifier: Modifier,

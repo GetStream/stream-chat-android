@@ -20,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ShareLocation
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.CustomPickerMode

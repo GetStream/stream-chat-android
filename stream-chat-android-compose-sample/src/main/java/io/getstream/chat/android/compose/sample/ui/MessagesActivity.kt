@@ -66,7 +66,7 @@ import io.getstream.chat.android.compose.sample.ui.channel.DirectChannelInfoActi
 import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponentFactory
 import io.getstream.chat.android.compose.sample.ui.location.LocationPickerTabFactory
-import io.getstream.chat.android.compose.sample.ui.location.SharedLocationViewModelFactory
+import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptionItemVisibility

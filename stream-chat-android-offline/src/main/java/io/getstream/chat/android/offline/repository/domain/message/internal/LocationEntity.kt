@@ -21,8 +21,8 @@ import java.util.Date
 
 @JsonClass(generateAdapter = true)
 public data class LocationEntity(
-    val messageId: String = "",
     val cid: String = "",
+    val messageId: String = "",
     val userId: String = "",
     val endAt: Date? = null,
     val latitude: Double,

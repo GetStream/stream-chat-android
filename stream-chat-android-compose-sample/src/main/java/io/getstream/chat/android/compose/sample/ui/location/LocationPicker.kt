@@ -57,6 +57,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModel
+import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.uiutils.util.openSystemSettings
@@ -164,13 +166,13 @@ private fun LocationContent(
         if (!hasPermission) {
             permissionLauncher.launch(locationPermission)
         } else {
-            val fusedClient = LocationServices.getFusedLocationProviderClient(context)
+            val locationClient = LocationServices.getFusedLocationProviderClient(context)
 
-            val lastLocation = fusedClient.lastLocation.await()
+            val lastLocation = locationClient.lastLocation.await()
             location = lastLocation
             onLocationFound(lastLocation)
 
-            val currentLocation = fusedClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null).await()
+            val currentLocation = locationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null).await()
             location = currentLocation
             onLocationFound(currentLocation)
         }
