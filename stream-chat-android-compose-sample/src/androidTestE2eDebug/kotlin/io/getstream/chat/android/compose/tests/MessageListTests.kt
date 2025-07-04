@@ -333,18 +333,16 @@ class MessageListTests : StreamTestCase() {
         step("WHEN user sends a new message") {
             userRobot.sendMessage(sampleText)
         }
-        step("THEN error indicator is shown for the message") {
-            userRobot.assertMessageFailedIcon(isDisplayed = true)
+        step("THEN pending indicator is shown for the message") {
+            userRobot
+                .assertMessageDeliveryStatus(status = MessageDeliveryStatus.PENDING, count = 1)
         }
         step("WHEN user becomes online") {
             device.enableInternetConnection()
         }
-        step("AND user resends the message") {
-            userRobot.resendMessage()
-        }
         step("THEN new message is delivered") {
             userRobot
-                .assertMessageDeliveryStatus(MessageDeliveryStatus.SENT)
+                .assertMessageDeliveryStatus(MessageDeliveryStatus.SENT, count = 1)
                 .assertMessageFailedIcon(isDisplayed = false)
         }
     }
