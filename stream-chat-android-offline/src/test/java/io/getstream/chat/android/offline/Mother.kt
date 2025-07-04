@@ -37,7 +37,7 @@ import io.getstream.chat.android.offline.repository.domain.user.internal.UserEnt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomDate
-import io.getstream.chat.android.randomFloat
+import io.getstream.chat.android.randomDouble
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomString
 import kotlinx.coroutines.Dispatchers
@@ -187,7 +187,7 @@ internal fun randomLocationEntity(): LocationEntity =
         messageId = randomString(),
         userId = randomString(),
         endAt = randomDate(),
-        latitude = randomFloat().toDouble(),
-        longitude = randomFloat().toDouble(),
+        latitude = randomDouble(),
+        longitude = randomDouble(),
         deviceId = randomString(),
     )
