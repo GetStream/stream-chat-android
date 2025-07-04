@@ -1658,6 +1658,7 @@ public interface ChatComponentFactory {
     /**
      * The default input content of the message composer.
      *
+     * @param modifier The modifier to apply to the composable.
      * @param state The current state of the message composer.
      * @param onInputChanged The action to perform when the input changes.
      * @param onAttachmentRemoved The action to perform when an attachment is removed.
@@ -1665,13 +1666,14 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun RowScope.MessageComposerInput(
+        modifier: Modifier,
         state: MessageComposerState,
         onInputChanged: (String) -> Unit,
         onAttachmentRemoved: (Attachment) -> Unit,
         label: @Composable (MessageComposerState) -> Unit,
     ) {
         DefaultComposerInputContent(
-            modifier = Modifier.animateContentSize(),
+            modifier = modifier.animateContentSize(),
             messageComposerState = state,
             onValueChange = onInputChanged,
             onAttachmentRemoved = onAttachmentRemoved,

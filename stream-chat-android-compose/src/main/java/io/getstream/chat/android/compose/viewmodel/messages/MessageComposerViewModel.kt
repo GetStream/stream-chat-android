@@ -35,6 +35,7 @@ import io.getstream.chat.android.ui.common.utils.typing.TypingUpdatesBuffer
 import io.getstream.result.call.Call
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -49,6 +50,11 @@ import kotlinx.coroutines.flow.StateFlow
 public class MessageComposerViewModel(
     private val messageComposerController: MessageComposerController,
 ) : ViewModel() {
+
+    /**
+     * One-shot focus events used to request focus on the message input field.
+     */
+    public val focusRequestFlow: SharedFlow<Unit> = messageComposerController.focusRequestFlow
 
     /**
      * The full UI state that has all the required data.
