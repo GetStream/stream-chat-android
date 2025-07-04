@@ -20,6 +20,7 @@ import android.os.Parcelable
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import kotlinx.parcelize.Parcelize
+import java.util.Date
 
 /**
  * Class used to parcelize the minimum necessary information
@@ -32,9 +33,10 @@ import kotlinx.parcelize.Parcelize
  * @param userId The ID of the user who sent the message.
  * @param userName The name of the user who sent the message.
  * @param userImage The image of the user who sent the message.
- * @param userIsOnline The online status of the user who sent the message.
  * Set to false because we don't track the status inside the preview screen.
  * @param attachments The list of attachments contained in the original message.
+ * @param updatedAt The date when the message was last updated.
+ * @param createdAt The date when the message was created.
  */
 @Parcelize
 internal data class MediaGalleryPreviewActivityState(
@@ -42,8 +44,9 @@ internal data class MediaGalleryPreviewActivityState(
     val userId: String,
     val userName: String,
     val userImage: String,
-    val userIsOnline: Boolean = false,
     val attachments: List<MediaGalleryPreviewActivityAttachmentState>,
+    val updatedAt: Date?,
+    val createdAt: Date?,
 ) : Parcelable
 
 /**
@@ -56,6 +59,8 @@ internal fun Message.toMediaGalleryPreviewActivityState(): MediaGalleryPreviewAc
         userName = this.user.name,
         userImage = this.user.image,
         attachments = this.attachments.map { it.toMediaGalleryPreviewActivityAttachmentState() },
+        updatedAt = this.updatedAt,
+        createdAt = this.createdAt,
     )
 
 /**
@@ -70,4 +75,6 @@ internal fun MediaGalleryPreviewActivityState.toMessage(): Message =
             image = this.userImage,
         ),
         attachments = this.attachments.map { it.toAttachment() }.toMutableList(),
+        updatedAt = this.updatedAt,
+        createdAt = this.createdAt,
     )

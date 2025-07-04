@@ -727,7 +727,10 @@ internal fun MediaGalleryPreviewTitle(
             )
         }
 
-        Timestamp(date = message.updatedAt ?: message.createdAt ?: Date())
+        val timestamp = message.updatedAt ?: message.createdAt
+        if (timestamp != null) {
+            Timestamp(date = timestamp)
+        }
     }
 }
 
@@ -934,6 +937,7 @@ private fun MediaGalleryPreviewTitlePreview() {
                 id = "messageId",
                 text = "Hello!",
                 user = User(id = "solo", name = "Han Solo"),
+                createdAt = Date(),
             )
             val connectionState = ConnectionState.Connected
             MediaGalleryPreviewTitle(
@@ -953,6 +957,7 @@ private fun MediaGalleryPreviewHeaderPreview() {
                 id = "messageId",
                 text = "Hello!",
                 user = User(id = "solo", name = "Han Solo"),
+                createdAt = Date(),
             )
             val connectionState = ConnectionState.Connected
             MediaGalleryPreviewHeader(
@@ -1084,6 +1089,7 @@ private fun MediaGalleryPreviewScreenPreview() {
                         thumbUrl = "https://example.com/thumb1.jpg",
                     ),
                 ),
+                createdAt = Date(),
             )
             MediaGalleryPreviewScreen(
                 message = message,
