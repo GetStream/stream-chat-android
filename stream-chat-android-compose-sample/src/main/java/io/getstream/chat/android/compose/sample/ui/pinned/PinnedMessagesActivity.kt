@@ -76,7 +76,9 @@ class PinnedMessagesActivity : BaseConnectedActivity() {
             channelId = message.cid,
             messageId = message.id,
             parentMessageId = message.parentId,
-        )
+        ).apply {
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+        }
         startActivity(intent)
     }
 }
