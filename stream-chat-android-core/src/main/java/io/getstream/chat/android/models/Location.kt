@@ -18,6 +18,17 @@ package io.getstream.chat.android.models
 
 import java.util.Date
 
+/**
+ * Represents a user's location.
+ *
+ * @property cid The channel ID where the location is shared.
+ * @property messageId The ID of the message containing the location.
+ * @property userId The ID of the user sharing the location.
+ * @property endAt The date and time when the location sharing ends.
+ * @property latitude The latitude of the user's location.
+ * @property longitude The longitude of the user's location.
+ * @property device The device from which the location is shared.
+ */
 public data class Location(
     val cid: String = "",
     val messageId: String = "",

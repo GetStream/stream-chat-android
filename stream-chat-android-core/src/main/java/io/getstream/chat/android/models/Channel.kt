@@ -56,6 +56,8 @@ import java.util.Date
  * @param cachedLatestMessages The list of cached messages if the regular list does not contain the newest messages.
  * @param isInsideSearch When the channel is inside search, eg. searching from the channel list for a message or when
  * hopping to a quoted message a number pages away without retaining the newest messages in the list.
+ * @param draftMessage The draft message for the channel.
+ * @param activeLiveLocations The list of active live locations in the channel.
  */
 @Immutable
 public data class Channel(
