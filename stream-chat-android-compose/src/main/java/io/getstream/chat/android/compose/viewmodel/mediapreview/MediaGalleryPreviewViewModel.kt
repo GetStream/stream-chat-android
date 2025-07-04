@@ -23,12 +23,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.compose.ui.attachments.preview.DefaultMediaGalleryAssetUriGenerator
+import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryAssetUriGenerator
+import io.getstream.chat.android.compose.util.extensions.asState
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.result.Result
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 /**
@@ -39,12 +44,14 @@ import kotlinx.coroutines.launch
  * @param messageId The ID of the message containing the attachments to be previewed.
  * @param skipEnrichUrl If set to true will skip enriching URLs when you update the message
  * by deleting an attachment contained within it. Set to false by default.
+ * @param assetUriGenerator The [MediaGalleryAssetUriGenerator] used to generate URIs for media assets.
  */
 public class MediaGalleryPreviewViewModel(
     private val chatClient: ChatClient,
     private val clientState: ClientState,
     private val messageId: String,
     private val skipEnrichUrl: Boolean = false,
+    private val assetUriGenerator: MediaGalleryAssetUriGenerator = DefaultMediaGalleryAssetUriGenerator(),
 ) : ViewModel() {
 
     /**
@@ -63,11 +70,24 @@ public class MediaGalleryPreviewViewModel(
      */
     internal var hasCompleteMessage: Boolean = false
 
+    private val messageInternal: MutableStateFlow<Message> = MutableStateFlow(Message())
+
     /**
      * Represents the message that we observe to show the UI data.
      */
-    public var message: Message by mutableStateOf(Message())
-        internal set
+    public val message: Message by messageInternal.map {
+        with(assetUriGenerator) {
+            it.copy(
+                attachments = it.attachments.map { attachment ->
+                    attachment.copy(
+                        assetUrl = generateAssetUri(attachment),
+                        imageUrl = generateImageUri(attachment),
+                        thumbUrl = generateThumbUri(attachment),
+                    )
+                },
+            )
+        }
+    }.asState(viewModelScope, Message())
 
     /**
      * If we are preparing a file for sharing or not.
@@ -117,7 +137,7 @@ public class MediaGalleryPreviewViewModel(
         val result = chatClient.getMessage(messageId).await()
 
         if (result is Result.Success) {
-            this.message = result.value
+            messageInternal.value = result.value
             hasCompleteMessage = true
         }
     }
@@ -140,7 +160,7 @@ public class MediaGalleryPreviewViewModel(
     }
 
     private suspend fun onConnected() {
-        if (message.id.isEmpty() || !hasCompleteMessage) {
+        if (messageInternal.value.id.isEmpty() || !hasCompleteMessage) {
             fetchMessage()
         }
     }
@@ -178,21 +198,42 @@ public class MediaGalleryPreviewViewModel(
         skipEnrichUrl: Boolean = this.skipEnrichUrl,
     ) {
         val attachments = message.attachments
-        val numberOfAttachments = attachments.size
+        if (message.text.isNotEmpty() || attachments.size > 1) {
+            deleteAttachmentFromMessage(currentMediaAttachment, skipEnrichUrl)
+        } else if (message.text.isEmpty() && attachments.size == 1) {
+            deleteMessage()
+        }
+    }
 
-        if (message.text.isNotEmpty() || numberOfAttachments > 1) {
-            message = message.copy(
-                attachments = attachments.filterNot {
-                    it.assetUrl == currentMediaAttachment.assetUrl
+    /**
+     * Sets the initial message that will be used to display the media gallery preview.
+     */
+    internal fun setMessage(message: Message) {
+        messageInternal.value = message
+    }
+
+    private fun deleteAttachmentFromMessage(attachment: Attachment, skipEnrichUrl: Boolean) {
+        // Find attachment in the transformed message
+        val attachmentPosition = message.attachments.indexOfFirst { it.assetUrl == attachment.assetUrl }
+        if (attachmentPosition != -1) {
+            // Update local internal message
+            val current = this.messageInternal.value
+            val updated = current.copy(
+                attachments = current.attachments.toMutableList().apply {
+                    removeAt(attachmentPosition)
                 },
                 skipEnrichUrl = skipEnrichUrl,
             )
-            chatClient.updateMessage(message = message).enqueue()
-        } else if (message.text.isEmpty() && numberOfAttachments == 1) {
-            chatClient.deleteMessage(message.id).enqueue { result ->
-                if (result is Result.Success) {
-                    message = result.value
-                }
+            this.messageInternal.value = updated
+            // Update message server-side
+            chatClient.updateMessage(message = updated).enqueue()
+        }
+    }
+
+    private fun deleteMessage() {
+        chatClient.deleteMessage(message.id).enqueue { result ->
+            if (result is Result.Success) {
+                messageInternal.value = result.value
             }
         }
     }

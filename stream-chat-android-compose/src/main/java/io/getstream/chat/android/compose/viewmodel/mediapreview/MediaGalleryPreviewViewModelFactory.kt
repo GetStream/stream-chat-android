@@ -20,6 +20,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.compose.ui.attachments.preview.DefaultMediaGalleryAssetUriGenerator
+import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryAssetUriGenerator
 
 /**
  * Holds the dependencies required for the Media Preview Screen.
@@ -38,6 +40,7 @@ public class MediaGalleryPreviewViewModelFactory(
     private val clientState: ClientState = chatClient.clientState,
     private val messageId: String,
     private val skipEnrichUrl: Boolean = false,
+    private val assetUriGenerator: MediaGalleryAssetUriGenerator = DefaultMediaGalleryAssetUriGenerator(),
 ) : ViewModelProvider.Factory {
 
     /**
@@ -50,6 +53,7 @@ public class MediaGalleryPreviewViewModelFactory(
             clientState = clientState,
             messageId = messageId,
             skipEnrichUrl = skipEnrichUrl,
+            assetUriGenerator = assetUriGenerator,
         ) as T
     }
 }

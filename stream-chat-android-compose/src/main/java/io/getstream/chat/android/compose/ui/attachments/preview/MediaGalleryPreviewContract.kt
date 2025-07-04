@@ -51,6 +51,7 @@ public class MediaGalleryPreviewContract(private val config: MediaGalleryConfig 
             streamCdnImageResizing = input.streamCdnImageResizing,
             skipEnrichUrl = input.skipEnrichUrl,
             config = config,
+            assetUriGenerator = input.assetUriGenerator,
         )
     }
 
@@ -74,6 +75,7 @@ public class MediaGalleryPreviewContract(private val config: MediaGalleryConfig 
      * @param streamCdnImageResizing The CDN image resizing strategy.
      * @param skipEnrichUrl If set to true will skip enriching URLs when you update the message
      * by deleting an attachment contained within it. Set to false by default.
+     * @param assetUriGenerator The URI generator for media gallery assets.
      */
     public class Input(
         public val message: Message,
@@ -83,5 +85,6 @@ public class MediaGalleryPreviewContract(private val config: MediaGalleryConfig 
         public val downloadRequestInterceptor: DownloadRequestInterceptor,
         public val streamCdnImageResizing: StreamCdnImageResizing,
         public val skipEnrichUrl: Boolean = false,
+        public val assetUriGenerator: MediaGalleryAssetUriGenerator = DefaultMediaGalleryAssetUriGenerator(),
     )
 }

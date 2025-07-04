@@ -98,6 +98,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             chatClient = ChatClient.instance(),
             messageId = messageId,
             skipEnrichUrl = intent?.getBooleanExtra(KeySkipEnrichUrl, false) ?: false,
+            assetUriGenerator = assetUriGenerator,
         )
     }
 
@@ -142,7 +143,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             val message = uiState?.toMessage()
 
             if (message != null) {
-                mediaGalleryPreviewViewModel.message = message
+                mediaGalleryPreviewViewModel.setMessage(message)
             }
         }
 
@@ -560,6 +561,11 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         private var downloadRequestInterceptor: DownloadRequestInterceptor = DownloadRequestInterceptor { }
 
         /**
+         * Used to generate URIs for media gallery assets.
+         */
+        private var assetUriGenerator: MediaGalleryAssetUriGenerator = DefaultMediaGalleryAssetUriGenerator()
+
+        /**
          * Used to build an [Intent] to start the [MediaGalleryPreviewActivity] with the required data.
          *
          * @param context The context to start the activity with.
@@ -574,6 +580,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
          * @param skipEnrichUrl If set to true will skip enriching URLs when you update the message
          * by deleting an attachment contained within it. Set to false by default.
          * @param config The [MediaGalleryConfig] for configuring the media gallery.
+         * @param assetUriGenerator The [MediaGalleryAssetUriGenerator] used to generate URIs for media assets.
          */
         @Suppress("LongParameterList")
         public fun getIntent(
@@ -586,9 +593,11 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing(),
             skipEnrichUrl: Boolean = false,
             config: MediaGalleryConfig = MediaGalleryConfig(),
+            assetUriGenerator: MediaGalleryAssetUriGenerator = DefaultMediaGalleryAssetUriGenerator(),
         ): Intent {
             this.downloadAttachmentUriGenerator = downloadAttachmentUriGenerator
             this.downloadRequestInterceptor = downloadRequestInterceptor
+            this.assetUriGenerator = assetUriGenerator
             return Intent(context, MediaGalleryPreviewActivity::class.java).apply {
                 val mediaGalleryPreviewActivityState = message.toMediaGalleryPreviewActivityState()
 
