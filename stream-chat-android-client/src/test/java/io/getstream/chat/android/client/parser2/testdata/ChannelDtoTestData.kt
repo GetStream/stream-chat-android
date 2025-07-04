@@ -61,7 +61,8 @@ internal object ChannelDtoTestData {
             "args": "empty",
             "set": "none"
            }
-          ]
+          ],
+          "shared_locations": true
         }
         """.withoutWhitespace()
 
@@ -95,6 +96,7 @@ internal object ChannelDtoTestData {
                 set = "none",
             ),
         ),
+        shared_locations = true,
     )
 
     @Language("JSON")

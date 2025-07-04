@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.plugin.listeners.DraftMessageListener
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.plugin.listeners.FetchCurrentUserListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
+import io.getstream.chat.android.client.plugin.listeners.LiveLocationListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.plugin.listeners.QueryBlockedUsersListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
@@ -57,6 +58,7 @@ import io.getstream.chat.android.state.plugin.listener.internal.DraftMessageList
 import io.getstream.chat.android.state.plugin.listener.internal.EditMessageListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.FetchCurrentUserListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.HideChannelListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.LiveLocationListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.MarkAllReadListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.QueryBlockedUsersListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.QueryChannelListenerState
@@ -128,6 +130,7 @@ public class StatePlugin internal constructor(
     BlockUserListener by BlockUserListenerState(mutableGlobalState),
     DraftMessageListener by DraftMessageListenerState(mutableGlobalState),
     UnblockUserListener by UnblockUserListenerState(mutableGlobalState),
+    LiveLocationListener by LiveLocationListenerState(mutableGlobalState),
     QueryBlockedUsersListener by QueryBlockedUsersListenerState(mutableGlobalState) {
 
     private val lazyErrorHandler: ErrorHandler by lazy { errorHandlerFactory.create() }

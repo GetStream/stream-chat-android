@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
@@ -71,6 +72,7 @@ import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.models.Flag
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageModerationAction
@@ -154,6 +156,7 @@ internal class DomainMapping(
             pinnedMessages = pinned_messages.map { it.toDomain(this.toChannelInfo()) },
             ownCapabilities = own_capabilities.toSet(),
             membership = membership?.toDomain(),
+            activeLiveLocations = active_live_locations.map { it.toDomain() },
             extraData = extraData.toMutableMap(),
         ).syncUnreadCountWithReads(currentUserIdProvider())
             .let(channelTransformer::transform)
@@ -215,6 +218,7 @@ internal class DomainMapping(
                 messageTextUpdatedAt = message_text_updated_at,
                 poll = poll?.toDomain(),
                 restrictedVisibility = emptyList(),
+                sharedLocation = shared_location?.toDomain(),
                 extraData = extraData.toMutableMap(),
             ).let(messageTransformer::transform)
         }
@@ -353,6 +357,17 @@ internal class DomainMapping(
             pinnedAt = pinned_at,
             archivedAt = archived_at,
             extraData = extraData,
+        )
+
+    internal fun DownstreamLocationDto.toDomain(): Location =
+        Location(
+            cid = channel_cid,
+            messageId = message_id,
+            userId = user_id,
+            latitude = latitude,
+            longitude = longitude,
+            deviceId = created_by_device_id,
+            endAt = end_at,
         )
 
     /**
@@ -555,6 +570,7 @@ internal class DomainMapping(
         automodBehavior = automod_behavior,
         blocklistBehavior = blocklist_behavior ?: "",
         commands = commands.map { it.toDomain() },
+        sharedLocationsEnabled = shared_locations ?: false,
     )
 
     /**

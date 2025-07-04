@@ -34,6 +34,7 @@ import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.models.Flag
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
@@ -74,6 +75,7 @@ public fun positiveRandomLong(maxLong: Long = Long.MAX_VALUE - 1): Long =
     Random.nextLong(1, maxLong + 1)
 
 public fun randomFloat(): Float = Random.nextFloat()
+public fun randomDouble(): Double = Random.nextDouble()
 public fun randomInt(): Int = Random.nextInt()
 public fun randomIntBetween(min: Int, max: Int): Int = Random.nextInt(min, max + 1)
 public fun randomLong(): Long = Random.nextLong()
@@ -313,6 +315,11 @@ public fun randomMessage(
     threadParticipants: List<User> = emptyList(),
     restrictedVisibility: List<String> = emptyList(),
     poll: Poll? = null,
+    sharedLocation: Location? = randomLocation(
+        cid = cid,
+        messageId = id,
+        userId = user.id,
+    ),
     moderationDetails: MessageModerationDetails? = null,
     moderation: Moderation? = null,
     i18n: Map<String, String> = emptyMap(),
@@ -356,6 +363,7 @@ public fun randomMessage(
     messageTextUpdatedAt = messageTextUpdatedAt,
     restrictedVisibility = restrictedVisibility,
     poll = poll,
+    sharedLocation = sharedLocation,
     moderationDetails = moderationDetails,
     moderation = moderation,
     i18n = i18n,
@@ -400,6 +408,7 @@ public fun randomChannel(
     extraData: Map<String, Any> = emptyMap(),
     membership: Member? = randomMember(),
     draftMessage: DraftMessage? = randomDraftMessageOrNull(),
+    activeLiveLocations: List<Location> = emptyList(),
 ): Channel = Channel(
     id = id,
     name = name,
@@ -425,6 +434,7 @@ public fun randomChannel(
     extraData = extraData,
     membership = membership,
     draftMessage = draftMessage,
+    activeLiveLocations = activeLiveLocations,
 )
 
 public fun randomChannelUserRead(
@@ -972,4 +982,22 @@ public fun randomModeration(
     blocklistMatched = blocklistMatched,
     semanticFilterMatched = semanticFilterMatched,
     platformCircumvented = platformCircumvented,
+)
+
+public fun randomLocation(
+    cid: String = randomCID(),
+    messageId: String = randomString(),
+    userId: String = randomString(),
+    endAt: Date = randomDate(),
+    latitude: Double = randomDouble(),
+    longitude: Double = randomDouble(),
+    deviceId: String = randomString(),
+): Location = Location(
+    cid = cid,
+    messageId = messageId,
+    userId = userId,
+    endAt = endAt,
+    latitude = latitude,
+    longitude = longitude,
+    deviceId = deviceId,
 )

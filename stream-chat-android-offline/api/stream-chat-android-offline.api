@@ -69,6 +69,40 @@ public final class io/getstream/chat/android/offline/repository/domain/message/a
 	public fun observeAttachmentsForMessage (Ljava/lang/String;)Lkotlinx/coroutines/flow/Flow;
 }
 
+public final class io/getstream/chat/android/offline/repository/domain/message/internal/LocationEntity {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;DDLjava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;DDLjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/util/Date;
+	public final fun component5 ()D
+	public final fun component6 ()D
+	public final fun component7 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;DDLjava/lang/String;)Lio/getstream/chat/android/offline/repository/domain/message/internal/LocationEntity;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/offline/repository/domain/message/internal/LocationEntity;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;DDLjava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/offline/repository/domain/message/internal/LocationEntity;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCid ()Ljava/lang/String;
+	public final fun getDeviceId ()Ljava/lang/String;
+	public final fun getEndAt ()Ljava/util/Date;
+	public final fun getLatitude ()D
+	public final fun getLongitude ()D
+	public final fun getMessageId ()Ljava/lang/String;
+	public final fun getUserId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/offline/repository/domain/message/internal/LocationEntityJsonAdapter : com/squareup/moshi/JsonAdapter {
+	public fun <init> (Lcom/squareup/moshi/Moshi;)V
+	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Lio/getstream/chat/android/offline/repository/domain/message/internal/LocationEntity;
+	public synthetic fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
+	public fun toJson (Lcom/squareup/moshi/JsonWriter;Lio/getstream/chat/android/offline/repository/domain/message/internal/LocationEntity;)V
+	public synthetic fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/offline/repository/domain/message/internal/MessageDao_Impl : io/getstream/chat/android/offline/repository/domain/message/internal/MessageDao {
 	public fun <init> (Landroidx/room/RoomDatabase;)V
 	public fun deleteAll (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

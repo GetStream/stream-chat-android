@@ -47,7 +47,6 @@ import io.getstream.chat.android.state.model.querychannels.pagination.internal.Q
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.test.TestCoroutineExtension
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should not be equal to`
@@ -65,7 +64,6 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class ChannelStateLogicTest {
 
     companion object {
@@ -79,7 +77,7 @@ internal class ChannelStateLogicTest {
         clientState = mock() {
             on(it.user) doReturn this@ChannelStateLogicTest.userFlow
         }
-        spyMutableGlobalState = spy(MutableGlobalState())
+        spyMutableGlobalState = spy(MutableGlobalState(user.id))
         channelStateLogic = ChannelStateLogic(
             clientState = clientState,
             mutableState = mutableState,

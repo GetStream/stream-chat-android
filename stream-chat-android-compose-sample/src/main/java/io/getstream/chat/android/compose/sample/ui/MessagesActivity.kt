@@ -57,12 +57,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
 import io.getstream.chat.android.compose.sample.ui.channel.DirectChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponentFactory
+import io.getstream.chat.android.compose.sample.ui.location.LocationPickerTabFactory
+import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptionItemVisibility
@@ -73,6 +76,7 @@ import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedR
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactories
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.theme.AttachmentPickerTheme
@@ -101,10 +105,14 @@ import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageRe
 
 class MessagesActivity : BaseConnectedActivity() {
 
+    private val cid: String by lazy {
+        requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)) { "Channel ID must be provided" }
+    }
+
     private val factory by lazy {
         MessagesViewModelFactory(
             context = this,
-            channelId = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)),
+            channelId = cid,
             autoTranslationEnabled = ChatApp.autoTranslationEnabled,
             isComposerLinkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
             deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
@@ -140,11 +148,14 @@ class MessagesActivity : BaseConnectedActivity() {
         val shapes = StreamShapes.defaultShapes()
         val messageComposerTheme = MessageComposerTheme.defaultTheme(isInDarkMode, typography, shapes, colors)
         val ownMessageTheme = MessageTheme.defaultOwnTheme(isInDarkMode, typography, shapes, colors)
+        val attachmentsPickerTabFactories = AttachmentsPickerTabFactories.defaultFactories() +
+            LocationPickerTabFactory(viewModelFactory = SharedLocationViewModelFactory(cid))
         ChatTheme(
             isInDarkMode = isInDarkMode,
             colors = colors,
             shapes = shapes,
             typography = typography,
+            attachmentsPickerTabFactories = attachmentsPickerTabFactories,
             componentFactory = CustomChatComponentFactory(),
             dateFormatter = ChatApp.dateFormatter,
             autoTranslationEnabled = ChatApp.autoTranslationEnabled,
@@ -192,6 +203,9 @@ class MessagesActivity : BaseConnectedActivity() {
                 onUserMentionClick = { user ->
                     Log.i("MessagesActivity", "user mention tapped: ${user.id}")
                 },
+                onMessageLinkClick = { _, link ->
+                    openLink(link)
+                },
             )
         }
         // MyCustomUi()
@@ -204,6 +218,11 @@ class MessagesActivity : BaseConnectedActivity() {
             DirectChannelInfoActivity.createIntent(applicationContext, channelId = channel.cid)
         }
         channelInfoLauncher.launch(intent)
+    }
+
+    private fun openLink(link: String) {
+        val intent = Intent(Intent.ACTION_VIEW, link.toUri())
+        startActivity(intent)
     }
 
     @Composable

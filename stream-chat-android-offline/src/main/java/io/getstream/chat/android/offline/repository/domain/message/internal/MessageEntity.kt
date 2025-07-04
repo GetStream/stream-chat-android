@@ -133,6 +133,8 @@ internal data class MessageInnerEntity(
     val pollId: String?,
     /** The list of user IDs that have restricted visibility of the message **/
     val restrictedVisibility: List<String> = emptyList(),
+    /** The shared location of the message, if any */
+    val sharedLocation: LocationEntity? = null,
 )
 
 internal const val MESSAGE_ENTITY_TABLE_NAME = "stream_chat_message"
