@@ -85,7 +85,9 @@ internal fun SharedLocationItem(
             message = message,
             location = location,
             onMapClick = onMapClick,
-            onStopSharingClick = { viewModel.stopLiveLocationSharing(location) },
+            onStopSharingClick = {
+                viewModel.stopLiveLocationSharing(messageId = location.messageId)
+            },
         )
     }
 }
@@ -258,11 +260,8 @@ private fun StaticSharedLocationItemPreview() {
             modifier = Modifier.fillMaxWidth(),
             message = Message(),
             location = Location(
-                cid = "cid",
-                messageId = "messageId",
                 latitude = 37.7749,
                 longitude = -122.4194,
-                device = "device",
             ),
         )
     }
@@ -279,11 +278,8 @@ private fun MyLiveLocationSharingItemPreview() {
             currentUser = currentUser,
             message = Message(user = currentUser),
             location = Location(
-                cid = "cid",
-                messageId = "messageId",
                 latitude = 37.7749,
                 longitude = -122.4194,
-                device = "device",
                 endAt = Calendar.getInstance().apply { add(Calendar.MINUTE, 15) }.time,
             ),
         )
@@ -300,11 +296,8 @@ private fun OtherLiveLocationSharingItemPreview() {
             currentUser = null,
             message = Message(),
             location = Location(
-                cid = "cid",
-                messageId = "messageId",
                 latitude = 37.7749,
                 longitude = -122.4194,
-                device = "device",
                 endAt = Calendar.getInstance().apply { add(Calendar.MINUTE, 15) }.time,
             ),
         )
@@ -320,11 +313,8 @@ private fun OtherEndedLiveLocationSharingItemPreview() {
             currentUser = null,
             message = Message(),
             location = Location(
-                cid = "cid",
-                messageId = "messageId",
                 latitude = 37.7749,
                 longitude = -122.4194,
-                device = "device",
                 endAt = Date(),
             ),
         )

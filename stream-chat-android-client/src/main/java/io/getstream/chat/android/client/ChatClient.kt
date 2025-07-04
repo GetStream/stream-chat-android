@@ -1564,16 +1564,36 @@ internal constructor(
 
     @CheckResult
     @ExperimentalStreamChatApi
-    public fun sendStaticLocation(location: Location): Call<Location> =
-        sendLocation(location = location.copy(endAt = null))
+    public fun sendStaticLocation(
+        cid: String,
+        latitude: Double,
+        longitude: Double,
+        device: String,
+    ): Call<Location> = sendLocationMessage(
+        location = Location(
+            cid = cid,
+            latitude = latitude,
+            longitude = longitude,
+            device = device,
+        ),
+    )
 
     @CheckResult
     @ExperimentalStreamChatApi
     public fun startLiveLocationSharing(
-        location: Location,
+        cid: String,
+        latitude: Double,
+        longitude: Double,
+        device: String,
         endAt: Date,
-    ): Call<Location> = sendLocation(location = location.copy(endAt = endAt))
-        .doOnResult(userScope) { result ->
+    ): Call<Location> = Location(
+        cid = cid,
+        latitude = latitude,
+        longitude = longitude,
+        device = device,
+        endAt = endAt,
+    ).let { location ->
+        sendLocationMessage(location).doOnResult(userScope) { result ->
             plugins.forEach { plugin ->
                 logger.v { "[startLiveLocationSharing] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                 plugin.onStartLiveLocationSharingResult(
@@ -1582,9 +1602,10 @@ internal constructor(
                 )
             }
         }
+    }
 
     @CheckResult
-    private fun sendLocation(location: Location): Call<Location> {
+    private fun sendLocationMessage(location: Location): Call<Location> {
         val (channelType, channelId) = location.cid.cidToTypeAndId()
         return sendMessage(
             channelType = channelType,
@@ -1615,26 +1636,40 @@ internal constructor(
     @CheckResult
     @ExperimentalStreamChatApi
     public fun updateLiveLocation(
-        location: Location,
-    ): Call<Location> = api.updateLiveLocation(location.copy(endAt = null))
-        .precondition(plugins) { onUpdateLiveLocationPrecondition(location) }
-        .doOnResult(userScope) { result ->
-            plugins.forEach { plugin ->
-                logger.v { "[updateLiveLocation] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
-                plugin.onUpdateLiveLocationResult(location, result)
+        messageId: String,
+        latitude: Double,
+        longitude: Double,
+        device: String,
+    ): Call<Location> = Location(
+        messageId = messageId,
+        latitude = latitude,
+        longitude = longitude,
+        device = device,
+    ).let { location ->
+        api.updateLiveLocation(location)
+            .precondition(plugins) { onUpdateLiveLocationPrecondition(location) }
+            .doOnResult(userScope) { result ->
+                plugins.forEach { plugin ->
+                    logger.v { "[updateLiveLocation] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                    plugin.onUpdateLiveLocationResult(location, result)
+                }
             }
-        }
+    }
 
     @CheckResult
     @ExperimentalStreamChatApi
-    public fun stopLiveLocationSharing(
-        location: Location,
-    ): Call<Location> = api.updateLiveLocation(location.copy(endAt = Date()))
-        .doOnResult(userScope) { result ->
-            plugins.forEach { plugin ->
-                logger.v { "[stopLiveLocationSharing] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
-                plugin.onStopLiveLocationSharingResult(location, result)
-            }
+    public fun stopLiveLocationSharing(messageId: String): Call<Location> =
+        Location(
+            messageId = messageId,
+            endAt = Date(),
+        ).let { location ->
+            api.updateLiveLocation(location)
+                .doOnResult(userScope) { result ->
+                    plugins.forEach { plugin ->
+                        logger.v { "[stopLiveLocationSharing] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                        plugin.onStopLiveLocationSharingResult(location, result)
+                    }
+                }
         }
 
     @CheckResult
