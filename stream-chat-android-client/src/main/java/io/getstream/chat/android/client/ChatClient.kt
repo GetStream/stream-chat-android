@@ -1562,6 +1562,14 @@ internal constructor(
             }
     }
 
+    /**
+     * Sends a static location message to the given channel.
+     *
+     * @param cid The full channel id, i.e. "messaging:123" to which the location will be sent.
+     * @param latitude The latitude of the location.
+     * @param longitude The longitude of the location.
+     * @param device The device from which the location is sent.
+     */
     @CheckResult
     @ExperimentalStreamChatApi
     public fun sendStaticLocation(
@@ -1578,6 +1586,15 @@ internal constructor(
         ),
     )
 
+    /**
+     * Starts live location sharing for the given channel.
+     *
+     * @param cid The full channel id, i.e. "messaging:123" to which the live location will be shared.
+     * @param latitude The latitude of the location.
+     * @param longitude The longitude of the location.
+     * @param device The device from which the location is shared.
+     * @param endAt The date when the live location sharing will end.
+     */
     @CheckResult
     @ExperimentalStreamChatApi
     public fun startLiveLocationSharing(
@@ -1623,6 +1640,9 @@ internal constructor(
         }
     }
 
+    /**
+     * Queries the active locations (non-expired) shared by the current user.
+     */
     @CheckResult
     @ExperimentalStreamChatApi
     public fun queryActiveLocations(): Call<List<Location>> = api.queryActiveLocations()
@@ -1633,6 +1653,14 @@ internal constructor(
             }
         }
 
+    /**
+     * Updates the live location info of a message.
+     *
+     * @param messageId The ID of the message to update.
+     * @param latitude The latitude of the new location.
+     * @param longitude The longitude of the new location.
+     * @param device The device from which the location is shared.
+     */
     @CheckResult
     @ExperimentalStreamChatApi
     public fun updateLiveLocation(
@@ -1656,6 +1684,11 @@ internal constructor(
             }
     }
 
+    /**
+     * Stops the live location sharing for a message.
+     *
+     * @param messageId The ID of the message for which to stop live location sharing.
+     */
     @CheckResult
     @ExperimentalStreamChatApi
     public fun stopLiveLocationSharing(messageId: String): Call<Location> =
