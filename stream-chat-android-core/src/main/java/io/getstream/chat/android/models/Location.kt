@@ -19,7 +19,7 @@ package io.getstream.chat.android.models
 import java.util.Date
 
 public data class Location(
-    val cid: String,
+    val cid: String = "",
     val messageId: String = "",
     val userId: String = "",
     val endAt: Date? = null,

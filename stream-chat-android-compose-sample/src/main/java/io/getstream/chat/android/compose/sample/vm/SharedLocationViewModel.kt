@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.sample.ui.location
+package io.getstream.chat.android.compose.sample.vm
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.User
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.launch
 import java.util.Date
 
@@ -30,7 +32,8 @@ class SharedLocationViewModel(
     private val chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
 
-    private val device = "my_device" // Replace with actual device name
+    private val logger by taggedLogger("Chat:SharedLocationViewModel")
+
     val currentUser: User? = chatClient.getCurrentUser()
 
     fun sendStaticLocation(
@@ -43,14 +46,14 @@ class SharedLocationViewModel(
                     cid = cid,
                     latitude = latitude,
                     longitude = longitude,
-                    device = device,
+                    device = ChatApp.sharedLocationService.currentDeviceId,
                 ),
             ).await()
                 .onSuccess {
-                    println("[sendStaticLocation] Success")
+                    logger.d { "[sendStaticLocation] Success" }
                 }
                 .onError {
-                    println("[sendStaticLocation] Fail")
+                    logger.e { "[sendStaticLocation] Fail" }
                 }
         }
     }
@@ -66,15 +69,15 @@ class SharedLocationViewModel(
                     cid = cid,
                     latitude = latitude,
                     longitude = longitude,
-                    device = device,
+                    device = ChatApp.sharedLocationService.currentDeviceId,
                 ),
                 endAt = endAt,
             ).await()
                 .onSuccess {
-                    println("[startLiveLocationSharing] Success")
+                    logger.d { "[startLiveLocationSharing] Success" }
                 }
                 .onError {
-                    println("[startLiveLocationSharing] Fail")
+                    logger.e { "[startLiveLocationSharing] Fail" }
                 }
         }
     }
@@ -83,10 +86,10 @@ class SharedLocationViewModel(
         viewModelScope.launch {
             chatClient.stopLiveLocationSharing(location).await()
                 .onSuccess {
-                    println("[stopLiveLocationSharing] Success")
+                    logger.d { "[stopLiveLocationSharing] Success" }
                 }
                 .onError {
-                    println("[stopLiveLocationSharing] Fail")
+                    logger.e { "[stopLiveLocationSharing] Fail" }
                 }
         }
     }
