@@ -179,15 +179,15 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun sendReaction (Lio/getstream/chat/android/models/Reaction;Z)Lio/getstream/result/call/Call;
 	public final fun sendReaction (Lio/getstream/chat/android/models/Reaction;ZLjava/lang/String;)Lio/getstream/result/call/Call;
 	public static synthetic fun sendReaction$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/Reaction;ZLjava/lang/String;ILjava/lang/Object;)Lio/getstream/result/call/Call;
-	public final fun sendStaticLocation (Lio/getstream/chat/android/models/Location;)Lio/getstream/result/call/Call;
+	public final fun sendStaticLocation (Ljava/lang/String;DDLjava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun setLogicRegistry (Lio/getstream/chat/android/client/channel/state/ChannelStateLogicProvider;)V
 	public static final fun setOFFLINE_SUPPORT_ENABLED (Z)V
 	public static final fun setVERSION_PREFIX_HEADER (Lio/getstream/chat/android/client/header/VersionPrefixHeader;)V
 	public final fun shadowBanUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lio/getstream/result/call/Call;
 	public final fun showChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun shuffleGiphy (Lio/getstream/chat/android/models/Message;)Lio/getstream/result/call/Call;
-	public final fun startLiveLocationSharing (Lio/getstream/chat/android/models/Location;Ljava/util/Date;)Lio/getstream/result/call/Call;
-	public final fun stopLiveLocationSharing (Lio/getstream/chat/android/models/Location;)Lio/getstream/result/call/Call;
+	public final fun startLiveLocationSharing (Ljava/lang/String;DDLjava/lang/String;Ljava/util/Date;)Lio/getstream/result/call/Call;
+	public final fun stopLiveLocationSharing (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun stopTyping (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public static synthetic fun stopTyping$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun stopWatching (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
@@ -224,7 +224,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public static synthetic fun updateChannel$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun updateChannelPartial (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/List;)Lio/getstream/result/call/Call;
 	public static synthetic fun updateChannelPartial$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/result/call/Call;
-	public final fun updateLiveLocation (Lio/getstream/chat/android/models/Location;)Lio/getstream/result/call/Call;
+	public final fun updateLiveLocation (Ljava/lang/String;DDLjava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun updateMessage (Lio/getstream/chat/android/models/Message;)Lio/getstream/result/call/Call;
 	public final fun updateReminder (Ljava/lang/String;Ljava/util/Date;)Lio/getstream/result/call/Call;
 	public final fun updateUser (Lio/getstream/chat/android/models/User;)Lio/getstream/result/call/Call;

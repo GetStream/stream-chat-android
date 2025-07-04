@@ -694,6 +694,7 @@ public final class io/getstream/chat/android/models/Config {
 	public final fun getPushNotificationsEnabled ()Z
 	public final fun getReadEventsEnabled ()Z
 	public final fun getSearchEnabled ()Z
+	public final fun getSharedLocationsEnabled ()Z
 	public final fun getSkipLastMsgUpdateForSystemMsgs ()Z
 	public final fun getTypingEventsEnabled ()Z
 	public final fun getUpdatedAt ()Ljava/util/Date;
@@ -1106,6 +1107,7 @@ public final class io/getstream/chat/android/models/LinkPreview$Companion {
 }
 
 public final class io/getstream/chat/android/models/Location {
+	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;DDLjava/lang/String;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;DDLjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
@@ -1119,7 +1121,7 @@ public final class io/getstream/chat/android/models/Location {
 	public static synthetic fun copy$default (Lio/getstream/chat/android/models/Location;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;DDLjava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/models/Location;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCid ()Ljava/lang/String;
-	public final fun getDevice ()Ljava/lang/String;
+	public final fun getDeviceId ()Ljava/lang/String;
 	public final fun getEndAt ()Ljava/util/Date;
 	public final fun getLatitude ()D
 	public final fun getLongitude ()D
