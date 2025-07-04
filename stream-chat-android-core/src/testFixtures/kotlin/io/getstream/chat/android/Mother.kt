@@ -317,6 +317,11 @@ public fun randomMessage(
     threadParticipants: List<User> = emptyList(),
     restrictedVisibility: List<String> = emptyList(),
     poll: Poll? = null,
+    sharedLocation: Location? = randomLocation(
+        cid = cid,
+        messageId = id,
+        userId = user.id,
+    ),
     moderationDetails: MessageModerationDetails? = null,
     moderation: Moderation? = null,
     i18n: Map<String, String> = emptyMap(),
@@ -361,6 +366,7 @@ public fun randomMessage(
     messageTextUpdatedAt = messageTextUpdatedAt,
     restrictedVisibility = restrictedVisibility,
     poll = poll,
+    sharedLocation = sharedLocation,
     moderationDetails = moderationDetails,
     moderation = moderation,
     i18n = i18n,
@@ -1016,4 +1022,22 @@ public fun randomMessageReminderInfo(
     remindAt = remindAt,
     createdAt = createdAt,
     updatedAt = updatedAt,
+)
+
+public fun randomLocation(
+    cid: String = randomCID(),
+    messageId: String = randomString(),
+    userId: String = randomString(),
+    endAt: Date = randomDate(),
+    latitude: Double = randomFloat().toDouble(),
+    longitude: Double = randomFloat().toDouble(),
+    deviceId: String = randomString(),
+): Location = Location(
+    cid = cid,
+    messageId = messageId,
+    userId = userId,
+    endAt = endAt,
+    latitude = latitude,
+    longitude = longitude,
+    deviceId = deviceId,
 )

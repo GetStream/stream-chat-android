@@ -26,6 +26,7 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity
+import io.getstream.chat.android.offline.repository.domain.message.internal.LocationEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageInnerEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.ReactionGroupEntity
@@ -38,6 +39,7 @@ import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomDateOrNull
+import io.getstream.chat.android.randomFloat
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomString
 import kotlinx.coroutines.Dispatchers
@@ -112,6 +114,7 @@ internal fun randomMessageEntity(
     threadParticipantsIds: List<String> = emptyList(),
     pollId: String? = null,
     reminder: ReminderInfoEntity = randomReminderInfoEntity(),
+    sharedLocation: LocationEntity? = randomLocationEntity(),
 ) = MessageEntity(
     messageInnerEntity = MessageInnerEntity(
         id = id,
@@ -143,6 +146,7 @@ internal fun randomMessageEntity(
         threadParticipantsIds = threadParticipantsIds,
         pollId = pollId,
         reminder = reminder,
+        sharedLocation = sharedLocation,
     ),
     attachments = attachments,
     latestReactions = latestReactions,
@@ -190,3 +194,14 @@ internal fun createRoomDB(): ChatDatabase =
         .setTransactionExecutor(Executors.newSingleThreadExecutor())
         .setQueryExecutor(Dispatchers.IO.asExecutor())
         .build()
+
+internal fun randomLocationEntity(): LocationEntity =
+    LocationEntity(
+        cid = randomCID(),
+        messageId = randomString(),
+        userId = randomString(),
+        endAt = randomDate(),
+        latitude = randomFloat().toDouble(),
+        longitude = randomFloat().toDouble(),
+        deviceId = randomString(),
+    )
