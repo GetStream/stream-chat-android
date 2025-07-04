@@ -21,7 +21,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.sample.ChatApp
-import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.User
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.launch
@@ -42,12 +41,10 @@ class SharedLocationViewModel(
     ) {
         viewModelScope.launch {
             chatClient.sendStaticLocation(
-                location = Location(
-                    cid = cid,
-                    latitude = latitude,
-                    longitude = longitude,
-                    device = ChatApp.sharedLocationService.currentDeviceId,
-                ),
+                cid = cid,
+                latitude = latitude,
+                longitude = longitude,
+                device = ChatApp.sharedLocationService.currentDeviceId,
             ).await()
                 .onSuccess {
                     logger.d { "[sendStaticLocation] Success" }
@@ -65,12 +62,10 @@ class SharedLocationViewModel(
     ) {
         viewModelScope.launch {
             chatClient.startLiveLocationSharing(
-                location = Location(
-                    cid = cid,
-                    latitude = latitude,
-                    longitude = longitude,
-                    device = ChatApp.sharedLocationService.currentDeviceId,
-                ),
+                cid = cid,
+                latitude = latitude,
+                longitude = longitude,
+                device = ChatApp.sharedLocationService.currentDeviceId,
                 endAt = endAt,
             ).await()
                 .onSuccess {
@@ -82,9 +77,10 @@ class SharedLocationViewModel(
         }
     }
 
-    fun stopLiveLocationSharing(location: Location) {
+    fun stopLiveLocationSharing(messageId: String) {
         viewModelScope.launch {
-            chatClient.stopLiveLocationSharing(location).await()
+            chatClient.stopLiveLocationSharing(messageId = messageId)
+                .await()
                 .onSuccess {
                     logger.d { "[stopLiveLocationSharing] Success" }
                 }

@@ -123,12 +123,10 @@ class SharedLocationService(private val context: Context) : LocationCallback() {
         for (location in result.locations) {
             locationsToUpdate.forEach { activeLiveLocation ->
                 chatClient.updateLiveLocation(
-                    location = Location(
-                        messageId = activeLiveLocation.messageId,
-                        latitude = location.latitude,
-                        longitude = location.longitude,
-                        device = currentDeviceId,
-                    ),
+                    messageId = activeLiveLocation.messageId,
+                    latitude = location.latitude,
+                    longitude = location.longitude,
+                    device = currentDeviceId,
                 ).enqueue { result ->
                     if (result is Result.Success) {
                         logger.d { "Live location updated successfully: ${result.value}" }
