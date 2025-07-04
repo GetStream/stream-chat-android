@@ -142,7 +142,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             val message = uiState?.toMessage()
 
             if (message != null) {
-                mediaGalleryPreviewViewModel.message = message
+                mediaGalleryPreviewViewModel.setInitialMessage(message)
             }
         }
 
