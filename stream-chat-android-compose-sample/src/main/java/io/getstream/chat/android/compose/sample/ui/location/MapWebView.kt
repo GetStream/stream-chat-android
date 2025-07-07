@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.compose.sample.ui.location
 
-import android.graphics.Color
+import android.annotation.SuppressLint
 import android.webkit.WebView
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.viewinterop.AndroidView
 
+@SuppressLint("SetJavaScriptEnabled")
 @Composable
 internal fun MapWebView(
     modifier: Modifier = Modifier,
@@ -38,8 +39,6 @@ internal fun MapWebView(
     var htmlContent by remember { mutableStateOf<String?>(null) }
     var viewSize by remember { mutableStateOf<IntSize?>(null) }
     val density = LocalDensity.current
-
-    WebView.setWebContentsDebuggingEnabled(true)
 
     AndroidView(
         modifier = modifier.onGloballyPositioned { coordinates ->
@@ -63,10 +62,6 @@ internal fun MapWebView(
         factory = { context ->
             WebView(context).apply {
                 settings.javaScriptEnabled = true
-                // settings.allowFileAccess = true
-                // settings.allowContentAccess = true
-                // settings.domStorageEnabled = true
-                setBackgroundColor(Color.TRANSPARENT)
             }
         },
         update = { webView ->
