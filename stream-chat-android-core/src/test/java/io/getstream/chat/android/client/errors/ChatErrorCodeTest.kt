@@ -46,6 +46,7 @@ internal class ChatErrorCodeTest {
             arrayOf(ChatErrorCode.UNABLE_TO_PARSE_SOCKET_EVENT.code, false),
             arrayOf(ChatErrorCode.NO_ERROR_BODY.code, false),
             arrayOf(ChatErrorCode.VALIDATION_ERROR.code, false),
+            arrayOf(ChatErrorCode.DUPLICATE_USERNAME_ERROR.code, false),
             arrayOf(ChatErrorCode.AUTHENTICATION_ERROR.code, true),
             arrayOf(ChatErrorCode.TOKEN_EXPIRED.code, true),
             arrayOf(ChatErrorCode.TOKEN_NOT_VALID.code, true),

@@ -232,6 +232,7 @@ internal open class ChatSocket(
             ChatErrorCode.INVALID_TOKEN.code,
             ChatErrorCode.API_KEY_NOT_FOUND.code,
             ChatErrorCode.VALIDATION_ERROR.code,
+            ChatErrorCode.DUPLICATE_USERNAME_ERROR.code,
             -> {
                 logger.d {
                     "One unrecoverable error happened. Error: $error. Error code: ${error.serverErrorCode}"
