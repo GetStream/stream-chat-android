@@ -118,12 +118,8 @@ internal class SyncManager(
         logger.d { "[start] no args" }
         val isDisposed = eventsDisposable?.isDisposed ?: true
         if (!isDisposed) return
-        eventsDisposable = chatClient.subscribe { event ->
-            onEvent(event)
-        }
-        syncScope.launch {
-            syncOfflineDraftMessages()
-        }
+        eventsDisposable = chatClient.subscribe(::onEvent)
+        syncScope.launch { syncOfflineDraftMessages() }
         syncScope.launch { scheduleLiveLocationExpiration() }
     }
 
@@ -161,23 +157,28 @@ internal class SyncManager(
             is ConnectingEvent -> syncScope.launch {
                 logger.i { "[onEvent] ConnectingEvent received" }
             }
+
             is ConnectedEvent -> syncScope.launch {
                 logger.i { "[onEvent] ConnectedEvent received" }
                 onConnectionEstablished(currentUserId)
             }
+
             is DisconnectedEvent -> syncScope.launch {
                 logger.i { "[onEvent] DisconnectedEvent received" }
                 onConnectionLost()
                 syncScope.coroutineContext.job.cancelChildren()
             }
+
             is HealthEvent -> syncScope.launch {
                 logger.v { "[onEvent] HealthEvent received" }
                 retryFailedEntities()
             }
+
             is MarkAllReadEvent -> syncScope.launch {
                 logger.i { "[onEvent] MarkAllReadEvent received" }
                 updateAllReadStateForDate(event.user.id, event.createdAt)
             }
+
             else -> Unit
         }
     }
@@ -334,6 +335,7 @@ internal class SyncManager(
                 true -> selectedState.copy(markedAllReadAt = currentDate).also { newState ->
                     repos.insertSyncState(newState)
                 }
+
                 else -> selectedState
             }
         } ?: SyncState(userId)
@@ -372,6 +374,7 @@ internal class SyncManager(
                     updatedCids,
                 )
             }
+
             is Result.Failure -> {
                 logger.e { "[restoreActiveChannels] failed: ${result.value}" }
                 return
@@ -527,6 +530,7 @@ internal class SyncManager(
                 message.updatedLocallyAt != null && message.createdAt != null -> {
                     retryUpdateOfMessageWithSyncedAttachments(id, message, channelClient)
                 }
+
                 else -> retrySendingOfMessageWithSyncedAttachments(message, id, channelClient)
             }
             logger.v { "[retryMgsWithSyncedAttachments] result(${message.id}).isSuccess: ${result is Result.Success}" }
