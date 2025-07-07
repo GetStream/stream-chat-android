@@ -118,7 +118,6 @@ public class StreamStatePluginFactory(
             repos = repositoryFacade,
             client = chatClient,
             coroutineScope = scope,
-            queryingChannelsFree = isQueryingFree,
             now = config.now,
         )
 
