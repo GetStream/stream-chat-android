@@ -86,6 +86,7 @@ internal class ThrottlingPlugin(
 
     override fun onUserDisconnected() {
         lastMarkReadMap.clear()
+        liveLocationMap.clear()
     }
 }
 

@@ -92,4 +92,13 @@ internal class ThrottlingPluginTest {
         val result = sut.onChannelMarkReadPrecondition(channelType = randomString(), channelId = randomString())
         assertTrue(result is Result.Success)
     }
+
+    @Test
+    fun `onUserDisconnected clears live location map`() = runTest {
+        sut.onUpdateLiveLocationPrecondition(location = Location())
+        sut.onUserDisconnected()
+        currentTime += 1000L
+        val result = sut.onUpdateLiveLocationPrecondition(location = Location())
+        assertTrue(result is Result.Success)
+    }
 }
