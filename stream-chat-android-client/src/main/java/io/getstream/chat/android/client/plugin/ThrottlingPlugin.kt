@@ -27,7 +27,7 @@ import kotlin.reflect.KClass
 internal class ThrottlingPlugin(
     private val now: () -> Long = { System.currentTimeMillis() },
 ) : Plugin {
-    private val logger by taggedLogger("ThrottlingPlugin")
+    private val logger by taggedLogger("Chat:ThrottlingPlugin")
     private val lastMarkReadMap: MutableMap<String, Long> = mutableMapOf()
     private val liveLocationMap: MutableMap<String, Long> = mutableMapOf()
 
@@ -37,13 +37,11 @@ internal class ThrottlingPlugin(
             key = channelId,
             throttleMs = MARK_READ_THROTTLE_MS,
         ) {
-            logger.w { "[onChannelMarkReadPrecondition] read is ignored ($channelId)" }
+            logger.w { "[onChannelMarkReadPrecondition] mark read is ignored ($channelId)" }
             Error.GenericError("Mark read throttled")
         }
 
-    override suspend fun onUpdateLiveLocationPrecondition(
-        location: Location,
-    ): Result<Unit> =
+    override suspend fun onUpdateLiveLocationPrecondition(location: Location): Result<Unit> =
         checkThrottling(
             lastUpdateProvider = liveLocationMap,
             key = location.messageId,
@@ -64,8 +62,11 @@ internal class ThrottlingPlugin(
         val deltaLastUpdateAt = now - lastUpdateAt
 
         return when {
-            deltaLastUpdateAt > throttleMs -> Result.Success(Unit).also { lastUpdateProvider[key] = now }
-            else -> Result.Failure(failureGenerator())
+            deltaLastUpdateAt == now || deltaLastUpdateAt >= throttleMs ->
+                Result.Success(Unit).also { lastUpdateProvider[key] = now }
+
+            else ->
+                Result.Failure(failureGenerator())
         }
     }
 
@@ -75,15 +76,18 @@ internal class ThrottlingPlugin(
         parentId: String,
         limit: Int,
         lastId: String?,
-    ) { /* No-op */ }
+    ) {
+        // No-op
+    }
 
-    override fun onUserSet(user: User) { /* No-op */ }
+    override fun onUserSet(user: User) {
+        // No-op
+    }
+
     override fun onUserDisconnected() {
         lastMarkReadMap.clear()
     }
-
-    companion object {
-        const val MARK_READ_THROTTLE_MS = 3000L
-        const val LIVE_LOCATION_THROTTLE_MS = 3000L
-    }
 }
+
+private const val MARK_READ_THROTTLE_MS = 3000L
+private const val LIVE_LOCATION_THROTTLE_MS = 3000L
