@@ -29,31 +29,22 @@ internal class LocationConverter {
     private val entityListAdapter = moshi.adapter<List<LocationEntity>>()
 
     @TypeConverter
-    fun stringToLocation(data: String?): LocationEntity? {
-        return data?.let {
-            entityAdapter.fromJson(it)
-        }
-    }
+    fun stringToLocation(json: String?): LocationEntity? =
+        json?.let(entityAdapter::fromJson)
 
     @TypeConverter
-    fun locationToString(entity: LocationEntity?): String? {
-        return entity?.let {
-            entityAdapter.toJson(it)
-        }
-    }
+    fun locationToString(entity: LocationEntity?): String? =
+        entity?.let(entityAdapter::toJson)
 
     @TypeConverter
-    fun stringToLocationList(data: String?): List<LocationEntity>? {
-        if (data.isNullOrEmpty() || data == "null") {
-            return emptyList()
+    fun stringToLocationList(json: String?): List<LocationEntity>? =
+        if (json.isNullOrEmpty() || json == "null") {
+            emptyList()
+        } else {
+            entityListAdapter.fromJson(json)
         }
-        return entityListAdapter.fromJson(data)
-    }
 
     @TypeConverter
-    fun locationListToString(entities: List<LocationEntity>?): String? {
-        return entities?.let {
-            entityListAdapter.toJson(it)
-        }
-    }
+    fun locationListToString(entities: List<LocationEntity>?): String? =
+        entities?.let(entityListAdapter::toJson)
 }
