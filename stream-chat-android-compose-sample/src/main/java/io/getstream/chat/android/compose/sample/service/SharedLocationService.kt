@@ -75,13 +75,13 @@ class SharedLocationService(private val context: Context) : LocationCallback() {
         chatClient.queryActiveLocations().enqueue()
 
         chatClient.globalStateFlow
-            .flatMapLatest { it.currentUserActiveLiveLocations }
-            .onEach { currentUserActiveLiveLocations ->
-                logger.d { "Current user active live locations: $currentUserActiveLiveLocations" }
+            .flatMapLatest { it.activeLiveLocations }
+            .onEach { userActiveLiveLocations ->
+                logger.d { "User active live locations: $userActiveLiveLocations" }
 
-                activeLiveLocations = currentUserActiveLiveLocations.toList()
+                activeLiveLocations = userActiveLiveLocations.toList()
 
-                if (activeLiveLocations.isEmpty()) {
+                if (userActiveLiveLocations.isEmpty()) {
                     logger.d { "No active locations -> stopping location updates..." }
                     locationClient.removeLocationUpdates(this)
                     isReceivingUpdates = false

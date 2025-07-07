@@ -27,7 +27,6 @@ import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
-import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.test.runTest
@@ -60,14 +59,13 @@ internal class QueryChannelsStateLogicTest {
         on(it.rawChannels) doReturn emptyMap()
         on(it.queryChannelsSpec) doReturn queryChannelsSpec
     }
-    private val mutableGlobalState: MutableGlobalState = mock()
     private val stateRegistry: StateRegistry = mock()
     private val logicRegistry: LogicRegistry = mock {
         on(it.channelState(any(), any())) doReturn mock()
     }
 
     private val queryChannelsStateLogic =
-        QueryChannelsStateLogic(mutableState, mutableGlobalState, stateRegistry, logicRegistry, testCoroutines.scope)
+        QueryChannelsStateLogic(mutableState, stateRegistry, logicRegistry, testCoroutines.scope)
 
     @Test
     fun `when a channel is inside the query spec and it is refreshed, it should be added`() {

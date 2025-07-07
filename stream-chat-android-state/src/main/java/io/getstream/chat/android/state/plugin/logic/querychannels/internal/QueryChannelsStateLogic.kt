@@ -28,7 +28,6 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
-import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.log.taggedLogger
@@ -38,7 +37,6 @@ import kotlinx.coroutines.async
 @Suppress("TooManyFunctions")
 internal class QueryChannelsStateLogic(
     private val mutableState: QueryChannelsMutableState,
-    private val mutableGlobalState: MutableGlobalState,
     private val stateRegistry: StateRegistry,
     private val logicRegistry: LogicRegistry,
     private val coroutineScope: CoroutineScope,
@@ -164,9 +162,6 @@ internal class QueryChannelsStateLogic(
         }.map {
             it.await()
         }
-        channels.flatMap { it.activeLiveLocations }
-            .takeUnless { it.isEmpty() }
-            ?.let { mutableGlobalState.addLiveLocations(it) }
     }
 
     private fun Channel.joinMessages(existingChannel: Channel?): Channel =

@@ -83,11 +83,10 @@ internal class LogicRegistry internal constructor(
     internal fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsLogic {
         return queryChannels.getOrPut(filter to sort) {
             val queryChannelsStateLogic = QueryChannelsStateLogic(
-                stateRegistry.queryChannels(filter, sort).toMutableState(),
-                mutableGlobalState,
-                stateRegistry,
-                this,
-                coroutineScope,
+                mutableState = stateRegistry.queryChannels(filter, sort).toMutableState(),
+                stateRegistry = stateRegistry,
+                logicRegistry = this,
+                coroutineScope = coroutineScope,
             )
 
             val queryChannelsDatabaseLogic = QueryChannelsDatabaseLogic(

@@ -151,12 +151,11 @@ internal class ChatClientLocationApiTest : BaseChatClientTest() {
 
     @Test
     fun `stopLiveLocationSharing should call api with correct parameters and return result`() = runTest {
-        val messageId = randomString()
-        val location = Location(messageId = messageId, endAt = now)
+        val location = randomLocation(endAt = now)
 
         whenever(api.updateLiveLocation(location)) doReturn location.asCall()
 
-        val actual = chatClient.stopLiveLocationSharing(messageId).await()
+        val actual = chatClient.stopLiveLocationSharing(location).await()
 
         verify(plugin).onStopLiveLocationSharingResult(location, Result.Success(location))
         verifySuccess(actual, location)

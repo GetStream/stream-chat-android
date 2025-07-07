@@ -1688,22 +1688,18 @@ internal constructor(
     /**
      * Stops the live location sharing for a message.
      *
-     * @param messageId The ID of the message for which to stop live location sharing.
+     * @param location The location to stop sharing.
      */
     @CheckResult
     @ExperimentalStreamChatApi
-    public fun stopLiveLocationSharing(messageId: String): Call<Location> =
-        Location(
-            messageId = messageId,
-            endAt = now(),
-        ).let { location ->
-            api.updateLiveLocation(location)
-                .doOnResult(userScope) { result ->
-                    plugins.forEach { plugin ->
-                        logger.v { "[stopLiveLocationSharing] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
-                        plugin.onStopLiveLocationSharingResult(location, result)
-                    }
-                }
+    public fun stopLiveLocationSharing(location: Location): Call<Location> =
+        api.updateLiveLocation(
+            location = location.copy(endAt = now()),
+        ).doOnResult(userScope) { result ->
+            plugins.forEach { plugin ->
+                logger.v { "[stopLiveLocationSharing] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                plugin.onStopLiveLocationSharingResult(location, result)
+            }
         }
 
     @CheckResult

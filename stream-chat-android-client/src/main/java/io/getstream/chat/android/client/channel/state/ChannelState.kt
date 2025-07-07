@@ -121,6 +121,7 @@ public interface ChannelState {
     /** The date of the last message sent by the current user. */
     public val lastSentMessageDate: StateFlow<Date?>
 
+    /** Live locations that are currently active in this channel. */
     public val activeLiveLocations: StateFlow<List<Location>>
 
     /** Function that builds a channel based on data from StateFlows. */

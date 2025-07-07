@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.sample.ChatApp
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.User
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.launch
@@ -50,7 +51,7 @@ class SharedLocationViewModel(
                     logger.d { "[sendStaticLocation] Success" }
                 }
                 .onError {
-                    logger.e { "[sendStaticLocation] Fail" }
+                    logger.e { "[sendStaticLocation] Failed: $it" }
                 }
         }
     }
@@ -72,20 +73,20 @@ class SharedLocationViewModel(
                     logger.d { "[startLiveLocationSharing] Success" }
                 }
                 .onError {
-                    logger.e { "[startLiveLocationSharing] Fail" }
+                    logger.e { "[startLiveLocationSharing] Failed: $it" }
                 }
         }
     }
 
-    fun stopLiveLocationSharing(messageId: String) {
+    fun stopLiveLocationSharing(location: Location) {
         viewModelScope.launch {
-            chatClient.stopLiveLocationSharing(messageId = messageId)
+            chatClient.stopLiveLocationSharing(location)
                 .await()
                 .onSuccess {
                     logger.d { "[stopLiveLocationSharing] Success" }
                 }
                 .onError {
-                    logger.e { "[stopLiveLocationSharing] Fail" }
+                    logger.e { "[stopLiveLocationSharing] Failed: $it" }
                 }
         }
     }

@@ -24,9 +24,9 @@ import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
-import io.getstream.chat.android.state.utils.internal.mapState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import java.util.Date
 
 /**
@@ -60,9 +60,6 @@ internal class MutableGlobalState(
     override val channelDraftMessages: StateFlow<Map<String, DraftMessage>> = _channelDraftMessages!!
     override val threadDraftMessages: StateFlow<Map<String, DraftMessage>> = _threadDraftMessages!!
     override val activeLiveLocations: StateFlow<List<Location>> = _activeLiveLocations!!
-    override val currentUserActiveLiveLocations: StateFlow<List<Location>> = activeLiveLocations.mapState {
-        it.filter { location -> location.userId == userId }
-    }
 
     /**
      * Destroys the state.
@@ -78,6 +75,7 @@ internal class MutableGlobalState(
         _typingChannels = null
         _channelDraftMessages = null
         _threadDraftMessages = null
+        _activeLiveLocations = null
     }
 
     fun setTotalUnreadCount(totalUnreadCount: Int) {
@@ -152,34 +150,24 @@ internal class MutableGlobalState(
         }
     }
 
-    @Synchronized
-    private fun updateActiveLiveLocations(
-        transform: (List<Location>) -> List<Location>,
-    ) {
-        _activeLiveLocations?.let {
-            it.tryEmit(
-                it.value.let(transform),
-            )
-        }
-    }
-
     fun addLiveLocation(location: Location) {
         addLiveLocations(listOf(location))
     }
 
     fun addLiveLocations(locations: List<Location>) {
-        updateActiveLiveLocations { currentLocations ->
+        val userLiveLocations = locations.filter { it.userId == userId }
+        _activeLiveLocations?.update { currentLocations ->
             (
                 currentLocations.filterNot { location ->
-                    locations.any { it.messageId == location.messageId }
-                } + locations
+                    userLiveLocations.any { it.messageId == location.messageId }
+                } + userLiveLocations
                 )
                 .removeExpired()
         }
     }
 
     fun removeExpiredLiveLocations() {
-        updateActiveLiveLocations { locations ->
+        _activeLiveLocations?.update { locations ->
             locations.removeExpired()
         }
     }
