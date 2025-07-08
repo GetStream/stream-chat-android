@@ -58,6 +58,7 @@ internal data class DownstreamThreadDto(
     val title: String,
     val latest_replies: List<DownstreamMessageDto>,
     val read: List<DownstreamChannelUserRead>?,
+    val draft: DownstreamDraftDto?,
 )
 
 /**

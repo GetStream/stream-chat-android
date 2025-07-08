@@ -127,6 +127,9 @@ public class CustomAttachmentsViewHolder internal constructor(
                 footnote.setOnThreadClickListener {
                     container.threadClickListener.onThreadClick(data.message)
                 }
+                footnote.setOnTranslatedLabelClickListener {
+                    container.translatedLabelClickListener.onTranslatedLabelClick(data.message)
+                }
                 messageContainer.setOnLongClickListener {
                     container.messageLongClickListener.onMessageLongClick(data.message)
                     true
