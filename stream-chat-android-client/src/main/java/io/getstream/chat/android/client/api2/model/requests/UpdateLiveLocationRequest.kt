@@ -23,16 +23,16 @@ import java.util.Date
  * Used to update a live location message.
  *
  * @param message_id The ID of the message to update.
- * @param latitude The new latitude of the live location.
- * @param longitude The new longitude of the live location.
+ * @param latitude The new latitude of the live location. Required to update the live location.
+ * @param longitude The new longitude of the live location. Required to update the live location.
  * @param created_by_device_id The ID of the device that created the live location.
- * @param end_at The time when the live location should end. If null, the previous end time will be used.
+ * @param end_at The time when the live location should end. Required to stop the live location.
  */
 @JsonClass(generateAdapter = true)
 internal data class UpdateLiveLocationRequest(
     val message_id: String,
-    val latitude: Double,
-    val longitude: Double,
+    val latitude: Double? = null,
+    val longitude: Double? = null,
     val created_by_device_id: String,
-    val end_at: Date?,
+    val end_at: Date? = null,
 )

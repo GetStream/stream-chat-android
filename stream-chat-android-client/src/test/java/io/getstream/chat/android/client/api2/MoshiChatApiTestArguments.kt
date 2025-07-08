@@ -21,8 +21,10 @@ import io.getstream.chat.android.client.Mother.randomDownstreamDraftDto
 import io.getstream.chat.android.client.api.FakeResponse
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
+import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
@@ -60,6 +62,7 @@ import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomDateOrNull
+import io.getstream.chat.android.randomLocation
 import io.getstream.chat.android.randomString
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -488,6 +491,51 @@ internal object MoshiChatApiTestArguments {
             Result.Success::class,
         ),
         Arguments.of(RetroError<QueryRemindersResult>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
+
+    @JvmStatic
+    fun updateLiveLocation() = listOf(
+        run {
+            val location = randomLocation()
+            val request = UpdateLiveLocationRequest(
+                message_id = location.messageId,
+                latitude = location.latitude,
+                longitude = location.longitude,
+                created_by_device_id = location.deviceId,
+            )
+            val response = DownstreamLocationDto(
+                message_id = location.messageId,
+                channel_cid = location.cid,
+                user_id = location.userId,
+                latitude = location.latitude,
+                longitude = location.longitude,
+                created_by_device_id = location.deviceId,
+                end_at = location.endAt,
+            )
+            Arguments.of(location, request, response)
+        },
+    )
+
+    @JvmStatic
+    fun stopLiveLocation() = listOf(
+        run {
+            val location = randomLocation()
+            val request = UpdateLiveLocationRequest(
+                message_id = location.messageId,
+                created_by_device_id = location.deviceId,
+                end_at = location.endAt,
+            )
+            val response = DownstreamLocationDto(
+                message_id = location.messageId,
+                channel_cid = location.cid,
+                user_id = location.userId,
+                latitude = location.latitude,
+                longitude = location.longitude,
+                created_by_device_id = location.deviceId,
+                end_at = location.endAt,
+            )
+            Arguments.of(location, request, response)
+        },
     )
 
     private fun muteUserResponseArguments() = listOf(

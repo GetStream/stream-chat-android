@@ -187,7 +187,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun showChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun shuffleGiphy (Lio/getstream/chat/android/models/Message;)Lio/getstream/result/call/Call;
 	public final fun startLiveLocationSharing (Ljava/lang/String;DDLjava/lang/String;Ljava/util/Date;)Lio/getstream/result/call/Call;
-	public final fun stopLiveLocationSharing (Lio/getstream/chat/android/models/Location;)Lio/getstream/result/call/Call;
+	public final fun stopLiveLocationSharing (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun stopTyping (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public static synthetic fun stopTyping$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun stopWatching (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;

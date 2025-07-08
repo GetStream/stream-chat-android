@@ -589,6 +589,9 @@ internal interface ChatApi {
     @CheckResult
     fun updateLiveLocation(location: Location): Call<Location>
 
+    @CheckResult
+    fun stopLiveLocation(location: Location): Call<Location>
+
     fun warmUp()
 
     fun releaseConnection()

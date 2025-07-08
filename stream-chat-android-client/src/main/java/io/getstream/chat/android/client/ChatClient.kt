@@ -1692,15 +1692,22 @@ internal constructor(
      */
     @CheckResult
     @ExperimentalStreamChatApi
-    public fun stopLiveLocationSharing(location: Location): Call<Location> =
-        api.updateLiveLocation(
-            location = location.copy(endAt = now()),
-        ).doOnResult(userScope) { result ->
-            plugins.forEach { plugin ->
-                logger.v { "[stopLiveLocationSharing] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
-                plugin.onStopLiveLocationSharingResult(location, result)
+    public fun stopLiveLocationSharing(
+        messageId: String,
+        deviceId: String,
+    ): Call<Location> = Location(
+        messageId = messageId,
+        deviceId = deviceId,
+        endAt = now(),
+    ).let { location ->
+        api.stopLiveLocation(location)
+            .doOnResult(userScope) { result ->
+                plugins.forEach { plugin ->
+                    logger.v { "[stopLiveLocationSharing] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                    plugin.onStopLiveLocationSharingResult(location, result)
+                }
             }
-        }
+    }
 
     @CheckResult
     public fun suggestPollOption(

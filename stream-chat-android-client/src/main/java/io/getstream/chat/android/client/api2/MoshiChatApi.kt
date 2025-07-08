@@ -1532,6 +1532,16 @@ constructor(
                 latitude = location.latitude,
                 longitude = location.longitude,
                 created_by_device_id = location.deviceId,
+            ),
+        ).mapDomain { response ->
+            response.toDomain()
+        }
+
+    override fun stopLiveLocation(location: Location): Call<Location> =
+        userApi.updateLiveLocation(
+            UpdateLiveLocationRequest(
+                message_id = location.messageId,
+                created_by_device_id = location.deviceId,
                 end_at = location.endAt,
             ),
         ).mapDomain { response ->

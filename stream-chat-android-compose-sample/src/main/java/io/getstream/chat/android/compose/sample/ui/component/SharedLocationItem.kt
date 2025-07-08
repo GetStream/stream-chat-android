@@ -86,7 +86,7 @@ internal fun SharedLocationItem(
             location = location,
             onMapClick = onMapClick,
             onStopSharingClick = {
-                viewModel.stopLiveLocationSharing(location)
+                viewModel.stopLiveLocationSharing(messageId = location.messageId)
             },
         )
     }

@@ -21,7 +21,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.sample.ChatApp
-import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.User
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.launch
@@ -78,10 +77,12 @@ class SharedLocationViewModel(
         }
     }
 
-    fun stopLiveLocationSharing(location: Location) {
+    fun stopLiveLocationSharing(messageId: String) {
         viewModelScope.launch {
-            chatClient.stopLiveLocationSharing(location)
-                .await()
+            chatClient.stopLiveLocationSharing(
+                messageId = messageId,
+                deviceId = ChatApp.sharedLocationService.currentDeviceId,
+            ).await()
                 .onSuccess {
                     logger.d { "[stopLiveLocationSharing] Success" }
                 }
