@@ -344,12 +344,7 @@ constructor(
     }
 
     override fun getPendingMessage(messageId: String): Call<PendingMessage> {
-        return messageApi.getMessage(messageId).mapDomain {
-            PendingMessage(
-                message = it.message.toDomain(),
-                metadata = it.pending_message_metadata.orEmpty(),
-            )
-        }
+        return messageApi.getMessage(messageId).mapDomain { it.toDomain() }
     }
 
     override fun deleteMessage(messageId: String, hard: Boolean): Call<Message> {

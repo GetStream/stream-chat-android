@@ -52,6 +52,7 @@ import io.getstream.chat.android.client.Mother.randomDownstreamVoteDto
 import io.getstream.chat.android.client.Mother.randomPrivacySettingsDto
 import io.getstream.chat.android.client.Mother.randomSearchWarningDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
+import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.App
 import io.getstream.chat.android.models.AppSettings
@@ -95,6 +96,7 @@ import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomPendingMessageMetadata
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import org.amshove.kluent.`should be equal to`
@@ -158,6 +160,20 @@ internal class DomainMappingTest {
             metadata = downstreamPendingMessageDto.metadata.orEmpty(),
         )
         val result = with(sut) { downstreamPendingMessageDto.toDomain() }
+        Assertions.assertEquals(expected, result)
+    }
+
+    @Test
+    fun `MessageResponse is correctly mappend to PendingMessage`() {
+        val messageDto = randomDownstreamMessageDto()
+        val pendingMessageMetadata = randomPendingMessageMetadata()
+        val messageResponse = MessageResponse(messageDto, pendingMessageMetadata)
+        val sut = Fixture().get()
+        val expected = PendingMessage(
+            message = with(sut) { messageDto.toDomain() },
+            metadata = pendingMessageMetadata,
+        )
+        val result = with(sut) { messageResponse.toDomain() }
         Assertions.assertEquals(expected, result)
     }
 

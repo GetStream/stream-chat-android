@@ -54,6 +54,7 @@ import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
 import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.client.api2.model.response.FileUploadConfigDto
+import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.models.Answer
@@ -242,6 +243,15 @@ internal class DomainMapping(
         PendingMessage(
             message = message.toDomain(),
             metadata = metadata.orEmpty(),
+        )
+
+    /**
+     * Transforms [MessageResponse] to [PendingMessage].
+     */
+    internal fun MessageResponse.toDomain(): PendingMessage =
+        PendingMessage(
+            message = message.toDomain(),
+            metadata = pending_message_metadata.orEmpty(),
         )
 
     /**
