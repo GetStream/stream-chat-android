@@ -22,10 +22,7 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -34,12 +31,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.LocationOn
+import androidx.compose.material.icons.rounded.NearMe
 import androidx.compose.material.icons.rounded.NearMeDisabled
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -49,7 +46,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil3.compose.AsyncImage
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModel
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
@@ -100,7 +96,7 @@ private fun StaticSharedLocation(
     onMapClick: (url: String) -> Unit = {},
 ) {
     MapBox(
-        modifier = modifier,
+        modifier = modifier.aspectRatio(1f),
         latitude = location.latitude,
         longitude = location.longitude,
         contentDescription = "Map with ${message.user.name}'s last location",
@@ -140,7 +136,7 @@ private fun LiveLocationSharing(
             ),
     ) {
         MapBox(
-            modifier = Modifier,
+            modifier = Modifier.aspectRatio(1f),
             latitude = location.latitude,
             longitude = location.longitude,
             contentDescription = "Map with ${message.user.name}'s live location",
@@ -148,7 +144,7 @@ private fun LiveLocationSharing(
         ) {
             val animatedPadding by rememberInfiniteTransition().animateFloat(
                 initialValue = 0f,
-                targetValue = if (isLiveLocationEnded) 0f else 6f,
+                targetValue = if (isLiveLocationEnded) 0f else 10f,
                 animationSpec = infiniteRepeatable(animation = tween(AnimationDurationMillis)),
             )
             val animatedColor by rememberInfiniteTransition().animateColor(
@@ -192,12 +188,23 @@ private fun LiveLocationSharing(
             }
         } else {
             Column {
-                Text(
+                Row(
                     modifier = Modifier.padding(8.dp),
-                    text = "Sharing live location until ${ChatTheme.dateFormatter.formatDate(location.endAt)}",
-                    style = ChatTheme.typography.footnote,
-                    color = ChatTheme.colors.textLowEmphasis,
-                )
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    if (!isOwnMessage) {
+                        Icon(
+                            imageVector = Icons.Rounded.NearMe,
+                            contentDescription = null,
+                            tint = ChatTheme.colors.primaryAccent,
+                        )
+                    }
+                    Text(
+                        text = "Sharing live location until ${ChatTheme.dateFormatter.formatDate(location.endAt)}",
+                        style = ChatTheme.typography.footnote,
+                        color = ChatTheme.colors.textLowEmphasis,
+                    )
+                }
                 if (isOwnMessage) {
                     TextButton(
                         modifier = Modifier.fillMaxWidth(),
@@ -213,44 +220,6 @@ private fun LiveLocationSharing(
 }
 
 private const val AnimationDurationMillis = 2000
-
-@Suppress("LongParameterList")
-@Composable
-private fun MapBox(
-    modifier: Modifier,
-    latitude: Double,
-    longitude: Double,
-    contentDescription: String,
-    onClick: (url: String) -> Unit,
-    content: @Composable BoxScope.() -> Unit,
-) {
-    Box(
-        modifier = modifier
-            .aspectRatio(1f)
-            .clip(ChatTheme.shapes.attachment)
-            .clickable(
-                interactionSource = null,
-                indication = ripple(),
-                onClick = {
-                    onClick(
-                        "https://www.openstreetmap.org/?" +
-                            "mlat=$latitude&mlon=$longitude#" +
-                            "map=15/$latitude/$longitude",
-                    )
-                },
-            ),
-    ) {
-        val data = "https://static-maps.yandex.ru/1.x/?lang=en-US&" +
-            "ll=$longitude,$latitude&" +
-            "z=15&size=450,450&l=map"
-        AsyncImage(
-            modifier = Modifier.matchParentSize(),
-            model = data,
-            contentDescription = contentDescription,
-        )
-        content()
-    }
-}
 
 @Preview(showBackground = true)
 @Composable

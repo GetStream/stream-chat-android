@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.LocationOn
+import androidx.compose.material.icons.rounded.MyLocation
 import androidx.compose.material.icons.rounded.NearMe
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -46,7 +47,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -57,6 +60,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.sample.ui.component.MapBox
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModel
 import io.getstream.chat.android.compose.sample.vm.SharedLocationViewModelFactory
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
@@ -110,6 +114,7 @@ private fun LocationPickerContent(
             DurationDropdownMenu(
                 expanded = showDurationDropdownMenu,
                 onSelect = { duration ->
+                    showDurationDropdownMenu = false
                     onStartLiveLocationSharing(
                         location!!.latitude,
                         location!!.longitude,
@@ -179,11 +184,21 @@ private fun LocationContent(
     }
 
     if (location != null) {
-        MapWebView(
+        MapBox(
             modifier = modifier,
             latitude = location!!.latitude,
             longitude = location!!.longitude,
-        )
+            contentDescription = "Map of current user's location",
+            contentScale = ContentScale.Crop,
+            shape = RectangleShape,
+        ) {
+            Icon(
+                modifier = Modifier.align(Alignment.Center),
+                imageVector = Icons.Rounded.MyLocation,
+                contentDescription = null,
+                tint = ChatTheme.colors.primaryAccent,
+            )
+        }
     } else if (showRequiredPermissionMissing) {
         MissingPermission(modifier = modifier)
     } else {
