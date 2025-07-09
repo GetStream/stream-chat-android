@@ -936,8 +936,8 @@ constructor(
     private fun flattenChannel(response: ChannelResponse): Channel = with(domainMapping) {
         return response.channel.toDomain().let { channel ->
             val channelInfo = response.channel.toChannelInfo()
-            // Pending messages are treated is regular messages from the current user, so we merge them with the regular
-            // messages.
+            // Pending messages are treated as regular messages from the current user, so we can merge them with the
+            // regular messages.
             val channelMessages =
                 (response.messages + response.pending_messages.map(DownstreamPendingMessageDto::message)).map {
                     it.toDomain(channelInfo).enrichWithCid(channel.cid)
