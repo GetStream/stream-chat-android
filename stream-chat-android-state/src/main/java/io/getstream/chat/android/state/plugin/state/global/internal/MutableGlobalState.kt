@@ -47,7 +47,7 @@ internal class MutableGlobalState(
     private var _typingChannels: MutableStateFlow<Map<String, TypingEvent>>? = MutableStateFlow(emptyMap())
     private var _channelDraftMessages: MutableStateFlow<Map<String, DraftMessage>>? = MutableStateFlow(emptyMap())
     private var _threadDraftMessages: MutableStateFlow<Map<String, DraftMessage>>? = MutableStateFlow(emptyMap())
-    private var _activeLiveLocations: MutableStateFlow<List<Location>>? = MutableStateFlow(emptyList())
+    private var _activeLiveLocations: MutableStateFlow<List<Location>> = MutableStateFlow(emptyList())
 
     override val totalUnreadCount: StateFlow<Int> = _totalUnreadCount!!
     override val channelUnreadCount: StateFlow<Int> = _channelUnreadCount!!
@@ -59,7 +59,7 @@ internal class MutableGlobalState(
     override val typingChannels: StateFlow<Map<String, TypingEvent>> = _typingChannels!!
     override val channelDraftMessages: StateFlow<Map<String, DraftMessage>> = _channelDraftMessages!!
     override val threadDraftMessages: StateFlow<Map<String, DraftMessage>> = _threadDraftMessages!!
-    override val activeLiveLocations: StateFlow<List<Location>> = _activeLiveLocations!!
+    override val activeLiveLocations: StateFlow<List<Location>> = _activeLiveLocations
 
     /**
      * Destroys the state.
@@ -75,7 +75,7 @@ internal class MutableGlobalState(
         _typingChannels = null
         _channelDraftMessages = null
         _threadDraftMessages = null
-        _activeLiveLocations = null
+        _activeLiveLocations.value = emptyList()
     }
 
     fun setTotalUnreadCount(totalUnreadCount: Int) {
@@ -112,7 +112,6 @@ internal class MutableGlobalState(
     }
 
     fun updateDraftMessage(draftMessage: DraftMessage) {
-        println("JcLog: updateDraftMessage: $draftMessage")
         draftMessage.parentId?.let { parentId ->
             _threadDraftMessages?.let { it.value += (parentId to draftMessage) }
         }
@@ -156,7 +155,7 @@ internal class MutableGlobalState(
 
     fun addLiveLocations(locations: List<Location>) {
         val userLiveLocations = locations.filter { it.userId == userId }
-        _activeLiveLocations?.update { currentLocations ->
+        _activeLiveLocations.update { currentLocations ->
             (
                 currentLocations.filterNot { location ->
                     userLiveLocations.any { it.messageId == location.messageId }
@@ -167,7 +166,7 @@ internal class MutableGlobalState(
     }
 
     fun removeExpiredLiveLocations() {
-        _activeLiveLocations?.update { locations ->
+        _activeLiveLocations.update { locations ->
             locations.removeExpired()
         }
     }
