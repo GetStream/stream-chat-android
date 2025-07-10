@@ -23,9 +23,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
@@ -55,13 +57,19 @@ class MessageRemindersComponentFactory(
         onReactionsClick: (Message) -> Unit,
     ) {
         with(delegate) {
-            Column {
-                // Add reminder info to the header (if available)
-                val reminder = messageItem.message.reminder
-                if (reminder != null) {
+            val message = messageItem.message
+            val reminder = message.reminder
+            if (!message.isDeleted() && reminder != null) {
+                // Add reminder info to the header (if message is not deleted and has a reminder)
+                val isMine = message.user.id == ChatClient.instance().getCurrentUser()?.id
+                val alignment = if (isMine) Alignment.End else Alignment.Start
+                Column(horizontalAlignment = alignment) {
+                    // Display the reminder status label
                     MessageReminderStatusLabel(reminder.remindAt)
+                    // Call the default header content
+                    MessageItemHeaderContent(messageItem, reactionSorting, onReactionsClick)
                 }
-                // Call the default header content
+            } else {
                 MessageItemHeaderContent(messageItem, reactionSorting, onReactionsClick)
             }
         }
