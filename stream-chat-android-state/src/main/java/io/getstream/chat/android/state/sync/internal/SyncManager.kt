@@ -161,6 +161,7 @@ internal class SyncManager(
             is ConnectedEvent -> syncScope.launch {
                 logger.i { "[onEvent] ConnectedEvent received" }
                 onConnectionEstablished(currentUserId)
+                syncScope.launch { syncOfflineDraftMessages() }
             }
 
             is DisconnectedEvent -> syncScope.launch {
@@ -200,6 +201,8 @@ internal class SyncManager(
      */
     private suspend fun onConnectionEstablished(userId: String) = try {
         logger.i { "[onConnectionEstablished] >>> userId: $userId, isFirstConnect: $isFirstConnect" }
+
+
         state.value = State.Syncing
         val online = clientState.isOnline
         logger.v { "[onConnectionEstablished] online: $online" }
