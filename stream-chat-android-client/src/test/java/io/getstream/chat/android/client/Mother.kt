@@ -41,6 +41,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetai
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamOptionDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
@@ -91,6 +92,7 @@ import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomDateOrNull
 import io.getstream.chat.android.randomInt
+import io.getstream.chat.android.randomPendingMessageMetadata
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import okhttp3.Request
@@ -227,6 +229,14 @@ internal object Mother {
         channel_cid = channelCid,
         quoted_message = quotedMessage,
         parent_message = parentMessage,
+    )
+
+    fun randomDownstreamPendingMessageDto(
+        message: DownstreamMessageDto = randomDownstreamMessageDto(),
+        metadata: Map<String, String> = randomPendingMessageMetadata(),
+    ): DownstreamPendingMessageDto = DownstreamPendingMessageDto(
+        message = message,
+        metadata = metadata,
     )
 
     fun randomDownstreamDraftMessageDto(
@@ -468,6 +478,7 @@ internal object Mother {
         automod_behavior: String = randomString(),
         blocklist_behavior: String? = randomString(),
         commands: List<CommandDto> = emptyList(),
+        mark_messages_pending: Boolean = randomBoolean(),
     ): ConfigDto = ConfigDto(
         created_at = created_at,
         updated_at = updated_at,
@@ -491,6 +502,7 @@ internal object Mother {
         automod_behavior = automod_behavior,
         blocklist_behavior = blocklist_behavior,
         commands = commands,
+        mark_messages_pending = mark_messages_pending,
     )
 
     /**

@@ -40,6 +40,7 @@ import io.getstream.chat.android.client.Mother.randomDownstreamModerationDetails
 import io.getstream.chat.android.client.Mother.randomDownstreamModerationDto
 import io.getstream.chat.android.client.Mother.randomDownstreamMuteDto
 import io.getstream.chat.android.client.Mother.randomDownstreamOptionDto
+import io.getstream.chat.android.client.Mother.randomDownstreamPendingMessageDto
 import io.getstream.chat.android.client.Mother.randomDownstreamPollDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReactionDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReactionGroupDto
@@ -51,6 +52,7 @@ import io.getstream.chat.android.client.Mother.randomDownstreamVoteDto
 import io.getstream.chat.android.client.Mother.randomPrivacySettingsDto
 import io.getstream.chat.android.client.Mother.randomSearchWarningDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
+import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.App
 import io.getstream.chat.android.models.AppSettings
@@ -77,6 +79,7 @@ import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
 import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.models.Reaction
@@ -93,10 +96,12 @@ import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomPendingMessageMetadata
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldBeEqualTo
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -120,7 +125,7 @@ internal class DomainMappingTest {
     }
 
     @Test
-    fun `Down is correctly mapped to DraftMessage`() {
+    fun `DownstreamDraftDto is correctly mapped to DraftMessage`() {
         val draftMessageResponse = randomDownstreamDraftDto()
         val sut = Fixture()
             .get()
@@ -144,6 +149,32 @@ internal class DomainMappingTest {
         }
 
         result `should be equal to` expectedMappedDraftMessage
+    }
+
+    @Test
+    fun `DownstreamPendingMessageDto is correctly mapped to PendingMessage`() {
+        val downstreamPendingMessageDto = randomDownstreamPendingMessageDto()
+        val sut = Fixture().get()
+        val expected = PendingMessage(
+            message = with(sut) { downstreamPendingMessageDto.message.toDomain() },
+            metadata = downstreamPendingMessageDto.metadata.orEmpty(),
+        )
+        val result = with(sut) { downstreamPendingMessageDto.toDomain() }
+        Assertions.assertEquals(expected, result)
+    }
+
+    @Test
+    fun `MessageResponse is correctly mappend to PendingMessage`() {
+        val messageDto = randomDownstreamMessageDto()
+        val pendingMessageMetadata = randomPendingMessageMetadata()
+        val messageResponse = MessageResponse(messageDto, pendingMessageMetadata)
+        val sut = Fixture().get()
+        val expected = PendingMessage(
+            message = with(sut) { messageDto.toDomain() },
+            metadata = pendingMessageMetadata,
+        )
+        val result = with(sut) { messageResponse.toDomain() }
+        Assertions.assertEquals(expected, result)
     }
 
     @Test
@@ -537,6 +568,7 @@ internal class DomainMappingTest {
             automodBehavior = configDto.automod_behavior,
             blocklistBehavior = configDto.blocklist_behavior ?: "",
             commands = configDto.commands.map { with(sut) { it.toDomain() } },
+            markMessagesPending = configDto.mark_messages_pending,
         )
         config shouldBeEqualTo expected
     }
