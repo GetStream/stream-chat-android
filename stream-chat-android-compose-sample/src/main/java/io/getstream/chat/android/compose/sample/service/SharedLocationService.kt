@@ -31,7 +31,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.state.extensions.globalStateFlow
 import io.getstream.log.taggedLogger
-import io.getstream.result.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -42,6 +41,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.util.Date
 
 /**
  * A simple class to handle shared location updates for simplicity.
@@ -72,8 +72,7 @@ class SharedLocationService(private val context: Context) : LocationCallback() {
 
         scope.launch { currentDeviceId = getCurrentDeviceId() }
 
-        chatClient.queryActiveLocations().enqueue()
-
+        // Listen for changes in active live locations
         chatClient.globalStateFlow
             .flatMapLatest { it.activeLiveLocations }
             .onEach { userActiveLiveLocations ->
@@ -121,20 +120,22 @@ class SharedLocationService(private val context: Context) : LocationCallback() {
         val locationsToUpdate = activeLiveLocations
 
         for (location in result.locations) {
-            locationsToUpdate.forEach { activeLiveLocation ->
-                chatClient.updateLiveLocation(
-                    messageId = activeLiveLocation.messageId,
-                    latitude = location.latitude,
-                    longitude = location.longitude,
-                    deviceId = currentDeviceId,
-                ).enqueue { result ->
-                    if (result is Result.Success) {
-                        logger.d { "Live location updated successfully: ${result.value}" }
-                    } else {
-                        logger.e { "Failed to update live location: ${result.errorOrNull()}" }
+            locationsToUpdate
+                .filterNot(Location::isExpired)
+                .forEach { activeLiveLocation ->
+                    chatClient.updateLiveLocation(
+                        messageId = activeLiveLocation.messageId,
+                        latitude = location.latitude,
+                        longitude = location.longitude,
+                        deviceId = currentDeviceId,
+                    ).enqueue { result ->
+                        result.onSuccess {
+                            logger.d { "Live location updated successfully: $it" }
+                        }.onError {
+                            logger.e { "Failed to update live location: $it" }
+                        }
                     }
                 }
-            }
         }
     }
 
@@ -157,3 +158,6 @@ class SharedLocationService(private val context: Context) : LocationCallback() {
 
 private const val LocationUpdatesIntervalMillis = 5000L
 private const val UnknownDevice = "unknown_device"
+
+private fun Location.isExpired(): Boolean =
+    endAt?.before(Date()) ?: false
