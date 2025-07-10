@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.state.internal
 
+import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.events.ChatEvent
@@ -25,15 +26,18 @@ import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateForm
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.sync.SyncState
+import io.getstream.chat.android.client.test.randomConnectedEvent
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.Tube
 import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.TimeDuration
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDraftMessage
+import io.getstream.chat.android.randomLocation
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
@@ -44,6 +48,7 @@ import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.sync.internal.SyncManager
 import io.getstream.chat.android.test.TestCall
+import io.getstream.chat.android.test.asCall
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -52,11 +57,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.currentTime
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should not be`
 import org.amshove.kluent.shouldBeGreaterThan
 import org.amshove.kluent.shouldNotBeNull
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -64,10 +71,8 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
-import org.mockito.kotlin.reset
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
-import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.whenever
 import java.util.Date
 
@@ -84,7 +89,7 @@ internal class SyncManagerTest {
     private lateinit var repositoryFacade: RepositoryFacade
     private lateinit var user: User
 
-    private val _syncEvents: Tube<List<ChatEvent>> = mock()
+    private val _syncEvents: Tube<List<ChatEvent>> = Tube()
     private val _syncState: MutableStateFlow<SyncState?> = MutableStateFlow(null)
 
     private val connectionState = MutableStateFlow(ConnectionState.Offline)
@@ -92,8 +97,6 @@ internal class SyncManagerTest {
 
     @BeforeEach
     fun setUp() {
-        reset(_syncEvents)
-
         val channelLogic: ChannelLogic = mock {
             on(it.cid) doReturn randomCID()
         }
@@ -183,9 +186,11 @@ internal class SyncManagerTest {
                 me = randomUser(),
             )
 
-            syncManager.onEvent(connectingEvent)
+            _syncEvents.test {
+                syncManager.onEvent(connectingEvent)
 
-            verify(_syncEvents, never()).emit(any())
+                assertEquals(listOf(mockedChatEvent), awaitItem())
+            }
         }
 
     @Test
@@ -208,11 +213,13 @@ internal class SyncManagerTest {
 
         val syncManager = buildSyncManager()
 
-        /* When */
-        syncManager.performSync(cids = listOf("1", "2"))
+        _syncEvents.test {
+            /* When */
+            syncManager.performSync(cids = listOf("1", "2"))
 
-        /* Then */
-        verify(_syncEvents).emit(listOf(mockedChatEvent))
+            /* Then */
+            assertEquals(listOf(mockedChatEvent), awaitItem())
+        }
     }
 
     @Test
@@ -335,7 +342,7 @@ internal class SyncManagerTest {
         delay(1000)
 
         /* Then */
-        verifyNoInteractions(_syncEvents)
+        _syncEvents.test { expectNoEvents() }
         _syncState.value `should not be` testSyncState
         _syncState.value.shouldNotBeNull()
         _syncState.value!!.lastSyncedAt.shouldNotBeNull()
@@ -343,7 +350,7 @@ internal class SyncManagerTest {
     }
 
     @Test
-    fun `start should subscribe to chatClient events if not already subscribed`() = runTest {
+    fun `start should subscribe to chatClient events if not already subscribed`() = runTest(testDispatcher) {
         val sut = buildSyncManager()
         whenever(chatClient.subscribe(any())).thenReturn(mock())
 
@@ -353,7 +360,7 @@ internal class SyncManagerTest {
     }
 
     @Test
-    fun `start should not subscribe again if already subscribed`() = runTest {
+    fun `start should not subscribe again if already subscribed`() = runTest(testDispatcher) {
         val sut = buildSyncManager()
         val disposable = mock<Disposable> { on { isDisposed } doReturn true }
         whenever(chatClient.subscribe(any())) doReturn disposable
@@ -367,24 +374,56 @@ internal class SyncManagerTest {
     }
 
     @Test
-    fun `start should schedule live location expiration`() = runTest(testDispatcher) {
-        val sut = buildSyncManager()
-        whenever(repositoryFacade.selectDraftMessages()).thenReturn(emptyList())
-
-        sut.start()
-
-        verify(mutableGlobalState).removeExpiredLiveLocations()
-    }
-
-    @Test
-    fun `start should sync offline draft messages`() = runTest(testDispatcher) {
+    fun `on connected event should sync offline draft messages`() = runTest(testDispatcher) {
         val sut = buildSyncManager()
         val draftMessages = listOf(randomDraftMessage(), randomDraftMessage())
         whenever(repositoryFacade.selectDraftMessages()).thenReturn(draftMessages)
 
-        sut.start()
+        sut.onEvent(event = randomConnectedEvent())
 
         draftMessages.forEach(verify(mutableGlobalState)::updateDraftMessage)
+    }
+
+    @Test
+    fun `on connected event should schedule live location message updates`() = runTest(testDispatcher) {
+        val sut = buildSyncManager()
+        val message1 = randomMessage()
+        val message2 = randomMessage()
+        val location1 = randomLocation(messageId = message1.id, endAt = Date(currentTime + 100))
+        val location2 = randomLocation(messageId = message2.id, endAt = Date(currentTime + 200))
+        val activeLiveLocations = MutableStateFlow<List<Location>>(emptyList())
+        whenever(mutableGlobalState.activeLiveLocations) doReturn activeLiveLocations
+        val set = mapOf("live_location_sharing_ended" to true)
+        whenever(chatClient.partialUpdateMessage(messageId = message1.id, set = set)) doReturn message1.asCall()
+        whenever(chatClient.partialUpdateMessage(messageId = message2.id, set = set)) doReturn message2.asCall()
+        whenever(chatClient.queryActiveLocations()) doReturn listOf(location1, location2).asCall()
+
+        sut.onEvent(event = randomConnectedEvent())
+        activeLiveLocations.value = listOf(location1, location2)
+        advanceTimeBy(250)
+
+        verify(chatClient).partialUpdateMessage(messageId = message1.id, set = set)
+        verify(chatClient).partialUpdateMessage(messageId = message2.id, set = set)
+    }
+
+    @Test
+    fun `on stop should cancel live location messages updates`() = runTest(testDispatcher) {
+        val sut = buildSyncManager()
+        val message1 = randomMessage()
+        val location1 = randomLocation(messageId = message1.id, endAt = Date(currentTime + 200))
+        val activeLiveLocations = MutableStateFlow<List<Location>>(emptyList())
+        whenever(mutableGlobalState.activeLiveLocations) doReturn activeLiveLocations
+        val set = mapOf("live_location_sharing_ended" to true)
+        whenever(chatClient.partialUpdateMessage(messageId = message1.id, set = set)) doReturn message1.asCall()
+        whenever(chatClient.queryActiveLocations()) doReturn listOf(location1).asCall()
+
+        sut.onEvent(event = randomConnectedEvent())
+        activeLiveLocations.value = listOf(location1)
+
+        sut.stop()
+        advanceTimeBy(250)
+
+        verify(chatClient, never()).partialUpdateMessage(messageId = message1.id, set = set)
     }
 
     private fun TestScope.localRandomMessage() = randomMessage(

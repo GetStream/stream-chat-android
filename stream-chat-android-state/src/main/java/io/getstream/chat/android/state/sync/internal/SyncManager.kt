@@ -58,12 +58,15 @@ import io.getstream.result.call.CoroutineCall
 import io.getstream.result.onSuccessSuspend
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
@@ -114,13 +117,13 @@ internal class SyncManager(
 
     private val mutex = Mutex()
 
+    private val liveLocationJobs = mutableListOf<Job>()
+
     override fun start() {
         logger.d { "[start] no args" }
         val isDisposed = eventsDisposable?.isDisposed ?: true
         if (!isDisposed) return
         eventsDisposable = chatClient.subscribe(::onEvent)
-        syncScope.launch { syncOfflineDraftMessages() }
-        syncScope.launch { scheduleLiveLocationExpiration() }
     }
 
     override fun stop() {
@@ -145,10 +148,46 @@ internal class SyncManager(
         logger.v { "[awaitSyncing] completed" }
     }
 
-    private suspend fun scheduleLiveLocationExpiration() {
-        mutableGlobalState.removeExpiredLiveLocations()
-        delay(LIVE_LOCATION_EXPIRATION_WAIT_TIME)
-        scheduleLiveLocationExpiration()
+    private fun scheduleLiveLocationMessageUpdates() {
+        logger.d { "[scheduleLiveLocationMessageUpdates] no args" }
+        // Fetch initial active live locations
+        chatClient.queryActiveLocations().enqueue { result ->
+            result.onError { error ->
+                logger.e { "[scheduleLiveLocationMessageUpdates] failed to fetch active live locations: $error" }
+            }
+        }
+        // Listen for changes in active live locations
+        mutableGlobalState.activeLiveLocations.onEach { locations ->
+            logger.d { "[scheduleLiveLocationMessageUpdates] locations: ${locations.size}" }
+            liveLocationJobs.forEach(Job::cancel)
+            locations.forEach { location ->
+                val delayMillis = (location.endAt?.time ?: now()) - now()
+                logger.d {
+                    "[scheduleLiveLocationMessageUpdates] " +
+                        "cid: ${location.cid}, " +
+                        "messageId: ${location.messageId}, " +
+                        "delayMillis: $delayMillis"
+                }
+                liveLocationJobs += syncScope.launch {
+                    delay(delayMillis)
+                    logger.v {
+                        "[scheduleLiveLocationMessageUpdates] live location sharing ended at ${location.endAt}, " +
+                            "messageId: ${location.messageId}"
+                    }
+                    // Ensure the message has any attribute updated, so the UI can reflect the live location update
+                    chatClient.partialUpdateMessage(
+                        messageId = location.messageId,
+                        set = mapOf("live_location_sharing_ended" to true),
+                    ).await()
+                        .onError { error ->
+                            logger.e {
+                                "[scheduleLiveLocationMessageUpdates] failed to update message: " +
+                                    "${location.messageId}, error: $error"
+                            }
+                        }
+                }
+            }
+        }.launchIn(syncScope)
     }
 
     @VisibleForTesting
@@ -162,6 +201,7 @@ internal class SyncManager(
                 logger.i { "[onEvent] ConnectedEvent received" }
                 onConnectionEstablished(currentUserId)
                 syncScope.launch { syncOfflineDraftMessages() }
+                scheduleLiveLocationMessageUpdates()
             }
 
             is DisconnectedEvent -> syncScope.launch {
@@ -201,8 +241,6 @@ internal class SyncManager(
      */
     private suspend fun onConnectionEstablished(userId: String) = try {
         logger.i { "[onConnectionEstablished] >>> userId: $userId, isFirstConnect: $isFirstConnect" }
-
-
         state.value = State.Syncing
         val online = clientState.isOnline
         logger.v { "[onConnectionEstablished] online: $online" }
@@ -703,9 +741,5 @@ internal class SyncManager(
 
     private enum class State {
         Idle, Syncing
-    }
-
-    companion object {
-        const val LIVE_LOCATION_EXPIRATION_WAIT_TIME = 1000L
     }
 }
