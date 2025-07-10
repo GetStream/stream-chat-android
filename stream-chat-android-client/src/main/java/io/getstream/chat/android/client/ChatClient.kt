@@ -1572,7 +1572,6 @@ internal constructor(
      * @param deviceId The device ID from which the location is sent.
      */
     @CheckResult
-    @ExperimentalStreamChatApi
     public fun sendStaticLocation(
         cid: String,
         latitude: Double,
@@ -1597,7 +1596,6 @@ internal constructor(
      * @param endAt The date when the live location sharing will end.
      */
     @CheckResult
-    @ExperimentalStreamChatApi
     public fun startLiveLocationSharing(
         cid: String,
         latitude: Double,
@@ -1645,7 +1643,6 @@ internal constructor(
      * Queries the active locations (non-expired) shared by the current user.
      */
     @CheckResult
-    @ExperimentalStreamChatApi
     public fun queryActiveLocations(): Call<List<Location>> = api.queryActiveLocations()
         .doOnResult(userScope) { result ->
             plugins.forEach { plugin ->
@@ -1663,7 +1660,6 @@ internal constructor(
      * @param deviceId The device ID from which the location is shared.
      */
     @CheckResult
-    @ExperimentalStreamChatApi
     public fun updateLiveLocation(
         messageId: String,
         latitude: Double,
@@ -1688,10 +1684,10 @@ internal constructor(
     /**
      * Stops the live location sharing for a message.
      *
-     * @param location The location to stop sharing.
+     * @param messageId The ID of the message to stop sharing live location.
+     * @param deviceId The device ID from which the location is shared.
      */
     @CheckResult
-    @ExperimentalStreamChatApi
     public fun stopLiveLocationSharing(
         messageId: String,
         deviceId: String,

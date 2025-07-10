@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.state.plugin.state.global
 
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.DraftMessage
@@ -90,6 +89,5 @@ public interface GlobalState {
     /**
      * Active live locations that are being shared in the app by the current user.
      */
-    @ExperimentalStreamChatApi
     public val activeLiveLocations: StateFlow<List<Location>>
 }

@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.plugin.listeners
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Location
 import io.getstream.result.Result
 
@@ -34,7 +33,6 @@ public interface LiveLocationListener {
      *
      * @return [Result.Success] if precondition passes, otherwise [Result.Failure].
      */
-    @ExperimentalStreamChatApi
     public suspend fun onUpdateLiveLocationPrecondition(location: Location): Result<Unit>
 
     /**
@@ -42,7 +40,6 @@ public interface LiveLocationListener {
      *
      * @param result The result of the query, which is a list of active locations.
      */
-    @ExperimentalStreamChatApi
     public suspend fun onQueryActiveLocationsResult(result: Result<List<Location>>)
 
     /**
@@ -51,7 +48,6 @@ public interface LiveLocationListener {
      * @param location The location used in the request.
      * @param result The result of the request.
      */
-    @ExperimentalStreamChatApi
     public suspend fun onUpdateLiveLocationResult(location: Location, result: Result<Location>)
 
     /**
@@ -60,7 +56,6 @@ public interface LiveLocationListener {
      * @param location The location used in request.
      * @param result The result of the request.
      */
-    @ExperimentalStreamChatApi
     public suspend fun onStopLiveLocationSharingResult(location: Location, result: Result<Location>)
 
     /**
@@ -69,6 +64,5 @@ public interface LiveLocationListener {
      * @param location The location used in the request.
      * @param result The result of the request.
      */
-    @ExperimentalStreamChatApi
     public suspend fun onStartLiveLocationSharingResult(location: Location, result: Result<Location>)
 }
