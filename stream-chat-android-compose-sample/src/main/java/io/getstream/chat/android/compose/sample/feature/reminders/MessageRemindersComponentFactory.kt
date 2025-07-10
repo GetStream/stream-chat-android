@@ -86,6 +86,7 @@ class MessageRemindersComponentFactory(
      * @param onShowMore Callback invoked when the "show more" option is selected.
      * @param onDismiss Callback invoked when the menu is dismissed.
      */
+    @Suppress("LongMethod")
     @Composable
     override fun MessageMenu(
         modifier: Modifier,
@@ -151,10 +152,17 @@ class MessageRemindersComponentFactory(
             )
         }
 
+        // Allow setting reminders only if the message is not a thread reply
+        val allOptions = if (message.parentId == null) {
+            messageOptions + remindMeOption + saveForLaterOption
+        } else {
+            messageOptions
+        }
+
         SelectedMessageMenu(
             modifier = modifier,
             message = message,
-            messageOptions = messageOptions + remindMeOption + saveForLaterOption,
+            messageOptions = allOptions,
             ownCapabilities = ownCapabilities,
             onMessageAction = extendedAction,
             onShowMoreReactionsSelected = onShowMore,
