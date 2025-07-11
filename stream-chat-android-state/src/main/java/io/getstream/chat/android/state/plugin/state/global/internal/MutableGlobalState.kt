@@ -24,6 +24,7 @@ import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
+import io.getstream.chat.android.state.utils.internal.mapState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -60,6 +61,9 @@ internal class MutableGlobalState(
     override val channelDraftMessages: StateFlow<Map<String, DraftMessage>> = _channelDraftMessages!!
     override val threadDraftMessages: StateFlow<Map<String, DraftMessage>> = _threadDraftMessages!!
     override val activeLiveLocations: StateFlow<List<Location>> = _activeLiveLocations
+    override val currentUserActiveLiveLocations: StateFlow<List<Location>> = activeLiveLocations.mapState {
+        it.filter { location -> location.userId == userId }
+    }
 
     /**
      * Destroys the state.
@@ -154,14 +158,16 @@ internal class MutableGlobalState(
     }
 
     fun addLiveLocations(locations: List<Location>) {
-        val userLiveLocations = locations.filter { it.userId == userId }
         _activeLiveLocations.update { currentLocations ->
             (
-                currentLocations.filterNot { location ->
-                    userLiveLocations.any { it.messageId == location.messageId }
-                } + userLiveLocations
+                currentLocations
+                    .asSequence()
+                    .filterNot { location -> locations.any { it.messageId == location.messageId } } +
+                    locations
                 )
-                .removeExpired()
+                .filter(nonExpiredPredicate())
+                .sortedBy(Location::messageId) // Keep the same order to prevent unnecessary emissions
+                .toList()
         }
     }
 
@@ -171,10 +177,9 @@ internal class MutableGlobalState(
         }
     }
 
-    private fun List<Location>.removeExpired(): List<Location> {
-        val currentDate = Date(now())
-        return filter { location ->
-            location.endAt?.after(currentDate) ?: false
-        }
-    }
+    private fun List<Location>.removeExpired(): List<Location> =
+        filter(nonExpiredPredicate())
+
+    private fun nonExpiredPredicate(): (location: Location) -> Boolean =
+        { location -> location.endAt?.after(Date(now())) ?: false }
 }

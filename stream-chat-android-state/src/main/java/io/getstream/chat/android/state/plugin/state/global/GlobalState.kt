@@ -87,7 +87,12 @@ public interface GlobalState {
     public val threadDraftMessages: StateFlow<Map<String, DraftMessage>>
 
     /**
-     * Active live locations that are being shared in the app by the current user.
+     * Active live locations that are being shared in the app.
      */
     public val activeLiveLocations: StateFlow<List<Location>>
+
+    /**
+     * Active live locations that are being shared in the app by the current user.
+     */
+    public val currentUserActiveLiveLocations: StateFlow<List<Location>>
 }

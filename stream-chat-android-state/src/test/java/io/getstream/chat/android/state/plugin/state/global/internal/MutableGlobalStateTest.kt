@@ -33,10 +33,10 @@ internal class MutableGlobalStateTest {
     private val sut = MutableGlobalState(userId = userId, now = { now })
 
     @Test
-    fun `addLiveLocations should add only locations for current user and remove expired ones`() = runTest {
-        val validLocation = randomLocation(
+    fun `addLiveLocations should add locations sorted by messageId and remove expired ones`() = runTest {
+        val currentUserLocation = randomLocation(
             userId = userId,
-            messageId = randomString(),
+            messageId = "2",
             endAt = Date(now + 10000),
         )
         val expiredLocation = randomLocation(
@@ -46,15 +46,36 @@ internal class MutableGlobalStateTest {
         )
         val otherUserLocation = randomLocation(
             userId = randomString(),
+            messageId = "1",
+            endAt = Date(now + 10000),
+        )
+
+        sut.addLiveLocations(locations = listOf(currentUserLocation, expiredLocation, otherUserLocation))
+
+        val result = sut.activeLiveLocations.first()
+        assertEquals(2, result.size)
+        assertEquals(otherUserLocation, result[0])
+        assertEquals(currentUserLocation, result[1])
+    }
+
+    @Test
+    fun `currentUserActiveLiveLocations should hold active live locations of the current user only`() = runTest {
+        val currentUserLocation = randomLocation(
+            userId = userId,
+            messageId = randomString(),
+            endAt = Date(now + 10000),
+        )
+        val otherUserLocation = randomLocation(
+            userId = randomString(),
             messageId = randomString(),
             endAt = Date(now + 10000),
         )
 
-        sut.addLiveLocations(locations = listOf(validLocation, expiredLocation, otherUserLocation))
+        sut.addLiveLocations(locations = listOf(currentUserLocation, otherUserLocation))
 
-        val result = sut.activeLiveLocations.first()
+        val result = sut.currentUserActiveLiveLocations.first()
         assertEquals(1, result.size)
-        assertEquals(validLocation, result[0])
+        assertEquals(currentUserLocation, result[0])
     }
 
     @Test
@@ -104,12 +125,12 @@ internal class MutableGlobalStateTest {
     fun `removeExpiredLiveLocations should keep all locations if none are expired`() = runTest {
         val location1 = randomLocation(
             userId = userId,
-            messageId = randomString(),
+            messageId = "1",
             endAt = Date(now + 10000),
         )
         val location2 = randomLocation(
             userId = userId,
-            messageId = randomString(),
+            messageId = "2",
             endAt = Date(now + 20000),
         )
         sut.addLiveLocations(listOf(location1, location2))
