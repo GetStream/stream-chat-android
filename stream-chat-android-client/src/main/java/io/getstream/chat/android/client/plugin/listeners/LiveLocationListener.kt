@@ -21,7 +21,7 @@ import io.getstream.chat.android.models.Location
 import io.getstream.result.Result
 
 /**
- * Listener for [ChatClient.updateLiveLocation] requests.
+ * Listener for live location sharing requests.
  */
 public interface LiveLocationListener {
 
