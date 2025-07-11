@@ -46,6 +46,16 @@ internal class PayloadValidatorTest {
         PayloadValidator.isValidNewMessage(payload) `should be` expectedResult
     }
 
+    /** [isValidPayloadArguments] **/
+    @ParameterizedTest
+    @MethodSource("isValidPayloadArguments")
+    fun `PayloadValidator should verify if payload contains a valid Payload`(
+        payload: Map<String, Any?>,
+        expectedResult: Boolean,
+    ) {
+        PayloadValidator.isValidPayload(payload) `should be` expectedResult
+    }
+
     companion object {
 
         @JvmStatic
@@ -326,6 +336,15 @@ internal class PayloadValidatorTest {
             Arguments.of(
                 mapOf(
                     "version" to "v2",
+                    "channel_id" to randomString(),
+                    "message_id" to randomString(),
+                    "channel_type" to randomString(),
+                ),
+                false,
+            ),
+            Arguments.of(
+                mapOf(
+                    "version" to "v2",
                     "type" to "message.new",
                     "channel_id" to randomString(),
                     "message_id" to randomString(),
@@ -334,5 +353,19 @@ internal class PayloadValidatorTest {
                 true,
             ),
         )
+
+        @JvmStatic
+        fun isValidPayloadArguments() =
+            isValidNewMessageV2Arguments() +
+                Arguments.of(
+                    mapOf(
+                        "version" to "v2",
+                        "type" to "notification.reminder_due",
+                        "channel_id" to randomString(),
+                        "message_id" to randomString(),
+                        "channel_type" to randomString(),
+                    ),
+                    true,
+                )
     }
 }

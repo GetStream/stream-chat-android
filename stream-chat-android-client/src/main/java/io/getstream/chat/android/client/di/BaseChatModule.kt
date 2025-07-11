@@ -49,6 +49,7 @@ import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
 import io.getstream.chat.android.client.api2.endpoint.OpenGraphApi
 import io.getstream.chat.android.client.api2.endpoint.PollsApi
+import io.getstream.chat.android.client.api2.endpoint.RemindersApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.endpoint.VideoCallApi
@@ -270,7 +271,6 @@ constructor(
         clientDebugger,
     )
 
-    @Suppress("RemoveExplicitTypeArguments")
     private fun buildApi(chatConfig: ChatClientConfig): ChatApi = ProxyChatApi(
         delegate = MoshiChatApi(
             domainMapping = domainMapping,
@@ -291,6 +291,7 @@ constructor(
             buildRetrofitApi<OpenGraphApi>(),
             buildRetrofitApi<ThreadsApi>(),
             buildRetrofitApi<PollsApi>(),
+            buildRetrofitApi<RemindersApi>(),
             userScope,
             userScope,
         ).let { originalApi ->

@@ -37,9 +37,13 @@ import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
+import io.getstream.chat.android.client.events.NotificationReminderDueEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.events.PollDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
+import io.getstream.chat.android.client.events.ReminderCreatedEvent
+import io.getstream.chat.android.client.events.ReminderDeletedEvent
+import io.getstream.chat.android.client.events.ReminderUpdatedEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
@@ -51,6 +55,7 @@ import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.NeutralFilterObject
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Reaction
@@ -64,6 +69,7 @@ import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomMessageReminder
 import io.getstream.chat.android.randomPoll
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
@@ -524,6 +530,86 @@ public fun randomMarkAllReadEvent(
     user = user,
     totalUnreadCount = totalUnreadCount,
     unreadChannels = unreadChannels,
+)
+
+public fun randomReminderCreatedEvent(
+    createdAt: Date = randomDate(),
+    cid: String = randomCID(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    reminder: MessageReminder = randomMessageReminder(),
+    messageId: String = randomString(),
+    userId: String = randomString(),
+): ReminderCreatedEvent = ReminderCreatedEvent(
+    type = EventType.REMINDER_CREATED,
+    createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
+    cid = cid,
+    channelType = channelType,
+    channelId = channelId,
+    reminder = reminder,
+    messageId = messageId,
+    userId = userId,
+)
+
+public fun randomReminderUpdatedEvent(
+    createdAt: Date = randomDate(),
+    cid: String = randomCID(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    reminder: MessageReminder = randomMessageReminder(),
+    messageId: String = randomString(),
+    userId: String = randomString(),
+): ReminderUpdatedEvent = ReminderUpdatedEvent(
+    type = EventType.REMINDER_UPDATED,
+    createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
+    cid = cid,
+    channelType = channelType,
+    channelId = channelId,
+    reminder = reminder,
+    messageId = messageId,
+    userId = userId,
+)
+
+public fun randomReminderDeletedEvent(
+    createdAt: Date = randomDate(),
+    cid: String = randomCID(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    reminder: MessageReminder = randomMessageReminder(),
+    messageId: String = randomString(),
+    userId: String = randomString(),
+): ReminderDeletedEvent = ReminderDeletedEvent(
+    type = EventType.REMINDER_DELETED,
+    createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
+    cid = cid,
+    channelType = channelType,
+    channelId = channelId,
+    reminder = reminder,
+    messageId = messageId,
+    userId = userId,
+)
+
+public fun randomNotificationReminderDueEvent(
+    createdAt: Date = randomDate(),
+    cid: String = randomCID(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    reminder: MessageReminder = randomMessageReminder(),
+    messageId: String = randomString(),
+    userId: String = randomString(),
+): NotificationReminderDueEvent = NotificationReminderDueEvent(
+    type = EventType.NOTIFICATION_REMINDER_DUE,
+    createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
+    cid = cid,
+    channelType = channelType,
+    channelId = channelId,
+    reminder = reminder,
+    messageId = messageId,
+    userId = userId,
 )
 
 public fun randomQueryChannelsSpec(
