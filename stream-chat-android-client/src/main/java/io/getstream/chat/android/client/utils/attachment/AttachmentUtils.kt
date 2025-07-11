@@ -52,6 +52,11 @@ public fun Attachment.isImgur(): Boolean = type == AttachmentType.IMGUR
 /**
  * @return If the attachment type is link.
  */
+@Deprecated(
+    message = "The attachment of type 'LINK' is not officially supported, and the Attachment.type can never have " +
+        "a value == 'link'. This method will always return false.",
+    level = DeprecationLevel.WARNING,
+)
 public fun Attachment.isLink(): Boolean = type == AttachmentType.LINK
 
 /**

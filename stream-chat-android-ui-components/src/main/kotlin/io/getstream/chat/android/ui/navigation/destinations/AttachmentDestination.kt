@@ -97,10 +97,7 @@ public open class AttachmentDestination(
             return
         }
 
-        val intent = Intent(context, AttachmentActivity::class.java).apply {
-            putExtra("type", type)
-            putExtra("url", url)
-        }
+        val intent = AttachmentActivity.createIntent(context, type, url)
         start(intent)
     }
 
