@@ -4473,7 +4473,8 @@ internal constructor(
         @JvmOverloads
         public fun handlePushMessage(pushMessage: PushMessage) {
             ensureClientInitialized().run {
-                if (!config.notificationConfig.ignorePushMessagesWhenUserOnline || !isSocketConnected()) {
+                val type = pushMessage.type.orEmpty()
+                if (!config.notificationConfig.ignorePushMessageWhenUserOnline(type) || !isSocketConnected()) {
                     clientScope.launch {
                         setUserWithoutConnectingIfNeeded()
                         notifications.onPushMessage(pushMessage, pushNotificationReceivedListener)

@@ -45,14 +45,14 @@ public interface NotificationHandler {
 
     /**
      * Handles showing notification after receiving [NotificationReminderDueEvent].
-     * Default implementation of the method doesn't handle this event, so it is delegated to the [showNotification]
-     * method.
+     * Default implementation of the method ignores the event, because the same reminder due is also delivered via a
+     * push notification.
      *
      * @param event The [NotificationReminderDueEvent] to handle.
      * @return True if the event was handled in the method, false if it should be handled internally.
      */
     public fun onNotificationReminderDueEvent(event: NotificationReminderDueEvent): Boolean {
-        return false
+        return true
     }
 
     /**
@@ -86,7 +86,7 @@ public interface NotificationHandler {
      * @param channel where the new message was posted
      * @param message was received
      */
-    @Deprecated("Use showNotification(type: String, channel: Channel, message: Message) instead.")
+    @Deprecated("Use showNotification(notification: ChatNotification) instead.")
     public fun showNotification(channel: Channel, message: Message)
 
     /**
