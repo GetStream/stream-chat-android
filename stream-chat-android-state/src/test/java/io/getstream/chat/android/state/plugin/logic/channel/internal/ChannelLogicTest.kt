@@ -16,42 +16,27 @@
 
 package io.getstream.chat.android.state.plugin.logic.channel.internal
 
-import io.getstream.chat.android.client.events.MemberAddedEvent
-import io.getstream.chat.android.client.events.MemberRemovedEvent
-import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.models.EventType
-import io.getstream.chat.android.randomCID
-import io.getstream.chat.android.randomDate
+import io.getstream.chat.android.client.test.randomMemberAddedEvent
+import io.getstream.chat.android.client.test.randomMemberRemovedEvent
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
-import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import kotlinx.coroutines.test.TestScope
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
 
 internal class ChannelLogicTest {
 
-    private val cid = randomCID()
     private val currentUserId = randomString()
-    private lateinit var channelStateLogic: ChannelStateLogic
-    private lateinit var channelLogic: ChannelLogic
+    private val channelStateLogic: ChannelStateLogic = mock()
+    private lateinit var sut: ChannelLogic
 
     @BeforeEach
     fun setUp() {
-        // Channel mutable state
-        val mutableState = mock<ChannelMutableState>()
-        whenever(mutableState.cid).doReturn(cid)
-        // Channel state logic
-        channelStateLogic = mock()
-        whenever(channelStateLogic.writeChannelState()).doReturn(mutableState)
-        // Channel logic
-        channelLogic = ChannelLogic(
+        sut = ChannelLogic(
             repos = mock(),
             userPresence = false,
             channelStateLogic = channelStateLogic,
@@ -63,22 +48,11 @@ internal class ChannelLogicTest {
     @Test
     fun `When handling MemberAddedEvent for current user, Then channel members and membership are updated`() {
         // Given
-        val cid = randomCID()
-        val (type, id) = cid.cidToTypeAndId()
         val user = randomUser(id = currentUserId)
         val member = randomMember(user = user)
-        val event = MemberAddedEvent(
-            type = EventType.MEMBER_ADDED,
-            createdAt = randomDate(),
-            rawCreatedAt = randomString(),
-            user = user,
-            cid = cid,
-            channelType = type,
-            channelId = id,
-            member = member,
-        )
+        val event = randomMemberAddedEvent(member = member)
         // When
-        channelLogic.handleEvent(event)
+        sut.handleEvent(event)
         // Then
         verify(channelStateLogic).addMember(member)
         verify(channelStateLogic).addMembership(member)
@@ -87,22 +61,10 @@ internal class ChannelLogicTest {
     @Test
     fun `When handling MemberAdded for other user, Then only channel members are updated`() {
         // Given
-        val cid = randomCID()
-        val (type, id) = cid.cidToTypeAndId()
-        val user = randomUser()
-        val member = randomMember(user = user)
-        val event = MemberAddedEvent(
-            type = EventType.MEMBER_ADDED,
-            createdAt = randomDate(),
-            rawCreatedAt = randomString(),
-            user = user,
-            cid = cid,
-            channelType = type,
-            channelId = id,
-            member = member,
-        )
+        val member = randomMember()
+        val event = randomMemberAddedEvent(member = member)
         // When
-        channelLogic.handleEvent(event)
+        sut.handleEvent(event)
         // Then
         verify(channelStateLogic).addMember(member)
         verify(channelStateLogic, never()).addMembership(member)
@@ -111,22 +73,11 @@ internal class ChannelLogicTest {
     @Test
     fun `When handling MemberRemovedEvent for current user, Then channel members and membership are updated`() {
         // Given
-        val cid = randomCID()
-        val (type, id) = cid.cidToTypeAndId()
         val user = randomUser(id = currentUserId)
         val member = randomMember(user = user)
-        val event = MemberRemovedEvent(
-            type = EventType.MEMBER_REMOVED,
-            createdAt = randomDate(),
-            rawCreatedAt = randomString(),
-            user = user,
-            cid = cid,
-            channelType = type,
-            channelId = id,
-            member = member,
-        )
+        val event = randomMemberRemovedEvent(member = member)
         // When
-        channelLogic.handleEvent(event)
+        sut.handleEvent(event)
         // Then
         verify(channelStateLogic).deleteMember(member)
         verify(channelStateLogic).removeMembership()
@@ -135,22 +86,10 @@ internal class ChannelLogicTest {
     @Test
     fun `When handling MemberRemovedEvent for other user, Then only channel members are updated`() {
         // Given
-        val cid = randomCID()
-        val (type, id) = cid.cidToTypeAndId()
-        val user = randomUser()
-        val member = randomMember(user = user)
-        val event = MemberRemovedEvent(
-            type = EventType.MEMBER_REMOVED,
-            createdAt = randomDate(),
-            rawCreatedAt = randomString(),
-            user = user,
-            cid = cid,
-            channelType = type,
-            channelId = id,
-            member = member,
-        )
+        val member = randomMember()
+        val event = randomMemberRemovedEvent(member = member)
         // When
-        channelLogic.handleEvent(event)
+        sut.handleEvent(event)
         // Then
         verify(channelStateLogic).deleteMember(member)
         verify(channelStateLogic, never()).removeMembership()
