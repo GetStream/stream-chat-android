@@ -72,9 +72,16 @@ class SharedLocationService(private val context: Context) : LocationCallback() {
 
         scope.launch { currentDeviceId = getCurrentDeviceId() }
 
-        // Listen for changes in active live locations
+        // Fetch user's active live locations
+        chatClient.queryActiveLocations().enqueue { result ->
+            result.onError { error ->
+                logger.e { "Failed to fetch user active live locations: $error" }
+            }
+        }
+
+        // Listen for changes in current user's active live locations
         chatClient.globalStateFlow
-            .flatMapLatest { it.activeLiveLocations }
+            .flatMapLatest { it.currentUserActiveLiveLocations }
             .onEach { userActiveLiveLocations ->
                 logger.d { "User active live locations: $userActiveLiveLocations" }
 

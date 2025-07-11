@@ -150,12 +150,7 @@ internal class SyncManager(
 
     private fun scheduleLiveLocationMessageUpdates() {
         logger.d { "[scheduleLiveLocationMessageUpdates] no args" }
-        // Fetch initial active live locations
-        chatClient.queryActiveLocations().enqueue { result ->
-            result.onError { error ->
-                logger.e { "[scheduleLiveLocationMessageUpdates] failed to fetch active live locations: $error" }
-            }
-        }
+
         // Listen for changes in active live locations
         mutableGlobalState.activeLiveLocations.onEach { locations ->
             logger.d { "[scheduleLiveLocationMessageUpdates] locations: ${locations.size}" }

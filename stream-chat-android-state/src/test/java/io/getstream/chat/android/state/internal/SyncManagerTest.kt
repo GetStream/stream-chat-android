@@ -396,7 +396,6 @@ internal class SyncManagerTest {
         val set = mapOf("live_location_sharing_ended" to true)
         whenever(chatClient.partialUpdateMessage(messageId = message1.id, set = set)) doReturn message1.asCall()
         whenever(chatClient.partialUpdateMessage(messageId = message2.id, set = set)) doReturn message2.asCall()
-        whenever(chatClient.queryActiveLocations()) doReturn listOf(location1, location2).asCall()
 
         sut.onEvent(event = randomConnectedEvent())
         activeLiveLocations.value = listOf(location1, location2)
@@ -415,7 +414,6 @@ internal class SyncManagerTest {
         whenever(mutableGlobalState.activeLiveLocations) doReturn activeLiveLocations
         val set = mapOf("live_location_sharing_ended" to true)
         whenever(chatClient.partialUpdateMessage(messageId = message1.id, set = set)) doReturn message1.asCall()
-        whenever(chatClient.queryActiveLocations()) doReturn listOf(location1).asCall()
 
         sut.onEvent(event = randomConnectedEvent())
         activeLiveLocations.value = listOf(location1)
