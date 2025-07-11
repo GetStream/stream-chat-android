@@ -77,6 +77,10 @@ public sealed interface HasPoll {
     public val poll: Poll
 }
 
+public sealed interface HasReminder {
+    public val reminder: MessageReminder
+}
+
 /**
  * Interface that marks a [ChatEvent] as having the information about watcher count.
  *
@@ -823,10 +827,10 @@ public data class ReminderCreatedEvent(
     override val cid: String,
     override val channelType: String,
     override val channelId: String,
+    override val reminder: MessageReminder,
     val messageId: String,
     val userId: String,
-    val reminder: MessageReminder,
-) : CidEvent()
+) : CidEvent(), HasReminder
 
 /**
  * Triggered when a message reminder is updated.
@@ -838,10 +842,10 @@ public data class ReminderUpdatedEvent(
     override val cid: String,
     override val channelType: String,
     override val channelId: String,
+    override val reminder: MessageReminder,
     val messageId: String,
     val userId: String,
-    val reminder: MessageReminder,
-) : CidEvent()
+) : CidEvent(), HasReminder
 
 /**
  * Triggered when a message reminder is deleted.
@@ -853,10 +857,10 @@ public data class ReminderDeletedEvent(
     override val cid: String,
     override val channelType: String,
     override val channelId: String,
+    override val reminder: MessageReminder,
     val messageId: String,
     val userId: String,
-    val reminder: MessageReminder,
-) : CidEvent()
+) : CidEvent(), HasReminder
 
 /**
  * Triggered when a message reminder is due.
@@ -868,10 +872,10 @@ public data class NotificationReminderDueEvent(
     override val cid: String,
     override val channelType: String,
     override val channelId: String,
+    override val reminder: MessageReminder,
     val messageId: String,
     val userId: String,
-    val reminder: MessageReminder,
-) : CidEvent()
+) : CidEvent(), HasReminder
 
 /**
  * Triggered when an ai indicator is updated.

@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
 import io.getstream.chat.android.client.events.HasMessage
 import io.getstream.chat.android.client.events.HasOwnUser
 import io.getstream.chat.android.client.events.HasPoll
+import io.getstream.chat.android.client.events.HasReminder
 import io.getstream.chat.android.client.events.HasUnreadCounts
 import io.getstream.chat.android.client.events.HasUnreadThreadCounts
 import io.getstream.chat.android.client.events.MarkAllReadEvent
@@ -450,7 +451,13 @@ internal class EventHandlerSequential(
             .groupBy { it.message.parentId ?: it.message.id }
             .filterKeys(logicRegistry::isActiveThread)
             .forEach { (messageId, events) ->
-                logicRegistry.thread(messageId).handleEvents(events)
+                logicRegistry.thread(messageId).handleMessageEvents(events)
+            }
+        sortedEvents.filterIsInstance<HasReminder>()
+            .groupBy { it.reminder.messageId }
+            .filterKeys(logicRegistry::isActiveThread)
+            .forEach { (messageId, events) ->
+                logicRegistry.thread(messageId).handleReminderEvents(events)
             }
         logger.v { "[updateThreadState] completed batchId: ${batchEvent.id}" }
     }

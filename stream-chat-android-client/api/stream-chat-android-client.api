@@ -1450,6 +1450,10 @@ public abstract interface class io/getstream/chat/android/client/events/HasReact
 	public abstract fun getReaction ()Lio/getstream/chat/android/models/Reaction;
 }
 
+public abstract interface class io/getstream/chat/android/client/events/HasReminder {
+	public abstract fun getReminder ()Lio/getstream/chat/android/models/MessageReminder;
+}
+
 public abstract interface class io/getstream/chat/android/client/events/HasUnreadCounts {
 	public abstract fun getTotalUnreadCount ()I
 	public abstract fun getUnreadChannels ()I
@@ -1999,19 +2003,19 @@ public final class io/getstream/chat/android/client/events/NotificationMutesUpda
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/client/events/NotificationReminderDueEvent : io/getstream/chat/android/client/events/CidEvent {
-	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/MessageReminder;)V
+public final class io/getstream/chat/android/client/events/NotificationReminderDueEvent : io/getstream/chat/android/client/events/CidEvent, io/getstream/chat/android/client/events/HasReminder {
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/MessageReminder;Ljava/lang/String;Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/util/Date;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Ljava/lang/String;
 	public final fun component5 ()Ljava/lang/String;
 	public final fun component6 ()Ljava/lang/String;
-	public final fun component7 ()Ljava/lang/String;
+	public final fun component7 ()Lio/getstream/chat/android/models/MessageReminder;
 	public final fun component8 ()Ljava/lang/String;
-	public final fun component9 ()Lio/getstream/chat/android/models/MessageReminder;
-	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/MessageReminder;)Lio/getstream/chat/android/client/events/NotificationReminderDueEvent;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/NotificationReminderDueEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/MessageReminder;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/NotificationReminderDueEvent;
+	public final fun component9 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/MessageReminder;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/events/NotificationReminderDueEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/NotificationReminderDueEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/MessageReminder;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/NotificationReminderDueEvent;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getChannelId ()Ljava/lang/String;
 	public fun getChannelType ()Ljava/lang/String;
@@ -2019,7 +2023,7 @@ public final class io/getstream/chat/android/client/events/NotificationReminderD
 	public fun getCreatedAt ()Ljava/util/Date;
 	public final fun getMessageId ()Ljava/lang/String;
 	public fun getRawCreatedAt ()Ljava/lang/String;
-	public final fun getReminder ()Lio/getstream/chat/android/models/MessageReminder;
+	public fun getReminder ()Lio/getstream/chat/android/models/MessageReminder;
 	public fun getType ()Ljava/lang/String;
 	public final fun getUserId ()Ljava/lang/String;
 	public fun hashCode ()I
@@ -2232,19 +2236,19 @@ public final class io/getstream/chat/android/client/events/ReactionUpdateEvent :
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/client/events/ReminderCreatedEvent : io/getstream/chat/android/client/events/CidEvent {
-	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/MessageReminder;)V
+public final class io/getstream/chat/android/client/events/ReminderCreatedEvent : io/getstream/chat/android/client/events/CidEvent, io/getstream/chat/android/client/events/HasReminder {
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/MessageReminder;Ljava/lang/String;Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/util/Date;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Ljava/lang/String;
 	public final fun component5 ()Ljava/lang/String;
 	public final fun component6 ()Ljava/lang/String;
-	public final fun component7 ()Ljava/lang/String;
+	public final fun component7 ()Lio/getstream/chat/android/models/MessageReminder;
 	public final fun component8 ()Ljava/lang/String;
-	public final fun component9 ()Lio/getstream/chat/android/models/MessageReminder;
-	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/MessageReminder;)Lio/getstream/chat/android/client/events/ReminderCreatedEvent;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/ReminderCreatedEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/MessageReminder;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/ReminderCreatedEvent;
+	public final fun component9 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/MessageReminder;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/events/ReminderCreatedEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/ReminderCreatedEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/MessageReminder;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/ReminderCreatedEvent;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getChannelId ()Ljava/lang/String;
 	public fun getChannelType ()Ljava/lang/String;
@@ -2252,26 +2256,26 @@ public final class io/getstream/chat/android/client/events/ReminderCreatedEvent 
 	public fun getCreatedAt ()Ljava/util/Date;
 	public final fun getMessageId ()Ljava/lang/String;
 	public fun getRawCreatedAt ()Ljava/lang/String;
-	public final fun getReminder ()Lio/getstream/chat/android/models/MessageReminder;
+	public fun getReminder ()Lio/getstream/chat/android/models/MessageReminder;
 	public fun getType ()Ljava/lang/String;
 	public final fun getUserId ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/client/events/ReminderDeletedEvent : io/getstream/chat/android/client/events/CidEvent {
-	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/MessageReminder;)V
+public final class io/getstream/chat/android/client/events/ReminderDeletedEvent : io/getstream/chat/android/client/events/CidEvent, io/getstream/chat/android/client/events/HasReminder {
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/MessageReminder;Ljava/lang/String;Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/util/Date;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Ljava/lang/String;
 	public final fun component5 ()Ljava/lang/String;
 	public final fun component6 ()Ljava/lang/String;
-	public final fun component7 ()Ljava/lang/String;
+	public final fun component7 ()Lio/getstream/chat/android/models/MessageReminder;
 	public final fun component8 ()Ljava/lang/String;
-	public final fun component9 ()Lio/getstream/chat/android/models/MessageReminder;
-	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/MessageReminder;)Lio/getstream/chat/android/client/events/ReminderDeletedEvent;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/ReminderDeletedEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/MessageReminder;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/ReminderDeletedEvent;
+	public final fun component9 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/MessageReminder;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/events/ReminderDeletedEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/ReminderDeletedEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/MessageReminder;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/ReminderDeletedEvent;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getChannelId ()Ljava/lang/String;
 	public fun getChannelType ()Ljava/lang/String;
@@ -2279,26 +2283,26 @@ public final class io/getstream/chat/android/client/events/ReminderDeletedEvent 
 	public fun getCreatedAt ()Ljava/util/Date;
 	public final fun getMessageId ()Ljava/lang/String;
 	public fun getRawCreatedAt ()Ljava/lang/String;
-	public final fun getReminder ()Lio/getstream/chat/android/models/MessageReminder;
+	public fun getReminder ()Lio/getstream/chat/android/models/MessageReminder;
 	public fun getType ()Ljava/lang/String;
 	public final fun getUserId ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/client/events/ReminderUpdatedEvent : io/getstream/chat/android/client/events/CidEvent {
-	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/MessageReminder;)V
+public final class io/getstream/chat/android/client/events/ReminderUpdatedEvent : io/getstream/chat/android/client/events/CidEvent, io/getstream/chat/android/client/events/HasReminder {
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/MessageReminder;Ljava/lang/String;Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/util/Date;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Ljava/lang/String;
 	public final fun component5 ()Ljava/lang/String;
 	public final fun component6 ()Ljava/lang/String;
-	public final fun component7 ()Ljava/lang/String;
+	public final fun component7 ()Lio/getstream/chat/android/models/MessageReminder;
 	public final fun component8 ()Ljava/lang/String;
-	public final fun component9 ()Lio/getstream/chat/android/models/MessageReminder;
-	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/MessageReminder;)Lio/getstream/chat/android/client/events/ReminderUpdatedEvent;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/ReminderUpdatedEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/MessageReminder;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/ReminderUpdatedEvent;
+	public final fun component9 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/MessageReminder;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/events/ReminderUpdatedEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/ReminderUpdatedEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/MessageReminder;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/ReminderUpdatedEvent;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getChannelId ()Ljava/lang/String;
 	public fun getChannelType ()Ljava/lang/String;
@@ -2306,7 +2310,7 @@ public final class io/getstream/chat/android/client/events/ReminderUpdatedEvent 
 	public fun getCreatedAt ()Ljava/util/Date;
 	public final fun getMessageId ()Ljava/lang/String;
 	public fun getRawCreatedAt ()Ljava/lang/String;
-	public final fun getReminder ()Lio/getstream/chat/android/models/MessageReminder;
+	public fun getReminder ()Lio/getstream/chat/android/models/MessageReminder;
 	public fun getType ()Ljava/lang/String;
 	public final fun getUserId ()Ljava/lang/String;
 	public fun hashCode ()I
