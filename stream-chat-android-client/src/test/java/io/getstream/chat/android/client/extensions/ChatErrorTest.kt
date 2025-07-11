@@ -21,6 +21,7 @@ import io.getstream.result.Error
 import org.amshove.kluent.shouldBeFalse
 import org.amshove.kluent.shouldBeTrue
 import org.junit.Test
+import java.net.ConnectException
 import java.net.UnknownHostException
 
 internal class ChatErrorTest {
@@ -82,6 +83,17 @@ internal class ChatErrorTest {
             message = "",
             statusCode = 500,
             cause = UnknownHostException(),
+        )
+        error.isPermanent().shouldBeFalse()
+    }
+
+    @Test
+    fun `ConnectException as cause should be a temporary error`() {
+        val error = Error.NetworkError(
+            serverErrorCode = 0,
+            message = "",
+            statusCode = 500,
+            cause = ConnectException(),
         )
         error.isPermanent().shouldBeFalse()
     }

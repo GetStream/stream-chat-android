@@ -34,6 +34,8 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Unread message count should not be reset on entering a thread. [#5836](https://github.com/GetStream/stream-chat-android/pull/5836)
+- Fix `GlobalState.totalUnreadCount` and `GlobalState.channelUnreadCount` not updated when receiving a new message, when the `OfflinePlugin` is not applied. [#5858](https://github.com/GetStream/stream-chat-android/pull/5858)
 - Ensure `Channel.membership` is updated when the current user joins a channel. [#5857](https://github.com/GetStream/stream-chat-android/pull/5857)
 
 ### ⬆️ Improved
@@ -46,6 +48,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Prevent calling `focusMessage` from the `MessageListController` after closing the `MessageList`. [#5854](https://github.com/GetStream/stream-chat-android/pull/5854)
 
 ### ⬆️ Improved
 

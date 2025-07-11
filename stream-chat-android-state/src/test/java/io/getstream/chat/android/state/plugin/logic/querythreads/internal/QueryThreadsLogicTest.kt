@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
+import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationThreadMessageNewEvent
 import io.getstream.chat.android.client.events.ReactionDeletedEvent
@@ -29,6 +30,7 @@ import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
 import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
@@ -265,7 +267,7 @@ internal class QueryThreadsLogicTest {
     fun `Given QueryThreadsLogic When handling ChannelDeletedEvent Should update state by deleting affected threads`() {
         // given
         val event = NotificationChannelDeletedEvent(
-            type = "notification.channel_deleted",
+            type = EventType.NOTIFICATION_CHANNEL_DELETED,
             createdAt = Date(),
             rawCreatedAt = "",
             cid = "messaging:123",
@@ -288,7 +290,7 @@ internal class QueryThreadsLogicTest {
     fun `Given QueryThreadsLogic When handling ThreadMessageNew for existing thread Should do nothing`() {
         // given
         val event = NotificationThreadMessageNewEvent(
-            type = "notification.thread_message_new",
+            type = EventType.NOTIFICATION_THREAD_MESSAGE_NEW,
             cid = "messaging:123",
             channelId = "123",
             channelType = "messaging",
@@ -313,7 +315,7 @@ internal class QueryThreadsLogicTest {
     fun `Given QueryThreadsLogic When handling ThreadMessageNew for new thread Should update unseenThreadIds`() {
         // given
         val event = NotificationThreadMessageNewEvent(
-            type = "notification.thread_message_new",
+            type = EventType.NOTIFICATION_THREAD_MESSAGE_NEW,
             cid = "messaging:123",
             channelId = "123",
             channelType = "messaging",
@@ -338,7 +340,7 @@ internal class QueryThreadsLogicTest {
     fun `Given QueryThreadsLogic When handling NotificationMarkUnread for non thread Should do nothing`() {
         // given
         val event = NotificationMarkUnreadEvent(
-            type = "notification.mark_unread",
+            type = EventType.NOTIFICATION_MARK_UNREAD,
             createdAt = Date(),
             rawCreatedAt = "",
             user = User(id = "usrId1"),
@@ -365,7 +367,7 @@ internal class QueryThreadsLogicTest {
     fun `Given QueryThreadsLogic When handling NotificationMarkUnread for thread Should mark unread via stateLogic`() {
         // given
         val event = NotificationMarkUnreadEvent(
-            type = "notification.mark_unread",
+            type = EventType.NOTIFICATION_MARK_UNREAD,
             createdAt = Date(),
             rawCreatedAt = "",
             user = User(id = "usrId1"),
@@ -392,7 +394,7 @@ internal class QueryThreadsLogicTest {
     fun `Given QueryThreadsLogic When handling MessageRead for thread Should mark read via stateLogic`() {
         // given
         val event = MessageReadEvent(
-            type = "notification.thread_message_new",
+            type = EventType.MESSAGE_READ,
             cid = "messaging:123",
             channelId = "123",
             channelType = "messaging",
@@ -430,7 +432,68 @@ internal class QueryThreadsLogicTest {
     fun `Given QueryThreadsLogic When handling MessageRead without thread Should do nothing`() {
         // given
         val event = MessageReadEvent(
-            type = "notification.thread_message_new",
+            type = EventType.MESSAGE_READ,
+            cid = "messaging:123",
+            channelId = "123",
+            channelType = "messaging",
+            createdAt = Date(),
+            rawCreatedAt = "",
+            user = User(id = "usrId2"),
+            lastReadMessageId = null,
+        )
+        val stateLogic = mock<QueryThreadsStateLogic>()
+        val databaseLogic = mock<QueryThreadsDatabaseLogic>()
+        whenever(stateLogic.getThreads()) doReturn threadList
+        val logic = QueryThreadsLogic(stateLogic, databaseLogic)
+        // when
+        logic.handleEvents(listOf(event))
+        // then
+        verify(stateLogic, never()).markThreadAsReadByUser(any(), any(), any())
+    }
+
+    @Test
+    fun `Given QueryThreadsLogic When handling NotificationMarkReadEvent for thread Should mark read via stateLogic`() {
+        // given
+        val event = NotificationMarkReadEvent(
+            type = EventType.NOTIFICATION_MARK_READ,
+            cid = "messaging:123",
+            channelId = "123",
+            channelType = "messaging",
+            createdAt = Date(),
+            rawCreatedAt = "",
+            thread = ThreadInfo(
+                activeParticipantCount = 2,
+                cid = "messaging:123",
+                createdAt = Date(),
+                createdBy = null,
+                createdByUserId = "usrId1",
+                deletedAt = null,
+                lastMessageAt = Date(),
+                parentMessage = null,
+                parentMessageId = "mId1",
+                participantCount = 2,
+                replyCount = 2,
+                title = "Thread 1",
+                updatedAt = Date(),
+            ),
+            user = User(id = "usrId2"),
+            lastReadMessageId = null,
+        )
+        val stateLogic = mock<QueryThreadsStateLogic>()
+        val databaseLogic = mock<QueryThreadsDatabaseLogic>()
+        whenever(stateLogic.getThreads()) doReturn threadList
+        val logic = QueryThreadsLogic(stateLogic, databaseLogic)
+        // when
+        logic.handleEvents(listOf(event))
+        // then
+        verify(stateLogic, times(1)).markThreadAsReadByUser(event.thread!!, event.user, event.createdAt)
+    }
+
+    @Test
+    fun `Given QueryThreadsLogic When handling NotificationMarkReadEvent without thread Should do nothing`() {
+        // given
+        val event = NotificationMarkReadEvent(
+            type = EventType.NOTIFICATION_MARK_READ,
             cid = "messaging:123",
             channelId = "123",
             channelType = "messaging",
@@ -453,7 +516,7 @@ internal class QueryThreadsLogicTest {
     fun `Given QueryThreadsLogic When handling MessageNew Should upsert reply`() {
         // given
         val event = NewMessageEvent(
-            type = "reply",
+            type = EventType.MESSAGE_NEW,
             createdAt = Date(),
             rawCreatedAt = "",
             user = User(id = "usrId1"),
@@ -476,7 +539,7 @@ internal class QueryThreadsLogicTest {
     fun `Given QueryThreadsLogic When handling MessageUpdated for parent Should update parent`() {
         // given
         val event = MessageUpdatedEvent(
-            type = "reply",
+            type = EventType.MESSAGE_UPDATED,
             createdAt = Date(),
             rawCreatedAt = "",
             user = User(id = "usrId1"),
@@ -501,7 +564,7 @@ internal class QueryThreadsLogicTest {
     fun `Given QueryThreadsLogic When handling MessageUpdated for reply Should upsert reply`() {
         // given
         val event = MessageUpdatedEvent(
-            type = "reply",
+            type = EventType.MESSAGE_UPDATED,
             createdAt = Date(),
             rawCreatedAt = "",
             user = User(id = "usrId1"),
@@ -526,7 +589,7 @@ internal class QueryThreadsLogicTest {
     fun `Given QueryThreadsLogic When handling MessageDeleted for parent Should update parent`() {
         // given
         val event = MessageDeletedEvent(
-            type = "reply",
+            type = EventType.MESSAGE_DELETED,
             createdAt = Date(),
             rawCreatedAt = "",
             user = User(id = "usrId1"),
@@ -552,7 +615,7 @@ internal class QueryThreadsLogicTest {
     fun `Given QueryThreadsLogic When handling MessageDeleted for reply Should upsert reply`() {
         // given
         val event = MessageDeletedEvent(
-            type = "reply",
+            type = EventType.MESSAGE_DELETED,
             createdAt = Date(),
             rawCreatedAt = "",
             user = User(id = "usrId1"),
@@ -578,7 +641,7 @@ internal class QueryThreadsLogicTest {
     fun `Given QueryThreadsLogic When handling ReactionNew for parent Should update parent`() {
         // given
         val event = ReactionNewEvent(
-            type = "reply",
+            type = EventType.REACTION_NEW,
             createdAt = Date(),
             rawCreatedAt = "",
             user = User(id = "usrId1"),
@@ -604,7 +667,7 @@ internal class QueryThreadsLogicTest {
     fun `Given QueryThreadsLogic When handling ReactionNew for reply Should upsert reply`() {
         // given
         val event = ReactionNewEvent(
-            type = "reply",
+            type = EventType.REACTION_NEW,
             createdAt = Date(),
             rawCreatedAt = "",
             user = User(id = "usrId1"),
@@ -630,7 +693,7 @@ internal class QueryThreadsLogicTest {
     fun `Given QueryThreadsLogic When handling ReactionUpdate for parent Should update parent`() {
         // given
         val event = ReactionUpdateEvent(
-            type = "reply",
+            type = EventType.REACTION_UPDATED,
             createdAt = Date(),
             rawCreatedAt = "",
             user = User(id = "usrId1"),
@@ -656,7 +719,7 @@ internal class QueryThreadsLogicTest {
     fun `Given QueryThreadsLogic When handling ReactionUpdate for reply Should upsert reply`() {
         // given
         val event = ReactionUpdateEvent(
-            type = "reply",
+            type = EventType.REACTION_UPDATED,
             createdAt = Date(),
             rawCreatedAt = "",
             user = User(id = "usrId1"),
@@ -682,7 +745,7 @@ internal class QueryThreadsLogicTest {
     fun `Given QueryThreadsLogic When handling ReactionDeleted for parent Should update parent`() {
         // given
         val event = ReactionDeletedEvent(
-            type = "reply",
+            type = EventType.REACTION_DELETED,
             createdAt = Date(),
             rawCreatedAt = "",
             user = User(id = "usrId1"),
@@ -708,7 +771,7 @@ internal class QueryThreadsLogicTest {
     fun `Given QueryThreadsLogic When handling ReactionDeleted for reply Should upsert reply`() {
         // given
         val event = ReactionDeletedEvent(
-            type = "reply",
+            type = EventType.REACTION_DELETED,
             createdAt = Date(),
             rawCreatedAt = "",
             user = User(id = "usrId1"),
