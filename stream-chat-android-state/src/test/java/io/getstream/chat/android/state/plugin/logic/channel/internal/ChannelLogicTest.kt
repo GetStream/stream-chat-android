@@ -18,24 +18,36 @@ package io.getstream.chat.android.state.plugin.logic.channel.internal
 
 import io.getstream.chat.android.client.test.randomMemberAddedEvent
 import io.getstream.chat.android.client.test.randomMemberRemovedEvent
+import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
+import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import kotlinx.coroutines.test.TestScope
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 
 internal class ChannelLogicTest {
 
     private val currentUserId = randomString()
-    private val channelStateLogic: ChannelStateLogic = mock()
+    private lateinit var channelStateLogic: ChannelStateLogic
     private lateinit var sut: ChannelLogic
 
     @BeforeEach
     fun setUp() {
+        // Channel mutable state
+        val cid = randomCID()
+        val mutableState = mock<ChannelMutableState>()
+        whenever(mutableState.cid).doReturn(cid)
+        // Channel state logic
+        channelStateLogic = mock()
+        whenever(channelStateLogic.writeChannelState()).doReturn(mutableState)
+        // Channel logic
         sut = ChannelLogic(
             repos = mock(),
             userPresence = false,
