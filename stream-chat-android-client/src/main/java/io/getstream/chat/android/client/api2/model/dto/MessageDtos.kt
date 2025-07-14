@@ -98,6 +98,7 @@ internal data class DownstreamMessageDto(
     val moderation_details: DownstreamModerationDetailsDto? = null, // Used for Moderation V1
     val moderation: DownstreamModerationDto? = null, // Used for Moderation V2
     val poll: DownstreamPollDto? = null,
+    val reminder: DownstreamReminderInfoDto? = null,
 
     val extraData: Map<String, Any>,
 ) : ExtraDataDto

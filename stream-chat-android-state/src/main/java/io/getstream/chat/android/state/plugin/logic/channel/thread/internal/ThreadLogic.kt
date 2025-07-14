@@ -17,13 +17,12 @@
 package io.getstream.chat.android.state.plugin.logic.channel.thread.internal
 
 import io.getstream.chat.android.client.events.HasMessage
-import io.getstream.chat.android.client.events.MessageDeletedEvent
+import io.getstream.chat.android.client.events.HasReminder
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
-import io.getstream.chat.android.client.events.NewMessageEvent
-import io.getstream.chat.android.client.events.NotificationMessageNewEvent
-import io.getstream.chat.android.client.events.ReactionDeletedEvent
-import io.getstream.chat.android.client.events.ReactionNewEvent
-import io.getstream.chat.android.client.events.ReactionUpdateEvent
+import io.getstream.chat.android.client.events.ReminderCreatedEvent
+import io.getstream.chat.android.client.events.ReminderDeletedEvent
+import io.getstream.chat.android.client.events.ReminderUpdatedEvent
+import io.getstream.chat.android.client.extensions.internal.toMessageReminderInfo
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.plugin.state.channel.thread.internal.ThreadMutableState
@@ -92,7 +91,7 @@ internal class ThreadLogic(
         )
     }
 
-    internal fun handleEvents(events: List<HasMessage>) {
+    internal fun handleMessageEvents(events: List<HasMessage>) {
         val messages = events
             .map { event ->
                 val ownReactions = getMessage(event.message.id)?.ownReactions ?: event.message.ownReactions
@@ -110,23 +109,23 @@ internal class ThreadLogic(
         upsertMessages(messages)
     }
 
-    private fun handleEvent(event: HasMessage) {
-        when (event) {
-            is MessageUpdatedEvent -> {
-                event.message.copy(
-                    replyTo = mutableState.messages.value.firstOrNull { it.id == event.message.replyMessageId },
-                ).let(::upsertMessage)
+    internal fun handleReminderEvents(events: List<HasReminder>) {
+        val messages = events.mapNotNull { event ->
+            val message = getMessage(event.reminder.messageId)
+            when (event) {
+                is ReminderCreatedEvent,
+                is ReminderUpdatedEvent,
+                -> {
+                    message?.copy(reminder = event.reminder.toMessageReminderInfo())
+                }
+                is ReminderDeletedEvent -> {
+                    message?.copy(reminder = null)
+                }
+                else -> return@mapNotNull null
             }
-            is NewMessageEvent,
-            is MessageDeletedEvent,
-            is NotificationMessageNewEvent,
-            is ReactionNewEvent,
-            is ReactionUpdateEvent,
-            is ReactionDeletedEvent,
-            -> {
-                upsertMessage(event.message)
-            }
-            else -> Unit
+        }
+        if (messages.isNotEmpty()) {
+            upsertMessages(messages)
         }
     }
 }

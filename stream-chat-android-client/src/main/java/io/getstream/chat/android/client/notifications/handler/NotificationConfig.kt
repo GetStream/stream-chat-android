@@ -34,7 +34,30 @@ public data class NotificationConfig @JvmOverloads constructor(
      * active WebSocket connection). Set to false if you would like to receive and handle push
      * notifications even if user is online. Default value is true.
      */
+    @Deprecated("Use the ignorePushMessageWhenUserOnline(type: String) function instead.")
     val ignorePushMessagesWhenUserOnline: Boolean = true,
+
+    /**
+     * There is different behaviour for receiving push messages when ths user is online (when there is an
+     * active WebSocket connection) depending on the type of the message.
+     *
+     * Supported types:
+     * - [ChatNotification.TYPE_MESSAGE_NEW] - new message notification
+     * - [ChatNotification.TYPE_NOTIFICATION_REMINDER_DUE] - reminder notification
+     *
+     * The default behaviour is:
+     * - [ChatNotification.TYPE_MESSAGE_NEW], the push is ignored when the user is online.
+     * - [ChatNotification.TYPE_NOTIFICATION_REMINDER_DUE], the push is shown when the user is online.
+     *
+     * This function allows you to customize the behavior for different notification types.
+     */
+    val ignorePushMessageWhenUserOnline: (type: String) -> Boolean = { type ->
+        when (type) {
+            ChatNotification.TYPE_MESSAGE_NEW -> ignorePushMessagesWhenUserOnline
+            ChatNotification.TYPE_NOTIFICATION_REMINDER_DUE -> false // Always show reminder notifications
+            else -> true // Default behavior for unknown types
+        }
+    },
 
     /**
      * A list of generators responsible for providing the information needed to register a device

@@ -17,6 +17,8 @@ import com.xiaomi.mipush.sdk.MiPushCommandMessage;
 import com.xiaomi.mipush.sdk.MiPushMessage;
 import com.xiaomi.mipush.sdk.PushMessageReceiver;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +33,8 @@ import io.getstream.android.push.xiaomi.XiaomiMessagingDelegate;
 import io.getstream.android.push.xiaomi.XiaomiPushDeviceGenerator;
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.events.NewMessageEvent;
+import io.getstream.chat.android.client.events.NotificationReminderDueEvent;
+import io.getstream.chat.android.client.notifications.handler.ChatNotification;
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig;
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler;
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory;
@@ -52,7 +56,12 @@ public class Push {
         boolean pushNotificationEnabled = true;
         boolean ignorePushMessagesWhenUserOnline = true;
         List<PushDeviceGenerator> pushDeviceGeneratorList = new ArrayList<>();
-        NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, ignorePushMessagesWhenUserOnline, pushDeviceGeneratorList);
+        NotificationConfig notificationConfig = new NotificationConfig(
+                pushNotificationEnabled,
+                ignorePushMessagesWhenUserOnline,
+                type -> type.equals(ChatNotification.TYPE_MESSAGE_NEW),
+                pushDeviceGeneratorList
+        );
 
         new ChatClient.Builder("api-key", context)
                 .notifications(notificationConfig, notificationHandler)
@@ -66,7 +75,12 @@ public class Push {
         boolean pushNotificationEnabled = true;
         boolean ignorePushMessagesWhenUserOnline = true;
         List<PushDeviceGenerator> pushDeviceGeneratorList = new ArrayList<>();
-        NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, ignorePushMessagesWhenUserOnline, pushDeviceGeneratorList);
+        NotificationConfig notificationConfig = new NotificationConfig(
+                pushNotificationEnabled,
+                ignorePushMessagesWhenUserOnline,
+                type -> type.equals(ChatNotification.TYPE_MESSAGE_NEW),
+                pushDeviceGeneratorList
+        );
 
         NotificationHandler notificationHandler = NotificationHandlerFactory.createNotificationHandler(context, notificationConfig, (message, channel) -> {
             // Return the intent you want to be triggered when the notification is clicked
@@ -114,6 +128,13 @@ public class Push {
             }
 
             @Override
+            public void showNotification(@NotNull ChatNotification notification) {
+                Notification customNotification = new NotificationCompat.Builder(context, notificationChannelId)
+                        .build();
+                notificationManager.notify(notificationId, customNotification);
+            }
+
+            @Override
             public void showNotification(@NonNull Channel channel, @NonNull Message message) {
                 Notification notification = new NotificationCompat.Builder(context, notificationChannelId)
                         .build();
@@ -132,6 +153,11 @@ public class Push {
 
             @Override
             public boolean onChatEvent(@NonNull NewMessageEvent event) {
+                return true;
+            }
+
+            @Override
+            public boolean onNotificationReminderDueEvent(@NonNull NotificationReminderDueEvent event) {
                 return true;
             }
 
@@ -184,7 +210,12 @@ public class Push {
                             context
                     )
             );
-            NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, ignorePushMessagesWhenUserOnline, pushDeviceGeneratorList);
+            NotificationConfig notificationConfig = new NotificationConfig(
+                    pushNotificationEnabled,
+                    ignorePushMessagesWhenUserOnline,
+                    type -> type.equals(ChatNotification.TYPE_MESSAGE_NEW),
+                    pushDeviceGeneratorList
+            );
             new ChatClient.Builder("apiKey", context)
                     .notifications(notificationConfig)
                     .build();
@@ -234,7 +265,12 @@ public class Push {
             List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(
                     new HuaweiPushDeviceGenerator(context, "YOUR HUAWEI APP ID", "providerName")
             );
-            NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, ignorePushMessagesWhenUserOnline, pushDeviceGeneratorList);
+            NotificationConfig notificationConfig = new NotificationConfig(
+                    pushNotificationEnabled,
+                    ignorePushMessagesWhenUserOnline,
+                    type -> type.equals(ChatNotification.TYPE_MESSAGE_NEW),
+                    pushDeviceGeneratorList
+            );
             new ChatClient.Builder("apiKey", context)
                     .notifications(notificationConfig)
                     .build();
@@ -280,7 +316,12 @@ public class Push {
             boolean pushNotificationEnabled = true;
             boolean ignorePushMessagesWhenUserOnline = true;
             List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(new XiaomiPushDeviceGenerator(context, "YOUR HUAWEI APP ID", "YOUR XIAOMI APP KEY", "providerName", Region.Global));
-            NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, ignorePushMessagesWhenUserOnline, pushDeviceGeneratorList);
+            NotificationConfig notificationConfig = new NotificationConfig(
+                    pushNotificationEnabled,
+                    ignorePushMessagesWhenUserOnline,
+                    type -> type.equals(ChatNotification.TYPE_MESSAGE_NEW),
+                    pushDeviceGeneratorList
+            );
             new ChatClient.Builder("apiKey", context)
                     .notifications(notificationConfig)
                     .build();
