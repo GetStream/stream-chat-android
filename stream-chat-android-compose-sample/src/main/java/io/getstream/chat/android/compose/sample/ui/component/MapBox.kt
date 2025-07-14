@@ -24,8 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.layout.ContentScale
-import coil3.compose.AsyncImage
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 @Suppress("LongParameterList")
@@ -34,37 +32,40 @@ internal fun MapBox(
     modifier: Modifier,
     latitude: Double,
     longitude: Double,
-    contentDescription: String,
-    contentScale: ContentScale = ContentScale.Fit,
     shape: Shape = ChatTheme.shapes.attachment,
     onClick: ((url: String) -> Unit)? = null,
     content: @Composable BoxScope.() -> Unit,
 ) {
     Box(
-        modifier = modifier
-            .clip(shape)
-            .clickable(
-                interactionSource = null,
-                enabled = onClick != null,
-                indication = ripple(),
-                onClick = {
-                    onClick?.invoke(
-                        "https://www.openstreetmap.org/?" +
-                            "mlat=$latitude&mlon=$longitude#" +
-                            "map=15/$latitude/$longitude",
-                    )
-                },
-            ),
+        modifier = modifier.clip(shape),
     ) {
-        val data = "https://static-maps.yandex.ru/1.x/?lang=en-US&" +
-            "ll=$longitude,$latitude&" +
-            "z=15&size=450,450&l=map"
-        AsyncImage(
-            modifier = Modifier.matchParentSize(),
-            model = data,
-            contentDescription = contentDescription,
-            contentScale = contentScale,
+        MapWebView(
+            modifier = modifier.matchParentSize(),
+            latitude = latitude,
+            longitude = longitude,
+            showMarker = false,
+            gesturesEnabled = false,
         )
+
+        // WebView consumes all touch events by default (even when not visibly interactive).
+        // so we need to ensure that the clickable area is on top of it.
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .clickable(
+                    interactionSource = null,
+                    enabled = onClick != null,
+                    indication = ripple(),
+                    onClick = {
+                        onClick?.invoke(
+                            "https://www.openstreetmap.org/?" +
+                                "mlat=$latitude&mlon=$longitude#" +
+                                "map=15/$latitude/$longitude",
+                        )
+                    },
+                ),
+        )
+
         content()
     }
 }

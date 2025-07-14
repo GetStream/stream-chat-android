@@ -21,6 +21,7 @@ import android.os.Build
 import android.view.View
 import android.webkit.WebView
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,37 +37,44 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 internal fun MapWebView(
-    modifier: Modifier = Modifier,
     latitude: Double,
     longitude: Double,
+    modifier: Modifier = Modifier,
+    showMarker: Boolean = true,
+    gesturesEnabled: Boolean = true,
 ) {
     var htmlContent by remember { mutableStateOf<String?>(null) }
     var viewSize by remember { mutableStateOf<IntSize?>(null) }
     val density = LocalDensity.current
     val markerColor = ChatTheme.colors.primaryAccent.toHexString()
 
+    LaunchedEffect(viewSize) {
+        // Ensure the HTML content is updated when the view size changes
+        viewSize?.let { size ->
+            val pxPerDp = density.density // e.g., ~2.75
+            // Convert back to "CSS pixels":
+            val cssWidth = size.width / pxPerDp
+            val cssHeight = size.height / pxPerDp
+            htmlContent = mapHtml(
+                latitude = latitude,
+                longitude = longitude,
+                cssWidth = cssWidth,
+                cssHeight = cssHeight,
+                showMarker = showMarker,
+                markerColor = markerColor,
+                gesturesEnabled = gesturesEnabled,
+            )
+        }
+    }
+
     AndroidView(
-        modifier = modifier.onGloballyPositioned { coordinates ->
-            val size = coordinates.size
-            if (viewSize != size) {
-                viewSize = size
-
-                val pxPerDp = density.density // e.g., ~2.75
-                // Convert back to "CSS pixels":
-                val cssWidth = size.width / pxPerDp
-                val cssHeight = size.height / pxPerDp
-
-                htmlContent = mapHtml(
-                    latitude = latitude,
-                    longitude = longitude,
-                    cssWidth = cssWidth,
-                    cssHeight = cssHeight,
-                    markerColor = markerColor.also {
-                        println("alor: markerColor: $it") // Debugging line to check marker color
-                    },
-                )
-            }
-        },
+        modifier = modifier
+            .onGloballyPositioned { coordinates ->
+                val size = coordinates.size
+                if (viewSize != size) {
+                    viewSize = size
+                }
+            },
         factory = { context ->
             WebView(context).apply {
                 // Disable hardware acceleration to avoid issues with WebView rendering on some devices
@@ -90,7 +98,9 @@ private fun mapHtml(
     longitude: Double,
     cssWidth: Float,
     cssHeight: Float,
-    markerColor: String,
+    showMarker: Boolean,
+    markerColor: String = "#FF0000",
+    gesturesEnabled: Boolean,
 ): String = """
     <!DOCTYPE html>
     <html>
@@ -109,12 +119,20 @@ private fun mapHtml(
     <div id="map"></div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-        var map = L.map('map').setView([$latitude, $longitude], 15);
+        var map = L.map('map', {
+          zoomControl: $gesturesEnabled,
+          scrollWheelZoom: $gesturesEnabled,
+          doubleClickZoom: $gesturesEnabled,
+          boxZoom: $gesturesEnabled,
+          keyboard: $gesturesEnabled,
+          touchZoom: $gesturesEnabled
+        }).setView([$latitude, $longitude], 15);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
-        L.marker([$latitude, $longitude], {
-          icon: L.divIcon({
+        var marker = null;
+        if ($showMarker) {
+          var icon = L.divIcon({
             className: '',
             html: `
               <div style="
@@ -129,7 +147,14 @@ private fun mapHtml(
             iconSize: [20, 20],
             iconAnchor: [10, 10] // center the dot
           })
-        }).addTo(map);
+          marker = L.marker([$latitude, $longitude], { icon: icon }).addTo(map);
+        }
+        function updateLocation(lat, lng) {
+          if (marker) {
+            marker.setLatLng([lat, lng]);
+          }
+          map.setView([lat, lng]);
+        }
     </script>
     </body>
     </html>

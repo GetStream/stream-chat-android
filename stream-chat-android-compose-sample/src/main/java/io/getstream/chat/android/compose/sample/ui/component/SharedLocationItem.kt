@@ -66,7 +66,6 @@ internal fun SharedLocationItem(
     if (location.endAt == null) {
         StaticSharedLocation(
             modifier = modifier,
-            message = message,
             location = location,
             onMapClick = onMapClick,
         )
@@ -91,7 +90,6 @@ internal fun SharedLocationItem(
 @Composable
 private fun StaticSharedLocation(
     modifier: Modifier,
-    message: Message,
     location: Location,
     onMapClick: (url: String) -> Unit = {},
 ) {
@@ -99,7 +97,6 @@ private fun StaticSharedLocation(
         modifier = modifier.aspectRatio(1f),
         latitude = location.latitude,
         longitude = location.longitude,
-        contentDescription = "Map with ${message.user.name}'s last location",
         onClick = onMapClick,
     ) {
         Icon(
@@ -139,7 +136,6 @@ private fun LiveLocationSharing(
             modifier = Modifier.aspectRatio(1f),
             latitude = location.latitude,
             longitude = location.longitude,
-            contentDescription = "Map with ${message.user.name}'s live location",
             onClick = onMapClick,
         ) {
             val animatedPadding by rememberInfiniteTransition().animateFloat(
@@ -227,7 +223,6 @@ private fun StaticSharedLocationItemPreview() {
     ChatTheme {
         StaticSharedLocation(
             modifier = Modifier.fillMaxWidth(),
-            message = Message(),
             location = Location(
                 latitude = 37.7749,
                 longitude = -122.4194,
