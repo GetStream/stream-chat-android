@@ -29,6 +29,7 @@
 - Deprecate `NotificationHandler.showNotification(Channel, Message)` in favor of `NotificationHandler.showNotification(ChatNotification)`. [#5833](https://github.com/GetStream/stream-chat-android/pull/5833)
 
 ### ❌ Removed
+- Remove `@ExperimentalStreamChatApi` annotation usage. [#5866](https://github.com/GetStream/stream-chat-android/pull/5866)
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
@@ -65,6 +66,7 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Remove `@ExperimentalStreamChatApi` annotation usage. [#5866](https://github.com/GetStream/stream-chat-android/pull/5866)
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
@@ -76,6 +78,7 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Remove `@ExperimentalStreamChatApi` annotation usage. [#5866](https://github.com/GetStream/stream-chat-android/pull/5866)
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -88,6 +91,7 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Remove `@ExperimentalStreamChatApi` annotation usage. [#5866](https://github.com/GetStream/stream-chat-android/pull/5866)
 
 ## stream-chat-android-markdown-transformer
 ### 🐞 Fixed
