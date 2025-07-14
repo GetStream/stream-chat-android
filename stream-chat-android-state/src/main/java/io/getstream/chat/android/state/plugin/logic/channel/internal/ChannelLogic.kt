@@ -568,23 +568,31 @@ internal class ChannelLogic(
                     is ReactionNewEvent -> upsertEventMessage(event.message)
                     is ReactionUpdateEvent -> upsertEventMessage(event.message)
                     is ReactionDeletedEvent -> upsertEventMessage(event.message)
-                    is MemberRemovedEvent -> {
-                        if (event.user.id == currentUserId) {
-                            logger.i { "[handleEvent] skip MemberRemovedEvent for currentUser" }
-                            return
+                    is MemberAddedEvent -> {
+                        channelStateLogic.addMember(event.member)
+                        // Set the channel.membership if the current user is added to the channel
+                        if (event.member.getUserId() == currentUserId) {
+                            channelStateLogic.addMembership(event.member)
                         }
+                    }
+                    is MemberRemovedEvent -> {
                         channelStateLogic.deleteMember(event.member)
+                        // Remove the channel.membership if the current user is removed from the channel
+                        if (event.member.getUserId() == currentUserId) {
+                            channelStateLogic.removeMembership()
+                        }
+                    }
+                    is MemberUpdatedEvent -> {
+                        channelStateLogic.upsertMember(event.member)
+                        channelStateLogic.updateMembership(event.member)
+                    }
+                    is NotificationAddedToChannelEvent -> {
+                        channelStateLogic.upsertMembers(event.channel.members)
                     }
                     is NotificationRemovedFromChannelEvent -> {
                         channelStateLogic.setMembers(event.channel.members, event.channel.memberCount)
                         channelStateLogic.setWatchers(event.channel.watchers, event.channel.watcherCount)
                     }
-                    is MemberAddedEvent -> channelStateLogic.addMember(event.member)
-                    is MemberUpdatedEvent -> {
-                        channelStateLogic.upsertMember(event.member)
-                        channelStateLogic.updateMembership(event.member)
-                    }
-                    is NotificationAddedToChannelEvent -> channelStateLogic.upsertMembers(event.channel.members)
                     is UserStartWatchingEvent -> channelStateLogic.upsertWatcher(event)
                     is UserStopWatchingEvent -> channelStateLogic.deleteWatcher(event)
                     is ChannelUpdatedEvent -> channelStateLogic.updateChannelData(event)
