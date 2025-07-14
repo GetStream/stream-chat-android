@@ -47,6 +47,5 @@
     <ID>TooGenericExceptionCaught:ChatClient.kt$exception: Exception</ID>
     <ID>TooGenericExceptionCaught:EventHandlerSequential.kt$EventHandlerSequential$e: Throwable</ID>
     <ID>UnusedPrivateMember:EventBatchUpdate.kt$EventBatchUpdate$private suspend fun enrichChannelsWithCapabilities()</ID>
-    <ID>UnusedPrivateMember:ThreadLogic.kt$ThreadLogic$private fun handleEvent(event: HasMessage)</ID>
   </CurrentIssues>
 </SmellBaseline>
