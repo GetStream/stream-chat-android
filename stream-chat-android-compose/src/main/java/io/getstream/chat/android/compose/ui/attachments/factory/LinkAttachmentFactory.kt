@@ -25,6 +25,7 @@ import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.LinkAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.onLinkAttachmentContentClick
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**
@@ -35,13 +36,15 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  *
  * @param linkDescriptionMaxLines - The limit of how many lines we show for the link description.
  * @param onContentItemClick Lambda called when an item gets clicked.
+ * @param canHandle Lambda that checks if the factory can handle the given attachments.
  */
 public class LinkAttachmentFactory(
     linkDescriptionMaxLines: Int,
     onContentItemClick: (context: Context, previewUrl: String) -> Unit = ::onLinkAttachmentContentClick,
+    canHandle: (attachments: List<Attachment>) -> Boolean = { links -> links.any { it.hasLink() && !it.isGiphy() } },
 ) : AttachmentFactory(
     type = Type.BuiltIn.LINK,
-    canHandle = { links -> links.any { it.hasLink() && !it.isGiphy() } },
+    canHandle = canHandle,
     content = @Composable { modifier, state ->
         LinkAttachmentContent(
             modifier = modifier
