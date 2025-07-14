@@ -12,6 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Include pending messages in the `Channel.messages` field so they are always visible in the message list. [#5862](https://github.com/GetStream/stream-chat-android/pull/5862)
 
 ### ⬆️ Improved
 
@@ -87,6 +88,7 @@
 - Add bottom padding to unread message separator. [#5855](https://github.com/GetStream/stream-chat-android/pull/5855)
 
 ### ✅ Added
+- Expose `canHandle` lambda of the attachment factories: `AudioRecordAttachmentFactory`, `FileAttachmentFactory`, `GiphyAttachmentFactory`, `LinkAttachmentFactory`, `MediaAttachmentFactory`, `UploadAttachmentFactory`. [#5865](https://github.com/GetStream/stream-chat-android/pull/5865) 
 
 ### ⚠️ Changed
 
