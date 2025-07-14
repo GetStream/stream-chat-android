@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.viewmodel.channel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.common.helper.CopyToClipboardHandler
 
 /**
@@ -28,7 +27,6 @@ import io.getstream.chat.android.ui.common.helper.CopyToClipboardHandler
  * @param context The application context.
  * @param cid The full channel identifier (Ex. "messaging:123").
  */
-@ExperimentalStreamChatApi
 public class ChannelInfoViewModelFactory(
     private val context: Context,
     private val cid: String,

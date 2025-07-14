@@ -16,13 +16,11 @@
 
 package io.getstream.chat.android.ui.common.feature.channel.info
 
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Member
 
 /**
  * Represents side-effect events related to channel member information actions.
  */
-@ExperimentalStreamChatApi
 public sealed interface ChannelInfoMemberViewEvent {
 
     /**

@@ -16,12 +16,9 @@
 
 package io.getstream.chat.android.ui.common.feature.channel.info
 
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
-
 /**
  * Represents actions that can be performed from the channel member information view.
  */
-@ExperimentalStreamChatApi
 public sealed interface ChannelInfoMemberViewAction {
     /**
      * Represents the click action to message the member.

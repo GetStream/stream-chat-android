@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.ui.common.state.channel.info
 
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Member
 
 /**
@@ -25,7 +24,6 @@ import io.getstream.chat.android.models.Member
  * This sealed interface is used to model the different states that the channel member information
  * can be in, such as loading or displaying content.
  */
-@ExperimentalStreamChatApi
 public sealed interface ChannelInfoMemberViewState {
 
     /**

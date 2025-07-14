@@ -18,7 +18,6 @@ package io.getstream.chat.android.ui.common.state.messages.composer
 
 import android.content.Context
 import android.net.Uri
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.common.utils.StreamFileUtil
@@ -28,7 +27,6 @@ import java.io.File
 /**
  * A model for the currently selected attachment item.
  */
-@ExperimentalStreamChatApi
 public data class AttachmentMetaData(
     var uri: Uri? = null,
     var type: String? = null,

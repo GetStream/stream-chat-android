@@ -59,7 +59,6 @@ import io.getstream.chat.android.compose.ui.util.getLastSeenText
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
@@ -84,7 +83,6 @@ import java.util.Date
  * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
  * @param onAddMembersClick Callback invoked when the "Add Members" button is clicked.
  */
-@ExperimentalStreamChatApi
 @Composable
 public fun GroupChannelInfoScreen(
     viewModelFactory: ChannelInfoViewModelFactory,

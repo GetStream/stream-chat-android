@@ -82,14 +82,12 @@ import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamFileUploader
 import io.getstream.chat.android.client.user.CurrentUserFetcher
 import io.getstream.chat.android.client.utils.HeadersUtil
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.UserId
 import io.getstream.log.StreamLog
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
 
-@OptIn(ExperimentalStreamChatApi::class)
 @Suppress("TooManyFunctions")
 internal open class BaseChatModule
 @Suppress("LongParameterList")
