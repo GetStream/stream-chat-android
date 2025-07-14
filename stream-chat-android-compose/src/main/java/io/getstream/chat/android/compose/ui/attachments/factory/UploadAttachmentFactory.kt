@@ -32,12 +32,14 @@ import io.getstream.chat.android.uiutils.extension.isUploading
  * Has no "preview content", given that this attachment only exists after being sent.
  *
  * @param onContentItemClick Lambda called when an item gets clicked.
+ * @param canHandle Lambda that checks if the factory can handle the given attachments.
  */
 public class UploadAttachmentFactory(
     onContentItemClick: (Attachment, List<AttachmentPreviewHandler>) -> Unit = ::onFileUploadContentItemClick,
+    canHandle: (attachments: List<Attachment>) -> Boolean = { attachments -> attachments.any(Attachment::isUploading) },
 ) : AttachmentFactory(
     type = Type.BuiltIn.UPLOAD,
-    canHandle = { attachments -> attachments.any { it.isUploading() } },
+    canHandle = canHandle,
     content = @Composable { modifier, state ->
         ChatTheme.componentFactory.FileUploadContent(
             modifier = modifier
