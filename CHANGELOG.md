@@ -72,6 +72,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added the `focusRequestFlow` that emits one-shot focus events used to request focus on the message input field.
 
 ### ⚠️ Changed
 
@@ -84,6 +85,7 @@
 - Add bottom padding to unread message separator. [#5855](https://github.com/GetStream/stream-chat-android/pull/5855)
 
 ### ✅ Added
+- Introduce `focusRequestFlow` in `MessageComposerViewModel` to request focus on the message input field triggered by certain `MessageAction`.
 
 ### ⚠️ Changed
 
