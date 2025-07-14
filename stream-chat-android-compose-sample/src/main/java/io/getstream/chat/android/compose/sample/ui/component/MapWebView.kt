@@ -100,6 +100,9 @@ private fun mapHtml(
         <style>
             html, body { margin:0; padding:0; }
             #map { width:${cssWidth}px; height:${cssHeight}px; }
+            .leaflet-control-attribution {
+              font-size: 10px !important;
+            }
         </style>
     </head>
     <body>
