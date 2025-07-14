@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
 import io.getstream.chat.android.client.events.HasMessage
 import io.getstream.chat.android.client.events.HasOwnUser
 import io.getstream.chat.android.client.events.HasPoll
+import io.getstream.chat.android.client.events.HasReminder
 import io.getstream.chat.android.client.events.HasUnreadCounts
 import io.getstream.chat.android.client.events.HasUnreadThreadCounts
 import io.getstream.chat.android.client.events.MarkAllReadEvent
@@ -66,6 +67,9 @@ import io.getstream.chat.android.client.events.PollUpdatedEvent
 import io.getstream.chat.android.client.events.ReactionDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
+import io.getstream.chat.android.client.events.ReminderCreatedEvent
+import io.getstream.chat.android.client.events.ReminderDeletedEvent
+import io.getstream.chat.android.client.events.ReminderUpdatedEvent
 import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
@@ -84,6 +88,7 @@ import io.getstream.chat.android.client.extensions.internal.mergeReactions
 import io.getstream.chat.android.client.extensions.internal.processPoll
 import io.getstream.chat.android.client.extensions.internal.removeMember
 import io.getstream.chat.android.client.extensions.internal.removeMembership
+import io.getstream.chat.android.client.extensions.internal.toMessageReminderInfo
 import io.getstream.chat.android.client.extensions.internal.updateMember
 import io.getstream.chat.android.client.extensions.internal.updateMemberBanned
 import io.getstream.chat.android.client.extensions.internal.updateMembership
@@ -98,6 +103,7 @@ import io.getstream.chat.android.core.internal.lazy.parameterizedLazy
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserId
@@ -445,7 +451,13 @@ internal class EventHandlerSequential(
             .groupBy { it.message.parentId ?: it.message.id }
             .filterKeys(logicRegistry::isActiveThread)
             .forEach { (messageId, events) ->
-                logicRegistry.thread(messageId).handleEvents(events)
+                logicRegistry.thread(messageId).handleMessageEvents(events)
+            }
+        sortedEvents.filterIsInstance<HasReminder>()
+            .groupBy { it.reminder.messageId }
+            .filterKeys(logicRegistry::isActiveThread)
+            .forEach { (messageId, events) ->
+                logicRegistry.thread(messageId).handleReminderEvents(events)
             }
         logger.v { "[updateThreadState] completed batchId: ${batchEvent.id}" }
     }
@@ -729,6 +741,9 @@ internal class EventHandlerSequential(
                 is VoteRemovedEvent -> batch.addPoll(event.processPoll(batch::getPoll))
                 is AnswerCastedEvent -> batch.addPoll(event.processPoll(batch::getPoll))
                 is PollDeletedEvent -> batch.deletePoll(event.poll)
+                is ReminderCreatedEvent -> batch.upsertReminder(event.messageId, event.reminder)
+                is ReminderUpdatedEvent -> batch.upsertReminder(event.messageId, event.reminder)
+                is ReminderDeletedEvent -> batch.deleteReminder(event.messageId)
                 else -> Unit
             }
         }
@@ -851,6 +866,22 @@ internal class EventHandlerSequential(
 
     private suspend fun threadFromPendingUpdateOrRepo(pendingUpdate: EventBatchUpdate, threadId: String): Thread? {
         return pendingUpdate.getCurrentThread(threadId) ?: repos.selectThread(threadId)
+    }
+
+    private suspend fun EventBatchUpdate.upsertReminder(messageId: String, reminder: MessageReminder) {
+        val message = reminder.message
+            ?: this.getCurrentMessage(messageId)
+            ?: repos.selectMessage(messageId)
+        if (message != null) {
+            this.addMessage(message.copy(reminder = reminder.toMessageReminderInfo()))
+        }
+    }
+
+    private suspend fun EventBatchUpdate.deleteReminder(messageId: String) {
+        val message = this.getCurrentMessage(messageId) ?: repos.selectMessage(messageId)
+        if (message != null) {
+            this.addMessage(message.copy(reminder = null))
+        }
     }
 
     companion object {

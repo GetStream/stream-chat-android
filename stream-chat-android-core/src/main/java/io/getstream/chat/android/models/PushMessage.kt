@@ -36,4 +36,11 @@ public data class PushMessage(
     val getstream: Map<String, Any?>,
     val extraData: Map<String, Any?>,
     val metadata: Map<String, Any?>,
-)
+) {
+
+    /**
+     * Returns the type of the push message (if present).
+     */
+    public val type: String?
+        get() = extraData["type"] as? String
+}

@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.Mother.randomDownstreamDraftDto
 import io.getstream.chat.android.client.api.FakeResponse
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
@@ -43,6 +44,7 @@ import io.getstream.chat.android.client.api2.model.response.QueryMembersResponse
 import io.getstream.chat.android.client.api2.model.response.QueryThreadsResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionResponse
 import io.getstream.chat.android.client.api2.model.response.ReactionsResponse
+import io.getstream.chat.android.client.api2.model.response.ReminderResponse
 import io.getstream.chat.android.client.api2.model.response.SearchMessagesResponse
 import io.getstream.chat.android.client.api2.model.response.SuggestPollOptionResponse
 import io.getstream.chat.android.client.api2.model.response.SyncHistoryResponse
@@ -53,6 +55,7 @@ import io.getstream.chat.android.client.api2.model.response.UsersResponse
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.models.EventType
+import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomDate
@@ -469,6 +472,24 @@ internal object MoshiChatApiTestArguments {
         Arguments.of(RetroError<SuggestPollOptionResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 
+    @JvmStatic
+    fun createReminderInput() = reminderResponseArguments()
+
+    @JvmStatic
+    fun updateReminderInput() = reminderResponseArguments()
+
+    @JvmStatic
+    fun deleteReminderInput() = completableResponseArguments()
+
+    @JvmStatic
+    fun queryRemindersInput() = listOf(
+        Arguments.of(
+            RetroSuccess(Mother.randomQueryRemindersResponse()).toRetrofitCall(),
+            Result.Success::class,
+        ),
+        Arguments.of(RetroError<QueryRemindersResult>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
+
     private fun muteUserResponseArguments() = listOf(
         Arguments.of(
             RetroSuccess(
@@ -607,5 +628,14 @@ internal object MoshiChatApiTestArguments {
             Result.Success::class,
         ),
         Arguments.of(RetroError<PollVoteResponse>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
+    )
+
+    @JvmStatic
+    private fun reminderResponseArguments() = listOf(
+        Arguments.of(
+            RetroSuccess(ReminderResponse(Mother.randomDownstreamReminderDto())).toRetrofitCall(),
+            Result.Success::class,
+        ),
+        Arguments.of(RetroError<DownstreamReminderDto>(statusCode = 500).toRetrofitCall(), Result.Failure::class),
     )
 }
