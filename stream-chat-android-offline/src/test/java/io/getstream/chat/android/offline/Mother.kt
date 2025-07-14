@@ -39,7 +39,6 @@ import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomDateOrNull
-import io.getstream.chat.android.randomFloat
 import io.getstream.chat.android.randomDouble
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomString

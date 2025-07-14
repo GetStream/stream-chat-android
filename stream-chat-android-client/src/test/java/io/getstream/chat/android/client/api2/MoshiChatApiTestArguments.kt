@@ -20,8 +20,8 @@ import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.Mother.randomDownstreamDraftDto
 import io.getstream.chat.android.client.api.FakeResponse
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest

@@ -93,6 +93,7 @@ internal fun MapWebView(
     )
 }
 
+@Suppress("LongParameterList")
 private fun mapHtml(
     latitude: Double,
     longitude: Double,
