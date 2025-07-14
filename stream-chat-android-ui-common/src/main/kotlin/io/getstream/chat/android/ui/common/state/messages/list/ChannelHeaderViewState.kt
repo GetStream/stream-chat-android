@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.ui.common.state.messages.list
 
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.User
@@ -27,7 +26,6 @@ import io.getstream.chat.android.models.User
  * This sealed interface is used to model the different states that the channel header
  * can be in, such as loading or displaying content.
  */
-@ExperimentalStreamChatApi
 public sealed interface ChannelHeaderViewState {
 
     /**

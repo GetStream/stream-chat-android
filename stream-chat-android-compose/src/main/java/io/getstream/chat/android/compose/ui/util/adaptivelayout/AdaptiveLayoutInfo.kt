@@ -20,7 +20,6 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.window.core.layout.WindowHeightSizeClass
 import androidx.window.core.layout.WindowWidthSizeClass
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
 /**
  * Provides information about the current adaptive layout.
@@ -28,7 +27,6 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
  * @see <a href=https://developer.android.com/develop/ui/compose/layouts/adaptive/use-window-size-classes>
  *     Use window size classes</a>
  */
-@ExperimentalStreamChatApi
 public object AdaptiveLayoutInfo {
 
     /**
