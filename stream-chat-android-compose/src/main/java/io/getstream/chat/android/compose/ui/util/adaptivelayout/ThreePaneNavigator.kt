@@ -21,14 +21,12 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
 /**
  * The navigator used to navigate between the different destinations in the three-pane layout.
  *
  * @param destinations The list of destinations to start with. Defaults to a single destination in the list pane.
  */
-@ExperimentalStreamChatApi
 public class ThreePaneNavigator(
     destinations: List<ThreePaneDestination<*>> = listOf(ThreePaneDestination<Unit>(pane = ThreePaneRole.List)),
 ) {
@@ -114,7 +112,6 @@ public class ThreePaneNavigator(
  * @property pane The pane destination of the navigation.
  * @property arguments The optional arguments to pass to the destination.
  */
-@ExperimentalStreamChatApi
 public data class ThreePaneDestination<out T>(
     val pane: ThreePaneRole,
     val arguments: T? = null,
@@ -130,7 +127,6 @@ public data class ThreePaneDestination<out T>(
 /**
  * Represents the role of a pane in the three-pane layout.
  */
-@ExperimentalStreamChatApi
 public enum class ThreePaneRole {
     /**
      * The list pane.
@@ -152,7 +148,6 @@ public enum class ThreePaneRole {
  * Remembers a [ThreePaneNavigator] that can be used to navigate between
  * the different destinations in the three-pane layout.
  */
-@ExperimentalStreamChatApi
 @Composable
 public fun rememberThreePaneNavigator(): ThreePaneNavigator =
     rememberSaveable(saver = ThreePaneNavigator.Saver) { ThreePaneNavigator() }

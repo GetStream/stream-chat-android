@@ -20,12 +20,10 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import androidx.core.content.getSystemService
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
 /**
  * Abstraction over the [ClipboardManager] that allows users to copy text to the clipboard.
  */
-@ExperimentalStreamChatApi
 public interface CopyToClipboardHandler {
     /**
      * Copies the given [text] to the clipboard.
@@ -41,7 +39,6 @@ public interface CopyToClipboardHandler {
     }
 }
 
-@OptIn(ExperimentalStreamChatApi::class)
 internal class CopyToClipboardHandlerImpl(
     private val clipboardManager: ClipboardManager,
 ) : CopyToClipboardHandler {

@@ -75,7 +75,6 @@ import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModel
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
@@ -122,7 +121,6 @@ import java.util.Date
  * [MediaGalleryOptionsMenu].
  */
 @Suppress("LongParameterList")
-@ExperimentalStreamChatApi
 @Composable
 public fun MediaGalleryPreviewScreen(
     viewModel: MediaGalleryPreviewViewModel,
@@ -258,7 +256,6 @@ public fun MediaGalleryPreviewScreen(
  * [MediaGalleryOptionsMenu].
  */
 @Suppress("LongParameterList", "LongMethod")
-@ExperimentalStreamChatApi
 @Composable
 public fun MediaGalleryPreviewScreen(
     message: Message,

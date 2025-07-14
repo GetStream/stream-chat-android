@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalStreamChatApi::class)
-
 package io.getstream.chat.android.ui.common.helper
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.positiveRandomLong
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
@@ -38,7 +35,6 @@ internal class AttachmentFilterTest {
 
     private val chatClient: ChatClient = mock(defaultAnswer = Mockito.RETURNS_DEEP_STUBS)
 
-    @OptIn(ExperimentalStreamChatApi::class)
     @ParameterizedTest
     @MethodSource("attachmentFilterArguments")
     fun `Given file and image upload configs When filtering attachments Should return only valid attachments`(

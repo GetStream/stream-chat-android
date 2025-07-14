@@ -154,7 +154,6 @@ import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.client.utils.stringify
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.models.AppSettings
@@ -3936,7 +3935,6 @@ internal constructor(
      * [Stream Dashboard](https://dashboard.getstream.io/).
      * @param appContext The application [Context].
      */
-    @OptIn(ExperimentalStreamChatApi::class)
     @Suppress("TooManyFunctions")
     public class Builder(private val apiKey: String, private val appContext: Context) : ChatClientBuilder() {
 
@@ -4079,7 +4077,6 @@ internal constructor(
          *
          * @param sendMessageInterceptor Your custom implementation of [SendMessageInterceptor].
          */
-        @ExperimentalStreamChatApi
         public fun sendMessageInterceptor(sendMessageInterceptor: SendMessageInterceptor): Builder {
             this.sendMessageInterceptor = sendMessageInterceptor
             return this
