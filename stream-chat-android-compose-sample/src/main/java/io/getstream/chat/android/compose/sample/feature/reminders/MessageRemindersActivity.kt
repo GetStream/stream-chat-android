@@ -17,10 +17,10 @@
 package io.getstream.chat.android.compose.sample.feature.reminders
 
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.ui.Modifier
-import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
 import io.getstream.chat.android.compose.sample.ui.MessagesActivity
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Message
@@ -28,7 +28,7 @@ import io.getstream.chat.android.models.Message
 /**
  * Activity displaying the list of message reminders.
  */
-class MessageRemindersActivity : BaseConnectedActivity() {
+class MessageRemindersActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

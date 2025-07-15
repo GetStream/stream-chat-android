@@ -20,6 +20,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -99,7 +100,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageOp
 import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageReactionsPickerState
 import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageReactionsState
 
-class MessagesActivity : BaseConnectedActivity() {
+class MessagesActivity : ComponentActivity() {
 
     private val factory by lazy {
         MessagesViewModelFactory(
