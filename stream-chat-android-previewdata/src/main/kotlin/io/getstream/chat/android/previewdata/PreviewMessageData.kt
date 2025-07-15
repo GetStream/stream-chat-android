@@ -131,6 +131,7 @@ public object PreviewMessageData {
                 thumbUrl = "https://example.com/thumb1.jpg",
             ),
         ),
+        createdAt = Date(),
     )
 
     public val draftMessage: DraftMessage = DraftMessage(

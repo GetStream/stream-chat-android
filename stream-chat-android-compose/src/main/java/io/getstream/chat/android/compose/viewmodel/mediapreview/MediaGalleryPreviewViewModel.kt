@@ -23,12 +23,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.compose.util.extensions.asState
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.result.Result
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 /**
@@ -64,10 +67,26 @@ public class MediaGalleryPreviewViewModel(
     internal var hasCompleteMessage: Boolean = false
 
     /**
+     * Represents the initial, partial [Message] object as passed to the Gallery Screen.
+     */
+    private val initialMessage: MutableStateFlow<Message?> = MutableStateFlow(null)
+
+    /**
+     * Represents the fresh [Message] object loaded from the server.
+     */
+    private val freshMessage: MutableStateFlow<Message?> = MutableStateFlow(null)
+
+    /**
      * Represents the message that we observe to show the UI data.
      */
-    public var message: Message by mutableStateOf(Message())
-        internal set
+    public val message: Message by combine(initialMessage, freshMessage) { initial, fresh ->
+        if (initial != null && fresh != null) {
+            // Use initial attachments if available (they could be modified locally before fetching the full message)
+            fresh.copy(attachments = initial.attachments)
+        } else {
+            initial ?: fresh ?: Message()
+        }
+    }.asState(viewModelScope, Message())
 
     /**
      * If we are preparing a file for sharing or not.
@@ -117,7 +136,7 @@ public class MediaGalleryPreviewViewModel(
         val result = chatClient.getMessage(messageId).await()
 
         if (result is Result.Success) {
-            this.message = result.value
+            this.freshMessage.value = result.value
             hasCompleteMessage = true
         }
     }
@@ -133,6 +152,7 @@ public class MediaGalleryPreviewViewModel(
                     onConnected()
                     this.connectionState = connectionState
                 }
+
                 is ConnectionState.Connecting -> this.connectionState = connectionState
                 is ConnectionState.Offline -> this.connectionState = connectionState
             }
@@ -140,7 +160,7 @@ public class MediaGalleryPreviewViewModel(
     }
 
     private suspend fun onConnected() {
-        if (message.id.isEmpty() || !hasCompleteMessage) {
+        if (!hasCompleteMessage) {
             fetchMessage()
         }
     }
@@ -178,21 +198,101 @@ public class MediaGalleryPreviewViewModel(
         skipEnrichUrl: Boolean = this.skipEnrichUrl,
     ) {
         val attachments = message.attachments
-        val numberOfAttachments = attachments.size
+        if (message.text.isNotEmpty() || attachments.size > 1) {
+            deleteAttachmentFromMessage(currentMediaAttachment, skipEnrichUrl)
+        } else if (message.text.isEmpty() && attachments.size == 1) {
+            deleteMessage()
+        }
+    }
 
-        if (message.text.isNotEmpty() || numberOfAttachments > 1) {
-            message = message.copy(
-                attachments = attachments.filterNot {
-                    it.assetUrl == currentMediaAttachment.assetUrl
+    /**
+     * Sets the initial message that will be used to display the media gallery preview.
+     */
+    internal fun setInitialMessage(message: Message) {
+        initialMessage.value = message
+    }
+
+    private fun deleteAttachmentFromMessage(attachment: Attachment, skipEnrichUrl: Boolean) {
+        val initialMessage = initialMessage.value
+        val freshMessage = freshMessage.value
+
+        if (initialMessage != null && freshMessage != null) {
+            // Update the initial message attachments
+            val displayedAttachments = initialMessage.attachments
+            val attachmentPosition = displayedAttachments.indexOfFirst { it.assetUrl == attachment.assetUrl }
+            removeAttachmentAndUpdate(
+                attachmentPosition = attachmentPosition,
+                message = initialMessage,
+                skipEnrichUrl = skipEnrichUrl,
+                updateServer = false,
+                update = { newMessage ->
+                    this.initialMessage.value = newMessage
                 },
+            )
+            // Update the fresh message attachments (use only the freshMessage to update the server, if we use fields
+            // from the initial message, we might override the server message)
+            removeAttachmentAndUpdate(
+                attachmentPosition = attachmentPosition,
+                message = freshMessage,
+                skipEnrichUrl = skipEnrichUrl,
+                updateServer = true,
+                update = { newMessage ->
+                    this.freshMessage.value = newMessage
+                },
+            )
+        } else if (initialMessage != null) {
+            // Update the initial message attachments
+            val attachmentPosition = initialMessage.attachments.indexOfFirst { it.assetUrl == attachment.assetUrl }
+            removeAttachmentAndUpdate(
+                attachmentPosition = attachmentPosition,
+                message = initialMessage,
+                skipEnrichUrl = skipEnrichUrl,
+                updateServer = false,
+                update = { newMessage ->
+                    this.initialMessage.value = newMessage
+                },
+            )
+        } else if (freshMessage != null) {
+            // Update the fresh message attachments
+            val attachmentPosition = freshMessage.attachments.indexOfFirst { it.assetUrl == attachment.assetUrl }
+            removeAttachmentAndUpdate(
+                attachmentPosition = attachmentPosition,
+                message = freshMessage,
+                skipEnrichUrl = skipEnrichUrl,
+                updateServer = true,
+                update = { newMessage ->
+                    this.freshMessage.value = newMessage
+                },
+            )
+        }
+    }
+
+    private fun removeAttachmentAndUpdate(
+        attachmentPosition: Int,
+        message: Message,
+        skipEnrichUrl: Boolean,
+        updateServer: Boolean,
+        update: (newMessage: Message) -> Unit,
+    ) {
+        if (attachmentPosition in message.attachments.indices) {
+            val updatedAttachments = message.attachments.toMutableList().apply {
+                removeAt(attachmentPosition)
+            }
+            val newMessage = message.copy(
+                attachments = updatedAttachments,
                 skipEnrichUrl = skipEnrichUrl,
             )
-            chatClient.updateMessage(message = message).enqueue()
-        } else if (message.text.isEmpty() && numberOfAttachments == 1) {
-            chatClient.deleteMessage(message.id).enqueue { result ->
-                if (result is Result.Success) {
-                    message = result.value
-                }
+            if (updateServer) {
+                chatClient.updateMessage(newMessage).enqueue()
+            }
+            update(newMessage)
+        }
+    }
+
+    private fun deleteMessage() {
+        chatClient.deleteMessage(message.id).enqueue { result ->
+            if (result is Result.Success) {
+                freshMessage.value = result.value
             }
         }
     }
