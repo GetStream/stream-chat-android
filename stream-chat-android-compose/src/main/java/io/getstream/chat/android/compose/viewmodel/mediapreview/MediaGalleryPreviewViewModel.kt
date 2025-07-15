@@ -220,55 +220,72 @@ public class MediaGalleryPreviewViewModel(
             // Update the initial message attachments
             val displayedAttachments = initialMessage.attachments
             val attachmentPosition = displayedAttachments.indexOfFirst { it.assetUrl == attachment.assetUrl }
-            if (attachmentPosition != -1) {
-                this.initialMessage.value = initialMessage.copy(
-                    attachments = displayedAttachments.toMutableList().apply {
-                        removeAt(attachmentPosition)
-                    },
-                    skipEnrichUrl = skipEnrichUrl,
-                )
-            }
+            removeAttachmentAndUpdate(
+                attachmentPosition = attachmentPosition,
+                message = initialMessage,
+                skipEnrichUrl = skipEnrichUrl,
+                updateServer = false,
+                update = { newMessage ->
+                    this.initialMessage.value = newMessage
+                },
+            )
             // Update the fresh message attachments (use only the freshMessage to update the server, if we use fields
             // from the initial message, we might override the server message)
-            val freshAttachments = freshMessage.attachments
-            if (attachmentPosition != -1) {
-                this.freshMessage.value = freshMessage.copy(
-                    attachments = freshAttachments.toMutableList().apply {
-                        removeAt(attachmentPosition)
-                    },
-                    skipEnrichUrl = skipEnrichUrl,
-                ).also {
-                    // Update the message on the server
-                    chatClient.updateMessage(message = it).enqueue()
-                }
-            }
+            removeAttachmentAndUpdate(
+                attachmentPosition = attachmentPosition,
+                message = freshMessage,
+                skipEnrichUrl = skipEnrichUrl,
+                updateServer = true,
+                update = { newMessage ->
+                    this.freshMessage.value = newMessage
+                },
+            )
         } else if (initialMessage != null) {
             // Update the initial message attachments
-            val displayedAttachments = initialMessage.attachments
-            val attachmentPosition = displayedAttachments.indexOfFirst { it.assetUrl == attachment.assetUrl }
-            if (attachmentPosition != -1) {
-                this.initialMessage.value = initialMessage.copy(
-                    attachments = displayedAttachments.toMutableList().apply {
-                        removeAt(attachmentPosition)
-                    },
-                    skipEnrichUrl = skipEnrichUrl,
-                )
-            }
+            val attachmentPosition = initialMessage.attachments.indexOfFirst { it.assetUrl == attachment.assetUrl }
+            removeAttachmentAndUpdate(
+                attachmentPosition = attachmentPosition,
+                message = initialMessage,
+                skipEnrichUrl = skipEnrichUrl,
+                updateServer = false,
+                update = { newMessage ->
+                    this.initialMessage.value = newMessage
+                },
+            )
         } else if (freshMessage != null) {
             // Update the fresh message attachments
-            val freshAttachments = freshMessage.attachments
-            val attachmentPosition = freshAttachments.indexOfFirst { it.assetUrl == attachment.assetUrl }
-            if (attachmentPosition != -1) {
-                this.freshMessage.value = freshMessage.copy(
-                    attachments = freshAttachments.toMutableList().apply {
-                        removeAt(attachmentPosition)
-                    },
-                    skipEnrichUrl = skipEnrichUrl,
-                ).also {
-                    // Update the message on the server
-                    chatClient.updateMessage(message = it).enqueue()
-                }
+            val attachmentPosition = freshMessage.attachments.indexOfFirst { it.assetUrl == attachment.assetUrl }
+            removeAttachmentAndUpdate(
+                attachmentPosition = attachmentPosition,
+                message = freshMessage,
+                skipEnrichUrl = skipEnrichUrl,
+                updateServer = true,
+                update = { newMessage ->
+                    this.freshMessage.value = newMessage
+                },
+            )
+        }
+    }
+
+    private fun removeAttachmentAndUpdate(
+        attachmentPosition: Int,
+        message: Message,
+        skipEnrichUrl: Boolean,
+        updateServer: Boolean,
+        update: (newMessage: Message) -> Unit,
+    ) {
+        if (attachmentPosition in message.attachments.indices) {
+            val updatedAttachments = message.attachments.toMutableList().apply {
+                removeAt(attachmentPosition)
             }
+            val newMessage = message.copy(
+                attachments = updatedAttachments,
+                skipEnrichUrl = skipEnrichUrl,
+            )
+            if (updateServer) {
+                chatClient.updateMessage(newMessage).enqueue()
+            }
+            update(newMessage)
         }
     }
 
