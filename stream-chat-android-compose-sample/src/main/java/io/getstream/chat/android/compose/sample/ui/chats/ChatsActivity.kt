@@ -20,6 +20,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.animateDpAsState
@@ -52,7 +53,6 @@ import io.getstream.chat.android.compose.sample.feature.channel.ChannelConstants
 import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelActivity
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
 import io.getstream.chat.android.compose.sample.feature.channel.list.CustomChatEventHandlerFactory
-import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
 import io.getstream.chat.android.compose.sample.ui.channel.AddMembersDialog
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBar
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBarOption
@@ -85,7 +85,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.querysort.QuerySortByField
-import io.getstream.chat.android.state.extensions.globalState
+import io.getstream.chat.android.state.extensions.globalStateFlow
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
@@ -93,9 +93,10 @@ import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVis
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
-class ChatsActivity : BaseConnectedActivity() {
+class ChatsActivity : ComponentActivity() {
 
     companion object {
         private const val KEY_CHANNEL_ID = "channelId"
@@ -227,9 +228,11 @@ class ChatsActivity : BaseConnectedActivity() {
         listContentMode: ChatListContentMode,
         onOptionSelected: (option: AppBottomBarOption) -> Unit,
     ) {
-        val globalState = ChatClient.instance().globalState
-        val unreadChannelsCount by globalState.channelUnreadCount.collectAsStateWithLifecycle()
-        val unreadThreadsCount by globalState.unreadThreadsCount.collectAsStateWithLifecycle()
+        val globalStateFlow = ChatClient.instance().globalStateFlow
+        val unreadChannelsCount by globalStateFlow.flatMapLatest { it.channelUnreadCount }
+            .collectAsStateWithLifecycle(0)
+        val unreadThreadsCount by globalStateFlow.flatMapLatest { it.unreadThreadsCount }
+            .collectAsStateWithLifecycle(0)
         val selectedOption = when (listContentMode) {
             ChatListContentMode.Channels -> AppBottomBarOption.CHATS
             ChatListContentMode.Mentions -> AppBottomBarOption.MENTIONS

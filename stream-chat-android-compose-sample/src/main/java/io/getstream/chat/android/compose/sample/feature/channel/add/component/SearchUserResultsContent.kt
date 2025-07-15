@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -104,9 +103,9 @@ fun SearchUserResultsContent(
 private fun SearchUserLoadingContent(padding: PaddingValues) {
     Box(
         modifier = Modifier
+            .padding(padding)
             .fillMaxSize()
-            .background(ChatTheme.colors.appBackground)
-            .padding(padding),
+            .background(ChatTheme.colors.appBackground),
         contentAlignment = Alignment.Center,
     ) {
         CircularProgressIndicator(strokeWidth = 2.dp, color = ChatTheme.colors.primaryAccent)
@@ -122,9 +121,9 @@ private fun SearchUserLoadingContent(padding: PaddingValues) {
 private fun SearchUserEmptyContent(padding: PaddingValues) {
     Column(
         modifier = Modifier
+            .padding(padding)
             .fillMaxSize()
-            .background(ChatTheme.colors.appBackground)
-            .padding(padding),
+            .background(ChatTheme.colors.appBackground),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -163,10 +162,9 @@ private fun SearchUserResultList(
     val listState = rememberLazyListState()
     LazyColumn(
         modifier = Modifier
+            .padding(padding)
             .fillMaxSize()
-            .background(ChatTheme.colors.appBackground)
-            .consumeWindowInsets(padding),
-        contentPadding = padding,
+            .background(ChatTheme.colors.appBackground),
         state = listState,
     ) {
         users.forEach { (group, users) ->

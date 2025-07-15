@@ -20,13 +20,13 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.sample.R
-import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
 import io.getstream.chat.android.compose.sample.ui.pinned.PinnedMessagesActivity
 import io.getstream.chat.android.compose.ui.channel.info.DirectChannelInfoScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -38,7 +38,7 @@ import kotlinx.coroutines.flow.collectLatest
 /**
  * Activity showing information about a 1-to-1 direct channel (chat).
  */
-class DirectChannelInfoActivity : BaseConnectedActivity() {
+class DirectChannelInfoActivity : ComponentActivity() {
 
     companion object {
         private const val KEY_CHANNEL_ID = "channelId"

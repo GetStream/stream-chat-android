@@ -19,13 +19,13 @@ package io.getstream.chat.android.compose.sample.feature.channel.add
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.feature.channel.add.group.AddGroupChannelActivity
-import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
 import io.getstream.chat.android.compose.sample.ui.MessagesActivity
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import kotlinx.coroutines.flow.collectLatest
@@ -33,7 +33,7 @@ import kotlinx.coroutines.flow.collectLatest
 /**
  * Activity hosting the "Add channel" flow.
  */
-class AddChannelActivity : BaseConnectedActivity() {
+class AddChannelActivity : ComponentActivity() {
 
     private val viewModel by viewModels<AddChannelViewModel>()
 
