@@ -64,7 +64,7 @@ class SharedLocationService(private val context: Context) : LocationCallback() {
     @Volatile
     private var isReceivingUpdates = false
 
-    var currentDeviceId: String = UnknownDevice
+    var currentDeviceId: String = UnknownDeviceId
         private set
 
     fun start() {
@@ -159,12 +159,12 @@ class SharedLocationService(private val context: Context) : LocationCallback() {
                 chatClient.getCurrentUser()?.devices?.find { device ->
                     device.token == token
                 }?.token
-            } ?: UnknownDevice
-    }.getOrElse { UnknownDevice }
+            } ?: UnknownDeviceId
+    }.getOrElse { UnknownDeviceId }
 }
 
 private const val LocationUpdatesIntervalMillis = 5000L
-private const val UnknownDevice = "unknown_device"
+private const val UnknownDeviceId = "unknown"
 
 private fun Location.isExpired(): Boolean =
     endAt?.before(Date()) ?: false
