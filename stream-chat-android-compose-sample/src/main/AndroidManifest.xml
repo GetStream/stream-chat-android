@@ -94,5 +94,6 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
             />
+        <activity android:name=".feature.reminders.MessageRemindersActivity" />
     </application>
 </manifest>

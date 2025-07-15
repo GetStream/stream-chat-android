@@ -22,7 +22,6 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
@@ -32,7 +31,6 @@ import java.util.Date
 import java.util.Locale
 
 @InternalStreamChatApi
-@OptIn(ExperimentalStreamChatApi::class)
 @Suppress("TooManyFunctions")
 public class StorageHelper {
     private val dateFormat = SimpleDateFormat(TIME_FORMAT, Locale.US)

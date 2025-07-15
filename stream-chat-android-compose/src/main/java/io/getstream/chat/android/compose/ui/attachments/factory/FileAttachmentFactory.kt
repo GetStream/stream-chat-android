@@ -31,7 +31,9 @@ import io.getstream.chat.android.uiutils.extension.isAnyFileType
  * An [AttachmentFactory] that validates attachments as files and uses [FileAttachmentContent] to
  * build the UI for the message.
  *
+ * @param showFileSize Lambda that determines whether to show the file size in the attachment content.
  * @param onContentItemClick Lambda called when an item gets clicked.
+ * @param canHandle Lambda that checks if the factory can handle the given attachments.
  */
 public class FileAttachmentFactory(
     showFileSize: (Attachment) -> Boolean = { true },
@@ -39,11 +41,12 @@ public class FileAttachmentFactory(
         previewHandlers: List<AttachmentPreviewHandler>,
         attachment: Attachment,
     ) -> Unit = ::onFileAttachmentContentItemClick,
+    canHandle: (attachments: List<Attachment>) -> Boolean = { attachments ->
+        attachments.any(Attachment::isAnyFileType)
+    },
 ) : AttachmentFactory(
     type = Type.BuiltIn.FILE,
-    canHandle = { attachments ->
-        attachments.any { it.isAnyFileType() }
-    },
+    canHandle = canHandle,
     previewContent = @Composable { modifier, attachments, onAttachmentRemoved ->
         ChatTheme.componentFactory.FileAttachmentPreviewContent(
             modifier = modifier,

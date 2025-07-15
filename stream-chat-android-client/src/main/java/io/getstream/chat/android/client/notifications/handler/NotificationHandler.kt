@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.notifications.handler
 import io.getstream.android.push.permissions.NotificationPermissionStatus
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.NewMessageEvent
+import io.getstream.chat.android.client.events.NotificationReminderDueEvent
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PushMessage
@@ -43,6 +44,18 @@ public interface NotificationHandler {
     }
 
     /**
+     * Handles showing notification after receiving [NotificationReminderDueEvent].
+     * Default implementation of the method ignores the event, because the same reminder due is also delivered via a
+     * push notification.
+     *
+     * @param event The [NotificationReminderDueEvent] to handle.
+     * @return True if the event was handled in the method, false if it should be handled internally.
+     */
+    public fun onNotificationReminderDueEvent(event: NotificationReminderDueEvent): Boolean {
+        return true
+    }
+
+    /**
      * Handles showing notification after receiving [PushMessage].
      * Default implementation loads necessary data from the server and shows notification if application is not in
      * foreground.
@@ -54,11 +67,26 @@ public interface NotificationHandler {
     }
 
     /**
+     * Show a notification for the given [ChatNotification].
+     *
+     * @param notification The notification to be shown.
+     */
+    public fun showNotification(notification: ChatNotification) {
+        when (notification) {
+            is ChatNotification.MessageNew ->
+                showNotification(notification.channel, notification.message)
+            is ChatNotification.NotificationReminderDue ->
+                showNotification(notification.channel, notification.message)
+        }
+    }
+
+    /**
      * Show a notification for the given [channel] and [message]
      *
      * @param channel where the new message was posted
      * @param message was received
      */
+    @Deprecated("Use showNotification(notification: ChatNotification) instead.")
     public fun showNotification(channel: Channel, message: Message)
 
     /**

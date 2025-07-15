@@ -25,6 +25,7 @@ import io.getstream.chat.android.compose.ui.attachments.content.AudioRecordAttac
 import io.getstream.chat.android.compose.ui.attachments.content.AudioRecordAttachmentPreviewContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
+import io.getstream.chat.android.models.Attachment
 import io.getstream.log.StreamLog
 
 /**
@@ -33,11 +34,12 @@ import io.getstream.log.StreamLog
 public class AudioRecordAttachmentFactory(
     private val viewModelFactory: AudioPlayerViewModelFactory,
     private val getCurrentUserId: () -> String?,
+    canHandle: (attachments: List<Attachment>) -> Boolean = { attachments ->
+        attachments.all(Attachment::isAudioRecording)
+    },
 ) : AttachmentFactory(
     type = Type.BuiltIn.AUDIO_RECORD,
-    canHandle = { attachments ->
-        attachments.all { it.isAudioRecording() }
-    },
+    canHandle = canHandle,
     previewContent = @Composable { modifier, attachments, onAttachmentRemoved ->
         AudioRecordAttachmentPreviewContent(
             modifier = modifier,

@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalStreamChatApi::class)
-
 package io.getstream.chat.ui.sample.feature.chat.info.group.member
 
 import android.os.Bundle
@@ -28,7 +26,6 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewEvent

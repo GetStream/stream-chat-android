@@ -12,14 +12,25 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Include pending messages in the `Channel.messages` field so they are always visible in the message list. [#5862](https://github.com/GetStream/stream-chat-android/pull/5862)
 
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `ChannelClient.queryReminders()` for querying message reminders. [#5779](https://github.com/GetStream/stream-chat-android/pull/5779)
+- Add `ChannelClient.createReminder()` for creating a message reminder. [#5779](https://github.com/GetStream/stream-chat-android/pull/5779)
+- Add `ChannelClient.updateReminder()` for updating an existing message reminder. [#5779](https://github.com/GetStream/stream-chat-android/pull/5779)
+- Add `ChannelClient.deleteReminder()` for deleting an existing message reminder. [#5779](https://github.com/GetStream/stream-chat-android/pull/5779)
+- Add `ReminderCreatedEvent`, `ReminderUpdatdeEvent`, `ReminderDeletedEvent` and `NotificationReminderDueEvent` events notifying the user about changes in the message reminders. [#5779](https://github.com/GetStream/stream-chat-android/pull/5779)
+- Add `reminder` field to the `Message` entity, which contains the reminder information. [#5779](https://github.com/GetStream/stream-chat-android/pull/5779)
+- Add default handling for `notification.reminder_due` push notification. [#5833](https://github.com/GetStream/stream-chat-android/pull/5833)
+- Add `NotificationHandler.showNotification(ChatNotification)` message method for showing a notification of a specific type. [#5833](https://github.com/GetStream/stream-chat-android/pull/5833)
 
 ### ⚠️ Changed
+- Deprecate `NotificationHandler.showNotification(Channel, Message)` in favor of `NotificationHandler.showNotification(ChatNotification)`. [#5833](https://github.com/GetStream/stream-chat-android/pull/5833)
 
 ### ❌ Removed
+- Remove `@ExperimentalStreamChatApi` annotation usage. [#5866](https://github.com/GetStream/stream-chat-android/pull/5866)
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
@@ -36,6 +47,7 @@
 ### 🐞 Fixed
 - Unread message count should not be reset on entering a thread. [#5836](https://github.com/GetStream/stream-chat-android/pull/5836)
 - Fix `GlobalState.totalUnreadCount` and `GlobalState.channelUnreadCount` not updated when receiving a new message, when the `OfflinePlugin` is not applied. [#5858](https://github.com/GetStream/stream-chat-android/pull/5858)
+- Ensure `Channel.membership` is updated when the current user joins a channel. [#5857](https://github.com/GetStream/stream-chat-android/pull/5857)
 
 ### ⬆️ Improved
 
@@ -56,6 +68,7 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Remove `@ExperimentalStreamChatApi` annotation usage. [#5866](https://github.com/GetStream/stream-chat-android/pull/5866)
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
@@ -67,6 +80,7 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Remove `@ExperimentalStreamChatApi` annotation usage. [#5866](https://github.com/GetStream/stream-chat-android/pull/5866)
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -76,10 +90,12 @@
 - Add bottom padding to unread message separator. [#5855](https://github.com/GetStream/stream-chat-android/pull/5855)
 
 ### ✅ Added
+- Expose `canHandle` lambda of the attachment factories: `AudioRecordAttachmentFactory`, `FileAttachmentFactory`, `GiphyAttachmentFactory`, `LinkAttachmentFactory`, `MediaAttachmentFactory`, `UploadAttachmentFactory`. [#5865](https://github.com/GetStream/stream-chat-android/pull/5865) 
 
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Remove `@ExperimentalStreamChatApi` annotation usage. [#5866](https://github.com/GetStream/stream-chat-android/pull/5866)
 
 ## stream-chat-android-markdown-transformer
 ### 🐞 Fixed

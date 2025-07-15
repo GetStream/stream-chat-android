@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifySuccess
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
@@ -36,7 +35,6 @@ import org.mockito.kotlin.spy
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-@OptIn(ExperimentalStreamChatApi::class)
 internal class ProxyChatApiTest {
 
     @Test

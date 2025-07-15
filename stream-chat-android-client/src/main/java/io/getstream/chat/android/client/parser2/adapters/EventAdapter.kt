@@ -62,6 +62,7 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationMarkReadEvent
 import io.getstream.chat.android.client.api2.model.dto.NotificationMarkUnreadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMutesUpdatedEventDto
+import io.getstream.chat.android.client.api2.model.dto.NotificationReminderDueEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationThreadMessageNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.PollClosedEventDto
@@ -70,6 +71,9 @@ import io.getstream.chat.android.client.api2.model.dto.PollUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
+import io.getstream.chat.android.client.api2.model.dto.ReminderCreatedEventDto
+import io.getstream.chat.android.client.api2.model.dto.ReminderDeletedEventDto
+import io.getstream.chat.android.client.api2.model.dto.ReminderUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.TypingStartEventDto
 import io.getstream.chat.android.client.api2.model.dto.TypingStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
@@ -158,6 +162,10 @@ internal class EventDtoAdapter(
     private val voteChangedEventAdapter = moshi.adapter(VoteChangedEventDto::class.java)
     private val answerCastedEventAdapter = moshi.adapter(AnswerCastedEventDto::class.java)
     private val voteRemovedEventAdapter = moshi.adapter(VoteRemovedEventDto::class.java)
+    private val reminderCreatedEventAdapter = moshi.adapter(ReminderCreatedEventDto::class.java)
+    private val reminderUpdatedEventAdapter = moshi.adapter(ReminderUpdatedEventDto::class.java)
+    private val reminderDeletedEventAdapter = moshi.adapter(ReminderDeletedEventDto::class.java)
+    private val notificationReminderDueEventAdapter = moshi.adapter(NotificationReminderDueEventDto::class.java)
     private val aiTypingIndicatorUpdatedEventAdapter = moshi.adapter(AIIndicatorUpdatedEventDto::class.java)
     private val aiTypingIndicatorClearEventAdapter = moshi.adapter(AIIndicatorClearEventDto::class.java)
     private val aiTypingIndicatorStopEventAdapter = moshi.adapter(AIIndicatorStopEventDto::class.java)
@@ -243,6 +251,10 @@ internal class EventDtoAdapter(
                 else -> voteChangedEventAdapter
             }
             EventType.POLL_VOTE_REMOVED -> voteRemovedEventAdapter
+            EventType.REMINDER_CREATED -> reminderCreatedEventAdapter
+            EventType.REMINDER_UPDATED -> reminderUpdatedEventAdapter
+            EventType.REMINDER_DELETED -> reminderDeletedEventAdapter
+            EventType.NOTIFICATION_REMINDER_DUE -> notificationReminderDueEventAdapter
             EventType.AI_TYPING_INDICATOR_UPDATED -> aiTypingIndicatorUpdatedEventAdapter
             EventType.AI_TYPING_INDICATOR_CLEAR -> aiTypingIndicatorClearEventAdapter
             EventType.AI_TYPING_INDICATOR_STOP -> aiTypingIndicatorStopEventAdapter

@@ -18,14 +18,12 @@ package io.getstream.chat.android.compose.viewmodel.channel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
 /**
  * Factory for creating instances of [ChannelHeaderViewModel].
  *
  * @param cid The full channel identifier (e.g., "messaging:123").
  */
-@ExperimentalStreamChatApi
 public class ChannelHeaderViewModelFactory(
     private val cid: String,
 ) : ViewModelProvider.Factory {

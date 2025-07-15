@@ -28,7 +28,6 @@ import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updateMarginsRelative
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SyncStatus
@@ -58,7 +57,6 @@ import io.getstream.chat.android.ui.widgets.FullScreenDialogFragment
 /**
  * An overlay with available message options to the selected message. Also, allows leaving a reaction.
  */
-@ExperimentalStreamChatApi
 public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
     private var _binding: StreamUiDialogMessageOptionsBinding? = null

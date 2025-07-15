@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalStreamChatApi::class)
-
 package io.getstream.chat.android.ui.common.feature.channel.info
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.channel.state.ChannelState
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities

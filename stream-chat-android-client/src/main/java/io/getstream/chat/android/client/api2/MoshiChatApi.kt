@@ -34,6 +34,7 @@ import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
 import io.getstream.chat.android.client.api2.endpoint.OpenGraphApi
 import io.getstream.chat.android.client.api2.endpoint.PollsApi
+import io.getstream.chat.android.client.api2.endpoint.RemindersApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.endpoint.VideoCallApi
@@ -41,6 +42,7 @@ import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.mapping.toDomain
+import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
@@ -67,8 +69,10 @@ import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryDraftsRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryRemindersRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
+import io.getstream.chat.android.client.api2.model.requests.ReminderRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
@@ -115,11 +119,13 @@ import io.getstream.chat.android.models.GuestUser
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.QueryDraftsResult
+import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
@@ -167,6 +173,7 @@ constructor(
     private val ogApi: OpenGraphApi,
     private val threadsApi: ThreadsApi,
     private val pollsApi: PollsApi,
+    private val remindersApi: RemindersApi,
     private val coroutineScope: CoroutineScope,
     private val userScope: UserScope,
 ) : ChatApi {
@@ -935,6 +942,12 @@ constructor(
     private fun flattenChannel(response: ChannelResponse): Channel = with(domainMapping) {
         return response.channel.toDomain().let { channel ->
             val channelInfo = response.channel.toChannelInfo()
+            // Pending messages are treated as regular messages from the current user, so we can merge them with the
+            // regular messages.
+            val channelMessages =
+                (response.messages + response.pending_messages.map(DownstreamPendingMessageDto::message)).map {
+                    it.toDomain(channelInfo).enrichWithCid(channel.cid)
+                }
             channel.copy(
                 watcherCount = response.watcher_count,
                 read = response.read.map {
@@ -944,9 +957,7 @@ constructor(
                 },
                 members = response.members.map { it.toDomain() },
                 membership = response.membership?.toDomain(),
-                messages = response.messages.map {
-                    it.toDomain(channelInfo).enrichWithCid(channel.cid)
-                },
+                messages = channelMessages,
                 pinnedMessages = response.pinned_messages.map {
                     it.toDomain(channelInfo).enrichWithCid(channel.cid)
                 },
@@ -1470,6 +1481,39 @@ constructor(
 
     override fun deletePoll(pollId: String): Call<Unit> {
         return pollsApi.deletePoll(pollId).toUnitCall()
+    }
+
+    override fun createReminder(messageId: String, remindAt: Date?): Call<MessageReminder> {
+        return remindersApi.createReminder(
+            messageId = messageId,
+            body = ReminderRequest(remind_at = remindAt),
+        ).mapDomain { it.reminder.toDomain() }
+    }
+
+    override fun updateReminder(messageId: String, remindAt: Date?): Call<MessageReminder> {
+        return remindersApi.updateReminder(
+            messageId = messageId,
+            body = ReminderRequest(remind_at = remindAt),
+        ).mapDomain { it.reminder.toDomain() }
+    }
+
+    override fun deleteReminder(messageId: String): Call<Unit> {
+        return remindersApi.deleteReminder(messageId).toUnitCall()
+    }
+
+    override fun queryReminders(
+        filter: FilterObject,
+        limit: Int,
+        next: String?,
+        sort: QuerySorter<MessageReminder>,
+    ): Call<QueryRemindersResult> {
+        val body = QueryRemindersRequest(
+            filter = filter.toMap(),
+            limit = limit,
+            next = next,
+            sort = sort.toDto(),
+        )
+        return remindersApi.queryReminders(body = body).mapDomain { it.toDomain() }
     }
 
     override fun warmUp() {

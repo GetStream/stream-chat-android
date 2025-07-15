@@ -178,7 +178,6 @@ import io.getstream.chat.android.compose.ui.threads.ThreadItemUnreadCountContent
 import io.getstream.chat.android.compose.ui.threads.UnreadThreadsBanner
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
 import io.getstream.chat.android.compose.ui.util.clickable
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Command
@@ -2999,7 +2998,6 @@ public interface ChatComponentFactory {
      * @param listState The state of the lazy list.
      * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
      */
-    @ExperimentalStreamChatApi
     @Composable
     public fun DirectChannelInfoTopBar(
         headerState: ChannelHeaderViewState,
@@ -3016,7 +3014,6 @@ public interface ChatComponentFactory {
      *
      * @param user The user whose avatar is displayed.
      */
-    @ExperimentalStreamChatApi
     @Composable
     public fun DirectChannelInfoAvatarContainer(user: User) {
         io.getstream.chat.android.compose.ui.channel.info.DirectChannelInfoAvatarContainer(
@@ -3033,7 +3030,6 @@ public interface ChatComponentFactory {
      * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
      * @param onAddMembersClick Callback invoked when the "Add members" button is clicked.
      */
-    @ExperimentalStreamChatApi
     @Composable
     public fun GroupChannelInfoTopBar(
         headerState: ChannelHeaderViewState,
@@ -3056,7 +3052,6 @@ public interface ChatComponentFactory {
      *
      * @param onClick Callback invoked when button is clicked.
      */
-    @ExperimentalStreamChatApi
     @Composable
     public fun GroupChannelInfoAddMembersButton(
         onClick: () -> Unit,
@@ -3073,7 +3068,6 @@ public interface ChatComponentFactory {
      * Factory method for creating the channel info separator item.
      * This is used to visually separate different sections in the channel info screens.
      */
-    @ExperimentalStreamChatApi
     @Composable
     public fun LazyItemScope.ChannelInfoSeparatorItem() {
         StreamHorizontalDivider(thickness = 8.dp)
@@ -3086,7 +3080,6 @@ public interface ChatComponentFactory {
      * @param isGroupChannel Whether the channel is a group channel.
      * @param onViewAction Callback invoked when a view action is triggered.
      */
-    @ExperimentalStreamChatApi
     @Composable
     public fun LazyItemScope.ChannelInfoOptionItem(
         option: ChannelInfoViewState.Content.Option,
@@ -3108,7 +3101,6 @@ public interface ChatComponentFactory {
      * @param isOwner Whether the member is the owner of the channel.
      * @param onClick Callback invoked when the user clicks on the member item.
      */
-    @ExperimentalStreamChatApi
     @Composable
     public fun LazyItemScope.GroupChannelInfoMemberItem(
         currentUser: User?,
@@ -3131,7 +3123,6 @@ public interface ChatComponentFactory {
      * @param collapsedCount The number of members that are currently collapsed.
      * @param onClick Callback invoked when the user clicks to expand the member list.
      */
-    @ExperimentalStreamChatApi
     @Composable
     public fun LazyItemScope.GroupChannelInfoExpandMembersItem(
         collapsedCount: Int,
@@ -3153,7 +3144,6 @@ public interface ChatComponentFactory {
      * @param onMemberViewEvent Callback invoked when a member view event is triggered.
      * Only applicable for [ChannelInfoViewEvent.MemberInfoModal].
      */
-    @ExperimentalStreamChatApi
     @Composable
     public fun ChannelInfoScreenModal(
         modal: ChannelInfoViewEvent.Modal?,
@@ -3176,7 +3166,6 @@ public interface ChatComponentFactory {
      *
      * @param member The member to display in the top bar.
      */
-    @ExperimentalStreamChatApi
     @Composable
     public fun ChannelInfoMemberInfoModalSheetTopBar(member: Member) {
         io.getstream.chat.android.compose.ui.channel.info.ChannelInfoMemberInfoModalSheetTopBar(
@@ -3190,7 +3179,6 @@ public interface ChatComponentFactory {
      * @param option The channel info member option to display.
      * @param onViewAction Callback invoked when a view action is triggered.
      */
-    @ExperimentalStreamChatApi
     @Composable
     public fun LazyItemScope.ChannelInfoMemberOptionItem(
         option: ChannelInfoMemberViewState.Content.Option,

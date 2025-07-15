@@ -91,6 +91,7 @@ import io.getstream.chat.android.client.events.HasOwnUser
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
+import io.getstream.chat.android.client.events.NotificationReminderDueEvent
 import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
@@ -110,6 +111,7 @@ import io.getstream.chat.android.client.logger.StreamLogLevelValidator
 import io.getstream.chat.android.client.logger.StreamLoggerHandler
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.PushNotificationReceivedListener
+import io.getstream.chat.android.client.notifications.handler.ChatNotification
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
@@ -152,7 +154,6 @@ import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.client.utils.stringify
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.models.AppSettings
@@ -174,12 +175,14 @@ import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PushMessage
 import io.getstream.chat.android.models.QueryDraftsResult
+import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
@@ -434,8 +437,11 @@ internal constructor(
                 mutableClientState.setUser(user)
             }
 
-            is NewMessageEvent -> {
-                notifications.onNewMessageEvent(event)
+            is NewMessageEvent,
+            is NotificationReminderDueEvent,
+            -> {
+                // No other events should potentially show notifications
+                notifications.onChatEvent(event)
             }
 
             is ConnectingEvent -> {
@@ -3837,6 +3843,66 @@ internal constructor(
         )
     }
 
+    /**
+     * Creates a reminder for a message.
+     *
+     * @param messageId The message id.
+     * @param remindAt The date when the reminder should be triggered. If null, this is a bookmark type reminder without
+     * a notification.
+     *
+     * @return Executable async [Call] responsible for creating the reminder.
+     */
+    @CheckResult
+    public fun createReminder(messageId: String, remindAt: Date?): Call<MessageReminder> {
+        return api.createReminder(messageId, remindAt)
+    }
+
+    /**
+     * Updates an existing reminder for a message.
+     *
+     * @param messageId The message id.
+     * @param remindAt The date when the reminder should be triggered. If null, this is a bookmark type reminder without
+     * a notification.
+     *
+     * @return Executable async [Call] responsible for updating the reminder.
+     */
+    @CheckResult
+    public fun updateReminder(messageId: String, remindAt: Date?): Call<MessageReminder> {
+        return api.updateReminder(messageId, remindAt)
+    }
+
+    /**
+     * Deletes a reminder for a message.
+     *
+     * @param messageId The message id whose reminder should be deleted.
+     *
+     * @return Executable async [Call] responsible for deleting the reminder.
+     */
+    @CheckResult
+    public fun deleteReminder(messageId: String): Call<Unit> {
+        return api.deleteReminder(messageId)
+    }
+
+    /**
+     * Queries the message reminders for the current user matching the provided filters.
+     *
+     * @param filter The [FilterObject] to filter the reminders.
+     * @param limit The maximum number of reminders to return.
+     * @param next The pagination token for the next page of results.
+     * @param sort The sorter object to apply to the query.
+     *
+     * @return Executable async [Call] responsible for obtaining the message reminders.
+     */
+    @CheckResult
+    public fun queryReminders(
+        filter: FilterObject,
+        limit: Int,
+        next: String? = null,
+        sort: QuerySorter<MessageReminder> = QuerySortByField(),
+    ): Call<QueryRemindersResult> {
+        return api.queryReminders(filter, limit, next, sort)
+    }
+
     private fun warmUp() {
         if (config.warmUp) {
             api.warmUp()
@@ -3869,7 +3935,6 @@ internal constructor(
      * [Stream Dashboard](https://dashboard.getstream.io/).
      * @param appContext The application [Context].
      */
-    @OptIn(ExperimentalStreamChatApi::class)
     @Suppress("TooManyFunctions")
     public class Builder(private val apiKey: String, private val appContext: Context) : ChatClientBuilder() {
 
@@ -4012,7 +4077,6 @@ internal constructor(
          *
          * @param sendMessageInterceptor Your custom implementation of [SendMessageInterceptor].
          */
-        @ExperimentalStreamChatApi
         public fun sendMessageInterceptor(sendMessageInterceptor: SendMessageInterceptor): Builder {
             this.sendMessageInterceptor = sendMessageInterceptor
             return this
@@ -4406,7 +4470,8 @@ internal constructor(
         @JvmOverloads
         public fun handlePushMessage(pushMessage: PushMessage) {
             ensureClientInitialized().run {
-                if (!config.notificationConfig.ignorePushMessagesWhenUserOnline || !isSocketConnected()) {
+                val type = pushMessage.type.orEmpty()
+                if (!config.notificationConfig.ignorePushMessageWhenUserOnline(type) || !isSocketConnected()) {
                     clientScope.launch {
                         setUserWithoutConnectingIfNeeded()
                         notifications.onPushMessage(pushMessage, pushNotificationReceivedListener)
@@ -4420,14 +4485,8 @@ internal constructor(
         }
 
         @Throws(IllegalStateException::class)
-        internal fun displayNotification(
-            channel: Channel,
-            message: Message,
-        ) {
-            ensureClientInitialized().notifications.displayNotification(
-                channel = channel,
-                message = message,
-            )
+        internal fun displayNotification(notification: ChatNotification) {
+            ensureClientInitialized().notifications.displayNotification(notification)
         }
 
         /**

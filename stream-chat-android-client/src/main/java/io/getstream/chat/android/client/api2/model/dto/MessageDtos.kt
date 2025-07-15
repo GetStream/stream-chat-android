@@ -98,6 +98,7 @@ internal data class DownstreamMessageDto(
     val moderation_details: DownstreamModerationDetailsDto? = null, // Used for Moderation V1
     val moderation: DownstreamModerationDto? = null, // Used for Moderation V2
     val poll: DownstreamPollDto? = null,
+    val reminder: DownstreamReminderInfoDto? = null,
 
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
@@ -121,4 +122,9 @@ internal data class DownstreamDraftMessageDto(
     val show_in_channel: Boolean = false,
 
     val extraData: Map<String, Any>? = null,
+)
+
+@JsonClass(generateAdapter = true)
+internal data class DownstreamPendingMessageDto(
+    val message: DownstreamMessageDto,
 )
