@@ -160,7 +160,7 @@ public class MediaGalleryPreviewViewModel(
     }
 
     private suspend fun onConnected() {
-        if (freshMessage.value?.id.isNullOrEmpty() || !hasCompleteMessage) {
+        if (!hasCompleteMessage) {
             fetchMessage()
         }
     }

@@ -84,7 +84,8 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Fix `MediaAttachmentGalleryActivity` overriding the `Message.attachments` of the `Message` which was passed to it. [#5863](https://github.com/GetStream/stream-chat-android/pull/5863)
+- Fix `MediaGalleryPreviewActivity` overriding the `Message.attachments` of the `Message` which was passed to it. [#5863](https://github.com/GetStream/stream-chat-android/pull/5863)
+- Fix `MediaGalleryPreviewActivity` displaying the current time instead of the `Message` timestamp if the screen was opened without internet connection. [#5863](https://github.com/GetStream/stream-chat-android/pull/5863)
 
 ### ⬆️ Improved
 - Add bottom padding to unread message separator. [#5855](https://github.com/GetStream/stream-chat-android/pull/5855)
