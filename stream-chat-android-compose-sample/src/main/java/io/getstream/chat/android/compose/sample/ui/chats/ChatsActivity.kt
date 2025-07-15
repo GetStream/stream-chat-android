@@ -85,7 +85,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.querysort.QuerySortByField
-import io.getstream.chat.android.state.extensions.globalState
+import io.getstream.chat.android.state.extensions.globalStateFlow
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
@@ -93,6 +93,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVis
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
 class ChatsActivity : ComponentActivity() {
@@ -227,9 +228,11 @@ class ChatsActivity : ComponentActivity() {
         listContentMode: ChatListContentMode,
         onOptionSelected: (option: AppBottomBarOption) -> Unit,
     ) {
-        val globalState = ChatClient.instance().globalState
-        val unreadChannelsCount by globalState.channelUnreadCount.collectAsStateWithLifecycle()
-        val unreadThreadsCount by globalState.unreadThreadsCount.collectAsStateWithLifecycle()
+        val globalStateFlow = ChatClient.instance().globalStateFlow
+        val unreadChannelsCount by globalStateFlow.flatMapLatest { it.channelUnreadCount }
+            .collectAsStateWithLifecycle(0)
+        val unreadThreadsCount by globalStateFlow.flatMapLatest { it.unreadThreadsCount }
+            .collectAsStateWithLifecycle(0)
         val selectedOption = when (listContentMode) {
             ChatListContentMode.Channels -> AppBottomBarOption.CHATS
             ChatListContentMode.Mentions -> AppBottomBarOption.MENTIONS

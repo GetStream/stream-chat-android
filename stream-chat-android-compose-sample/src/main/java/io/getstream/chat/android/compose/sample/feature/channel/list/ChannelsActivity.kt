@@ -97,9 +97,10 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
-import io.getstream.chat.android.state.extensions.globalState
+import io.getstream.chat.android.state.extensions.globalStateFlow
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
 class ChannelsActivity : ComponentActivity() {
@@ -139,9 +140,11 @@ class ChannelsActivity : ComponentActivity() {
          */
         setContent {
             var selectedTab by rememberSaveable { mutableStateOf(AppBottomBarOption.CHATS) }
-            val globalState = ChatClient.instance().globalState
-            val unreadChannelsCount by globalState.channelUnreadCount.collectAsState()
-            val unreadThreadsCount by globalState.unreadThreadsCount.collectAsState()
+            val globalStateFlow = ChatClient.instance().globalStateFlow
+            val unreadChannelsCount by globalStateFlow.flatMapLatest { it.channelUnreadCount }
+                .collectAsStateWithLifecycle(0)
+            val unreadThreadsCount by globalStateFlow.flatMapLatest { it.unreadThreadsCount }
+                .collectAsStateWithLifecycle(0)
 
             ChatTheme(
                 dateFormatter = ChatApp.dateFormatter,
