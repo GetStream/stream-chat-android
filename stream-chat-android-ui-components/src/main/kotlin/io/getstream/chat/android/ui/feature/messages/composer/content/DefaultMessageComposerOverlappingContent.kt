@@ -43,6 +43,7 @@ import android.widget.TextView
 import androidx.annotation.ColorRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.ImageViewCompat
 import io.getstream.chat.android.extensions.limitTo
@@ -59,8 +60,12 @@ import io.getstream.chat.android.ui.utils.extensions.applyTint
 import io.getstream.chat.android.ui.utils.extensions.displayMetrics
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.getDimension
+import io.getstream.chat.android.ui.utils.extensions.isRtlLayout
 import io.getstream.chat.android.ui.utils.extensions.setStartDrawable
 import io.getstream.log.taggedLogger
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 private const val TAG = "OverlappingContent"
 
@@ -251,9 +256,9 @@ public open class DefaultMessageComposerOverlappingContent : ConstraintLayout, M
         binding.recordingSlider.text = style.audioRecordingSlideToCancelText
         binding.recordingSlider.setTextStyle(style.audioRecordingSlideToCancelTextStyle)
         binding.recordingSlider.setStartDrawable(
-            style.audioRecordingSlideToCancelStartDrawable.applyTint(
-                style.audioRecordingSlideToCancelStartDrawableTint,
-            ),
+            style.audioRecordingSlideToCancelStartDrawable
+                .apply { DrawableCompat.setLayoutDirection(this, resources.configuration.layoutDirection) }
+                .applyTint(style.audioRecordingSlideToCancelStartDrawableTint),
         )
         style.audioRecordingWaveformColor?.also {
             binding.recordingWaveform.setWaveformColor(it)
@@ -498,7 +503,10 @@ public open class DefaultMessageComposerOverlappingContent : ConstraintLayout, M
 
                 val micX = micBaseRect.left + deltaX
                 val micY = micBaseRect.top + deltaY
-                micLastRect.left = micX.limitTo(micMoveRect.left, micBaseRect.left)
+                micLastRect.left = micX.limitTo(
+                    min(micBaseRect.left, micMoveRect.left),
+                    max(micBaseRect.left, micMoveRect.left)
+                )
                 micLastRect.top = micY.limitTo(micMoveRect.top, micBaseRect.top)
                 micPopup?.update(micLastRect.left, micLastRect.top, -1, -1)
 
@@ -506,8 +514,9 @@ public open class DefaultMessageComposerOverlappingContent : ConstraintLayout, M
                 lockLastRect.top = lockY.limitTo(lockMoveRect.top, lockBaseRect.top)
                 lockPopup?.update(lockLastRect.left, lockLastRect.top, -1, -1)
 
-                val progress =
-                    (micBaseRect.left - micLastRect.left).toFloat() / (micBaseRect.left - micMoveRect.left).toFloat()
+                val totalDistance = abs(micBaseRect.left - micMoveRect.left).toFloat()
+                val progress = abs(micBaseRect.left - micLastRect.left).toFloat() / totalDistance
+
                 logger.w { "[onMove] progress: $progress, diff: ${micLastRect.left - micBaseRect.left}" }
                 binding.recordingSlider.translationX = micLastRect.left - micBaseRect.left.toFloat()
                 binding.recordingSlider.alpha = 1 - progress * 1.5f
@@ -593,7 +602,11 @@ public open class DefaultMessageComposerOverlappingContent : ConstraintLayout, M
             micLastRect.set(micBaseRect)
             micMoveRect.apply {
                 set(micBaseRect)
-                left -= (parentWidth / 3)
+                if (context.isRtlLayout) {
+                    left += (parentWidth / 3)
+                } else {
+                    left -= (parentWidth / 3)
+                }
                 top -= centerContentHeight * 2
             }
             showAtLocation(binding.root, Gravity.TOP or Gravity.START, micBaseRect.left, micBaseRect.top)
