@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.sample.ui.location
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -43,6 +44,7 @@ fun DurationDropdownMenu(
             modifier = Modifier.padding(16.dp),
             text = "Select a duration for sharing",
             style = ChatTheme.typography.title3Bold,
+            color = ChatTheme.colors.textHighEmphasis,
         )
         Duration.entries.forEach { duration ->
             val label = when (duration) {
@@ -52,6 +54,7 @@ fun DurationDropdownMenu(
             }
             DropdownMenuItem(
                 text = { Text(text = label) },
+                colors = MenuDefaults.itemColors(textColor = ChatTheme.colors.textLowEmphasis),
                 onClick = { onSelect(duration) },
             )
         }
