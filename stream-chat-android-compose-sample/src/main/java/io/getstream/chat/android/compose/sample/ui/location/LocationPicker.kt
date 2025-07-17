@@ -17,9 +17,12 @@
 package io.getstream.chat.android.compose.sample.ui.location
 
 import android.Manifest
+import android.app.Activity
+import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -54,7 +57,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.location.Priority
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.sample.ui.component.MapWebView
@@ -95,9 +101,11 @@ private fun LocationPickerContent(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
-        ) { foundLocation ->
-            location = foundLocation
-        }
+            onLocationFound = { foundLocation ->
+                location = foundLocation
+            },
+            onDismiss = onDismiss,
+        )
 
         Box {
             LocationButton(
@@ -138,27 +146,38 @@ private fun LocationPickerContent(
     }
 }
 
+@Suppress("LongMethod")
 @Composable
 private fun LocationContent(
     modifier: Modifier = Modifier,
     onLocationFound: (Location) -> Unit,
+    onDismiss: () -> Unit,
 ) {
     val context = LocalContext.current
     var location by remember { mutableStateOf<Location?>(null) }
 
     var locationPermissionTrigger by remember { mutableIntStateOf(0) }
-    var showRequiredPermissionMissing by remember { mutableStateOf(false) }
+    var showLocationPermissionRequired by remember { mutableStateOf(false) }
 
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
-        onResult = { granted ->
-            if (granted) {
-                locationPermissionTrigger++
-            } else {
-                showRequiredPermissionMissing = true
-            }
-        },
-    )
+    ) { granted ->
+        if (granted) {
+            locationPermissionTrigger++
+        } else {
+            showLocationPermissionRequired = true
+        }
+    }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult(),
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            locationPermissionTrigger++
+        } else {
+            onDismiss()
+        }
+    }
 
     LaunchedEffect(locationPermissionTrigger) {
         val locationPermission = Manifest.permission.ACCESS_FINE_LOCATION
@@ -168,15 +187,29 @@ private fun LocationContent(
         if (!hasPermission) {
             permissionLauncher.launch(locationPermission)
         } else {
-            val locationClient = LocationServices.getFusedLocationProviderClient(context)
+            try {
+                val priority = Priority.PRIORITY_HIGH_ACCURACY
+                // Check is the location settings is enabled
+                val enabled = context.isLocationEnabled(priority)
+                if (enabled) {
+                    val locationClient = LocationServices.getFusedLocationProviderClient(context)
 
-            val lastLocation = locationClient.lastLocation.await()
-            location = lastLocation
-            onLocationFound(lastLocation)
+                    locationClient.lastLocation.await()?.let { lastLocation ->
+                        location = lastLocation
+                        onLocationFound(lastLocation)
+                    }
 
-            val currentLocation = locationClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, null).await()
-            location = currentLocation
-            onLocationFound(currentLocation)
+                    locationClient.getCurrentLocation(priority, null).await()?.let { currentLocation ->
+                        location = currentLocation
+                        onLocationFound(currentLocation)
+                    }
+                }
+            } catch (cause: ResolvableApiException) {
+                // Show the system dialog to enable location
+                launcher.launch(
+                    IntentSenderRequest.Builder(cause.resolution.intentSender).build(),
+                )
+            }
         }
     }
 
@@ -186,19 +219,26 @@ private fun LocationContent(
             latitude = location!!.latitude,
             longitude = location!!.longitude,
         )
-    } else if (showRequiredPermissionMissing) {
-        MissingPermission(modifier = modifier)
+    } else if (showLocationPermissionRequired) {
+        LocationPermissionRequired(
+            modifier = modifier,
+            onClick = {
+                context.openSystemSettings()
+                onDismiss()
+            },
+        )
     } else {
         LoadingIndicator(modifier = modifier)
     }
 }
 
 @Composable
-private fun MissingPermission(
+private fun LocationPermissionRequired(
     modifier: Modifier,
+    onClick: () -> Unit,
 ) {
     val title = "Location Permission Required"
-    val message = "Location permission is needed in order to find your current location"
+    val message = "Location permission is required to find your current location"
 
     Column(
         modifier = modifier,
@@ -220,11 +260,9 @@ private fun MissingPermission(
             color = ChatTheme.colors.textLowEmphasis,
         )
 
-        val context = LocalContext.current
-
         TextButton(
             colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.primaryAccent),
-            onClick = { context.openSystemSettings() },
+            onClick = onClick,
         ) {
             Text(stringResource(id = R.string.stream_compose_grant_permission))
         }
@@ -288,6 +326,30 @@ private fun LocationButton(
                 )
             }
         }
+    }
+}
+
+@Suppress("TooGenericExceptionCaught", "SwallowedException")
+/**
+ * Checks if the location settings is enabled.
+ *
+ * @throws ResolvableApiException
+ */
+private suspend fun Context.isLocationEnabled(priority: Int): Boolean {
+    val client = LocationServices.getSettingsClient(this)
+    val locationRequest = LocationRequest.Builder(priority, 0).build()
+    val builder = LocationSettingsRequest.Builder()
+        .addLocationRequest(locationRequest)
+        .setAlwaysShow(true)
+
+    return try {
+        client.checkLocationSettings(builder.build()).await()
+        true
+    } catch (e: ResolvableApiException) {
+        // Caller will handle resolution
+        throw e
+    } catch (e: Exception) {
+        false
     }
 }
 
