@@ -331,11 +331,7 @@ private class DefaultMessagePreviewFormatter(
         textStyle: TextStyle,
     ) {
         message.sharedLocation?.let { sharedLocation ->
-            val text = if (sharedLocation.endAt == null) {
-                context.getString(R.string.stream_ui_channel_list_item_static_location)
-            } else {
-                context.getString(R.string.stream_ui_channel_list_item_live_location)
-            }
+            val text = context.getString(sharedLocation.getMessageTextResId())
             appendMessageText(
                 messageText = text,
                 messageTextStyle = textStyle,
