@@ -16,7 +16,8 @@
 
 package io.getstream.chat.android.compose.sample.ui.component
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.material3.ripple
@@ -26,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
+@OptIn(ExperimentalFoundationApi::class)
 @Suppress("LongParameterList")
 @Composable
 internal fun MapBox(
@@ -34,8 +36,13 @@ internal fun MapBox(
     longitude: Double,
     shape: Shape = ChatTheme.shapes.attachment,
     onClick: ((url: String) -> Unit)? = null,
+    onLongClick: ((url: String) -> Unit)? = null,
     content: @Composable BoxScope.() -> Unit,
 ) {
+    val mapUrl = "https://www.openstreetmap.org/?" +
+        "mlat=$latitude&mlon=$longitude#" +
+        "map=15/$latitude/$longitude"
+
     Box(
         modifier = modifier.clip(shape),
     ) {
@@ -52,17 +59,12 @@ internal fun MapBox(
         Box(
             modifier = Modifier
                 .matchParentSize()
-                .clickable(
+                .combinedClickable(
                     interactionSource = null,
                     enabled = onClick != null,
                     indication = ripple(),
-                    onClick = {
-                        onClick?.invoke(
-                            "https://www.openstreetmap.org/?" +
-                                "mlat=$latitude&mlon=$longitude#" +
-                                "map=15/$latitude/$longitude",
-                        )
-                    },
+                    onClick = { onClick?.invoke(mapUrl) },
+                    onLongClick = { onLongClick?.invoke(mapUrl) },
                 ),
         )
 

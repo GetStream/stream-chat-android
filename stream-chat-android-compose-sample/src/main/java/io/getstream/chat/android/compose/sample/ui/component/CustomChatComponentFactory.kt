@@ -97,6 +97,7 @@ class CustomChatComponentFactory(
                 message = message,
                 location = location,
                 onMapClick = { url -> onLinkClick?.invoke(message, url) },
+                onMapLongClick = { onLongItemClick(message) },
             )
         } else {
             DefaultMessageItemCenterContent(

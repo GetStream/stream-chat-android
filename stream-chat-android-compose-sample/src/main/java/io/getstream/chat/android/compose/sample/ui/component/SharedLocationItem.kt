@@ -62,12 +62,14 @@ internal fun SharedLocationItem(
     message: Message,
     location: Location,
     onMapClick: (url: String) -> Unit = {},
+    onMapLongClick: (url: String) -> Unit = {},
 ) {
     if (location.endAt == null) {
         StaticSharedLocation(
             modifier = modifier,
             location = location,
             onMapClick = onMapClick,
+            onMapLongClick = onMapLongClick,
         )
     } else {
         val viewModel = viewModel(
@@ -80,6 +82,7 @@ internal fun SharedLocationItem(
             message = message,
             location = location,
             onMapClick = onMapClick,
+            onMapLongClick = onMapLongClick,
             onStopSharingClick = {
                 viewModel.stopLiveLocationSharing(messageId = location.messageId)
             },
@@ -92,12 +95,14 @@ private fun StaticSharedLocation(
     modifier: Modifier,
     location: Location,
     onMapClick: (url: String) -> Unit = {},
+    onMapLongClick: (url: String) -> Unit = {},
 ) {
     MapBox(
         modifier = modifier.aspectRatio(1f),
         latitude = location.latitude,
         longitude = location.longitude,
         onClick = onMapClick,
+        onLongClick = onMapLongClick,
     ) {
         Icon(
             modifier = Modifier.align(Alignment.Center),
@@ -116,6 +121,7 @@ private fun LiveLocationSharing(
     message: Message,
     location: Location,
     onMapClick: (url: String) -> Unit = {},
+    onMapLongClick: (url: String) -> Unit = {},
     onStopSharingClick: () -> Unit = {},
 ) {
     val isOwnMessage = message.user.id == currentUser?.id
@@ -137,6 +143,7 @@ private fun LiveLocationSharing(
             latitude = location.latitude,
             longitude = location.longitude,
             onClick = onMapClick,
+            onLongClick = onMapLongClick,
         ) {
             val animatedPadding by rememberInfiniteTransition().animateFloat(
                 initialValue = 0f,
