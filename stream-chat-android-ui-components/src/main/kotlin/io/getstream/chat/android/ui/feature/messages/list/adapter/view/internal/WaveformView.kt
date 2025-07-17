@@ -22,7 +22,6 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.MotionEvent
-import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.annotation.ColorInt
@@ -34,21 +33,10 @@ import io.getstream.chat.android.extensions.limitTo
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.log.taggedLogger
-import kotlin.math.pow
-import kotlin.math.sqrt
 
-private const val MIN_BAR_VALUE = 0.05F
-private const val DEFAULT_BAR_HEIGHT_RATIO = 0.9F
 private const val EXPAND_TRACKER_WIDTH = 10
-private const val DEFAULT_BAR_PADDING = 5
 private const val DEFAULT_BAR_SPACING = 0.4
-private const val DEFAULT_BAR_NUMBER = 40
-private const val DEFAULT_BAR_VALUE = 0F
 private const val INITIAL_PROGRESS = 0F
-
-private const val DRAG_START = 1
-private const val DRAG_MOVE = 2
-private const val DRAG_END = 3
 
 /**
  * Custom view that presents a Seekbar that shows and interacts with audio wave bars.
@@ -90,13 +78,10 @@ internal class WaveformView : LinearLayoutCompat {
     private var spaceWidth: Float? = null
     private var maxHeight: Int? = null
     private val barSpacing = DEFAULT_BAR_SPACING
-    private var barHeightRatio: Float = DEFAULT_BAR_HEIGHT_RATIO
-    private var onStartDrag: () -> Unit = {}
-    private var onEndDrag: (Int) -> Unit = {}
     private var isDragging = false
 
-    public var onSliderDragStart: (Float) -> Unit = {}
-    public var onSliderDragStop: (Float) -> Unit = {}
+    var onSliderDragStart: (Float) -> Unit = {}
+    var onSliderDragStop: (Float) -> Unit = {}
 
     private val paintPassed = Paint().apply {
         color = ContextCompat.getColor(context, R.color.stream_ui_accent_blue)
@@ -110,24 +95,24 @@ internal class WaveformView : LinearLayoutCompat {
 
     private val _waveform = arrayListOf<Float>()
 
-    public fun setWaveformColor(@ColorInt color: Int) {
+    fun setWaveformColor(@ColorInt color: Int) {
         paintPassed.color = color
     }
 
-    public var progress: Float = INITIAL_PROGRESS
+    var progress: Float = INITIAL_PROGRESS
         set(value) {
             logger.v { "[setProgress] progress: $value" }
             field = value
             invalidate()
         }
 
-    public var isSliderVisible: Boolean
-        get() = slider.visibility == View.VISIBLE
+    var isSliderVisible: Boolean
+        get() = slider.isVisible
         set(value) {
             slider.isVisible = value
         }
 
-    public var waveform: List<Float>
+    var waveform: List<Float>
         get() = _waveform
         set(value) {
             _waveform.clear()
@@ -135,38 +120,9 @@ internal class WaveformView : LinearLayoutCompat {
             invalidate()
         }
 
-    public fun clearData() {
+    fun clearData() {
         this._waveform.clear()
         invalidate()
-    }
-
-    public fun addValue(normalized: Float) {
-        if (normalized > 1 || normalized < 0) {
-            logger.w { "[addValue] rejected (Normalized value must be between 0 and 1): $normalized" }
-            return
-        }
-        this._waveform.add(normalized)
-        invalidate()
-    }
-
-    internal fun updateProgress(progress: Float) {
-        if (!isDragging) {
-            this.progress = progress
-            invalidate()
-        }
-    }
-
-    private fun forceProgress(progress: Float) {
-        this.progress = progress
-        invalidate()
-    }
-
-    internal fun setOnStartDrag(func: () -> Unit) {
-        onStartDrag = func
-    }
-
-    internal fun setOnEndDrag(func: (Int) -> Unit) {
-        onEndDrag = func
     }
 
     /**
@@ -196,10 +152,6 @@ internal class WaveformView : LinearLayoutCompat {
 
     private val viewportRect = RectF()
     private val barRect = RectF()
-
-    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
-        return super.onInterceptTouchEvent(ev)
-    }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         return when (event.action) {
@@ -251,29 +203,20 @@ internal class WaveformView : LinearLayoutCompat {
 
         val progressX = viewportW * progress
 
-        var deltaX = 0f
         for (index in _waveform.lastIndex downTo minVisibleIndex) {
             val value = _waveform[index]
-            val barHeight = maxOf(maxBarHeight * value, barW.toFloat())
+            val barHeight = maxOf(maxBarHeight * value, barW)
 
             val relativeIndex = index - minVisibleIndex
             val top = centerY - barHeight / 2
             val bottom = centerY + barHeight / 2
-            val start = (minStart + perBarW * relativeIndex).toFloat()
+            val start = minStart + perBarW * relativeIndex
             val end = start + barW
 
             val rx = barW / 2f
             val ry = rx
 
             barRect.set(start, top, end, bottom)
-            // if (deltaX == 0f && end > maxEnd) {
-            //     deltaX = maxEnd - end
-            //     logger.i { "[onDraw] index: $index, end: $end($maxEnd) -> end is out of viewport" }
-            // }
-            // if (deltaX != 0f) {
-            //     logger.v { "[onDraw] index: $index, deltaX: $deltaX -> moving into viewport" }
-            //     barRect.offset(deltaX, 0f)
-            // }
 
             if (barRect.left < minStart) {
                 barRect.left = minStart.toFloat()
@@ -288,19 +231,4 @@ internal class WaveformView : LinearLayoutCompat {
         val finalSliderX = sliderX.limitTo(viewportRect.left, viewportRect.right - slider.width)
         slider.translationX = finalSliderX
     }
-}
-
-private fun List<Float>.downsampleRms(targetSamples: Int): List<Float> {
-    val sourceSamples = size
-    val sourceStep = sourceSamples / targetSamples
-    val target = ArrayList<Float>(targetSamples)
-    for (targetIndex in 0 until targetSamples) {
-        var sum = 0f
-        for (sourceIndex in 0 until sourceStep) {
-            val sourceSample = this[targetIndex * sourceStep + sourceIndex]
-            sum += sourceSample.pow(2)
-        }
-        target.add(sqrt(sum / sourceStep))
-    }
-    return target
 }
