@@ -86,6 +86,7 @@ internal suspend fun MessageEntity.toModel(
         restrictedVisibility = restrictedVisibility,
         poll = pollId?.let { getPoll(it) },
         reminder = reminder?.toModel(),
+        sharedLocation = sharedLocation?.toModel(),
     )
 }
 
@@ -131,6 +132,8 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
         messageTextUpdatedAt = messageTextUpdatedAt,
         pollId = poll?.id,
         reminder = reminder?.toEntity(),
+        restrictedVisibility = restrictedVisibility,
+        sharedLocation = sharedLocation?.toEntity(),
     ),
     attachments = attachments.mapIndexed { index, attachment -> attachment.toEntity(id, index) },
     latestReactions = latestReactions.map(Reaction::toEntity),

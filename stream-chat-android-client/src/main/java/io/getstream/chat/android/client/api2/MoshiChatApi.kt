@@ -84,6 +84,7 @@ import io.getstream.chat.android.client.api2.model.requests.UnblockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
+import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
@@ -116,6 +117,7 @@ import io.getstream.chat.android.models.DraftsSort
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.GuestUser
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
@@ -1515,6 +1517,36 @@ constructor(
         )
         return remindersApi.queryReminders(body = body).mapDomain { it.toDomain() }
     }
+
+    override fun queryActiveLocations(): Call<List<Location>> =
+        userApi.liveLocations().mapDomain {
+            it.active_live_locations.map {
+                it.toDomain()
+            }
+        }
+
+    override fun updateLiveLocation(location: Location): Call<Location> =
+        userApi.updateLiveLocation(
+            UpdateLiveLocationRequest(
+                message_id = location.messageId,
+                latitude = location.latitude,
+                longitude = location.longitude,
+                created_by_device_id = location.deviceId,
+            ),
+        ).mapDomain { response ->
+            response.toDomain()
+        }
+
+    override fun stopLiveLocation(location: Location): Call<Location> =
+        userApi.updateLiveLocation(
+            UpdateLiveLocationRequest(
+                message_id = location.messageId,
+                created_by_device_id = location.deviceId,
+                end_at = location.endAt,
+            ),
+        ).mapDomain { response ->
+            response.toDomain()
+        }
 
     override fun warmUp() {
         generalApi.warmUp().enqueue()

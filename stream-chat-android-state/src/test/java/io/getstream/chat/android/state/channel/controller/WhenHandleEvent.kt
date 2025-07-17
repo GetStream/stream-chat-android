@@ -72,11 +72,14 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
     private lateinit var channelLogic: ChannelLogic
     private val channelMutableState: ChannelMutableState = ChannelMutableState(
-        "type1",
-        channelId,
-        userFlow,
-        MutableStateFlow(
+        channelType = "type1",
+        channelId = channelId,
+        userFlow = userFlow,
+        latestUsers = MutableStateFlow(
             mapOf(currentUser.id to currentUser),
+        ),
+        activeLiveLocations = MutableStateFlow(
+            emptyList(),
         ),
     ) { System.currentTimeMillis() }
 

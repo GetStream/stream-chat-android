@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.offline.repository.domain.message.internal
 
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.randomMessageEntity
@@ -31,6 +32,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
+@Suppress("LongMethod")
 internal class MessageMapperTest {
 
     @Suppress("LongMethod")
@@ -92,6 +94,17 @@ internal class MessageMapperTest {
             restrictedVisibility = messageEntity.messageInnerEntity.restrictedVisibility,
             poll = null,
             reminder = messageEntity.messageInnerEntity.reminder?.toModel(),
+            sharedLocation = messageEntity.messageInnerEntity.sharedLocation?.run {
+                Location(
+                    messageId = messageId,
+                    cid = cid,
+                    userId = userId,
+                    endAt = endAt,
+                    latitude = latitude,
+                    longitude = longitude,
+                    deviceId = deviceId,
+                )
+            },
         )
 
         val result = messageEntity.toModel(
@@ -151,6 +164,17 @@ internal class MessageMapperTest {
                 messageTextUpdatedAt = message.messageTextUpdatedAt,
                 pollId = message.poll?.id,
                 reminder = message.reminder?.toEntity(),
+                sharedLocation = message.sharedLocation?.run {
+                    LocationEntity(
+                        messageId = message.id,
+                        cid = message.cid,
+                        userId = message.user.id,
+                        endAt = endAt,
+                        latitude = latitude,
+                        longitude = longitude,
+                        deviceId = deviceId,
+                    )
+                },
             ),
             attachments = message.attachments.mapIndexed { index, attachment ->
                 attachment.toEntity(

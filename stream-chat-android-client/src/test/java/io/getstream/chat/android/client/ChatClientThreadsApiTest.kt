@@ -202,6 +202,6 @@ internal class ChatClientThreadsApiTest : BaseChatClientTest() {
             plugins.add(plugin)
         }
 
-        fun get(): ChatClient = chatClient.apply { plugins = this@ChatClientThreadsApiTest.plugins }
+        fun get(): ChatClient = chatClient
     }
 }

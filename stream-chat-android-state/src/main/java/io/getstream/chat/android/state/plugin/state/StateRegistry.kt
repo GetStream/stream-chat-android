@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.internal.batch.BatchEvent
@@ -43,12 +44,14 @@ import java.util.concurrent.ConcurrentHashMap
  *
  * @param userStateFlow The state flow that provides the user once it is set.
  * @param latestUsers Latest users of the SDK.
+ * @param activeLiveLocations Latest live locations of the SDK.
  * @param job A background job cancelled after calling [clear].
  * @param scope A scope for new coroutines.
  */
 public class StateRegistry constructor(
     private val userStateFlow: StateFlow<User?>,
     private var latestUsers: StateFlow<Map<String, User>>,
+    private val activeLiveLocations: StateFlow<List<Location>>,
     private val job: Job,
     private val now: () -> Long,
     private val scope: CoroutineScope,
@@ -75,7 +78,7 @@ public class StateRegistry constructor(
      */
     public fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsState {
         return queryChannels.getOrPut(filter to sort) {
-            QueryChannelsMutableState(filter, sort, scope, latestUsers)
+            QueryChannelsMutableState(filter, sort, scope, latestUsers, activeLiveLocations)
         }
     }
 
@@ -99,7 +102,7 @@ public class StateRegistry constructor(
      */
     internal fun mutableChannel(channelType: String, channelId: String): ChannelMutableState {
         return channels.getOrPut(channelType to channelId) {
-            ChannelMutableState(channelType, channelId, userStateFlow, latestUsers, now)
+            ChannelMutableState(channelType, channelId, userStateFlow, latestUsers, activeLiveLocations, now)
         }
     }
 

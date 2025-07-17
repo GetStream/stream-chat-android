@@ -172,6 +172,7 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.GuestUser
 import io.getstream.chat.android.models.InitializationState
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
@@ -265,6 +266,7 @@ internal constructor(
     private val repositoryFactoryProvider: RepositoryFactory.Provider,
     @InternalStreamChatApi
     public val audioPlayer: AudioPlayer,
+    private val now: () -> Date = ::Date,
 ) {
     private val logger by taggedLogger(TAG)
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
@@ -1114,7 +1116,7 @@ internal constructor(
     @JvmOverloads
     public fun sendReaction(reaction: Reaction, enforceUnique: Boolean, cid: String? = null): Call<Reaction> {
         val currentUser = getCurrentUser()
-        val finalReaction = reaction.copy(createdLocallyAt = Date())
+        val finalReaction = reaction.copy(createdLocallyAt = now())
         return api.sendReaction(finalReaction, enforceUnique)
             .retry(scope = userScope, retryPolicy = retryPolicy)
             .doOnStart(userScope) {
@@ -1554,8 +1556,152 @@ internal constructor(
                 sendMessage(
                     channelType = channelType,
                     channelId = channelId,
-                    Message(extraData = mapOf("poll_id" to poll.id)),
+                    Message(
+                        extraData = mapOf("poll_id" to poll.id),
+                    ),
                 )
+            }
+    }
+
+    /**
+     * Sends a static location message to the given channel.
+     *
+     * @param cid The full channel id, i.e. "messaging:123" to which the location will be sent.
+     * @param latitude The latitude of the location.
+     * @param longitude The longitude of the location.
+     * @param deviceId The device ID from which the location is sent.
+     */
+    @CheckResult
+    public fun sendStaticLocation(
+        cid: String,
+        latitude: Double,
+        longitude: Double,
+        deviceId: String,
+    ): Call<Location> = sendLocationMessage(
+        location = Location(
+            cid = cid,
+            latitude = latitude,
+            longitude = longitude,
+            deviceId = deviceId,
+        ),
+    )
+
+    /**
+     * Starts live location sharing for the given channel.
+     *
+     * @param cid The full channel id, i.e. "messaging:123" to which the live location will be shared.
+     * @param latitude The latitude of the location.
+     * @param longitude The longitude of the location.
+     * @param deviceId The device ID from which the location is shared.
+     * @param endAt The date when the live location sharing will end.
+     */
+    @CheckResult
+    public fun startLiveLocationSharing(
+        cid: String,
+        latitude: Double,
+        longitude: Double,
+        deviceId: String,
+        endAt: Date,
+    ): Call<Location> = Location(
+        cid = cid,
+        latitude = latitude,
+        longitude = longitude,
+        deviceId = deviceId,
+        endAt = endAt,
+    ).let { location ->
+        sendLocationMessage(location).doOnResult(userScope) { result ->
+            plugins.forEach { plugin ->
+                logger.v { "[startLiveLocationSharing] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                plugin.onStartLiveLocationSharingResult(
+                    location = location,
+                    result = result,
+                )
+            }
+        }
+    }
+
+    @CheckResult
+    private fun sendLocationMessage(location: Location): Call<Location> {
+        val (channelType, channelId) = location.cid.cidToTypeAndId()
+        return sendMessage(
+            channelType = channelType,
+            channelId = channelId,
+            message = Message(sharedLocation = location),
+        ).flatMap { message ->
+            message.sharedLocation?.let { sharedLocation ->
+                CoroutineCall(scope = userScope) { Result.Success(sharedLocation) }
+            } ?: ErrorCall<Location>(
+                userScope,
+                Error.GenericError("Location was not sent."),
+            ).also {
+                logger.e { "Location was not sent" }
+            }
+        }
+    }
+
+    /**
+     * Queries the active locations (non-expired) shared by the current user.
+     */
+    @CheckResult
+    public fun queryActiveLocations(): Call<List<Location>> = api.queryActiveLocations()
+        .doOnResult(userScope) { result ->
+            plugins.forEach { plugin ->
+                logger.v { "[queryActiveLocations] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                plugin.onQueryActiveLocationsResult(result)
+            }
+        }
+
+    /**
+     * Updates the live location info of a message.
+     *
+     * @param messageId The ID of the message to update.
+     * @param latitude The latitude of the new location.
+     * @param longitude The longitude of the new location.
+     * @param deviceId The device ID from which the location is shared.
+     */
+    @CheckResult
+    public fun updateLiveLocation(
+        messageId: String,
+        latitude: Double,
+        longitude: Double,
+        deviceId: String,
+    ): Call<Location> = Location(
+        messageId = messageId,
+        latitude = latitude,
+        longitude = longitude,
+        deviceId = deviceId,
+    ).let { location ->
+        api.updateLiveLocation(location)
+            .precondition(plugins) { onUpdateLiveLocationPrecondition(location) }
+            .doOnResult(userScope) { result ->
+                plugins.forEach { plugin ->
+                    logger.v { "[updateLiveLocation] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                    plugin.onUpdateLiveLocationResult(location, result)
+                }
+            }
+    }
+
+    /**
+     * Stops the live location sharing for a message.
+     *
+     * @param messageId The ID of the message to stop sharing live location.
+     * @param deviceId The device ID from which the location is shared.
+     */
+    @CheckResult
+    public fun stopLiveLocationSharing(
+        messageId: String,
+        deviceId: String,
+    ): Call<Location> = Location(
+        messageId = messageId,
+        deviceId = deviceId,
+        endAt = now(),
+    ).let { location ->
+        api.stopLiveLocation(location)
+            .doOnResult(userScope) { result ->
+                plugins.forEach { plugin ->
+                    logger.v { "[stopLiveLocationSharing] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                    plugin.onStopLiveLocationSharingResult(location, result)
+                }
             }
     }
 
@@ -1917,7 +2063,7 @@ internal constructor(
         message: Message,
         isRetrying: Boolean = false,
     ): Call<Message> {
-        return message.copy(createdLocallyAt = message.createdLocallyAt ?: Date())
+        return message.copy(createdLocallyAt = message.createdLocallyAt ?: now())
             .ensureId(getCurrentUser() ?: getStoredUser())
             .let { processedMessage ->
                 CoroutineCall(userScope) {
@@ -3639,7 +3785,7 @@ internal constructor(
         val extraData: Map<Any, Any> = parentId?.let {
             mapOf(ARG_TYPING_PARENT_ID to parentId)
         } ?: emptyMap()
-        val eventTime = Date()
+        val eventTime = now()
         val eventType = EventType.TYPING_START
         return api.sendEvent(
             eventType = eventType,
@@ -3688,7 +3834,7 @@ internal constructor(
         val extraData: Map<Any, Any> = parentId?.let {
             mapOf(ARG_TYPING_PARENT_ID to parentId)
         } ?: emptyMap()
-        val eventTime = Date()
+        val eventTime = now()
         val eventType = EventType.TYPING_STOP
         return api.sendEvent(
             eventType = eventType,

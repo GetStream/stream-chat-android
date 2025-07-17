@@ -25,6 +25,13 @@
 - Add `reminder` field to the `Message` entity, which contains the reminder information. [#5779](https://github.com/GetStream/stream-chat-android/pull/5779)
 - Add default handling for `notification.reminder_due` push notification. [#5833](https://github.com/GetStream/stream-chat-android/pull/5833)
 - Add `NotificationHandler.showNotification(ChatNotification)` message method for showing a notification of a specific type. [#5833](https://github.com/GetStream/stream-chat-android/pull/5833)
+- Add `ChatClient.queryActiveLocations` to query the active live locations (non-expired) shared by the current user. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
+- Add `ChatClient.sendStaticLocation` to send a static location message to the given channel. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
+- Add `ChatClient.startLiveLocationSharing` to start a live location sharing for the given channel. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
+- Add `ChatClient.updateLiveLocation` to update the live location info of a message. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
+- Add `ChatClient.stopLiveLocationSharing` to stop the live location sharing for a message. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
+- Introduce the `LiveLocationListener` interface to handle live location-related request events: `onQueryActiveLocationsResult`, `onStartLiveLocationSharingResult`, `onUpdateLiveLocationPrecondition`, `onUpdateLiveLocationResult`, `onStopLiveLocationSharingResult`. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
+- Add utility function `Message.hasSharedLocation` to check if a message contains shared location data. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
 
 ### ⚠️ Changed
 - Deprecate `NotificationHandler.showNotification(Channel, Message)` in favor of `NotificationHandler.showNotification(ChatNotification)`. [#5833](https://github.com/GetStream/stream-chat-android/pull/5833)
@@ -38,6 +45,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Support local storage to the shared location. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
 
 ### ⚠️ Changed
 
@@ -52,8 +60,10 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Introduce `GlobalState.activeLiveLocations` that emits active live locations that are being shared in the app by the current user. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
 
 ### ⚠️ Changed
+- Change `SyncManager` to schedule updates of messages that contains live locations sharing, to be executed when the live locations sharing ends. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
 
 ### ❌ Removed
 

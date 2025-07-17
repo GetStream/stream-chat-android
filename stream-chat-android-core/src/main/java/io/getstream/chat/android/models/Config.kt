@@ -139,4 +139,9 @@ public data class Config(
      * Determines if message reminders are enabled. Disabled by default.
      */
     val messageRemindersEnabled: Boolean = false,
+
+    /**
+     * Determines if shared locations are enabled. Disabled by default.
+     */
+    val sharedLocationsEnabled: Boolean = false,
 )

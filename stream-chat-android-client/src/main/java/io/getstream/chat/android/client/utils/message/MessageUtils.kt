@@ -168,6 +168,11 @@ public fun Message.belongsToThread(): Boolean = this.isThreadStart() || this.isT
 public fun Message.isReply(): Boolean = replyTo != null
 
 /**
+ * @return If the message has a shared location.
+ */
+public fun Message.hasSharedLocation(): Boolean = sharedLocation != null
+
+/**
  * @return If the message belongs to the current user.
  */
 @InternalStreamChatApi

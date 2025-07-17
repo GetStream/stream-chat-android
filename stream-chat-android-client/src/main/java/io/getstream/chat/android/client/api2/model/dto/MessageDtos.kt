@@ -49,6 +49,7 @@ internal data class UpstreamMessageDto(
     val text: String,
     val thread_participants: List<UpstreamUserDto>,
     val restricted_visibility: List<String>,
+    val shared_location: UpstreamLocationDto?,
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
 
@@ -99,7 +100,7 @@ internal data class DownstreamMessageDto(
     val moderation: DownstreamModerationDto? = null, // Used for Moderation V2
     val poll: DownstreamPollDto? = null,
     val reminder: DownstreamReminderInfoDto? = null,
-
+    val shared_location: DownstreamLocationDto? = null,
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
 

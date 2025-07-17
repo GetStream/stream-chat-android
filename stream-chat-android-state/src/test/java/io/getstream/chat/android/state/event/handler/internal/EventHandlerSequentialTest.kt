@@ -16,12 +16,16 @@
 
 package io.getstream.chat.android.state.event.handler.internal
 
+import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatEventListener
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.test.randomChannelDeletedEvent
+import io.getstream.chat.android.client.test.randomChannelUpdatedEvent
 import io.getstream.chat.android.client.test.randomConnectedEvent
 import io.getstream.chat.android.client.test.randomMarkAllReadEvent
+import io.getstream.chat.android.client.test.randomMessageUpdateEvent
 import io.getstream.chat.android.client.test.randomNewMessageEvent
 import io.getstream.chat.android.client.test.randomNotificationAddedToChannelEvent
 import io.getstream.chat.android.client.test.randomNotificationChannelDeletedEvent
@@ -35,6 +39,7 @@ import io.getstream.chat.android.client.test.randomPollDeletedEvent
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelMute
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.positiveRandomInt
@@ -42,6 +47,7 @@ import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomChannelMute
+import io.getstream.chat.android.randomLocation
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomMute
 import io.getstream.chat.android.randomPoll
@@ -56,6 +62,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -79,7 +86,7 @@ internal class EventHandlerSequentialTest {
         expectedTotalUnreadCount: Int,
         expectedChannelUnreadCount: Int,
     ) = runTest {
-        val mutableGlobalState = MutableGlobalState().apply {
+        val mutableGlobalState = MutableGlobalState(currentUser.id).apply {
             setTotalUnreadCount(initialTotalunreadCount)
             setChannelUnreadCount(initialChannelUnreadCount)
         }
@@ -104,7 +111,7 @@ internal class EventHandlerSequentialTest {
         expectedChannelMutes: List<ChannelMute>,
         expectedBlockedUserIds: List<String>,
     ) = runTest {
-        val mutableGlobalState = MutableGlobalState().apply {
+        val mutableGlobalState = MutableGlobalState(currentUser.id).apply {
             setBanned(false)
             setMutedUsers(emptyList())
             setChannelMutes(emptyList())
@@ -137,12 +144,31 @@ internal class EventHandlerSequentialTest {
         whenever(repos.selectThreads(any())) doReturn emptyList()
         val handler = Fixture()
             .withRepositoryFacade(repos)
-            .withMutableGlobalState(MutableGlobalState())
             .get(this)
         // when
         handler.handleEvents(event)
         // then
         verify(repos).deletePoll(event.poll.id)
+    }
+
+    @ParameterizedTest
+    @MethodSource("sharedLocationArguments")
+    fun `GlobalState should be updated with shared locations`(
+        events: List<ChatEvent>,
+        locations: List<Location>,
+    ) = runTest {
+        val mutableGlobalState = MutableGlobalState(currentUser.id)
+
+        val sut = Fixture()
+            .withMutableGlobalState(mutableGlobalState)
+            .apply(prepareFixtureWithReadCapability)
+            .get(this)
+
+        sut.handleEvents(*events.toTypedArray())
+
+        mutableGlobalState.activeLiveLocations.test {
+            assertEquals(locations, awaitItem())
+        }
     }
 
     internal class Fixture {
@@ -185,7 +211,7 @@ internal class EventHandlerSequentialTest {
             logicRegistry = logicRegistry,
             stateRegistry = stateRegistry,
             clientState = clientState,
-            mutableGlobalState = mutableGlobalState ?: MutableGlobalState(),
+            mutableGlobalState = mutableGlobalState ?: MutableGlobalState(currentUser.id),
             repos = repos,
             sideEffect = sideEffect,
             syncedEvents = syncedEvents,
@@ -253,6 +279,44 @@ internal class EventHandlerSequentialTest {
                 ),
             )
         }
+
+        @JvmStatic
+        fun sharedLocationArguments() = listOf(
+            run {
+                val message = randomMessage(
+                    sharedLocation = randomLocation(userId = currentUser.id),
+                )
+                Arguments.of(
+                    listOf(randomNewMessageEvent(cid = randomCid, message = message)),
+                    listOf(message.sharedLocation),
+                )
+            },
+            run {
+                val message = randomMessage(
+                    sharedLocation = randomLocation(userId = currentUser.id),
+                )
+                Arguments.of(
+                    listOf(randomMessageUpdateEvent(cid = randomCid, message = message)),
+                    listOf(message.sharedLocation),
+                )
+            },
+            run {
+                val location = randomLocation(userId = currentUser.id)
+                val channel = randomChannel(activeLiveLocations = listOf(location))
+                Arguments.of(
+                    listOf(randomChannelUpdatedEvent(cid = randomCid, channel = channel)),
+                    listOf(location),
+                )
+            },
+            run {
+                val location = randomLocation(userId = currentUser.id)
+                val channel = randomChannel(activeLiveLocations = listOf(location))
+                Arguments.of(
+                    listOf(randomChannelDeletedEvent(cid = randomCid, channel = channel)),
+                    listOf(location),
+                )
+            },
+        )
 
         private fun unreadArgumentNotificationAddedToChannelEvent() = listOf(
             Arguments.of(

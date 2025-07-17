@@ -19,8 +19,10 @@ package io.getstream.chat.android.client.extensions.internal
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelUserRead
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomLocation
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMembers
 import io.getstream.chat.android.randomMessage
@@ -29,6 +31,7 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldContain
 import org.amshove.kluent.shouldContainAll
 import org.amshove.kluent.shouldNotContain
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.whenever
@@ -548,5 +551,42 @@ internal class ChannelExtensionsTests {
         // Check watchers were updated
         val updatedWatcher = result.watchers.first()
         updatedWatcher.name shouldBeEqualTo "New Name 2"
+    }
+
+    @Test
+    fun `should update activeLiveLocations for each channel based on matching cid`() {
+        val channel1 = randomChannel(id = "channel1")
+        val channel2 = randomChannel(id = "channel2")
+        val channels = listOf(channel1, channel2)
+
+        val location1 = randomLocation(cid = "${channel1.type}:channel1")
+        val location2 = randomLocation(cid = "${channel2.type}:channel2")
+        val location3 = randomLocation(cid = "${channel1.type}:channel1")
+        val locations = listOf(location1, location2, location3)
+
+        val updatedChannels = channels.updateLiveLocations(locations)
+
+        val updatedChannel1 = updatedChannels.first { it.id == "channel1" }
+        val updatedChannel2 = updatedChannels.first { it.id == "channel2" }
+
+        assertEquals(listOf(location1, location3), updatedChannel1.activeLiveLocations)
+        assertEquals(listOf(location2), updatedChannel2.activeLiveLocations)
+    }
+
+    @Test
+    fun `should set activeLiveLocations to empty if no locations match`() {
+        val channel = randomChannel(id = "channel1", activeLiveLocations = listOf(randomLocation(cid = "channel1")))
+        val locations = listOf(randomLocation(cid = "channel2"))
+        val updatedChannels = listOf(channel).updateLiveLocations(locations)
+        assertEquals(emptyList<Location>(), updatedChannels.first().activeLiveLocations)
+    }
+
+    @Test
+    fun `should not modify original channels`() {
+        val channel = randomChannel(id = "channel1", activeLiveLocations = listOf(Location(cid = "channel1")))
+        val locations = listOf(randomLocation(cid = "channel1"))
+        val channels = listOf(channel)
+        channels.updateLiveLocations(locations)
+        assertEquals(listOf(Location(cid = "channel1")), channel.activeLiveLocations)
     }
 }

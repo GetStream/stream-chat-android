@@ -129,4 +129,9 @@
 
     <string name="stream_ui_channel_info_remove_member_modal_message">Are you sure you want to remove\n%s ?</string>
 
+    <!-- Channel List -->
+
+    <string name="stream_ui_location_static_message_text">📍Location</string>
+    <string name="stream_ui_location_live_message_text">📍Live location</string>
+
 </resources>

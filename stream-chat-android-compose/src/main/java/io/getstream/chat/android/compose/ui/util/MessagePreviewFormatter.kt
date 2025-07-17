@@ -25,6 +25,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import io.getstream.chat.android.client.utils.message.hasAudioRecording
+import io.getstream.chat.android.client.utils.message.hasSharedLocation
 import io.getstream.chat.android.client.utils.message.isPoll
 import io.getstream.chat.android.client.utils.message.isPollClosed
 import io.getstream.chat.android.client.utils.message.isSystem
@@ -161,6 +162,7 @@ private class DefaultMessagePreviewFormatter(
                     true -> currentUser?.language?.let { userLanguage ->
                         message.getTranslation(userLanguage).ifEmpty { message.text }
                     } ?: message.text
+
                     else -> message.text
                 }.trim()
 
@@ -192,10 +194,17 @@ private class DefaultMessagePreviewFormatter(
                         currentUser = currentUser,
                         senderNameTextStyle = senderNameTextStyle,
                     )
-                    appendMessageText(
-                        messageText = displayedText,
-                        messageTextStyle = messageTextStyle,
-                    )
+                    if (message.hasSharedLocation()) {
+                        appendSharedLocationMessageText(
+                            message = message,
+                            textStyle = messageTextStyle,
+                        )
+                    } else {
+                        appendMessageText(
+                            messageText = displayedText,
+                            messageTextStyle = messageTextStyle,
+                        )
+                    }
                     appendAttachmentText(
                         attachments = message.attachments,
                         attachmentFactories = attachmentFactories,
@@ -314,6 +323,19 @@ private class DefaultMessagePreviewFormatter(
                         end = startIndex + attachmentText.length,
                     )
                 }
+        }
+    }
+
+    private fun AnnotatedString.Builder.appendSharedLocationMessageText(
+        message: Message,
+        textStyle: TextStyle,
+    ) {
+        message.sharedLocation?.let { sharedLocation ->
+            val text = context.getString(sharedLocation.getMessageTextResId())
+            appendMessageText(
+                messageText = text,
+                messageTextStyle = textStyle,
+            )
         }
     }
 }

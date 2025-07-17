@@ -36,6 +36,7 @@ import io.getstream.chat.android.client.api2.mapping.DomainMapping
 import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
@@ -66,6 +67,7 @@ import io.getstream.chat.android.client.api2.model.requests.SuggestPollOptionReq
 import io.getstream.chat.android.client.api2.model.requests.UnblockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
+import io.getstream.chat.android.client.api2.model.requests.UpdateLiveLocationRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMemberPartialResponse
 import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
@@ -113,6 +115,7 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageReminder
@@ -142,6 +145,8 @@ import kotlinx.coroutines.test.runTest
 import okhttp3.ResponseBody
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.amshove.kluent.`should be instance of`
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.junit.jupiter.params.ParameterizedTest
@@ -2131,6 +2136,44 @@ internal class MoshiChatApiTest {
         )
         result `should be instance of` expected
         verify(api, times(1)).queryReminders(expectedBody)
+    }
+
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#updateLiveLocation")
+    fun testUpdateLiveLocation(
+        location: Location,
+        request: UpdateLiveLocationRequest,
+        response: DownstreamLocationDto,
+    ) = runTest {
+        val api = mock<UserApi>()
+        whenever(api.updateLiveLocation(request)) doReturn RetroSuccess(response).toRetrofitCall()
+        val sut = Fixture()
+            .withUserApi(api)
+            .get()
+
+        val result = sut.updateLiveLocation(location).await()
+
+        assertTrue(result is Result.Success)
+        assertEquals(location, result.getOrThrow())
+    }
+
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#stopLiveLocation")
+    fun testStopLiveLocation(
+        location: Location,
+        request: UpdateLiveLocationRequest,
+        response: DownstreamLocationDto,
+    ) = runTest {
+        val api = mock<UserApi>()
+        whenever(api.updateLiveLocation(request)) doReturn RetroSuccess(response).toRetrofitCall()
+        val sut = Fixture()
+            .withUserApi(api)
+            .get()
+
+        val result = sut.stopLiveLocation(location).await()
+
+        assertTrue(result is Result.Success)
+        assertEquals(location, result.getOrThrow())
     }
 
     @Test

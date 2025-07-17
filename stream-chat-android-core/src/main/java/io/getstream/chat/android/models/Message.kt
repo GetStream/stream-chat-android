@@ -258,6 +258,11 @@ public data class Message(
      * The reminder information for this message if it has one set up.
      */
     val reminder: MessageReminderInfo? = null,
+
+    /**
+     * Location shared by the user in the message.
+     */
+    val sharedLocation: Location? = null,
 ) : CustomObject, ComparableFieldProvider {
     public companion object {
         /**
@@ -431,6 +436,7 @@ public data class Message(
         private var poll: Poll? = null
         private var restrictedVisibility: List<String> = emptyList()
         private var reminder: MessageReminderInfo? = null
+        private var sharedLocation: Location? = null
 
         public constructor(message: Message) : this() {
             id = message.id
@@ -478,6 +484,7 @@ public data class Message(
             poll = message.poll
             restrictedVisibility = message.restrictedVisibility
             reminder = message.reminder
+            sharedLocation = message.sharedLocation
         }
 
         public fun withId(id: String): Builder = apply { this.id = id }
@@ -555,6 +562,9 @@ public data class Message(
             this.restrictedVisibility = restrictedVisibility
         }
         public fun withReminder(reminder: MessageReminderInfo?): Builder = apply { this.reminder = reminder }
+        public fun withSharedLocation(sharedLocation: Location?): Builder = apply {
+            this.sharedLocation = sharedLocation
+        }
 
         public fun build(): Message {
             return Message(
@@ -603,6 +613,7 @@ public data class Message(
                 restrictedVisibility = restrictedVisibility,
                 poll = poll,
                 reminder = reminder,
+                sharedLocation = sharedLocation,
             )
         }
     }

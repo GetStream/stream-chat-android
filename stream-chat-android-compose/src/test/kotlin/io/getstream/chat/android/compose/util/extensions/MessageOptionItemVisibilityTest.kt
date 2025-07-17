@@ -231,21 +231,21 @@ internal class MessageOptionItemVisibilityTest {
             Arguments.of(
                 MessageOptionItemVisibility(isEditMessageVisible = false),
                 currentUser.takeIf { randomBoolean() },
-                randomMessage(),
+                randomMessage(sharedLocation = null),
                 randomChannelCapabilities(),
                 false,
             ),
             Arguments.of(
                 MessageOptionItemVisibility(),
                 currentUser.takeIf { randomBoolean() },
-                randomMessage(command = AttachmentType.GIPHY),
+                randomMessage(command = AttachmentType.GIPHY, sharedLocation = null),
                 randomChannelCapabilities(),
                 false,
             ),
             Arguments.of(
                 MessageOptionItemVisibility(),
                 currentUser.takeIf { randomBoolean() },
-                randomMessage(),
+                randomMessage(sharedLocation = null),
                 randomChannelCapabilities(
                     exclude = setOf(
                         ChannelCapabilities.UPDATE_OWN_MESSAGE,
@@ -257,19 +257,26 @@ internal class MessageOptionItemVisibilityTest {
             Arguments.of(
                 MessageOptionItemVisibility(isEditMessageVisible = true),
                 currentUser.takeIf { randomBoolean() },
-                randomMessage(),
+                randomMessage(sharedLocation = null),
                 randomChannelCapabilities(include = setOf(ChannelCapabilities.UPDATE_ANY_MESSAGE)),
                 true,
             ),
             Arguments.of(
                 MessageOptionItemVisibility(isEditMessageVisible = true),
                 currentUser,
-                randomMessage(user = currentUser),
+                randomMessage(user = currentUser, sharedLocation = null),
                 randomChannelCapabilities(
                     include = setOf(ChannelCapabilities.UPDATE_OWN_MESSAGE),
                     exclude = setOf(ChannelCapabilities.UPDATE_ANY_MESSAGE),
                 ),
                 true,
+            ),
+            Arguments.of(
+                MessageOptionItemVisibility(isEditMessageVisible = true),
+                null,
+                randomMessage(),
+                randomChannelCapabilities(include = setOf(ChannelCapabilities.UPDATE_ANY_MESSAGE)),
+                false,
             ),
         )
 

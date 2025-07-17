@@ -471,6 +471,7 @@ internal object Mother {
         blocklist_behavior: String? = randomString(),
         commands: List<CommandDto> = emptyList(),
         user_message_reminders: Boolean? = randomBoolean(),
+        shared_locations: Boolean = randomBoolean(),
     ): ConfigDto = ConfigDto(
         created_at = created_at,
         updated_at = updated_at,
@@ -495,6 +496,7 @@ internal object Mother {
         blocklist_behavior = blocklist_behavior,
         commands = commands,
         user_message_reminders = user_message_reminders,
+        shared_locations = shared_locations,
     )
 
     /**

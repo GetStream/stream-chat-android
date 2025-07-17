@@ -542,6 +542,7 @@ internal class DomainMappingTest {
             blocklistBehavior = configDto.blocklist_behavior ?: "",
             commands = configDto.commands.map { with(sut) { it.toDomain() } },
             messageRemindersEnabled = configDto.user_message_reminders ?: false,
+            sharedLocationsEnabled = configDto.shared_locations ?: false,
         )
         config shouldBeEqualTo expected
     }

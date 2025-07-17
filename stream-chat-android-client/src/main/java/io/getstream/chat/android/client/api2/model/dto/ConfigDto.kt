@@ -44,4 +44,5 @@ internal data class ConfigDto(
     val blocklist_behavior: String?,
     val commands: List<CommandDto>,
     val user_message_reminders: Boolean?,
+    val shared_locations: Boolean?,
 )

@@ -34,6 +34,7 @@ import io.getstream.chat.android.client.events.DraftMessageDeletedEvent
 import io.getstream.chat.android.client.events.DraftMessageUpdatedEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
+import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.HasMessage
 import io.getstream.chat.android.client.events.HasOwnUser
 import io.getstream.chat.android.client.events.HasPoll
@@ -355,6 +356,9 @@ internal class EventHandlerSequential(
                 (event as? UserUpdatedEvent)
                     ?.takeIf { it.user.id == currentUserId }
                     ?.let { modifyValuesFromUser(me?.mergePartially(it.user) ?: it.user) }
+                (event as? NewMessageEvent)?.message?.sharedLocation?.let(mutableGlobalState::addLiveLocation)
+                (event as? MessageUpdatedEvent)?.message?.sharedLocation?.let(mutableGlobalState::addLiveLocation)
+                (event as? HasChannel)?.channel?.activeLiveLocations?.let(mutableGlobalState::addLiveLocations)
             }
 
         me?.let {

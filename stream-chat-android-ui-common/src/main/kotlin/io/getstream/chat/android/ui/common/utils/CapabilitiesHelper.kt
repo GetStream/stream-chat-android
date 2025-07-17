@@ -19,6 +19,7 @@
 package io.getstream.chat.android.ui.common.utils
 
 import io.getstream.chat.android.client.utils.attachment.isGiphy
+import io.getstream.chat.android.client.utils.message.hasSharedLocation
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
@@ -66,7 +67,7 @@ public fun canEditMessage(
     ownCapabilities: Set<String>,
 ): Boolean = editMessageEnabled &&
     with(ownCapabilities) { ((message.isOwnMessage(currentUser) && canEditOwnMessage()) || canEditAnyMessage()) } &&
-    !message.isGiphyCommand()
+    !message.isGiphyCommand() && !message.hasSharedLocation()
 
 public fun canDeleteMessage(
     deleteMessageEnabled: Boolean,
