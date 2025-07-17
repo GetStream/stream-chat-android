@@ -29,9 +29,9 @@ import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
-import io.getstream.chat.android.extensions.limitTo
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
+import io.getstream.chat.android.ui.utils.extensions.isRtlLayout
 import io.getstream.log.taggedLogger
 
 private const val EXPAND_TRACKER_WIDTH = 10
@@ -52,6 +52,8 @@ internal class WaveformView : LinearLayoutCompat {
     )
 
     private val logger by taggedLogger("WaveformView")
+
+    private val isRtl = context.isRtlLayout
 
     private val slider: ImageView
 
@@ -154,24 +156,25 @@ internal class WaveformView : LinearLayoutCompat {
     private val barRect = RectF()
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        val adjustedX = if (isRtl) width - event.x else event.x
         return when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 isDragging = true
                 slider.updateLayoutParams {
                     width += EXPAND_TRACKER_WIDTH.dpToPx()
                 }
-                progress = event.x / viewportRect.width()
+                progress = adjustedX / viewportRect.width()
                 onSliderDragStart(progress)
                 true
             }
 
             MotionEvent.ACTION_MOVE -> {
-                progress = event.x / viewportRect.width()
+                progress = adjustedX / viewportRect.width()
                 true
             }
 
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                progress = event.x / viewportRect.width()
+                progress = adjustedX / viewportRect.width()
                 onSliderDragStop(progress)
                 isDragging = false
                 slider.updateLayoutParams {
@@ -201,7 +204,7 @@ internal class WaveformView : LinearLayoutCompat {
 
         val minVisibleIndex = maxOf((_waveform.size - barLimit), 0)
 
-        val progressX = viewportW * progress
+        val progressX = if (isRtl) viewportW * (1 - progress) else viewportW * progress
 
         for (index in _waveform.lastIndex downTo minVisibleIndex) {
             val value = _waveform[index]
@@ -210,8 +213,16 @@ internal class WaveformView : LinearLayoutCompat {
             val relativeIndex = index - minVisibleIndex
             val top = centerY - barHeight / 2
             val bottom = centerY + barHeight / 2
-            val start = minStart + perBarW * relativeIndex
-            val end = start + barW
+            val start = if (isRtl) {
+                maxEnd - perBarW * (relativeIndex + 1)
+            } else {
+                minStart + perBarW * relativeIndex
+            }
+            val end = if (isRtl) {
+                start + barW
+            } else {
+                start + barW
+            }
 
             val rx = barW / 2f
             val ry = rx
@@ -224,11 +235,20 @@ internal class WaveformView : LinearLayoutCompat {
                 barRect.right = maxEnd.toFloat()
             }
 
-            val passed = !isSliderVisible || barRect.centerX() < progressX
+            val passed = if (isRtl) {
+                !isSliderVisible || barRect.centerX() > progressX
+            } else {
+                !isSliderVisible || barRect.centerX() < progressX
+            }
             canvas.drawRoundRect(barRect, rx, ry, if (passed) paintPassed else paintUpcoming)
         }
-        val sliderX = progressX - slider.width / 2f
-        val finalSliderX = sliderX.limitTo(viewportRect.left, viewportRect.right - slider.width)
-        slider.translationX = finalSliderX
+
+        val sliderX = if (isRtl) {
+            progressX - slider.width / 2f
+        } else {
+            progressX - slider.width / 2f
+        }
+        val finalSliderX = sliderX.coerceIn(viewportRect.left, viewportRect.right - slider.width)
+        slider.x = finalSliderX
     }
 }

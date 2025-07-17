@@ -46,7 +46,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.ImageViewCompat
-import io.getstream.chat.android.extensions.limitTo
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
@@ -503,15 +502,15 @@ public open class DefaultMessageComposerOverlappingContent : ConstraintLayout, M
 
                 val micX = micBaseRect.left + deltaX
                 val micY = micBaseRect.top + deltaY
-                micLastRect.left = micX.limitTo(
+                micLastRect.left = micX.coerceIn(
                     min(micBaseRect.left, micMoveRect.left),
-                    max(micBaseRect.left, micMoveRect.left)
+                    max(micBaseRect.left, micMoveRect.left),
                 )
-                micLastRect.top = micY.limitTo(micMoveRect.top, micBaseRect.top)
+                micLastRect.top = micY.coerceIn(micMoveRect.top, micBaseRect.top)
                 micPopup?.update(micLastRect.left, micLastRect.top, -1, -1)
 
                 val lockY = lockBaseRect.top + deltaY
-                lockLastRect.top = lockY.limitTo(lockMoveRect.top, lockBaseRect.top)
+                lockLastRect.top = lockY.coerceIn(lockMoveRect.top, lockBaseRect.top)
                 lockPopup?.update(lockLastRect.left, lockLastRect.top, -1, -1)
 
                 val totalDistance = abs(micBaseRect.left - micMoveRect.left).toFloat()
