@@ -31,6 +31,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
+import io.getstream.chat.android.ui.utils.extensions.isRtlLayout
 import java.lang.Float.min
 import kotlin.math.max
 
@@ -53,6 +54,8 @@ internal class AudioWavesSeekBar : LinearLayoutCompat {
         attrs,
         defStyleAttr,
     )
+
+    private val isRtl = context.isRtlLayout
 
     private val tracker: ImageView
 
@@ -225,16 +228,23 @@ internal class AudioWavesSeekBar : LinearLayoutCompat {
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
+        val barCount = waveBars.size
+
         waveBars.forEachIndexed { index, barValue ->
             val barHeight = (maxHeight!! * max(barValue, MIN_BAR_VALUE) * barHeightRatio)
 
-            val left = (barWidth!! + spaceWidth!!) * index + realPaddingStart
+            val barIndex = if (isRtl) barCount - 1 - index else index
+            val left = (barWidth!! + spaceWidth!!) * barIndex + realPaddingStart
             val right = left + barWidth!!
             val top = (height - barHeight) / 2
             val bottom = top + barHeight
 
             rect.set(left, top, right, bottom)
-            val paint = if (progressToX(progress) > left + barWidth!! / 2) paintPlayed else paintFuture
+            val paint = if (isRtl) {
+                if (progressToX(progress) < left + barWidth!! / 2) paintPlayed else paintFuture
+            } else {
+                if (progressToX(progress) > left + barWidth!! / 2) paintPlayed else paintFuture
+            }
 
             tracker.x = trackerPosition(progressToX(progress)) - tracker.width / 2
 
@@ -245,17 +255,35 @@ internal class AudioWavesSeekBar : LinearLayoutCompat {
     /**
      * Calculates the tracker position not allowing it go beyond the bounds of the seekbar.
      */
-    private fun trackerPosition(positionX: Float) =
-        min(
-            max(realPaddingStart.toFloat() + tracker.width / 2, positionX),
-            (width - realPaddingEnd - tracker.width / 2).toFloat(),
-        )
+    private fun trackerPosition(positionX: Float): Float {
+        val startBound = if (isRtl) {
+            realPaddingEnd.toFloat() + tracker.width / 2
+        } else {
+            realPaddingStart.toFloat() + tracker.width / 2
+        }
+        val endBound = if (isRtl) {
+            (width - realPaddingStart - tracker.width / 2).toFloat()
+        } else {
+            (width - realPaddingEnd - tracker.width / 2).toFloat()
+        }
+        return min(max(startBound, positionX), endBound)
+    }
 
-    private fun progressToX(progress: Float): Float =
-        (progress / 100) * seekWidth() + realPaddingStart
+    private fun progressToX(progress: Float): Float {
+        val seekWidth = seekWidth().toFloat()
+        return if (isRtl) {
+            (1 - progress / 100) * seekWidth + realPaddingStart
+        } else {
+            (progress / 100) * seekWidth + realPaddingStart
+        }
+    }
 
     private fun xToProgress(x: Float): Float {
         val croppedX = min(max(realPaddingStart.toFloat(), x), width - realPaddingEnd.toFloat())
-        return 100 * ((croppedX - realPaddingStart) / seekWidth())
+        return if (isRtl) {
+            100 * ((width - realPaddingEnd - croppedX) / seekWidth())
+        } else {
+            100 * ((croppedX - realPaddingStart) / seekWidth())
+        }
     }
 }

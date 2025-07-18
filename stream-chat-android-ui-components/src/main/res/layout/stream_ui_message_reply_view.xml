@@ -50,7 +50,6 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/stream_ui_spacing_tiny"
             android:padding="@dimen/stream_ui_spacing_tiny"
-            app:layout_constraintEnd_toStartOf="@+id/replyText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             />
@@ -79,6 +78,7 @@
             app:layout_constraintStart_toStartOf="@+id/replyText"
             android:textAppearance="@style/StreamUiTextAppearance.Footnote"
             android:paddingStart="@dimen/stream_ui_spacing_tiny"
+            tools:text="@tools:sample/date/hhmm"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
