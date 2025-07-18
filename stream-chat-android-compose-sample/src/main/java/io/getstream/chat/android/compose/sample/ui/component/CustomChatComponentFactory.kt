@@ -29,8 +29,6 @@ import io.getstream.chat.android.compose.sample.feature.reminders.MessageReminde
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
-import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
-import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageItemCenterContent
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Channel
@@ -100,23 +98,24 @@ class CustomChatComponentFactory(
                 onMapLongClick = { onLongItemClick(message) },
             )
         } else {
-            DefaultMessageItemCenterContent(
-                messageItem = messageItem,
-                messageContentFactory = MessageContentFactory.Deprecated,
-                onLongItemClick = onLongItemClick,
-                onGiphyActionClick = onGiphyActionClick,
-                onQuotedMessageClick = onQuotedMessageClick,
-                onLinkClick = onLinkClick,
-                onUserMentionClick = onUserMentionClick,
-                onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                onPollUpdated = onPollUpdated,
-                onCastVote = onCastVote,
-                onRemoveVote = onRemoveVote,
-                selectPoll = selectPoll,
-                onAddAnswer = onAddAnswer,
-                onClosePoll = onClosePoll,
-                onAddPollOption = onAddPollOption,
-            )
+            with(delegate) {
+                MessageItemCenterContent(
+                    messageItem = messageItem,
+                    onLongItemClick = onLongItemClick,
+                    onGiphyActionClick = onGiphyActionClick,
+                    onQuotedMessageClick = onQuotedMessageClick,
+                    onLinkClick = onLinkClick,
+                    onUserMentionClick = onUserMentionClick,
+                    onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+                    onPollUpdated = onPollUpdated,
+                    onCastVote = onCastVote,
+                    onRemoveVote = onRemoveVote,
+                    selectPoll = selectPoll,
+                    onAddAnswer = onAddAnswer,
+                    onClosePoll = onClosePoll,
+                    onAddPollOption = onAddPollOption,
+                )
+            }
         }
     }
 }
