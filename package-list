@@ -151,6 +151,7 @@ io.getstream.chat.android.markdown
 module:stream-chat-android-offline
 io.getstream.chat.android.offline.plugin.factory
 io.getstream.chat.android.offline.repository.database.converter.internal
+io.getstream.chat.android.offline.repository.domain.message.internal
 module:stream-chat-android-previewdata
 io.getstream.chat.android.previewdata
 module:stream-chat-android-state
