@@ -1,20 +1,7 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# July 18th, 2025 - 6.19.0
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Include pending messages in the `Channel.messages` field so they are always visible in the message list. [#5862](https://github.com/GetStream/stream-chat-android/pull/5862)
-
-### ⬆️ Improved
 
 ### ✅ Added
 - Add `ChannelClient.queryReminders()` for querying message reminders. [#5779](https://github.com/GetStream/stream-chat-android/pull/5779)
@@ -40,16 +27,8 @@
 - Remove `@ExperimentalStreamChatApi` annotation usage. [#5866](https://github.com/GetStream/stream-chat-android/pull/5866)
 
 ## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Support local storage to the shared location. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-state
 ### 🐞 Fixed
@@ -57,38 +36,20 @@
 - Fix `GlobalState.totalUnreadCount` and `GlobalState.channelUnreadCount` not updated when receiving a new message, when the `OfflinePlugin` is not applied. [#5858](https://github.com/GetStream/stream-chat-android/pull/5858)
 - Ensure `Channel.membership` is updated when the current user joins a channel. [#5857](https://github.com/GetStream/stream-chat-android/pull/5857)
 
-### ⬆️ Improved
-
 ### ✅ Added
 - Introduce `GlobalState.activeLiveLocations` that emits active live locations that are being shared in the app by the current user. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
 
 ### ⚠️ Changed
 - Change `SyncManager` to schedule updates of messages that contains live locations sharing, to be executed when the live locations sharing ends. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
 
-### ❌ Removed
-
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
 - Prevent calling `focusMessage` from the `MessageListController` after closing the `MessageList`. [#5854](https://github.com/GetStream/stream-chat-android/pull/5854)
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
 
 ### ❌ Removed
 - Remove `@ExperimentalStreamChatApi` annotation usage. [#5866](https://github.com/GetStream/stream-chat-android/pull/5866)
 
 ## stream-chat-android-ui-components
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
 ### ❌ Removed
 - Remove `@ExperimentalStreamChatApi` annotation usage. [#5866](https://github.com/GetStream/stream-chat-android/pull/5866)
 
@@ -104,21 +65,8 @@
 ### ✅ Added
 - Expose `canHandle` lambda of the attachment factories: `AudioRecordAttachmentFactory`, `FileAttachmentFactory`, `GiphyAttachmentFactory`, `LinkAttachmentFactory`, `MediaAttachmentFactory`, `UploadAttachmentFactory`. [#5865](https://github.com/GetStream/stream-chat-android/pull/5865) 
 
-### ⚠️ Changed
-
 ### ❌ Removed
 - Remove `@ExperimentalStreamChatApi` annotation usage. [#5866](https://github.com/GetStream/stream-chat-android/pull/5866)
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # June 27th, 2025 - 6.18.0
 ## stream-chat-android-client
