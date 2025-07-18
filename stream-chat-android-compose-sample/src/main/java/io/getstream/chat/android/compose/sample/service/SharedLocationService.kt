@@ -126,14 +126,14 @@ class SharedLocationService(private val context: Context) : LocationCallback() {
 
         val locationsToUpdate = activeLiveLocations
 
-        for (location in result.locations) {
+        for (deviceLocation in result.locations) {
             locationsToUpdate
                 .filterNot(Location::isExpired)
                 .forEach { activeLiveLocation ->
                     chatClient.updateLiveLocation(
                         messageId = activeLiveLocation.messageId,
-                        latitude = location.latitude,
-                        longitude = location.longitude,
+                        latitude = deviceLocation.latitude,
+                        longitude = deviceLocation.longitude,
                         deviceId = currentDeviceId,
                     ).enqueue { result ->
                         result.onSuccess {
