@@ -30,6 +30,7 @@ import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
 import io.getstream.chat.android.compose.util.extensions.asState
 import io.getstream.chat.android.core.utils.Debouncer
+import io.getstream.chat.android.models.AndFilterObject
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.ConnectionState
@@ -461,7 +462,7 @@ public class ChannelListViewModel(
     /**
      * Creates a filter that is used to query channels.
      *
-     * If the [searchQuery] is empty, then returns the original [filter] provided by the user.
+     * If the [searchQuery] is shorter than 3 characters, then returns the original [filter] provided by the user.
      * Otherwise, returns a wrapped [filter] that also checks that the channel name match the
      * [searchQuery].
      *
@@ -470,21 +471,28 @@ public class ChannelListViewModel(
      *
      * @return The filter that will be used to query channels.
      */
+    @Suppress("SpreadOperator")
     private fun createQueryChannelsFilter(filter: FilterObject, searchQuery: String): FilterObject {
-        return if (searchQuery.isNotEmpty()) {
-            Filters.and(
-                filter,
-                Filters.or(
-                    Filters.and(
-                        Filters.autocomplete("member.user.name", searchQuery),
-                        Filters.notExists("name"),
-                    ),
-                    Filters.autocomplete("name", searchQuery),
-                ),
-            )
+        return if (searchQuery.length >= MIN_CHANNEL_SEARCH_QUERY_LENGTH) {
+            if (filter is AndFilterObject) {
+                // If the base filter is `AND`, extend it with the search query filter.
+                val filters = filter.filterObjects
+                val extendedFilters = filters + searchChannelFilter(searchQuery)
+                Filters.and(*extendedFilters.toTypedArray())
+            } else {
+                // If the base filter is not `AND`, wrap it in an `AND` with the search query filter.
+                Filters.and(filter, searchChannelFilter(searchQuery))
+            }
         } else {
             filter
         }
+    }
+
+    private fun searchChannelFilter(searchQuery: String): FilterObject {
+        return Filters.or(
+            Filters.autocomplete("member.user.name", searchQuery),
+            Filters.autocomplete("name", searchQuery),
+        )
     }
 
     /**
@@ -761,6 +769,11 @@ public class ChannelListViewModel(
          * Debounce time for search queries.
          */
         private const val SEARCH_DEBOUNCE_MS = 200L
+
+        /**
+         * Minimum length of the search query to start searching for channels.
+         */
+        private const val MIN_CHANNEL_SEARCH_QUERY_LENGTH = 3
     }
 
     private data class SearchMessageState(
