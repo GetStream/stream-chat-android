@@ -66,7 +66,7 @@ public class DefaultPollSwitchItemFactory(
                     value = "",
                     description = context.getString(R.string.stream_compose_poll_option_max_number_of_answers_hint),
                     minValue = PollsConstants.MIN_NUMBER_OF_MULTIPLE_ANSWERS,
-                    maxValue = PollsConstants.MAX_NUMBER_OF_VOTES_PER_USER,
+                    maxValue = PollsConstants.MAX_NUMBER_OF_MULTIPLE_ANSWERS,
                     keyboardType = KeyboardType.Number,
                 ),
                 key = PollSwitchItemKeys.MAX_VOTES_ALLOWED,

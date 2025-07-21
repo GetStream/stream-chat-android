@@ -56,7 +56,6 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.poll.PollOptionInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.clickable
-import io.getstream.chat.android.ui.common.utils.PollsConstants
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
@@ -201,7 +200,7 @@ public fun PollOptionList(
             .padding(horizontal = 16.dp)
             .clip(shape = ChatTheme.shapes.pollOptionInput)
             .background(ChatTheme.messageComposerTheme.inputField.backgroundColor)
-            .clickable(enabled = optionItemList.size < PollsConstants.MAX_NUMBER_OF_VOTES_PER_USER) {
+            .clickable {
                 optionItemList = optionItemList
                     .toMutableList()
                     .apply {

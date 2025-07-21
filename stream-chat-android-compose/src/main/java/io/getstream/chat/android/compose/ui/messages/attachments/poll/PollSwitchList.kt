@@ -249,7 +249,7 @@ private inline fun <T : Comparable<T>> PollSwitchInput.validateRange(
 
     return if (value < min || value > max) {
         PollOptionNumberExceed(
-            message = context.getString(R.string.stream_ui_poll_error_multiple_answers, min, max),
+            message = context.getString(R.string.stream_ui_poll_multiple_answers_error, min, max),
         )
     } else {
         null
@@ -279,9 +279,9 @@ internal fun PollSwitchList() {
                 ),
                 pollOptionError = PollOptionNumberExceed(
                     message = stringResource(
-                        R.string.stream_ui_poll_error_multiple_answers,
+                        R.string.stream_ui_poll_multiple_answers_error,
                         PollsConstants.MIN_NUMBER_OF_MULTIPLE_ANSWERS,
-                        PollsConstants.MAX_NUMBER_OF_VOTES_PER_USER,
+                        PollsConstants.MAX_NUMBER_OF_MULTIPLE_ANSWERS,
                     ),
                 ),
                 enabled = true,

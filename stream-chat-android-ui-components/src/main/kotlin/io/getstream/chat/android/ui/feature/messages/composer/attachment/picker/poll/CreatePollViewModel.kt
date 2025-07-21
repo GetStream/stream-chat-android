@@ -73,8 +73,8 @@ public class CreatePollViewModel : ViewModel() {
         when {
             !allowMultipleVotes || maxAnswer == null -> null
             maxAnswer
-                !in PollsConstants.MIN_NUMBER_OF_MULTIPLE_ANSWERS..PollsConstants.MAX_NUMBER_OF_VOTES_PER_USER ->
-                R.string.stream_ui_poll_error_multiple_answers
+                !in PollsConstants.MIN_NUMBER_OF_MULTIPLE_ANSWERS..PollsConstants.MAX_NUMBER_OF_MULTIPLE_ANSWERS ->
+                R.string.stream_ui_poll_multiple_answers_error
 
             else -> null
         }

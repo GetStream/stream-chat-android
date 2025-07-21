@@ -29,7 +29,7 @@ public object PollsConstants {
     public const val MIN_NUMBER_OF_MULTIPLE_ANSWERS: Int = 2
 
     /**
-     * The maximum number of votes allowed per user in a poll.
+     * The maximum number of multiple answers allowed in a poll.
      */
-    public const val MAX_NUMBER_OF_VOTES_PER_USER: Int = 10
+    public const val MAX_NUMBER_OF_MULTIPLE_ANSWERS: Int = 10
 }

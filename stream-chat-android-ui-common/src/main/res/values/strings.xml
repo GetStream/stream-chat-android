@@ -136,6 +136,6 @@
 
     <!-- Polls -->
 
-    <string name="stream_ui_poll_error_multiple_answers">Type a number from %s to %s</string>
+    <string name="stream_ui_poll_multiple_answers_error">Type a number from %s to %s</string>
 
 </resources>
