@@ -411,9 +411,13 @@ public interface Plugin :
         /* No-Op */
     }
 
-    public fun onUserSet(user: User)
+    public fun onUserSet(user: User) {
+        /* No-Op */
+    }
 
-    public fun onUserDisconnected()
+    public fun onUserDisconnected() {
+        /* No-Op */
+    }
 
     public override suspend fun onGetMessageResult(
         messageId: String,

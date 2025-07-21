@@ -17,12 +17,9 @@
 package io.getstream.chat.android.client.plugin
 
 import io.getstream.chat.android.models.Location
-import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.User
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
-import kotlin.reflect.KClass
 
 internal class ThrottlingPlugin(
     private val now: () -> Long = { System.currentTimeMillis() },
@@ -30,16 +27,6 @@ internal class ThrottlingPlugin(
     private val logger by taggedLogger("Chat:ThrottlingPlugin")
     private val lastMarkReadMap: MutableMap<String, Long> = mutableMapOf()
     private val liveLocationMap: MutableMap<String, Long> = mutableMapOf()
-
-    override suspend fun onChannelMarkReadPrecondition(channelType: String, channelId: String): Result<Unit> =
-        checkThrottling(
-            lastUpdateProvider = lastMarkReadMap,
-            key = channelId,
-            throttleMs = MARK_READ_THROTTLE_MS,
-        ) {
-            logger.w { "[onChannelMarkReadPrecondition] mark read is ignored ($channelId)" }
-            Error.GenericError("Mark read throttled")
-        }
 
     override suspend fun onUpdateLiveLocationPrecondition(location: Location): Result<Unit> =
         checkThrottling(
@@ -70,25 +57,10 @@ internal class ThrottlingPlugin(
         }
     }
 
-    override fun <T : Any> resolveDependency(klass: KClass<T>): T? = null
-    override suspend fun onGetNewerRepliesResult(
-        result: Result<List<Message>>,
-        parentId: String,
-        limit: Int,
-        lastId: String?,
-    ) {
-        // No-op
-    }
-
-    override fun onUserSet(user: User) {
-        // No-op
-    }
-
     override fun onUserDisconnected() {
         lastMarkReadMap.clear()
         liveLocationMap.clear()
     }
 }
 
-private const val MARK_READ_THROTTLE_MS = 3000L
 private const val LIVE_LOCATION_THROTTLE_MS = 3000L
