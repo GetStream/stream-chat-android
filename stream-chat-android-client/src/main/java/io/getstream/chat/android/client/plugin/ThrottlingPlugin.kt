@@ -25,7 +25,6 @@ internal class ThrottlingPlugin(
     private val now: () -> Long = { System.currentTimeMillis() },
 ) : Plugin {
     private val logger by taggedLogger("Chat:ThrottlingPlugin")
-    private val lastMarkReadMap: MutableMap<String, Long> = mutableMapOf()
     private val liveLocationMap: MutableMap<String, Long> = mutableMapOf()
 
     override suspend fun onUpdateLiveLocationPrecondition(location: Location): Result<Unit> =
@@ -58,7 +57,6 @@ internal class ThrottlingPlugin(
     }
 
     override fun onUserDisconnected() {
-        lastMarkReadMap.clear()
         liveLocationMap.clear()
     }
 }
