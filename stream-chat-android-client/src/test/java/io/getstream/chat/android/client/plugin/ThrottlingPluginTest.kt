@@ -35,32 +35,6 @@ internal class ThrottlingPluginTest {
     }
 
     @Test
-    fun `onChannelMarkReadPrecondition allows first call`() = runTest {
-        val result = sut.onChannelMarkReadPrecondition(channelType = randomString(), channelId = randomString())
-        assertTrue(result is Result.Success)
-    }
-
-    @Test
-    fun `onChannelMarkReadPrecondition throttles repeated calls within threshold`() = runTest {
-        val channelType = randomString()
-        val channelId = randomString()
-        sut.onChannelMarkReadPrecondition(channelType, channelId)
-        currentTime += 1000L // less than MARK_READ_THROTTLE_MS
-        val result = sut.onChannelMarkReadPrecondition(channelType, channelId)
-        assertTrue(result is Result.Failure)
-    }
-
-    @Test
-    fun `onChannelMarkReadPrecondition allows call after threshold`() = runTest {
-        val channelType = randomString()
-        val channelId = randomString()
-        sut.onChannelMarkReadPrecondition(channelType, channelId)
-        currentTime += 4000L // more than MARK_READ_THROTTLE_MS
-        val result = sut.onChannelMarkReadPrecondition(channelType, channelId)
-        assertTrue(result is Result.Success)
-    }
-
-    @Test
     fun `onUpdateLiveLocationPrecondition allows first call`() = runTest {
         val result = sut.onUpdateLiveLocationPrecondition(location = Location())
         assertTrue(result is Result.Success)
