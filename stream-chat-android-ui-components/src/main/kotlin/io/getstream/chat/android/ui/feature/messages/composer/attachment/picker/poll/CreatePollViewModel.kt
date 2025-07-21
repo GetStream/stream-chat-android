@@ -21,11 +21,14 @@ import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.utils.PollsConstants
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 
 /**
@@ -52,17 +55,30 @@ public class CreatePollViewModel : ViewModel() {
     /**
      * The error message for the maximum number of answers allowed.
      */
+    @Deprecated(
+        "Use multipleAnswersError instead. This property will be removed in future versions.",
+        ReplaceWith("multipleAnswersError"),
+        level = DeprecationLevel.WARNING,
+    )
     public val maxAnswerError: StateFlow<Int?> =
-        combine(allowMultipleVotes, maxAnswers, options) { allowMultipleVotes, maxAnswer, options ->
-            when {
-                !allowMultipleVotes ||
-                    maxAnswer == null -> null
-                maxAnswer <= 0 -> R.string.stream_ui_poll_error_max_answer_should_be_positive
-                maxAnswer > options.size -> R.string.stream_ui_poll_error_max_answer_can_not_be_more_than_options
-                else -> null
-            }
+        multipleAnswersErrorFlow().stateIn(viewModelScope, SharingStarted.Lazily, null)
+
+    /**
+     * A shared flow that emits an error when the range of multiple answers is invalid.
+     */
+    public val multipleAnswersError: SharedFlow<Int?> =
+        multipleAnswersErrorFlow().shareIn(viewModelScope, SharingStarted.Lazily)
+
+    private fun multipleAnswersErrorFlow() = combine(allowMultipleVotes, maxAnswers) { allowMultipleVotes, maxAnswer ->
+        when {
+            !allowMultipleVotes || maxAnswer == null -> null
+            maxAnswer
+                !in PollsConstants.MIN_NUMBER_OF_MULTIPLE_ANSWERS..PollsConstants.MAX_NUMBER_OF_VOTES_PER_USER ->
+                R.string.stream_ui_poll_error_multiple_answers
+
+            else -> null
         }
-            .stateIn(viewModelScope, SharingStarted.Lazily, null)
+    }
 
     /**
      * The poll configuration.

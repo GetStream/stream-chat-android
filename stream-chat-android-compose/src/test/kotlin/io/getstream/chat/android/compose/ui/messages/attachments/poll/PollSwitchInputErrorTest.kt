@@ -63,7 +63,7 @@ internal class PollSwitchInputErrorTest {
 
     @Test
     fun `number below range returns error`() {
-        whenever(context.getString(R.string.stream_compose_poll_option_error_exceed, 1, 10))
+        whenever(context.getString(R.string.stream_ui_poll_error_multiple_answers, 1, 10))
             .thenReturn("Error")
 
         val sut = PollSwitchInput(
@@ -80,7 +80,7 @@ internal class PollSwitchInputErrorTest {
 
     @Test
     fun `number above range returns error`() {
-        whenever(context.getString(R.string.stream_compose_poll_option_error_exceed, 1, 10))
+        whenever(context.getString(R.string.stream_ui_poll_error_multiple_answers, 1, 10))
             .thenReturn("Error")
 
         val sut = PollSwitchInput(
@@ -97,7 +97,7 @@ internal class PollSwitchInputErrorTest {
 
     @Test
     fun `invalid number format returns error`() {
-        whenever(context.getString(R.string.stream_compose_poll_option_error_exceed, 1, 10))
+        whenever(context.getString(R.string.stream_ui_poll_error_multiple_answers, 1, 10))
             .thenReturn("Error")
 
         val sut = PollSwitchInput(
@@ -128,7 +128,7 @@ internal class PollSwitchInputErrorTest {
 
     @Test
     fun `decimal below range returns error`() {
-        whenever(context.getString(R.string.stream_compose_poll_option_error_exceed, 1f, 10f))
+        whenever(context.getString(R.string.stream_ui_poll_error_multiple_answers, 1f, 10f))
             .thenReturn("Error")
 
         val sut = PollSwitchInput(
@@ -145,7 +145,7 @@ internal class PollSwitchInputErrorTest {
 
     @Test
     fun `decimal above range returns error`() {
-        whenever(context.getString(R.string.stream_compose_poll_option_error_exceed, 1f, 10f))
+        whenever(context.getString(R.string.stream_ui_poll_error_multiple_answers, 1f, 10f))
             .thenReturn("Error")
 
         val sut = PollSwitchInput(
@@ -162,7 +162,7 @@ internal class PollSwitchInputErrorTest {
 
     @Test
     fun `invalid decimal format returns error`() {
-        whenever(context.getString(R.string.stream_compose_poll_option_error_exceed, 1f, 10f))
+        whenever(context.getString(R.string.stream_ui_poll_error_multiple_answers, 1f, 10f))
             .thenReturn("Error")
 
         val sut = PollSwitchInput(

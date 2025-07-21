@@ -55,7 +55,6 @@ import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOption
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionList
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollQuestionInput
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchItem
-import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchItemKeys
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchList
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.pollConfigFrom
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -176,7 +175,6 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
                 lazyListState = questionListLazyState,
                 onQuestionsChanged = {
                     optionItemList = it
-                    switchItemList = updateMaxVotesAllowedSwitch(optionItemList, switchItemList)
                     hasError = hasError(optionItemList, switchItemList)
                 },
             )
@@ -225,27 +223,6 @@ private fun hasError(
     }
     return hasErrorInOptions || hasErrorInSwitches
 }
-
-/**
- * Updates the max votes allowed switch based on the number of options available.
- *
- * @param optionItemList The list of poll options.
- * @param switchItemList The list of poll switches.
- */
-private fun updateMaxVotesAllowedSwitch(
-    optionItemList: List<PollOptionItem>,
-    switchItemList: List<PollSwitchItem>,
-): List<PollSwitchItem> =
-    switchItemList.map {
-        when (it.key) {
-            PollSwitchItemKeys.MAX_VOTES_ALLOWED -> it.copy(
-                pollSwitchInput = it.pollSwitchInput?.copy(
-                    maxValue = optionItemList.count { item -> item.title.isNotBlank() },
-                ),
-            )
-            else -> it
-        }
-    }
 
 @Preview
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)

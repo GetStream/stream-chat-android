@@ -56,6 +56,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.poll.PollOptionInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.clickable
+import io.getstream.chat.android.ui.common.utils.PollsConstants
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
@@ -70,7 +71,6 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
  * @param onQuestionsChanged This lambda will be executed when the item of the question list is reordered.
  * @param itemHeightSize The height size of the question item.
  * @param itemInnerPadding The inner padding size of the question item.
- * It provides the index information [from] and [to] as a receiver, so you must swap the item of the [optionItems] list.
  */
 @Composable
 public fun PollOptionList(
@@ -201,7 +201,7 @@ public fun PollOptionList(
             .padding(horizontal = 16.dp)
             .clip(shape = ChatTheme.shapes.pollOptionInput)
             .background(ChatTheme.messageComposerTheme.inputField.backgroundColor)
-            .clickable {
+            .clickable(enabled = optionItemList.size < PollsConstants.MAX_NUMBER_OF_VOTES_PER_USER) {
                 optionItemList = optionItemList
                     .toMutableList()
                     .apply {

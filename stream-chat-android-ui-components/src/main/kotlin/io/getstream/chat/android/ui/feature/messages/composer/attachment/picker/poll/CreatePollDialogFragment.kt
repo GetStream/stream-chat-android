@@ -24,16 +24,18 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.utils.PollsConstants
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentCreatePollBinding
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 /**
@@ -94,6 +96,9 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
         binding.suggestAnOptionSwitch.setOnCheckedChangeListener { _, isChecked ->
             createPollViewModel.setSuggestAnOption(isChecked)
         }
+        createPollViewModel.options
+            .onEach { binding.addOption.isEnabled = it.size < PollsConstants.MAX_NUMBER_OF_VOTES_PER_USER }
+            .launchIn(lifecycleScope)
         binding.addOption.setOnClickListener {
             createPollViewModel.createOption()
         }
@@ -118,8 +123,14 @@ public class CreatePollDialogFragment : AppCompatDialogFragment() {
             }
         }
         lifecycleScope.launch {
-            createPollViewModel.maxAnswerError.collectLatest { error ->
-                binding.multipleAnswersCount.error = error?.let { getString(it) }
+            createPollViewModel.multipleAnswersError.collectLatest { error ->
+                binding.multipleAnswersCount.error = error?.let {
+                    getString(
+                        R.string.stream_ui_poll_error_multiple_answers,
+                        PollsConstants.MIN_NUMBER_OF_MULTIPLE_ANSWERS.toString(),
+                        PollsConstants.MAX_NUMBER_OF_VOTES_PER_USER.toString(),
+                    )
+                }
             }
         }
     }

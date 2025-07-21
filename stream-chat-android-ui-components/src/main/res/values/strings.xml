@@ -111,8 +111,6 @@
     <string name="stream_ui_message_composer_slide_to_cancel">Slide to cancel</string>
     <string name="stream_ui_message_composer_hold_to_record">Hold to start, release to send.</string>
 
-    <string name="stream_ui_poll_error_max_answer_should_be_positive">Max number of answer should be a positive number.</string>
-    <string name="stream_ui_poll_error_max_answer_can_not_be_more_than_options">Max number of answer can not be more than options.</string>
     <string name="stream_ui_message_list_empty">No messages</string>
     <string name="stream_ui_message_list_download_started">Download started</string>
     <string name="stream_ui_message_audio_reply_info">Voice Message</string>

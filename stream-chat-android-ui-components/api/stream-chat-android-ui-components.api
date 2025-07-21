@@ -1502,6 +1502,7 @@ public final class io/getstream/chat/android/ui/feature/messages/composer/attach
 	public final fun createOption ()V
 	public final fun createPollConfig ()V
 	public final fun getMaxAnswerError ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun getMultipleAnswersError ()Lkotlinx/coroutines/flow/SharedFlow;
 	public final fun getOptions ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getPollConfig ()Lkotlinx/coroutines/flow/StateFlow;
 	public final fun getPollIsReady ()Lkotlinx/coroutines/flow/StateFlow;
