@@ -137,6 +137,7 @@
     <!-- Polls -->
 
     <string name="stream_ui_poll_multiple_answers_error">Type a number from %s to %s</string>
+    <string name="stream_ui_poll_description_closed">Vote ended</string>
     <string name="stream_ui_poll_description_single_answer">Select one</string>
     <string name="stream_ui_poll_description_multiple_answers">Select up to %d</string>
 

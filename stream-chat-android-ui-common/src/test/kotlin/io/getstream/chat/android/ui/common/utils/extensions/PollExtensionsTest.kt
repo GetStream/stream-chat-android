@@ -31,7 +31,7 @@ internal class PollExtensionsTest {
 
     @Test
     fun `getSubtitle should return single answer subtitle when maxVotesAllowed is 1`() {
-        val poll = randomPoll(maxVotesAllowed = 1)
+        val poll = randomPoll(maxVotesAllowed = 1, closed = false)
         whenever(context.getString(R.string.stream_ui_poll_description_single_answer))
             .thenReturn("You can select only one answer.")
 
@@ -45,6 +45,7 @@ internal class PollExtensionsTest {
         val poll = randomPoll(
             options = listOf(randomPollOption(), randomPollOption()),
             maxVotesAllowed = 2,
+            closed = false,
         )
         whenever(context.getString(R.string.stream_ui_poll_description_multiple_answers, 2))
             .thenReturn("You can select up to 2 answers.")
@@ -56,14 +57,23 @@ internal class PollExtensionsTest {
 
     @Test
     fun `getSubtitle should respect the minimum of maxVotesAllowed and options size`() {
-        val poll = randomPoll(
-            maxVotesAllowed = 3,
-        )
+        val poll = randomPoll(maxVotesAllowed = 3, closed = false)
         whenever(context.getString(R.string.stream_ui_poll_description_single_answer))
             .thenReturn("You can select only one answer.")
 
         val result = poll.getSubtitle(context)
 
         assertEquals("You can select only one answer.", result)
+    }
+
+    @Test
+    fun `getSubtitle should return closed subtitle when poll is closed`() {
+        val poll = randomPoll(closed = true)
+        whenever(context.getString(R.string.stream_ui_poll_description_closed))
+            .thenReturn("This poll is closed.")
+
+        val result = poll.getSubtitle(context)
+
+        assertEquals("This poll is closed.", result)
     }
 }
