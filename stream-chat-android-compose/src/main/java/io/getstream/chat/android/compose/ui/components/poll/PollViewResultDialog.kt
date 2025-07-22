@@ -37,7 +37,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -53,12 +53,13 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import io.getstream.chat.android.client.extensions.internal.getVotesUnlessAnonymous
+import io.getstream.chat.android.client.extensions.internal.getWinner
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Vote
-import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewPollData
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
@@ -141,25 +142,26 @@ private fun LazyListScope.pollViewResultContent(
     poll: Poll,
 ) {
     val options = poll.options.sortedByDescending { option -> poll.voteCountsByOption[option.id] ?: 0 }
+    val winner = poll.getWinner()
 
-    itemsIndexed(
+    items(
         items = options,
-        key = { _, option -> option.id },
-    ) { index, option ->
-        val optionVotes = poll.votes.filter { it.optionId == option.id }
+        key = Option::id,
+    ) { option ->
+        val votes = poll.getVotesUnlessAnonymous(option)
         PollViewResultItem(
-            index = index,
             option = option,
-            votesCount = poll.voteCountsByOption[option.id] ?: optionVotes.size,
-            votes = optionVotes.takeUnless { poll.votingVisibility == VotingVisibility.ANONYMOUS } ?: emptyList(),
+            isWinner = winner == option,
+            votesCount = poll.voteCountsByOption[option.id] ?: 0,
+            votes = votes,
         )
     }
 }
 
 @Composable
 private fun PollViewResultItem(
-    index: Int,
     option: Option,
+    isWinner: Boolean,
     votesCount: Int,
     votes: List<Vote>,
 ) {
@@ -182,7 +184,7 @@ private fun PollViewResultItem(
                 fontSize = 16.sp,
             )
 
-            if (index == 0) {
+            if (isWinner) {
                 Icon(
                     modifier = Modifier.padding(end = 8.dp),
                     painter = painterResource(id = R.drawable.stream_compose_ic_award),

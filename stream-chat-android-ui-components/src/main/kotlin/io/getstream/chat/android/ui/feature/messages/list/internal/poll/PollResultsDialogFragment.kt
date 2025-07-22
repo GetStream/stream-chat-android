@@ -26,6 +26,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import io.getstream.chat.android.client.extensions.internal.getWinner
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.ChatUI
@@ -103,12 +104,14 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
         private val poll: Poll,
     ) : RecyclerView.Adapter<ResultsAdapter.ResultViewHolder>() {
 
+        private val winner = poll.getWinner()
+
         val results: List<ResultItem> = poll.options.map { option ->
             ResultItem(
                 option = option.text,
                 votes = poll.voteCountsByOption[option.id] ?: 0,
                 users = poll.votes.filter { it.optionId == option.id }.filter { it.user != null },
-                isWinner = poll.voteCountsByOption[option.id] == poll.voteCountsByOption.values.maxOrNull(),
+                isWinner = winner == option,
             )
         }.sortedByDescending { it.votes }
 

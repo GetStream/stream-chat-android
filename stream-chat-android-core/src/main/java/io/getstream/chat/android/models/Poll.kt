@@ -146,13 +146,13 @@ public data class Vote(
 )
 
 /**
- * The VotingVisibility enum represents the visibility of the votes.
- *
- * @property PUBLIC The votes are public.
- * @property ANONYMOUS The votes are anonymous.
+ * Represents the visibility of the votes.
  */
 @Immutable
 public enum class VotingVisibility {
+    /** Votes are public. */
     PUBLIC,
+
+    /** Votes are anonymous. */
     ANONYMOUS,
 }

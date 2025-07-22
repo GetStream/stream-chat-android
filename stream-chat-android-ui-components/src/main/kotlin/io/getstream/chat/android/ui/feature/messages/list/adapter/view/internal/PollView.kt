@@ -25,10 +25,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
+import io.getstream.chat.android.client.extensions.internal.getVotesUnlessAnonymous
+import io.getstream.chat.android.client.extensions.internal.getWinner
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Vote
-import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.ui.common.utils.extensions.getSubtitle
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollAnswerBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollCloseBinding
@@ -94,20 +95,19 @@ internal class PollView : RecyclerView {
                 subtitle = poll.getSubtitle(context),
             ),
         )
+        val winner = poll.getWinner()
         pollItems.addAll(
             poll.options
                 .take(MAX_OPTIONS)
                 .map { option ->
                     PollItem.Answer(
                         option = option,
-                        votes = poll.getVotes(option)
-                            .takeUnless { poll.votingVisibility == VotingVisibility.ANONYMOUS }
-                            ?: emptyList(),
+                        votes = poll.getVotesUnlessAnonymous(option),
                         voteCount = poll.voteCountsByOption[option.id] ?: 0,
                         isVotedByUser = poll.ownVotes.any { it.optionId == option.id },
                         totalVotes = poll.voteCountsByOption.values.sum(),
                         closed = poll.closed,
-                        isWinner = poll.voteCountsByOption[option.id] == poll.voteCountsByOption.values.maxOrNull(),
+                        isWinner = winner == option,
                     )
                 },
         )
