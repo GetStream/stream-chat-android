@@ -103,7 +103,7 @@ internal class PollView : RecyclerView {
 
         pollItems.addAll(
             poll.options
-                .take(PollsConstants.MINIMUM_VISIBLE_OPTIONS)
+                .take(PollsConstants.MIN_NUMBER_OF_VISIBLE_OPTIONS)
                 .map { option ->
                     PollItem.Answer(
                         option = option,
@@ -118,7 +118,7 @@ internal class PollView : RecyclerView {
         )
 
         PollItem.ShowAllOptions(count = poll.options.size)
-            .takeIf { poll.options.size > PollsConstants.MINIMUM_VISIBLE_OPTIONS }
+            .takeIf { poll.options.size > PollsConstants.MIN_NUMBER_OF_VISIBLE_OPTIONS }
             ?.let(pollItems::add)
 
         pollItems.add(PollItem.ViewResults)

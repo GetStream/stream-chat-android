@@ -36,5 +36,5 @@ public object PollsConstants {
     /**
      * The minimum number of visible options in a poll message.
      */
-    public const val MINIMUM_VISIBLE_OPTIONS: Int = 10
+    public const val MIN_NUMBER_OF_VISIBLE_OPTIONS: Int = 10
 }

@@ -249,7 +249,7 @@ private fun PollMessageContent(
         }
 
         items(
-            items = poll.options.take(PollsConstants.MINIMUM_VISIBLE_OPTIONS),
+            items = poll.options.take(PollsConstants.MIN_NUMBER_OF_VISIBLE_OPTIONS),
             key = Option::id,
         ) { option ->
             val voteCount = poll.voteCountsByOption[option.id] ?: 0
@@ -270,7 +270,7 @@ private fun PollMessageContent(
             )
         }
 
-        if (poll.options.size > PollsConstants.MINIMUM_VISIBLE_OPTIONS) {
+        if (poll.options.size > PollsConstants.MIN_NUMBER_OF_VISIBLE_OPTIONS) {
             item {
                 PollOptionButton(
                     text = stringResource(id = R.string.stream_ui_poll_action_see_all, poll.options.size),
