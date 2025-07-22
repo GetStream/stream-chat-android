@@ -32,4 +32,9 @@ public object PollsConstants {
      * The maximum number of multiple answers allowed in a poll.
      */
     public const val MAX_NUMBER_OF_MULTIPLE_ANSWERS: Int = 10
+
+    /**
+     * The minimum number of visible options in a poll message.
+     */
+    public const val MINIMUM_VISIBLE_OPTIONS: Int = 10
 }

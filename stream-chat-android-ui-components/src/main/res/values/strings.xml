@@ -198,7 +198,6 @@
     <string name="stream_ui_message_list_error_remove_vote">Failed to remove a vote</string>
     <string name="stream_ui_message_list_error_blocked_by_moderation">Message was blocked by moderation policies</string>
     <!-- Poll -->
-    <string name="stream_ui_poll_show_all_options">Show All Options</string>
     <string name="stream_ui_poll_end_vote">End Vote</string>
     <string name="stream_ui_poll_view_results">View Results</string>
     <!-- Header Title -->

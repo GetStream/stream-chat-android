@@ -30,6 +30,8 @@ import io.getstream.chat.android.client.extensions.internal.getWinner
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.utils.PollsConstants
 import io.getstream.chat.android.ui.common.utils.extensions.getSubtitle
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollAnswerBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollCloseBinding
@@ -95,10 +97,12 @@ internal class PollView : RecyclerView {
                 subtitle = poll.getSubtitle(context),
             ),
         )
+
         val winner = poll.getWinner()
+
         pollItems.addAll(
             poll.options
-                .take(MAX_OPTIONS)
+                .take(PollsConstants.MINIMUM_VISIBLE_OPTIONS)
                 .map { option ->
                     PollItem.Answer(
                         option = option,
@@ -111,21 +115,17 @@ internal class PollView : RecyclerView {
                     )
                 },
         )
-        PollItem.ShowAllOptions
-            .takeIf { poll.options.size > MAX_OPTIONS }
-            ?.takeUnless { poll.closed }
-            ?.let { pollItems.add(it) }
-        PollItem.ViewResults
-            .takeUnless { poll.ownVotes.isEmpty() || poll.closed }
-            ?.let { pollItems.add(it) }
+
+        PollItem.ShowAllOptions(count = poll.options.size)
+            .takeIf { poll.options.size > PollsConstants.MINIMUM_VISIBLE_OPTIONS }
+            ?.let(pollItems::add)
+
+        pollItems.add(PollItem.ViewResults)
+
         PollItem.Close.takeIf { isMine && !poll.closed }
-            ?.let { pollItems.add(it) }
+            ?.let(pollItems::add)
 
         pollAdapter.submitList(pollItems)
-    }
-
-    private companion object {
-        private const val MAX_OPTIONS = 10
     }
 }
 
@@ -185,7 +185,7 @@ private class PollAdapter(
         is PollItem.Answer -> VIEW_TYPE_ANSWER
         PollItem.Close -> VIEW_TYPE_CLOSE
         PollItem.ViewResults -> VIEW_TYPE_RESULTS
-        PollItem.ShowAllOptions -> VIEW_TYPE_SHOW_ALL_OPTIONS
+        is PollItem.ShowAllOptions -> VIEW_TYPE_SHOW_ALL_OPTIONS
     }
 
     override fun onBindViewHolder(holder: PollItemViewHolder<out PollItem>, position: Int) {
@@ -221,7 +221,7 @@ private sealed class PollItem {
     ) : PollItem()
 
     data object Close : PollItem()
-    data object ShowAllOptions : PollItem()
+    data class ShowAllOptions(val count: Int) : PollItem()
     data object ViewResults : PollItem()
 }
 
@@ -309,6 +309,10 @@ private class ShowAllOptionsViewHolder(
     private val onShowAllOptions: () -> Unit,
 ) : PollItemViewHolder<PollItem.ShowAllOptions>(binding) {
     override fun bind(pollItem: PollItem.ShowAllOptions) {
+        binding.pollShowAllOptions.text = binding.root.context.getString(
+            R.string.stream_ui_poll_action_see_all,
+            pollItem.count,
+        )
         binding.root.setOnClickListener { onShowAllOptions() }
     }
 }

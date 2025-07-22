@@ -79,6 +79,7 @@ import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
+import io.getstream.chat.android.ui.common.utils.PollsConstants
 import io.getstream.chat.android.ui.common.utils.extensions.getSubtitle
 
 /**
@@ -247,8 +248,8 @@ private fun PollMessageContent(
         }
 
         items(
-            items = poll.options.take(10),
-            key = { it.id },
+            items = poll.options.take(PollsConstants.MINIMUM_VISIBLE_OPTIONS),
+            key = Option::id,
         ) { option ->
             val voteCount = poll.voteCountsByOption[option.id] ?: 0
             val isVotedByMine = poll.ownVotes.any { it.optionId == option.id }
@@ -267,6 +268,15 @@ private fun PollMessageContent(
                     onRemoveVote.invoke(vote)
                 },
             )
+        }
+
+        if (poll.options.size > PollsConstants.MINIMUM_VISIBLE_OPTIONS) {
+            item {
+                PollOptionButton(
+                    text = stringResource(id = R.string.stream_ui_poll_action_see_all, poll.options.size),
+                    onButtonClicked = { selectPoll.invoke(message, poll, PollSelectionType.MoreOption) },
+                )
+            }
         }
 
         if (poll.allowUserSuggestedOptions && !isClosed) {
@@ -293,15 +303,6 @@ private fun PollMessageContent(
                         onButtonClicked = { showAddAnswerDialog.value = true },
                     )
                 }
-            }
-        }
-
-        if (poll.options.size > 10) {
-            item {
-                PollOptionButton(
-                    text = stringResource(id = R.string.stream_compose_poll_see_more_options, poll.options.size),
-                    onButtonClicked = { selectPoll.invoke(message, poll, PollSelectionType.MoreOption) },
-                )
             }
         }
 

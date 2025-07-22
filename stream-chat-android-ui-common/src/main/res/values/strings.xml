@@ -140,5 +140,6 @@
     <string name="stream_ui_poll_description_closed">Vote ended</string>
     <string name="stream_ui_poll_description_single_answer">Select one</string>
     <string name="stream_ui_poll_description_multiple_answers">Select up to %d</string>
+    <string name="stream_ui_poll_action_see_all">See All %d Options</string>
 
 </resources>

@@ -16,7 +16,6 @@
 -->
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingHorizontal="@dimen/stream_ui_spacing_small"
@@ -33,6 +32,6 @@
         android:textColor="@color/stream_ui_accent_blue"
         android:gravity="center"
         android:textDirection="locale"
-        android:text="@string/stream_ui_poll_show_all_options"
+        android:text="@string/stream_ui_poll_action_see_all"
         />
 </FrameLayout>
