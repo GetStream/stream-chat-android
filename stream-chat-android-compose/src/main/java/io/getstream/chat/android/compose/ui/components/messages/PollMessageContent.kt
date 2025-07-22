@@ -53,6 +53,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -291,7 +292,11 @@ private fun PollMessageContent(
             if (poll.answers.isNotEmpty()) {
                 item {
                     PollOptionButton(
-                        text = stringResource(R.string.stream_compose_view_answers),
+                        text = pluralStringResource(
+                            R.plurals.stream_ui_poll_action_view_comments,
+                            poll.answers.size,
+                            poll.answers.size,
+                        ),
                         onButtonClicked = { selectPoll.invoke(message, poll, PollSelectionType.ViewAnswers) },
                     )
                 }

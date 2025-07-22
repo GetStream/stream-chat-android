@@ -141,5 +141,9 @@
     <string name="stream_ui_poll_description_single_answer">Select one</string>
     <string name="stream_ui_poll_description_multiple_answers">Select up to %d</string>
     <string name="stream_ui_poll_action_see_all">See All %d Options</string>
+    <plurals name="stream_ui_poll_action_view_comments">
+        <item quantity="one">View %d Comment</item>
+        <item quantity="other">View %d Comments</item>
+    </plurals>
 
 </resources>

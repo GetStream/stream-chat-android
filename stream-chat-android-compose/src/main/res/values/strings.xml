@@ -244,7 +244,6 @@
     <string name="stream_compose_suggest_an_option">Suggest an Option</string>
     <string name="stream_compose_confirm">Confirm</string>
     <string name="stream_compose_dismiss">Dismiss</string>
-    <string name="stream_compose_view_answers">View Comments</string>
 
     <!--  Threads  -->
     <string name="stream_compose_thread_list_empty_title">No threads here yet…</string>
