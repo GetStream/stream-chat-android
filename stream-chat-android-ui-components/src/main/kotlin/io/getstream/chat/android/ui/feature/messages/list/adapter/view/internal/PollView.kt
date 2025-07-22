@@ -29,6 +29,7 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
+import io.getstream.chat.android.ui.common.utils.extensions.getSubtitle
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollAnswerBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollCloseBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollHeaderBinding
@@ -87,7 +88,12 @@ internal class PollView : RecyclerView {
         }
 
         val pollItems = mutableListOf<PollItem>()
-        pollItems.add(PollItem.Header(poll.name, poll.description))
+        pollItems.add(
+            PollItem.Header(
+                title = poll.name,
+                subtitle = poll.getSubtitle(context),
+            ),
+        )
         pollItems.addAll(
             poll.options
                 .take(MAX_OPTIONS)
@@ -145,26 +151,31 @@ private class PollAdapter(
                 StreamUiItemPollHeaderBinding.inflate(parent.streamThemeInflater, parent, false)
                     .applyStyle(pollViewStyle),
             )
+
             VIEW_TYPE_ANSWER -> AnswerViewHolder(
                 StreamUiItemPollAnswerBinding.inflate(parent.streamThemeInflater, parent, false)
                     .applyStyle(pollViewStyle),
                 onOptionClick,
             )
+
             VIEW_TYPE_CLOSE -> CloseViewHolder(
                 StreamUiItemPollCloseBinding.inflate(parent.streamThemeInflater, parent, false)
                     .applyStyle(pollViewStyle),
                 onClosePollClick,
             )
+
             VIEW_TYPE_RESULTS -> ViewResultsViewHolder(
                 StreamUiItemPollResultsBinding.inflate(parent.streamThemeInflater, parent, false)
                     .applyStyle(pollViewStyle),
                 onViewPollResultsClick,
             )
+
             VIEW_TYPE_SHOW_ALL_OPTIONS -> ShowAllOptionsViewHolder(
                 StreamUiItemPollShowAllOptionsBinding.inflate(parent.streamThemeInflater, parent, false)
                     .applyStyle(pollViewStyle),
                 onShowAllOptionsClick,
             )
+
             else -> throw IllegalArgumentException("Unknown view type: $viewType")
         }
     }

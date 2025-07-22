@@ -51,6 +51,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -78,6 +79,7 @@ import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
+import io.getstream.chat.android.ui.common.utils.extensions.getSubtitle
 
 /**
  * Message content for the poll, which distinguishes the owner and users and allows them to interact.
@@ -195,6 +197,7 @@ private fun PollMessageContent(
     onAddPollOption: (poll: Poll, option: String) -> Unit,
     selectPoll: (Message, Poll, PollSelectionType) -> Unit,
 ) {
+    val context = LocalContext.current
     val showDialog = remember { mutableStateOf(false) }
     val heightMax = LocalConfiguration.current.screenHeightDp
     val isClosed = poll.closed
@@ -237,7 +240,7 @@ private fun PollMessageContent(
         item {
             Text(
                 modifier = Modifier.padding(bottom = 8.dp),
-                text = poll.description,
+                text = poll.getSubtitle(context),
                 color = ChatTheme.colors.textLowEmphasis,
                 fontSize = 12.sp,
             )
