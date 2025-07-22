@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
 import android.content.res.Configuration
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Column
@@ -188,6 +189,8 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
                     hasError = hasError(optionItemList, switchItemList)
                 },
             )
+
+            BackHandler(enabled = hasChanges) { isShowingDiscardDialog = true }
 
             if (isShowingDiscardDialog) {
                 PollCreationDiscardDialog(
