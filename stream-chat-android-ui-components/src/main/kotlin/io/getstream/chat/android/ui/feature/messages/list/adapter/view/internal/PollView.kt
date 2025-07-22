@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal
 import android.content.Context
 import android.util.AttributeSet
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -257,6 +258,13 @@ private class AnswerViewHolder(
         }
         binding.check.isEnabled = pollItem.isVotedByUser
         binding.option.text = pollItem.option.text
+        binding.votesPercentage.setIndicatorColor(
+            if (pollItem.isVotedByUser) {
+                ContextCompat.getColor(binding.root.context, R.color.stream_ui_accent_green)
+            } else {
+                ContextCompat.getColor(binding.root.context, R.color.stream_ui_accent_blue)
+            },
+        )
         drawVotes(pollItem.voteCount, pollItem.totalVotes)
         pollItem.votes
             .firstOrNull()
