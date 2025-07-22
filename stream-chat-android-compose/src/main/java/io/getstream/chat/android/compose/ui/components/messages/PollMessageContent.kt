@@ -252,20 +252,19 @@ private fun PollMessageContent(
             key = Option::id,
         ) { option ->
             val voteCount = poll.voteCountsByOption[option.id] ?: 0
-            val isVotedByMine = poll.ownVotes.any { it.optionId == option.id }
 
             PollOptionItem(
                 poll = poll,
                 option = option,
                 voteCount = voteCount,
-                users = poll.votes.filter { it.optionId == option.id }.mapNotNull { it.user },
+                users = poll.getVotes(option).mapNotNull(Vote::user),
                 totalVoteCount = poll.voteCountsByOption.values.sum(),
                 checkedCount = poll.ownVotes.count { it.optionId == option.id },
-                checked = isVotedByMine,
+                checked = poll.ownVotes.any { it.optionId == option.id },
                 onCastVote = { onCastVote.invoke(option) },
                 onRemoveVote = {
-                    val vote = poll.votes.firstOrNull { it.optionId == option.id } ?: return@PollOptionItem
-                    onRemoveVote.invoke(vote)
+                    poll.ownVotes.firstOrNull { it.optionId == option.id }
+                        ?.let(onRemoveVote)
                 },
             )
         }
@@ -434,7 +433,7 @@ private fun PollOptionItem(
             )
 
             Row {
-                if (voteCount > 0 && poll.votingVisibility != VotingVisibility.ANONYMOUS) {
+                if (users.isNotEmpty() && poll.votingVisibility != VotingVisibility.ANONYMOUS) {
                     UserAvatarRow(
                         modifier = Modifier.padding(end = 2.dp),
                         users = users,
