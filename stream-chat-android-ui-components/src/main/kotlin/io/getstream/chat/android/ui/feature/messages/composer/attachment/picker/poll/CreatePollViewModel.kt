@@ -22,11 +22,14 @@ import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.utils.PollsConstants
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
@@ -39,7 +42,7 @@ public class CreatePollViewModel : ViewModel() {
 
     private val _titleStateFlow: MutableStateFlow<String> = MutableStateFlow("")
     private val _options: MutableStateFlow<LinkedHashMap<Int, PollAnswer>> = MutableStateFlow(LinkedHashMap())
-    private val createPoll: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val createPoll = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     private var suggestAnOption = false
     private var annonymousPoll = false
     private var allowMultipleVotes = MutableStateFlow(false)
@@ -84,52 +87,42 @@ public class CreatePollViewModel : ViewModel() {
      * The poll configuration.
      * If the poll is not ready to be created, it will be null.
      */
-    public val pollConfig: StateFlow<PollConfig?> =
-        combine(
-            createPoll,
-            _titleStateFlow,
-            options,
-            allowMultipleVotes,
-            maxAnswers,
-        ) { createPoll, title, options, allowMultipleVotes, maxAnswers ->
-            if (!createPoll) {
-                null
-            } else if (title.isNotBlank() &&
-                options.isNotEmpty() &&
-                options.all { it.text.isNotBlank() && !it.duplicateError } &&
-                (!allowMultipleVotes || (maxAnswers != null && maxAnswers > 0 && maxAnswers <= options.size))
-            ) {
+    public val pollConfig: StateFlow<PollConfig?> = createPoll
+        .flatMapLatest { pollIsReady.filter { it } }
+        .flatMapLatest {
+            combine(
+                _titleStateFlow,
+                options,
+                allowMultipleVotes,
+                maxAnswers,
+            ) { title, options, allowMultipleVotes, maxAnswers ->
                 PollConfig(
                     name = title,
-                    options = options.map { it.text },
+                    options = options.map(PollAnswer::text),
                     votingVisibility = if (annonymousPoll) VotingVisibility.ANONYMOUS else VotingVisibility.PUBLIC,
                     allowUserSuggestedOptions = suggestAnOption,
                     maxVotesAllowed = maxAnswers.takeIf { allowMultipleVotes } ?: 1,
                     enforceUniqueVote = !allowMultipleVotes,
                 )
-            } else {
-                null
             }
-        }
-            .stateIn(viewModelScope, SharingStarted.Lazily, null)
+        }.stateIn(viewModelScope, SharingStarted.Lazily, null)
 
     /**
      * Indicates if the poll is ready to be created.
      */
     public val pollIsReady: StateFlow<Boolean> =
         combine(
-            _options,
+            options,
             _titleStateFlow,
             allowMultipleVotes,
             maxAnswers,
-        ) { options, title, allowMultipleVotes, maxAnswers ->
-            options.values.let {
-                it.isNotEmpty() && it.all { it.text.isNotBlank() && !it.duplicateError }
-            } &&
+            multipleAnswersError,
+        ) { options, title, allowMultipleVotes, maxAnswers, multipleAnswersError ->
+            options.isNotEmpty() &&
+                options.all { it.text.isNotBlank() && !it.duplicateError } &&
                 title.isNotBlank() &&
-                (!allowMultipleVotes || (maxAnswers != null && maxAnswers > 0 && maxAnswers <= options.size))
-        }
-            .stateIn(viewModelScope, SharingStarted.Lazily, false)
+                (!allowMultipleVotes || (maxAnswers != null && multipleAnswersError == null))
+        }.stateIn(viewModelScope, SharingStarted.Lazily, false)
 
     /**
      * Set the title of the poll.
@@ -175,7 +168,7 @@ public class CreatePollViewModel : ViewModel() {
      * Create a new poll config.
      */
     public fun createPollConfig() {
-        createPoll.value = true
+        createPoll.tryEmit(Unit)
     }
 
     /**
