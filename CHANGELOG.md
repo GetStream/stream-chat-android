@@ -50,6 +50,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added a check for skipping the message send when text is not changed. [#5831](https://github.com/GetStream/stream-chat-android/pull/5831)
 
 ### ⚠️ Changed
 
