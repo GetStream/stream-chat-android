@@ -60,6 +60,11 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improve enforcement of multiple answer ranges in polls. The number of multiple answers must be between 2 and 10, inclusive. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
+- Show the number of selectable poll answers as a subtitle in poll message content. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
+- Show unique poll winner. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
+- Show "Vote ended" subtitle for closed polls.. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
+- Shows the vote date and time in the Poll result dialog. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
 
 ### ✅ Added
 
@@ -69,8 +74,16 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix duplicate avatars in poll messages by remembering `imageUrl` to invalidate `data` when `imageUrl` changes. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
 
 ### ⬆️ Improved
+- Improve enforcement of multiple answer ranges in polls. The number of multiple answers must be between 2 and 10, inclusive. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
+- Show the number of selectable poll answers as a subtitle in poll message content. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
+- Show unique poll winner. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
+- Show "Vote ended" subtitle for closed polls.. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
+- Show the number of comments on the "View Comments" button. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
+- Show discard dialog when there are changes in the poll composer and the system back button is "pressed". [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
+- Shows the vote date and time in the Poll result dialog. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
 - Optimize default channel search query to prevent timeouts. [#5870](https://github.com/GetStream/stream-chat-android/pull/5870)
 
 ### ✅ Added
