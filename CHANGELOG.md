@@ -1,10 +1,8 @@
 # UNRELEASED CHANGELOG
 ## Common changes for all artifacts
 ### 🐞 Fixed
-- Fix JSON parsing of `Device.providerName` when calling `ChatClient.getDevices()`. [#5821](https://github.com/GetStream/stream-chat-android/pull/5821)
 
 ### ⬆️ Improved
-- Use `AAC_ADTS` as default audio recording output format. [#5825](https://github.com/GetStream/stream-chat-android/pull/5825)
 
 ### ✅ Added
 
@@ -18,6 +16,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add throttling mechanism to prevent excessive API calls when updating locations. [#5871](https://github.com/GetStream/stream-chat-android/pull/5871)
 
 ### ⚠️ Changed
 
@@ -72,14 +71,13 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Optimize default channel search query to prevent timeouts. [#5870](https://github.com/GetStream/stream-chat-android/pull/5870)
 
 ### ✅ Added
-- Add `FileAttachmentPreviewContent`, `FileAttachmentContent`,`FileAttachmentItem`, `FileUploadContent` and `FileUploadItem` to `ChatComponentFactory`. [#5791](https://github.com/GetStream/stream-chat-android/pull/5791)
 
 ### ⚠️ Changed
 
 ### ❌ Removed
-- Remove redundant use of coroutineScope inside of `LaunchedEffect`. [#5811](https://github.com/GetStream/stream-chat-android/pull/5811)
 
 ## stream-chat-android-markdown-transformer
 ### 🐞 Fixed
@@ -91,6 +89,123 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# July 18th, 2025 - 6.19.0
+## stream-chat-android-client
+### 🐞 Fixed
+- Include pending messages in the `Channel.messages` field so they are always visible in the message list. [#5862](https://github.com/GetStream/stream-chat-android/pull/5862)
+
+### ✅ Added
+- Add `ChannelClient.queryReminders()` for querying message reminders. [#5779](https://github.com/GetStream/stream-chat-android/pull/5779)
+- Add `ChannelClient.createReminder()` for creating a message reminder. [#5779](https://github.com/GetStream/stream-chat-android/pull/5779)
+- Add `ChannelClient.updateReminder()` for updating an existing message reminder. [#5779](https://github.com/GetStream/stream-chat-android/pull/5779)
+- Add `ChannelClient.deleteReminder()` for deleting an existing message reminder. [#5779](https://github.com/GetStream/stream-chat-android/pull/5779)
+- Add `ReminderCreatedEvent`, `ReminderUpdatdeEvent`, `ReminderDeletedEvent` and `NotificationReminderDueEvent` events notifying the user about changes in the message reminders. [#5779](https://github.com/GetStream/stream-chat-android/pull/5779)
+- Add `reminder` field to the `Message` entity, which contains the reminder information. [#5779](https://github.com/GetStream/stream-chat-android/pull/5779)
+- Add default handling for `notification.reminder_due` push notification. [#5833](https://github.com/GetStream/stream-chat-android/pull/5833)
+- Add `NotificationHandler.showNotification(ChatNotification)` message method for showing a notification of a specific type. [#5833](https://github.com/GetStream/stream-chat-android/pull/5833)
+- Add `ChatClient.queryActiveLocations` to query the active live locations (non-expired) shared by the current user. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
+- Add `ChatClient.sendStaticLocation` to send a static location message to the given channel. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
+- Add `ChatClient.startLiveLocationSharing` to start a live location sharing for the given channel. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
+- Add `ChatClient.updateLiveLocation` to update the live location info of a message. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
+- Add `ChatClient.stopLiveLocationSharing` to stop the live location sharing for a message. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
+- Introduce the `LiveLocationListener` interface to handle live location-related request events: `onQueryActiveLocationsResult`, `onStartLiveLocationSharingResult`, `onUpdateLiveLocationPrecondition`, `onUpdateLiveLocationResult`, `onStopLiveLocationSharingResult`. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
+- Add utility function `Message.hasSharedLocation` to check if a message contains shared location data. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
+
+### ⚠️ Changed
+- Deprecate `NotificationHandler.showNotification(Channel, Message)` in favor of `NotificationHandler.showNotification(ChatNotification)`. [#5833](https://github.com/GetStream/stream-chat-android/pull/5833)
+
+### ❌ Removed
+- Remove `@ExperimentalStreamChatApi` annotation usage. [#5866](https://github.com/GetStream/stream-chat-android/pull/5866)
+
+## stream-chat-android-offline
+### ✅ Added
+- Support local storage to the shared location. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
+
+## stream-chat-android-state
+### 🐞 Fixed
+- Unread message count should not be reset on entering a thread. [#5836](https://github.com/GetStream/stream-chat-android/pull/5836)
+- Fix `GlobalState.totalUnreadCount` and `GlobalState.channelUnreadCount` not updated when receiving a new message, when the `OfflinePlugin` is not applied. [#5858](https://github.com/GetStream/stream-chat-android/pull/5858)
+- Ensure `Channel.membership` is updated when the current user joins a channel. [#5857](https://github.com/GetStream/stream-chat-android/pull/5857)
+
+### ✅ Added
+- Introduce `GlobalState.activeLiveLocations` that emits active live locations that are being shared in the app by the current user. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
+
+### ⚠️ Changed
+- Change `SyncManager` to schedule updates of messages that contains live locations sharing, to be executed when the live locations sharing ends. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+- Prevent calling `focusMessage` from the `MessageListController` after closing the `MessageList`. [#5854](https://github.com/GetStream/stream-chat-android/pull/5854)
+
+### ❌ Removed
+- Remove `@ExperimentalStreamChatApi` annotation usage. [#5866](https://github.com/GetStream/stream-chat-android/pull/5866)
+
+## stream-chat-android-ui-components
+### ❌ Removed
+- Remove `@ExperimentalStreamChatApi` annotation usage. [#5866](https://github.com/GetStream/stream-chat-android/pull/5866)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fix `MediaGalleryPreviewActivity` overriding the `Message.attachments` of the `Message` which was passed to it. [#5863](https://github.com/GetStream/stream-chat-android/pull/5863)
+- Fix `MediaGalleryPreviewActivity` displaying the current time instead of the `Message` timestamp if the screen was opened without internet connection. [#5863](https://github.com/GetStream/stream-chat-android/pull/5863)
+- Fix the top bar up button not working when the keyboard is open in the messages screen. [#5868](https://github.com/GetStream/stream-chat-android/pull/5868)
+
+### ⬆️ Improved
+- Add bottom padding to unread message separator. [#5855](https://github.com/GetStream/stream-chat-android/pull/5855)
+
+### ✅ Added
+- Expose `canHandle` lambda of the attachment factories: `AudioRecordAttachmentFactory`, `FileAttachmentFactory`, `GiphyAttachmentFactory`, `LinkAttachmentFactory`, `MediaAttachmentFactory`, `UploadAttachmentFactory`. [#5865](https://github.com/GetStream/stream-chat-android/pull/5865) 
+
+### ❌ Removed
+- Remove `@ExperimentalStreamChatApi` annotation usage. [#5866](https://github.com/GetStream/stream-chat-android/pull/5866)
+
+# June 27th, 2025 - 6.18.0
+## stream-chat-android-client
+### 🐞 Fixed
+- Fix JSON parsing of `Device.providerName` when calling `ChatClient.getDevices()`. [#5821](https://github.com/GetStream/stream-chat-android/pull/5821)
+- Fix JSON parsing of `Flag.targetMessageId` when calling `ChatClient.flagUser()`. [#5829](https://github.com/GetStream/stream-chat-android/pull/5829)
+
+### ⬆️ Improved
+- Refactor how Draft Messages are queried to avoid potential issues on the sync process. [#5847](https://github.com/GetStream/stream-chat-android/pull/5847)
+
+## stream-chat-android-ui-common
+### ⬆️ Improved
+- Use `AAC_ADTS` as default audio recording output format. [#5825](https://github.com/GetStream/stream-chat-android/pull/5825)
+
+### ✅ Added
+- Add `MessageOriginalTranslationsStore`: In-memory storage for keeping track of all auto-translated messages which have been manually converted to their original text. [#5845](https://github.com/GetStream/stream-chat-android/pull/5845)
+- Add `MessageListController.toggleOriginalText()` method for toggling between the original and translated text of the given message. [#5843](https://github.com/GetStream/stream-chat-android/pull/5843)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fix quoted poll messages showing an empty message preview. [#5849](https://github.com/GetStream/stream-chat-android/pull/5849)
+
+### ✅ Added
+- Introduce experimental classes: `ChannelInfoViewModel`, `ChannelInfoViewModelFactory`, `ChannelInfoMemberViewModel`, and `ChannelInfoMemberViewModelFactory`. [#5801](https://github.com/GetStream/stream-chat-android/pull/5801) 
+- Add `ChatUI.showOriginalTranslationEnabled` flag for enabling/disabling the "Show original" translation label in the message list. [#5843](https://github.com/GetStream/stream-chat-android/pull/5843)
+- Add `MessageListViewModel.Event.ToggleOriginalText` for toggling between the original and translated text of the given message. [#5843](https://github.com/GetStream/stream-chat-android/pull/5843)
+
+### ⚠️ Changed
+- Refactor the XML sample view models and UI components to use ChannelInfoViewController. [#5801](https://github.com/GetStream/stream-chat-android/pull/5801)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Use the same text style in `DefaultComposerLabel` and `MessageInput` so that typing `MessageComposer` doesn't cause any glitches. [#5838](https://github.com/GetStream/stream-chat-android/pull/5838)
+- Fix quoted poll messages showing an empty message preview. [#5849](https://github.com/GetStream/stream-chat-android/pull/5849)
+- Fix ExoPlayer crash when playing a video, happening when the integration app is using the legacy `com.google.android.exoplayer` library. [#5841](https://github.com/GetStream/stream-chat-android/pull/5841)
+
+### ✅ Added
+- Add `FileAttachmentPreviewContent`, `FileAttachmentContent`,`FileAttachmentItem`, `FileUploadContent` and `FileUploadItem` to `ChatComponentFactory`. [#5791](https://github.com/GetStream/stream-chat-android/pull/5791)
+- Introduce internal `DraftChannelViewController` and experimental classes `DraftChannelViewState`, `DraftChannelViewAction`, and `DraftChannelViewEvent`. [#5797](https://github.com/GetStream/stream-chat-android/pull/5797)
+- Message member from the member bottom sheet of the channel info screen. [#5797](https://github.com/GetStream/stream-chat-android/pull/5797)
+- Introduce **experimental** factory methods for the channel info screens. [#5812](https://github.com/GetStream/stream-chat-android/pull/5812)
+- Add `ChatTheme.showOriginalTranslationEnabled` flag for enabling/disabling the "Show original" translation label in the message list. [#5845](https://github.com/GetStream/stream-chat-android/pull/5845)
+- Add `MessageListViewModel.toggleOriginalText()` method for toggling between the original and translated text of the given message. [#5845](https://github.com/GetStream/stream-chat-android/pull/5845)
+- Support adding members to group in the channel info screen. [#5850](https://github.com/GetStream/stream-chat-android/pull/5850)
+
+### ❌ Removed
+- Remove redundant use of coroutineScope inside of `LaunchedEffect`. [#5811](https://github.com/GetStream/stream-chat-android/pull/5811)
 
 # June 09th, 2025 - 6.17.0
 ## stream-chat-android-client
@@ -3471,7 +3586,9 @@ Consider migrating to `stream-chat-android-ui-components` or `stream-chat-androi
 - Rtl support was added. If the app has `android:supportsRtl="true"` and the locale of the device needs Rtl support, the SDK will draw the components from the right-to-left instead the default way (left-to-right) [#2799](https://github.com/GetStream/stream-chat-android/pull/2799)
 
 ### ⚠️ Changed
-- Constructor of `ChannelListViewModel` and `ChannelListViewModelFactory` changed. Now they ask for `ChatEventHandlerFactory` instead `ChatEventHandler`, so users can use `StateFlow<List<Channel>>` in their implementations of `ChatEventHandler`, which can make implementation smarter with resources (don't try to add a channel that is already there, for example) [#2747](https://github.com/GetStream/stream-chat-android/pull/2747)
+- Constructor of `ChannelListViewModel` and `ChannelListViewModelFactory` changed. Now they ask for `ChatEventHandlerFactory` instead `ChatEventHandler`, so users can use `StateFlow<List<Channel
+
+` in their implementations of `ChatEventHandler`, which can make implementation smarter with resources (don't try to add a channel that is already there, for example) [#2747](https://github.com/GetStream/stream-chat-android/pull/2747)
 
 ### ❌ Removed
 

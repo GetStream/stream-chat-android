@@ -111,7 +111,7 @@ public class MessageComposerController(
     mediaRecorder: StreamMediaRecorder,
     private val userLookupHandler: UserLookupHandler,
     fileToUri: (File) -> String,
-    private val config: MessageComposerController.Config = MessageComposerController.Config(),
+    private val config: Config = Config(),
     private val globalState: Flow<GlobalState> = chatClient.globalStateFlow,
 ) {
 
@@ -363,7 +363,7 @@ public class MessageComposerController(
     private val selectedMentions: MutableSet<User> = mutableSetOf()
 
     private val mentionSuggester = TypingSuggester(
-        TypingSuggestionOptions(symbol = MentionStartSymbol),
+        TypingSuggestionOptions(symbol = MENTION_START_SYMBOL),
     )
 
     /**
@@ -919,7 +919,7 @@ public class MessageComposerController(
     /**
      * Shows the mention suggestion list popup if necessary.
      */
-    private suspend fun handleMentionSuggestions() {
+    private fun handleMentionSuggestions() {
         val messageInput = messageInput.value
         if (messageInput.source == MessageInput.Source.MentionSelected) {
             logger.v { "[handleMentionSuggestions] rejected (messageInput came from mention selection)" }
@@ -981,7 +981,7 @@ public class MessageComposerController(
                 cooldownTimerJob = scope.launch {
                     for (timeRemaining in cooldownInterval - elapsedTime downTo 0) {
                         updateCooldownTime(timeRemaining.toInt())
-                        delay(OneSecond)
+                        delay(ONE_SECOND)
                     }
                 }
             } else {
@@ -1048,7 +1048,7 @@ public class MessageComposerController(
         /**
          * The character used to start a mention.
          */
-        private const val MentionStartSymbol: String = "@"
+        private const val MENTION_START_SYMBOL: String = "@"
 
         /**
          * The regex pattern used to check if the message ends with incomplete command.
@@ -1059,7 +1059,7 @@ public class MessageComposerController(
             "(http://|https://)?([a-zA-Z0-9]+(\\.[a-zA-Z0-9-]+)*\\.([a-zA-Z]{2,}))(/[\\w-./?%&=]*)?",
         )
 
-        private const val OneSecond = 1000L
+        private const val ONE_SECOND = 1000L
 
         /**
          * The amount of time we debounce computing mention suggestions and link previews.

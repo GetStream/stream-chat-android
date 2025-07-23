@@ -25,12 +25,12 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -88,8 +88,7 @@ fun AddChannelScreen(
 ) {
     Scaffold(
         modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding(),
+            .safeDrawingPadding(),
         topBar = {
             AddChannelToolbar(
                 state = state.searchUsersState,
@@ -108,6 +107,9 @@ fun AddChannelScreen(
                 }
                 MessageComposer(
                     viewModel = viewModel,
+                    integrations = {
+                        Spacer(Modifier.width(8.dp))
+                    },
                     onSendMessage = {
                         viewModel.sendMessage(it)
                         onMessageSent()

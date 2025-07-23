@@ -22,6 +22,11 @@ package io.getstream.chat.android.extensions
  * @param min The minimum value.
  * @param max The maximum value.
  */
+@Deprecated(
+    message = "This function is deprecated and will be removed in the future. " +
+        "Use `kotlin.ranges.coerceIn` instead.",
+    replaceWith = ReplaceWith("this.coerceIn(min, max)"),
+)
 public fun Int.limitTo(min: Int, max: Int): Int {
     return when {
         this < min -> min

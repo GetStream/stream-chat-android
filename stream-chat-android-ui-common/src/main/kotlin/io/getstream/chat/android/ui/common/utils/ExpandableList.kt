@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.ui.common.utils
 
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
-
 /**
  * A read-only, immutable list wrapper that supports expandable and collapsible behavior.
  *
@@ -41,7 +39,6 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
  * @property collapsedCount the number of items currently hidden due to collapsing,
  * or `0` if fully expanded or not expandable.
  */
-@ExperimentalStreamChatApi
 public data class ExpandableList<T>(
     private val items: List<T>,
     private val minimumVisibleItems: Int = items.size,

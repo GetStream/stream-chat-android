@@ -508,6 +508,6 @@ internal class ChatClientGeneralApiTests : BaseChatClientTest() {
             plugins.add(plugin)
         }
 
-        fun get(): ChatClient = chatClient.apply { plugins = this@ChatClientGeneralApiTests.plugins }
+        fun get(): ChatClient = chatClient
     }
 }

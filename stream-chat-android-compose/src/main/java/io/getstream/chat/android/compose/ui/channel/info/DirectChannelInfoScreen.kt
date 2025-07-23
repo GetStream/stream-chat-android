@@ -22,7 +22,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -42,19 +44,25 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
 import io.getstream.chat.android.compose.ui.components.ContentBox
-import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
+import io.getstream.chat.android.compose.ui.components.avatar.DefaultOnlineIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getLastSeenText
+import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.previewdata.PreviewChannelData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
+import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
 import io.getstream.chat.android.ui.common.utils.ExpandableList
+import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndicator
 import kotlinx.coroutines.flow.collectLatest
 import java.util.Date
 
@@ -64,35 +72,59 @@ import java.util.Date
  *
  * @param viewModelFactory The factory used to create the [ChannelInfoViewModel].
  * @param modifier The [Modifier] to be applied to this screen.
- * @param viewModelKey Key to differentiate between instances of [ChannelInfoViewModel].
  * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
- * @param topBar The top bar to be displayed on the screen.
  */
-@ExperimentalStreamChatApi
 @Composable
 public fun DirectChannelInfoScreen(
     viewModelFactory: ChannelInfoViewModelFactory,
     modifier: Modifier = Modifier,
-    viewModelKey: String? = null,
     onNavigationIconClick: () -> Unit = {},
-    topBar: @Composable () -> Unit = {
-        DirectChannelInfoTopBar(
-            onNavigationIconClick = onNavigationIconClick,
-        )
-    },
 ) {
-    val viewModel = viewModel<ChannelInfoViewModel>(key = viewModelKey, factory = viewModelFactory)
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val headerViewModel = viewModel<ChannelHeaderViewModel>(factory = viewModelFactory)
+    val infoViewModel = viewModel<ChannelInfoViewModel>(factory = viewModelFactory)
+    val headerState by headerViewModel.state.collectAsStateWithLifecycle()
+    val infoState by infoViewModel.state.collectAsStateWithLifecycle()
 
-    DirectChannelInfoContent(
-        state = state,
+    DirectChannelInfoScaffold(
         modifier = modifier,
+        headerState = headerState,
+        infoState = infoState,
         onNavigationIconClick = onNavigationIconClick,
-        onViewAction = viewModel::onViewAction,
-        topBar = topBar,
+        onViewAction = infoViewModel::onViewAction,
     )
 
-    DirectChannelInfoScreenModal(viewModel)
+    DirectChannelInfoScreenModal(infoViewModel)
+}
+
+@Composable
+private fun DirectChannelInfoScaffold(
+    modifier: Modifier,
+    headerState: ChannelHeaderViewState,
+    infoState: ChannelInfoViewState,
+    onNavigationIconClick: () -> Unit = {},
+    onViewAction: (action: ChannelInfoViewAction) -> Unit = {},
+) {
+    val listState = rememberLazyListState()
+    Scaffold(
+        modifier = modifier,
+        topBar = {
+            ChatTheme.componentFactory.DirectChannelInfoTopBar(
+                headerState = headerState,
+                listState = listState,
+                onNavigationIconClick = onNavigationIconClick,
+            )
+        },
+        containerColor = ChatTheme.colors.barsBackground,
+    ) { padding ->
+        DirectChannelInfoContent(
+            state = infoState,
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize(),
+            listState = listState,
+            onViewAction = onViewAction,
+        )
+    }
 }
 
 @Composable
@@ -107,7 +139,7 @@ private fun DirectChannelInfoScreenModal(viewModel: ChannelInfoViewModel) {
         }
     }
 
-    ChannelInfoScreenModal(
+    ChatTheme.componentFactory.ChannelInfoScreenModal(
         modal = modal,
         isGroupChannel = false,
         onViewAction = viewModel::onViewAction,
@@ -118,13 +150,13 @@ private fun DirectChannelInfoScreenModal(viewModel: ChannelInfoViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DirectChannelInfoTopBar(
+internal fun DirectChannelInfoTopBar(
     onNavigationIconClick: () -> Unit,
 ) {
     TopAppBar(
         title = {},
         navigationIcon = {
-            DefaultChannelInfoScreenNavigationIcon(
+            ChannelInfoNavigationIcon(
                 onClick = onNavigationIconClick,
             )
         },
@@ -135,55 +167,27 @@ private fun DirectChannelInfoTopBar(
 @Composable
 private fun DirectChannelInfoContent(
     state: ChannelInfoViewState,
-    modifier: Modifier = Modifier,
-    onNavigationIconClick: () -> Unit = {},
-    onViewAction: (action: ChannelInfoViewAction) -> Unit = {},
-    topBar: @Composable () -> Unit = {
-        DirectChannelInfoTopBar(
-            onNavigationIconClick = onNavigationIconClick,
-        )
-    },
+    modifier: Modifier,
+    listState: LazyListState,
+    onViewAction: (action: ChannelInfoViewAction) -> Unit,
 ) {
-    Scaffold(
+    val isLoading = state is ChannelInfoViewState.Loading
+    ContentBox(
         modifier = modifier,
-        topBar = topBar,
-        containerColor = ChatTheme.colors.barsBackground,
-    ) { padding ->
-        val isLoading = state is ChannelInfoViewState.Loading
-        ContentBox(
-            modifier = Modifier
-                .padding(padding)
-                .fillMaxSize(),
-            contentAlignment = if (isLoading) Alignment.Center else Alignment.TopCenter,
-            isLoading = isLoading,
+        isLoading = isLoading,
+    ) {
+        val content = state as ChannelInfoViewState.Content
+        Column(
+            modifier = Modifier.matchParentSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            val content = state as ChannelInfoViewState.Content
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                val user = content.members.first().user
-                UserAvatar(
-                    modifier = Modifier.size(72.dp),
-                    user = user,
-                )
-                Text(
-                    text = user.name.takeIf(String::isNotBlank) ?: user.id,
-                    style = ChatTheme.typography.title3Bold,
-                    color = ChatTheme.colors.textHighEmphasis,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Text(
-                    text = user.getLastSeenText(LocalContext.current),
-                    style = ChatTheme.typography.footnote,
-                    color = ChatTheme.colors.textLowEmphasis,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                LazyColumn {
-                    items(content.options) { option ->
-                        ChannelInfoChannelOption(
+            val user = content.members.first().user
+            ChatTheme.componentFactory.DirectChannelInfoAvatarContainer(user)
+            LazyColumn(state = listState) {
+                items(content.options) { option ->
+                    with(ChatTheme.componentFactory) {
+                        ChannelInfoOptionItem(
                             option = option,
                             isGroupChannel = false,
                             onViewAction = onViewAction,
@@ -192,6 +196,40 @@ private fun DirectChannelInfoContent(
                 }
             }
         }
+    }
+}
+
+@Composable
+internal fun DirectChannelInfoAvatarContainer(user: User) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        ChatTheme.componentFactory.UserAvatar(
+            modifier = Modifier.size(72.dp),
+            user = user,
+            textStyle = ChatTheme.typography.title3Bold,
+            showOnlineIndicator = user.shouldShowOnlineIndicator(
+                userPresence = ChatTheme.userPresence,
+                currentUser = null,
+            ),
+            onlineIndicator = { DefaultOnlineIndicator(onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd) },
+            onClick = null,
+        )
+        Text(
+            text = user.name.takeIf(String::isNotBlank) ?: user.id,
+            style = ChatTheme.typography.title3Bold,
+            color = ChatTheme.colors.textHighEmphasis,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Text(
+            text = user.getLastSeenText(LocalContext.current),
+            style = ChatTheme.typography.footnote,
+            color = ChatTheme.colors.textLowEmphasis,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
     }
 }
 
@@ -205,8 +243,12 @@ private fun DirectChannelInfoContentLoadingPreview() {
 
 @Composable
 internal fun DirectChannelInfoLoading() {
-    DirectChannelInfoContent(
-        state = ChannelInfoViewState.Loading,
+    DirectChannelInfoScaffold(
+        modifier = Modifier.fillMaxSize(),
+        headerState = ChannelHeaderViewState.Loading,
+        infoState = ChannelInfoViewState.Loading,
+        onNavigationIconClick = {},
+        onViewAction = {},
     )
 }
 
@@ -221,8 +263,14 @@ private fun DirectChannelInfoContentPreview() {
 @Composable
 internal fun DirectChannelInfoContent() {
     val member = Member(user = PreviewUserData.user1.copy(lastActive = Date()))
-    DirectChannelInfoContent(
-        state = ChannelInfoViewState.Content(
+    DirectChannelInfoScaffold(
+        modifier = Modifier.fillMaxSize(),
+        headerState = ChannelHeaderViewState.Content(
+            currentUser = PreviewUserData.user1,
+            connectionState = ConnectionState.Connected,
+            channel = PreviewChannelData.channelWithImage,
+        ),
+        infoState = ChannelInfoViewState.Content(
             owner = member.user,
             members = ExpandableList(
                 items = listOf(member),

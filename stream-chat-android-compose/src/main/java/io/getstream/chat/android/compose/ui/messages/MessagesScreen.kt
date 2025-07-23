@@ -53,7 +53,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -178,15 +177,13 @@ public fun MessagesScreen(
         composerViewModel.setMessageMode(messageMode)
     }
 
-    val isImeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
-    val backAction: BackAction = remember(listViewModel, composerViewModel, attachmentsPickerViewModel) {
+    val backAction: BackAction =
         {
             val isStartedForThread = listViewModel.isStartedForThread
             val isInThread = listViewModel.isInThread
             val isShowingOverlay = listViewModel.isShowingOverlay
 
             when {
-                isImeVisible -> Unit
                 attachmentsPickerViewModel.isShowingAttachments -> attachmentsPickerViewModel.changeAttachmentState(
                     false,
                 )
@@ -201,7 +198,6 @@ public fun MessagesScreen(
                 else -> onBackPressed()
             }
         }
-    }
 
     BackHandler(enabled = true, onBack = backAction)
 

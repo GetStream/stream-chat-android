@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.api
 
 import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Message
 import io.getstream.result.call.Call
 import io.getstream.result.call.CoroutineCall
@@ -31,7 +30,6 @@ import kotlinx.coroutines.CoroutineScope
  * @param sendMessageInterceptor An optional [SendMessageInterceptor] for intercepting and overriding the 'sendMessage'
  * API call.
  */
-@OptIn(ExperimentalStreamChatApi::class)
 internal class ProxyChatApi(
     private val delegate: ChatApi,
     private val scope: CoroutineScope,

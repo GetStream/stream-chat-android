@@ -34,9 +34,11 @@ import io.getstream.chat.android.client.events.DraftMessageDeletedEvent
 import io.getstream.chat.android.client.events.DraftMessageUpdatedEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
+import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.HasMessage
 import io.getstream.chat.android.client.events.HasOwnUser
 import io.getstream.chat.android.client.events.HasPoll
+import io.getstream.chat.android.client.events.HasReminder
 import io.getstream.chat.android.client.events.HasUnreadCounts
 import io.getstream.chat.android.client.events.HasUnreadThreadCounts
 import io.getstream.chat.android.client.events.MarkAllReadEvent
@@ -66,6 +68,9 @@ import io.getstream.chat.android.client.events.PollUpdatedEvent
 import io.getstream.chat.android.client.events.ReactionDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
+import io.getstream.chat.android.client.events.ReminderCreatedEvent
+import io.getstream.chat.android.client.events.ReminderDeletedEvent
+import io.getstream.chat.android.client.events.ReminderUpdatedEvent
 import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
@@ -84,6 +89,7 @@ import io.getstream.chat.android.client.extensions.internal.mergeReactions
 import io.getstream.chat.android.client.extensions.internal.processPoll
 import io.getstream.chat.android.client.extensions.internal.removeMember
 import io.getstream.chat.android.client.extensions.internal.removeMembership
+import io.getstream.chat.android.client.extensions.internal.toMessageReminderInfo
 import io.getstream.chat.android.client.extensions.internal.updateMember
 import io.getstream.chat.android.client.extensions.internal.updateMemberBanned
 import io.getstream.chat.android.client.extensions.internal.updateMembership
@@ -98,6 +104,7 @@ import io.getstream.chat.android.core.internal.lazy.parameterizedLazy
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserId
@@ -295,7 +302,7 @@ internal class EventHandlerSequential(
 
         val hasReadEventsCapability = parameterizedLazy<String, Boolean> { cid ->
             // can we somehow get rid of repos usage here?
-            repos.hasReadEventsCapability(cid)
+            checkReadEventsCapability(cid)
         }
 
         val modifyValuesFromEvent: suspend (HasUnreadCounts) -> Unit = {
@@ -349,6 +356,9 @@ internal class EventHandlerSequential(
                 (event as? UserUpdatedEvent)
                     ?.takeIf { it.user.id == currentUserId }
                     ?.let { modifyValuesFromUser(me?.mergePartially(it.user) ?: it.user) }
+                (event as? NewMessageEvent)?.message?.sharedLocation?.let(mutableGlobalState::addLiveLocation)
+                (event as? MessageUpdatedEvent)?.message?.sharedLocation?.let(mutableGlobalState::addLiveLocation)
+                (event as? HasChannel)?.channel?.activeLiveLocations?.let(mutableGlobalState::addLiveLocations)
             }
 
         me?.let {
@@ -445,7 +455,13 @@ internal class EventHandlerSequential(
             .groupBy { it.message.parentId ?: it.message.id }
             .filterKeys(logicRegistry::isActiveThread)
             .forEach { (messageId, events) ->
-                logicRegistry.thread(messageId).handleEvents(events)
+                logicRegistry.thread(messageId).handleMessageEvents(events)
+            }
+        sortedEvents.filterIsInstance<HasReminder>()
+            .groupBy { it.reminder.messageId }
+            .filterKeys(logicRegistry::isActiveThread)
+            .forEach { (messageId, events) ->
+                logicRegistry.thread(messageId).handleReminderEvents(events)
             }
         logger.v { "[updateThreadState] completed batchId: ${batchEvent.id}" }
     }
@@ -612,9 +628,10 @@ internal class EventHandlerSequential(
                 }
                 is MemberAddedEvent -> {
                     batch.getCurrentChannel(event.cid)?.let { channel ->
-                        batch.addChannel(
-                            channel.addMember(event.member),
-                        )
+                        val enrichedChannel = channel
+                            .addMember(event.member)
+                            .addMembership(currentUserId, event.member)
+                        batch.addChannel(enrichedChannel)
                     }
                 }
                 is MemberUpdatedEvent -> {
@@ -729,6 +746,9 @@ internal class EventHandlerSequential(
                 is VoteRemovedEvent -> batch.addPoll(event.processPoll(batch::getPoll))
                 is AnswerCastedEvent -> batch.addPoll(event.processPoll(batch::getPoll))
                 is PollDeletedEvent -> batch.deletePoll(event.poll)
+                is ReminderCreatedEvent -> batch.upsertReminder(event.messageId, event.reminder)
+                is ReminderUpdatedEvent -> batch.upsertReminder(event.messageId, event.reminder)
+                is ReminderDeletedEvent -> batch.deleteReminder(event.messageId)
                 else -> Unit
             }
         }
@@ -791,24 +811,25 @@ internal class EventHandlerSequential(
 
     /**
      * Checks if unread counts should be updated for particular channel.
-     * The unread counts should not be updated if channel in the DB
-     * does not contain [ChannelCapabilities.READ_EVENTS] capability.
+     * It initially checks the offline storage for the channel's capabilities.
+     * If the channel is not found (not stored in the DB, or there is no offline support), it checks the local state.
+     * The unread counts should not be updated if the channel in the DB/state does not contain
+     * the [ChannelCapabilities.READ_EVENTS] capability.
      *
      * @param cid CID of the channel.
      *
      * @return True if unread counts should be updated
      */
-    private suspend fun RepositoryFacade.hasReadEventsCapability(cid: String): Boolean {
-        return selectChannels(listOf(cid)).let { channels ->
-            val channel = channels.firstOrNull()
-            if (channel?.ownCapabilities?.contains(ChannelCapabilities.READ_EVENTS) == true) {
-                true
-            } else {
-                logger.d {
-                    "Skipping unread counts update for channel: $cid. ${ChannelCapabilities.READ_EVENTS} capability is missing."
-                }
-                false
-            }
+    private suspend fun checkReadEventsCapability(cid: String): Boolean {
+        // Check offline storage first
+        val offlineChannel = repos.selectChannel(cid)
+        return if (offlineChannel != null) {
+            offlineChannel.ownCapabilities.contains(ChannelCapabilities.READ_EVENTS)
+        } else {
+            // Check local state if channel is not found in offline storage
+            val (type, id) = cid.cidToTypeAndId()
+            val channelData = stateRegistry.channel(type, id).channelData.value
+            channelData.ownCapabilities.contains(ChannelCapabilities.READ_EVENTS)
         }
     }
 
@@ -850,6 +871,22 @@ internal class EventHandlerSequential(
 
     private suspend fun threadFromPendingUpdateOrRepo(pendingUpdate: EventBatchUpdate, threadId: String): Thread? {
         return pendingUpdate.getCurrentThread(threadId) ?: repos.selectThread(threadId)
+    }
+
+    private suspend fun EventBatchUpdate.upsertReminder(messageId: String, reminder: MessageReminder) {
+        val message = reminder.message
+            ?: this.getCurrentMessage(messageId)
+            ?: repos.selectMessage(messageId)
+        if (message != null) {
+            this.addMessage(message.copy(reminder = reminder.toMessageReminderInfo()))
+        }
+    }
+
+    private suspend fun EventBatchUpdate.deleteReminder(messageId: String) {
+        val message = this.getCurrentMessage(messageId) ?: repos.selectMessage(messageId)
+        if (message != null) {
+            this.addMessage(message.copy(reminder = null))
+        }
     }
 
     companion object {

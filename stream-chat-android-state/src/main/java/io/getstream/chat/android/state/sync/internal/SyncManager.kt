@@ -58,11 +58,15 @@ import io.getstream.result.call.CoroutineCall
 import io.getstream.result.onSuccessSuspend
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
@@ -113,16 +117,13 @@ internal class SyncManager(
 
     private val mutex = Mutex()
 
+    private val liveLocationJobs = mutableListOf<Job>()
+
     override fun start() {
         logger.d { "[start] no args" }
         val isDisposed = eventsDisposable?.isDisposed ?: true
         if (!isDisposed) return
-        eventsDisposable = chatClient.subscribe { event ->
-            onEvent(event)
-        }
-        syncScope.launch {
-            syncOfflineDraftMessages()
-        }
+        eventsDisposable = chatClient.subscribe(::onEvent)
     }
 
     override fun stop() {
@@ -147,30 +148,80 @@ internal class SyncManager(
         logger.v { "[awaitSyncing] completed" }
     }
 
+    private fun scheduleLiveLocationMessageUpdates() {
+        logger.d { "[scheduleLiveLocationMessageUpdates] no args" }
+
+        // Listen for changes in active live locations
+        mutableGlobalState.activeLiveLocations.onEach { locations ->
+            logger.d { "[scheduleLiveLocationMessageUpdates] locations: ${locations.size}" }
+            liveLocationJobs.forEach(Job::cancel)
+            locations.forEach { location ->
+                val delayMillis = (location.endAt?.time ?: now()) - now()
+                logger.d {
+                    "[scheduleLiveLocationMessageUpdates] " +
+                        "cid: ${location.cid}, " +
+                        "messageId: ${location.messageId}, " +
+                        "delayMillis: $delayMillis"
+                }
+                liveLocationJobs += syncScope.launch {
+                    delay(delayMillis)
+                    logger.v {
+                        "[scheduleLiveLocationMessageUpdates] live location sharing ended at ${location.endAt}, " +
+                            "messageId: ${location.messageId}"
+                    }
+                    // Ensure the message has any attribute updated, so the UI can reflect the live location update
+                    chatClient.partialUpdateMessage(
+                        messageId = location.messageId,
+                        set = mapOf("live_location_sharing_ended" to true),
+                    ).await()
+                        .onError { error ->
+                            logger.e {
+                                "[scheduleLiveLocationMessageUpdates] failed to update message: " +
+                                    "${location.messageId}, error: $error"
+                            }
+                        }
+                }
+            }
+        }.launchIn(syncScope)
+    }
+
     @VisibleForTesting
     internal fun onEvent(event: ChatEvent) {
         when (event) {
             is ConnectingEvent -> syncScope.launch {
                 logger.i { "[onEvent] ConnectingEvent received" }
             }
+
             is ConnectedEvent -> syncScope.launch {
                 logger.i { "[onEvent] ConnectedEvent received" }
                 onConnectionEstablished(currentUserId)
+                syncScope.launch { syncOfflineDraftMessages() }
+                scheduleLiveLocationMessageUpdates()
             }
+
             is DisconnectedEvent -> syncScope.launch {
                 logger.i { "[onEvent] DisconnectedEvent received" }
                 onConnectionLost()
                 syncScope.coroutineContext.job.cancelChildren()
             }
+
             is HealthEvent -> syncScope.launch {
                 logger.v { "[onEvent] HealthEvent received" }
                 retryFailedEntities()
             }
+
             is MarkAllReadEvent -> syncScope.launch {
                 logger.i { "[onEvent] MarkAllReadEvent received" }
                 updateAllReadStateForDate(event.user.id, event.createdAt)
             }
+
             else -> Unit
+        }
+    }
+
+    private suspend fun syncOfflineDraftMessages() {
+        repos.selectDraftMessages().forEach { draftMessage ->
+            mutableGlobalState.updateDraftMessage(draftMessage)
         }
     }
 
@@ -224,36 +275,12 @@ internal class SyncManager(
 
     private suspend fun performSync() {
         logger.i { "[performSync] no args" }
-        syncDraftMessages()
         val cids = logicRegistry.getActiveChannelsLogic().map { it.cid }.ifEmpty {
             logger.w { "[performSync] no active cids found" }
             repos.selectSyncState(currentUserId)?.activeChannelIds ?: emptyList()
         }
         mutex.withLock {
             performSync(cids)
-        }
-    }
-
-    private suspend fun syncOfflineDraftMessages() {
-        repos.selectDraftMessages().forEach { draftMessage ->
-            mutableGlobalState.updateDraftMessage(draftMessage)
-        }
-    }
-
-    private fun syncDraftMessages(
-        limit: Int = QUERY_DRAFT_MESSAGES_LIMIT,
-        next: String? = null,
-    ) {
-        chatClient.queryDrafts(
-            filter = Filters.neutral(),
-            limit = limit,
-            next = next,
-        ).enqueue {
-            it.onSuccess { result ->
-                if (result.next != null) {
-                    syncDraftMessages(limit, result.next)
-                }
-            }
         }
     }
 
@@ -344,6 +371,7 @@ internal class SyncManager(
                 true -> selectedState.copy(markedAllReadAt = currentDate).also { newState ->
                     repos.insertSyncState(newState)
                 }
+
                 else -> selectedState
             }
         } ?: SyncState(userId)
@@ -382,6 +410,7 @@ internal class SyncManager(
                     updatedCids,
                 )
             }
+
             is Result.Failure -> {
                 logger.e { "[restoreActiveChannels] failed: ${result.value}" }
                 return
@@ -537,6 +566,7 @@ internal class SyncManager(
                 message.updatedLocallyAt != null && message.createdAt != null -> {
                     retryUpdateOfMessageWithSyncedAttachments(id, message, channelClient)
                 }
+
                 else -> retrySendingOfMessageWithSyncedAttachments(message, id, channelClient)
             }
             logger.v { "[retryMgsWithSyncedAttachments] result(${message.id}).isSuccess: ${result is Result.Success}" }
@@ -706,9 +736,5 @@ internal class SyncManager(
 
     private enum class State {
         Idle, Syncing
-    }
-
-    companion object {
-        const val QUERY_DRAFT_MESSAGES_LIMIT = 100
     }
 }

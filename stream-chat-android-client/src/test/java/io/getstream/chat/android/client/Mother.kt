@@ -44,6 +44,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamOptionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
@@ -63,6 +64,7 @@ import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.FileUploadConfigDto
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
+import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
 import io.getstream.chat.android.client.api2.model.response.TokenResponse
 import io.getstream.chat.android.client.api2.model.response.UnblockUserResponse
@@ -468,6 +470,8 @@ internal object Mother {
         automod_behavior: String = randomString(),
         blocklist_behavior: String? = randomString(),
         commands: List<CommandDto> = emptyList(),
+        user_message_reminders: Boolean? = randomBoolean(),
+        shared_locations: Boolean = randomBoolean(),
     ): ConfigDto = ConfigDto(
         created_at = created_at,
         updated_at = updated_at,
@@ -491,6 +495,8 @@ internal object Mother {
         automod_behavior = automod_behavior,
         blocklist_behavior = blocklist_behavior,
         commands = commands,
+        user_message_reminders = user_message_reminders,
+        shared_locations = shared_locations,
     )
 
     /**
@@ -922,6 +928,7 @@ internal object Mother {
         title: String = randomString(),
         latestReplies: List<DownstreamMessageDto> = listOf(randomDownstreamMessageDto()),
         read: List<DownstreamChannelUserRead> = listOf(randomDownstreamChannelUserRead()),
+        draft: DownstreamDraftDto? = randomDownstreamDraftDto(),
     ): DownstreamThreadDto = DownstreamThreadDto(
         active_participant_count = activeParticipantCount,
         channel_cid = channelCid,
@@ -939,6 +946,7 @@ internal object Mother {
         title = title,
         latest_replies = latestReplies,
         read = read,
+        draft = draft,
     )
 
     fun randomDownstreamThreadInfoDto(
@@ -1088,6 +1096,32 @@ internal object Mother {
         user_id = userId,
         is_answer = true,
         answer_text = answerText,
+    )
+
+    fun randomDownstreamReminderDto(
+        channelCid: String = randomString(),
+        channel: DownstreamChannelDto = randomDownstreamChannelDto(id = channelCid),
+        messageId: String = randomString(),
+        message: DownstreamMessageDto = randomDownstreamMessageDto(id = messageId),
+        remindAt: Date? = randomDateOrNull(),
+        createdAt: Date = randomDate(),
+        updatedAt: Date = randomDate(),
+    ): DownstreamReminderDto = DownstreamReminderDto(
+        channel_cid = channelCid,
+        channel = channel,
+        message_id = messageId,
+        message = message,
+        remind_at = remindAt,
+        created_at = createdAt,
+        updated_at = updatedAt,
+    )
+
+    fun randomQueryRemindersResponse(
+        reminders: List<DownstreamReminderDto> = listOf(randomDownstreamReminderDto()),
+        next: String? = randomString(),
+    ): QueryRemindersResponse = QueryRemindersResponse(
+        reminders = reminders,
+        next = next,
     )
 
     fun randomUploadFileResponse(

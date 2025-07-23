@@ -91,6 +91,7 @@ import io.getstream.chat.android.client.events.HasOwnUser
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
+import io.getstream.chat.android.client.events.NotificationReminderDueEvent
 import io.getstream.chat.android.client.events.UserEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
@@ -110,6 +111,7 @@ import io.getstream.chat.android.client.logger.StreamLogLevelValidator
 import io.getstream.chat.android.client.logger.StreamLoggerHandler
 import io.getstream.chat.android.client.notifications.ChatNotifications
 import io.getstream.chat.android.client.notifications.PushNotificationReceivedListener
+import io.getstream.chat.android.client.notifications.handler.ChatNotification
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
@@ -121,6 +123,7 @@ import io.getstream.chat.android.client.persistance.repository.noop.NoOpReposito
 import io.getstream.chat.android.client.plugin.DependencyResolver
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
+import io.getstream.chat.android.client.plugin.factory.ThrottlingPluginFactory
 import io.getstream.chat.android.client.query.AddMembersParams
 import io.getstream.chat.android.client.query.CreateChannelParams
 import io.getstream.chat.android.client.scope.ClientScope
@@ -152,7 +155,6 @@ import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.client.utils.stringify
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.models.AppSettings
@@ -171,15 +173,18 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.GuestUser
 import io.getstream.chat.android.models.InitializationState
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PushMessage
 import io.getstream.chat.android.models.QueryDraftsResult
+import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
@@ -262,6 +267,7 @@ internal constructor(
     private val repositoryFactoryProvider: RepositoryFactory.Provider,
     @InternalStreamChatApi
     public val audioPlayer: AudioPlayer,
+    private val now: () -> Date = ::Date,
 ) {
     private val logger by taggedLogger(TAG)
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
@@ -434,8 +440,11 @@ internal constructor(
                 mutableClientState.setUser(user)
             }
 
-            is NewMessageEvent -> {
-                notifications.onNewMessageEvent(event)
+            is NewMessageEvent,
+            is NotificationReminderDueEvent,
+            -> {
+                // No other events should potentially show notifications
+                notifications.onChatEvent(event)
             }
 
             is ConnectingEvent -> {
@@ -1108,7 +1117,7 @@ internal constructor(
     @JvmOverloads
     public fun sendReaction(reaction: Reaction, enforceUnique: Boolean, cid: String? = null): Call<Reaction> {
         val currentUser = getCurrentUser()
-        val finalReaction = reaction.copy(createdLocallyAt = Date())
+        val finalReaction = reaction.copy(createdLocallyAt = now())
         return api.sendReaction(finalReaction, enforceUnique)
             .retry(scope = userScope, retryPolicy = retryPolicy)
             .doOnStart(userScope) {
@@ -1548,8 +1557,152 @@ internal constructor(
                 sendMessage(
                     channelType = channelType,
                     channelId = channelId,
-                    Message(extraData = mapOf("poll_id" to poll.id)),
+                    Message(
+                        extraData = mapOf("poll_id" to poll.id),
+                    ),
                 )
+            }
+    }
+
+    /**
+     * Sends a static location message to the given channel.
+     *
+     * @param cid The full channel id, i.e. "messaging:123" to which the location will be sent.
+     * @param latitude The latitude of the location.
+     * @param longitude The longitude of the location.
+     * @param deviceId The device ID from which the location is sent.
+     */
+    @CheckResult
+    public fun sendStaticLocation(
+        cid: String,
+        latitude: Double,
+        longitude: Double,
+        deviceId: String,
+    ): Call<Location> = sendLocationMessage(
+        location = Location(
+            cid = cid,
+            latitude = latitude,
+            longitude = longitude,
+            deviceId = deviceId,
+        ),
+    )
+
+    /**
+     * Starts live location sharing for the given channel.
+     *
+     * @param cid The full channel id, i.e. "messaging:123" to which the live location will be shared.
+     * @param latitude The latitude of the location.
+     * @param longitude The longitude of the location.
+     * @param deviceId The device ID from which the location is shared.
+     * @param endAt The date when the live location sharing will end.
+     */
+    @CheckResult
+    public fun startLiveLocationSharing(
+        cid: String,
+        latitude: Double,
+        longitude: Double,
+        deviceId: String,
+        endAt: Date,
+    ): Call<Location> = Location(
+        cid = cid,
+        latitude = latitude,
+        longitude = longitude,
+        deviceId = deviceId,
+        endAt = endAt,
+    ).let { location ->
+        sendLocationMessage(location).doOnResult(userScope) { result ->
+            plugins.forEach { plugin ->
+                logger.v { "[startLiveLocationSharing] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                plugin.onStartLiveLocationSharingResult(
+                    location = location,
+                    result = result,
+                )
+            }
+        }
+    }
+
+    @CheckResult
+    private fun sendLocationMessage(location: Location): Call<Location> {
+        val (channelType, channelId) = location.cid.cidToTypeAndId()
+        return sendMessage(
+            channelType = channelType,
+            channelId = channelId,
+            message = Message(sharedLocation = location),
+        ).flatMap { message ->
+            message.sharedLocation?.let { sharedLocation ->
+                CoroutineCall(scope = userScope) { Result.Success(sharedLocation) }
+            } ?: ErrorCall<Location>(
+                userScope,
+                Error.GenericError("Location was not sent."),
+            ).also {
+                logger.e { "Location was not sent" }
+            }
+        }
+    }
+
+    /**
+     * Queries the active locations (non-expired) shared by the current user.
+     */
+    @CheckResult
+    public fun queryActiveLocations(): Call<List<Location>> = api.queryActiveLocations()
+        .doOnResult(userScope) { result ->
+            plugins.forEach { plugin ->
+                logger.v { "[queryActiveLocations] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                plugin.onQueryActiveLocationsResult(result)
+            }
+        }
+
+    /**
+     * Updates the live location info of a message.
+     *
+     * @param messageId The ID of the message to update.
+     * @param latitude The latitude of the new location.
+     * @param longitude The longitude of the new location.
+     * @param deviceId The device ID from which the location is shared.
+     */
+    @CheckResult
+    public fun updateLiveLocation(
+        messageId: String,
+        latitude: Double,
+        longitude: Double,
+        deviceId: String,
+    ): Call<Location> = Location(
+        messageId = messageId,
+        latitude = latitude,
+        longitude = longitude,
+        deviceId = deviceId,
+    ).let { location ->
+        api.updateLiveLocation(location)
+            .precondition(plugins) { onUpdateLiveLocationPrecondition(location) }
+            .doOnResult(userScope) { result ->
+                plugins.forEach { plugin ->
+                    logger.v { "[updateLiveLocation] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                    plugin.onUpdateLiveLocationResult(location, result)
+                }
+            }
+    }
+
+    /**
+     * Stops the live location sharing for a message.
+     *
+     * @param messageId The ID of the message to stop sharing live location.
+     * @param deviceId The device ID from which the location is shared.
+     */
+    @CheckResult
+    public fun stopLiveLocationSharing(
+        messageId: String,
+        deviceId: String,
+    ): Call<Location> = Location(
+        messageId = messageId,
+        deviceId = deviceId,
+        endAt = now(),
+    ).let { location ->
+        api.stopLiveLocation(location)
+            .doOnResult(userScope) { result ->
+                plugins.forEach { plugin ->
+                    logger.v { "[stopLiveLocationSharing] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                    plugin.onStopLiveLocationSharingResult(location, result)
+                }
             }
     }
 
@@ -1911,7 +2064,7 @@ internal constructor(
         message: Message,
         isRetrying: Boolean = false,
     ): Call<Message> {
-        return message.copy(createdLocallyAt = message.createdLocallyAt ?: Date())
+        return message.copy(createdLocallyAt = message.createdLocallyAt ?: now())
             .ensureId(getCurrentUser() ?: getStoredUser())
             .let { processedMessage ->
                 CoroutineCall(userScope) {
@@ -3633,7 +3786,7 @@ internal constructor(
         val extraData: Map<Any, Any> = parentId?.let {
             mapOf(ARG_TYPING_PARENT_ID to parentId)
         } ?: emptyMap()
-        val eventTime = Date()
+        val eventTime = now()
         val eventType = EventType.TYPING_START
         return api.sendEvent(
             eventType = eventType,
@@ -3682,7 +3835,7 @@ internal constructor(
         val extraData: Map<Any, Any> = parentId?.let {
             mapOf(ARG_TYPING_PARENT_ID to parentId)
         } ?: emptyMap()
-        val eventTime = Date()
+        val eventTime = now()
         val eventType = EventType.TYPING_STOP
         return api.sendEvent(
             eventType = eventType,
@@ -3837,6 +3990,66 @@ internal constructor(
         )
     }
 
+    /**
+     * Creates a reminder for a message.
+     *
+     * @param messageId The message id.
+     * @param remindAt The date when the reminder should be triggered. If null, this is a bookmark type reminder without
+     * a notification.
+     *
+     * @return Executable async [Call] responsible for creating the reminder.
+     */
+    @CheckResult
+    public fun createReminder(messageId: String, remindAt: Date?): Call<MessageReminder> {
+        return api.createReminder(messageId, remindAt)
+    }
+
+    /**
+     * Updates an existing reminder for a message.
+     *
+     * @param messageId The message id.
+     * @param remindAt The date when the reminder should be triggered. If null, this is a bookmark type reminder without
+     * a notification.
+     *
+     * @return Executable async [Call] responsible for updating the reminder.
+     */
+    @CheckResult
+    public fun updateReminder(messageId: String, remindAt: Date?): Call<MessageReminder> {
+        return api.updateReminder(messageId, remindAt)
+    }
+
+    /**
+     * Deletes a reminder for a message.
+     *
+     * @param messageId The message id whose reminder should be deleted.
+     *
+     * @return Executable async [Call] responsible for deleting the reminder.
+     */
+    @CheckResult
+    public fun deleteReminder(messageId: String): Call<Unit> {
+        return api.deleteReminder(messageId)
+    }
+
+    /**
+     * Queries the message reminders for the current user matching the provided filters.
+     *
+     * @param filter The [FilterObject] to filter the reminders.
+     * @param limit The maximum number of reminders to return.
+     * @param next The pagination token for the next page of results.
+     * @param sort The sorter object to apply to the query.
+     *
+     * @return Executable async [Call] responsible for obtaining the message reminders.
+     */
+    @CheckResult
+    public fun queryReminders(
+        filter: FilterObject,
+        limit: Int,
+        next: String? = null,
+        sort: QuerySorter<MessageReminder> = QuerySortByField(),
+    ): Call<QueryRemindersResult> {
+        return api.queryReminders(filter, limit, next, sort)
+    }
+
     private fun warmUp() {
         if (config.warmUp) {
             api.warmUp()
@@ -3869,7 +4082,6 @@ internal constructor(
      * [Stream Dashboard](https://dashboard.getstream.io/).
      * @param appContext The application [Context].
      */
-    @OptIn(ExperimentalStreamChatApi::class)
     @Suppress("TooManyFunctions")
     public class Builder(private val apiKey: String, private val appContext: Context) : ChatClientBuilder() {
 
@@ -4012,7 +4224,6 @@ internal constructor(
          *
          * @param sendMessageInterceptor Your custom implementation of [SendMessageInterceptor].
          */
-        @ExperimentalStreamChatApi
         public fun sendMessageInterceptor(sendMessageInterceptor: SendMessageInterceptor): Builder {
             this.sendMessageInterceptor = sendMessageInterceptor
             return this
@@ -4324,7 +4535,7 @@ internal constructor(
          * @see [Plugin]
          * @see [PluginFactory]
          */
-        protected val pluginFactories: MutableList<PluginFactory> = mutableListOf()
+        protected val pluginFactories: MutableList<PluginFactory> = mutableListOf(ThrottlingPluginFactory)
 
         /**
          * Create a [ChatClient] instance based on the current configuration
@@ -4406,7 +4617,8 @@ internal constructor(
         @JvmOverloads
         public fun handlePushMessage(pushMessage: PushMessage) {
             ensureClientInitialized().run {
-                if (!config.notificationConfig.ignorePushMessagesWhenUserOnline || !isSocketConnected()) {
+                val type = pushMessage.type.orEmpty()
+                if (!config.notificationConfig.ignorePushMessageWhenUserOnline(type) || !isSocketConnected()) {
                     clientScope.launch {
                         setUserWithoutConnectingIfNeeded()
                         notifications.onPushMessage(pushMessage, pushNotificationReceivedListener)
@@ -4420,14 +4632,8 @@ internal constructor(
         }
 
         @Throws(IllegalStateException::class)
-        internal fun displayNotification(
-            channel: Channel,
-            message: Message,
-        ) {
-            ensureClientInitialized().notifications.displayNotification(
-                channel = channel,
-                message = message,
-            )
+        internal fun displayNotification(notification: ChatNotification) {
+            ensureClientInitialized().notifications.displayNotification(notification)
         }
 
         /**

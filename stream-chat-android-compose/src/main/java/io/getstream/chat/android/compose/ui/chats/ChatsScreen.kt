@@ -63,7 +63,7 @@ import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.theme.ChatComponentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.LocalComponentFactory
+import io.getstream.chat.android.compose.ui.theme.CompoundComponentFactory
 import io.getstream.chat.android.compose.ui.threads.ThreadList
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.AdaptiveLayoutConstraints
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.AdaptiveLayoutInfo
@@ -81,7 +81,6 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadListViewModel
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadsViewModelFactory
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
@@ -121,7 +120,6 @@ import kotlin.math.abs
  * @param infoContent The content to display in the optional info pane given the provided arguments.
  */
 @OptIn(ExperimentalMaterial3Api::class)
-@ExperimentalStreamChatApi
 @Suppress("LongMethod")
 @Composable
 public fun ChatsScreen(
@@ -344,7 +342,20 @@ public fun ChatsScreen(
             }
         }
     } else {
-        CompositionLocalProvider(LocalComponentFactory provides rememberCompoundComponentFactory(navigator)) {
+        val currentSelection by remember(navigator.destinations) {
+            derivedStateOf {
+                navigator.destinations.lastOrNull { destination -> destination.pane == ThreePaneRole.Detail }
+                    ?.arguments as? ChatMessageSelection
+            }
+        }
+        CompoundComponentFactory(
+            factory = { currentComponentFactory ->
+                CompoundComponentFactory(
+                    currentComponentFactory = currentComponentFactory,
+                    currentSelection = currentSelection,
+                )
+            },
+        ) {
             // Auto-select the first item in the list when it loads on wide screens
             FirstItemLoadHandler(
                 listContentMode = listContentMode,
@@ -457,92 +468,82 @@ private fun ThreePaneNavigator.initialSelection(
     }
 
 /**
- * Remember a compound [ChatComponentFactory] that adapts the list items to emphasize the selected item.
+ * A compound [ChatComponentFactory] that emphasizes the currently selected channel, mention, or thread
+ * by applying an emphasis effect to the corresponding list item.
  */
-@Composable
-private fun rememberCompoundComponentFactory(navigator: ThreePaneNavigator): ChatComponentFactory {
-    val currentSelection by remember(navigator.destinations) {
-        derivedStateOf {
-            navigator.destinations.lastOrNull { destination ->
-                destination.pane == ThreePaneRole.Detail
-            }?.arguments as? ChatMessageSelection
+private class CompoundComponentFactory(
+    private val currentComponentFactory: ChatComponentFactory,
+    private val currentSelection: ChatMessageSelection?,
+) : ChatComponentFactory by currentComponentFactory {
+    @Composable
+    override fun LazyItemScope.ChannelListItemContent(
+        channelItem: ItemState.ChannelItemState,
+        currentUser: User?,
+        onChannelClick: (Channel) -> Unit,
+        onChannelLongClick: (Channel) -> Unit,
+    ) {
+        EmphasisBox(
+            modifier = Modifier.animateItem(),
+            isEmphasized = channelItem.key == currentSelection?.channelId,
+        ) {
+            with(currentComponentFactory) {
+                ChannelListItemContent(
+                    channelItem = channelItem,
+                    currentUser = currentUser,
+                    onChannelClick = onChannelClick,
+                    onChannelLongClick = onChannelLongClick,
+                )
+            }
         }
     }
-    val currentComponentFactory = LocalComponentFactory.current
-    return remember {
-        object : ChatComponentFactory by currentComponentFactory {
 
-            @Composable
-            override fun LazyItemScope.ChannelListItemContent(
-                channelItem: ItemState.ChannelItemState,
-                currentUser: User?,
-                onChannelClick: (Channel) -> Unit,
-                onChannelLongClick: (Channel) -> Unit,
-            ) {
-                EmphasisBox(
-                    modifier = Modifier.animateItem(),
-                    isEmphasized = channelItem.key == currentSelection?.channelId,
-                ) {
-                    with(currentComponentFactory) {
-                        ChannelListItemContent(
-                            channelItem = channelItem,
-                            currentUser = currentUser,
-                            onChannelClick = onChannelClick,
-                            onChannelLongClick = onChannelLongClick,
-                        )
-                    }
-                }
+    @Composable
+    override fun LazyItemScope.SearchResultItemContent(
+        searchResultItem: ItemState.SearchResultItemState,
+        currentUser: User?,
+        onSearchResultClick: (Message) -> Unit,
+    ) {
+        EmphasisBox(
+            modifier = Modifier.animateItem(),
+            isEmphasized = searchResultItem.key == currentSelection?.messageId,
+        ) {
+            with(currentComponentFactory) {
+                SearchResultItemContent(
+                    searchResultItem = searchResultItem,
+                    currentUser = currentUser,
+                    onSearchResultClick = onSearchResultClick,
+                )
             }
+        }
+    }
 
-            @Composable
-            override fun LazyItemScope.SearchResultItemContent(
-                searchResultItem: ItemState.SearchResultItemState,
-                currentUser: User?,
-                onSearchResultClick: (Message) -> Unit,
-            ) {
-                EmphasisBox(
-                    modifier = Modifier.animateItem(),
-                    isEmphasized = searchResultItem.key == currentSelection?.messageId,
-                ) {
-                    with(currentComponentFactory) {
-                        SearchResultItemContent(
-                            searchResultItem = searchResultItem,
-                            currentUser = currentUser,
-                            onSearchResultClick = onSearchResultClick,
-                        )
-                    }
-                }
+    @Composable
+    override fun LazyItemScope.MentionListItem(
+        mention: MessageResult,
+        modifier: Modifier,
+        currentUser: User?,
+        onClick: ((message: Message) -> Unit)?,
+    ) {
+        EmphasisBox(isEmphasized = mention.message.id == currentSelection?.messageId) {
+            with(currentComponentFactory) {
+                MentionListItem(
+                    mention = mention,
+                    modifier = modifier,
+                    currentUser = currentUser,
+                    onClick = onClick,
+                )
             }
+        }
+    }
 
-            @Composable
-            override fun LazyItemScope.MentionListItem(
-                mention: MessageResult,
-                modifier: Modifier,
-                currentUser: User?,
-                onClick: ((message: Message) -> Unit)?,
-            ) {
-                EmphasisBox(isEmphasized = mention.message.id == currentSelection?.messageId) {
-                    with(currentComponentFactory) {
-                        MentionListItem(
-                            mention = mention,
-                            modifier = modifier,
-                            currentUser = currentUser,
-                            onClick = onClick,
-                        )
-                    }
-                }
-            }
-
-            @Composable
-            override fun ThreadListItem(thread: Thread, currentUser: User?, onThreadClick: (Thread) -> Unit) {
-                EmphasisBox(isEmphasized = thread.parentMessageId == currentSelection?.parentMessageId) {
-                    currentComponentFactory.ThreadListItem(
-                        thread = thread,
-                        currentUser = currentUser,
-                        onThreadClick = onThreadClick,
-                    )
-                }
-            }
+    @Composable
+    override fun ThreadListItem(thread: Thread, currentUser: User?, onThreadClick: (Thread) -> Unit) {
+        EmphasisBox(isEmphasized = thread.parentMessageId == currentSelection?.parentMessageId) {
+            currentComponentFactory.ThreadListItem(
+                thread = thread,
+                currentUser = currentUser,
+                onThreadClick = onThreadClick,
+            )
         }
     }
 }

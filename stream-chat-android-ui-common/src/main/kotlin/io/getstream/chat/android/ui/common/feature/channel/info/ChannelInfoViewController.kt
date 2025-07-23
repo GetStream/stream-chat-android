@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalStreamChatApi::class)
-
 package io.getstream.chat.android.ui.common.feature.channel.info
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelState
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -90,7 +87,7 @@ public class ChannelInfoViewController(
     private val _events = MutableSharedFlow<ChannelInfoViewEvent>(extraBufferCapacity = 1)
 
     /**
-     * A [SharedFlow] that emits one-time events related to channel info, such as errors or success events.
+     * A [SharedFlow] that emits one-shot events related to channel info, such as errors or success events.
      */
     public val events: SharedFlow<ChannelInfoViewEvent> = _events.asSharedFlow()
 
@@ -159,7 +156,7 @@ public class ChannelInfoViewController(
     /**
      * Handles actions related to channel information view.
      *
-     * @param action The [ChannelInfoViewAction] representing the action to be performed.
+     * @param action The [ChannelInfoViewAction] representing the action to be handled.
      */
     public fun onViewAction(
         action: ChannelInfoViewAction,
@@ -194,8 +191,11 @@ public class ChannelInfoViewController(
     public fun onMemberViewEvent(event: ChannelInfoMemberViewEvent) {
         logger.d { "[onMemberViewEvent] event: $event" }
         when (event) {
-            // https://linear.app/stream/issue/AND-567/compose-navigate-to-messages-from-the-member-modal-sheet-of-channel
-            is ChannelInfoMemberViewEvent.MessageMember -> Unit
+            is ChannelInfoMemberViewEvent.MessageMember -> if (event.distinctCid != null) {
+                _events.tryEmit(ChannelInfoViewEvent.NavigateToChannel(event.distinctCid))
+            } else {
+                _events.tryEmit(ChannelInfoViewEvent.NavigateToDraftChannel(event.memberId))
+            }
 
             is ChannelInfoMemberViewEvent.BanMember ->
                 _events.tryEmit(ChannelInfoViewEvent.BanMemberModal(event.member))

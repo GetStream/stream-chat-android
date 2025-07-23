@@ -20,13 +20,19 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.sample.R
-import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
+import io.getstream.chat.android.compose.sample.feature.channel.draft.DraftChannelActivity
+import io.getstream.chat.android.compose.sample.ui.MessagesActivity
 import io.getstream.chat.android.compose.sample.ui.pinned.PinnedMessagesActivity
 import io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -38,7 +44,7 @@ import kotlinx.coroutines.flow.collectLatest
 /**
  * Activity showing information about a group channel (chat).
  */
-class GroupChannelInfoActivity : BaseConnectedActivity() {
+class GroupChannelInfoActivity : ComponentActivity() {
 
     companion object {
         private const val KEY_CHANNEL_ID = "channelId"
@@ -54,10 +60,12 @@ class GroupChannelInfoActivity : BaseConnectedActivity() {
                 .putExtra(KEY_CHANNEL_ID, channelId)
     }
 
+    private val channelId by lazy { requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)) }
+
     private val viewModelFactory by lazy {
         ChannelInfoViewModelFactory(
             context = applicationContext,
-            cid = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)),
+            cid = channelId,
         )
     }
     private val viewModel by viewModels<ChannelInfoViewModel> { viewModelFactory }
@@ -65,38 +73,55 @@ class GroupChannelInfoActivity : BaseConnectedActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            var showAddMembers by remember { mutableStateOf(false) }
             ChatTheme {
                 GroupChannelInfoScreen(
                     modifier = Modifier.statusBarsPadding(),
                     viewModelFactory = viewModelFactory,
                     onNavigationIconClick = ::finish,
+                    onAddMembersClick = { showAddMembers = true },
                 )
+                if (showAddMembers) {
+                    AddMembersDialog(
+                        cid = channelId,
+                        onDismiss = { showAddMembers = false },
+                    )
+                }
             }
             LaunchedEffect(viewModel) {
                 viewModel.events.collectLatest { event ->
                     when (event) {
-                        is ChannelInfoViewEvent.Error ->
-                            showError(event)
-
-                        is ChannelInfoViewEvent.NavigateUp -> {
-                            setResult(RESULT_OK)
-                            finish()
-                        }
-
-                        is ChannelInfoViewEvent.NavigateToPinnedMessages ->
-                            openPinnedMessages()
-
-                        else -> Unit
+                        is ChannelInfoViewEvent.Error -> showError(event)
+                        is ChannelInfoViewEvent.Navigation -> onNavigationEvent(event)
+                        is ChannelInfoViewEvent.Modal -> Unit
                     }
                 }
             }
         }
     }
 
+    private fun onNavigationEvent(event: ChannelInfoViewEvent.Navigation) {
+        when (event) {
+            is ChannelInfoViewEvent.NavigateUp -> {
+                setResult(RESULT_OK)
+                finish()
+            }
+
+            is ChannelInfoViewEvent.NavigateToPinnedMessages ->
+                openPinnedMessages()
+
+            is ChannelInfoViewEvent.NavigateToChannel ->
+                startActivity(MessagesActivity.createIntent(context = this, channelId = event.cid))
+
+            is ChannelInfoViewEvent.NavigateToDraftChannel ->
+                startActivity(DraftChannelActivity.createIntent(context = this, memberIds = listOf(event.memberId)))
+        }
+    }
+
     private fun openPinnedMessages() {
         val intent = PinnedMessagesActivity.createIntent(
             context = this,
-            channelId = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)),
+            channelId = channelId,
         )
         startActivity(intent)
     }

@@ -567,6 +567,7 @@ internal fun DefaultComposerLabel(ownCapabilities: Set<String>) {
     Text(
         text = text,
         color = ChatTheme.colors.textLowEmphasis,
+        style = ChatTheme.messageComposerTheme.inputField.textStyle,
     )
 }
 

@@ -16,13 +16,11 @@
 
 package io.getstream.chat.android.ui.common.feature.channel.info
 
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Member
 
 /**
  * Represents side-effect events related to channel information actions.
  */
-@ExperimentalStreamChatApi
 public sealed interface ChannelInfoViewEvent {
 
     /**
@@ -142,6 +140,20 @@ public sealed interface ChannelInfoViewEvent {
      * Indicates an event to navigate to the pinned messages.
      */
     public data object NavigateToPinnedMessages : Navigation(reason = null)
+
+    /**
+     * Indicates an event to navigate to the channel with the specified [cid].
+     *
+     * @param cid The full channel ID of the channel to navigate to.
+     */
+    public data class NavigateToChannel(val cid: String) : Navigation(reason = null)
+
+    /**
+     * Indicates an event to navigate to draft a channel with the specified [memberId].
+     *
+     * @param memberId The ID of the member to whom the draft channel belongs.
+     */
+    public data class NavigateToDraftChannel(val memberId: String) : Navigation(reason = null)
 
     /**
      * Represents error events occurred while performing an action.

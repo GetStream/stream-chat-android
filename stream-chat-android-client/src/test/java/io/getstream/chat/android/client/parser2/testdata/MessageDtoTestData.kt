@@ -434,6 +434,7 @@ internal object MessageDtoTestData {
         pinned_at = null,
         pin_expires = null,
         restricted_visibility = listOf("jc"),
+        shared_location = null,
     )
 
     @Language("JSON")
@@ -474,5 +475,6 @@ internal object MessageDtoTestData {
         pinned_at = null,
         pin_expires = null,
         restricted_visibility = emptyList(),
+        shared_location = null,
     )
 }

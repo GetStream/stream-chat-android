@@ -33,6 +33,9 @@ import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.chat.android.client.notifications.handler.ChatNotification
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
 import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
 import io.getstream.result.call.zipWith
@@ -45,6 +48,7 @@ internal class LoadNotificationDataWorker(
     private val logger by taggedLogger(TAG)
 
     override suspend fun doWork(): Result {
+        val type = inputData.getString(DATA_TYPE)!!
         val channelId: String = inputData.getString(DATA_CHANNEL_ID)!!
         val channelType: String = inputData.getString(DATA_CHANNEL_TYPE)!!
         val messageId: String = inputData.getString(DATA_MESSAGE_ID)!!
@@ -74,7 +78,7 @@ internal class LoadNotificationDataWorker(
                         logger.v { "[doWork] fetching thread parent message." }
                         client.getMessage(messageParentId).await()
                     }
-                    ChatClient.displayNotification(channel = channel, message = message)
+                    createNotification(type, channel, message)?.let(ChatClient::displayNotification)
                     logger.v { "[doWork] completed" }
                     Result.success()
                 }
@@ -136,8 +140,15 @@ internal class LoadNotificationDataWorker(
         }
     }
 
+    private fun createNotification(type: String, channel: Channel, message: Message): ChatNotification? = when (type) {
+        ChatNotification.TYPE_MESSAGE_NEW -> ChatNotification.MessageNew(channel, message)
+        ChatNotification.TYPE_NOTIFICATION_REMINDER_DUE -> ChatNotification.NotificationReminderDue(channel, message)
+        else -> null
+    }
+
     internal companion object {
         private const val TAG = "Chat:Notifications-Loader"
+        private const val DATA_TYPE = "DATA_TYPE"
         private const val DATA_CHANNEL_TYPE = "DATA_CHANNEL_TYPE"
         private const val DATA_CHANNEL_ID = "DATA_CHANNEL_ID"
         private const val DATA_MESSAGE_ID = "DATA_MESSAGE_ID"
@@ -147,6 +158,7 @@ internal class LoadNotificationDataWorker(
 
         fun start(
             context: Context,
+            type: String,
             channelId: String,
             channelType: String,
             messageId: String,
@@ -155,6 +167,7 @@ internal class LoadNotificationDataWorker(
             val syncMessagesWork = OneTimeWorkRequestBuilder<LoadNotificationDataWorker>()
                 .setInputData(
                     workDataOf(
+                        DATA_TYPE to type,
                         DATA_CHANNEL_ID to channelId,
                         DATA_CHANNEL_TYPE to channelType,
                         DATA_MESSAGE_ID to messageId,

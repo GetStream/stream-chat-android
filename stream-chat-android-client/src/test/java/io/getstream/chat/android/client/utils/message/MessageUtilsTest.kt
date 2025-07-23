@@ -414,6 +414,18 @@ internal class MessageUtilsTest {
     }
 
     @Test
+    fun `hasSharedLocation should return true for message with shared location`() {
+        val message = randomMessage()
+        message.hasSharedLocation() shouldBeEqualTo true
+    }
+
+    @Test
+    fun `hasSharedLocation should return false for message without shared location`() {
+        val message = randomMessage(sharedLocation = null)
+        message.hasSharedLocation() shouldBeEqualTo false
+    }
+
+    @Test
     fun `isMine should return true for message from current user`() {
         val currentUserId = "userId"
         val message = randomMessage(user = randomUser(id = currentUserId))

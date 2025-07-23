@@ -23,6 +23,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.state.utils.EventObserver
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.feature.gallery.toAttachment
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.utils.PermissionChecker
@@ -67,6 +68,9 @@ public fun MessageListViewModel.bindView(
     view.setMessageDeleteHandler { onEvent(DeleteMessage(it, hard = false)) }
     view.setThreadStartHandler { onEvent(ThreadModeEntered(it)) }
     view.setOpenThreadHandler { onEvent(MessageListViewModel.Event.OpenThread(it)) }
+    if (ChatUI.showOriginalTranslationEnabled) {
+        view.setToggleOriginalTextHandler { onEvent(MessageListViewModel.Event.ToggleOriginalText(it)) }
+    }
     view.setMessageFlagHandler {
         onEvent(
             FlagMessage(

@@ -7,122 +7,14 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  BUILD_CACHE_AWS_REGION: ${{ secrets.BUILD_CACHE_AWS_REGION }}
-  BUILD_CACHE_AWS_BUCKET: ${{ secrets.BUILD_CACHE_AWS_BUCKET }}
-  BUILD_CACHE_AWS_ACCESS_KEY_ID: ${{ secrets.BUILD_CACHE_AWS_ACCESS_KEY_ID }}
-  BUILD_CACHE_AWS_SECRET_KEY: ${{ secrets.BUILD_CACHE_AWS_SECRET_KEY }}
-  METRICS_PROJECT: "stream-chat-android-metrics"
-  MODULES: "stream-chat-android-client stream-chat-android-offline stream-chat-android-ui-components stream-chat-android-compose"
-  METRICS_FILE: "metrics/size.json"
-  MAX_TOLERANCE: 500
-  FINE_TOLERANCE: 250
-
 jobs:
   compare-sdk-sizes:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - uses: GetStream/android-ci-actions/actions/setup-java@main
-      - uses: GetStream/android-ci-actions/actions/gradle-cache@main
-        with:
-          cache-name: gradle-build
-
-      - name: Assemble release for metrics
-        run: ./gradlew :metrics:$METRICS_PROJECT:assembleRelease
-
-      - name: Get current SDK sizes
-        run: |
-          # Reads current SDK sizes from the metrics file
-          # and define to a variable using a compact JSON format
-          # so it can be exported for the next job step
-          CURRENT_SDK_SIZES=$(jq -c .release $METRICS_FILE)
-          echo "CURRENT_SDK_SIZES=$CURRENT_SDK_SIZES" >> $GITHUB_ENV
-
-      - name: Calculate PR branch SDK sizes
-        run: |
-          echo '{}' > pr_sdk_sizes.json
-
-          # Calculate sizes from the .apk files and save them into a temporary JSON file
-          # so it can be exported for the next job step
-          for module in $MODULES; do
-            baselineFile="metrics/$METRICS_PROJECT/build/outputs/apk/$module-baseline/release/$METRICS_PROJECT-$module-baseline-release.apk"
-            streamFile="metrics/$METRICS_PROJECT/build/outputs/apk/$module-stream/release/$METRICS_PROJECT-$module-stream-release.apk"
-
-            baselineSize=$(du -k "$baselineFile" | awk '{print $1}')
-            streamSize=$(du -k "$streamFile" | awk '{print $1}')
-            size=$((streamSize - baselineSize))
-
-            jq -c --arg sdk "$module" --arg size "$size" '. + {($sdk): ($size | tonumber)}' pr_sdk_sizes.json > temp.json && mv temp.json pr_sdk_sizes.json
-          done
-
-          echo "PR_SDK_SIZES=$(cat pr_sdk_sizes.json)" >> $GITHUB_ENV
-
-      - name: Post a comment or print size comparison
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const maxTolerance = process.env.MAX_TOLERANCE;
-            const fineTolerance = process.env.FINE_TOLERANCE;
-            const currentSdkSizes = process.env.CURRENT_SDK_SIZES ? JSON.parse(process.env.CURRENT_SDK_SIZES) : {};
-            const prSdkSizes = JSON.parse(process.env.PR_SDK_SIZES);
-            const commentHeader = '## SDK Size Comparison 📏';
-            
-            let commentBody = `${commentHeader}\n\n| SDK | Before | After | Difference | Status |\n|-|-|-|-|-|\n`;
-            
-            Object.keys(prSdkSizes).forEach(sdk => {
-              const currentSize = currentSdkSizes[sdk] || 0;
-              const prSize = prSdkSizes[sdk];
-              const diff = prSize - currentSize;
-              const currentSizeInMb = (currentSize / 1024).toFixed(2);
-              const prSizeInMb = (prSize / 1024).toFixed(2);
-              const diffInMb = (diff / 1024).toFixed(2);
-
-              let status = "🟢";
-              if (diff < 0) { status = "🚀"; }
-              else if (diff >= maxTolerance) { status = "🔴"; }
-              else if (diff >= fineTolerance) { status = "🟡"; }
-            
-              commentBody += `| ${sdk} | ${currentSizeInMb} MB | ${prSizeInMb} MB | ${diffInMb} MB | ${status} |\n`;
-            });
-
-            const isFork = context.payload.pull_request.head.repo.fork;
-            
-            if (isFork) {
-              console.log("Pull Request is from a fork. Printing size comparison to the log instead of commenting.");
-              console.log("------------------------------------------------------------------------------------");
-              console.log(commentBody);
-              console.log("------------------------------------------------------------------------------------");
-              return;
-            }
-
-            const issue_number = context.issue.number;
-            const { owner, repo } = context.repo;
-
-            const { data: comments } = await github.rest.issues.listComments({
-              owner,
-              repo,
-              issue_number,
-            });
-
-            const existingComment = comments.find(c => c.body.includes(commentHeader));
-
-            if (existingComment) {
-              console.log(`Found existing comment with ID ${existingComment.id}. Updating it.`);
-              await github.rest.issues.updateComment({
-                owner,
-                repo,
-                comment_id: existingComment.id,
-                body: commentBody,
-              });
-            } else {
-              console.log("No existing comment found. Creating a new one.");
-              await github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number,
-                body: commentBody,
-              });
-            }
+    uses: GetStream/android-ci-actions/.github/workflows/sdk-size-checks.yml@main
+    with:
+      modules: "stream-chat-android-client stream-chat-android-offline stream-chat-android-ui-components stream-chat-android-compose"
+      metrics-project: "stream-chat-android-metrics"
+    secrets:
+      BUILD_CACHE_AWS_REGION: ${{ secrets.BUILD_CACHE_AWS_REGION }}
+      BUILD_CACHE_AWS_BUCKET: ${{ secrets.BUILD_CACHE_AWS_BUCKET }}
+      BUILD_CACHE_AWS_ACCESS_KEY_ID: ${{ secrets.BUILD_CACHE_AWS_ACCESS_KEY_ID }}
+      BUILD_CACHE_AWS_SECRET_KEY: ${{ secrets.BUILD_CACHE_AWS_SECRET_KEY }}

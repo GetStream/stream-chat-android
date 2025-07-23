@@ -29,6 +29,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Config
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessagesState
@@ -49,6 +50,7 @@ internal class ChannelMutableState(
     override val channelId: String,
     private val userFlow: StateFlow<User?>,
     latestUsers: StateFlow<Map<String, User>>,
+    activeLiveLocations: StateFlow<List<Location>>,
     private val now: () -> Long,
 ) : ChannelState {
 
@@ -99,6 +101,9 @@ internal class ChannelMutableState(
     override val endOfOlderMessages: StateFlow<Boolean> = _endOfOlderMessages!!
 
     override val endOfNewerMessages: StateFlow<Boolean> = _endOfNewerMessages!!
+    override val activeLiveLocations: StateFlow<List<Location>> = activeLiveLocations.mapState { locations ->
+        locations.filter { it.cid == cid }
+    }
 
     /** the data to hide messages before */
     var hideMessagesBefore: Date? = null
@@ -201,8 +206,6 @@ internal class ChannelMutableState(
     override val read: StateFlow<ChannelUserRead?> =
         combineStates(rawReads, userFlow) { readsMap, user -> user?.id?.let { readsMap[it] } }
 
-    val lastMarkReadEvent: StateFlow<Date?> = read.mapState { it?.lastRead }
-
     override val unreadCount: StateFlow<Int> = read.mapState { it?.unreadMessages ?: 0 }
 
     override val members: StateFlow<List<Member>> =
@@ -261,6 +264,7 @@ internal class ChannelMutableState(
                 config = channelConfig.value,
                 hidden = hidden.value,
                 pinnedMessages = sortedPinnedMessages.value,
+                activeLiveLocations = activeLiveLocations.value,
             ).syncUnreadCountWithReads()
     }
 

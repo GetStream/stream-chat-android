@@ -34,11 +34,14 @@ import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.models.Flag
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageModerationAction
 import io.getstream.chat.android.models.MessageModerationDetails
+import io.getstream.chat.android.models.MessageReminder
+import io.getstream.chat.android.models.MessageReminderInfo
 import io.getstream.chat.android.models.Moderation
 import io.getstream.chat.android.models.ModerationAction
 import io.getstream.chat.android.models.Mute
@@ -47,6 +50,7 @@ import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.models.QueryDraftsResult
+import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.ReactionGroup
@@ -74,6 +78,7 @@ public fun positiveRandomLong(maxLong: Long = Long.MAX_VALUE - 1): Long =
     Random.nextLong(1, maxLong + 1)
 
 public fun randomFloat(): Float = Random.nextFloat()
+public fun randomDouble(): Double = Random.nextDouble()
 public fun randomInt(): Int = Random.nextInt()
 public fun randomIntBetween(min: Int, max: Int): Int = Random.nextInt(min, max + 1)
 public fun randomLong(): Long = Random.nextLong()
@@ -240,6 +245,7 @@ public fun randomReaction(
     enforceUnique = enforceUnique,
 )
 
+public fun randomDraftMessageOrNull(): DraftMessage? = randomDraftMessage().takeIf { randomBoolean() }
 public fun randomDraftMessage(
     id: String = randomString(),
     cid: String = randomCID(),
@@ -312,8 +318,15 @@ public fun randomMessage(
     threadParticipants: List<User> = emptyList(),
     restrictedVisibility: List<String> = emptyList(),
     poll: Poll? = null,
+    sharedLocation: Location? = randomLocation(
+        cid = cid,
+        messageId = id,
+        userId = user.id,
+    ),
     moderationDetails: MessageModerationDetails? = null,
     moderation: Moderation? = null,
+    i18n: Map<String, String> = emptyMap(),
+    reminder: MessageReminderInfo? = randomMessageReminderInfo(),
 ): Message = Message(
     id = id,
     cid = cid,
@@ -354,8 +367,11 @@ public fun randomMessage(
     messageTextUpdatedAt = messageTextUpdatedAt,
     restrictedVisibility = restrictedVisibility,
     poll = poll,
+    sharedLocation = sharedLocation,
     moderationDetails = moderationDetails,
     moderation = moderation,
+    i18n = i18n,
+    reminder = reminder,
 )
 
 public fun randomChannelMute(
@@ -396,6 +412,8 @@ public fun randomChannel(
     ownCapabilities: Set<String> = randomChannelCapabilities(),
     extraData: Map<String, Any> = emptyMap(),
     membership: Member? = randomMember(),
+    draftMessage: DraftMessage? = randomDraftMessageOrNull(),
+    activeLiveLocations: List<Location> = emptyList(),
 ): Channel = Channel(
     id = id,
     name = name,
@@ -420,6 +438,8 @@ public fun randomChannel(
     ownCapabilities = ownCapabilities,
     extraData = extraData,
     membership = membership,
+    draftMessage = draftMessage,
+    activeLiveLocations = activeLiveLocations,
 )
 
 public fun randomChannelUserRead(
@@ -890,6 +910,7 @@ public fun randomThread(
     title: String = randomString(),
     latestReplies: List<Message> = List(positiveRandomInt(5)) { randomMessage() },
     read: List<ChannelUserRead> = List(positiveRandomInt(5)) { randomChannelUserRead() },
+    draftMessage: DraftMessage? = randomDraftMessageOrNull(),
 ): Thread = Thread(
     activeParticipantCount = activeParticipantCount,
     cid = cid,
@@ -907,6 +928,7 @@ public fun randomThread(
     title = title,
     latestReplies = latestReplies,
     read = read,
+    draft = draftMessage,
 )
 
 public fun randomAppSettings(
@@ -965,4 +987,58 @@ public fun randomModeration(
     blocklistMatched = blocklistMatched,
     semanticFilterMatched = semanticFilterMatched,
     platformCircumvented = platformCircumvented,
+)
+
+public fun randomMessageReminder(
+    remindAt: Date? = randomDate(),
+    messageId: String = randomString(),
+    message: Message = randomMessage(id = messageId),
+    cid: String = randomCID(),
+    channel: Channel = randomChannel(),
+    createdAt: Date = randomDate(),
+    updatedAt: Date = randomDate(),
+): MessageReminder = MessageReminder(
+    remindAt = remindAt,
+    cid = cid,
+    channel = channel,
+    messageId = messageId,
+    message = message,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+)
+
+public fun randomQueryMessageRemindersResult(
+    reminders: List<MessageReminder> = List(positiveRandomInt(5)) { randomMessageReminder() },
+    next: String? = randomString(),
+): QueryRemindersResult = QueryRemindersResult(
+    reminders = reminders,
+    next = next,
+)
+
+public fun randomMessageReminderInfo(
+    remindAt: Date? = randomDateOrNull(),
+    createdAt: Date = randomDate(),
+    updatedAt: Date = randomDate(),
+): MessageReminderInfo = MessageReminderInfo(
+    remindAt = remindAt,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+)
+
+public fun randomLocation(
+    cid: String = randomCID(),
+    messageId: String = randomString(),
+    userId: String = randomString(),
+    endAt: Date = randomDate(),
+    latitude: Double = randomDouble(),
+    longitude: Double = randomDouble(),
+    deviceId: String = randomString(),
+): Location = Location(
+    cid = cid,
+    messageId = messageId,
+    userId = userId,
+    endAt = endAt,
+    latitude = latitude,
+    longitude = longitude,
+    deviceId = deviceId,
 )

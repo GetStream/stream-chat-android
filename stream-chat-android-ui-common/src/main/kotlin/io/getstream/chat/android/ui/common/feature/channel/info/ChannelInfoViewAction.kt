@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.ui.common.feature.channel.info
 
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -24,7 +23,6 @@ import io.getstream.chat.android.models.User
 /**
  * Represents actions that can be performed from the channel information view.
  */
-@ExperimentalStreamChatApi
 public sealed interface ChannelInfoViewAction {
     /**
      * Represents the expand list of members click action.

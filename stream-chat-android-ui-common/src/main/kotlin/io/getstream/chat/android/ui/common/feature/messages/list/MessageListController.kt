@@ -65,6 +65,7 @@ import io.getstream.chat.android.state.extensions.loadNewerMessages
 import io.getstream.chat.android.state.extensions.loadNewestMessages
 import io.getstream.chat.android.state.extensions.loadOlderMessages
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
+import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
 import io.getstream.chat.android.ui.common.helper.ClipboardHandler
 import io.getstream.chat.android.ui.common.state.messages.BlockUser
 import io.getstream.chat.android.ui.common.state.messages.Copy
@@ -223,6 +224,7 @@ public class MessageListController(
     public val unreadLabelState: MutableStateFlow<UnreadLabel?> = MutableStateFlow(null)
     private val showUnreadButtonState = MutableSharedFlow<Boolean>(extraBufferCapacity = 1)
     private val updateUnreadLabelState = MutableStateFlow(true)
+    private val originalTranslationsStore by lazy { MessageOriginalTranslationsStore.forChannel(cid) }
 
     /**
      * Holds information about the abilities the current user is able to exercise in the given channel.
@@ -469,6 +471,7 @@ public class MessageListController(
                 unreadLabelState,
                 channelState.members,
                 channelState.endOfOlderMessages,
+                originalTranslationsStore.originalTextMessageIds,
             ) { data ->
                 val state = data[0] as MessagesState
                 val reads = data[1] as List<ChannelUserRead>
@@ -483,6 +486,7 @@ public class MessageListController(
                 val unreadLabel = data[10] as UnreadLabel?
                 val members = data[11] as List<Member>
                 val endOfOlderMessages = data[12] as Boolean
+                val messagesInOriginalLanguage = data[13] as Set<String>
 
                 when (state) {
                     is MessagesState.Loading,
@@ -517,6 +521,7 @@ public class MessageListController(
                                 read = reads,
                             ),
                             ownCapabilities = channel.ownCapabilities,
+                            messagesInOriginalLanguage = messagesInOriginalLanguage,
                         ),
                         endOfNewMessagesReached = endOfNewerMessages,
                     )
@@ -627,23 +632,23 @@ public class MessageListController(
         disableUnreadLabelButton()
     }
 
-    private fun initialFocusMessage() {
+    private suspend fun initialFocusMessage() {
         messageId ?: return // No initial focus if no message id is provided
-        scope.launch {
-            listState
-                .onCompletion {
-                    logger.v { "[initialFocusMessage] mode: ${_mode.value}" }
-                    when {
-                        _mode.value is MessageMode.Normal -> focusChannelMessage(messageId)
-                        _mode.value is MessageMode.MessageThread && parentMessageId != null ->
-                            focusThreadMessage(
-                                threadMessageId = messageId,
-                                parentMessageId = parentMessageId,
-                            )
-                    }
+        listState
+            .onCompletion {
+                // Prevent focusing if the list is empty (if the listState flow is cancelled)
+                if (listState.value.messageItems.isEmpty()) return@onCompletion
+                logger.v { "[initialFocusMessage] mode: ${_mode.value}" }
+                when {
+                    _mode.value is MessageMode.Normal -> focusChannelMessage(messageId)
+                    _mode.value is MessageMode.MessageThread && parentMessageId != null ->
+                        focusThreadMessage(
+                            threadMessageId = messageId,
+                            parentMessageId = parentMessageId,
+                        )
                 }
-                .first { it.messageItems.isNotEmpty() }
-        }
+            }
+            .first { it.messageItems.isNotEmpty() }
     }
 
     private fun List<Message>.focusUnreadMessage(lastReadMessageId: String) {
@@ -759,6 +764,7 @@ public class MessageListController(
                 focusedMessage,
                 members,
                 ownCapabilities,
+                originalTranslationsStore.originalTextMessageIds,
             ) { data ->
                 val messages = data[0] as List<Message>
                 val reads = data[1] as List<ChannelUserRead>
@@ -771,6 +777,7 @@ public class MessageListController(
                 val focusedMessage = data[8] as Message?
                 val members = data[9] as List<Member>
                 val ownCapabilities = data[10] as Set<String>
+                val messagesInOriginalLanguage = data[11] as Set<String>
 
                 _threadListState.value.copy(
                     isLoading = false,
@@ -793,6 +800,7 @@ public class MessageListController(
                         endOfOlderMessages = false,
                         channel = null,
                         ownCapabilities = ownCapabilities,
+                        messagesInOriginalLanguage = messagesInOriginalLanguage,
                     ),
                     parentMessageId = threadId,
                     endOfNewMessagesReached = true,
@@ -856,6 +864,7 @@ public class MessageListController(
         endOfOlderMessages: Boolean,
         channel: Channel?,
         ownCapabilities: Set<String>,
+        messagesInOriginalLanguage: Set<String>,
     ): List<MessageListItemState> {
         val parentMessageId = (_mode.value as? MessageMode.MessageThread)?.parentMessage?.id
         val currentUser = user.value
@@ -949,6 +958,7 @@ public class MessageListController(
                         messageReadBy = messageReadBy,
                         focusState = if (isMessageFocused) MessageFocused else null,
                         ownCapabilities = ownCapabilities,
+                        showOriginalText = messagesInOriginalLanguage.contains(message.id),
                     ),
                 )
             }
@@ -1233,6 +1243,15 @@ public class MessageListController(
             reads = channelState.reads,
             members = channelState.members,
         )
+    }
+
+    /**
+     * Toggles between the translated and the original text of the message (if the message was auto-translated).
+     *
+     * @param messageId The ID of the message for which to toggle the original text.
+     */
+    public fun toggleOriginalText(messageId: String) {
+        originalTranslationsStore.toggleOriginalText(messageId)
     }
 
     /**
@@ -2333,6 +2352,8 @@ public class MessageListController(
      * Cancels any pending work when the parent ViewModel is about to be destroyed.
      */
     public fun onCleared() {
+        // Clear any messages for which the original text was shown
+        originalTranslationsStore.clear()
         scope.cancel()
     }
 

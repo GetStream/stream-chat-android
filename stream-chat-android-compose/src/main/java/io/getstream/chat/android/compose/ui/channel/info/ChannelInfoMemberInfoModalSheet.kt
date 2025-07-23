@@ -21,6 +21,7 @@ import android.text.format.DateUtils
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -44,8 +45,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
 import io.getstream.chat.android.compose.ui.components.ContentBox
-import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
+import io.getstream.chat.android.compose.ui.components.avatar.DefaultOnlineIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getLastSeenText
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoMemberViewModel
@@ -56,6 +58,7 @@ import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMembe
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewEvent
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoMemberViewState
+import io.getstream.chat.android.ui.common.utils.extensions.shouldShowOnlineIndicator
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.Calendar
@@ -108,54 +111,73 @@ private fun ChannelInfoMemberInfoModalSheetContent(
 ) {
     val isLoading = state is ChannelInfoMemberViewState.Loading
     ContentBox(
-        contentAlignment = if (isLoading) Alignment.Center else Alignment.TopCenter,
+        modifier = Modifier.fillMaxWidth(),
         isLoading = isLoading,
     ) {
         val content = state as ChannelInfoMemberViewState.Content
         Column(
-            modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            val context = LocalContext.current
-            val member = content.member
-            val user = member.user
-            Text(
-                text = user.name.takeIf(String::isNotBlank) ?: user.id,
-                style = ChatTheme.typography.title3Bold,
-                color = ChatTheme.colors.textHighEmphasis,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Text(
-                text = user.getLastSeenText(context),
-                style = ChatTheme.typography.footnote,
-                color = ChatTheme.colors.textLowEmphasis,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            if (member.banned) {
-                Text(
-                    text = member.getBanExpirationText(context),
-                    style = ChatTheme.typography.footnote,
-                    color = ChatTheme.colors.errorAccent,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-            UserAvatar(
-                modifier = Modifier.size(72.dp),
-                user = user,
-            )
+            ChatTheme.componentFactory.ChannelInfoMemberInfoModalSheetTopBar(content.member)
             LazyColumn {
                 items(content.options) { option ->
-                    ChannelInfoMemberOption(
-                        option = option,
-                        onViewAction = onViewAction,
-                    )
+                    with(ChatTheme.componentFactory) {
+                        ChannelInfoMemberOptionItem(
+                            option = option,
+                            onViewAction = onViewAction,
+                        )
+                    }
                 }
             }
         }
+    }
+}
+
+@Composable
+internal fun ChannelInfoMemberInfoModalSheetTopBar(member: Member) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        val context = LocalContext.current
+        val user = member.user
+        Text(
+            text = user.name.takeIf(String::isNotBlank) ?: user.id,
+            style = ChatTheme.typography.title3Bold,
+            color = ChatTheme.colors.textHighEmphasis,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Text(
+            text = user.getLastSeenText(context),
+            style = ChatTheme.typography.footnote,
+            color = ChatTheme.colors.textLowEmphasis,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        if (member.banned) {
+            Text(
+                text = member.getBanExpirationText(context),
+                style = ChatTheme.typography.footnote,
+                color = ChatTheme.colors.errorAccent,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+        ChatTheme.componentFactory.UserAvatar(
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .size(72.dp),
+            user = user,
+            textStyle = ChatTheme.typography.title3Bold,
+            showOnlineIndicator = user.shouldShowOnlineIndicator(
+                userPresence = ChatTheme.userPresence,
+                currentUser = null,
+            ),
+            onlineIndicator = { DefaultOnlineIndicator(onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd) },
+            onClick = null,
+        )
     }
 }
 

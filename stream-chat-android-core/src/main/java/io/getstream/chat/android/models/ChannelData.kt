@@ -58,6 +58,7 @@ public data class ChannelData(
     val extraData: Map<String, Any> = mapOf(),
     val ownCapabilities: Set<String> = setOf(),
     val membership: Member? = null,
+    val draft: DraftMessage? = null,
 ) {
 
     /**
@@ -98,6 +99,7 @@ public data class ChannelData(
         ownCapabilities = channel.ownCapabilities.takeIf { ownCapabilities -> ownCapabilities.isNotEmpty() }
             ?: currentOwnCapabilities,
         membership = channel.membership,
+        draft = channel.draftMessage,
     )
 
     @Deprecated(
@@ -135,6 +137,7 @@ public data class ChannelData(
      * @param reads The list of read states.
      * @param watchers The list of channel's watchers.
      * @param watcherCount Number of channel watchers.
+     * @param insideSearch Whether the channel is inside a search result.
      *
      * @return A [Channel] object.
      */
@@ -171,6 +174,8 @@ public data class ChannelData(
             membership = membership,
             cachedLatestMessages = cachedLatestMessages,
             isInsideSearch = insideSearch,
+            draftMessage = draft,
+            activeLiveLocations = emptyList(),
         )
     }
 

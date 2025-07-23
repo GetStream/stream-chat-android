@@ -124,7 +124,7 @@ public final class io/getstream/chat/android/state/plugin/factory/StreamStatePlu
 }
 
 public final class io/getstream/chat/android/state/plugin/state/StateRegistry {
-	public fun <init> (Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/Job;Lkotlin/jvm/functions/Function0;Lkotlinx/coroutines/CoroutineScope;)V
+	public fun <init> (Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/Job;Lkotlin/jvm/functions/Function0;Lkotlinx/coroutines/CoroutineScope;)V
 	public final fun channel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/channel/state/ChannelState;
 	public final fun clear ()V
 	public final fun queryChannels (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;)Lio/getstream/chat/android/state/plugin/state/querychannels/QueryChannelsState;
@@ -143,11 +143,13 @@ public abstract interface class io/getstream/chat/android/state/plugin/state/cha
 }
 
 public abstract interface class io/getstream/chat/android/state/plugin/state/global/GlobalState {
+	public abstract fun getActiveLiveLocations ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getBanned ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getBlockedUserIds ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getChannelDraftMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getChannelMutes ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getChannelUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getCurrentUserActiveLiveLocations ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMuted ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getThreadDraftMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getTotalUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;

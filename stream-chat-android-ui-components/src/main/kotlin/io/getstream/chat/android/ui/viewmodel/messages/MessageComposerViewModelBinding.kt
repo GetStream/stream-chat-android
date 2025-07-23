@@ -20,7 +20,6 @@ package io.getstream.chat.android.ui.viewmodel.messages
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Message
@@ -166,7 +165,6 @@ public fun MessageComposerViewModel.bindView(
  */
 @JvmName("bindDefaults")
 @JvmOverloads
-@ExperimentalStreamChatApi
 public fun MessageComposerViewModel.bindViewDefaults(
     view: MessageComposerView,
     lifecycleOwner: LifecycleOwner,

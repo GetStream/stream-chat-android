@@ -19,6 +19,7 @@ package io.getstream.chat.android.offline.repository.domain.message.internal
 import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageReminderInfo
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Reaction
@@ -84,6 +85,8 @@ internal suspend fun MessageEntity.toModel(
         messageTextUpdatedAt = messageTextUpdatedAt,
         restrictedVisibility = restrictedVisibility,
         poll = pollId?.let { getPoll(it) },
+        reminder = reminder?.toModel(),
+        sharedLocation = sharedLocation?.toModel(),
     )
 }
 
@@ -128,6 +131,9 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
         moderation = moderation?.toEntity(),
         messageTextUpdatedAt = messageTextUpdatedAt,
         pollId = poll?.id,
+        reminder = reminder?.toEntity(),
+        restrictedVisibility = restrictedVisibility,
+        sharedLocation = sharedLocation?.toEntity(),
     ),
     attachments = attachments.mapIndexed { index, attachment -> attachment.toEntity(id, index) },
     latestReactions = latestReactions.map(Reaction::toEntity),
@@ -178,6 +184,7 @@ internal suspend fun ReplyMessageEntity.toModel(
             poll = pollId?.let { getPoll(it) },
             restrictedVisibility = restrictedVisibility,
             channelInfo = channelInfo?.toModel(),
+            reminder = reminder?.toModel(),
         )
     }
 }
@@ -214,6 +221,7 @@ internal fun Message.toReplyEntity(): ReplyMessageEntity =
             pinnedByUserId = pinnedBy?.id,
             moderationDetails = moderationDetails?.toEntity(),
             pollId = poll?.id,
+            reminder = reminder?.toEntity(),
         ),
         attachments = attachments.mapIndexed { index, attachment -> attachment.toReplyEntity(id, index) },
     )
@@ -343,4 +351,16 @@ internal suspend fun DraftMessageEntity.toModel(
     replyMessage = replyMessageId?.let { getMessage(it) },
     text = text,
     extraData = extraData,
+)
+
+internal fun MessageReminderInfo.toEntity(): ReminderInfoEntity = ReminderInfoEntity(
+    remindAt = remindAt,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+)
+
+internal fun ReminderInfoEntity.toModel(): MessageReminderInfo = MessageReminderInfo(
+    remindAt = remindAt,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
 )

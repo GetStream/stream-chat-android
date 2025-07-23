@@ -358,6 +358,6 @@ internal class ChatClientUserApiTests : BaseChatClientTest() {
             whenever(mutableClientState.user) doReturn MutableStateFlow(user)
         }
 
-        fun get(): ChatClient = chatClient.apply { plugins = this@ChatClientUserApiTests.plugins }
+        fun get(): ChatClient = chatClient
     }
 }

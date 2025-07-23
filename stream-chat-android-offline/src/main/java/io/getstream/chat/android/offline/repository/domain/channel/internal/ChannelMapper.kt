@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.extensions.internal.lastMessage
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelUserRead
+import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -29,6 +30,8 @@ import io.getstream.chat.android.offline.repository.domain.channel.member.intern
 import io.getstream.chat.android.offline.repository.domain.channel.userread.internal.ChannelUserReadEntity
 import io.getstream.chat.android.offline.repository.domain.channel.userread.internal.toEntity
 import io.getstream.chat.android.offline.repository.domain.channel.userread.internal.toModel
+import io.getstream.chat.android.offline.repository.domain.message.internal.toEntity
+import io.getstream.chat.android.offline.repository.domain.message.internal.toModel
 
 internal fun Channel.toEntity(): ChannelEntity {
     return ChannelEntity(
@@ -56,12 +59,14 @@ internal fun Channel.toEntity(): ChannelEntity {
         team = team,
         ownCapabilities = ownCapabilities,
         membership = membership?.toEntity(),
+        activeLiveLocations = activeLiveLocations.map { it.toEntity() },
     )
 }
 
 internal suspend fun ChannelEntity.toModel(
     getUser: suspend (userId: String) -> User,
     getMessage: suspend (messageId: String) -> Message?,
+    getDraftMessage: suspend (cid: String) -> DraftMessage?,
 ): Channel = Channel(
     cooldown = cooldown,
     type = type,
@@ -86,4 +91,6 @@ internal suspend fun ChannelEntity.toModel(
     team = team,
     ownCapabilities = ownCapabilities,
     membership = membership?.toModel(getUser),
+    draftMessage = getDraftMessage(channelId),
+    activeLiveLocations = activeLiveLocations.map { it.toModel() },
 ).syncUnreadCountWithReads()

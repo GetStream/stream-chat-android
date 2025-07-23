@@ -39,6 +39,7 @@ import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentP
 import io.getstream.chat.android.compose.ui.attachments.content.PlayButton
 import io.getstream.chat.android.compose.ui.attachments.content.onMediaAttachmentContentItemClick
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract.Input
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
@@ -53,6 +54,7 @@ import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizin
  * @param skipEnrichUrl Used by the media gallery. If set to true will skip enriching URLs when you update the message
  * by deleting an attachment contained within it. Set to false by default.
  * @param onContentItemClick Lambda called when an item gets clicked.
+ * @param canHandle Lambda that checks if the factory can handle the given attachments.
  * @param itemOverlayContent Represents the content overlaid above individual items.
  * By default it is used to display a play button over video previews.
  * @param previewItemOverlayContent Represents the content overlaid above individual preview items.
@@ -71,6 +73,9 @@ public class MediaAttachmentFactory(
         streamCdnImageResizing: StreamCdnImageResizing,
         skipEnrichUrl: Boolean,
     ) -> Unit = ::onMediaAttachmentContentItemClick,
+    canHandle: (attachments: List<Attachment>) -> Boolean = { attachments ->
+        attachments.all { it.isImage() || it.isVideo() }
+    },
     itemOverlayContent: @Composable (attachmentType: String?) -> Unit = { attachmentType ->
         if (attachmentType == AttachmentType.VIDEO) {
             DefaultItemOverlayContent()
@@ -83,9 +88,7 @@ public class MediaAttachmentFactory(
     },
 ) : AttachmentFactory(
     type = Type.BuiltIn.MEDIA,
-    canHandle = { attachments ->
-        attachments.all { it.isImage() || it.isVideo() }
-    },
+    canHandle = canHandle,
     previewContent = { modifier, attachments, onAttachmentRemoved ->
         MediaAttachmentPreviewContent(
             attachments = attachments,
