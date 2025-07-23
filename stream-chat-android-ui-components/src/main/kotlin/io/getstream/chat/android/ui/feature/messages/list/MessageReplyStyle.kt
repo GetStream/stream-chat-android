@@ -38,6 +38,7 @@ import io.getstream.chat.android.ui.utils.extensions.getDimension
  * Style for view holders used inside [MessageListView] allowing to customize message "reply" view.
  * Use this class together with [TransformStyle.messageReplyStyleTransformer] to change styles programmatically.
  *
+ * @param showUserAvatar Whether to show user avatar in the reply view. Default value is `true`.
  * @property messageBackgroundColorMine Background color for message sent by the current user. Default value is [R.color.stream_ui_grey_gainsboro].
  * @property messageBackgroundColorTheirs Background color for message sent by other user. Default value is [R.color.stream_ui_white].
  * @property linkBackgroundColorMine Background color of links in the message sent by the current user.
@@ -52,6 +53,7 @@ import io.getstream.chat.android.ui.utils.extensions.getDimension
  * @property messageStrokeWidthTheirs Stroke width for message sent by other user. Default value is [MESSAGE_STROKE_WIDTH_THEIRS].
  */
 public data class MessageReplyStyle(
+    public val showUserAvatar: Boolean = true,
     @ColorInt public val messageBackgroundColorMine: Int,
     @ColorInt public val messageBackgroundColorTheirs: Int,
     @ColorInt public val linkBackgroundColorMine: Int,
@@ -67,6 +69,10 @@ public data class MessageReplyStyle(
 ) : ViewStyle {
     internal companion object {
         operator fun invoke(attributes: TypedArray, context: Context): MessageReplyStyle {
+            val showUserAvatar = attributes.getBoolean(
+                R.styleable.MessageListView_streamUiMessageReplyShowUserAvatar,
+                true,
+            )
             val messageBackgroundColorMine: Int = attributes.getColor(
                 R.styleable.MessageListView_streamUiMessageReplyBackgroundColorMine,
                 VALUE_NOT_SET,
@@ -156,6 +162,7 @@ public data class MessageReplyStyle(
                 )
 
             return MessageReplyStyle(
+                showUserAvatar = showUserAvatar,
                 messageBackgroundColorMine = messageBackgroundColorMine,
                 messageBackgroundColorTheirs = messageBackgroundColorTheirs,
                 linkStyleMine = textStyleLinkMine,
