@@ -168,7 +168,8 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
                     binding.name.text = user.name
                     binding.userAvatarView.setUser(user)
                 }
-                binding.dateVote.text = ChatUI.dateFormatter.formatDate(vote.createdAt)
+                binding.date.text = ChatUI.dateFormatter.formatRelativeDate(vote.createdAt)
+                binding.time.text = ChatUI.dateFormatter.formatTime(vote.createdAt)
             }
         }
     }

@@ -25,6 +25,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -215,6 +216,7 @@ private fun PollVoteItem(vote: Vote) {
             .fillMaxSize()
             .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         val user = vote.user
         if (user != null) {
@@ -232,20 +234,29 @@ private fun PollVoteItem(vote: Vote) {
             )
 
             Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 4.dp)
-                    .weight(1f),
+                modifier = Modifier.weight(1f),
                 text = user.name,
                 color = ChatTheme.colors.textHighEmphasis,
-                fontSize = 14.sp,
+                style = ChatTheme.typography.body,
+            )
+
+            Text(
+                text = ChatTheme.dateFormatter.formatRelativeDate(vote.createdAt),
+                color = ChatTheme.colors.textLowEmphasis,
+                style = ChatTheme.typography.bodyBold,
+            )
+
+            Text(
+                text = ChatTheme.dateFormatter.formatTime(vote.createdAt),
+                color = ChatTheme.colors.textLowEmphasis,
+                style = ChatTheme.typography.body,
             )
         }
     }
 }
 
 @Composable
-internal fun PollViewResultTitle(title: String) {
+private fun PollViewResultTitle(title: String) {
     Box(
         modifier = Modifier
             .padding(16.dp)
