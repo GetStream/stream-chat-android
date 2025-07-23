@@ -186,6 +186,6 @@ internal class MaxPossibleWidthDecorator(private val style: MessageListItemStyle
 
     companion object {
         private const val START_PERCENT = 0f
-        private const val END_PERCENT = 0.97f
+        private const val END_PERCENT = 1f
     }
 }
