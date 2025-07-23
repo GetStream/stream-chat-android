@@ -70,6 +70,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Optimize default channel search query to prevent timeouts. [#5870](https://github.com/GetStream/stream-chat-android/pull/5870)
 
 ### ✅ Added
 
