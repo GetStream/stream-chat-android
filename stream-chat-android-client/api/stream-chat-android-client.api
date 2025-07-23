@@ -3039,6 +3039,8 @@ public final class io/getstream/chat/android/client/plugin/Plugin$DefaultImpls {
 	public static fun onUnblockUserResult (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Lio/getstream/result/Result;)V
 	public static fun onUpdateLiveLocationPrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/models/Location;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onUpdateLiveLocationResult (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/models/Location;Lio/getstream/result/Result;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun onUserDisconnected (Lio/getstream/chat/android/client/plugin/Plugin;)V
+	public static fun onUserSet (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/models/User;)V
 }
 
 public abstract interface class io/getstream/chat/android/client/plugin/factory/PluginFactory : io/getstream/chat/android/client/plugin/DependencyResolver {

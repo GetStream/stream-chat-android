@@ -16,6 +16,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add throttling mechanism to prevent excessive API calls when updating locations. [#5871](https://github.com/GetStream/stream-chat-android/pull/5871)
 
 ### ⚠️ Changed
 
@@ -69,6 +70,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Optimize default channel search query to prevent timeouts. [#5870](https://github.com/GetStream/stream-chat-android/pull/5870)
 
 ### ✅ Added
 
