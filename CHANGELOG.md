@@ -16,6 +16,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add throttling mechanism to prevent excessive API calls when updating locations. [#5871](https://github.com/GetStream/stream-chat-android/pull/5871)
 
 ### ⚠️ Changed
 
