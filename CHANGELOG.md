@@ -83,6 +83,7 @@
 - Show the number of comments on the "View Comments" button. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
 - Show discard dialog when there are changes in the poll composer and the system back button is "pressed". [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
 - Shows the vote date and time in the Poll result dialog. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
+- Optimize default channel search query to prevent timeouts. [#5870](https://github.com/GetStream/stream-chat-android/pull/5870)
 
 ### ✅ Added
 
