@@ -67,6 +67,7 @@
 - Shows the vote date and time in the Poll result dialog. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
 
 ### ✅ Added
+- Add customizable `DurationFormatter` via `ChatUI`. [#5876](https://github.com/GetStream/stream-chat-android/pull/5876)
 
 ### ⚠️ Changed
 
@@ -87,6 +88,7 @@
 - Optimize default channel search query to prevent timeouts. [#5870](https://github.com/GetStream/stream-chat-android/pull/5870)
 
 ### ✅ Added
+- Add customizable `DurationFormatter` via `ChatTheme`. [#5876](https://github.com/GetStream/stream-chat-android/pull/5876)
 
 ### ⚠️ Changed
 
