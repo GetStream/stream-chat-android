@@ -1006,6 +1006,15 @@ public abstract interface class io/getstream/chat/android/ui/common/helper/Downl
 	public abstract fun intercept (Landroid/app/DownloadManager$Request;)V
 }
 
+public abstract interface class io/getstream/chat/android/ui/common/helper/DurationFormatter {
+	public static final field Companion Lio/getstream/chat/android/ui/common/helper/DurationFormatter$Companion;
+	public abstract fun format (I)Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/helper/DurationFormatter$Companion {
+	public final fun defaultFormatter ()Lio/getstream/chat/android/ui/common/helper/DurationFormatter;
+}
+
 public abstract interface class io/getstream/chat/android/ui/common/helper/ImageAssetTransformer {
 	public abstract fun transform (Ljava/lang/Object;)Ljava/lang/Object;
 }

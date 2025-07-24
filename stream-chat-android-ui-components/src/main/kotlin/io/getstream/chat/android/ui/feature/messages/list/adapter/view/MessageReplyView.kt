@@ -26,15 +26,15 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.google.android.material.shape.MaterialShapeDrawable
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.extensions.duration
+import io.getstream.chat.android.client.extensions.durationInMs
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.client.utils.attachment.isLink
 import io.getstream.chat.android.client.utils.message.isDeleted
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.utils.DurationFormatter
 import io.getstream.chat.android.ui.common.utils.extensions.isMine
 import io.getstream.chat.android.ui.databinding.StreamUiMessageReplyViewBinding
 import io.getstream.chat.android.ui.feature.messages.list.MessageReplyStyle
@@ -155,6 +155,7 @@ public class MessageReplyView : FrameLayout {
                     }
                     setTint(color)
                 }
+
                 isMine -> {
                     paintStyle = Paint.Style.FILL_AND_STROKE
                     setStrokeTint(
@@ -167,6 +168,7 @@ public class MessageReplyView : FrameLayout {
                             ?: context.getColorCompat(R.color.stream_ui_white),
                     )
                 }
+
                 else -> {
                     paintStyle = Paint.Style.FILL_AND_STROKE
                     setStrokeTint(
@@ -200,12 +202,10 @@ public class MessageReplyView : FrameLayout {
         if (message.attachments.any { it.isAudioRecording() }) {
             binding.additionalInfo.isVisible = true
             binding.additionalInfo.text =
-                DurationFormatter.formatDurationInSeconds(
-                    (
-                        message.attachments
-                            .first { it.isAudioRecording() }
-                            .duration
-                        ) ?: 0f,
+                ChatUI.durationFormatter.format(
+                    message.attachments
+                        .firstOrNull(Attachment::isAudioRecording)
+                        ?.durationInMs ?: 0,
                 )
         } else {
             binding.additionalInfo.isVisible = false
@@ -240,9 +240,11 @@ public class MessageReplyView : FrameLayout {
             isLink(message) -> {
                 configureLinkTextStyle(isMine, style)
             }
+
             isMine -> {
                 style?.textStyleMine?.apply(binding.replyText)
             }
+
             else -> {
                 style?.textStyleTheirs?.apply(binding.replyText)
             }

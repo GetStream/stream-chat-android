@@ -22,6 +22,7 @@ import io.getstream.chat.android.ui.common.helper.DefaultDownloadAttachmentUriGe
 import io.getstream.chat.android.ui.common.helper.DefaultVideoHeadersProvider
 import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
+import io.getstream.chat.android.ui.common.helper.DurationFormatter
 import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.ui.common.helper.VideoHeadersProvider
@@ -153,6 +154,12 @@ public object ChatUI {
      */
     @JvmStatic
     public var dateFormatter: DateFormatter by lazyVar { DateFormatter.from(appContext) }
+
+    /**
+     * Allows formatting durations as strings.
+     */
+    @JvmStatic
+    public var durationFormatter: DurationFormatter by lazyVar { DurationFormatter.defaultFormatter() }
 
     /**
      * Allows adding support for custom attachments in the message list.

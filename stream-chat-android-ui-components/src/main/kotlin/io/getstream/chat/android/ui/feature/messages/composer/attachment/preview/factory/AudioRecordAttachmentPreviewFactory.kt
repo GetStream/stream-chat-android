@@ -23,10 +23,11 @@ import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.AudioState
 import io.getstream.chat.android.client.audio.audioHash
 import io.getstream.chat.android.client.extensions.duration
+import io.getstream.chat.android.client.extensions.durationInMs
 import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.ui.common.utils.DurationFormatter
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.databinding.StreamUiAudioRecordPlayerPreviewBinding
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewViewHolder
@@ -106,8 +107,8 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
 
             this.attachment = attachment
 
-            attachment.duration
-                ?.let(DurationFormatter::formatDurationInSeconds)
+            attachment.durationInMs
+                ?.let(ChatUI.durationFormatter::format)
                 ?.let { duration ->
                     logger.v { "[bind] duration: $duration" }
                     playerView.setDuration(duration)
@@ -136,8 +137,8 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
                     AudioState.PLAYING -> playerView.setPlaying()
                 }
             }
-            registerOnProgressStateChange(hashCode) { (duration, progress) ->
-                playerView.setDuration(DurationFormatter.formatDurationInMillis(duration))
+            registerOnProgressStateChange(hashCode) { (durationInMs, progress) ->
+                playerView.setDuration(ChatUI.durationFormatter.format(durationInMs))
                 playerView.setProgress(progress.toDouble())
             }
             registerOnSpeedChange(hashCode, playerView::setSpeedText)
