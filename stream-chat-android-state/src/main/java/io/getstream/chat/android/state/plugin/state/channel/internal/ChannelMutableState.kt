@@ -43,7 +43,7 @@ import kotlinx.coroutines.flow.StateFlow
 import java.util.Date
 import java.util.concurrent.atomic.AtomicInteger
 
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "LongParameterList")
 /** State container with mutable data of a channel.*/
 internal class ChannelMutableState(
     override val channelType: String,
@@ -507,8 +507,9 @@ internal class ChannelMutableState(
             ?.let { setChannelData(it.copy(createdBy = user)) }
         _messages?.apply {
             value = messagesLimitFilter(
-                value.values.updateUsers(mapOf(user.id to user))
-            ).associateBy { it.id } }
+                value.values.updateUsers(mapOf(user.id to user)),
+            ).associateBy { it.id }
+        }
         _pinnedMessages?.apply { value = value.updateUsers(mapOf(user.id to user)) }
     }
 
