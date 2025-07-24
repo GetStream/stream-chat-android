@@ -11,6 +11,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final fun getDownloadAttachmentUriGenerator ()Lio/getstream/chat/android/ui/common/helper/DownloadAttachmentUriGenerator;
 	public static final fun getDownloadRequestInterceptor ()Lio/getstream/chat/android/ui/common/helper/DownloadRequestInterceptor;
 	public static final fun getDraftMessagesEnabled ()Z
+	public static final fun getDurationFormatter ()Lio/getstream/chat/android/ui/common/helper/DurationFormatter;
 	public static final fun getFonts ()Lio/getstream/chat/android/ui/font/ChatFonts;
 	public static final fun getImageAssetTransformer ()Lio/getstream/chat/android/ui/common/helper/ImageAssetTransformer;
 	public static final fun getImageHeadersProvider ()Lio/getstream/chat/android/ui/common/helper/ImageHeadersProvider;
@@ -37,6 +38,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final fun setDownloadAttachmentUriGenerator (Lio/getstream/chat/android/ui/common/helper/DownloadAttachmentUriGenerator;)V
 	public static final fun setDownloadRequestInterceptor (Lio/getstream/chat/android/ui/common/helper/DownloadRequestInterceptor;)V
 	public static final fun setDraftMessagesEnabled (Z)V
+	public static final fun setDurationFormatter (Lio/getstream/chat/android/ui/common/helper/DurationFormatter;)V
 	public static final fun setFonts (Lio/getstream/chat/android/ui/font/ChatFonts;)V
 	public static final fun setImageAssetTransformer (Lio/getstream/chat/android/ui/common/helper/ImageAssetTransformer;)V
 	public static final fun setImageHeadersProvider (Lio/getstream/chat/android/ui/common/helper/ImageHeadersProvider;)V

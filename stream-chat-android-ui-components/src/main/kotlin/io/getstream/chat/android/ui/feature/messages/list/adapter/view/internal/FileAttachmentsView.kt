@@ -34,12 +34,13 @@ import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.AudioState
 import io.getstream.chat.android.client.audio.audioHash
 import io.getstream.chat.android.client.extensions.duration
+import io.getstream.chat.android.client.extensions.durationInMs
 import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.doForAllViewHolders
-import io.getstream.chat.android.ui.common.utils.DurationFormatter
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentBinding
@@ -391,9 +392,8 @@ private class RecordingFileAttachmentViewHolder(
                 AudioState.PLAYING -> playerView.setPlaying()
             }
         }
-        registerOnProgressStateChange(hashCode) { (duration, progress) ->
-            playerView.setDuration(DurationFormatter.formatDurationInMillis(duration))
-            // TODO
+        registerOnProgressStateChange(hashCode) { (durationInMs, progress) ->
+            playerView.setDuration(ChatUI.durationFormatter.format(durationInMs))
             playerView.setProgress(progress.toDouble())
         }
         registerOnSpeedChange(hashCode, playerView::setSpeedText)
@@ -478,8 +478,8 @@ private class RecordingFileAttachmentViewHolder(
             uploadingContainer.isVisible = isSuccess.not()
             playerView.isVisible = isSuccess
 
-            item.duration
-                ?.let(DurationFormatter::formatDurationInSeconds)
+            item.durationInMs
+                ?.let(ChatUI.durationFormatter::format)
                 ?.let(playerView::setDuration)
 
             item.waveformData?.also {
@@ -495,11 +495,11 @@ private class RecordingFileAttachmentViewHolder(
             } else if (item.uploadState is Attachment.UploadState.Failed || item.fileSize == 0) {
                 actionButton.visibility = View.VISIBLE
                 actionButton.setImageDrawable(style.failedAttachmentIcon)
-                fileSize.text = DurationFormatter.formatDurationInSeconds(item.duration ?: 0.0f)
+                fileSize.text = ChatUI.durationFormatter.format(item.durationInMs ?: 0)
             } else {
                 actionButton.visibility = View.GONE
                 actionButton.setImageDrawable(style.actionButtonIcon)
-                fileSize.text = DurationFormatter.formatDurationInSeconds(item.duration ?: 0.0f)
+                fileSize.text = ChatUI.durationFormatter.format(item.durationInMs ?: 0)
             }
 
             binding.progressBar.indeterminateDrawable = style.progressBarDrawable

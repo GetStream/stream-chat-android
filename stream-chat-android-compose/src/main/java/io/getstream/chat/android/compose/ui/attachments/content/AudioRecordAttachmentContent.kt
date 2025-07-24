@@ -55,7 +55,7 @@ import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.client.utils.message.isMine
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.components.audio.PlaybackTimer
+import io.getstream.chat.android.compose.ui.components.audio.PlaybackTimerBox
 import io.getstream.chat.android.compose.ui.components.audio.StaticWaveformSlider
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -285,7 +285,7 @@ internal fun AudioRecordAttachmentContentItemBase(
             var currentProgress by remember { mutableFloatStateOf(trackProgress) }
             LaunchedEffect(attachmentUrl, playing, trackProgress) { currentProgress = trackProgress }
 
-            PlaybackTimer(currentProgress, currentAttachment.durationInMs, timerStyle)
+            PlaybackTimerBox(currentProgress, currentAttachment.durationInMs, timerStyle)
 
             StaticWaveformSlider(
                 modifier = Modifier

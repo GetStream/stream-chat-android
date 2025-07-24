@@ -30,10 +30,11 @@ import io.getstream.chat.android.client.audio.AudioState
 import io.getstream.chat.android.client.audio.WaveformExtractor
 import io.getstream.chat.android.client.audio.audioHash
 import io.getstream.chat.android.client.extensions.duration
+import io.getstream.chat.android.client.extensions.durationInMs
 import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.ui.common.utils.DurationFormatter
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.feature.messages.common.AudioRecordPlayerViewStyle
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
@@ -130,14 +131,11 @@ internal class AudioRecordingAttachmentsGroupView : LinearLayoutCompat {
 
     private fun addAttachmentPlayerView(index: Int, attachment: Attachment) {
         logger.d { "[addAttachmentPlayerView] index: $index" }
-        // attachment.assetUrl?.also {
-        //     extractor.start(it)
-        // }
 
         AudioRecordPlayerView(context).apply {
-            attachment.duration
-                ?.let(DurationFormatter::formatDurationInSeconds)
-                ?.let(this::setTotalDuration)
+            attachment.durationInMs
+                ?.let(ChatUI.durationFormatter::format)
+                ?.let(::setTotalDuration)
 
             logger.i { "[addAttachmentPlayerView] waveformData: ${attachment.waveformData}" }
             attachment.waveformData?.let(::setWaveBars)
@@ -194,9 +192,8 @@ internal class AudioRecordingAttachmentsGroupView : LinearLayoutCompat {
                 AudioState.PLAYING -> playerView.setPlaying()
             }
         }
-        registerOnProgressStateChange(audioHash) { (duration, progress) ->
-            playerView.setDuration(DurationFormatter.formatDurationInMillis(duration))
-            // TODO
+        registerOnProgressStateChange(audioHash) { (durationInMs, progress) ->
+            playerView.setDuration(ChatUI.durationFormatter.format(durationInMs))
             playerView.setProgress(progress.toDouble())
         }
         registerOnSpeedChange(audioHash, playerView::setSpeedText)
