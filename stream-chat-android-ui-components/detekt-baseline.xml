@@ -3,7 +3,6 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>ComplexCondition:AttachmentDestination.kt$AttachmentDestination$attachment.isFile() || attachment.isVideo() || attachment.isAudio() || attachment.mimeType?.contains(VIDEO_MIME_TYPE_PREFIX) == true</ID>
-    <ID>ComplexCondition:CreatePollViewModel.kt$CreatePollViewModel$title.isNotBlank() &amp;&amp; options.isNotEmpty() &amp;&amp; options.all { it.text.isNotBlank() &amp;&amp; !it.duplicateError } &amp;&amp; (!allowMultipleVotes || (maxAnswers != null &amp;&amp; maxAnswers > 0 &amp;&amp; maxAnswers &lt;= options.size))</ID>
     <ID>ComplexCondition:FileAttachmentsView.kt$GeneralFileAttachmentViewHolder$item.uploadState is Attachment.UploadState.Idle || item.uploadState is Attachment.UploadState.InProgress || (item.uploadState is Attachment.UploadState.Success &amp;&amp; item.fileSize == 0)</ID>
     <ID>ComplexCondition:FileAttachmentsView.kt$RecordingFileAttachmentViewHolder$item.uploadState is Attachment.UploadState.Idle || item.uploadState is Attachment.UploadState.InProgress || (item.uploadState is Attachment.UploadState.Success &amp;&amp; item.fileSize == 0)</ID>
     <ID>ComplexCondition:FootnoteDecorator.kt$FootnoteDecorator$!isGiphy &amp;&amp; !isDeleted &amp;&amp; userLanguage != i18nLanguage &amp;&amp; translatedText != data.message.text</ID>
@@ -164,8 +163,6 @@
     <ID>TooManyFunctions:MessageListView.kt$MessageListView : ConstraintLayout</ID>
     <ID>TooManyFunctions:SimpleChannelListView.kt$SimpleChannelListView : RecyclerView</ID>
     <ID>UnusedPrivateClass:MediaAttachmentGridView.kt$MediaAttachmentGridView$SharedMediaSpaceItemDecorator : ItemDecoration</ID>
-    <ID>UnusedPrivateMember:WaveformView.kt$WaveformView$private fun forceProgress(progress: Float)</ID>
-    <ID>UnusedPrivateMember:WaveformView.kt$private fun List&lt;Float>.downsampleRms(targetSamples: Int): List&lt;Float></ID>
     <ID>VariableNaming:ChannelListView.kt$ChannelListView$private val CHANNEL_LIST_VIEW_ID = generateViewId()</ID>
   </CurrentIssues>
 </SmellBaseline>
