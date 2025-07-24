@@ -228,6 +228,10 @@
 
         <attr name="streamUiMessageComposerShowMessageReplyView" format="boolean" />
 
+        <!-- Whether to show the user avatar in the message reply view. If set to true, the
+         user avatar will be displayed next to the quoted message when replying to a message. -->
+        <attr name="streamUiMessageComposerMessageReplyShowUserAvatar" format="boolean" />
+
         <!-- Sets the background color of the quoted message bubble visible in the input when
          replying to a message. Applied both when replying to messages owned by the currently
          logged-in user and messages owned by other users. -->
