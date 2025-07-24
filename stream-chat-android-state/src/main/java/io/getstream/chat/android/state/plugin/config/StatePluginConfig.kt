@@ -25,10 +25,23 @@ import io.getstream.chat.android.models.TimeDuration
  * @param userPresence Whether the SDK should receive user presence changes.
  * @param syncMaxThreshold The maximum time allowed for data to synchronize. If not synced within this limit, the SDK deletes it.
  * @param now A function that provides the current time in milliseconds.
+ * @param messageLimitConfig Configuration for message limits in channels.
  */
 public data class StatePluginConfig @JvmOverloads constructor(
     public val backgroundSyncEnabled: Boolean = true,
     public val userPresence: Boolean = true,
     public val syncMaxThreshold: TimeDuration = TimeDuration.hours(12),
     public val now: () -> Long = { System.currentTimeMillis() },
+    public val messageLimitConfig: MessageLimitConfig = MessageLimitConfig(),
+)
+
+/**
+ * Configuration for message limits in channels.
+ *
+ * @param channelTypes The set of channel types for which the limit applies.
+ * @param limit The maximum number of messages to keep in memory for the channel.
+ */
+public data class MessageLimitConfig(
+    public val channelTypes: Set<String> = setOf("livestream"),
+    public val limit: Int = 1000,
 )
