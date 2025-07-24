@@ -81,6 +81,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         activeLiveLocations = MutableStateFlow(
             emptyList(),
         ),
+        messagesLimitFilter = { it },
     ) { System.currentTimeMillis() }
 
     private val channelStateLogic: ChannelStateLogic = mock {

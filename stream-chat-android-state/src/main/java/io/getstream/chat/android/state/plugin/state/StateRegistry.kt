@@ -119,8 +119,8 @@ public class StateRegistry constructor(
                 userStateFlow,
                 latestUsers,
                 activeLiveLocations,
-                now,
                 getMessageLimitFilter(channelType),
+                now,
             )
         }
     }
