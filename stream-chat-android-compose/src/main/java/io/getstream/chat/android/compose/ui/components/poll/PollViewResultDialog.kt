@@ -25,6 +25,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,7 +38,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -53,12 +54,13 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import io.getstream.chat.android.client.extensions.internal.getVotesUnlessAnonymous
+import io.getstream.chat.android.client.extensions.internal.getWinner
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Vote
-import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewPollData
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
@@ -141,25 +143,26 @@ private fun LazyListScope.pollViewResultContent(
     poll: Poll,
 ) {
     val options = poll.options.sortedByDescending { option -> poll.voteCountsByOption[option.id] ?: 0 }
+    val winner = poll.getWinner()
 
-    itemsIndexed(
+    items(
         items = options,
-        key = { _, option -> option.id },
-    ) { index, option ->
-        val optionVotes = poll.votes.filter { it.optionId == option.id }
+        key = Option::id,
+    ) { option ->
+        val votes = poll.getVotesUnlessAnonymous(option)
         PollViewResultItem(
-            index = index,
             option = option,
-            votesCount = poll.voteCountsByOption[option.id] ?: optionVotes.size,
-            votes = optionVotes.takeUnless { poll.votingVisibility == VotingVisibility.ANONYMOUS } ?: emptyList(),
+            isWinner = winner == option,
+            votesCount = poll.voteCountsByOption[option.id] ?: 0,
+            votes = votes,
         )
     }
 }
 
 @Composable
 private fun PollViewResultItem(
-    index: Int,
     option: Option,
+    isWinner: Boolean,
     votesCount: Int,
     votes: List<Vote>,
 ) {
@@ -182,7 +185,7 @@ private fun PollViewResultItem(
                 fontSize = 16.sp,
             )
 
-            if (index == 0) {
+            if (isWinner) {
                 Icon(
                     modifier = Modifier.padding(end = 8.dp),
                     painter = painterResource(id = R.drawable.stream_compose_ic_award),
@@ -213,6 +216,7 @@ private fun PollVoteItem(vote: Vote) {
             .fillMaxSize()
             .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         val user = vote.user
         if (user != null) {
@@ -230,20 +234,29 @@ private fun PollVoteItem(vote: Vote) {
             )
 
             Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 4.dp)
-                    .weight(1f),
+                modifier = Modifier.weight(1f),
                 text = user.name,
                 color = ChatTheme.colors.textHighEmphasis,
-                fontSize = 14.sp,
+                style = ChatTheme.typography.body,
+            )
+
+            Text(
+                text = ChatTheme.dateFormatter.formatRelativeDate(vote.createdAt),
+                color = ChatTheme.colors.textLowEmphasis,
+                style = ChatTheme.typography.bodyBold,
+            )
+
+            Text(
+                text = ChatTheme.dateFormatter.formatTime(vote.createdAt),
+                color = ChatTheme.colors.textLowEmphasis,
+                style = ChatTheme.typography.body,
             )
         }
     }
 }
 
 @Composable
-internal fun PollViewResultTitle(title: String) {
+private fun PollViewResultTitle(title: String) {
     Box(
         modifier = Modifier
             .padding(16.dp)

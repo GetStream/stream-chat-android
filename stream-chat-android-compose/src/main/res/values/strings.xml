@@ -213,7 +213,6 @@
     <string name="stream_compose_poll_option_description" translatable="false">Add an option</string>
     <string name="stream_compose_poll_option_hint" translatable="false">Add an option</string>
     <string name="stream_compose_poll_option_error_duplicated" translatable="false">This is already an option</string>
-    <string name="stream_compose_poll_option_error_exceed" translatable="false">Type a number from %s to %s</string>
     <string name="stream_compose_poll_option_discard_dialog_title" translatable="false">Discard poll</string>
     <string name="stream_compose_poll_option_discard_dialog_description" translatable="false">Are you sure want to discard your poll?</string>
     <string name="stream_compose_poll_option_discard_dialog_cancel" translatable="false">Keep Editing</string>
@@ -226,7 +225,6 @@
     <string name="stream_compose_poll_view_result" translatable="false">View Results</string>
     <string name="stream_compose_poll_end_vote" translatable="false">End Vote</string>
     <string name="stream_compose_poll_suggest_option">Suggest Option</string>
-    <string name="stream_compose_poll_see_more_options" translatable="false">See All %d Options</string>
     <string name="stream_compose_poll_options" translatable="false">Poll Options</string>
     <string name="stream_compose_poll_results" translatable="false">Poll Results</string>
     <string name="stream_compose_poll_answers">Poll Comments</string>
@@ -246,7 +244,6 @@
     <string name="stream_compose_suggest_an_option">Suggest an Option</string>
     <string name="stream_compose_confirm">Confirm</string>
     <string name="stream_compose_dismiss">Dismiss</string>
-    <string name="stream_compose_view_answers">View Comments</string>
 
     <!--  Threads  -->
     <string name="stream_compose_thread_list_empty_title">No threads here yet…</string>

@@ -59,6 +59,7 @@ import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.poll.PollOptionInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.ui.common.utils.PollsConstants
 
 /**
  * The Poll switch list is that a Composable that enables users to create a poll with configurations.
@@ -248,7 +249,7 @@ private inline fun <T : Comparable<T>> PollSwitchInput.validateRange(
 
     return if (value < min || value > max) {
         PollOptionNumberExceed(
-            message = context.getString(R.string.stream_compose_poll_option_error_exceed, min, max),
+            message = context.getString(R.string.stream_ui_poll_multiple_answers_error, min, max),
         )
     } else {
         null
@@ -277,7 +278,11 @@ internal fun PollSwitchList() {
                     value = 11,
                 ),
                 pollOptionError = PollOptionNumberExceed(
-                    message = stringResource(R.string.stream_compose_poll_option_error_exceed),
+                    message = stringResource(
+                        R.string.stream_ui_poll_multiple_answers_error,
+                        PollsConstants.MIN_NUMBER_OF_MULTIPLE_ANSWERS,
+                        PollsConstants.MAX_NUMBER_OF_MULTIPLE_ANSWERS,
+                    ),
                 ),
                 enabled = true,
             ),

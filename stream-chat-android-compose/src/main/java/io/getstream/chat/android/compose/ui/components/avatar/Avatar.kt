@@ -63,7 +63,7 @@ public fun Avatar(
     onClick: (() -> Unit)? = null,
 ) {
     val streamCdnImageResizing = ChatTheme.streamCdnImageResizing
-    val data = remember { imageUrl.applyStreamCdnImageResizingIfEnabled(streamCdnImageResizing) }
+    val data = remember(imageUrl) { imageUrl.applyStreamCdnImageResizingIfEnabled(streamCdnImageResizing) }
     StreamAsyncImage(
         data = data,
         modifier = modifier.testTag("Stream_QuotedMessageAuthorAvatar"),
@@ -77,7 +77,7 @@ public fun Avatar(
             Crossfade(targetState = targetPainter) { painter ->
                 if (painter == null) {
                     ChatTheme.componentFactory.FallbackAvatar(
-                        imageUrl = imageUrl,
+                        imageUrl = data,
                         initials = initials,
                         modifier = Modifier.fillMaxSize(),
                         shape = shape,

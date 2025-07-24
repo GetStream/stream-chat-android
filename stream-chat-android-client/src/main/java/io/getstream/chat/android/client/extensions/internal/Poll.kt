@@ -23,7 +23,10 @@ import io.getstream.chat.android.client.events.VoteCastedEvent
 import io.getstream.chat.android.client.events.VoteChangedEvent
 import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.models.VotingVisibility
 
 /**
  * Processes the [VoteChangedEvent] and updates the poll with the new vote.
@@ -129,3 +132,24 @@ public fun PollUpdatedEvent.processPoll(
         answers = oldPoll?.answers ?: poll.answers,
     )
 }
+
+/**
+ * Returns the votes for a specific option in the poll. If the poll is anonymous, it returns an empty list.
+ */
+@InternalStreamChatApi
+public fun Poll.getVotesUnlessAnonymous(option: Option): List<Vote> =
+    getVotes(option).takeUnless { votingVisibility == VotingVisibility.ANONYMOUS }
+        ?: emptyList()
+
+/**
+ * Returns the unique winner of the poll.
+ */
+@InternalStreamChatApi
+public fun Poll.getWinner(): Option? =
+    options
+        .maxByOrNull { voteCountsByOption[it.id] ?: 0 }
+        ?.takeIf { option ->
+            val maxVotes = voteCountsByOption[option.id] ?: 0
+            maxVotes > 0 && // Ensure there are votes
+                options.count { (voteCountsByOption[it.id] ?: 0) == maxVotes } == 1 // Ensure the winner is unique
+        }

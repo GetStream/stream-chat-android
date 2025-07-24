@@ -23,6 +23,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -152,6 +153,7 @@ public class AllPollOptionsDialogFragment : AppCompatDialogFragment() {
                         option = it,
                         votes = poll.voteCountsByOption[it.id] ?: 0,
                         isVotedByUser = poll.ownVotes.any { vote -> vote.optionId == it.id },
+                        readonly = poll.closed,
                     )
                 },
             )
@@ -171,6 +173,7 @@ public class AllPollOptionsDialogFragment : AppCompatDialogFragment() {
             val option: Option,
             val votes: Int,
             val isVotedByUser: Boolean,
+            val readonly: Boolean,
         )
 
         private class OptionViewHolder(
@@ -183,6 +186,7 @@ public class AllPollOptionsDialogFragment : AppCompatDialogFragment() {
                 binding.option.text = result.option.text
                 binding.votes.text = result.votes.toString()
                 binding.check.isEnabled = result.isVotedByUser
+                binding.check.isVisible = !result.readonly
             }
         }
 

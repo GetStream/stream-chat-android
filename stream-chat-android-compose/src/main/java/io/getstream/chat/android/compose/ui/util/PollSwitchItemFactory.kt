@@ -23,6 +23,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchInput
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchItem
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchItemKeys
+import io.getstream.chat.android.ui.common.utils.PollsConstants
 
 /**
  * An interface that allows the creation of poll switch items for the creation screen.
@@ -64,8 +65,8 @@ public class DefaultPollSwitchItemFactory(
                 pollSwitchInput = PollSwitchInput(
                     value = "",
                     description = context.getString(R.string.stream_compose_poll_option_max_number_of_answers_hint),
-                    minValue = 1,
-                    maxValue = 2,
+                    minValue = PollsConstants.MIN_NUMBER_OF_MULTIPLE_ANSWERS,
+                    maxValue = PollsConstants.MAX_NUMBER_OF_MULTIPLE_ANSWERS,
                     keyboardType = KeyboardType.Number,
                 ),
                 key = PollSwitchItemKeys.MAX_VOTES_ALLOWED,

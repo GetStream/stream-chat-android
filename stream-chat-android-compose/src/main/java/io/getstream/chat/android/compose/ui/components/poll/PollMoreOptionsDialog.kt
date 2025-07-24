@@ -238,6 +238,7 @@ private fun PollMoreOptionItem(
     ) {
         if (!poll.closed) {
             PollItemCheckBox(
+                modifier = Modifier.padding(end = 8.dp),
                 checked = checked,
                 onCheckChanged = { enabled ->
                     if (enabled && checkedCount < poll.maxVotesAllowed && !checked) {
@@ -250,9 +251,7 @@ private fun PollMoreOptionItem(
         }
 
         Text(
-            modifier = Modifier
-                .weight(1f)
-                .padding(start = 16.dp),
+            modifier = Modifier.weight(1f),
             text = option.text,
             color = ChatTheme.colors.textHighEmphasis,
             maxLines = 2,
