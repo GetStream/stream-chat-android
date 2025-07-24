@@ -50,6 +50,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @param job A background job cancelled after calling [clear].
  * @param scope A scope for new coroutines.
  */
+@Suppress("LongParameterList")
 public class StateRegistry constructor(
     private val userStateFlow: StateFlow<User?>,
     private var latestUsers: StateFlow<Map<String, User>>,
@@ -63,7 +64,7 @@ public class StateRegistry constructor(
     private val logger by taggedLogger("Chat:StateRegistry")
     private val noOpMessagesLimitFilter: (Collection<Message>) -> Collection<Message> = { it }
     private val messagesLimitFilter: (Collection<Message>) -> Collection<Message> = {
-        when(it.size > messageLimitConfig.limit) {
+        when (it.size > messageLimitConfig.limit) {
             true -> it.sortedBy { it.createdAt }.takeLast(messageLimitConfig.limit)
             false -> it
         }
@@ -214,5 +215,4 @@ public class StateRegistry constructor(
             true -> messagesLimitFilter
             false -> noOpMessagesLimitFilter
         }
-
 }
