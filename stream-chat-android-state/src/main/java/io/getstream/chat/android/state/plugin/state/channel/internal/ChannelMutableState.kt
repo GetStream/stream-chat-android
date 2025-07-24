@@ -51,8 +51,8 @@ internal class ChannelMutableState(
     private val userFlow: StateFlow<User?>,
     latestUsers: StateFlow<Map<String, User>>,
     activeLiveLocations: StateFlow<List<Location>>,
-    private val now: () -> Long,
     private val messagesLimitFilter: (Collection<Message>) -> Collection<Message>,
+    private val now: () -> Long,
 ) : ChannelState {
 
     override val cid: String = "%s:%s".format(channelType, channelId)
