@@ -32,6 +32,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.Date
 
+@Suppress("LongParameterList")
 internal class DatabaseMessageRepository(
     private val scope: CoroutineScope,
     private val messageDao: MessageDao,
@@ -39,6 +40,7 @@ internal class DatabaseMessageRepository(
     private val pollDao: PollDao,
     private val getUser: suspend (userId: String) -> User,
     private val currentUser: User,
+    private val ignoredChannelTypes: Set<String>,
     cacheSize: Int = 1000,
 ) : MessageRepository {
     // the message cache, specifically caches messages on which we're receiving events
@@ -113,6 +115,9 @@ internal class DatabaseMessageRepository(
         if (messages.isEmpty()) return
         val validMessages = messages
             .filter { message -> message.cid.isNotEmpty() }
+            .filterNot { message ->
+                message.type.ifEmpty { message.cid.substringBefore(":") } in ignoredChannelTypes
+            }
             .filterNot { message -> (message.id in deletedMessageIds) }
 
         val messagesToInsert = validMessages
