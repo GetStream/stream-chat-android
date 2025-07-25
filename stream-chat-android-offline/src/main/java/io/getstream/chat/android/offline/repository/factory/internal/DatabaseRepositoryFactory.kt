@@ -45,6 +45,7 @@ internal class DatabaseRepositoryFactory(
     private val database: ChatDatabase,
     private val currentUser: User,
     private val scope: CoroutineScope,
+    private val ignoredChannelTypes: Set<String>,
     private val now: () -> Long = { System.currentTimeMillis() },
 ) : RepositoryFactory {
 
@@ -139,6 +140,7 @@ internal class DatabaseRepositoryFactory(
                 database.pollDao(),
                 getUser,
                 currentUser,
+                ignoredChannelTypes,
                 DEFAULT_CACHE_SIZE,
             ).also { repository ->
                 repositoriesCache[MessageRepository::class.java] = repository

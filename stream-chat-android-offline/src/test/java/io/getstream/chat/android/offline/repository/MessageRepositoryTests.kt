@@ -52,6 +52,7 @@ internal class MessageRepositoryTests {
             pollDao,
             ::randomUser,
             randomUser(id = "currentUserId"),
+            emptySet(),
             100,
         )
         val createdAt = Date()
@@ -107,6 +108,7 @@ internal class MessageRepositoryTests {
             pollDao,
             ::randomUser,
             randomUser(id = "currentUserId"),
+            emptySet(),
         )
         val pollId = randomString()
         // when
