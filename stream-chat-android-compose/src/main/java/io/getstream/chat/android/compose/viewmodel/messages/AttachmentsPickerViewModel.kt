@@ -170,13 +170,12 @@ public class AttachmentsPickerViewModel(
     public fun changeSelectedAttachments(attachmentItem: AttachmentPickerItemState) {
         val dataSet = attachments
 
-        val itemIndex = dataSet.indexOf(attachmentItem)
+        val itemIndex = dataSet.indexOfFirst { it.attachmentMetaData == attachmentItem.attachmentMetaData }
         val newFiles = dataSet.toMutableList()
 
         val newItem = dataSet[itemIndex].copy(isSelected = !newFiles[itemIndex].isSelected)
 
-        newFiles.removeAt(itemIndex)
-        newFiles.add(itemIndex, newItem)
+        newFiles[itemIndex] = newItem
 
         if (attachmentsPickerMode == Files) {
             files = newFiles
