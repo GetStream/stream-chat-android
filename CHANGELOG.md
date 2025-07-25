@@ -1,64 +1,13 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# July 25th, 2025 - 6.20.0
 ## stream-chat-android-client
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Add throttling mechanism to prevent excessive API calls when updating locations. [#5871](https://github.com/GetStream/stream-chat-android/pull/5871)
 
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Added a check for skipping the message send when text is not changed. [#5831](https://github.com/GetStream/stream-chat-android/pull/5831)
 
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-components
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - Improve enforcement of multiple answer ranges in polls. The number of multiple answers must be between 2 and 10, inclusive. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
 - Show the number of selectable poll answers as a subtitle in poll message content. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
@@ -68,10 +17,6 @@
 
 ### ✅ Added
 - Add customizable `DurationFormatter` via `ChatUI`. [#5876](https://github.com/GetStream/stream-chat-android/pull/5876)
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -89,21 +34,6 @@
 
 ### ✅ Added
 - Add customizable `DurationFormatter` via `ChatTheme`. [#5876](https://github.com/GetStream/stream-chat-android/pull/5876)
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # July 18th, 2025 - 6.19.0
 ## stream-chat-android-client
