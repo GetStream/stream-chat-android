@@ -1,7 +1,8 @@
 public final class io/getstream/chat/android/offline/plugin/factory/StreamOfflinePluginFactory : io/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory$Provider, io/getstream/chat/android/client/plugin/factory/PluginFactory {
 	public fun <init> (Landroid/content/Context;)V
-	public fun <init> (Landroid/content/Context;Lkotlin/jvm/functions/Function0;)V
-	public synthetic fun <init> (Landroid/content/Context;Lkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Landroid/content/Context;Ljava/util/Set;)V
+	public fun <init> (Landroid/content/Context;Ljava/util/Set;Lkotlin/jvm/functions/Function0;)V
+	public synthetic fun <init> (Landroid/content/Context;Ljava/util/Set;Lkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun createRepositoryFactory (Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory;
 	public fun get (Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/client/plugin/Plugin;
 }
