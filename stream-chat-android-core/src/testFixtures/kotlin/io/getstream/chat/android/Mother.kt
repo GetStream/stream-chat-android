@@ -412,6 +412,7 @@ public fun randomChannel(
     ownCapabilities: Set<String> = randomChannelCapabilities(),
     extraData: Map<String, Any> = emptyMap(),
     membership: Member? = randomMember(),
+    isInsideSearch: Boolean = randomBoolean(),
     draftMessage: DraftMessage? = randomDraftMessageOrNull(),
     activeLiveLocations: List<Location> = emptyList(),
 ): Channel = Channel(
@@ -438,6 +439,7 @@ public fun randomChannel(
     ownCapabilities = ownCapabilities,
     extraData = extraData,
     membership = membership,
+    isInsideSearch = isInsideSearch,
     draftMessage = draftMessage,
     activeLiveLocations = activeLiveLocations,
 )

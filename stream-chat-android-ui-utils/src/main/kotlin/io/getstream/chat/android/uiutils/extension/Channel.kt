@@ -43,7 +43,6 @@ public fun Channel.getPreviewMessage(currentUser: User?): Message? =
     }.asSequence()
         .filter { it.createdAt != null || it.createdLocallyAt != null }
         .filterNot { it.isDeleted() }
-        .filter { !it.silent }
         .filter { it.user.id == currentUser?.id || !it.shadowed }
         .filter { it.isRegular() || it.isSystem() }
         .maxByOrNull { requireNotNull(it.createdAt ?: it.createdLocallyAt) }
