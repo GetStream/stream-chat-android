@@ -45,6 +45,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fix silent messages not shown in the channel preview in the channel list. [#5880](https://github.com/GetStream/stream-chat-android/pull/5880)
 
 ### ⬆️ Improved
 
