@@ -31,7 +31,7 @@ import io.getstream.chat.android.ui.utils.R
 
 /**
  * Returns channel's last regular or system message if exists.
- * Deleted and silent messages, as well as messages from shadow-banned users, are not taken into account.
+ * Deleted and messages from shadow-banned users, are not taken into account.
  *
  * @return Last message from the channel or null if it doesn't exist.
  */
