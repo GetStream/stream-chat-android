@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.common.state.channel.attachments
 
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Message
 
 /**
  * Represents the state of the channel attachments view.
@@ -34,22 +35,34 @@ public sealed interface ChannelAttachmentsViewState {
     /**
      * Represents the content state of the channel attachments view.
      *
-     * @param results The list of attachments to be displayed. Defaults to an empty list.
+     * @param items The list of items to be displayed. Defaults to an empty list.
      * @param nextPage The next page token to be loaded *(Internal usage only)*. Defaults to null.
-     * @param canLoadMore True if there are more attachments to be loaded. Defaults to true.
+     * @param canLoadMore True if there are more items to be loaded. Defaults to true.
      * @param isLoadingMore True if the loading of the next page is in progress. Defaults to false.
      */
     public data class Content(
-        val results: List<Attachment> = emptyList(),
+        val items: List<Item> = emptyList(),
         internal val nextPage: String? = null,
         val canLoadMore: Boolean = true,
         val isLoadingMore: Boolean = false,
-    ) : ChannelAttachmentsViewState
+    ) : ChannelAttachmentsViewState {
+
+        /**
+         * Represents a result item in the channel attachments view.
+         *
+         * @param message The message associated with the attachment.
+         * @param attachment The attachment to be displayed.
+         */
+        public data class Item(
+            val message: Message,
+            val attachment: Attachment,
+        )
+    }
 
     /**
      * Represents the error state of the channel attachments view.
      *
-     * This state is used when an error occurs while loading attachments.
+     * This state is used when an error occurs while loading the items.
      *
      * @param message The error message to be displayed.
      */

@@ -43,7 +43,7 @@ import kotlinx.coroutines.flow.update
 public class ChannelAttachmentsViewController(
     scope: CoroutineScope,
     private val cid: String,
-    private val attachmentType: String,
+    private val attachmentTypes: List<String>,
     private val chatClient: ChatClient = ChatClient.instance(),
 ) {
 
@@ -87,11 +87,11 @@ public class ChannelAttachmentsViewController(
 
     private suspend fun searchAttachments(): Result<SearchMessagesResult> {
         val (channelType, channelId) = cid.cidToTypeAndId()
-        val channelFilter = Filters.`in`("cid", "$channelType:$channelId")
-        val messageFilter = Filters.`in`("attachments.type", listOf(attachmentType))
+        val channelFilter = Filters.eq("cid", "$channelType:$channelId")
+        val messageFilter = Filters.`in`("attachments.type", attachmentTypes)
         val nextPage = (_state.value as? ChannelAttachmentsViewState.Content)?.nextPage
         logger.d {
-            "[searchAttachments] filter: $channelFilter and $messageFilter, limit: $QUERY_LIMIT, nextPage: $nextPage"
+            "[searchAttachments] filters: $channelFilter and $messageFilter, limit: $QUERY_LIMIT, nextPage: $nextPage"
         }
         return chatClient.searchMessages(
             channelFilter = channelFilter,
@@ -102,20 +102,27 @@ public class ChannelAttachmentsViewController(
     }
 
     private fun onSuccessResult(result: SearchMessagesResult) {
-        val messages = result.messages
         val next = result.next
-        logger.d { "[onSuccessResult] messages: ${messages.size}, next: $next" }
-        val attachments = result.messages.flatMap { message ->
-            message.attachments.filter { it.type == attachmentType }
+        val items = result.messages.flatMap { message ->
+            message.attachments
+                .filter { it.type in attachmentTypes }
+                .map {
+                    ChannelAttachmentsViewState.Content.Item(
+                        message = message,
+                        attachment = it,
+                    )
+                }
         }
+
+        logger.d { "[onSuccessResult] items: ${items.size}, next: $next" }
         _state.update { currentState ->
-            val currentResults = if (currentState is ChannelAttachmentsViewState.Content) {
-                currentState.results
+            val currentItems = if (currentState is ChannelAttachmentsViewState.Content) {
+                currentState.items
             } else {
                 emptyList()
             }
             ChannelAttachmentsViewState.Content(
-                results = currentResults + attachments,
+                items = currentItems + items,
                 nextPage = next,
                 canLoadMore = next != null,
                 isLoadingMore = false,

@@ -78,7 +78,11 @@ internal class ChannelAttachmentsViewControllerTest {
 
             assertTrue(viewState is ChannelAttachmentsViewState.Content)
             viewState as ChannelAttachmentsViewState.Content
-            assertEquals(listOf(attachment1, attachment2), viewState.results)
+            val expectedItems = listOf(
+                ChannelAttachmentsViewState.Content.Item(message1, attachment1),
+                ChannelAttachmentsViewState.Content.Item(message2, attachment2),
+            )
+            assertEquals(expectedItems, viewState.items)
             assertEquals(nextPage, viewState.nextPage)
             assertTrue(viewState.canLoadMore)
             assertFalse(viewState.isLoadingMore)
@@ -125,21 +129,25 @@ internal class ChannelAttachmentsViewControllerTest {
         sut.state.test {
             skipItems(1) // Skip initial state
 
-            val expectedFirstPageResults = listOf(attachment1)
+            val expectedFirstPageItems = listOf(
+                ChannelAttachmentsViewState.Content.Item(message1, attachment1),
+            )
             val firstPageViewState = awaitItem() as ChannelAttachmentsViewState.Content
-            assertEquals(expectedFirstPageResults, firstPageViewState.results)
+            assertEquals(expectedFirstPageItems, firstPageViewState.items)
 
             sut.onViewAction(ChannelAttachmentsViewAction.LoadMoreRequested)
 
             val loadingMoreViewState = awaitItem() as ChannelAttachmentsViewState.Content
-            assertEquals(expectedFirstPageResults, loadingMoreViewState.results)
+            assertEquals(expectedFirstPageItems, loadingMoreViewState.items)
             assertEquals(nextPage, loadingMoreViewState.nextPage)
             assertTrue(loadingMoreViewState.canLoadMore)
             assertTrue(loadingMoreViewState.isLoadingMore)
 
-            val expectedAccumulatedResults = expectedFirstPageResults + listOf(attachment2)
+            val expectedAccumulatedItems = expectedFirstPageItems + listOf(
+                ChannelAttachmentsViewState.Content.Item(message2, attachment2),
+            )
             val finalViewState = awaitItem() as ChannelAttachmentsViewState.Content
-            assertEquals(expectedAccumulatedResults, finalViewState.results)
+            assertEquals(expectedAccumulatedItems, finalViewState.items)
             assertNull(finalViewState.nextPage)
             assertFalse(finalViewState.canLoadMore)
             assertFalse(finalViewState.isLoadingMore)
@@ -178,9 +186,11 @@ internal class ChannelAttachmentsViewControllerTest {
                 assertEquals(searchingError.message, event.message)
             }
 
-            val expectedFinalResults = listOf(attachment1)
+            val expectedFinalItems = listOf(
+                ChannelAttachmentsViewState.Content.Item(message1, attachment1),
+            )
             val finalViewState = awaitItem() as ChannelAttachmentsViewState.Content
-            assertEquals(expectedFinalResults, finalViewState.results)
+            assertEquals(expectedFinalItems, finalViewState.items)
             assertEquals(nextPage, finalViewState.nextPage)
             assertTrue(finalViewState.canLoadMore)
             assertFalse(finalViewState.isLoadingMore)
@@ -188,7 +198,7 @@ internal class ChannelAttachmentsViewControllerTest {
     }
 
     @Test
-    fun `no more results to load`() = runTest {
+    fun `no more items to load`() = runTest {
         val sut = Fixture()
             .givenSearchMessagesResult(result = SearchMessagesResult())
             .get(backgroundScope)
@@ -229,14 +239,11 @@ internal class ChannelAttachmentsViewControllerTest {
     }
 
     @Test
-    fun `cannot load more on initial load`() = runTest {
+    fun `cannot load more on initial state`() = runTest {
         val sut = Fixture().get(backgroundScope)
 
         sut.state.test {
             skipItems(1) // Skip initial state
-
-            val viewState = awaitItem() as ChannelAttachmentsViewState.Content
-            assertFalse(viewState.isLoadingMore)
 
             sut.onViewAction(ChannelAttachmentsViewAction.LoadMoreRequested)
 
@@ -260,7 +267,7 @@ private class Fixture {
         val (channelType, channelId) = CID.cidToTypeAndId()
         whenever(
             chatClient.searchMessages(
-                channelFilter = Filters.`in`("cid", "$channelType:$channelId"),
+                channelFilter = Filters.eq("cid", "$channelType:$channelId"),
                 messageFilter = Filters.`in`("attachments.type", listOf(ATTACHMENT_TYPE)),
                 offset = null,
                 limit = 30,
@@ -273,7 +280,7 @@ private class Fixture {
     fun get(scope: CoroutineScope) = ChannelAttachmentsViewController(
         scope = scope,
         cid = CID,
-        attachmentType = ATTACHMENT_TYPE,
+        attachmentTypes = listOf(ATTACHMENT_TYPE),
         chatClient = chatClient,
     )
 }
