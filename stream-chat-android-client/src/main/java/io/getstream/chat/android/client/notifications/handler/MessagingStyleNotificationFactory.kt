@@ -56,7 +56,7 @@ internal class MessagingStyleNotificationFactory(
     private val notificationTextFormatter: (currentUser: User?, message: Message) -> CharSequence,
     private val actionsProvider: (notificationId: Int, channel: Channel, message: Message) -> List<Action>,
     private val notificationBuilderTransformer:
-        (NotificationCompat.Builder, ChatNotification) -> NotificationCompat.Builder,
+    (NotificationCompat.Builder, ChatNotification) -> NotificationCompat.Builder,
 ) {
 
     /**
