@@ -49,7 +49,7 @@ internal class ChatNotificationHandler(
     private val notificationTextFormatter: (currentUser: User?, message: Message) -> CharSequence,
     private val actionsProvider: (notificationId: Int, channel: Channel, message: Message) -> List<Action>,
     private val notificationBuilderTransformer:
-        (NotificationCompat.Builder, ChatNotification) -> NotificationCompat.Builder,
+    (NotificationCompat.Builder, ChatNotification) -> NotificationCompat.Builder,
 ) : NotificationHandler {
 
     private val sharedPreferences: SharedPreferences by lazy {
@@ -102,7 +102,8 @@ internal class ChatNotificationHandler(
             notificationBuilderTransformer(
                 buildNotification(notificationId, channel, message),
                 chatNotification,
-            ).build())
+            ).build(),
+        )
         showNotification(notificationSummaryId, buildNotificationGroupSummary(channel, message).build())
     }
 

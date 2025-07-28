@@ -69,7 +69,7 @@ public object NotificationHandlerFactory {
         actionsProvider: (notificationId: Int, channel: Channel, message: Message) -> List<NotificationCompat.Action> =
             getDefaultActionsProvider(context),
         notificationBuilderTransformer: (NotificationCompat.Builder, ChatNotification) -> NotificationCompat.Builder =
-            { builder, _ -> builder }
+            { builder, _ -> builder },
     ): NotificationHandler = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         MessagingStyleNotificationHandler(
             context = context,
