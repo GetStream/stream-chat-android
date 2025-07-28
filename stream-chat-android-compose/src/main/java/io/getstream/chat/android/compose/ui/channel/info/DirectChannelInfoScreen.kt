@@ -182,8 +182,9 @@ private fun DirectChannelInfoContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            val user = content.members.first().user
-            ChatTheme.componentFactory.DirectChannelInfoAvatarContainer(user)
+            content.members.firstOrNull()?.user?.let { user ->
+                ChatTheme.componentFactory.DirectChannelInfoAvatarContainer(user)
+            }
             LazyColumn(state = listState) {
                 items(content.options) { option ->
                     with(ChatTheme.componentFactory) {
