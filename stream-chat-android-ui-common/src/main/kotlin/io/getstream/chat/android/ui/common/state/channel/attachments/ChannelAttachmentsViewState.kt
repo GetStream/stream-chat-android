@@ -36,13 +36,11 @@ public sealed interface ChannelAttachmentsViewState {
      * Represents the content state of the channel attachments view.
      *
      * @param items The list of items to be displayed. Defaults to an empty list.
-     * @param nextPage The next page token to be loaded *(Internal usage only)*. Defaults to null.
      * @param canLoadMore True if there are more items to be loaded. Defaults to true.
      * @param isLoadingMore True if the loading of the next page is in progress. Defaults to false.
      */
     public data class Content(
         val items: List<Item> = emptyList(),
-        internal val nextPage: String? = null,
         val canLoadMore: Boolean = true,
         val isLoadingMore: Boolean = false,
     ) : ChannelAttachmentsViewState {

@@ -54,6 +54,11 @@ public class ChannelAttachmentsViewController(
      */
     private val loadRequests = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
+    /**
+     * The next page token for pagination.
+     */
+    private var nextPage: String? = null
+
     private val _state = MutableStateFlow<ChannelAttachmentsViewState>(ChannelAttachmentsViewState.Loading)
 
     /**
@@ -89,7 +94,6 @@ public class ChannelAttachmentsViewController(
         val (channelType, channelId) = cid.cidToTypeAndId()
         val channelFilter = Filters.eq("cid", "$channelType:$channelId")
         val messageFilter = Filters.`in`("attachments.type", attachmentTypes)
-        val nextPage = (_state.value as? ChannelAttachmentsViewState.Content)?.nextPage
         logger.d {
             "[searchAttachments] filters: $channelFilter and $messageFilter, limit: $QUERY_LIMIT, nextPage: $nextPage"
         }
@@ -102,7 +106,7 @@ public class ChannelAttachmentsViewController(
     }
 
     private fun onSuccessResult(result: SearchMessagesResult) {
-        val next = result.next
+        nextPage = result.next
         val items = result.messages.flatMap { message ->
             message.attachments
                 .filter { it.type in attachmentTypes }
@@ -114,7 +118,7 @@ public class ChannelAttachmentsViewController(
                 }
         }
 
-        logger.d { "[onSuccessResult] items: ${items.size}, next: $next" }
+        logger.d { "[onSuccessResult] items: ${items.size}, next: $nextPage" }
         _state.update { currentState ->
             val currentItems = if (currentState is ChannelAttachmentsViewState.Content) {
                 currentState.items
@@ -123,8 +127,7 @@ public class ChannelAttachmentsViewController(
             }
             ChannelAttachmentsViewState.Content(
                 items = currentItems + items,
-                nextPage = next,
-                canLoadMore = next != null,
+                canLoadMore = nextPage != null,
                 isLoadingMore = false,
             )
         }

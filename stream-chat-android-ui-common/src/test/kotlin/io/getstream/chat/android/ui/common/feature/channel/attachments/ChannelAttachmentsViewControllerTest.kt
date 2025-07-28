@@ -32,7 +32,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertInstanceOf
@@ -55,7 +54,6 @@ internal class ChannelAttachmentsViewControllerTest {
     fun `initial load`() = runTest {
         val attachment1 = randomAttachment(type = ATTACHMENT_TYPE)
         val attachment2 = randomAttachment(type = ATTACHMENT_TYPE)
-        val nextPage = randomString()
         val message1 = randomMessage(
             cid = CID,
             attachments = listOf(attachment1, randomAttachment()),
@@ -66,7 +64,7 @@ internal class ChannelAttachmentsViewControllerTest {
         )
         val searchMessagesResult = SearchMessagesResult(
             messages = listOf(message1, message2),
-            next = nextPage,
+            next = randomString(),
         )
         val sut = Fixture()
             .givenSearchMessagesResult(result = searchMessagesResult)
@@ -83,7 +81,6 @@ internal class ChannelAttachmentsViewControllerTest {
                 ChannelAttachmentsViewState.Content.Item(message2, attachment2),
             )
             assertEquals(expectedItems, viewState.items)
-            assertEquals(nextPage, viewState.nextPage)
             assertTrue(viewState.canLoadMore)
             assertFalse(viewState.isLoadingMore)
         }
@@ -139,7 +136,6 @@ internal class ChannelAttachmentsViewControllerTest {
 
             val loadingMoreViewState = awaitItem() as ChannelAttachmentsViewState.Content
             assertEquals(expectedFirstPageItems, loadingMoreViewState.items)
-            assertEquals(nextPage, loadingMoreViewState.nextPage)
             assertTrue(loadingMoreViewState.canLoadMore)
             assertTrue(loadingMoreViewState.isLoadingMore)
 
@@ -148,7 +144,6 @@ internal class ChannelAttachmentsViewControllerTest {
             )
             val finalViewState = awaitItem() as ChannelAttachmentsViewState.Content
             assertEquals(expectedAccumulatedItems, finalViewState.items)
-            assertNull(finalViewState.nextPage)
             assertFalse(finalViewState.canLoadMore)
             assertFalse(finalViewState.isLoadingMore)
         }
@@ -191,7 +186,6 @@ internal class ChannelAttachmentsViewControllerTest {
             )
             val finalViewState = awaitItem() as ChannelAttachmentsViewState.Content
             assertEquals(expectedFinalItems, finalViewState.items)
-            assertEquals(nextPage, finalViewState.nextPage)
             assertTrue(finalViewState.canLoadMore)
             assertFalse(finalViewState.isLoadingMore)
         }
