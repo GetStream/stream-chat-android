@@ -51,6 +51,7 @@ internal class MessagingStyleNotificationHandler(
     private val permissionHandler: NotificationPermissionHandler?,
     private val notificationTextFormatter: (currentUser: User?, message: Message) -> CharSequence,
     private val actionsProvider: (notificationId: Int, channel: Channel, message: Message) -> List<Action>,
+    notificationBuilderTransformer: (NotificationCompat.Builder, ChatNotification) -> NotificationCompat.Builder,
 ) : NotificationHandler {
 
     private val logger by taggedLogger("Chat:MsnHandler")
@@ -74,6 +75,7 @@ internal class MessagingStyleNotificationHandler(
         newMessageIntent = newMessageIntent,
         notificationTextFormatter = notificationTextFormatter,
         actionsProvider = actionsProvider,
+        notificationBuilderTransformer = notificationBuilderTransformer,
     )
 
     override fun onNotificationPermissionStatus(status: NotificationPermissionStatus) {
