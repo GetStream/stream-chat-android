@@ -28,26 +28,28 @@ import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import androidx.navigation.fragment.navArgs
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.extensions.getCreatedAtOrThrow
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.ChatUI
+import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewAction
+import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
 import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryItem
+import io.getstream.chat.android.ui.viewmodel.channel.ChannelAttachmentsViewModel
+import io.getstream.chat.android.ui.viewmodel.channel.ChannelAttachmentsViewModelFactory
 import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.common.showToast
 import io.getstream.chat.ui.sample.databinding.FragmentChatInfoSharedMediaBinding
-import io.getstream.chat.ui.sample.feature.chat.info.shared.ChatInfoSharedAttachmentsViewModel
-import io.getstream.chat.ui.sample.feature.chat.info.shared.ChatInfoSharedAttachmentsViewModelFactory
-import io.getstream.chat.ui.sample.feature.chat.info.shared.SharedAttachment
 
 class ChatInfoSharedMediaFragment : Fragment() {
 
     private val args: ChatInfoSharedMediaFragmentArgs by navArgs()
-    private val factory: ChatInfoSharedAttachmentsViewModelFactory by lazy {
-        ChatInfoSharedAttachmentsViewModelFactory(
+    private val viewModel: ChannelAttachmentsViewModel by viewModels {
+        ChannelAttachmentsViewModelFactory(
             args.cid!!,
-            ChatInfoSharedAttachmentsViewModel.AttachmentsType.MEDIA,
+            attachmentTypes = listOf(AttachmentType.IMAGE, AttachmentType.VIDEO),
         )
     }
-    private val viewModel: ChatInfoSharedAttachmentsViewModel by viewModels { factory }
 
     private val attachmentGalleryDestination by lazy {
         AttachmentGalleryDestination(
@@ -92,7 +94,7 @@ class ChatInfoSharedMediaFragment : Fragment() {
             ChatUI.navigator.navigate(attachmentGalleryDestination)
         }
         binding.mediaAttachmentGridView.setOnLoadMoreListener {
-            viewModel.onAction(ChatInfoSharedAttachmentsViewModel.Action.LoadMoreRequested)
+            viewModel.onViewAction(ChannelAttachmentsViewAction.LoadMoreRequested)
         }
 
         if (args.cid != null) {
@@ -114,16 +116,18 @@ class ChatInfoSharedMediaFragment : Fragment() {
                 user to state
             }
         }.observe(viewLifecycleOwner) { (user, state) ->
-            if (state.isLoading) {
-                showLoading()
-            } else {
-                val results = state.results.filterIsInstance<SharedAttachment.AttachmentItem>()
-                    .mapNotNull {
+            when (state) {
+                is ChannelAttachmentsViewState.Loading -> {
+                    showLoading()
+                }
+
+                is ChannelAttachmentsViewState.Content -> {
+                    val results = state.items.mapNotNull {
                         if (!it.attachment.imageUrl.isNullOrEmpty() && it.attachment.titleLink.isNullOrEmpty()) {
                             AttachmentGalleryItem(
                                 attachment = it.attachment,
                                 user = it.message.user,
-                                createdAt = it.createdAt,
+                                createdAt = it.message.getCreatedAtOrThrow(),
                                 messageId = it.message.id,
                                 cid = it.message.cid,
                                 isMine = it.message.user.id == user?.id,
@@ -132,10 +136,15 @@ class ChatInfoSharedMediaFragment : Fragment() {
                             null
                         }
                     }
-                if (results.isEmpty()) {
-                    showEmptyState()
-                } else {
-                    showResults(results)
+                    if (results.isEmpty()) {
+                        showEmptyState()
+                    } else {
+                        showResults(results)
+                    }
+                }
+
+                is ChannelAttachmentsViewState.Error -> {
+                    // TODO Handle error state
                 }
             }
         }
