@@ -68,6 +68,8 @@ public object NotificationHandlerFactory {
             getDefaultNotificationTextFormatter(notificationConfig),
         actionsProvider: (notificationId: Int, channel: Channel, message: Message) -> List<NotificationCompat.Action> =
             getDefaultActionsProvider(context),
+        notificationBuilderTransformer: (NotificationCompat.Builder, ChatNotification) -> NotificationCompat.Builder =
+            { builder, _ -> builder }
     ): NotificationHandler = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         MessagingStyleNotificationHandler(
             context = context,
@@ -77,6 +79,7 @@ public object NotificationHandlerFactory {
             permissionHandler = permissionHandler,
             notificationTextFormatter = notificationTextFormatter,
             actionsProvider = actionsProvider,
+            notificationBuilderTransformer = notificationBuilderTransformer,
         )
     } else {
         ChatNotificationHandler(
@@ -85,6 +88,7 @@ public object NotificationHandlerFactory {
             notificationChannel = notificationChannel,
             notificationTextFormatter = notificationTextFormatter,
             actionsProvider = actionsProvider,
+            notificationBuilderTransformer = notificationBuilderTransformer,
         )
     }
 

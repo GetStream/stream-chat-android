@@ -48,6 +48,8 @@ internal class ChatNotificationHandler(
     private val notificationChannel: () -> NotificationChannel,
     private val notificationTextFormatter: (currentUser: User?, message: Message) -> CharSequence,
     private val actionsProvider: (notificationId: Int, channel: Channel, message: Message) -> List<Action>,
+    private val notificationBuilderTransformer:
+        (NotificationCompat.Builder, ChatNotification) -> NotificationCompat.Builder,
 ) : NotificationHandler {
 
     private val sharedPreferences: SharedPreferences by lazy {
@@ -85,25 +87,33 @@ internal class ChatNotificationHandler(
 
     private fun showNotificationInternal(chatNotification: ChatNotification) {
         when (chatNotification) {
-            is ChatNotification.MessageNew ->
-                showMessageNewNotification(chatNotification.channel, chatNotification.message)
-            is ChatNotification.NotificationReminderDue ->
-                showReminderDueNotification(chatNotification.channel, chatNotification.message)
+            is ChatNotification.MessageNew -> showMessageNewNotification(chatNotification)
+            is ChatNotification.NotificationReminderDue -> showReminderDueNotification(chatNotification)
         }
     }
 
-    private fun showMessageNewNotification(channel: Channel, message: Message) {
+    private fun showMessageNewNotification(chatNotification: ChatNotification.MessageNew) {
+        val (channel, message) = chatNotification
         val notificationId: Int = System.nanoTime().toInt()
         val notificationSummaryId = getNotificationGroupSummaryId(channel.type, channel.id)
         addNotificationId(notificationId, notificationSummaryId)
-        showNotification(notificationId, buildNotification(notificationId, channel, message).build())
+        showNotification(
+            notificationId,
+            notificationBuilderTransformer(
+                buildNotification(notificationId, channel, message),
+                chatNotification,
+            ).build())
         showNotification(notificationSummaryId, buildNotificationGroupSummary(channel, message).build())
     }
 
-    private fun showReminderDueNotification(channel: Channel, message: Message) {
+    private fun showReminderDueNotification(chatNotification: ChatNotification.NotificationReminderDue) {
+        val (channel, message) = chatNotification
         val notificationId = "${channel.type}:${channel.id}:${message.id}".hashCode()
         addNotificationIdWithoutSummary(notificationId)
-        val notification = buildReminderDueNotification(channel, message).build()
+        val notification = notificationBuilderTransformer(
+            buildReminderDueNotification(channel, message),
+            chatNotification,
+        ).build()
         showNotification(notificationId, notification)
     }
 
