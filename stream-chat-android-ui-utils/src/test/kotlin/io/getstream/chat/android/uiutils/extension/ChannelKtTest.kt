@@ -18,16 +18,21 @@ package io.getstream.chat.android.uiutils.extension
 
 import android.content.Context
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomMember
+import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.ui.utils.R
+import io.getstream.chat.android.uiutils.extension.ChannelKtTest.Companion.arguments
 import org.amshove.kluent.`should be equal to`
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -38,6 +43,7 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
+import java.util.Date
 
 internal class ChannelKtTest {
     @BeforeEach
@@ -74,6 +80,181 @@ internal class ChannelKtTest {
             System.err.println("Failed on test #$argSetNum")
             throw e
         }
+    }
+
+    @Test
+    fun `Should return silent regular message as preview when it is the latest`() {
+        // Given
+        val user = randomUser()
+        val olderMessage = randomMessage(
+            text = "Older message",
+            type = MessageType.REGULAR,
+            silent = false,
+            createdAt = Date(1000L),
+            createdLocallyAt = null,
+            deletedAt = null,
+            user = user,
+            shadowed = false,
+        )
+        val latestSilentMessage = randomMessage(
+            text = "Latest silent message",
+            type = MessageType.REGULAR,
+            silent = true,
+            createdAt = Date(2000L),
+            createdLocallyAt = null,
+            deletedAt = null,
+            user = user,
+            shadowed = false,
+        )
+        val channel = randomChannel(isInsideSearch = false, messages = listOf(olderMessage, latestSilentMessage))
+
+        // When
+        val previewMessage = channel.getPreviewMessage(user)
+
+        // Then
+        Assertions.assertEquals(latestSilentMessage, previewMessage)
+    }
+
+    @Test
+    fun `Should return non-silent regular message as preview when it is the latest`() {
+        // Given
+        val user = randomUser()
+        val olderSilentMessage = randomMessage(
+            text = "Older silent message",
+            type = MessageType.REGULAR,
+            silent = true,
+            createdAt = Date(1000L),
+            createdLocallyAt = null,
+            deletedAt = null,
+            user = user,
+            shadowed = false,
+        )
+        val latestNonSilentMessage = randomMessage(
+            text = "Latest non-silent message",
+            type = MessageType.REGULAR,
+            silent = false,
+            createdAt = Date(2000L),
+            createdLocallyAt = null,
+            deletedAt = null,
+            user = user,
+            shadowed = false,
+        )
+        val channel = randomChannel(
+            isInsideSearch = false,
+            messages = listOf(olderSilentMessage, latestNonSilentMessage),
+        )
+
+        // When
+        val previewMessage = channel.getPreviewMessage(user)
+
+        // Then
+        Assertions.assertEquals(latestNonSilentMessage, previewMessage)
+    }
+
+    @Test
+    fun `Should return system message as preview when it is the latest`() {
+        // Given
+        val user = randomUser()
+        val olderRegularMessage = randomMessage(
+            text = "Older regular message",
+            type = MessageType.REGULAR,
+            silent = false,
+            createdAt = Date(1000L),
+            createdLocallyAt = null,
+            deletedAt = null,
+            user = user,
+            shadowed = false,
+        )
+        val latestSystemMessage = randomMessage(
+            text = "User joined the channel",
+            type = MessageType.SYSTEM,
+            silent = false,
+            createdAt = Date(2000L),
+            createdLocallyAt = null,
+            deletedAt = null,
+            user = user,
+            shadowed = false,
+        )
+        val channel = randomChannel(
+            isInsideSearch = false,
+            messages = listOf(olderRegularMessage, latestSystemMessage),
+        )
+
+        // When
+        val previewMessage = channel.getPreviewMessage(user)
+
+        // Then
+        Assertions.assertEquals(latestSystemMessage, previewMessage)
+    }
+
+    @Test
+    fun `Should ignore deleted messages for preview`() {
+        // Given
+        val user = randomUser()
+        val validMessage = randomMessage(
+            text = "Valid message",
+            type = MessageType.REGULAR,
+            createdAt = Date(1000L),
+            createdLocallyAt = null,
+            deletedAt = null,
+            user = user,
+            shadowed = false,
+        )
+        val deletedSilentMessage = randomMessage(
+            text = "Deleted silent message",
+            type = MessageType.REGULAR,
+            createdAt = Date(2000L),
+            createdLocallyAt = null,
+            deletedAt = Date(2500L),
+            user = user,
+            shadowed = false,
+        )
+        val channel = randomChannel(
+            isInsideSearch = false,
+            messages = listOf(validMessage, deletedSilentMessage),
+        )
+
+        // When
+        val previewMessage = channel.getPreviewMessage(user)
+
+        // Then
+        Assertions.assertEquals(validMessage, previewMessage)
+    }
+
+    @Test
+    fun `Should return null when no valid messages exist`() {
+        // Given
+        val user = randomUser()
+        val deletedMessage = randomMessage(
+            text = "Deleted message",
+            type = MessageType.REGULAR,
+            silent = false,
+            createdAt = Date(1000L),
+            createdLocallyAt = null,
+            deletedAt = Date(1500L),
+            user = user,
+            shadowed = false,
+        )
+        val ephemeralMessage = randomMessage(
+            text = "Ephemeral message",
+            type = MessageType.EPHEMERAL,
+            silent = false,
+            createdAt = Date(2000L),
+            createdLocallyAt = null,
+            deletedAt = null,
+            user = user,
+            shadowed = false,
+        )
+        val channel = randomChannel(
+            isInsideSearch = false,
+            messages = listOf(deletedMessage, ephemeralMessage),
+        )
+
+        // When
+        val previewMessage = channel.getPreviewMessage(user)
+
+        // Then
+        Assertions.assertNull(previewMessage)
     }
 
     companion object {
