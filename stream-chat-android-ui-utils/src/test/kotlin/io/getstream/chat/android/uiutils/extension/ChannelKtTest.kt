@@ -106,10 +106,7 @@ internal class ChannelKtTest {
             user = user,
             shadowed = false,
         )
-        val channel = randomChannel(
-            isInsideSearch = false,
-            messages = listOf(olderMessage, latestSilentMessage),
-        )
+        val channel = randomChannel(isInsideSearch = false, messages = listOf(olderMessage, latestSilentMessage))
 
         // When
         val previewMessage = channel.getPreviewMessage(user)
