@@ -121,4 +121,7 @@
         <item quantity="other">%d seconds</item>
     </plurals>
 
+    <!-- Channel Attachments -->
+    <string name="channel_attachments_files_loading_more_error">Failed to load more files attachments</string>
+
 </resources>
