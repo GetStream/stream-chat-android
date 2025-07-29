@@ -171,6 +171,12 @@ public class ChannelInfoViewController(
             is ChannelInfoViewAction.PinnedMessagesClick ->
                 _events.tryEmit(ChannelInfoViewEvent.NavigateToPinnedMessages)
 
+            is ChannelInfoViewAction.MediaAttachmentsClick ->
+                _events.tryEmit(ChannelInfoViewEvent.NavigateToMediaAttachments)
+
+            is ChannelInfoViewAction.FilesAttachmentsClick ->
+                _events.tryEmit(ChannelInfoViewEvent.NavigateToFilesAttachments)
+
             is ChannelInfoViewAction.MuteChannelClick -> setChannelMute(mute = true)
             is ChannelInfoViewAction.UnmuteChannelClick -> setChannelMute(mute = false)
             is ChannelInfoViewAction.HideChannelClick -> _events.tryEmit(ChannelInfoViewEvent.HideChannelModal)
@@ -454,6 +460,8 @@ private fun buildChannelOptionList(
     }
     add(ChannelInfoViewState.Content.Option.HideChannel(isHidden))
     add(ChannelInfoViewState.Content.Option.PinnedMessages)
+    add(ChannelInfoViewState.Content.Option.MediaAttachments)
+    add(ChannelInfoViewState.Content.Option.FilesAttachments)
     add(ChannelInfoViewState.Content.Option.Separator)
     if (channelData.ownCapabilities.contains(ChannelCapabilities.LEAVE_CHANNEL)) {
         add(ChannelInfoViewState.Content.Option.LeaveChannel)
