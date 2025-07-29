@@ -54,7 +54,13 @@ public sealed interface ChannelAttachmentsViewState {
         public data class Item(
             val message: Message,
             val attachment: Attachment,
-        )
+        ) {
+            /**
+             * Returns the unique identifier for the item,
+             * which is a combination of the message identifier hash and the attachment name.
+             */
+            public val id: String = "${message.identifierHash()}-${attachment.name}"
+        }
     }
 
     /**
