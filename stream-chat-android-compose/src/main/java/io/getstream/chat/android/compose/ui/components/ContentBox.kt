@@ -40,14 +40,16 @@ internal fun ContentBox(
     isLoading: Boolean,
     modifier: Modifier = Modifier,
     isEmpty: Boolean = false,
+    isError: Boolean = false,
     contentAlignment: Alignment = Alignment.Center,
     loadingIndicator: @Composable BoxScope.() -> Unit = { LoadingIndicator() },
     emptyContent: @Composable BoxScope.() -> Unit = {},
+    errorContent: @Composable BoxScope.() -> Unit = {},
     content: @Composable BoxScope.() -> Unit,
 ) {
     Crossfade(
-        targetState = isLoading to isEmpty,
-    ) { (isLoading, isEmpty) ->
+        targetState = Triple(isLoading, isEmpty, isError),
+    ) { (isLoading, isEmpty, isError) ->
         Box(
             modifier = modifier,
             contentAlignment = contentAlignment,
@@ -55,6 +57,7 @@ internal fun ContentBox(
             when {
                 isLoading -> loadingIndicator()
                 isEmpty -> emptyContent()
+                isError -> errorContent()
                 else -> content()
             }
         }
