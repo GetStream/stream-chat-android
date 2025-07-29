@@ -3252,6 +3252,7 @@ public interface ChatComponentFactory {
 
     /**
      * Factory method for creating the channel files attachments group item.
+     * This is typically used to display the title of a group of attachments.
      *
      * @param modifier The modifier for styling the group item.
      * @param label The label for the group item.
@@ -3306,5 +3307,15 @@ public interface ChatComponentFactory {
         index: Int,
     ) {
         StreamHorizontalDivider()
+    }
+
+    /**
+     * Factory method for creating the loading item in the channel files attachments list.
+     *
+     * This is typically shown at the end of the list when more items are being loaded.
+     */
+    @Composable
+    public fun LazyItemScope.ChannelFilesAttachmentsLoadingItem(modifier: Modifier) {
+        LoadingFooter(modifier = modifier.fillMaxWidth())
     }
 }
