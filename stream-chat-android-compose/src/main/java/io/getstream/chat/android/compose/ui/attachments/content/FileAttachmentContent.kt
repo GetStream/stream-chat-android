@@ -171,7 +171,7 @@ public fun FileAttachmentItem(
  *  @param attachment The attachment for which the information is displayed.
  */
 @Composable
-private fun FileAttachmentDescription(
+internal fun RowScope.FileAttachmentDescription(
     attachment: Attachment,
     isMine: Boolean,
     showFileSize: (Attachment) -> Boolean,
@@ -182,7 +182,7 @@ private fun FileAttachmentDescription(
     }
     Column(
         modifier = Modifier
-            .fillMaxWidth(0.85f)
+            .weight(1f)
             .padding(start = 16.dp, end = 8.dp),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Center,
