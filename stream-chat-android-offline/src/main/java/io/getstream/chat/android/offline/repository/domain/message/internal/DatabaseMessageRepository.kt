@@ -115,9 +115,7 @@ internal class DatabaseMessageRepository(
         if (messages.isEmpty()) return
         val validMessages = messages
             .filter { message -> message.cid.isNotEmpty() }
-            .filterNot { message ->
-                message.type.ifEmpty { message.cid.substringBefore(":") } in ignoredChannelTypes
-            }
+            .filterNot { message -> message.cid.substringBefore(":") in ignoredChannelTypes }
             .filterNot { message -> (message.id in deletedMessageIds) }
 
         val messagesToInsert = validMessages
