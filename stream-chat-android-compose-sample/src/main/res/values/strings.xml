@@ -111,4 +111,8 @@
     <string name="reminders_query_failed">Failed to load reminders</string>
     <string name="reminders_update_failed">Failed to update the reminder</string>
     <string name="reminders_delete_failed">Failed to delete the reminder</string>
+
+    <!-- Channel Attachments -->
+    <string name="channel_attachments_files_loading_more_error">Failed to load more files attachments</string>
+
 </resources>

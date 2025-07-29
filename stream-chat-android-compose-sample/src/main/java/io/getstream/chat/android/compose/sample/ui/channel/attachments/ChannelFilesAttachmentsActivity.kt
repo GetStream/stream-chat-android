@@ -19,14 +19,21 @@ package io.getstream.chat.android.compose.sample.ui.channel.attachments
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
+import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.ui.channel.attachments.ChannelFilesAttachmentsScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsViewModelFactory
 import io.getstream.chat.android.models.AttachmentType
+import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewEvent
+import kotlinx.coroutines.flow.collectLatest
 
 class ChannelFilesAttachmentsActivity : ComponentActivity() {
     companion object {
@@ -48,11 +55,24 @@ class ChannelFilesAttachmentsActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ChatTheme {
+                val viewModel = viewModel<ChannelAttachmentsViewModel>(factory = viewModelFactory)
                 ChannelFilesAttachmentsScreen(
                     modifier = Modifier.statusBarsPadding(),
                     viewModelFactory = viewModelFactory,
                     onNavigationIconClick = ::finish,
                 )
+                LaunchedEffect(viewModel) {
+                    viewModel.events.collectLatest { event ->
+                        when (event) {
+                            is ChannelAttachmentsViewEvent.LoadMoreError ->
+                                Toast.makeText(
+                                    applicationContext,
+                                    R.string.channel_attachments_files_loading_more_error,
+                                    Toast.LENGTH_SHORT,
+                                ).show()
+                        }
+                    }
+                }
             }
         }
     }

@@ -138,11 +138,13 @@ public class ChannelAttachmentsViewController(
         _state.update { currentState ->
             when (currentState) {
                 is ChannelAttachmentsViewState.Loading -> ChannelAttachmentsViewState.Error(message = error.message)
-                is ChannelAttachmentsViewState.Content -> currentState.copy(isLoadingMore = false)
+                is ChannelAttachmentsViewState.Content -> {
+                    _events.tryEmit(ChannelAttachmentsViewEvent.LoadMoreError(message = error.message))
+                    currentState.copy(isLoadingMore = false)
+                }
                 else -> currentState
             }
         }
-        _events.tryEmit(ChannelAttachmentsViewEvent.Error(message = error.message))
     }
 
     private fun loadMore() {
