@@ -40,6 +40,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.getCreatedAtOrThrow
+import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentDescription
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentImage
 import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
@@ -119,6 +120,10 @@ private fun ChannelFilesAttachmentsScaffold(
     }
 }
 
+/**
+ * The default group key selector for the channel files attachments list.
+ * It groups items by the relative time span of their creation date, skipping the day of the month.
+ */
 private val GroupKeySelector = { item: ChannelAttachmentsViewState.Content.Item ->
     DateUtils.getRelativeTimeSpanString(
         item.message.getCreatedAtOrThrow().time,
@@ -191,6 +196,13 @@ private fun ChannelFilesAttachmentsList(
                 )
             }
         },
+    loadingItem: @Composable LazyItemScope.() -> Unit = {
+        with(ChatTheme.componentFactory) {
+            ChannelFilesAttachmentsLoadingItem(
+                modifier = Modifier,
+            )
+        }
+    },
 ) {
     val isLoading = viewState is ChannelAttachmentsViewState.Loading
     ContentBox(
@@ -216,8 +228,15 @@ private fun ChannelFilesAttachmentsList(
                     itemContent(index, item)
                     itemDivider(index)
                 }
+                if (content.isLoadingMore) {
+                    item { loadingItem() }
+                }
             }
         }
+        LoadMoreHandler(
+            lazyListState = listState,
+            loadMore = { onViewAction(ChannelAttachmentsViewAction.LoadMoreRequested) },
+        )
     }
 }
 
