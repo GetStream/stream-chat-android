@@ -36,6 +36,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.twotone.Warning
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -51,6 +53,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
@@ -3235,6 +3238,15 @@ public interface ChatComponentFactory {
             title = stringResource(UiCommonR.string.stream_ui_channel_attachments_files_empty_title),
             text = stringResource(UiCommonR.string.stream_ui_channel_attachments_files_empty_text),
             painter = painterResource(UiCommonR.drawable.stream_ic_files),
+        )
+    }
+
+    @Composable
+    public fun BoxScope.ChannelFilesAttachmentsErrorContent(modifier: Modifier) {
+        EmptyContent(
+            modifier = modifier,
+            text = stringResource(UiCommonR.string.stream_ui_channel_attachments_files_load_error),
+            painter = rememberVectorPainter(Icons.TwoTone.Warning),
         )
     }
 

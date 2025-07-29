@@ -134,6 +134,7 @@ private fun ChannelFilesAttachmentsList(
     listState: LazyListState,
     modifier: Modifier = Modifier,
     currentUser: User? = ChatClient.instance().getCurrentUser(),
+    onViewAction: (action: ChannelAttachmentsViewAction) -> Unit = {},
     loadingIndicator: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelFilesAttachmentsLoadingIndicator(
@@ -144,6 +145,13 @@ private fun ChannelFilesAttachmentsList(
     emptyContent: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelFilesAttachmentsEmptyContent(
+                modifier = Modifier,
+            )
+        }
+    },
+    errorContent: @Composable BoxScope.() -> Unit = {
+        with(ChatTheme.componentFactory) {
+            ChannelFilesAttachmentsErrorContent(
                 modifier = Modifier,
             )
         }
@@ -183,15 +191,16 @@ private fun ChannelFilesAttachmentsList(
                 )
             }
         },
-    onViewAction: (action: ChannelAttachmentsViewAction) -> Unit,
 ) {
     val isLoading = viewState is ChannelAttachmentsViewState.Loading
     ContentBox(
         modifier = modifier,
         isLoading = isLoading,
         isEmpty = viewState is ChannelAttachmentsViewState.Content && viewState.items.isEmpty(),
+        isError = viewState is ChannelAttachmentsViewState.Error,
         loadingIndicator = loadingIndicator,
         emptyContent = emptyContent,
+        errorContent = errorContent,
     ) {
         val content = viewState as ChannelAttachmentsViewState.Content
         val groupedItems by remember(content.items) {
