@@ -35,13 +35,30 @@ public data class StatePluginConfig @JvmOverloads constructor(
     public val messageLimitConfig: MessageLimitConfig = MessageLimitConfig(),
 )
 
+private const val MESSAGE_LIMIT = 1000
+
 /**
  * Configuration for message limits in channels.
  *
- * @param channelTypes The set of channel types for which the limit applies.
- * @param limit The maximum number of messages to keep in memory for the channel.
+ * @param channelMessageLimits A set of [ChannelMessageLimit] defining the maximum number of messages to keep in
+ * memory for different channel types.
+ * This configuration allows you to specify the maximum number of messages to keep in memory for different
+ * channel types.
+ * By default, it includes a limit for "livestream" channels with a maximum of 1000 messages.
  */
 public data class MessageLimitConfig(
-    public val channelTypes: Set<String> = setOf("livestream"),
-    public val limit: Int = 1000,
+    public val channelMessageLimits: Set<ChannelMessageLimit> = setOf(
+        ChannelMessageLimit("livestream", MESSAGE_LIMIT),
+    ),
+)
+
+/**
+ * Configuration for message limits in channels, specifying the channel type and limit.
+ *
+ * @param channelType The type of the channel for which the limit applies.
+ * @param limit The maximum number of messages to keep in memory for the channel.
+ */
+public data class ChannelMessageLimit(
+    public val channelType: String,
+    public val limit: Int,
 )

@@ -63,12 +63,6 @@ public class StateRegistry constructor(
 
     private val logger by taggedLogger("Chat:StateRegistry")
     private val noOpMessagesLimitFilter: (Collection<Message>) -> Collection<Message> = { it }
-    private val messagesLimitFilter: (Collection<Message>) -> Collection<Message> = {
-        when (it.size > messageLimitConfig.limit) {
-            true -> it.sortedBy { it.createdAt }.takeLast(messageLimitConfig.limit)
-            false -> it
-        }
-    }
 
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsMutableState> =
         ConcurrentHashMap()
@@ -211,8 +205,14 @@ public class StateRegistry constructor(
     }
 
     private fun getMessageLimitFilter(channelType: String): (Collection<Message>) -> Collection<Message> =
-        when (messageLimitConfig.channelTypes.contains(channelType)) {
-            true -> messagesLimitFilter
-            false -> noOpMessagesLimitFilter
+        messageLimitConfig.channelMessageLimits.firstOrNull { it.channelType == channelType }
+            ?.let { createMessageLimitFilter(it.limit) }
+            ?: noOpMessagesLimitFilter
+
+    private fun createMessageLimitFilter(limit: Int): (Collection<Message>) -> Collection<Message> = {
+        when (it.size > limit) {
+            true -> it.sortedBy { it.createdAt }.takeLast(limit)
+            false -> it
         }
+    }
 }
