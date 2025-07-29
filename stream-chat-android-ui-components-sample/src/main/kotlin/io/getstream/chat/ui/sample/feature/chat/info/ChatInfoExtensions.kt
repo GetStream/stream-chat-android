@@ -67,13 +67,19 @@ internal fun List<ChannelInfoViewState.Content.Option>.toChannelInfoItems(
 
             is ChannelInfoViewState.Content.Option.PinnedMessages -> {
                 add(ChatInfoItem.Option.PinnedMessages)
-                // These options aren't coming from the ViewModel yet, so we add them manually
-                add(ChatInfoItem.Option.SharedMedia)
-                add(ChatInfoItem.Option.SharedFiles)
+                // This option isn't coming from the ViewModel yet, so we add them manually
                 if (!isGroupChannel) {
                     add(ChatInfoItem.Option.SharedGroups)
                 }
             }
+
+            is ChannelInfoViewState.Content.Option.MediaAttachments -> add(
+                ChatInfoItem.Option.SharedMedia,
+            )
+
+            is ChannelInfoViewState.Content.Option.FilesAttachments -> add(
+                ChatInfoItem.Option.SharedFiles,
+            )
 
             is ChannelInfoViewState.Content.Option.LeaveChannel -> add(
                 ChatInfoItem.Option.LeaveChannel(

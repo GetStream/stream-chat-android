@@ -86,10 +86,8 @@
 
     <!-- Chat Info Screens -->
     <string name="chat_info_user_name">Username</string>
-    <string name="chat_info_option_media">Photos &amp; Videos</string>
     <string name="chat_info_option_shared_media_empty_title">No media</string>
     <string name="chat_info_option_shared_media_empty_description">Photos or video sent in this chat will appear here. </string>
-    <string name="chat_info_option_files">Files</string>
     <string name="chat_info_option_shared_files_empty_title">No files</string>
     <string name="chat_info_option_shared_files_empty_description">Files sent in this chat will appear here.</string>
     <string name="chat_info_option_shared_groups">Shared Groups</string>

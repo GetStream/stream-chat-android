@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/chat_info_option_media"
+            android:text="@string/stream_ui_channel_info_option_media_attachments"
             android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"
             />
 
