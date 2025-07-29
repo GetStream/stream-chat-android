@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.sample.R
+import io.getstream.chat.android.compose.sample.ui.channel.attachments.ChannelFilesAttachmentsActivity
 import io.getstream.chat.android.compose.sample.ui.pinned.PinnedMessagesActivity
 import io.getstream.chat.android.compose.ui.channel.info.DirectChannelInfoScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -54,10 +55,12 @@ class DirectChannelInfoActivity : ComponentActivity() {
                 .putExtra(KEY_CHANNEL_ID, channelId)
     }
 
+    private val channelId by lazy { requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)) }
+
     private val viewModelFactory by lazy {
         ChannelInfoViewModelFactory(
             context = applicationContext,
-            cid = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)),
+            cid = channelId,
         )
     }
 
@@ -95,6 +98,12 @@ class DirectChannelInfoActivity : ComponentActivity() {
             is ChannelInfoViewEvent.NavigateToPinnedMessages ->
                 openPinnedMessages()
 
+            ChannelInfoViewEvent.NavigateToMediaAttachments ->
+                openMediaAttachments()
+
+            ChannelInfoViewEvent.NavigateToFilesAttachments ->
+                openFilesAttachments()
+
             // No need to handle these in DirectChannelInfoActivity,
             // as it is only applicable for group channels.
             is ChannelInfoViewEvent.NavigateToChannel,
@@ -106,7 +115,20 @@ class DirectChannelInfoActivity : ComponentActivity() {
     private fun openPinnedMessages() {
         val intent = PinnedMessagesActivity.createIntent(
             context = this,
-            channelId = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)),
+            channelId = channelId,
+        )
+        startActivity(intent)
+    }
+
+    private fun openMediaAttachments() {
+        // TODO Implement the logic to open media attachments screen
+        Toast.makeText(this, "Media Attachments", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun openFilesAttachments() {
+        val intent = ChannelFilesAttachmentsActivity.createIntent(
+            context = this,
+            cid = channelId,
         )
         startActivity(intent)
     }
