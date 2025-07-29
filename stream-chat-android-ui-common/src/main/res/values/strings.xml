@@ -148,4 +148,11 @@
         <item quantity="other">View %d Comments</item>
     </plurals>
 
+    <!-- Channel Attachments -->
+
+    <string name="stream_ui_channel_attachments_media_title">Photos &amp; Videos</string>
+    <string name="stream_ui_channel_attachments_files_title">Files</string>
+    <string name="stream_ui_channel_attachments_files_empty_title">No files</string>
+    <string name="stream_ui_channel_attachments_files_empty_text">Files sent in this chat will appear here</string>
+
 </resources>
