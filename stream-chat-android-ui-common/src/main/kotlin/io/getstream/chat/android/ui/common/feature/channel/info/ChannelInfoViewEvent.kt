@@ -142,6 +142,16 @@ public sealed interface ChannelInfoViewEvent {
     public data object NavigateToPinnedMessages : Navigation(reason = null)
 
     /**
+     * Indicates an event to navigate to the media attachments.
+     */
+    public data object NavigateToMediaAttachments : Navigation(reason = null)
+
+    /**
+     * Indicates an event to navigate to the files attachments.
+     */
+    public data object NavigateToFilesAttachments : Navigation(reason = null)
+
+    /**
      * Indicates an event to navigate to the channel with the specified [cid].
      *
      * @param cid The full channel ID of the channel to navigate to.

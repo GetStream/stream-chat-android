@@ -99,6 +99,8 @@
     <string name="stream_ui_channel_info_option_leave_conversation">Leave Conversation</string>
     <string name="stream_ui_channel_info_option_leave_group">Leave Group</string>
     <string name="stream_ui_channel_info_option_pinned_messages">Pinned Messages</string>
+    <string name="stream_ui_channel_info_option_media_attachments">Photos &amp; Videos</string>
+    <string name="stream_ui_channel_info_option_files_attachments">Files</string>
     <string name="stream_ui_channel_info_option_delete_conversation">Delete Conversation</string>
     <string name="stream_ui_channel_info_option_delete_group">Delete Group</string>
 
