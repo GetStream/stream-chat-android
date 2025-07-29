@@ -552,7 +552,12 @@ class ChatsActivity : ComponentActivity() {
         LaunchedEffect(viewModel) {
             viewModel.events.collectLatest { event ->
                 when (event) {
-                    is ChannelAttachmentsViewEvent.Error -> TODO()
+                    is ChannelAttachmentsViewEvent.LoadMoreError ->
+                        Toast.makeText(
+                            applicationContext,
+                            R.string.channel_attachments_files_loading_more_error,
+                            Toast.LENGTH_SHORT,
+                        ).show()
                 }
             }
         }
