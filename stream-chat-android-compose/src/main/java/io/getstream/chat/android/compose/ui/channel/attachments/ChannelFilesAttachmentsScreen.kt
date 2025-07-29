@@ -223,8 +223,13 @@ private fun ChannelFilesAttachmentsList(
             state = listState,
         ) {
             groupedItems.forEach { (group, items) ->
-                item { groupItem(group) }
-                itemsIndexed(items) { index, item ->
+                item(key = group) {
+                    groupItem(group)
+                }
+                itemsIndexed(
+                    items = items,
+                    key = { _, item -> item.id },
+                ) { index, item ->
                     itemContent(index, item)
                     itemDivider(index)
                 }
