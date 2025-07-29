@@ -27,6 +27,7 @@ import io.getstream.chat.ui.sample.common.showToast
 import io.getstream.chat.ui.sample.feature.chat.info.group.member.GroupChatInfoMemberOptionsDialogFragment
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
 
+@Suppress("LongMethod")
 internal fun List<ChannelInfoViewState.Content.Option>.toChannelInfoItems(
     isGroupChannel: Boolean,
 ): List<ChatInfoItem> = buildList {

@@ -36,9 +36,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.runtime.Composable
@@ -65,6 +68,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
+import io.getstream.chat.android.compose.ui.channel.info.ChannelInfoNavigationIcon
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelHeaderLeadingContent
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderCenterContent
 import io.getstream.chat.android.compose.ui.channels.header.DefaultChannelListHeaderTrailingContent
@@ -198,6 +202,7 @@ import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewA
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.feature.messages.translations.MessageOriginalTranslationsStore
 import io.getstream.chat.android.ui.common.model.MessageResult
+import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoMemberViewState
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
@@ -220,6 +225,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparat
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
+import io.getstream.chat.android.compose.ui.channel.attachments.ChannelFilesAttachmentsItem as DefaultChannelFilesAttachmentsItem
 import io.getstream.chat.android.compose.ui.channel.info.ChannelInfoOptionItem as DefaultChannelInfoOptionItem
 import io.getstream.chat.android.ui.common.R as UiCommonR
 
@@ -2887,7 +2893,6 @@ public interface ChatComponentFactory {
     }
 
     /**
-<<<<<<< HEAD
      * Factory method for creating the preview content of file attachments.
      *
      * @param modifier Modifier for styling.
@@ -3188,5 +3193,106 @@ public interface ChatComponentFactory {
             option = option,
             onViewAction = onViewAction,
         )
+    }
+
+    /**
+     * Factory method for creating the top bar of the channel files attachments screen.
+     *
+     * @param listState The state of the lazy list.
+     * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
+     */
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    public fun ChannelFilesAttachmentsTopBar(
+        listState: LazyListState,
+        onNavigationIconClick: () -> Unit,
+    ) {
+        CenterAlignedTopAppBar(
+            title = { Text(text = stringResource(R.string.stream_ui_channel_attachments_files_title)) },
+            navigationIcon = { ChannelInfoNavigationIcon(onClick = onNavigationIconClick) },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = ChatTheme.colors.barsBackground,
+                titleContentColor = ChatTheme.colors.textHighEmphasis,
+            ),
+        )
+    }
+
+    /**
+     * Factory method for creating the loading indicator of the channel files attachments screen.
+     */
+    @Composable
+    public fun ChannelFilesAttachmentsLoadingIndicator(modifier: Modifier) {
+        LoadingIndicator(modifier = modifier)
+    }
+
+    /**
+     * Factory method for creating the empty content of the channel files attachments screen.
+     */
+    @Composable
+    public fun BoxScope.ChannelFilesAttachmentsEmptyContent(modifier: Modifier) {
+        EmptyContent(
+            modifier = modifier,
+            title = stringResource(UiCommonR.string.stream_ui_channel_attachments_files_empty_title),
+            text = stringResource(UiCommonR.string.stream_ui_channel_attachments_files_empty_text),
+            painter = painterResource(UiCommonR.drawable.stream_ic_files),
+        )
+    }
+
+    /**
+     * Factory method for creating the channel files attachments group item.
+     *
+     * @param modifier The modifier for styling the group item.
+     * @param label The label for the group item.
+     * This is typically used to display the title of a group of attachments.
+     */
+    @Composable
+    public fun LazyItemScope.ChannelFilesAttachmentsGroupItem(
+        modifier: Modifier,
+        label: String,
+    ) {
+        Text(
+            modifier = modifier.padding(16.dp),
+            text = label,
+            style = ChatTheme.typography.bodyBold,
+            color = ChatTheme.colors.textHighEmphasis,
+        )
+    }
+
+    /**
+     * Factory method for creating the channel files attachments item.
+     *
+     * @param modifier The modifier for styling the item.
+     * @param index The index of the item in the list.
+     * @param item The channel file attachment item to display.
+     * @param onClick Callback invoked when the item is clicked.
+     */
+    @Composable
+    public fun LazyItemScope.ChannelFilesAttachmentsItem(
+        modifier: Modifier,
+        index: Int,
+        item: ChannelAttachmentsViewState.Content.Item,
+        currentUser: User?,
+        onClick: () -> Unit,
+    ) {
+        DefaultChannelFilesAttachmentsItem(
+            modifier = modifier.animateItem(),
+            item = item,
+            currentUser = currentUser,
+            onClick = onClick,
+        )
+    }
+
+    /**
+     * Factory method for creating a divider between channel files attachments items.
+     *
+     * @param modifier The modifier for styling the divider.
+     * @param index The index of the item in the list.
+     */
+    @Composable
+    public fun LazyItemScope.ChannelFilesAttachmentsItemDivider(
+        modifier: Modifier,
+        index: Int,
+    ) {
+        StreamHorizontalDivider()
     }
 }
