@@ -43,7 +43,7 @@ import kotlinx.coroutines.flow.StateFlow
 import java.util.Date
 import java.util.concurrent.atomic.AtomicInteger
 
-@Suppress("TooManyFunctions")
+@Suppress("TooManyFunctions", "LongParameterList")
 /** State container with mutable data of a channel.*/
 internal class ChannelMutableState(
     override val channelType: String,
@@ -51,6 +51,7 @@ internal class ChannelMutableState(
     private val userFlow: StateFlow<User?>,
     latestUsers: StateFlow<Map<String, User>>,
     activeLiveLocations: StateFlow<List<Location>>,
+    private val messagesLimitFilter: (Collection<Message>) -> Collection<Message>,
     private val now: () -> Long,
 ) : ChannelState {
 
@@ -504,7 +505,11 @@ internal class ChannelMutableState(
             ?.let { upsertWatchers(listOf(it), watcherCount.value) }
         _channelData?.value?.takeIf { it.createdBy.id == user.id }
             ?.let { setChannelData(it.copy(createdBy = user)) }
-        _messages?.apply { value = value.values.updateUsers(mapOf(user.id to user)).associateBy { it.id } }
+        _messages?.apply {
+            value = messagesLimitFilter(
+                value.values.updateUsers(mapOf(user.id to user)),
+            ).associateBy { it.id }
+        }
         _pinnedMessages?.apply { value = value.updateUsers(mapOf(user.id to user)) }
     }
 
@@ -546,7 +551,10 @@ internal class ChannelMutableState(
     }
 
     fun upsertMessages(updatedMessages: Collection<Message>) {
-        _messages?.apply { value += (updatedMessages.associateBy(Message::id) - deletedMessagesIds) }
+        _messages?.apply {
+            val newMessageList = (value + (updatedMessages.associateBy(Message::id) - deletedMessagesIds)).values
+            value = messagesLimitFilter(newMessageList).associateBy(Message::id)
+        }
         _pinnedMessages?.value
             ?.let { pinnedMessages ->
                 val pinnedMessageIds = pinnedMessages.keys
@@ -557,7 +565,7 @@ internal class ChannelMutableState(
     }
 
     fun setMessages(messages: List<Message>) {
-        _messages?.value = messages.associateBy(Message::id)
+        _messages?.value = messagesLimitFilter(messages).associateBy(Message::id)
     }
 
     fun setPinnedMessages(messages: List<Message>) {

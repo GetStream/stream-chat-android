@@ -52,6 +52,7 @@ internal class ChannelMutableStateTests {
             activeLiveLocations = MutableStateFlow(
                 emptyList(),
             ),
+            messagesLimitFilter = { it },
             now = ChannelMutableStateTests::currentTime,
         )
     }

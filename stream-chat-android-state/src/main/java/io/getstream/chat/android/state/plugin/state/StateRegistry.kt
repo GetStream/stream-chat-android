@@ -22,9 +22,11 @@ import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Location
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.internal.batch.BatchEvent
+import io.getstream.chat.android.state.plugin.config.MessageLimitConfig
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.state.plugin.state.channel.thread.internal.ThreadMutableState
@@ -48,6 +50,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @param job A background job cancelled after calling [clear].
  * @param scope A scope for new coroutines.
  */
+@Suppress("LongParameterList")
 public class StateRegistry constructor(
     private val userStateFlow: StateFlow<User?>,
     private var latestUsers: StateFlow<Map<String, User>>,
@@ -55,9 +58,11 @@ public class StateRegistry constructor(
     private val job: Job,
     private val now: () -> Long,
     private val scope: CoroutineScope,
+    private val messageLimitConfig: MessageLimitConfig,
 ) {
 
     private val logger by taggedLogger("Chat:StateRegistry")
+    private val noOpMessagesLimitFilter: (Collection<Message>) -> Collection<Message> = { it }
 
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsMutableState> =
         ConcurrentHashMap()
@@ -102,7 +107,15 @@ public class StateRegistry constructor(
      */
     internal fun mutableChannel(channelType: String, channelId: String): ChannelMutableState {
         return channels.getOrPut(channelType to channelId) {
-            ChannelMutableState(channelType, channelId, userStateFlow, latestUsers, activeLiveLocations, now)
+            ChannelMutableState(
+                channelType,
+                channelId,
+                userStateFlow,
+                latestUsers,
+                activeLiveLocations,
+                getMessageLimitFilter(channelType),
+                now,
+            )
         }
     }
 
@@ -189,5 +202,17 @@ public class StateRegistry constructor(
             it.destroy()
         }
         logger.i { "[removeChanel] removed channel($channelType, $channelId): $removed" }
+    }
+
+    private fun getMessageLimitFilter(channelType: String): (Collection<Message>) -> Collection<Message> =
+        messageLimitConfig.channelMessageLimits.firstOrNull { it.channelType == channelType }
+            ?.let { createMessageLimitFilter(it.limit) }
+            ?: noOpMessagesLimitFilter
+
+    private fun createMessageLimitFilter(limit: Int): (Collection<Message>) -> Collection<Message> = {
+        when (it.size > limit) {
+            true -> it.sortedBy { it.createdAt }.takeLast(limit)
+            false -> it
+        }
     }
 }
