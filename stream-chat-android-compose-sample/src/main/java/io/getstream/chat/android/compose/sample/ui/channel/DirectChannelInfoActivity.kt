@@ -28,6 +28,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.ui.channel.attachments.ChannelFilesAttachmentsActivity
+import io.getstream.chat.android.compose.sample.ui.channel.attachments.ChannelMediaAttachmentsActivity
 import io.getstream.chat.android.compose.sample.ui.pinned.PinnedMessagesActivity
 import io.getstream.chat.android.compose.ui.channel.info.DirectChannelInfoScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -121,8 +122,11 @@ class DirectChannelInfoActivity : ComponentActivity() {
     }
 
     private fun openMediaAttachments() {
-        // TODO Implement the logic to open media attachments screen
-        Toast.makeText(this, "Media Attachments", Toast.LENGTH_SHORT).show()
+        val intent = ChannelMediaAttachmentsActivity.createIntent(
+            context = this,
+            cid = channelId,
+        )
+        startActivity(intent)
     }
 
     private fun openFilesAttachments() {

@@ -60,6 +60,7 @@ import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponent
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
 import io.getstream.chat.android.compose.sample.ui.pinned.PinnedMessagesScreen
 import io.getstream.chat.android.compose.ui.channel.attachments.ChannelFilesAttachmentsScreen
+import io.getstream.chat.android.compose.ui.channel.attachments.ChannelMediaAttachmentsScreen
 import io.getstream.chat.android.compose.ui.channel.info.DirectChannelInfoScreen
 import io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoScreen
 import io.getstream.chat.android.compose.ui.channels.SearchMode
@@ -296,7 +297,10 @@ class ChatsActivity : ComponentActivity() {
                 },
             )
 
-            is InfoContentMode.MediaAttachments -> Text(text = "TODO: Media Attachments Content")
+            is InfoContentMode.MediaAttachments -> ChannelMediaAttachmentsContent(
+                cid = mode.channelId,
+                onNavigationIconClick = { navigator.navigateBack() },
+            )
 
             is InfoContentMode.FilesAttachments -> ChannelFilesAttachmentsContent(
                 cid = mode.channelId,
@@ -556,6 +560,36 @@ class ChatsActivity : ComponentActivity() {
                         Toast.makeText(
                             applicationContext,
                             R.string.channel_attachments_files_loading_more_error,
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun ChannelMediaAttachmentsContent(
+        cid: String,
+        onNavigationIconClick: () -> Unit,
+    ) {
+        val viewModelFactory = ChannelAttachmentsViewModelFactory(
+            cid = cid,
+            attachmentTypes = listOf(AttachmentType.IMAGE, AttachmentType.VIDEO),
+        )
+        val viewModel = viewModel<ChannelAttachmentsViewModel>(
+            factory = viewModelFactory,
+        )
+        ChannelMediaAttachmentsScreen(
+            viewModelFactory = viewModelFactory,
+            onNavigationIconClick = onNavigationIconClick,
+        )
+        LaunchedEffect(viewModel) {
+            viewModel.events.collectLatest { event ->
+                when (event) {
+                    is ChannelAttachmentsViewEvent.LoadMoreError ->
+                        Toast.makeText(
+                            applicationContext,
+                            R.string.channel_attachments_media_loading_more_error,
                             Toast.LENGTH_SHORT,
                         ).show()
                 }
