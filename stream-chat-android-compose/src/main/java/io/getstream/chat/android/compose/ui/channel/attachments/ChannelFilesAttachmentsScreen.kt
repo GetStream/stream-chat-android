@@ -17,21 +17,15 @@
 package io.getstream.chat.android.compose.ui.channel.attachments
 
 import android.text.format.DateUtils
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,11 +34,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.getCreatedAtOrThrow
-import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentDescription
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentImage
-import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
-import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsViewModel
@@ -77,7 +68,7 @@ public fun ChannelFilesAttachmentsScreen(
     val viewModel = viewModel<ChannelAttachmentsViewModel>(factory = viewModelFactory)
     val viewState by viewModel.state.collectAsStateWithLifecycle()
 
-    ChannelFilesAttachmentsScaffold(
+    ChannelFilesAttachmentsContent(
         modifier = modifier,
         viewState = viewState,
         currentUser = currentUser,
@@ -88,7 +79,7 @@ public fun ChannelFilesAttachmentsScreen(
 }
 
 @Composable
-private fun ChannelFilesAttachmentsScaffold(
+private fun ChannelFilesAttachmentsContent(
     viewState: ChannelAttachmentsViewState,
     modifier: Modifier = Modifier,
     currentUser: User? = ChatClient.instance().getCurrentUser(),
@@ -134,118 +125,6 @@ private val GroupKeySelector = { item: ChannelAttachmentsViewState.Content.Item 
 }
 
 @Composable
-private fun ChannelFilesAttachmentsList(
-    viewState: ChannelAttachmentsViewState,
-    listState: LazyListState,
-    modifier: Modifier = Modifier,
-    currentUser: User? = ChatClient.instance().getCurrentUser(),
-    onViewAction: (action: ChannelAttachmentsViewAction) -> Unit = {},
-    loadingIndicator: @Composable BoxScope.() -> Unit = {
-        with(ChatTheme.componentFactory) {
-            ChannelFilesAttachmentsLoadingIndicator(
-                modifier = Modifier,
-            )
-        }
-    },
-    emptyContent: @Composable BoxScope.() -> Unit = {
-        with(ChatTheme.componentFactory) {
-            ChannelFilesAttachmentsEmptyContent(
-                modifier = Modifier,
-            )
-        }
-    },
-    errorContent: @Composable BoxScope.() -> Unit = {
-        with(ChatTheme.componentFactory) {
-            ChannelFilesAttachmentsErrorContent(
-                modifier = Modifier,
-            )
-        }
-    },
-    groupKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String,
-    groupItem: @Composable LazyItemScope.(label: String) -> Unit = { label ->
-        with(ChatTheme.componentFactory) {
-            ChannelFilesAttachmentsGroupItem(
-                modifier = Modifier,
-                label = label,
-            )
-        }
-    },
-    itemDivider: @Composable LazyItemScope.(index: Int) -> Unit = { index ->
-        with(ChatTheme.componentFactory) {
-            ChannelFilesAttachmentsItemDivider(
-                modifier = Modifier,
-                index = index,
-            )
-        }
-    },
-    itemContent: @Composable LazyItemScope.(index: Int, item: ChannelAttachmentsViewState.Content.Item) -> Unit =
-        { index, item ->
-            val previewHandlers = ChatTheme.attachmentPreviewHandlers
-            with(ChatTheme.componentFactory) {
-                ChannelFilesAttachmentsItem(
-                    modifier = Modifier,
-                    index = index,
-                    item = item,
-                    currentUser = currentUser,
-                    onClick = {
-                        onFileAttachmentContentItemClick(
-                            previewHandlers = previewHandlers,
-                            attachment = item.attachment,
-                        )
-                    },
-                )
-            }
-        },
-    loadingItem: @Composable LazyItemScope.() -> Unit = {
-        with(ChatTheme.componentFactory) {
-            ChannelFilesAttachmentsLoadingItem(
-                modifier = Modifier,
-            )
-        }
-    },
-) {
-    val isLoading = viewState is ChannelAttachmentsViewState.Loading
-    ContentBox(
-        modifier = modifier,
-        isLoading = isLoading,
-        isEmpty = viewState is ChannelAttachmentsViewState.Content && viewState.items.isEmpty(),
-        isError = viewState is ChannelAttachmentsViewState.Error,
-        loadingIndicator = loadingIndicator,
-        emptyContent = emptyContent,
-        errorContent = errorContent,
-    ) {
-        val content = viewState as ChannelAttachmentsViewState.Content
-        val groupedItems by remember(content.items) {
-            derivedStateOf { content.items.groupBy(groupKeySelector) }
-        }
-        LazyColumn(
-            modifier = Modifier.matchParentSize(),
-            state = listState,
-        ) {
-            groupedItems.forEach { (group, items) ->
-                item(key = group) {
-                    groupItem(group)
-                }
-                itemsIndexed(
-                    items = items,
-                    key = { _, item -> item.id },
-                ) { index, item ->
-                    itemContent(index, item)
-                    itemDivider(index)
-                }
-            }
-            if (content.isLoadingMore) {
-                item { loadingItem() }
-            }
-        }
-        LoadMoreHandler(
-            lazyListState = listState,
-            loadMore = { onViewAction(ChannelAttachmentsViewAction.LoadMoreRequested) },
-        )
-    }
-}
-
-@Composable
 internal fun LazyItemScope.ChannelFilesAttachmentsItem(
     modifier: Modifier,
     item: ChannelAttachmentsViewState.Content.Item,
@@ -274,7 +153,7 @@ internal fun LazyItemScope.ChannelFilesAttachmentsItem(
 
 @Preview
 @Composable
-private fun ChannelFilesAttachmentsContentLoadingPreview() {
+private fun ChannelFilesAttachmentsLoadingPreview() {
     ChatTheme {
         ChannelFilesAttachmentsLoading()
     }
@@ -282,7 +161,7 @@ private fun ChannelFilesAttachmentsContentLoadingPreview() {
 
 @Composable
 internal fun ChannelFilesAttachmentsLoading() {
-    ChannelFilesAttachmentsScaffold(
+    ChannelFilesAttachmentsContent(
         modifier = Modifier.fillMaxSize(),
         currentUser = PreviewUserData.user1,
         viewState = ChannelAttachmentsViewState.Loading,
@@ -291,7 +170,7 @@ internal fun ChannelFilesAttachmentsLoading() {
 
 @Preview
 @Composable
-private fun ChannelFilesAttachmentsContentEmptyPreview() {
+private fun ChannelFilesAttachmentsEmptyPreview() {
     ChatTheme {
         ChannelFilesAttachmentsEmpty()
     }
@@ -299,7 +178,7 @@ private fun ChannelFilesAttachmentsContentEmptyPreview() {
 
 @Composable
 internal fun ChannelFilesAttachmentsEmpty() {
-    ChannelFilesAttachmentsScaffold(
+    ChannelFilesAttachmentsContent(
         modifier = Modifier.fillMaxSize(),
         currentUser = PreviewUserData.user1,
         viewState = ChannelAttachmentsViewState.Content(
@@ -318,7 +197,7 @@ private fun ChannelFilesAttachmentsContentPreview() {
 
 @Composable
 internal fun ChannelFilesAttachmentsContent() {
-    ChannelFilesAttachmentsScaffold(
+    ChannelFilesAttachmentsContent(
         modifier = Modifier.fillMaxSize(),
         currentUser = PreviewUserData.user1,
         viewState = ChannelAttachmentsViewState.Content(
@@ -334,7 +213,7 @@ internal fun ChannelFilesAttachmentsContent() {
 
 @Preview
 @Composable
-private fun ChannelFilesAttachmentsContentErrorPreview() {
+private fun ChannelFilesAttachmentsErrorPreview() {
     ChatTheme {
         ChannelFilesAttachmentsError()
     }
@@ -342,7 +221,7 @@ private fun ChannelFilesAttachmentsContentErrorPreview() {
 
 @Composable
 internal fun ChannelFilesAttachmentsError() {
-    ChannelFilesAttachmentsScaffold(
+    ChannelFilesAttachmentsContent(
         modifier = Modifier.fillMaxSize(),
         currentUser = PreviewUserData.user1,
         viewState = ChannelAttachmentsViewState.Error(
