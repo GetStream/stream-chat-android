@@ -18,24 +18,17 @@ package io.getstream.chat.android.compose.ui.channel.attachments
 
 import android.text.format.DateUtils
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
-import androidx.compose.foundation.lazy.grid.LazyGridState
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -47,17 +40,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.window.core.layout.WindowWidthSizeClass
 import io.getstream.chat.android.client.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.handlers.LoadMoreHandler
-import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
-import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
-import io.getstream.chat.android.compose.ui.util.adaptivelayout.AdaptiveLayoutConstraints
 import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsViewModelFactory
@@ -86,7 +74,7 @@ public fun ChannelMediaAttachmentsScreen(
     val viewModel = viewModel<ChannelAttachmentsViewModel>(factory = viewModelFactory)
     val viewState by viewModel.state.collectAsStateWithLifecycle()
 
-    ChannelMediaAttachmentsScaffold(
+    ChannelMediaAttachmentsContent(
         modifier = modifier,
         viewState = viewState,
         groupKeySelector = groupKeySelector,
@@ -96,9 +84,9 @@ public fun ChannelMediaAttachmentsScreen(
 }
 
 @Composable
-private fun ChannelMediaAttachmentsScaffold(
+private fun ChannelMediaAttachmentsContent(
+    modifier: Modifier,
     viewState: ChannelAttachmentsViewState,
-    modifier: Modifier = Modifier,
     groupKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String = GroupKeySelector,
     onNavigationIconClick: () -> Unit = {},
     onViewAction: (action: ChannelAttachmentsViewAction) -> Unit = {},
@@ -139,112 +127,6 @@ private val GroupKeySelector = { item: ChannelAttachmentsViewState.Content.Item 
     ).toString()
 }
 
-@Suppress("MagicNumber")
-private val ColumnSizes = mapOf(
-    WindowWidthSizeClass.COMPACT to 3,
-    WindowWidthSizeClass.MEDIUM to 4,
-    WindowWidthSizeClass.EXPANDED to 6,
-)
-
-@Composable
-private fun ChannelMediaAttachmentsList(
-    viewState: ChannelAttachmentsViewState,
-    gridState: LazyGridState,
-    modifier: Modifier = Modifier,
-    onViewAction: (action: ChannelAttachmentsViewAction) -> Unit = {},
-    loadingIndicator: @Composable BoxScope.() -> Unit = {
-        with(ChatTheme.componentFactory) {
-            ChannelMediaAttachmentsLoadingIndicator(
-                modifier = Modifier,
-            )
-        }
-    },
-    emptyContent: @Composable BoxScope.() -> Unit = {
-        with(ChatTheme.componentFactory) {
-            ChannelMediaAttachmentsEmptyContent(
-                modifier = Modifier,
-            )
-        }
-    },
-    errorContent: @Composable BoxScope.() -> Unit = {
-        with(ChatTheme.componentFactory) {
-            ChannelMediaAttachmentsErrorContent(
-                modifier = Modifier,
-            )
-        }
-    },
-    groupKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String,
-    groupItem: @Composable LazyGridItemScope.(label: String) -> Unit = { label ->
-        with(ChatTheme.componentFactory) {
-            ChannelMediaAttachmentsGroupItem(
-                modifier = Modifier,
-                label = label,
-            )
-        }
-    },
-    itemContent: @Composable LazyGridItemScope.(index: Int, item: ChannelAttachmentsViewState.Content.Item) -> Unit =
-        { index, item ->
-            val previewHandlers = ChatTheme.attachmentPreviewHandlers
-            with(ChatTheme.componentFactory) {
-                ChannelMediaAttachmentsItem(
-                    modifier = Modifier,
-                    index = index,
-                    item = item,
-                    onClick = {
-                        onFileAttachmentContentItemClick(
-                            previewHandlers = previewHandlers,
-                            attachment = item.attachment,
-                        )
-                    },
-                )
-            }
-        },
-    loadingItem: @Composable LazyGridItemScope.() -> Unit = {
-        with(ChatTheme.componentFactory) {
-            ChannelMediaAttachmentsLoadingItem(
-                modifier = Modifier,
-            )
-        }
-    },
-) {
-    val isLoading = viewState is ChannelAttachmentsViewState.Loading
-    val windowSize = currentWindowAdaptiveInfo().windowSizeClass
-    val columnSize = ColumnSizes.getValue(windowSize.windowWidthSizeClass)
-    ContentBox(
-        modifier = modifier,
-        isLoading = isLoading,
-        isEmpty = viewState is ChannelAttachmentsViewState.Content && viewState.items.isEmpty(),
-        isError = viewState is ChannelAttachmentsViewState.Error,
-        loadingIndicator = loadingIndicator,
-        emptyContent = emptyContent,
-        errorContent = errorContent,
-    ) {
-        AdaptiveLayoutConstraints.DETAIL_PANE_WEIGHT
-        val content = viewState as ChannelAttachmentsViewState.Content
-        LazyVerticalGrid(
-            modifier = Modifier.matchParentSize(),
-            columns = GridCells.Fixed(columnSize),
-            verticalArrangement = Arrangement.spacedBy(ChatTheme.dimens.attachmentsContentMediaGridSpacing),
-            horizontalArrangement = Arrangement.spacedBy(ChatTheme.dimens.attachmentsContentMediaGridSpacing),
-            state = gridState,
-        ) {
-            itemsIndexed(
-                items = content.items,
-                key = { _, item -> item.id },
-            ) { index, item ->
-                itemContent(index, item)
-            }
-            if (content.isLoadingMore) {
-                item { loadingItem() }
-            }
-        }
-        LoadMoreHandler(
-            lazyGridState = gridState,
-            loadMore = { onViewAction(ChannelAttachmentsViewAction.LoadMoreRequested) },
-        )
-    }
-}
-
 @Composable
 internal fun LazyGridItemScope.ChannelMediaAttachmentsItem(
     modifier: Modifier,
@@ -270,7 +152,7 @@ internal fun LazyGridItemScope.ChannelMediaAttachmentsItem(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(8.dp)
-                .fillMaxSize(.3f)
+                .fillMaxSize(.25f)
                 .aspectRatio(1f)
                 .background(
                     color = Color.White,
@@ -298,7 +180,7 @@ internal fun LazyGridItemScope.ChannelMediaAttachmentsItem(
 
 @Preview
 @Composable
-private fun ChannelMediaAttachmentsContentLoadingPreview() {
+private fun ChannelMediaAttachmentsLoadingPreview() {
     ChatTheme {
         ChannelMediaAttachmentsLoading()
     }
@@ -306,7 +188,7 @@ private fun ChannelMediaAttachmentsContentLoadingPreview() {
 
 @Composable
 internal fun ChannelMediaAttachmentsLoading() {
-    ChannelMediaAttachmentsScaffold(
+    ChannelMediaAttachmentsContent(
         modifier = Modifier.fillMaxSize(),
         viewState = ChannelAttachmentsViewState.Loading,
     )
@@ -314,7 +196,7 @@ internal fun ChannelMediaAttachmentsLoading() {
 
 @Preview
 @Composable
-private fun ChannelMediaAttachmentsContentEmptyPreview() {
+private fun ChannelMediaAttachmentsEmptyPreview() {
     ChatTheme {
         ChannelMediaAttachmentsEmpty()
     }
@@ -322,7 +204,7 @@ private fun ChannelMediaAttachmentsContentEmptyPreview() {
 
 @Composable
 internal fun ChannelMediaAttachmentsEmpty() {
-    ChannelMediaAttachmentsScaffold(
+    ChannelMediaAttachmentsContent(
         modifier = Modifier.fillMaxSize(),
         viewState = ChannelAttachmentsViewState.Content(
             items = emptyList(),
@@ -340,7 +222,7 @@ private fun ChannelMediaAttachmentsContentPreview() {
 
 @Composable
 internal fun ChannelMediaAttachmentsContent() {
-    ChannelMediaAttachmentsScaffold(
+    ChannelMediaAttachmentsContent(
         modifier = Modifier.fillMaxSize(),
         viewState = ChannelAttachmentsViewState.Content(
             items = PreviewMessageData.messageWithUserAndAttachment.attachments.map { attachment ->
@@ -355,7 +237,7 @@ internal fun ChannelMediaAttachmentsContent() {
 
 @Preview
 @Composable
-private fun ChannelMediaAttachmentsContentErrorPreview() {
+private fun ChannelMediaAttachmentsErrorPreview() {
     ChatTheme {
         ChannelMediaAttachmentsError()
     }
@@ -363,7 +245,7 @@ private fun ChannelMediaAttachmentsContentErrorPreview() {
 
 @Composable
 internal fun ChannelMediaAttachmentsError() {
-    ChannelMediaAttachmentsScaffold(
+    ChannelMediaAttachmentsContent(
         modifier = Modifier.fillMaxSize(),
         viewState = ChannelAttachmentsViewState.Error(
             message = "An error occurred while loading attachments.",
