@@ -233,9 +233,9 @@ private fun ChannelFilesAttachmentsList(
                     itemContent(index, item)
                     itemDivider(index)
                 }
-                if (content.isLoadingMore) {
-                    item { loadingItem() }
-                }
+            }
+            if (content.isLoadingMore) {
+                item { loadingItem() }
             }
         }
         LoadMoreHandler(
