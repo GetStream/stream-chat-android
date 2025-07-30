@@ -23,8 +23,10 @@ import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.window.core.layout.WindowWidthSizeClass
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
@@ -39,6 +41,9 @@ internal fun ChannelMediaAttachmentsList(
     viewState: ChannelAttachmentsViewState,
     gridState: LazyGridState,
     modifier: Modifier = Modifier,
+    gridColumnCount: (adaptiveInfo: WindowAdaptiveInfo) -> Int = { adaptiveInfo ->
+        ColumnCounts.getValue(adaptiveInfo.windowSizeClass.windowWidthSizeClass)
+    },
     onViewAction: (action: ChannelAttachmentsViewAction) -> Unit = {},
     loadingIndicator: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
@@ -96,8 +101,8 @@ internal fun ChannelMediaAttachmentsList(
     },
 ) {
     val isLoading = viewState is ChannelAttachmentsViewState.Loading
-    val windowSize = currentWindowAdaptiveInfo().windowSizeClass
-    val gridColumnSize = ColumnSizes.getValue(windowSize.windowWidthSizeClass)
+    val adaptiveInfo = currentWindowAdaptiveInfo()
+    val gridColumnCount = remember(adaptiveInfo) { gridColumnCount(adaptiveInfo) }
     ContentBox(
         modifier = modifier,
         isLoading = isLoading,
@@ -110,7 +115,7 @@ internal fun ChannelMediaAttachmentsList(
         val content = viewState as ChannelAttachmentsViewState.Content
         LazyVerticalGrid(
             modifier = Modifier.matchParentSize(),
-            columns = GridCells.Fixed(gridColumnSize),
+            columns = GridCells.Fixed(gridColumnCount),
             verticalArrangement = Arrangement.spacedBy(ChatTheme.dimens.attachmentsContentMediaGridSpacing),
             horizontalArrangement = Arrangement.spacedBy(ChatTheme.dimens.attachmentsContentMediaGridSpacing),
             state = gridState,
@@ -133,7 +138,7 @@ internal fun ChannelMediaAttachmentsList(
 }
 
 @Suppress("MagicNumber")
-private val ColumnSizes = mapOf(
+private val ColumnCounts = mapOf(
     WindowWidthSizeClass.COMPACT to 3,
     WindowWidthSizeClass.MEDIUM to 4,
     WindowWidthSizeClass.EXPANDED to 6,
