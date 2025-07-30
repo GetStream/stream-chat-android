@@ -41,7 +41,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 @Composable
 public fun LoadMoreHandler(
     listState: LazyListState,
-    loadMoreThreshold: Int = 3,
+    loadMoreThreshold: Int = DefaultLoadMoreThreshold,
     loadMore: () -> Unit,
 ) {
     LoadMoreHandler(
@@ -55,20 +55,20 @@ public fun LoadMoreHandler(
  * Handler to notify that more items should be loaded when the user scrolls to the end of the list.
  *
  * @param lazyListState The [LazyListState] used to control scrolling.
- * @param threshold The number if items to check before reaching the end of the list.
- * Default is half of the visible items.
+ * @param threshold The number if items to check before reaching the end of the list. Default is 3.
  * @param loadMore The callback to load more items.
  */
 @Composable
 public fun LoadMoreHandler(
     lazyListState: LazyListState,
-    threshold: () -> Int = { lazyListState.layoutInfo.visibleItemsInfo.size / 2 },
+    threshold: () -> Int = { DefaultLoadMoreThreshold },
     loadMore: () -> Unit,
 ) {
     LaunchedEffect(lazyListState) {
         snapshotFlow {
-            val totalItemsCount = lazyListState.layoutInfo.totalItemsCount
-            val lastVisibleItemIndex = lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
+            val layoutInfo = lazyListState.layoutInfo
+            val totalItemsCount = layoutInfo.totalItemsCount
+            val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
             shouldLoadMore(
                 totalItemsCount = totalItemsCount,
                 lastVisibleItemIndex = lastVisibleItemIndex,
@@ -88,20 +88,20 @@ public fun LoadMoreHandler(
  * Handler to notify that more items should be loaded when the user scrolls to the end of the grid.
  *
  * @param lazyGridState The [LazyGridState] used to control scrolling.
- * @param threshold The number if items to check before reaching the end of the grid.
- * Default is half of the visible items.
+ * @param threshold The number if items to check before reaching the end of the grid. Default is 3.
  * @param loadMore The callback to load more items.
  */
 @Composable
 public fun LoadMoreHandler(
     lazyGridState: LazyGridState,
-    threshold: () -> Int = { lazyGridState.layoutInfo.visibleItemsInfo.size / 2 },
+    threshold: () -> Int = { DefaultLoadMoreThreshold },
     loadMore: () -> Unit,
 ) {
     LaunchedEffect(lazyGridState) {
         snapshotFlow {
-            val totalItemsCount = lazyGridState.layoutInfo.totalItemsCount
-            val lastVisibleItemIndex = lazyGridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
+            val layoutInfo = lazyGridState.layoutInfo
+            val totalItemsCount = layoutInfo.totalItemsCount
+            val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
             shouldLoadMore(
                 totalItemsCount = totalItemsCount,
                 lastVisibleItemIndex = lastVisibleItemIndex,
@@ -126,3 +126,5 @@ internal fun shouldLoadMore(
     totalItemsCount > 0 && // List isn’t empty
         totalItemsCount > loadMoreThreshold && // Ensure list is large enough
         lastVisibleItemIndex > totalItemsCount - loadMoreThreshold - 1
+
+private const val DefaultLoadMoreThreshold = 3
