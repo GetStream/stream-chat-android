@@ -23,7 +23,6 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
-- Fix reactions not working in `livestream` channels. [#5883](https://github.com/GetStream/stream-chat-android/pull/5883)
 
 ### ⬆️ Improved
 
@@ -37,14 +36,16 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Fix reactions not working in `livestream` channels. [#5883](https://github.com/GetStream/stream-chat-android/pull/5883)
 
 ### ⬆️ Improved
 
 ### ✅ Added
 - Add `StatePluginConfig.MessageLimitConfig` config to allow setting the maximum number of messages to be kept in memory for specific channel types. [#5877](https://github.com/GetStream/stream-chat-android/pull/5877)
-- By default the `StatePluginConfig.MessageLimitConfig` is set to 1000 messages for `livestream` channel types. [#5877](https://github.com/GetStream/stream-chat-android/pull/5877)
+- By default the `StatePluginConfig.MessageLimitConfig` is set to 500 messages for `livestream` channel types. [#5877](https://github.com/GetStream/stream-chat-android/pull/5877)
 
 ### ⚠️ Changed
+- Deprecate `SendReactionListener.onSendReactionPrecondition(currentUser?, reaction: Reaction)` in favor of `SendReactionListener.onSendReactionPrecondition(cid: String?, currentUser: User?, reaction: Reaction)`. [#5883](https://github.com/GetStream/stream-chat-android/pull/5883)
 
 ### ❌ Removed
 
