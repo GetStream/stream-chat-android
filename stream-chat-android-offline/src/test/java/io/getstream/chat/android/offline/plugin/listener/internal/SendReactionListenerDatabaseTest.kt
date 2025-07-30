@@ -54,6 +54,7 @@ internal class SendReactionListenerDatabaseTest {
         reactionsRepository = reactionsRepository,
         messageRepository = messageRepository,
         userRepository = userRepository,
+        ignoredChannelTypes = emptySet(),
     )
 
     @Test
