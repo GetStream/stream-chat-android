@@ -3211,7 +3211,13 @@ public interface ChatComponentFactory {
         onNavigationIconClick: () -> Unit,
     ) {
         CenterAlignedTopAppBar(
-            title = { Text(text = stringResource(R.string.stream_ui_channel_attachments_files_title)) },
+            title = {
+                Text(
+                    text = stringResource(R.string.stream_ui_channel_attachments_files_title),
+                    style = ChatTheme.typography.title3Bold,
+                    maxLines = 1,
+                )
+            },
             navigationIcon = { ChannelInfoNavigationIcon(onClick = onNavigationIconClick) },
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = ChatTheme.colors.barsBackground,
