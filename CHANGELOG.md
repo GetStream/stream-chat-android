@@ -23,6 +23,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fix reactions not working in `livestream` channels. [#5883](https://github.com/GetStream/stream-chat-android/pull/5883)
 
 ### ⬆️ Improved
 
