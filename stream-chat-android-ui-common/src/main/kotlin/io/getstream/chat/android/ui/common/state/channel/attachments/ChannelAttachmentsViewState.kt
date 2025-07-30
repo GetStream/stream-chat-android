@@ -18,6 +18,8 @@ package io.getstream.chat.android.ui.common.state.channel.attachments
 
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
+import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 
 /**
  * Represents the state of the channel attachments view.
@@ -56,10 +58,10 @@ public sealed interface ChannelAttachmentsViewState {
             val attachment: Attachment,
         ) {
             /**
-             * Returns the unique identifier for the item,
-             * which is a combination of the message identifier hash and the attachment name.
+             * Returns the unique identifier for the item.
              */
-            public val id: String = "${message.identifierHash()}-${attachment.name}"
+            public val id: String =
+                "${message.identifierHash()}-${attachment.getDisplayableName() ?: attachment.imagePreviewUrl}"
         }
     }
 
