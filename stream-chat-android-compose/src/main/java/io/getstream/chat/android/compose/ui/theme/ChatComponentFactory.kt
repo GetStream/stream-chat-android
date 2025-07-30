@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -36,6 +37,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridItemScope
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Warning
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -229,6 +232,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import io.getstream.chat.android.compose.ui.channel.attachments.ChannelFilesAttachmentsItem as DefaultChannelFilesAttachmentsItem
+import io.getstream.chat.android.compose.ui.channel.attachments.ChannelMediaAttachmentsItem as DefaultChannelMediaAttachmentsItem
 import io.getstream.chat.android.compose.ui.channel.info.ChannelInfoOptionItem as DefaultChannelInfoOptionItem
 import io.getstream.chat.android.ui.common.R as UiCommonR
 
@@ -3283,6 +3287,7 @@ public interface ChatComponentFactory {
      * @param modifier The modifier for styling the item.
      * @param index The index of the item in the list.
      * @param item The channel file attachment item to display.
+     * @param currentUser The currently logged-in user.
      * @param onClick Callback invoked when the item is clicked.
      */
     @Composable
@@ -3323,5 +3328,120 @@ public interface ChatComponentFactory {
     @Composable
     public fun LazyItemScope.ChannelFilesAttachmentsLoadingItem(modifier: Modifier) {
         LoadingFooter(modifier = modifier.fillMaxWidth())
+    }
+
+    /**
+     * Factory method for creating the top bar of the channel media attachments screen.
+     *
+     * @param gridState The state of the lazy grid.
+     * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
+     */
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    public fun ChannelMediaAttachmentsTopBar(
+        gridState: LazyGridState,
+        onNavigationIconClick: () -> Unit,
+    ) {
+        CenterAlignedTopAppBar(
+            title = {
+                Text(
+                    text = stringResource(R.string.stream_ui_channel_attachments_media_title),
+                    style = ChatTheme.typography.title3Bold,
+                    maxLines = 1,
+                )
+            },
+            navigationIcon = { ChannelInfoNavigationIcon(onClick = onNavigationIconClick) },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = ChatTheme.colors.barsBackground,
+                titleContentColor = ChatTheme.colors.textHighEmphasis,
+            ),
+        )
+    }
+
+    /**
+     * Factory method for creating the loading indicator of the channel media attachments screen.
+     */
+    @Composable
+    public fun ChannelMediaAttachmentsLoadingIndicator(modifier: Modifier) {
+        LoadingIndicator(modifier = modifier)
+    }
+
+    /**
+     * Factory method for creating the empty content of the channel media attachments screen.
+     */
+    @Composable
+    public fun BoxScope.ChannelMediaAttachmentsEmptyContent(modifier: Modifier) {
+        EmptyContent(
+            modifier = modifier,
+            title = stringResource(UiCommonR.string.stream_ui_channel_attachments_media_empty_title),
+            text = stringResource(UiCommonR.string.stream_ui_channel_attachments_media_empty_text),
+            painter = painterResource(UiCommonR.drawable.stream_ic_media),
+        )
+    }
+
+    @Composable
+    public fun BoxScope.ChannelMediaAttachmentsErrorContent(modifier: Modifier) {
+        EmptyContent(
+            modifier = modifier,
+            text = stringResource(UiCommonR.string.stream_ui_channel_attachments_media_load_error),
+            painter = rememberVectorPainter(Icons.TwoTone.Warning),
+        )
+    }
+
+    /**
+     * Factory method for creating the channel media attachments group item.
+     * This is typically used to display the title of a group of attachments.
+     *
+     * @param modifier The modifier for styling the group item.
+     * @param label The label for the group item.
+     * This is typically used to display the title of a group of attachments.
+     */
+    @Composable
+    public fun LazyGridItemScope.ChannelMediaAttachmentsGroupItem(
+        modifier: Modifier,
+        label: String,
+    ) {
+        Text(
+            modifier = modifier.padding(16.dp),
+            text = label,
+            style = ChatTheme.typography.bodyBold,
+            color = ChatTheme.colors.textHighEmphasis,
+        )
+    }
+
+    /**
+     * Factory method for creating the channel media attachments item.
+     *
+     * @param modifier The modifier for styling the item.
+     * @param index The index of the item in the list.
+     * @param item The channel file attachment item to display.
+     * @param onClick Callback invoked when the item is clicked.
+     */
+    @Composable
+    public fun LazyGridItemScope.ChannelMediaAttachmentsItem(
+        modifier: Modifier,
+        index: Int,
+        item: ChannelAttachmentsViewState.Content.Item,
+        onClick: () -> Unit,
+    ) {
+        DefaultChannelMediaAttachmentsItem(
+            modifier = modifier.animateItem(),
+            item = item,
+            onClick = onClick,
+        )
+    }
+
+    /**
+     * Factory method for creating the loading item in the channel media attachments list.
+     *
+     * This is typically shown at the end of the list when more items are being loaded.
+     */
+    @Composable
+    public fun LazyGridItemScope.ChannelMediaAttachmentsLoadingItem(modifier: Modifier) {
+        LoadingFooter(
+            modifier = modifier
+                .fillMaxSize()
+                .aspectRatio(1f),
+        )
     }
 }

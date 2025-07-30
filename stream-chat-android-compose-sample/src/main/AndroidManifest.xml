@@ -100,5 +100,6 @@
         <activity android:name=".feature.reminders.MessageRemindersActivity" />
         <activity android:name=".ui.profile.UserProfileActivity" />
         <activity android:name=".ui.channel.attachments.ChannelFilesAttachmentsActivity" />
+        <activity android:name=".ui.channel.attachments.ChannelMediaAttachmentsActivity" />
     </application>
 </manifest>

@@ -122,6 +122,7 @@
     </plurals>
 
     <!-- Channel Attachments -->
+    <string name="channel_attachments_media_loading_more_error">Failed to load more media attachments</string>
     <string name="channel_attachments_files_loading_more_error">Failed to load more files attachments</string>
 
 </resources>

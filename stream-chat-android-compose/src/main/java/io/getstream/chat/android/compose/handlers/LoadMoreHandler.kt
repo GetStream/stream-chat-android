@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.handlers
 
 import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
@@ -68,6 +69,39 @@ public fun LoadMoreHandler(
         snapshotFlow {
             val totalItemsCount = lazyListState.layoutInfo.totalItemsCount
             val lastVisibleItemIndex = lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
+            shouldLoadMore(
+                totalItemsCount = totalItemsCount,
+                lastVisibleItemIndex = lastVisibleItemIndex,
+                loadMoreThreshold = threshold(),
+            )
+        }
+            .distinctUntilChanged()
+            .collect { shouldLoadMore ->
+                if (shouldLoadMore) {
+                    loadMore()
+                }
+            }
+    }
+}
+
+/**
+ * Handler to notify that more items should be loaded when the user scrolls to the end of the grid.
+ *
+ * @param lazyGridState The [LazyGridState] used to control scrolling.
+ * @param threshold The number if items to check before reaching the end of the grid.
+ * Default is half of the visible items.
+ * @param loadMore The callback to load more items.
+ */
+@Composable
+public fun LoadMoreHandler(
+    lazyGridState: LazyGridState,
+    threshold: () -> Int = { lazyGridState.layoutInfo.visibleItemsInfo.size / 2 },
+    loadMore: () -> Unit,
+) {
+    LaunchedEffect(lazyGridState) {
+        snapshotFlow {
+            val totalItemsCount = lazyGridState.layoutInfo.totalItemsCount
+            val lastVisibleItemIndex = lazyGridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
             shouldLoadMore(
                 totalItemsCount = totalItemsCount,
                 lastVisibleItemIndex = lastVisibleItemIndex,
