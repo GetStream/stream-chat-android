@@ -35,6 +35,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
@@ -144,4 +145,33 @@ internal class SendReactionListenerDatabaseTest {
 
         verify(reactionsRepository).insertReaction(testReaction.copy(syncStatus = SyncStatus.SYNC_NEEDED))
     }
+
+    @Test
+    fun `when checking precondition for livestream channel, should return success without calling selectMessage`() =
+        runTest {
+            val testReaction = randomReaction(user = randomUser())
+            val livestreamCid = "livestream:123"
+            val messageRepository = mock<MessageRepository>()
+
+            // Create a SendReactionListenerDatabase instance with livestream as ignored channel type
+            val sendReactionListenerWithIgnoredTypes = SendReactionListenerDatabase(
+                clientState = clientState,
+                reactionsRepository = reactionsRepository,
+                messageRepository = messageRepository,
+                userRepository = userRepository,
+                ignoredChannelTypes = setOf("livestream"),
+            )
+
+            val result = sendReactionListenerWithIgnoredTypes.onSendReactionPrecondition(
+                cid = livestreamCid,
+                currentUser = currentUser,
+                reaction = testReaction,
+            )
+
+            // Assert that the result is Success
+            assert(result is Result.Success)
+
+            // Verify that messageRepository.selectMessage() is never called
+            verify(messageRepository, never()).selectMessage(any())
+        }
 }
