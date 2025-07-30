@@ -60,6 +60,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
+import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.uiutils.model.MimeType
 
@@ -190,7 +191,7 @@ internal fun RowScope.FileAttachmentDescription(
     ) {
         Text(
             modifier = Modifier.testTag("Stream_FileAttachmentName"),
-            text = attachment.title ?: attachment.name ?: "",
+            text = attachment.getDisplayableName() ?: "",
             style = fileAttachmentTheme.fileNameTextStyle,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
