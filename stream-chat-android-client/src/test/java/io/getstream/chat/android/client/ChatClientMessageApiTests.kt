@@ -433,7 +433,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         // then
         verifySuccess(result, reaction)
         val inOrder = Mockito.inOrder(plugin)
-        inOrder.verify(plugin).onSendReactionPrecondition(currentUser, reaction)
+        inOrder.verify(plugin).onSendReactionPrecondition(cid, currentUser, reaction)
         inOrder.verify(plugin).onSendReactionRequest(eq(cid), any(), eq(enforceUnique), eq(currentUser))
         inOrder.verify(plugin).onSendReactionResult(eq(cid), any(), eq(enforceUnique), eq(currentUser), eq(result))
     }
@@ -457,7 +457,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         // then
         verifyNetworkError(result, errorCode)
         val inOrder = Mockito.inOrder(plugin)
-        inOrder.verify(plugin).onSendReactionPrecondition(currentUser, reaction)
+        inOrder.verify(plugin).onSendReactionPrecondition(cid, currentUser, reaction)
         inOrder.verify(plugin).onSendReactionRequest(eq(cid), any(), eq(enforceUnique), eq(currentUser))
         inOrder.verify(plugin).onSendReactionResult(eq(cid), any(), eq(enforceUnique), eq(currentUser), eq(result))
     }

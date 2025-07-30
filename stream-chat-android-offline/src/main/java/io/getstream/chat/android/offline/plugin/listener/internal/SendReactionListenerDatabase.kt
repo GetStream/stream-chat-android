@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.addMyReaction
 import io.getstream.chat.android.client.extensions.internal.enrichWithDataBeforeSending
 import io.getstream.chat.android.client.extensions.internal.updateSyncStatus
@@ -38,12 +39,14 @@ import java.util.Date
  * @param reactionsRepository [ReactionRepository] to cache intermediate data and final result related to reactions.
  * @param messageRepository [MessageRepository] to cache intermediate data and final result related to messages.
  * @param userRepository [UserRepository] to cache intermediate data and final result related to User.
+ * @param ignoredChannelTypes Set of channel types for which the messages are not stored in the DB.
  */
 internal class SendReactionListenerDatabase(
     private val clientState: ClientState,
     private val reactionsRepository: ReactionRepository,
     private val messageRepository: MessageRepository,
     private val userRepository: UserRepository,
+    private val ignoredChannelTypes: Set<String>,
 ) : SendReactionListener {
 
     /**
@@ -119,6 +122,11 @@ internal class SendReactionListenerDatabase(
      * @param currentUser The currently logged in user.
      * @param reaction The [Reaction] to send.
      */
+    @Deprecated(
+        "This method will be removed in the future. " +
+            "Use SendReactionListener#onSendReactionPrecondition(cid, currentUser, reaction) instead." +
+            "For backwards compatibility, this method is still called internally by the new, non-deprecated method.",
+    )
     override suspend fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit> {
         return when {
             currentUser == null -> {
@@ -127,6 +135,30 @@ internal class SendReactionListenerDatabase(
             reaction.messageId.isBlank() || reaction.type.isBlank() -> {
                 Result.Failure(Error.GenericError("Reaction::messageId and Reaction::type cannot be empty!"))
             }
+            messageRepository.selectMessage(reaction.messageId) == null -> {
+                Result.Failure(Error.GenericError("Reaction::messageId cannot be found in DB!"))
+            }
+            else -> {
+                Result.Success(Unit)
+            }
+        }
+    }
+
+    override suspend fun onSendReactionPrecondition(
+        cid: String?,
+        currentUser: User?,
+        reaction: Reaction,
+    ): Result<Unit> {
+        val channelType = cid?.cidToTypeAndId()?.first
+        return when {
+            currentUser == null -> {
+                Result.Failure(Error.GenericError(message = "Current user is null!"))
+            }
+            reaction.messageId.isBlank() || reaction.type.isBlank() -> {
+                Result.Failure(Error.GenericError("Reaction::messageId and Reaction::type cannot be empty!"))
+            }
+            // Don't look in the DB for messages in channels that don't store messages (ex. "livestream" - by default)
+            channelType == null || channelType in ignoredChannelTypes -> Result.Success(Unit)
             messageRepository.selectMessage(reaction.messageId) == null -> {
                 Result.Failure(Error.GenericError("Reaction::messageId cannot be found in DB!"))
             }
