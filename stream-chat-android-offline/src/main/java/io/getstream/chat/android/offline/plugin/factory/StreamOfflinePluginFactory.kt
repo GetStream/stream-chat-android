@@ -141,6 +141,7 @@ public class StreamOfflinePluginFactory @JvmOverloads constructor(
             messageRepository = repositoryFacade,
             reactionsRepository = repositoryFacade,
             userRepository = repositoryFacade,
+            ignoredChannelTypes = ignoredChannelTypes,
         )
 
         val deleteMessageListener: DeleteMessageListener = DeleteMessageListenerDatabase(

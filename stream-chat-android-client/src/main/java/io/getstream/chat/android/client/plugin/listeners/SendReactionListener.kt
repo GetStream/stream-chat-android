@@ -68,5 +68,21 @@ public interface SendReactionListener {
      *
      * @return [Result.Success] if the precondition is fulfilled, [Result.Failure] otherwise.
      */
+    @Deprecated(
+        "This method will be removed in the future. " +
+            "Use SendReactionListener#onSendReactionPrecondition(cid, currentUser, reaction) instead." +
+            "For backwards compatibility, this method is still called internally by the new, non-deprecated method.",
+    )
     public suspend fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit>
+
+    /**
+     * Runs precondition check for [ChatClient.sendReaction].
+     * The request will be run if the method returns [Result.Success] and won't be made if it returns [Result.Failure].
+     *
+     * @param cid The full channel id, i.e. "messaging:123".
+     * @param currentUser The currently logged in user.
+     * @param reaction The [Reaction] to send.
+     */
+    public suspend fun onSendReactionPrecondition(cid: String?, currentUser: User?, reaction: Reaction): Result<Unit> =
+        onSendReactionPrecondition(currentUser, reaction)
 }
