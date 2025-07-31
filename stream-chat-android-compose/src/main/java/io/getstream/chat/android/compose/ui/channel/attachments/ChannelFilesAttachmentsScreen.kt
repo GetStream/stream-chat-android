@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.channel.attachments
 
-import android.text.format.DateUtils
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentDescription
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentImage
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -45,7 +43,6 @@ import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewAction
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
-import java.util.Date
 
 /**
  * Displays the channel files attachments screen.
@@ -53,8 +50,7 @@ import java.util.Date
  * @param viewModelFactory The factory to create the [ChannelAttachmentsViewModel].
  * @param modifier The modifier for styling.
  * @param currentUser The currently logged in user.
- * @param groupKeySelector The function to select the group key for each item in the list.
- * This is used to group items in the list.
+ * @param groupKeySelector The function to select the group key for each item and group them in the list.
  * @param onNavigationIconClick The callback to be invoked when the navigation icon is clicked.
  */
 @Composable
@@ -62,7 +58,8 @@ public fun ChannelFilesAttachmentsScreen(
     viewModelFactory: ChannelAttachmentsViewModelFactory,
     modifier: Modifier = Modifier,
     currentUser: User? = ChatClient.instance().getCurrentUser(),
-    groupKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String = GroupKeySelector,
+    groupKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String =
+        ChannelAttachmentsDefaults.GroupKeySelector,
     onNavigationIconClick: () -> Unit = {},
 ) {
     val viewModel = viewModel<ChannelAttachmentsViewModel>(factory = viewModelFactory)
@@ -83,7 +80,8 @@ private fun ChannelFilesAttachmentsContent(
     viewState: ChannelAttachmentsViewState,
     modifier: Modifier = Modifier,
     currentUser: User? = ChatClient.instance().getCurrentUser(),
-    groupKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String = GroupKeySelector,
+    groupKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String =
+        ChannelAttachmentsDefaults.GroupKeySelector,
     onNavigationIconClick: () -> Unit = {},
     onViewAction: (action: ChannelAttachmentsViewAction) -> Unit = {},
 ) {
@@ -109,19 +107,6 @@ private fun ChannelFilesAttachmentsContent(
             onViewAction = onViewAction,
         )
     }
-}
-
-/**
- * The default group key selector for the channel files attachments list.
- * It groups items by the relative time span of their creation date, skipping the day of the month.
- */
-private val GroupKeySelector = { item: ChannelAttachmentsViewState.Content.Item ->
-    DateUtils.getRelativeTimeSpanString(
-        item.message.getCreatedAtOrThrow().time,
-        Date().time,
-        DateUtils.DAY_IN_MILLIS,
-        DateUtils.FORMAT_NO_MONTH_DAY,
-    ).toString()
 }
 
 @Composable

@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.channel.attachments
 
-import android.text.format.DateUtils
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
@@ -40,7 +39,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.getstream.chat.android.client.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
@@ -53,15 +51,13 @@ import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewAction
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
-import java.util.Date
 
 /**
  * Displays the channel media attachments screen.
  *
  * @param viewModelFactory The factory to create the [ChannelAttachmentsViewModel].
  * @param modifier The modifier for styling.
- * @param groupKeySelector The function to select the group key for each item in the list.
- * This is used to group items in the list.
+ * @param groupKeySelector The function to select the group key for each media item and group them in the grid.
  * @param gridColumnCount The number of columns in the grid. If null, it will adapt based on the screen size.
  * @param onNavigationIconClick The callback to be invoked when the navigation icon is clicked.
  */
@@ -69,7 +65,8 @@ import java.util.Date
 public fun ChannelMediaAttachmentsScreen(
     viewModelFactory: ChannelAttachmentsViewModelFactory,
     modifier: Modifier = Modifier,
-    groupKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String = GroupKeySelector,
+    groupKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String =
+        ChannelAttachmentsDefaults.GroupKeySelector,
     gridColumnCount: Int? = null,
     onNavigationIconClick: () -> Unit = {},
 ) {
@@ -90,7 +87,8 @@ public fun ChannelMediaAttachmentsScreen(
 private fun ChannelMediaAttachmentsContent(
     modifier: Modifier,
     viewState: ChannelAttachmentsViewState,
-    groupKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String = GroupKeySelector,
+    groupKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String =
+        ChannelAttachmentsDefaults.GroupKeySelector,
     gridColumnCount: Int? = null,
     onNavigationIconClick: () -> Unit = {},
     onViewAction: (action: ChannelAttachmentsViewAction) -> Unit = {},
@@ -117,19 +115,6 @@ private fun ChannelMediaAttachmentsContent(
             onViewAction = onViewAction,
         )
     }
-}
-
-/**
- * The default group key selector for the channel media attachments list.
- * It groups items by the relative time span of their creation date, skipping the day of the month.
- */
-private val GroupKeySelector = { item: ChannelAttachmentsViewState.Content.Item ->
-    DateUtils.getRelativeTimeSpanString(
-        item.message.getCreatedAtOrThrow().time,
-        Date().time,
-        DateUtils.DAY_IN_MILLIS,
-        DateUtils.FORMAT_NO_MONTH_DAY,
-    ).toString()
 }
 
 @Composable

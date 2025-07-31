@@ -41,6 +41,7 @@ import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Warning
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -3397,15 +3398,22 @@ public interface ChatComponentFactory {
      * This is typically used to display the title of a group of attachments.
      */
     @Composable
-    public fun LazyGridItemScope.ChannelMediaAttachmentsGroupItem(
+    public fun BoxScope.ChannelMediaAttachmentsGroupItem(
         modifier: Modifier,
         label: String,
     ) {
         Text(
-            modifier = modifier.padding(16.dp),
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(16.dp)
+                .background(
+                    color = ChatTheme.colors.textHighEmphasis.copy(alpha = 0.6f),
+                    shape = ButtonDefaults.outlinedShape,
+                )
+                .padding(horizontal = 12.dp, vertical = 8.dp),
             text = label,
             style = ChatTheme.typography.bodyBold,
-            color = ChatTheme.colors.textHighEmphasis,
+            color = ChatTheme.colors.textHighEmphasisInverse,
         )
     }
 

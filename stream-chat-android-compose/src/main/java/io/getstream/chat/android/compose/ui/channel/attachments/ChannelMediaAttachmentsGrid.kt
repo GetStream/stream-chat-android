@@ -25,8 +25,11 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.window.core.layout.WindowWidthSizeClass
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
 import io.getstream.chat.android.compose.ui.components.ContentBox
@@ -63,10 +66,10 @@ internal fun ChannelMediaAttachmentsGrid(
         }
     },
     groupKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String,
-    groupItem: @Composable LazyGridItemScope.(label: String) -> Unit = { label ->
+    groupItem: @Composable BoxScope.(label: String) -> Unit = { label ->
         with(ChatTheme.componentFactory) {
             ChannelMediaAttachmentsGroupItem(
-                modifier = Modifier,
+                modifier = Modifier.align(Alignment.TopCenter),
                 label = label,
             )
         }
@@ -99,7 +102,7 @@ internal fun ChannelMediaAttachmentsGrid(
     val isLoading = viewState is ChannelAttachmentsViewState.Loading
     val adaptiveInfo = currentWindowAdaptiveInfo()
     val gridColumnCount = gridColumnCount ?: run {
-        ColumnCounts.getValue(adaptiveInfo.windowSizeClass.windowWidthSizeClass)
+        ChannelAttachmentsDefaults.GridColumnCounts.getValue(adaptiveInfo.windowSizeClass.windowWidthSizeClass)
     }
     ContentBox(
         modifier = modifier,
@@ -128,16 +131,16 @@ internal fun ChannelMediaAttachmentsGrid(
                 item { loadingItem() }
             }
         }
+
+        val groupKey by remember(content.items) {
+            derivedStateOf { groupKeySelector(content.items[gridState.firstVisibleItemIndex]) }
+        }
+
+        groupItem(groupKey)
+
         LoadMoreHandler(
             lazyGridState = gridState,
             loadMore = { onViewAction(ChannelAttachmentsViewAction.LoadMoreRequested) },
         )
     }
 }
-
-@Suppress("MagicNumber")
-private val ColumnCounts = mapOf(
-    WindowWidthSizeClass.COMPACT to 3,
-    WindowWidthSizeClass.MEDIUM to 4,
-    WindowWidthSizeClass.EXPANDED to 6,
-)
