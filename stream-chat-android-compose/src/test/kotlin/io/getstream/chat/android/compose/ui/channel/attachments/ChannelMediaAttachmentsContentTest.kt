@@ -82,4 +82,18 @@ internal class ChannelMediaAttachmentsContentTest : SnapshotTest {
             ChannelMediaAttachmentsError()
         }
     }
+
+    @Test
+    fun `loading more`() {
+        snapshot {
+            ChannelMediaAttachmentsLoadingMore()
+        }
+    }
+
+    @Test
+    fun `loading more in dark mode`() {
+        snapshot(isInDarkMode = true) {
+            ChannelMediaAttachmentsLoadingMore()
+        }
+    }
 }

@@ -242,3 +242,27 @@ internal fun ChannelMediaAttachmentsError() {
         ),
     )
 }
+
+@Preview
+@Composable
+private fun ChannelMediaAttachmentsLoadingMorePreview() {
+    ChatTheme {
+        ChannelMediaAttachmentsLoadingMore()
+    }
+}
+
+@Composable
+internal fun ChannelMediaAttachmentsLoadingMore() {
+    ChannelMediaAttachmentsContent(
+        modifier = Modifier.fillMaxSize(),
+        viewState = ChannelAttachmentsViewState.Content(
+            items = PreviewMessageData.messageWithUserAndAttachment.attachments.map { attachment ->
+                ChannelAttachmentsViewState.Content.Item(
+                    message = PreviewMessageData.message1,
+                    attachment = attachment,
+                )
+            },
+            isLoadingMore = true,
+        ),
+    )
+}
