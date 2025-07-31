@@ -3452,6 +3452,7 @@ public interface ChatComponentFactory {
             modifier = modifier.aspectRatio(1f),
             contentAlignment = Alignment.Center,
         ) {
+            @Suppress("MagicNumber")
             CircularProgressIndicator(
                 modifier = modifier.fillMaxSize(.25f),
                 strokeWidth = 2.dp,
