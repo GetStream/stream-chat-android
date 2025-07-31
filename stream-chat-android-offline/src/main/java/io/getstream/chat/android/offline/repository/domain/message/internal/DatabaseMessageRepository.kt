@@ -148,7 +148,6 @@ internal class DatabaseMessageRepository(
      * Inserts a messages.
      *
      * @param message [Message]
-     * @param cache Boolean.
      */
     override suspend fun insertMessage(message: Message) {
         insertMessages(listOf(message))

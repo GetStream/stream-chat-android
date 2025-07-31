@@ -211,7 +211,7 @@ public class StateRegistry constructor(
 
     private fun createMessageLimitFilter(limit: Int): (Collection<Message>) -> Collection<Message> = {
         when (it.size > limit) {
-            true -> it.sortedBy { it.createdAt }.takeLast(limit)
+            true -> it.sortedBy { it.createdAt ?: it.createdLocallyAt }.takeLast(limit)
             false -> it
         }
     }
