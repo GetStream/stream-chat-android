@@ -63,7 +63,7 @@ internal class DeleteMessageListenerState(
             } else {
                 Result.Success(Unit)
             }
-        } ?: Result.Success(Unit)
+        } ?: Result.Failure(Error.GenericError(message = "No message found with id: $messageId"))
     }
 
     /**
