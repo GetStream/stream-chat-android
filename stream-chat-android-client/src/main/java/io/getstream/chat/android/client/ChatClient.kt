@@ -1144,7 +1144,7 @@ internal constructor(
                 }
             }
             .onReactionError(errorHandlers, reaction, enforceUnique, currentUser!!)
-            .precondition(plugins) { onSendReactionPrecondition(currentUser, reaction) }
+            .precondition(plugins) { onSendReactionPrecondition(cid, currentUser, reaction) }
             .share(userScope) { SendReactionIdentifier(reaction, enforceUnique, cid) }
     }
     //endregion

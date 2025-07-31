@@ -119,7 +119,41 @@ internal class SendReactionListenerState(
      * @param currentUser The currently logged in user.
      * @param reaction The [Reaction] to send.
      */
+    @Deprecated(
+        "This method will be removed in the future. " +
+            "Use SendReactionListener#onSendReactionPrecondition(cid, currentUser, reaction) instead." +
+            "For backwards compatibility, this method is still called internally by the new, non-deprecated method.",
+    )
     override suspend fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit> {
+        return when {
+            currentUser == null -> {
+                Result.Failure(Error.GenericError(message = "Current user is null!"))
+            }
+            reaction.messageId.isBlank() || reaction.type.isBlank() -> {
+                Result.Failure(
+                    Error.GenericError(
+                        message = "Reaction::messageId and Reaction::type cannot be empty!",
+                    ),
+                )
+            }
+            else -> {
+                Result.Success(Unit)
+            }
+        }
+    }
+
+    /**
+     * Checks if current user is set and reaction contains required data.
+     *
+     * @param cid The full channel id, i.e. "messaging:123".
+     * @param currentUser The currently logged in user.
+     * @param reaction The [Reaction] to send.
+     */
+    override suspend fun onSendReactionPrecondition(
+        cid: String?,
+        currentUser: User?,
+        reaction: Reaction,
+    ): Result<Unit> {
         return when {
             currentUser == null -> {
                 Result.Failure(Error.GenericError(message = "Current user is null!"))
