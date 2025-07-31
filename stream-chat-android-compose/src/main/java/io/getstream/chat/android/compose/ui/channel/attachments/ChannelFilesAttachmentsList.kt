@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.channel.attachments
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
@@ -35,6 +36,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewAction
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun ChannelFilesAttachmentsList(
     viewState: ChannelAttachmentsViewState,
@@ -64,9 +66,10 @@ internal fun ChannelFilesAttachmentsList(
         }
     },
     groupKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String,
-    groupItem: @Composable LazyItemScope.(label: String) -> Unit = { label ->
+    stickHeader: Boolean = true,
+    headerItem: @Composable LazyItemScope.(label: String) -> Unit = { label ->
         with(ChatTheme.componentFactory) {
-            ChannelFilesAttachmentsGroupItem(
+            ChannelFilesAttachmentsHeaderItem(
                 modifier = Modifier,
                 label = label,
             )
@@ -125,8 +128,14 @@ internal fun ChannelFilesAttachmentsList(
             state = listState,
         ) {
             groupedItems.forEach { (group, items) ->
-                item(key = group) {
-                    groupItem(group)
+                if (stickHeader) {
+                    stickyHeader(key = group) {
+                        headerItem(group)
+                    }
+                } else {
+                    item(key = group) {
+                        headerItem(group)
+                    }
                 }
                 itemsIndexed(
                     items = items,
