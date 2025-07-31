@@ -23,10 +23,8 @@ import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.window.core.layout.WindowWidthSizeClass
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
@@ -37,13 +35,11 @@ import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAt
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
 
 @Composable
-internal fun ChannelMediaAttachmentsList(
+internal fun ChannelMediaAttachmentsGrid(
     viewState: ChannelAttachmentsViewState,
     gridState: LazyGridState,
     modifier: Modifier = Modifier,
-    gridColumnCount: (adaptiveInfo: WindowAdaptiveInfo) -> Int = { adaptiveInfo ->
-        ColumnCounts.getValue(adaptiveInfo.windowSizeClass.windowWidthSizeClass)
-    },
+    gridColumnCount: Int? = null,
     onViewAction: (action: ChannelAttachmentsViewAction) -> Unit = {},
     loadingIndicator: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
@@ -102,7 +98,9 @@ internal fun ChannelMediaAttachmentsList(
 ) {
     val isLoading = viewState is ChannelAttachmentsViewState.Loading
     val adaptiveInfo = currentWindowAdaptiveInfo()
-    val gridColumnCount = remember(adaptiveInfo) { gridColumnCount(adaptiveInfo) }
+    val gridColumnCount = gridColumnCount ?: run {
+        ColumnCounts.getValue(adaptiveInfo.windowSizeClass.windowWidthSizeClass)
+    }
     ContentBox(
         modifier = modifier,
         isLoading = isLoading,

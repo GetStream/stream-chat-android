@@ -62,6 +62,7 @@ import java.util.Date
  * @param modifier The modifier for styling.
  * @param groupKeySelector The function to select the group key for each item in the list.
  * This is used to group items in the list.
+ * @param gridColumnCount The number of columns in the grid. If null, it will adapt based on the screen size.
  * @param onNavigationIconClick The callback to be invoked when the navigation icon is clicked.
  */
 @Composable
@@ -69,6 +70,7 @@ public fun ChannelMediaAttachmentsScreen(
     viewModelFactory: ChannelAttachmentsViewModelFactory,
     modifier: Modifier = Modifier,
     groupKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String = GroupKeySelector,
+    gridColumnCount: Int? = null,
     onNavigationIconClick: () -> Unit = {},
 ) {
     val viewModel = viewModel<ChannelAttachmentsViewModel>(factory = viewModelFactory)
@@ -78,6 +80,7 @@ public fun ChannelMediaAttachmentsScreen(
         modifier = modifier,
         viewState = viewState,
         groupKeySelector = groupKeySelector,
+        gridColumnCount = gridColumnCount,
         onNavigationIconClick = onNavigationIconClick,
         onViewAction = viewModel::onViewAction,
     )
@@ -88,6 +91,7 @@ private fun ChannelMediaAttachmentsContent(
     modifier: Modifier,
     viewState: ChannelAttachmentsViewState,
     groupKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String = GroupKeySelector,
+    gridColumnCount: Int? = null,
     onNavigationIconClick: () -> Unit = {},
     onViewAction: (action: ChannelAttachmentsViewAction) -> Unit = {},
 ) {
@@ -102,13 +106,14 @@ private fun ChannelMediaAttachmentsContent(
         },
         containerColor = ChatTheme.colors.appBackground,
     ) { padding ->
-        ChannelMediaAttachmentsList(
+        ChannelMediaAttachmentsGrid(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize(),
             viewState = viewState,
             gridState = gridState,
             groupKeySelector = groupKeySelector,
+            gridColumnCount = gridColumnCount,
             onViewAction = onViewAction,
         )
     }
