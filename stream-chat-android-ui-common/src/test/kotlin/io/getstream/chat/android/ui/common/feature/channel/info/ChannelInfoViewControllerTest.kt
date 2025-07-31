@@ -1281,6 +1281,30 @@ internal class ChannelInfoViewControllerTest {
             }
         }
     }
+
+    @Test
+    fun `filter options`() = runTest {
+        val channel = randomChannel(ownCapabilities = setOf(ChannelCapabilities.UPDATE_CHANNEL))
+        val fixture = Fixture()
+            .given(channel = channel)
+            .givenOptionFilter { false }
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            assertEquals(
+                ChannelInfoViewState.Content(
+                    owner = channel.createdBy,
+                    members = emptyMembers(),
+                    options = emptyList(),
+                ),
+                awaitItem(),
+            )
+        }
+
+        launch { fixture.verifyNoMoreInteractions() }
+    }
 }
 
 private class Fixture {
@@ -1297,6 +1321,7 @@ private class Fixture {
     private val channelClient: ChannelClient = mock()
     private val chatClient: ChatClient = mock()
     private val copyToClipboardHandler: CopyToClipboardHandler = mock()
+    private var optionFilter: (ChannelInfoViewState.Content.Option) -> Boolean = { true }
 
     fun given(
         currentUser: User? = null,
@@ -1400,6 +1425,10 @@ private class Fixture {
         }
     }
 
+    fun givenOptionFilter(filter: (ChannelInfoViewState.Content.Option) -> Boolean) = apply {
+        optionFilter = filter
+    }
+
     fun verifyNoMoreInteractions() = apply {
         verifyNoMoreInteractions(channelClient)
     }
@@ -1431,6 +1460,7 @@ private class Fixture {
     fun get(scope: CoroutineScope) = ChannelInfoViewController(
         cid = randomCID(),
         scope = scope,
+        optionFilter = { optionFilter(it) }, // No filtering for options in tests
         chatClient = chatClient,
         channelState = MutableStateFlow(channelState),
         channelClient = channelClient,
