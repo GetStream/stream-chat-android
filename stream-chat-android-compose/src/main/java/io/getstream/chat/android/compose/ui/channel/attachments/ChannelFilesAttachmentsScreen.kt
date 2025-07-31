@@ -51,6 +51,7 @@ import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAtta
  * @param modifier The modifier for styling.
  * @param currentUser The currently logged in user.
  * @param groupKeySelector The function to select the group key for each item and group them in the list.
+ * @param stickHeader Whether the header should stick to the top of the list when scrolling.
  * @param onNavigationIconClick The callback to be invoked when the navigation icon is clicked.
  */
 @Composable
@@ -60,6 +61,7 @@ public fun ChannelFilesAttachmentsScreen(
     currentUser: User? = ChatClient.instance().getCurrentUser(),
     groupKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String =
         ChannelAttachmentsDefaults.GroupKeySelector,
+    stickHeader: Boolean = true,
     onNavigationIconClick: () -> Unit = {},
 ) {
     val viewModel = viewModel<ChannelAttachmentsViewModel>(factory = viewModelFactory)
@@ -70,6 +72,7 @@ public fun ChannelFilesAttachmentsScreen(
         viewState = viewState,
         currentUser = currentUser,
         groupKeySelector = groupKeySelector,
+        stickHeader = stickHeader,
         onNavigationIconClick = onNavigationIconClick,
         onViewAction = viewModel::onViewAction,
     )
@@ -82,6 +85,7 @@ private fun ChannelFilesAttachmentsContent(
     currentUser: User? = ChatClient.instance().getCurrentUser(),
     groupKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String =
         ChannelAttachmentsDefaults.GroupKeySelector,
+    stickHeader: Boolean = true,
     onNavigationIconClick: () -> Unit = {},
     onViewAction: (action: ChannelAttachmentsViewAction) -> Unit = {},
 ) {
@@ -104,6 +108,7 @@ private fun ChannelFilesAttachmentsContent(
             listState = listState,
             currentUser = currentUser,
             groupKeySelector = groupKeySelector,
+            stickHeader = stickHeader,
             onViewAction = onViewAction,
         )
     }
