@@ -163,7 +163,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 SetupEdgeToEdge()
 
                 val message = mediaGalleryPreviewViewModel.message
-                if (message.isDeleted()) {
+                if (message.isDeleted() || message.attachments.isEmpty()) {
                     finish()
                     return@ChatTheme
                 }
