@@ -74,6 +74,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix media gallery screen not closed after all attachments are deleted from the message. [#5884](https://github.com/GetStream/stream-chat-android/pull/5884)
 
 ### ⬆️ Improved
 
