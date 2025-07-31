@@ -66,9 +66,9 @@ internal fun ChannelMediaAttachmentsGrid(
         }
     },
     groupKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String,
-    groupItem: @Composable BoxScope.(label: String) -> Unit = { label ->
+    floatingHeader: @Composable BoxScope.(label: String) -> Unit = { label ->
         with(ChatTheme.componentFactory) {
-            ChannelMediaAttachmentsGroupItem(
+            ChannelMediaAttachmentsFloatingHeader(
                 modifier = Modifier.align(Alignment.TopCenter),
                 label = label,
             )
@@ -136,7 +136,7 @@ internal fun ChannelMediaAttachmentsGrid(
             derivedStateOf { groupKeySelector(content.items[gridState.firstVisibleItemIndex]) }
         }
 
-        groupItem(groupKey)
+        floatingHeader(groupKey)
 
         LoadMoreHandler(
             lazyGridState = gridState,

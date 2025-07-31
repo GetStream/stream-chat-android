@@ -3262,20 +3262,22 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * Factory method for creating the channel files attachments group item.
+     * Factory method for creating the channel files attachments header item.
      * This is typically used to display the title of a group of attachments.
      *
-     * @param modifier The modifier for styling the group item.
-     * @param label The label for the group item.
-     * This is typically used to display the title of a group of attachments.
+     * @param modifier The modifier for styling the header item.
+     * @param label The label for the header item.
      */
     @Composable
-    public fun LazyItemScope.ChannelFilesAttachmentsGroupItem(
+    public fun LazyItemScope.ChannelFilesAttachmentsHeaderItem(
         modifier: Modifier,
         label: String,
     ) {
         Text(
-            modifier = modifier.padding(16.dp),
+            modifier = modifier
+                .fillMaxWidth()
+                .background(ChatTheme.colors.borders.copy(alpha = 0.8f))
+                .padding(horizontal = 16.dp, vertical = 8.dp),
             text = label,
             style = ChatTheme.typography.bodyBold,
             color = ChatTheme.colors.textHighEmphasis,
@@ -3390,15 +3392,14 @@ public interface ChatComponentFactory {
     }
 
     /**
-     * Factory method for creating the channel media attachments group item.
+     * Factory method for creating the channel media attachments floating header.
      * This is typically used to display the title of a group of attachments.
      *
-     * @param modifier The modifier for styling the group item.
-     * @param label The label for the group item.
-     * This is typically used to display the title of a group of attachments.
+     * @param modifier The modifier for styling the floating header.
+     * @param label The label for the floating item.
      */
     @Composable
-    public fun BoxScope.ChannelMediaAttachmentsGroupItem(
+    public fun BoxScope.ChannelMediaAttachmentsFloatingHeader(
         modifier: Modifier,
         label: String,
     ) {
