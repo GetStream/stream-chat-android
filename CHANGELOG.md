@@ -75,6 +75,7 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fix media gallery screen not closed after all attachments are deleted from the message. [#5884](https://github.com/GetStream/stream-chat-android/pull/5884)
+- Fix the poll creation button to disable when multiple answers has a wrong input. [#5885](https://github.com/GetStream/stream-chat-android/pull/5885)
 
 ### ⬆️ Improved
 
