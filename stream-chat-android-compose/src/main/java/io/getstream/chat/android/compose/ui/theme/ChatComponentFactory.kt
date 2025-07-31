@@ -43,6 +43,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Warning
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -3447,10 +3448,15 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun LazyGridItemScope.ChannelMediaAttachmentsLoadingItem(modifier: Modifier) {
-        LoadingFooter(
-            modifier = modifier
-                .fillMaxSize()
-                .aspectRatio(1f),
-        )
+        Box(
+            modifier = modifier.aspectRatio(1f),
+            contentAlignment = Alignment.Center,
+        ) {
+            CircularProgressIndicator(
+                modifier = modifier.fillMaxSize(.25f),
+                strokeWidth = 2.dp,
+                color = ChatTheme.colors.primaryAccent,
+            )
+        }
     }
 }

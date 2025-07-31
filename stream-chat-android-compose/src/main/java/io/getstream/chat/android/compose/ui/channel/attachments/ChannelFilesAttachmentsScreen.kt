@@ -219,3 +219,28 @@ internal fun ChannelFilesAttachmentsError() {
         ),
     )
 }
+
+@Preview
+@Composable
+private fun ChannelFilesAttachmentsLoadingMorePreview() {
+    ChatTheme {
+        ChannelFilesAttachmentsLoadingMore()
+    }
+}
+
+@Composable
+internal fun ChannelFilesAttachmentsLoadingMore() {
+    ChannelFilesAttachmentsContent(
+        modifier = Modifier.fillMaxSize(),
+        currentUser = PreviewUserData.user1,
+        viewState = ChannelAttachmentsViewState.Content(
+            items = PreviewMessageData.messageWithUserAndAttachment.attachments.map { attachment ->
+                ChannelAttachmentsViewState.Content.Item(
+                    message = PreviewMessageData.message1,
+                    attachment = attachment,
+                )
+            },
+            isLoadingMore = true,
+        ),
+    )
+}
