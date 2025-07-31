@@ -581,6 +581,7 @@ class ChatsActivity : ComponentActivity() {
         )
         ChannelMediaAttachmentsScreen(
             viewModelFactory = viewModelFactory,
+            gridColumnCount = if (AdaptiveLayoutInfo.singlePaneWindow()) null else 4,
             onNavigationIconClick = onNavigationIconClick,
         )
         LaunchedEffect(viewModel) {
