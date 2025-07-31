@@ -125,6 +125,7 @@ public fun PollSwitchList(
                             end = itemInnerPadding.calculateEndPadding(layoutDirection = layoutDirection),
                         ),
                 ) {
+                    val context = LocalContext.current
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
@@ -163,7 +164,14 @@ public fun PollSwitchList(
                             onCheckedChange = { checked ->
                                 switchItemList[index] = item.copy(
                                     enabled = checked,
-                                    pollOptionError = null,
+                                    // Validate the poll switch input even on checked state change
+                                    pollOptionError = item.pollSwitchInput?.run {
+                                        if (checked) {
+                                            errorOrNull(context, value.toString())
+                                        } else {
+                                            null
+                                        }
+                                    },
                                 )
                                 onSwitchesChanged(switchItemList)
                             },
@@ -172,7 +180,6 @@ public fun PollSwitchList(
 
                     if (item.pollSwitchInput != null && item.enabled) {
                         val switchInput = item.pollSwitchInput
-                        val context = LocalContext.current
                         PollOptionInput(
                             modifier = Modifier
                                 .fillMaxWidth()
