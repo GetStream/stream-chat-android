@@ -62,16 +62,16 @@ sealed class ChatInfoItem {
 
         data object SharedMedia : Option() {
             override val iconResId: Int
-                get() = R.drawable.ic_media
+                get() = R.drawable.stream_ic_media
             override val textResId: Int
-                get() = R.string.chat_info_option_media
+                get() = R.string.stream_ui_channel_info_option_media_attachments
         }
 
         data object SharedFiles : Option() {
             override val iconResId: Int
-                get() = R.drawable.ic_files
+                get() = R.drawable.stream_ic_files
             override val textResId: Int
-                get() = R.string.chat_info_option_files
+                get() = R.string.stream_ui_channel_info_option_files_attachments
         }
 
         data object SharedGroups : Option() {

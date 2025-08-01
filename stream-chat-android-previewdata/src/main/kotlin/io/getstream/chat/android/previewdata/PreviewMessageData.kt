@@ -117,6 +117,7 @@ public object PreviewMessageData {
         user = User(id = "test-user", name = "Test User"),
         attachments = listOf(
             Attachment(
+                name = "image1.jpg",
                 fileSize = 2000000,
                 type = "image",
                 mimeType = "image/jpeg",
@@ -124,6 +125,7 @@ public object PreviewMessageData {
                 thumbUrl = "https://example.com/thumb1.jpg",
             ),
             Attachment(
+                name = "video1.mp4",
                 fileSize = 2000000,
                 type = "video",
                 mimeType = "video/mp4",
