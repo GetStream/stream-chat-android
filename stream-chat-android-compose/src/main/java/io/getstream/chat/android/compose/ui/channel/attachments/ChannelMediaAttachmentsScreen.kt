@@ -81,8 +81,8 @@ public fun ChannelMediaAttachmentsScreen(
         groupKeySelector = groupKeySelector,
         gridColumnCount = gridColumnCount,
         onNavigationIconClick = onNavigationIconClick,
-        onVideoPlaybackError = onVideoPlaybackError,
         onLoadMoreRequested = { viewModel.onViewAction(ChannelAttachmentsViewAction.LoadMoreRequested) },
+        onVideoPlaybackError = onVideoPlaybackError,
     )
 }
 

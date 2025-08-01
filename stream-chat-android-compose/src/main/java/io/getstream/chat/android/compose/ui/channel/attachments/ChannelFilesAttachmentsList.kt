@@ -33,7 +33,6 @@ import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachment
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewAction
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -43,7 +42,7 @@ internal fun ChannelFilesAttachmentsList(
     listState: LazyListState,
     modifier: Modifier = Modifier,
     currentUser: User? = ChatClient.instance().getCurrentUser(),
-    onViewAction: (action: ChannelAttachmentsViewAction) -> Unit = {},
+    onLoadMoreRequested: () -> Unit = {},
     loadingIndicator: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelFilesAttachmentsLoadingIndicator(
@@ -151,7 +150,7 @@ internal fun ChannelFilesAttachmentsList(
         }
         LoadMoreHandler(
             lazyListState = listState,
-            loadMore = { onViewAction(ChannelAttachmentsViewAction.LoadMoreRequested) },
+            loadMore = onLoadMoreRequested,
         )
     }
 }
