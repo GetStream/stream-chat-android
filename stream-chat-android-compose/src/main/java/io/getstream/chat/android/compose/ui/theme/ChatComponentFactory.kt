@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -3457,6 +3458,59 @@ public interface ChatComponentFactory {
                 modifier = modifier.fillMaxSize(.25f),
                 strokeWidth = 2.dp,
                 color = ChatTheme.colors.primaryAccent,
+            )
+        }
+    }
+
+    /**
+     * Factory method for creating the top bar of the channel media attachments preview screen.
+     *
+     * @param title The title to display in the top bar.
+     * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
+     */
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    public fun ChannelMediaAttachmentsPreviewTopBar(
+        title: @Composable () -> Unit,
+        onNavigationIconClick: () -> Unit,
+    ) {
+        CenterAlignedTopAppBar(
+            title = title,
+            navigationIcon = {
+                IconButton(onClick = onNavigationIconClick) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.stream_compose_ic_close),
+                        contentDescription = stringResource(id = R.string.stream_compose_cancel),
+                        tint = ChatTheme.colors.textHighEmphasis,
+                    )
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = ChatTheme.colors.barsBackground,
+                titleContentColor = ChatTheme.colors.textHighEmphasis,
+            ),
+        )
+    }
+
+    /**
+     * Factory method for creating the bottom bar of the channel media attachments preview screen.
+     *
+     * @param text The text to display in the bottom bar.
+     */
+    @Composable
+    public fun ChannelMediaAttachmentsPreviewBottomBar(text: String) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(ChatTheme.colors.barsBackground)
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Text(
+                text = text,
+                style = ChatTheme.typography.title3Bold,
+                maxLines = 1,
             )
         }
     }

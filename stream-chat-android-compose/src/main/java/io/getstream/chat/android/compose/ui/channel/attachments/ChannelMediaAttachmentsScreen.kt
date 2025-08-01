@@ -60,6 +60,7 @@ import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
  * @param groupKeySelector The function to select the group key for each media item and group them in the grid.
  * @param gridColumnCount The number of columns in the grid. If null, it will adapt based on the screen size.
  * @param onNavigationIconClick The callback to be invoked when the navigation icon is clicked.
+ * @param onVideoPlaybackError The callback to be invoked when there is an error during video playback.
  */
 @Composable
 public fun ChannelMediaAttachmentsScreen(
@@ -69,6 +70,7 @@ public fun ChannelMediaAttachmentsScreen(
         ChannelAttachmentsDefaults.GroupKeySelector,
     gridColumnCount: Int? = null,
     onNavigationIconClick: () -> Unit = {},
+    onVideoPlaybackError: () -> Unit = {},
 ) {
     val viewModel = viewModel<ChannelAttachmentsViewModel>(factory = viewModelFactory)
     val viewState by viewModel.state.collectAsStateWithLifecycle()
@@ -79,7 +81,8 @@ public fun ChannelMediaAttachmentsScreen(
         groupKeySelector = groupKeySelector,
         gridColumnCount = gridColumnCount,
         onNavigationIconClick = onNavigationIconClick,
-        onViewAction = viewModel::onViewAction,
+        onVideoPlaybackError = onVideoPlaybackError,
+        onLoadMoreRequested = { viewModel.onViewAction(ChannelAttachmentsViewAction.LoadMoreRequested) },
     )
 }
 
@@ -91,7 +94,8 @@ private fun ChannelMediaAttachmentsContent(
         ChannelAttachmentsDefaults.GroupKeySelector,
     gridColumnCount: Int? = null,
     onNavigationIconClick: () -> Unit = {},
-    onViewAction: (action: ChannelAttachmentsViewAction) -> Unit = {},
+    onLoadMoreRequested: () -> Unit = {},
+    onVideoPlaybackError: () -> Unit = {},
 ) {
     val gridState = rememberLazyGridState()
     Scaffold(
@@ -112,7 +116,8 @@ private fun ChannelMediaAttachmentsContent(
             gridState = gridState,
             groupKeySelector = groupKeySelector,
             gridColumnCount = gridColumnCount,
-            onViewAction = onViewAction,
+            onLoadMoreRequested = onLoadMoreRequested,
+            onVideoPlaybackError = onVideoPlaybackError,
         )
     }
 }

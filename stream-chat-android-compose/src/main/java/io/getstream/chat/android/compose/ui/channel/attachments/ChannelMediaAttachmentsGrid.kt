@@ -23,27 +23,34 @@ import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
-import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewAction
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
 
+@Suppress("LongMethod")
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ChannelMediaAttachmentsGrid(
     viewState: ChannelAttachmentsViewState,
     gridState: LazyGridState,
     modifier: Modifier = Modifier,
     gridColumnCount: Int? = null,
-    onViewAction: (action: ChannelAttachmentsViewAction) -> Unit = {},
+    onLoadMoreRequested: () -> Unit = {},
+    onVideoPlaybackError: () -> Unit = {},
     loadingIndicator: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelMediaAttachmentsLoadingIndicator(
@@ -74,23 +81,20 @@ internal fun ChannelMediaAttachmentsGrid(
             )
         }
     },
-    itemContent: @Composable LazyGridItemScope.(index: Int, item: ChannelAttachmentsViewState.Content.Item) -> Unit =
-        { index, item ->
-            val previewHandlers = ChatTheme.attachmentPreviewHandlers
-            with(ChatTheme.componentFactory) {
-                ChannelMediaAttachmentsItem(
-                    modifier = Modifier,
-                    index = index,
-                    item = item,
-                    onClick = {
-                        onFileAttachmentContentItemClick(
-                            previewHandlers = previewHandlers,
-                            attachment = item.attachment,
-                        )
-                    },
-                )
-            }
-        },
+    itemContent: @Composable LazyGridItemScope.(
+        index: Int,
+        item: ChannelAttachmentsViewState.Content.Item,
+        onClick: () -> Unit,
+    ) -> Unit = { index, item, onClick ->
+        with(ChatTheme.componentFactory) {
+            ChannelMediaAttachmentsItem(
+                modifier = Modifier,
+                index = index,
+                item = item,
+                onClick = onClick,
+            )
+        }
+    },
     loadingItem: @Composable LazyGridItemScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelMediaAttachmentsLoadingItem(
@@ -104,6 +108,7 @@ internal fun ChannelMediaAttachmentsGrid(
     val gridColumnCount = gridColumnCount ?: run {
         ChannelAttachmentsDefaults.GridColumnCounts.getValue(adaptiveInfo.windowSizeClass.windowWidthSizeClass)
     }
+    var previewItem by remember { mutableStateOf<ChannelAttachmentsViewState.Content.Item?>(null) }
     ContentBox(
         modifier = modifier,
         isLoading = isLoading,
@@ -125,7 +130,9 @@ internal fun ChannelMediaAttachmentsGrid(
                 items = content.items,
                 key = { _, item -> item.id },
             ) { index, item ->
-                itemContent(index, item)
+                itemContent(index, item) {
+                    previewItem = item
+                }
             }
             if (content.isLoadingMore) {
                 item { loadingItem() }
@@ -140,7 +147,25 @@ internal fun ChannelMediaAttachmentsGrid(
 
         LoadMoreHandler(
             lazyGridState = gridState,
-            loadMore = { onViewAction(ChannelAttachmentsViewAction.LoadMoreRequested) },
+            loadMore = onLoadMoreRequested,
         )
+
+        previewItem?.let { item ->
+            val items = content.items
+            ModalBottomSheet(
+                onDismissRequest = { previewItem = null },
+                sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+                shape = RectangleShape,
+                dragHandle = {},
+                containerColor = ChatTheme.colors.barsBackground,
+            ) {
+                ChannelMediaAttachmentsPreview(
+                    items = items,
+                    initialItem = item,
+                    onNavigationIconClick = { previewItem = null },
+                    onVideoPlaybackError = onVideoPlaybackError,
+                )
+            }
+        }
     }
 }
