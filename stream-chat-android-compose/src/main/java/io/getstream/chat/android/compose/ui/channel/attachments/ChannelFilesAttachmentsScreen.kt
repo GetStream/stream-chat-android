@@ -74,7 +74,7 @@ public fun ChannelFilesAttachmentsScreen(
         groupKeySelector = groupKeySelector,
         stickHeader = stickHeader,
         onNavigationIconClick = onNavigationIconClick,
-        onViewAction = viewModel::onViewAction,
+        onLoadMoreRequested = { viewModel.onViewAction(ChannelAttachmentsViewAction.LoadMoreRequested) },
     )
 }
 
@@ -87,7 +87,7 @@ private fun ChannelFilesAttachmentsContent(
         ChannelAttachmentsDefaults.GroupKeySelector,
     stickHeader: Boolean = true,
     onNavigationIconClick: () -> Unit = {},
-    onViewAction: (action: ChannelAttachmentsViewAction) -> Unit = {},
+    onLoadMoreRequested: () -> Unit = {},
 ) {
     val listState = rememberLazyListState()
     Scaffold(
@@ -109,7 +109,7 @@ private fun ChannelFilesAttachmentsContent(
             currentUser = currentUser,
             groupKeySelector = groupKeySelector,
             stickHeader = stickHeader,
-            onViewAction = onViewAction,
+            onLoadMoreRequested = onLoadMoreRequested,
         )
     }
 }
