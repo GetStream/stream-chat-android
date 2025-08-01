@@ -209,13 +209,22 @@ public fun Messages(
         }
     }
 
+    // Loads more (older) messages when the user scrolls to the top of the list.
+    val isMessageStartReached by remember(endOfMessages) {
+        derivedStateOf {
+            !endOfMessages &&
+                lazyListState.firstVisibleItemIndex == messages.lastIndex &&
+                lazyListState.isScrollInProgress
+        }
+    }
     LoadMoreHandler(lazyListState = lazyListState) {
-        if (!endOfMessages) {
+        if (!isMessageStartReached) {
             onMessagesStartReached()
         }
     }
 
-    val isMessagesEndReached by remember {
+    // Loads more (newer) messages when the user scrolls to the bottom of the list.
+    val isMessagesEndReached by remember(startOfMessages) {
         derivedStateOf {
             !startOfMessages &&
                 lazyListState.firstVisibleItemIndex == 0 &&
