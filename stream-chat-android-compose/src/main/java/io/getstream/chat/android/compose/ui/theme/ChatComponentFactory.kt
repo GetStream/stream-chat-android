@@ -68,6 +68,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.client.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channels.list.ChannelOptionState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
@@ -3465,17 +3466,17 @@ public interface ChatComponentFactory {
     /**
      * Factory method for creating the top bar of the channel media attachments preview screen.
      *
-     * @param title The title to display in the top bar.
+     * @param item The item to display in the top bar.
      * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
      */
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     public fun ChannelMediaAttachmentsPreviewTopBar(
-        title: @Composable () -> Unit,
+        item: ChannelAttachmentsViewState.Content.Item,
         onNavigationIconClick: () -> Unit,
     ) {
         CenterAlignedTopAppBar(
-            title = title,
+            title = { ChannelMediaAttachmentsPreviewTopBarTitle(item = item) },
             navigationIcon = {
                 IconButton(onClick = onNavigationIconClick) {
                     Icon(
@@ -3490,6 +3491,35 @@ public interface ChatComponentFactory {
                 titleContentColor = ChatTheme.colors.textHighEmphasis,
             ),
         )
+    }
+
+    /**
+     * Factory method for creating the title of the channel media attachments preview top bar.
+     * This displays the message sender's name and the time when the message was sent.
+     *
+     * @param item The item containing the message to display in the top bar.
+     */
+    @Composable
+    public fun ChannelMediaAttachmentsPreviewTopBarTitle(item: ChannelAttachmentsViewState.Content.Item) {
+        val dateFormatter = ChatTheme.dateFormatter
+        val title = item.message.user.name
+        val subtitle = dateFormatter.formatRelativeTime(item.message.getCreatedAtOrThrow())
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = title,
+                style = ChatTheme.typography.title3Bold,
+                color = ChatTheme.colors.textHighEmphasis,
+                maxLines = 1,
+            )
+            Text(
+                text = subtitle,
+                style = ChatTheme.typography.footnote,
+                color = ChatTheme.colors.textLowEmphasis,
+                maxLines = 1,
+            )
+        }
     }
 
     /**
@@ -3510,6 +3540,7 @@ public interface ChatComponentFactory {
             Text(
                 text = text,
                 style = ChatTheme.typography.title3Bold,
+                color = ChatTheme.colors.textHighEmphasis,
                 maxLines = 1,
             )
         }
