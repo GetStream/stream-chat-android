@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPager
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.previewdata.PreviewMessageData
@@ -37,6 +38,7 @@ import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAtta
 internal fun ChannelMediaAttachmentsPreview(
     items: List<ChannelAttachmentsViewState.Content.Item>,
     initialItem: ChannelAttachmentsViewState.Content.Item,
+    onLoadMoreRequested: () -> Unit = {},
     onNavigationIconClick: () -> Unit = {},
     onVideoPlaybackError: () -> Unit = {},
 ) {
@@ -72,6 +74,11 @@ internal fun ChannelMediaAttachmentsPreview(
                 items.map(ChannelAttachmentsViewState.Content.Item::attachment)
             },
             onPlaybackError = onVideoPlaybackError,
+        )
+        LoadMoreHandler(
+            pagerState = pagerState,
+            pageCount = items::size,
+            loadMore = onLoadMoreRequested,
         )
     }
 }
