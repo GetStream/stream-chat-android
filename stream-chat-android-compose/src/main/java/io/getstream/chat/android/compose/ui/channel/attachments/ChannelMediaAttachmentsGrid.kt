@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
@@ -36,21 +37,62 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.window.core.layout.WindowWidthSizeClass
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
 
+/**
+ * Displays the channel media attachments grid.
+ *
+ * @param viewState The state of the channel attachments view.
+ * @param modifier The modifier for styling.
+ * @param gridState The state of the lazy grid.
+ * @param gridColumnCount The number of columns in the grid. If null, it will adapt based on the screen size.
+ * @param headerKeySelector The function to select the group key for each item and group them in the list.
+ * @param onLoadMoreRequested The callback to be invoked when more items need to be loaded.
+ * @param onVideoPlaybackError The callback to be invoked when there is an error during video playback.
+ * @param itemContent The composable to display each item in the grid.
+ * @param floatingHeader The composable to display as a floating header for each group of items.
+ * @param loadingIndicator The composable to display when the grid is loading.
+ * @param emptyContent The composable to display when the grid is empty.
+ * @param errorContent The composable to display when there is an error.
+ * @param loadingItem The composable to display when more items are being loaded.
+ */
 @Suppress("LongMethod")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ChannelMediaAttachmentsGrid(
     viewState: ChannelAttachmentsViewState,
-    gridState: LazyGridState,
     modifier: Modifier = Modifier,
+    gridState: LazyGridState = rememberLazyGridState(),
     gridColumnCount: Int? = null,
+    headerKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String,
     onLoadMoreRequested: () -> Unit = {},
     onVideoPlaybackError: () -> Unit = {},
+    itemContent: @Composable LazyGridItemScope.(
+        index: Int,
+        item: ChannelAttachmentsViewState.Content.Item,
+        onClick: () -> Unit,
+    ) -> Unit = { index, item, onClick ->
+        with(ChatTheme.componentFactory) {
+            ChannelMediaAttachmentsItem(
+                modifier = Modifier,
+                index = index,
+                item = item,
+                onClick = onClick,
+            )
+        }
+    },
+    floatingHeader: @Composable BoxScope.(label: String) -> Unit = { label ->
+        with(ChatTheme.componentFactory) {
+            ChannelMediaAttachmentsFloatingHeader(
+                modifier = Modifier.align(Alignment.TopCenter),
+                label = label,
+            )
+        }
+    },
     loadingIndicator: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelMediaAttachmentsLoadingIndicator(
@@ -72,29 +114,6 @@ internal fun ChannelMediaAttachmentsGrid(
             )
         }
     },
-    groupKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String,
-    floatingHeader: @Composable BoxScope.(label: String) -> Unit = { label ->
-        with(ChatTheme.componentFactory) {
-            ChannelMediaAttachmentsFloatingHeader(
-                modifier = Modifier.align(Alignment.TopCenter),
-                label = label,
-            )
-        }
-    },
-    itemContent: @Composable LazyGridItemScope.(
-        index: Int,
-        item: ChannelAttachmentsViewState.Content.Item,
-        onClick: () -> Unit,
-    ) -> Unit = { index, item, onClick ->
-        with(ChatTheme.componentFactory) {
-            ChannelMediaAttachmentsItem(
-                modifier = Modifier,
-                index = index,
-                item = item,
-                onClick = onClick,
-            )
-        }
-    },
     loadingItem: @Composable LazyGridItemScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelMediaAttachmentsLoadingItem(
@@ -106,7 +125,7 @@ internal fun ChannelMediaAttachmentsGrid(
     val isLoading = viewState is ChannelAttachmentsViewState.Loading
     val adaptiveInfo = currentWindowAdaptiveInfo()
     val gridColumnCount = gridColumnCount ?: run {
-        ChannelAttachmentsDefaults.GridColumnCounts.getValue(adaptiveInfo.windowSizeClass.windowWidthSizeClass)
+        GridColumnCounts.getValue(adaptiveInfo.windowSizeClass.windowWidthSizeClass)
     }
     var previewItem by remember { mutableStateOf<ChannelAttachmentsViewState.Content.Item?>(null) }
     ContentBox(
@@ -140,7 +159,7 @@ internal fun ChannelMediaAttachmentsGrid(
         }
 
         val groupKey by remember(content.items) {
-            derivedStateOf { groupKeySelector(content.items[gridState.firstVisibleItemIndex]) }
+            derivedStateOf { headerKeySelector(content.items[gridState.firstVisibleItemIndex]) }
         }
 
         floatingHeader(groupKey)
@@ -169,3 +188,13 @@ internal fun ChannelMediaAttachmentsGrid(
         }
     }
 }
+
+/**
+ * The default number of columns based on the window width size class.
+ */
+@Suppress("MagicNumber")
+private val GridColumnCounts = mapOf(
+    WindowWidthSizeClass.COMPACT to 3,
+    WindowWidthSizeClass.MEDIUM to 4,
+    WindowWidthSizeClass.EXPANDED to 6,
+)

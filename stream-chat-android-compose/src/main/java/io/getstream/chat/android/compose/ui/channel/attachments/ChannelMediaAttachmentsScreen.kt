@@ -57,8 +57,8 @@ import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
  *
  * @param viewModelFactory The factory to create the [ChannelAttachmentsViewModel].
  * @param modifier The modifier for styling.
- * @param groupKeySelector The function to select the group key for each media item and group them in the grid.
  * @param gridColumnCount The number of columns in the grid. If null, it will adapt based on the screen size.
+ * @param headerKeySelector The function to select the group key for each media item and group them in the grid.
  * @param onNavigationIconClick The callback to be invoked when the navigation icon is clicked.
  * @param onVideoPlaybackError The callback to be invoked when there is an error during video playback.
  */
@@ -66,9 +66,9 @@ import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 public fun ChannelMediaAttachmentsScreen(
     viewModelFactory: ChannelAttachmentsViewModelFactory,
     modifier: Modifier = Modifier,
-    groupKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String =
-        ChannelAttachmentsDefaults.GroupKeySelector,
     gridColumnCount: Int? = null,
+    headerKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String =
+        ChannelAttachmentsDefaults.HeaderKeySelector,
     onNavigationIconClick: () -> Unit = {},
     onVideoPlaybackError: () -> Unit = {},
 ) {
@@ -78,8 +78,8 @@ public fun ChannelMediaAttachmentsScreen(
     ChannelMediaAttachmentsContent(
         modifier = modifier,
         viewState = viewState,
-        groupKeySelector = groupKeySelector,
         gridColumnCount = gridColumnCount,
+        headerKeySelector = headerKeySelector,
         onNavigationIconClick = onNavigationIconClick,
         onLoadMoreRequested = { viewModel.onViewAction(ChannelAttachmentsViewAction.LoadMoreRequested) },
         onVideoPlaybackError = onVideoPlaybackError,
@@ -90,9 +90,9 @@ public fun ChannelMediaAttachmentsScreen(
 private fun ChannelMediaAttachmentsContent(
     modifier: Modifier,
     viewState: ChannelAttachmentsViewState,
-    groupKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String =
-        ChannelAttachmentsDefaults.GroupKeySelector,
     gridColumnCount: Int? = null,
+    headerKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String =
+        ChannelAttachmentsDefaults.HeaderKeySelector,
     onNavigationIconClick: () -> Unit = {},
     onLoadMoreRequested: () -> Unit = {},
     onVideoPlaybackError: () -> Unit = {},
@@ -114,7 +114,7 @@ private fun ChannelMediaAttachmentsContent(
                 .fillMaxSize(),
             viewState = viewState,
             gridState = gridState,
-            groupKeySelector = groupKeySelector,
+            headerKeySelector = headerKeySelector,
             gridColumnCount = gridColumnCount,
             onLoadMoreRequested = onLoadMoreRequested,
             onVideoPlaybackError = onVideoPlaybackError,
