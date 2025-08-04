@@ -193,7 +193,7 @@ internal fun ChannelFilesAttachmentsContent() {
         viewState = ChannelAttachmentsViewState.Content(
             items = PreviewMessageData.messageWithUserAndAttachment.attachments.map { attachment ->
                 ChannelAttachmentsViewState.Content.Item(
-                    message = PreviewMessageData.message1,
+                    message = PreviewMessageData.messageWithUserAndAttachment,
                     attachment = attachment,
                 )
             },
@@ -236,7 +236,7 @@ internal fun ChannelFilesAttachmentsLoadingMore() {
         viewState = ChannelAttachmentsViewState.Content(
             items = PreviewMessageData.messageWithUserAndAttachment.attachments.map { attachment ->
                 ChannelAttachmentsViewState.Content.Item(
-                    message = PreviewMessageData.message1,
+                    message = PreviewMessageData.messageWithUserAndAttachment,
                     attachment = attachment,
                 )
             },
