@@ -50,8 +50,8 @@ import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAtta
  * @param viewModelFactory The factory to create the [ChannelAttachmentsViewModel].
  * @param modifier The modifier for styling.
  * @param currentUser The currently logged in user.
- * @param groupKeySelector The function to select the group key for each item and group them in the list.
  * @param stickHeader Whether the header should stick to the top of the list when scrolling.
+ * @param headerKeySelector The function to select the group key for each item and group them in the list.
  * @param onNavigationIconClick The callback to be invoked when the navigation icon is clicked.
  */
 @Composable
@@ -59,9 +59,9 @@ public fun ChannelFilesAttachmentsScreen(
     viewModelFactory: ChannelAttachmentsViewModelFactory,
     modifier: Modifier = Modifier,
     currentUser: User? = ChatClient.instance().getCurrentUser(),
-    groupKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String =
-        ChannelAttachmentsDefaults.GroupKeySelector,
     stickHeader: Boolean = true,
+    headerKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String =
+        ChannelAttachmentsDefaults.HeaderKeySelector,
     onNavigationIconClick: () -> Unit = {},
 ) {
     val viewModel = viewModel<ChannelAttachmentsViewModel>(factory = viewModelFactory)
@@ -71,7 +71,7 @@ public fun ChannelFilesAttachmentsScreen(
         modifier = modifier,
         viewState = viewState,
         currentUser = currentUser,
-        groupKeySelector = groupKeySelector,
+        headerKeySelector = headerKeySelector,
         stickHeader = stickHeader,
         onNavigationIconClick = onNavigationIconClick,
         onLoadMoreRequested = { viewModel.onViewAction(ChannelAttachmentsViewAction.LoadMoreRequested) },
@@ -83,8 +83,8 @@ private fun ChannelFilesAttachmentsContent(
     viewState: ChannelAttachmentsViewState,
     modifier: Modifier = Modifier,
     currentUser: User? = ChatClient.instance().getCurrentUser(),
-    groupKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String =
-        ChannelAttachmentsDefaults.GroupKeySelector,
+    headerKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String =
+        ChannelAttachmentsDefaults.HeaderKeySelector,
     stickHeader: Boolean = true,
     onNavigationIconClick: () -> Unit = {},
     onLoadMoreRequested: () -> Unit = {},
@@ -107,8 +107,8 @@ private fun ChannelFilesAttachmentsContent(
             viewState = viewState,
             listState = listState,
             currentUser = currentUser,
-            groupKeySelector = groupKeySelector,
             stickHeader = stickHeader,
+            headerKeySelector = headerKeySelector,
             onLoadMoreRequested = onLoadMoreRequested,
         )
     }

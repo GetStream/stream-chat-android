@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -35,14 +36,60 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
 
+/**
+ * Displays the channel files attachments list.
+ *
+ * @param viewState The state of the channel attachments view.
+ * @param modifier The modifier for styling.
+ * @param listState The state of the lazy list.
+ * @param currentUser The currently logged in user.
+ * @param stickHeader Whether the header should stick to the top of the list when scrolling.
+ * @param headerKeySelector The function to select the group key for each item and group them in the list.
+ * @param onLoadMoreRequested The callback to be invoked when more items need to be loaded.
+ * @param itemContent The composable to display each item in the list.
+ * @param headerItem The composable to display as the header for each group of items.
+ * @param loadingIndicator The composable to display when the list is loading.
+ * @param emptyContent The composable to display when the list is empty.
+ * @param errorContent The composable to display when there is an error.
+ * @param itemDivider The composable to display as a divider between items.
+ * @param loadingItem The composable to display when more items are being loaded.
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal fun ChannelFilesAttachmentsList(
+public fun ChannelFilesAttachmentsList(
     viewState: ChannelAttachmentsViewState,
-    listState: LazyListState,
     modifier: Modifier = Modifier,
+    listState: LazyListState = rememberLazyListState(),
     currentUser: User? = ChatClient.instance().getCurrentUser(),
+    stickHeader: Boolean = true,
+    headerKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String,
     onLoadMoreRequested: () -> Unit = {},
+    itemContent: @Composable LazyItemScope.(index: Int, item: ChannelAttachmentsViewState.Content.Item) -> Unit =
+        { index, item ->
+            val previewHandlers = ChatTheme.attachmentPreviewHandlers
+            with(ChatTheme.componentFactory) {
+                ChannelFilesAttachmentsItem(
+                    modifier = Modifier,
+                    index = index,
+                    item = item,
+                    currentUser = currentUser,
+                    onClick = {
+                        onFileAttachmentContentItemClick(
+                            previewHandlers = previewHandlers,
+                            attachment = item.attachment,
+                        )
+                    },
+                )
+            }
+        },
+    headerItem: @Composable LazyItemScope.(label: String) -> Unit = { label ->
+        with(ChatTheme.componentFactory) {
+            ChannelFilesAttachmentsHeaderItem(
+                modifier = Modifier,
+                label = label,
+            )
+        }
+    },
     loadingIndicator: @Composable BoxScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelFilesAttachmentsLoadingIndicator(
@@ -64,16 +111,6 @@ internal fun ChannelFilesAttachmentsList(
             )
         }
     },
-    groupKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String,
-    stickHeader: Boolean = true,
-    headerItem: @Composable LazyItemScope.(label: String) -> Unit = { label ->
-        with(ChatTheme.componentFactory) {
-            ChannelFilesAttachmentsHeaderItem(
-                modifier = Modifier,
-                label = label,
-            )
-        }
-    },
     itemDivider: @Composable LazyItemScope.(index: Int) -> Unit = { index ->
         with(ChatTheme.componentFactory) {
             ChannelFilesAttachmentsItemDivider(
@@ -82,24 +119,6 @@ internal fun ChannelFilesAttachmentsList(
             )
         }
     },
-    itemContent: @Composable LazyItemScope.(index: Int, item: ChannelAttachmentsViewState.Content.Item) -> Unit =
-        { index, item ->
-            val previewHandlers = ChatTheme.attachmentPreviewHandlers
-            with(ChatTheme.componentFactory) {
-                ChannelFilesAttachmentsItem(
-                    modifier = Modifier,
-                    index = index,
-                    item = item,
-                    currentUser = currentUser,
-                    onClick = {
-                        onFileAttachmentContentItemClick(
-                            previewHandlers = previewHandlers,
-                            attachment = item.attachment,
-                        )
-                    },
-                )
-            }
-        },
     loadingItem: @Composable LazyItemScope.() -> Unit = {
         with(ChatTheme.componentFactory) {
             ChannelFilesAttachmentsLoadingItem(
@@ -120,7 +139,7 @@ internal fun ChannelFilesAttachmentsList(
     ) {
         val content = viewState as ChannelAttachmentsViewState.Content
         val groupedItems by remember(content.items) {
-            derivedStateOf { content.items.groupBy(groupKeySelector) }
+            derivedStateOf { content.items.groupBy(headerKeySelector) }
         }
         LazyColumn(
             modifier = Modifier.matchParentSize(),

@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.ui.channel.attachments
 
 import android.text.format.DateUtils
-import androidx.window.core.layout.WindowWidthSizeClass
 import io.getstream.chat.android.client.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
 import java.util.Date
@@ -25,9 +24,11 @@ import java.util.Date
 internal object ChannelAttachmentsDefaults {
 
     /**
-     * It groups items by the relative time span of their creation date, skipping the day of the month.
+     * The key selector used to group items by the relative time span of their creation date,
+     * skipping the day of the month.
+     * This is used to create headers in the channel attachments list/grid.
      */
-    val GroupKeySelector = { item: ChannelAttachmentsViewState.Content.Item ->
+    val HeaderKeySelector = { item: ChannelAttachmentsViewState.Content.Item ->
         DateUtils.getRelativeTimeSpanString(
             item.message.getCreatedAtOrThrow().time,
             Date().time,
@@ -35,11 +36,4 @@ internal object ChannelAttachmentsDefaults {
             DateUtils.FORMAT_NO_MONTH_DAY,
         ).toString()
     }
-
-    @Suppress("MagicNumber")
-    val GridColumnCounts = mapOf(
-        WindowWidthSizeClass.COMPACT to 3,
-        WindowWidthSizeClass.MEDIUM to 4,
-        WindowWidthSizeClass.EXPANDED to 6,
-    )
 }
