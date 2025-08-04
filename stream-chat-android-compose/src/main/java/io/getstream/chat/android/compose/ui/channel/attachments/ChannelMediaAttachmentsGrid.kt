@@ -181,6 +181,7 @@ internal fun ChannelMediaAttachmentsGrid(
                 ChannelMediaAttachmentsPreview(
                     items = items,
                     initialItem = item,
+                    onLoadMoreRequested = onLoadMoreRequested,
                     onNavigationIconClick = { previewItem = null },
                     onVideoPlaybackError = onVideoPlaybackError,
                 )
