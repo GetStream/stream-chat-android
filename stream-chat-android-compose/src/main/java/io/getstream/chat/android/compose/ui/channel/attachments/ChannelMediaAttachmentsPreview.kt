@@ -21,14 +21,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPager
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,31 +37,28 @@ import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAtta
 internal fun ChannelMediaAttachmentsPreview(
     items: List<ChannelAttachmentsViewState.Content.Item>,
     initialItem: ChannelAttachmentsViewState.Content.Item,
-    onNavigationIconClick: () -> Unit,
-    onVideoPlaybackError: () -> Unit,
+    onNavigationIconClick: () -> Unit = {},
+    onVideoPlaybackError: () -> Unit = {},
 ) {
     val pagerState = rememberPagerState(
         initialPage = items.indexOf(initialItem),
         pageCount = items::size,
     )
-    val topBarTitle by remember { derivedStateOf(items[pagerState.currentPage].message.user::name) }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             ChatTheme.componentFactory.ChannelMediaAttachmentsPreviewTopBar(
-                title = {
-                    Text(
-                        text = topBarTitle,
-                        style = ChatTheme.typography.title3Bold,
-                        maxLines = 1,
-                    )
-                },
+                item = items[pagerState.currentPage],
                 onNavigationIconClick = onNavigationIconClick,
             )
         },
         bottomBar = {
             ChatTheme.componentFactory.ChannelMediaAttachmentsPreviewBottomBar(
-                text = "${pagerState.currentPage + 1} / ${items.size}",
+                text = stringResource(
+                    R.string.stream_ui_channel_attachments_media_preview_index,
+                    pagerState.currentPage + 1,
+                    items.size,
+                ),
             )
         },
         containerColor = ChatTheme.colors.appBackground,
@@ -76,4 +74,24 @@ internal fun ChannelMediaAttachmentsPreview(
             onPlaybackError = onVideoPlaybackError,
         )
     }
+}
+
+@Preview
+@Composable
+private fun ChannelMediaAttachmentsPreviewContentPreview() {
+    ChatTheme {
+        ChannelMediaAttachmentsPreviewContent()
+    }
+}
+
+@Composable
+internal fun ChannelMediaAttachmentsPreviewContent() {
+    val item = ChannelAttachmentsViewState.Content.Item(
+        message = PreviewMessageData.messageWithUserAndAttachment,
+        attachment = PreviewMessageData.messageWithUserAndAttachment.attachments.first(),
+    )
+    ChannelMediaAttachmentsPreview(
+        items = listOf(item),
+        initialItem = item,
+    )
 }
