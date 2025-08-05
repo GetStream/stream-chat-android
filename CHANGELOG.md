@@ -16,6 +16,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `NotificationhandlerFactory.notificationBuilderTransformer` parameter to allow customization of the notification builder. [#5881](https://github.com/GetStream/stream-chat-android/pull/5881)
 
 ### ⚠️ Changed
 
