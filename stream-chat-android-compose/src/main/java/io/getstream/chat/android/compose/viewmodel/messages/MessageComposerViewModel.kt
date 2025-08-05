@@ -280,4 +280,11 @@ public class MessageComposerViewModel(
         super.onCleared()
         messageComposerController.onCleared()
     }
+
+    /**
+     * @see [MessageComposerController.cancelLinkPreview]
+     */
+    public fun cancelLinkPreview() {
+        messageComposerController.cancelLinkPreview()
+    }
 }
