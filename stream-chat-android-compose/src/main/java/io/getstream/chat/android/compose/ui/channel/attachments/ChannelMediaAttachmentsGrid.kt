@@ -37,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.unit.Dp
 import androidx.window.core.layout.WindowWidthSizeClass
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.components.ContentBox
@@ -174,6 +175,7 @@ internal fun ChannelMediaAttachmentsGrid(
             ModalBottomSheet(
                 onDismissRequest = { previewItem = null },
                 sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+                sheetMaxWidth = Dp.Unspecified,
                 shape = RectangleShape,
                 dragHandle = {},
                 containerColor = ChatTheme.colors.barsBackground,
