@@ -16,7 +16,9 @@
 
 package io.getstream.chat.android.compose.ui.attachments.preview.internal
 
+import android.annotation.SuppressLint
 import android.util.Log
+import androidx.annotation.OptIn
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
@@ -42,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
@@ -50,12 +53,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import coil3.compose.AsyncImagePainter
 import coil3.request.ImageRequest
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
+import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import kotlinx.coroutines.coroutineScope
@@ -90,6 +98,7 @@ internal fun MediaGalleryImagePage(
     pagerState: PagerState,
     page: Int,
 ) {
+    @SuppressLint("UnusedBoxWithConstraintsScope")
     BoxWithConstraints(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
@@ -274,25 +283,52 @@ private fun ErrorIcon(modifier: Modifier) {
  * The video playback is automatically paused and the preview is restored when
  * the user navigates away from this page in the pager.
  *
- * @param assetUrl The url of the video to display.
+ * @param player The [Player] instance used for video playback.
  * @param thumbnailUrl The url of the thumbnail to display before the video is played.
+ * @param showBuffering Whether to show a buffering indicator while the video is loading.
  * @param onPlaybackError Callback invoked when video playback encounters an error.
  * @param modifier The [Modifier] to be applied to the video player.
  */
+@OptIn(UnstableApi::class)
 @Composable
 internal fun MediaGalleryVideoPage(
-    assetUrl: String?,
+    player: Player,
     thumbnailUrl: String?,
+    showBuffering: Boolean,
     onPlaybackError: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    StreamMediaPlayerContent(
+    var showThumbnail by remember { mutableStateOf(true) }
+    Box(
         modifier = modifier,
-        assetUrl = assetUrl,
-        thumbnailUrl = if (ChatTheme.videoThumbnailsEnabled) thumbnailUrl else null,
-        playWhenReady = false,
-        onPlaybackError = onPlaybackError,
-    )
+        contentAlignment = Alignment.Center,
+    ) {
+        // Video player
+        AndroidView(
+            modifier = Modifier
+                .matchParentSize()
+                .background(Color.Black),
+            factory = { context ->
+                createPlayerView(context, player)
+            },
+        )
+        // Thumbnail
+        if (showThumbnail) {
+            MediaThumbnail(
+                modifier = Modifier
+                    .matchParentSize()
+                    .clickable {
+                        showThumbnail = false
+                        player.play()
+                    },
+                thumbnailUrl = if (ChatTheme.videoThumbnailsEnabled) thumbnailUrl else null,
+            )
+        }
+        // Buffering indicator
+        if (showBuffering) {
+            LoadingIndicator()
+        }
+    }
 }
 
 /**
