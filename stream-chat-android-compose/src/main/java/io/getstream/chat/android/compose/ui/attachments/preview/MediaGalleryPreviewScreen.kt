@@ -47,21 +47,30 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.media3.common.MediaItem
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
@@ -69,6 +78,7 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryP
 import io.getstream.chat.android.compose.ui.attachments.preview.internal.MediaGalleryImagePage
 import io.getstream.chat.android.compose.ui.attachments.preview.internal.MediaGalleryPhotosMenu
 import io.getstream.chat.android.compose.ui.attachments.preview.internal.MediaGalleryVideoPage
+import io.getstream.chat.android.compose.ui.attachments.preview.internal.createPlayer
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.Timestamp
@@ -526,6 +536,7 @@ internal fun MediaGalleryPreviewHeader(
  * @param onPlaybackError Callback to be invoked when an error during the playing of a video occurs.
  * @param modifier The [Modifier] to be applied to the pager.
  */
+@Suppress("LongMethod")
 @Composable
 internal fun MediaGalleryPager(
     pagerState: PagerState,
@@ -533,24 +544,71 @@ internal fun MediaGalleryPager(
     onPlaybackError: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+    val previewMode = LocalInspectionMode.current
+    var showBuffering by remember { mutableStateOf(true) }
+    // Create a single instance of the player for the pager,
+    // so it can be reused across pages,
+    // improving performance and preventing issues when switching between pages.
+    val player = remember {
+        // Player should not be created in preview mode to prevent exceptions.
+        if (!previewMode) {
+            createPlayer(
+                context = context,
+                onBuffering = { isBuffering -> showBuffering = isBuffering },
+                onPlaybackError = onPlaybackError,
+            )
+        } else {
+            null
+        }
+    }
+    val currentPage = pagerState.currentPage
+    LaunchedEffect(currentPage) {
+        player?.pause() // Pause the player when the page changes
+        val attachment = attachments[currentPage]
+        // Prepare the player with the media item if it's a video.
+        if (attachment.isVideo()) {
+            attachment.assetUrl?.let { assetUrl ->
+                player?.setMediaItem(MediaItem.fromUri(assetUrl))
+                player?.prepare()
+            }
+        }
+    }
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        // Pause the player when the lifecycle owner is paused,
+        // preventing it from playing videos in the background.
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_PAUSE) {
+                player?.pause()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+            player?.release()
+        }
+    }
     HorizontalPager(
         modifier = modifier,
         state = pagerState,
     ) { page ->
+        val attachment = attachments[page]
         when {
-            attachments[page].isImage() -> {
+            attachment.isImage() -> {
                 MediaGalleryImagePage(
-                    attachment = attachments[page],
+                    attachment = attachment,
                     pagerState = pagerState,
                     page = page,
                 )
             }
 
-            attachments[page].isVideo() -> {
+            attachment.isVideo() && player != null -> {
                 MediaGalleryVideoPage(
                     modifier = Modifier.fillMaxSize(),
-                    assetUrl = attachments[page].assetUrl,
-                    thumbnailUrl = attachments[page].thumbUrl,
+                    player = player,
+                    thumbnailUrl = attachment.thumbUrl,
+                    showBuffering = showBuffering,
                     onPlaybackError = onPlaybackError,
                 )
             }
