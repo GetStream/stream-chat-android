@@ -27,6 +27,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.sample.R
+import io.getstream.chat.android.compose.sample.R.string.stream_ui_message_list_video_display_error
 import io.getstream.chat.android.compose.ui.channel.attachments.ChannelMediaAttachmentsScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsViewModel
@@ -60,6 +61,13 @@ class ChannelMediaAttachmentsActivity : ComponentActivity() {
                     modifier = Modifier.statusBarsPadding(),
                     viewModelFactory = viewModelFactory,
                     onNavigationIconClick = ::finish,
+                    onVideoPlaybackError = {
+                        Toast.makeText(
+                            applicationContext,
+                            stream_ui_message_list_video_display_error,
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                    },
                 )
                 LaunchedEffect(viewModel) {
                     viewModel.events.collectLatest { event ->
