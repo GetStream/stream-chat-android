@@ -53,6 +53,11 @@ public object NotificationHandlerFactory {
      * @param permissionHandler Handles [android.Manifest.permission.POST_NOTIFICATIONS] permission lifecycle.
      * @param notificationTextFormatter Lambda expression used to formats the text of the notification.
      * @param actionsProvider Lambda expression used to provide actions for the notification.
+     * @param notificationBuilderTransformer Lambda expression used to transform the [NotificationCompat.Builder]
+     * before building the notification.
+     *
+     * @return A [NotificationHandler] instance.
+     * @see NotificationHandler
      */
     @SuppressLint("NewApi")
     @JvmOverloads
