@@ -49,6 +49,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Introduce `ChannelAttachmentsViewController`, `ChannelAttachmentsViewAction`, `ChannelAttachmentsViewEvent`, and `ChannelAttachmentsViewState` shared between XML and Compose SDKs and responsible for managing the state and events related to channel attachments, supporting pagination. [#5882](https://github.com/GetStream/stream-chat-android/pull/5882)
 
 ### ⚠️ Changed
 
@@ -56,11 +57,11 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fix the read mark failing to update. [#5890](https://github.com/GetStream/stream-chat-android/pull/5890)
 
 ### ⬆️ Improved
 
 ### ✅ Added
+- Introduce `ChannelAttachmentsViewModel` and `ChannelAttachmentsViewModelFactory`. [#5882](https://github.com/GetStream/stream-chat-android/pull/5882)
 
 ### ⚠️ Changed
 
@@ -71,8 +72,13 @@
 
 ### ⬆️ Improved
 - Improve the uploaded attachment loading UI. [#5889](https://github.com/GetStream/stream-chat-android/pull/5889)
+- `MediaGalleryPager` now supports a single `Player` instead of creating a player for each video attachment.
 
 ### ✅ Added
+- Introduce `ChannelAttachmentsViewModel` and `ChannelAttachmentsViewModelFactory`. [#5882](https://github.com/GetStream/stream-chat-android/pull/5882)
+- Introduce `ChannelFilesAttachmentsScreen` to display the channel files attachments. [#5882](https://github.com/GetStream/stream-chat-android/pull/5882)
+- Introduce `ChannelMediaAttachmentsScreen` to display the channel media (photos & videos) attachments. [#5882](https://github.com/GetStream/stream-chat-android/pull/5882)
+- Introduce `ChannelMediaAttachmentsPreview`, a full-screen pager that allows users to swipe through media attachments in a channel. [#5882](https://github.com/GetStream/stream-chat-android/pull/5882)
 
 ### ⚠️ Changed
 
@@ -115,6 +121,9 @@
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
 - Fix silent messages not shown in the channel preview in the channel list. [#5880](https://github.com/GetStream/stream-chat-android/pull/5880)
+
+## stream-chat-android-ui-components
+- Fix the read mark failing to update. [#5890](https://github.com/GetStream/stream-chat-android/pull/5890)
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
