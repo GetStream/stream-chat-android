@@ -272,9 +272,9 @@ private class Fixture {
     }
 
     fun get(scope: CoroutineScope) = ChannelAttachmentsViewController(
-        scope = scope,
         cid = CID,
         attachmentTypes = listOf(ATTACHMENT_TYPE),
         chatClient = chatClient,
+        scope = scope,
     )
 }

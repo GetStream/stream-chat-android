@@ -39,12 +39,23 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
 
+/**
+ * Controller responsible for managing the state and events related to channel attachments.
+ *
+ * This controller handles the loading of attachments in a channel, supports pagination,
+ * and emits state updates and events for the UI to react to.
+ *
+ * @param cid The full channel identifier (e.g., "messaging:123").
+ * @param attachmentTypes The list of attachment types to filter by.
+ * @param chatClient The [ChatClient] instance used for interacting with the chat API.
+ * @param scope The [CoroutineScope] used for launching coroutines.
+ */
 @InternalStreamChatApi
 public class ChannelAttachmentsViewController(
-    scope: CoroutineScope,
     private val cid: String,
     private val attachmentTypes: List<String>,
     private val chatClient: ChatClient = ChatClient.instance(),
+    scope: CoroutineScope,
 ) {
 
     private val logger by taggedLogger("Chat:ChannelAttachmentsViewController")
