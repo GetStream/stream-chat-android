@@ -55,8 +55,6 @@ public interface MessageRepository {
      * Selects messages by IDs.
      *
      * @param messageIds A list of [Message.id] as query specification.
-     * @param forceCache A boolean flag that forces cache in repository and fetches data directly in database if passed
-     * value is true.
      *
      * @return A list of messages found in repository.
      */
@@ -82,7 +80,6 @@ public interface MessageRepository {
      * Inserts many messages.
      *
      * @param messages list of [Message]
-     * @param cache Boolean.
      */
     public suspend fun insertMessages(messages: List<Message>)
 
@@ -90,7 +87,6 @@ public interface MessageRepository {
      * Inserts a messages.
      *
      * @param message [Message]
-     * @param cache Boolean.
      */
     public suspend fun insertMessage(message: Message)
 
