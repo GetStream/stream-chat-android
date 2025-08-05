@@ -38,9 +38,9 @@ public class ChannelAttachmentsViewModel(
     private val attachmentTypes: List<String>,
     controllerProvider: ViewModel.() -> ChannelAttachmentsViewController = {
         ChannelAttachmentsViewController(
-            scope = viewModelScope,
             cid = cid,
             attachmentTypes = attachmentTypes,
+            scope = viewModelScope,
         )
     },
 ) : ViewModel() {

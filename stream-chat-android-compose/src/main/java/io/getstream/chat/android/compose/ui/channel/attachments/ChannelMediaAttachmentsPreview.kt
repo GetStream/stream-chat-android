@@ -33,6 +33,16 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
 
+/**
+ * A full-screen pager that allows users to swipe through media attachments in a channel.
+ * It includes a top bar for navigation and a bottom bar to show the current index of the media being viewed.
+ *
+ * @param items The list of media attachments to display.
+ * @param initialItem The initial item to display in the pager.
+ * @param onLoadMoreRequested Callback invoked when more items need to be loaded.
+ * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
+ * @param onVideoPlaybackError Callback invoked when there is an error during video playback.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ChannelMediaAttachmentsPreview(
