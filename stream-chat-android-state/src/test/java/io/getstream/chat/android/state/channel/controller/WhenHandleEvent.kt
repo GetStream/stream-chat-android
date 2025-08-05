@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.test.SynchronizedCoroutineTest
 import io.getstream.chat.android.client.test.randomChannelDeletedEvent
 import io.getstream.chat.android.client.test.randomMemberAddedEvent
 import io.getstream.chat.android.client.test.randomMessageReadEvent
-import io.getstream.chat.android.client.test.randomMessageUpdateEvent
 import io.getstream.chat.android.client.test.randomNewMessageEvent
 import io.getstream.chat.android.client.test.randomNotificationMarkReadEvent
 import io.getstream.chat.android.client.test.randomPollDeletedEvent
@@ -81,7 +80,6 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         activeLiveLocations = MutableStateFlow(
             emptyList(),
         ),
-        messagesLimitFilter = { it },
     ) { System.currentTimeMillis() }
 
     private val channelStateLogic: ChannelStateLogic = mock {
@@ -99,6 +97,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         channelLogic = ChannelLogic(
             repos,
             false,
+            messageLimit = null,
             channelStateLogic,
             testCoroutines.scope,
         ) { CURRENT_USER_ID }
@@ -126,25 +125,6 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         verify(channelStateLogic).upsertMessage(newMessage)
         verify(channelStateLogic).updateCurrentUserRead(userStartWatchingEvent.createdAt, userStartWatchingEvent.message)
         verify(channelStateLogic).toggleHidden(false)
-    }
-
-    // Message update
-    @Test
-    fun `when a message update for an existing message arrives, it is added`() = runTest {
-        val messageId = randomString()
-        val message = randomMessage(
-            id = messageId,
-            user = User(id = "otherUserId"),
-            silent = false,
-            showInChannel = true,
-        )
-        channelLogic.upsertMessages(listOf(message))
-
-        val messageUpdateEvent = randomMessageUpdateEvent(message = message)
-
-        channelLogic.handleEvent(messageUpdateEvent)
-
-        verify(channelStateLogic).upsertMessages(listOf(messageUpdateEvent.message))
     }
 
     // Member added event

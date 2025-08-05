@@ -35,7 +35,7 @@ public data class StatePluginConfig @JvmOverloads constructor(
     public val messageLimitConfig: MessageLimitConfig = MessageLimitConfig(),
 )
 
-private const val MESSAGE_LIMIT = 500
+private const val MESSAGE_LIMIT = 50
 
 /**
  * Configuration for message limits in channels.

@@ -114,7 +114,7 @@ class ChannelsActivity : ComponentActivity() {
                 .descByName<Channel>("pinned_at") // pinned channels first
                 .desc("last_updated"), // then by last updated
             filters = Filters.and(
-                Filters.eq("type", "messaging"),
+                Filters.`in`("type", "livestream", "messaging"),
                 Filters.`in`("members", listOf(currentUserId)),
                 Filters.or(Filters.notExists(CHANNEL_ARG_DRAFT), Filters.eq(CHANNEL_ARG_DRAFT, false)),
             ),

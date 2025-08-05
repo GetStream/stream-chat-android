@@ -116,12 +116,15 @@ import java.util.Date
  * @property repos [RepositoryFacade] that interact with data sources. The this object should be used only
  * to read data and never update data as the state module should never change the database.
  * @property userPresence [Boolean] true if user presence is enabled, false otherwise.
+ * @property messageLimit The maximum number of latest messages to be kept in memory. If null, no limit will be
+ * applied.
  * @property channelStateLogic [ChannelStateLogic]
  */
 @Suppress("TooManyFunctions", "LargeClass")
 internal class ChannelLogic(
     private val repos: RepositoryFacade,
     private val userPresence: Boolean,
+    private val messageLimit: Int?,
     private val channelStateLogic: ChannelStateLogic,
     private val coroutineScope: CoroutineScope,
     private val getCurrentUserId: () -> String?,
@@ -132,6 +135,10 @@ internal class ChannelLogic(
 
     val cid: String
         get() = mutableState.cid
+
+    private var loadOlderMessagesCount: Int = 0
+    private val trimOldMessages: Boolean
+        get() = loadOlderMessagesCount < DISABLE_TRIMMING_AFTER_PAGINATION_ATTEMPTS
 
     suspend fun updateStateFromDatabase(request: QueryChannelRequest) {
         logger.d { "[updateStateFromDatabase] request: $request" }
@@ -173,6 +180,8 @@ internal class ChannelLogic(
                 ),
             )
         }
+        // Reset counter for older messages requests
+        loadOlderMessagesCount = 0
         return runChannelQuery(
             "watch",
             QueryChannelPaginationRequest(messagesLimit).toWatchChannelRequest(userPresence).apply {
@@ -206,6 +215,8 @@ internal class ChannelLogic(
     internal suspend fun loadOlderMessages(messageLimit: Int, baseMessageId: String? = null): Result<Channel> {
         logger.i { "[loadOlderMessages] messageLimit: $messageLimit, baseMessageId: $baseMessageId" }
         channelStateLogic.loadingOlderMessages()
+        // Increment the counter of older messages requests
+        loadOlderMessagesCount += 1
         return runChannelQuery(
             "loadOlderMessages",
             olderWatchChannelRequest(limit = messageLimit, baseMessageId = baseMessageId),
@@ -389,11 +400,7 @@ internal class ChannelLogic(
     internal fun upsertMessage(message: Message) {
         logger.d { "[upsertMessage] message.id: ${message.id}, message.text: ${message.text}" }
         channelStateLogic.upsertMessage(message)
-    }
-
-    internal fun upsertMessages(messages: List<Message>) {
-        logger.d { "[upsertMessages] messages.size: ${messages.size}" }
-        channelStateLogic.upsertMessages(messages)
+        applyMessageLimitIfNeeded(message)
     }
 
     /**
@@ -538,6 +545,7 @@ internal class ChannelLogic(
                 when (event) {
                     is NewMessageEvent -> {
                         upsertEventMessage(event.message)
+                        applyMessageLimitIfNeeded(event.message)
                         channelStateLogic.updateCurrentUserRead(event.createdAt, event.message)
                         channelStateLogic.takeUnless { event.message.shadowed }?.toggleHidden(false)
                     }
@@ -560,6 +568,7 @@ internal class ChannelLogic(
                     is NotificationMessageNewEvent -> {
                         if (!mutableState.insideSearch.value) {
                             upsertEventMessage(event.message)
+                            applyMessageLimitIfNeeded(event.message)
                         }
                         channelStateLogic.updateCurrentUserRead(event.createdAt, event.message)
                         channelStateLogic.toggleHidden(false)
@@ -688,9 +697,32 @@ internal class ChannelLogic(
         }
     }
 
-    fun toChannel(): Channel = mutableState.toChannel()
+    private fun applyMessageLimitIfNeeded(message: Message) {
+        // If no message limit is set, restriction is not applied
+        if (messageLimit == null) return
+        // Re-apply restriction if current user sent the message (most likely the message list is scrolled to bottom)
+        resetLoadOlderMessagesCounter(message)
+        // Trim old messages if the limit is reached
+        trimOldMessagesIfNeeded()
+    }
 
-    internal fun replyMessage(repliedMessage: Message?) {
-        channelStateLogic.replyMessage(repliedMessage)
+    private fun trimOldMessagesIfNeeded() {
+        if (messageLimit == null) return
+        if (!trimOldMessages) {
+            logger.d { "[trimOldMessagesIfNeeded] trimming disabled, count: $loadOlderMessagesCount" }
+            return
+        }
+        channelStateLogic.trimOldMessagesIfNeeded(keep = messageLimit)
+    }
+
+    private fun resetLoadOlderMessagesCounter(message: Message) {
+        if (message.user.id == getCurrentUserId()) {
+            logger.d { "[resetLoadOlderMessagesCounter] resetting load older messages count for own message" }
+            loadOlderMessagesCount = 0
+        }
+    }
+
+    companion object {
+        private const val DISABLE_TRIMMING_AFTER_PAGINATION_ATTEMPTS = 5
     }
 }
