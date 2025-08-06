@@ -276,33 +276,19 @@ internal class ChannelMutableState(
      *
      * @param isLoading Boolean.
      */
-    fun setLoadingOlderMessages(isLoading: Boolean, pageSize: Int) {
+    fun setLoadingOlderMessages(isLoading: Boolean) {
         _loadingOlderMessages?.value = isLoading
-        // If messageLimit is set && we would overshoot the limit:
-        // 1. Update the limit by a factor of 1.5
-        // 2. If we still overshoot the limit, disable limit
-        if (messageLimit != null && isLoading) {
-            val currentMessageCount = _messages?.value?.size ?: return
-            val newMessageCount = currentMessageCount + pageSize
-            if (newMessageCount >= messageLimit!! + TRIM_BUFFER) {
-                // potentially above the limit, so we need to adjust
-                if (messageLimit == baseMessageLimit) {
-                    // the limit is the base limit, so we increase it by 50%
-                    messageLimit = (messageLimit!! * LIMIT_MULTIPLIER).toInt()
-                    logger.d { "[setLoadingOlderMessages] Adjusting message limit to $messageLimit" }
-                } else {
-                    // the limit was already adjusted, so we disable it
+        val currentMessageCount = _messages?.value?.size ?: return
+        if (isLoading) {
+            messageLimit = messageLimit?.let { limit ->
+                val multiplier = LIMIT_MULTIPLIER.takeIf {
+                    currentMessageCount + TRIM_BUFFER >= limit
+                } ?: NEUTRAL_MULTIPLIER
+                (limit * multiplier).toInt().also {
                     logger.d {
-                        "[setLoadingOlderMessages] Disabling message limit, " +
-                            "current size: $currentMessageCount, limit: $messageLimit"
+                        "[applyMessageLimitIfNeeded] Adjusting message limit to $it, " +
+                            "current size: $currentMessageCount, limit: $limit, multiplier: $multiplier"
                     }
-                    messageLimit = null
-                }
-            } else {
-                // we are still within the limit, so we can keep it
-                logger.d {
-                    "[setLoadingOlderMessages] Keeping message limit, " +
-                        "current size: $currentMessageCount, limit: $messageLimit, buffer: $TRIM_BUFFER"
                 }
             }
         }
@@ -695,6 +681,7 @@ internal class ChannelMutableState(
         private val seqGenerator = AtomicInteger()
 
         private const val TRIM_BUFFER = 30
+        private const val NEUTRAL_MULTIPLIER = 1.0
         private const val LIMIT_MULTIPLIER = 1.5
     }
 }

@@ -147,7 +147,7 @@ internal class ChannelLogic(
 
     fun setPaginationDirection(request: QueryChannelRequest) {
         when {
-            request.filteringOlderMessages() -> channelStateLogic.loadingOlderMessages(request.messagesLimit())
+            request.filteringOlderMessages() -> channelStateLogic.loadingOlderMessages()
             request.isFilteringNewerMessages() -> channelStateLogic.loadingNewerMessages()
             !request.isFilteringMessages() -> channelStateLogic.loadingNewestMessages()
         }
@@ -214,7 +214,7 @@ internal class ChannelLogic(
      */
     internal suspend fun loadOlderMessages(messageLimit: Int, baseMessageId: String? = null): Result<Channel> {
         logger.i { "[loadOlderMessages] messageLimit: $messageLimit, baseMessageId: $baseMessageId" }
-        channelStateLogic.loadingOlderMessages(messageLimit)
+        channelStateLogic.loadingOlderMessages()
         // Increment the counter of older messages requests
         return runChannelQuery(
             "loadOlderMessages",
