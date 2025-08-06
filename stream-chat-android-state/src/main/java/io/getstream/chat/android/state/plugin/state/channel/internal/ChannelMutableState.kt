@@ -51,6 +51,7 @@ internal class ChannelMutableState(
     private val userFlow: StateFlow<User?>,
     latestUsers: StateFlow<Map<String, User>>,
     activeLiveLocations: StateFlow<List<Location>>,
+    val baseMessageLimit: Int?,
     private val now: () -> Long,
 ) : ChannelState {
 
@@ -58,6 +59,8 @@ internal class ChannelMutableState(
 
     private val seq = seqGenerator.incrementAndGet()
     private val logger by taggedLogger("Chat:ChannelState-$seq")
+
+    private var messageLimit: Int? = baseMessageLimit
 
     private var _messages: MutableStateFlow<Map<String, Message>>? = MutableStateFlow(emptyMap())
     private var _pinnedMessages: MutableStateFlow<Map<String, Message>>? = MutableStateFlow(emptyMap())
@@ -273,8 +276,36 @@ internal class ChannelMutableState(
      *
      * @param isLoading Boolean.
      */
-    fun setLoadingOlderMessages(isLoading: Boolean) {
+    fun setLoadingOlderMessages(isLoading: Boolean, pageSize: Int) {
         _loadingOlderMessages?.value = isLoading
+        // If messageLimit is set && we would overshoot the limit:
+        // 1. Update the limit by a factor of 1.5
+        // 2. If we still overshoot the limit, disable limit
+        if (messageLimit != null && isLoading) {
+            val currentMessageCount = _messages?.value?.size ?: return
+            val newMessageCount = currentMessageCount + pageSize
+            if (newMessageCount >= messageLimit!! + TRIM_BUFFER) {
+                // potentially above the limit, so we need to adjust
+                if (messageLimit == baseMessageLimit) {
+                    // the limit is the base limit, so we increase it by 50%
+                    messageLimit = (messageLimit!! * LIMIT_MULTIPLIER).toInt()
+                    logger.d { "[setLoadingOlderMessages] Adjusting message limit to $messageLimit" }
+                } else {
+                    // the limit was already adjusted, so we disable it
+                    logger.d {
+                        "[setLoadingOlderMessages] Disabling message limit, " +
+                            "current size: $currentMessageCount, limit: $messageLimit"
+                    }
+                    messageLimit = null
+                }
+            } else {
+                // we are still within the limit, so we can keep it
+                logger.d {
+                    "[setLoadingOlderMessages] Keeping message limit, " +
+                        "current size: $currentMessageCount, limit: $messageLimit, buffer: $TRIM_BUFFER"
+                }
+            }
+        }
     }
 
     /**
@@ -550,7 +581,7 @@ internal class ChannelMutableState(
     fun upsertMessages(updatedMessages: Collection<Message>) {
         _messages?.apply {
             val newMessageList = (value + (updatedMessages.associateBy(Message::id) - deletedMessagesIds)).values
-            value = newMessageList.associateBy(Message::id)
+            value = applyMessageLimitIfNeeded(newMessageList).associateBy(Message::id)
         }
         _pinnedMessages?.value
             ?.let { pinnedMessages ->
@@ -562,7 +593,8 @@ internal class ChannelMutableState(
     }
 
     fun setMessages(messages: List<Message>) {
-        _messages?.value = messages.associateBy(Message::id)
+        messageLimit = baseMessageLimit
+        _messages?.value = applyMessageLimitIfNeeded(messages).associateBy(Message::id)
     }
 
     fun setPinnedMessages(messages: List<Message>) {
@@ -634,7 +666,35 @@ internal class ChannelMutableState(
         _channelConfig = null
     }
 
+    @Suppress("ComplexMethod")
+    private fun applyMessageLimitIfNeeded(messages: Collection<Message>): Collection<Message> {
+        // If no message limit is set or we are loading older messages, restriction is not applied
+        if (messageLimit == null || loadingOlderMessages.value) return messages
+        // Add buffer to avoid trimming too often
+        return if (messages.size > messageLimit!! + TRIM_BUFFER) {
+            val trimmedMessages = messages
+                .sortedBy { it.createdAt ?: it.createdLocallyAt }
+                .takeLast(messageLimit!!)
+            logger.d {
+                "[applyMessageLimitIfNeeded] trimmed messages: " +
+                    "kept: $messageLimit, trimmed: ${messages.size - trimmedMessages.size}"
+            }
+            // Set end of older messages to false, as we trimmed the messages
+            setEndOfOlderMessages(false)
+            trimmedMessages
+        } else {
+            logger.d {
+                "[applyMessageLimitIfNeeded] no need to trim, " +
+                    "messages.size: ${messages.size}, limit(+buffer): ${messageLimit!! + TRIM_BUFFER}"
+            }
+            messages
+        }
+    }
+
     private companion object {
         private val seqGenerator = AtomicInteger()
+
+        private const val TRIM_BUFFER = 30
+        private const val LIMIT_MULTIPLIER = 1.5
     }
 }

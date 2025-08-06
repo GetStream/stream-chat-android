@@ -51,7 +51,6 @@ internal class ChannelLogicTest {
         sut = ChannelLogic(
             repos = mock(),
             userPresence = false,
-            messageLimit = null,
             channelStateLogic = channelStateLogic,
             coroutineScope = TestScope(),
             getCurrentUserId = { currentUserId },

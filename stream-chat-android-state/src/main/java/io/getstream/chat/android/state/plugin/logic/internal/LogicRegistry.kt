@@ -26,7 +26,6 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.querysort.QuerySorter
-import io.getstream.chat.android.state.plugin.config.MessageLimitConfig
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.SearchLogic
@@ -58,7 +57,6 @@ internal class LogicRegistry internal constructor(
     private val clientState: ClientState,
     private val mutableGlobalState: MutableGlobalState,
     private val userPresence: Boolean,
-    private val messageLimitConfig: MessageLimitConfig,
     private val repos: RepositoryFacade,
     private val client: ChatClient,
     private val coroutineScope: CoroutineScope,
@@ -115,9 +113,6 @@ internal class LogicRegistry internal constructor(
     /** Returns [ChannelLogic] by channelType and channelId combination. */
     fun channel(channelType: String, channelId: String): ChannelLogic {
         return channels.getOrPut(channelType to channelId) {
-            val messageLimit = messageLimitConfig.channelMessageLimits
-                .find { it.channelType == channelType }
-                ?.limit
             val mutableState = stateRegistry.mutableChannel(channelType, channelId)
             val stateLogic = ChannelStateLogic(
                 clientState = clientState,
@@ -131,7 +126,6 @@ internal class LogicRegistry internal constructor(
             ChannelLogic(
                 repos = repos,
                 userPresence = userPresence,
-                messageLimit = messageLimit,
                 channelStateLogic = stateLogic,
                 coroutineScope = coroutineScope,
             ) {

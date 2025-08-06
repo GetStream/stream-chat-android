@@ -586,7 +586,7 @@ internal class ChannelStateLogic(
 
         mutableState.setChannelConfig(channel.config)
 
-        mutableState.setLoadingOlderMessages(false)
+        mutableState.setLoadingOlderMessages(false, messageLimit)
         mutableState.setLoadingNewerMessages(false)
     }
 
@@ -763,6 +763,13 @@ internal class ChannelStateLogic(
         }
     }
 
+    fun loadingNewestMessages() {
+        // Reset messages if there is a limit set
+        if (mutableState.baseMessageLimit != null) {
+            mutableState.setMessages(emptyList())
+        }
+    }
+
     /**
      * Set states as loading newer messages.
      */
@@ -773,8 +780,8 @@ internal class ChannelStateLogic(
     /**
      * Set states as loading older messages.
      */
-    fun loadingOlderMessages() {
-        mutableState.setLoadingOlderMessages(true)
+    fun loadingOlderMessages(messageLimit: Int) {
+        mutableState.setLoadingOlderMessages(true, messageLimit)
     }
 
     /**

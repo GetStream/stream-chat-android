@@ -25,6 +25,7 @@ import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.internal.batch.BatchEvent
+import io.getstream.chat.android.state.plugin.config.MessageLimitConfig
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.state.plugin.state.channel.thread.internal.ThreadMutableState
@@ -47,6 +48,7 @@ import java.util.concurrent.ConcurrentHashMap
  * @param activeLiveLocations Latest live locations of the SDK.
  * @param job A background job cancelled after calling [clear].
  * @param scope A scope for new coroutines.
+ * @param messageLimitConfig Configuration for message limits.
  */
 @Suppress("LongParameterList")
 public class StateRegistry constructor(
@@ -56,6 +58,7 @@ public class StateRegistry constructor(
     private val job: Job,
     private val now: () -> Long,
     private val scope: CoroutineScope,
+    private val messageLimitConfig: MessageLimitConfig,
 ) {
 
     private val logger by taggedLogger("Chat:StateRegistry")
@@ -103,13 +106,17 @@ public class StateRegistry constructor(
      */
     internal fun mutableChannel(channelType: String, channelId: String): ChannelMutableState {
         return channels.getOrPut(channelType to channelId) {
+            val messageLimit = messageLimitConfig.channelMessageLimits
+                .find { it.channelType == channelType }
+                ?.limit
             ChannelMutableState(
-                channelType,
-                channelId,
-                userStateFlow,
-                latestUsers,
-                activeLiveLocations,
-                now,
+                channelType = channelType,
+                channelId = channelId,
+                userFlow = userStateFlow,
+                latestUsers = latestUsers,
+                activeLiveLocations = activeLiveLocations,
+                baseMessageLimit = messageLimit,
+                now = now,
             )
         }
     }
