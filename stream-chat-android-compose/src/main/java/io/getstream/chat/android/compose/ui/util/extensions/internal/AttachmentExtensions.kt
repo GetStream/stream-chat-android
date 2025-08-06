@@ -25,9 +25,10 @@ import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageRe
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 
 /**
- * @return The image preview data.
  * This property checks if the attachment is an image or a video with enabled thumbnails.
- * If it is, it applies Stream CDN image resizing if enabled. Otherwise, it returns the upload [java.io.File] object.
+ * If so, it returns the image preview URL (applied with Stream CDN image resizing if enabled)
+ * or the upload [java.io.File] object.
+ * Otherwise, it returns null.
  */
 @get:Composable
 internal val Attachment.imagePreviewData: Any?
