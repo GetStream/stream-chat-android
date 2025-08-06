@@ -91,6 +91,11 @@ public fun GiphyAttachmentContent(
         "Missing Giphy attachment."
     }
 
+    println(
+        "alor: type: ${attachment.type}, thumbUrl: ${attachment.thumbUrl}, " +
+            "imageUrl: ${attachment.imageUrl}, upload: ${attachment.upload}",
+    )
+
     val previewUrl = attachment.titleLink ?: attachment.ogUrl
 
     checkNotNull(previewUrl) {

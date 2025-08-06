@@ -68,6 +68,7 @@ import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
+import io.getstream.chat.android.compose.ui.util.extensions.internal.imagePreviewData
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
@@ -75,8 +76,6 @@ import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
-import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**
@@ -409,17 +408,12 @@ internal fun MediaAttachmentContentItem(
     val isImage = attachment.isImage()
     val isVideo = attachment.isVideo()
 
-    val data =
-        if (isImage || (isVideo && ChatTheme.videoThumbnailsEnabled)) {
-            when (message.syncStatus) {
-                SyncStatus.COMPLETED ->
-                    attachment.imagePreviewUrl?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
+    println(
+        "alor: type: ${attachment.type}, thumbUrl: ${attachment.thumbUrl}, " +
+            "imageUrl: ${attachment.imageUrl}, upload: ${attachment.upload}",
+    )
 
-                else -> attachment.upload
-            }
-        } else {
-            null
-        }
+    val data = attachment.imagePreviewData
 
     val context = LocalContext.current
     val imageRequest = remember(data) {
