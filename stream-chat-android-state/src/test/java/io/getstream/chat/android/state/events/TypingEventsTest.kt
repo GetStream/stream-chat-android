@@ -20,7 +20,6 @@ import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomUser
-import io.getstream.chat.android.state.plugin.config.MessageLimitConfig
 import io.getstream.chat.android.state.plugin.listener.internal.TypingEventListenerState
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -176,7 +175,6 @@ internal class TypingEventsTest {
             userStateFlow = MutableStateFlow(user),
             latestUsers = MutableStateFlow(emptyMap()),
             activeLiveLocations = MutableStateFlow(emptyList()),
-            messageLimitConfig = MessageLimitConfig(),
         )
 
         fun givenTypingEventsDisabled(channelType: String, channelId: String): Fixture {

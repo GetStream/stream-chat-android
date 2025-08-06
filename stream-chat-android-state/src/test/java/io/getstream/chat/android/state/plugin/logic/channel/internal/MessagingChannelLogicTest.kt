@@ -32,11 +32,11 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-internal class ChannelLogicTest {
+internal class MessagingChannelLogicTest {
 
     private val currentUserId = randomString()
     private lateinit var channelStateLogic: ChannelStateLogic
-    private lateinit var sut: ChannelLogic
+    private lateinit var sut: MessagingChannelLogic
 
     @BeforeEach
     fun setUp() {
@@ -48,7 +48,7 @@ internal class ChannelLogicTest {
         channelStateLogic = mock()
         whenever(channelStateLogic.writeChannelState()).doReturn(mutableState)
         // Channel logic
-        sut = ChannelLogic(
+        sut = MessagingChannelLogic(
             repos = mock(),
             userPresence = false,
             channelStateLogic = channelStateLogic,

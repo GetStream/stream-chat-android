@@ -334,7 +334,7 @@ public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Ch
             is Result.Success -> {
                 val (channelType, channelId) = cid.cidToTypeAndId()
                 logic.channel(channelType = channelType, channelId = channelId)
-                    .loadOlderMessages(messageLimit = messageLimit)
+                    .loadOlderMessages(messageId = null, limit = messageLimit)
             }
             is Result.Failure -> cidValidationResult
         }
@@ -516,7 +516,7 @@ public fun ChatClient.loadNewestMessages(
             is Result.Success -> {
                 val (channelType, channelId) = cid.cidToTypeAndId()
                 logic.channel(channelType = channelType, channelId = channelId)
-                    .watch(messageLimit, userPresence)
+                    .watch(userPresence, messageLimit)
             }
             is Result.Failure -> Result.Failure(cidValidationResult.value)
         }

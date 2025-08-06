@@ -26,8 +26,11 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.state.plugin.config.MessageLimitConfig
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
+import io.getstream.chat.android.state.plugin.logic.channel.internal.LivestreamChannelLogic
+import io.getstream.chat.android.state.plugin.logic.channel.internal.MessagingChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.SearchLogic
 import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.ThreadLogic
 import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.ThreadStateLogic
@@ -60,6 +63,7 @@ internal class LogicRegistry internal constructor(
     private val repos: RepositoryFacade,
     private val client: ChatClient,
     private val coroutineScope: CoroutineScope,
+    private val messageLimitConfig: MessageLimitConfig,
     private val now: () -> Long,
 ) : ChannelStateLogicProvider {
 
@@ -113,6 +117,9 @@ internal class LogicRegistry internal constructor(
     /** Returns [ChannelLogic] by channelType and channelId combination. */
     fun channel(channelType: String, channelId: String): ChannelLogic {
         return channels.getOrPut(channelType to channelId) {
+            val messageLimit = messageLimitConfig.channelMessageLimits
+                .find { it.channelType == channelType }
+                ?.limit
             val mutableState = stateRegistry.mutableChannel(channelType, channelId)
             val stateLogic = ChannelStateLogic(
                 clientState = clientState,
@@ -123,13 +130,23 @@ internal class LogicRegistry internal constructor(
                 coroutineScope = coroutineScope,
             )
 
-            ChannelLogic(
-                repos = repos,
-                userPresence = userPresence,
-                channelStateLogic = stateLogic,
-                coroutineScope = coroutineScope,
-            ) {
-                clientState.user.value?.id
+            if (messageLimit != null) {
+                LivestreamChannelLogic(
+                    channelType = channelType,
+                    channelId = channelId,
+                    userPresence = userPresence,
+                    stateLogic = stateLogic,
+                    getCurrentUserId = { clientState.user.value?.id },
+                    messageLimit = messageLimit,
+                )
+            } else {
+                MessagingChannelLogic(
+                    repos = repos,
+                    userPresence = userPresence,
+                    channelStateLogic = stateLogic,
+                    coroutineScope = coroutineScope,
+                    getCurrentUserId = { clientState.user.value?.id },
+                )
             }
         }
     }

@@ -37,8 +37,8 @@ import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.event.handler.internal.utils.toChannelUserRead
 import io.getstream.chat.android.state.message.attachments.internal.AttachmentUrlValidator
-import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
+import io.getstream.chat.android.state.plugin.logic.channel.internal.MessagingChannelLogic
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -52,6 +52,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
@@ -70,7 +71,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
     private val repos: RepositoryFacade = mock()
     private val attachmentUrlValidator: AttachmentUrlValidator = mock()
 
-    private lateinit var channelLogic: ChannelLogic
+    private lateinit var channelLogic: MessagingChannelLogic
     private val channelMutableState: ChannelMutableState = ChannelMutableState(
         channelType = "type1",
         channelId = channelId,
@@ -81,7 +82,6 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         activeLiveLocations = MutableStateFlow(
             emptyList(),
         ),
-        messagesLimitFilter = { it },
     ) { System.currentTimeMillis() }
 
     private val channelStateLogic: ChannelStateLogic = mock {
@@ -96,7 +96,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
             invocation.arguments[0] as List<Message>
         }
 
-        channelLogic = ChannelLogic(
+        channelLogic = MessagingChannelLogic(
             repos,
             false,
             channelStateLogic,
@@ -138,13 +138,13 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
             silent = false,
             showInChannel = true,
         )
-        channelLogic.upsertMessages(listOf(message))
+        channelLogic.upsertMessage(message)
 
         val messageUpdateEvent = randomMessageUpdateEvent(message = message)
 
         channelLogic.handleEvent(messageUpdateEvent)
 
-        verify(channelStateLogic).upsertMessages(listOf(messageUpdateEvent.message))
+        verify(channelStateLogic, times(2)).upsertMessage(messageUpdateEvent.message)
     }
 
     // Member added event

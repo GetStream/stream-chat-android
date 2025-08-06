@@ -209,13 +209,17 @@ public fun Messages(
         }
     }
 
-    LoadMoreHandler(lazyListState = lazyListState) {
+    LoadMoreHandler(
+        lazyListState = lazyListState,
+        threshold = { 2 },
+    ) {
         if (!endOfMessages) {
             onMessagesStartReached()
         }
     }
 
-    val isMessagesEndReached by remember {
+    // Loads more (newer) messages when the user scrolls to the bottom of the list.
+    val isMessagesEndReached by remember(startOfMessages) {
         derivedStateOf {
             !startOfMessages &&
                 lazyListState.firstVisibleItemIndex == 0 &&
