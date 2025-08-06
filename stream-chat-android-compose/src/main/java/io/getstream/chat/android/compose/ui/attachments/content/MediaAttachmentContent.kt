@@ -408,11 +408,6 @@ internal fun MediaAttachmentContentItem(
     val isImage = attachment.isImage()
     val isVideo = attachment.isVideo()
 
-    println(
-        "alor: type: ${attachment.type}, thumbUrl: ${attachment.thumbUrl}, " +
-            "imageUrl: ${attachment.imageUrl}, upload: ${attachment.upload}",
-    )
-
     val data = attachment.imagePreviewData
 
     val context = LocalContext.current
