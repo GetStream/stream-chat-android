@@ -375,28 +375,6 @@ internal class ChannelStateLogic(
     }
 
     /**
-     * Trims the oldest messages if the number of messages exceeds the given limit.
-     *
-     * @param keep The number of messages to keep.
-     */
-    fun trimOldMessagesIfNeeded(keep: Int) {
-        val messages = mutableState.messages.value
-        // Add buffer to avoid trimming too often
-        if (messages.size > keep + TRIM_BUFFER) {
-            val trimmedMessages = messages.takeLast(keep)
-            mutableState.setMessages(trimmedMessages)
-            // We have trimmed from the end, so we don't have the oldest messages
-            mutableState.setEndOfOlderMessages(false)
-            logger.d {
-                "[trimOldMessagesIfNeeded] Trimmed messages for channel ${mutableState.cid}, " +
-                    "kept: ${trimmedMessages.size}, trimmed: ${messages.size - trimmedMessages.size}"
-            }
-        } else {
-            logger.d { "[trimOldMessagesIfNeeded] No need to trim, size: ${messages.size}, buffer: $TRIM_BUFFER" }
-        }
-    }
-
-    /**
      * Hides the messages created before the given date.
      *
      * @param date The date used for generating result.
@@ -852,6 +830,5 @@ internal class ChannelStateLogic(
         private const val TAG = "Chat:ChannelStateLogic"
         private const val TEXT_LIMIT = 10
         private const val CACHE_SIZE = 100
-        private const val TRIM_BUFFER = 30
     }
 }
