@@ -53,6 +53,11 @@ public object NotificationHandlerFactory {
      * @param permissionHandler Handles [android.Manifest.permission.POST_NOTIFICATIONS] permission lifecycle.
      * @param notificationTextFormatter Lambda expression used to formats the text of the notification.
      * @param actionsProvider Lambda expression used to provide actions for the notification.
+     * @param notificationBuilderTransformer Lambda expression used to transform the [NotificationCompat.Builder]
+     * before building the notification.
+     *
+     * @return A [NotificationHandler] instance.
+     * @see NotificationHandler
      */
     @SuppressLint("NewApi")
     @JvmOverloads
@@ -68,6 +73,8 @@ public object NotificationHandlerFactory {
             getDefaultNotificationTextFormatter(notificationConfig),
         actionsProvider: (notificationId: Int, channel: Channel, message: Message) -> List<NotificationCompat.Action> =
             getDefaultActionsProvider(context),
+        notificationBuilderTransformer: (NotificationCompat.Builder, ChatNotification) -> NotificationCompat.Builder =
+            { builder, _ -> builder },
     ): NotificationHandler = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         MessagingStyleNotificationHandler(
             context = context,
@@ -77,6 +84,7 @@ public object NotificationHandlerFactory {
             permissionHandler = permissionHandler,
             notificationTextFormatter = notificationTextFormatter,
             actionsProvider = actionsProvider,
+            notificationBuilderTransformer = notificationBuilderTransformer,
         )
     } else {
         ChatNotificationHandler(
@@ -85,6 +93,7 @@ public object NotificationHandlerFactory {
             notificationChannel = notificationChannel,
             notificationTextFormatter = notificationTextFormatter,
             actionsProvider = actionsProvider,
+            notificationBuilderTransformer = notificationBuilderTransformer,
         )
     }
 

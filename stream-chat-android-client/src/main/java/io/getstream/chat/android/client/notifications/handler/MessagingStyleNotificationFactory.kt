@@ -55,6 +55,8 @@ internal class MessagingStyleNotificationFactory(
     private val newMessageIntent: (message: Message, channel: Channel) -> Intent,
     private val notificationTextFormatter: (currentUser: User?, message: Message) -> CharSequence,
     private val actionsProvider: (notificationId: Int, channel: Channel, message: Message) -> List<Action>,
+    private val notificationBuilderTransformer:
+    (NotificationCompat.Builder, ChatNotification) -> NotificationCompat.Builder,
 ) {
 
     /**
@@ -112,7 +114,7 @@ internal class MessagingStyleNotificationFactory(
                     .setAutoCancel(true)
             }
         }
-        return builder.build()
+        return notificationBuilderTransformer(builder, notification).build()
     }
 
     private fun createContentIntent(notificationId: Int, channel: Channel, message: Message) =
