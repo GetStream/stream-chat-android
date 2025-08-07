@@ -50,7 +50,7 @@ internal fun ChannelMediaAttachmentsPreview(
     initialItem: ChannelAttachmentsViewState.Content.Item,
     onLoadMoreRequested: () -> Unit = {},
     onNavigationIconClick: () -> Unit = {},
-    onVideoPlaybackError: () -> Unit = {},
+    onVideoPlaybackError: (error: Throwable) -> Unit = {},
 ) {
     val pagerState = rememberPagerState(
         initialPage = items.indexOf(initialItem),

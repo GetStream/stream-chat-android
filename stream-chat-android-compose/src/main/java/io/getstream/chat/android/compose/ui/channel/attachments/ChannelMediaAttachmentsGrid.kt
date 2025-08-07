@@ -71,7 +71,7 @@ internal fun ChannelMediaAttachmentsGrid(
     gridColumnCount: Int? = null,
     headerKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String,
     onLoadMoreRequested: () -> Unit = {},
-    onVideoPlaybackError: () -> Unit = {},
+    onVideoPlaybackError: (error: Throwable) -> Unit = {},
     itemContent: @Composable LazyGridItemScope.(
         index: Int,
         item: ChannelAttachmentsViewState.Content.Item,

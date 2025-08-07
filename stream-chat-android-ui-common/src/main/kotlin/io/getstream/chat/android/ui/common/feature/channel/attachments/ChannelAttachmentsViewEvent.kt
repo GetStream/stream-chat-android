@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.ui.common.feature.channel.attachments
 
+import io.getstream.result.Error
+
 /**
  * The different types of events that can occur in the channel attachments view.
  */
@@ -23,7 +25,7 @@ public sealed interface ChannelAttachmentsViewEvent {
     /**
      * The error event that occurred while loading more attachments.
      *
-     * @param message The error message.
+     * @param error The error that occurred during the loading more process.
      */
-    public data class LoadMoreError(val message: String) : ChannelAttachmentsViewEvent
+    public data class LoadMoreError(val error: Error) : ChannelAttachmentsViewEvent
 }
