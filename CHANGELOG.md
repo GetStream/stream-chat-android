@@ -29,7 +29,6 @@
 
 ### ✅ Added
 - Add `StreamOfflinePluginFactory.ignoredChannelTypes` property to allow ignoring messages for specific channel types in the offline storage. [#5877](https://github.com/GetStream/stream-chat-android/pull/5877)
-- By default the `StreamOfflinePluginFactory.ignoredChannelTypes` is set to `livestream` channel types, so that the messages that belong to `livestream` channel type are not stored in the offline storage. [#5877](https://github.com/GetStream/stream-chat-android/pull/5877)
 
 ### ⚠️ Changed
 
@@ -37,15 +36,14 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
-- Fix reactions not working in `livestream` channels. [#5883](https://github.com/GetStream/stream-chat-android/pull/5883)
-- Fix attachments upload not working in channels with message limit applied. [#5886](https://github.com/GetStream/stream-chat-android/pull/5886)
+- Fix reactions not working in channels with disabled DB writes. [#5883](https://github.com/GetStream/stream-chat-android/pull/5883)
 - Fix delete message not working in channels with disabled DB writes. [#5886](https://github.com/GetStream/stream-chat-android/pull/5886)
+- Fix attachments upload not working in channels with message limit applied. [#5886](https://github.com/GetStream/stream-chat-android/pull/5886)
 
 ### ⬆️ Improved
 
 ### ✅ Added
 - Add `StatePluginConfig.MessageLimitConfig` config to allow setting the maximum number of messages to be kept in memory for specific channel types. [#5877](https://github.com/GetStream/stream-chat-android/pull/5877)
-- By default the `StatePluginConfig.MessageLimitConfig` is set to 500 messages for `livestream` channel types. [#5877](https://github.com/GetStream/stream-chat-android/pull/5877)
 
 ### ⚠️ Changed
 - Deprecate `SendReactionListener.onSendReactionPrecondition(currentUser?, reaction: Reaction)` in favor of `SendReactionListener.onSendReactionPrecondition(cid: String?, currentUser: User?, reaction: Reaction)`. [#5883](https://github.com/GetStream/stream-chat-android/pull/5883)
