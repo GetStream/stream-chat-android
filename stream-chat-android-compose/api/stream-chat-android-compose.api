@@ -920,10 +920,6 @@ public final class io/getstream/chat/android/compose/ui/attachments/preview/inte
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 }
 
-public final class io/getstream/chat/android/compose/ui/channel/attachments/ChannelFilesAttachmentsListKt {
-	public static final fun ChannelFilesAttachmentsList (Lio/getstream/chat/android/ui/common/state/channel/attachments/ChannelAttachmentsViewState;Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/lazy/LazyListState;Lio/getstream/chat/android/models/User;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function5;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
-}
-
 public final class io/getstream/chat/android/compose/ui/channel/attachments/ChannelFilesAttachmentsScreenKt {
 	public static final fun ChannelFilesAttachmentsScreen (Lio/getstream/chat/android/compose/viewmodel/channel/ChannelAttachmentsViewModelFactory;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;ZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
