@@ -56,7 +56,7 @@ import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAtta
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-public fun ChannelFilesAttachmentsList(
+internal fun ChannelFilesAttachmentsList(
     viewState: ChannelAttachmentsViewState,
     modifier: Modifier = Modifier,
     listState: LazyListState = rememberLazyListState(),
