@@ -178,7 +178,7 @@ internal class ChannelAttachmentsViewControllerTest {
             sut.events.test {
                 val event = awaitItem()
                 assertInstanceOf<ChannelAttachmentsViewEvent.LoadMoreError>(event)
-                assertEquals(searchingError.message, event.message)
+                assertEquals(searchingError, event.error)
             }
 
             val expectedFinalItems = listOf(

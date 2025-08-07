@@ -925,7 +925,7 @@ public final class io/getstream/chat/android/compose/ui/channel/attachments/Chan
 }
 
 public final class io/getstream/chat/android/compose/ui/channel/attachments/ChannelMediaAttachmentsScreenKt {
-	public static final fun ChannelMediaAttachmentsScreen (Lio/getstream/chat/android/compose/viewmodel/channel/ChannelAttachmentsViewModelFactory;Landroidx/compose/ui/Modifier;Ljava/lang/Integer;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+	public static final fun ChannelMediaAttachmentsScreen (Lio/getstream/chat/android/compose/viewmodel/channel/ChannelAttachmentsViewModelFactory;Landroidx/compose/ui/Modifier;Ljava/lang/Integer;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/channel/attachments/ComposableSingletons$ChannelFilesAttachmentsListKt {

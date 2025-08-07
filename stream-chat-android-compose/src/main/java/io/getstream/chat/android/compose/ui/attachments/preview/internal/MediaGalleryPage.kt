@@ -295,7 +295,7 @@ internal fun MediaGalleryVideoPage(
     player: Player,
     thumbnailUrl: String?,
     showBuffering: Boolean,
-    onPlaybackError: () -> Unit,
+    onPlaybackError: (error: Throwable) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showThumbnail by remember { mutableStateOf(true) }

@@ -70,7 +70,7 @@ public fun ChannelMediaAttachmentsScreen(
     headerKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String =
         ChannelAttachmentsDefaults.HeaderKeySelector,
     onNavigationIconClick: () -> Unit = {},
-    onVideoPlaybackError: () -> Unit = {},
+    onVideoPlaybackError: (error: Throwable) -> Unit = {},
 ) {
     val viewModel = viewModel<ChannelAttachmentsViewModel>(factory = viewModelFactory)
     val viewState by viewModel.state.collectAsStateWithLifecycle()
@@ -95,7 +95,7 @@ private fun ChannelMediaAttachmentsContent(
         ChannelAttachmentsDefaults.HeaderKeySelector,
     onNavigationIconClick: () -> Unit = {},
     onLoadMoreRequested: () -> Unit = {},
-    onVideoPlaybackError: () -> Unit = {},
+    onVideoPlaybackError: (error: Throwable) -> Unit = {},
 ) {
     val gridState = rememberLazyGridState()
     Scaffold(

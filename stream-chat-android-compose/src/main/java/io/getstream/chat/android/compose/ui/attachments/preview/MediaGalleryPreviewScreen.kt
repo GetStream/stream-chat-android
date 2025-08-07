@@ -171,7 +171,7 @@ public fun MediaGalleryPreviewScreen(
                 .padding(padding),
             pagerState = pagerState,
             attachments = attachments,
-            onPlaybackError = onPlaybackError,
+            onPlaybackError = { onPlaybackError() },
         )
     },
     footer: @Composable (attachments: List<Attachment>, currentPage: Int) -> Unit = { attachments, currentPage ->
@@ -312,7 +312,7 @@ public fun MediaGalleryPreviewScreen(
                 .padding(padding),
             pagerState = pagerState,
             attachments = attachments,
-            onPlaybackError = onPlaybackError,
+            onPlaybackError = { onPlaybackError() },
         )
     },
     footer: @Composable (attachments: List<Attachment>, currentPage: Int) -> Unit = { attachments, currentPage ->
@@ -541,7 +541,7 @@ internal fun MediaGalleryPreviewHeader(
 internal fun MediaGalleryPager(
     pagerState: PagerState,
     attachments: List<Attachment>,
-    onPlaybackError: () -> Unit,
+    onPlaybackError: (error: Throwable) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current

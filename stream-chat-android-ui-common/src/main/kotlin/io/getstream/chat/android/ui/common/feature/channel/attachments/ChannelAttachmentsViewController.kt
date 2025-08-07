@@ -150,7 +150,7 @@ public class ChannelAttachmentsViewController(
             when (currentState) {
                 is ChannelAttachmentsViewState.Loading -> ChannelAttachmentsViewState.Error(message = error.message)
                 is ChannelAttachmentsViewState.Content -> {
-                    _events.tryEmit(ChannelAttachmentsViewEvent.LoadMoreError(message = error.message))
+                    _events.tryEmit(ChannelAttachmentsViewEvent.LoadMoreError(error))
                     currentState.copy(isLoadingMore = false)
                 }
                 else -> currentState

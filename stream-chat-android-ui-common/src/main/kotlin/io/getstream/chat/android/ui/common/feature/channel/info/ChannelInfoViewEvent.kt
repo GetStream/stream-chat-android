@@ -64,7 +64,7 @@ public sealed interface ChannelInfoViewEvent {
         /**
          * The available timeout options for banning the member.
          */
-        val timeouts: List<Timeout> = ChannelInfoViewEvent.BanMemberModal.Timeout.entries.toList()
+        val timeouts: List<Timeout> = Timeout.entries.toList()
 
         /**
          * Represents the available timeout options for banning a member.

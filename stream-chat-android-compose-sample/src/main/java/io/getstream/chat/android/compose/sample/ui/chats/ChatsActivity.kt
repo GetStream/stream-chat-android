@@ -49,6 +49,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
+import io.getstream.chat.android.compose.sample.R.string.stream_ui_message_list_video_display_error
 import io.getstream.chat.android.compose.sample.feature.channel.ChannelConstants.CHANNEL_ARG_DRAFT
 import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelActivity
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
@@ -583,6 +584,13 @@ class ChatsActivity : ComponentActivity() {
             viewModelFactory = viewModelFactory,
             gridColumnCount = if (AdaptiveLayoutInfo.singlePaneWindow()) null else 4,
             onNavigationIconClick = onNavigationIconClick,
+            onVideoPlaybackError = {
+                Toast.makeText(
+                    applicationContext,
+                    stream_ui_message_list_video_display_error,
+                    Toast.LENGTH_SHORT,
+                ).show()
+            },
         )
         LaunchedEffect(viewModel) {
             viewModel.events.collectLatest { event ->

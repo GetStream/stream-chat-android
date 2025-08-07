@@ -75,7 +75,7 @@ import io.getstream.chat.android.core.internal.StreamHandsOff
 internal fun StreamMediaPlayerContent(
     assetUrl: String?,
     playWhenReady: Boolean,
-    onPlaybackError: () -> Unit,
+    onPlaybackError: (error: Throwable) -> Unit,
     modifier: Modifier = Modifier,
     thumbnailUrl: String? = null,
 ) {
@@ -192,7 +192,7 @@ internal fun MediaThumbnail(
 internal fun createPlayer(
     context: Context,
     onBuffering: (Boolean) -> Unit,
-    onPlaybackError: () -> Unit,
+    onPlaybackError: (error: Throwable) -> Unit,
 ): Player {
     // Setup player
     val player = ExoPlayer.Builder(context).build()
@@ -206,7 +206,7 @@ internal fun createPlayer(
         }
 
         override fun onPlayerError(error: PlaybackException) {
-            onPlaybackError()
+            onPlaybackError(error)
         }
     })
     return player
