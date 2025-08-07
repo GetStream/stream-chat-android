@@ -741,11 +741,12 @@ internal class ChannelStateLogic(
         }
     }
 
+    /**
+     * Called when the user is loading the newest messages.
+     * Resets the current message limit.
+     */
     fun loadingNewestMessages() {
-        // Reset messages if there is a limit set
-        if (mutableState.baseMessageLimit != null) {
-            mutableState.setMessages(emptyList())
-        }
+        mutableState.resetMessageLimit()
     }
 
     /**

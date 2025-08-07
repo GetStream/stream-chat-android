@@ -106,16 +106,16 @@ public class StateRegistry constructor(
      */
     internal fun mutableChannel(channelType: String, channelId: String): ChannelMutableState {
         return channels.getOrPut(channelType to channelId) {
-            val messageLimit = messageLimitConfig.channelMessageLimits
+            val baseMessageLimit = messageLimitConfig.channelMessageLimits
                 .find { it.channelType == channelType }
-                ?.limit
+                ?.baseLimit
             ChannelMutableState(
                 channelType = channelType,
                 channelId = channelId,
                 userFlow = userStateFlow,
                 latestUsers = latestUsers,
                 activeLiveLocations = activeLiveLocations,
-                baseMessageLimit = messageLimit,
+                baseMessageLimit = baseMessageLimit,
                 now = now,
             )
         }

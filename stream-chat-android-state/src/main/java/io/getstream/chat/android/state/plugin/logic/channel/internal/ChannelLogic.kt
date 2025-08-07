@@ -215,7 +215,6 @@ internal class ChannelLogic(
     internal suspend fun loadOlderMessages(messageLimit: Int, baseMessageId: String? = null): Result<Channel> {
         logger.i { "[loadOlderMessages] messageLimit: $messageLimit, baseMessageId: $baseMessageId" }
         channelStateLogic.loadingOlderMessages()
-        // Increment the counter of older messages requests
         return runChannelQuery(
             "loadOlderMessages",
             olderWatchChannelRequest(limit = messageLimit, baseMessageId = baseMessageId),
