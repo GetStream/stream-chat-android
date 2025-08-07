@@ -678,8 +678,10 @@ internal class ChannelMutableState(
     private fun applyMessageLimitIfNeeded(messages: Collection<Message>): Collection<Message> {
         // If no message limit is set or we are loading older messages, restriction is not applied
         if (messageLimit == null || loadingOlderMessages.value) {
-            logger.d { "[applyMessageLimitIfNeeded] no need to trim, " +
-                "messageLimit: $messageLimit, loadingOlderMessages: ${loadingOlderMessages.value}" }
+            logger.d {
+                "[applyMessageLimitIfNeeded] no need to trim, " +
+                    "messageLimit: $messageLimit, loadingOlderMessages: ${loadingOlderMessages.value}"
+            }
             return messages
         }
         // Add buffer to avoid trimming too often
