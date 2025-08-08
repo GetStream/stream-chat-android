@@ -226,7 +226,8 @@ internal class LogicRegistry internal constructor(
             val stateLogic = ThreadStateLogic(mutableState)
             ThreadLogic(stateLogic).also { threadLogic ->
                 coroutineScope.launch {
-                    repos.selectMessage(messageId)?.let { threadLogic.upsertMessage(it) }
+                    val parentMessage = getMessageById(messageId) ?: repos.selectMessage(messageId)
+                    parentMessage?.let { threadLogic.upsertMessage(it) }
                     repos.selectMessagesForThread(messageId, MESSAGE_LIMIT).let { threadLogic.upsertMessages(it) }
                 }
             }
