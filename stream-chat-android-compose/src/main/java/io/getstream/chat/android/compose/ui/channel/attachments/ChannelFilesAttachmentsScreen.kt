@@ -47,6 +47,12 @@ import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAtta
 /**
  * Displays the channel files attachments screen.
  *
+ * The screen includes a top bar, a list of file attachments,
+ * and handles attachments click events with [ChatTheme.attachmentPreviewHandlers].
+ * The screen supports loading more attachments when the user scrolls to the end of the list.
+ * It also supports grouping attachments by a header key,
+ * which can be customized using the [headerKeySelector] function.
+ *
  * @param viewModelFactory The factory to create the [ChannelAttachmentsViewModel].
  * @param modifier The modifier for styling.
  * @param currentUser The currently logged in user.
