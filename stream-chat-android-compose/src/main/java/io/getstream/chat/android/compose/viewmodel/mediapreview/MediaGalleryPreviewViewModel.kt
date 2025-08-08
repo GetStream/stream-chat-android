@@ -23,12 +23,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.compose.util.extensions.asState
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.result.Result
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -87,6 +90,13 @@ public class MediaGalleryPreviewViewModel(
             initial ?: fresh ?: Message()
         }
     }.asState(viewModelScope, Message())
+
+    /**
+     * Exposes events indicating that the screen should be closed (message deleted or no attachments left).
+     */
+    private val _closeScreen: MutableSharedFlow<Boolean> = MutableSharedFlow(extraBufferCapacity = 1)
+    internal val closeScreen: Flow<Boolean>
+        get() = _closeScreen
 
     /**
      * If we are preparing a file for sharing or not.
@@ -265,6 +275,10 @@ public class MediaGalleryPreviewViewModel(
                 },
             )
         }
+        if (message.isDeleted() || message.attachments.isEmpty()) {
+            // If the message is deleted or has no attachments, close the screen as there is nothing to show.
+            _closeScreen.tryEmit(true)
+        }
     }
 
     private fun removeAttachmentAndUpdate(
@@ -293,6 +307,8 @@ public class MediaGalleryPreviewViewModel(
         chatClient.deleteMessage(message.id).enqueue { result ->
             if (result is Result.Success) {
                 freshMessage.value = result.value
+                // If the message is deleted, close the screen
+                _closeScreen.tryEmit(true)
             }
         }
     }
