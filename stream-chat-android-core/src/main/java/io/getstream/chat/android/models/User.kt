@@ -45,6 +45,7 @@ import java.util.Date
  * @param teamsRole The roles of the user in the teams they are part of. Example: `["teamId": "role"]`.
  * @param channelMutes A list of channels muted by the current user.
  * @param blockedUserIds A list of user ids blocked by the current user.
+ * @param avgResponseTime The average response time of the user in seconds
  * @param extraData A map of custom fields for the user.
  * @param deactivatedAt Date/time of deactivation.
  */
