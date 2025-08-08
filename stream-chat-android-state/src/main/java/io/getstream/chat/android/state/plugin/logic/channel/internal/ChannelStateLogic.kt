@@ -707,6 +707,68 @@ internal class ChannelStateLogic(
         updateMute(isChannelMuted)
     }
 
+    fun addOlderMessages(messages: List<Message>, isEnd: Boolean) {
+        logger.d { "[addOlderMessages] Adding older messages: ${messages.size}, isEnd: $isEnd" }
+        mutableState.setEndOfOlderMessages(isEnd)
+        mutableState.upsertMessages(messages)
+        mutableState.setLoadingOlderMessages(false)
+    }
+
+    fun addNewerMessages(messages: List<Message>, isEnd: Boolean) {
+        logger.d { "[addNewerMessages] Adding newer messages: ${messages.size}, isEnd: $isEnd" }
+        mutableState.setEndOfNewerMessages(isEnd)
+        mutableState.upsertMessages(messages)
+        mutableState.setLoadingNewerMessages(false)
+    }
+
+    fun replaceMessages(messages: List<Message>, loadedAroundId: Boolean, isEnd: Boolean) {
+        logger.d {
+            "[replaceMessages] Replacing messages: ${messages.size}, loadedAroundId: $loadedAroundId, isEnd: $isEnd"
+        }
+        mutableState.setMessages(messages)
+        if (loadedAroundId) {
+            // We are loading an arbitrary set of messages around a specific message id, we can't know if there are
+            // no older or newer messages left, so we set both ends to false
+            mutableState.setEndOfOlderMessages(false)
+            mutableState.setEndOfNewerMessages(false)
+        } else {
+            // We have loaded the latest messages, so we can set the end of newer messages to true, and the end of the
+            // older messages based on the number of loaded messages
+            mutableState.setEndOfOlderMessages(isEnd)
+            mutableState.setEndOfNewerMessages(true)
+        }
+    }
+
+    fun trimNewMessagesIfNeeded(keep: Int) {
+        logger.d { "[trimNewMessagesIfNeeded] Trimming new messages if needed, keep: $keep" }
+        val messages = mutableState.messages.value
+        // Remove newest messages if the size exceeds the limit
+        if (messages.size > keep) {
+            logger.d { "[trimNewMessagesIfNeeded] Trimming newest messages, trimmed: ${messages.size - keep}" }
+            val messagesToKeep = messages.take(keep)
+            mutableState.setMessages(messagesToKeep)
+            // Set the end of newer messages to false, as we have trimmed the newest messages
+            mutableState.setEndOfNewerMessages(false)
+        } else {
+            logger.d { "[trimNewMessagesIfNeeded] Skip trimming, messages size: ${messages.size}" }
+        }
+    }
+
+    fun trimOldMessagesIfNeeded(keep: Int) {
+        logger.d { "[trimOldMessagesIfNeeded] Trimming old messages if needed, keep: $keep" }
+        val messages = mutableState.messages.value
+        // Remove oldest messages if the size exceeds the limit
+        if (messages.size > keep) {
+            logger.d { "[trimOldMessagesIfNeeded] Trimming oldest messages, trimmed: ${messages.size - keep}" }
+            val messagesToKeep = messages.takeLast(keep)
+            mutableState.setMessages(messagesToKeep)
+            // Set the end of older messages to false, as we have trimmed the oldest messages
+            mutableState.setEndOfOlderMessages(false)
+        } else {
+            logger.d { "[trimOldMessagesIfNeeded] Skip trimming, messages size: ${messages.size}" }
+        }
+    }
+
     private fun isMessageNewerThanCurrent(currentMessage: Message?, newMessage: Message): Boolean {
         return if (newMessage.syncStatus == SyncStatus.COMPLETED) {
             (currentMessage?.lastUpdateTime() ?: NEVER.time) <= newMessage.lastUpdateTime()
