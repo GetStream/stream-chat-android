@@ -117,6 +117,22 @@ internal fun LazyItemScope.ChannelInfoOptionItem(
             )
         }
 
+        is ChannelInfoViewState.Content.Option.MediaAttachments -> {
+            ChannelInfoOptionNavigationButton(
+                icon = R.drawable.stream_compose_ic_image_picker,
+                text = stringResource(R.string.stream_ui_channel_info_option_media_attachments),
+                onClick = { onViewAction(ChannelInfoViewAction.MediaAttachmentsClick) },
+            )
+        }
+
+        is ChannelInfoViewState.Content.Option.FilesAttachments -> {
+            ChannelInfoOptionNavigationButton(
+                icon = R.drawable.stream_compose_ic_file_picker,
+                text = stringResource(R.string.stream_ui_channel_info_option_files_attachments),
+                onClick = { onViewAction(ChannelInfoViewAction.FilesAttachmentsClick) },
+            )
+        }
+
         is ChannelInfoViewState.Content.Option.LeaveChannel -> {
             CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.errorAccent)) {
                 ChannelInfoOptionButton(

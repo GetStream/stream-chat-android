@@ -75,7 +75,7 @@ import io.getstream.chat.android.core.internal.StreamHandsOff
 internal fun StreamMediaPlayerContent(
     assetUrl: String?,
     playWhenReady: Boolean,
-    onPlaybackError: () -> Unit,
+    onPlaybackError: (error: Throwable) -> Unit,
     modifier: Modifier = Modifier,
     thumbnailUrl: String? = null,
 ) {
@@ -152,7 +152,7 @@ internal fun StreamMediaPlayerContent(
  * @param modifier Modifier to be applied to the thumbnail container.
  */
 @Composable
-private fun MediaThumbnail(
+internal fun MediaThumbnail(
     thumbnailUrl: String?,
     modifier: Modifier = Modifier,
 ) {
@@ -188,10 +188,11 @@ private fun MediaThumbnail(
  * @param onBuffering Callback to be invoked when the player enters or exits buffering state.
  * @param onPlaybackError Callback to be invoked when a playback error occurs.
  */
-private fun createPlayer(
+@OptIn(UnstableApi::class)
+internal fun createPlayer(
     context: Context,
     onBuffering: (Boolean) -> Unit,
-    onPlaybackError: () -> Unit,
+    onPlaybackError: (error: Throwable) -> Unit,
 ): Player {
     // Setup player
     val player = ExoPlayer.Builder(context).build()
@@ -205,7 +206,7 @@ private fun createPlayer(
         }
 
         override fun onPlayerError(error: PlaybackException) {
-            onPlaybackError()
+            onPlaybackError(error)
         }
     })
     return player
@@ -227,7 +228,7 @@ private fun createPlayer(
         "we always use the correct layout for our version of the ExoPlayer library",
 )
 @OptIn(UnstableApi::class)
-private fun createPlayerView(context: Context, player: Player): PlayerView {
+internal fun createPlayerView(context: Context, player: Player): PlayerView {
     val playerView = LayoutInflater.from(context)
         .inflate(R.layout.stream_compose_player_view, null) as PlayerView
     return playerView.apply {

@@ -35,16 +35,20 @@ import kotlinx.coroutines.flow.StateFlow
  *
  * @param cid The full channel identifier (e.g., "messaging:123").
  * @param copyToClipboardHandler The handler for copying text to the clipboard.
+ * @param optionFilter A filter function for channel options, allowing customization of which options are displayed.
+ *                      Defaults to a function that returns true for all options.
  * @param controllerProvider The provider for [ChannelInfoViewController].
  */
 public class ChannelInfoViewModel(
     private val cid: String,
     private val copyToClipboardHandler: CopyToClipboardHandler,
+    private val optionFilter: (option: ChannelInfoViewState.Content.Option) -> Boolean = { true },
     controllerProvider: ViewModel.() -> ChannelInfoViewController = {
         ChannelInfoViewController(
             cid = cid,
             scope = viewModelScope,
             copyToClipboardHandler = copyToClipboardHandler,
+            optionFilter = optionFilter,
         )
     },
 ) : ViewModel() {

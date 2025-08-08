@@ -59,6 +59,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Introduce `ChannelAttachmentsViewController`, `ChannelAttachmentsViewAction`, `ChannelAttachmentsViewEvent`, and `ChannelAttachmentsViewState` shared between XML and Compose SDKs and responsible for managing the state and events related to channel attachments, supporting pagination. [#5882](https://github.com/GetStream/stream-chat-android/pull/5882)
 
 ### ⚠️ Changed
 
@@ -70,6 +71,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Introduce `ChannelAttachmentsViewModel` and `ChannelAttachmentsViewModelFactory`. [#5882](https://github.com/GetStream/stream-chat-android/pull/5882)
 
 ### ⚠️ Changed
 
@@ -81,8 +83,13 @@
 - Fix the poll creation button to disable when multiple answers has a wrong input. [#5885](https://github.com/GetStream/stream-chat-android/pull/5885)
 
 ### ⬆️ Improved
+- `MediaGalleryPager` now supports a single `Player` instead of creating a player for each video attachment.
 
 ### ✅ Added
+- Introduce `ChannelAttachmentsViewModel` and `ChannelAttachmentsViewModelFactory`. [#5882](https://github.com/GetStream/stream-chat-android/pull/5882)
+- Introduce `ChannelFilesAttachmentsScreen` to display the channel files attachments. [#5882](https://github.com/GetStream/stream-chat-android/pull/5882)
+- Introduce `ChannelMediaAttachmentsScreen` to display the channel media (photos & videos) attachments. [#5882](https://github.com/GetStream/stream-chat-android/pull/5882)
+- Introduce `ChannelMediaAttachmentsPreview`, a full-screen pager that allows users to swipe through media attachments in a channel. [#5882](https://github.com/GetStream/stream-chat-android/pull/5882)
 
 ### ⚠️ Changed
 

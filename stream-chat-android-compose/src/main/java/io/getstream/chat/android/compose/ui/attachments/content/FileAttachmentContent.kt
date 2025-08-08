@@ -60,6 +60,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
+import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.uiutils.model.MimeType
 
@@ -172,7 +173,7 @@ public fun FileAttachmentItem(
  *  @param attachment The attachment for which the information is displayed.
  */
 @Composable
-private fun FileAttachmentDescription(
+internal fun RowScope.FileAttachmentDescription(
     attachment: Attachment,
     isMine: Boolean,
     showFileSize: (Attachment) -> Boolean,
@@ -183,14 +184,14 @@ private fun FileAttachmentDescription(
     }
     Column(
         modifier = Modifier
-            .fillMaxWidth(0.85f)
+            .weight(1f)
             .padding(start = 16.dp, end = 8.dp),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
             modifier = Modifier.testTag("Stream_FileAttachmentName"),
-            text = attachment.title ?: attachment.name ?: "",
+            text = attachment.getDisplayableName() ?: "",
             style = fileAttachmentTheme.fileNameTextStyle,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,

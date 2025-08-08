@@ -60,6 +60,8 @@ import kotlinx.coroutines.launch
  * @param cid The unique identifier of the channel.
  * @param scope The [CoroutineScope] used for launching coroutines.
  * @param copyToClipboardHandler The [CopyToClipboardHandler] used for copying text to the clipboard.
+ * @param optionFilter A filter function for channel options, allowing customization of which options are displayed.
+ *                      Defaults to a function that returns true for all options.
  * @param chatClient The [ChatClient] instance used for interacting with the chat API.
  * @param channelState A [Flow] representing the state of the channel.
  * @param channelClient The [ChannelClient] instance for performing channel-specific operations.
@@ -69,6 +71,7 @@ public class ChannelInfoViewController(
     private val cid: String,
     private val scope: CoroutineScope,
     private val copyToClipboardHandler: CopyToClipboardHandler,
+    private val optionFilter: (option: ChannelInfoViewState.Content.Option) -> Boolean = { true },
     private val chatClient: ChatClient = ChatClient.instance(),
     channelState: Flow<ChannelState> = chatClient
         .watchChannelAsState(cid = cid, messageLimit = 0, coroutineScope = scope)
@@ -148,7 +151,9 @@ public class ChannelInfoViewController(
                     singleMember = if (contentMembers.size == 1) contentMembers.first() else null,
                     isMuted = isMuted,
                     isHidden = isHidden,
-                ),
+                ).mapNotNull { option ->
+                    if (optionFilter(option)) option else null
+                },
             )
         }
     }
@@ -170,6 +175,12 @@ public class ChannelInfoViewController(
             is ChannelInfoViewAction.RenameChannelClick -> renameChannel(action.name)
             is ChannelInfoViewAction.PinnedMessagesClick ->
                 _events.tryEmit(ChannelInfoViewEvent.NavigateToPinnedMessages)
+
+            is ChannelInfoViewAction.MediaAttachmentsClick ->
+                _events.tryEmit(ChannelInfoViewEvent.NavigateToMediaAttachments)
+
+            is ChannelInfoViewAction.FilesAttachmentsClick ->
+                _events.tryEmit(ChannelInfoViewEvent.NavigateToFilesAttachments)
 
             is ChannelInfoViewAction.MuteChannelClick -> setChannelMute(mute = true)
             is ChannelInfoViewAction.UnmuteChannelClick -> setChannelMute(mute = false)
@@ -454,6 +465,8 @@ private fun buildChannelOptionList(
     }
     add(ChannelInfoViewState.Content.Option.HideChannel(isHidden))
     add(ChannelInfoViewState.Content.Option.PinnedMessages)
+    add(ChannelInfoViewState.Content.Option.MediaAttachments)
+    add(ChannelInfoViewState.Content.Option.FilesAttachments)
     add(ChannelInfoViewState.Content.Option.Separator)
     if (channelData.ownCapabilities.contains(ChannelCapabilities.LEAVE_CHANNEL)) {
         add(ChannelInfoViewState.Content.Option.LeaveChannel)

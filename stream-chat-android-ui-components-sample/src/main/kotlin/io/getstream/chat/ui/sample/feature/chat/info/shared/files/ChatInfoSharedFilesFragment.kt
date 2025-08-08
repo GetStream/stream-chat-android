@@ -24,27 +24,34 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import io.getstream.chat.android.client.extensions.getCreatedAtOrThrow
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.ChatUI
+import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewAction
+import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
 import io.getstream.chat.android.ui.navigation.destinations.AttachmentDestination
+import io.getstream.chat.android.ui.viewmodel.channel.ChannelAttachmentsViewModel
+import io.getstream.chat.android.ui.viewmodel.channel.ChannelAttachmentsViewModelFactory
 import io.getstream.chat.android.ui.widgets.EndlessScrollListener
 import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.databinding.FragmentChatInfoSharedFilesBinding
-import io.getstream.chat.ui.sample.feature.chat.info.shared.ChatInfoSharedAttachmentsViewModel
-import io.getstream.chat.ui.sample.feature.chat.info.shared.ChatInfoSharedAttachmentsViewModelFactory
 import io.getstream.chat.ui.sample.feature.chat.info.shared.SharedAttachment
+import java.util.Calendar
+import java.util.Date
 
 class ChatInfoSharedFilesFragment : Fragment() {
 
+    private val attachmentsType = AttachmentType.FILE
     private val args: ChatInfoSharedFilesFragmentArgs by navArgs()
-    private val viewModel: ChatInfoSharedAttachmentsViewModel by viewModels {
-        ChatInfoSharedAttachmentsViewModelFactory(
-            args.cid!!,
-            ChatInfoSharedAttachmentsViewModel.AttachmentsType.FILES,
+    private val viewModel: ChannelAttachmentsViewModel by viewModels {
+        ChannelAttachmentsViewModelFactory(
+            cid = args.cid!!,
+            attachmentTypes = listOf(attachmentsType),
         )
     }
     private val adapter: ChatInfoSharedFilesAdapter = ChatInfoSharedFilesAdapter()
     private val scrollListener = EndlessScrollListener(LOAD_MORE_THRESHOLD) {
-        viewModel.onAction(ChatInfoSharedAttachmentsViewModel.Action.LoadMoreRequested)
+        viewModel.onViewAction(ChannelAttachmentsViewAction.LoadMoreRequested)
     }
 
     private var _binding: FragmentChatInfoSharedFilesBinding? = null
@@ -87,13 +94,26 @@ class ChatInfoSharedFilesFragment : Fragment() {
 
     private fun bindViewModel() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
-            if (state.isLoading) {
-                showLoading()
-            } else {
-                if (state.results.isEmpty()) {
-                    showEmptyState()
-                } else {
-                    showResults(state.results)
+            when (state) {
+                is ChannelAttachmentsViewState.Loading -> {
+                    showLoading()
+                }
+
+                is ChannelAttachmentsViewState.Content -> {
+                    if (state.items.isEmpty()) {
+                        showEmptyState()
+                    } else {
+                        val attachments = state.items
+                            .groupBy { mapDate(it.message.getCreatedAtOrThrow()) }
+                            .flatMap { (date, items) ->
+                                listOf(SharedAttachment.DateDivider(date)) + items.toAttachmentItems()
+                            }
+                        showResults(attachments)
+                    }
+                }
+
+                is ChannelAttachmentsViewState.Error -> {
+                    // TODO Handle error state
                 }
             }
         }
@@ -125,3 +145,23 @@ class ChatInfoSharedFilesFragment : Fragment() {
         private const val LOAD_MORE_THRESHOLD = 10
     }
 }
+
+private fun mapDate(date: Date): Date {
+    // We only care about year and month
+    return Calendar.getInstance().apply {
+        time = date
+        val year = get(Calendar.YEAR)
+        val month = get(Calendar.MONTH)
+        clear()
+        set(year, month, getActualMinimum(Calendar.DAY_OF_MONTH))
+    }.time
+}
+
+private fun List<ChannelAttachmentsViewState.Content.Item>.toAttachmentItems(): List<SharedAttachment.AttachmentItem> =
+    map { item ->
+        SharedAttachment.AttachmentItem(
+            message = item.message,
+            createdAt = item.message.getCreatedAtOrThrow(),
+            attachment = item.attachment,
+        )
+    }
