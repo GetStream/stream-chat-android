@@ -40,6 +40,7 @@
 - Fix reactions not working in `livestream` channels. [#5883](https://github.com/GetStream/stream-chat-android/pull/5883)
 - Fix attachments upload not working in channels with message limit applied. [#5886](https://github.com/GetStream/stream-chat-android/pull/5886)
 - Fix delete message not working in channels with disabled DB writes. [#5886](https://github.com/GetStream/stream-chat-android/pull/5886)
+- Fix thread not showing the parent message when offline support is disabled. [#5891](https://github.com/GetStream/stream-chat-android/pull/5891)
 
 ### ⬆️ Improved
 
