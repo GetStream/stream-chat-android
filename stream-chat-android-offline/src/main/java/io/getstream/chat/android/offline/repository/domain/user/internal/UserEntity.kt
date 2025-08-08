@@ -62,6 +62,7 @@ internal data class UserEntity(
     val teams: List<String> = emptyList(),
     val teamsRole: Map<String, String> = emptyMap(),
     val extraData: Map<String, Any> = emptyMap(),
+    val avgResponseTime: Long? = null,
 )
 
 internal const val USER_ENTITY_TABLE_NAME = "stream_chat_user"

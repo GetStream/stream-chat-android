@@ -71,6 +71,7 @@ public data class User(
     val teamsRole: Map<String, String> = emptyMap(),
     val channelMutes: List<ChannelMute> = emptyList(),
     val blockedUserIds: List<String> = emptyList(),
+    val avgResponseTime: Long = 0,
     override val extraData: Map<String, Any> = mapOf(),
     val deactivatedAt: Date? = null,
 ) : CustomObject, ComparableFieldProvider {
@@ -112,6 +113,7 @@ public data class User(
             "deactivated_at", "deactivatedAt" -> deactivatedAt
             "updated_at", "updatedAt" -> updatedAt
             "last_active", "lastActive" -> lastActive
+            "avg_response_time", "avgResponseTime" -> avgResponseTime
             else -> extraData[fieldName] as? Comparable<*>
         }
     }
@@ -142,6 +144,7 @@ public data class User(
         private var teamsRole: Map<String, String> = emptyMap()
         private var channelMutes: List<ChannelMute> = emptyList()
         private var blockedUserIds: List<String> = emptyList()
+        private var avgResponseTime: Long = 0
         private var extraData: Map<String, Any> = mutableMapOf()
         private var deactivatedAt: Date? = null
 
@@ -167,6 +170,7 @@ public data class User(
             teamsRole = user.teamsRole
             channelMutes = user.channelMutes
             blockedUserIds = user.blockedUserIds
+            avgResponseTime = user.avgResponseTime
             extraData = user.extraData
             deactivatedAt = user.deactivatedAt
         }
@@ -198,6 +202,9 @@ public data class User(
         public fun withBlockedUserIds(blockedUserIds: List<String>): Builder = apply {
             this.blockedUserIds = blockedUserIds
         }
+        public fun withAvgResponseTime(avgResponseTime: Long): Builder = apply {
+            this.avgResponseTime = avgResponseTime
+        }
         public fun withExtraData(extraData: Map<String, Any>): Builder = apply { this.extraData = extraData }
         public fun withDeactivatedAt(deactivatedAt: Date?): Builder = apply { this.deactivatedAt = deactivatedAt }
 
@@ -224,6 +231,7 @@ public data class User(
                 teamsRole = teamsRole,
                 channelMutes = channelMutes,
                 blockedUserIds = blockedUserIds,
+                avgResponseTime = avgResponseTime,
                 extraData = extraData.toMutableMap(),
                 deactivatedAt = deactivatedAt,
             )
