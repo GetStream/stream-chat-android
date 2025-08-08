@@ -79,6 +79,7 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
             poll = oldMessage.poll != newMessage.poll,
             threadMode = oldItem.isThreadMode != newItem.isThreadMode,
             showOriginalText = oldItem.showOriginalText != newItem.showOriginalText,
+            isMessageRead = oldItem.isMessageRead != newItem.isMessageRead,
         )
     }
 
