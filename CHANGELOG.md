@@ -67,6 +67,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix the read mark failing to update. [#5890](https://github.com/GetStream/stream-chat-android/pull/5890)
 
 ### ⬆️ Improved
 
@@ -82,6 +83,7 @@
 - Fix the poll creation button to disable when multiple answers has a wrong input. [#5885](https://github.com/GetStream/stream-chat-android/pull/5885)
 
 ### ⬆️ Improved
+- Improve the uploaded attachment loading UI. [#5889](https://github.com/GetStream/stream-chat-android/pull/5889)
 
 ### ✅ Added
 
