@@ -66,7 +66,7 @@ import kotlin.reflect.KClass
  */
 public class StreamOfflinePluginFactory @JvmOverloads constructor(
     private val appContext: Context,
-    private val ignoredChannelTypes: Set<String> = setOf("livestream"),
+    private val ignoredChannelTypes: Set<String> = emptySet(),
     private val now: () -> Long = { System.currentTimeMillis() },
 ) : PluginFactory, RepositoryFactory.Provider {
 

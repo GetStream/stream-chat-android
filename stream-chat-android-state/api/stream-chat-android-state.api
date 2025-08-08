@@ -103,8 +103,8 @@ public final class io/getstream/chat/android/state/plugin/config/ChannelMessageL
 	public final fun copy (Ljava/lang/String;I)Lio/getstream/chat/android/state/plugin/config/ChannelMessageLimit;
 	public static synthetic fun copy$default (Lio/getstream/chat/android/state/plugin/config/ChannelMessageLimit;Ljava/lang/String;IILjava/lang/Object;)Lio/getstream/chat/android/state/plugin/config/ChannelMessageLimit;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBaseLimit ()I
 	public final fun getChannelType ()Ljava/lang/String;
-	public final fun getLimit ()I
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
