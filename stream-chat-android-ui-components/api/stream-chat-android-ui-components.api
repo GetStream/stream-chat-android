@@ -2958,7 +2958,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/Me
 
 public final class io/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff {
 	public static final field Companion Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff$Companion;
-	public fun <init> (ZZZZZZZZZZZZZZZ)V
+	public fun <init> (ZZZZZZZZZZZZZZZZ)V
 	public final fun anyChanged ()Z
 	public final fun component1 ()Z
 	public final fun component10 ()Z
@@ -2967,6 +2967,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/Me
 	public final fun component13 ()Z
 	public final fun component14 ()Z
 	public final fun component15 ()Z
+	public final fun component16 ()Z
 	public final fun component2 ()Z
 	public final fun component3 ()Z
 	public final fun component4 ()Z
@@ -2975,8 +2976,8 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/Me
 	public final fun component7 ()Z
 	public final fun component8 ()Z
 	public final fun component9 ()Z
-	public final fun copy (ZZZZZZZZZZZZZZZ)Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;ZZZZZZZZZZZZZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;
+	public final fun copy (ZZZZZZZZZZZZZZZZ)Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;ZZZZZZZZZZZZZZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAttachments ()Z
 	public final fun getDeleted ()Z
@@ -2994,6 +2995,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/Me
 	public final fun getThreadMode ()Z
 	public final fun getUser ()Z
 	public fun hashCode ()I
+	public final fun isMessageRead ()Z
 	public final fun plus (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;
 	public fun toString ()Ljava/lang/String;
 }
