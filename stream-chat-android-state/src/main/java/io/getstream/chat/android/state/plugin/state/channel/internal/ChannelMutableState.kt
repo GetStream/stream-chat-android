@@ -300,12 +300,7 @@ internal class ChannelMutableState(
                 val multiplier = LIMIT_MULTIPLIER.takeIf {
                     currentMessageCount + TRIM_BUFFER >= limit
                 } ?: NEUTRAL_MULTIPLIER
-                (limit * multiplier).toInt().also {
-                    logger.d {
-                        "[applyMessageLimitIfNeeded] Adjusting message limit to $it, " +
-                            "current size: $currentMessageCount, limit: $limit, multiplier: $multiplier"
-                    }
-                }
+                (limit * multiplier).toInt()
             }
         }
     }
@@ -678,10 +673,6 @@ internal class ChannelMutableState(
     private fun applyMessageLimitIfNeeded(messages: Collection<Message>): Collection<Message> {
         // If no message limit is set or we are loading older messages, restriction is not applied
         if (messageLimit == null || loadingOlderMessages.value) {
-            logger.d {
-                "[applyMessageLimitIfNeeded] no need to trim, " +
-                    "messageLimit: $messageLimit, loadingOlderMessages: ${loadingOlderMessages.value}"
-            }
             return messages
         }
         // Add buffer to avoid trimming too often
@@ -689,18 +680,10 @@ internal class ChannelMutableState(
             val trimmedMessages = messages
                 .sortedBy { it.createdAt ?: it.createdLocallyAt }
                 .takeLast(messageLimit!!)
-            logger.d {
-                "[applyMessageLimitIfNeeded] trimmed messages: " +
-                    "kept: $messageLimit, trimmed: ${messages.size - trimmedMessages.size}"
-            }
             // Set end of older messages to false, as we trimmed the messages
             setEndOfOlderMessages(false)
             trimmedMessages
         } else {
-            logger.d {
-                "[applyMessageLimitIfNeeded] no need to trim, " +
-                    "messages.size: ${messages.size}, limit(+buffer): ${messageLimit!! + TRIM_BUFFER}"
-            }
             messages
         }
     }
