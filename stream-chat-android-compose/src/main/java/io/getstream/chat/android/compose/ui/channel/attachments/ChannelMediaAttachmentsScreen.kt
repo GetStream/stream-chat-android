@@ -55,6 +55,13 @@ import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 /**
  * Displays the channel media attachments screen.
  *
+ * This screen includes a top bar, a grid of media attachments,
+ * and display a preview screen when an attachment is clicked.
+ * The attachments can be images or videos.
+ * The screen supports loading more attachments when the user scrolls to the end of the grid.
+ * It also supports grouping media items by a header key,
+ * which can be customized using the [headerKeySelector] function.
+ *
  * @param viewModelFactory The factory to create the [ChannelAttachmentsViewModel].
  * @param modifier The modifier for styling.
  * @param gridColumnCount The number of columns in the grid. If null, it will adapt based on the screen size.

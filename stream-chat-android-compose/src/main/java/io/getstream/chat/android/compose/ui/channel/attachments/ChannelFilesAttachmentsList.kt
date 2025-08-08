@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
+import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.components.ContentBox
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
@@ -64,6 +65,15 @@ internal fun ChannelFilesAttachmentsList(
     stickHeader: Boolean = true,
     headerKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String,
     onLoadMoreRequested: () -> Unit = {},
+    onItemClick: (
+        item: ChannelAttachmentsViewState.Content.Item,
+        previewHandlers: List<AttachmentPreviewHandler>,
+    ) -> Unit = { item, previewHandlers ->
+        onFileAttachmentContentItemClick(
+            previewHandlers = previewHandlers,
+            attachment = item.attachment,
+        )
+    },
     itemContent: @Composable LazyItemScope.(index: Int, item: ChannelAttachmentsViewState.Content.Item) -> Unit =
         { index, item ->
             val previewHandlers = ChatTheme.attachmentPreviewHandlers
@@ -73,12 +83,7 @@ internal fun ChannelFilesAttachmentsList(
                     index = index,
                     item = item,
                     currentUser = currentUser,
-                    onClick = {
-                        onFileAttachmentContentItemClick(
-                            previewHandlers = previewHandlers,
-                            attachment = item.attachment,
-                        )
-                    },
+                    onClick = { onItemClick(item, previewHandlers) },
                 )
             }
         },
