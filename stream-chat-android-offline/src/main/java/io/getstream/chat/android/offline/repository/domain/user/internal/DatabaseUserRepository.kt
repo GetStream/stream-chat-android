@@ -149,7 +149,7 @@ internal class DatabaseUserRepository(
             banned = banned,
             teams = teams,
             teamsRole = teamsRole,
-            avgResponseTime = avgResponseTime ?: 0,
+            avgResponseTime = avgResponseTime,
             extraData = extraData.toMutableMap(),
         )
     }

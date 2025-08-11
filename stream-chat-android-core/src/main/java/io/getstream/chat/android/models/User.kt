@@ -45,7 +45,7 @@ import java.util.Date
  * @param teamsRole The roles of the user in the teams they are part of. Example: `["teamId": "role"]`.
  * @param channelMutes A list of channels muted by the current user.
  * @param blockedUserIds A list of user ids blocked by the current user.
- * @param avgResponseTime The average response time of the user in seconds
+ * @param avgResponseTime The average time (in seconds) the user took to respond to messages.
  * @param extraData A map of custom fields for the user.
  * @param deactivatedAt Date/time of deactivation.
  */
@@ -72,7 +72,7 @@ public data class User(
     val teamsRole: Map<String, String> = emptyMap(),
     val channelMutes: List<ChannelMute> = emptyList(),
     val blockedUserIds: List<String> = emptyList(),
-    val avgResponseTime: Long = 0,
+    val avgResponseTime: Long? = null,
     override val extraData: Map<String, Any> = mapOf(),
     val deactivatedAt: Date? = null,
 ) : CustomObject, ComparableFieldProvider {
@@ -145,7 +145,7 @@ public data class User(
         private var teamsRole: Map<String, String> = emptyMap()
         private var channelMutes: List<ChannelMute> = emptyList()
         private var blockedUserIds: List<String> = emptyList()
-        private var avgResponseTime: Long = 0
+        private var avgResponseTime: Long? = null
         private var extraData: Map<String, Any> = mutableMapOf()
         private var deactivatedAt: Date? = null
 
