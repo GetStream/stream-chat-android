@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.api2.model.dto.ChannelTruncatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedByUserEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUserBannedEventDto
+import io.getstream.chat.android.client.api2.model.dto.ChannelUserMessagesDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelVisibleEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
@@ -39,6 +40,7 @@ import io.getstream.chat.android.client.api2.model.dto.DraftMessageDeletedEventD
 import io.getstream.chat.android.client.api2.model.dto.DraftMessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
+import io.getstream.chat.android.client.api2.model.dto.GlobalUserMessagesDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.MarkAllReadEventDto
@@ -93,6 +95,7 @@ import io.getstream.chat.android.client.events.ChannelTruncatedEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelUserBannedEvent
+import io.getstream.chat.android.client.events.ChannelUserMessagesDeletedEvent
 import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ChatEvent
@@ -104,6 +107,7 @@ import io.getstream.chat.android.client.events.DraftMessageDeletedEvent
 import io.getstream.chat.android.client.events.DraftMessageUpdatedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
+import io.getstream.chat.android.client.events.GlobalUserMessagesDeletedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
@@ -228,6 +232,8 @@ internal class EventMapping(
             is AIIndicatorUpdatedEventDto -> toDomain()
             is AIIndicatorClearEventDto -> toDomain()
             is AIIndicatorStopEventDto -> toDomain()
+            is ChannelUserMessagesDeletedEventDto -> toDomain()
+            is GlobalUserMessagesDeletedEventDto -> toDomain()
         }
     }
 
@@ -1141,6 +1147,30 @@ internal class EventMapping(
             messageId = message_id,
             userId = user_id,
             reminder = reminder.toDomain(),
+        )
+    }
+
+    private fun ChannelUserMessagesDeletedEventDto.toDomain(): ChannelUserMessagesDeletedEvent = with(domainMapping) {
+        val (channelType, channelId) = cid.cidToTypeAndId()
+        return ChannelUserMessagesDeletedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            cid = cid,
+            channelType = channelType,
+            channelId = channelId,
+            user = user.toDomain(),
+            hardDelete = hard_delete == true,
+        )
+    }
+
+    private fun GlobalUserMessagesDeletedEventDto.toDomain(): GlobalUserMessagesDeletedEvent = with(domainMapping) {
+        return GlobalUserMessagesDeletedEvent(
+            type = type,
+            createdAt = created_at.date,
+            rawCreatedAt = created_at.rawDate,
+            user = user.toDomain(),
+            hardDelete = hard_delete == true,
         )
     }
 

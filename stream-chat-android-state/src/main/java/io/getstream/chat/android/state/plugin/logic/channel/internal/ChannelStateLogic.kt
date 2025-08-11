@@ -374,6 +374,17 @@ internal class ChannelStateLogic(
         systemMessage?.let(mutableState::upsertMessage)
     }
 
+    fun deleteMessagesFromUser(userId: String, softDeletedAt: Date? = null) {
+        mutableState.getMessagesFromUser(userId)
+            .takeIf { it.isNotEmpty() }
+            ?.let {
+                when (softDeletedAt == null) {
+                    true -> mutableState.deleteMessages(it)
+                    false -> mutableState.upsertMessages(it.map { it.copy(deletedAt = softDeletedAt) })
+                }
+            }
+    }
+
     /**
      * Hides the messages created before the given date.
      *

@@ -230,6 +230,9 @@ internal interface MessageDao {
     @Transaction
     suspend fun selectBySyncStatus(syncStatus: SyncStatus, limit: Int = NO_LIMIT): List<MessageEntity>
 
+    @Query("SELECT * FROM $MESSAGE_ENTITY_TABLE_NAME WHERE userId = :userId")
+    suspend fun selectByUserId(userId: String): List<MessageEntity>
+
     @Query(
         "SELECT id FROM $MESSAGE_ENTITY_TABLE_NAME " +
             "WHERE syncStatus = :syncStatus " +

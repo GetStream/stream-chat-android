@@ -127,6 +127,14 @@ public interface MessageRepository {
     public suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message>
 
     /**
+     * Selects all messages by user ID.
+     *
+     * @param userId The ID of the user whose messages are to be selected.
+     * @return A list of messages sent by the user.
+     */
+    public suspend fun selectMessagesByUserId(userId: String): List<Message>
+
+    /**
      * Insert a draft message.
      *
      * @param message [DraftMessage] to be inserted.

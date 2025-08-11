@@ -495,13 +495,25 @@ internal class ChannelMutableState(
 
     fun deleteMessage(message: Message) {
         logger.v { "[deleteMessage] message.id: ${message.id}" }
-        _messages?.apply { value = value - message.id }
-        setPinned { pinned -> pinned - message.id }
+        deleteMessages(listOf(message))
+    }
+
+    fun deleteMessages(messages: List<Message>) {
+        val messageIds = messages.map { it.id }.toSet()
+        logger.v { "[deleteMessages] messages.ids: $messageIds" }
+        _messages?.apply { value = value - messageIds }
+        deletePinnedMessages(messages)
     }
 
     fun deletePinnedMessage(message: Message) {
         logger.v { "[deletePinnedMessage] message.id=${message.id}, message.text=${message.text}" }
-        setPinned { pinned -> pinned - message.id }
+        deletePinnedMessages(listOf(message))
+    }
+
+    private fun deletePinnedMessages(messages: List<Message>) {
+        val messageIds = messages.map { it.id }.toSet()
+        logger.v { "[deletePinnedMessages] messages.ids: $messageIds" }
+        setPinned { pinned -> pinned - messageIds }
     }
 
     fun upsertWatchers(watchers: List<User>, watchersCount: Int) {
@@ -642,6 +654,16 @@ internal class ChannelMutableState(
      */
     internal fun resetMessageLimit() {
         messageLimit = baseMessageLimit
+    }
+
+    /**
+     * Returns a list of messages from a specific user.
+     *
+     * @param userId The ID of the user whose messages are to be retrieved.
+     * @return A list of messages sent by the specified user.
+     */
+    fun getMessagesFromUser(userId: String): List<Message> {
+        return _messages?.value?.values?.filter { it.user.id == userId } ?: emptyList()
     }
 
     override fun getMessageById(id: String): Message? = _messages?.value?.get(id) ?: _pinnedMessages?.value?.get(id)

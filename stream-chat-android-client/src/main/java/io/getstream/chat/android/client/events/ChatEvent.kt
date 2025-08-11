@@ -881,6 +881,25 @@ public data class NotificationReminderDueEvent(
     val userId: String,
 ) : CidEvent(), HasReminder
 
+public data class ChannelUserMessagesDeletedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    override val user: User,
+    val hardDelete: Boolean,
+) : CidEvent(), UserEvent
+
+public data class GlobalUserMessagesDeletedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String,
+    override val user: User,
+    val hardDelete: Boolean,
+) : ChatEvent(), UserEvent
+
 /**
  * Triggered when an ai indicator is updated.
  */

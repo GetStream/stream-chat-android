@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.events.ChannelTruncatedEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelUserBannedEvent
+import io.getstream.chat.android.client.events.ChannelUserMessagesDeletedEvent
 import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ChatEvent
@@ -33,6 +34,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DraftMessageDeletedEvent
 import io.getstream.chat.android.client.events.DraftMessageUpdatedEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
+import io.getstream.chat.android.client.events.GlobalUserMessagesDeletedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
 import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.HasMessage
@@ -135,6 +137,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import java.util.Date
 import java.util.InputMismatchException
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -373,6 +376,7 @@ internal class EventHandlerSequential(
         logger.v { "[updateGlobalState] completed batchId: ${batchEvent.id}" }
     }
 
+    @Suppress("LongMethod")
     private suspend fun updateChannelsState(batchEvent: BatchEvent) {
         val first = batchEvent.sortedEvents.firstOrNull()
         val last = batchEvent.sortedEvents.lastOrNull()
@@ -432,6 +436,11 @@ internal class EventHandlerSequential(
                     channelLogic.handleEvent(userPresenceChanged)
                 }
         }
+
+        sortedEvents.filterIsInstance<GlobalUserMessagesDeletedEvent>()
+            .let { globalUserMessagesDeletedEvents ->
+                logicRegistry.getActiveChannelsLogic().forEach { it.handleEvents(globalUserMessagesDeletedEvents) }
+            }
 
         // only afterwards forward to the queryRepo since it borrows some data from the channel
         // queryRepo mainly monitors for the notification added to channel event
@@ -763,6 +772,17 @@ internal class EventHandlerSequential(
         // execute the batch
         batch.execute()
 
+        val deleteUserBannedMessages: suspend (userId: String, softDeletedAt: Date?) -> Unit =
+            { userId: String, softDeletedAt: Date? ->
+                repos.selectMessagesByUserId(userId)
+                    .let { messages ->
+                        when (softDeletedAt) {
+                            null -> messages.forEach { repos.deleteChannelMessage(it) }
+                            else -> messages.map { it.copy(deletedAt = softDeletedAt) }.let { repos.insertMessages(it) }
+                        }
+                    }
+            }
+
         // handle delete and truncate events
         for (event in events) {
             when (event) {
@@ -801,6 +821,10 @@ internal class EventHandlerSequential(
                 is PollDeletedEvent -> {
                     repos.deletePoll(event.poll.id)
                 }
+                is ChannelUserMessagesDeletedEvent ->
+                    deleteUserBannedMessages(event.user.id, event.createdAt.takeUnless { event.hardDelete })
+                is GlobalUserMessagesDeletedEvent ->
+                    deleteUserBannedMessages(event.user.id, event.createdAt.takeUnless { event.hardDelete })
                 else -> Unit // Ignore other events
             }
         }
