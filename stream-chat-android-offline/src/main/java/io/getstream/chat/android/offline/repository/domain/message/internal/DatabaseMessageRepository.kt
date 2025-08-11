@@ -218,6 +218,10 @@ internal class DatabaseMessageRepository(
         return messageDao.selectBySyncStatus(syncStatus).map { it.toMessage() }
     }
 
+    override suspend fun selectMessagesByUserId(userId: String): List<Message> {
+        return messageDao.selectByUserId(userId).map { it.toMessage() }
+    }
+
     override suspend fun selectMessagesWithPoll(pollId: String): List<Message> =
         messageDao.selectMessagesWithPoll(pollId).map { it.toMessage() }
 

@@ -38,6 +38,7 @@ internal object NoOpMessageRepository : MessageRepository {
     override suspend fun deleteChannelMessage(message: Message) { /* No-Op */ }
     override suspend fun selectMessageIdsBySyncState(syncStatus: SyncStatus): List<String> = emptyList()
     override suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message> = emptyList()
+    override suspend fun selectMessagesByUserId(userId: String): List<Message> = emptyList()
     override suspend fun selectMessagesWithPoll(pollId: String): List<Message> = emptyList()
     override suspend fun deleteDraftMessage(message: DraftMessage) { /* No-Op */ }
     override suspend fun selectDraftMessages(): List<DraftMessage> = emptyList()

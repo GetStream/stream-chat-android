@@ -34,6 +34,7 @@ import io.getstream.chat.android.client.events.ChannelTruncatedEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelUserBannedEvent
+import io.getstream.chat.android.client.events.ChannelUserMessagesDeletedEvent
 import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ChatEvent
@@ -45,6 +46,7 @@ import io.getstream.chat.android.client.events.DraftMessageDeletedEvent
 import io.getstream.chat.android.client.events.DraftMessageUpdatedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
+import io.getstream.chat.android.client.events.GlobalUserMessagesDeletedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
@@ -309,6 +311,7 @@ public class ChannelClient internal constructor(
             is ReminderUpdatedEvent -> event.cid == cid
             is ReminderDeletedEvent -> event.cid == cid
             is NotificationReminderDueEvent -> event.cid == cid
+            is ChannelUserMessagesDeletedEvent -> event.cid == cid
             is HealthEvent,
             is NotificationChannelMutesUpdatedEvent,
             is NotificationMutesUpdatedEvent,
@@ -323,6 +326,7 @@ public class ChannelClient internal constructor(
             is DisconnectedEvent,
             is ErrorEvent,
             is MarkAllReadEvent,
+            is GlobalUserMessagesDeletedEvent,
             -> false
         }
     }

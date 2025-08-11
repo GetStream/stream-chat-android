@@ -261,6 +261,10 @@ internal class MockMessageRepository : MessageRepository {
         TODO("Not yet implemented")
     }
 
+    override suspend fun selectMessagesByUserId(userId: String): List<Message> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun selectMessagesWithPoll(pollId: String): List<Message> {
         TODO("Not yet implemented")
     }
