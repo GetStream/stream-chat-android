@@ -17,12 +17,12 @@
 package io.getstream.chat.android.compose.sample.feature.channel.list
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -47,9 +47,11 @@ import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
 
+@Suppress("LongParameterList")
 @Composable
 fun ChannelsScreenNavigationDrawer(
     currentUser: User?,
+    onUserClick: () -> Unit,
     onNewDirectMessageClick: () -> Unit,
     onNewGroupClick: () -> Unit,
     onRemindersClick: () -> Unit,
@@ -61,8 +63,11 @@ fun ChannelsScreenNavigationDrawer(
             .wrapContentWidth(),
     ) {
         // Currently logged in User
-        currentUser?.let {
-            LoggedInUserHeader(it)
+        currentUser?.let { user ->
+            LoggedInUserHeader(
+                user = user,
+                onClick = onUserClick,
+            )
         }
         // New Direct Message
         NavigationDrawerItem(
@@ -95,21 +100,32 @@ fun ChannelsScreenNavigationDrawer(
     }
 }
 
+@Suppress("LongMethod")
 @Composable
-private fun LoggedInUserHeader(user: User) {
-    Column {
+private fun LoggedInUserHeader(
+    user: User,
+    onClick: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(
+                interactionSource = null,
+                indication = ripple(),
+                onClick = onClick,
+            )
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
         // Avatar and name
         Row(
-            modifier = Modifier
-                .height(64.dp)
-                .padding(horizontal = 8.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             UserAvatar(
                 modifier = Modifier.size(40.dp),
                 user = user,
             )
-            Spacer(modifier = Modifier.size(12.dp))
             Text(
                 text = user.name,
                 fontWeight = FontWeight.Bold,
@@ -124,28 +140,24 @@ private fun LoggedInUserHeader(user: User) {
             val text = remember(user.teams, user.teamsRole) {
                 val builder = StringBuilder()
                 builder.appendLine("Member of:")
-                user.teams.forEach { team ->
+                user.teams.forEachIndexed { index, team ->
                     builder.append(" - $team")
                     if (user.teamsRole[team] != null) {
                         builder.append(" (role = ${user.teamsRole[team]})")
                     }
-                    builder.appendLine()
+                    if (index != user.teams.lastIndex) {
+                        builder.appendLine()
+                    }
                 }
                 builder.toString()
             }
             Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
                 text = text,
                 fontSize = 12.sp,
                 color = ChatTheme.colors.textLowEmphasis,
             )
         } else {
             Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
                 text = "No teams",
                 fontSize = 12.sp,
                 color = ChatTheme.colors.textLowEmphasis,
