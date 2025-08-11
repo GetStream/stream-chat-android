@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.sample.ui.profile
 
+import android.content.res.Resources
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -32,16 +33,17 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.ui.components.BackButton
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
@@ -64,7 +66,7 @@ class UserProfileActivity : ComponentActivity() {
     @Composable
     private fun UserProfileScreen() {
         val viewModel = viewModel<UserProfileViewModel>()
-        val user by viewModel.user.collectAsState()
+        val user by viewModel.user.collectAsStateWithLifecycle()
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -86,67 +88,71 @@ class UserProfileActivity : ComponentActivity() {
             UserProfileScreenContent(user, paddingValues)
         }
     }
-}
 
-@Composable
-private fun UserProfileScreenContent(
-    user: User?,
-    paddingValues: PaddingValues,
-) {
-    when (user) {
-        null -> {
-            LoadingIndicator(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-            )
-        }
-
-        else -> {
-            Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxWidth()
-                    .padding(start = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                UserAvatar(
+    @Suppress("LongMethod")
+    @Composable
+    private fun UserProfileScreenContent(
+        user: User?,
+        paddingValues: PaddingValues,
+    ) {
+        when (user) {
+            null -> {
+                LoadingIndicator(
                     modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(bottom = 16.dp)
-                        .size(72.dp),
-                    user = user,
-                    showOnlineIndicator = false,
-                    onClick = null,
+                        .padding(paddingValues)
+                        .padding(16.dp)
+                        .fillMaxWidth(),
                 )
-                Text(
-                    text = "Name",
-                    style = ChatTheme.typography.title3,
-                    color = ChatTheme.colors.textHighEmphasis,
-                )
-                Text(
-                    text = user.name.takeIf(String::isNotBlank) ?: user.id,
-                    style = ChatTheme.typography.body,
-                    color = ChatTheme.colors.textHighEmphasis,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Divider()
-                val avgResponseTimeInSeconds = user.avgResponseTime ?: 0
-                if (avgResponseTimeInSeconds > 0) {
+            }
+
+            else -> {
+                Column(
+                    modifier = Modifier
+                        .padding(paddingValues)
+                        .fillMaxWidth()
+                        .padding(start = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    UserAvatar(
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(bottom = 16.dp)
+                            .size(72.dp),
+                        user = user,
+                        showOnlineIndicator = false,
+                        onClick = null,
+                    )
                     Text(
-                        text = "Average Response Time",
+                        text = "Name",
                         style = ChatTheme.typography.title3,
                         color = ChatTheme.colors.textHighEmphasis,
                     )
                     Text(
-                        text = "$avgResponseTimeInSeconds seconds",
+                        text = user.name.takeIf(String::isNotBlank) ?: user.id,
                         style = ChatTheme.typography.body,
                         color = ChatTheme.colors.textHighEmphasis,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
+                    Divider()
+                    val avgResponseTimeInSeconds = user.avgResponseTime ?: 0
+                    if (avgResponseTimeInSeconds > 0) {
+                        Text(
+                            text = "Average Response Time",
+                            style = ChatTheme.typography.title3,
+                            color = ChatTheme.colors.textHighEmphasis,
+                        )
+                        Text(
+                            text = formatTime(
+                                resources = LocalContext.current.resources,
+                                seconds = avgResponseTimeInSeconds,
+                            ),
+                            style = ChatTheme.typography.body,
+                            color = ChatTheme.colors.textHighEmphasis,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
                 }
             }
         }
@@ -156,4 +162,22 @@ private fun UserProfileScreenContent(
 @Composable
 private fun Divider() {
     HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
+}
+
+@Suppress("MagicNumber")
+private fun formatTime(
+    resources: Resources,
+    seconds: Long,
+): String {
+    val minutes = (seconds / 60).toInt()
+    val remainingSeconds = (seconds % 60).toInt()
+    return buildString {
+        if (minutes > 0) {
+            append(resources.getQuantityString(R.plurals.time_minutes, minutes, minutes))
+        }
+        if (remainingSeconds > 0) {
+            if (isNotEmpty()) append(" ")
+            append(resources.getQuantityString(R.plurals.time_seconds, remainingSeconds, remainingSeconds))
+        }
+    }
 }
