@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import coil3.ColorImage
+import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.LocalAsyncImagePreviewHandler
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.R
@@ -90,7 +91,7 @@ public fun LinkAttachmentContent(
     modifier: Modifier = Modifier,
     onItemClick: (context: Context, url: String) -> Unit = ::onLinkAttachmentContentClick,
 ) {
-    val (message, _, onLongItemClick) = attachmentState
+    val (message, isMine, onLongItemClick) = attachmentState
 
     val context = LocalContext.current
     val attachment = message.attachments.firstOrNull { it.hasLink() && !it.isGiphy() }
@@ -106,15 +107,18 @@ public fun LinkAttachmentContent(
         "Missing preview URL."
     }
 
-    val errorMessage = stringResource(
-        id = R.string.stream_compose_message_list_error_cannot_open_link,
-        previewUrl,
-    )
+    val errorMessage = stringResource(R.string.stream_compose_message_list_error_cannot_open_link, previewUrl)
+
+    val linkBackgroundColor = if (isMine) {
+        ChatTheme.ownMessageTheme.linkBackgroundColor
+    } else {
+        ChatTheme.otherMessageTheme.linkBackgroundColor
+    }
 
     Column(
         modifier = modifier
             .clip(ChatTheme.shapes.attachment)
-            .background(ChatTheme.colors.linkBackground)
+            .background(linkBackgroundColor)
             .combinedClickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
@@ -139,7 +143,7 @@ public fun LinkAttachmentContent(
     ) {
         val imagePreviewUrl = attachment.imagePreviewUrl
         if (imagePreviewUrl != null) {
-            LinkAttachmentImagePreview(attachment)
+            LinkAttachmentImagePreview(attachment, isMine)
         }
 
         val title = attachment.title
@@ -155,7 +159,7 @@ public fun LinkAttachmentContent(
 }
 
 @Composable
-private fun LinkAttachmentImagePreview(attachment: Attachment) {
+private fun LinkAttachmentImagePreview(attachment: Attachment, isMine: Boolean) {
     val data = attachment.imagePreviewUrl
     var maxWidth by remember { mutableStateOf(0.dp) }
 
@@ -195,6 +199,11 @@ private fun LinkAttachmentImagePreview(attachment: Attachment) {
         val authorName = attachment.authorName
 
         if (authorName != null) {
+            val backgroundColor = if (isMine) {
+                ChatTheme.ownMessageTheme.linkBackgroundColor
+            } else {
+                ChatTheme.otherMessageTheme.linkBackgroundColor
+            }
             Text(
                 text = authorName,
                 color = ChatTheme.colors.primaryAccent,
@@ -205,7 +214,7 @@ private fun LinkAttachmentImagePreview(attachment: Attachment) {
                 modifier = Modifier
                     .widthIn(max = maxWidth / 2)
                     .background(
-                        color = ChatTheme.colors.linkBackground,
+                        color = backgroundColor,
                         shape = ChatTheme.shapes.attachmentSiteLabel,
                     )
                     .padding(vertical = 6.dp, horizontal = 12.dp)
@@ -269,6 +278,7 @@ private fun LinkAttachmentContentPreview() {
     }
 }
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 internal fun LinkAttachmentContent() {
     val previewHandler = AsyncImagePreviewHandler {

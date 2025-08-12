@@ -47,6 +47,7 @@ import io.getstream.chat.android.compose.ui.theme.messages.list.QuotedMessageSty
  * @param audioRecording The theming for the audio recording attachment.
  * @param mentionColor The color for the mentions in the messages.
  * @param linkStyle The text style for the links in message components.
+ * @param linkBackgroundColor The background color for the links in messages.
  */
 @Immutable
 public data class MessageTheme(
@@ -82,6 +83,7 @@ public data class MessageTheme(
     val poll: PollMessageStyle,
     val mentionColor: Color,
     val linkStyle: TextStyle,
+    val linkBackgroundColor: Color,
 ) {
     public companion object {
 
@@ -213,6 +215,7 @@ public data class MessageTheme(
                     color = colors.primaryAccent,
                     textDecoration = TextDecoration.Underline,
                 ),
+                linkBackgroundColor = colors.linkBackground,
             ).let { theme ->
                 theme.copy(
                     quoted = theme.quoted.copy(
