@@ -87,8 +87,10 @@
 - Improve the uploaded attachment loading UI. [#5889](https://github.com/GetStream/stream-chat-android/pull/5889)
 
 ### ✅ Added
+- Add `MessageTheme.linkBackgroundColor` for customizing the background color of the message link card. [#5894](https://github.com/GetStream/stream-chat-android/pull/5894)
 
 ### ⚠️ Changed
+- Deprecate `StreamColors.linkBackground` in favor of `MessageTheme.linkBackgroundColor`. [#5894](https://github.com/GetStream/stream-chat-android/pull/5894)
 
 ### ❌ Removed
 
