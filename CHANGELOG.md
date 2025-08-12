@@ -12,12 +12,14 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fix `ChatClient.connectUser` not propagating unrecoverable errors from the socket to the result. [#5896](https://github.com/GetStream/stream-chat-android/pull/5896)
 
 ### ⬆️ Improved
 
 ### ✅ Added
 - Add `NotificationhandlerFactory.notificationBuilderTransformer` parameter to allow customization of the notification builder. [#5881](https://github.com/GetStream/stream-chat-android/pull/5881)
 - Support User Average Response Time. [#5893](https://github.com/GetStream/stream-chat-android/pull/5893)
+- Add `ChatErrorCode.DUPLICATE_USERNAME_ERROR` covering the error case when a user tries to connect with an existing username, when `enforce_unique_usernames` is enabled. [#5896](https://github.com/GetStream/stream-chat-android/pull/5896)
 
 ### ⚠️ Changed
 
