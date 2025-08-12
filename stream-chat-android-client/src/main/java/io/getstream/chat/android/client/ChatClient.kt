@@ -26,6 +26,7 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
+import io.getstream.chat.android.client.ChatClient.Companion.MAX_COOLDOWN_TIME_SECONDS
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
@@ -189,6 +190,7 @@ import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
+import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
@@ -2913,6 +2915,11 @@ internal constructor(
         channelId: String,
         extraData: Map<Any, Any> = emptyMap(),
     ): Call<ChatEvent> = api.sendEvent(eventType, channelType, channelId, extraData)
+
+    /**
+     * Gets the unread counts for the current user.
+     */
+    public fun getUserUnreadCounts(): Call<UnreadCounts> = api.getUnreadCounts()
 
     /**
      * Marks all the channel as read.
