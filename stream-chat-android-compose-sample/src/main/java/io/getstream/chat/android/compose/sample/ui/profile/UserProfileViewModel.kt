@@ -21,37 +21,70 @@ import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.UserId
+import io.getstream.result.Error
+import io.getstream.result.onSuccessSuspend
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class UserProfileViewModel(
     private val chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
 
-    val user: StateFlow<User?> =
-        chatClient.clientState.user
-            .flatMapLatest(::queryUser)
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(StopTimeout),
-                initialValue = null,
+    private val _unreadCounts = MutableStateFlow<UnreadCounts?>(null)
+
+    val state: StateFlow<UserProfileViewState> =
+        combine(
+            queryUser(userId = chatClient.getCurrentUser()?.id),
+            _unreadCounts,
+        ) { user, unreadCounts ->
+            UserProfileViewState(
+                user = user,
+                unreadCounts = unreadCounts,
             )
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(StopTimeout),
+            initialValue = UserProfileViewState(),
+        )
+
+    private val _errors = MutableSharedFlow<Error>(extraBufferCapacity = 1)
+    val errors: SharedFlow<Error> = _errors.asSharedFlow()
 
     /**
      * Query updated user information from the server.
      */
-    private fun queryUser(user: User?) = flow {
-        if (user == null) {
+    private fun queryUser(userId: UserId?): Flow<User?> = flow {
+        if (userId == null) {
             emit(null)
         } else {
-            val filter = Filters.eq("id", user.id)
+            val filter = Filters.eq("id", userId)
             val request = QueryUsersRequest(filter, offset = 0, limit = 1)
-            val result = chatClient.queryUsers(request).await()
-            emit(result.getOrNull()?.firstOrNull())
+            chatClient.queryUsers(request)
+                .await()
+                .onSuccessSuspend { emit(it.firstOrNull()) }
+                .onError(_errors::tryEmit)
+        }
+    }
+
+    fun loadUnreadCounts() {
+        _unreadCounts.value = null
+        viewModelScope.launch {
+            chatClient.getUserUnreadCounts()
+                .await()
+                .onSuccess { _unreadCounts.value = it }
+                .onError(_errors::tryEmit)
         }
     }
 }
