@@ -47,7 +47,7 @@ import io.getstream.chat.android.compose.ui.theme.messages.list.QuotedMessageSty
  * @param audioRecording The theming for the audio recording attachment.
  * @param mentionColor The color for the mentions in the messages.
  * @param linkStyle The text style for the links in message components.
- * @param linkBackgroundColor The background color for the links in messages.
+ * @param linkBackgroundColor The color for the message link card background.
  */
 @Immutable
 public data class MessageTheme(
