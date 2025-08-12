@@ -78,7 +78,7 @@ internal data class DownstreamUserDto(
     val teams_role: Map<String, String>?,
     val channel_mutes: List<DownstreamChannelMuteDto>?,
     val blocked_user_ids: List<String>?,
-
+    val avg_response_time: Long?,
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
 

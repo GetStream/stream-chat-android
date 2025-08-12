@@ -17,6 +17,7 @@
 
 ### ✅ Added
 - Add `NotificationhandlerFactory.notificationBuilderTransformer` parameter to allow customization of the notification builder. [#5881](https://github.com/GetStream/stream-chat-android/pull/5881)
+- Support User Average Response Time. [#5893](https://github.com/GetStream/stream-chat-android/pull/5893)
 
 ### ⚠️ Changed
 

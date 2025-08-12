@@ -71,6 +71,7 @@ import io.getstream.chat.android.compose.sample.ui.component.AppBottomBar
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBarOption
 import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponentFactory
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
+import io.getstream.chat.android.compose.sample.ui.profile.UserProfileActivity
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
@@ -169,6 +170,10 @@ class ChannelsActivity : ComponentActivity() {
                         ) {
                             ChannelsScreenNavigationDrawer(
                                 currentUser = user,
+                                onUserClick = {
+                                    openUserProfile()
+                                    coroutineScope.launch { drawerState.close() }
+                                },
                                 onNewDirectMessageClick = {
                                     openAddChannel()
                                     coroutineScope.launch { drawerState.close() }
@@ -410,6 +415,10 @@ class ChannelsActivity : ComponentActivity() {
                 parentMessageId = thread.parentMessageId,
             ),
         )
+    }
+
+    private fun openUserProfile() {
+        startActivity(Intent(this, UserProfileActivity::class.java))
     }
 
     private fun openAddChannel() {
