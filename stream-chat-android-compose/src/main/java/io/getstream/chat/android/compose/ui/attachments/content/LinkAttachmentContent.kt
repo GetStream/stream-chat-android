@@ -109,16 +109,10 @@ public fun LinkAttachmentContent(
 
     val errorMessage = stringResource(R.string.stream_compose_message_list_error_cannot_open_link, previewUrl)
 
-    val linkBackgroundColor = if (isMine) {
-        ChatTheme.ownMessageTheme.linkBackgroundColor
-    } else {
-        ChatTheme.otherMessageTheme.linkBackgroundColor
-    }
-
     Column(
         modifier = modifier
             .clip(ChatTheme.shapes.attachment)
-            .background(linkBackgroundColor)
+            .background(getLinkBackgroundColor(isMine))
             .combinedClickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
@@ -199,11 +193,6 @@ private fun LinkAttachmentImagePreview(attachment: Attachment, isMine: Boolean) 
         val authorName = attachment.authorName
 
         if (authorName != null) {
-            val backgroundColor = if (isMine) {
-                ChatTheme.ownMessageTheme.linkBackgroundColor
-            } else {
-                ChatTheme.otherMessageTheme.linkBackgroundColor
-            }
             Text(
                 text = authorName,
                 color = ChatTheme.colors.primaryAccent,
@@ -214,7 +203,7 @@ private fun LinkAttachmentImagePreview(attachment: Attachment, isMine: Boolean) 
                 modifier = Modifier
                     .widthIn(max = maxWidth / 2)
                     .background(
-                        color = backgroundColor,
+                        color = getLinkBackgroundColor(isMine),
                         shape = ChatTheme.shapes.attachmentSiteLabel,
                     )
                     .padding(vertical = 6.dp, horizontal = 12.dp)
@@ -253,6 +242,15 @@ private fun LinkAttachmentDescription(description: String, linkDescriptionMaxLin
         maxLines = linkDescriptionMaxLines,
         overflow = TextOverflow.Ellipsis,
     )
+}
+
+@Composable
+private fun getLinkBackgroundColor(isMine: Boolean): Color {
+    return if (isMine) {
+        ChatTheme.ownMessageTheme.linkBackgroundColor
+    } else {
+        ChatTheme.otherMessageTheme.linkBackgroundColor
+    }
 }
 
 /**
