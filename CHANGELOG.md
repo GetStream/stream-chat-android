@@ -16,6 +16,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Introduce `getUnreadCounts` to the `ChatClient`. [#5897](https://github.com/GetStream/stream-chat-android/pull/5897)
 
 ### ⚠️ Changed
 
