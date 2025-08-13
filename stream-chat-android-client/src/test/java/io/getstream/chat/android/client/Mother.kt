@@ -1211,7 +1211,7 @@ internal object Mother {
         channel_type = channelType,
     )
 
-    fun randomUnreadCountByTeam(
+    fun randomUnreadCountByTeamDto(
         teamId: String = randomString(),
         unreadCount: Int = randomInt(),
     ): Pair<String, Int> = teamId to unreadCount

@@ -54,7 +54,7 @@ import io.getstream.chat.android.client.Mother.randomQueryRemindersResponse
 import io.getstream.chat.android.client.Mother.randomSearchWarningDto
 import io.getstream.chat.android.client.Mother.randomUnreadChannelByTypeDto
 import io.getstream.chat.android.client.Mother.randomUnreadChannelDto
-import io.getstream.chat.android.client.Mother.randomUnreadCountByTeam
+import io.getstream.chat.android.client.Mother.randomUnreadCountByTeamDto
 import io.getstream.chat.android.client.Mother.randomUnreadDto
 import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
@@ -791,7 +791,7 @@ internal class DomainMappingTest {
     @Test
     fun `UnreadDto is correctly mapped to UnreadCounts`() {
         val input = randomUnreadDto(
-            totalUnreadCountByTeam = mapOf(randomUnreadCountByTeam()),
+            totalUnreadCountByTeam = mapOf(randomUnreadCountByTeamDto()),
             channels = listOf(randomUnreadChannelDto()),
             threads = listOf(randomUnreadThreadDto()),
             channelType = listOf(randomUnreadChannelByTypeDto()),

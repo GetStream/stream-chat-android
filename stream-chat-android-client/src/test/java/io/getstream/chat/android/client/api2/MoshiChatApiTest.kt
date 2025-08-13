@@ -38,6 +38,7 @@ import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
+import io.getstream.chat.android.client.api2.model.dto.UnreadDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
@@ -122,6 +123,7 @@ import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.NoOpChannelTransformer
 import io.getstream.chat.android.models.NoOpMessageTransformer
 import io.getstream.chat.android.models.NoOpUserTransformer
+import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField
@@ -2174,6 +2176,25 @@ internal class MoshiChatApiTest {
 
         assertTrue(result is Result.Success)
         assertEquals(location, result.getOrThrow())
+    }
+
+    @ParameterizedTest
+    @MethodSource("io.getstream.chat.android.client.api2.MoshiChatApiTestArguments#getUnreadCounts")
+    fun testGetUnreadCounts(
+        model: UnreadCounts,
+        dto: UnreadDto,
+    ) = runTest {
+        val api = mock<GeneralApi> {
+            on { getUnreadCounts() } doReturn RetroSuccess(dto).toRetrofitCall()
+        }
+        val sut = Fixture()
+            .withGeneralApi(api)
+            .get()
+
+        val result = sut.getUnreadCounts().await()
+
+        assertTrue(result is Result.Success)
+        assertEquals(model, result.getOrThrow())
     }
 
     @Test
