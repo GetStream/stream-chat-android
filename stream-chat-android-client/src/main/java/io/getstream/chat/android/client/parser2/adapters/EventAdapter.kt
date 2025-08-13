@@ -32,6 +32,7 @@ import io.getstream.chat.android.client.api2.model.dto.ChannelTruncatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedByUserEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUserBannedEventDto
+import io.getstream.chat.android.client.api2.model.dto.ChannelUserMessagesDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelVisibleEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
@@ -41,6 +42,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.DraftMessageDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.DraftMessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
+import io.getstream.chat.android.client.api2.model.dto.GlobalUserMessagesDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.MarkAllReadEventDto
@@ -169,6 +171,8 @@ internal class EventDtoAdapter(
     private val aiTypingIndicatorUpdatedEventAdapter = moshi.adapter(AIIndicatorUpdatedEventDto::class.java)
     private val aiTypingIndicatorClearEventAdapter = moshi.adapter(AIIndicatorClearEventDto::class.java)
     private val aiTypingIndicatorStopEventAdapter = moshi.adapter(AIIndicatorStopEventDto::class.java)
+    private val channelUserMessageDeletedEventAdapter = moshi.adapter(ChannelUserMessagesDeletedEventDto::class.java)
+    private val globalUserMessageDeletedEventAdapter = moshi.adapter(GlobalUserMessagesDeletedEventDto::class.java)
 
     @Suppress("LongMethod", "ComplexMethod", "ReturnCount")
     override fun fromJson(reader: JsonReader): ChatEventDto? {
@@ -238,6 +242,10 @@ internal class EventDtoAdapter(
             EventType.USER_UNBANNED -> when {
                 map.containsKey("cid") -> channelUserUnbannedEventAdapter
                 else -> globalUserUnbannedEventAdapter
+            }
+            EventType.USER_MESSAGES_DELETED -> when {
+                map.containsKey("cid") -> channelUserMessageDeletedEventAdapter
+                else -> globalUserMessageDeletedEventAdapter
             }
             EventType.POLL_UPDATED -> pollUpdatedEventAdapter
             EventType.POLL_DELETED -> pollDeletedEventAdapter

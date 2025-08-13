@@ -625,6 +625,25 @@ internal data class AIIndicatorStopEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
+internal data class ChannelUserMessagesDeletedEventDto(
+    val type: String,
+    val created_at: ExactDate,
+    val user: DownstreamUserDto,
+    val cid: String,
+    val channel_type: String,
+    val channel_id: String,
+    val soft_delete: Boolean,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
+internal data class GlobalUserMessagesDeletedEventDto(
+    val type: String,
+    val created_at: ExactDate,
+    val user: DownstreamUserDto,
+    val soft_delete: Boolean,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
 internal data class ConnectedEventDto(
     val type: String,
     val created_at: ExactDate,
