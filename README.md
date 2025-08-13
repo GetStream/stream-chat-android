@@ -12,6 +12,10 @@
   <a href="https://github.com/GetStream/stream-chat-android/releases"><img src="https://img.shields.io/github/v/release/GetStream/stream-chat-android" /></a>
 </p>
 
+<p align="center">
+  <a href="https://deepwiki.com/GetStream/stream-chat-android"><img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki"></a>
+</p>
+
 <div align="center">
 
 ![stream-chat-android-client](https://img.shields.io/badge/stream--chat--android--client-3.19%20MB-lightgreen)
