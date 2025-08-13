@@ -2919,7 +2919,7 @@ internal constructor(
     /**
      * Gets the unread counts for the current user.
      */
-    public fun getUserUnreadCounts(): Call<UnreadCounts> = api.getUnreadCounts()
+    public fun getUnreadCounts(): Call<UnreadCounts> = api.getUnreadCounts()
 
     /**
      * Marks all the channel as read.

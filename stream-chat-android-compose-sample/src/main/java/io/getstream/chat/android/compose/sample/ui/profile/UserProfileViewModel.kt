@@ -81,7 +81,7 @@ class UserProfileViewModel(
     fun loadUnreadCounts() {
         _unreadCounts.value = null
         viewModelScope.launch {
-            chatClient.getUserUnreadCounts()
+            chatClient.getUnreadCounts()
                 .await()
                 .onSuccess { _unreadCounts.value = it }
                 .onError(_errors::tryEmit)
