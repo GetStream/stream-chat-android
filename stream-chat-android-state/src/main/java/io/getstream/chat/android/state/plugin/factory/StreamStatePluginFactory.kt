@@ -106,7 +106,6 @@ public class StreamStatePluginFactory(
             scope.coroutineContext.job,
             config.now,
             scope,
-            config.messageLimitConfig,
         )
 
         val isQueryingFree = MutableStateFlow(true)
@@ -119,6 +118,7 @@ public class StreamStatePluginFactory(
             repos = repositoryFacade,
             client = chatClient,
             coroutineScope = scope,
+            messageLimitConfig = config.messageLimitConfig,
             now = config.now,
         )
 

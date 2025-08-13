@@ -51,7 +51,6 @@ internal class ChannelMutableState(
     private val userFlow: StateFlow<User?>,
     latestUsers: StateFlow<Map<String, User>>,
     activeLiveLocations: StateFlow<List<Location>>,
-    private val messagesLimitFilter: (Collection<Message>) -> Collection<Message>,
     private val now: () -> Long,
 ) : ChannelState {
 
@@ -506,9 +505,7 @@ internal class ChannelMutableState(
         _channelData?.value?.takeIf { it.createdBy.id == user.id }
             ?.let { setChannelData(it.copy(createdBy = user)) }
         _messages?.apply {
-            value = messagesLimitFilter(
-                value.values.updateUsers(mapOf(user.id to user)),
-            ).associateBy { it.id }
+            value = value.values.updateUsers(mapOf(user.id to user)).associateBy { it.id }
         }
         _pinnedMessages?.apply { value = value.updateUsers(mapOf(user.id to user)) }
     }
@@ -553,7 +550,7 @@ internal class ChannelMutableState(
     fun upsertMessages(updatedMessages: Collection<Message>) {
         _messages?.apply {
             val newMessageList = (value + (updatedMessages.associateBy(Message::id) - deletedMessagesIds)).values
-            value = messagesLimitFilter(newMessageList).associateBy(Message::id)
+            value = newMessageList.associateBy(Message::id)
         }
         _pinnedMessages?.value
             ?.let { pinnedMessages ->
@@ -565,7 +562,7 @@ internal class ChannelMutableState(
     }
 
     fun setMessages(messages: List<Message>) {
-        _messages?.value = messagesLimitFilter(messages).associateBy(Message::id)
+        _messages?.value = messages.associateBy(Message::id)
     }
 
     fun setPinnedMessages(messages: List<Message>) {
