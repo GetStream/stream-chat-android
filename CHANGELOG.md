@@ -17,6 +17,7 @@
 
 ### ✅ Added
 - Add `NotificationhandlerFactory.notificationBuilderTransformer` parameter to allow customization of the notification builder. [#5881](https://github.com/GetStream/stream-chat-android/pull/5881)
+- Support User Average Response Time. [#5893](https://github.com/GetStream/stream-chat-android/pull/5893)
 
 ### ⚠️ Changed
 
@@ -83,8 +84,10 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `MessageTheme.linkBackgroundColor` for customizing the background color of the message link card. [#5894](https://github.com/GetStream/stream-chat-android/pull/5894)
 
 ### ⚠️ Changed
+- Deprecate `StreamColors.linkBackground` in favor of `MessageTheme.linkBackgroundColor`. [#5894](https://github.com/GetStream/stream-chat-android/pull/5894)
 
 ### ❌ Removed
 
