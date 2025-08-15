@@ -145,6 +145,14 @@ internal class ChannelLogic(
         }
     }
 
+    fun setPaginationDirection(request: QueryChannelRequest) {
+        when {
+            request.filteringOlderMessages() -> channelStateLogic.loadingOlderMessages()
+            request.isFilteringNewerMessages() -> channelStateLogic.loadingNewerMessages()
+            !request.isFilteringMessages() -> channelStateLogic.loadingNewestMessages()
+        }
+    }
+
     /**
      * Returns the state of Channel. Useful to check how it the state of the channel of the [ChannelLogic]
      *
@@ -173,6 +181,7 @@ internal class ChannelLogic(
                 ),
             )
         }
+        channelStateLogic.loadingNewestMessages()
         return runChannelQuery(
             "watch",
             QueryChannelPaginationRequest(messagesLimit).toWatchChannelRequest(userPresence).apply {
@@ -391,11 +400,6 @@ internal class ChannelLogic(
         channelStateLogic.upsertMessage(message)
     }
 
-    internal fun upsertMessages(messages: List<Message>) {
-        logger.d { "[upsertMessages] messages.size: ${messages.size}" }
-        channelStateLogic.upsertMessages(messages)
-    }
-
     /**
      * Returns instance of [WatchChannelRequest] to obtain older messages of a channel.
      *
@@ -541,6 +545,7 @@ internal class ChannelLogic(
                         channelStateLogic.updateCurrentUserRead(event.createdAt, event.message)
                         channelStateLogic.takeUnless { event.message.shadowed }?.toggleHidden(false)
                     }
+
                     is MessageUpdatedEvent -> {
                         event.message.copy(
                             replyTo = event.message.replyMessageId
@@ -549,6 +554,7 @@ internal class ChannelLogic(
                         ).let(::upsertEventMessage)
                         channelStateLogic.toggleHidden(false)
                     }
+
                     is MessageDeletedEvent -> {
                         if (event.hardDelete) {
                             deleteMessage(event.message)
@@ -557,6 +563,7 @@ internal class ChannelLogic(
                         }
                         channelStateLogic.toggleHidden(false)
                     }
+
                     is NotificationMessageNewEvent -> {
                         if (!mutableState.insideSearch.value) {
                             upsertEventMessage(event.message)
@@ -564,6 +571,7 @@ internal class ChannelLogic(
                         channelStateLogic.updateCurrentUserRead(event.createdAt, event.message)
                         channelStateLogic.toggleHidden(false)
                     }
+
                     is NotificationThreadMessageNewEvent -> upsertEventMessage(event.message)
                     is ReactionNewEvent -> upsertEventMessage(event.message)
                     is ReactionUpdateEvent -> upsertEventMessage(event.message)
@@ -575,6 +583,7 @@ internal class ChannelLogic(
                             channelStateLogic.addMembership(event.member)
                         }
                     }
+
                     is MemberRemovedEvent -> {
                         channelStateLogic.deleteMember(event.member)
                         // Remove the channel.membership if the current user is removed from the channel
@@ -582,17 +591,21 @@ internal class ChannelLogic(
                             channelStateLogic.removeMembership()
                         }
                     }
+
                     is MemberUpdatedEvent -> {
                         channelStateLogic.upsertMember(event.member)
                         channelStateLogic.updateMembership(event.member)
                     }
+
                     is NotificationAddedToChannelEvent -> {
                         channelStateLogic.upsertMembers(event.channel.members)
                     }
+
                     is NotificationRemovedFromChannelEvent -> {
                         channelStateLogic.setMembers(event.channel.members, event.channel.memberCount)
                         channelStateLogic.setWatchers(event.channel.watchers, event.channel.watcherCount)
                     }
+
                     is UserStartWatchingEvent -> channelStateLogic.upsertWatcher(event)
                     is UserStopWatchingEvent -> channelStateLogic.deleteWatcher(event)
                     is ChannelUpdatedEvent -> channelStateLogic.updateChannelData(event)
@@ -603,11 +616,13 @@ internal class ChannelLogic(
                             removeMessagesBefore(event.createdAt)
                         }
                     }
+
                     is ChannelVisibleEvent -> channelStateLogic.toggleHidden(false)
                     is ChannelDeletedEvent -> {
                         removeMessagesBefore(event.createdAt)
                         channelStateLogic.deleteChannel(event.createdAt)
                     }
+
                     is ChannelTruncatedEvent -> removeMessagesBefore(event.createdAt, event.message)
                     is NotificationChannelTruncatedEvent -> removeMessagesBefore(event.createdAt)
                     is TypingStopEvent -> channelStateLogic.setTyping(event.user.id, null)
@@ -615,18 +630,22 @@ internal class ChannelLogic(
                     is MessageReadEvent -> if (event.thread == null) {
                         channelStateLogic.updateRead(event.toChannelUserRead())
                     }
+
                     is NotificationMarkReadEvent -> if (event.thread == null) {
                         channelStateLogic.updateRead(event.toChannelUserRead())
                     }
+
                     is NotificationMarkUnreadEvent -> channelStateLogic.updateRead(event.toChannelUserRead())
                     is NotificationInviteAcceptedEvent -> {
                         channelStateLogic.addMember(event.member)
                         channelStateLogic.updateChannelData(event)
                     }
+
                     is NotificationInviteRejectedEvent -> {
                         channelStateLogic.deleteMember(event.member)
                         channelStateLogic.updateChannelData(event)
                     }
+
                     is ChannelUserBannedEvent -> {
                         channelStateLogic.updateMemberBanned(
                             memberUserId = event.user.id,
@@ -635,6 +654,7 @@ internal class ChannelLogic(
                             shadow = event.shadow,
                         )
                     }
+
                     is ChannelUserUnbannedEvent -> {
                         channelStateLogic.updateMemberBanned(
                             memberUserId = event.user.id,
@@ -643,13 +663,16 @@ internal class ChannelLogic(
                             shadow = false,
                         )
                     }
+
                     is PollClosedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
                     is PollUpdatedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
                     is PollDeletedEvent -> channelStateLogic.deletePoll(event.poll)
                     is VoteCastedEvent ->
                         channelStateLogic.upsertPoll(event.processPoll(currentUserId, channelStateLogic::getPoll))
+
                     is VoteChangedEvent ->
                         channelStateLogic.upsertPoll(event.processPoll(currentUserId, channelStateLogic::getPoll))
+
                     is VoteRemovedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
                     is AnswerCastedEvent -> channelStateLogic.upsertPoll(event.processPoll(channelStateLogic::getPoll))
                     is ReminderCreatedEvent -> upsertReminder(event.messageId, event.reminder)
@@ -671,6 +694,7 @@ internal class ChannelLogic(
             is NotificationChannelMutesUpdatedEvent -> event.me.channelMutes.any { mute ->
                 mute.channel?.cid == mutableState.cid
             }.let(channelStateLogic::updateMute)
+
             is ConnectedEvent,
             is ConnectionErrorEvent,
             is ConnectingEvent,
@@ -686,11 +710,5 @@ internal class ChannelLogic(
             is DraftMessageDeletedEvent,
             -> Unit // Ignore these events
         }
-    }
-
-    fun toChannel(): Channel = mutableState.toChannel()
-
-    internal fun replyMessage(repliedMessage: Message?) {
-        channelStateLogic.replyMessage(repliedMessage)
     }
 }
