@@ -25,12 +25,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
+import io.getstream.chat.android.compose.ui.util.extensions.internal.imagePreviewData
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.uiutils.model.MimeType
 
 /**
@@ -43,17 +43,8 @@ public fun FileAttachmentQuotedContent(
     attachment: Attachment,
     modifier: Modifier = Modifier,
 ) {
-    val isImage = attachment.type == "image"
-
-    val data = if (isImage) {
-        val dataToLoad =
-            attachment.imagePreviewUrl?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
-                ?: attachment.upload
-
-        dataToLoad
-    } else {
-        MimeTypeIconProvider.getIconRes(attachment.mimeType)
-    }
+    val isImage = attachment.isImage()
+    val data = attachment.imagePreviewData ?: MimeTypeIconProvider.getIconRes(attachment.mimeType)
 
     val startPadding = ChatTheme.dimens.quotedMessageAttachmentStartPadding
     val verticalPadding = ChatTheme.dimens.quotedMessageAttachmentTopPadding
