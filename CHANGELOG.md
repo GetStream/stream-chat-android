@@ -71,6 +71,7 @@
 
 ### ⬆️ Improved
 - Improve the uploaded attachment loading UI. [#5889](https://github.com/GetStream/stream-chat-android/pull/5889)
+- Show message for unsupported file types during the system attachment upload. [#5900](https://github.com/GetStream/stream-chat-android/pull/5900) 
 
 ### ✅ Added
 
