@@ -98,5 +98,6 @@
             android:windowSoftInputMode="adjustResize"
             />
         <activity android:name=".feature.reminders.MessageRemindersActivity" />
+        <activity android:name=".ui.profile.UserProfileActivity" />
     </application>
 </manifest>

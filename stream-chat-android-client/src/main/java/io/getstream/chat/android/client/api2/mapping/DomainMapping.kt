@@ -290,6 +290,7 @@ internal class DomainMapping(
             teamsRole = teams_role.orEmpty(),
             channelMutes = channel_mutes.orEmpty().map { it.toDomain() },
             blockedUserIds = blocked_user_ids.orEmpty(),
+            avgResponseTime = avg_response_time,
             extraData = extraData.toMutableMap(),
         ).let(userTransformer::transform)
 

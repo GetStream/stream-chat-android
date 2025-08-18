@@ -76,6 +76,7 @@ internal object UserDtoTestData {
             teams_role = null,
             channel_mutes = emptyList(),
             blocked_user_ids = null,
+            avg_response_time = null,
             extraData = emptyMap(),
         )
 
@@ -126,6 +127,7 @@ internal object UserDtoTestData {
             teams_role = null,
             channel_mutes = emptyList(),
             blocked_user_ids = null,
+            avg_response_time = null,
             extraData = emptyMap(),
         )
 
@@ -175,7 +177,8 @@ internal object UserDtoTestData {
             },
             "channel_mutes": [],
             "name": "username",
-            "image": "image"
+            "image": "image",
+            "avg_response_time": 1000
          }"""
     val downstreamUser =
         DownstreamUserDto(
@@ -221,6 +224,7 @@ internal object UserDtoTestData {
             ),
             channel_mutes = emptyList(),
             blocked_user_ids = null,
+            avg_response_time = 1000L,
             extraData = emptyMap(),
         )
 

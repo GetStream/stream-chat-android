@@ -131,6 +131,7 @@ internal class DatabaseUserRepository(
             mutes = mutes.map { mute -> mute.target?.id.orEmpty() },
             teams = teams,
             teamsRole = teamsRole,
+            avgResponseTime = avgResponseTime,
             extraData = extraData,
         )
 
@@ -148,6 +149,7 @@ internal class DatabaseUserRepository(
             banned = banned,
             teams = teams,
             teamsRole = teamsRole,
+            avgResponseTime = avgResponseTime,
             extraData = extraData.toMutableMap(),
         )
     }
