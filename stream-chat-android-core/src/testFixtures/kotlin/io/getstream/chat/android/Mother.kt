@@ -1035,7 +1035,7 @@ public fun randomLocation(
     cid: String = randomCID(),
     messageId: String = randomString(),
     userId: String = randomString(),
-    endAt: Date = randomDate(),
+    endAt: Date? = randomDate(),
     latitude: Double = randomDouble(),
     longitude: Double = randomDouble(),
     deviceId: String = randomString(),

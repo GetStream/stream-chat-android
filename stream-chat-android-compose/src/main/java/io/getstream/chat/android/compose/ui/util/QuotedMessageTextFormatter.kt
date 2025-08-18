@@ -208,7 +208,7 @@ private class CompositeQuotedMessageTextFormatter(
  * The default implementation automatically supports the [ChatTheme.autoTranslationEnabled] feature.
  * It also uses the [ChatTheme] to style the text including links highlighting.
  */
-private class DefaultQuotedMessageTextFormatter(
+internal class DefaultQuotedMessageTextFormatter(
     private val context: Context,
     private val autoTranslationEnabled: Boolean,
     private val typography: StreamTypography,
