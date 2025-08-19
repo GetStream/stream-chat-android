@@ -12,10 +12,12 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fix `ChatClient.connectUser` not propagating unrecoverable errors from the socket to the result. [#5896](https://github.com/GetStream/stream-chat-android/pull/5896)
 
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `ChatErrorCode.DUPLICATE_USERNAME_ERROR` covering the error case when a user tries to connect with an existing username, when `enforce_unique_usernames` is enabled. [#5896](https://github.com/GetStream/stream-chat-android/pull/5896)
 - Introduce `getUnreadCounts` to the `ChatClient`. [#5897](https://github.com/GetStream/stream-chat-android/pull/5897)
 
 ### ⚠️ Changed
