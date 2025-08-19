@@ -20,6 +20,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -217,7 +218,17 @@ public class AttachmentsPickerSystemTabFactory(
         }
 
         val filePickerLauncher = rememberFilePickerLauncher { uri ->
-            onAttachmentsSubmitted(storageHelper.getAttachmentsMetadataFromUris(listOf(uri)))
+            val uris = listOf(uri)
+            val attachments = storageHelper.getAttachmentsMetadataFromUris(uris)
+            // Check if some of the files were filtered out due to upload config
+            if (uris.size != attachments.size) {
+                Toast.makeText(
+                    context,
+                    R.string.stream_compose_message_composer_file_not_supported,
+                    Toast.LENGTH_SHORT,
+                ).show()
+            }
+            onAttachmentsSubmitted(attachments)
         }
 
         val imagePickerLauncher =
