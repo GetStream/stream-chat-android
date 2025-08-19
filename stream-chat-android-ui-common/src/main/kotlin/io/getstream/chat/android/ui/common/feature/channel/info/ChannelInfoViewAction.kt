@@ -61,6 +61,16 @@ public sealed interface ChannelInfoViewAction {
     public data object PinnedMessagesClick : ChannelInfoViewAction
 
     /**
+     * Represents the media attachments click action.
+     */
+    public data object MediaAttachmentsClick : ChannelInfoViewAction
+
+    /**
+     * Represents the files attachments click action.
+     */
+    public data object FilesAttachmentsClick : ChannelInfoViewAction
+
+    /**
      * Represents the mute channel click action.
      */
     public data object MuteChannelClick : ChannelInfoViewAction

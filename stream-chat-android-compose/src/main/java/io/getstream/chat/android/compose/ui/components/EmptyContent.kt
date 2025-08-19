@@ -37,12 +37,14 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param text The text to be displayed.
  * @param painter The painter for the icon.
  * @param modifier Modifier for styling.
+ * @param title Optional title to be displayed above the text.
  */
 @Composable
 public fun EmptyContent(
     text: String,
     painter: Painter,
     modifier: Modifier = Modifier,
+    title: String? = null,
 ) {
     Column(
         modifier = modifier.background(color = ChatTheme.colors.appBackground),
@@ -57,6 +59,16 @@ public fun EmptyContent(
         )
 
         Spacer(Modifier.size(16.dp))
+
+        if (title != null) {
+            Text(
+                text = title,
+                style = ChatTheme.typography.title3,
+                color = ChatTheme.colors.textHighEmphasis,
+                textAlign = TextAlign.Center,
+            )
+            Spacer(Modifier.size(8.dp))
+        }
 
         Text(
             text = text,

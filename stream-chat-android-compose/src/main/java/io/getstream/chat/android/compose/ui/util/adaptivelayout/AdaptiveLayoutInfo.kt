@@ -50,12 +50,12 @@ internal object AdaptiveLayoutConstraints {
  * [WindowWidthSizeClass]'s hash codes are set order-wise
  * from [WindowWidthSizeClass.COMPACT] to [WindowWidthSizeClass.EXPANDED], so we use them for comparison.
  */
-private operator fun WindowWidthSizeClass.compareTo(other: WindowWidthSizeClass): Int =
+public operator fun WindowWidthSizeClass.compareTo(other: WindowWidthSizeClass): Int =
     hashCode().compareTo(other.hashCode())
 
 /**
  * [WindowHeightSizeClass]'s hash codes are set order-wise
  * from [WindowHeightSizeClass.COMPACT] to [WindowHeightSizeClass.EXPANDED], so we use them for comparison.
  */
-private operator fun WindowHeightSizeClass.compareTo(other: WindowHeightSizeClass): Int =
+public operator fun WindowHeightSizeClass.compareTo(other: WindowHeightSizeClass): Int =
     hashCode().compareTo(other.hashCode())

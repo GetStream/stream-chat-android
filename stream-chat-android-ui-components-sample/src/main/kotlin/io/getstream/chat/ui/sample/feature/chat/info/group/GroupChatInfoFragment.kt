@@ -151,6 +151,16 @@ class GroupChatInfoFragment : Fragment() {
                     GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToPinnedMessageListFragment(args.cid),
                 )
 
+            is ChannelInfoViewEvent.NavigateToMediaAttachments ->
+                findNavController().navigateSafely(
+                    GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToChatInfoSharedMediaFragment(args.cid),
+                )
+
+            is ChannelInfoViewEvent.NavigateToFilesAttachments ->
+                findNavController().navigateSafely(
+                    GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToChatInfoSharedFilesFragment(args.cid),
+                )
+
             is ChannelInfoViewEvent.NavigateToChannel ->
                 findNavController().navigateSafely(
                     GroupChatInfoFragmentDirections.actionOpenChat(event.cid),
@@ -178,14 +188,14 @@ class GroupChatInfoFragment : Fragment() {
         }
         adapter.setChatInfoOptionClickListener { option ->
             when (option) {
-                ChatInfoItem.Option.PinnedMessages -> viewModel.onViewAction(ChannelInfoViewAction.PinnedMessagesClick)
+                ChatInfoItem.Option.PinnedMessages ->
+                    viewModel.onViewAction(ChannelInfoViewAction.PinnedMessagesClick)
 
-                ChatInfoItem.Option.SharedMedia -> findNavController().navigateSafely(
-                    GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToChatInfoSharedMediaFragment(args.cid),
-                )
-                ChatInfoItem.Option.SharedFiles -> findNavController().navigateSafely(
-                    GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToChatInfoSharedFilesFragment(args.cid),
-                )
+                ChatInfoItem.Option.SharedMedia ->
+                    viewModel.onViewAction(ChannelInfoViewAction.MediaAttachmentsClick)
+
+                ChatInfoItem.Option.SharedFiles ->
+                    viewModel.onViewAction(ChannelInfoViewAction.FilesAttachmentsClick)
 
                 is ChatInfoItem.Option.LeaveChannel ->
                     viewModel.onViewAction(ChannelInfoViewAction.LeaveChannelClick)

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+    Copyright (c) 2014-2025 Stream.io Inc. All rights reserved.
 
     Licensed under the Stream License;
     you may not use this file except in compliance with the License.
@@ -17,12 +17,14 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
+    android:autoMirrored="true"
     android:viewportWidth="24"
     android:viewportHeight="24"
     >
+
     <path
         android:fillColor="#000000"
-        android:fillType="evenOdd"
-        android:pathData="M21,5H12.414L10.414,3H3C2.4477,3 2,3.4477 2,4V20C2,20.5523 2.4477,21 3,21H21C21.5523,21 22,20.5523 22,20V6C22,5.4477 21.5523,5 21,5ZM4,19V7H20V19H4Z"
+        android:pathData="M20,6H12L10,4H4C2.9,4 2.01,4.9 2.01,6L2,18C2,19.1 2.9,20 4,20H20C21.1,20 22,19.1 22,18V8C22,6.9 21.1,6 20,6ZM20,18H4V8H20V18Z"
         />
+
 </vector>

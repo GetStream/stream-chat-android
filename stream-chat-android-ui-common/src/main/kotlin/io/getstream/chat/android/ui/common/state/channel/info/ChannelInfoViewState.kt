@@ -91,9 +91,19 @@ public sealed interface ChannelInfoViewState {
             public data class HideChannel(val isHidden: Boolean) : Option
 
             /**
-             * Indicates an option to view pinned messages in the channel.
+             * Indicates an option to view the channel's pinned messages.
              */
             public data object PinnedMessages : Option
+
+            /**
+             * Indicates an option to view the channel's media attachments.
+             */
+            public data object MediaAttachments : Option
+
+            /**
+             * Indicates an option to view the channel's files attachments.
+             */
+            public data object FilesAttachments : Option
 
             /**
              * Indicates an option to leave the channel.

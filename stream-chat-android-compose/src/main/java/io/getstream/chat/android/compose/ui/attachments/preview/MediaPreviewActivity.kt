@@ -104,7 +104,7 @@ public class MediaPreviewActivity : AppCompatActivity() {
         modifier: Modifier = Modifier,
         url: String,
         title: String,
-        onPlaybackError: () -> Unit,
+        onPlaybackError: (error: Throwable) -> Unit,
         onBackPressed: () -> Unit,
     ) {
         BackHandler(enabled = true, onBack = onBackPressed)

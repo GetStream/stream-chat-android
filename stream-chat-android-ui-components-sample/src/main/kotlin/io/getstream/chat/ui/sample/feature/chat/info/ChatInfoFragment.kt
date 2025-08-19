@@ -104,6 +104,16 @@ class ChatInfoFragment : Fragment() {
                 findNavController().navigateSafely(
                     ChatInfoFragmentDirections.actionChatInfoFragmentToPinnedMessageListFragment(args.cid),
                 )
+
+            is ChannelInfoViewEvent.NavigateToMediaAttachments ->
+                findNavController().navigateSafely(
+                    ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedMediaFragment(args.cid),
+                )
+
+            is ChannelInfoViewEvent.NavigateToFilesAttachments ->
+                findNavController().navigateSafely(
+                    ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedFilesFragment(args.cid),
+                )
             // No need to handle these in ChatInfoFragment,
             // as it is only applicable for group channels.
             is ChannelInfoViewEvent.NavigateToChannel,
@@ -136,15 +146,14 @@ class ChatInfoFragment : Fragment() {
         }
         adapter.setChatInfoOptionClickListener { option ->
             when (option) {
-                ChatInfoItem.Option.PinnedMessages -> viewModel.onViewAction(ChannelInfoViewAction.PinnedMessagesClick)
+                ChatInfoItem.Option.PinnedMessages ->
+                    viewModel.onViewAction(ChannelInfoViewAction.PinnedMessagesClick)
 
-                ChatInfoItem.Option.SharedMedia -> findNavController().navigateSafely(
-                    ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedMediaFragment(args.cid),
-                )
+                ChatInfoItem.Option.SharedMedia ->
+                    viewModel.onViewAction(ChannelInfoViewAction.MediaAttachmentsClick)
 
-                ChatInfoItem.Option.SharedFiles -> findNavController().navigateSafely(
-                    ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedFilesFragment(args.cid),
-                )
+                ChatInfoItem.Option.SharedFiles ->
+                    viewModel.onViewAction(ChannelInfoViewAction.FilesAttachmentsClick)
 
                 ChatInfoItem.Option.SharedGroups -> findNavController().navigateSafely(
                     ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedGroupsFragment(
