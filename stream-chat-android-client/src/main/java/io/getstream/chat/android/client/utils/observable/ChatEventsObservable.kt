@@ -61,6 +61,14 @@ internal class ChatEventsObservable(
                 is ErrorEvent -> {
                     waitConnection.emit(Result.Failure(event.error))
                 }
+                is DisconnectedEvent -> {
+                    // We can get an unrecoverable error when attempting to connect to the socket
+                    // (ex. connection.error event - wrapped in a DisconnectedEvent)
+                    val error = (event.disconnectCause as? DisconnectCause.UnrecoverableError)?.error
+                    if (error != null) {
+                        waitConnection.emit(Result.Failure(error))
+                    }
+                }
                 else -> Unit // Ignore other events
             }
         }

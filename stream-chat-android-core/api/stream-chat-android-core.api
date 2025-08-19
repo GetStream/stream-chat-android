@@ -52,6 +52,7 @@ public final class io/getstream/chat/android/client/errors/ChatErrorCode : java/
 	public static final field CANT_PARSE_CONNECTION_EVENT Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public static final field CANT_PARSE_EVENT Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public static final field Companion Lio/getstream/chat/android/client/errors/ChatErrorCode$Companion;
+	public static final field DUPLICATE_USERNAME_ERROR Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public static final field INVALID_TOKEN Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public static final field NETWORK_FAILED Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public static final field NO_ERROR_BODY Lio/getstream/chat/android/client/errors/ChatErrorCode;
