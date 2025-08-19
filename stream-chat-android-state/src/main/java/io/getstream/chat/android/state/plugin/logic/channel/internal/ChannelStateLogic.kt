@@ -348,7 +348,7 @@ internal class ChannelStateLogic(
     /**
      * Returns all the replies of a quoted message.
      */
-    public fun getAllReplies(message: Message): List<Message>? {
+    fun getAllReplies(message: Message): List<Message>? {
         return mutableState.quotedMessagesMap
             .value[message.id]
             ?.mapNotNull(mutableState::getMessageById)
@@ -739,6 +739,14 @@ internal class ChannelStateLogic(
         (message.replyTo?.id ?: message.replyMessageId)?.let { quotedMessageId ->
             mutableState.addQuotedMessage(quotedMessageId, message.id)
         }
+    }
+
+    /**
+     * Called when the user is loading the newest messages.
+     * Resets the current message limit.
+     */
+    fun loadingNewestMessages() {
+        mutableState.resetMessageLimit()
     }
 
     /**

@@ -61,11 +61,10 @@ import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.clickable
+import io.getstream.chat.android.compose.ui.util.extensions.internal.imagePreviewData
 import io.getstream.chat.android.compose.ui.util.isCompleted
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.common.utils.extensions.initials
 
 /**
@@ -194,13 +193,7 @@ private fun MediaGalleryPhotosMenuItem(
             .clickable { onClick() },
         contentAlignment = Alignment.Center,
     ) {
-        val data =
-            if (isImage || (isVideo && ChatTheme.videoThumbnailsEnabled)) {
-                attachment.imagePreviewUrl?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
-            } else {
-                null
-            }
-
+        val data = attachment.imagePreviewData
         val context = LocalContext.current
         val imageRequest = remember {
             ImageRequest.Builder(context)

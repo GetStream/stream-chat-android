@@ -45,11 +45,12 @@ import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
+import io.getstream.chat.android.compose.ui.util.extensions.internal.imagePreviewData
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
-import io.getstream.chat.android.uiutils.model.MimeType
+import java.io.File
 
 /**
  * Builds an image attachment for a quoted message which is composed from a singe attachment previewing the attached
@@ -76,11 +77,13 @@ public fun MediaAttachmentQuotedContent(
 
     val data =
         when {
-            isGiphy -> attachment.imagePreviewUrl
-            isImageContent || (isVideo && ChatTheme.videoThumbnailsEnabled) ->
-                attachment.imagePreviewUrl?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
+            isGiphy ->
+                attachment.imagePreviewUrl
+            isImageContent ->
+                attachment.imagePreviewUrl
+                    ?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
 
-            else -> null
+            else -> attachment.imagePreviewData
         }
 
     Box(
@@ -125,38 +128,57 @@ private fun MediaAttachmentQuotedContentPreview() {
     }
 }
 
+@Suppress("LongMethod")
 @Composable
 internal fun MediaAttachmentQuotedContent() {
-    val types = listOf(
-        AttachmentType.FILE,
-        AttachmentType.FILE,
-        AttachmentType.FILE,
-        AttachmentType.VIDEO,
-        AttachmentType.VIDEO,
+    data class PreviewData(
+        val type: String,
+        val thumbUrl: String?,
+        val imageUrl: String?,
+        val upload: File?,
     )
-    val mimeTypes = listOf(
-        MimeType.MIME_TYPE_PDF,
-        MimeType.MIME_TYPE_DOC,
-        MimeType.MIME_TYPE_PPT,
-        MimeType.MIME_TYPE_MP4,
-        MimeType.MIME_TYPE_MOV,
+
+    val dataList = listOf(
+        PreviewData(
+            type = AttachmentType.IMAGE,
+            thumbUrl = null,
+            imageUrl = "image",
+            upload = File("image"),
+        ),
+        PreviewData(
+            type = AttachmentType.IMGUR,
+            thumbUrl = null,
+            imageUrl = "imgur",
+            upload = File("imgur"),
+        ),
+        PreviewData(
+            type = AttachmentType.GIPHY,
+            thumbUrl = "giphy",
+            imageUrl = null,
+            upload = null,
+        ),
+        PreviewData(
+            type = AttachmentType.VIDEO,
+            thumbUrl = "video",
+            imageUrl = "video",
+            upload = File("video"),
+        ),
+        PreviewData(
+            type = AttachmentType.VIDEO,
+            thumbUrl = "video",
+            imageUrl = "video",
+            upload = null,
+        ),
     )
-    val thumbs = listOf(
-        null,
-        null,
-        null,
-        "thumb",
-        "thumb",
-    )
-    val data = types.zip(mimeTypes).zip(thumbs) { (type, mimeType), thumb ->
-        Triple(type, mimeType, thumb)
-    }
     val previewHandler = AsyncImagePreviewHandler { request ->
         ColorImage(
-            color = if (request.data is String) {
-                Color.DarkGray.toArgb()
-            } else {
-                Color.Red.toArgb()
+            color = when (request.data) {
+                "image" -> Color.Red.toArgb()
+                "imgur" -> Color.Green.toArgb()
+                "giphy" -> Color.Blue.toArgb()
+                "video" -> Color.Yellow.toArgb()
+                is File -> Color.Magenta.toArgb()
+                else -> Color.LightGray.toArgb()
             },
             width = 200,
             height = 150,
@@ -164,12 +186,13 @@ internal fun MediaAttachmentQuotedContent() {
     }
     CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
         Row {
-            data.forEach { (type, mimeType, thumb) ->
+            dataList.forEach { (type, thumbUrl, imageUrl, upload) ->
                 MediaAttachmentQuotedContent(
                     attachment = Attachment(
                         type = type,
-                        mimeType = mimeType,
-                        thumbUrl = thumb,
+                        thumbUrl = thumbUrl,
+                        imageUrl = imageUrl,
+                        upload = upload,
                     ),
                 )
             }

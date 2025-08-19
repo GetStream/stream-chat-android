@@ -17,8 +17,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Add `NotificationhandlerFactory.notificationBuilderTransformer` parameter to allow customization of the notification builder. [#5881](https://github.com/GetStream/stream-chat-android/pull/5881)
-- Support User Average Response Time. [#5893](https://github.com/GetStream/stream-chat-android/pull/5893)
 - Add `ChatErrorCode.DUPLICATE_USERNAME_ERROR` covering the error case when a user tries to connect with an existing username, when `enforce_unique_usernames` is enabled. [#5896](https://github.com/GetStream/stream-chat-android/pull/5896)
 
 ### ⚠️ Changed
@@ -31,8 +29,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Add `StreamOfflinePluginFactory.ignoredChannelTypes` property to allow ignoring messages for specific channel types in the offline storage. [#5877](https://github.com/GetStream/stream-chat-android/pull/5877)
-- By default the `StreamOfflinePluginFactory.ignoredChannelTypes` is set to `livestream` channel types, so that the messages that belong to `livestream` channel type are not stored in the offline storage. [#5877](https://github.com/GetStream/stream-chat-android/pull/5877)
 
 ### ⚠️ Changed
 
@@ -40,25 +36,17 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
-- Fix reactions not working in `livestream` channels. [#5883](https://github.com/GetStream/stream-chat-android/pull/5883)
-- Fix attachments upload not working in channels with message limit applied. [#5886](https://github.com/GetStream/stream-chat-android/pull/5886)
-- Fix delete message not working in channels with disabled DB writes. [#5886](https://github.com/GetStream/stream-chat-android/pull/5886)
-- Fix thread not showing the parent message when offline support is disabled. [#5891](https://github.com/GetStream/stream-chat-android/pull/5891)
 
 ### ⬆️ Improved
 
 ### ✅ Added
-- Add `StatePluginConfig.MessageLimitConfig` config to allow setting the maximum number of messages to be kept in memory for specific channel types. [#5877](https://github.com/GetStream/stream-chat-android/pull/5877)
-- By default the `StatePluginConfig.MessageLimitConfig` is set to 500 messages for `livestream` channel types. [#5877](https://github.com/GetStream/stream-chat-android/pull/5877)
 
 ### ⚠️ Changed
-- Deprecate `SendReactionListener.onSendReactionPrecondition(currentUser?, reaction: Reaction)` in favor of `SendReactionListener.onSendReactionPrecondition(cid: String?, currentUser: User?, reaction: Reaction)`. [#5883](https://github.com/GetStream/stream-chat-android/pull/5883)
 
 ### ❌ Removed
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
-- Fix silent messages not shown in the channel preview in the channel list. [#5880](https://github.com/GetStream/stream-chat-android/pull/5880)
 
 ### ⬆️ Improved
 
@@ -70,6 +58,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix the read mark failing to update. [#5890](https://github.com/GetStream/stream-chat-android/pull/5890)
 
 ### ⬆️ Improved
 
@@ -81,17 +70,14 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Fix media gallery screen not closed after all attachments are deleted from the message. [#5884](https://github.com/GetStream/stream-chat-android/pull/5884)
-- Fix the poll creation button to disable when multiple answers has a wrong input. [#5885](https://github.com/GetStream/stream-chat-android/pull/5885)
-- Fix media gallery not opened (closed automatically) when clicking on a media attachment in the message list. [#5892](https://github.com/GetStream/stream-chat-android/pull/5892)
 
 ### ⬆️ Improved
+- Improve the uploaded attachment loading UI. [#5889](https://github.com/GetStream/stream-chat-android/pull/5889)
+- Show message for unsupported file types during the system attachment upload. [#5900](https://github.com/GetStream/stream-chat-android/pull/5900) 
 
 ### ✅ Added
-- Add `MessageTheme.linkBackgroundColor` for customizing the background color of the message link card. [#5894](https://github.com/GetStream/stream-chat-android/pull/5894)
 
 ### ⚠️ Changed
-- Deprecate `StreamColors.linkBackground` in favor of `MessageTheme.linkBackgroundColor`. [#5894](https://github.com/GetStream/stream-chat-android/pull/5894)
 
 ### ❌ Removed
 
@@ -105,6 +91,45 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# August 13th, 2025 - 6.21.0
+## stream-chat-android-client
+### ✅ Added
+- Add `NotificationhandlerFactory.notificationBuilderTransformer` parameter to allow customization of the notification builder. [#5881](https://github.com/GetStream/stream-chat-android/pull/5881)
+- Support User Average Response Time. [#5893](https://github.com/GetStream/stream-chat-android/pull/5893)
+
+## stream-chat-android-offline
+### ✅ Added
+- Add `StreamOfflinePluginFactory.ignoredChannelTypes` property to allow ignoring messages for specific channel types in the offline storage. [#5877](https://github.com/GetStream/stream-chat-android/pull/5877)
+
+## stream-chat-android-state
+### 🐞 Fixed
+- Fix reactions not working in channels with disabled DB writes. [#5883](https://github.com/GetStream/stream-chat-android/pull/5883)
+- Fix delete message not working in channels with disabled DB writes. [#5886](https://github.com/GetStream/stream-chat-android/pull/5886)
+- Fix attachments upload not working in channels with message limit applied. [#5886](https://github.com/GetStream/stream-chat-android/pull/5886)
+- Fix thread not showing the parent message when offline support is disabled. [#5891](https://github.com/GetStream/stream-chat-android/pull/5891)
+
+### ✅ Added
+- Add `StatePluginConfig.MessageLimitConfig` config to allow setting the maximum number of messages to be kept in memory for specific channel types. [#5877](https://github.com/GetStream/stream-chat-android/pull/5877)
+
+### ⚠️ Changed
+- Deprecate `SendReactionListener.onSendReactionPrecondition(currentUser?, reaction: Reaction)` in favor of `SendReactionListener.onSendReactionPrecondition(cid: String?, currentUser: User?, reaction: Reaction)`. [#5883](https://github.com/GetStream/stream-chat-android/pull/5883)
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+- Fix silent messages not shown in the channel preview in the channel list. [#5880](https://github.com/GetStream/stream-chat-android/pull/5880)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fix media gallery screen not closed after all attachments are deleted from the message. [#5884](https://github.com/GetStream/stream-chat-android/pull/5884)
+- Fix the poll creation button to disable when multiple answers has a wrong input. [#5885](https://github.com/GetStream/stream-chat-android/pull/5885)
+- Fix media gallery not opened (closed automatically) when clicking on a media attachment in the message list. [#5892](https://github.com/GetStream/stream-chat-android/pull/5892)
+
+### ✅ Added
+- Add `MessageTheme.linkBackgroundColor` for customizing the background color of the message link card. [#5894](https://github.com/GetStream/stream-chat-android/pull/5894)
+
+### ⚠️ Changed
+- Deprecate `StreamColors.linkBackground` in favor of `MessageTheme.linkBackgroundColor`. [#5894](https://github.com/GetStream/stream-chat-android/pull/5894)
 
 # July 25th, 2025 - 6.20.0
 ## stream-chat-android-client
