@@ -132,6 +132,7 @@ import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
+import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
@@ -817,6 +818,9 @@ constructor(
             channelId = channelId,
         ).map(this::flattenChannel)
     }
+
+    override fun getUnreadCounts(): Call<UnreadCounts> = generalApi.getUnreadCounts()
+        .mapDomain { it.toDomain() }
 
     override fun markRead(channelType: String, channelId: String, messageId: String): Call<Unit> {
         return channelApi.markRead(

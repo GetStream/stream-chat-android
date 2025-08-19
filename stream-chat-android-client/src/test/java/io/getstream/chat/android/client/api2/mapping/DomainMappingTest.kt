@@ -52,6 +52,11 @@ import io.getstream.chat.android.client.Mother.randomDownstreamVoteDto
 import io.getstream.chat.android.client.Mother.randomPrivacySettingsDto
 import io.getstream.chat.android.client.Mother.randomQueryRemindersResponse
 import io.getstream.chat.android.client.Mother.randomSearchWarningDto
+import io.getstream.chat.android.client.Mother.randomUnreadChannelByTypeDto
+import io.getstream.chat.android.client.Mother.randomUnreadChannelDto
+import io.getstream.chat.android.client.Mother.randomUnreadCountByTeamDto
+import io.getstream.chat.android.client.Mother.randomUnreadDto
+import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
 import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.App
@@ -89,6 +94,10 @@ import io.getstream.chat.android.models.SearchWarning
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
 import io.getstream.chat.android.models.ThreadParticipant
+import io.getstream.chat.android.models.UnreadChannel
+import io.getstream.chat.android.models.UnreadChannelByType
+import io.getstream.chat.android.models.UnreadCounts
+import io.getstream.chat.android.models.UnreadThread
 import io.getstream.chat.android.models.UserBlock
 import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.UserTransformer
@@ -135,7 +144,9 @@ internal class DomainMappingTest {
                 text = draftMessageResponse.message.text,
                 parentId = draftMessageResponse.parent_message?.id,
                 replyMessage = draftMessageResponse.quoted_message?.toDomain(),
-                attachments = with(sut) { draftMessageResponse.message.attachments?.map { it.toDomain() } ?: emptyList() },
+                attachments = with(sut) {
+                    draftMessageResponse.message.attachments?.map { it.toDomain() } ?: emptyList()
+                },
                 mentionedUsersIds = draftMessageResponse.message.mentioned_users?.map { it.id } ?: emptyList(),
                 extraData = draftMessageResponse.message.extraData ?: emptyMap(),
                 silent = draftMessageResponse.message.silent,
@@ -773,6 +784,46 @@ internal class DomainMappingTest {
         val expected = QueryRemindersResult(
             reminders = input.reminders.map { with(sut) { it.toDomain() } },
             next = input.next,
+        )
+        result shouldBeEqualTo expected
+    }
+
+    @Test
+    fun `UnreadDto is correctly mapped to UnreadCounts`() {
+        val input = randomUnreadDto(
+            totalUnreadCountByTeam = mapOf(randomUnreadCountByTeamDto()),
+            channels = listOf(randomUnreadChannelDto()),
+            threads = listOf(randomUnreadThreadDto()),
+            channelType = listOf(randomUnreadChannelByTypeDto()),
+        )
+        val sut = Fixture().get()
+        val result = with(sut) { input.toDomain() }
+        val expected = UnreadCounts(
+            messagesCount = input.total_unread_count,
+            threadsCount = input.total_unread_threads_count,
+            messagesCountByTeam = input.total_unread_count_by_team!!,
+            channels = input.channels.map { dto ->
+                UnreadChannel(
+                    cid = dto.channel_id,
+                    messagesCount = dto.unread_count,
+                    lastRead = dto.last_read,
+                )
+            },
+            threads = input.threads.map { dto ->
+                UnreadThread(
+                    parentMessageId = dto.parent_message_id,
+                    messagesCount = dto.unread_count,
+                    lastRead = dto.last_read,
+                    lastReadMessageId = dto.last_read_message_id,
+                )
+            },
+            channelsByType = input.channel_type.map { dto ->
+                UnreadChannelByType(
+                    channelType = dto.channel_type,
+                    channelsCount = dto.channel_count,
+                    messagesCount = dto.unread_count,
+                )
+            },
         )
         result shouldBeEqualTo expected
     }

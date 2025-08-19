@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.api2.endpoint
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.UrlQueryPayload
+import io.getstream.chat.android.client.api2.model.dto.UnreadDto
 import io.getstream.chat.android.client.api2.model.requests.QueryMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SearchMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
@@ -53,4 +54,7 @@ internal interface GeneralApi {
     fun queryMembers(
         @UrlQueryPayload @Query("payload") payload: QueryMembersRequest,
     ): RetrofitCall<QueryMembersResponse>
+
+    @GET("/unread")
+    fun getUnreadCounts(): RetrofitCall<UnreadDto>
 }

@@ -16,21 +16,10 @@
 
 package io.getstream.chat.android.compose.sample.ui.profile
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.models.UnreadCounts
+import io.getstream.chat.android.models.User
 
-class UserProfileActivity : ComponentActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            ChatTheme {
-                UserProfileScreen(
-                    onNavigationIconClick = ::finish,
-                )
-            }
-        }
-    }
-}
+data class UserProfileViewState(
+    val user: User? = null,
+    val unreadCounts: UnreadCounts? = null,
+)
