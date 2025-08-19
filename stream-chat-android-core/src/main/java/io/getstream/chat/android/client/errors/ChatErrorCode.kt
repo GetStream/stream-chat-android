@@ -28,6 +28,7 @@ private const val UNABLE_TO_PARSE_SOCKET_EVENT_ERROR_CODE = 1008
 private const val NO_ERROR_BODY_ERROR_CODE = 1009
 private const val VALIDATION_ERROR_ERROR_CODE = 4
 private const val AUTHENTICATION_ERROR_CODE = 5
+private const val DUPLICATE_USERNAME_ERROR_CODE = 6
 private const val TOKEN_EXPIRED_ERROR_CODE = 40
 private const val TOKEN_NOT_VALID_ERROR_CODE = 41
 private const val TOKEN_DATE_INCORRECT_ERROR_CODE = 42
@@ -60,6 +61,7 @@ public enum class ChatErrorCode(public val code: Int, public val description: St
     // server error codes
     VALIDATION_ERROR(VALIDATION_ERROR_ERROR_CODE, "Validation error, check your credentials"),
     AUTHENTICATION_ERROR(AUTHENTICATION_ERROR_CODE, "Unauthenticated, problem with authentication"),
+    DUPLICATE_USERNAME_ERROR(DUPLICATE_USERNAME_ERROR_CODE, "Username(s) already exists."),
     TOKEN_EXPIRED(TOKEN_EXPIRED_ERROR_CODE, "Token expired, new one must be requested."),
     TOKEN_NOT_VALID(TOKEN_NOT_VALID_ERROR_CODE, "Unauthenticated, token not valid yet"),
     TOKEN_DATE_INCORRECT(TOKEN_DATE_INCORRECT_ERROR_CODE, "Unauthenticated, token date incorrect"),

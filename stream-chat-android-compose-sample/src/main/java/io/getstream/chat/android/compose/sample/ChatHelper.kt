@@ -116,7 +116,8 @@ object ChatHelper {
                     if (it == InitializationState.NOT_INITIALIZED) {
                         connectUser(userCredentials.user, userCredentials.token)
                             .enqueue { result ->
-                                result.onError(onError)
+                                result
+                                    .onError(onError)
                                     .onSuccess {
                                         ChatApp.credentialsRepository.saveUserCredentials(userCredentials)
                                         ChatApp.sharedLocationService.start()
