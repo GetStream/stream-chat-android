@@ -23,6 +23,8 @@ import io.getstream.chat.android.compose.sample.data.UserCredentialsRepository
 import io.getstream.chat.android.compose.sample.service.SharedLocationService
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.common.helper.DateFormatter
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
 class ChatApp : Application() {
 
@@ -37,6 +39,14 @@ class ChatApp : Application() {
 
         // Initialize Stream SDK
         ChatHelper.initializeSdk(this, getApiKey())
+
+        MainScope().launch {
+            val userCredentials = credentialsRepository.loadUserCredentials()
+            if (userCredentials != null && !BuildConfig.BENCHMARK) {
+                // Ensure that the user is connected
+                ChatHelper.connectUser(userCredentials)
+            }
+        }
     }
 
     private fun getApiKey(): String {
