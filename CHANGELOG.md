@@ -61,6 +61,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added the `focusRequestFlow` that emits one-shot focus events used to request focus on the message input field.
 
 ### ⚠️ Changed
 
@@ -73,6 +74,7 @@
 - Improve the uploaded attachment loading UI. [#5889](https://github.com/GetStream/stream-chat-android/pull/5889)
 
 ### ✅ Added
+- Introduce `focusRequestFlow` in `MessageComposerViewModel` to request focus on the message input field triggered by certain `MessageAction`.
 
 ### ⚠️ Changed
 
