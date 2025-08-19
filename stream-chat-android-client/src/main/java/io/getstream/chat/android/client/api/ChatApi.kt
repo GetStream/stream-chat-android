@@ -53,6 +53,7 @@ import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
+import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
@@ -303,6 +304,8 @@ internal interface ChatApi {
         channelType: String,
         channelId: String,
     ): Call<Channel>
+
+    fun getUnreadCounts(): Call<UnreadCounts>
 
     @CheckResult
     fun markRead(

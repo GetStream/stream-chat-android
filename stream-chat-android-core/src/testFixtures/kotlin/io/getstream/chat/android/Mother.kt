@@ -57,6 +57,10 @@ import io.getstream.chat.android.models.ReactionGroup
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadParticipant
+import io.getstream.chat.android.models.UnreadChannel
+import io.getstream.chat.android.models.UnreadChannelByType
+import io.getstream.chat.android.models.UnreadCounts
+import io.getstream.chat.android.models.UnreadThread
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
@@ -1043,4 +1047,57 @@ public fun randomLocation(
     latitude = latitude,
     longitude = longitude,
     deviceId = deviceId,
+)
+
+public fun randomUnreadCounts(
+    messagesCount: Int = positiveRandomInt(),
+    threadsCount: Int = positiveRandomInt(),
+    messagesCountByTeam: Map<String, Int> = emptyMap(),
+    channels: List<UnreadChannel> = emptyList(),
+    threads: List<UnreadThread> = emptyList(),
+    channelsByType: List<UnreadChannelByType> = emptyList(),
+): UnreadCounts = UnreadCounts(
+    messagesCount = messagesCount,
+    threadsCount = threadsCount,
+    messagesCountByTeam = messagesCountByTeam,
+    channels = channels,
+    threads = threads,
+    channelsByType = channelsByType,
+)
+
+public fun randomMessagesCountByTeam(
+    teamId: String = randomString(),
+    unreadCount: Int = randomInt(),
+): Pair<String, Int> = teamId to unreadCount
+
+public fun randomUnreadChannel(
+    cid: String = randomCID(),
+    messagesCount: Int = positiveRandomInt(),
+    lastRead: Date = randomDate(),
+): UnreadChannel = UnreadChannel(
+    cid = cid,
+    messagesCount = messagesCount,
+    lastRead = lastRead,
+)
+
+public fun randomUnreadThread(
+    parentMessageId: String = randomCID(),
+    messagesCount: Int = positiveRandomInt(),
+    lastRead: Date = randomDate(),
+    lastReadMessageId: String = randomString(),
+): UnreadThread = UnreadThread(
+    parentMessageId = parentMessageId,
+    messagesCount = messagesCount,
+    lastRead = lastRead,
+    lastReadMessageId = lastReadMessageId,
+)
+
+public fun randomUnreadChannelByType(
+    channelType: String = randomString(),
+    channelsCount: Int = positiveRandomInt(),
+    messagesCount: Int = positiveRandomInt(),
+): UnreadChannelByType = UnreadChannelByType(
+    channelType = channelType,
+    channelsCount = channelsCount,
+    messagesCount = messagesCount,
 )
