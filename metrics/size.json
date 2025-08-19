@@ -2,13 +2,13 @@
   "debug": {
     "stream-chat-android-client": 15352,
     "stream-chat-android-offline": 15680,
-    "stream-chat-android-ui-components": 24212,
-    "stream-chat-android-compose": 27068
+    "stream-chat-android-ui-components": 24228,
+    "stream-chat-android-compose": 27156
   },
   "release": {
     "stream-chat-android-client": 3280,
     "stream-chat-android-offline": 3508,
-    "stream-chat-android-ui-components": 10740,
-    "stream-chat-android-compose": 12904
+    "stream-chat-android-ui-components": 10752,
+    "stream-chat-android-compose": 12980
   }
 }
