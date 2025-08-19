@@ -23,7 +23,7 @@ import java.util.Date
 internal data class UnreadDto(
     val total_unread_count: Int = 0,
     val total_unread_threads_count: Int = 0,
-    val total_unread_count_by_team: Map<String, Int> = emptyMap(),
+    val total_unread_count_by_team: Map<String, Int>? = emptyMap(),
     val channels: List<UnreadChannelDto> = emptyList(),
     val threads: List<UnreadThreadDto> = emptyList(),
     val channel_type: List<UnreadChannelByTypeDto> = emptyList(),

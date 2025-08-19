@@ -801,7 +801,7 @@ internal class DomainMappingTest {
         val expected = UnreadCounts(
             messagesCount = input.total_unread_count,
             threadsCount = input.total_unread_threads_count,
-            messagesCountByTeam = input.total_unread_count_by_team,
+            messagesCountByTeam = input.total_unread_count_by_team!!,
             channels = input.channels.map { dto ->
                 UnreadChannel(
                     cid = dto.channel_id,

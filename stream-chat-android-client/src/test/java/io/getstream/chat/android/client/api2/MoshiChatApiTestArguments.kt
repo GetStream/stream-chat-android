@@ -559,7 +559,7 @@ internal object MoshiChatApiTestArguments {
             val model = UnreadCounts(
                 messagesCount = dto.total_unread_count,
                 threadsCount = dto.total_unread_threads_count,
-                messagesCountByTeam = dto.total_unread_count_by_team,
+                messagesCountByTeam = dto.total_unread_count_by_team!!,
                 channels = dto.channels.map { dto ->
                     UnreadChannel(
                         cid = dto.channel_id,

@@ -783,7 +783,7 @@ internal class DomainMapping(
     internal fun UnreadDto.toDomain(): UnreadCounts = UnreadCounts(
         messagesCount = total_unread_count,
         threadsCount = total_unread_threads_count,
-        messagesCountByTeam = total_unread_count_by_team,
+        messagesCountByTeam = total_unread_count_by_team.orEmpty(),
         channels = channels.map { it.toDomain() },
         threads = threads.map { it.toDomain() },
         channelsByType = channel_type.map { it.toDomain() },
