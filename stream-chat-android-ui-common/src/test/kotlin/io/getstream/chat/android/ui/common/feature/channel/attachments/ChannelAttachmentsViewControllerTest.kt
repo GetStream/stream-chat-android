@@ -42,7 +42,7 @@ import org.mockito.kotlin.whenever
 internal class ChannelAttachmentsViewControllerTest {
 
     @Test
-    fun `initial state`() = runTest {
+    fun `when initialized, should set state to Loading`() = runTest {
         val sut = Fixture().get(backgroundScope)
 
         sut.state.value.let { state ->
@@ -51,7 +51,7 @@ internal class ChannelAttachmentsViewControllerTest {
     }
 
     @Test
-    fun `initial load`() = runTest {
+    fun `when initial load succeeds, should update state with content`() = runTest {
         val attachment1 = randomAttachment(type = ATTACHMENT_TYPE)
         val attachment2 = randomAttachment(type = ATTACHMENT_TYPE)
         val message1 = randomMessage(
@@ -87,7 +87,7 @@ internal class ChannelAttachmentsViewControllerTest {
     }
 
     @Test
-    fun `initial load error`() = runTest {
+    fun `when initial load fails, should update state with error`() = runTest {
         val error = Error.GenericError("error")
         val sut = Fixture()
             .givenSearchMessagesResult(error = error)
@@ -104,7 +104,7 @@ internal class ChannelAttachmentsViewControllerTest {
     }
 
     @Test
-    fun `load more`() = runTest {
+    fun `when load more succeeds, should append items to state`() = runTest {
         val attachment1 = randomAttachment(type = ATTACHMENT_TYPE)
         val message1 = randomMessage(cid = CID, attachments = listOf(attachment1))
         val nextPage = randomString()
@@ -150,7 +150,7 @@ internal class ChannelAttachmentsViewControllerTest {
     }
 
     @Test
-    fun `load more error`() = runTest {
+    fun `when load more fails, should emit error event and retain state`() = runTest {
         val attachment1 = randomAttachment(type = ATTACHMENT_TYPE)
         val message1 = randomMessage(cid = CID, attachments = listOf(attachment1))
         val nextPage = randomString()
@@ -192,7 +192,7 @@ internal class ChannelAttachmentsViewControllerTest {
     }
 
     @Test
-    fun `no more items to load`() = runTest {
+    fun `when no more items to load, should not emit events`() = runTest {
         val sut = Fixture()
             .givenSearchMessagesResult(result = SearchMessagesResult())
             .get(backgroundScope)
@@ -210,7 +210,7 @@ internal class ChannelAttachmentsViewControllerTest {
     }
 
     @Test
-    fun `already loading more`() = runTest {
+    fun `when already loading more, should not emit duplicate events`() = runTest {
         val sut = Fixture()
             .givenSearchMessagesResult(result = SearchMessagesResult(next = randomString()))
             .get(backgroundScope)
@@ -233,7 +233,7 @@ internal class ChannelAttachmentsViewControllerTest {
     }
 
     @Test
-    fun `cannot load more on initial state`() = runTest {
+    fun `when in initial state, should not allow load more`() = runTest {
         val sut = Fixture().get(backgroundScope)
 
         sut.state.test {
