@@ -57,6 +57,10 @@ import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
 import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.SearchWarningDto
 import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
+import io.getstream.chat.android.client.api2.model.dto.UnreadChannelByTypeDto
+import io.getstream.chat.android.client.api2.model.dto.UnreadChannelDto
+import io.getstream.chat.android.client.api2.model.dto.UnreadDto
+import io.getstream.chat.android.client.api2.model.dto.UnreadThreadDto
 import io.getstream.chat.android.client.api2.model.response.AppDto
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
@@ -1190,4 +1194,57 @@ internal object Mother {
             code = code,
             messages = messages,
         )
+
+    fun randomUnreadDto(
+        totalUnreadCount: Int = randomInt(),
+        totalUnreadThreadsCount: Int = randomInt(),
+        totalUnreadCountByTeam: Map<String, Int> = emptyMap(),
+        channels: List<UnreadChannelDto> = emptyList(),
+        threads: List<UnreadThreadDto> = emptyList(),
+        channelType: List<UnreadChannelByTypeDto> = emptyList(),
+    ): UnreadDto = UnreadDto(
+        total_unread_count = totalUnreadCount,
+        total_unread_threads_count = totalUnreadThreadsCount,
+        total_unread_count_by_team = totalUnreadCountByTeam,
+        channels = channels,
+        threads = threads,
+        channel_type = channelType,
+    )
+
+    fun randomUnreadCountByTeamDto(
+        teamId: String = randomString(),
+        unreadCount: Int = randomInt(),
+    ): Pair<String, Int> = teamId to unreadCount
+
+    fun randomUnreadChannelDto(
+        channelId: String = randomString(),
+        unreadCount: Int = randomInt(),
+        lastRead: Date = randomDate(),
+    ): UnreadChannelDto = UnreadChannelDto(
+        channel_id = channelId,
+        unread_count = unreadCount,
+        last_read = lastRead,
+    )
+
+    fun randomUnreadThreadDto(
+        parentMessageId: String = randomString(),
+        unreadCount: Int = randomInt(),
+        lastRead: Date = randomDate(),
+        lastReadMessageId: String = randomString(),
+    ): UnreadThreadDto = UnreadThreadDto(
+        parent_message_id = parentMessageId,
+        unread_count = unreadCount,
+        last_read = lastRead,
+        last_read_message_id = lastReadMessageId,
+    )
+
+    fun randomUnreadChannelByTypeDto(
+        channelType: String = randomString(),
+        channelCount: Int = randomInt(),
+        unreadCount: Int = randomInt(),
+    ): UnreadChannelByTypeDto = UnreadChannelByTypeDto(
+        channel_type = channelType,
+        channel_count = channelCount,
+        unread_count = unreadCount,
+    )
 }

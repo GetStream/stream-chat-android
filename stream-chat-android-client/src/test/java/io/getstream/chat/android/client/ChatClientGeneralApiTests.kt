@@ -32,6 +32,7 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SearchMessagesResult
+import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomAttachment
@@ -39,6 +40,7 @@ import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUnreadCounts
 import io.getstream.result.call.Call
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -489,6 +491,30 @@ internal class ChatClientGeneralApiTests : BaseChatClientTest() {
         verify(plugin).onQueryMembersResult(result, channelType, channelId, offset, limit, filter, sort, members)
     }
 
+    @Test
+    fun getUnreadCountsSuccess() = runTest {
+        val unreadCounts = randomUnreadCounts()
+        val sut = Fixture()
+            .givenGetUnreadCountsResult(RetroSuccess(unreadCounts).toRetrofitCall())
+            .get()
+
+        val result = sut.getUnreadCounts().await()
+
+        verifySuccess(result, unreadCounts)
+    }
+
+    @Test
+    fun getUnreadCountsError() = runTest {
+        val errorCode = positiveRandomInt()
+        val sut = Fixture()
+            .givenGetUnreadCountsResult(RetroError<UnreadCounts>(errorCode).toRetrofitCall())
+            .get()
+
+        val result = sut.getUnreadCounts().await()
+
+        verifyNetworkError(result, errorCode)
+    }
+
     internal inner class Fixture {
 
         fun givenGetSyncHistoryResult(result: Call<List<ChatEvent>>) = apply {
@@ -502,6 +528,10 @@ internal class ChatClientGeneralApiTests : BaseChatClientTest() {
 
         fun givenQueryMembersResult(result: Call<List<Member>>) = apply {
             whenever(api.queryMembers(any(), any(), any(), any(), any(), any(), any())).thenReturn(result)
+        }
+
+        fun givenGetUnreadCountsResult(result: Call<UnreadCounts>) = apply {
+            whenever(api.getUnreadCounts()).thenReturn(result)
         }
 
         fun givenPlugin(plugin: Plugin) = apply {

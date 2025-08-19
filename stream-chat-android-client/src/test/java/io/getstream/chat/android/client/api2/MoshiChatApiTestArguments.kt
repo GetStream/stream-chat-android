@@ -18,6 +18,11 @@ package io.getstream.chat.android.client.api2
 
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.Mother.randomDownstreamDraftDto
+import io.getstream.chat.android.client.Mother.randomUnreadChannelByTypeDto
+import io.getstream.chat.android.client.Mother.randomUnreadChannelDto
+import io.getstream.chat.android.client.Mother.randomUnreadCountByTeamDto
+import io.getstream.chat.android.client.Mother.randomUnreadDto
+import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
 import io.getstream.chat.android.client.api.FakeResponse
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
@@ -58,6 +63,10 @@ import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.QueryRemindersResult
+import io.getstream.chat.android.models.UnreadChannel
+import io.getstream.chat.android.models.UnreadChannelByType
+import io.getstream.chat.android.models.UnreadCounts
+import io.getstream.chat.android.models.UnreadThread
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomDate
@@ -535,6 +544,46 @@ internal object MoshiChatApiTestArguments {
                 end_at = location.endAt,
             )
             Arguments.of(location, request, response)
+        },
+    )
+
+    @JvmStatic
+    fun getUnreadCounts() = listOf(
+        run {
+            val dto = randomUnreadDto(
+                totalUnreadCountByTeam = mapOf(randomUnreadCountByTeamDto()),
+                channels = listOf(randomUnreadChannelDto()),
+                threads = listOf(randomUnreadThreadDto()),
+                channelType = listOf(randomUnreadChannelByTypeDto()),
+            )
+            val model = UnreadCounts(
+                messagesCount = dto.total_unread_count,
+                threadsCount = dto.total_unread_threads_count,
+                messagesCountByTeam = dto.total_unread_count_by_team!!,
+                channels = dto.channels.map { dto ->
+                    UnreadChannel(
+                        cid = dto.channel_id,
+                        messagesCount = dto.unread_count,
+                        lastRead = dto.last_read,
+                    )
+                },
+                threads = dto.threads.map { dto ->
+                    UnreadThread(
+                        parentMessageId = dto.parent_message_id,
+                        messagesCount = dto.unread_count,
+                        lastRead = dto.last_read,
+                        lastReadMessageId = dto.last_read_message_id,
+                    )
+                },
+                channelsByType = dto.channel_type.map { dto ->
+                    UnreadChannelByType(
+                        channelType = dto.channel_type,
+                        channelsCount = dto.channel_count,
+                        messagesCount = dto.unread_count,
+                    )
+                },
+            )
+            Arguments.of(model, dto)
         },
     )
 

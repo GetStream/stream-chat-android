@@ -51,6 +51,10 @@ import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
 import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.SearchWarningDto
 import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
+import io.getstream.chat.android.client.api2.model.dto.UnreadChannelByTypeDto
+import io.getstream.chat.android.client.api2.model.dto.UnreadChannelDto
+import io.getstream.chat.android.client.api2.model.dto.UnreadDto
+import io.getstream.chat.android.client.api2.model.dto.UnreadThreadDto
 import io.getstream.chat.android.client.api2.model.response.AppDto
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
@@ -96,6 +100,10 @@ import io.getstream.chat.android.models.SearchWarning
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
 import io.getstream.chat.android.models.ThreadParticipant
+import io.getstream.chat.android.models.UnreadChannel
+import io.getstream.chat.android.models.UnreadChannelByType
+import io.getstream.chat.android.models.UnreadCounts
+import io.getstream.chat.android.models.UnreadThread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
 import io.getstream.chat.android.models.UserId
@@ -469,6 +477,7 @@ internal class DomainMapping(
         null,
         "public",
         -> VotingVisibility.PUBLIC
+
         "anonymous" -> VotingVisibility.ANONYMOUS
         else -> throw IllegalArgumentException("Unknown voting visibility: $this")
     }
@@ -769,5 +778,33 @@ internal class DomainMapping(
     internal fun QueryRemindersResponse.toDomain(): QueryRemindersResult = QueryRemindersResult(
         reminders = reminders.map { it.toDomain() },
         next = next,
+    )
+
+    internal fun UnreadDto.toDomain(): UnreadCounts = UnreadCounts(
+        messagesCount = total_unread_count,
+        threadsCount = total_unread_threads_count,
+        messagesCountByTeam = total_unread_count_by_team.orEmpty(),
+        channels = channels.map { it.toDomain() },
+        threads = threads.map { it.toDomain() },
+        channelsByType = channel_type.map { it.toDomain() },
+    )
+
+    internal fun UnreadChannelDto.toDomain(): UnreadChannel = UnreadChannel(
+        cid = channel_id,
+        messagesCount = unread_count,
+        lastRead = last_read,
+    )
+
+    internal fun UnreadThreadDto.toDomain(): UnreadThread = UnreadThread(
+        parentMessageId = parent_message_id,
+        messagesCount = unread_count,
+        lastRead = last_read,
+        lastReadMessageId = last_read_message_id,
+    )
+
+    internal fun UnreadChannelByTypeDto.toDomain(): UnreadChannelByType = UnreadChannelByType(
+        channelType = channel_type,
+        channelsCount = channel_count,
+        messagesCount = unread_count,
     )
 }

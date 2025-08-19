@@ -22,13 +22,15 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.TaskStackBuilder
 import androidx.lifecycle.lifecycleScope
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.sample.BuildConfig
 import io.getstream.chat.android.compose.sample.ChatApp
-import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.data.customSettings
 import io.getstream.chat.android.compose.sample.feature.channel.list.ChannelsActivity
 import io.getstream.chat.android.compose.sample.ui.chats.ChatsActivity
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
+import io.getstream.chat.android.models.InitializationState
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 /**
@@ -49,8 +51,9 @@ class StartupActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val userCredentials = ChatApp.credentialsRepository.loadUserCredentials()
             if (userCredentials != null && !BuildConfig.BENCHMARK) {
-                // Ensure that the user is connected
-                ChatHelper.connectUser(userCredentials)
+                // Await for the client to be initialized
+                ChatClient.instance().clientState.initializationState
+                    .first { it == InitializationState.COMPLETE }
 
                 if (intent.hasExtra(KEY_CHANNEL_ID)) {
                     // Navigating from push, route to the messages screen

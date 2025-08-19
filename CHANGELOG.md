@@ -16,6 +16,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Introduce `getUnreadCounts` to the `ChatClient`. [#5897](https://github.com/GetStream/stream-chat-android/pull/5897)
 
 ### ⚠️ Changed
 
@@ -72,6 +73,7 @@
 
 ### ⬆️ Improved
 - Improve the uploaded attachment loading UI. [#5889](https://github.com/GetStream/stream-chat-android/pull/5889)
+- Show message for unsupported file types during the system attachment upload. [#5900](https://github.com/GetStream/stream-chat-android/pull/5900) 
 - `MediaGalleryPager` now supports a single `Player` instead of creating a player for each video attachment.
 
 ### ✅ Added
