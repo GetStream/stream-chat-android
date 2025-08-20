@@ -152,7 +152,7 @@ internal fun DefaultImagesPickerItem(
                     .size(24.dp)
                     .background(
                         shape = CircleShape,
-                        color = ChatTheme.attachmentPickerTheme.checkIconBackgroundColor
+                        color = ChatTheme.attachmentPickerTheme.checkIconBackgroundColor,
                     ),
             ) {
                 Icon(
