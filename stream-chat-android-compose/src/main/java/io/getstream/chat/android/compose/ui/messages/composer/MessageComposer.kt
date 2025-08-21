@@ -415,7 +415,7 @@ public fun DefaultMessageComposerHeaderContent(
         ChatTheme.componentFactory.MessageComposerMessageInputOptions(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp, bottom = 6.dp, start = 8.dp, end = 8.dp),
+                .padding(start = 12.dp),
             activeAction = activeAction,
             onCancel = onCancelAction,
         )
