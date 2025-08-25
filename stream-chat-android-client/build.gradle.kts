@@ -100,9 +100,6 @@ dependencies {
     ksp(libs.moshi.codegen)
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.ok2curl)
-    debugImplementation(libs.flipper)
-    debugImplementation(libs.flipper.network)
-    debugImplementation(libs.flipper.so.loader)
 
     // Tests
     testImplementation(project(":stream-chat-android-test"))

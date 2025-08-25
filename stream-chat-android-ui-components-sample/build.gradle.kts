@@ -175,9 +175,6 @@ dependencies {
     implementation(libs.coil.gif)
     implementation(libs.shimmer)
 
-    debugImplementation(libs.flipper)
-    debugImplementation(libs.flipper.network)
-    debugImplementation(libs.flipper.so.loader)
     debugImplementation(libs.androidx.fragment.testing)
 
     // Instrumentation tests
