@@ -77,7 +77,7 @@ import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.debugger.ChatClientDebugger
 import io.getstream.chat.android.client.debugger.SendMessageDebugger
 import io.getstream.chat.android.client.debugger.StubChatClientDebugger
-import io.getstream.chat.android.client.di.ChatModule
+import io.getstream.chat.android.client.di.BaseChatModule
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.errorhandler.onCreateChannelError
 import io.getstream.chat.android.client.errorhandler.onMessageError
@@ -4439,7 +4439,7 @@ internal constructor(
             }
 
             val module =
-                ChatModule(
+                BaseChatModule(
                     appContext = appContext,
                     clientScope = clientScope,
                     userScope = userScope,
@@ -4450,7 +4450,7 @@ internal constructor(
                     ),
                     apiModelTransformers = apiModelTransformers,
                     fileTransformer = fileTransformer,
-                    uploader = fileUploader,
+                    fileUploader = fileUploader,
                     sendMessageInterceptor = sendMessageInterceptor,
                     tokenManager = tokenManager,
                     customOkHttpClient = customOkHttpClient,
