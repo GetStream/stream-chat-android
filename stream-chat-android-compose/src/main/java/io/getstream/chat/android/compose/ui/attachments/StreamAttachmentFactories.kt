@@ -201,7 +201,7 @@ public object StreamAttachmentFactories {
             getCurrentUserId = { getChatClient().getCurrentOrStoredUserId() },
         ),
         LinkAttachmentFactory(
-            descriptionMaxLines = linkDescriptionMaxLines,
+            linkDescriptionMaxLines = linkDescriptionMaxLines,
             onItemClick = onLinkContentItemClick,
         ),
         GiphyAttachmentFactory(

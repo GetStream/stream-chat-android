@@ -35,12 +35,12 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  *
  * Has no "preview content", given that this attachment only exists after being sent.
  *
- * @param descriptionMaxLines - The limit of how many lines we show for the link description.
+ * @param linkDescriptionMaxLines - The limit of how many lines we show for the link description.
  * @param onLinkAttachmentContentClick Lambda called when an item gets clicked.
  * @param canHandle Lambda that checks if the factory can handle the given attachments.
  */
 public class LinkAttachmentFactory(
-    descriptionMaxLines: Int,
+    linkDescriptionMaxLines: Int,
     onItemClick: (LinkAttachmentClickData) -> Unit = {
         onLinkAttachmentContentClick(it.context, it.url)
     },
@@ -54,7 +54,7 @@ public class LinkAttachmentFactory(
                 .width(ChatTheme.dimens.attachmentsContentLinkWidth)
                 .wrapContentHeight(),
             state = state,
-            descriptionMaxLines = descriptionMaxLines,
+            linkDescriptionMaxLines = linkDescriptionMaxLines,
             onItemClick = onItemClick,
         )
     },
@@ -70,12 +70,12 @@ public class LinkAttachmentFactory(
     )
     public constructor(
         linkDescriptionMaxLines: Int,
-        onContentItemClick: (context: Context, previewUrl: String) -> Unit = ::onLinkAttachmentContentClick,
+        onContentItemClick: (context: Context, previewUrl: String) -> Unit,
         canHandle: (attachments: List<Attachment>) -> Boolean = { links ->
             links.any { it.hasLink() && !it.isGiphy() }
         },
     ) : this(
-        descriptionMaxLines = linkDescriptionMaxLines,
+        linkDescriptionMaxLines = linkDescriptionMaxLines,
         onItemClick = {
             onContentItemClick(it.context, it.url)
         },

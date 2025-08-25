@@ -95,11 +95,11 @@ public fun LinkAttachmentContent(
     attachmentState: AttachmentState,
     linkDescriptionMaxLines: Int,
     modifier: Modifier = Modifier,
-    onItemClick: (context: Context, url: String) -> Unit = ::onLinkAttachmentContentClick,
+    onItemClick: (context: Context, url: String) -> Unit,
 ) {
     LinkAttachmentContent(
         state = attachmentState,
-        descriptionMaxLines = linkDescriptionMaxLines,
+        linkDescriptionMaxLines = linkDescriptionMaxLines,
         modifier = modifier,
         onItemClick = { onItemClick(it.context, it.url) },
     )
@@ -113,7 +113,7 @@ public fun LinkAttachmentContent(
  *
  * @param state - The state of the attachment, holding the root modifier, the message
  * and the onLongItemClick handler.
- * @param descriptionMaxLines - The limit of how many lines we show for the link description.
+ * @param linkDescriptionMaxLines - The limit of how many lines we show for the link description.
  * @param modifier Modifier for styling.
  * @param onItemClick Lambda called when an item gets clicked.
  */
@@ -121,7 +121,7 @@ public fun LinkAttachmentContent(
 @Composable
 public fun LinkAttachmentContent(
     state: AttachmentState,
-    descriptionMaxLines: Int,
+    linkDescriptionMaxLines: Int,
     modifier: Modifier = Modifier,
     onItemClick: (LinkAttachmentClickData) -> Unit = {
         onLinkAttachmentContentClick(it.context, it.url)
@@ -189,7 +189,7 @@ public fun LinkAttachmentContent(
 
         val description = attachment.text
         if (description != null) {
-            LinkAttachmentDescription(description, descriptionMaxLines)
+            LinkAttachmentDescription(description, linkDescriptionMaxLines)
         }
     }
 }
@@ -336,7 +336,7 @@ internal fun LinkAttachmentContent() {
             state = AttachmentState(
                 message = Message(attachments = listOf(attachment)),
             ),
-            descriptionMaxLines = 5,
+            linkDescriptionMaxLines = 5,
         )
     }
 }
