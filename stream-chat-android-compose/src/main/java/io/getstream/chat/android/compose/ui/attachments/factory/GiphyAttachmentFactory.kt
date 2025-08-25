@@ -80,7 +80,15 @@ public class GiphyAttachmentFactory(
      */
     @Deprecated(
         message = "Use the constructor that does not take onContentItemClick parameter.",
-        replaceWith = ReplaceWith("GiphyAttachmentFactory(giphyInfoType, giphySizingMode, contentScale, onContentItemClick, canHandle)"),
+        replaceWith = ReplaceWith(
+            "GiphyAttachmentFactory(" +
+                "giphyInfoType, " +
+                "giphySizingMode, " +
+                "contentScale, " +
+                "onContentItemClick, " +
+                "canHandle" +
+                ")",
+        ),
         level = DeprecationLevel.WARNING,
     )
     public constructor(

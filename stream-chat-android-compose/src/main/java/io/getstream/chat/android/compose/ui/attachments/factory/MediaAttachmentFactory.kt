@@ -117,14 +117,16 @@ public class MediaAttachmentFactory(
      */
     @Deprecated(
         message = "Use the constructor that does not take onContentItemClick parameter.",
-        replaceWith = ReplaceWith("MediaAttachmentFactory(" +
-            "maximumNumberOfPreviewedItems, " +
-            "skipEnrichUrl, " +
-            "onContentItemClick, " +
-            "canHandle, " +
-            "itemOverlayContent, " +
-            "previewItemOverlayContent" +
-            ")"),
+        replaceWith = ReplaceWith(
+            "MediaAttachmentFactory(" +
+                "maximumNumberOfPreviewedItems, " +
+                "skipEnrichUrl, " +
+                "onContentItemClick, " +
+                "canHandle, " +
+                "itemOverlayContent, " +
+                "previewItemOverlayContent" +
+                ")",
+        ),
         level = DeprecationLevel.WARNING,
     )
     public constructor(

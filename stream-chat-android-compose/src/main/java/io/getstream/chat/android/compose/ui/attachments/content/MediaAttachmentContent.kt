@@ -130,8 +130,26 @@ public fun MediaAttachmentContent(
         }
     },
 ) {
+    MediaAttachmentContent(
+        state = attachmentState,
+        modifier = modifier,
+        maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
+        skipEnrichUrl = skipEnrichUrl,
+        onItemClick = {
+            onItemClick(
+                it.mediaGalleryPreviewLauncher,
+                it.message,
+                it.attachmentPosition,
+                it.videoThumbnailsEnabled,
+                it.downloadAttachmentUriGenerator,
+                it.downloadRequestInterceptor,
+                it.streamCdnImageResizing,
+                it.skipEnrichUrl,
+            )
+        },
+        itemOverlayContent = itemOverlayContent,
+    )
 }
-
 
 /**
  * Displays a preview of single or multiple video or attachments.
@@ -481,7 +499,7 @@ internal fun MediaAttachmentContentItem(
                                 downloadRequestInterceptor,
                                 streamCdnImageResizing,
                                 skipEnrichUrl,
-                            )
+                            ),
                         )
                     } else {
                         onLongItemClick(message)
@@ -625,7 +643,8 @@ internal fun MediaAttachmentShowMoreOverlay(
  * @param message The message that holds the clicked attachment.
  * @param attachmentPosition The position of the clicked attachment in the message's attachments list.
  * @param videoThumbnailsEnabled Whether video thumbnails are enabled.
- * @param downloadAttachmentUriGenerator The [DownloadAttachmentUriGenerator] used to generate URIs for downloading attachments.
+ * @param downloadAttachmentUriGenerator The [DownloadAttachmentUriGenerator] used to generate URIs for downloading
+ * attachments.
  * @param downloadRequestInterceptor The [DownloadRequestInterceptor] used to intercept download requests.
  * @param streamCdnImageResizing The [StreamCdnImageResizing] used to resize images.
  * @param skipEnrichUrl Used by the media gallery. If set to true will skip enriching URLs when you update the message

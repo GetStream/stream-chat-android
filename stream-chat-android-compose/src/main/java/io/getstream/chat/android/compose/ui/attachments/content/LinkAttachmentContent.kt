@@ -105,7 +105,6 @@ public fun LinkAttachmentContent(
     )
 }
 
-
 /**
  * Builds a link attachment message, which shows the link image preview, the title of the link
  * as well as its description.
@@ -159,9 +158,9 @@ public fun LinkAttachmentContent(
                             onItemClick(
                                 LinkAttachmentClickData(
                                     context = context,
-                                    url =urlWithScheme,
-                                    message = message
-                                )
+                                    url = urlWithScheme,
+                                    message = message,
+                                ),
                             )
                         } else {
                             Toast

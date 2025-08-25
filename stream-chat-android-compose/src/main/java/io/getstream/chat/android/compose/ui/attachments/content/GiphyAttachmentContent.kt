@@ -77,8 +77,18 @@ import io.getstream.chat.android.ui.common.utils.giphyInfo
 @Suppress("LongMethod")
 @Composable
 @Deprecated(
-    message = "Use GiphyAttachmentContent version with the `onItemClick` parameter that accepts a GiphyAttachmentClickData.",
-    replaceWith = ReplaceWith("GiphyAttachmentContent(state, modifier, giphyInfoType, giphySizingMode, contentScale, onItemClick)"),
+    message = "Use GiphyAttachmentContent version with the `onItemClick` parameter that accepts a " +
+        "GiphyAttachmentClickData.",
+    replaceWith = ReplaceWith(
+        "GiphyAttachmentContent(" +
+            "state = state, " +
+            "modifier = modifier, " +
+            "giphyInfoType = giphyInfoType, " +
+            "giphySizingMode = giphySizingMode, " +
+            "contentScale = contentScale, " +
+            "onItemClick = onItemClick" +
+            ")",
+    ),
     level = DeprecationLevel.WARNING,
 )
 public fun GiphyAttachmentContent(
@@ -287,4 +297,3 @@ public data class GiphyAttachmentClickData(
     val url: String,
     val message: Message,
 )
-

@@ -27,7 +27,6 @@ import io.getstream.chat.android.compose.ui.attachments.content.LinkAttachmentCo
 import io.getstream.chat.android.compose.ui.attachments.content.onLinkAttachmentContentClick
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**
@@ -44,7 +43,7 @@ public class LinkAttachmentFactory(
     descriptionMaxLines: Int,
     onItemClick: (LinkAttachmentClickData) -> Unit = {
         onLinkAttachmentContentClick(it.context, it.url)
-                                                                                    },
+    },
     canHandle: (attachments: List<Attachment>) -> Boolean = { links -> links.any { it.hasLink() && !it.isGiphy() } },
 ) : AttachmentFactory(
     type = Type.BuiltIn.LINK,
@@ -72,7 +71,9 @@ public class LinkAttachmentFactory(
     public constructor(
         linkDescriptionMaxLines: Int,
         onContentItemClick: (context: Context, previewUrl: String) -> Unit = ::onLinkAttachmentContentClick,
-        canHandle: (attachments: List<Attachment>) -> Boolean = { links -> links.any { it.hasLink() && !it.isGiphy() } },
+        canHandle: (attachments: List<Attachment>) -> Boolean = { links ->
+            links.any { it.hasLink() && !it.isGiphy() }
+        },
     ) : this(
         descriptionMaxLines = linkDescriptionMaxLines,
         onItemClick = {
