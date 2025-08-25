@@ -36,7 +36,7 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  *
  * Has no "preview content", given that this attachment only exists after being sent.
  *
- * @param linkDescriptionMaxLines - The limit of how many lines we show for the link description.
+ * @param descriptionMaxLines - The limit of how many lines we show for the link description.
  * @param onLinkAttachmentContentClick Lambda called when an item gets clicked.
  * @param canHandle Lambda that checks if the factory can handle the given attachments.
  */
