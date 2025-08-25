@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentClickData
 import io.getstream.chat.android.compose.ui.attachments.content.LinkAttachmentClickData
+import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentClickData
 import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
 import io.getstream.chat.android.compose.ui.attachments.content.onFileUploadContentItemClick
 import io.getstream.chat.android.compose.ui.attachments.content.onGiphyAttachmentContentClick
@@ -170,16 +171,18 @@ public object StreamAttachmentFactories {
         onGiphyContentItemClick: (GiphyAttachmentClickData) -> Unit = {
             onGiphyAttachmentContentClick(it.context, it.url)
         },
-        onMediaContentItemClick: (
-            mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>,
-            message: Message,
-            attachmentPosition: Int,
-            videoThumbnailsEnabled: Boolean,
-            downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
-            downloadRequestInterceptor: DownloadRequestInterceptor,
-            streamCdnImageResizing: StreamCdnImageResizing,
-            skipEnrichUrl: Boolean,
-        ) -> Unit = ::onMediaAttachmentContentItemClick,
+        onMediaContentItemClick: (MediaAttachmentClickData) -> Unit = {
+            onMediaAttachmentContentItemClick(
+                it.mediaGalleryPreviewLauncher,
+                it.message,
+                it.attachmentPosition,
+                it.videoThumbnailsEnabled,
+                it.downloadAttachmentUriGenerator,
+                it.downloadRequestInterceptor,
+                it.streamCdnImageResizing,
+                it.skipEnrichUrl,
+            )
+        },
         showFileSize: (Attachment) -> Boolean = { true },
         onFileContentItemClick: (
             previewHandlers: List<AttachmentPreviewHandler>,
