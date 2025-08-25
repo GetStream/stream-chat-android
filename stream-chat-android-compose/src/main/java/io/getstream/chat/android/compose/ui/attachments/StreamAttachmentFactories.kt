@@ -23,6 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.core.net.toUri
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
+import io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentClickData
 import io.getstream.chat.android.compose.ui.attachments.content.LinkAttachmentClickData
 import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
 import io.getstream.chat.android.compose.ui.attachments.content.onFileUploadContentItemClick
@@ -166,7 +167,9 @@ public object StreamAttachmentFactories {
         onLinkContentItemClick: (LinkAttachmentClickData) -> Unit = {
             onLinkAttachmentContentClick(it.context, it.url)
         },
-        onGiphyContentItemClick: (context: Context, url: String) -> Unit = ::onGiphyAttachmentContentClick,
+        onGiphyContentItemClick: (GiphyAttachmentClickData) -> Unit = {
+            onGiphyAttachmentContentClick(it.context, it.url)
+        },
         onMediaContentItemClick: (
             mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>,
             message: Message,
@@ -202,7 +205,7 @@ public object StreamAttachmentFactories {
             giphyInfoType = giphyInfoType,
             giphySizingMode = giphySizingMode,
             contentScale = contentScale,
-            onContentItemClick = onGiphyContentItemClick,
+            onItemClick = onGiphyContentItemClick,
         ),
         MediaAttachmentFactory(
             skipEnrichUrl = skipEnrichUrl,

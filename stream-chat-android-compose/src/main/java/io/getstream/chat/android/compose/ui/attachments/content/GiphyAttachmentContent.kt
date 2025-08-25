@@ -50,6 +50,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDimens
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.utils.GiphyInfoType
 import io.getstream.chat.android.ui.common.utils.GiphySizingMode
 import io.getstream.chat.android.ui.common.utils.giphyInfo
@@ -75,6 +76,11 @@ import io.getstream.chat.android.ui.common.utils.giphyInfo
 @OptIn(ExperimentalFoundationApi::class)
 @Suppress("LongMethod")
 @Composable
+@Deprecated(
+    message = "Use GiphyAttachmentContent version with the `onItemClick` parameter that accepts a GiphyAttachmentClickData.",
+    replaceWith = ReplaceWith("GiphyAttachmentContent(state, modifier, giphyInfoType, giphySizingMode, contentScale, onItemClick)"),
+    level = DeprecationLevel.WARNING,
+)
 public fun GiphyAttachmentContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,
@@ -83,8 +89,54 @@ public fun GiphyAttachmentContent(
     contentScale: ContentScale = ContentScale.Crop,
     onItemClick: (context: Context, previewUrl: String) -> Unit = ::onGiphyAttachmentContentClick,
 ) {
+    GiphyAttachmentContent(
+        state = attachmentState,
+        modifier = modifier,
+        giphyInfoType = giphyInfoType,
+        giphySizingMode = giphySizingMode,
+        contentScale = contentScale,
+        onItemClick = {
+            onItemClick(
+                it.context,
+                it.url,
+            )
+        },
+    )
+}
+
+/**
+ * Builds a Giphy attachment message.
+ *
+ * It shows the GIF, as well as a label for users to recognize it's sent from Giphy.
+ *
+ * @param state - The attachment to show.
+ * @param modifier Modifier for styling.
+ * @param giphyInfoType Used to modify the quality and dimensions of the rendered
+ * Giphy attachments.
+ * @param giphySizingMode Sets the Giphy container sizing strategy. Setting it to automatic
+ * makes the container capable of adaptive resizing and ignore
+ * [StreamDimens.attachmentsContentGiphyWidth] and [StreamDimens.attachmentsContentGiphyHeight]
+ * dimensions, however you can still clip maximum dimensions using [StreamDimens.attachmentsContentGiphyMaxWidth]
+ * and [StreamDimens.attachmentsContentGiphyMaxHeight].
+ * Setting it to fixed size mode will make it respect all given dimensions.
+ * @param contentScale Used to determine the way Giphys are scaled inside the [Image] composable.
+ * @param onItemClick Lambda called when an item gets clicked.
+ */
+@OptIn(ExperimentalFoundationApi::class)
+@Suppress("LongMethod")
+@Composable
+public fun GiphyAttachmentContent(
+    state: AttachmentState,
+    modifier: Modifier = Modifier,
+    giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
+    giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
+    contentScale: ContentScale = ContentScale.Crop,
+    onItemClick: (GiphyAttachmentClickData) -> Unit = {
+        onGiphyAttachmentContentClick(it.context, it.url)
+    },
+) {
     val context = LocalContext.current
-    val (message, _, onLongItemClick) = attachmentState
+    val (message, _, onLongItemClick) = state
     val attachment = message.attachments.firstOrNull(Attachment::isGiphy)
 
     checkNotNull(attachment) {
@@ -150,7 +202,7 @@ public fun GiphyAttachmentContent(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
                 onClick = {
-                    onItemClick(context, previewUrl)
+                    onItemClick(GiphyAttachmentClickData(context, previewUrl, message))
                 },
                 onLongClick = { onLongItemClick(message) },
             ),
@@ -222,3 +274,17 @@ internal fun onGiphyAttachmentContentClick(context: Context, previewUrl: String)
         ),
     )
 }
+
+/**
+ * Data class that holds information about a giphy attachment click event.
+ *
+ * @param context The context in which the click event occurred.
+ * @param url The URL of the giphy attachment that was clicked.
+ * @param message The message containing the giphy attachment.
+ */
+public data class GiphyAttachmentClickData(
+    val context: Context,
+    val url: String,
+    val message: Message,
+)
+
