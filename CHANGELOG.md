@@ -76,7 +76,8 @@
 ### ⬆️ Improved
 - Improve the uploaded attachment loading UI. [#5889](https://github.com/GetStream/stream-chat-android/pull/5889)
 - Show message for unsupported file types during the system attachment upload. [#5900](https://github.com/GetStream/stream-chat-android/pull/5900) 
-- `MediaGalleryPager` now supports a single `Player` instead of creating a player for each video attachment.
+- `MediaGalleryPager` now supports a single `Player` instead of creating a player for each video attachment. [#5882](https://github.com/GetStream/stream-chat-android/pull/5882)
+- Scroll to the bottom when the current user sends a new message. [#5907](https://github.com/GetStream/stream-chat-android/pull/5907)
 
 ### ✅ Added
 - Introduce `ChannelAttachmentsViewModel` and `ChannelAttachmentsViewModelFactory`. [#5882](https://github.com/GetStream/stream-chat-android/pull/5882)
