@@ -71,7 +71,7 @@ class MessagesActivity : AppCompatActivity() {
         val channelId = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID))
 
         val customFactories = listOf(dateAttachmentFactory)
-        val defaultFactories = StreamAttachmentFactories.defaultFactories()
+        val defaultFactories = StreamAttachmentFactories.defaults()
 
         val customQuotedFactories = listOf(quotedDateAttachmentFactory)
         val defaultQuotedFactories = StreamAttachmentFactories.defaultQuotedFactories()

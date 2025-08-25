@@ -83,7 +83,7 @@ private object CustomizingImageAndVideoPreviewsSnippet {
 
         val attachmentFactories = listOf(
             UploadAttachmentFactory(),
-            LinkAttachmentFactory(linkDescriptionMaxLines = 5),
+            LinkAttachmentFactory(descriptionMaxLines = 5),
             GiphyAttachmentFactory(),
             customMediaAttachmentFactory,
             FileAttachmentFactory(),

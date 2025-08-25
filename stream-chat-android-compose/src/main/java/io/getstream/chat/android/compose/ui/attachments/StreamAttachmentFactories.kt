@@ -23,6 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.core.net.toUri
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
+import io.getstream.chat.android.compose.ui.attachments.content.LinkAttachmentClickData
 import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
 import io.getstream.chat.android.compose.ui.attachments.content.onFileUploadContentItemClick
 import io.getstream.chat.android.compose.ui.attachments.content.onGiphyAttachmentContentClick
@@ -85,6 +86,11 @@ public object StreamAttachmentFactories {
      *
      * @return A [List] of various [AttachmentFactory] instances that provide different attachments support.
      */
+    @Deprecated(
+        message = "Use defaults() method instead.",
+        replaceWith = ReplaceWith("defaults(...)"),
+        level = DeprecationLevel.WARNING,
+    )
     public fun defaultFactories(
         getChatClient: () -> ChatClient = { ChatClient.instance() },
         linkDescriptionMaxLines: Int = DEFAULT_LINK_DESCRIPTION_MAX_LINES,
@@ -128,6 +134,69 @@ public object StreamAttachmentFactories {
         LinkAttachmentFactory(
             linkDescriptionMaxLines = linkDescriptionMaxLines,
             onContentItemClick = onLinkContentItemClick,
+        ),
+        GiphyAttachmentFactory(
+            giphyInfoType = giphyInfoType,
+            giphySizingMode = giphySizingMode,
+            contentScale = contentScale,
+            onContentItemClick = onGiphyContentItemClick,
+        ),
+        MediaAttachmentFactory(
+            skipEnrichUrl = skipEnrichUrl,
+            onContentItemClick = onMediaContentItemClick,
+        ),
+        FileAttachmentFactory(
+            showFileSize = showFileSize,
+            onContentItemClick = onFileContentItemClick,
+        ),
+        UnsupportedAttachmentFactory,
+    ).filterNot { skipTypes.contains(it.type) }
+
+    public fun defaults(
+        getChatClient: () -> ChatClient = { ChatClient.instance() },
+        linkDescriptionMaxLines: Int = DEFAULT_LINK_DESCRIPTION_MAX_LINES,
+        giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
+        giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
+        contentScale: ContentScale = ContentScale.Crop,
+        skipEnrichUrl: Boolean = false,
+        onUploadContentItemClick: (
+            Attachment,
+            List<AttachmentPreviewHandler>,
+        ) -> Unit = ::onFileUploadContentItemClick,
+        onLinkContentItemClick: (LinkAttachmentClickData) -> Unit = {
+            onLinkAttachmentContentClick(it.context, it.url)
+        },
+        onGiphyContentItemClick: (context: Context, url: String) -> Unit = ::onGiphyAttachmentContentClick,
+        onMediaContentItemClick: (
+            mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>,
+            message: Message,
+            attachmentPosition: Int,
+            videoThumbnailsEnabled: Boolean,
+            downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
+            downloadRequestInterceptor: DownloadRequestInterceptor,
+            streamCdnImageResizing: StreamCdnImageResizing,
+            skipEnrichUrl: Boolean,
+        ) -> Unit = ::onMediaAttachmentContentItemClick,
+        showFileSize: (Attachment) -> Boolean = { true },
+        onFileContentItemClick: (
+            previewHandlers: List<AttachmentPreviewHandler>,
+            attachment: Attachment,
+        ) -> Unit = ::onFileAttachmentContentItemClick,
+        skipTypes: List<AttachmentFactory.Type> = emptyList(),
+    ): List<AttachmentFactory> = listOf(
+        UploadAttachmentFactory(
+            onContentItemClick = onUploadContentItemClick,
+        ),
+        AudioRecordAttachmentFactory(
+            viewModelFactory = AudioPlayerViewModelFactory(
+                getAudioPlayer = { getChatClient().audioPlayer },
+                getRecordingUri = { it.assetUrl ?: it.upload?.toUri()?.toString() },
+            ),
+            getCurrentUserId = { getChatClient().getCurrentOrStoredUserId() },
+        ),
+        LinkAttachmentFactory(
+            descriptionMaxLines = linkDescriptionMaxLines,
+            onItemClick = onLinkContentItemClick,
         ),
         GiphyAttachmentFactory(
             giphyInfoType = giphyInfoType,

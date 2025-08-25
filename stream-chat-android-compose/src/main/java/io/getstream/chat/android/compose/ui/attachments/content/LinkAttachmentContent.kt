@@ -85,13 +85,50 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
+@Deprecated(
+    message = "Use the version with the `onItemClick` parameter that accepts a LinkAttachmentClickData.",
+    replaceWith = ReplaceWith(
+        expression = "LinkAttachmentContent(attachmentState, linkDescriptionMaxLines, modifier, onItemClick)",
+    ),
+)
 public fun LinkAttachmentContent(
     attachmentState: AttachmentState,
     linkDescriptionMaxLines: Int,
     modifier: Modifier = Modifier,
     onItemClick: (context: Context, url: String) -> Unit = ::onLinkAttachmentContentClick,
 ) {
-    val (message, isMine, onLongItemClick) = attachmentState
+    LinkAttachmentContent(
+        state = attachmentState,
+        descriptionMaxLines = linkDescriptionMaxLines,
+        modifier = modifier,
+        onItemClick = { onItemClick(it.context, it.url) },
+    )
+}
+
+
+/**
+ * Builds a link attachment message, which shows the link image preview, the title of the link
+ * as well as its description.
+ *
+ * When clicking it, we open the preview link.
+ *
+ * @param state - The state of the attachment, holding the root modifier, the message
+ * and the onLongItemClick handler.
+ * @param descriptionMaxLines - The limit of how many lines we show for the link description.
+ * @param modifier Modifier for styling.
+ * @param onItemClick Lambda called when an item gets clicked.
+ */
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+public fun LinkAttachmentContent(
+    state: AttachmentState,
+    descriptionMaxLines: Int,
+    modifier: Modifier = Modifier,
+    onItemClick: (LinkAttachmentClickData) -> Unit = {
+        onLinkAttachmentContentClick(it.context, it.url)
+    },
+) {
+    val (message, isMine, onLongItemClick) = state
 
     val context = LocalContext.current
     val attachment = message.attachments.firstOrNull { it.hasLink() && !it.isGiphy() }
@@ -119,7 +156,13 @@ public fun LinkAttachmentContent(
                 onClick = {
                     try {
                         if (urlWithScheme != null) {
-                            onItemClick(context, urlWithScheme)
+                            onItemClick(
+                                LinkAttachmentClickData(
+                                    context = context,
+                                    url =urlWithScheme,
+                                    message = message
+                                )
+                            )
                         } else {
                             Toast
                                 .makeText(context, errorMessage, Toast.LENGTH_LONG)
@@ -147,7 +190,7 @@ public fun LinkAttachmentContent(
 
         val description = attachment.text
         if (description != null) {
-            LinkAttachmentDescription(description, linkDescriptionMaxLines)
+            LinkAttachmentDescription(description, descriptionMaxLines)
         }
     }
 }
@@ -291,13 +334,26 @@ internal fun LinkAttachmentContent() {
             authorName = "Author",
         )
         LinkAttachmentContent(
-            attachmentState = AttachmentState(
+            state = AttachmentState(
                 message = Message(attachments = listOf(attachment)),
             ),
-            linkDescriptionMaxLines = 5,
+            descriptionMaxLines = 5,
         )
     }
 }
+
+/**
+ * Data class that holds information about a link attachment click event.
+ *
+ * @param context The context in which the click event occurred.
+ * @param url The URL of the link attachment that was clicked.
+ * @param message The message containing the link attachment.
+ */
+public data class LinkAttachmentClickData(
+    val context: Context,
+    val url: String,
+    val message: Message,
+)
 
 @Suppress("MagicNumber")
 private val LongDescription = (0..50).joinToString { "Lorem ipsum dolor sit amet" }

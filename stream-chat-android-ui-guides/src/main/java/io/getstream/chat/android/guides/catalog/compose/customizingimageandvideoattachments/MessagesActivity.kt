@@ -48,7 +48,7 @@ class MessagesActivity : ComponentActivity() {
 
     /**
      * A list of attachment factories that mimics the order of those
-     * found in [StreamAttachmentFactories.defaultFactories] while
+     * found in [StreamAttachmentFactories.defaults] while
      * replacing the default media attachment factory with a
      * custom one.
      */
