@@ -51,6 +51,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
+import io.getstream.chat.android.ui.common.state.messages.list.MyOwn
 import io.getstream.chat.android.ui.common.state.messages.list.NewMessageState
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterIsInstance
@@ -302,11 +303,11 @@ internal fun BoxScope.DefaultMessagesHelperContent(
 
     LaunchedEffect(newMessageState) {
         val shouldScrollToBottom = shouldScrollToBottomOnNewMessage(
-            focusedItemIndex,
-            firstVisibleItemIndex,
-            newMessageState,
-            areNewestMessagesLoaded,
-            lazyListState.isScrollInProgress,
+            focusedItemIndex = focusedItemIndex,
+            firstVisibleItemIndex = firstVisibleItemIndex,
+            newMessageState = newMessageState,
+            areNewestMessagesLoaded = areNewestMessagesLoaded,
+            isScrollInProgress = lazyListState.isScrollInProgress,
         )
 
         if (shouldScrollToBottom) {
@@ -336,10 +337,12 @@ internal fun BoxScope.DefaultMessagesHelperContent(
 }
 
 /**
- * Determines if the list should scroll to the bottom when a new message arrives. If we are focusing on an item we do
- * not wish to take the user off of it, if the newest messages are not loaded then the list will not scroll since the
- * new message will not be in the list and if the user has scrolled further in search of a certain part of messages
- * history we should not break that flow.
+ * Determines if the list should scroll to the bottom when a new message arrives, except for certain conditions:
+ * - If we are focusing on an item we do not wish to take the user off of it.
+ * - If the newest messages are not loaded, then the list will not scroll since the
+ * new message will not be in the list.
+ * - If the user has scrolled further in search of a certain part of messages
+ * history, or the message is not sent by the current user, we should not break that flow.
  *
  * @param focusedItemIndex The index of the currently focused item.
  * @param firstVisibleItemIndex The index of the first visible item in the messages list.
@@ -361,7 +364,7 @@ private fun shouldScrollToBottomOnNewMessage(
     return focusedItemIndex == -1 &&
         !isScrollInProgress &&
         areNewestMessagesLoaded &&
-        firstVisibleItemIndex < 3
+        (firstVisibleItemIndex < 3 || newMessageState is MyOwn)
 }
 
 /**
