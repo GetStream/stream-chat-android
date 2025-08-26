@@ -590,13 +590,12 @@ public final class io/getstream/chat/android/compose/ui/attachments/content/File
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/GiphyAttachmentClickData {
 	public static final field $stable I
-	public fun <init> (Landroid/content/Context;Ljava/lang/String;Lio/getstream/chat/android/models/Message;)V
 	public final fun component1 ()Landroid/content/Context;
 	public final fun component2 ()Ljava/lang/String;
-	public final fun component3 ()Lio/getstream/chat/android/models/Message;
-	public final fun copy (Landroid/content/Context;Ljava/lang/String;Lio/getstream/chat/android/models/Message;)Lio/getstream/chat/android/compose/ui/attachments/content/GiphyAttachmentClickData;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/attachments/content/GiphyAttachmentClickData;Landroid/content/Context;Ljava/lang/String;Lio/getstream/chat/android/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/attachments/content/GiphyAttachmentClickData;
+	public final fun component3 ()Lio/getstream/chat/android/models/Attachment;
+	public final fun component4 ()Lio/getstream/chat/android/models/Message;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAttachment ()Lio/getstream/chat/android/models/Attachment;
 	public final fun getContext ()Landroid/content/Context;
 	public final fun getMessage ()Lio/getstream/chat/android/models/Message;
 	public final fun getUrl ()Ljava/lang/String;
@@ -615,13 +614,12 @@ public final class io/getstream/chat/android/compose/ui/attachments/content/Imag
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/LinkAttachmentClickData {
 	public static final field $stable I
-	public fun <init> (Landroid/content/Context;Ljava/lang/String;Lio/getstream/chat/android/models/Message;)V
 	public final fun component1 ()Landroid/content/Context;
 	public final fun component2 ()Ljava/lang/String;
-	public final fun component3 ()Lio/getstream/chat/android/models/Message;
-	public final fun copy (Landroid/content/Context;Ljava/lang/String;Lio/getstream/chat/android/models/Message;)Lio/getstream/chat/android/compose/ui/attachments/content/LinkAttachmentClickData;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/attachments/content/LinkAttachmentClickData;Landroid/content/Context;Ljava/lang/String;Lio/getstream/chat/android/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/attachments/content/LinkAttachmentClickData;
+	public final fun component3 ()Lio/getstream/chat/android/models/Attachment;
+	public final fun component4 ()Lio/getstream/chat/android/models/Message;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAttachment ()Lio/getstream/chat/android/models/Attachment;
 	public final fun getContext ()Landroid/content/Context;
 	public final fun getMessage ()Lio/getstream/chat/android/models/Message;
 	public final fun getUrl ()Ljava/lang/String;
@@ -636,7 +634,6 @@ public final class io/getstream/chat/android/compose/ui/attachments/content/Link
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/MediaAttachmentClickData {
 	public static final field $stable I
-	public fun <init> (Landroidx/activity/compose/ManagedActivityResultLauncher;Lio/getstream/chat/android/models/Message;IZLio/getstream/chat/android/ui/common/helper/DownloadAttachmentUriGenerator;Lio/getstream/chat/android/ui/common/helper/DownloadRequestInterceptor;Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;Z)V
 	public final fun component1 ()Landroidx/activity/compose/ManagedActivityResultLauncher;
 	public final fun component2 ()Lio/getstream/chat/android/models/Message;
 	public final fun component3 ()I
@@ -645,8 +642,6 @@ public final class io/getstream/chat/android/compose/ui/attachments/content/Medi
 	public final fun component6 ()Lio/getstream/chat/android/ui/common/helper/DownloadRequestInterceptor;
 	public final fun component7 ()Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;
 	public final fun component8 ()Z
-	public final fun copy (Landroidx/activity/compose/ManagedActivityResultLauncher;Lio/getstream/chat/android/models/Message;IZLio/getstream/chat/android/ui/common/helper/DownloadAttachmentUriGenerator;Lio/getstream/chat/android/ui/common/helper/DownloadRequestInterceptor;Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;Z)Lio/getstream/chat/android/compose/ui/attachments/content/MediaAttachmentClickData;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/attachments/content/MediaAttachmentClickData;Landroidx/activity/compose/ManagedActivityResultLauncher;Lio/getstream/chat/android/models/Message;IZLio/getstream/chat/android/ui/common/helper/DownloadAttachmentUriGenerator;Lio/getstream/chat/android/ui/common/helper/DownloadRequestInterceptor;Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;ZILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/attachments/content/MediaAttachmentClickData;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAttachmentPosition ()I
 	public final fun getDownloadAttachmentUriGenerator ()Lio/getstream/chat/android/ui/common/helper/DownloadAttachmentUriGenerator;

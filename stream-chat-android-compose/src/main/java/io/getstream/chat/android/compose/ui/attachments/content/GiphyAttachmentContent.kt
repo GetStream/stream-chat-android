@@ -212,7 +212,14 @@ public fun GiphyAttachmentContent(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
                 onClick = {
-                    onItemClick(GiphyAttachmentClickData(context, previewUrl, message))
+                    onItemClick(
+                        GiphyAttachmentClickData(
+                            context = context,
+                            url = previewUrl,
+                            attachment = attachment,
+                            message = message,
+                        ),
+                    )
                 },
                 onLongClick = { onLongItemClick(message) },
             ),
@@ -292,8 +299,10 @@ internal fun onGiphyAttachmentContentClick(context: Context, previewUrl: String)
  * @param url The URL of the giphy attachment that was clicked.
  * @param message The message containing the giphy attachment.
  */
-public data class GiphyAttachmentClickData(
+@ConsistentCopyVisibility
+public data class GiphyAttachmentClickData internal constructor(
     val context: Context,
     val url: String,
+    val attachment: Attachment,
     val message: Message,
 )

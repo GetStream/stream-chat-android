@@ -119,6 +119,7 @@ public fun LinkAttachmentContent(
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
+@Suppress("LongMethod")
 public fun LinkAttachmentContent(
     state: AttachmentState,
     linkDescriptionMaxLines: Int,
@@ -159,6 +160,7 @@ public fun LinkAttachmentContent(
                                 LinkAttachmentClickData(
                                     context = context,
                                     url = urlWithScheme,
+                                    attachment = attachment,
                                     message = message,
                                 ),
                             )
@@ -348,9 +350,11 @@ internal fun LinkAttachmentContent() {
  * @param url The URL of the link attachment that was clicked.
  * @param message The message containing the link attachment.
  */
-public data class LinkAttachmentClickData(
+@ConsistentCopyVisibility
+public data class LinkAttachmentClickData internal constructor(
     val context: Context,
     val url: String,
+    val attachment: Attachment,
     val message: Message,
 )
 

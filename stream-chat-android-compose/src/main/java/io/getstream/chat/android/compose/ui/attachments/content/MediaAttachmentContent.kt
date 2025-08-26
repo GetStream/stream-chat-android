@@ -650,7 +650,8 @@ internal fun MediaAttachmentShowMoreOverlay(
  * @param skipEnrichUrl Used by the media gallery. If set to true will skip enriching URLs when you update the message
  * by deleting an attachment contained within it. Set to false by default.
  */
-public data class MediaAttachmentClickData(
+@ConsistentCopyVisibility
+public data class MediaAttachmentClickData internal constructor(
     val mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<Input, MediaGalleryPreviewResult?>,
     val message: Message,
     val attachmentPosition: Int,
