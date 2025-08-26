@@ -475,7 +475,7 @@ private fun RoundedIconButton(
     iconPainter: Painter,
     contentDescription: String,
     text: String,
-    iconTint: Color = ChatTheme.colors.overlayDark,
+    contentColor: Color = ChatTheme.attachmentPickerTheme.contentColor,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -501,7 +501,7 @@ private fun RoundedIconButton(
                 Icon(
                     painter = iconPainter,
                     contentDescription = contentDescription,
-                    tint = iconTint,
+                    tint = contentColor,
                     modifier = Modifier
                         .size(48.dp)
                         .padding(12.dp),
@@ -512,7 +512,7 @@ private fun RoundedIconButton(
         Text(
             text = text,
             style = ChatTheme.typography.footnote,
-            color = ChatTheme.colors.textLowEmphasis,
+            color = contentColor,
             modifier = Modifier.padding(top = 4.dp),
         )
     }

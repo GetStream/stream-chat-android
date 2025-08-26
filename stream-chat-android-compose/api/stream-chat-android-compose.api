@@ -2155,6 +2155,7 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/fac
 	public final fun defaultFactoriesWithoutStoragePermissions (ZZZZZ)Ljava/util/List;
 	public static synthetic fun defaultFactoriesWithoutStoragePermissions$default (Lio/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerTabFactories;ZZZZZILjava/lang/Object;)Ljava/util/List;
 	public final fun systemAttachmentsPickerTabFactories (Lio/getstream/chat/android/ui/common/permissions/SystemAttachmentsPickerConfig;)Ljava/util/List;
+	public static synthetic fun systemAttachmentsPickerTabFactories$default (Lio/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerTabFactories;Lio/getstream/chat/android/ui/common/permissions/SystemAttachmentsPickerConfig;ILjava/lang/Object;)Ljava/util/List;
 }
 
 public abstract interface class io/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerTabFactory {
@@ -2600,17 +2601,23 @@ public final class io/getstream/chat/android/compose/ui/pinned/PinnedMessageList
 public final class io/getstream/chat/android/compose/ui/theme/AttachmentPickerTheme {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/AttachmentPickerTheme$Companion;
-	public synthetic fun <init> (JJJZLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (JJJJJJZLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1-0d7_KjU ()J
 	public final fun component2-0d7_KjU ()J
 	public final fun component3-0d7_KjU ()J
-	public final fun component4 ()Z
-	public final fun copy-qwTeutE (JJJZ)Lio/getstream/chat/android/compose/ui/theme/AttachmentPickerTheme;
-	public static synthetic fun copy-qwTeutE$default (Lio/getstream/chat/android/compose/ui/theme/AttachmentPickerTheme;JJJZILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/AttachmentPickerTheme;
+	public final fun component4-0d7_KjU ()J
+	public final fun component5-0d7_KjU ()J
+	public final fun component6-0d7_KjU ()J
+	public final fun component7 ()Z
+	public final fun copy-nl4AeYM (JJJJJJZ)Lio/getstream/chat/android/compose/ui/theme/AttachmentPickerTheme;
+	public static synthetic fun copy-nl4AeYM$default (Lio/getstream/chat/android/compose/ui/theme/AttachmentPickerTheme;JJJJJJZILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/AttachmentPickerTheme;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBackgroundOverlay-0d7_KjU ()J
 	public final fun getBackgroundPrimary-0d7_KjU ()J
 	public final fun getBackgroundSecondary-0d7_KjU ()J
+	public final fun getCheckIconBackgroundColor-0d7_KjU ()J
+	public final fun getCheckIconTintColor-0d7_KjU ()J
+	public final fun getContentColor-0d7_KjU ()J
 	public final fun getSaveAttachmentsOnDismiss ()Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
