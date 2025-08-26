@@ -140,7 +140,10 @@ constructor(
     private val defaultApi by lazy { buildApi(config) }
     internal val chatSocket: ChatSocket by lazy { buildChatSocket(config) }
     private val defaultFileUploader by lazy {
-        StreamFileUploader(buildRetrofitCdnApi())
+        StreamFileUploader(
+            retrofitCdnApi = buildRetrofitCdnApi(),
+            dtoMapping = dtoMapping,
+        )
     }
 
     val lifecycleObserver: StreamLifecycleObserver by lazy { StreamLifecycleObserver(userScope, lifecycle) }

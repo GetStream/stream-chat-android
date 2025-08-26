@@ -18,22 +18,30 @@ package io.getstream.chat.android.client.uploader
 
 import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.getstream.chat.android.client.Mother.randomUploadFileResponse
 import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api.models.CompletableResponse
 import io.getstream.chat.android.client.api.models.UploadFileResponse
+import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.models.UploadedFile
+import io.getstream.chat.android.randomFile
+import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
 import io.getstream.result.Error
 import io.getstream.result.Result
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.Before
 import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.runner.RunWith
 import org.mockito.kotlin.any
 import org.mockito.kotlin.anyOrNull
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
@@ -57,14 +65,14 @@ internal class StreamFileUploaderTest {
         override fun onProgress(bytesUploaded: Long, totalBytes: Long) = Unit
     }
 
-    private lateinit var retrofitCdnApi: RetrofitCdnApi
+    private val retrofitCdnApi: RetrofitCdnApi = mock()
+    private val dtpMapping: DtoMapping = mock()
     private lateinit var streamFileUploader: StreamFileUploader
 
     @Before
     fun before() {
-        retrofitCdnApi = mock()
         shadowOf(MimeTypeMap.getSingleton())
-        streamFileUploader = StreamFileUploader(retrofitCdnApi)
+        streamFileUploader = StreamFileUploader(retrofitCdnApi, dtpMapping)
     }
 
     @Test
@@ -221,5 +229,131 @@ internal class StreamFileUploaderTest {
             eq(channelId),
             eq(url),
         )
+    }
+
+    @Test
+    fun `Should upload file to api with user and progress callback`() {
+        val file = randomFile()
+        val user = randomUser()
+        val response = randomUploadFileResponse()
+        whenever(
+            retrofitCdnApi.uploadFile(
+                file = any(),
+                user = any(),
+                progressCallback = eq(progressCallback),
+            ),
+        ) doReturn RetroSuccess(response).toRetrofitCall()
+
+        val result = streamFileUploader.uploadFile(file, user, progressCallback)
+
+        assertTrue(result is Result.Success)
+        val uploadedFile = result.getOrThrow()
+        assertEquals(response.file, uploadedFile.file)
+        assertEquals(response.thumb_url, uploadedFile.thumbUrl)
+    }
+
+    @Test
+    fun `Should upload file to api with no user nor progress callback`() {
+        val file = randomFile()
+        val response = randomUploadFileResponse()
+        whenever(
+            retrofitCdnApi.uploadFile(
+                file = any(),
+                user = eq(null),
+                progressCallback = eq(null),
+            ),
+        ) doReturn RetroSuccess(response).toRetrofitCall()
+
+        val result = streamFileUploader.uploadFile(file, user = null, progressCallback = null)
+
+        assertTrue(result is Result.Success)
+        val uploadedFile = result.getOrThrow()
+        assertEquals(response.file, uploadedFile.file)
+        assertEquals(response.thumb_url, uploadedFile.thumbUrl)
+    }
+
+    @Test
+    fun `Should upload image to api with user and progress callback`() {
+        val file = randomFile()
+        val user = randomUser()
+        val response = randomUploadFileResponse()
+        whenever(
+            retrofitCdnApi.uploadImage(
+                file = any(),
+                user = any(),
+                progressCallback = eq(progressCallback),
+            ),
+        ) doReturn RetroSuccess(response).toRetrofitCall()
+
+        val result = streamFileUploader.uploadImage(file, user, progressCallback)
+
+        assertTrue(result is Result.Success)
+        val uploadedFile = result.getOrThrow()
+        assertEquals(response.file, uploadedFile.file)
+        assertEquals(response.thumb_url, uploadedFile.thumbUrl)
+    }
+
+    @Test
+    fun `Should upload image to api with no user nor progress callback`() {
+        val file = randomFile()
+        val response = randomUploadFileResponse()
+        whenever(
+            retrofitCdnApi.uploadImage(
+                file = any(),
+                user = eq(null),
+                progressCallback = eq(null),
+            ),
+        ) doReturn RetroSuccess(response).toRetrofitCall()
+
+        val result = streamFileUploader.uploadImage(file, user = null, progressCallback = null)
+
+        assertTrue(result is Result.Success)
+        val uploadedFile = result.getOrThrow()
+        assertEquals(response.file, uploadedFile.file)
+        assertEquals(response.thumb_url, uploadedFile.thumbUrl)
+    }
+
+    @Test
+    fun `Should delete file with url and userId`() {
+        val url = randomString()
+        whenever(retrofitCdnApi.deleteFile(url = url)) doReturn
+            RetroSuccess(CompletableResponse(duration = randomString())).toRetrofitCall()
+
+        val result = streamFileUploader.deleteFile(url, userId)
+
+        assertTrue(result is Result.Success)
+    }
+
+    @Test
+    fun `Should delete file with url and no userId`() {
+        val url = randomString()
+        whenever(retrofitCdnApi.deleteFile(url = url)) doReturn
+            RetroSuccess(CompletableResponse(duration = randomString())).toRetrofitCall()
+
+        val result = streamFileUploader.deleteFile(url, userId = null)
+
+        assertTrue(result is Result.Success)
+    }
+
+    @Test
+    fun `Should delete image with url and userId`() {
+        val url = randomString()
+        whenever(retrofitCdnApi.deleteImage(url = url)) doReturn
+            RetroSuccess(CompletableResponse(duration = randomString())).toRetrofitCall()
+
+        val result = streamFileUploader.deleteImage(url, userId)
+
+        assertTrue(result is Result.Success)
+    }
+
+    @Test
+    fun `Should delete image with url and no userId`() {
+        val url = randomString()
+        whenever(retrofitCdnApi.deleteImage(url = url)) doReturn
+            RetroSuccess(CompletableResponse(duration = randomString())).toRetrofitCall()
+
+        val result = streamFileUploader.deleteImage(url, userId = null)
+
+        assertTrue(result is Result.Success)
     }
 }

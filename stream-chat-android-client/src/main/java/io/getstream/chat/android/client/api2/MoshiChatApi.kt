@@ -137,6 +137,7 @@ import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
+import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.VideoCallInfo
 import io.getstream.chat.android.models.VideoCallToken
 import io.getstream.chat.android.models.Vote
@@ -562,6 +563,58 @@ constructor(
             )
         }
     }
+
+    override fun uploadFile(
+        file: File,
+        user: User?,
+        progressCallback: ProgressCallback?,
+    ): Call<UploadedFile> = CoroutineCall(coroutineScope) {
+        fileTransformer.transform(file)
+            .let { transformedFile ->
+                fileUploader.uploadFile(
+                    file = transformedFile,
+                    user = user,
+                    progressCallback = progressCallback,
+                )
+            }
+    }
+
+    override fun deleteFile(
+        url: String,
+        userId: UserId?,
+    ): Call<Unit> =
+        CoroutineCall(coroutineScope) {
+            fileUploader.deleteFile(
+                url = url,
+                userId = userId,
+            )
+        }
+
+    override fun uploadImage(
+        file: File,
+        user: User?,
+        progressCallback: ProgressCallback?,
+    ): Call<UploadedFile> = CoroutineCall(coroutineScope) {
+        fileTransformer.transform(file)
+            .let { transformedFile ->
+                fileUploader.uploadImage(
+                    file = transformedFile,
+                    user = user,
+                    progressCallback = progressCallback,
+                )
+            }
+    }
+
+    override fun deleteImage(
+        url: String,
+        userId: UserId?,
+    ): Call<Unit> =
+        CoroutineCall(coroutineScope) {
+            fileUploader.deleteImage(
+                url = url,
+                userId = userId,
+            )
+        }
 
     override fun flagUser(
         userId: String,

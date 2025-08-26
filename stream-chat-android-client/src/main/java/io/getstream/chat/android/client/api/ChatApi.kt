@@ -58,6 +58,7 @@ import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
+import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.VideoCallInfo
 import io.getstream.chat.android.models.VideoCallToken
 import io.getstream.chat.android.models.Vote
@@ -95,6 +96,32 @@ internal interface ChatApi {
 
     @CheckResult
     fun deleteImage(channelType: String, channelId: String, url: String): Call<Unit>
+
+    @CheckResult
+    fun uploadFile(
+        file: File,
+        user: User?,
+        progressCallback: ProgressCallback?,
+    ): Call<UploadedFile>
+
+    @CheckResult
+    fun deleteFile(
+        url: String,
+        userId: UserId?,
+    ): Call<Unit>
+
+    @CheckResult
+    fun uploadImage(
+        file: File,
+        user: User?,
+        progressCallback: ProgressCallback?,
+    ): Call<UploadedFile>
+
+    @CheckResult
+    fun deleteImage(
+        url: String,
+        userId: UserId?,
+    ): Call<Unit>
 
     @CheckResult
     fun addDevice(device: Device): Call<Unit>
