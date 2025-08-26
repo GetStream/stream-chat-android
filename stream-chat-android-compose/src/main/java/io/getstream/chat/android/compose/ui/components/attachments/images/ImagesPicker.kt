@@ -150,13 +150,16 @@ internal fun DefaultImagesPickerItem(
                     .align(Alignment.TopEnd)
                     .padding(4.dp)
                     .size(24.dp)
-                    .background(shape = CircleShape, color = ChatTheme.colors.overlayDark),
+                    .background(
+                        shape = CircleShape,
+                        color = ChatTheme.attachmentPickerTheme.checkIconBackgroundColor,
+                    ),
             ) {
                 Icon(
                     modifier = Modifier.align(Alignment.Center),
                     painter = painterResource(id = R.drawable.stream_compose_ic_checkmark),
                     contentDescription = null,
-                    tint = ChatTheme.colors.appBackground,
+                    tint = ChatTheme.attachmentPickerTheme.checkIconTintColor,
                 )
             }
         }

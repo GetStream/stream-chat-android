@@ -27,6 +27,9 @@ import androidx.compose.ui.graphics.Color
  * @param backgroundOverlay The overlay background color.
  * @param backgroundSecondary The secondary background color.
  * @param backgroundPrimary The primary background color.
+ * @param checkIconBackgroundColor The background color of the check icon.
+ * @param checkIconTintColor The tint color of the check icon.
+ * @param contentColor The content color used for text and icons.
  * @param saveAttachmentsOnDismiss If the selected attachments should be saved when the picker is dismissed.
  */
 @Immutable
@@ -34,6 +37,9 @@ public data class AttachmentPickerTheme(
     val backgroundOverlay: Color,
     val backgroundSecondary: Color,
     val backgroundPrimary: Color,
+    val checkIconBackgroundColor: Color,
+    val checkIconTintColor: Color,
+    val contentColor: Color,
     val saveAttachmentsOnDismiss: Boolean,
 ) {
 
@@ -55,6 +61,9 @@ public data class AttachmentPickerTheme(
                 backgroundOverlay = colors.overlay,
                 backgroundSecondary = colors.inputBackground,
                 backgroundPrimary = colors.barsBackground,
+                checkIconBackgroundColor = colors.overlayDark,
+                checkIconTintColor = colors.textHighEmphasisInverse,
+                contentColor = colors.overlayDark,
                 saveAttachmentsOnDismiss = false,
             )
         }

@@ -85,6 +85,7 @@
 - Introduce `ChannelFilesAttachmentsScreen` to display the channel files attachments. [#5882](https://github.com/GetStream/stream-chat-android/pull/5882)
 - Introduce `ChannelMediaAttachmentsScreen` to display the channel media (photos & videos) attachments. [#5882](https://github.com/GetStream/stream-chat-android/pull/5882)
 - Introduce `ChannelMediaAttachmentsPreview`, a full-screen pager that allows users to swipe through media attachments in a channel. [#5882](https://github.com/GetStream/stream-chat-android/pull/5882)
+- Introduce `checkIconBackgroundColor`, `checkIconTintColor`, and `contentColor` to `AttachmentPickerTheme`. [#5903](https://github.com/GetStream/stream-chat-android/pull/5903)
 
 ### ⚠️ Changed
 
