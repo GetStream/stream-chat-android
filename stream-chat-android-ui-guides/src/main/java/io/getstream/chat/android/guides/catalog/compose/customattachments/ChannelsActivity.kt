@@ -35,7 +35,7 @@ class ChannelsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         val customFactories = listOf(dateAttachmentFactory)
-        val defaultFactories = StreamAttachmentFactories.defaultFactories()
+        val defaultFactories = StreamAttachmentFactories.defaults()
 
         setContent {
             ChatTheme(attachmentFactories = customFactories + defaultFactories) {

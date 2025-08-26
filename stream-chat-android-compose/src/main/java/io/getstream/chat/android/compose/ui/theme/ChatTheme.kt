@@ -331,7 +331,7 @@ public fun ChatTheme(
     ),
     userPresence: UserPresence = UserPresence(),
     componentFactory: ChatComponentFactory = DefaultChatComponentFactory(),
-    attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories(),
+    attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaults(),
     messageContentFactory: MessageContentFactory = MessageContentFactory.Deprecated,
     attachmentPreviewHandlers: List<AttachmentPreviewHandler> =
         AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),

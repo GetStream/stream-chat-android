@@ -88,6 +88,14 @@
 - Introduce `checkIconBackgroundColor`, `checkIconTintColor`, and `contentColor` to `AttachmentPickerTheme`. [#5903](https://github.com/GetStream/stream-chat-android/pull/5903)
 
 ### ⚠️ Changed
+- Deprecate `StreamAttachmentFactories.defaultFactories()` in favor of `StreamAttachmentFactories.defaults()`. [#5908](https://github.com/GetStream/stream-chat-android/pull/5908)
+- Deprecate `GiphyAttachmentContent` in favor of `GiphyAttachmentContent` with the `onItemClick` lambda parameter that accepts a `GiphyAttachmentClickData`. [#5908](https://github.com/GetStream/stream-chat-android/pull/5908)
+- Deprecate `LinkAttachmentContent` in favor of `LinkAttachmentContent` with the `onItemClick` lambda parameter that accepts a `LinkAttachmentClickData`. [#5908](https://github.com/GetStream/stream-chat-android/pull/5908)
+- Deprecate `MediaAttachmentContent` in favor of `MediaAttachmentContent` with the `onItemClick` lambda parameter that accepts a `MediaAttachmentClickData`. [#5908](https://github.com/GetStream/stream-chat-android/pull/5908)
+- Deprecate `GiphyAttachmentFactory` constructor that accepts `onContentItemClick` in favor of the one that accepts `onItemClick` lambda parameter that accepts a `GiphyAttachmentClickData`. [#5908](https://github.com/GetStream/stream-chat-android/pull/5908)
+- Deprecate `LinkAttachmentFactory` constructor that accepts `onContentItemClick` in favor of the one that accepts `onItemClick` lambda parameter that accepts a `LinkAttachmentClickData`. [#5908](https://github.com/GetStream/stream-chat-android/pull/5908)
+- Deprecate `MediaAttachmentFactory` constructor that accepts `onContentItemClick` in favor of the one that accepts `onItemClick` lambda parameter that accepts a `MediaAttachmentClickData`. [#5908](https://github.com/GetStream/stream-chat-android/pull/5908)
+- 
 
 ### ❌ Removed
 

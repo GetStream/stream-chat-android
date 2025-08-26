@@ -34,6 +34,7 @@ import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentClickData
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentPreviewContent
 import io.getstream.chat.android.compose.ui.attachments.content.PlayButton
@@ -63,16 +64,18 @@ import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizin
 public class MediaAttachmentFactory(
     maximumNumberOfPreviewedItems: Int = 4,
     skipEnrichUrl: Boolean = false,
-    onContentItemClick: (
-        mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<Input, MediaGalleryPreviewResult?>,
-        message: Message,
-        attachmentPosition: Int,
-        videoThumbnailsEnabled: Boolean,
-        downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
-        downloadRequestInterceptor: DownloadRequestInterceptor,
-        streamCdnImageResizing: StreamCdnImageResizing,
-        skipEnrichUrl: Boolean,
-    ) -> Unit = ::onMediaAttachmentContentItemClick,
+    onContentItemClick: (MediaAttachmentClickData) -> Unit = {
+        onMediaAttachmentContentItemClick(
+            it.mediaGalleryPreviewLauncher,
+            it.message,
+            it.attachmentPosition,
+            it.videoThumbnailsEnabled,
+            it.downloadAttachmentUriGenerator,
+            it.downloadRequestInterceptor,
+            it.streamCdnImageResizing,
+            it.skipEnrichUrl,
+        )
+    },
     canHandle: (attachments: List<Attachment>) -> Boolean = { attachments ->
         attachments.all { it.isImage() || it.isVideo() }
     },
@@ -100,14 +103,78 @@ public class MediaAttachmentFactory(
     content = @Composable { modifier, state ->
         MediaAttachmentContent(
             modifier = modifier,
-            attachmentState = state,
+            state = state,
             maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
             itemOverlayContent = itemOverlayContent,
             skipEnrichUrl = skipEnrichUrl,
             onItemClick = onContentItemClick,
         )
     },
-)
+) {
+
+    /**
+     * Creates a new instance of [MediaAttachmentFactory] with the default parameters.
+     */
+    @Deprecated(
+        message = "Use the constructor that does not take onContentItemClick parameter.",
+        replaceWith = ReplaceWith(
+            "MediaAttachmentFactory(" +
+                "maximumNumberOfPreviewedItems, " +
+                "skipEnrichUrl, " +
+                "onContentItemClick, " +
+                "canHandle, " +
+                "itemOverlayContent, " +
+                "previewItemOverlayContent" +
+                ")",
+        ),
+        level = DeprecationLevel.WARNING,
+    )
+    public constructor(
+        maximumNumberOfPreviewedItems: Int = 4,
+        skipEnrichUrl: Boolean = false,
+        onContentItemClick: (
+            mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<Input, MediaGalleryPreviewResult?>,
+            message: Message,
+            attachmentPosition: Int,
+            videoThumbnailsEnabled: Boolean,
+            downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
+            downloadRequestInterceptor: DownloadRequestInterceptor,
+            streamCdnImageResizing: StreamCdnImageResizing,
+            skipEnrichUrl: Boolean,
+        ) -> Unit,
+        canHandle: (attachments: List<Attachment>) -> Boolean = { attachments ->
+            attachments.all { it.isImage() || it.isVideo() }
+        },
+        itemOverlayContent: @Composable (attachmentType: String?) -> Unit = { attachmentType ->
+            if (attachmentType == AttachmentType.VIDEO) {
+                DefaultItemOverlayContent()
+            }
+        },
+        previewItemOverlayContent: @Composable (attachmentType: String?) -> Unit = { attachmentType ->
+            if (attachmentType == AttachmentType.VIDEO) {
+                DefaultPreviewItemOverlayContent()
+            }
+        },
+    ) : this(
+        maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
+        skipEnrichUrl = skipEnrichUrl,
+        onContentItemClick = {
+            onContentItemClick(
+                it.mediaGalleryPreviewLauncher,
+                it.message,
+                it.attachmentPosition,
+                it.videoThumbnailsEnabled,
+                it.downloadAttachmentUriGenerator,
+                it.downloadRequestInterceptor,
+                it.streamCdnImageResizing,
+                skipEnrichUrl,
+            )
+        },
+        canHandle = canHandle,
+        itemOverlayContent = itemOverlayContent,
+        previewItemOverlayContent = previewItemOverlayContent,
+    )
+}
 
 /**
  * Represents the default play button that is

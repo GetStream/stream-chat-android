@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.content.LinkAttachmentClickData
 import io.getstream.chat.android.compose.ui.attachments.content.LinkAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.onLinkAttachmentContentClick
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -35,12 +36,14 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  * Has no "preview content", given that this attachment only exists after being sent.
  *
  * @param linkDescriptionMaxLines - The limit of how many lines we show for the link description.
- * @param onContentItemClick Lambda called when an item gets clicked.
+ * @param onLinkAttachmentContentClick Lambda called when an item gets clicked.
  * @param canHandle Lambda that checks if the factory can handle the given attachments.
  */
 public class LinkAttachmentFactory(
     linkDescriptionMaxLines: Int,
-    onContentItemClick: (context: Context, previewUrl: String) -> Unit = ::onLinkAttachmentContentClick,
+    onItemClick: (LinkAttachmentClickData) -> Unit = {
+        onLinkAttachmentContentClick(it.context, it.url)
+    },
     canHandle: (attachments: List<Attachment>) -> Boolean = { links -> links.any { it.hasLink() && !it.isGiphy() } },
 ) : AttachmentFactory(
     type = Type.BuiltIn.LINK,
@@ -50,9 +53,32 @@ public class LinkAttachmentFactory(
             modifier = modifier
                 .width(ChatTheme.dimens.attachmentsContentLinkWidth)
                 .wrapContentHeight(),
-            attachmentState = state,
+            state = state,
             linkDescriptionMaxLines = linkDescriptionMaxLines,
-            onItemClick = onContentItemClick,
+            onItemClick = onItemClick,
         )
     },
-)
+) {
+
+    /**
+     * Creates a new instance of [LinkAttachmentFactory] with the default parameters.
+     */
+    @Deprecated(
+        message = "Use the constructor that does not take onContentItemClick parameter.",
+        replaceWith = ReplaceWith("LinkAttachmentFactory(linkDescriptionMaxLines, onItemClick, canHandle)"),
+        level = DeprecationLevel.WARNING,
+    )
+    public constructor(
+        linkDescriptionMaxLines: Int,
+        onContentItemClick: (context: Context, previewUrl: String) -> Unit,
+        canHandle: (attachments: List<Attachment>) -> Boolean = { links ->
+            links.any { it.hasLink() && !it.isGiphy() }
+        },
+    ) : this(
+        linkDescriptionMaxLines = linkDescriptionMaxLines,
+        onItemClick = {
+            onContentItemClick(it.context, it.url)
+        },
+        canHandle = canHandle,
+    )
+}
