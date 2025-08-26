@@ -36,7 +36,7 @@ import org.mockito.kotlin.whenever
 /**
  * Tests for the files functionalities of the [ChatClient].
  */
-internal class ChatClientFileUploaderTests : BaseChatClientTest() {
+internal class ChatClientChannelFileUploaderTests : BaseChatClientTest() {
 
     @Test
     fun sendFileSuccess() = runTest {
