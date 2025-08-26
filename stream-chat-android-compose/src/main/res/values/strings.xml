@@ -201,7 +201,6 @@
     <string name="stream_compose_cd_channel_item" translatable="false">Channel item</string>
     <string name="stream_compose_cd_message_item" translatable="false">Message item</string>
     <string name="stream_compose_cd_message_input" translatable="false">Message input</string>
-    <string name="stream_compose_cd_send_button" translatable="false">Send button</string>
     <string name="stream_compose_cd_play_button" translatable="false">Play button</string>
     <string name="stream_compose_cd_record_audio_message" translatable="false">Record audio message</string>
 

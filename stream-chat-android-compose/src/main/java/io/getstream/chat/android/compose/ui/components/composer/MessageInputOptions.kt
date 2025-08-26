@@ -18,8 +18,8 @@ package io.getstream.chat.android.compose.ui.components.composer
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,10 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.Reply
 
@@ -62,12 +60,11 @@ public fun MessageInputOptions(
     )
 
     Row(
-        modifier,
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Icon(
-            modifier = Modifier.padding(4.dp),
             painter = optionImage,
             contentDescription = null,
             tint = ChatTheme.colors.textLowEmphasis,
@@ -79,17 +76,16 @@ public fun MessageInputOptions(
             color = ChatTheme.colors.textHighEmphasis,
         )
 
-        Icon(
+        IconButton(
             modifier = Modifier
-                .padding(4.dp)
-                .clickable(
-                    onClick = onCancelAction,
-                    bounded = false,
-                )
                 .testTag("Stream_ComposerCancelButton"),
-            painter = painterResource(id = R.drawable.stream_compose_ic_close),
-            contentDescription = stringResource(id = R.string.stream_compose_cancel),
-            tint = ChatTheme.colors.textLowEmphasis,
-        )
+            onClick = onCancelAction,
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.stream_compose_ic_close),
+                contentDescription = stringResource(id = R.string.stream_compose_cancel),
+                tint = ChatTheme.colors.textLowEmphasis,
+            )
+        }
     }
 }
