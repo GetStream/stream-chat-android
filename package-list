@@ -14,7 +14,6 @@ io.getstream.chat.android.client.channel
 io.getstream.chat.android.client.channel.state
 io.getstream.chat.android.client.clientstate
 io.getstream.chat.android.client.debugger
-io.getstream.chat.android.client.di
 io.getstream.chat.android.client.errorhandler
 io.getstream.chat.android.client.errorhandler.factory
 io.getstream.chat.android.client.errors
@@ -73,6 +72,7 @@ io.getstream.chat.android.compose.ui.attachments.content
 io.getstream.chat.android.compose.ui.attachments.factory
 io.getstream.chat.android.compose.ui.attachments.preview
 io.getstream.chat.android.compose.ui.attachments.preview.handler
+io.getstream.chat.android.compose.ui.channel.attachments
 io.getstream.chat.android.compose.ui.channel.info
 io.getstream.chat.android.compose.ui.channels
 io.getstream.chat.android.compose.ui.channels.header
@@ -171,6 +171,7 @@ module:stream-chat-android-ui-common
 io.getstream.chat.android.ui.common
 io.getstream.chat.android.ui.common.contract.internal
 io.getstream.chat.android.ui.common.disposable
+io.getstream.chat.android.ui.common.feature.channel.attachments
 io.getstream.chat.android.ui.common.feature.channel.header
 io.getstream.chat.android.ui.common.feature.channel.info
 io.getstream.chat.android.ui.common.feature.documents
@@ -192,6 +193,7 @@ io.getstream.chat.android.ui.common.images.resizing
 io.getstream.chat.android.ui.common.model
 io.getstream.chat.android.ui.common.notifications
 io.getstream.chat.android.ui.common.permissions
+io.getstream.chat.android.ui.common.state.channel.attachments
 io.getstream.chat.android.ui.common.state.channel.info
 io.getstream.chat.android.ui.common.state.channels.actions
 io.getstream.chat.android.ui.common.state.mentions
