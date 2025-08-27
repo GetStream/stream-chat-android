@@ -3344,9 +3344,9 @@ public abstract interface class io/getstream/chat/android/client/user/storage/Us
 }
 
 public abstract interface class io/getstream/chat/android/client/utils/ProgressCallback {
-	public abstract fun onError (Lio/getstream/result/Error;)V
-	public abstract fun onProgress (JJ)V
-	public abstract fun onSuccess (Ljava/lang/String;)V
+	public fun onError (Lio/getstream/result/Error;)V
+	public fun onProgress (JJ)V
+	public fun onSuccess (Ljava/lang/String;)V
 }
 
 public final class io/getstream/chat/android/client/utils/TimeProvider {
