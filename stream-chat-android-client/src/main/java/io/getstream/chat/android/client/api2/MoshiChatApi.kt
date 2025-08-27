@@ -576,6 +576,11 @@ constructor(
                     user = user,
                     progressCallback = progressCallback,
                 )
+            }.onSuccess { uploadedFile ->
+                progressCallback?.onSuccess(url = uploadedFile.file)
+            }
+            .onError { error ->
+                progressCallback?.onError(error)
             }
     }
 
@@ -602,6 +607,11 @@ constructor(
                     user = user,
                     progressCallback = progressCallback,
                 )
+            }.onSuccess { uploadedFile ->
+                progressCallback?.onSuccess(url = uploadedFile.file)
+            }
+            .onError { error ->
+                progressCallback?.onError(error)
             }
     }
 

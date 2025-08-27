@@ -796,6 +796,7 @@ internal class MoshiChatApiTest {
         val result = sut.uploadFile(file, user, progressCallback).await()
 
         verifySuccess(result, equalsTo = uploadedFile)
+        verify(progressCallback).onSuccess(uploadedFile.file)
     }
 
     @Test
@@ -834,6 +835,7 @@ internal class MoshiChatApiTest {
         val result = sut.uploadImage(file, user, progressCallback).await()
 
         verifySuccess(result, equalsTo = uploadedFile)
+        verify(progressCallback).onSuccess(uploadedFile.file)
     }
 
     @Test
