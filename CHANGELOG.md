@@ -1,78 +1,21 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# August 27th, 2025 - 6.22.0
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fix `ChatClient.connectUser` not propagating unrecoverable errors from the socket to the result. [#5896](https://github.com/GetStream/stream-chat-android/pull/5896)
-
-### ⬆️ Improved
 
 ### ✅ Added
 - Add `ChatErrorCode.DUPLICATE_USERNAME_ERROR` covering the error case when a user tries to connect with an existing username, when `enforce_unique_usernames` is enabled. [#5896](https://github.com/GetStream/stream-chat-android/pull/5896)
 - Introduce `getUnreadCounts` to the `ChatClient`. [#5897](https://github.com/GetStream/stream-chat-android/pull/5897)
 
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Introduce `ChannelAttachmentsViewController`, `ChannelAttachmentsViewAction`, `ChannelAttachmentsViewEvent`, and `ChannelAttachmentsViewState` shared between XML and Compose SDKs and responsible for managing the state and events related to channel attachments, supporting pagination. [#5882](https://github.com/GetStream/stream-chat-android/pull/5882)
 
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-components
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Introduce `ChannelAttachmentsViewModel` and `ChannelAttachmentsViewModelFactory`. [#5882](https://github.com/GetStream/stream-chat-android/pull/5882)
 
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-compose
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - Improve the uploaded attachment loading UI. [#5889](https://github.com/GetStream/stream-chat-android/pull/5889)
 - Show message for unsupported file types during the system attachment upload. [#5900](https://github.com/GetStream/stream-chat-android/pull/5900) 
@@ -96,19 +39,6 @@
 - Deprecate `LinkAttachmentFactory` constructor that accepts `onContentItemClick` in favor of the one that accepts `onItemClick` lambda parameter that accepts a `LinkAttachmentClickData`. [#5908](https://github.com/GetStream/stream-chat-android/pull/5908)
 - Deprecate `MediaAttachmentFactory` constructor that accepts `onContentItemClick` in favor of the one that accepts `onItemClick` lambda parameter that accepts a `MediaAttachmentClickData`. [#5908](https://github.com/GetStream/stream-chat-android/pull/5908)
 - 
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # August 13th, 2025 - 6.21.0
 ## stream-chat-android-client
