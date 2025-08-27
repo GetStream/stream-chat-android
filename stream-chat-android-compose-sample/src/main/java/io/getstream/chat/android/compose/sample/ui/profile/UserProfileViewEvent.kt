@@ -16,15 +16,13 @@
 
 package io.getstream.chat.android.compose.sample.ui.profile
 
-import io.getstream.chat.android.models.UnreadCounts
-import io.getstream.chat.android.models.User
+import io.getstream.result.Error
 
-data class UserProfileViewState(
-    val user: User? = null,
-    val unreadCounts: UnreadCounts? = null,
-    val progressIndicator: ProgressIndicator? = null,
-) {
-    data class ProgressIndicator(
-        val progress: Float? = null, // null when indeterminate
-    )
+sealed interface UserProfileViewEvent {
+    data object UpdateProfilePictureSuccess : UserProfileViewEvent
+    sealed interface Failure : UserProfileViewEvent { val error: Error }
+    data class LoadUserError(override val error: Error) : Failure
+    data class LoadUnreadCountsError(override val error: Error) : Failure
+    data class UpdateProfilePictureError(override val error: Error) : Failure
+    data class RemoveProfilePictureError(override val error: Error) : Failure
 }

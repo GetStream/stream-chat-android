@@ -20,47 +20,42 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
+import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.models.Filters
-import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserId
 import io.getstream.result.Error
+import io.getstream.result.onErrorSuspend
 import io.getstream.result.onSuccessSuspend
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.File
 
 class UserProfileViewModel(
     private val chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
 
-    private val _unreadCounts = MutableStateFlow<UnreadCounts?>(null)
+    private val _state = MutableStateFlow(UserProfileViewState())
+    val state: StateFlow<UserProfileViewState> = _state.asStateFlow()
 
-    val state: StateFlow<UserProfileViewState> =
-        combine(
-            queryUser(userId = chatClient.getCurrentUser()?.id),
-            _unreadCounts,
-        ) { user, unreadCounts ->
-            UserProfileViewState(
-                user = user,
-                unreadCounts = unreadCounts,
-            )
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(StopTimeout),
-            initialValue = UserProfileViewState(),
-        )
+    private val _events = MutableSharedFlow<UserProfileViewEvent>(extraBufferCapacity = 1)
+    val events: SharedFlow<UserProfileViewEvent> = _events.asSharedFlow()
 
-    private val _errors = MutableSharedFlow<Error>(extraBufferCapacity = 1)
-    val errors: SharedFlow<Error> = _errors.asSharedFlow()
+    init {
+        queryUser(userId = chatClient.getCurrentUser()?.id)
+            .onEach { user -> _state.update { currentState -> currentState.copy(user = user) } }
+            .launchIn(viewModelScope)
+    }
 
     /**
      * Query updated user information from the server.
@@ -73,20 +68,98 @@ class UserProfileViewModel(
             val request = QueryUsersRequest(filter, offset = 0, limit = 1)
             chatClient.queryUsers(request)
                 .await()
-                .onSuccessSuspend { emit(it.firstOrNull()) }
-                .onError(_errors::tryEmit)
+                .onSuccessSuspend { users -> emit(users.firstOrNull()) }
+                .onErrorSuspend { error -> _events.emit(UserProfileViewEvent.LoadUserError(error)) }
+        }
+    }
+
+    fun updateProfilePicture(imageFile: File) {
+        val user = state.value.user!!
+        fun onError(error: Error) {
+            _state.update { currentState ->
+                currentState.copy(progressIndicator = null)
+            }
+            _events.tryEmit(UserProfileViewEvent.UpdateProfilePictureError(error))
+        }
+        viewModelScope.launch {
+            // Upload the user image file
+            chatClient.uploadImage(
+                file = imageFile,
+                user = user,
+                progressCallback = object : ProgressCallback {
+                    override fun onProgress(bytesUploaded: Long, totalBytes: Long) {
+                        val progress = bytesUploaded.toFloat() / totalBytes
+                        _state.update { currentState ->
+                            currentState.copy(progressIndicator = UserProfileViewState.ProgressIndicator(progress))
+                        }
+                    }
+                },
+            ).await()
+                .onSuccessSuspend { uploadedFile ->
+                    val url = uploadedFile.file
+                    _state.update { currentState ->
+                        currentState.copy(progressIndicator = UserProfileViewState.ProgressIndicator())
+                    }
+                    // Update the user entity with the uploaded image url
+                    chatClient.updateUser(user = user.copy(image = url))
+                        .await()
+                        .onSuccess { updatedUser ->
+                            _state.update { currentState ->
+                                currentState.copy(
+                                    user = updatedUser,
+                                    progressIndicator = null,
+                                )
+                            }
+                            _events.tryEmit(UserProfileViewEvent.UpdateProfilePictureSuccess)
+                        }
+                        .onError(::onError)
+                }
+                .onError(::onError)
         }
     }
 
     fun loadUnreadCounts() {
-        _unreadCounts.value = null
+        _state.update { currentState -> currentState.copy(unreadCounts = null) }
         viewModelScope.launch {
             chatClient.getUnreadCounts()
                 .await()
-                .onSuccess { _unreadCounts.value = it }
-                .onError(_errors::tryEmit)
+                .onSuccess { unreadCounts ->
+                    _state.update { currentState -> currentState.copy(unreadCounts = unreadCounts) }
+                }
+                .onError { error -> _events.tryEmit(UserProfileViewEvent.LoadUnreadCountsError(error)) }
+        }
+    }
+
+    fun removeProfilePicture() {
+        _state.update { currentState ->
+            currentState.copy(progressIndicator = UserProfileViewState.ProgressIndicator())
+        }
+        val user = state.value.user!!
+        fun onError(error: Error) {
+            _state.update { currentState ->
+                currentState.copy(progressIndicator = null)
+            }
+            _events.tryEmit(UserProfileViewEvent.RemoveProfilePictureError(error))
+        }
+        viewModelScope.launch {
+            chatClient.deleteImage(
+                url = user.image,
+                userId = user.id,
+            ).await()
+                .onSuccessSuspend {
+                    chatClient.updateUser(user = user.copy(image = ""))
+                        .await()
+                        .onSuccess { updatedUser ->
+                            _state.update { currentState ->
+                                currentState.copy(
+                                    user = updatedUser,
+                                    progressIndicator = null,
+                                )
+                            }
+                        }
+                        .onError(::onError)
+                }
+                .onError(::onError)
         }
     }
 }
-
-private const val StopTimeout = 5000L
