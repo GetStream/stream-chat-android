@@ -21,6 +21,7 @@
 
 ### ✅ Added
 - Add `ChatClient.getPendingMessage` to fetch a pending message (and its metadata) by its ID. [#5784](https://github.com/GetStream/stream-chat-android/pull/5784)
+- Introduce `ChatClient.uploadFile`, `ChatClient.deleteFile`, `ChatClient.uploadImage`, and `ChatClient.deleteImage`, to upload/delete files/images that are not related to any channel. [#5909](https://github.com/GetStream/stream-chat-android/pull/5909)
 
 ### ⚠️ Changed
 
