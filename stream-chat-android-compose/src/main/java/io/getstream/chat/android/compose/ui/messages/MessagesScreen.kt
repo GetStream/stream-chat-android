@@ -142,7 +142,7 @@ public fun MessagesScreen(
     onChannelAvatarClick: () -> Unit = {},
     onComposerLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     onMessageLinkClick: ((Message, String) -> Unit)? = null,
-    onUserAvatarClick: (User) -> Unit = {},
+    onUserAvatarClick: ((User) -> Unit)? = null,
     onUserMentionClick: (User) -> Unit = {},
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
