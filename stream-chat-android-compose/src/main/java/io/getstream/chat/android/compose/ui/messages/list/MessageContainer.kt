@@ -31,6 +31,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
@@ -222,7 +224,12 @@ public fun LazyItemScope.MessageContainer(
  */
 @Composable
 internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorItemState) {
-    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+    Box(
+        modifier = Modifier
+            .semantics(mergeDescendants = true) {}
+            .fillMaxWidth(),
+        contentAlignment = Alignment.Center,
+    ) {
         Surface(
             modifier = Modifier
                 .padding(vertical = 8.dp),
@@ -249,10 +256,12 @@ internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorItem
 internal fun DefaultMessageUnreadSeparatorContent(unreadSeparatorItemState: UnreadSeparatorItemState) {
     Box(
         modifier = Modifier
+            .semantics(mergeDescendants = true) {
+                testTag = "Stream_UnreadMessagesBadge"
+            }
             .fillMaxWidth()
             .padding(bottom = 8.dp)
-            .background(ChatTheme.messageUnreadSeparatorTheme.backgroundColor)
-            .testTag("Stream_UnreadMessagesBadge"),
+            .background(ChatTheme.messageUnreadSeparatorTheme.backgroundColor),
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -283,6 +292,7 @@ internal fun DefaultMessageThreadSeparatorContent(threadSeparator: ThreadDateSep
 
     Box(
         modifier = Modifier
+            .semantics(mergeDescendants = true) {}
             .fillMaxWidth()
             .padding(vertical = ChatTheme.dimens.threadSeparatorVerticalPadding)
             .background(brush = backgroundGradient),
