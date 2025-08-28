@@ -30,8 +30,10 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.toChannelData
+import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomDateAfter
 import io.getstream.chat.android.randomDateBefore
@@ -53,6 +55,9 @@ import org.amshove.kluent.`should not be equal to`
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
@@ -62,15 +67,10 @@ import org.mockito.kotlin.spy
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import org.mockito.verification.VerificationMode
 import java.util.Date
 
 internal class ChannelStateLogicTest {
-
-    companion object {
-        @JvmField
-        @RegisterExtension
-        val testCoroutines = TestCoroutineExtension()
-    }
 
     @BeforeEach
     fun setup() {
@@ -104,7 +104,6 @@ internal class ChannelStateLogicTest {
         _watcherCount.value = 0
     }
 
-    private val user = randomUser()
     private val userFlow = MutableStateFlow(user)
     private var _messages: Map<String, Message> = emptyMap()
     private val _unreadCount: MutableStateFlow<Int> = MutableStateFlow(0)
@@ -378,5 +377,130 @@ internal class ChannelStateLogicTest {
         channelStateLogic.deletePoll(poll)
         // then
         channelStateLogic.getPoll(poll.id) `should be equal to` null
+    }
+
+    @ParameterizedTest
+    @MethodSource("updateCurrentUserReadArguments")
+    fun `Given a new message from the current user is added, the current user reads does not need to be updated`(
+        initialChannelUserRead: ChannelUserRead,
+        eventDate: Date,
+        newMessage: Message,
+        verificationMode: VerificationMode,
+        expectedChannelUserRead: ChannelUserRead,
+    ) {
+        _read.value = initialChannelUserRead
+
+        channelStateLogic.updateCurrentUserRead(eventDate, newMessage)
+
+        verify(mutableState, mode = verificationMode).upsertReads(eq(listOf(expectedChannelUserRead)))
+    }
+
+    companion object {
+
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+
+        private val user = randomUser()
+
+        @JvmStatic
+        @Suppress("LongMethod")
+        fun updateCurrentUserReadArguments() = randomChannelUserRead(
+            user = user,
+            lastReceivedEventDate = Date(10L),
+            unreadMessages = positiveRandomInt(),
+            lastRead = Date(10L),
+            lastReadMessageId = randomString(),
+        ).let { initialChannelUserRead ->
+            listOf(
+                Arguments.of(
+                    initialChannelUserRead,
+                    Date(5L),
+                    randomMessage(
+                        user = randomUser(id = "anotherUserId"),
+                        createdAt = Date(20L),
+                    ),
+                    times(0),
+                    initialChannelUserRead,
+                ),
+                Arguments.of(
+                    initialChannelUserRead,
+                    Date(20L),
+                    randomMessage(
+                        user = user,
+                        createdAt = Date(20L),
+                    ),
+                    times(0),
+                    initialChannelUserRead,
+                ),
+                Arguments.of(
+                    initialChannelUserRead,
+                    Date(20L),
+                    randomMessage(
+                        user = randomUser(id = "anotherUserId"),
+                        createdAt = Date(20L),
+                        shadowed = true,
+                    ),
+                    times(0),
+                    initialChannelUserRead,
+                ),
+                Arguments.of(
+                    initialChannelUserRead,
+                    Date(20L),
+                    randomMessage(
+                        user = randomUser(id = "anotherUserId"),
+                        createdAt = Date(20L),
+                        silent = true,
+                    ),
+                    times(0),
+                    initialChannelUserRead,
+                ),
+                Arguments.of(
+                    initialChannelUserRead,
+                    Date(20L),
+                    randomMessage(
+                        user = randomUser(id = "anotherUserId"),
+                        createdAt = Date(20L),
+                        parentId = randomString(),
+                        showInChannel = false,
+                    ),
+                    times(0),
+                    initialChannelUserRead,
+                ),
+                Arguments.of(
+                    initialChannelUserRead,
+                    Date(20L),
+                    randomMessage(
+                        user = randomUser(id = "anotherUserId"),
+                        createdAt = Date(20L),
+                        parentId = randomString(),
+                        showInChannel = true,
+                        shadowed = false,
+                        silent = false,
+                    ),
+                    times(0),
+                    initialChannelUserRead.copy(
+                        unreadMessages = initialChannelUserRead.unreadMessages + 1,
+                        lastReceivedEventDate = Date(20L),
+                    ),
+                ),
+                Arguments.of(
+                    initialChannelUserRead,
+                    Date(20L),
+                    randomMessage(
+                        user = randomUser(id = "anotherUserId"),
+                        createdAt = Date(20L),
+                        silent = false,
+                        shadowed = false,
+                        parentId = null,
+                    ),
+                    times(1),
+                    initialChannelUserRead.copy(
+                        unreadMessages = initialChannelUserRead.unreadMessages + 1,
+                        lastReceivedEventDate = Date(20L),
+                    ),
+                ),
+            )
+        }
     }
 }

@@ -14,6 +14,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- New Silent messages are not increasing the unread count. [#5910](https://github.com/GetStream/stream-chat-android/pull/5910)
 
 ### ✅ Added
 
@@ -36,6 +37,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- New Silent messages are not increasing the unread count. [#5910](https://github.com/GetStream/stream-chat-android/pull/5910)
 
 ### ✅ Added
 
