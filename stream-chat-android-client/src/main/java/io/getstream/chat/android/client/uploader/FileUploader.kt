@@ -142,7 +142,7 @@ public interface FileUploader {
         file: File,
         user: User?,
         progressCallback: ProgressCallback?,
-    ): Result<UploadedFile> = error("Not implemented! Have you forgotten to implement it in your custom FileUploader?")
+    ): Result<UploadedFile> = NotImplemented
 
     /**
      * Deletes a file not related to any channel.
@@ -157,7 +157,7 @@ public interface FileUploader {
     public fun deleteFile(
         url: String,
         userId: UserId?,
-    ): Result<Unit> = error("Not implemented! Have you forgotten to implement it in your custom FileUploader?")
+    ): Result<Unit> = NotImplemented
 
     /**
      * Uploads an image not related to any channel. Progress can be accessed via [progressCallback].
@@ -175,7 +175,7 @@ public interface FileUploader {
         file: File,
         user: User?,
         progressCallback: ProgressCallback?,
-    ): Result<UploadedFile> = error("Not implemented! Have you forgotten to implement it in your custom FileUploader?")
+    ): Result<UploadedFile> = NotImplemented
 
     /**
      * Deletes an image not related to any channel.
@@ -190,5 +190,8 @@ public interface FileUploader {
     public fun deleteImage(
         url: String,
         userId: UserId?,
-    ): Result<Unit> = error("Not implemented! Have you forgotten to implement it in your custom FileUploader?")
+    ): Result<Unit> = NotImplemented
 }
+
+private val NotImplemented: Nothing =
+    error("Not implemented! Have you forgotten to implement it in your custom FileUploader?")
