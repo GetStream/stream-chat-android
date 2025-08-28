@@ -124,6 +124,51 @@ internal class ChannelExtensionsTests {
     }
 
     @Test
+    fun `updateLastMessage with a silent message should add message to channel messages but not update reads`() {
+        // given
+        val currentUserId = "current-user"
+        val currentUserRead = ChannelUserRead(
+            user = randomUser(id = currentUserId),
+            lastRead = Date(1000),
+            lastReceivedEventDate = Date(1000),
+            unreadMessages = 0,
+            lastReadMessageId = null,
+        )
+        val otherUserRead = ChannelUserRead(
+            user = randomUser(id = "other-user"),
+            lastRead = Date(1000),
+            lastReceivedEventDate = Date(1000),
+            unreadMessages = 0,
+            lastReadMessageId = null,
+        )
+        val existingMessage = randomMessage(id = "existing", createdAt = Date(1000), deletedAt = null)
+        val newMessage = randomMessage(id = "new", createdAt = Date(2000), deletedAt = null, silent = true)
+        val receivedEventDate = Date(2500)
+
+        val channel = randomChannel(
+            messages = listOf(existingMessage),
+            read = listOf(currentUserRead, otherUserRead),
+        )
+
+        // when
+        val result = channel.updateLastMessage(receivedEventDate, newMessage, currentUserId)
+
+        // then
+        result.messages shouldContain existingMessage
+        result.messages shouldContain newMessage
+
+        // Check that current user read was updated
+        val updatedCurrentUserRead = result.read.find { it.user.id == currentUserId }
+        updatedCurrentUserRead?.lastReceivedEventDate shouldBeEqualTo receivedEventDate
+        updatedCurrentUserRead?.unreadMessages shouldBeEqualTo 0
+
+        // Check that other user's read was not changed
+        val updatedOtherUserRead = result.read.find { it.user.id == "other-user" }
+        updatedOtherUserRead?.lastReceivedEventDate shouldBeEqualTo Date(1000)
+        updatedOtherUserRead?.unreadMessages shouldBeEqualTo 0
+    }
+
+    @Test
     fun `removeMember should remove member from channel by user id`() {
         // given
         val memberToRemove = randomMember(user = randomUser(id = "user-to-remove"))

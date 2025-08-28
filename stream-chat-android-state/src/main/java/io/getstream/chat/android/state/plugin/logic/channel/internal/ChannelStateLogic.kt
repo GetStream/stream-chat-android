@@ -776,9 +776,10 @@ internal class ChannelStateLogic(
             ?.takeUnless { processedMessageIds.get(message.id) == true }
             ?.takeUnless {
                 message.user.id == clientState.user.value?.id ||
-                    message.parentId?.takeUnless { message.showInChannel } != null
+                    message.parentId?.takeIf { message.showInChannel } != null
             }
             ?.takeUnless { message.shadowed }
+            ?.takeUnless { message.silent }
             ?.let {
                 updateRead(
                     it.copy(
