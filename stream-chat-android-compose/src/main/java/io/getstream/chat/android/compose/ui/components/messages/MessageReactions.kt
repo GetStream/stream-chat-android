@@ -25,9 +25,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewReactionOptionData
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -46,19 +50,30 @@ public fun MessageReactions(
     itemContent: @Composable RowScope.(ReactionOptionItemState) -> Unit = { option ->
         MessageReactionItem(
             modifier = Modifier
+                .semantics {
+                    testTag = "Stream_MessageReaction_${option.type}"
+                    contentDescription = option.type
+                }
                 .size(20.dp)
                 .padding(2.dp)
-                .align(Alignment.CenterVertically)
-                .testTag("Stream_MessageReaction_${option.type}"),
+                .align(Alignment.CenterVertically),
             option = option,
         )
     },
 ) {
+    val description = pluralStringResource(
+        R.plurals.stream_ui_message_list_message_reactions,
+        options.size,
+        options.size,
+    )
     Row(
         modifier = modifier
+            .semantics {
+                testTag = "Stream_MessageReaction"
+                contentDescription = description
+            }
             .background(shape = RoundedCornerShape(16.dp), color = ChatTheme.colors.barsBackground)
-            .padding(4.dp)
-            .testTag("Stream_MessageReaction"),
+            .padding(4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         options.forEach { option ->
