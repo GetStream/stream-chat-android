@@ -65,6 +65,10 @@
     <string name="stream_ui_message_list_message_attachments">%d attachments</string>
     <string name="stream_ui_message_list_message_attachment_image">Image attachment</string>
     <string name="stream_ui_message_list_message_attachment_video">Video attachment</string>
+    <plurals name="stream_ui_message_list_message_reactions">
+        <item quantity="one">%d message reaction</item>
+        <item quantity="other">%d message reactions</item>
+    </plurals>
 
     <!--Moderation Dialog-->
     <string name="stream_ui_moderation_dialog_title">Failed to send message</string>
