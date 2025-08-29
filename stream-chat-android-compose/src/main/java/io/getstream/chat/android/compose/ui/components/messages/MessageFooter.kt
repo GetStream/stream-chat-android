@@ -29,6 +29,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
@@ -60,14 +62,11 @@ public fun MessageFooter(
     val alignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
 
     if (message.belongsToThread() && !messageItem.isInThread) {
-        val threadFooterText = when (message.replyCount) {
-            0 -> LocalContext.current.resources.getString(R.string.stream_compose_thread_reply)
-            else -> LocalContext.current.resources.getQuantityString(
-                R.plurals.stream_compose_message_list_thread_footnote,
-                message.replyCount,
-                message.replyCount,
-            )
-        }
+        val threadFooterText = LocalContext.current.resources.getQuantityString(
+            R.plurals.stream_compose_message_list_thread_footnote,
+            message.replyCount,
+            message.replyCount,
+        )
         MessageThreadFooter(
             participants = message.threadParticipants,
             messageAlignment = alignment,
@@ -88,9 +87,11 @@ public fun MessageFooter(
                 if (!messageItem.isMine) {
                     Text(
                         modifier = Modifier
+                            .clearAndSetSemantics {
+                                testTag = "Stream_MessageAuthorName"
+                            }
                             .padding(end = 8.dp)
-                            .weight(1f, fill = false)
-                            .testTag("Stream_MessageAuthorName"),
+                            .weight(1f, fill = false),
                         text = message.user.name,
                         style = ChatTheme.typography.footnote,
                         overflow = TextOverflow.Ellipsis,

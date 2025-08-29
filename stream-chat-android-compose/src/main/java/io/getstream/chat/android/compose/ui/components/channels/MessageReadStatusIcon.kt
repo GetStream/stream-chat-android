@@ -26,6 +26,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.extensions.getCreatedAtOrThrow
@@ -98,12 +101,20 @@ private fun IsReadCount(
     modifier: Modifier,
     readCount: Int,
 ) {
+    val showReadCount = readCount > 1 && ChatTheme.readCountEnabled
+    val description = if (showReadCount) {
+        stringResource(R.string.stream_ui_message_list_message_status_read_by, readCount)
+    } else {
+        stringResource(R.string.stream_ui_message_list_message_status_read)
+    }
     Row(
-        modifier = modifier.padding(horizontal = 2.dp),
+        modifier = modifier
+            .semantics { contentDescription = description }
+            .padding(horizontal = 2.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        if (readCount > 1 && ChatTheme.readCountEnabled) {
+        if (showReadCount) {
             Text(
                 text = readCount.toString(),
                 modifier = Modifier.testTag("Stream_MessageReadCount"),
@@ -125,7 +136,7 @@ private fun IsPendingIcon(modifier: Modifier) {
     Icon(
         modifier = modifier.testTag("Stream_MessageReadStatus_isPending"),
         painter = painterResource(id = R.drawable.stream_compose_ic_clock),
-        contentDescription = null,
+        contentDescription = stringResource(R.string.stream_ui_message_list_message_status_pending),
         tint = ChatTheme.colors.textLowEmphasis,
     )
 }
@@ -135,7 +146,7 @@ private fun IsSentIcon(modifier: Modifier) {
     Icon(
         modifier = modifier.testTag("Stream_MessageReadStatus_isSent"),
         painter = painterResource(id = R.drawable.stream_compose_message_sent),
-        contentDescription = null,
+        contentDescription = stringResource(R.string.stream_ui_message_list_message_status_sent),
         tint = ChatTheme.colors.textLowEmphasis,
     )
 }
