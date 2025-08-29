@@ -29,6 +29,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
@@ -85,9 +87,11 @@ public fun MessageFooter(
                 if (!messageItem.isMine) {
                     Text(
                         modifier = Modifier
+                            .clearAndSetSemantics {
+                                testTag = "Stream_MessageAuthorName"
+                            }
                             .padding(end = 8.dp)
-                            .weight(1f, fill = false)
-                            .testTag("Stream_MessageAuthorName"),
+                            .weight(1f, fill = false),
                         text = message.user.name,
                         style = ChatTheme.typography.footnote,
                         overflow = TextOverflow.Ellipsis,
