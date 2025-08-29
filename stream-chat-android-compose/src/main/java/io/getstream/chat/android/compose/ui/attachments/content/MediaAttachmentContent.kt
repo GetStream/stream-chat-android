@@ -53,6 +53,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import coil3.compose.AsyncImagePainter
@@ -199,22 +202,27 @@ public fun MediaAttachmentContent(
         MediaGalleryInjector.install(imageLoader)
     }
 
+    val attachments = message.attachments.filter {
+        !it.hasLink() && (it.isImage() || it.isVideo())
+    }
+    val attachmentCount = attachments.size
+
+    val description = if (attachmentCount > 1) {
+        stringResource(R.string.stream_ui_message_list_message_attachments, attachmentCount)
+    } else {
+        null
+    }
+
     Row(
         modifier
-            .clip(ChatTheme.shapes.attachment)
-            .combinedClickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() },
-                onClick = {},
-                onLongClick = { onLongItemClick(message) },
-            ),
+            .semantics {
+                if (description != null) {
+                    contentDescription = description
+                }
+            }
+            .clip(ChatTheme.shapes.attachment),
         horizontalArrangement = Arrangement.spacedBy(gridSpacing),
     ) {
-        val attachments = message.attachments.filter {
-            !it.hasLink() && (it.isImage() || it.isVideo())
-        }
-        val attachmentCount = attachments.size
-
         if (attachmentCount == 1) {
             val attachment = attachments.first()
 
@@ -477,13 +485,24 @@ internal fun MediaAttachmentContentItem(
     val downloadAttachmentUriGenerator = ChatTheme.streamDownloadAttachmentUriGenerator
     val downloadRequestInterceptor = ChatTheme.streamDownloadRequestInterceptor
 
-    val testTag = if (isVideo) "Video" else "Image"
+    val description = if (isImage) {
+        stringResource(R.string.stream_ui_message_list_message_attachment_image)
+    } else if (isVideo) {
+        stringResource(R.string.stream_ui_message_list_message_attachment_video)
+    } else {
+        null
+    }
 
     Box(
         modifier = modifier
+            .semantics {
+                testTag = "Stream_MediaContent_${if (isVideo) "Video" else "Image"}"
+                if (description != null) {
+                    contentDescription = description
+                }
+            }
             .background(Color.Black)
             .fillMaxWidth()
-            .testTag("Stream_MediaContent_$testTag")
             .combinedClickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = ripple(),
