@@ -69,6 +69,7 @@ tasks.withType<KotlinCompile>().configureEach {
             listOf(
                 "-progressive",
                 "-Xexplicit-api=strict",
+                "-Xjvm-default=all",
                 "-opt-in=kotlin.RequiresOptIn",
                 "-opt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi",
             ),

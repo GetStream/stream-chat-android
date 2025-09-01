@@ -16,6 +16,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Introduce `ChatClient.uploadFile`, `ChatClient.deleteFile`, `ChatClient.uploadImage`, and `ChatClient.deleteImage`, to upload/delete files/images that are not related to any channel. [#5909](https://github.com/GetStream/stream-chat-android/pull/5909)
 
 ### ⚠️ Changed
 
