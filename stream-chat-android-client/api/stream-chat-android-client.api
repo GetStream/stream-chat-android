@@ -1087,8 +1087,8 @@ public final class io/getstream/chat/android/client/events/ChannelDeletedEvent :
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/client/events/ChannelHiddenEvent : io/getstream/chat/android/client/events/CidEvent, io/getstream/chat/android/client/events/UserEvent {
-	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;Z)V
+public final class io/getstream/chat/android/client/events/ChannelHiddenEvent : io/getstream/chat/android/client/events/CidEvent, io/getstream/chat/android/client/events/HasChannel, io/getstream/chat/android/client/events/UserEvent {
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Channel;Z)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/util/Date;
 	public final fun component3 ()Ljava/lang/String;
@@ -1096,10 +1096,12 @@ public final class io/getstream/chat/android/client/events/ChannelHiddenEvent : 
 	public final fun component5 ()Ljava/lang/String;
 	public final fun component6 ()Ljava/lang/String;
 	public final fun component7 ()Lio/getstream/chat/android/models/User;
-	public final fun component8 ()Z
-	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;Z)Lio/getstream/chat/android/client/events/ChannelHiddenEvent;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/ChannelHiddenEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;ZILjava/lang/Object;)Lio/getstream/chat/android/client/events/ChannelHiddenEvent;
+	public final fun component8 ()Lio/getstream/chat/android/models/Channel;
+	public final fun component9 ()Z
+	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Channel;Z)Lio/getstream/chat/android/client/events/ChannelHiddenEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/ChannelHiddenEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Channel;ZILjava/lang/Object;)Lio/getstream/chat/android/client/events/ChannelHiddenEvent;
 	public fun equals (Ljava/lang/Object;)Z
+	public fun getChannel ()Lio/getstream/chat/android/models/Channel;
 	public fun getChannelId ()Ljava/lang/String;
 	public fun getChannelType ()Ljava/lang/String;
 	public fun getCid ()Ljava/lang/String;
@@ -1241,8 +1243,8 @@ public final class io/getstream/chat/android/client/events/ChannelUserUnbannedEv
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/client/events/ChannelVisibleEvent : io/getstream/chat/android/client/events/CidEvent, io/getstream/chat/android/client/events/UserEvent {
-	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;)V
+public final class io/getstream/chat/android/client/events/ChannelVisibleEvent : io/getstream/chat/android/client/events/CidEvent, io/getstream/chat/android/client/events/HasChannel, io/getstream/chat/android/client/events/UserEvent {
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Channel;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/util/Date;
 	public final fun component3 ()Ljava/lang/String;
@@ -1250,9 +1252,11 @@ public final class io/getstream/chat/android/client/events/ChannelVisibleEvent :
 	public final fun component5 ()Ljava/lang/String;
 	public final fun component6 ()Ljava/lang/String;
 	public final fun component7 ()Lio/getstream/chat/android/models/User;
-	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/client/events/ChannelVisibleEvent;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/ChannelVisibleEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/ChannelVisibleEvent;
+	public final fun component8 ()Lio/getstream/chat/android/models/Channel;
+	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/client/events/ChannelVisibleEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/ChannelVisibleEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Channel;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/ChannelVisibleEvent;
 	public fun equals (Ljava/lang/Object;)Z
+	public fun getChannel ()Lio/getstream/chat/android/models/Channel;
 	public fun getChannelId ()Ljava/lang/String;
 	public fun getChannelType ()Ljava/lang/String;
 	public fun getCid ()Ljava/lang/String;

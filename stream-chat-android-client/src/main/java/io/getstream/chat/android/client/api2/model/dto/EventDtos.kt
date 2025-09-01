@@ -42,6 +42,7 @@ internal data class ChannelHiddenEventDto(
     val channel_type: String,
     val channel_id: String,
     val user: DownstreamUserDto,
+    val channel: DownstreamChannelDto,
     val clear_history: Boolean,
 ) : ChatEventDto()
 
@@ -88,6 +89,7 @@ internal data class ChannelVisibleEventDto(
     val channel_type: String,
     val channel_id: String,
     val user: DownstreamUserDto,
+    val channel: DownstreamChannelDto,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)

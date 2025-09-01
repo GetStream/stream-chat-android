@@ -243,6 +243,7 @@ internal object EventMappingTestArguments {
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
         user = USER,
+        channel = CHANNEL,
         clear_history = CLEAR_HISTORY,
     )
 
@@ -304,6 +305,7 @@ internal object EventMappingTestArguments {
         cid = CID,
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
+        channel = CHANNEL,
         user = USER,
     )
 
@@ -813,6 +815,7 @@ internal object EventMappingTestArguments {
         cid = channelHiddenDto.cid,
         channelType = channelHiddenDto.channel_type,
         channelId = channelHiddenDto.channel_id,
+        channel = with(domainMapping) { channelHiddenDto.channel.toDomain() },
         clearHistory = channelHiddenDto.clear_history,
     )
 
@@ -886,6 +889,7 @@ internal object EventMappingTestArguments {
         user = with(domainMapping) { channelVisibleDto.user.toDomain() },
         cid = channelVisibleDto.cid,
         channelType = channelVisibleDto.channel_type,
+        channel = with(domainMapping) { channelVisibleDto.channel.toDomain() },
         channelId = channelVisibleDto.channel_id,
     )
 

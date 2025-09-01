@@ -97,7 +97,7 @@ internal class ChannelExtensionsTests {
             lastReadMessageId = null,
         )
         val existingMessage = randomMessage(id = "existing", createdAt = Date(1000), deletedAt = null)
-        val newMessage = randomMessage(id = "new", createdAt = Date(2000), deletedAt = null)
+        val newMessage = randomMessage(id = "new", createdAt = Date(2000), deletedAt = null, silent = false)
         val receivedEventDate = Date(2500)
 
         val channel = randomChannel(
