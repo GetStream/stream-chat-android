@@ -103,6 +103,8 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
         return when (event) {
             is ChannelDeletedEvent -> EventHandlingResult.Remove(event.cid)
             is NotificationChannelDeletedEvent -> EventHandlingResult.Remove(event.cid)
+            is ChannelHiddenEvent -> EventHandlingResult.Remove(event.cid)
+            is ChannelVisibleEvent -> EventHandlingResult.WatchAndAdd(event.cid)
             else -> EventHandlingResult.Skip
         }
     }
@@ -120,13 +122,7 @@ public abstract class BaseChatEventHandler : ChatEventHandler {
         event: CidEvent,
         filter: FilterObject,
         cachedChannel: Channel?,
-    ): EventHandlingResult {
-        return when (event) {
-            is ChannelHiddenEvent -> EventHandlingResult.Remove(event.cid)
-            is ChannelVisibleEvent -> EventHandlingResult.WatchAndAdd(event.cid)
-            else -> EventHandlingResult.Skip
-        }
-    }
+    ): EventHandlingResult = EventHandlingResult.Skip
 
     /**
      * Computes the event handling result.

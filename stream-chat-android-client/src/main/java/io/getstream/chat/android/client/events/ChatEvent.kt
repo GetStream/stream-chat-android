@@ -148,8 +148,9 @@ public data class ChannelHiddenEvent(
     override val channelType: String,
     override val channelId: String,
     override val user: User,
+    override val channel: Channel,
     val clearHistory: Boolean,
-) : CidEvent(), UserEvent
+) : CidEvent(), UserEvent, HasChannel
 
 /**
  * Triggered when a channels' history is truncated. Could contain system [message].
@@ -206,7 +207,8 @@ public data class ChannelVisibleEvent(
     override val channelType: String,
     override val channelId: String,
     override val user: User,
-) : CidEvent(), UserEvent
+    override val channel: Channel,
+) : CidEvent(), UserEvent, HasChannel
 
 /**
  * Triggered every 30 second to confirm that the client connection is still alive

@@ -259,6 +259,7 @@ internal class EventMapping(
             channelType = channel_type,
             channelId = channel_id,
             user = user.toDomain(),
+            channel = channel.toDomain(),
             clearHistory = clear_history,
         )
     }
@@ -325,6 +326,7 @@ internal class EventMapping(
             channelType = channel_type,
             channelId = channel_id,
             user = user.toDomain(),
+            channel = channel.toDomain(),
         )
     }
 

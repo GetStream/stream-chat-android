@@ -248,6 +248,7 @@ internal object EventArguments {
         channelType = channelType,
         channelId = channelId,
         user = user,
+        channel = channel,
         clearHistory = true,
     )
 
@@ -301,6 +302,7 @@ internal object EventArguments {
         cid = cid,
         channelType = channelType,
         channelId = channelId,
+        channel = channel,
         user = user,
     )
     private val memberAddedEvent = MemberAddedEvent(

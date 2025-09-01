@@ -116,7 +116,7 @@ public fun randomChannelVisibleEvent(
     channelType: String = randomString(),
     channelId: String = randomString(),
     user: User = randomUser(),
-
+    channel: Channel = randomChannel(),
 ): ChannelVisibleEvent = ChannelVisibleEvent(
     type = EventType.CHANNEL_VISIBLE,
     createdAt = createdAt,
@@ -125,6 +125,7 @@ public fun randomChannelVisibleEvent(
     channelType = channelType,
     channelId = channelId,
     user = user,
+    channel = channel,
 )
 
 public fun randomUserStartWatchingEvent(
@@ -152,6 +153,7 @@ public fun randomChannelHiddenEvent(
     channelId: String = randomString(),
     user: User = randomUser(),
     clearHistory: Boolean = randomBoolean(),
+    channel: Channel = randomChannel(),
 ): ChannelHiddenEvent = ChannelHiddenEvent(
     type = EventType.CHANNEL_HIDDEN,
     createdAt = createdAt,
@@ -160,6 +162,7 @@ public fun randomChannelHiddenEvent(
     channelType = channelType,
     channelId = channelId,
     user = user,
+    channel = channel,
     clearHistory = clearHistory,
 )
 
