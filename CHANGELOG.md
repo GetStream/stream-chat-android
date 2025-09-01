@@ -17,6 +17,8 @@
 - New Silent messages are not increasing the unread count. [#5910](https://github.com/GetStream/stream-chat-android/pull/5910)
 
 ### ✅ Added
+- Add `channel` entity to `ChannelHiddenEvent`. [#5912](https://github.com/GetStream/stream-chat-android/pull/5912)
+- Add `channel` entity to `ChannelVisibleEvent`. [#5912](https://github.com/GetStream/stream-chat-android/pull/5912)
 
 ### ⚠️ Changed
 
