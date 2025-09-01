@@ -1,18 +1,5 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# September 01th, 2025 - 6.22.1
 ## stream-chat-android-client
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - New Silent messages are not increasing the unread count. [#5910](https://github.com/GetStream/stream-chat-android/pull/5910)
 
@@ -20,76 +7,9 @@
 - Add `channel` entity to `ChannelHiddenEvent`. [#5912](https://github.com/GetStream/stream-chat-android/pull/5912)
 - Add `channel` entity to `ChannelVisibleEvent`. [#5912](https://github.com/GetStream/stream-chat-android/pull/5912)
 
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-state
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - New Silent messages are not increasing the unread count. [#5910](https://github.com/GetStream/stream-chat-android/pull/5910)
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-ui-components
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-compose
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # August 27th, 2025 - 6.22.0
 ## stream-chat-android-client
