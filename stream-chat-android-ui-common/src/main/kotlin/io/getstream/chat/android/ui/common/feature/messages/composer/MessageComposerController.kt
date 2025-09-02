@@ -717,7 +717,10 @@ public class MessageComposerController(
             chatClient.sendMessage(
                 channelType,
                 channelId,
-                message.copy(showInChannel = isInThread && alsoSendToChannel.value),
+                message.copy(
+                    showInChannel = isInThread && alsoSendToChannel.value,
+                    skipEnrichUrl = linkPreviews.value.isEmpty(),
+                ),
             ).doOnResult(scope) { result ->
                 result.onSuccessSuspend { resultMessage ->
                     chatClient.markMessageRead(
@@ -1092,5 +1095,11 @@ public class MessageComposerController(
     private fun MessageMode.emptyDraftMessage(): DraftMessage = when (this) {
         is MessageMode.MessageThread -> DraftMessage(cid = channelCid, parentId = parentMessage.id)
         else -> DraftMessage(cid = channelCid)
+    }
+
+    /**
+     */
+    public fun cancelLinkPreview() {
+        linkPreviews.value = emptyList()
     }
 }

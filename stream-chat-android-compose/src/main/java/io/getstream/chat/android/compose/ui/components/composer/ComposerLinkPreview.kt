@@ -82,6 +82,7 @@ public fun ComposerLinkPreview(
     modifier: Modifier = Modifier,
     linkPreview: LinkPreview,
     onClick: ((linkPreview: LinkPreview) -> Unit)? = null,
+    onCancel: () -> Unit = {},
 ) {
     var previewClosed by rememberSaveable { mutableStateOf(false) }
 
@@ -127,7 +128,10 @@ public fun ComposerLinkPreview(
             Spacer(modifier = Modifier.height(theme.titleToSubtitle))
             ComposerLinkDescription(attachment.text)
         }
-        ComposerLinkCancelIcon { previewClosed = true }
+        ComposerLinkCancelIcon {
+            onCancel()
+            previewClosed = true
+        }
     }
 }
 
