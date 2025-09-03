@@ -46,6 +46,8 @@ import io.getstream.chat.android.ui.common.helper.DefaultImageHeadersProvider
 import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.ui.common.images.internal.StreamCoil.streamImageLoader
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 internal object CoilStreamImageLoader : StreamImageLoader {
@@ -146,10 +148,12 @@ internal object CoilStreamImageLoader : StreamImageLoader {
         transformation: StreamImageLoader.ImageTransformation,
         onStart: () -> Unit,
         onComplete: () -> Unit,
-    ) {
+    ): Unit = coroutineScope {
         val context = target.context
 
-        val drawable = withContext(DispatcherProvider.IO) {
+        val calledContext = coroutineContext
+
+        withContext(DispatcherProvider.IO) {
             val asset = data.transformedAsset()
             val headers = asset?.toString()?.let { url ->
                 imageHeadersProvider.getImageRequestHeaders(url).toNetworkHeaders()
@@ -162,27 +166,28 @@ internal object CoilStreamImageLoader : StreamImageLoader {
                     .error(placeholderDrawable)
                     .data(asset)
                     .listener(
-                        onStart = { onStart() },
-                        onCancel = { onComplete() },
-                        onError = { _, _ -> onComplete() },
-                        onSuccess = { _, _ -> onComplete() },
+                        onStart = { launch(calledContext) { onStart() } },
+                        onCancel = { launch(calledContext) { onComplete() } },
+                        onError = { _, _ -> launch(calledContext) { onComplete() } },
+                        onSuccess = { _, _ -> launch(calledContext) { onComplete() } },
                     )
                     .applyTransformation(transformation)
                     .build(),
             )
 
             result.image?.asDrawable(context.resources)
-        } ?: return
-
-        if (drawable is ScaleDrawable &&
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && drawable.child is AnimatedImageDrawable
-        ) {
-            (drawable.child as AnimatedImageDrawable).start()
-        } else if (drawable is MovieDrawable) {
-            drawable.start()
+        }?.let { drawable ->
+            launch(calledContext) {
+                if (drawable is ScaleDrawable &&
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && drawable.child is AnimatedImageDrawable
+                ) {
+                    (drawable.child as AnimatedImageDrawable).start()
+                } else if (drawable is MovieDrawable) {
+                    drawable.start()
+                }
+                target.setImageDrawable(drawable)
+            }
         }
-
-        target.setImageDrawable(drawable)
     }
 
     override fun loadVideoThumbnail(
