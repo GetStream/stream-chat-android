@@ -511,8 +511,10 @@ internal fun DefaultComposerIntegrations(
     val isAttachmentsButtonEnabled = !hasCommandInput && !hasCommandSuggestions && !hasMentionSuggestions
     val isCommandsButtonEnabled = !hasTextInput && !hasAttachments
 
-    val canSendMessage = ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
-    val canSendAttachments = ownCapabilities.contains(ChannelCapabilities.UPLOAD_FILE)
+    val canSendMessage = messageInputState.sendEnabled &&
+        ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
+    val canSendAttachments = messageInputState.sendEnabled &&
+        ownCapabilities.contains(ChannelCapabilities.UPLOAD_FILE)
 
     val isRecording = messageInputState.recording !is RecordingState.Idle
 
@@ -550,17 +552,17 @@ internal fun DefaultComposerIntegrations(
 /**
  * Default input field label that the user can override in [MessageComposer].
  *
- * @param ownCapabilities Set of capabilities the user is given for the current channel.
- * For a full list @see [ChannelCapabilities].
+ * @param state The state of the message input.
  */
 @Composable
-internal fun DefaultComposerLabel(ownCapabilities: Set<String>) {
-    val text =
-        if (ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)) {
+internal fun DefaultComposerLabel(state: MessageComposerState) {
+    val text = with(state) {
+        if (sendEnabled && ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)) {
             stringResource(id = R.string.stream_compose_message_label)
         } else {
             stringResource(id = R.string.stream_compose_cannot_send_messages_label)
         }
+    }
 
     Text(
         text = text,
@@ -626,7 +628,8 @@ internal fun DefaultMessageComposerTrailingContent(
     val isRecordingEnabled = isRecordAudioPermissionDeclared && ChatTheme.messageComposerTheme.audioRecording.enabled
     val showRecordOverSend = ChatTheme.messageComposerTheme.audioRecording.showRecordButtonOverSend
 
-    val isSendButtonEnabled = ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
+    val isSendButtonEnabled = messageComposerState.sendEnabled &&
+        ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
     val isInputValid by lazy { (value.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty() }
 
     if (coolDownTime > 0 && !isInEditMode) {

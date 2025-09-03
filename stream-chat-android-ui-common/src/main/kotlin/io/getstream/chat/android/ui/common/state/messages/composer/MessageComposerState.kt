@@ -43,6 +43,8 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
  * @param currentUser The currently logged in user.
  * @param recording The current recording state.
  * @param pollsEnabled Indicator if polls are enabled for the current channel.
+ * @param sendEnabled Whether the send action is enabled or not. If true, the send button is enabled and input file is
+ * editable unless the user doesn't have proper [ChannelCapabilities] to send messages, otherwise it's disabled.
  */
 public data class MessageComposerState @JvmOverloads constructor(
     val inputValue: String = "",
@@ -60,4 +62,5 @@ public data class MessageComposerState @JvmOverloads constructor(
     val currentUser: User? = null,
     val recording: RecordingState = RecordingState.Idle,
     val pollsEnabled: Boolean = false,
+    val sendEnabled: Boolean = true,
 )
