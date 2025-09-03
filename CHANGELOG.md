@@ -69,6 +69,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Add MessageComposerState.sendEnabled property to be able to locally enable/disable sned action. [#5916](https://github.com/GetStream/stream-chat-android/pull/5916)
 
 ### ✅ Added
 
