@@ -88,6 +88,7 @@
 
 ### ⬆️ Improved
 - Improved accessibility of the message list items. [#5911](https://github.com/GetStream/stream-chat-android/pull/5911)
+- Add MessageComposerState.sendEnabled property to be able to locally enable/disable sned action. [#5916](https://github.com/GetStream/stream-chat-android/pull/5916)
 
 ### ✅ Added
 - Added `MessageReactionList` and `MessageReactionItem` component factories. [#5925](https://github.com/GetStream/stream-chat-android/pull/5925)
