@@ -68,7 +68,8 @@ public fun MessageInput(
     innerTrailingContent: @Composable RowScope.() -> Unit = {},
 ) {
     val (value, attachments, activeAction) = messageComposerState
-    val canSendMessage = messageComposerState.ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
+    val canSendMessage = messageComposerState.sendEnabled &&
+        messageComposerState.ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
 
     InputField(
         modifier = modifier,
