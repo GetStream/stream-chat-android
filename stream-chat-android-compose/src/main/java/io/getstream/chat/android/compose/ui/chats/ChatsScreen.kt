@@ -81,7 +81,6 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadListViewModel
 import io.getstream.chat.android.compose.viewmodel.threads.ThreadsViewModelFactory
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
@@ -121,7 +120,6 @@ import kotlin.math.abs
  * @param infoContent The content to display in the optional info pane given the provided arguments.
  */
 @OptIn(ExperimentalMaterial3Api::class)
-@ExperimentalStreamChatApi
 @Suppress("LongMethod")
 @Composable
 public fun ChatsScreen(

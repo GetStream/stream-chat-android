@@ -31,11 +31,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.extensions.duration
+import io.getstream.chat.android.client.extensions.durationInMs
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.ui.common.utils.DurationFormatter
 
 /**
  * Builds an audio record attachment quoted message which shows a single audio in the attachments list.
@@ -47,7 +46,7 @@ public fun AudioRecordAttachmentQuotedContent(
     attachment: Attachment,
     modifier: Modifier = Modifier,
 ) {
-    val durationInSeconds = attachment.duration ?: 0f
+    val durationInMs = attachment.durationInMs ?: 0
 
     Row(
         modifier = modifier
@@ -77,7 +76,7 @@ public fun AudioRecordAttachmentQuotedContent(
             )
             Spacer(modifier = Modifier.size(ChatTheme.dimens.quotedMessageAttachmentSpacerVertical))
             Text(
-                text = DurationFormatter.formatDurationInSeconds(durationInSeconds),
+                text = ChatTheme.durationFormatter.format(durationInMs),
                 color = ChatTheme.colors.textLowEmphasis,
                 style = ChatTheme.typography.footnote,
             )

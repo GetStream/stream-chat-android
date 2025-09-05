@@ -15,6 +15,10 @@
     limitations under the License.
 -->
 <resources>
+
+    <!-- Common -->
+    <string name="stream_ui_back_button">Back</string>
+
     <!--Message Date-->
     <string name="stream_ui_yesterday">Yesterday</string>
 
@@ -99,6 +103,8 @@
     <string name="stream_ui_channel_info_option_leave_conversation">Leave Conversation</string>
     <string name="stream_ui_channel_info_option_leave_group">Leave Group</string>
     <string name="stream_ui_channel_info_option_pinned_messages">Pinned Messages</string>
+    <string name="stream_ui_channel_info_option_media_attachments">Photos &amp; Videos</string>
+    <string name="stream_ui_channel_info_option_files_attachments">Files</string>
     <string name="stream_ui_channel_info_option_delete_conversation">Delete Conversation</string>
     <string name="stream_ui_channel_info_option_delete_group">Delete Group</string>
 
@@ -128,5 +134,35 @@
     <string name="stream_ui_channel_info_ban_member_modal_no_timeout">Permanently</string>
 
     <string name="stream_ui_channel_info_remove_member_modal_message">Are you sure you want to remove\n%s ?</string>
+
+    <!-- Channel List -->
+
+    <string name="stream_ui_location_static_message_text">📍Location</string>
+    <string name="stream_ui_location_live_message_text">📍Live location</string>
+
+    <!-- Polls -->
+
+    <string name="stream_ui_poll_multiple_answers_error">Type a number from %s to %s</string>
+    <string name="stream_ui_poll_description_closed">Vote ended</string>
+    <string name="stream_ui_poll_description_single_answer">Select one</string>
+    <string name="stream_ui_poll_description_multiple_answers">Select up to %d</string>
+    <string name="stream_ui_poll_action_see_all">See All %d Options</string>
+    <plurals name="stream_ui_poll_action_view_comments">
+        <item quantity="one">View %d Comment</item>
+        <item quantity="other">View %d Comments</item>
+    </plurals>
+
+    <!-- Channel Attachments -->
+
+    <string name="stream_ui_channel_attachments_media_title">Photos &amp; Videos</string>
+    <string name="stream_ui_channel_attachments_media_empty_title">No media</string>
+    <string name="stream_ui_channel_attachments_media_empty_text">Media sent in this chat will appear here.</string>
+    <string name="stream_ui_channel_attachments_media_load_error">Failed to load media attachments!</string>
+    <string name="stream_ui_channel_attachments_media_preview_index">%d of %d</string>
+
+    <string name="stream_ui_channel_attachments_files_title">Files</string>
+    <string name="stream_ui_channel_attachments_files_empty_title">No files</string>
+    <string name="stream_ui_channel_attachments_files_empty_text">Files sent in this chat will appear here.</string>
+    <string name="stream_ui_channel_attachments_files_load_error">Failed to load files attachments!</string>
 
 </resources>

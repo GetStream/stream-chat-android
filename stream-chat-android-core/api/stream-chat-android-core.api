@@ -43,6 +43,7 @@ public final class io/getstream/chat/android/client/PayloadValidator {
 	public static final field INSTANCE Lio/getstream/chat/android/client/PayloadValidator;
 	public final fun isFromStreamServer (Ljava/util/Map;)Z
 	public final fun isValidNewMessage (Ljava/util/Map;)Z
+	public final fun isValidPayload (Ljava/util/Map;)Z
 }
 
 public final class io/getstream/chat/android/client/errors/ChatErrorCode : java/lang/Enum {
@@ -51,6 +52,7 @@ public final class io/getstream/chat/android/client/errors/ChatErrorCode : java/
 	public static final field CANT_PARSE_CONNECTION_EVENT Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public static final field CANT_PARSE_EVENT Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public static final field Companion Lio/getstream/chat/android/client/errors/ChatErrorCode$Companion;
+	public static final field DUPLICATE_USERNAME_ERROR Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public static final field INVALID_TOKEN Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public static final field NETWORK_FAILED Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public static final field NO_ERROR_BODY Lio/getstream/chat/android/client/errors/ChatErrorCode;
@@ -350,8 +352,8 @@ public final class io/getstream/chat/android/models/BannedUsersSort : io/getstre
 
 public final class io/getstream/chat/android/models/Channel : io/getstream/chat/android/models/CustomObject, io/getstream/chat/android/models/querysort/ComparableFieldProvider {
 	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/models/SyncStatus;ILjava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/models/Config;Lio/getstream/chat/android/models/User;ILjava/lang/String;Ljava/lang/Boolean;Ljava/util/Date;ILjava/util/List;Ljava/util/List;Ljava/util/Set;Lio/getstream/chat/android/models/Member;Ljava/util/List;ZLio/getstream/chat/android/models/DraftMessage;Ljava/util/Map;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/models/SyncStatus;ILjava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/models/Config;Lio/getstream/chat/android/models/User;ILjava/lang/String;Ljava/lang/Boolean;Ljava/util/Date;ILjava/util/List;Ljava/util/List;Ljava/util/Set;Lio/getstream/chat/android/models/Member;Ljava/util/List;ZLio/getstream/chat/android/models/DraftMessage;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/models/SyncStatus;ILjava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/models/Config;Lio/getstream/chat/android/models/User;ILjava/lang/String;Ljava/lang/Boolean;Ljava/util/Date;ILjava/util/List;Ljava/util/Set;Lio/getstream/chat/android/models/Member;Ljava/util/List;ZLio/getstream/chat/android/models/DraftMessage;Ljava/util/List;Ljava/util/Map;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/models/SyncStatus;ILjava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/models/Config;Lio/getstream/chat/android/models/User;ILjava/lang/String;Ljava/lang/Boolean;Ljava/util/Date;ILjava/util/List;Ljava/util/Set;Lio/getstream/chat/android/models/Member;Ljava/util/List;ZLio/getstream/chat/android/models/DraftMessage;Ljava/util/List;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component10 ()Lio/getstream/chat/android/models/SyncStatus;
 	public final fun component11 ()I
@@ -368,12 +370,12 @@ public final class io/getstream/chat/android/models/Channel : io/getstream/chat/
 	public final fun component21 ()Ljava/util/Date;
 	public final fun component22 ()I
 	public final fun component23 ()Ljava/util/List;
-	public final fun component24 ()Ljava/util/List;
-	public final fun component25 ()Ljava/util/Set;
-	public final fun component26 ()Lio/getstream/chat/android/models/Member;
-	public final fun component27 ()Ljava/util/List;
-	public final fun component28 ()Z
-	public final fun component29 ()Lio/getstream/chat/android/models/DraftMessage;
+	public final fun component24 ()Ljava/util/Set;
+	public final fun component25 ()Lio/getstream/chat/android/models/Member;
+	public final fun component26 ()Ljava/util/List;
+	public final fun component27 ()Z
+	public final fun component28 ()Lio/getstream/chat/android/models/DraftMessage;
+	public final fun component29 ()Ljava/util/List;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component30 ()Ljava/util/Map;
 	public final fun component4 ()Ljava/lang/String;
@@ -382,9 +384,10 @@ public final class io/getstream/chat/android/models/Channel : io/getstream/chat/
 	public final fun component7 ()Ljava/util/Date;
 	public final fun component8 ()Ljava/util/Date;
 	public final fun component9 ()Ljava/util/Date;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/models/SyncStatus;ILjava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/models/Config;Lio/getstream/chat/android/models/User;ILjava/lang/String;Ljava/lang/Boolean;Ljava/util/Date;ILjava/util/List;Ljava/util/List;Ljava/util/Set;Lio/getstream/chat/android/models/Member;Ljava/util/List;ZLio/getstream/chat/android/models/DraftMessage;Ljava/util/Map;)Lio/getstream/chat/android/models/Channel;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/Channel;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/models/SyncStatus;ILjava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/models/Config;Lio/getstream/chat/android/models/User;ILjava/lang/String;Ljava/lang/Boolean;Ljava/util/Date;ILjava/util/List;Ljava/util/List;Ljava/util/Set;Lio/getstream/chat/android/models/Member;Ljava/util/List;ZLio/getstream/chat/android/models/DraftMessage;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/models/Channel;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/models/SyncStatus;ILjava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/models/Config;Lio/getstream/chat/android/models/User;ILjava/lang/String;Ljava/lang/Boolean;Ljava/util/Date;ILjava/util/List;Ljava/util/Set;Lio/getstream/chat/android/models/Member;Ljava/util/List;ZLio/getstream/chat/android/models/DraftMessage;Ljava/util/List;Ljava/util/Map;)Lio/getstream/chat/android/models/Channel;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/Channel;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;IZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/models/SyncStatus;ILjava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/models/Config;Lio/getstream/chat/android/models/User;ILjava/lang/String;Ljava/lang/Boolean;Ljava/util/Date;ILjava/util/List;Ljava/util/Set;Lio/getstream/chat/android/models/Member;Ljava/util/List;ZLio/getstream/chat/android/models/DraftMessage;Ljava/util/List;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/models/Channel;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getActiveLiveLocations ()Ljava/util/List;
 	public final fun getCachedLatestMessages ()Ljava/util/List;
 	public final fun getCid ()Ljava/lang/String;
 	public fun getComparableField (Ljava/lang/String;)Ljava/lang/Comparable;
@@ -410,7 +413,6 @@ public final class io/getstream/chat/android/models/Channel : io/getstream/chat/
 	public final fun getMessages ()Ljava/util/List;
 	public final fun getName ()Ljava/lang/String;
 	public final fun getOwnCapabilities ()Ljava/util/Set;
-	public final fun getPendingMessages ()Ljava/util/List;
 	public final fun getPinnedMessages ()Ljava/util/List;
 	public final fun getRead ()Ljava/util/List;
 	public final fun getSyncStatus ()Lio/getstream/chat/android/models/SyncStatus;
@@ -430,6 +432,7 @@ public final class io/getstream/chat/android/models/Channel$Builder {
 	public fun <init> ()V
 	public fun <init> (Lio/getstream/chat/android/models/Channel;)V
 	public final fun build ()Lio/getstream/chat/android/models/Channel;
+	public final fun withActiveLiveLocations (Ljava/util/List;)Lio/getstream/chat/android/models/Channel$Builder;
 	public final fun withCachedLatestMessages (Ljava/util/List;)Lio/getstream/chat/android/models/Channel$Builder;
 	public final fun withChannelLastMessageAt (Ljava/util/Date;)Lio/getstream/chat/android/models/Channel$Builder;
 	public final fun withConfig (Lio/getstream/chat/android/models/Config;)Lio/getstream/chat/android/models/Channel$Builder;
@@ -648,8 +651,8 @@ public final class io/getstream/chat/android/models/Command {
 
 public final class io/getstream/chat/android/models/Config {
 	public fun <init> ()V
-	public fun <init> (Ljava/util/Date;Ljava/util/Date;Ljava/lang/String;ZZZZZZZZZZZZZLjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Z)V
-	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Date;Ljava/lang/String;ZZZZZZZZZZZZZLjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/util/Date;Ljava/util/Date;Ljava/lang/String;ZZZZZZZZZZZZZLjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ZZ)V
+	public synthetic fun <init> (Ljava/util/Date;Ljava/util/Date;Ljava/lang/String;ZZZZZZZZZZZZZLjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/util/Date;
 	public final fun component10 ()Z
 	public final fun component11 ()Z
@@ -666,6 +669,7 @@ public final class io/getstream/chat/android/models/Config {
 	public final fun component21 ()Ljava/lang/String;
 	public final fun component22 ()Ljava/util/List;
 	public final fun component23 ()Z
+	public final fun component24 ()Z
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Z
 	public final fun component5 ()Z
@@ -673,8 +677,8 @@ public final class io/getstream/chat/android/models/Config {
 	public final fun component7 ()Z
 	public final fun component8 ()Z
 	public final fun component9 ()Z
-	public final fun copy (Ljava/util/Date;Ljava/util/Date;Ljava/lang/String;ZZZZZZZZZZZZZLjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Z)Lio/getstream/chat/android/models/Config;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/Config;Ljava/util/Date;Ljava/util/Date;Ljava/lang/String;ZZZZZZZZZZZZZLjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ZILjava/lang/Object;)Lio/getstream/chat/android/models/Config;
+	public final fun copy (Ljava/util/Date;Ljava/util/Date;Ljava/lang/String;ZZZZZZZZZZZZZLjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ZZ)Lio/getstream/chat/android/models/Config;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/Config;Ljava/util/Date;Ljava/util/Date;Ljava/lang/String;ZZZZZZZZZZZZZLjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;ZZILjava/lang/Object;)Lio/getstream/chat/android/models/Config;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAutomod ()Ljava/lang/String;
 	public final fun getAutomodBehavior ()Ljava/lang/String;
@@ -683,8 +687,8 @@ public final class io/getstream/chat/android/models/Config {
 	public final fun getConnectEventsEnabled ()Z
 	public final fun getCreatedAt ()Ljava/util/Date;
 	public final fun getCustomEventsEnabled ()Z
-	public final fun getMarkMessagesPending ()Z
 	public final fun getMaxMessageLength ()I
+	public final fun getMessageRemindersEnabled ()Z
 	public final fun getMessageRetention ()Ljava/lang/String;
 	public final fun getMuteEnabled ()Z
 	public final fun getName ()Ljava/lang/String;
@@ -692,6 +696,7 @@ public final class io/getstream/chat/android/models/Config {
 	public final fun getPushNotificationsEnabled ()Z
 	public final fun getReadEventsEnabled ()Z
 	public final fun getSearchEnabled ()Z
+	public final fun getSharedLocationsEnabled ()Z
 	public final fun getSkipLastMsgUpdateForSystemMsgs ()Z
 	public final fun getTypingEventsEnabled ()Z
 	public final fun getUpdatedAt ()Ljava/util/Date;
@@ -889,6 +894,7 @@ public final class io/getstream/chat/android/models/EventType {
 	public static final field NOTIFICATION_MARK_UNREAD Ljava/lang/String;
 	public static final field NOTIFICATION_MESSAGE_NEW Ljava/lang/String;
 	public static final field NOTIFICATION_MUTES_UPDATED Ljava/lang/String;
+	public static final field NOTIFICATION_REMINDER_DUE Ljava/lang/String;
 	public static final field NOTIFICATION_REMOVED_FROM_CHANNEL Ljava/lang/String;
 	public static final field NOTIFICATION_THREAD_MESSAGE_NEW Ljava/lang/String;
 	public static final field POLL_CLOSED Ljava/lang/String;
@@ -900,6 +906,9 @@ public final class io/getstream/chat/android/models/EventType {
 	public static final field REACTION_DELETED Ljava/lang/String;
 	public static final field REACTION_NEW Ljava/lang/String;
 	public static final field REACTION_UPDATED Ljava/lang/String;
+	public static final field REMINDER_CREATED Ljava/lang/String;
+	public static final field REMINDER_DELETED Ljava/lang/String;
+	public static final field REMINDER_UPDATED Ljava/lang/String;
 	public static final field TYPING_START Ljava/lang/String;
 	public static final field TYPING_STOP Ljava/lang/String;
 	public static final field UNKNOWN Ljava/lang/String;
@@ -1099,6 +1108,31 @@ public final class io/getstream/chat/android/models/LinkPreview$Companion {
 	public final fun getEMPTY ()Lio/getstream/chat/android/models/LinkPreview;
 }
 
+public final class io/getstream/chat/android/models/Location {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;DDLjava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;DDLjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/util/Date;
+	public final fun component5 ()D
+	public final fun component6 ()D
+	public final fun component7 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;DDLjava/lang/String;)Lio/getstream/chat/android/models/Location;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/Location;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;DDLjava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/models/Location;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCid ()Ljava/lang/String;
+	public final fun getDeviceId ()Ljava/lang/String;
+	public final fun getEndAt ()Ljava/util/Date;
+	public final fun getLatitude ()D
+	public final fun getLongitude ()D
+	public final fun getMessageId ()Ljava/lang/String;
+	public final fun getUserId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/models/Member : io/getstream/chat/android/models/CustomObject, io/getstream/chat/android/models/UserEntity, io/getstream/chat/android/models/querysort/ComparableFieldProvider {
 	public fun <init> (Lio/getstream/chat/android/models/User;Ljava/util/Date;Ljava/util/Date;Ljava/lang/Boolean;Ljava/util/Date;Ljava/util/Date;ZZLjava/lang/String;Ljava/lang/Boolean;Ljava/lang/String;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Map;)V
 	public synthetic fun <init> (Lio/getstream/chat/android/models/User;Ljava/util/Date;Ljava/util/Date;Ljava/lang/Boolean;Ljava/util/Date;Ljava/util/Date;ZZLjava/lang/String;Ljava/lang/Boolean;Ljava/lang/String;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -1163,8 +1197,8 @@ public final class io/getstream/chat/android/models/Message : io/getstream/chat/
 	public static final field TYPE_ERROR Ljava/lang/String;
 	public static final field TYPE_REGULAR Ljava/lang/String;
 	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;IILjava/util/Map;Ljava/util/Map;Ljava/util/Map;Lio/getstream/chat/android/models/SyncStatus;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/models/User;Ljava/util/Map;ZZLjava/util/Map;ZLio/getstream/chat/android/models/ChannelInfo;Lio/getstream/chat/android/models/Message;Ljava/lang/String;ZLjava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/models/User;Ljava/util/List;ZZLio/getstream/chat/android/models/MessageModerationDetails;Lio/getstream/chat/android/models/Moderation;Ljava/util/Date;Lio/getstream/chat/android/models/Poll;Ljava/util/List;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;IILjava/util/Map;Ljava/util/Map;Ljava/util/Map;Lio/getstream/chat/android/models/SyncStatus;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/models/User;Ljava/util/Map;ZZLjava/util/Map;ZLio/getstream/chat/android/models/ChannelInfo;Lio/getstream/chat/android/models/Message;Ljava/lang/String;ZLjava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/models/User;Ljava/util/List;ZZLio/getstream/chat/android/models/MessageModerationDetails;Lio/getstream/chat/android/models/Moderation;Ljava/util/Date;Lio/getstream/chat/android/models/Poll;Ljava/util/List;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;IILjava/util/Map;Ljava/util/Map;Ljava/util/Map;Lio/getstream/chat/android/models/SyncStatus;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/models/User;Ljava/util/Map;ZZLjava/util/Map;ZLio/getstream/chat/android/models/ChannelInfo;Lio/getstream/chat/android/models/Message;Ljava/lang/String;ZLjava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/models/User;Ljava/util/List;ZZLio/getstream/chat/android/models/MessageModerationDetails;Lio/getstream/chat/android/models/Moderation;Ljava/util/Date;Lio/getstream/chat/android/models/Poll;Ljava/util/List;Lio/getstream/chat/android/models/MessageReminderInfo;Lio/getstream/chat/android/models/Location;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;IILjava/util/Map;Ljava/util/Map;Ljava/util/Map;Lio/getstream/chat/android/models/SyncStatus;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/models/User;Ljava/util/Map;ZZLjava/util/Map;ZLio/getstream/chat/android/models/ChannelInfo;Lio/getstream/chat/android/models/Message;Ljava/lang/String;ZLjava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/models/User;Ljava/util/List;ZZLio/getstream/chat/android/models/MessageModerationDetails;Lio/getstream/chat/android/models/Moderation;Ljava/util/Date;Lio/getstream/chat/android/models/Poll;Ljava/util/List;Lio/getstream/chat/android/models/MessageReminderInfo;Lio/getstream/chat/android/models/Location;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component10 ()I
 	public final fun component11 ()I
@@ -1204,13 +1238,15 @@ public final class io/getstream/chat/android/models/Message : io/getstream/chat/
 	public final fun component42 ()Ljava/util/Date;
 	public final fun component43 ()Lio/getstream/chat/android/models/Poll;
 	public final fun component44 ()Ljava/util/List;
+	public final fun component45 ()Lio/getstream/chat/android/models/MessageReminderInfo;
+	public final fun component46 ()Lio/getstream/chat/android/models/Location;
 	public final fun component5 ()Ljava/lang/String;
 	public final fun component6 ()Ljava/lang/String;
 	public final fun component7 ()Ljava/util/List;
 	public final fun component8 ()Ljava/util/List;
 	public final fun component9 ()Ljava/util/List;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;IILjava/util/Map;Ljava/util/Map;Ljava/util/Map;Lio/getstream/chat/android/models/SyncStatus;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/models/User;Ljava/util/Map;ZZLjava/util/Map;ZLio/getstream/chat/android/models/ChannelInfo;Lio/getstream/chat/android/models/Message;Ljava/lang/String;ZLjava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/models/User;Ljava/util/List;ZZLio/getstream/chat/android/models/MessageModerationDetails;Lio/getstream/chat/android/models/Moderation;Ljava/util/Date;Lio/getstream/chat/android/models/Poll;Ljava/util/List;)Lio/getstream/chat/android/models/Message;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/Message;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;IILjava/util/Map;Ljava/util/Map;Ljava/util/Map;Lio/getstream/chat/android/models/SyncStatus;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/models/User;Ljava/util/Map;ZZLjava/util/Map;ZLio/getstream/chat/android/models/ChannelInfo;Lio/getstream/chat/android/models/Message;Ljava/lang/String;ZLjava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/models/User;Ljava/util/List;ZZLio/getstream/chat/android/models/MessageModerationDetails;Lio/getstream/chat/android/models/Moderation;Ljava/util/Date;Lio/getstream/chat/android/models/Poll;Ljava/util/List;IILjava/lang/Object;)Lio/getstream/chat/android/models/Message;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;IILjava/util/Map;Ljava/util/Map;Ljava/util/Map;Lio/getstream/chat/android/models/SyncStatus;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/models/User;Ljava/util/Map;ZZLjava/util/Map;ZLio/getstream/chat/android/models/ChannelInfo;Lio/getstream/chat/android/models/Message;Ljava/lang/String;ZLjava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/models/User;Ljava/util/List;ZZLio/getstream/chat/android/models/MessageModerationDetails;Lio/getstream/chat/android/models/Moderation;Ljava/util/Date;Lio/getstream/chat/android/models/Poll;Ljava/util/List;Lio/getstream/chat/android/models/MessageReminderInfo;Lio/getstream/chat/android/models/Location;)Lio/getstream/chat/android/models/Message;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/Message;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/List;IILjava/util/Map;Ljava/util/Map;Ljava/util/Map;Lio/getstream/chat/android/models/SyncStatus;Ljava/lang/String;Ljava/util/List;Ljava/util/List;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/models/User;Ljava/util/Map;ZZLjava/util/Map;ZLio/getstream/chat/android/models/ChannelInfo;Lio/getstream/chat/android/models/Message;Ljava/lang/String;ZLjava/util/Date;Ljava/util/Date;Lio/getstream/chat/android/models/User;Ljava/util/List;ZZLio/getstream/chat/android/models/MessageModerationDetails;Lio/getstream/chat/android/models/Moderation;Ljava/util/Date;Lio/getstream/chat/android/models/Poll;Ljava/util/List;Lio/getstream/chat/android/models/MessageReminderInfo;Lio/getstream/chat/android/models/Location;IILjava/lang/Object;)Lio/getstream/chat/android/models/Message;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAttachments ()Ljava/util/List;
 	public final fun getChannelInfo ()Lio/getstream/chat/android/models/ChannelInfo;
@@ -1243,11 +1279,13 @@ public final class io/getstream/chat/android/models/Message : io/getstream/chat/
 	public final fun getReactionCounts ()Ljava/util/Map;
 	public final fun getReactionGroups ()Ljava/util/Map;
 	public final fun getReactionScores ()Ljava/util/Map;
+	public final fun getReminder ()Lio/getstream/chat/android/models/MessageReminderInfo;
 	public final fun getReplyCount ()I
 	public final fun getReplyMessageId ()Ljava/lang/String;
 	public final fun getReplyTo ()Lio/getstream/chat/android/models/Message;
 	public final fun getRestrictedVisibility ()Ljava/util/List;
 	public final fun getShadowed ()Z
+	public final fun getSharedLocation ()Lio/getstream/chat/android/models/Location;
 	public final fun getShowInChannel ()Z
 	public final fun getSilent ()Z
 	public final fun getSkipEnrichUrl ()Z
@@ -1299,11 +1337,13 @@ public final class io/getstream/chat/android/models/Message$Builder {
 	public final fun withReactionCounts (Ljava/util/Map;)Lio/getstream/chat/android/models/Message$Builder;
 	public final fun withReactionGroups (Ljava/util/Map;)Lio/getstream/chat/android/models/Message$Builder;
 	public final fun withReactionScores (Ljava/util/Map;)Lio/getstream/chat/android/models/Message$Builder;
+	public final fun withReminder (Lio/getstream/chat/android/models/MessageReminderInfo;)Lio/getstream/chat/android/models/Message$Builder;
 	public final fun withReplyCount (I)Lio/getstream/chat/android/models/Message$Builder;
 	public final fun withReplyMessageId (Ljava/lang/String;)Lio/getstream/chat/android/models/Message$Builder;
 	public final fun withReplyTo (Lio/getstream/chat/android/models/Message;)Lio/getstream/chat/android/models/Message$Builder;
 	public final fun withRestrictedVisibility (Ljava/util/List;)Lio/getstream/chat/android/models/Message$Builder;
 	public final fun withShadowed (Z)Lio/getstream/chat/android/models/Message$Builder;
+	public final fun withSharedLocation (Lio/getstream/chat/android/models/Location;)Lio/getstream/chat/android/models/Message$Builder;
 	public final fun withShowInChannel (Z)Lio/getstream/chat/android/models/Message$Builder;
 	public final fun withSilent (Z)Lio/getstream/chat/android/models/Message$Builder;
 	public final fun withSkipEnrichUrl (Z)Lio/getstream/chat/android/models/Message$Builder;
@@ -1351,6 +1391,59 @@ public final class io/getstream/chat/android/models/MessageModerationDetails {
 	public final fun getAction ()Lio/getstream/chat/android/models/MessageModerationAction;
 	public final fun getErrorMsg ()Ljava/lang/String;
 	public final fun getOriginalText ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/models/MessageReminder : io/getstream/chat/android/models/querysort/ComparableFieldProvider {
+	public fun <init> (Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/models/Channel;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Ljava/util/Date;Ljava/util/Date;)V
+	public final fun component1 ()Ljava/util/Date;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Lio/getstream/chat/android/models/Channel;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Lio/getstream/chat/android/models/Message;
+	public final fun component6 ()Ljava/util/Date;
+	public final fun component7 ()Ljava/util/Date;
+	public final fun copy (Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/models/Channel;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Ljava/util/Date;Ljava/util/Date;)Lio/getstream/chat/android/models/MessageReminder;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/MessageReminder;Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/models/Channel;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Ljava/util/Date;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/models/MessageReminder;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChannel ()Lio/getstream/chat/android/models/Channel;
+	public final fun getCid ()Ljava/lang/String;
+	public fun getComparableField (Ljava/lang/String;)Ljava/lang/Comparable;
+	public final fun getCreatedAt ()Ljava/util/Date;
+	public final fun getMessage ()Lio/getstream/chat/android/models/Message;
+	public final fun getMessageId ()Ljava/lang/String;
+	public final fun getRemindAt ()Ljava/util/Date;
+	public final fun getUpdatedAt ()Ljava/util/Date;
+	public fun hashCode ()I
+	public final fun newBuilder ()Lio/getstream/chat/android/models/MessageReminder$Builder;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/models/MessageReminder$Builder {
+	public fun <init> ()V
+	public fun <init> (Lio/getstream/chat/android/models/MessageReminder;)V
+	public final fun build ()Lio/getstream/chat/android/models/MessageReminder;
+	public final fun withChannel (Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/models/MessageReminder$Builder;
+	public final fun withCid (Ljava/lang/String;)Lio/getstream/chat/android/models/MessageReminder$Builder;
+	public final fun withCreatedAt (Ljava/util/Date;)Lio/getstream/chat/android/models/MessageReminder$Builder;
+	public final fun withMessage (Lio/getstream/chat/android/models/Message;)Lio/getstream/chat/android/models/MessageReminder$Builder;
+	public final fun withMessageId (Ljava/lang/String;)Lio/getstream/chat/android/models/MessageReminder$Builder;
+	public final fun withRemindAt (Ljava/util/Date;)Lio/getstream/chat/android/models/MessageReminder$Builder;
+	public final fun withUpdatedAt (Ljava/util/Date;)Lio/getstream/chat/android/models/MessageReminder$Builder;
+}
+
+public final class io/getstream/chat/android/models/MessageReminderInfo {
+	public fun <init> (Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;)V
+	public final fun component1 ()Ljava/util/Date;
+	public final fun component2 ()Ljava/util/Date;
+	public final fun component3 ()Ljava/util/Date;
+	public final fun copy (Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;)Lio/getstream/chat/android/models/MessageReminderInfo;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/MessageReminderInfo;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/models/MessageReminderInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCreatedAt ()Ljava/util/Date;
+	public final fun getRemindAt ()Ljava/util/Date;
+	public final fun getUpdatedAt ()Ljava/util/Date;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -1541,28 +1634,6 @@ public final class io/getstream/chat/android/models/OrFilterObject : io/getstrea
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/models/PendingMessage {
-	public fun <init> (Lio/getstream/chat/android/models/Message;Ljava/util/Map;)V
-	public final fun component1 ()Lio/getstream/chat/android/models/Message;
-	public final fun component2 ()Ljava/util/Map;
-	public final fun copy (Lio/getstream/chat/android/models/Message;Ljava/util/Map;)Lio/getstream/chat/android/models/PendingMessage;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/PendingMessage;Lio/getstream/chat/android/models/Message;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/models/PendingMessage;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getMessage ()Lio/getstream/chat/android/models/Message;
-	public final fun getMetadata ()Ljava/util/Map;
-	public fun hashCode ()I
-	public final fun newBuilder ()Lio/getstream/chat/android/models/PendingMessage$Builder;
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/models/PendingMessage$Builder {
-	public fun <init> ()V
-	public fun <init> (Lio/getstream/chat/android/models/PendingMessage;)V
-	public final fun build ()Lio/getstream/chat/android/models/PendingMessage;
-	public final fun withMessage (Lio/getstream/chat/android/models/Message;)Lio/getstream/chat/android/models/PendingMessage$Builder;
-	public final fun withMetadata (Ljava/util/Map;)Lio/getstream/chat/android/models/PendingMessage$Builder;
-}
-
 public final class io/getstream/chat/android/models/Poll {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/models/VotingVisibility;ZIZZLjava/util/Map;Ljava/util/List;Ljava/util/List;Ljava/util/Date;Ljava/util/Date;ZLjava/util/List;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/models/VotingVisibility;ZIZZLjava/util/Map;Ljava/util/List;Ljava/util/List;Ljava/util/Date;Ljava/util/Date;ZLjava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -1649,6 +1720,7 @@ public final class io/getstream/chat/android/models/PushMessage {
 	public final fun getGetstream ()Ljava/util/Map;
 	public final fun getMessageId ()Ljava/lang/String;
 	public final fun getMetadata ()Ljava/util/Map;
+	public final fun getType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -1678,6 +1750,19 @@ public final class io/getstream/chat/android/models/QueryDraftsResult {
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getDrafts ()Ljava/util/List;
 	public final fun getNext ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/models/QueryRemindersResult {
+	public fun <init> (Ljava/util/List;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun copy (Ljava/util/List;Ljava/lang/String;)Lio/getstream/chat/android/models/QueryRemindersResult;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/QueryRemindersResult;Ljava/util/List;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/models/QueryRemindersResult;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getNext ()Ljava/lang/String;
+	public final fun getReminders ()Ljava/util/List;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -2005,6 +2090,76 @@ public final class io/getstream/chat/android/models/TypingEvent {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/models/UnreadChannel {
+	public fun <init> (Ljava/lang/String;ILjava/util/Date;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()I
+	public final fun component3 ()Ljava/util/Date;
+	public final fun copy (Ljava/lang/String;ILjava/util/Date;)Lio/getstream/chat/android/models/UnreadChannel;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/UnreadChannel;Ljava/lang/String;ILjava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/models/UnreadChannel;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCid ()Ljava/lang/String;
+	public final fun getLastRead ()Ljava/util/Date;
+	public final fun getMessagesCount ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/models/UnreadChannelByType {
+	public fun <init> (Ljava/lang/String;II)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()I
+	public final fun component3 ()I
+	public final fun copy (Ljava/lang/String;II)Lio/getstream/chat/android/models/UnreadChannelByType;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/UnreadChannelByType;Ljava/lang/String;IIILjava/lang/Object;)Lio/getstream/chat/android/models/UnreadChannelByType;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChannelType ()Ljava/lang/String;
+	public final fun getChannelsCount ()I
+	public final fun getMessagesCount ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/models/UnreadCounts {
+	public fun <init> ()V
+	public fun <init> (IILjava/util/Map;Ljava/util/List;Ljava/util/List;Ljava/util/List;)V
+	public synthetic fun <init> (IILjava/util/Map;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun component3 ()Ljava/util/Map;
+	public final fun component4 ()Ljava/util/List;
+	public final fun component5 ()Ljava/util/List;
+	public final fun component6 ()Ljava/util/List;
+	public final fun copy (IILjava/util/Map;Ljava/util/List;Ljava/util/List;Ljava/util/List;)Lio/getstream/chat/android/models/UnreadCounts;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/UnreadCounts;IILjava/util/Map;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/models/UnreadCounts;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChannels ()Ljava/util/List;
+	public final fun getChannelsByType ()Ljava/util/List;
+	public final fun getMessagesCount ()I
+	public final fun getMessagesCountByTeam ()Ljava/util/Map;
+	public final fun getThreads ()Ljava/util/List;
+	public final fun getThreadsCount ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/models/UnreadThread {
+	public fun <init> (Ljava/lang/String;ILjava/util/Date;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()I
+	public final fun component3 ()Ljava/util/Date;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;ILjava/util/Date;Ljava/lang/String;)Lio/getstream/chat/android/models/UnreadThread;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/UnreadThread;Ljava/lang/String;ILjava/util/Date;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/models/UnreadThread;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getLastRead ()Ljava/util/Date;
+	public final fun getLastReadMessageId ()Ljava/lang/String;
+	public final fun getMessagesCount ()I
+	public final fun getParentMessageId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/models/UploadAttachmentsNetworkType : java/lang/Enum {
 	public static final field CONNECTED Lio/getstream/chat/android/models/UploadAttachmentsNetworkType;
 	public static final field METERED Lio/getstream/chat/android/models/UploadAttachmentsNetworkType;
@@ -2035,8 +2190,8 @@ public final class io/getstream/chat/android/models/UploadedFile {
 
 public final class io/getstream/chat/android/models/User : io/getstream/chat/android/models/CustomObject, io/getstream/chat/android/models/querysort/ComparableFieldProvider {
 	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Lio/getstream/chat/android/PrivacySettings;Ljava/lang/String;Ljava/lang/Boolean;Ljava/util/List;ZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;IIILjava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Date;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Lio/getstream/chat/android/PrivacySettings;Ljava/lang/String;Ljava/lang/Boolean;Ljava/util/List;ZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;IIILjava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Lio/getstream/chat/android/PrivacySettings;Ljava/lang/String;Ljava/lang/Boolean;Ljava/util/List;ZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;IIILjava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/List;Ljava/util/List;Ljava/lang/Long;Ljava/util/Map;Ljava/util/Date;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Lio/getstream/chat/android/PrivacySettings;Ljava/lang/String;Ljava/lang/Boolean;Ljava/util/List;ZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;IIILjava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/List;Ljava/util/List;Ljava/lang/Long;Ljava/util/Map;Ljava/util/Date;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component10 ()Z
 	public final fun component11 ()Ljava/util/Date;
@@ -2051,8 +2206,9 @@ public final class io/getstream/chat/android/models/User : io/getstream/chat/and
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component20 ()Ljava/util/List;
 	public final fun component21 ()Ljava/util/List;
-	public final fun component22 ()Ljava/util/Map;
-	public final fun component23 ()Ljava/util/Date;
+	public final fun component22 ()Ljava/lang/Long;
+	public final fun component23 ()Ljava/util/Map;
+	public final fun component24 ()Ljava/util/Date;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Ljava/lang/String;
 	public final fun component5 ()Ljava/lang/Boolean;
@@ -2060,9 +2216,10 @@ public final class io/getstream/chat/android/models/User : io/getstream/chat/and
 	public final fun component7 ()Ljava/lang/String;
 	public final fun component8 ()Ljava/lang/Boolean;
 	public final fun component9 ()Ljava/util/List;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Lio/getstream/chat/android/PrivacySettings;Ljava/lang/String;Ljava/lang/Boolean;Ljava/util/List;ZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;IIILjava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Date;)Lio/getstream/chat/android/models/User;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/User;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Lio/getstream/chat/android/PrivacySettings;Ljava/lang/String;Ljava/lang/Boolean;Ljava/util/List;ZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;IIILjava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/models/User;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Lio/getstream/chat/android/PrivacySettings;Ljava/lang/String;Ljava/lang/Boolean;Ljava/util/List;ZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;IIILjava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/List;Ljava/util/List;Ljava/lang/Long;Ljava/util/Map;Ljava/util/Date;)Lio/getstream/chat/android/models/User;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/User;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Lio/getstream/chat/android/PrivacySettings;Ljava/lang/String;Ljava/lang/Boolean;Ljava/util/List;ZLjava/util/Date;Ljava/util/Date;Ljava/util/Date;IIILjava/util/List;Ljava/util/List;Ljava/util/Map;Ljava/util/List;Ljava/util/List;Ljava/lang/Long;Ljava/util/Map;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/models/User;
 	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAvgResponseTime ()Ljava/lang/Long;
 	public final fun getBanned ()Ljava/lang/Boolean;
 	public final fun getBlockedUserIds ()Ljava/util/List;
 	public final fun getChannelMutes ()Ljava/util/List;
@@ -2101,6 +2258,7 @@ public final class io/getstream/chat/android/models/User$Builder {
 	public fun <init> ()V
 	public fun <init> (Lio/getstream/chat/android/models/User;)V
 	public final fun build ()Lio/getstream/chat/android/models/User;
+	public final fun withAvgResponseTime (J)Lio/getstream/chat/android/models/User$Builder;
 	public final fun withBanned (Ljava/lang/Boolean;)Lio/getstream/chat/android/models/User$Builder;
 	public final fun withBlockedUserIds (Ljava/util/List;)Lio/getstream/chat/android/models/User$Builder;
 	public final fun withChannelMutes (Ljava/util/List;)Lio/getstream/chat/android/models/User$Builder;

@@ -512,6 +512,7 @@ public class TestDataHelper {
             channelType = channel2.type,
             channelId = channel2.id,
             user = user1,
+            channel = channel2,
             clearHistory = false,
         )
     }
@@ -525,6 +526,7 @@ public class TestDataHelper {
             cid = channel2.cid,
             channelType = channel2.type,
             channelId = channel2.id,
+            channel = channel2,
             user = user1,
         )
     }

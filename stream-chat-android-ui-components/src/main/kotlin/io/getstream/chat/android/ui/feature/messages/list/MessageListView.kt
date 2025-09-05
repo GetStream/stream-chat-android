@@ -44,7 +44,6 @@ import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.client.utils.message.belongsToThread
 import io.getstream.chat.android.client.utils.message.isModerationError
 import io.getstream.chat.android.client.utils.message.isThreadReply
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
@@ -82,6 +81,52 @@ import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryItem
 import io.getstream.chat.android.ui.feature.gallery.toAttachment
 import io.getstream.chat.android.ui.feature.messages.dialog.ModeratedMessageDialogFragment
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.AttachmentDownloadHandler
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.BottomEndRegionReachedHandler
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.ConfirmDeleteMessageHandler
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.ConfirmFlagMessageHandler
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.CustomActionHandler
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.EndRegionReachedHandler
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.ErrorEventHandler
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.FlagMessageResultHandler
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.GiphySendHandler
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.LastMessageReadHandler
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.MessageDeleteHandler
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.MessageEditHandler
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.MessageFlagHandler
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.MessageListItemTransformer
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.MessageMarkAsUnreadHandler
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.MessagePinHandler
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.MessageReactionHandler
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.MessageReplyHandler
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.MessageRetryHandler
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.MessageUnpinHandler
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.MessageUserBlockHandler
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.MessageUserUnblockHandler
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.ModeratedMessageOptionHandler
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnAttachmentClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnAttachmentDownloadClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnEnterThreadListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnGiphySendListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnLinkClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMentionClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMessageClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMessageLongClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMessageRetryListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnModeratedMessageLongClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnPollCloseClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnPollOptionClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnReactionViewClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnReplyMessageClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnShowAllPollOptionClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnThreadClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnTranslatedLabelClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnUserClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnUserReactionClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnViewPollResultClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OpenThreadHandler
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.ThreadStartHandler
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.ToggleOriginalTextHandler
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainerImpl
@@ -402,7 +447,6 @@ public class MessageListView : ConstraintLayout {
      * @param reactionClickListener The callback to be invoked on reaction item click.
      * @param optionClickListener The callback to be invoked on option item click.
      */
-    @ExperimentalStreamChatApi
     public fun showMessageOptionsDialog(
         fragmentManager: FragmentManager,
         message: Message,

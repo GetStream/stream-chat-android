@@ -52,7 +52,6 @@ import io.getstream.chat.android.compose.ui.util.getLastSeenText
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelHeaderViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
@@ -75,7 +74,6 @@ import java.util.Date
  * @param modifier The [Modifier] to be applied to this screen.
  * @param onNavigationIconClick Callback invoked when the navigation icon is clicked.
  */
-@ExperimentalStreamChatApi
 @Composable
 public fun DirectChannelInfoScreen(
     viewModelFactory: ChannelInfoViewModelFactory,
@@ -184,8 +182,9 @@ private fun DirectChannelInfoContent(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            val user = content.members.first().user
-            ChatTheme.componentFactory.DirectChannelInfoAvatarContainer(user)
+            content.members.firstOrNull()?.user?.let { user ->
+                ChatTheme.componentFactory.DirectChannelInfoAvatarContainer(user)
+            }
             LazyColumn(state = listState) {
                 items(content.options) { option ->
                     with(ChatTheme.componentFactory) {

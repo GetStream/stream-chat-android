@@ -20,8 +20,11 @@ import android.app.Application
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.compose.sample.data.PredefinedUserCredentials
 import io.getstream.chat.android.compose.sample.data.UserCredentialsRepository
+import io.getstream.chat.android.compose.sample.service.SharedLocationService
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.common.helper.DateFormatter
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
 class ChatApp : Application() {
 
@@ -30,11 +33,20 @@ class ChatApp : Application() {
         // Done for simplicity, use a DI framework instead
         credentialsRepository = UserCredentialsRepository(this)
         dateFormatter = DateFormatter.from(this)
+        sharedLocationService = SharedLocationService(this)
 
         initializeToggleService()
 
         // Initialize Stream SDK
         ChatHelper.initializeSdk(this, getApiKey())
+
+        MainScope().launch {
+            val userCredentials = credentialsRepository.loadUserCredentials()
+            if (userCredentials != null && !BuildConfig.BENCHMARK) {
+                // Ensure that the user is connected
+                ChatHelper.connectUser(userCredentials)
+            }
+        }
     }
 
     private fun getApiKey(): String {
@@ -51,6 +63,9 @@ class ChatApp : Application() {
             private set
 
         lateinit var dateFormatter: DateFormatter
+            private set
+
+        lateinit var sharedLocationService: SharedLocationService
             private set
 
         public const val autoTranslationEnabled: Boolean = true

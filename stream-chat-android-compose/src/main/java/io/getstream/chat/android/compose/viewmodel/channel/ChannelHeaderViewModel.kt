@@ -18,7 +18,6 @@ package io.getstream.chat.android.compose.viewmodel.channel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.common.feature.channel.header.ChannelHeaderViewController
 import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
 import kotlinx.coroutines.flow.StateFlow
@@ -29,7 +28,6 @@ import kotlinx.coroutines.flow.StateFlow
  * @param cid The full channel identifier (e.g., "messaging:123").
  * @param controllerProvider The provider for [ChannelHeaderViewController].
  */
-@ExperimentalStreamChatApi
 public class ChannelHeaderViewModel(
     private val cid: String,
     controllerProvider: ViewModel.() -> ChannelHeaderViewController = {

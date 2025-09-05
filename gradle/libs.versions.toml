@@ -41,8 +41,6 @@ firebaseAnalytics = "22.1.2"
 firebaseCrashlytics = "19.2.1"
 firebaseCrashlyticsPlugin = "3.0.2"
 firebaseMessaging = "24.1.0"
-flipper = "0.272.0"
-flipperSOLoader = "0.12.1"
 gitversioner = "0.5.0"
 googleServices = "4.4.2"
 gradleNexusPublishPlugin = "1.3.0"
@@ -88,6 +86,7 @@ threetenbp = "1.7.0"
 timber = "5.0.1"
 turbine = "1.2.0"
 work = "2.9.1"
+playServicesLocation = "21.3.0"
 
 [libraries]
 allure-kotlin-model = { module = "io.qameta.allure:allure-kotlin-model", version.ref = "allureKotlin"}
@@ -105,6 +104,7 @@ androidx-compose-foundation = { module = "androidx.compose.foundation:foundation
 androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "androidxComposeMaterial3"}
 androidx-compose-material3-adaptive = { module = "androidx.compose.material3.adaptive:adaptive", version.ref = "androidxComposeMaterial3Adaptive"}
 androidx-compose-material-icons-core = { module = "androidx.compose.material:material-icons-core", version.ref = "androidxCompose"}
+androidx-compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "androidxCompose"}
 androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "androidxCompose"}
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "androidxCompose"}
 androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidxCompose"}
@@ -162,9 +162,6 @@ detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", 
 firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx", version.ref = "firebaseAnalytics"}
 firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics", version.ref = "firebaseCrashlytics"}
 firebase-messaging = { module = "com.google.firebase:firebase-messaging", version.ref = "firebaseMessaging"}
-flipper = { module = "com.facebook.flipper:flipper", version.ref = "flipper"}
-flipper-network = { module = "com.facebook.flipper:flipper-network-plugin", version.ref = "flipper"}
-flipper-so-loader = { module = "com.facebook.soloader:soloader", version.ref = "flipperSOLoader"}
 google-accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "composeAccompanist"}
 huawei-push = { module = "com.huawei.hms:push", version.ref = "huaweiPush"}
 itu-date-version = { module = "com.ethlo.time:itu", version.ref = "ituDateVersion"}
@@ -222,6 +219,7 @@ test-parameter-injector = { module = "com.google.testparameterinjector:test-para
 threetenbp = { module = "org.threeten:threetenbp", version.ref = "threetenbp"}
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber"}
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine"}
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin"}

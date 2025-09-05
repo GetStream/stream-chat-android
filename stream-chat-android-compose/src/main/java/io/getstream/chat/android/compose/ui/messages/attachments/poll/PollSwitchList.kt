@@ -59,6 +59,7 @@ import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.poll.PollOptionInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.ui.common.utils.PollsConstants
 
 /**
  * The Poll switch list is that a Composable that enables users to create a poll with configurations.
@@ -124,6 +125,7 @@ public fun PollSwitchList(
                             end = itemInnerPadding.calculateEndPadding(layoutDirection = layoutDirection),
                         ),
                 ) {
+                    val context = LocalContext.current
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
@@ -162,7 +164,14 @@ public fun PollSwitchList(
                             onCheckedChange = { checked ->
                                 switchItemList[index] = item.copy(
                                     enabled = checked,
-                                    pollOptionError = null,
+                                    // Validate the poll switch input even on checked state change
+                                    pollOptionError = item.pollSwitchInput?.run {
+                                        if (checked) {
+                                            errorOrNull(context, value.toString())
+                                        } else {
+                                            null
+                                        }
+                                    },
                                 )
                                 onSwitchesChanged(switchItemList)
                             },
@@ -171,7 +180,6 @@ public fun PollSwitchList(
 
                     if (item.pollSwitchInput != null && item.enabled) {
                         val switchInput = item.pollSwitchInput
-                        val context = LocalContext.current
                         PollOptionInput(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -248,7 +256,7 @@ private inline fun <T : Comparable<T>> PollSwitchInput.validateRange(
 
     return if (value < min || value > max) {
         PollOptionNumberExceed(
-            message = context.getString(R.string.stream_compose_poll_option_error_exceed, min, max),
+            message = context.getString(R.string.stream_ui_poll_multiple_answers_error, min, max),
         )
     } else {
         null
@@ -277,7 +285,11 @@ internal fun PollSwitchList() {
                     value = 11,
                 ),
                 pollOptionError = PollOptionNumberExceed(
-                    message = stringResource(R.string.stream_compose_poll_option_error_exceed),
+                    message = stringResource(
+                        R.string.stream_ui_poll_multiple_answers_error,
+                        PollsConstants.MIN_NUMBER_OF_MULTIPLE_ANSWERS,
+                        PollsConstants.MAX_NUMBER_OF_MULTIPLE_ANSWERS,
+                    ),
                 ),
                 enabled = true,
             ),

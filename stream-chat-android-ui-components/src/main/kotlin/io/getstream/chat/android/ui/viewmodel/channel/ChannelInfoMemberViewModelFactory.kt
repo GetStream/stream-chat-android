@@ -18,7 +18,6 @@ package io.getstream.chat.android.ui.viewmodel.channel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
 /**
  * Factory for creating instances of [ChannelInfoMemberViewModel].
@@ -26,7 +25,6 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
  * @param cid The full channel identifier (e.g., "messaging:123").
  * @param memberId The member ID of the user.
  */
-@ExperimentalStreamChatApi
 public class ChannelInfoMemberViewModelFactory(
     private val cid: String,
     private val memberId: String,

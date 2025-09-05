@@ -93,7 +93,9 @@
         app:layout_constraintStart_toEndOf="@+id/check"
         app:layout_constraintEnd_toEndOf="parent"
         app:trackCornerRadius="4dp"
-        app:trackThickness="8dp"
+        app:trackThickness="4dp"
+        app:trackColor="@color/stream_ui_grey_whisper"
+        app:indicatorColor="@color/stream_ui_accent_green"
         android:indeterminate="false"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

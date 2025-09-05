@@ -64,10 +64,12 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryP
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryInjector
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract
+import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract.Input
 import io.getstream.chat.android.compose.ui.components.ShimmerProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
+import io.getstream.chat.android.compose.ui.util.extensions.internal.imagePreviewData
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
@@ -75,8 +77,6 @@ import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
-import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**
@@ -95,6 +95,20 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
+@Deprecated(
+    message = "Use the overload that takes onItemClick as a single parameter of type MediaAttachmentClickData.",
+    replaceWith = ReplaceWith(
+        "MediaAttachmentContent(" +
+            "state = attachmentState, " +
+            "modifier = modifier, " +
+            "maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems, " +
+            "skipEnrichUrl = skipEnrichUrl, " +
+            "onItemClick = onItemClick, " +
+            "itemOverlayContent = itemOverlayContent" +
+            ")",
+    ),
+    level = DeprecationLevel.WARNING,
+)
 public fun MediaAttachmentContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,
@@ -116,7 +130,67 @@ public fun MediaAttachmentContent(
         }
     },
 ) {
-    val (message, _, onLongItemClick, onMediaGalleryPreviewResult) = attachmentState
+    MediaAttachmentContent(
+        state = attachmentState,
+        modifier = modifier,
+        maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
+        skipEnrichUrl = skipEnrichUrl,
+        onItemClick = {
+            onItemClick(
+                it.mediaGalleryPreviewLauncher,
+                it.message,
+                it.attachmentPosition,
+                it.videoThumbnailsEnabled,
+                it.downloadAttachmentUriGenerator,
+                it.downloadRequestInterceptor,
+                it.streamCdnImageResizing,
+                it.skipEnrichUrl,
+            )
+        },
+        itemOverlayContent = itemOverlayContent,
+    )
+}
+
+/**
+ * Displays a preview of single or multiple video or attachments.
+ *
+ * @param state The state of the attachment, holding the root modifier, the message
+ * and the onLongItemClick handler.
+ * @param modifier The modifier used for styling.
+ * @param maximumNumberOfPreviewedItems The maximum number of thumbnails that can be displayed
+ * in a group when previewing Media attachments in the message list.
+ * @param skipEnrichUrl Used by the media gallery. If set to true will skip enriching URLs when you update the message
+ * by deleting an attachment contained within it. Set to false by default.
+ * @param onItemClick Lambda called when an item gets clicked.
+ * @param itemOverlayContent Represents the content overlaid above individual items.
+ * By default it is used to display a play button over video previews.
+ */
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+public fun MediaAttachmentContent(
+    state: AttachmentState,
+    modifier: Modifier = Modifier,
+    maximumNumberOfPreviewedItems: Int = 4,
+    skipEnrichUrl: Boolean = false,
+    onItemClick: (MediaAttachmentClickData) -> Unit = {
+        onMediaAttachmentContentItemClick(
+            it.mediaGalleryPreviewLauncher,
+            it.message,
+            it.attachmentPosition,
+            it.videoThumbnailsEnabled,
+            it.downloadAttachmentUriGenerator,
+            it.downloadRequestInterceptor,
+            it.streamCdnImageResizing,
+            it.skipEnrichUrl,
+        )
+    },
+    itemOverlayContent: @Composable (attachmentType: String?) -> Unit = { attachmentType ->
+        if (attachmentType == AttachmentType.VIDEO) {
+            PlayButton()
+        }
+    },
+) {
+    val (message, _, onLongItemClick, onMediaGalleryPreviewResult) = state
     val gridSpacing = ChatTheme.dimens.attachmentsContentMediaGridSpacing
 
     // Prepare the image loader for the media gallery
@@ -192,16 +266,7 @@ internal fun SingleMediaAttachment(
     skipEnrichUrl: Boolean,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onLongItemClick: (Message) -> Unit,
-    onContentItemClick: (
-        mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>,
-        message: Message,
-        attachmentPosition: Int,
-        videoThumbnailsEnabled: Boolean,
-        downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
-        downloadRequestInterceptor: DownloadRequestInterceptor,
-        streamCdnImageResizing: StreamCdnImageResizing,
-        skipEnrichUrl: Boolean,
-    ) -> Unit,
+    onContentItemClick: (MediaAttachmentClickData) -> Unit,
     overlayContent: @Composable (attachmentType: String?) -> Unit,
 ) {
     val isVideo = attachment.isVideo()
@@ -276,16 +341,7 @@ internal fun RowScope.MultipleMediaAttachments(
     skipEnrichUrl: Boolean,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onLongItemClick: (Message) -> Unit,
-    onContentItemClick: (
-        mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>,
-        message: Message,
-        attachmentPosition: Int,
-        videoThumbnailsEnabled: Boolean,
-        downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
-        downloadRequestInterceptor: DownloadRequestInterceptor,
-        streamCdnImageResizing: StreamCdnImageResizing,
-        skipEnrichUrl: Boolean,
-    ) -> Unit,
+    onContentItemClick: (MediaAttachmentClickData) -> Unit,
     itemOverlayContent: @Composable (attachmentType: String?) -> Unit,
 ) {
     Column(
@@ -394,32 +450,13 @@ internal fun MediaAttachmentContentItem(
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit,
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
-    onItemClick: (
-        mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>,
-        message: Message,
-        attachmentPosition: Int,
-        videoThumbnailsEnabled: Boolean,
-        downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
-        downloadRequestInterceptor: DownloadRequestInterceptor,
-        streamCdnImageResizing: StreamCdnImageResizing,
-        skipEnrichUrl: Boolean,
-    ) -> Unit,
+    onItemClick: (MediaAttachmentClickData) -> Unit,
     overlayContent: @Composable (attachmentType: String?) -> Unit,
 ) {
     val isImage = attachment.isImage()
     val isVideo = attachment.isVideo()
 
-    val data =
-        if (isImage || (isVideo && ChatTheme.videoThumbnailsEnabled)) {
-            when (message.syncStatus) {
-                SyncStatus.COMPLETED ->
-                    attachment.imagePreviewUrl?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
-
-                else -> attachment.upload
-            }
-        } else {
-            null
-        }
+    val data = attachment.imagePreviewData
 
     val context = LocalContext.current
     val imageRequest = remember(data) {
@@ -453,14 +490,16 @@ internal fun MediaAttachmentContentItem(
                 onClick = {
                     if (message.syncStatus == SyncStatus.COMPLETED) {
                         onItemClick(
-                            mixedMediaPreviewLauncher,
-                            message,
-                            attachmentPosition,
-                            areVideosEnabled,
-                            downloadAttachmentUriGenerator,
-                            downloadRequestInterceptor,
-                            streamCdnImageResizing,
-                            skipEnrichUrl,
+                            MediaAttachmentClickData(
+                                mixedMediaPreviewLauncher,
+                                message,
+                                attachmentPosition,
+                                areVideosEnabled,
+                                downloadAttachmentUriGenerator,
+                                downloadRequestInterceptor,
+                                streamCdnImageResizing,
+                                skipEnrichUrl,
+                            ),
                         )
                     } else {
                         onLongItemClick(message)
@@ -595,6 +634,33 @@ internal fun MediaAttachmentShowMoreOverlay(
         )
     }
 }
+
+/**
+ * Data class that holds all the information required to handle
+ * media attachment clicks.
+ *
+ * @param mediaGalleryPreviewLauncher The [ManagedActivityResultLauncher] to launch the media gallery.
+ * @param message The message that holds the clicked attachment.
+ * @param attachmentPosition The position of the clicked attachment in the message's attachments list.
+ * @param videoThumbnailsEnabled Whether video thumbnails are enabled.
+ * @param downloadAttachmentUriGenerator The [DownloadAttachmentUriGenerator] used to generate URIs for downloading
+ * attachments.
+ * @param downloadRequestInterceptor The [DownloadRequestInterceptor] used to intercept download requests.
+ * @param streamCdnImageResizing The [StreamCdnImageResizing] used to resize images.
+ * @param skipEnrichUrl Used by the media gallery. If set to true will skip enriching URLs when you update the message
+ * by deleting an attachment contained within it. Set to false by default.
+ */
+@ConsistentCopyVisibility
+public data class MediaAttachmentClickData internal constructor(
+    val mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<Input, MediaGalleryPreviewResult?>,
+    val message: Message,
+    val attachmentPosition: Int,
+    val videoThumbnailsEnabled: Boolean,
+    val downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
+    val downloadRequestInterceptor: DownloadRequestInterceptor,
+    val streamCdnImageResizing: StreamCdnImageResizing,
+    val skipEnrichUrl: Boolean,
+)
 
 /**
  * Produces the same height as the width of the

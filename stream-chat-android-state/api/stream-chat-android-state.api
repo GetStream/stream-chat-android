@@ -96,21 +96,50 @@ public final class io/getstream/chat/android/state/extensions/ChatClientExtensio
 	public static synthetic fun watchChannelAsState$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ILkotlinx/coroutines/CoroutineScope;ILjava/lang/Object;)Lkotlinx/coroutines/flow/StateFlow;
 }
 
+public final class io/getstream/chat/android/state/plugin/config/ChannelMessageLimit {
+	public fun <init> (Ljava/lang/String;I)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()I
+	public final fun copy (Ljava/lang/String;I)Lio/getstream/chat/android/state/plugin/config/ChannelMessageLimit;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/state/plugin/config/ChannelMessageLimit;Ljava/lang/String;IILjava/lang/Object;)Lio/getstream/chat/android/state/plugin/config/ChannelMessageLimit;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBaseLimit ()I
+	public final fun getChannelType ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/state/plugin/config/MessageLimitConfig {
+	public fun <init> ()V
+	public fun <init> (Ljava/util/Set;)V
+	public synthetic fun <init> (Ljava/util/Set;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/Set;
+	public final fun copy (Ljava/util/Set;)Lio/getstream/chat/android/state/plugin/config/MessageLimitConfig;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/state/plugin/config/MessageLimitConfig;Ljava/util/Set;ILjava/lang/Object;)Lio/getstream/chat/android/state/plugin/config/MessageLimitConfig;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChannelMessageLimits ()Ljava/util/Set;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/state/plugin/config/StatePluginConfig {
 	public fun <init> ()V
 	public fun <init> (Z)V
 	public fun <init> (ZZ)V
 	public fun <init> (ZZLio/getstream/chat/android/models/TimeDuration;)V
 	public fun <init> (ZZLio/getstream/chat/android/models/TimeDuration;Lkotlin/jvm/functions/Function0;)V
-	public synthetic fun <init> (ZZLio/getstream/chat/android/models/TimeDuration;Lkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (ZZLio/getstream/chat/android/models/TimeDuration;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/state/plugin/config/MessageLimitConfig;)V
+	public synthetic fun <init> (ZZLio/getstream/chat/android/models/TimeDuration;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/state/plugin/config/MessageLimitConfig;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Z
 	public final fun component2 ()Z
 	public final fun component3 ()Lio/getstream/chat/android/models/TimeDuration;
 	public final fun component4 ()Lkotlin/jvm/functions/Function0;
-	public final fun copy (ZZLio/getstream/chat/android/models/TimeDuration;Lkotlin/jvm/functions/Function0;)Lio/getstream/chat/android/state/plugin/config/StatePluginConfig;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/state/plugin/config/StatePluginConfig;ZZLio/getstream/chat/android/models/TimeDuration;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lio/getstream/chat/android/state/plugin/config/StatePluginConfig;
+	public final fun component5 ()Lio/getstream/chat/android/state/plugin/config/MessageLimitConfig;
+	public final fun copy (ZZLio/getstream/chat/android/models/TimeDuration;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/state/plugin/config/MessageLimitConfig;)Lio/getstream/chat/android/state/plugin/config/StatePluginConfig;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/state/plugin/config/StatePluginConfig;ZZLio/getstream/chat/android/models/TimeDuration;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/state/plugin/config/MessageLimitConfig;ILjava/lang/Object;)Lio/getstream/chat/android/state/plugin/config/StatePluginConfig;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBackgroundSyncEnabled ()Z
+	public final fun getMessageLimitConfig ()Lio/getstream/chat/android/state/plugin/config/MessageLimitConfig;
 	public final fun getNow ()Lkotlin/jvm/functions/Function0;
 	public final fun getSyncMaxThreshold ()Lio/getstream/chat/android/models/TimeDuration;
 	public final fun getUserPresence ()Z
@@ -124,7 +153,7 @@ public final class io/getstream/chat/android/state/plugin/factory/StreamStatePlu
 }
 
 public final class io/getstream/chat/android/state/plugin/state/StateRegistry {
-	public fun <init> (Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/Job;Lkotlin/jvm/functions/Function0;Lkotlinx/coroutines/CoroutineScope;)V
+	public fun <init> (Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/Job;Lkotlin/jvm/functions/Function0;Lkotlinx/coroutines/CoroutineScope;Lio/getstream/chat/android/state/plugin/config/MessageLimitConfig;)V
 	public final fun channel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/channel/state/ChannelState;
 	public final fun clear ()V
 	public final fun queryChannels (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;)Lio/getstream/chat/android/state/plugin/state/querychannels/QueryChannelsState;
@@ -143,11 +172,13 @@ public abstract interface class io/getstream/chat/android/state/plugin/state/cha
 }
 
 public abstract interface class io/getstream/chat/android/state/plugin/state/global/GlobalState {
+	public abstract fun getActiveLiveLocations ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getBanned ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getBlockedUserIds ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getChannelDraftMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getChannelMutes ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getChannelUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getCurrentUserActiveLiveLocations ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMuted ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getThreadDraftMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getTotalUnreadCount ()Lkotlinx/coroutines/flow/StateFlow;

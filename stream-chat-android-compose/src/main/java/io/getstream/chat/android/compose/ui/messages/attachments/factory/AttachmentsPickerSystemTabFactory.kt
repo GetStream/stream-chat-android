@@ -20,6 +20,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -217,7 +218,17 @@ public class AttachmentsPickerSystemTabFactory(
         }
 
         val filePickerLauncher = rememberFilePickerLauncher { uri ->
-            onAttachmentsSubmitted(storageHelper.getAttachmentsMetadataFromUris(listOf(uri)))
+            val uris = listOf(uri)
+            val attachments = storageHelper.getAttachmentsMetadataFromUris(uris)
+            // Check if some of the files were filtered out due to upload config
+            if (uris.size != attachments.size) {
+                Toast.makeText(
+                    context,
+                    R.string.stream_compose_message_composer_file_not_supported,
+                    Toast.LENGTH_SHORT,
+                ).show()
+            }
+            onAttachmentsSubmitted(attachments)
         }
 
         val imagePickerLauncher =
@@ -464,7 +475,7 @@ private fun RoundedIconButton(
     iconPainter: Painter,
     contentDescription: String,
     text: String,
-    iconTint: Color = ChatTheme.colors.overlayDark,
+    contentColor: Color = ChatTheme.attachmentPickerTheme.contentColor,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -490,7 +501,7 @@ private fun RoundedIconButton(
                 Icon(
                     painter = iconPainter,
                     contentDescription = contentDescription,
-                    tint = iconTint,
+                    tint = contentColor,
                     modifier = Modifier
                         .size(48.dp)
                         .padding(12.dp),
@@ -501,7 +512,7 @@ private fun RoundedIconButton(
         Text(
             text = text,
             style = ChatTheme.typography.footnote,
-            color = ChatTheme.colors.textLowEmphasis,
+            color = contentColor,
             modifier = Modifier.padding(top = 4.dp),
         )
     }

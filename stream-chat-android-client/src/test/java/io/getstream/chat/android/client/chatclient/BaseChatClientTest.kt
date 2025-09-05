@@ -51,6 +51,7 @@ import org.mockito.MockitoAnnotations
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
+import java.util.Date
 
 internal open class BaseChatClientTest {
 
@@ -73,7 +74,7 @@ internal open class BaseChatClientTest {
     @Mock
     protected lateinit var config: ChatClientConfig
 
-    protected lateinit var plugins: MutableList<Plugin>
+    protected val plugins: MutableList<Plugin> = mutableListOf()
 
     @Mock
     protected lateinit var api: ChatApi
@@ -88,8 +89,9 @@ internal open class BaseChatClientTest {
 
     protected lateinit var chatClient: ChatClient
     protected lateinit var fakeChatSocket: FakeChatSocket
-    internal val tokenUtils: TokenUtils = mock()
-    internal val pluginFactories: MutableList<PluginFactory> = mutableListOf()
+    protected val tokenUtils: TokenUtils = mock()
+    protected val pluginFactories: MutableList<PluginFactory> = mutableListOf()
+    protected val now = Date()
 
     @BeforeEach
     fun before() {
@@ -106,7 +108,6 @@ internal open class BaseChatClientTest {
             tokenManager = tokenManager,
             networkStateProvider = networkStateProvider,
         )
-        plugins = mutableListOf()
         chatClient = ChatClient(
             config = config,
             api = api,
@@ -126,8 +127,10 @@ internal open class BaseChatClientTest {
             mutableClientState = mutableClientState,
             currentUserFetcher = currentUserFetcher,
             audioPlayer = mock(),
+            now = { now },
         )
         chatClient.attachmentsSender = attachmentsSender
+        chatClient.plugins = plugins
 
         Mockito.reset(
             userStateService,

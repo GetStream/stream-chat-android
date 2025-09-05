@@ -36,8 +36,6 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
-- Unread message count should not be reset on entering a thread. [#5836](https://github.com/GetStream/stream-chat-android/pull/5836)
-- Fix `GlobalState.totalUnreadCount` and `GlobalState.channelUnreadCount` not updated when receiving a new message, when the `OfflinePlugin` is not applied. [#5858](https://github.com/GetStream/stream-chat-android/pull/5858)
 
 ### ⬆️ Improved
 
@@ -49,7 +47,6 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
-- Prevent calling `focusMessage` from the `MessageListController` after closing the `MessageList`. [#5854](https://github.com/GetStream/stream-chat-android/pull/5854)
 
 ### ⬆️ Improved
 
@@ -74,7 +71,6 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Add bottom padding to unread message separator. [#5855](https://github.com/GetStream/stream-chat-android/pull/5855)
 
 ### ✅ Added
 
@@ -92,6 +88,210 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# September 01th, 2025 - 6.22.1
+## stream-chat-android-client
+### ⬆️ Improved
+- New Silent messages are not increasing the unread count. [#5910](https://github.com/GetStream/stream-chat-android/pull/5910)
+
+### ✅ Added
+- Add `channel` entity to `ChannelHiddenEvent`. [#5912](https://github.com/GetStream/stream-chat-android/pull/5912)
+- Add `channel` entity to `ChannelVisibleEvent`. [#5912](https://github.com/GetStream/stream-chat-android/pull/5912)
+
+## stream-chat-android-state
+### ⬆️ Improved
+- New Silent messages are not increasing the unread count. [#5910](https://github.com/GetStream/stream-chat-android/pull/5910)
+
+# August 27th, 2025 - 6.22.0
+## stream-chat-android-client
+### 🐞 Fixed
+- Fix `ChatClient.connectUser` not propagating unrecoverable errors from the socket to the result. [#5896](https://github.com/GetStream/stream-chat-android/pull/5896)
+
+### ✅ Added
+- Add `ChatErrorCode.DUPLICATE_USERNAME_ERROR` covering the error case when a user tries to connect with an existing username, when `enforce_unique_usernames` is enabled. [#5896](https://github.com/GetStream/stream-chat-android/pull/5896)
+- Introduce `getUnreadCounts` to the `ChatClient`. [#5897](https://github.com/GetStream/stream-chat-android/pull/5897)
+
+## stream-chat-android-ui-common
+### ✅ Added
+- Introduce `ChannelAttachmentsViewController`, `ChannelAttachmentsViewAction`, `ChannelAttachmentsViewEvent`, and `ChannelAttachmentsViewState` shared between XML and Compose SDKs and responsible for managing the state and events related to channel attachments, supporting pagination. [#5882](https://github.com/GetStream/stream-chat-android/pull/5882)
+
+## stream-chat-android-ui-components
+### ✅ Added
+- Introduce `ChannelAttachmentsViewModel` and `ChannelAttachmentsViewModelFactory`. [#5882](https://github.com/GetStream/stream-chat-android/pull/5882)
+
+## stream-chat-android-compose
+### ⬆️ Improved
+- Improve the uploaded attachment loading UI. [#5889](https://github.com/GetStream/stream-chat-android/pull/5889)
+- Show message for unsupported file types during the system attachment upload. [#5900](https://github.com/GetStream/stream-chat-android/pull/5900) 
+- `MediaGalleryPager` now supports a single `Player` instead of creating a player for each video attachment. [#5882](https://github.com/GetStream/stream-chat-android/pull/5882)
+- Scroll to the bottom when the current user sends a new message. [#5907](https://github.com/GetStream/stream-chat-android/pull/5907)
+- Address the minor accessibility issues of `Back Button`, `Send Button`, `Message Composer Cancel Button`, and `Message Reactions`. [#5904](https://github.com/GetStream/stream-chat-android/pull/5904)
+
+### ✅ Added
+- Introduce `ChannelAttachmentsViewModel` and `ChannelAttachmentsViewModelFactory`. [#5882](https://github.com/GetStream/stream-chat-android/pull/5882)
+- Introduce `ChannelFilesAttachmentsScreen` to display the channel files attachments. [#5882](https://github.com/GetStream/stream-chat-android/pull/5882)
+- Introduce `ChannelMediaAttachmentsScreen` to display the channel media (photos & videos) attachments. [#5882](https://github.com/GetStream/stream-chat-android/pull/5882)
+- Introduce `ChannelMediaAttachmentsPreview`, a full-screen pager that allows users to swipe through media attachments in a channel. [#5882](https://github.com/GetStream/stream-chat-android/pull/5882)
+- Introduce `checkIconBackgroundColor`, `checkIconTintColor`, and `contentColor` to `AttachmentPickerTheme`. [#5903](https://github.com/GetStream/stream-chat-android/pull/5903)
+
+### ⚠️ Changed
+- Deprecate `StreamAttachmentFactories.defaultFactories()` in favor of `StreamAttachmentFactories.defaults()`. [#5908](https://github.com/GetStream/stream-chat-android/pull/5908)
+- Deprecate `GiphyAttachmentContent` in favor of `GiphyAttachmentContent` with the `onItemClick` lambda parameter that accepts a `GiphyAttachmentClickData`. [#5908](https://github.com/GetStream/stream-chat-android/pull/5908)
+- Deprecate `LinkAttachmentContent` in favor of `LinkAttachmentContent` with the `onItemClick` lambda parameter that accepts a `LinkAttachmentClickData`. [#5908](https://github.com/GetStream/stream-chat-android/pull/5908)
+- Deprecate `MediaAttachmentContent` in favor of `MediaAttachmentContent` with the `onItemClick` lambda parameter that accepts a `MediaAttachmentClickData`. [#5908](https://github.com/GetStream/stream-chat-android/pull/5908)
+- Deprecate `GiphyAttachmentFactory` constructor that accepts `onContentItemClick` in favor of the one that accepts `onItemClick` lambda parameter that accepts a `GiphyAttachmentClickData`. [#5908](https://github.com/GetStream/stream-chat-android/pull/5908)
+- Deprecate `LinkAttachmentFactory` constructor that accepts `onContentItemClick` in favor of the one that accepts `onItemClick` lambda parameter that accepts a `LinkAttachmentClickData`. [#5908](https://github.com/GetStream/stream-chat-android/pull/5908)
+- Deprecate `MediaAttachmentFactory` constructor that accepts `onContentItemClick` in favor of the one that accepts `onItemClick` lambda parameter that accepts a `MediaAttachmentClickData`. [#5908](https://github.com/GetStream/stream-chat-android/pull/5908)
+- 
+
+# August 13th, 2025 - 6.21.0
+## stream-chat-android-client
+### ✅ Added
+- Add `NotificationhandlerFactory.notificationBuilderTransformer` parameter to allow customization of the notification builder. [#5881](https://github.com/GetStream/stream-chat-android/pull/5881)
+- Support User Average Response Time. [#5893](https://github.com/GetStream/stream-chat-android/pull/5893)
+
+## stream-chat-android-offline
+### ✅ Added
+- Add `StreamOfflinePluginFactory.ignoredChannelTypes` property to allow ignoring messages for specific channel types in the offline storage. [#5877](https://github.com/GetStream/stream-chat-android/pull/5877)
+
+## stream-chat-android-state
+### 🐞 Fixed
+- Fix reactions not working in channels with disabled DB writes. [#5883](https://github.com/GetStream/stream-chat-android/pull/5883)
+- Fix delete message not working in channels with disabled DB writes. [#5886](https://github.com/GetStream/stream-chat-android/pull/5886)
+- Fix attachments upload not working in channels with message limit applied. [#5886](https://github.com/GetStream/stream-chat-android/pull/5886)
+- Fix thread not showing the parent message when offline support is disabled. [#5891](https://github.com/GetStream/stream-chat-android/pull/5891)
+
+### ✅ Added
+- Add `StatePluginConfig.MessageLimitConfig` config to allow setting the maximum number of messages to be kept in memory for specific channel types. [#5877](https://github.com/GetStream/stream-chat-android/pull/5877)
+
+### ⚠️ Changed
+- Deprecate `SendReactionListener.onSendReactionPrecondition(currentUser?, reaction: Reaction)` in favor of `SendReactionListener.onSendReactionPrecondition(cid: String?, currentUser: User?, reaction: Reaction)`. [#5883](https://github.com/GetStream/stream-chat-android/pull/5883)
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+- Fix silent messages not shown in the channel preview in the channel list. [#5880](https://github.com/GetStream/stream-chat-android/pull/5880)
+
+## stream-chat-android-ui-components
+- Fix the read mark failing to update. [#5890](https://github.com/GetStream/stream-chat-android/pull/5890)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fix media gallery screen not closed after all attachments are deleted from the message. [#5884](https://github.com/GetStream/stream-chat-android/pull/5884)
+- Fix the poll creation button to disable when multiple answers has a wrong input. [#5885](https://github.com/GetStream/stream-chat-android/pull/5885)
+- Fix media gallery not opened (closed automatically) when clicking on a media attachment in the message list. [#5892](https://github.com/GetStream/stream-chat-android/pull/5892)
+
+### ✅ Added
+- Add `MessageTheme.linkBackgroundColor` for customizing the background color of the message link card. [#5894](https://github.com/GetStream/stream-chat-android/pull/5894)
+
+### ⚠️ Changed
+- Deprecate `StreamColors.linkBackground` in favor of `MessageTheme.linkBackgroundColor`. [#5894](https://github.com/GetStream/stream-chat-android/pull/5894)
+
+# July 25th, 2025 - 6.20.0
+## stream-chat-android-client
+### ✅ Added
+- Add throttling mechanism to prevent excessive API calls when updating locations. [#5871](https://github.com/GetStream/stream-chat-android/pull/5871)
+
+## stream-chat-android-ui-common
+### ✅ Added
+- Added a check for skipping the message send when text is not changed. [#5831](https://github.com/GetStream/stream-chat-android/pull/5831)
+
+## stream-chat-android-ui-components
+### ⬆️ Improved
+- Improve enforcement of multiple answer ranges in polls. The number of multiple answers must be between 2 and 10, inclusive. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
+- Show the number of selectable poll answers as a subtitle in poll message content. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
+- Show unique poll winner. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
+- Show "Vote ended" subtitle for closed polls.. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
+- Shows the vote date and time in the Poll result dialog. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
+
+### ✅ Added
+- Add customizable `DurationFormatter` via `ChatUI`. [#5876](https://github.com/GetStream/stream-chat-android/pull/5876)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fix duplicate avatars in poll messages by remembering `imageUrl` to invalidate `data` when `imageUrl` changes. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
+
+### ⬆️ Improved
+- Improve enforcement of multiple answer ranges in polls. The number of multiple answers must be between 2 and 10, inclusive. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
+- Show the number of selectable poll answers as a subtitle in poll message content. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
+- Show unique poll winner. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
+- Show "Vote ended" subtitle for closed polls.. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
+- Show the number of comments on the "View Comments" button. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
+- Show discard dialog when there are changes in the poll composer and the system back button is "pressed". [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
+- Shows the vote date and time in the Poll result dialog. [#5872](https://github.com/GetStream/stream-chat-android/pull/5872)
+- Optimize default channel search query to prevent timeouts. [#5870](https://github.com/GetStream/stream-chat-android/pull/5870)
+
+### ✅ Added
+- Add customizable `DurationFormatter` via `ChatTheme`. [#5876](https://github.com/GetStream/stream-chat-android/pull/5876)
+
+# July 18th, 2025 - 6.19.0
+## stream-chat-android-client
+### 🐞 Fixed
+- Include pending messages in the `Channel.messages` field so they are always visible in the message list. [#5862](https://github.com/GetStream/stream-chat-android/pull/5862)
+
+### ✅ Added
+- Add `ChannelClient.queryReminders()` for querying message reminders. [#5779](https://github.com/GetStream/stream-chat-android/pull/5779)
+- Add `ChannelClient.createReminder()` for creating a message reminder. [#5779](https://github.com/GetStream/stream-chat-android/pull/5779)
+- Add `ChannelClient.updateReminder()` for updating an existing message reminder. [#5779](https://github.com/GetStream/stream-chat-android/pull/5779)
+- Add `ChannelClient.deleteReminder()` for deleting an existing message reminder. [#5779](https://github.com/GetStream/stream-chat-android/pull/5779)
+- Add `ReminderCreatedEvent`, `ReminderUpdatdeEvent`, `ReminderDeletedEvent` and `NotificationReminderDueEvent` events notifying the user about changes in the message reminders. [#5779](https://github.com/GetStream/stream-chat-android/pull/5779)
+- Add `reminder` field to the `Message` entity, which contains the reminder information. [#5779](https://github.com/GetStream/stream-chat-android/pull/5779)
+- Add default handling for `notification.reminder_due` push notification. [#5833](https://github.com/GetStream/stream-chat-android/pull/5833)
+- Add `NotificationHandler.showNotification(ChatNotification)` message method for showing a notification of a specific type. [#5833](https://github.com/GetStream/stream-chat-android/pull/5833)
+- Add `ChatClient.queryActiveLocations` to query the active live locations (non-expired) shared by the current user. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
+- Add `ChatClient.sendStaticLocation` to send a static location message to the given channel. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
+- Add `ChatClient.startLiveLocationSharing` to start a live location sharing for the given channel. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
+- Add `ChatClient.updateLiveLocation` to update the live location info of a message. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
+- Add `ChatClient.stopLiveLocationSharing` to stop the live location sharing for a message. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
+- Introduce the `LiveLocationListener` interface to handle live location-related request events: `onQueryActiveLocationsResult`, `onStartLiveLocationSharingResult`, `onUpdateLiveLocationPrecondition`, `onUpdateLiveLocationResult`, `onStopLiveLocationSharingResult`. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
+- Add utility function `Message.hasSharedLocation` to check if a message contains shared location data. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
+
+### ⚠️ Changed
+- Deprecate `NotificationHandler.showNotification(Channel, Message)` in favor of `NotificationHandler.showNotification(ChatNotification)`. [#5833](https://github.com/GetStream/stream-chat-android/pull/5833)
+
+### ❌ Removed
+- Remove `@ExperimentalStreamChatApi` annotation usage. [#5866](https://github.com/GetStream/stream-chat-android/pull/5866)
+
+## stream-chat-android-offline
+### ✅ Added
+- Support local storage to the shared location. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
+
+## stream-chat-android-state
+### 🐞 Fixed
+- Unread message count should not be reset on entering a thread. [#5836](https://github.com/GetStream/stream-chat-android/pull/5836)
+- Fix `GlobalState.totalUnreadCount` and `GlobalState.channelUnreadCount` not updated when receiving a new message, when the `OfflinePlugin` is not applied. [#5858](https://github.com/GetStream/stream-chat-android/pull/5858)
+- Ensure `Channel.membership` is updated when the current user joins a channel. [#5857](https://github.com/GetStream/stream-chat-android/pull/5857)
+
+### ✅ Added
+- Introduce `GlobalState.activeLiveLocations` that emits active live locations that are being shared in the app by the current user. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
+
+### ⚠️ Changed
+- Change `SyncManager` to schedule updates of messages that contains live locations sharing, to be executed when the live locations sharing ends. [#5852](https://github.com/GetStream/stream-chat-android/pull/5852)
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+- Prevent calling `focusMessage` from the `MessageListController` after closing the `MessageList`. [#5854](https://github.com/GetStream/stream-chat-android/pull/5854)
+
+### ❌ Removed
+- Remove `@ExperimentalStreamChatApi` annotation usage. [#5866](https://github.com/GetStream/stream-chat-android/pull/5866)
+
+## stream-chat-android-ui-components
+### ❌ Removed
+- Remove `@ExperimentalStreamChatApi` annotation usage. [#5866](https://github.com/GetStream/stream-chat-android/pull/5866)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fix `MediaGalleryPreviewActivity` overriding the `Message.attachments` of the `Message` which was passed to it. [#5863](https://github.com/GetStream/stream-chat-android/pull/5863)
+- Fix `MediaGalleryPreviewActivity` displaying the current time instead of the `Message` timestamp if the screen was opened without internet connection. [#5863](https://github.com/GetStream/stream-chat-android/pull/5863)
+- Fix the top bar up button not working when the keyboard is open in the messages screen. [#5868](https://github.com/GetStream/stream-chat-android/pull/5868)
+
+### ⬆️ Improved
+- Add bottom padding to unread message separator. [#5855](https://github.com/GetStream/stream-chat-android/pull/5855)
+
+### ✅ Added
+- Expose `canHandle` lambda of the attachment factories: `AudioRecordAttachmentFactory`, `FileAttachmentFactory`, `GiphyAttachmentFactory`, `LinkAttachmentFactory`, `MediaAttachmentFactory`, `UploadAttachmentFactory`. [#5865](https://github.com/GetStream/stream-chat-android/pull/5865) 
+
+### ❌ Removed
+- Remove `@ExperimentalStreamChatApi` annotation usage. [#5866](https://github.com/GetStream/stream-chat-android/pull/5866)
 
 # June 27th, 2025 - 6.18.0
 ## stream-chat-android-client

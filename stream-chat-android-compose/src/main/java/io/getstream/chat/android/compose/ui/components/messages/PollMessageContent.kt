@@ -51,7 +51,9 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -78,6 +80,8 @@ import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
+import io.getstream.chat.android.ui.common.utils.PollsConstants
+import io.getstream.chat.android.ui.common.utils.extensions.getSubtitle
 
 /**
  * Message content for the poll, which distinguishes the owner and users and allows them to interact.
@@ -195,6 +199,7 @@ private fun PollMessageContent(
     onAddPollOption: (poll: Poll, option: String) -> Unit,
     selectPoll: (Message, Poll, PollSelectionType) -> Unit,
 ) {
+    val context = LocalContext.current
     val showDialog = remember { mutableStateOf(false) }
     val heightMax = LocalConfiguration.current.screenHeightDp
     val isClosed = poll.closed
@@ -237,33 +242,41 @@ private fun PollMessageContent(
         item {
             Text(
                 modifier = Modifier.padding(bottom = 8.dp),
-                text = poll.description,
+                text = poll.getSubtitle(context),
                 color = ChatTheme.colors.textLowEmphasis,
                 fontSize = 12.sp,
             )
         }
 
         items(
-            items = poll.options.take(10),
-            key = { it.id },
+            items = poll.options.take(PollsConstants.MIN_NUMBER_OF_VISIBLE_OPTIONS),
+            key = Option::id,
         ) { option ->
             val voteCount = poll.voteCountsByOption[option.id] ?: 0
-            val isVotedByMine = poll.ownVotes.any { it.optionId == option.id }
 
             PollOptionItem(
                 poll = poll,
                 option = option,
                 voteCount = voteCount,
-                users = poll.votes.filter { it.optionId == option.id }.mapNotNull { it.user },
+                users = poll.getVotes(option).mapNotNull(Vote::user),
                 totalVoteCount = poll.voteCountsByOption.values.sum(),
                 checkedCount = poll.ownVotes.count { it.optionId == option.id },
-                checked = isVotedByMine,
+                checked = poll.ownVotes.any { it.optionId == option.id },
                 onCastVote = { onCastVote.invoke(option) },
                 onRemoveVote = {
-                    val vote = poll.votes.firstOrNull { it.optionId == option.id } ?: return@PollOptionItem
-                    onRemoveVote.invoke(vote)
+                    poll.ownVotes.firstOrNull { it.optionId == option.id }
+                        ?.let(onRemoveVote)
                 },
             )
+        }
+
+        if (poll.options.size > PollsConstants.MIN_NUMBER_OF_VISIBLE_OPTIONS) {
+            item {
+                PollOptionButton(
+                    text = stringResource(id = R.string.stream_ui_poll_action_see_all, poll.options.size),
+                    onButtonClicked = { selectPoll.invoke(message, poll, PollSelectionType.MoreOption) },
+                )
+            }
         }
 
         if (poll.allowUserSuggestedOptions && !isClosed) {
@@ -279,7 +292,11 @@ private fun PollMessageContent(
             if (poll.answers.isNotEmpty()) {
                 item {
                     PollOptionButton(
-                        text = stringResource(R.string.stream_compose_view_answers),
+                        text = pluralStringResource(
+                            R.plurals.stream_ui_poll_action_view_comments,
+                            poll.answers.size,
+                            poll.answers.size,
+                        ),
                         onButtonClicked = { selectPoll.invoke(message, poll, PollSelectionType.ViewAnswers) },
                     )
                 }
@@ -290,15 +307,6 @@ private fun PollMessageContent(
                         onButtonClicked = { showAddAnswerDialog.value = true },
                     )
                 }
-            }
-        }
-
-        if (poll.options.size > 10) {
-            item {
-                PollOptionButton(
-                    text = stringResource(id = R.string.stream_compose_poll_see_more_options, poll.options.size),
-                    onButtonClicked = { selectPoll.invoke(message, poll, PollSelectionType.MoreOption) },
-                )
             }
         }
 
@@ -430,7 +438,7 @@ private fun PollOptionItem(
             )
 
             Row {
-                if (voteCount > 0 && poll.votingVisibility != VotingVisibility.ANONYMOUS) {
+                if (users.isNotEmpty() && poll.votingVisibility != VotingVisibility.ANONYMOUS) {
                     UserAvatarRow(
                         modifier = Modifier.padding(end = 2.dp),
                         users = users,

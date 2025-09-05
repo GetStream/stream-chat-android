@@ -20,6 +20,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Config
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessagesState
@@ -119,6 +120,9 @@ public interface ChannelState {
 
     /** The date of the last message sent by the current user. */
     public val lastSentMessageDate: StateFlow<Date?>
+
+    /** Live locations that are currently active in this channel. */
+    public val activeLiveLocations: StateFlow<List<Location>>
 
     /** Function that builds a channel based on data from StateFlows. */
     public fun toChannel(): Channel

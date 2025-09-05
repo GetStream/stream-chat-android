@@ -57,6 +57,8 @@ import java.util.Date
  * @param cachedLatestMessages The list of cached messages if the regular list does not contain the newest messages.
  * @param isInsideSearch When the channel is inside search, eg. searching from the channel list for a message or when
  * hopping to a quoted message a number pages away without retaining the newest messages in the list.
+ * @param draftMessage The draft message for the channel.
+ * @param activeLiveLocations The list of active live locations in the channel.
  */
 @Immutable
 public data class Channel(
@@ -97,6 +99,7 @@ public data class Channel(
     val cachedLatestMessages: List<Message> = emptyList(),
     val isInsideSearch: Boolean = false,
     val draftMessage: DraftMessage? = null,
+    val activeLiveLocations: List<Location> = emptyList(),
     override val extraData: Map<String, Any> = mapOf(),
 ) : CustomObject, ComparableFieldProvider {
 
@@ -189,6 +192,7 @@ public data class Channel(
         private var cachedLatestMessages: List<Message> = emptyList()
         private var isInsideSearch: Boolean = false
         private var draft: DraftMessage? = null
+        private var activeLiveLocations: List<Location> = emptyList()
         private var extraData: Map<String, Any> = mapOf()
 
         public constructor(channel: Channel) : this() {
@@ -220,6 +224,7 @@ public data class Channel(
             cachedLatestMessages = channel.cachedLatestMessages
             isInsideSearch = channel.isInsideSearch
             draft = channel.draftMessage
+            activeLiveLocations = channel.activeLiveLocations
             extraData = channel.extraData
         }
 
@@ -261,6 +266,9 @@ public data class Channel(
         public fun withDraftMessage(draftMessage: DraftMessage?): Builder = apply {
             this.draft = draftMessage
         }
+        public fun withActiveLiveLocations(activeLiveLocations: List<Location>): Builder = apply {
+            this.activeLiveLocations = activeLiveLocations
+        }
         public fun withExtraData(extraData: Map<String, Any>): Builder = apply { this.extraData = extraData }
 
         @Deprecated(
@@ -300,6 +308,7 @@ public data class Channel(
             cachedLatestMessages = cachedLatestMessages,
             isInsideSearch = isInsideSearch,
             draftMessage = draft,
+            activeLiveLocations = activeLiveLocations,
             extraData = extraData,
         )
     }

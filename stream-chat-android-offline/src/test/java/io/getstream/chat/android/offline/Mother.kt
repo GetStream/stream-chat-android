@@ -26,9 +26,11 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity
+import io.getstream.chat.android.offline.repository.domain.message.internal.LocationEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageInnerEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.ReactionGroupEntity
+import io.getstream.chat.android.offline.repository.domain.message.internal.ReminderInfoEntity
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsEntity
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionEntity
 import io.getstream.chat.android.offline.repository.domain.user.internal.PrivacySettingsEntity
@@ -36,6 +38,8 @@ import io.getstream.chat.android.offline.repository.domain.user.internal.UserEnt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomDate
+import io.getstream.chat.android.randomDateOrNull
+import io.getstream.chat.android.randomDouble
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomString
 import kotlinx.coroutines.Dispatchers
@@ -109,6 +113,8 @@ internal fun randomMessageEntity(
     pinnedByUserId: String? = randomString(),
     threadParticipantsIds: List<String> = emptyList(),
     pollId: String? = null,
+    reminder: ReminderInfoEntity = randomReminderInfoEntity(),
+    sharedLocation: LocationEntity? = randomLocationEntity(),
 ) = MessageEntity(
     messageInnerEntity = MessageInnerEntity(
         id = id,
@@ -139,10 +145,22 @@ internal fun randomMessageEntity(
         pinnedByUserId = pinnedByUserId,
         threadParticipantsIds = threadParticipantsIds,
         pollId = pollId,
+        reminder = reminder,
+        sharedLocation = sharedLocation,
     ),
     attachments = attachments,
     latestReactions = latestReactions,
     ownReactions = ownReactions,
+)
+
+internal fun randomReminderInfoEntity(
+    remindAt: Date? = randomDateOrNull(),
+    createdAt: Date = randomDate(),
+    updatedAt: Date = randomDate(),
+): ReminderInfoEntity = ReminderInfoEntity(
+    remindAt = remindAt,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
 )
 
 internal fun randomReactionGroupEntity(
@@ -176,3 +194,14 @@ internal fun createRoomDB(): ChatDatabase =
         .setTransactionExecutor(Executors.newSingleThreadExecutor())
         .setQueryExecutor(Dispatchers.IO.asExecutor())
         .build()
+
+internal fun randomLocationEntity(): LocationEntity =
+    LocationEntity(
+        cid = randomCID(),
+        messageId = randomString(),
+        userId = randomString(),
+        endAt = randomDate(),
+        latitude = randomDouble(),
+        longitude = randomDouble(),
+        deviceId = randomString(),
+    )

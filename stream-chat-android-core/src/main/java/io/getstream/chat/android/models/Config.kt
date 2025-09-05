@@ -136,6 +136,16 @@ public data class Config(
     val commands: List<Command> = mutableListOf(),
 
     /**
+     * Determines if message reminders are enabled. Disabled by default.
+     */
+    val messageRemindersEnabled: Boolean = false,
+
+    /**
+     * Determines if shared locations are enabled. Disabled by default.
+     */
+    val sharedLocationsEnabled: Boolean = false,
+
+    /**
      * If true, the messages sent in the channel will be marked as pending.
      */
     val markMessagesPending: Boolean = false,

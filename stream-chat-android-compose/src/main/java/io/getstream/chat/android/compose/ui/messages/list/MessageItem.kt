@@ -40,6 +40,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -51,6 +53,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
@@ -418,9 +421,9 @@ internal fun DefaultMessageItemHeaderContent(
             }?.let { options ->
                 MessageReactions(
                     modifier = Modifier
-                        .clickable(bounded = false) {
-                            onReactionsClick(message)
-                        }
+                        .minimumInteractiveComponentSize()
+                        .clip(shape = RoundedCornerShape(16.dp))
+                        .clickable { onReactionsClick(message) }
                         .padding(horizontal = 4.dp, vertical = 2.dp),
                     options = options,
                 )

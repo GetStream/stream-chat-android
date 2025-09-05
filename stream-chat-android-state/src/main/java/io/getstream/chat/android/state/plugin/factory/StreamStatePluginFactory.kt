@@ -85,7 +85,7 @@ public class StreamStatePluginFactory(
         val scope = ChatClient.instance().inheritScope { parentJob ->
             SupervisorJob(parentJob) + DispatcherProvider.IO + exceptionHandler
         }
-        return createStatePlugin(user, scope, MutableGlobalState())
+        return createStatePlugin(user, scope, MutableGlobalState(user.id))
     }
 
     @SuppressWarnings("LongMethod")
@@ -102,9 +102,11 @@ public class StreamStatePluginFactory(
         val stateRegistry = StateRegistry(
             clientState.user,
             repositoryFacade.observeLatestUsers(),
+            mutableGlobalState.activeLiveLocations,
             scope.coroutineContext.job,
             config.now,
             scope,
+            config.messageLimitConfig,
         )
 
         val isQueryingFree = MutableStateFlow(true)
@@ -117,7 +119,6 @@ public class StreamStatePluginFactory(
             repos = repositoryFacade,
             client = chatClient,
             coroutineScope = scope,
-            queryingChannelsFree = isQueryingFree,
             now = config.now,
         )
 

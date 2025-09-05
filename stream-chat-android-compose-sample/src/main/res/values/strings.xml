@@ -70,4 +70,59 @@
 
     <!-- Draft Channel -->
     <string name="draft_channel_error">Failed to draft a channel</string>
+
+    <!--  Navigation drawer  -->
+    <string name="navigation_drawer_new_direct_message">New Direct Message</string>
+    <string name="navigation_drawer_new_group_chat">Create a group</string>
+    <string name="navigation_drawer_later">Later</string>
+    <string name="navigation_drawer_sign_out">Sign out</string>
+
+    <!--  Message reminders  -->
+    <string name="message_menu_add_reminder">Remind me</string>
+    <string name="message_menu_update_reminder">Update reminder</string>
+    <string name="message_menu_save_for_later">Save for later</string>
+    <string name="message_menu_remove_reminder">Remove reminder</string>
+    <string name="reminders_select_reminder_time_title">Select reminder time</string>
+    <string name="reminders_select_reminder_time_description">When would you like to be reminded?</string>
+    <string name="reminders_remind_in_2_minutes">In 2 minutes</string>
+    <string name="reminders_remind_in_5_minutes">In 5 minutes</string>
+    <string name="reminders_remind_in_1_hour">In 1 hour</string>
+    <string name="reminders_remind_in_1_day">In 1 day</string>
+    <string name="reminders_title">Message Reminders</string>
+    <string name="reminders_filter_all">All</string>
+    <string name="reminders_filter_overdue">Overdue</string>
+    <string name="reminders_filter_upcoming">Upcoming</string>
+    <string name="reminders_filter_scheduled">Scheduled</string>
+    <string name="reminders_filter_saved_for_later">Saved for later</string>
+    <string name="reminders_no_results">No reminders</string>
+    <string name="reminders_no_overdue">No overdue reminders</string>
+    <string name="reminders_no_upcoming">No upcoming reminders</string>
+    <string name="reminders_no_scheduled">No scheduled reminders</string>
+    <string name="reminders_no_saved_for_later">No saved for later</string>
+    <string name="reminders_channel_name"># %1$s</string>
+    <string name="reminders_status_save_for_later">• Saved for later</string>
+    <string name="reminders_status_due_in">• Due in %1$s</string>
+    <string name="reminders_status_overdue_by">• Overdue by %1$s</string>
+    <string name="reminders_options">Reminder options</string>
+    <string name="reminders_edit">Edit</string>
+    <string name="reminders_delete">Delete</string>
+    <string name="reminders_edit_due_date">Edit reminder due date</string>
+    <string name="reminders_clear_due_date">Clear due date</string>
+    <string name="reminders_query_failed">Failed to load reminders</string>
+    <string name="reminders_update_failed">Failed to update the reminder</string>
+    <string name="reminders_delete_failed">Failed to delete the reminder</string>
+
+    <plurals name="time_minutes">
+        <item quantity="one">1 minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+    <plurals name="time_seconds">
+        <item quantity="one">1 second</item>
+        <item quantity="other">%d seconds</item>
+    </plurals>
+
+    <!-- Channel Attachments -->
+    <string name="channel_attachments_media_loading_more_error">Failed to load more media attachments</string>
+    <string name="channel_attachments_files_loading_more_error">Failed to load more files attachments</string>
+
 </resources>

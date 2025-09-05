@@ -22,6 +22,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -43,7 +45,7 @@ public fun BackButton(
     ) {
         Icon(
             painter = painter,
-            contentDescription = null,
+            contentDescription = stringResource(R.string.stream_ui_back_button),
             tint = ChatTheme.colors.textHighEmphasis,
         )
     }

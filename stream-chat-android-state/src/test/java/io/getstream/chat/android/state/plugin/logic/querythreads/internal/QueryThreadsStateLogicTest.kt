@@ -92,7 +92,7 @@ internal class QueryThreadsStateLogicTest {
             draft = null,
         ),
     )
-    val mutableGlobalState = MutableGlobalState()
+    val mutableGlobalState = MutableGlobalState("usrId1")
 
     @Test
     fun `Given QueryThreadsStateLogic When getting isLoading Should return isLoading from mutableState`() {

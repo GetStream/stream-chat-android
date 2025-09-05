@@ -20,18 +20,18 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.sample.R
-import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
 import io.getstream.chat.android.compose.sample.ui.MessagesActivity
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import kotlinx.coroutines.flow.collectLatest
 
-class DraftChannelActivity : BaseConnectedActivity() {
+class DraftChannelActivity : ComponentActivity() {
 
     companion object {
         private const val KEY_MEMBER_IDS = "memberIds"

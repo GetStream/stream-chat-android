@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalStreamChatApi::class)
-
 package io.getstream.chat.ui.sample.feature.chat.info
 
 import android.os.Bundle
@@ -27,7 +25,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
@@ -107,6 +104,16 @@ class ChatInfoFragment : Fragment() {
                 findNavController().navigateSafely(
                     ChatInfoFragmentDirections.actionChatInfoFragmentToPinnedMessageListFragment(args.cid),
                 )
+
+            is ChannelInfoViewEvent.NavigateToMediaAttachments ->
+                findNavController().navigateSafely(
+                    ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedMediaFragment(args.cid),
+                )
+
+            is ChannelInfoViewEvent.NavigateToFilesAttachments ->
+                findNavController().navigateSafely(
+                    ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedFilesFragment(args.cid),
+                )
             // No need to handle these in ChatInfoFragment,
             // as it is only applicable for group channels.
             is ChannelInfoViewEvent.NavigateToChannel,
@@ -139,15 +146,14 @@ class ChatInfoFragment : Fragment() {
         }
         adapter.setChatInfoOptionClickListener { option ->
             when (option) {
-                ChatInfoItem.Option.PinnedMessages -> viewModel.onViewAction(ChannelInfoViewAction.PinnedMessagesClick)
+                ChatInfoItem.Option.PinnedMessages ->
+                    viewModel.onViewAction(ChannelInfoViewAction.PinnedMessagesClick)
 
-                ChatInfoItem.Option.SharedMedia -> findNavController().navigateSafely(
-                    ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedMediaFragment(args.cid),
-                )
+                ChatInfoItem.Option.SharedMedia ->
+                    viewModel.onViewAction(ChannelInfoViewAction.MediaAttachmentsClick)
 
-                ChatInfoItem.Option.SharedFiles -> findNavController().navigateSafely(
-                    ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedFilesFragment(args.cid),
-                )
+                ChatInfoItem.Option.SharedFiles ->
+                    viewModel.onViewAction(ChannelInfoViewAction.FilesAttachmentsClick)
 
                 ChatInfoItem.Option.SharedGroups -> findNavController().navigateSafely(
                     ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedGroupsFragment(

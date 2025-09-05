@@ -19,6 +19,9 @@
     package="io.getstream.chat.android.compose.sample"
     >
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application
         android:name="io.getstream.chat.android.compose.sample.ChatApp"
         android:allowBackup="false"
@@ -27,7 +30,7 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Streamchatcompose"
+        android:theme="@style/AppTheme"
         >
         <profileable
             android:shell="true"
@@ -94,5 +97,9 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
             />
+        <activity android:name=".feature.reminders.MessageRemindersActivity" />
+        <activity android:name=".ui.profile.UserProfileActivity" />
+        <activity android:name=".ui.channel.attachments.ChannelFilesAttachmentsActivity" />
+        <activity android:name=".ui.channel.attachments.ChannelMediaAttachmentsActivity" />
     </application>
 </manifest>

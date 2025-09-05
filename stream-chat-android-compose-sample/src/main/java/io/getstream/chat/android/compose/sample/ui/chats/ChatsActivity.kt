@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalStreamChatApi::class)
-
 package io.getstream.chat.android.compose.sample.ui.chats
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.animateDpAsState
@@ -50,17 +49,19 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
+import io.getstream.chat.android.compose.sample.R.string.stream_ui_message_list_video_display_error
 import io.getstream.chat.android.compose.sample.feature.channel.ChannelConstants.CHANNEL_ARG_DRAFT
 import io.getstream.chat.android.compose.sample.feature.channel.add.AddChannelActivity
 import io.getstream.chat.android.compose.sample.feature.channel.isGroupChannel
 import io.getstream.chat.android.compose.sample.feature.channel.list.CustomChatEventHandlerFactory
-import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
 import io.getstream.chat.android.compose.sample.ui.channel.AddMembersDialog
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBar
 import io.getstream.chat.android.compose.sample.ui.component.AppBottomBarOption
 import io.getstream.chat.android.compose.sample.ui.component.CustomChatComponentFactory
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
 import io.getstream.chat.android.compose.sample.ui.pinned.PinnedMessagesScreen
+import io.getstream.chat.android.compose.ui.channel.attachments.ChannelFilesAttachmentsScreen
+import io.getstream.chat.android.compose.ui.channel.attachments.ChannelMediaAttachmentsScreen
 import io.getstream.chat.android.compose.ui.channel.info.DirectChannelInfoScreen
 import io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoScreen
 import io.getstream.chat.android.compose.ui.channels.SearchMode
@@ -77,18 +78,21 @@ import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneDestina
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneNavigator
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.ThreePaneRole
 import io.getstream.chat.android.compose.ui.util.adaptivelayout.rememberThreePaneNavigator
+import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsViewModel
+import io.getstream.chat.android.compose.viewmodel.channel.ChannelAttachmentsViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModel
 import io.getstream.chat.android.compose.viewmodel.channel.ChannelInfoViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModelFactory
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.querysort.QuerySortByField
-import io.getstream.chat.android.state.extensions.globalState
+import io.getstream.chat.android.state.extensions.globalStateFlow
+import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewEvent
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 import io.getstream.chat.android.ui.common.state.messages.list.ChannelHeaderViewState
@@ -96,9 +100,10 @@ import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVis
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
-class ChatsActivity : BaseConnectedActivity() {
+class ChatsActivity : ComponentActivity() {
 
     companion object {
         private const val KEY_CHANNEL_ID = "channelId"
@@ -230,9 +235,11 @@ class ChatsActivity : BaseConnectedActivity() {
         listContentMode: ChatListContentMode,
         onOptionSelected: (option: AppBottomBarOption) -> Unit,
     ) {
-        val globalState = ChatClient.instance().globalState
-        val unreadChannelsCount by globalState.channelUnreadCount.collectAsStateWithLifecycle()
-        val unreadThreadsCount by globalState.unreadThreadsCount.collectAsStateWithLifecycle()
+        val globalStateFlow = ChatClient.instance().globalStateFlow
+        val unreadChannelsCount by globalStateFlow.flatMapLatest { it.channelUnreadCount }
+            .collectAsStateWithLifecycle(0)
+        val unreadThreadsCount by globalStateFlow.flatMapLatest { it.unreadThreadsCount }
+            .collectAsStateWithLifecycle(0)
         val selectedOption = when (listContentMode) {
             ChatListContentMode.Channels -> AppBottomBarOption.CHATS
             ChatListContentMode.Mentions -> AppBottomBarOption.MENTIONS
@@ -260,6 +267,8 @@ class ChatsActivity : BaseConnectedActivity() {
                 onNavigationIconClick = { navigator.navigateBack() },
                 onNavigateUp = { navigator.popUpTo(pane = ThreePaneRole.List) },
                 onNavigateToPinnedMessages = { navigator.navigateToPinnedMessages(mode.channelId) },
+                onNavigateToMediaAttachments = { navigator.navigateToMediaAttachments(channelId = mode.channelId) },
+                onNavigateToFilesAttachments = { navigator.navigateToFilesAttachments(channelId = mode.channelId) },
             )
 
             is InfoContentMode.GroupChannelInfo -> GroupChannelInfoContent(
@@ -267,6 +276,8 @@ class ChatsActivity : BaseConnectedActivity() {
                 onNavigationIconClick = { navigator.navigateBack() },
                 onNavigateUp = { navigator.popUpTo(pane = ThreePaneRole.List) },
                 onNavigateToPinnedMessages = { navigator.navigateToPinnedMessages(mode.channelId) },
+                onNavigateToMediaAttachments = { navigator.navigateToMediaAttachments(channelId = mode.channelId) },
+                onNavigateToFilesAttachments = { navigator.navigateToFilesAttachments(channelId = mode.channelId) },
                 onNavigateToChannel = { channelId ->
                     navigator.navigateToChannel(
                         channelId = channelId,
@@ -287,23 +298,41 @@ class ChatsActivity : BaseConnectedActivity() {
                 },
             )
 
+            is InfoContentMode.MediaAttachments -> ChannelMediaAttachmentsContent(
+                cid = mode.channelId,
+                onNavigationIconClick = { navigator.navigateBack() },
+            )
+
+            is InfoContentMode.FilesAttachments -> ChannelFilesAttachmentsContent(
+                cid = mode.channelId,
+                onNavigationIconClick = { navigator.navigateBack() },
+            )
+
             is InfoContentMode.Hidden -> Unit
         }
     }
 
+    @Suppress("LongParameterList")
     @Composable
     private fun DirectChannelInfoContent(
         channelId: String,
         onNavigationIconClick: () -> Unit,
         onNavigateUp: () -> Unit,
         onNavigateToPinnedMessages: () -> Unit,
+        onNavigateToMediaAttachments: () -> Unit,
+        onNavigateToFilesAttachments: () -> Unit,
     ) {
         val viewModelFactory = remember(channelId) {
             ChannelInfoViewModelFactory(context = applicationContext, cid = channelId)
         }
         val viewModel = viewModel<ChannelInfoViewModel>(factory = viewModelFactory)
 
-        viewModel.OnChannelInfoEvents(onNavigateUp, onNavigateToPinnedMessages)
+        viewModel.OnChannelInfoEvents(
+            onNavigateUp = onNavigateUp,
+            onNavigateToPinnedMessages = onNavigateToPinnedMessages,
+            onNavigateToMediaAttachments = onNavigateToMediaAttachments,
+            onNavigateToFilesAttachments = onNavigateToFilesAttachments,
+        )
 
         if (AdaptiveLayoutInfo.singlePaneWindow()) {
             DirectChannelInfoScreen(
@@ -340,12 +369,15 @@ class ChatsActivity : BaseConnectedActivity() {
         }
     }
 
+    @Suppress("LongParameterList")
     @Composable
     private fun GroupChannelInfoContent(
         channelId: String,
         onNavigationIconClick: () -> Unit,
         onNavigateUp: () -> Unit,
         onNavigateToPinnedMessages: () -> Unit,
+        onNavigateToMediaAttachments: () -> Unit,
+        onNavigateToFilesAttachments: () -> Unit,
         onNavigateToChannel: (cid: String) -> Unit,
     ) {
         val viewModelFactory = remember(channelId) {
@@ -356,6 +388,8 @@ class ChatsActivity : BaseConnectedActivity() {
         viewModel.OnChannelInfoEvents(
             onNavigateUp = onNavigateUp,
             onNavigateToPinnedMessages = onNavigateToPinnedMessages,
+            onNavigateToMediaAttachments = onNavigateToMediaAttachments,
+            onNavigateToFilesAttachments = onNavigateToFilesAttachments,
             onNavigateToChannel = onNavigateToChannel,
         )
 
@@ -410,6 +444,8 @@ class ChatsActivity : BaseConnectedActivity() {
     private fun ChannelInfoViewModel.OnChannelInfoEvents(
         onNavigateUp: () -> Unit,
         onNavigateToPinnedMessages: () -> Unit,
+        onNavigateToMediaAttachments: () -> Unit,
+        onNavigateToFilesAttachments: () -> Unit,
         onNavigateToChannel: (cid: String) -> Unit = {},
     ) {
         LaunchedEffect(this) {
@@ -418,6 +454,8 @@ class ChatsActivity : BaseConnectedActivity() {
                     is ChannelInfoViewEvent.Navigation -> when (event) {
                         is ChannelInfoViewEvent.NavigateUp -> onNavigateUp()
                         is ChannelInfoViewEvent.NavigateToPinnedMessages -> onNavigateToPinnedMessages()
+                        is ChannelInfoViewEvent.NavigateToMediaAttachments -> onNavigateToMediaAttachments()
+                        is ChannelInfoViewEvent.NavigateToFilesAttachments -> onNavigateToFilesAttachments()
                         is ChannelInfoViewEvent.NavigateToChannel -> onNavigateToChannel(event.cid)
                         // https://linear.app/stream/issue/AND-582/compose-support-draft-messages-in-chatsactivity
                         is ChannelInfoViewEvent.NavigateToDraftChannel -> Unit
@@ -500,6 +538,74 @@ class ChatsActivity : BaseConnectedActivity() {
         )
     }
 
+    @Composable
+    private fun ChannelFilesAttachmentsContent(
+        cid: String,
+        onNavigationIconClick: () -> Unit,
+    ) {
+        val viewModelFactory = ChannelAttachmentsViewModelFactory(
+            cid = cid,
+            attachmentTypes = listOf(AttachmentType.FILE),
+        )
+        val viewModel = viewModel<ChannelAttachmentsViewModel>(
+            factory = viewModelFactory,
+        )
+        ChannelFilesAttachmentsScreen(
+            viewModelFactory = viewModelFactory,
+            onNavigationIconClick = onNavigationIconClick,
+        )
+        LaunchedEffect(viewModel) {
+            viewModel.events.collectLatest { event ->
+                when (event) {
+                    is ChannelAttachmentsViewEvent.LoadMoreError ->
+                        Toast.makeText(
+                            applicationContext,
+                            R.string.channel_attachments_files_loading_more_error,
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun ChannelMediaAttachmentsContent(
+        cid: String,
+        onNavigationIconClick: () -> Unit,
+    ) {
+        val viewModelFactory = ChannelAttachmentsViewModelFactory(
+            cid = cid,
+            attachmentTypes = listOf(AttachmentType.IMAGE, AttachmentType.VIDEO),
+        )
+        val viewModel = viewModel<ChannelAttachmentsViewModel>(
+            factory = viewModelFactory,
+        )
+        ChannelMediaAttachmentsScreen(
+            viewModelFactory = viewModelFactory,
+            gridColumnCount = if (AdaptiveLayoutInfo.singlePaneWindow()) null else 4,
+            onNavigationIconClick = onNavigationIconClick,
+            onVideoPlaybackError = {
+                Toast.makeText(
+                    applicationContext,
+                    stream_ui_message_list_video_display_error,
+                    Toast.LENGTH_SHORT,
+                ).show()
+            },
+        )
+        LaunchedEffect(viewModel) {
+            viewModel.events.collectLatest { event ->
+                when (event) {
+                    is ChannelAttachmentsViewEvent.LoadMoreError ->
+                        Toast.makeText(
+                            applicationContext,
+                            R.string.channel_attachments_media_loading_more_error,
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                }
+            }
+        }
+    }
+
     private fun buildMessagesViewModelFactory(
         channelId: String,
         messageId: String?,
@@ -552,6 +658,24 @@ private fun ThreePaneNavigator.navigateToPinnedMessages(channelId: String) {
         destination = ThreePaneDestination(
             pane = ThreePaneRole.Info,
             arguments = InfoContentMode.PinnedMessages(channelId),
+        ),
+    )
+}
+
+private fun ThreePaneNavigator.navigateToMediaAttachments(channelId: String) {
+    navigateTo(
+        destination = ThreePaneDestination(
+            pane = ThreePaneRole.Info,
+            arguments = InfoContentMode.MediaAttachments(channelId),
+        ),
+    )
+}
+
+private fun ThreePaneNavigator.navigateToFilesAttachments(channelId: String) {
+    navigateTo(
+        destination = ThreePaneDestination(
+            pane = ThreePaneRole.Info,
+            arguments = InfoContentMode.FilesAttachments(channelId),
         ),
     )
 }

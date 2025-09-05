@@ -19,19 +19,21 @@ package io.getstream.chat.android.ui.viewmodel.channel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.common.helper.CopyToClipboardHandler
+import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
 
 /**
  * Factory for creating instances of [ChannelInfoViewModel].
  *
  * @param context The application context.
  * @param cid The full channel identifier (Ex. "messaging:123").
+ * @param optionFilter A filter function for channel options, allowing customization of which options are displayed.
+ *                      Defaults to a function that returns true for all options.
  */
-@ExperimentalStreamChatApi
 public class ChannelInfoViewModelFactory(
     private val context: Context,
     private val cid: String,
+    private val optionFilter: (option: ChannelInfoViewState.Content.Option) -> Boolean = { true },
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -42,6 +44,7 @@ public class ChannelInfoViewModelFactory(
         return ChannelInfoViewModel(
             cid = cid,
             copyToClipboardHandler = CopyToClipboardHandler(context = context.applicationContext),
+            optionFilter = optionFilter,
         ) as T
     }
 }

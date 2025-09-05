@@ -20,7 +20,7 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
-import java.util.Date
+import java.util.Calendar
 import java.util.UUID
 
 /**
@@ -63,46 +63,54 @@ public object PreviewPollData {
                 id = UUID.randomUUID().toString(),
                 pollId = UUID.randomUUID().toString(),
                 optionId = option1.id,
-                createdAt = Date(),
-                updatedAt = Date(),
+                createdAt = Now,
+                updatedAt = Now,
                 user = PreviewUserData.user1,
             ),
             Vote(
                 id = UUID.randomUUID().toString(),
                 pollId = UUID.randomUUID().toString(),
                 optionId = option1.id,
-                createdAt = Date(),
-                updatedAt = Date(),
+                createdAt = Now,
+                updatedAt = Now,
                 user = PreviewUserData.user2,
             ),
             Vote(
                 id = UUID.randomUUID().toString(),
                 pollId = UUID.randomUUID().toString(),
                 optionId = option1.id,
-                createdAt = Date(),
-                updatedAt = Date(),
+                createdAt = Now,
+                updatedAt = Now,
                 user = PreviewUserData.user3,
             ),
             Vote(
                 id = UUID.randomUUID().toString(),
                 pollId = UUID.randomUUID().toString(),
                 optionId = option2.id,
-                createdAt = Date(),
-                updatedAt = Date(),
+                createdAt = Now,
+                updatedAt = Now,
                 user = PreviewUserData.user4,
             ),
             Vote(
                 id = UUID.randomUUID().toString(),
                 pollId = UUID.randomUUID().toString(),
                 optionId = option3.id,
-                createdAt = Date(),
-                updatedAt = Date(),
+                createdAt = Now,
+                updatedAt = Now,
                 user = PreviewUserData.user5,
             ),
         ),
         ownVotes = listOf(),
-        createdAt = Date(),
-        updatedAt = Date(),
+        createdAt = Now,
+        updatedAt = Now,
         closed = false,
     )
+}
+
+@Suppress("MagicNumber")
+private val Now = Calendar.getInstance().run {
+    set(Calendar.HOUR_OF_DAY, 8)
+    set(Calendar.MINUTE, 32)
+    set(Calendar.SECOND, 0)
+    time
 }

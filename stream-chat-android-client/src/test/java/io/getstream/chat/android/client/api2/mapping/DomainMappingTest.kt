@@ -44,13 +44,20 @@ import io.getstream.chat.android.client.Mother.randomDownstreamPendingMessageDto
 import io.getstream.chat.android.client.Mother.randomDownstreamPollDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReactionDto
 import io.getstream.chat.android.client.Mother.randomDownstreamReactionGroupDto
+import io.getstream.chat.android.client.Mother.randomDownstreamReminderDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadDto
 import io.getstream.chat.android.client.Mother.randomDownstreamThreadInfoDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserBlockDto
 import io.getstream.chat.android.client.Mother.randomDownstreamUserDto
 import io.getstream.chat.android.client.Mother.randomDownstreamVoteDto
 import io.getstream.chat.android.client.Mother.randomPrivacySettingsDto
+import io.getstream.chat.android.client.Mother.randomQueryRemindersResponse
 import io.getstream.chat.android.client.Mother.randomSearchWarningDto
+import io.getstream.chat.android.client.Mother.randomUnreadChannelByTypeDto
+import io.getstream.chat.android.client.Mother.randomUnreadChannelDto
+import io.getstream.chat.android.client.Mother.randomUnreadCountByTeamDto
+import io.getstream.chat.android.client.Mother.randomUnreadDto
+import io.getstream.chat.android.client.Mother.randomUnreadThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
 import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.models.Answer
@@ -71,6 +78,7 @@ import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MessageModerationAction
 import io.getstream.chat.android.models.MessageModerationDetails
+import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.Moderation
 import io.getstream.chat.android.models.ModerationAction
@@ -82,12 +90,17 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PushProvider
+import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.ReactionGroup
 import io.getstream.chat.android.models.SearchWarning
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
 import io.getstream.chat.android.models.ThreadParticipant
+import io.getstream.chat.android.models.UnreadChannel
+import io.getstream.chat.android.models.UnreadChannelByType
+import io.getstream.chat.android.models.UnreadCounts
+import io.getstream.chat.android.models.UnreadThread
 import io.getstream.chat.android.models.UserBlock
 import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.UserTransformer
@@ -136,7 +149,9 @@ internal class DomainMappingTest {
                 text = draftMessageResponse.message.text,
                 parentId = draftMessageResponse.parent_message?.id,
                 replyMessage = draftMessageResponse.quoted_message?.toDomain(),
-                attachments = with(sut) { draftMessageResponse.message.attachments?.map { it.toDomain() } ?: emptyList() },
+                attachments = with(sut) {
+                    draftMessageResponse.message.attachments?.map { it.toDomain() } ?: emptyList()
+                },
                 mentionedUsersIds = draftMessageResponse.message.mentioned_users?.map { it.id } ?: emptyList(),
                 extraData = draftMessageResponse.message.extraData ?: emptyMap(),
                 silent = draftMessageResponse.message.silent,
@@ -568,6 +583,8 @@ internal class DomainMappingTest {
             automodBehavior = configDto.automod_behavior,
             blocklistBehavior = configDto.blocklist_behavior ?: "",
             commands = configDto.commands.map { with(sut) { it.toDomain() } },
+            messageRemindersEnabled = configDto.user_message_reminders ?: false,
+            sharedLocationsEnabled = configDto.shared_locations ?: false,
             markMessagesPending = configDto.mark_messages_pending,
         )
         config shouldBeEqualTo expected
@@ -772,6 +789,75 @@ internal class DomainMappingTest {
             blockedAt = blockUserResponse.created_at,
         )
         userBlock shouldBeEqualTo expected
+    }
+
+    @Test
+    fun `DownstreamReminderDto is correctly mapped to MessageReminder`() {
+        val downstreamReminderDto = randomDownstreamReminderDto()
+        val sut = Fixture().get()
+        val messageReminder = with(sut) { downstreamReminderDto.toDomain() }
+        val expected = MessageReminder(
+            remindAt = downstreamReminderDto.remind_at,
+            messageId = downstreamReminderDto.message_id,
+            message = with(sut) { downstreamReminderDto.message?.toDomain() },
+            cid = downstreamReminderDto.channel_cid,
+            channel = with(sut) { downstreamReminderDto.channel?.toDomain() },
+            createdAt = downstreamReminderDto.created_at,
+            updatedAt = downstreamReminderDto.updated_at,
+        )
+        messageReminder shouldBeEqualTo expected
+    }
+
+    @Test
+    fun `QueryRemindersResponse is correctly mapped to QueryMessageRemindersResult`() {
+        val input = randomQueryRemindersResponse()
+        val sut = Fixture().get()
+        val result = with(sut) { input.toDomain() }
+        val expected = QueryRemindersResult(
+            reminders = input.reminders.map { with(sut) { it.toDomain() } },
+            next = input.next,
+        )
+        result shouldBeEqualTo expected
+    }
+
+    @Test
+    fun `UnreadDto is correctly mapped to UnreadCounts`() {
+        val input = randomUnreadDto(
+            totalUnreadCountByTeam = mapOf(randomUnreadCountByTeamDto()),
+            channels = listOf(randomUnreadChannelDto()),
+            threads = listOf(randomUnreadThreadDto()),
+            channelType = listOf(randomUnreadChannelByTypeDto()),
+        )
+        val sut = Fixture().get()
+        val result = with(sut) { input.toDomain() }
+        val expected = UnreadCounts(
+            messagesCount = input.total_unread_count,
+            threadsCount = input.total_unread_threads_count,
+            messagesCountByTeam = input.total_unread_count_by_team!!,
+            channels = input.channels.map { dto ->
+                UnreadChannel(
+                    cid = dto.channel_id,
+                    messagesCount = dto.unread_count,
+                    lastRead = dto.last_read,
+                )
+            },
+            threads = input.threads.map { dto ->
+                UnreadThread(
+                    parentMessageId = dto.parent_message_id,
+                    messagesCount = dto.unread_count,
+                    lastRead = dto.last_read,
+                    lastReadMessageId = dto.last_read_message_id,
+                )
+            },
+            channelsByType = input.channel_type.map { dto ->
+                UnreadChannelByType(
+                    channelType = dto.channel_type,
+                    channelsCount = dto.channel_count,
+                    messagesCount = dto.unread_count,
+                )
+            },
+        )
+        result shouldBeEqualTo expected
     }
 
     internal class Fixture {

@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.ui.theme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 
 /**
  * A composable that allows you to create a compound [ChatComponentFactory] by providing a
@@ -33,7 +32,6 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
  * @param factory A function that takes the current [ChatComponentFactory] and returns a new [ChatComponentFactory].
  * @param content The composable content that will use the compound [ChatComponentFactory].
  */
-@ExperimentalStreamChatApi
 @Composable
 public fun CompoundComponentFactory(
     vararg keys: Any?,

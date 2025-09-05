@@ -41,7 +41,6 @@ import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.toMutableState
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.concurrent.ConcurrentHashMap
 
@@ -61,7 +60,6 @@ internal class LogicRegistry internal constructor(
     private val repos: RepositoryFacade,
     private val client: ChatClient,
     private val coroutineScope: CoroutineScope,
-    private val queryingChannelsFree: StateFlow<Boolean>,
     private val now: () -> Long,
 ) : ChannelStateLogicProvider {
 
@@ -85,10 +83,10 @@ internal class LogicRegistry internal constructor(
     internal fun queryChannels(filter: FilterObject, sort: QuerySorter<Channel>): QueryChannelsLogic {
         return queryChannels.getOrPut(filter to sort) {
             val queryChannelsStateLogic = QueryChannelsStateLogic(
-                stateRegistry.queryChannels(filter, sort).toMutableState(),
-                stateRegistry,
-                this,
-                coroutineScope,
+                mutableState = stateRegistry.queryChannels(filter, sort).toMutableState(),
+                stateRegistry = stateRegistry,
+                logicRegistry = this,
+                coroutineScope = coroutineScope,
             )
 
             val queryChannelsDatabaseLogic = QueryChannelsDatabaseLogic(
@@ -228,7 +226,8 @@ internal class LogicRegistry internal constructor(
             val stateLogic = ThreadStateLogic(mutableState)
             ThreadLogic(stateLogic).also { threadLogic ->
                 coroutineScope.launch {
-                    repos.selectMessage(messageId)?.let { threadLogic.upsertMessage(it) }
+                    val parentMessage = getMessageById(messageId) ?: repos.selectMessage(messageId)
+                    parentMessage?.let { threadLogic.upsertMessage(it) }
                     repos.selectMessagesForThread(messageId, MESSAGE_LIMIT).let { threadLogic.upsertMessages(it) }
                 }
             }

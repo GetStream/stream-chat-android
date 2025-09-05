@@ -29,6 +29,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Config
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessagesState
@@ -42,13 +43,31 @@ import kotlinx.coroutines.flow.StateFlow
 import java.util.Date
 import java.util.concurrent.atomic.AtomicInteger
 
-@Suppress("TooManyFunctions")
-/** State container with mutable data of a channel.*/
+@Suppress("TooManyFunctions", "LongParameterList")
+/**
+ * State container with mutable data of a channel.
+ *
+ * @property channelType The type of the channel.
+ * @property channelId The ID of the channel.
+ * @property userFlow State flow providing the user once it is set.
+ * @property latestUsers Flow holding the latest updated users.
+ * @property activeLiveLocations Flow holding the latest live locations.
+ * @property baseMessageLimit The initial limit specifying how many of the latest messages should be kept in memory. If
+ * provided, the [ChannelMutableState] will try to keep the number of messages in memory below this limit. Inserting new
+ * messages in the channel (ex. from `message.new` event) will remove the oldest messages if the limit is exceeded. When
+ * older messages are loaded (ex. by scrolling upwards), the limit is increased by a factor of [LIMIT_MULTIPLIER] if the
+ * number of messages in the channel exceeds the limit. This ensures that the channel limit is not exceeded when loading
+ * older messages. However, this means that the [baseMessageLimit] is not guaranteed to be the maximum number of
+ * messages in the channel.
+ * @property now Function providing the current time in milliseconds. Used to determine if a message is pinned or not.
+ */
 internal class ChannelMutableState(
     override val channelType: String,
     override val channelId: String,
     private val userFlow: StateFlow<User?>,
     latestUsers: StateFlow<Map<String, User>>,
+    activeLiveLocations: StateFlow<List<Location>>,
+    val baseMessageLimit: Int?,
     private val now: () -> Long,
 ) : ChannelState {
 
@@ -56,6 +75,8 @@ internal class ChannelMutableState(
 
     private val seq = seqGenerator.incrementAndGet()
     private val logger by taggedLogger("Chat:ChannelState-$seq")
+
+    private var messageLimit: Int? = baseMessageLimit
 
     private var _messages: MutableStateFlow<Map<String, Message>>? = MutableStateFlow(emptyMap())
     private var _pinnedMessages: MutableStateFlow<Map<String, Message>>? = MutableStateFlow(emptyMap())
@@ -99,6 +120,9 @@ internal class ChannelMutableState(
     override val endOfOlderMessages: StateFlow<Boolean> = _endOfOlderMessages!!
 
     override val endOfNewerMessages: StateFlow<Boolean> = _endOfNewerMessages!!
+    override val activeLiveLocations: StateFlow<List<Location>> = activeLiveLocations.mapState { locations ->
+        locations.filter { it.cid == cid }
+    }
 
     /** the data to hide messages before */
     var hideMessagesBefore: Date? = null
@@ -259,6 +283,7 @@ internal class ChannelMutableState(
                 config = channelConfig.value,
                 hidden = hidden.value,
                 pinnedMessages = sortedPinnedMessages.value,
+                activeLiveLocations = activeLiveLocations.value,
             ).syncUnreadCountWithReads()
     }
 
@@ -269,6 +294,15 @@ internal class ChannelMutableState(
      */
     fun setLoadingOlderMessages(isLoading: Boolean) {
         _loadingOlderMessages?.value = isLoading
+        val currentMessageCount = _messages?.value?.size ?: return
+        if (isLoading) {
+            messageLimit = messageLimit?.let { limit ->
+                val multiplier = LIMIT_MULTIPLIER.takeIf {
+                    currentMessageCount + TRIM_BUFFER >= limit
+                } ?: NEUTRAL_MULTIPLIER
+                (limit * multiplier).toInt()
+            }
+        }
     }
 
     /**
@@ -498,7 +532,9 @@ internal class ChannelMutableState(
             ?.let { upsertWatchers(listOf(it), watcherCount.value) }
         _channelData?.value?.takeIf { it.createdBy.id == user.id }
             ?.let { setChannelData(it.copy(createdBy = user)) }
-        _messages?.apply { value = value.values.updateUsers(mapOf(user.id to user)).associateBy { it.id } }
+        _messages?.apply {
+            value = value.values.updateUsers(mapOf(user.id to user)).associateBy { it.id }
+        }
         _pinnedMessages?.apply { value = value.updateUsers(mapOf(user.id to user)) }
     }
 
@@ -540,7 +576,10 @@ internal class ChannelMutableState(
     }
 
     fun upsertMessages(updatedMessages: Collection<Message>) {
-        _messages?.apply { value += (updatedMessages.associateBy(Message::id) - deletedMessagesIds) }
+        _messages?.apply {
+            val newMessageList = (value + (updatedMessages.associateBy(Message::id) - deletedMessagesIds)).values
+            value = applyMessageLimitIfNeeded(newMessageList).associateBy(Message::id)
+        }
         _pinnedMessages?.value
             ?.let { pinnedMessages ->
                 val pinnedMessageIds = pinnedMessages.keys
@@ -551,7 +590,7 @@ internal class ChannelMutableState(
     }
 
     fun setMessages(messages: List<Message>) {
-        _messages?.value = messages.associateBy(Message::id)
+        _messages?.value = applyMessageLimitIfNeeded(messages).associateBy(Message::id)
     }
 
     fun setPinnedMessages(messages: List<Message>) {
@@ -596,6 +635,13 @@ internal class ChannelMutableState(
         cachedLatestMessages.value = messages
     }
 
+    /**
+     * Resets the current message limit to the [baseMessageLimit].
+     */
+    internal fun resetMessageLimit() {
+        messageLimit = baseMessageLimit
+    }
+
     override fun getMessageById(id: String): Message? = _messages?.value?.get(id) ?: _pinnedMessages?.value?.get(id)
 
     internal fun destroy() {
@@ -623,7 +669,30 @@ internal class ChannelMutableState(
         _channelConfig = null
     }
 
+    @Suppress("ComplexMethod")
+    private fun applyMessageLimitIfNeeded(messages: Collection<Message>): Collection<Message> {
+        // If no message limit is set or we are loading older messages, restriction is not applied
+        if (messageLimit == null || loadingOlderMessages.value) {
+            return messages
+        }
+        // Add buffer to avoid trimming too often
+        return if (messages.size > messageLimit!! + TRIM_BUFFER) {
+            val trimmedMessages = messages
+                .sortedBy { it.createdAt ?: it.createdLocallyAt }
+                .takeLast(messageLimit!!)
+            // Set end of older messages to false, as we trimmed the messages
+            setEndOfOlderMessages(false)
+            trimmedMessages
+        } else {
+            messages
+        }
+    }
+
     private companion object {
         private val seqGenerator = AtomicInteger()
+
+        private const val TRIM_BUFFER = 30
+        private const val NEUTRAL_MULTIPLIER = 1.0
+        private const val LIMIT_MULTIPLIER = 1.5
     }
 }

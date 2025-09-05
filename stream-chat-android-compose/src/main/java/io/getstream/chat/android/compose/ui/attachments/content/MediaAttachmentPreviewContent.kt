@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -104,7 +103,7 @@ private fun MediaAttachmentPreviewItem(
     Box(
         modifier = Modifier
             .size(95.dp)
-            .clip(RoundedCornerShape(16.dp))
+            .clip(ChatTheme.shapes.attachment)
             .testTag("Stream_MediaAttachmentPreviewItem"),
         contentAlignment = Alignment.Center,
     ) {

@@ -32,6 +32,7 @@ import io.getstream.chat.android.compose.ui.theme.MessageTheme
 import io.getstream.chat.android.compose.ui.theme.StreamColors
 import io.getstream.chat.android.compose.ui.theme.StreamShapes
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.utils.extensions.isMine
@@ -207,7 +208,7 @@ private class CompositeQuotedMessageTextFormatter(
  * The default implementation automatically supports the [ChatTheme.autoTranslationEnabled] feature.
  * It also uses the [ChatTheme] to style the text including links highlighting.
  */
-private class DefaultQuotedMessageTextFormatter(
+internal class DefaultQuotedMessageTextFormatter(
     private val context: Context,
     private val autoTranslationEnabled: Boolean,
     private val typography: StreamTypography,
@@ -227,20 +228,14 @@ private class DefaultQuotedMessageTextFormatter(
         }
 
         val poll = message.poll
+        val sharedLocation = message.sharedLocation
         val attachment = message.attachments.firstOrNull()
         val quotedMessageText = when {
             message.isDeleted() -> context.getString(R.string.stream_ui_message_list_message_deleted)
             poll != null -> context.getString(R.string.stream_compose_quoted_message_poll, poll.name)
+            sharedLocation != null -> context.getString(sharedLocation.getMessageTextResId())
             displayedText.isNotBlank() -> displayedText
-            attachment != null -> when {
-                attachment.name != null -> attachment.name
-                attachment.text != null -> attachment.text
-                attachment.isImage() -> context.getString(R.string.stream_compose_quoted_message_image_tag)
-                attachment.isGiphy() -> context.getString(R.string.stream_compose_quoted_message_giphy_tag)
-                attachment.isAnyFileType() -> context.getString(R.string.stream_compose_quoted_message_file_tag)
-                else -> displayedText
-            }
-
+            attachment != null -> attachment.getMessageText() ?: displayedText
             else -> displayedText
         }
 
@@ -262,5 +257,15 @@ private class DefaultQuotedMessageTextFormatter(
                 builder?.invoke(this, message, replyMessage, currentUser)
             },
         )
+    }
+
+    private fun Attachment.getMessageText(): String? = when {
+        name != null -> name
+        text != null -> text
+        title != null -> title
+        isImage() -> context.getString(R.string.stream_compose_quoted_message_image_tag)
+        isGiphy() -> context.getString(R.string.stream_compose_quoted_message_giphy_tag)
+        isAnyFileType() -> context.getString(R.string.stream_compose_quoted_message_file_tag)
+        else -> null
     }
 }

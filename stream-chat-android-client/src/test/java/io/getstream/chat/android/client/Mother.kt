@@ -45,6 +45,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageD
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
@@ -57,6 +58,10 @@ import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
 import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.SearchWarningDto
 import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
+import io.getstream.chat.android.client.api2.model.dto.UnreadChannelByTypeDto
+import io.getstream.chat.android.client.api2.model.dto.UnreadChannelDto
+import io.getstream.chat.android.client.api2.model.dto.UnreadDto
+import io.getstream.chat.android.client.api2.model.dto.UnreadThreadDto
 import io.getstream.chat.android.client.api2.model.response.AppDto
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
@@ -64,6 +69,7 @@ import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.client.api2.model.response.DraftMessageResponse
 import io.getstream.chat.android.client.api2.model.response.FileUploadConfigDto
 import io.getstream.chat.android.client.api2.model.response.QueryDraftMessagesResponse
+import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
 import io.getstream.chat.android.client.api2.model.response.TokenResponse
 import io.getstream.chat.android.client.api2.model.response.UnblockUserResponse
@@ -359,6 +365,7 @@ internal object Mother {
         teamsRole: Map<String, String> = emptyMap(),
         channel_mutes: List<DownstreamChannelMuteDto>? = emptyList(),
         blocked_user_ids: List<String>? = emptyList(),
+        avg_response_time: Long? = null,
         extraData: Map<String, Any> = emptyMap(),
     ): DownstreamUserDto = DownstreamUserDto(
         id = id,
@@ -384,6 +391,7 @@ internal object Mother {
         teams_role = teamsRole,
         channel_mutes = channel_mutes,
         blocked_user_ids = blocked_user_ids,
+        avg_response_time = avg_response_time,
         extraData = extraData,
     )
 
@@ -478,6 +486,8 @@ internal object Mother {
         automod_behavior: String = randomString(),
         blocklist_behavior: String? = randomString(),
         commands: List<CommandDto> = emptyList(),
+        user_message_reminders: Boolean? = randomBoolean(),
+        shared_locations: Boolean = randomBoolean(),
         mark_messages_pending: Boolean = randomBoolean(),
     ): ConfigDto = ConfigDto(
         created_at = created_at,
@@ -502,6 +512,8 @@ internal object Mother {
         automod_behavior = automod_behavior,
         blocklist_behavior = blocklist_behavior,
         commands = commands,
+        user_message_reminders = user_message_reminders,
+        shared_locations = shared_locations,
         mark_messages_pending = mark_messages_pending,
     )
 
@@ -1104,6 +1116,32 @@ internal object Mother {
         answer_text = answerText,
     )
 
+    fun randomDownstreamReminderDto(
+        channelCid: String = randomString(),
+        channel: DownstreamChannelDto = randomDownstreamChannelDto(id = channelCid),
+        messageId: String = randomString(),
+        message: DownstreamMessageDto = randomDownstreamMessageDto(id = messageId),
+        remindAt: Date? = randomDateOrNull(),
+        createdAt: Date = randomDate(),
+        updatedAt: Date = randomDate(),
+    ): DownstreamReminderDto = DownstreamReminderDto(
+        channel_cid = channelCid,
+        channel = channel,
+        message_id = messageId,
+        message = message,
+        remind_at = remindAt,
+        created_at = createdAt,
+        updated_at = updatedAt,
+    )
+
+    fun randomQueryRemindersResponse(
+        reminders: List<DownstreamReminderDto> = listOf(randomDownstreamReminderDto()),
+        next: String? = randomString(),
+    ): QueryRemindersResponse = QueryRemindersResponse(
+        reminders = reminders,
+        next = next,
+    )
+
     fun randomUploadFileResponse(
         file: String = randomString(),
         thumbUrl: String? = randomString(),
@@ -1168,4 +1206,57 @@ internal object Mother {
             code = code,
             messages = messages,
         )
+
+    fun randomUnreadDto(
+        totalUnreadCount: Int = randomInt(),
+        totalUnreadThreadsCount: Int = randomInt(),
+        totalUnreadCountByTeam: Map<String, Int> = emptyMap(),
+        channels: List<UnreadChannelDto> = emptyList(),
+        threads: List<UnreadThreadDto> = emptyList(),
+        channelType: List<UnreadChannelByTypeDto> = emptyList(),
+    ): UnreadDto = UnreadDto(
+        total_unread_count = totalUnreadCount,
+        total_unread_threads_count = totalUnreadThreadsCount,
+        total_unread_count_by_team = totalUnreadCountByTeam,
+        channels = channels,
+        threads = threads,
+        channel_type = channelType,
+    )
+
+    fun randomUnreadCountByTeamDto(
+        teamId: String = randomString(),
+        unreadCount: Int = randomInt(),
+    ): Pair<String, Int> = teamId to unreadCount
+
+    fun randomUnreadChannelDto(
+        channelId: String = randomString(),
+        unreadCount: Int = randomInt(),
+        lastRead: Date = randomDate(),
+    ): UnreadChannelDto = UnreadChannelDto(
+        channel_id = channelId,
+        unread_count = unreadCount,
+        last_read = lastRead,
+    )
+
+    fun randomUnreadThreadDto(
+        parentMessageId: String = randomString(),
+        unreadCount: Int = randomInt(),
+        lastRead: Date = randomDate(),
+        lastReadMessageId: String = randomString(),
+    ): UnreadThreadDto = UnreadThreadDto(
+        parent_message_id = parentMessageId,
+        unread_count = unreadCount,
+        last_read = lastRead,
+        last_read_message_id = lastReadMessageId,
+    )
+
+    fun randomUnreadChannelByTypeDto(
+        channelType: String = randomString(),
+        channelCount: Int = randomInt(),
+        unreadCount: Int = randomInt(),
+    ): UnreadChannelByTypeDto = UnreadChannelByTypeDto(
+        channel_type = channelType,
+        channel_count = channelCount,
+        unread_count = unreadCount,
+    )
 }

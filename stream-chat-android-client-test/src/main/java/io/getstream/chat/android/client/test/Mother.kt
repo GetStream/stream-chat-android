@@ -37,9 +37,13 @@ import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
+import io.getstream.chat.android.client.events.NotificationReminderDueEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
 import io.getstream.chat.android.client.events.PollDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
+import io.getstream.chat.android.client.events.ReminderCreatedEvent
+import io.getstream.chat.android.client.events.ReminderDeletedEvent
+import io.getstream.chat.android.client.events.ReminderUpdatedEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
@@ -51,6 +55,7 @@ import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.NeutralFilterObject
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Reaction
@@ -64,6 +69,7 @@ import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomMessageReminder
 import io.getstream.chat.android.randomPoll
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
@@ -110,7 +116,7 @@ public fun randomChannelVisibleEvent(
     channelType: String = randomString(),
     channelId: String = randomString(),
     user: User = randomUser(),
-
+    channel: Channel = randomChannel(),
 ): ChannelVisibleEvent = ChannelVisibleEvent(
     type = EventType.CHANNEL_VISIBLE,
     createdAt = createdAt,
@@ -119,11 +125,12 @@ public fun randomChannelVisibleEvent(
     channelType = channelType,
     channelId = channelId,
     user = user,
+    channel = channel,
 )
 
 public fun randomUserStartWatchingEvent(
     createdAt: Date = randomDate(),
-    cid: String = randomString(),
+    cid: String = randomCID(),
     watcherCount: Int = randomInt(),
     channelType: String = randomString(),
     channelId: String = randomString(),
@@ -146,6 +153,7 @@ public fun randomChannelHiddenEvent(
     channelId: String = randomString(),
     user: User = randomUser(),
     clearHistory: Boolean = randomBoolean(),
+    channel: Channel = randomChannel(),
 ): ChannelHiddenEvent = ChannelHiddenEvent(
     type = EventType.CHANNEL_HIDDEN,
     createdAt = createdAt,
@@ -154,13 +162,14 @@ public fun randomChannelHiddenEvent(
     channelType = channelType,
     channelId = channelId,
     user = user,
+    channel = channel,
     clearHistory = clearHistory,
 )
 
 public fun randomChannelDeletedEvent(
     createdAt: Date = Date(),
     user: User = randomUser(),
-    cid: String = randomString(),
+    cid: String = randomCID(),
     channelType: String = randomString(),
     channelId: String = randomString(),
     channel: Channel = randomChannel(),
@@ -177,7 +186,7 @@ public fun randomChannelDeletedEvent(
 
 public fun randomNotificationChannelDeletedEvent(
     createdAt: Date = Date(),
-    cid: String = randomString(),
+    cid: String = randomCID(),
     channelType: String = randomString(),
     channelId: String = randomString(),
     channel: Channel = randomChannel(),
@@ -200,7 +209,7 @@ public fun randomNotificationChannelDeletedEvent(
 public fun randomReactionNewEvent(
     createdAt: Date = Date(),
     user: User = randomUser(),
-    cid: String = randomString(),
+    cid: String = randomCID(),
     channelType: String = randomString(),
     channelId: String = randomString(),
     message: Message = randomMessage(),
@@ -222,7 +231,7 @@ public fun randomReactionNewEvent(
 public fun randomMessageReadEvent(
     createdAt: Date = Date(),
     user: User = randomUser(),
-    cid: String = randomString(),
+    cid: String = randomCID(),
     channelType: String = randomString(),
     channelId: String = randomString(),
     lastReadMessageId: String? = randomString(),
@@ -242,7 +251,7 @@ public fun randomMessageReadEvent(
 public fun randomNotificationMarkReadEvent(
     createdAt: Date = Date(),
     user: User = randomUser(),
-    cid: String = randomString(),
+    cid: String = randomCID(),
     channelType: String = randomString(),
     channelId: String = randomString(),
     totalUnreadCount: Int = randomInt(),
@@ -266,10 +275,11 @@ public fun randomNotificationMarkReadEvent(
     unreadThreads = unreadThreads,
     unreadThreadMessages = unreadThreadMessages,
 )
+
 public fun randomNotificationMarkUnreadEvent(
     createdAt: Date = Date(),
     user: User = randomUser(),
-    cid: String = randomString(),
+    cid: String = randomCID(),
     channelType: String = randomString(),
     channelId: String = randomString(),
     totalUnreadCount: Int = randomInt(),
@@ -303,7 +313,7 @@ public fun randomNotificationMarkUnreadEvent(
 public fun randomTypingStopEvent(
     createdAt: Date = Date(),
     user: User = randomUser(),
-    cid: String = randomString(),
+    cid: String = randomCID(),
     channelType: String = randomString(),
     channelId: String = randomString(),
     parentId: String? = randomString(),
@@ -323,7 +333,7 @@ public fun randomTypingStopEvent(
 public fun randomTypingStartEvent(
     createdAt: Date = Date(),
     user: User = randomUser(),
-    cid: String = randomString(),
+    cid: String = randomCID(),
     channelType: String = randomString(),
     channelId: String = randomString(),
     parentId: String? = randomString(),
@@ -343,7 +353,7 @@ public fun randomTypingStartEvent(
 public fun randomMemberAddedEvent(
     createdAt: Date = Date(),
     user: User = randomUser(),
-    cid: String = randomString(),
+    cid: String = randomCID(),
     channelType: String = randomString(),
     channelId: String = randomString(),
     member: Member = randomMember(),
@@ -362,7 +372,7 @@ public fun randomMemberAddedEvent(
 
 public fun randomNotificationAddedToChannelEvent(
     createdAt: Date = Date(),
-    cid: String = randomString(),
+    cid: String = randomCID(),
     channelType: String = randomString(),
     channelId: String = randomString(),
     channel: Channel = randomChannel(),
@@ -386,7 +396,7 @@ public fun randomNotificationAddedToChannelEvent(
 
 public fun randomNotificationMessageNewEvent(
     createdAt: Date = Date(),
-    cid: String = randomString(),
+    cid: String = randomCID(),
     channelType: String = randomString(),
     channelId: String = randomString(),
     channel: Channel = randomChannel(),
@@ -409,7 +419,7 @@ public fun randomNotificationMessageNewEvent(
 public fun randomMessageUpdateEvent(
     createdAt: Date = Date(),
     user: User = randomUser(),
-    cid: String = randomString(),
+    cid: String = randomCID(),
     channelType: String = randomString(),
     channelId: String = randomString(),
     message: Message = randomMessage(),
@@ -426,7 +436,7 @@ public fun randomMessageUpdateEvent(
 
 public fun randomChannelUpdatedEvent(
     createdAt: Date = randomDate(),
-    cid: String = randomString(),
+    cid: String = randomCID(),
     channelType: String = randomString(),
     channelId: String = randomString(),
     message: Message = randomMessage(),
@@ -446,7 +456,7 @@ public fun randomChannelUpdatedEvent(
 
 public fun randomChannelUpdatedByUserEvent(
     createdAt: Date = randomDate(),
-    cid: String = randomString(),
+    cid: String = randomCID(),
     channelType: String = randomString(),
     channelId: String = randomString(),
     message: Message = randomMessage(),
@@ -469,7 +479,7 @@ public fun randomChannelUpdatedByUserEvent(
 public fun randomNewMessageEvent(
     createdAt: Date = randomDate(),
     user: User = randomUser(),
-    cid: String = randomString(),
+    cid: String = randomCID(),
     channelType: String = randomString(),
     channelId: String = randomString(),
     message: Message = randomMessage(),
@@ -494,7 +504,7 @@ public fun randomNewMessageEvent(
 
 public fun randomNotificationChannelTruncatedEvent(
     createdAt: Date = randomDate(),
-    cid: String = randomString(),
+    cid: String = randomCID(),
     channelType: String = randomString(),
     channelId: String = randomString(),
     channel: Channel = randomChannel(),
@@ -526,6 +536,86 @@ public fun randomMarkAllReadEvent(
     unreadChannels = unreadChannels,
 )
 
+public fun randomReminderCreatedEvent(
+    createdAt: Date = randomDate(),
+    cid: String = randomCID(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    reminder: MessageReminder = randomMessageReminder(),
+    messageId: String = randomString(),
+    userId: String = randomString(),
+): ReminderCreatedEvent = ReminderCreatedEvent(
+    type = EventType.REMINDER_CREATED,
+    createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
+    cid = cid,
+    channelType = channelType,
+    channelId = channelId,
+    reminder = reminder,
+    messageId = messageId,
+    userId = userId,
+)
+
+public fun randomReminderUpdatedEvent(
+    createdAt: Date = randomDate(),
+    cid: String = randomCID(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    reminder: MessageReminder = randomMessageReminder(),
+    messageId: String = randomString(),
+    userId: String = randomString(),
+): ReminderUpdatedEvent = ReminderUpdatedEvent(
+    type = EventType.REMINDER_UPDATED,
+    createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
+    cid = cid,
+    channelType = channelType,
+    channelId = channelId,
+    reminder = reminder,
+    messageId = messageId,
+    userId = userId,
+)
+
+public fun randomReminderDeletedEvent(
+    createdAt: Date = randomDate(),
+    cid: String = randomCID(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    reminder: MessageReminder = randomMessageReminder(),
+    messageId: String = randomString(),
+    userId: String = randomString(),
+): ReminderDeletedEvent = ReminderDeletedEvent(
+    type = EventType.REMINDER_DELETED,
+    createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
+    cid = cid,
+    channelType = channelType,
+    channelId = channelId,
+    reminder = reminder,
+    messageId = messageId,
+    userId = userId,
+)
+
+public fun randomNotificationReminderDueEvent(
+    createdAt: Date = randomDate(),
+    cid: String = randomCID(),
+    channelType: String = randomString(),
+    channelId: String = randomString(),
+    reminder: MessageReminder = randomMessageReminder(),
+    messageId: String = randomString(),
+    userId: String = randomString(),
+): NotificationReminderDueEvent = NotificationReminderDueEvent(
+    type = EventType.NOTIFICATION_REMINDER_DUE,
+    createdAt = createdAt,
+    rawCreatedAt = streamFormatter.format(createdAt),
+    cid = cid,
+    channelType = channelType,
+    channelId = channelId,
+    reminder = reminder,
+    messageId = messageId,
+    userId = userId,
+)
+
 public fun randomQueryChannelsSpec(
     filter: FilterObject = NeutralFilterObject,
     sort: QuerySorter<Channel> = QuerySortByField(),
@@ -533,7 +623,7 @@ public fun randomQueryChannelsSpec(
 ): QueryChannelsSpec = QueryChannelsSpec(filter, sort).apply { this.cids = cids }
 
 public fun randomNotificationRemovedFromChannelEvent(
-    cid: String = randomString(),
+    cid: String = randomCID(),
     channel: Channel = randomChannel(),
     member: Member = randomMember(),
 ): NotificationRemovedFromChannelEvent {
@@ -554,7 +644,7 @@ public fun randomNotificationRemovedFromChannelEvent(
 
 public fun randomMemberRemovedEvent(
     createdAt: Date = Date(),
-    cid: String = randomString(),
+    cid: String = randomCID(),
     member: Member = randomMember(),
     user: User = randomUser(),
     channelType: String = randomString(),
