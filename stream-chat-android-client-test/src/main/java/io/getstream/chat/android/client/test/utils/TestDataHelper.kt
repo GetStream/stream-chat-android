@@ -296,6 +296,7 @@ public class TestDataHelper {
             watcherCount = 1,
             totalUnreadCount = 0,
             unreadChannels = 0,
+            channelMessageCount = 1,
         )
     }
 
@@ -314,6 +315,7 @@ public class TestDataHelper {
             watcherCount = 1,
             totalUnreadCount = 0,
             unreadChannels = 0,
+            channelMessageCount = 1,
         )
     }
     public val newMessageFromUser2: NewMessageEvent by lazy {
@@ -331,6 +333,7 @@ public class TestDataHelper {
             watcherCount = 1,
             totalUnreadCount = 0,
             unreadChannels = 0,
+            channelMessageCount = 1,
         )
     }
 
@@ -379,6 +382,7 @@ public class TestDataHelper {
             channelId = channel1.id,
             message = message1Deleted,
             hardDelete = false,
+            channelMessageCount = 1,
         )
     }
 
@@ -395,6 +399,7 @@ public class TestDataHelper {
             channelId = channel1.id,
             message = message1Deleted,
             hardDelete = true,
+            channelMessageCount = 1,
         )
     }
 

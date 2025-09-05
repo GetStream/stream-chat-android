@@ -780,6 +780,7 @@ internal object EventMappingTestArguments {
         watcherCount = newMessageDto.watcher_count,
         totalUnreadCount = newMessageDto.total_unread_count,
         unreadChannels = newMessageDto.unread_channels,
+        channelMessageCount = newMessageDto.channel_message_count,
     )
 
     private val draftMessageUpdatedEvent = DraftMessageUpdatedEvent(
@@ -999,6 +1000,7 @@ internal object EventMappingTestArguments {
         user = with(domainMapping) { messageDeletedDto.user?.toDomain() },
         message = with(domainMapping) { messageDeletedDto.message.toDomain() },
         hardDelete = messageDeletedDto.hard_delete ?: false,
+        channelMessageCount = messageDeletedDto.channel_message_count,
     )
 
     private val messageRead = MessageReadEvent(

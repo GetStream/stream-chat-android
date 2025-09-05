@@ -62,6 +62,7 @@ import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
@@ -486,6 +487,7 @@ public fun randomNewMessageEvent(
     watcherCount: Int = randomInt(),
     totalUnreadCount: Int = randomInt(),
     unreadChannels: Int = randomInt(),
+    channelMessageCount: Int? = positiveRandomInt(),
 ): NewMessageEvent {
     return NewMessageEvent(
         type = EventType.MESSAGE_NEW,
@@ -499,6 +501,7 @@ public fun randomNewMessageEvent(
         watcherCount = watcherCount,
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
+        channelMessageCount = channelMessageCount,
     )
 }
 

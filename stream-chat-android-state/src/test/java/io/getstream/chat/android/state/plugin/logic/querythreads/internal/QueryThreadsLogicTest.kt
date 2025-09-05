@@ -524,6 +524,7 @@ internal class QueryThreadsLogicTest {
             channelType = "messaging",
             channelId = "123",
             message = Message(id = "mId4", parentId = "mId1", text = "New reply"),
+            channelMessageCount = 1,
         )
         val stateLogic = mock<QueryThreadsStateLogic>()
         val databaseLogic = mock<QueryThreadsDatabaseLogic>()
@@ -598,6 +599,7 @@ internal class QueryThreadsLogicTest {
             channelId = "123",
             message = Message(id = "mId1", text = "Deleted thread parent"),
             hardDelete = false,
+            channelMessageCount = 1,
         )
         val stateLogic = mock<QueryThreadsStateLogic>()
         val databaseLogic = mock<QueryThreadsDatabaseLogic>()
@@ -624,6 +626,7 @@ internal class QueryThreadsLogicTest {
             channelId = "123",
             message = Message(id = "mId2", text = "Deleted thread reply"),
             hardDelete = false,
+            channelMessageCount = 1,
         )
         val stateLogic = mock<QueryThreadsStateLogic>()
         val databaseLogic = mock<QueryThreadsDatabaseLogic>()
