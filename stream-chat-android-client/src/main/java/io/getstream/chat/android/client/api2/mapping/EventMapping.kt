@@ -398,6 +398,7 @@ internal class EventMapping(
             channelId = channel_id,
             message = message.toDomain(),
             hardDelete = hard_delete ?: false,
+            channelMessageCount = channel_message_count,
         )
     }
 
@@ -450,6 +451,7 @@ internal class EventMapping(
             watcherCount = watcher_count,
             totalUnreadCount = total_unread_count,
             unreadChannels = unread_channels,
+            channelMessageCount = channel_message_count,
         )
     }
 

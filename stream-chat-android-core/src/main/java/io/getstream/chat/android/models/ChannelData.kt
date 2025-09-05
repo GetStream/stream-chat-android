@@ -59,6 +59,7 @@ public data class ChannelData(
     val ownCapabilities: Set<String> = setOf(),
     val membership: Member? = null,
     val draft: DraftMessage? = null,
+    val messagesCount: Int? = null,
 ) {
 
     /**
@@ -100,6 +101,7 @@ public data class ChannelData(
             ?: currentOwnCapabilities,
         membership = channel.membership,
         draft = channel.draftMessage,
+        messagesCount = channel.messagesCount,
     )
 
     @Deprecated(
@@ -176,6 +178,7 @@ public data class ChannelData(
             isInsideSearch = insideSearch,
             draftMessage = draft,
             activeLiveLocations = emptyList(),
+            messagesCount = messagesCount,
         )
     }
 
@@ -210,6 +213,7 @@ public fun ChannelData.mergeFromEvent(that: ChannelData): ChannelData {
         updatedAt = that.updatedAt,
         deletedAt = that.deletedAt,
         createdBy = that.createdBy,
+        messagesCount = messagesCount ?: this.messagesCount,
         /* Do not merge (ownCapabilities, membership) fields.
         ownCapabilities = that.ownCapabilities,
         membership = that.membership,

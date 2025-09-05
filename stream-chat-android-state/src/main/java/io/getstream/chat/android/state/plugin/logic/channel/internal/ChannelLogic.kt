@@ -544,6 +544,7 @@ internal class ChannelLogic(
                         upsertEventMessage(event.message)
                         channelStateLogic.updateCurrentUserRead(event.createdAt, event.message)
                         channelStateLogic.takeUnless { event.message.shadowed }?.toggleHidden(false)
+                        event.channelMessageCount?.let(channelStateLogic::udpateMessagesCount)
                     }
 
                     is MessageUpdatedEvent -> {
@@ -562,6 +563,7 @@ internal class ChannelLogic(
                             upsertEventMessage(event.message)
                         }
                         channelStateLogic.toggleHidden(false)
+                        event.channelMessageCount?.let(channelStateLogic::udpateMessagesCount)
                     }
 
                     is NotificationMessageNewEvent -> {
