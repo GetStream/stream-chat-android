@@ -77,5 +77,6 @@ internal data class DownstreamChannelDto(
     val own_capabilities: List<String> = emptyList(),
     val membership: DownstreamMemberDto?,
     val active_live_locations: List<DownstreamLocationDto> = emptyList(),
+    val message_count: Int? = null,
     val extraData: Map<String, Any>,
 ) : ExtraDataDto

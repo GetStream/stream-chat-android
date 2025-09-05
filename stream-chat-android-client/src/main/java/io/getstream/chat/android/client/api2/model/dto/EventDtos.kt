@@ -142,6 +142,7 @@ internal data class MessageDeletedEventDto(
     val channel_id: String,
     val message: DownstreamMessageDto,
     val hard_delete: Boolean?,
+    val channel_message_count: Int? = null,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -179,6 +180,7 @@ internal data class NewMessageEventDto(
     val watcher_count: Int = 0,
     val total_unread_count: Int = 0,
     val unread_channels: Int = 0,
+    val channel_message_count: Int? = null,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)

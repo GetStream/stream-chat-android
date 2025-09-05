@@ -73,6 +73,7 @@ internal class ChannelClientSubscribeTest {
             watcherCount = 0,
             totalUnreadCount = 0,
             unreadChannels = 0,
+            channelMessageCount = 1,
         )
     }
 

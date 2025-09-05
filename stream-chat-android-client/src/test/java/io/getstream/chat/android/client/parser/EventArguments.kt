@@ -345,6 +345,7 @@ internal object EventArguments {
         channelId = channelId,
         message = message,
         hardDelete = false,
+        channelMessageCount = 1,
     )
     private val messageDeletedServerSideEvent = MessageDeletedEvent(
         type = EventType.MESSAGE_DELETED,
@@ -356,6 +357,7 @@ internal object EventArguments {
         channelId = channelId,
         message = message,
         hardDelete = true,
+        channelMessageCount = 1,
     )
     private val messageReadEvent = MessageReadEvent(
         type = EventType.MESSAGE_READ,
@@ -649,6 +651,7 @@ internal object EventArguments {
         watcherCount = watcherCount,
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
+        channelMessageCount = 1,
     )
     private val newMessageWithoutUnreadCountsEvent = NewMessageEvent(
         type = EventType.MESSAGE_NEW,
@@ -660,6 +663,7 @@ internal object EventArguments {
         channelId = channelId,
         message = message,
         watcherCount = watcherCount,
+        channelMessageCount = 1,
     )
     private val unknownEvent = UnknownEvent(
         type = EventType.UNKNOWN,

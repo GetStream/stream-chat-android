@@ -40,6 +40,7 @@ import io.getstream.chat.android.state.utils.internal.mapState
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.mapNotNull
 import java.util.Date
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -120,6 +121,7 @@ internal class ChannelMutableState(
     override val endOfOlderMessages: StateFlow<Boolean> = _endOfOlderMessages!!
 
     override val endOfNewerMessages: StateFlow<Boolean> = _endOfNewerMessages!!
+    override val messagesCount: StateFlow<Int?> = _channelData!!.mapState { it?.messagesCount }
     override val activeLiveLocations: StateFlow<List<Location>> = activeLiveLocations.mapState { locations ->
         locations.filter { it.cid == cid }
     }
