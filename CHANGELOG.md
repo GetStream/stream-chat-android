@@ -10,12 +10,18 @@
 
 ### ❌ Removed
 
+## stream-chat-android-core
+### ✅ Added
+- Add `Channel.messagesCount` field representing the total number of messages in the channel. [#5918](https://github.com/GetStream/stream-chat-android/pull/5918)
+
 ## stream-chat-android-client
 ### 🐞 Fixed
 
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `NewMessageEvent.channelMessageCount` field representing the total number of messages in the channel. [#5918](https://github.com/GetStream/stream-chat-android/pull/5918)
+- Add `MessageDeletedEvent.channelMessageCount` field representing the total number of messages in the channel. [#5918](https://github.com/GetStream/stream-chat-android/pull/5918)
 
 ### ⚠️ Changed
 
@@ -38,6 +44,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `ChannelState.messagesCount` field representing the total number of messages in the channel. [#5918](https://github.com/GetStream/stream-chat-android/pull/5918)
 
 ### ⚠️ Changed
 
