@@ -105,6 +105,7 @@ internal class MessageMapperTest {
                     deviceId = deviceId,
                 )
             },
+            channelRole = messageEntity.messageInnerEntity.channelRole,
         )
 
         val result = messageEntity.toModel(
@@ -175,6 +176,7 @@ internal class MessageMapperTest {
                         deviceId = deviceId,
                     )
                 },
+                channelRole = message.channelRole,
             ),
             attachments = message.attachments.mapIndexed { index, attachment ->
                 attachment.toEntity(

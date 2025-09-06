@@ -101,6 +101,7 @@ internal data class DownstreamMessageDto(
     val poll: DownstreamPollDto? = null,
     val reminder: DownstreamReminderInfoDto? = null,
     val shared_location: DownstreamLocationDto? = null,
+    val member: DownstreamMemberInfoDto? = null,
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
 

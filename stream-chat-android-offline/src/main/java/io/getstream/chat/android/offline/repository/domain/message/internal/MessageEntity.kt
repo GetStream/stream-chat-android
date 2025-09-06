@@ -137,6 +137,8 @@ internal data class MessageInnerEntity(
     val reminder: ReminderInfoEntity? = null,
     /** The shared location of the message, if any */
     val sharedLocation: LocationEntity? = null,
+    /** The role of the member(who sent the message) in the channel */
+    val channelRole: String? = null,
 )
 
 internal const val MESSAGE_ENTITY_TABLE_NAME = "stream_chat_message"

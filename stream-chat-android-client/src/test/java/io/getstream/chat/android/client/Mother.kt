@@ -36,6 +36,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDto
@@ -288,6 +289,7 @@ internal object Mother {
         moderation_details: DownstreamModerationDetailsDto? = null,
         moderation: DownstreamModerationDto? = null,
         poll: DownstreamPollDto? = null,
+        member: DownstreamMemberInfoDto? = randomDownstreamMemberInfoDto(),
         extraData: Map<String, Any> = emptyMap(),
     ): DownstreamMessageDto {
         return DownstreamMessageDto(
@@ -327,6 +329,7 @@ internal object Mother {
             moderation_details = moderation_details,
             moderation = moderation,
             poll = poll,
+            member = member,
             extraData = extraData,
         )
     }
@@ -684,6 +687,9 @@ internal object Mother {
         archived_at = archivedAt,
         extraData = extraData,
     )
+
+    fun randomDownstreamMemberInfoDto(channelRole: String? = randomString()): DownstreamMemberInfoDto =
+        DownstreamMemberInfoDto(channel_role = channelRole)
 
     fun randomDownstreamChannelUserRead(
         user: DownstreamUserDto = randomDownstreamUserDto(),

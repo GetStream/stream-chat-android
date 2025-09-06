@@ -234,6 +234,7 @@ internal class DomainMapping(
                 restrictedVisibility = emptyList(),
                 reminder = reminder?.toDomain(),
                 sharedLocation = shared_location?.toDomain(),
+                channelRole = member?.channel_role,
                 extraData = extraData.toMutableMap(),
             ).let(messageTransformer::transform)
         }
