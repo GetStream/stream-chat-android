@@ -48,6 +48,7 @@ import java.util.Date
  * @param hidden Whether this channel is hidden by current user or not.
  * @param hiddenMessagesBefore Messages before this date are hidden from the user.
  * @param cooldown Cooldown period after sending each message in seconds.
+ * @param pendingMessages The list of pending messages in the channel for the current user (if the feature enabled).
  * @param pinnedMessages The list of pinned messages in the channel.
  * @param ownCapabilities Channel's capabilities available for the current user. Note that the field is not provided
  * in the events.
@@ -91,6 +92,7 @@ public data class Channel(
     val hidden: Boolean? = null,
     val hiddenMessagesBefore: Date? = null,
     val cooldown: Int = 0,
+    val pendingMessages: List<PendingMessage> = emptyList(),
     val pinnedMessages: List<Message> = listOf(),
     val ownCapabilities: Set<String> = setOf(),
     val membership: Member? = null,

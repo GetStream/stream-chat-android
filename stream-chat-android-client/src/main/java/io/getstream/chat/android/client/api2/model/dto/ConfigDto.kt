@@ -45,4 +45,5 @@ internal data class ConfigDto(
     val commands: List<CommandDto>,
     val user_message_reminders: Boolean?,
     val shared_locations: Boolean?,
+    val mark_messages_pending: Boolean,
 )

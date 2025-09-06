@@ -124,6 +124,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.QueryDraftsResult
@@ -350,6 +351,10 @@ constructor(
         ).mapDomain { response ->
             response.message.toDomain()
         }
+    }
+
+    override fun getPendingMessage(messageId: String): Call<PendingMessage> {
+        return messageApi.getMessage(messageId).mapDomain { it.toDomain() }
     }
 
     override fun deleteMessage(messageId: String, hard: Boolean): Call<Message> {
@@ -964,6 +969,7 @@ constructor(
                 members = response.members.map { it.toDomain() },
                 membership = response.membership?.toDomain(),
                 messages = channelMessages,
+                pendingMessages = response.pending_messages.map { it.toDomain() },
                 pinnedMessages = response.pinned_messages.map {
                     it.toDomain(channelInfo).enrichWithCid(channel.cid)
                 },

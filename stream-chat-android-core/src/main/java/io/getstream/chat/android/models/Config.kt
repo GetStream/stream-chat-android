@@ -144,4 +144,9 @@ public data class Config(
      * Determines if shared locations are enabled. Disabled by default.
      */
     val sharedLocationsEnabled: Boolean = false,
+
+    /**
+     * If true, the messages sent in the channel will be marked as pending.
+     */
+    val markMessagesPending: Boolean = false,
 )
