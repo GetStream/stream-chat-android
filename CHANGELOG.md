@@ -5,7 +5,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Add `pendingMessages` field to the `Channel` model. [#5784](https://github.com/GetStream/stream-chat-android/pull/5784)
+- Add `pendingMessages` field to the `Channel` model holding all current pending messages in the channel. [#5784](https://github.com/GetStream/stream-chat-android/pull/5784)
+- Add `markMessagesPending` flag to the `Config` model indicating whether pending messages are enabled for the channel. [#5784](https://github.com/GetStream/stream-chat-android/pull/5784)
 
 ### ⚠️ Changed
 
