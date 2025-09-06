@@ -63,7 +63,7 @@ internal object ChannelDtoTestData {
            }
           ],
           "user_message_reminders": false,
-          "shared_locations": true
+          "shared_locations": true,
           "mark_messages_pending": false
         }
         """.withoutWhitespace()
