@@ -16,6 +16,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `channelRole` property on the `Message` model, representing the role of the member who sent the message in the channel. [#5919](https://github.com/GetStream/stream-chat-android/pull/5919)
 
 ### ⚠️ Changed
 
