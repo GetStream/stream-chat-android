@@ -86,6 +86,7 @@ import io.getstream.chat.android.models.UserId
 import io.getstream.log.StreamLog
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.create
 import java.util.concurrent.TimeUnit
 
 @Suppress("TooManyFunctions")
@@ -107,7 +108,6 @@ constructor(
     private val lifecycle: Lifecycle,
     private val appName: String?,
     private val appVersion: String?,
-    private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it },
 ) {
 
     private val headersUtil = HeadersUtil(appContext, appName, appVersion)
@@ -198,41 +198,22 @@ constructor(
 
     // Create Builders from a single client to share threadpools
     private val baseClient: OkHttpClient by lazy { customOkHttpClient ?: OkHttpClient() }
-    private fun baseClientBuilder(): OkHttpClient.Builder =
-        baseClient.newBuilder().followRedirects(false)
 
-    protected open fun clientBuilder(
-        timeout: Long,
-        config: ChatClientConfig,
-        parser: ChatParser,
-        isAnonymousApi: Boolean,
-    ): OkHttpClient.Builder {
-        return baseClientBuilder()
+    private fun baseClientBuilder(timeout: Long): OkHttpClient.Builder =
+        baseClient.newBuilder()
+            .followRedirects(false)
             .apply {
+                // timeouts
                 if (baseClient != customOkHttpClient) {
                     connectTimeout(timeout, TimeUnit.MILLISECONDS)
                     writeTimeout(timeout, TimeUnit.MILLISECONDS)
                     readTimeout(timeout, TimeUnit.MILLISECONDS)
                 }
-            }
-            // timeouts
-            // interceptors
-            .addInterceptor(ApiKeyInterceptor(config.apiKey))
-            .addInterceptor(HeadersInterceptor(getAnonymousProvider(config, isAnonymousApi), headersUtil))
-            .apply {
+                // api analysis
                 if (config.debugRequests) {
                     addInterceptor(ApiRequestAnalyserInterceptor(ApiRequestsAnalyser.get()))
                 }
-            }
-            .let(httpClientConfig)
-            .addInterceptor(
-                TokenAuthInterceptor(
-                    tokenManager,
-                    parser,
-                    getAnonymousProvider(config, isAnonymousApi),
-                ),
-            )
-            .apply {
+                // logging
                 if (config.loggerConfig.level != ChatLogLevel.NOTHING) {
                     addInterceptor(HttpLoggingInterceptor())
                     addInterceptor(
@@ -246,6 +227,24 @@ constructor(
                     )
                 }
             }
+
+    protected open fun clientBuilder(
+        timeout: Long,
+        config: ChatClientConfig,
+        parser: ChatParser,
+        isAnonymousApi: Boolean,
+    ): OkHttpClient.Builder {
+        return baseClientBuilder(timeout)
+            // Stream-specific interceptors
+            .addInterceptor(ApiKeyInterceptor(config.apiKey))
+            .addInterceptor(HeadersInterceptor(getAnonymousProvider(config, isAnonymousApi), headersUtil))
+            .addInterceptor(
+                TokenAuthInterceptor(
+                    tokenManager,
+                    parser,
+                    getAnonymousProvider(config, isAnonymousApi),
+                ),
+            )
             .addNetworkInterceptor(ProgressInterceptor())
     }
 
@@ -285,7 +284,7 @@ constructor(
             buildRetrofitApi<GeneralApi>(),
             buildRetrofitApi<ConfigApi>(),
             buildRetrofitApi<VideoCallApi>(),
-            buildRetrofitApi<FileDownloadApi>(),
+            buildFileDownloadApi(),
             buildRetrofitApi<OpenGraphApi>(),
             buildRetrofitApi<ThreadsApi>(),
             buildRetrofitApi<PollsApi>(),
@@ -314,6 +313,37 @@ constructor(
         ).create(apiClass)
     }
 
+    private fun buildRetrofitCdnApi(): RetrofitCdnApi {
+        val apiClass = RetrofitCdnApi::class.java
+        return buildRetrofit(
+            config.cdnHttpUrl,
+            CDN_TIMEOUT,
+            config,
+            moshiParser,
+            apiClass.isAnonymousApi,
+        ).create(apiClass)
+    }
+
+    /**
+     * Builds the [FileDownloadApi] whose purpose is to download a file from a given URL.
+     * This API doesn't use the default Stream interceptors:
+     * - [ApiKeyInterceptor]
+     * - [HeadersInterceptor]
+     * - [TokenAuthInterceptor]
+     * because the files might be hosted on a different server that doesn't require them. Even if the file is hosted on
+     * the Stream CDN, these files are public and don't require the data provided by the interceptors. (Similar to how
+     * we can directly load images/videos from the CDN in an image/video loading library).
+     */
+    private fun buildFileDownloadApi(): FileDownloadApi {
+        val okHttpClient = baseClientBuilder(BASE_TIMEOUT).build()
+        return Retrofit.Builder()
+            .baseUrl(config.httpUrl)
+            .client(okHttpClient)
+            .addCallAdapterFactory(RetrofitCallAdapterFactory.create(moshiParser, userScope))
+            .build()
+            .create<FileDownloadApi>()
+    }
+
     private val Class<*>.isAnonymousApi: Boolean
         get() {
             val anon = this.annotations.any { it is AnonymousApi }
@@ -330,17 +360,6 @@ constructor(
 
             throw IllegalStateException("Api class must be annotated with either @AnonymousApi or @AuthenticatedApi")
         }
-
-    private fun buildRetrofitCdnApi(): RetrofitCdnApi {
-        val apiClass = RetrofitCdnApi::class.java
-        return buildRetrofit(
-            config.cdnHttpUrl,
-            CDN_TIMEOUT,
-            config,
-            moshiParser,
-            apiClass.isAnonymousApi,
-        ).create(apiClass)
-    }
 
     private companion object {
         private const val BASE_TIMEOUT = 30_000L
