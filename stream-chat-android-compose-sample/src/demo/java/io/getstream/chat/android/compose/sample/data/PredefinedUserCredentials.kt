@@ -23,7 +23,7 @@ import io.getstream.chat.android.models.User
  */
 object PredefinedUserCredentials {
 
-    const val API_KEY: String = "pd67s34fzpgw"
+    const val API_KEY: String = "qx5us2v6xvmh"
 
     val availableUsers: List<UserCredentials> = listOf(
         UserCredentials(
@@ -48,11 +48,12 @@ object PredefinedUserCredentials {
         UserCredentials(
             apiKey = API_KEY,
             user = User(
-                id = "petar",
-                name = "Petar",
+                id = "pvelikov",
+                name = "Petar Velikov",
                 image = "https://ca.slack-edge.com/T02RM6X6B-U07LDJZRUTG-a4129fed05b6-512",
             ),
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicGV0YXIifQ.mZFi4iSblaIoyo9JDdcxIkGkwI-tuApeSBawxpz42rs",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicHZlbGlrb3YifQ." +
+                "d5eenuTIZD5gZh7rHiv3lYbE8uOqUiHfwULtUr8a-l0",
         ),
         UserCredentials(
             apiKey = API_KEY,
