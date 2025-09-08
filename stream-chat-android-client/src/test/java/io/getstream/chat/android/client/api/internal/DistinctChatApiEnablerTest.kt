@@ -75,6 +75,7 @@ internal class DistinctChatApiEnablerTest {
         enabler.getNewerReplies(parentId, limit, lastId)
         enabler.getReactions(messageId, offset, limit)
         enabler.getMessage(messageId)
+        enabler.getPendingMessage(messageId)
         enabler.getPinnedMessages(channelType, channelId, limit, messageSort, pagination)
         enabler.queryChannels(channelsRequest)
         enabler.queryBannedUsers(
@@ -103,6 +104,7 @@ internal class DistinctChatApiEnablerTest {
         verify(distinctApi, times(1)).getNewerReplies(parentId, limit, lastId)
         verify(distinctApi, times(1)).getReactions(messageId, offset, limit)
         verify(distinctApi, times(1)).getMessage(messageId)
+        verify(distinctApi, times(1)).getPendingMessage(messageId)
         verify(distinctApi, times(1)).getPinnedMessages(
             channelType = channelType,
             channelId = channelId,
@@ -148,6 +150,7 @@ internal class DistinctChatApiEnablerTest {
         enabler.getNewerReplies(parentId, limit, lastId)
         enabler.getReactions(messageId, offset, limit)
         enabler.getMessage(messageId)
+        enabler.getPendingMessage(messageId)
         enabler.getPinnedMessages(channelType, channelId, limit, messageSort, pagination)
         enabler.queryChannels(channelsRequest)
         enabler.queryBannedUsers(
@@ -177,6 +180,7 @@ internal class DistinctChatApiEnablerTest {
         verify(api, times(1)).getNewerReplies(parentId, limit, lastId)
         verify(api, times(1)).getReactions(messageId, offset, limit)
         verify(api, times(1)).getMessage(messageId)
+        verify(api, times(1)).getPendingMessage(messageId)
         verify(api, times(1)).getPinnedMessages(channelType, channelId, limit, messageSort, pagination)
         verify(api, times(1)).queryChannels(channelsRequest)
         verify(api, times(1)).queryBannedUsers(
@@ -204,6 +208,7 @@ internal class DistinctChatApiEnablerTest {
         verify(distinctApi, times(0)).getNewerReplies(any(), any(), any())
         verify(distinctApi, times(0)).getReactions(any(), any(), any())
         verify(distinctApi, times(0)).getMessage(any())
+        verify(distinctApi, times(0)).getPendingMessage(any())
         verify(distinctApi, times(0)).getPinnedMessages(any(), any(), any(), any(), any())
         verify(distinctApi, times(0)).queryChannels(any())
         verify(distinctApi, times(0)).queryBannedUsers(any(), any(), any(), any(), any(), any(), any(), any())

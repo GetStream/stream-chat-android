@@ -339,6 +339,51 @@ internal class DistinctChatApiTest {
     }
 
     @Test
+    fun `When calling getPendingMessage with same arguments, Then same instance of Call is returned`() {
+        // given
+        val distinctChatApi = DistinctChatApi(TestScope(), mock())
+        val messageId = randomString()
+        // when
+        val call1 = distinctChatApi.getPendingMessage(messageId)
+        val call2 = distinctChatApi.getPendingMessage(messageId)
+        // then
+        // verify same instance of call is reused
+        Assert.assertTrue(call1 === call2)
+    }
+
+    @Test
+    fun `When calling getPendingMessage with same arguments and first call finishes, Then different instance of Call is returned`() =
+        runTest {
+            // given
+            val delegateApi = mock<ChatApi>()
+            whenever(delegateApi.getPendingMessage(any())).thenReturn(mock())
+            val distinctChatApi = DistinctChatApi(backgroundScope, delegateApi)
+            val messageId = randomString()
+            // when
+            val call1 = distinctChatApi.getPendingMessage(messageId)
+            // Complete first call
+            call1.await()
+            val call2 = distinctChatApi.getPendingMessage(messageId)
+            // then
+            // verify different instance of call is returned
+            Assert.assertFalse(call1 === call2)
+        }
+
+    @Test
+    fun `When calling getPendingMessage with different arguments, Then different instance of Call is returned`() {
+        // given
+        val distinctChatApi = DistinctChatApi(TestScope(), mock())
+        val messageId1 = randomString()
+        val messageId2 = randomString()
+        // when
+        val call1 = distinctChatApi.getPendingMessage(messageId1)
+        val call2 = distinctChatApi.getPendingMessage(messageId2)
+        // then
+        // verify different instance of call is returned
+        Assert.assertFalse(call1 === call2)
+    }
+
+    @Test
     fun `When calling getPinnedMessages with same arguments, Then same instance of Call is returned`() {
         // given
         val distinctChatApi = DistinctChatApi(TestScope(), mock())
