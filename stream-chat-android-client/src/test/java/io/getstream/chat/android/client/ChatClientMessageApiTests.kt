@@ -22,10 +22,10 @@ import io.getstream.chat.android.client.chatclient.BaseChatClientTest
 import io.getstream.chat.android.client.clientstate.UserState
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.utils.RetroError
-import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.client.utils.verifyNetworkError
 import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
@@ -35,9 +35,11 @@ import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomPendingMessage
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
+import io.getstream.chat.android.test.asCall
 import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.call.Call
@@ -67,7 +69,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         val message = randomMessage(id = messageId)
         val sut = Fixture()
             .givenPlugin(plugin)
-            .givenGetMessageResult(RetroSuccess(message).toRetrofitCall())
+            .givenGetMessageResult(message.asCall())
             .get()
         // when
         val result = sut.getMessage(messageId).await()
@@ -94,6 +96,34 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
     }
 
     @Test
+    fun getPendingMessageSuccess() = runTest {
+        // given
+        val messageId = randomString()
+        val pendingMessage = randomPendingMessage()
+        val sut = Fixture()
+            .givenGetPendingMessageResult(pendingMessage.asCall())
+            .get()
+        // when
+        val result = sut.getPendingMessage(messageId).await()
+        // then
+        verifySuccess(result, pendingMessage)
+    }
+
+    @Test
+    fun getPendingMessageError() = runTest {
+        // given
+        val messageId = randomString()
+        val errorCode = positiveRandomInt()
+        val sut = Fixture()
+            .givenGetPendingMessageResult(RetroError<PendingMessage>(errorCode).toRetrofitCall())
+            .get()
+        // when
+        val result = sut.getPendingMessage(messageId).await()
+        // then
+        verifyNetworkError(result, errorCode)
+    }
+
+    @Test
     fun deleteMessageSuccess() = runTest {
         // given
         val messageId = randomString()
@@ -101,7 +131,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         val message = randomMessage(id = messageId)
         val sut = Fixture()
             .givenPlugin(plugin)
-            .givenDeleteMessageResult(RetroSuccess(message).toRetrofitCall())
+            .givenDeleteMessageResult(message.asCall())
             .get()
         // when
         val result = sut.deleteMessage(messageId).await()
@@ -142,7 +172,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         val plugin = mock<Plugin>()
         val sut = Fixture()
             .givenPlugin(plugin)
-            .givenSendMessageResult(RetroSuccess(message).toRetrofitCall())
+            .givenSendMessageResult(message.asCall())
             .givenSendAttachmentsResult(Result.Success(message))
             .get()
         // when
@@ -180,7 +210,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         val message = randomMessage()
         val request = Mother.randomSendActionRequest()
         val sut = Fixture()
-            .givenSendActionResult(RetroSuccess(message).toRetrofitCall())
+            .givenSendActionResult(message.asCall())
             .get()
         // when
         val result = sut.sendAction(request).await()
@@ -210,7 +240,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         val plugin = mock<Plugin>()
         val sut = Fixture()
             .givenPlugin(plugin)
-            .givenSendActionResult(RetroSuccess(resultMessage).toRetrofitCall())
+            .givenSendActionResult(resultMessage.asCall())
             .get()
         // when
         val result = sut.sendGiphy(inputMessage).await()
@@ -251,7 +281,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         val plugin = mock<Plugin>()
         val sut = Fixture()
             .givenPlugin(plugin)
-            .givenSendActionResult(RetroSuccess(resultMessage).toRetrofitCall())
+            .givenSendActionResult(resultMessage.asCall())
             .get()
         // when
         val result = sut.shuffleGiphy(inputMessage).await()
@@ -294,7 +324,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         val plugin = mock<Plugin>()
         val sut = Fixture()
             .givenPlugin(plugin)
-            .givenGetRepliesResult(RetroSuccess(listOf(message)).toRetrofitCall())
+            .givenGetRepliesResult(listOf(message).asCall())
             .get()
         // when
         val result = sut.getReplies(messageId, limit).await()
@@ -337,7 +367,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         val replies = listOf(randomMessage())
         val sut = Fixture()
             .givenPlugin(plugin)
-            .givenGetNewerRepliesResult(RetroSuccess(replies).toRetrofitCall())
+            .givenGetNewerRepliesResult(replies.asCall())
             .get()
         // when
         val result = sut.getNewerReplies(parentId, limit, lastId).await()
@@ -381,7 +411,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         val messages = listOf(randomMessage())
         val sut = Fixture()
             .givenPlugin(plugin)
-            .givenGetRepliesMoreResult(RetroSuccess(messages).toRetrofitCall())
+            .givenGetRepliesMoreResult(messages.asCall())
             .get()
         // when
         val result = sut.getRepliesMore(messageId, firstId, limit).await()
@@ -426,7 +456,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         val sut = Fixture()
             .givenUser(currentUser)
             .givenPlugin(plugin)
-            .givenSendReactionResult(RetroSuccess(reaction).toRetrofitCall())
+            .givenSendReactionResult(reaction.asCall())
             .get()
         // when
         val result = sut.sendReaction(reaction, enforceUnique, cid).await()
@@ -474,7 +504,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         val sut = Fixture()
             .givenUser(currentUser)
             .givenPlugin(plugin)
-            .givenDeleteReactionResult(RetroSuccess(message).toRetrofitCall())
+            .givenDeleteReactionResult(message.asCall())
             .get()
         // when
         val result = sut.deleteReaction(messageId, reactionType, cid).await()
@@ -518,7 +548,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         val limit = positiveRandomInt()
         val reaction = randomReaction(messageId = messageId)
         val sut = Fixture()
-            .givenGetReactionsResult(RetroSuccess(listOf(reaction)).toRetrofitCall())
+            .givenGetReactionsResult(listOf(reaction).asCall())
             .get()
         // when
         val result = sut.getReactions(messageId, offset, limit).await()
@@ -549,7 +579,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         val plugin = mock<Plugin>()
         val sut = Fixture()
             .givenPlugin(plugin)
-            .givenUpdateMessageResult(RetroSuccess(message).toRetrofitCall())
+            .givenUpdateMessageResult(message.asCall())
             .get()
         // when
         val result = sut.updateMessage(message).await()
@@ -587,7 +617,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         val unset = emptyList<String>()
         val message = randomMessage()
         val sut = Fixture()
-            .givenPartialUpdateMessageResult(RetroSuccess(message).toRetrofitCall())
+            .givenPartialUpdateMessageResult(message.asCall())
             .get()
         // when
         val result = sut.partialUpdateMessage(messageId, set, unset).await()
@@ -617,7 +647,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         val message = randomMessage()
         val expirationDate = randomDate()
         val sut = Fixture()
-            .givenPartialUpdateMessageResult(RetroSuccess(message).toRetrofitCall())
+            .givenPartialUpdateMessageResult(message.asCall())
             .get()
         // when
         val result = sut.pinMessage(message, expirationDate).await()
@@ -651,7 +681,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         val message = randomMessage()
         val timeout = positiveRandomInt()
         val sut = Fixture()
-            .givenPartialUpdateMessageResult(RetroSuccess(message).toRetrofitCall())
+            .givenPartialUpdateMessageResult(message.asCall())
             .get()
         // when
         val result = sut.pinMessage(message, timeout).await()
@@ -679,7 +709,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         // given
         val message = randomMessage()
         val sut = Fixture()
-            .givenPartialUpdateMessageResult(RetroSuccess(message).toRetrofitCall())
+            .givenPartialUpdateMessageResult(message.asCall())
             .get()
         // when
         val result = sut.unpinMessage(message).await()
@@ -713,7 +743,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         val pagination = PinnedMessagesPagination.BeforeDate(randomDate(), inclusive = randomBoolean())
         val pinnedMessages = listOf(randomMessage())
         val sut = Fixture()
-            .givenGetPinnedMessagesResult(RetroSuccess(pinnedMessages).toRetrofitCall())
+            .givenGetPinnedMessagesResult(pinnedMessages.asCall())
             .get()
         // when
         val result = sut.getPinnedMessages(channelType, channelId, limit, sort, pagination).await()
@@ -746,7 +776,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         val language = randomString()
         val message = randomMessage()
         val sut = Fixture()
-            .givenTranslateResult(RetroSuccess(message).toRetrofitCall())
+            .givenTranslateResult(message.asCall())
             .get()
         // when
         val result = sut.translate(messageId, language).await()
@@ -773,6 +803,10 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
 
         fun givenGetMessageResult(result: Call<Message>) = apply {
             whenever(api.getMessage(any())).thenReturn(result)
+        }
+
+        fun givenGetPendingMessageResult(result: Call<PendingMessage>) = apply {
+            whenever(api.getPendingMessage(any())).thenReturn(result)
         }
 
         fun givenDeleteMessageResult(result: Call<Message>) = apply {

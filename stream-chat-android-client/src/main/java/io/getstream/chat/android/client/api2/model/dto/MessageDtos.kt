@@ -128,4 +128,5 @@ internal data class DownstreamDraftMessageDto(
 @JsonClass(generateAdapter = true)
 internal data class DownstreamPendingMessageDto(
     val message: DownstreamMessageDto,
+    val metadata: Map<String, String>?,
 )
