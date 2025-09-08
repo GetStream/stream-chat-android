@@ -42,6 +42,7 @@ internal data class ChannelHiddenEventDto(
     val channel_type: String,
     val channel_id: String,
     val user: DownstreamUserDto,
+    val channel: DownstreamChannelDto,
     val clear_history: Boolean,
 ) : ChatEventDto()
 
@@ -88,6 +89,7 @@ internal data class ChannelVisibleEventDto(
     val channel_type: String,
     val channel_id: String,
     val user: DownstreamUserDto,
+    val channel: DownstreamChannelDto,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -556,6 +558,46 @@ internal data class VoteRemovedEventDto(
     val poll: DownstreamPollDto,
     val created_at: ExactDate,
     val poll_vote: DownstreamVoteDto,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
+internal data class ReminderCreatedEventDto(
+    val type: String,
+    val created_at: ExactDate,
+    val message_id: String,
+    val user_id: String,
+    val cid: String,
+    val reminder: DownstreamReminderDto,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
+internal data class ReminderUpdatedEventDto(
+    val type: String,
+    val created_at: ExactDate,
+    val message_id: String,
+    val user_id: String,
+    val cid: String,
+    val reminder: DownstreamReminderDto,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
+internal data class ReminderDeletedEventDto(
+    val type: String,
+    val created_at: ExactDate,
+    val message_id: String,
+    val user_id: String,
+    val cid: String,
+    val reminder: DownstreamReminderDto,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
+internal data class NotificationReminderDueEventDto(
+    val type: String,
+    val created_at: ExactDate,
+    val message_id: String,
+    val user_id: String,
+    val cid: String,
+    val reminder: DownstreamReminderDto,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)

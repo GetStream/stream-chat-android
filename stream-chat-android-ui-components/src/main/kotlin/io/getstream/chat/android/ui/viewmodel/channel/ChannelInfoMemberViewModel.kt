@@ -22,7 +22,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoMemberViewController
@@ -37,7 +36,6 @@ import io.getstream.chat.android.ui.utils.asSingleLiveEvent
  * @param memberId The member ID of the user whose information is being managed.
  * @param controllerProvider The provider for [ChannelInfoMemberViewController].
  */
-@ExperimentalStreamChatApi
 public class ChannelInfoMemberViewModel(
     private val cid: String,
     private val memberId: String,

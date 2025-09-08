@@ -133,6 +133,7 @@ tasks.withType<KotlinCompile> {
 dependencies {
     implementation(project(":stream-chat-android-compose"))
     implementation(project(":stream-chat-android-offline"))
+    implementation(project(":stream-chat-android-ui-utils"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -146,15 +147,19 @@ dependencies {
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material.icons.core)
+    implementation(libs.androidx.compose.material.icons.extended)
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.google.accompanist.permissions)
+    implementation(libs.coil.compose)
 
     // Firebase
     implementation(libs.firebase.analytics.ktx)
     implementation(libs.firebase.crashlytics)
+
+    implementation(libs.play.services.location)
 
     // Instrumentation tests
     "e2eImplementation"(libs.okhttp)

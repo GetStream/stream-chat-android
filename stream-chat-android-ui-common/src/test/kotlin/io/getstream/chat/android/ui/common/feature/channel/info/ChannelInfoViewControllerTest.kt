@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalStreamChatApi::class)
-
 package io.getstream.chat.android.ui.common.feature.channel.info
 
 import app.cash.turbine.test
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelState
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelData
@@ -97,6 +94,8 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.UserInfo(user = currentMember.user),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.MediaAttachments,
+                        ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
                     ),
                 ),
@@ -137,6 +136,8 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.UserInfo(user = otherMember.user),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.MediaAttachments,
+                        ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
                     ),
                 ),
@@ -174,6 +175,8 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.MediaAttachments,
+                        ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
                     ),
                 ),
@@ -203,6 +206,8 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.MediaAttachments,
+                        ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
                     ),
                 ),
@@ -219,6 +224,8 @@ internal class ChannelInfoViewControllerTest {
             ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
             ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
             ChannelInfoViewState.Content.Option.PinnedMessages,
+            ChannelInfoViewState.Content.Option.MediaAttachments,
+            ChannelInfoViewState.Content.Option.FilesAttachments,
             ChannelInfoViewState.Content.Option.Separator,
         )
         val sut = Fixture()
@@ -289,6 +296,8 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.MediaAttachments,
+                        ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
                     ),
                 ),
@@ -320,6 +329,8 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.MediaAttachments,
+                        ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
                         ChannelInfoViewState.Content.Option.LeaveChannel,
                         ChannelInfoViewState.Content.Option.DeleteChannel,
@@ -359,6 +370,8 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = false),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.MediaAttachments,
+                        ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
                     ),
                 ),
@@ -378,6 +391,8 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.RenameChannel(name = newName, isReadOnly = false),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.MediaAttachments,
+                        ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
                     ),
                 ),
@@ -428,6 +443,42 @@ internal class ChannelInfoViewControllerTest {
     }
 
     @Test
+    fun `media attachments click`() = runTest {
+        val fixture = Fixture().given(channel = randomChannel())
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2) // Skip initial states
+
+            sut.events.test {
+                sut.onViewAction(ChannelInfoViewAction.MediaAttachmentsClick)
+
+                assertEquals(ChannelInfoViewEvent.NavigateToMediaAttachments, awaitItem())
+            }
+        }
+
+        launch { fixture.verifyNoMoreInteractions() }
+    }
+
+    @Test
+    fun `files attachments click`() = runTest {
+        val fixture = Fixture().given(channel = randomChannel())
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(2) // Skip initial states
+
+            sut.events.test {
+                sut.onViewAction(ChannelInfoViewAction.FilesAttachmentsClick)
+
+                assertEquals(ChannelInfoViewEvent.NavigateToFilesAttachments, awaitItem())
+            }
+        }
+
+        launch { fixture.verifyNoMoreInteractions() }
+    }
+
+    @Test
     fun `mute channel`() = runTest {
         val channel = randomChannel(ownCapabilities = setOf(ChannelCapabilities.MUTE_CHANNEL))
         val fixture = Fixture().given(channel = channel, isMuted = false)
@@ -445,6 +496,8 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.MediaAttachments,
+                        ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
                     ),
                 ),
@@ -464,6 +517,8 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.MuteChannel(isMuted = true),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.MediaAttachments,
+                        ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
                     ),
                 ),
@@ -490,6 +545,8 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.MediaAttachments,
+                        ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
                     ),
                 ),
@@ -524,6 +581,8 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.MuteChannel(isMuted = true),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.MediaAttachments,
+                        ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
                     ),
                 ),
@@ -543,6 +602,8 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.MuteChannel(isMuted = false),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.MediaAttachments,
+                        ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
                     ),
                 ),
@@ -569,6 +630,8 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.MuteChannel(isMuted = true),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.MediaAttachments,
+                        ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
                     ),
                 ),
@@ -618,6 +681,8 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.MediaAttachments,
+                        ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
                     ),
                 ),
@@ -643,6 +708,8 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = true),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.MediaAttachments,
+                        ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
                     ),
                 ),
@@ -666,6 +733,8 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.MediaAttachments,
+                        ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
                     ),
                 ),
@@ -701,6 +770,8 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = true),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.MediaAttachments,
+                        ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
                     ),
                 ),
@@ -718,6 +789,8 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.MediaAttachments,
+                        ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
                     ),
                 ),
@@ -741,6 +814,8 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.RenameChannel(name = "", isReadOnly = true),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = true),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.MediaAttachments,
+                        ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
                     ),
                 ),
@@ -815,6 +890,8 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.MediaAttachments,
+                        ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
                         ChannelInfoViewState.Content.Option.LeaveChannel,
                     ),
@@ -858,6 +935,8 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.MediaAttachments,
+                        ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
                         ChannelInfoViewState.Content.Option.LeaveChannel,
                     ),
@@ -915,6 +994,8 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.MediaAttachments,
+                        ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
                         ChannelInfoViewState.Content.Option.DeleteChannel,
                     ),
@@ -952,6 +1033,8 @@ internal class ChannelInfoViewControllerTest {
                         ChannelInfoViewState.Content.Option.RenameChannel(name = channel.name, isReadOnly = true),
                         ChannelInfoViewState.Content.Option.HideChannel(isHidden = false),
                         ChannelInfoViewState.Content.Option.PinnedMessages,
+                        ChannelInfoViewState.Content.Option.MediaAttachments,
+                        ChannelInfoViewState.Content.Option.FilesAttachments,
                         ChannelInfoViewState.Content.Option.Separator,
                         ChannelInfoViewState.Content.Option.DeleteChannel,
                     ),
@@ -1198,6 +1281,30 @@ internal class ChannelInfoViewControllerTest {
             }
         }
     }
+
+    @Test
+    fun `filter options`() = runTest {
+        val channel = randomChannel(ownCapabilities = setOf(ChannelCapabilities.UPDATE_CHANNEL))
+        val fixture = Fixture()
+            .given(channel = channel)
+            .givenOptionFilter { false }
+        val sut = fixture.get(backgroundScope)
+
+        sut.state.test {
+            skipItems(1) // Skip initial state
+
+            assertEquals(
+                ChannelInfoViewState.Content(
+                    owner = channel.createdBy,
+                    members = emptyMembers(),
+                    options = emptyList(),
+                ),
+                awaitItem(),
+            )
+        }
+
+        launch { fixture.verifyNoMoreInteractions() }
+    }
 }
 
 private class Fixture {
@@ -1214,6 +1321,7 @@ private class Fixture {
     private val channelClient: ChannelClient = mock()
     private val chatClient: ChatClient = mock()
     private val copyToClipboardHandler: CopyToClipboardHandler = mock()
+    private var optionFilter: (ChannelInfoViewState.Content.Option) -> Boolean = { true }
 
     fun given(
         currentUser: User? = null,
@@ -1317,6 +1425,10 @@ private class Fixture {
         }
     }
 
+    fun givenOptionFilter(filter: (ChannelInfoViewState.Content.Option) -> Boolean) = apply {
+        optionFilter = filter
+    }
+
     fun verifyNoMoreInteractions() = apply {
         verifyNoMoreInteractions(channelClient)
     }
@@ -1348,6 +1460,7 @@ private class Fixture {
     fun get(scope: CoroutineScope) = ChannelInfoViewController(
         cid = randomCID(),
         scope = scope,
+        optionFilter = { optionFilter(it) }, // No filtering for options in tests
         chatClient = chatClient,
         channelState = MutableStateFlow(channelState),
         channelClient = channelClient,

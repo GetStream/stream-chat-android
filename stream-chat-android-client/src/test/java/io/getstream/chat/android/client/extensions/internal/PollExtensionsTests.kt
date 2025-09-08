@@ -28,8 +28,14 @@ import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
+import io.getstream.chat.android.randomPoll
+import io.getstream.chat.android.randomPollOption
+import io.getstream.chat.android.randomPollVote
+import io.getstream.chat.android.randomString
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
 import java.util.Date
 
 internal class PollExtensionsTests {
@@ -275,5 +281,79 @@ internal class PollExtensionsTests {
         result.ownVotes.size shouldBeEqualTo 1
         result.ownVotes.first() shouldBeEqualTo vote1
         result.answers shouldBeEqualTo basePoll.answers
+    }
+
+    @Test
+    fun `getVotesUnlessAnonymous returns votes when poll is not anonymous`() {
+        val optionId = randomString()
+        val option = randomPollOption(id = optionId)
+        val votes = listOf(randomPollVote(optionId = optionId))
+        val poll = randomPoll(
+            options = listOf(option),
+            votingVisibility = VotingVisibility.PUBLIC,
+            votes = votes,
+        )
+
+        val result = poll.getVotesUnlessAnonymous(option)
+
+        assertEquals(votes, result)
+    }
+
+    @Test
+    fun `getVotesUnlessAnonymous returns empty list when poll is anonymous`() {
+        val optionId = randomString()
+        val option = randomPollOption(id = optionId)
+        val poll = randomPoll(
+            options = listOf(option),
+            votingVisibility = VotingVisibility.ANONYMOUS,
+            votes = listOf(randomPollVote(optionId = optionId)),
+        )
+
+        val result = poll.getVotesUnlessAnonymous(option)
+
+        assertEquals(0, result.size)
+    }
+
+    @Test
+    fun `getWinner returns the option with the highest votes when there is a single winner`() {
+        val optionId1 = randomString()
+        val optionId2 = randomString()
+        val optionId3 = randomString()
+        val options = listOf(
+            randomPollOption(id = optionId1),
+            randomPollOption(id = optionId2),
+            randomPollOption(id = optionId3),
+        )
+        val voteCountsByOption = mapOf(optionId1 to 10, optionId2 to 5, optionId3 to 3)
+        val poll = randomPoll(options = options, voteCountsByOption = voteCountsByOption)
+
+        val winner = poll.getWinner()
+
+        assertEquals(options[0], winner)
+    }
+
+    @Test
+    fun `getWinner returns null when there is a tie for the highest votes`() {
+        val optionId1 = randomString()
+        val optionId2 = randomString()
+        val options = listOf(
+            randomPollOption(id = optionId1),
+            randomPollOption(id = optionId2),
+        )
+        val voteCountsByOption = mapOf(optionId1 to 5, optionId2 to 5)
+        val poll = randomPoll(options = options, voteCountsByOption = voteCountsByOption)
+
+        val winner = poll.getWinner()
+
+        assertNull(winner)
+    }
+
+    @Test
+    fun `getWinner returns null when there are no votes`() {
+        val poll = randomPoll()
+
+        val winner = poll.getWinner()
+
+        assertNull(winner)
     }
 }

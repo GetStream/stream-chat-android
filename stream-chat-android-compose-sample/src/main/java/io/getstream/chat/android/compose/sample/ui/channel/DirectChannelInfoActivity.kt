@@ -20,13 +20,15 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.sample.R
-import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
+import io.getstream.chat.android.compose.sample.ui.channel.attachments.ChannelFilesAttachmentsActivity
+import io.getstream.chat.android.compose.sample.ui.channel.attachments.ChannelMediaAttachmentsActivity
 import io.getstream.chat.android.compose.sample.ui.pinned.PinnedMessagesActivity
 import io.getstream.chat.android.compose.ui.channel.info.DirectChannelInfoScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -38,7 +40,7 @@ import kotlinx.coroutines.flow.collectLatest
 /**
  * Activity showing information about a 1-to-1 direct channel (chat).
  */
-class DirectChannelInfoActivity : BaseConnectedActivity() {
+class DirectChannelInfoActivity : ComponentActivity() {
 
     companion object {
         private const val KEY_CHANNEL_ID = "channelId"
@@ -54,10 +56,12 @@ class DirectChannelInfoActivity : BaseConnectedActivity() {
                 .putExtra(KEY_CHANNEL_ID, channelId)
     }
 
+    private val channelId by lazy { requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)) }
+
     private val viewModelFactory by lazy {
         ChannelInfoViewModelFactory(
             context = applicationContext,
-            cid = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)),
+            cid = channelId,
         )
     }
 
@@ -95,6 +99,12 @@ class DirectChannelInfoActivity : BaseConnectedActivity() {
             is ChannelInfoViewEvent.NavigateToPinnedMessages ->
                 openPinnedMessages()
 
+            ChannelInfoViewEvent.NavigateToMediaAttachments ->
+                openMediaAttachments()
+
+            ChannelInfoViewEvent.NavigateToFilesAttachments ->
+                openFilesAttachments()
+
             // No need to handle these in DirectChannelInfoActivity,
             // as it is only applicable for group channels.
             is ChannelInfoViewEvent.NavigateToChannel,
@@ -106,7 +116,23 @@ class DirectChannelInfoActivity : BaseConnectedActivity() {
     private fun openPinnedMessages() {
         val intent = PinnedMessagesActivity.createIntent(
             context = this,
-            channelId = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)),
+            channelId = channelId,
+        )
+        startActivity(intent)
+    }
+
+    private fun openMediaAttachments() {
+        val intent = ChannelMediaAttachmentsActivity.createIntent(
+            context = this,
+            cid = channelId,
+        )
+        startActivity(intent)
+    }
+
+    private fun openFilesAttachments() {
+        val intent = ChannelFilesAttachmentsActivity.createIntent(
+            context = this,
+            cid = channelId,
         )
         startActivity(intent)
     }

@@ -40,6 +40,7 @@ internal fun createChannelHiddenEventStringJson() =
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "clear_history": true,
+            "channel": ${createChannelJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
         """.trimIndent(),
     )
@@ -104,6 +105,7 @@ internal fun createChannelVisibleEventStringJson() =
             "channel_id": "channelId",
             "cid": "channelType:channelId",
             "user": ${createUserJsonString()},
+            "channel": ${createChannelJsonString()},
             "channel_last_message_at": "2020-06-29T06:14:28.000Z"
         """.trimIndent(),
     )
@@ -707,7 +709,8 @@ private fun createConfigJsonString() =
               "args": "[text]",
               "set": "fun_set"
             }
-          ]
+          ],
+          "mark_messages_pending": false
         }
     """.trimIndent()
 

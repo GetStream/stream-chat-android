@@ -33,7 +33,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.TextContainerStyle
 import io.getstream.chat.android.compose.ui.util.padding
 import io.getstream.chat.android.compose.ui.util.size
-import io.getstream.chat.android.ui.common.utils.DurationFormatter
 
 /**
  * Represents the playback timer.
@@ -43,17 +42,11 @@ import io.getstream.chat.android.ui.common.utils.DurationFormatter
  * @param style The style for the timer component.
  */
 @Composable
-internal fun PlaybackTimer(
+internal fun PlaybackTimerBox(
     progress: Float,
     durationInMs: Int?,
     style: TextContainerStyle,
 ) {
-    val finalDurationInMs = durationInMs ?: 0
-    val playbackInMs = (progress * finalDurationInMs).toInt()
-    val playbackText = when (progress > 0) {
-        true -> DurationFormatter.formatDurationInMillis(playbackInMs)
-        else -> DurationFormatter.formatDurationInMillis(finalDurationInMs)
-    }
     Box(
         modifier = Modifier
             .size(style.size)
@@ -73,10 +66,9 @@ internal fun PlaybackTimerText(
 ) {
     val finalDurationInMs = durationInMs ?: 0
     val playbackInMs = (progress * finalDurationInMs).toInt()
-    val playbackText = when (progress > 0) {
-        true -> DurationFormatter.formatDurationInMillis(playbackInMs)
-        else -> DurationFormatter.formatDurationInMillis(finalDurationInMs)
-    }
+    val playbackText = ChatTheme.durationFormatter.format(
+        if (progress > 0) playbackInMs else finalDurationInMs,
+    )
     Text(
         style = style,
         text = playbackText,
@@ -100,7 +92,7 @@ internal fun PlaybackTimerPreview() {
                 .background(Color.Black),
             contentAlignment = Alignment.Center,
         ) {
-            PlaybackTimer(
+            PlaybackTimerBox(
                 progress = 1f,
                 durationInMs = 120_000,
                 style = ChatTheme.ownMessageTheme.audioRecording.timerStyle,

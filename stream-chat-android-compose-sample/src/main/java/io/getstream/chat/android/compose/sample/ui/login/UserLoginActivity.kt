@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.sample.ui.login
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
@@ -65,6 +66,7 @@ import io.getstream.chat.android.compose.sample.feature.channel.list.ChannelsAct
 import io.getstream.chat.android.compose.sample.ui.chats.ChatsActivity
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.result.Error
 import kotlinx.coroutines.launch
 
 /**
@@ -87,8 +89,11 @@ class UserLoginActivity : AppCompatActivity() {
                                 // login screen then we need to reinitialize the SDK with our API key.
                                 ChatHelper.initializeSdk(applicationContext, userCredentials.apiKey)
                             }
-                            ChatHelper.connectUser(userCredentials = userCredentials)
-                            openChannels()
+                            ChatHelper.connectUser(
+                                userCredentials = userCredentials,
+                                onSuccess = ::openChannels,
+                                onError = ::showError,
+                            )
                         }
                     },
                     onCustomLoginClick = ::openCustomLogin,
@@ -301,6 +306,10 @@ class UserLoginActivity : AppCompatActivity() {
 
     private fun openCustomLogin() {
         startActivity(CustomLoginActivity.createIntent(this))
+    }
+
+    private fun showError(error: Error) {
+        Toast.makeText(this, "Login failed: ${error.message}", Toast.LENGTH_SHORT).show()
     }
 
     companion object {

@@ -65,6 +65,7 @@ import io.getstream.chat.android.ui.common.helper.DefaultImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.DefaultImageHeadersProvider
 import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
+import io.getstream.chat.android.ui.common.helper.DurationFormatter
 import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.ui.common.helper.TimeProvider
@@ -136,6 +137,9 @@ private val LocalDateFormatter = compositionLocalOf<DateFormatter> {
 }
 private val LocalTimeProvider = compositionLocalOf<TimeProvider> {
     error("No TimeProvider provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+private val LocalDurationFormatter = compositionLocalOf<DurationFormatter> {
+    error("No DurationFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 private val LocalChannelNameFormatter = compositionLocalOf<ChannelNameFormatter> {
     error("No ChannelNameFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
@@ -279,6 +283,7 @@ private val LocalMediaGalleryConfig = compositionLocalOf<MediaGalleryConfig> {
  * @param allowUIAutomationTest Allow to simulate ui automation with given test tags.
  * @param dateFormatter [DateFormatter] Used throughout the app for date and time information.
  * @param timeProvider [TimeProvider] Used throughout the app for time information.
+ * @param durationFormatter [DurationFormatter] Used to format durations in the app.
  * @param channelNameFormatter [ChannelNameFormatter] Used throughout the app for channel names.
  * @param messagePreviewFormatter [MessagePreviewFormatter] Used to generate a string preview for the given message.
  * @param imageLoaderFactory A factory that creates new Coil [ImageLoader] instances.
@@ -326,7 +331,7 @@ public fun ChatTheme(
     ),
     userPresence: UserPresence = UserPresence(),
     componentFactory: ChatComponentFactory = DefaultChatComponentFactory(),
-    attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultFactories(),
+    attachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaults(),
     messageContentFactory: MessageContentFactory = MessageContentFactory.Deprecated,
     attachmentPreviewHandlers: List<AttachmentPreviewHandler> =
         AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
@@ -338,6 +343,7 @@ public fun ChatTheme(
     allowUIAutomationTest: Boolean = false,
     dateFormatter: DateFormatter = DateFormatter.from(LocalContext.current),
     timeProvider: TimeProvider = TimeProvider.DEFAULT,
+    durationFormatter: DurationFormatter = DurationFormatter.defaultFormatter(),
     channelNameFormatter: ChannelNameFormatter = ChannelNameFormatter.defaultFormatter(LocalContext.current),
     messagePreviewFormatter: MessagePreviewFormatter = MessagePreviewFormatter.defaultFormatter(
         context = LocalContext.current,
@@ -438,6 +444,7 @@ public fun ChatTheme(
         LocalPollSwitchItemFactory provides pollSwitchItemFactory,
         LocalDateFormatter provides dateFormatter,
         LocalTimeProvider provides timeProvider,
+        LocalDurationFormatter provides durationFormatter,
         LocalChannelNameFormatter provides channelNameFormatter,
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
         LocalMessageTextFormatter provides messageTextFormatter,
@@ -621,6 +628,14 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalTimeProvider.current
+
+    /**
+     * Retrieves the current [DurationFormatter] at the call site's position in the hierarchy.
+     */
+    public val durationFormatter: DurationFormatter
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDurationFormatter.current
 
     /**
      * Retrieves the current [ChannelNameFormatter] at the call site's position in the hierarchy.

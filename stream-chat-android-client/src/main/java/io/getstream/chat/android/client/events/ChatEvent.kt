@@ -23,6 +23,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.ThreadInfo
@@ -74,6 +75,10 @@ public sealed interface HasOwnUser {
 
 public sealed interface HasPoll {
     public val poll: Poll
+}
+
+public sealed interface HasReminder {
+    public val reminder: MessageReminder
 }
 
 /**
@@ -143,8 +148,9 @@ public data class ChannelHiddenEvent(
     override val channelType: String,
     override val channelId: String,
     override val user: User,
+    override val channel: Channel,
     val clearHistory: Boolean,
-) : CidEvent(), UserEvent
+) : CidEvent(), UserEvent, HasChannel
 
 /**
  * Triggered when a channels' history is truncated. Could contain system [message].
@@ -201,7 +207,8 @@ public data class ChannelVisibleEvent(
     override val channelType: String,
     override val channelId: String,
     override val user: User,
-) : CidEvent(), UserEvent
+    override val channel: Channel,
+) : CidEvent(), UserEvent, HasChannel
 
 /**
  * Triggered every 30 second to confirm that the client connection is still alive
@@ -811,6 +818,66 @@ public data class VoteRemovedEvent(
     override val poll: Poll,
     val removedVote: Vote,
 ) : CidEvent(), HasPoll
+
+/**
+ * Triggered when a message reminder is created.
+ */
+public data class ReminderCreatedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    override val reminder: MessageReminder,
+    val messageId: String,
+    val userId: String,
+) : CidEvent(), HasReminder
+
+/**
+ * Triggered when a message reminder is updated.
+ */
+public data class ReminderUpdatedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    override val reminder: MessageReminder,
+    val messageId: String,
+    val userId: String,
+) : CidEvent(), HasReminder
+
+/**
+ * Triggered when a message reminder is deleted.
+ */
+public data class ReminderDeletedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    override val reminder: MessageReminder,
+    val messageId: String,
+    val userId: String,
+) : CidEvent(), HasReminder
+
+/**
+ * Triggered when a message reminder is due.
+ */
+public data class NotificationReminderDueEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    override val reminder: MessageReminder,
+    val messageId: String,
+    val userId: String,
+) : CidEvent(), HasReminder
 
 /**
  * Triggered when an ai indicator is updated.

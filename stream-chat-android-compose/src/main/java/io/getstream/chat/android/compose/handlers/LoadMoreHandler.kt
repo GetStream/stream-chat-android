@@ -18,6 +18,8 @@ package io.getstream.chat.android.compose.handlers
 
 import androidx.annotation.VisibleForTesting
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
@@ -40,7 +42,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 @Composable
 public fun LoadMoreHandler(
     listState: LazyListState,
-    loadMoreThreshold: Int = 3,
+    loadMoreThreshold: Int = DefaultLoadMoreThreshold,
     loadMore: () -> Unit,
 ) {
     LoadMoreHandler(
@@ -54,22 +56,89 @@ public fun LoadMoreHandler(
  * Handler to notify that more items should be loaded when the user scrolls to the end of the list.
  *
  * @param lazyListState The [LazyListState] used to control scrolling.
- * @param threshold The number if items to check before reaching the end of the list.
- * Default is half of the visible items.
+ * @param threshold The number if items to check before reaching the end of the list. Default is 3.
  * @param loadMore The callback to load more items.
  */
 @Composable
 public fun LoadMoreHandler(
     lazyListState: LazyListState,
-    threshold: () -> Int = { lazyListState.layoutInfo.visibleItemsInfo.size / 2 },
+    threshold: () -> Int = { DefaultLoadMoreThreshold },
     loadMore: () -> Unit,
 ) {
     LaunchedEffect(lazyListState) {
         snapshotFlow {
-            val totalItemsCount = lazyListState.layoutInfo.totalItemsCount
-            val lastVisibleItemIndex = lazyListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
+            val layoutInfo = lazyListState.layoutInfo
+            val totalItemsCount = layoutInfo.totalItemsCount
+            val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
             shouldLoadMore(
                 totalItemsCount = totalItemsCount,
+                lastVisibleItemIndex = lastVisibleItemIndex,
+                loadMoreThreshold = threshold(),
+            )
+        }
+            .distinctUntilChanged()
+            .collect { shouldLoadMore ->
+                if (shouldLoadMore) {
+                    loadMore()
+                }
+            }
+    }
+}
+
+/**
+ * Handler to notify that more items should be loaded when the user scrolls to the end of the grid.
+ *
+ * @param lazyGridState The [LazyGridState] used to control scrolling.
+ * @param threshold The number if items to check before reaching the end of the grid. Default is 3.
+ * @param loadMore The callback to load more items.
+ */
+@Composable
+public fun LoadMoreHandler(
+    lazyGridState: LazyGridState,
+    threshold: () -> Int = { DefaultLoadMoreThreshold },
+    loadMore: () -> Unit,
+) {
+    LaunchedEffect(lazyGridState) {
+        snapshotFlow {
+            val layoutInfo = lazyGridState.layoutInfo
+            val totalItemsCount = layoutInfo.totalItemsCount
+            val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
+            shouldLoadMore(
+                totalItemsCount = totalItemsCount,
+                lastVisibleItemIndex = lastVisibleItemIndex,
+                loadMoreThreshold = threshold(),
+            )
+        }
+            .distinctUntilChanged()
+            .collect { shouldLoadMore ->
+                if (shouldLoadMore) {
+                    loadMore()
+                }
+            }
+    }
+}
+
+/**
+ * Handler to notify that more items should be loaded when the user scrolls to the end of the pager.
+ *
+ * @param pagerState The [PagerState] used to control scrolling.
+ * @param pageCount The total number of pages.
+ * @param threshold The number if items to check before reaching the end of the pager. Default is 3.
+ * @param loadMore The callback to load more items.
+ */
+@Composable
+public fun LoadMoreHandler(
+    pagerState: PagerState,
+    pageCount: () -> Int,
+    threshold: () -> Int = { DefaultLoadMoreThreshold },
+    loadMore: () -> Unit,
+) {
+    LaunchedEffect(pagerState) {
+        snapshotFlow {
+            val layoutInfo = pagerState.layoutInfo
+            val lastVisibleItemIndex = layoutInfo.visiblePagesInfo.lastOrNull()?.index ?: -1
+            shouldLoadMore(
+                totalItemsCount = pageCount(),
                 lastVisibleItemIndex = lastVisibleItemIndex,
                 loadMoreThreshold = threshold(),
             )
@@ -92,3 +161,5 @@ internal fun shouldLoadMore(
     totalItemsCount > 0 && // List isn’t empty
         totalItemsCount > loadMoreThreshold && // Ensure list is large enough
         lastVisibleItemIndex > totalItemsCount - loadMoreThreshold - 1
+
+private const val DefaultLoadMoreThreshold = 3

@@ -57,7 +57,7 @@ private object AddingCustomAttachmentsSnippet {
             val channelId = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID))
 
             val customFactories = listOf(dateAttachmentFactory)
-            val defaultFactories = StreamAttachmentFactories.defaultFactories()
+            val defaultFactories = StreamAttachmentFactories.defaults()
 
             setContent {
                 // Pass in custom factories or combine them with the default ones
@@ -267,7 +267,7 @@ private object AddingCustomAttachmentsSnippet {
             val channelId = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID))
 
             val customFactories = listOf(dateAttachmentFactory)
-            val defaultFactories = StreamAttachmentFactories.defaultFactories()
+            val defaultFactories = StreamAttachmentFactories.defaults()
 
             val customQuotedFactories = listOf(quotedDateAttachmentFactory)
             val defaultQuotedFactories = StreamAttachmentFactories.defaultQuotedFactories()

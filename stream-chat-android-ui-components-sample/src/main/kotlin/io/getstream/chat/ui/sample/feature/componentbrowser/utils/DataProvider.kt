@@ -20,7 +20,6 @@ import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import androidx.annotation.DrawableRes
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Member
@@ -69,7 +68,6 @@ internal fun randomMessage(): Message {
     return Message(text = "Random message")
 }
 
-@ExperimentalStreamChatApi
 internal fun randomMediaAttachments(count: Int): List<AttachmentMetaData> {
     return List(count) {
         AttachmentMetaData(
@@ -80,7 +78,6 @@ internal fun randomMediaAttachments(count: Int): List<AttachmentMetaData> {
     }
 }
 
-@ExperimentalStreamChatApi
 internal fun randomFileAttachments(count: Int): List<AttachmentMetaData> {
     return List(count) {
         AttachmentMetaData(

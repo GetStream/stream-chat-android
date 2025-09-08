@@ -116,9 +116,11 @@ object ChatHelper {
                     if (it == InitializationState.NOT_INITIALIZED) {
                         connectUser(userCredentials.user, userCredentials.token)
                             .enqueue { result ->
-                                result.onError(onError)
+                                result
+                                    .onError(onError)
                                     .onSuccess {
                                         ChatApp.credentialsRepository.saveUserCredentials(userCredentials)
+                                        ChatApp.sharedLocationService.start()
                                         onSuccess()
                                     }
                             }
@@ -131,8 +133,9 @@ object ChatHelper {
      * Logs out the user and removes their credentials from the persistent storage.
      */
     suspend fun disconnectUser() {
+        ChatApp.sharedLocationService.stop()
         ChatApp.credentialsRepository.clearCredentials()
 
-        ChatClient.instance().disconnect(false).await()
+        ChatClient.instance().disconnect(flushPersistence = true).await()
     }
 }

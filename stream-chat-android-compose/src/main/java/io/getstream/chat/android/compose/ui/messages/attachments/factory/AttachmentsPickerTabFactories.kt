@@ -73,7 +73,7 @@ public object AttachmentsPickerTabFactories {
      * @param config The configuration for the system attachment picker.
      */
     public fun systemAttachmentsPickerTabFactories(
-        config: SystemAttachmentsPickerConfig,
+        config: SystemAttachmentsPickerConfig = SystemAttachmentsPickerConfig(),
     ): List<AttachmentsPickerTabFactory> {
         val factory = AttachmentsPickerSystemTabFactory(config)
         return listOf(factory)

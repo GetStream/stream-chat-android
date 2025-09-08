@@ -38,18 +38,23 @@ import io.getstream.chat.android.models.DraftsSort
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.GuestUser
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.MemberData
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageReminder
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.QueryDraftsResult
+import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
+import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
@@ -167,6 +172,9 @@ internal interface ChatApi {
 
     @CheckResult
     fun getMessage(messageId: String): Call<Message>
+
+    @CheckResult
+    fun getPendingMessage(messageId: String): Call<PendingMessage>
 
     @CheckResult
     fun sendMessage(
@@ -300,6 +308,8 @@ internal interface ChatApi {
         channelType: String,
         channelId: String,
     ): Call<Channel>
+
+    fun getUnreadCounts(): Call<UnreadCounts>
 
     @CheckResult
     fun markRead(
@@ -562,6 +572,32 @@ internal interface ChatApi {
 
     @CheckResult
     fun deletePoll(pollId: String): Call<Unit>
+
+    @CheckResult
+    fun createReminder(messageId: String, remindAt: Date?): Call<MessageReminder>
+
+    @CheckResult
+    fun updateReminder(messageId: String, remindAt: Date?): Call<MessageReminder>
+
+    @CheckResult
+    fun deleteReminder(messageId: String): Call<Unit>
+
+    @CheckResult
+    fun queryReminders(
+        filter: FilterObject,
+        limit: Int,
+        next: String?,
+        sort: QuerySorter<MessageReminder>,
+    ): Call<QueryRemindersResult>
+
+    @CheckResult
+    fun queryActiveLocations(): Call<List<Location>>
+
+    @CheckResult
+    fun updateLiveLocation(location: Location): Call<Location>
+
+    @CheckResult
+    fun stopLiveLocation(location: Location): Call<Location>
 
     fun warmUp()
 

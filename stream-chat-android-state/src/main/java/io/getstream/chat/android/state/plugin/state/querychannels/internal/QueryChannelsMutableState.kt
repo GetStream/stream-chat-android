@@ -18,10 +18,12 @@ package io.getstream.chat.android.state.plugin.state.querychannels.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.extensions.internal.updateLiveLocations
 import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
@@ -43,6 +45,7 @@ internal class QueryChannelsMutableState(
     override val sort: QuerySorter<Channel>,
     scope: CoroutineScope,
     latestUsers: StateFlow<Map<String, User>>,
+    activeLiveLocations: StateFlow<List<Location>>,
 ) : QueryChannelsState {
 
     private val logger by taggedLogger("Chat:QueryChannelsState")
@@ -75,8 +78,10 @@ internal class QueryChannelsMutableState(
 
     private var _endOfChannels: MutableStateFlow<Boolean>? = MutableStateFlow(false)
     private val sortedChannels: StateFlow<List<Channel>?> =
-        mapChannels.combine(latestUsers) { channelMap, userMap ->
-            channelMap?.values?.updateUsers(userMap)
+        combine(mapChannels, latestUsers, activeLiveLocations) { channelMap, userMap, activeLocations ->
+            channelMap?.values
+                ?.updateUsers(userMap)
+                ?.updateLiveLocations(activeLocations)
         }.map { channels ->
             channels?.sortedWith(sort.comparator)
         }.stateIn(scope, SharingStarted.Eagerly, null)

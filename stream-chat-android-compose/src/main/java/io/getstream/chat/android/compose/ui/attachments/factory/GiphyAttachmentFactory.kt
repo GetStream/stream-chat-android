@@ -24,6 +24,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentClickData
 import io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.onGiphyAttachmentContentClick
 import io.getstream.chat.android.compose.ui.theme.StreamDimens
@@ -46,6 +47,7 @@ import io.getstream.chat.android.ui.common.utils.GiphySizingMode
  * Setting it to fixed size mode will make it respect all given dimensions.
  * @param contentScale Used to determine the way Giphys are scaled inside the [Image] composable.
  * @param onContentItemClick Lambda called when an item gets clicked.
+ * @param canHandle Lambda that checks if the factory can handle the given attachments.
  *
  * @return Returns an instance of [AttachmentFactory] that is used to handle Giphys.
  */
@@ -53,20 +55,55 @@ public class GiphyAttachmentFactory(
     giphyInfoType: GiphyInfoType = GiphyInfoType.FIXED_HEIGHT_DOWNSAMPLED,
     giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
     contentScale: ContentScale = ContentScale.Crop,
-    onContentItemClick: (context: Context, Url: String) -> Unit = ::onGiphyAttachmentContentClick,
+    onItemClick: (GiphyAttachmentClickData) -> Unit = {
+        onGiphyAttachmentContentClick(it.context, it.url)
+    },
+    canHandle: (attachments: List<Attachment>) -> Boolean = { attachments -> attachments.any(Attachment::isGiphy) },
 ) : AttachmentFactory(
     type = Type.BuiltIn.GIPHY,
-    canHandle = { attachments -> attachments.any(Attachment::isGiphy) },
+    canHandle = canHandle,
     content = @Composable { modifier, state ->
         GiphyAttachmentContent(
             modifier = modifier
                 .wrapContentSize()
                 .testTag("Stream_GiphyContent"),
-            attachmentState = state,
+            state = state,
             giphyInfoType = giphyInfoType,
             giphySizingMode = giphySizingMode,
             contentScale = contentScale,
-            onItemClick = onContentItemClick,
+            onItemClick = onItemClick,
         )
     },
-)
+) {
+    /**
+     * Creates a new instance of [GiphyAttachmentFactory] with the default parameters.
+     */
+    @Deprecated(
+        message = "Use the constructor that does not take onContentItemClick parameter.",
+        replaceWith = ReplaceWith(
+            "GiphyAttachmentFactory(" +
+                "giphyInfoType, " +
+                "giphySizingMode, " +
+                "contentScale, " +
+                "onContentItemClick, " +
+                "canHandle" +
+                ")",
+        ),
+        level = DeprecationLevel.WARNING,
+    )
+    public constructor(
+        giphyInfoType: GiphyInfoType = GiphyInfoType.FIXED_HEIGHT_DOWNSAMPLED,
+        giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
+        contentScale: ContentScale = ContentScale.Crop,
+        onContentItemClick: (context: Context, url: String) -> Unit,
+        canHandle: (attachments: List<Attachment>) -> Boolean = { attachments -> attachments.any(Attachment::isGiphy) },
+    ) : this(
+        giphyInfoType = giphyInfoType,
+        giphySizingMode = giphySizingMode,
+        contentScale = contentScale,
+        onItemClick = {
+            onContentItemClick(it.context, it.url)
+        },
+        canHandle = canHandle,
+    )
+}

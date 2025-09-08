@@ -48,6 +48,8 @@ internal class ChatNotificationHandler(
     private val notificationChannel: () -> NotificationChannel,
     private val notificationTextFormatter: (currentUser: User?, message: Message) -> CharSequence,
     private val actionsProvider: (notificationId: Int, channel: Channel, message: Message) -> List<Action>,
+    private val notificationBuilderTransformer:
+    (NotificationCompat.Builder, ChatNotification) -> NotificationCompat.Builder,
 ) : NotificationHandler {
 
     private val sharedPreferences: SharedPreferences by lazy {
@@ -74,12 +76,46 @@ internal class ChatNotificationHandler(
 
     override fun onNotificationPermissionStatus(status: NotificationPermissionStatus) { /* no-op */ }
 
+    override fun showNotification(notification: ChatNotification) {
+        showNotificationInternal(notification)
+    }
+
     override fun showNotification(channel: Channel, message: Message) {
+        // Only possible type is message.new
+        showNotificationInternal(ChatNotification.MessageNew(channel, message))
+    }
+
+    private fun showNotificationInternal(chatNotification: ChatNotification) {
+        when (chatNotification) {
+            is ChatNotification.MessageNew -> showMessageNewNotification(chatNotification)
+            is ChatNotification.NotificationReminderDue -> showReminderDueNotification(chatNotification)
+        }
+    }
+
+    private fun showMessageNewNotification(chatNotification: ChatNotification.MessageNew) {
+        val (channel, message) = chatNotification
         val notificationId: Int = System.nanoTime().toInt()
         val notificationSummaryId = getNotificationGroupSummaryId(channel.type, channel.id)
         addNotificationId(notificationId, notificationSummaryId)
-        showNotification(notificationId, buildNotification(notificationId, channel, message).build())
+        showNotification(
+            notificationId,
+            notificationBuilderTransformer(
+                buildNotification(notificationId, channel, message),
+                chatNotification,
+            ).build(),
+        )
         showNotification(notificationSummaryId, buildNotificationGroupSummary(channel, message).build())
+    }
+
+    private fun showReminderDueNotification(chatNotification: ChatNotification.NotificationReminderDue) {
+        val (channel, message) = chatNotification
+        val notificationId = "${channel.type}:${channel.id}:${message.id}".hashCode()
+        addNotificationIdWithoutSummary(notificationId)
+        val notification = notificationBuilderTransformer(
+            buildReminderDueNotification(channel, message),
+            chatNotification,
+        ).build()
+        showNotification(notificationId, notification)
     }
 
     private fun buildNotification(
@@ -98,6 +134,17 @@ internal class ChatNotificationHandler(
             actionsProvider(notificationId, channel, message).forEach(::addAction)
             setDeleteIntent(NotificationMessageReceiver.createDismissPendingIntent(context, notificationId, channel))
         }
+    }
+
+    private fun buildReminderDueNotification(channel: Channel, message: Message): NotificationCompat.Builder {
+        val currentUser = ChatClient.instance().getCurrentUser()
+            ?: ChatClient.instance().getStoredUser()
+        return getNotificationBuilder(
+            contentTitle = context.getString(R.string.stream_chat_notification_reminder_due_title),
+            contentText = notificationTextFormatter(currentUser, message),
+            groupKey = null,
+            intent = getNewMessageIntent(message = message, channel = channel),
+        )
     }
 
     private fun buildNotificationGroupSummary(channel: Channel, message: Message): NotificationCompat.Builder {
@@ -140,6 +187,9 @@ internal class ChatNotificationHandler(
      */
     override fun dismissAllNotifications() {
         getNotificationSummaryIds().forEach(::dismissSummaryNotification)
+        // Dismiss any non-grouped notifications
+        getNotificationWithoutSummaryIds().forEach { notificationManager.cancel(it) }
+        clearNotificationWithoutSummaryIds()
     }
 
     private fun showNotification(notificationId: Int, notification: Notification) {
@@ -149,7 +199,7 @@ internal class ChatNotificationHandler(
     private fun getNotificationBuilder(
         contentTitle: String,
         contentText: CharSequence,
-        groupKey: String,
+        groupKey: String?,
         intent: Intent,
     ): NotificationCompat.Builder {
         val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -210,6 +260,15 @@ internal class ChatNotificationHandler(
         }
     }
 
+    private fun addNotificationIdWithoutSummary(notificationId: Int) {
+        sharedPreferences.edit {
+            putStringSet(
+                KEY_NOTIFICATION_WITHOUT_SUMMARY_IDS,
+                (getNotificationWithoutSummaryIds() + notificationId).map(Int::toString).toSet(),
+            )
+        }
+    }
+
     private fun removeNotificationId(notificationId: Int) {
         sharedPreferences.edit {
             val notificationSummaryId = getAssociatedNotificationSummaryId(notificationId)
@@ -235,10 +294,18 @@ internal class ChatNotificationHandler(
     private fun getNotificationSummaryIdKey(notificationSummaryId: Int) =
         KEY_PREFIX_NOTIFICATION_SUMMARY_ID + notificationSummaryId
 
+    private fun getNotificationWithoutSummaryIds(): Set<Int> =
+        sharedPreferences.getStringSet(KEY_NOTIFICATION_WITHOUT_SUMMARY_IDS, null).orEmpty().map(String::toInt).toSet()
+
+    private fun clearNotificationWithoutSummaryIds() {
+        sharedPreferences.edit { remove(KEY_NOTIFICATION_WITHOUT_SUMMARY_IDS) }
+    }
+
     private companion object {
         private const val SHARED_PREFERENCES_NAME = "stream_notifications.sp"
         private const val KEY_PREFIX_NOTIFICATION_ID = "nId-"
         private const val KEY_PREFIX_NOTIFICATION_SUMMARY_ID = "nSId-"
         private const val KEY_NOTIFICATION_SUMMARY_IDS = "notification_summary_ids"
+        private const val KEY_NOTIFICATION_WITHOUT_SUMMARY_IDS = "notification_without_summary_ids"
     }
 }

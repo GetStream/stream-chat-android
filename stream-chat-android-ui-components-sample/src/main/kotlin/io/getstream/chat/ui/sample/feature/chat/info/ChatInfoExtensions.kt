@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalStreamChatApi::class)
-
 package io.getstream.chat.ui.sample.feature.chat.info
 
 import androidx.fragment.app.Fragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewAction
 import io.getstream.chat.android.ui.common.feature.channel.info.ChannelInfoViewEvent
 import io.getstream.chat.android.ui.common.state.channel.info.ChannelInfoViewState
@@ -30,6 +27,7 @@ import io.getstream.chat.ui.sample.common.showToast
 import io.getstream.chat.ui.sample.feature.chat.info.group.member.GroupChatInfoMemberOptionsDialogFragment
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
 
+@Suppress("LongMethod")
 internal fun List<ChannelInfoViewState.Content.Option>.toChannelInfoItems(
     isGroupChannel: Boolean,
 ): List<ChatInfoItem> = buildList {
@@ -70,13 +68,19 @@ internal fun List<ChannelInfoViewState.Content.Option>.toChannelInfoItems(
 
             is ChannelInfoViewState.Content.Option.PinnedMessages -> {
                 add(ChatInfoItem.Option.PinnedMessages)
-                // These options aren't coming from the ViewModel yet, so we add them manually
-                add(ChatInfoItem.Option.SharedMedia)
-                add(ChatInfoItem.Option.SharedFiles)
+                // This option isn't coming from the ViewModel yet, so we add them manually
                 if (!isGroupChannel) {
                     add(ChatInfoItem.Option.SharedGroups)
                 }
             }
+
+            is ChannelInfoViewState.Content.Option.MediaAttachments -> add(
+                ChatInfoItem.Option.SharedMedia,
+            )
+
+            is ChannelInfoViewState.Content.Option.FilesAttachments -> add(
+                ChatInfoItem.Option.SharedFiles,
+            )
 
             is ChannelInfoViewState.Content.Option.LeaveChannel -> add(
                 ChatInfoItem.Option.LeaveChannel(

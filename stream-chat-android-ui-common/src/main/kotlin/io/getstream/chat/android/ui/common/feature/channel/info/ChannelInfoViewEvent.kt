@@ -16,13 +16,11 @@
 
 package io.getstream.chat.android.ui.common.feature.channel.info
 
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Member
 
 /**
  * Represents side-effect events related to channel information actions.
  */
-@ExperimentalStreamChatApi
 public sealed interface ChannelInfoViewEvent {
 
     /**
@@ -66,7 +64,7 @@ public sealed interface ChannelInfoViewEvent {
         /**
          * The available timeout options for banning the member.
          */
-        val timeouts: List<Timeout> = ChannelInfoViewEvent.BanMemberModal.Timeout.entries.toList()
+        val timeouts: List<Timeout> = Timeout.entries.toList()
 
         /**
          * Represents the available timeout options for banning a member.
@@ -142,6 +140,16 @@ public sealed interface ChannelInfoViewEvent {
      * Indicates an event to navigate to the pinned messages.
      */
     public data object NavigateToPinnedMessages : Navigation(reason = null)
+
+    /**
+     * Indicates an event to navigate to the media attachments.
+     */
+    public data object NavigateToMediaAttachments : Navigation(reason = null)
+
+    /**
+     * Indicates an event to navigate to the files attachments.
+     */
+    public data object NavigateToFilesAttachments : Navigation(reason = null)
 
     /**
      * Indicates an event to navigate to the channel with the specified [cid].

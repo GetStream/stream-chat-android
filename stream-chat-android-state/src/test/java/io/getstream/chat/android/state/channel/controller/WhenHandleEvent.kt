@@ -52,6 +52,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
@@ -72,11 +73,15 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
     private lateinit var channelLogic: ChannelLogic
     private val channelMutableState: ChannelMutableState = ChannelMutableState(
-        "type1",
-        channelId,
-        userFlow,
-        MutableStateFlow(
+        channelType = "type1",
+        channelId = channelId,
+        userFlow = userFlow,
+        latestUsers = MutableStateFlow(
             mapOf(currentUser.id to currentUser),
+        ),
+        baseMessageLimit = null,
+        activeLiveLocations = MutableStateFlow(
+            emptyList(),
         ),
     ) { System.currentTimeMillis() }
 
@@ -134,13 +139,13 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
             silent = false,
             showInChannel = true,
         )
-        channelLogic.upsertMessages(listOf(message))
+        channelLogic.upsertMessage(message)
 
         val messageUpdateEvent = randomMessageUpdateEvent(message = message)
 
         channelLogic.handleEvent(messageUpdateEvent)
 
-        verify(channelStateLogic).upsertMessages(listOf(messageUpdateEvent.message))
+        verify(channelStateLogic, times(2)).upsertMessage(messageUpdateEvent.message)
     }
 
     // Member added event

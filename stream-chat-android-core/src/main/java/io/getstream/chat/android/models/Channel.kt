@@ -48,6 +48,7 @@ import java.util.Date
  * @param hidden Whether this channel is hidden by current user or not.
  * @param hiddenMessagesBefore Messages before this date are hidden from the user.
  * @param cooldown Cooldown period after sending each message in seconds.
+ * @param pendingMessages The list of pending messages in the channel for the current user (if the feature enabled).
  * @param pinnedMessages The list of pinned messages in the channel.
  * @param ownCapabilities Channel's capabilities available for the current user. Note that the field is not provided
  * in the events.
@@ -56,6 +57,8 @@ import java.util.Date
  * @param cachedLatestMessages The list of cached messages if the regular list does not contain the newest messages.
  * @param isInsideSearch When the channel is inside search, eg. searching from the channel list for a message or when
  * hopping to a quoted message a number pages away without retaining the newest messages in the list.
+ * @param draftMessage The draft message for the channel.
+ * @param activeLiveLocations The list of active live locations in the channel.
  */
 @Immutable
 public data class Channel(
@@ -89,12 +92,14 @@ public data class Channel(
     val hidden: Boolean? = null,
     val hiddenMessagesBefore: Date? = null,
     val cooldown: Int = 0,
+    val pendingMessages: List<PendingMessage> = emptyList(),
     val pinnedMessages: List<Message> = listOf(),
     val ownCapabilities: Set<String> = setOf(),
     val membership: Member? = null,
     val cachedLatestMessages: List<Message> = emptyList(),
     val isInsideSearch: Boolean = false,
     val draftMessage: DraftMessage? = null,
+    val activeLiveLocations: List<Location> = emptyList(),
     override val extraData: Map<String, Any> = mapOf(),
 ) : CustomObject, ComparableFieldProvider {
 
@@ -187,6 +192,7 @@ public data class Channel(
         private var cachedLatestMessages: List<Message> = emptyList()
         private var isInsideSearch: Boolean = false
         private var draft: DraftMessage? = null
+        private var activeLiveLocations: List<Location> = emptyList()
         private var extraData: Map<String, Any> = mapOf()
 
         public constructor(channel: Channel) : this() {
@@ -218,6 +224,7 @@ public data class Channel(
             cachedLatestMessages = channel.cachedLatestMessages
             isInsideSearch = channel.isInsideSearch
             draft = channel.draftMessage
+            activeLiveLocations = channel.activeLiveLocations
             extraData = channel.extraData
         }
 
@@ -259,6 +266,9 @@ public data class Channel(
         public fun withDraftMessage(draftMessage: DraftMessage?): Builder = apply {
             this.draft = draftMessage
         }
+        public fun withActiveLiveLocations(activeLiveLocations: List<Location>): Builder = apply {
+            this.activeLiveLocations = activeLiveLocations
+        }
         public fun withExtraData(extraData: Map<String, Any>): Builder = apply { this.extraData = extraData }
 
         @Deprecated(
@@ -298,6 +308,7 @@ public data class Channel(
             cachedLatestMessages = cachedLatestMessages,
             isInsideSearch = isInsideSearch,
             draftMessage = draft,
+            activeLiveLocations = activeLiveLocations,
             extraData = extraData,
         )
     }

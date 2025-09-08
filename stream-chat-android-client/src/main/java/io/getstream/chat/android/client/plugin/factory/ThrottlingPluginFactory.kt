@@ -19,9 +19,7 @@ package io.getstream.chat.android.client.plugin.factory
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.ThrottlingPlugin
 import io.getstream.chat.android.models.User
-import kotlin.reflect.KClass
 
 internal object ThrottlingPluginFactory : PluginFactory {
-    override fun <T : Any> resolveDependency(klass: KClass<T>): T? = null
     override fun get(user: User): Plugin = ThrottlingPlugin()
 }

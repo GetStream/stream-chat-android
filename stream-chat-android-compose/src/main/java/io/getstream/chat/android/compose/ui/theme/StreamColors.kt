@@ -77,6 +77,7 @@ public data class StreamColors(
     public val inputBackground: Color,
     public val appBackground: Color,
     public val barsBackground: Color,
+    @Deprecated("Use MessageTheme.linkBackgroundColor instead", level = DeprecationLevel.WARNING)
     public val linkBackground: Color,
     public val overlay: Color,
     public val overlayDark: Color,

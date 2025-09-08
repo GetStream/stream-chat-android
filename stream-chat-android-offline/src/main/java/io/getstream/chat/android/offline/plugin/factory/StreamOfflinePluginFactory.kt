@@ -61,9 +61,12 @@ import kotlin.reflect.KClass
  * Implementation of [PluginFactory] that provides [OfflinePlugin].
  *
  * @param appContext [Context]
+ * @param ignoredChannelTypes Set of channel types that should be ignored by the offline plugin.
+ * @param now Function to get the current time in milliseconds. Useful for testing purposes.
  */
 public class StreamOfflinePluginFactory @JvmOverloads constructor(
     private val appContext: Context,
+    private val ignoredChannelTypes: Set<String> = emptySet(),
     private val now: () -> Long = { System.currentTimeMillis() },
 ) : PluginFactory, RepositoryFactory.Provider {
 
@@ -82,6 +85,7 @@ public class StreamOfflinePluginFactory @JvmOverloads constructor(
             database = createDatabase(appContext, user),
             currentUser = user,
             scope = ChatClient.instance().inheritScope { SupervisorJob(it) },
+            ignoredChannelTypes = ignoredChannelTypes,
             now = now,
         )
     }
@@ -137,6 +141,7 @@ public class StreamOfflinePluginFactory @JvmOverloads constructor(
             messageRepository = repositoryFacade,
             reactionsRepository = repositoryFacade,
             userRepository = repositoryFacade,
+            ignoredChannelTypes = ignoredChannelTypes,
         )
 
         val deleteMessageListener: DeleteMessageListener = DeleteMessageListenerDatabase(

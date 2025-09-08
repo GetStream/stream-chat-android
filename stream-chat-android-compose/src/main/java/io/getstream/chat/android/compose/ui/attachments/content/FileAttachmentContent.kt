@@ -54,13 +54,13 @@ import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttac
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.compose.ui.util.clickable
+import io.getstream.chat.android.compose.ui.util.extensions.internal.imagePreviewData
 import io.getstream.chat.android.compose.util.attachmentDownloadState
 import io.getstream.chat.android.compose.util.onDownloadHandleRequest
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
+import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
 import io.getstream.chat.android.uiutils.model.MimeType
 
 /**
@@ -172,7 +172,7 @@ public fun FileAttachmentItem(
  *  @param attachment The attachment for which the information is displayed.
  */
 @Composable
-private fun FileAttachmentDescription(
+internal fun RowScope.FileAttachmentDescription(
     attachment: Attachment,
     isMine: Boolean,
     showFileSize: (Attachment) -> Boolean,
@@ -183,14 +183,14 @@ private fun FileAttachmentDescription(
     }
     Column(
         modifier = Modifier
-            .fillMaxWidth(0.85f)
+            .weight(1f)
             .padding(start = 16.dp, end = 8.dp),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
             modifier = Modifier.testTag("Stream_FileAttachmentName"),
-            text = attachment.title ?: attachment.name ?: "",
+            text = attachment.getDisplayableName() ?: "",
             style = fileAttachmentTheme.fileNameTextStyle,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -273,19 +273,7 @@ public fun FileAttachmentImage(
     val isImage = attachment.isImage()
     val isVideoWithThumbnails = attachment.isVideo() && ChatTheme.videoThumbnailsEnabled
 
-    val data = when {
-        isImage ->
-            attachment.imagePreviewUrl
-                ?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
-                ?: attachment.upload
-
-        isVideoWithThumbnails ->
-            attachment.thumbUrl
-                ?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
-                ?: attachment.upload
-
-        else -> MimeTypeIconProvider.getIconRes(attachment.mimeType)
-    }
+    val data = attachment.imagePreviewData ?: MimeTypeIconProvider.getIconRes(attachment.mimeType)
 
     val shape = if (isImage || isVideoWithThumbnails) fileAttachmentTheme.imageThumbnail else null
 

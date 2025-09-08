@@ -325,7 +325,7 @@ class CustomLoginActivity : AppCompatActivity() {
     }
 
     private fun showError(error: Error) {
-        Toast.makeText(this, "Login failed ${error.message}", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, "Login failed: ${error.message}", Toast.LENGTH_SHORT).show()
     }
 
     companion object {

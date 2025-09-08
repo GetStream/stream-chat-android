@@ -47,4 +47,14 @@ sealed class InfoContentMode(open val channelId: String) : Serializable {
      * Display the pinned messages for a channel.
      */
     data class PinnedMessages(override val channelId: String) : InfoContentMode(channelId)
+
+    /**
+     * Display the media attachments for a channel.
+     */
+    data class MediaAttachments(override val channelId: String) : InfoContentMode(channelId)
+
+    /**
+     * Display the files attachments for a channel.
+     */
+    data class FilesAttachments(override val channelId: String) : InfoContentMode(channelId)
 }

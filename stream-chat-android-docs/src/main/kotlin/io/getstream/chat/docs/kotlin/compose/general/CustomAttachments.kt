@@ -21,7 +21,7 @@ private object CustomAttachmentsSnippet {
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             val myAttachmentFactories = listOf<AttachmentFactory>()
-            val defaultFactories = StreamAttachmentFactories.defaultFactories()
+            val defaultFactories = StreamAttachmentFactories.defaults()
 
             setContent {
                 // override the default factories by adding your own

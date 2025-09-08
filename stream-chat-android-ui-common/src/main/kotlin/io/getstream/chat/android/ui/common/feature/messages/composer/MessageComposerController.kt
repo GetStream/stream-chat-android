@@ -702,6 +702,11 @@ public class MessageComposerController(
 
         val currentUserId = chatClient.getCurrentUser()?.id
         val sendMessageCall = if (isInEditMode && !activeMessage.isModerationError(currentUserId)) {
+            if (activeMessage.text == message.text) {
+                logger.i { "[sendMessage] No changes in the message text, skipping edit." }
+                clearData()
+                return
+            }
             getEditMessageCall(message)
         } else {
             val (channelType, channelId) = message.cid.cidToTypeAndId()

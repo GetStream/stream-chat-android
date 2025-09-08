@@ -242,6 +242,10 @@
             <flag name="italic" value="2" />
         </attr>
 
+        <!-- Whether to show the user avatar in the message reply view. If set to true, the
+        user avatar will be displayed next to the quoted message. -->
+        <attr name="streamUiMessageReplyShowUserAvatar" format="boolean" />
+
         <!-- Message Reply background color -->
         <attr name="streamUiMessageReplyBackgroundColorMine" format="color" />
         <attr name="streamUiMessageReplyBackgroundColorTheirs" format="color" />

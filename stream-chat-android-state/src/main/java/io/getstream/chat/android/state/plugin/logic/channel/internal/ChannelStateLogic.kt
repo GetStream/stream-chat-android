@@ -150,6 +150,26 @@ internal class ChannelStateLogic(
     }
 
     /**
+     * Adds new membership to the channel. Used when the current user joins the channel.
+     *
+     * @param member The [Member] to be added as a membership to the channel.
+     */
+    fun addMembership(member: Member) {
+        mutableState.updateChannelData { data ->
+            data?.copy(membership = member)
+        }
+    }
+
+    /**
+     * Removes the membership from the channel. Used when the current user leaves the channel.
+     */
+    fun removeMembership() {
+        mutableState.updateChannelData { data ->
+            data?.copy(membership = null)
+        }
+    }
+
+    /**
      * Updates the channel data of the state of the SDK.
      *
      * @param event The event containing the channel data.
@@ -328,7 +348,7 @@ internal class ChannelStateLogic(
     /**
      * Returns all the replies of a quoted message.
      */
-    public fun getAllReplies(message: Message): List<Message>? {
+    fun getAllReplies(message: Message): List<Message>? {
         return mutableState.quotedMessagesMap
             .value[message.id]
             ?.mapNotNull(mutableState::getMessageById)
@@ -722,6 +742,14 @@ internal class ChannelStateLogic(
     }
 
     /**
+     * Called when the user is loading the newest messages.
+     * Resets the current message limit.
+     */
+    fun loadingNewestMessages() {
+        mutableState.resetMessageLimit()
+    }
+
+    /**
      * Set states as loading newer messages.
      */
     fun loadingNewerMessages() {
@@ -748,9 +776,10 @@ internal class ChannelStateLogic(
             ?.takeUnless { processedMessageIds.get(message.id) == true }
             ?.takeUnless {
                 message.user.id == clientState.user.value?.id ||
-                    message.parentId?.takeUnless { message.showInChannel } != null
+                    message.parentId?.takeIf { message.showInChannel } != null
             }
             ?.takeUnless { message.shadowed }
+            ?.takeUnless { message.silent }
             ?.let {
                 updateRead(
                     it.copy(

@@ -20,6 +20,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -31,8 +32,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.feature.channel.draft.DraftChannelActivity
-import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
 import io.getstream.chat.android.compose.sample.ui.MessagesActivity
+import io.getstream.chat.android.compose.sample.ui.channel.attachments.ChannelFilesAttachmentsActivity
+import io.getstream.chat.android.compose.sample.ui.channel.attachments.ChannelMediaAttachmentsActivity
 import io.getstream.chat.android.compose.sample.ui.pinned.PinnedMessagesActivity
 import io.getstream.chat.android.compose.ui.channel.info.GroupChannelInfoScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -44,7 +46,7 @@ import kotlinx.coroutines.flow.collectLatest
 /**
  * Activity showing information about a group channel (chat).
  */
-class GroupChannelInfoActivity : BaseConnectedActivity() {
+class GroupChannelInfoActivity : ComponentActivity() {
 
     companion object {
         private const val KEY_CHANNEL_ID = "channelId"
@@ -110,6 +112,12 @@ class GroupChannelInfoActivity : BaseConnectedActivity() {
             is ChannelInfoViewEvent.NavigateToPinnedMessages ->
                 openPinnedMessages()
 
+            ChannelInfoViewEvent.NavigateToMediaAttachments ->
+                openMediaAttachments()
+
+            ChannelInfoViewEvent.NavigateToFilesAttachments ->
+                openFilesAttachments()
+
             is ChannelInfoViewEvent.NavigateToChannel ->
                 startActivity(MessagesActivity.createIntent(context = this, channelId = event.cid))
 
@@ -122,6 +130,22 @@ class GroupChannelInfoActivity : BaseConnectedActivity() {
         val intent = PinnedMessagesActivity.createIntent(
             context = this,
             channelId = channelId,
+        )
+        startActivity(intent)
+    }
+
+    private fun openMediaAttachments() {
+        val intent = ChannelMediaAttachmentsActivity.createIntent(
+            context = this,
+            cid = channelId,
+        )
+        startActivity(intent)
+    }
+
+    private fun openFilesAttachments() {
+        val intent = ChannelFilesAttachmentsActivity.createIntent(
+            context = this,
+            cid = channelId,
         )
         startActivity(intent)
     }

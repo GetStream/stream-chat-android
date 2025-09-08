@@ -16,16 +16,8 @@
 -->
 <resources>
 
-    <style name="Theme.Streamchatcompose" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/stream_compose_primary_accent</item>
-        <item name="colorOnPrimary">@color/black</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
-        <item name="android:statusBarColor">@android:color/transparent</item>
+    <style name="AppTheme" parent="AppTheme.Base">
+        <item name="android:windowBackground">@color/stream_compose_bars_background_dark</item>
         <item name="android:windowLightStatusBar">false</item>
-        <!-- Customize your theme here. -->
     </style>
 </resources>

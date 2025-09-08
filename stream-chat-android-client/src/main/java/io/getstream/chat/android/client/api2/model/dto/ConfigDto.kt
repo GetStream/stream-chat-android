@@ -43,4 +43,7 @@ internal data class ConfigDto(
     val automod_behavior: String,
     val blocklist_behavior: String?,
     val commands: List<CommandDto>,
+    val user_message_reminders: Boolean?,
+    val shared_locations: Boolean?,
+    val mark_messages_pending: Boolean,
 )

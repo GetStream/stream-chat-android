@@ -36,14 +36,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.Delete
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewAction
@@ -142,7 +143,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             val message = uiState?.toMessage()
 
             if (message != null) {
-                mediaGalleryPreviewViewModel.message = message
+                mediaGalleryPreviewViewModel.setInitialMessage(message)
             }
         }
 
@@ -161,12 +162,6 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 mediaGalleryConfig = intent.getParcelable(KeyConfig) ?: MediaGalleryConfig(),
             ) {
                 SetupEdgeToEdge()
-
-                val message = mediaGalleryPreviewViewModel.message
-                if (message.isDeleted()) {
-                    finish()
-                    return@ChatTheme
-                }
 
                 val (writePermissionState, downloadPayload) = attachmentDownloadState()
                 val downloadAttachmentUriGenerator = ChatTheme.streamDownloadAttachmentUriGenerator
@@ -195,6 +190,13 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                         onRequestShareAttachment = ::onRequestShareAttachment,
                         onConfirmShareAttachment = ::shareAttachment,
                     )
+                }
+            }
+            // Close the activity when the closeScreen state is true (message deleted or no more attachments).
+            val closeScreen by mediaGalleryPreviewViewModel.closeScreen.collectAsStateWithLifecycle(false)
+            LaunchedEffect(closeScreen) {
+                if (closeScreen) {
+                    finish()
                 }
             }
         }

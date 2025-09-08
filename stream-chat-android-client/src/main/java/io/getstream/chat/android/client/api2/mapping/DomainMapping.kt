@@ -29,15 +29,19 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
 import io.getstream.chat.android.client.api2.model.dto.DownstreamDraftDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamLocationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamOptionDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamReminderInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadInfoDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadParticipantDto
@@ -48,11 +52,17 @@ import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
 import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
 import io.getstream.chat.android.client.api2.model.dto.SearchWarningDto
 import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
+import io.getstream.chat.android.client.api2.model.dto.UnreadChannelByTypeDto
+import io.getstream.chat.android.client.api2.model.dto.UnreadChannelDto
+import io.getstream.chat.android.client.api2.model.dto.UnreadDto
+import io.getstream.chat.android.client.api2.model.dto.UnreadThreadDto
 import io.getstream.chat.android.client.api2.model.response.AppDto
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
 import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.client.api2.model.response.FileUploadConfigDto
+import io.getstream.chat.android.client.api2.model.response.MessageResponse
+import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.models.Answer
@@ -71,23 +81,32 @@ import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.DraftMessage
 import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.models.Flag
+import io.getstream.chat.android.models.Location
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageModerationAction
 import io.getstream.chat.android.models.MessageModerationDetails
+import io.getstream.chat.android.models.MessageReminder
+import io.getstream.chat.android.models.MessageReminderInfo
 import io.getstream.chat.android.models.MessageTransformer
 import io.getstream.chat.android.models.Moderation
 import io.getstream.chat.android.models.ModerationAction
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PushProvider
+import io.getstream.chat.android.models.QueryRemindersResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.ReactionGroup
 import io.getstream.chat.android.models.SearchWarning
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.ThreadInfo
 import io.getstream.chat.android.models.ThreadParticipant
+import io.getstream.chat.android.models.UnreadChannel
+import io.getstream.chat.android.models.UnreadChannelByType
+import io.getstream.chat.android.models.UnreadCounts
+import io.getstream.chat.android.models.UnreadThread
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
 import io.getstream.chat.android.models.UserId
@@ -154,6 +173,7 @@ internal class DomainMapping(
             pinnedMessages = pinned_messages.map { it.toDomain(this.toChannelInfo()) },
             ownCapabilities = own_capabilities.toSet(),
             membership = membership?.toDomain(),
+            activeLiveLocations = active_live_locations.map { it.toDomain() },
             extraData = extraData.toMutableMap(),
         ).syncUnreadCountWithReads(currentUserIdProvider())
             .let(channelTransformer::transform)
@@ -215,6 +235,8 @@ internal class DomainMapping(
                 messageTextUpdatedAt = message_text_updated_at,
                 poll = poll?.toDomain(),
                 restrictedVisibility = emptyList(),
+                reminder = reminder?.toDomain(),
+                sharedLocation = shared_location?.toDomain(),
                 extraData = extraData.toMutableMap(),
             ).let(messageTransformer::transform)
         }
@@ -231,6 +253,24 @@ internal class DomainMapping(
             silent = message.silent,
             text = message.text,
             extraData = message.extraData ?: emptyMap(),
+        )
+
+    /**
+     * Transforms [DownstreamPendingMessageDto] to [PendingMessage].
+     */
+    internal fun DownstreamPendingMessageDto.toDomain(): PendingMessage =
+        PendingMessage(
+            message = message.toDomain(),
+            metadata = metadata.orEmpty(),
+        )
+
+    /**
+     * Transforms [MessageResponse] to [PendingMessage].
+     */
+    internal fun MessageResponse.toDomain(): PendingMessage =
+        PendingMessage(
+            message = message.toDomain(),
+            metadata = pending_message_metadata.orEmpty(),
         )
 
     /**
@@ -279,6 +319,7 @@ internal class DomainMapping(
             teamsRole = teams_role.orEmpty(),
             channelMutes = channel_mutes.orEmpty().map { it.toDomain() },
             blockedUserIds = blocked_user_ids.orEmpty(),
+            avgResponseTime = avg_response_time,
             extraData = extraData.toMutableMap(),
         ).let(userTransformer::transform)
 
@@ -353,6 +394,17 @@ internal class DomainMapping(
             pinnedAt = pinned_at,
             archivedAt = archived_at,
             extraData = extraData,
+        )
+
+    internal fun DownstreamLocationDto.toDomain(): Location =
+        Location(
+            cid = channel_cid,
+            messageId = message_id,
+            userId = user_id,
+            latitude = latitude,
+            longitude = longitude,
+            deviceId = created_by_device_id,
+            endAt = end_at,
         )
 
     /**
@@ -446,6 +498,7 @@ internal class DomainMapping(
         null,
         "public",
         -> VotingVisibility.PUBLIC
+
         "anonymous" -> VotingVisibility.ANONYMOUS
         else -> throw IllegalArgumentException("Unknown voting visibility: $this")
     }
@@ -555,6 +608,9 @@ internal class DomainMapping(
         automodBehavior = automod_behavior,
         blocklistBehavior = blocklist_behavior ?: "",
         commands = commands.map { it.toDomain() },
+        messageRemindersEnabled = user_message_reminders ?: false,
+        sharedLocationsEnabled = shared_locations ?: false,
+        markMessagesPending = mark_messages_pending,
     )
 
     /**
@@ -714,5 +770,63 @@ internal class DomainMapping(
         blockedBy = blocked_by_user_id,
         userId = blocked_user_id,
         blockedAt = created_at,
+    )
+
+    /**
+     * Transforms a network [DownstreamReminderDto] model to a domain [MessageReminder].
+     */
+    internal fun DownstreamReminderDto.toDomain(): MessageReminder = MessageReminder(
+        remindAt = remind_at,
+        cid = channel_cid,
+        channel = channel?.toDomain(),
+        messageId = message_id,
+        message = message?.toDomain(),
+        createdAt = created_at,
+        updatedAt = updated_at,
+    )
+
+    /**
+     * Transforms a network [DownstreamReminderInfoDto] model to a domain [MessageReminderInfo].
+     */
+    internal fun DownstreamReminderInfoDto.toDomain(): MessageReminderInfo = MessageReminderInfo(
+        remindAt = remind_at,
+        createdAt = created_at,
+        updatedAt = updated_at,
+    )
+
+    /**
+     * Transforms a network [QueryRemindersResponse] model to a domain [QueryRemindersResult].
+     */
+    internal fun QueryRemindersResponse.toDomain(): QueryRemindersResult = QueryRemindersResult(
+        reminders = reminders.map { it.toDomain() },
+        next = next,
+    )
+
+    internal fun UnreadDto.toDomain(): UnreadCounts = UnreadCounts(
+        messagesCount = total_unread_count,
+        threadsCount = total_unread_threads_count,
+        messagesCountByTeam = total_unread_count_by_team.orEmpty(),
+        channels = channels.map { it.toDomain() },
+        threads = threads.map { it.toDomain() },
+        channelsByType = channel_type.map { it.toDomain() },
+    )
+
+    internal fun UnreadChannelDto.toDomain(): UnreadChannel = UnreadChannel(
+        cid = channel_id,
+        messagesCount = unread_count,
+        lastRead = last_read,
+    )
+
+    internal fun UnreadThreadDto.toDomain(): UnreadThread = UnreadThread(
+        parentMessageId = parent_message_id,
+        messagesCount = unread_count,
+        lastRead = last_read,
+        lastReadMessageId = last_read_message_id,
+    )
+
+    internal fun UnreadChannelByTypeDto.toDomain(): UnreadChannelByType = UnreadChannelByType(
+        channelType = channel_type,
+        channelsCount = channel_count,
+        messagesCount = unread_count,
     )
 }

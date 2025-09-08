@@ -19,11 +19,11 @@ package io.getstream.chat.android.compose.sample.ui.pinned
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.ui.Modifier
-import io.getstream.chat.android.compose.sample.ui.BaseConnectedActivity
 import io.getstream.chat.android.compose.sample.ui.MessagesActivity
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.pinned.PinnedMessageListViewModel
@@ -33,7 +33,7 @@ import io.getstream.chat.android.models.Message
 /**
  * Activity displaying the list of pinned messages from a channel.
  */
-class PinnedMessagesActivity : BaseConnectedActivity() {
+class PinnedMessagesActivity : ComponentActivity() {
 
     companion object {
         private const val KEY_CHANNEL_ID = "channelId"

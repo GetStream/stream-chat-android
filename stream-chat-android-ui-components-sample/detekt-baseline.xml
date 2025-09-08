@@ -25,7 +25,6 @@
     <ID>MaxLineLength:AddChannelFragment.kt$AddChannelFragment$is AddChannelViewModel.ErrorEvent.CreateChannelError -> R.string.add_channel_error_create_channel</ID>
     <ID>MaxLineLength:AddGroupChannelMembersAdapter.kt$AddGroupChannelMembersAdapter.MemberViewHolder$inner</ID>
     <ID>MaxLineLength:AddGroupChannelSelectNameFragment.kt$AddGroupChannelSelectNameFragment$is AddGroupChannelSelectNameViewModel.ErrorEvent.CreateChannelError -> R.string.add_group_channel_error_create_channel</ID>
-    <ID>MaxLineLength:ChatInfoSharedAttachmentsViewModel.kt$private</ID>
     <ID>MaxLineLength:ChatViewModelFactory.kt$ChatViewModelFactory$?:</ID>
     <ID>MaxLineLength:ComponentBrowserHomeFragment.kt$ComponentBrowserHomeFragment$findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserAvatarViewFragment)</ID>
     <ID>MaxLineLength:ComponentBrowserHomeFragment.kt$ComponentBrowserHomeFragment$findNavController().navigateSafely(R.id.action_componentBrowserHomeFragment_to_componentBrowserChannelsHeaderViewFragment)</ID>

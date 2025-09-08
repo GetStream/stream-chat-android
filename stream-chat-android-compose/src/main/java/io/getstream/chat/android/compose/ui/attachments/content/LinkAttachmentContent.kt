@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
 import coil3.ColorImage
+import coil3.annotation.ExperimentalCoilApi
 import coil3.compose.LocalAsyncImagePreviewHandler
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.R
@@ -84,13 +85,50 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
+@Deprecated(
+    message = "Use the version with the `onItemClick` parameter that accepts a LinkAttachmentClickData.",
+    replaceWith = ReplaceWith(
+        expression = "LinkAttachmentContent(attachmentState, linkDescriptionMaxLines, modifier, onItemClick)",
+    ),
+)
 public fun LinkAttachmentContent(
     attachmentState: AttachmentState,
     linkDescriptionMaxLines: Int,
     modifier: Modifier = Modifier,
-    onItemClick: (context: Context, url: String) -> Unit = ::onLinkAttachmentContentClick,
+    onItemClick: (context: Context, url: String) -> Unit,
 ) {
-    val (message, _, onLongItemClick) = attachmentState
+    LinkAttachmentContent(
+        state = attachmentState,
+        linkDescriptionMaxLines = linkDescriptionMaxLines,
+        modifier = modifier,
+        onItemClick = { onItemClick(it.context, it.url) },
+    )
+}
+
+/**
+ * Builds a link attachment message, which shows the link image preview, the title of the link
+ * as well as its description.
+ *
+ * When clicking it, we open the preview link.
+ *
+ * @param state - The state of the attachment, holding the root modifier, the message
+ * and the onLongItemClick handler.
+ * @param linkDescriptionMaxLines - The limit of how many lines we show for the link description.
+ * @param modifier Modifier for styling.
+ * @param onItemClick Lambda called when an item gets clicked.
+ */
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+@Suppress("LongMethod")
+public fun LinkAttachmentContent(
+    state: AttachmentState,
+    linkDescriptionMaxLines: Int,
+    modifier: Modifier = Modifier,
+    onItemClick: (LinkAttachmentClickData) -> Unit = {
+        onLinkAttachmentContentClick(it.context, it.url)
+    },
+) {
+    val (message, isMine, onLongItemClick) = state
 
     val context = LocalContext.current
     val attachment = message.attachments.firstOrNull { it.hasLink() && !it.isGiphy() }
@@ -106,22 +144,26 @@ public fun LinkAttachmentContent(
         "Missing preview URL."
     }
 
-    val errorMessage = stringResource(
-        id = R.string.stream_compose_message_list_error_cannot_open_link,
-        previewUrl,
-    )
+    val errorMessage = stringResource(R.string.stream_compose_message_list_error_cannot_open_link, previewUrl)
 
     Column(
         modifier = modifier
             .clip(ChatTheme.shapes.attachment)
-            .background(ChatTheme.colors.linkBackground)
+            .background(getLinkBackgroundColor(isMine))
             .combinedClickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
                 onClick = {
                     try {
                         if (urlWithScheme != null) {
-                            onItemClick(context, urlWithScheme)
+                            onItemClick(
+                                LinkAttachmentClickData(
+                                    context = context,
+                                    url = urlWithScheme,
+                                    attachment = attachment,
+                                    message = message,
+                                ),
+                            )
                         } else {
                             Toast
                                 .makeText(context, errorMessage, Toast.LENGTH_LONG)
@@ -139,7 +181,7 @@ public fun LinkAttachmentContent(
     ) {
         val imagePreviewUrl = attachment.imagePreviewUrl
         if (imagePreviewUrl != null) {
-            LinkAttachmentImagePreview(attachment)
+            LinkAttachmentImagePreview(attachment, isMine)
         }
 
         val title = attachment.title
@@ -155,7 +197,7 @@ public fun LinkAttachmentContent(
 }
 
 @Composable
-private fun LinkAttachmentImagePreview(attachment: Attachment) {
+private fun LinkAttachmentImagePreview(attachment: Attachment, isMine: Boolean) {
     val data = attachment.imagePreviewUrl
     var maxWidth by remember { mutableStateOf(0.dp) }
 
@@ -205,7 +247,7 @@ private fun LinkAttachmentImagePreview(attachment: Attachment) {
                 modifier = Modifier
                     .widthIn(max = maxWidth / 2)
                     .background(
-                        color = ChatTheme.colors.linkBackground,
+                        color = getLinkBackgroundColor(isMine),
                         shape = ChatTheme.shapes.attachmentSiteLabel,
                     )
                     .padding(vertical = 6.dp, horizontal = 12.dp)
@@ -246,6 +288,15 @@ private fun LinkAttachmentDescription(description: String, linkDescriptionMaxLin
     )
 }
 
+@Composable
+private fun getLinkBackgroundColor(isMine: Boolean): Color {
+    return if (isMine) {
+        ChatTheme.ownMessageTheme.linkBackgroundColor
+    } else {
+        ChatTheme.otherMessageTheme.linkBackgroundColor
+    }
+}
+
 /**
  * Handles clicks on link attachment content.
  *
@@ -269,6 +320,7 @@ private fun LinkAttachmentContentPreview() {
     }
 }
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 internal fun LinkAttachmentContent() {
     val previewHandler = AsyncImagePreviewHandler {
@@ -283,13 +335,28 @@ internal fun LinkAttachmentContent() {
             authorName = "Author",
         )
         LinkAttachmentContent(
-            attachmentState = AttachmentState(
+            state = AttachmentState(
                 message = Message(attachments = listOf(attachment)),
             ),
             linkDescriptionMaxLines = 5,
         )
     }
 }
+
+/**
+ * Data class that holds information about a link attachment click event.
+ *
+ * @param context The context in which the click event occurred.
+ * @param url The URL of the link attachment that was clicked.
+ * @param message The message containing the link attachment.
+ */
+@ConsistentCopyVisibility
+public data class LinkAttachmentClickData internal constructor(
+    val context: Context,
+    val url: String,
+    val attachment: Attachment,
+    val message: Message,
+)
 
 @Suppress("MagicNumber")
 private val LongDescription = (0..50).joinToString { "Lorem ipsum dolor sit amet" }

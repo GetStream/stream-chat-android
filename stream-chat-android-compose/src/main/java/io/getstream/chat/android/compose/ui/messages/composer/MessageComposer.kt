@@ -52,8 +52,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
@@ -417,7 +415,7 @@ public fun DefaultMessageComposerHeaderContent(
         ChatTheme.componentFactory.MessageComposerMessageInputOptions(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 8.dp, bottom = 6.dp, start = 8.dp, end = 8.dp),
+                .padding(start = 12.dp),
             activeAction = activeAction,
             onCancel = onCancelAction,
         )
@@ -750,13 +748,11 @@ internal fun SendButton(
     onClick: () -> Unit,
 ) {
     val layoutDirection = LocalLayoutDirection.current
-    val sendButtonDescription = stringResource(id = R.string.stream_compose_cd_send_button)
     val sendButtonStyle = ChatTheme.messageComposerTheme.actionsTheme.sendButton
     IconButton(
         modifier = Modifier
             .size(sendButtonStyle.size)
             .padding(sendButtonStyle.padding)
-            .semantics { contentDescription = sendButtonDescription }
             .testTag("Stream_ComposerSendButton"),
         enabled = enabled,
         content = {
