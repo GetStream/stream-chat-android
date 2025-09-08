@@ -145,6 +145,7 @@ internal class ChannelConfigRepositoryTest {
                 uploadsEnabled = randomBoolean(),
                 urlEnrichmentEnabled = randomBoolean(),
                 messageRemindersEnabled = randomBoolean(),
+                markMessagesPending = randomBoolean(),
             ),
             emptyList(),
         )

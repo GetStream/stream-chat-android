@@ -26,6 +26,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.result.call.Call
@@ -60,6 +61,10 @@ internal class DistinctChatApiEnabler(
 
     override fun getMessage(messageId: String): Call<Message> {
         return getApi().getMessage(messageId)
+    }
+
+    override fun getPendingMessage(messageId: String): Call<PendingMessage> {
+        return getApi().getPendingMessage(messageId)
     }
 
     override fun getPinnedMessages(
