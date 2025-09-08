@@ -779,11 +779,11 @@ internal class MoshiChatApiTest {
     @Test
     fun testUploadStandaloneFile() = runTest {
         val file = randomFile()
-        val user = randomUser()
+        val userId = randomString()
         val progressCallback = mock<ProgressCallback>()
         val uploadedFile = randomUploadedFile()
         val fileUploader = mock<FileUploader> {
-            on { uploadFile(file, user, progressCallback) } doReturn Result.Success(uploadedFile)
+            on { uploadFile(file, userId, progressCallback) } doReturn Result.Success(uploadedFile)
         }
         val fileTransformer = mock<FileTransformer> {
             on { transform(file) } doReturn file
@@ -793,7 +793,8 @@ internal class MoshiChatApiTest {
             .withFileTransformer(fileTransformer)
             .get()
 
-        val result = sut.uploadFile(file, user, progressCallback).await()
+        sut.setConnection(userId = userId, connectionId = randomString())
+        val result = sut.uploadFile(file, progressCallback).await()
 
         verifySuccess(result, equalsTo = uploadedFile)
         verify(progressCallback).onSuccess(uploadedFile.file)
@@ -802,15 +803,14 @@ internal class MoshiChatApiTest {
     @Test
     fun testDeleteStandaloneFile() = runTest {
         val url = randomString()
-        val userId = randomString()
         val fileUploader = mock<FileUploader> {
-            on { deleteFile(url, userId) } doReturn Result.Success(Unit)
+            on { deleteFile(url) } doReturn Result.Success(Unit)
         }
         val sut = Fixture()
             .withFileUploader(fileUploader)
             .get()
 
-        val result = sut.deleteFile(url, userId).await()
+        val result = sut.deleteFile(url).await()
 
         verifySuccess(result, equalsTo = Unit)
     }
@@ -818,11 +818,11 @@ internal class MoshiChatApiTest {
     @Test
     fun testUploadStandaloneImage() = runTest {
         val file = randomFile()
-        val user = randomUser()
+        val userId = randomString()
         val progressCallback = mock<ProgressCallback>()
         val uploadedFile = randomUploadedFile()
         val fileUploader = mock<FileUploader> {
-            on { uploadImage(file, user, progressCallback) } doReturn Result.Success(uploadedFile)
+            on { uploadImage(file, userId, progressCallback) } doReturn Result.Success(uploadedFile)
         }
         val fileTransformer = mock<FileTransformer> {
             on { transform(file) } doReturn file
@@ -832,7 +832,8 @@ internal class MoshiChatApiTest {
             .withFileTransformer(fileTransformer)
             .get()
 
-        val result = sut.uploadImage(file, user, progressCallback).await()
+        sut.setConnection(userId = userId, connectionId = randomString())
+        val result = sut.uploadImage(file, progressCallback).await()
 
         verifySuccess(result, equalsTo = uploadedFile)
         verify(progressCallback).onSuccess(uploadedFile.file)
@@ -841,15 +842,14 @@ internal class MoshiChatApiTest {
     @Test
     fun testDeleteStandaloneImage() = runTest {
         val url = randomString()
-        val userId = randomString()
         val fileUploader = mock<FileUploader> {
-            on { deleteImage(url, userId) } doReturn Result.Success(Unit)
+            on { deleteImage(url) } doReturn Result.Success(Unit)
         }
         val sut = Fixture()
             .withFileUploader(fileUploader)
             .get()
 
-        val result = sut.deleteImage(url, userId).await()
+        val result = sut.deleteImage(url).await()
 
         verifySuccess(result, equalsTo = Unit)
     }

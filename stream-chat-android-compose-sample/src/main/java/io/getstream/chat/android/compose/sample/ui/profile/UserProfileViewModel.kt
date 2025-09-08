@@ -74,7 +74,6 @@ class UserProfileViewModel(
     }
 
     fun updateProfilePicture(imageFile: File) {
-        val user = state.value.user!!
         fun onError(error: Error) {
             _state.update { currentState ->
                 currentState.copy(progressIndicator = null)
@@ -85,7 +84,6 @@ class UserProfileViewModel(
             // Upload the user image file
             chatClient.uploadImage(
                 file = imageFile,
-                user = user,
                 progressCallback = object : ProgressCallback {
                     override fun onProgress(bytesUploaded: Long, totalBytes: Long) {
                         val progress = bytesUploaded.toFloat() / totalBytes
@@ -96,6 +94,7 @@ class UserProfileViewModel(
                 },
             ).await()
                 .onSuccessSuspend { uploadedFile ->
+                    val user = state.value.user!!
                     val url = uploadedFile.file
                     _state.update { currentState ->
                         currentState.copy(progressIndicator = UserProfileViewState.ProgressIndicator())
@@ -142,10 +141,8 @@ class UserProfileViewModel(
             _events.tryEmit(UserProfileViewEvent.RemoveProfilePictureError(error))
         }
         viewModelScope.launch {
-            chatClient.deleteImage(
-                url = user.image,
-                userId = user.id,
-            ).await()
+            chatClient.deleteImage(url = user.image)
+                .await()
                 .onSuccessSuspend {
                     chatClient.updateUser(user = user.copy(image = ""))
                         .await()

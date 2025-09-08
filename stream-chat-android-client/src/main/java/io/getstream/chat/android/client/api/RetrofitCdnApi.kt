@@ -67,7 +67,7 @@ internal interface RetrofitCdnApi {
     @POST("/uploads/file")
     fun uploadFile(
         @Part file: MultipartBody.Part,
-        @Part user: MultipartBody.Part?,
+        @Part user: MultipartBody.Part,
         @Tag progressCallback: ProgressCallback?,
     ): RetrofitCall<UploadFileResponse>
 
@@ -80,7 +80,7 @@ internal interface RetrofitCdnApi {
     @POST("/uploads/image")
     fun uploadImage(
         @Part file: MultipartBody.Part,
-        @Part user: MultipartBody.Part?,
+        @Part user: MultipartBody.Part,
         @Tag progressCallback: ProgressCallback?,
     ): RetrofitCall<UploadFileResponse>
 

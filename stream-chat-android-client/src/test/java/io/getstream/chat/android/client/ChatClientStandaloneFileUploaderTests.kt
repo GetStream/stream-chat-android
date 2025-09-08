@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.randomFile
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUploadedFile
-import io.getstream.chat.android.randomUser
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
@@ -33,24 +32,23 @@ import org.mockito.kotlin.whenever
 internal class ChatClientStandaloneFileUploaderTests : BaseChatClientTest() {
 
     @Test
-    fun `upload file with user and progress callback should return success result`() = runTest {
+    fun `upload file with progress callback should return success result`() = runTest {
         val file = randomFile()
-        val user = randomUser()
         val progressCallback = mock<ProgressCallback>()
         val uploadedFile = randomUploadedFile()
-        whenever(api.uploadFile(file, user, progressCallback)) doReturn
+        whenever(api.uploadFile(file, progressCallback)) doReturn
             RetroSuccess(uploadedFile).toRetrofitCall()
 
-        val result = chatClient.uploadFile(file, user, progressCallback).await()
+        val result = chatClient.uploadFile(file, progressCallback).await()
 
         verifySuccess(result, equalsTo = uploadedFile)
     }
 
     @Test
-    fun `upload file without user and progress callback should return success result`() = runTest {
+    fun `upload file without progress callback should return success result`() = runTest {
         val file = randomFile()
         val uploadedFile = randomUploadedFile()
-        whenever(api.uploadFile(file, user = null, progressCallback = null)) doReturn
+        whenever(api.uploadFile(file, progressCallback = null)) doReturn
             RetroSuccess(uploadedFile).toRetrofitCall()
 
         val result = chatClient.uploadFile(file).await()
@@ -59,24 +57,23 @@ internal class ChatClientStandaloneFileUploaderTests : BaseChatClientTest() {
     }
 
     @Test
-    fun `upload image with user and progress callback should return success result`() = runTest {
+    fun `upload image with progress callback should return success result`() = runTest {
         val file = randomFile()
-        val user = randomUser()
         val progressCallback = mock<ProgressCallback>()
         val uploadedFile = randomUploadedFile()
-        whenever(api.uploadImage(file, user, progressCallback)) doReturn
+        whenever(api.uploadImage(file, progressCallback)) doReturn
             RetroSuccess(uploadedFile).toRetrofitCall()
 
-        val result = chatClient.uploadImage(file, user, progressCallback).await()
+        val result = chatClient.uploadImage(file, progressCallback).await()
 
         verifySuccess(result, equalsTo = uploadedFile)
     }
 
     @Test
-    fun `upload image without user and progress callback should return success result`() = runTest {
+    fun `upload image without progress callback should return success result`() = runTest {
         val file = randomFile()
         val uploadedFile = randomUploadedFile()
-        whenever(api.uploadImage(file, user = null, progressCallback = null)) doReturn
+        whenever(api.uploadImage(file, progressCallback = null)) doReturn
             RetroSuccess(uploadedFile).toRetrofitCall()
 
         val result = chatClient.uploadImage(file).await()
@@ -85,21 +82,9 @@ internal class ChatClientStandaloneFileUploaderTests : BaseChatClientTest() {
     }
 
     @Test
-    fun `delete file with user ID should return success result`() = runTest {
+    fun `delete file should return success result`() = runTest {
         val url = randomString()
-        val userId = randomString()
-        whenever(api.deleteFile(url, userId)) doReturn
-            RetroSuccess(Unit).toRetrofitCall()
-
-        val result = chatClient.deleteFile(url, userId).await()
-
-        verifySuccess(result, equalsTo = Unit)
-    }
-
-    @Test
-    fun `delete file without user ID should return success result`() = runTest {
-        val url = randomString()
-        whenever(api.deleteFile(url, userId = null)) doReturn
+        whenever(api.deleteFile(url)) doReturn
             RetroSuccess(Unit).toRetrofitCall()
 
         val result = chatClient.deleteFile(url).await()
@@ -108,21 +93,9 @@ internal class ChatClientStandaloneFileUploaderTests : BaseChatClientTest() {
     }
 
     @Test
-    fun `delete image with user ID should return success result`() = runTest {
+    fun `delete image should return success result`() = runTest {
         val url = randomString()
-        val userId = randomString()
-        whenever(api.deleteImage(url, userId)) doReturn
-            RetroSuccess(Unit).toRetrofitCall()
-
-        val result = chatClient.deleteImage(url, userId).await()
-
-        verifySuccess(result, equalsTo = Unit)
-    }
-
-    @Test
-    fun `delete image without user ID should return success result`() = runTest {
-        val url = randomString()
-        whenever(api.deleteImage(url, userId = null)) doReturn
+        whenever(api.deleteImage(url)) doReturn
             RetroSuccess(Unit).toRetrofitCall()
 
         val result = chatClient.deleteImage(url).await()

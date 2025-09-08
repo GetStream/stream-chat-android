@@ -142,7 +142,6 @@ constructor(
     private val defaultFileUploader by lazy {
         StreamFileUploader(
             retrofitCdnApi = buildRetrofitCdnApi(),
-            dtoMapping = dtoMapping,
         )
     }
 

@@ -196,7 +196,6 @@ import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
-import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.VideoCallInfo
 import io.getstream.chat.android.models.VideoCallToken
 import io.getstream.chat.android.models.Vote
@@ -1036,7 +1035,6 @@ internal constructor(
      * Uploads a file not related to any channel. Progress can be accessed via [progressCallback].
      *
      * @param file The file to be uploaded.
-     * @param user An optional user associated with the file. Can be null.
      * @param progressCallback The callback to be invoked periodically to report upload progress.
      *
      * @return Executable async [Call] which completes with [Result] containing an instance of [UploadedFile]
@@ -1048,15 +1046,16 @@ internal constructor(
     @JvmOverloads
     public fun uploadFile(
         file: File,
-        user: User? = null,
         progressCallback: ProgressCallback? = null,
-    ): Call<UploadedFile> = api.uploadFile(file, user, progressCallback)
+    ): Call<UploadedFile> = api.uploadFile(
+        file = file,
+        progressCallback = progressCallback,
+    )
 
     /**
      * Deletes a file not related to any channel.
      *
      * @param url The URL of the file to be deleted.
-     * @param userId An optional ID of the user associated with the file.
      * @return The empty [Result] object, or [Result] object with exception if the operation failed.
      *
      * @return Executable async [Call] which completes with [Result] containing an instance of [Unit]
@@ -1065,17 +1064,14 @@ internal constructor(
      * @see FileUploader
      */
     @CheckResult
-    @JvmOverloads
     public fun deleteFile(
         url: String,
-        userId: UserId? = null,
-    ): Call<Unit> = api.deleteFile(url, userId)
+    ): Call<Unit> = api.deleteFile(url)
 
     /**
      * Uploads an image not related to any channel. Progress can be accessed via [progressCallback].
      *
      * @param file The image to be uploaded.
-     * @param user An optional user associated with the image. Can be null.
      * @param progressCallback The callback to be invoked periodically to report upload progress.
      * @return The [Result] object containing an instance of [UploadedFile] in the case of a successful upload
      * or an exception if the upload failed.
@@ -1089,15 +1085,16 @@ internal constructor(
     @JvmOverloads
     public fun uploadImage(
         file: File,
-        user: User? = null,
         progressCallback: ProgressCallback? = null,
-    ): Call<UploadedFile> = api.uploadImage(file, user, progressCallback)
+    ): Call<UploadedFile> = api.uploadImage(
+        file = file,
+        progressCallback = progressCallback,
+    )
 
     /**
      * Deletes an image not related to any channel.
      *
      * @param url The URL of the image to be deleted.
-     * @param userId An optional ID of the user associated with the image.
      * @return The empty [Result] object, or [Result] object with exception if the operation failed.
      *
      * @return Executable async [Call] which completes with [Result] containing an instance of [Unit]
@@ -1109,8 +1106,7 @@ internal constructor(
     @JvmOverloads
     public fun deleteImage(
         url: String,
-        userId: UserId? = null,
-    ): Call<Unit> = api.deleteImage(url, userId)
+    ): Call<Unit> = api.deleteImage(url)
 
     //region Reactions
     /**

@@ -47,13 +47,9 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun deleteDevice (Lio/getstream/chat/android/models/Device;)Lio/getstream/result/call/Call;
 	public final fun deleteDraftMessages (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/DraftMessage;)Lio/getstream/result/call/Call;
 	public final fun deleteFile (Ljava/lang/String;)Lio/getstream/result/call/Call;
-	public final fun deleteFile (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun deleteFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
-	public static synthetic fun deleteFile$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun deleteImage (Ljava/lang/String;)Lio/getstream/result/call/Call;
-	public final fun deleteImage (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun deleteImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
-	public static synthetic fun deleteImage$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun deleteMessage (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun deleteMessage (Ljava/lang/String;Z)Lio/getstream/result/call/Call;
 	public static synthetic fun deleteMessage$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/result/call/Call;
@@ -238,13 +234,11 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun updateUser (Lio/getstream/chat/android/models/User;)Lio/getstream/result/call/Call;
 	public final fun updateUsers (Ljava/util/List;)Lio/getstream/result/call/Call;
 	public final fun uploadFile (Ljava/io/File;)Lio/getstream/result/call/Call;
-	public final fun uploadFile (Ljava/io/File;Lio/getstream/chat/android/models/User;)Lio/getstream/result/call/Call;
-	public final fun uploadFile (Ljava/io/File;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/call/Call;
-	public static synthetic fun uploadFile$default (Lio/getstream/chat/android/client/ChatClient;Ljava/io/File;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/client/utils/ProgressCallback;ILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public final fun uploadFile (Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/call/Call;
+	public static synthetic fun uploadFile$default (Lio/getstream/chat/android/client/ChatClient;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun uploadImage (Ljava/io/File;)Lio/getstream/result/call/Call;
-	public final fun uploadImage (Ljava/io/File;Lio/getstream/chat/android/models/User;)Lio/getstream/result/call/Call;
-	public final fun uploadImage (Ljava/io/File;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/call/Call;
-	public static synthetic fun uploadImage$default (Lio/getstream/chat/android/client/ChatClient;Ljava/io/File;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/client/utils/ProgressCallback;ILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public final fun uploadImage (Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/call/Call;
+	public static synthetic fun uploadImage$default (Lio/getstream/chat/android/client/ChatClient;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 }
 
 public final class io/getstream/chat/android/client/ChatClient$Builder : io/getstream/chat/android/client/ChatClient$ChatClientBuilder {
@@ -3307,16 +3301,16 @@ public abstract interface class io/getstream/chat/android/client/uploader/FileTr
 }
 
 public abstract interface class io/getstream/chat/android/client/uploader/FileUploader {
-	public fun deleteFile (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/Result;
+	public fun deleteFile (Ljava/lang/String;)Lio/getstream/result/Result;
 	public abstract fun deleteFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/Result;
-	public fun deleteImage (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/Result;
+	public fun deleteImage (Ljava/lang/String;)Lio/getstream/result/Result;
 	public abstract fun deleteImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/Result;
 	public abstract fun sendFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;)Lio/getstream/result/Result;
 	public abstract fun sendFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/Result;
 	public abstract fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;)Lio/getstream/result/Result;
 	public abstract fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/Result;
-	public fun uploadFile (Ljava/io/File;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/Result;
-	public fun uploadImage (Ljava/io/File;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/Result;
+	public fun uploadFile (Ljava/io/File;Ljava/lang/String;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/Result;
+	public fun uploadImage (Ljava/io/File;Ljava/lang/String;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/Result;
 }
 
 public final class io/getstream/chat/android/client/uploader/NoOpFileTransformer : io/getstream/chat/android/client/uploader/FileTransformer {

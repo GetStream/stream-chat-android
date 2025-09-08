@@ -16,16 +16,12 @@
 
 package io.getstream.chat.android.client.uploader
 
-import com.squareup.moshi.Moshi
 import io.getstream.chat.android.client.api.RetrofitCdnApi
 import io.getstream.chat.android.client.api.models.UploadFileResponse
-import io.getstream.chat.android.client.api2.mapping.DtoMapping
 import io.getstream.chat.android.client.api2.mapping.toUploadedFile
-import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.client.extensions.getMediaType
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.models.UploadedFile
-import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserId
 import io.getstream.result.Result
 import okhttp3.MediaType.Companion.toMediaType
@@ -36,7 +32,6 @@ import java.io.File
 
 internal class StreamFileUploader(
     private val retrofitCdnApi: RetrofitCdnApi,
-    private val dtoMapping: DtoMapping,
 ) : FileUploader {
 
     private val filenameSanitizer = FilenameSanitizer()
@@ -115,33 +110,31 @@ internal class StreamFileUploader(
 
     override fun uploadFile(
         file: File,
-        user: User?,
+        userId: UserId,
         progressCallback: ProgressCallback?,
     ): Result<UploadedFile> = retrofitCdnApi.uploadFile(
         file = file.asBodyPart(),
-        user = user?.asBodyPart(),
+        user = userId.asBodyPart(),
         progressCallback = progressCallback,
     ).execute().map(UploadFileResponse::toUploadedFile)
 
     override fun deleteFile(
         url: String,
-        userId: UserId?,
     ): Result<Unit> = retrofitCdnApi.deleteFile(url = url)
         .execute().toUnitResult()
 
     override fun uploadImage(
         file: File,
-        user: User?,
+        userId: UserId,
         progressCallback: ProgressCallback?,
     ): Result<UploadedFile> = retrofitCdnApi.uploadImage(
         file = file.asBodyPart(),
-        user = user?.asBodyPart(),
+        user = userId.asBodyPart(),
         progressCallback = progressCallback,
     ).execute().map(UploadFileResponse::toUploadedFile)
 
     override fun deleteImage(
         url: String,
-        userId: UserId?,
     ): Result<Unit> = retrofitCdnApi.deleteImage(url = url)
         .execute().toUnitResult()
 
@@ -151,11 +144,10 @@ internal class StreamFileUploader(
         return MultipartBody.Part.createFormData(name = "file", filename = filename, body = body)
     }
 
-    private fun User.asBodyPart(): MultipartBody.Part = with(dtoMapping) {
-        val adapter = Moshi.Builder().build().adapter(UpstreamUserDto::class.java)
-        val json = adapter.toJson(toDto())
+    private fun UserId.asBodyPart(): MultipartBody.Part {
+        val json = "{\"id\":\"$this\"}"
         val body = json.toRequestBody(contentType = "application/json".toMediaType())
-        MultipartBody.Part.createFormData(name = "user", filename = null, body = body)
+        return MultipartBody.Part.createFormData(name = "user", filename = null, body = body)
     }
 }
 
