@@ -50,6 +50,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Ensure any callback action called from the CoilStreamImageLoader is run on the caller thread. [#5915](https://github.com/GetStream/stream-chat-android/pull/5915)
 
 ### ⬆️ Improved
 
