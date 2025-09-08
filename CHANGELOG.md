@@ -5,6 +5,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `pendingMessages` field to the `Channel` model holding all current pending messages in the channel. [#5784](https://github.com/GetStream/stream-chat-android/pull/5784)
+- Add `markMessagesPending` flag to the `Config` model indicating whether pending messages are enabled for the channel. [#5784](https://github.com/GetStream/stream-chat-android/pull/5784)
 
 ### ⚠️ Changed
 
@@ -16,6 +18,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `ChatClient.getPendingMessage` to fetch a pending message (and its metadata) by its ID. [#5784](https://github.com/GetStream/stream-chat-android/pull/5784)
 - Add `channelRole` property on the `Message` model, representing the role of the member who sent the message in the channel. [#5919](https://github.com/GetStream/stream-chat-android/pull/5919)
 
 ### ⚠️ Changed
@@ -46,6 +49,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Ensure any callback action called from the CoilStreamImageLoader is run on the caller thread. [#5915](https://github.com/GetStream/stream-chat-android/pull/5915)
 
 ### ⬆️ Improved
 
@@ -57,6 +61,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Filter out Poll Options differing only on whitespaces. [#5913](https://github.com/GetStream/stream-chat-android/pull/5913)
 
 ### ⬆️ Improved
 
@@ -68,6 +73,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Filter out Poll Options differing only on whitespaces. [#5913](https://github.com/GetStream/stream-chat-android/pull/5913)
 
 ### ⬆️ Improved
 

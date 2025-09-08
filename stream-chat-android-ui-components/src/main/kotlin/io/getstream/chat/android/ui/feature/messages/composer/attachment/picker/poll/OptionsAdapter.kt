@@ -62,6 +62,7 @@ public class OptionsAdapter(
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { /* no-op */ }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { /* no-op */ }
             override fun afterTextChanged(s: Editable?) {
+                pollAnswer.updateErrorState()
                 onOptionChange(pollAnswer.id, s.toString())
             }
         }
@@ -71,9 +72,13 @@ public class OptionsAdapter(
             binding.option.removeTextChangedListener(textWatcher)
             binding.option.setText(pollAnswer.text)
             binding.option.setSelection(pollAnswer.text.length)
+            pollAnswer.updateErrorState()
             binding.option.addTextChangedListener(textWatcher)
+        }
+
+        private fun PollAnswer.updateErrorState() {
             binding.option.error = when {
-                pollAnswer.duplicateError ->
+                duplicateError ->
                     binding.root.context.getString(R.string.stream_ui_poll_this_is_already_an_option)
                 else -> null
             }

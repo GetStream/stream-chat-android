@@ -154,11 +154,17 @@ public class CreatePollViewModel : ViewModel() {
         _options.value.let { options ->
             val previousOptions = options.values
                 .filterNot { it.id == id }
-                .map { it.text }
+                .map { it.text.trim() }
                 .filter { it.isNotEmpty() }
             options[id]?.let { option ->
                 _options.value = LinkedHashMap(options).apply {
-                    put(id, option.copy(text = text, duplicateError = previousOptions.contains(text)))
+                    put(
+                        id,
+                        option.copy(
+                            text = text,
+                            duplicateError = previousOptions.any { it == text.trim() },
+                        ),
+                    )
                 }
             }
         }

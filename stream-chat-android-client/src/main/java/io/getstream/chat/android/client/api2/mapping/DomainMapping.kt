@@ -36,6 +36,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetai
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamOptionDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamPendingMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
@@ -60,6 +61,7 @@ import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
 import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
 import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
 import io.getstream.chat.android.client.api2.model.response.FileUploadConfigDto
+import io.getstream.chat.android.client.api2.model.response.MessageResponse
 import io.getstream.chat.android.client.api2.model.response.QueryRemindersResponse
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.core.internal.StreamHandsOff
@@ -91,6 +93,7 @@ import io.getstream.chat.android.models.Moderation
 import io.getstream.chat.android.models.ModerationAction
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.PendingMessage
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.models.QueryRemindersResult
@@ -251,6 +254,24 @@ internal class DomainMapping(
             silent = message.silent,
             text = message.text,
             extraData = message.extraData ?: emptyMap(),
+        )
+
+    /**
+     * Transforms [DownstreamPendingMessageDto] to [PendingMessage].
+     */
+    internal fun DownstreamPendingMessageDto.toDomain(): PendingMessage =
+        PendingMessage(
+            message = message.toDomain(),
+            metadata = metadata.orEmpty(),
+        )
+
+    /**
+     * Transforms [MessageResponse] to [PendingMessage].
+     */
+    internal fun MessageResponse.toDomain(): PendingMessage =
+        PendingMessage(
+            message = message.toDomain(),
+            metadata = pending_message_metadata.orEmpty(),
         )
 
     /**
@@ -590,6 +611,7 @@ internal class DomainMapping(
         commands = commands.map { it.toDomain() },
         messageRemindersEnabled = user_message_reminders ?: false,
         sharedLocationsEnabled = shared_locations ?: false,
+        markMessagesPending = mark_messages_pending,
     )
 
     /**

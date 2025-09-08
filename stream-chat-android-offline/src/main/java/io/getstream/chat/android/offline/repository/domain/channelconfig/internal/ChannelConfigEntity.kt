@@ -48,6 +48,7 @@ internal data class ChannelConfigInnerEntity(
     val automodBehavior: String,
     val blocklistBehavior: String,
     val messageRemindersEnabled: Boolean,
+    val markMessagesPending: Boolean,
 )
 
 @Entity(

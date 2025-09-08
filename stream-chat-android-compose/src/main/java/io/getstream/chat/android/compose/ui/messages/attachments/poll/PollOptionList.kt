@@ -142,23 +142,27 @@ public fun PollOptionList(
                             PaddingValues(horizontal = 16.dp, vertical = 8.dp)
                         },
                         onValueChange = { newTitle ->
-                            optionItemList.toMutableList().apply {
-                                val duplicated = this.any { it.title == newTitle }
-                                if (duplicated) {
-                                    this[index] = item.copy(
-                                        title = newTitle,
-                                        pollOptionError = PollOptionDuplicated(
-                                            context.getString(R.string.stream_compose_poll_option_error_duplicated),
-                                        ),
-                                    )
-                                } else {
-                                    this[index] =
-                                        item.copy(title = newTitle, pollOptionError = null)
+                            val duplicated = optionItemList
+                                .withIndex()
+                                .any {
+                                    it.index != index &&
+                                        it.value.title.trim() == newTitle.trim()
                                 }
-
-                                optionItemList = this
-                                onQuestionsChanged.invoke(this)
+                            optionItemList = optionItemList.mapIndexed { i, item ->
+                                when (i) {
+                                    index -> item.copy(
+                                        title = newTitle,
+                                        pollOptionError = when (duplicated) {
+                                            false -> null
+                                            true -> PollOptionDuplicated(
+                                                context.getString(R.string.stream_compose_poll_option_error_duplicated),
+                                            )
+                                        },
+                                    )
+                                    else -> item
+                                }
                             }
+                            onQuestionsChanged.invoke(optionItemList)
                         },
                         decorationBox = { innerTextField ->
                             if (item.pollOptionError == null) {
