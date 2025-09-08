@@ -62,11 +62,14 @@ public fun MessageFooter(
     val alignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
 
     if (message.belongsToThread() && !messageItem.isInThread) {
-        val threadFooterText = LocalContext.current.resources.getQuantityString(
-            R.plurals.stream_compose_message_list_thread_footnote,
-            message.replyCount,
-            message.replyCount,
-        )
+        val threadFooterText = when (message.replyCount) {
+            0 -> LocalContext.current.resources.getString(R.string.stream_compose_thread_reply)
+            else -> LocalContext.current.resources.getQuantityString(
+                R.plurals.stream_compose_message_list_thread_footnote,
+                message.replyCount,
+                message.replyCount,
+            )
+        }
         MessageThreadFooter(
             participants = message.threadParticipants,
             messageAlignment = alignment,
