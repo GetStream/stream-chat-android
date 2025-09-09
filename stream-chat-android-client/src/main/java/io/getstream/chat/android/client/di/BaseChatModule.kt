@@ -177,7 +177,7 @@ constructor(
     val networkStateProvider: NetworkStateProvider by lazy {
         NetworkStateProvider(
             userScope,
-            appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager,
         )
     }
     val userStateService: UserStateService = UserStateService()
