@@ -16,12 +16,14 @@
 
 package io.getstream.chat.android.ui.feature.messages.list.adapter.view
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.util.PatternsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.google.android.material.shape.MaterialShapeDrawable
@@ -185,10 +187,24 @@ public class MessageReplyView : FrameLayout {
         }
     }
 
-    private fun isLink(message: Message) = message.attachments.run {
-        // Link messages have an image attachment with title_link or og_scrape_url set.
-        size == 1 && last().isImage() && (last().titleLink != null || last().ogUrl != null)
+    /**
+     * Checks if the message contains a link, either as an enriched link (attachment) or as a plain text URL.
+     */
+    private fun isLink(message: Message) = hasEnrichedLink(message) || hasLinkInText(message)
+
+    private fun hasEnrichedLink(message: Message) = message.attachments.run {
+        // Messages with enriched links have an image attachment with title_link or og_scrape_url set.
+        if (size == 1) {
+            val lastAttachment = last()
+            lastAttachment.isImage() && (lastAttachment.titleLink != null || lastAttachment.ogUrl != null)
+        } else {
+            false
+        }
     }
+
+    @SuppressLint("RestrictedApi")
+    private fun hasLinkInText(message: Message) =
+        PatternsCompat.AUTOLINK_WEB_URL.matcher(message.text).matches()
 
     private fun setAttachmentImage(message: Message) {
         if (ChatUI.quotedAttachmentFactoryManager.canHandle(message)) {
