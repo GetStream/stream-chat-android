@@ -62,6 +62,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Filter out Poll Options differing only on whitespaces. [#5913](https://github.com/GetStream/stream-chat-android/pull/5913)
 - Fix `MessageReplyStyle.linkBackgroundColorMine`, `MessageReplyStyle.linkBackgroundColorTheirs`, `MessageReplyStyle.linkStyleMine` and `MessageReplyStyle.linkStyleTheirs` customizations not applied to the `MessageReplyView`. [#5848](https://github.com/GetStream/stream-chat-android/pull/5848)
 
 ### ⬆️ Improved
@@ -74,6 +75,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Filter out Poll Options differing only on whitespaces. [#5913](https://github.com/GetStream/stream-chat-android/pull/5913)
 
 ### ⬆️ Improved
 
