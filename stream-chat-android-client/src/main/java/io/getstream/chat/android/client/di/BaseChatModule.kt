@@ -346,8 +346,8 @@ constructor(
             .addInterceptor { chain ->
                 // Apply custom modifications to the request
                 val requestBuilder = chain.request().newBuilder()
-                val newRequest =
-                    (shareFileDownloadRequestInterceptor?.intercept(requestBuilder) ?: requestBuilder).build()
+                val modifiedRequestBuilder = shareFileDownloadRequestInterceptor?.intercept(requestBuilder) ?: requestBuilder
+                val newRequest = modifiedRequestBuilder.build()
                 chain.proceed(newRequest)
             }
             .build()
