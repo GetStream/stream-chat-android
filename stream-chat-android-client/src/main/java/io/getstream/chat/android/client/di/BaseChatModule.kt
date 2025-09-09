@@ -90,6 +90,32 @@ import retrofit2.Retrofit
 import retrofit2.create
 import java.util.concurrent.TimeUnit
 
+/**
+ * Dependency wiring for the Stream Chat Android client.
+ *
+ * This module composes the networking stack (Retrofit/OkHttp), socket layer, notifications, and
+ * various mappers and helpers required by the client. It exposes preconfigured instances used by
+ * the rest of the SDK.
+ *
+ * @param appContext Application [Context] used to access system services and to build headers/notifications.
+ * @param clientScope Scope for client-level operations and background work not tied to a specific user.
+ * @param userScope Scope bound to the current user session; used for API calls and socket lifecycle.
+ * @param config Global client configuration including API key, endpoints, timeouts, and feature flags.
+ * @param notificationsHandler Handler responsible for showing and managing chat notifications.
+ * @param apiModelTransformers Transformers that map between network DTOs and domain models (in/outgoing).
+ * @param fileTransformer Transformer applied to files before/after upload (e.g., to adjust metadata).
+ * @param fileUploader Optional custom [FileUploader]; if null, a default [StreamFileUploader] is used.
+ * @param sendMessageInterceptor Interceptor allowing to override the logic for sending messages with your own custom
+ * logic.
+ * @param shareFileDownloadRequestInterceptor Optional interceptor to customize file download requests done for the
+ * purpose of sharing the file.
+ * @param tokenManager Manager that provides and refreshes auth tokens for authenticated requests.
+ * @param customOkHttpClient Optional base [OkHttpClient] to reuse threads/connection pools and customize networking.
+ * @param clientDebugger Optional hooks for debugging client state, sockets, and network operations.
+ * @param lifecycle Host [Lifecycle] used to observe app foreground/background and manage socket behavior.
+ * @param appName Optional app name added to default headers for tracking.
+ * @param appVersion Optional app version added to default headers for tracking.
+ */
 @Suppress("TooManyFunctions")
 internal open class BaseChatModule
 @Suppress("LongParameterList")
@@ -149,7 +175,10 @@ constructor(
 
     val lifecycleObserver: StreamLifecycleObserver by lazy { StreamLifecycleObserver(userScope, lifecycle) }
     val networkStateProvider: NetworkStateProvider by lazy {
-        NetworkStateProvider(userScope, appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
+        NetworkStateProvider(
+            userScope,
+            appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        )
     }
     val userStateService: UserStateService = UserStateService()
 
@@ -346,7 +375,8 @@ constructor(
             .addInterceptor { chain ->
                 // Apply custom modifications to the request
                 val requestBuilder = chain.request().newBuilder()
-                val modifiedRequestBuilder = shareFileDownloadRequestInterceptor?.intercept(requestBuilder) ?: requestBuilder
+                val modifiedRequestBuilder =
+                    shareFileDownloadRequestInterceptor?.intercept(requestBuilder) ?: requestBuilder
                 val newRequest = modifiedRequestBuilder.build()
                 chain.proceed(newRequest)
             }
