@@ -3309,8 +3309,8 @@ public abstract interface class io/getstream/chat/android/client/uploader/FileUp
 	public abstract fun sendFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/Result;
 	public abstract fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;)Lio/getstream/result/Result;
 	public abstract fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/Result;
-	public fun uploadFile (Ljava/io/File;Ljava/lang/String;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/Result;
-	public fun uploadImage (Ljava/io/File;Ljava/lang/String;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/Result;
+	public fun uploadFile (Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/Result;
+	public fun uploadImage (Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/Result;
 }
 
 public final class io/getstream/chat/android/client/uploader/NoOpFileTransformer : io/getstream/chat/android/client/uploader/FileTransformer {

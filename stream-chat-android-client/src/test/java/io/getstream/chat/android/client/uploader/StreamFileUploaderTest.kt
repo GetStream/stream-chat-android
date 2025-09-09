@@ -235,12 +235,11 @@ internal class StreamFileUploaderTest {
         whenever(
             retrofitCdnApi.uploadFile(
                 file = any(),
-                user = any(),
                 progressCallback = eq(progressCallback),
             ),
         ) doReturn RetroSuccess(response).toRetrofitCall()
 
-        val result = streamFileUploader.uploadFile(file, userId, progressCallback)
+        val result = streamFileUploader.uploadFile(file, progressCallback)
 
         assertTrue(result is Result.Success)
         val uploadedFile = result.getOrThrow()
@@ -255,12 +254,11 @@ internal class StreamFileUploaderTest {
         whenever(
             retrofitCdnApi.uploadFile(
                 file = any(),
-                user = any(),
                 progressCallback = eq(null),
             ),
         ) doReturn RetroSuccess(response).toRetrofitCall()
 
-        val result = streamFileUploader.uploadFile(file, userId, progressCallback = null)
+        val result = streamFileUploader.uploadFile(file, progressCallback = null)
 
         assertTrue(result is Result.Success)
         val uploadedFile = result.getOrThrow()
@@ -275,12 +273,11 @@ internal class StreamFileUploaderTest {
         whenever(
             retrofitCdnApi.uploadImage(
                 file = any(),
-                user = any(),
                 progressCallback = eq(progressCallback),
             ),
         ) doReturn RetroSuccess(response).toRetrofitCall()
 
-        val result = streamFileUploader.uploadImage(file, userId, progressCallback)
+        val result = streamFileUploader.uploadImage(file, progressCallback)
 
         assertTrue(result is Result.Success)
         val uploadedFile = result.getOrThrow()
@@ -295,12 +292,11 @@ internal class StreamFileUploaderTest {
         whenever(
             retrofitCdnApi.uploadImage(
                 file = any(),
-                user = any(),
                 progressCallback = eq(null),
             ),
         ) doReturn RetroSuccess(response).toRetrofitCall()
 
-        val result = streamFileUploader.uploadImage(file, userId, progressCallback = null)
+        val result = streamFileUploader.uploadImage(file, progressCallback = null)
 
         assertTrue(result is Result.Success)
         val uploadedFile = result.getOrThrow()

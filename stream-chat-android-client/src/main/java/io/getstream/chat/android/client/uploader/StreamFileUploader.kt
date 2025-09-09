@@ -22,12 +22,9 @@ import io.getstream.chat.android.client.api2.mapping.toUploadedFile
 import io.getstream.chat.android.client.extensions.getMediaType
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.models.UploadedFile
-import io.getstream.chat.android.models.UserId
 import io.getstream.result.Result
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 
 internal class StreamFileUploader(
@@ -110,11 +107,9 @@ internal class StreamFileUploader(
 
     override fun uploadFile(
         file: File,
-        userId: UserId,
         progressCallback: ProgressCallback?,
     ): Result<UploadedFile> = retrofitCdnApi.uploadFile(
         file = file.asBodyPart(),
-        user = userId.asBodyPart(),
         progressCallback = progressCallback,
     ).execute().map(UploadFileResponse::toUploadedFile)
 
@@ -125,11 +120,9 @@ internal class StreamFileUploader(
 
     override fun uploadImage(
         file: File,
-        userId: UserId,
         progressCallback: ProgressCallback?,
     ): Result<UploadedFile> = retrofitCdnApi.uploadImage(
         file = file.asBodyPart(),
-        user = userId.asBodyPart(),
         progressCallback = progressCallback,
     ).execute().map(UploadFileResponse::toUploadedFile)
 
@@ -142,12 +135,6 @@ internal class StreamFileUploader(
         val body = asRequestBody(contentType = getMediaType())
         val filename = filenameSanitizer.sanitize(filename = name)
         return MultipartBody.Part.createFormData(name = "file", filename = filename, body = body)
-    }
-
-    private fun UserId.asBodyPart(): MultipartBody.Part {
-        val json = "{\"id\":\"$this\"}"
-        val body = json.toRequestBody(contentType = "application/json".toMediaType())
-        return MultipartBody.Part.createFormData(name = "user", filename = null, body = body)
     }
 }
 

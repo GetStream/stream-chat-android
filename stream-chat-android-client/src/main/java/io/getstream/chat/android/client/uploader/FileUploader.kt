@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.uploader
 
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.models.UploadedFile
-import io.getstream.chat.android.models.UserId
 import io.getstream.result.Result
 import java.io.File
 
@@ -129,7 +128,6 @@ public interface FileUploader {
      * Uploads a file not related to any channel. Progress can be accessed via [progressCallback].
      *
      * @param file The file to be uploaded.
-     * @param userId The ID of the user associated with the file.
      * @param progressCallback The callback to be invoked periodically to report upload progress.
      * @return The [Result] object containing an instance of [UploadedFile] in the case of a successful upload
      * or an exception if the upload failed.
@@ -139,7 +137,6 @@ public interface FileUploader {
      */
     public fun uploadFile(
         file: File,
-        userId: UserId,
         progressCallback: ProgressCallback?,
     ): Result<UploadedFile> = NotImplemented
 
@@ -160,7 +157,6 @@ public interface FileUploader {
      * Uploads an image not related to any channel. Progress can be accessed via [progressCallback].
      *
      * @param file The image to be uploaded.
-     * @param userId The ID of the user associated with the file.
      * @param progressCallback The callback to be invoked periodically to report upload progress.
      * @return The [Result] object containing an instance of [UploadedFile] in the case of a successful upload
      * or an exception if the upload failed.
@@ -170,7 +166,6 @@ public interface FileUploader {
      */
     public fun uploadImage(
         file: File,
-        userId: UserId,
         progressCallback: ProgressCallback?,
     ): Result<UploadedFile> = NotImplemented
 

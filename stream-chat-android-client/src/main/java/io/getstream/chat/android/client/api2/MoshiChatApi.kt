@@ -571,7 +571,6 @@ constructor(
             .let { transformedFile ->
                 fileUploader.uploadFile(
                     file = transformedFile,
-                    userId = userId,
                     progressCallback = progressCallback,
                 )
             }.onSuccess { uploadedFile ->
@@ -597,7 +596,6 @@ constructor(
             .let { transformedFile ->
                 fileUploader.uploadImage(
                     file = transformedFile,
-                    userId = userId,
                     progressCallback = progressCallback,
                 )
             }.onSuccess { uploadedFile ->
