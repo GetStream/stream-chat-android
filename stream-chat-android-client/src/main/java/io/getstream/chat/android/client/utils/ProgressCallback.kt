@@ -24,21 +24,27 @@ import io.getstream.result.Error
 public interface ProgressCallback {
 
     /**
-     * Called when the attachment is uploaded successfully with an [url].
+     * Called when a file is uploaded successfully with an [url].
      */
-    public fun onSuccess(url: String?)
+    public fun onSuccess(url: String?) {
+        // no-op
+    }
 
     /**
-     * Called when the attachment could not be uploaded due to cancellation, network problem or timeout etc
+     * Called when a file could not be uploaded due to cancellation, network problem or timeout etc
      * with an [error].
      *
      * @see Error
      */
-    public fun onError(error: Error)
+    public fun onError(error: Error) {
+        // no-op
+    }
 
     /**
-     * Called when the attachment upload is in progress with [bytesUploaded] count
+     * Called when the file upload is in progress with [bytesUploaded] count
      * and [totalBytes] in bytes of the file.
      */
-    public fun onProgress(bytesUploaded: Long, totalBytes: Long)
+    public fun onProgress(bytesUploaded: Long, totalBytes: Long) {
+        // no-op
+    }
 }

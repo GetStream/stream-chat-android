@@ -1031,6 +1031,83 @@ internal constructor(
         return api.deleteImage(channelType, channelId, url)
     }
 
+    /**
+     * Uploads a file not related to any channel. Progress can be accessed via [progressCallback].
+     *
+     * @param file The file to be uploaded.
+     * @param progressCallback The callback to be invoked periodically to report upload progress.
+     *
+     * @return Executable async [Call] which completes with [Result] containing an instance of [UploadedFile]
+     * if the file was successfully uploaded.
+     *
+     * @see FileUploader
+     */
+    @CheckResult
+    @JvmOverloads
+    public fun uploadFile(
+        file: File,
+        progressCallback: ProgressCallback? = null,
+    ): Call<UploadedFile> = api.uploadFile(
+        file = file,
+        progressCallback = progressCallback,
+    )
+
+    /**
+     * Deletes a file not related to any channel.
+     *
+     * @param url The URL of the file to be deleted.
+     * @return The empty [Result] object, or [Result] object with exception if the operation failed.
+     *
+     * @return Executable async [Call] which completes with [Result] containing an instance of [Unit]
+     * if the file was successfully deleted.
+     *
+     * @see FileUploader
+     */
+    @CheckResult
+    public fun deleteFile(
+        url: String,
+    ): Call<Unit> = api.deleteFile(url)
+
+    /**
+     * Uploads an image not related to any channel. Progress can be accessed via [progressCallback].
+     *
+     * @param file The image to be uploaded.
+     * @param progressCallback The callback to be invoked periodically to report upload progress.
+     * @return The [Result] object containing an instance of [UploadedFile] in the case of a successful upload
+     * or an exception if the upload failed.
+     *
+     * @return Executable async [Call] which completes with [Result] containing an instance of [UploadedFile]
+     * if the file was successfully uploaded.
+     *
+     * @see FileUploader
+     */
+    @CheckResult
+    @JvmOverloads
+    public fun uploadImage(
+        file: File,
+        progressCallback: ProgressCallback? = null,
+    ): Call<UploadedFile> = api.uploadImage(
+        file = file,
+        progressCallback = progressCallback,
+    )
+
+    /**
+     * Deletes an image not related to any channel.
+     *
+     * @param url The URL of the image to be deleted.
+     * @return The empty [Result] object, or [Result] object with exception if the operation failed.
+     *
+     * @return Executable async [Call] which completes with [Result] containing an instance of [Unit]
+     * if the file was successfully deleted.
+     *
+     * @see FileUploader
+     */
+    @CheckResult
+    @JvmOverloads
+    public fun deleteImage(
+        url: String,
+    ): Call<Unit> = api.deleteImage(url)
+
     //region Reactions
     /**
      * Retrieves the reactions on a given message.

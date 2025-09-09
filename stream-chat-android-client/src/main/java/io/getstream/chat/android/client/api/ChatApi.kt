@@ -97,6 +97,28 @@ internal interface ChatApi {
     fun deleteImage(channelType: String, channelId: String, url: String): Call<Unit>
 
     @CheckResult
+    fun uploadFile(
+        file: File,
+        progressCallback: ProgressCallback?,
+    ): Call<UploadedFile>
+
+    @CheckResult
+    fun deleteFile(
+        url: String,
+    ): Call<Unit>
+
+    @CheckResult
+    fun uploadImage(
+        file: File,
+        progressCallback: ProgressCallback?,
+    ): Call<UploadedFile>
+
+    @CheckResult
+    fun deleteImage(
+        url: String,
+    ): Call<Unit>
+
+    @CheckResult
     fun addDevice(device: Device): Call<Unit>
 
     @CheckResult

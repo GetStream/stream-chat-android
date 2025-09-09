@@ -62,4 +62,28 @@ internal interface RetrofitCdnApi {
         @Path("id") channelId: String,
         @Query("url") url: String,
     ): RetrofitCall<CompletableResponse>
+
+    @Multipart
+    @POST("/uploads/file")
+    fun uploadFile(
+        @Part file: MultipartBody.Part,
+        @Tag progressCallback: ProgressCallback?,
+    ): RetrofitCall<UploadFileResponse>
+
+    @DELETE("/uploads/file")
+    fun deleteFile(
+        @Query("url") url: String,
+    ): RetrofitCall<CompletableResponse>
+
+    @Multipart
+    @POST("/uploads/image")
+    fun uploadImage(
+        @Part file: MultipartBody.Part,
+        @Tag progressCallback: ProgressCallback?,
+    ): RetrofitCall<UploadFileResponse>
+
+    @DELETE("/uploads/image")
+    fun deleteImage(
+        @Query("url") url: String,
+    ): RetrofitCall<CompletableResponse>
 }

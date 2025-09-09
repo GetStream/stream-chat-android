@@ -114,6 +114,8 @@ import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.NoOpFileTransformer
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.RetroSuccess
+import io.getstream.chat.android.client.utils.verifyNetworkError
+import io.getstream.chat.android.client.utils.verifySuccess
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Location
@@ -129,6 +131,7 @@ import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
+import io.getstream.chat.android.randomChatNetworkError
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomDevice
 import io.getstream.chat.android.randomDraftMessage
@@ -140,6 +143,7 @@ import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomPollConfig
 import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUploadedFile
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.result.Result
@@ -772,6 +776,164 @@ internal class MoshiChatApiTest {
         // then
         result `should be instance of` expected
         verify(fileUploader, times(1)).deleteImage(channelType, channelId, userId, url)
+    }
+
+    @Test
+    fun testUploadStandaloneFileSuccessWithProgress() = runTest {
+        val file = randomFile()
+        val progressCallback = mock<ProgressCallback>()
+        val uploadedFile = randomUploadedFile()
+        val fileUploader = mock<FileUploader> {
+            on { uploadFile(file, progressCallback) } doReturn Result.Success(uploadedFile)
+        }
+        val fileTransformer = mock<FileTransformer> {
+            on { transform(file) } doReturn file
+        }
+        val sut = Fixture()
+            .withFileUploader(fileUploader)
+            .withFileTransformer(fileTransformer)
+            .get()
+
+        val result = sut.uploadFile(file, progressCallback).await()
+
+        verifySuccess(result, equalsTo = uploadedFile)
+        verify(progressCallback).onSuccess(uploadedFile.file)
+    }
+
+    @Test
+    fun testUploadStandaloneFileErrorWithProgress() = runTest {
+        val file = randomFile()
+        val progressCallback = mock<ProgressCallback>()
+        val error = randomChatNetworkError()
+        val fileUploader = mock<FileUploader> {
+            on { uploadFile(file, progressCallback) } doReturn Result.Failure(error)
+        }
+        val fileTransformer = mock<FileTransformer> {
+            on { transform(file) } doReturn file
+        }
+        val sut = Fixture()
+            .withFileUploader(fileUploader)
+            .withFileTransformer(fileTransformer)
+            .get()
+
+        val result = sut.uploadFile(file, progressCallback).await()
+
+        verifyNetworkError(result, statusCode = error.statusCode)
+        verify(progressCallback).onError(error)
+    }
+
+    @Test
+    fun testUploadStandaloneFileSuccessWithoutProgress() = runTest {
+        val file = randomFile()
+        val uploadedFile = randomUploadedFile()
+        val fileUploader = mock<FileUploader> {
+            on { uploadFile(file, progressCallback = null) } doReturn Result.Success(uploadedFile)
+        }
+        val fileTransformer = mock<FileTransformer> {
+            on { transform(file) } doReturn file
+        }
+        val sut = Fixture()
+            .withFileUploader(fileUploader)
+            .withFileTransformer(fileTransformer)
+            .get()
+
+        val result = sut.uploadFile(file, progressCallback = null).await()
+
+        verifySuccess(result, equalsTo = uploadedFile)
+    }
+
+    @Test
+    fun testDeleteStandaloneFile() = runTest {
+        val url = randomString()
+        val fileUploader = mock<FileUploader> {
+            on { deleteFile(url) } doReturn Result.Success(Unit)
+        }
+        val sut = Fixture()
+            .withFileUploader(fileUploader)
+            .get()
+
+        val result = sut.deleteFile(url).await()
+
+        verifySuccess(result, equalsTo = Unit)
+    }
+
+    @Test
+    fun testUploadStandaloneImageSuccessWithProgress() = runTest {
+        val file = randomFile()
+        val progressCallback = mock<ProgressCallback>()
+        val uploadedFile = randomUploadedFile()
+        val fileUploader = mock<FileUploader> {
+            on { uploadImage(file, progressCallback) } doReturn Result.Success(uploadedFile)
+        }
+        val fileTransformer = mock<FileTransformer> {
+            on { transform(file) } doReturn file
+        }
+        val sut = Fixture()
+            .withFileUploader(fileUploader)
+            .withFileTransformer(fileTransformer)
+            .get()
+
+        val result = sut.uploadImage(file, progressCallback).await()
+
+        verifySuccess(result, equalsTo = uploadedFile)
+        verify(progressCallback).onSuccess(uploadedFile.file)
+    }
+
+    @Test
+    fun testUploadStandaloneImageErrorWithProgress() = runTest {
+        val file = randomFile()
+        val progressCallback = mock<ProgressCallback>()
+        val error = randomChatNetworkError()
+        val fileUploader = mock<FileUploader> {
+            on { uploadImage(file, progressCallback) } doReturn Result.Failure(error)
+        }
+        val fileTransformer = mock<FileTransformer> {
+            on { transform(file) } doReturn file
+        }
+        val sut = Fixture()
+            .withFileUploader(fileUploader)
+            .withFileTransformer(fileTransformer)
+            .get()
+
+        val result = sut.uploadImage(file, progressCallback).await()
+
+        verifyNetworkError(result, statusCode = error.statusCode)
+        verify(progressCallback).onError(error)
+    }
+
+    @Test
+    fun testUploadStandaloneImageSuccessWithoutProgress() = runTest {
+        val file = randomFile()
+        val uploadedFile = randomUploadedFile()
+        val fileUploader = mock<FileUploader> {
+            on { uploadImage(file, progressCallback = null) } doReturn Result.Success(uploadedFile)
+        }
+        val fileTransformer = mock<FileTransformer> {
+            on { transform(file) } doReturn file
+        }
+        val sut = Fixture()
+            .withFileUploader(fileUploader)
+            .withFileTransformer(fileTransformer)
+            .get()
+
+        val result = sut.uploadImage(file, progressCallback = null).await()
+
+        verifySuccess(result, equalsTo = uploadedFile)
+    }
+
+    @Test
+    fun testDeleteStandaloneImage() = runTest {
+        val url = randomString()
+        val fileUploader = mock<FileUploader> {
+            on { deleteImage(url) } doReturn Result.Success(Unit)
+        }
+        val sut = Fixture()
+            .withFileUploader(fileUploader)
+            .get()
+
+        val result = sut.deleteImage(url).await()
+
+        verifySuccess(result, equalsTo = Unit)
     }
 
     @ParameterizedTest
