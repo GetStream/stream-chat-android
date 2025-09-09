@@ -16,19 +16,21 @@
 
 package io.getstream.chat.android.ui.feature.messages.list.adapter.view
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Paint
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.util.PatternsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.google.android.material.shape.MaterialShapeDrawable
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.durationInMs
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
-import io.getstream.chat.android.client.utils.attachment.isLink
+import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
@@ -185,9 +187,24 @@ public class MessageReplyView : FrameLayout {
         }
     }
 
-    private fun isLink(message: Message) = message.attachments.run {
-        size == 1 && last().isLink()
+    /**
+     * Checks if the message contains a link, either as an enriched link (attachment) or as a plain text URL.
+     */
+    private fun isLink(message: Message) = hasEnrichedLink(message) || hasLinkInText(message)
+
+    private fun hasEnrichedLink(message: Message) = message.attachments.run {
+        // Messages with enriched links have an image attachment with title_link or og_scrape_url set.
+        if (size == 1) {
+            val lastAttachment = last()
+            lastAttachment.isImage() && (lastAttachment.titleLink != null || lastAttachment.ogUrl != null)
+        } else {
+            false
+        }
     }
+
+    @SuppressLint("RestrictedApi")
+    private fun hasLinkInText(message: Message) =
+        PatternsCompat.AUTOLINK_WEB_URL.matcher(message.text).matches()
 
     private fun setAttachmentImage(message: Message) {
         if (ChatUI.quotedAttachmentFactoryManager.canHandle(message)) {
@@ -227,9 +244,7 @@ public class MessageReplyView : FrameLayout {
                 displayedText
             }
         } else {
-            if (attachment.isLink()) {
-                attachment.titleLink ?: attachment.ogUrl
-            } else if (attachment.isAudioRecording()) {
+            if (attachment.isAudioRecording()) {
                 context.getString(R.string.stream_ui_message_audio_reply_info)
             } else {
                 attachment.title ?: attachment.name

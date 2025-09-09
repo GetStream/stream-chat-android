@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.ui.feature.gallery
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
@@ -58,11 +60,15 @@ public class AttachmentActivity : AppCompatActivity() {
         setupEdgeToEdge()
         configUIs()
 
-        val type = intent.getStringExtra("type")
-        val url = intent.getStringExtra("url")
+        val type = intent.getStringExtra(EXTRA_TYPE)
+        val url = intent.getStringExtra(EXTRA_URL)
         if (type.isNullOrEmpty() || url.isNullOrEmpty()) {
             logger.e { "This file can't be displayed. TYPE or URL is missing." }
-            Toast.makeText(this, getString(R.string.stream_ui_message_list_attachment_display_error), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this,
+                getString(R.string.stream_ui_message_list_attachment_display_error),
+                Toast.LENGTH_SHORT,
+            ).show()
             return
         }
         showAttachment(type, url)
@@ -151,6 +157,26 @@ public class AttachmentActivity : AppCompatActivity() {
                 return
             }
             Toast.makeText(this@AttachmentActivity, error.toString(), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    public companion object {
+        private const val EXTRA_TYPE = "type"
+        private const val EXTRA_URL = "url"
+
+        /**
+         * Creates an Intent to start the AttachmentActivity.
+         *
+         * @param context The context to use for creating the Intent.
+         * @param type The type of the attachment (e.g., "giphy", etc.).
+         * @param url The URL of the attachment to display.
+         * @return An Intent to start the AttachmentActivity.
+         */
+        public fun createIntent(context: Context, type: String?, url: String): Intent {
+            return Intent(context, AttachmentActivity::class.java).apply {
+                putExtra(EXTRA_TYPE, type)
+                putExtra(EXTRA_URL, url)
+            }
         }
     }
 }

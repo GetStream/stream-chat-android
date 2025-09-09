@@ -9,6 +9,8 @@
 - Add `markMessagesPending` flag to the `Config` model indicating whether pending messages are enabled for the channel. [#5784](https://github.com/GetStream/stream-chat-android/pull/5784)
 
 ### ⚠️ Changed
+- Deprecate `AttachmentType.LINK` because it is not officially supported as a separate attachment type. [#5848](https://github.com/GetStream/stream-chat-android/pull/5848)
+- Deprecate `Attachment.isLink()` because it is not officially supported as a separate attachment type. [#5848](https://github.com/GetStream/stream-chat-android/pull/5848)
 
 ### ❌ Removed
 
@@ -61,6 +63,7 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Filter out Poll Options differing only on whitespaces. [#5913](https://github.com/GetStream/stream-chat-android/pull/5913)
+- Fix `MessageReplyStyle.linkBackgroundColorMine`, `MessageReplyStyle.linkBackgroundColorTheirs`, `MessageReplyStyle.linkStyleMine` and `MessageReplyStyle.linkStyleTheirs` customizations not applied to the `MessageReplyView`. [#5848](https://github.com/GetStream/stream-chat-android/pull/5848)
 
 ### ⬆️ Improved
 
