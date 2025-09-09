@@ -1081,6 +1081,10 @@ public abstract interface class io/getstream/chat/android/ui/common/helper/Image
 	public abstract fun getImageRequestHeaders (Ljava/lang/String;)Ljava/util/Map;
 }
 
+public abstract interface class io/getstream/chat/android/ui/common/helper/ShareFileDownloadRequestInterceptor {
+	public abstract fun intercept (Lokhttp3/Request$Builder;)Lokhttp3/Request$Builder;
+}
+
 public abstract interface class io/getstream/chat/android/ui/common/helper/TimeProvider : kotlin/jvm/functions/Function0 {
 	public static final field Companion Lio/getstream/chat/android/ui/common/helper/TimeProvider$Companion;
 	public static fun getDEFAULT ()Lio/getstream/chat/android/ui/common/helper/TimeProvider;
