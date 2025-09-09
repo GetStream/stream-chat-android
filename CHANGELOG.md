@@ -16,6 +16,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fix API_KEY being sent with the request done to the CDN when sharing a video from the media gallery. [#5921](https://github.com/GetStream/stream-chat-android/pull/5921)
 
 ### ⬆️ Improved
 
