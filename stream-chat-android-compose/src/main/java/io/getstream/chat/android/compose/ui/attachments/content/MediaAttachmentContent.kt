@@ -74,8 +74,10 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.ui.common.helper.DefaultShareFileDownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
+import io.getstream.chat.android.ui.common.helper.ShareFileDownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.uiutils.extension.hasLink
 
@@ -121,6 +123,7 @@ public fun MediaAttachmentContent(
         videoThumbnailsEnabled: Boolean,
         downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
         downloadRequestInterceptor: DownloadRequestInterceptor,
+        shareFileDownloadRequestInterceptor: ShareFileDownloadRequestInterceptor,
         streamCdnImageResizing: StreamCdnImageResizing,
         skipEnrichUrl: Boolean,
     ) -> Unit = ::onMediaAttachmentContentItemClick,
@@ -143,6 +146,7 @@ public fun MediaAttachmentContent(
                 it.videoThumbnailsEnabled,
                 it.downloadAttachmentUriGenerator,
                 it.downloadRequestInterceptor,
+                it.shareFileDownloadRequestInterceptor,
                 it.streamCdnImageResizing,
                 it.skipEnrichUrl,
             )
@@ -180,6 +184,7 @@ public fun MediaAttachmentContent(
             it.videoThumbnailsEnabled,
             it.downloadAttachmentUriGenerator,
             it.downloadRequestInterceptor,
+            it.shareFileDownloadRequestInterceptor,
             it.streamCdnImageResizing,
             it.skipEnrichUrl,
         )
@@ -476,6 +481,7 @@ internal fun MediaAttachmentContentItem(
 
     val downloadAttachmentUriGenerator = ChatTheme.streamDownloadAttachmentUriGenerator
     val downloadRequestInterceptor = ChatTheme.streamDownloadRequestInterceptor
+    val shareFileDownloadRequestInterceptor = ChatTheme.streamShareFileDownloadRequestInterceptor
 
     val testTag = if (isVideo) "Video" else "Image"
 
@@ -497,6 +503,7 @@ internal fun MediaAttachmentContentItem(
                                 areVideosEnabled,
                                 downloadAttachmentUriGenerator,
                                 downloadRequestInterceptor,
+                                shareFileDownloadRequestInterceptor,
                                 streamCdnImageResizing,
                                 skipEnrichUrl,
                             ),
@@ -646,6 +653,8 @@ internal fun MediaAttachmentShowMoreOverlay(
  * @param downloadAttachmentUriGenerator The [DownloadAttachmentUriGenerator] used to generate URIs for downloading
  * attachments.
  * @param downloadRequestInterceptor The [DownloadRequestInterceptor] used to intercept download requests.
+ * @param shareFileDownloadRequestInterceptor The [ShareFileDownloadRequestInterceptor] used to intercept share file
+ * download requests.
  * @param streamCdnImageResizing The [StreamCdnImageResizing] used to resize images.
  * @param skipEnrichUrl Used by the media gallery. If set to true will skip enriching URLs when you update the message
  * by deleting an attachment contained within it. Set to false by default.
@@ -658,6 +667,8 @@ public data class MediaAttachmentClickData internal constructor(
     val videoThumbnailsEnabled: Boolean,
     val downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
     val downloadRequestInterceptor: DownloadRequestInterceptor,
+    val shareFileDownloadRequestInterceptor: ShareFileDownloadRequestInterceptor =
+        DefaultShareFileDownloadRequestInterceptor,
     val streamCdnImageResizing: StreamCdnImageResizing,
     val skipEnrichUrl: Boolean,
 )
@@ -687,6 +698,7 @@ internal fun onMediaAttachmentContentItemClick(
     videoThumbnailsEnabled: Boolean,
     downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
     downloadRequestInterceptor: DownloadRequestInterceptor,
+    shareFileDownloadRequestInterceptor: ShareFileDownloadRequestInterceptor,
     streamCdnImageResizing: StreamCdnImageResizing,
     skipEnrichUrl: Boolean,
 ) {
@@ -697,6 +709,7 @@ internal fun onMediaAttachmentContentItemClick(
             videoThumbnailsEnabled = videoThumbnailsEnabled,
             downloadAttachmentUriGenerator = downloadAttachmentUriGenerator,
             downloadRequestInterceptor = downloadRequestInterceptor,
+            shareFileDownloadRequestInterceptor = shareFileDownloadRequestInterceptor,
             streamCdnImageResizing = streamCdnImageResizing,
             skipEnrichUrl = skipEnrichUrl,
         ),

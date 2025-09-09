@@ -69,8 +69,10 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.streamcdn.image.StreamCdnCropImageMode
 import io.getstream.chat.android.models.streamcdn.image.StreamCdnResizeImageMode
 import io.getstream.chat.android.ui.common.helper.DefaultDownloadAttachmentUriGenerator
+import io.getstream.chat.android.ui.common.helper.DefaultShareFileDownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
+import io.getstream.chat.android.ui.common.helper.ShareFileDownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.utils.StreamFileUtil
@@ -159,6 +161,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 streamCdnImageResizing = streamCdnImageResizing,
                 downloadAttachmentUriGenerator = downloadAttachmentUriGenerator,
                 downloadRequestInterceptor = downloadRequestInterceptor,
+                shareFileDownloadRequestInterceptor = shareFileDownloadRequestInterceptor,
                 mediaGalleryConfig = intent.getParcelable(KeyConfig) ?: MediaGalleryConfig(),
             ) {
                 SetupEdgeToEdge()
@@ -257,6 +260,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     ),
                 )
             }
+
             is Reply -> {
                 handleResult(
                     MediaGalleryPreviewResult(
@@ -266,9 +270,11 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     ),
                 )
             }
+
             is Delete -> {
                 mediaGalleryPreviewViewModel.deleteCurrentMediaAttachment(attachment)
             }
+
             is SaveMedia -> {
                 onDownloadHandleRequest(
                     context = this,
@@ -311,6 +317,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     is Result.Success -> {
                         shareAttachment(mediaUri = result.value, attachmentType = attachment.type)
                     }
+
                     is Result.Failure -> {
                         mediaGalleryPreviewViewModel.promptedAttachment = attachment
                     }
@@ -424,6 +431,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             StreamFileUtil.writeFileToShareableFile(
                 context = applicationContext,
                 attachment = attachment,
+                shareFileDownloadRequestInterceptor = shareFileDownloadRequestInterceptor,
             )
         }
 
@@ -562,6 +570,12 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         private var downloadRequestInterceptor: DownloadRequestInterceptor = DownloadRequestInterceptor { }
 
         /**
+         * Used to intercept share file download requests.
+         */
+        private var shareFileDownloadRequestInterceptor: ShareFileDownloadRequestInterceptor =
+            DefaultShareFileDownloadRequestInterceptor
+
+        /**
          * Used to build an [Intent] to start the [MediaGalleryPreviewActivity] with the required data.
          *
          * @param context The context to start the activity with.
@@ -570,6 +584,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
          * @param videoThumbnailsEnabled Whether video thumbnails will be displayed in previews or not.
          * @param downloadAttachmentUriGenerator Used to generate download URIs for attachments.
          * @param downloadRequestInterceptor Used to intercept download requests.
+         * @param shareFileDownloadRequestInterceptor Used to intercept share file download requests.
          * @param streamCdnImageResizing Sets the Stream CDN hosted image resizing strategy. Turned off by default.
          * Please note that only Stream CDN hosted images containing original width (ow) and original height (oh)
          * parameters are able to be resized.
@@ -585,12 +600,15 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             videoThumbnailsEnabled: Boolean,
             downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
             downloadRequestInterceptor: DownloadRequestInterceptor,
+            shareFileDownloadRequestInterceptor: ShareFileDownloadRequestInterceptor =
+                DefaultShareFileDownloadRequestInterceptor,
             streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing(),
             skipEnrichUrl: Boolean = false,
             config: MediaGalleryConfig = MediaGalleryConfig(),
         ): Intent {
             this.downloadAttachmentUriGenerator = downloadAttachmentUriGenerator
             this.downloadRequestInterceptor = downloadRequestInterceptor
+            this.shareFileDownloadRequestInterceptor = shareFileDownloadRequestInterceptor
             return Intent(context, MediaGalleryPreviewActivity::class.java).apply {
                 val mediaGalleryPreviewActivityState = message.toMediaGalleryPreviewActivityState()
 

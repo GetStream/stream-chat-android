@@ -19,12 +19,14 @@ package io.getstream.chat.android.ui
 import android.content.Context
 import io.getstream.chat.android.ui.common.helper.DateFormatter
 import io.getstream.chat.android.ui.common.helper.DefaultDownloadAttachmentUriGenerator
+import io.getstream.chat.android.ui.common.helper.DefaultShareFileDownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.helper.DefaultVideoHeadersProvider
 import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.helper.DurationFormatter
 import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
+import io.getstream.chat.android.ui.common.helper.ShareFileDownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.helper.VideoHeadersProvider
 import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
@@ -87,6 +89,13 @@ public object ChatUI {
      */
     @JvmStatic
     public var downloadRequestInterceptor: DownloadRequestInterceptor = DownloadRequestInterceptor { }
+
+    /**
+     * Intercepts and customizes the HTTP request used to download an attachment that will be shared.
+     */
+    @JvmStatic
+    public var shareFileDownloadRequestInterceptor: ShareFileDownloadRequestInterceptor =
+        DefaultShareFileDownloadRequestInterceptor
 
     /**
      * Provides HTTP headers for image loading requests.

@@ -47,6 +47,9 @@ import io.getstream.chat.android.compose.ui.attachments.preview.handler.Attachme
 import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactories
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
+import io.getstream.chat.android.compose.ui.theme.ChatTheme.autoTranslationEnabled
+import io.getstream.chat.android.compose.ui.theme.ChatTheme.isComposerLinkPreviewEnabled
+import io.getstream.chat.android.compose.ui.theme.ChatTheme.showOriginalTranslationEnabled
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.FileAttachmentTheme
 import io.getstream.chat.android.compose.ui.util.DefaultPollSwitchItemFactory
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
@@ -63,11 +66,13 @@ import io.getstream.chat.android.ui.common.helper.DateFormatter
 import io.getstream.chat.android.ui.common.helper.DefaultDownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DefaultImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.DefaultImageHeadersProvider
+import io.getstream.chat.android.ui.common.helper.DefaultShareFileDownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.helper.DurationFormatter
 import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
+import io.getstream.chat.android.ui.common.helper.ShareFileDownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.helper.TimeProvider
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.model.UserPresence
@@ -166,6 +171,12 @@ private val LocalStreamDownloadAttachmentUriGenerator = compositionLocalOf<Downl
 }
 private val LocalStreamDownloadRequestInterceptor = compositionLocalOf<DownloadRequestInterceptor> {
     error("No DownloadRequestInterceptor provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+private val LocalStreamShareFileDownloadRequestInterceptor = compositionLocalOf<ShareFileDownloadRequestInterceptor> {
+    error(
+        "No ShareFileDownloadRequestInterceptor provided! " +
+            "Make sure to wrap all usages of Stream components in a ChatTheme.",
+    )
 }
 private val LocalStreamImageAssetTransformer = compositionLocalOf<ImageAssetTransformer> {
     error("No ImageAssetTransformer provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
@@ -292,6 +303,8 @@ private val LocalMediaGalleryConfig = compositionLocalOf<MediaGalleryConfig> {
  * @param downloadAttachmentUriGenerator [DownloadAttachmentUriGenerator] Used to generate download URIs for
  * attachments.
  * @param downloadRequestInterceptor [DownloadRequestInterceptor] Used to intercept download requests.
+ * @param shareFileDownloadRequestInterceptor [ShareFileDownloadRequestInterceptor] Used to intercept share file
+ * download requests.
  * @param messageAlignmentProvider [MessageAlignmentProvider] Used to provide message alignment for the given message.
  * @param messageOptionsTheme [MessageOptionsTheme] Theme for the message option list in the selected message menu.
  * For theming the reaction option list in the same menu, use [reactionOptionsTheme].
@@ -357,6 +370,8 @@ public fun ChatTheme(
     imageHeadersProvider: ImageHeadersProvider = DefaultImageHeadersProvider,
     downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator = DefaultDownloadAttachmentUriGenerator,
     downloadRequestInterceptor: DownloadRequestInterceptor = DownloadRequestInterceptor { },
+    shareFileDownloadRequestInterceptor: ShareFileDownloadRequestInterceptor =
+        DefaultShareFileDownloadRequestInterceptor,
     imageAssetTransformer: ImageAssetTransformer = DefaultImageAssetTransformer,
     messageAlignmentProvider: MessageAlignmentProvider = MessageAlignmentProvider.defaultMessageAlignmentProvider(),
     messageOptionsTheme: MessageOptionsTheme = MessageOptionsTheme.defaultTheme(),
@@ -460,6 +475,7 @@ public fun ChatTheme(
         LocalStreamImageHeadersProvider provides imageHeadersProvider,
         LocalStreamDownloadAttachmentUriGenerator provides downloadAttachmentUriGenerator,
         LocalStreamDownloadRequestInterceptor provides downloadRequestInterceptor,
+        LocalStreamShareFileDownloadRequestInterceptor provides shareFileDownloadRequestInterceptor,
         LocalStreamImageAssetTransformer provides imageAssetTransformer,
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
         LocalMessageOptionsTheme provides messageOptionsTheme,
@@ -820,6 +836,14 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalStreamDownloadRequestInterceptor.current
+
+    /**
+     * Retrieves the current [ShareFileDownloadRequestInterceptor] at the call site's position in the hierarchy.
+     */
+    public val streamShareFileDownloadRequestInterceptor: ShareFileDownloadRequestInterceptor
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalStreamShareFileDownloadRequestInterceptor.current
 
     /**
      * Retrieves the current [ImageAssetTransformer] at the call site's position in the hierarchy.

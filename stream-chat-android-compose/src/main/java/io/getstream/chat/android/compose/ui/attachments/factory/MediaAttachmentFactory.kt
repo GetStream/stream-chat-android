@@ -45,6 +45,7 @@ import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
+import io.getstream.chat.android.ui.common.helper.ShareFileDownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 
 /**
@@ -72,6 +73,7 @@ public class MediaAttachmentFactory(
             it.videoThumbnailsEnabled,
             it.downloadAttachmentUriGenerator,
             it.downloadRequestInterceptor,
+            it.shareFileDownloadRequestInterceptor,
             it.streamCdnImageResizing,
             it.skipEnrichUrl,
         )
@@ -139,6 +141,7 @@ public class MediaAttachmentFactory(
             videoThumbnailsEnabled: Boolean,
             downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
             downloadRequestInterceptor: DownloadRequestInterceptor,
+            shareFileDownloadRequestInterceptor: ShareFileDownloadRequestInterceptor,
             streamCdnImageResizing: StreamCdnImageResizing,
             skipEnrichUrl: Boolean,
         ) -> Unit,
@@ -166,6 +169,7 @@ public class MediaAttachmentFactory(
                 it.videoThumbnailsEnabled,
                 it.downloadAttachmentUriGenerator,
                 it.downloadRequestInterceptor,
+                it.shareFileDownloadRequestInterceptor,
                 it.streamCdnImageResizing,
                 skipEnrichUrl,
             )

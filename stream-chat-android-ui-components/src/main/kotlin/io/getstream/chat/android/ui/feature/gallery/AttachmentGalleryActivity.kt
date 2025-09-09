@@ -236,6 +236,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                 StreamFileUtil.writeFileToShareableFile(
                     context = applicationContext,
                     attachment = attachment,
+                    shareFileDownloadRequestInterceptor = ChatUI.shareFileDownloadRequestInterceptor,
                 )
             }
 

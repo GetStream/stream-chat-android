@@ -22,15 +22,19 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Environment
 import androidx.core.content.FileProvider
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.StreamFileProvider
+import io.getstream.chat.android.ui.common.helper.DefaultShareFileDownloadRequestInterceptor
+import io.getstream.chat.android.ui.common.helper.ShareFileDownloadRequestInterceptor
 import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.Result.Failure
 import io.getstream.result.Result.Success
 import io.getstream.result.flatMap
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.ResponseBody
 import java.io.File
 import java.io.IOException
 
@@ -205,6 +209,7 @@ public object StreamFileUtil {
      *
      * @param context The Android [Context] used for path resolving and [Uri] fetching.
      * @param attachment the attachment to be downloaded.
+     * @param shareFileDownloadRequestInterceptor interceptor used to customize the download request.
      *
      * @return Returns a [Result]. If the action was successful
      * [Result.Success] will contain a [Uri] pointing to the file, otherwise [Result.Failure]
@@ -214,6 +219,8 @@ public object StreamFileUtil {
     public suspend fun writeFileToShareableFile(
         context: Context,
         attachment: Attachment,
+        shareFileDownloadRequestInterceptor: ShareFileDownloadRequestInterceptor =
+            DefaultShareFileDownloadRequestInterceptor,
     ): Result<Uri> {
         val runCatching = kotlin.runCatching {
             when (val getOrCreateCacheDirResult = getOrCreateStreamCacheDir(context)) {
@@ -236,7 +243,7 @@ public object StreamFileUtil {
                             Error.GenericError(message = "File URL cannot be null."),
                         )
 
-                        when (val response = ChatClient.instance().downloadFile(fileUrl).await()) {
+                        when (val response = downloadFile(fileUrl, shareFileDownloadRequestInterceptor)) {
                             is Success -> {
                                 // write the response to a file
                                 response.value.byteStream().use { inputStream ->
@@ -255,6 +262,34 @@ public object StreamFileUtil {
         }
 
         return runCatching.getOrNull() ?: createFailureResultFromException(runCatching.exceptionOrNull())
+    }
+
+    private fun downloadFile(
+        url: String,
+        interceptor: ShareFileDownloadRequestInterceptor,
+    ): Result<ResponseBody> {
+        // Base request
+        val requestBuilder = Request.Builder()
+            .get()
+            .url(url)
+        // Intercept the request to allow custom modifications
+        val request = interceptor.intercept(requestBuilder).build()
+        return try {
+            val okHttpClient = OkHttpClient.Builder().build()
+            val response = okHttpClient.newCall(request).execute()
+            if (response.isSuccessful) {
+                val body = response.body
+                if (body != null) {
+                    Success(body)
+                } else {
+                    Failure(Error.GenericError("Response body is null"))
+                }
+            } else {
+                Failure(Error.GenericError("Failed to download file: ${response.message}"))
+            }
+        } catch (e: Exception) {
+            Failure(Error.ThrowableError("Exception during file download", e))
+        }
     }
 
     private fun createFailureResultFromException(throwable: Throwable?): Failure {

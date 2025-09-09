@@ -21,8 +21,10 @@ import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.helper.DefaultShareFileDownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
+import io.getstream.chat.android.ui.common.helper.ShareFileDownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 
 /**
@@ -47,6 +49,7 @@ public class MediaGalleryPreviewContract(private val config: MediaGalleryConfig 
             attachmentPosition = input.initialPosition,
             downloadAttachmentUriGenerator = input.downloadAttachmentUriGenerator,
             downloadRequestInterceptor = input.downloadRequestInterceptor,
+            shareFileDownloadRequestInterceptor = input.shareFileDownloadRequestInterceptor,
             videoThumbnailsEnabled = input.videoThumbnailsEnabled,
             streamCdnImageResizing = input.streamCdnImageResizing,
             skipEnrichUrl = input.skipEnrichUrl,
@@ -70,6 +73,7 @@ public class MediaGalleryPreviewContract(private val config: MediaGalleryConfig 
      * @param initialPosition The initial position of the media gallery, based on the clicked item.
      * @param downloadAttachmentUriGenerator The URI generator for downloading attachments.
      * @param downloadRequestInterceptor The request interceptor for downloading attachments.
+     * @param shareFileDownloadRequestInterceptor The request interceptor for downloading attachments.
      * @param videoThumbnailsEnabled Whether video thumbnails will be displayed in previews or not.
      * @param streamCdnImageResizing The CDN image resizing strategy.
      * @param skipEnrichUrl If set to true will skip enriching URLs when you update the message
@@ -81,6 +85,8 @@ public class MediaGalleryPreviewContract(private val config: MediaGalleryConfig 
         public val videoThumbnailsEnabled: Boolean,
         public val downloadAttachmentUriGenerator: DownloadAttachmentUriGenerator,
         public val downloadRequestInterceptor: DownloadRequestInterceptor,
+        public val shareFileDownloadRequestInterceptor: ShareFileDownloadRequestInterceptor =
+            DefaultShareFileDownloadRequestInterceptor,
         public val streamCdnImageResizing: StreamCdnImageResizing,
         public val skipEnrichUrl: Boolean = false,
     )
