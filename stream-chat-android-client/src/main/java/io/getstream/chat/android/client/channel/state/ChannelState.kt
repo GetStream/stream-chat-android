@@ -125,7 +125,7 @@ public interface ChannelState {
     public val activeLiveLocations: StateFlow<List<Location>>
 
     /** Number of messages in the channel. */
-    public val messagesCount: StateFlow<Int?>
+    public val messageCount: StateFlow<Int?>
 
     /** Function that builds a channel based on data from StateFlows. */
     public fun toChannel(): Channel

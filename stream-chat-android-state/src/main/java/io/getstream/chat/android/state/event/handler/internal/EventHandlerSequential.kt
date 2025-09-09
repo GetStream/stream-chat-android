@@ -520,7 +520,7 @@ internal class EventHandlerSequential(
                     val updatedChannel = channel.copy(
                         hidden = channel.hidden.takeIf { enrichedMessage.shadowed } ?: false,
                         messages = channel.messages + listOf(enrichedMessage),
-                        messagesCount = event.channelMessageCount ?: channel.messagesCount,
+                        messageCount = event.channelMessageCount ?: channel.messageCount,
                     )
                     batch.addChannel(updatedChannel)
                     // Update thread data in DB if the new message is added to a thread
@@ -538,7 +538,7 @@ internal class EventHandlerSequential(
                     (batch.getCurrentChannel(event.cid) ?: repos.selectChannel(event.cid))
                         ?.let {
                             batch.addChannel(
-                                it.copy(messagesCount = event.channelMessageCount ?: it.messagesCount),
+                                it.copy(messageCount = event.channelMessageCount ?: it.messageCount),
                             )
                         }
                 }

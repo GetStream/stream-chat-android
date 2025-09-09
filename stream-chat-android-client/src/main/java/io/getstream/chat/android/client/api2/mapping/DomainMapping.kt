@@ -174,7 +174,7 @@ internal class DomainMapping(
             ownCapabilities = own_capabilities.toSet(),
             membership = membership?.toDomain(),
             activeLiveLocations = active_live_locations.map { it.toDomain() },
-            messagesCount = message_count,
+            messageCount = message_count,
             extraData = extraData.toMutableMap(),
         ).syncUnreadCountWithReads(currentUserIdProvider())
             .let(channelTransformer::transform)

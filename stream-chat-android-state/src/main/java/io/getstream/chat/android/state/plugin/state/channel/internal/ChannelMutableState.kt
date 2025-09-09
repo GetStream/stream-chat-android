@@ -121,7 +121,7 @@ internal class ChannelMutableState(
     override val endOfOlderMessages: StateFlow<Boolean> = _endOfOlderMessages!!
 
     override val endOfNewerMessages: StateFlow<Boolean> = _endOfNewerMessages!!
-    override val messagesCount: StateFlow<Int?> = _channelData!!.mapState { it?.messagesCount }
+    override val messageCount: StateFlow<Int?> = _channelData!!.mapState { it?.messageCount }
     override val activeLiveLocations: StateFlow<List<Location>> = activeLiveLocations.mapState { locations ->
         locations.filter { it.cid == cid }
     }
