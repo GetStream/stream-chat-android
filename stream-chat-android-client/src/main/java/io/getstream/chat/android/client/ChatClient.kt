@@ -104,6 +104,7 @@ import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.client.helpers.AppSettingManager
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
+import io.getstream.chat.android.client.interceptor.ShareFileDownloadRequestInterceptor
 import io.getstream.chat.android.client.interceptor.message.internal.PrepareMessageLogicImpl
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerConfigImpl
@@ -4196,6 +4197,7 @@ internal constructor(
         private var notificationConfig: NotificationConfig = NotificationConfig(pushNotificationsEnabled = false)
         private var fileUploader: FileUploader? = null
         private var sendMessageInterceptor: SendMessageInterceptor? = null
+        private var shareFileDownloadRequestInterceptor: ShareFileDownloadRequestInterceptor? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
         private var customOkHttpClient: OkHttpClient? = null
         private var userCredentialStorage: UserCredentialStorage? = null
@@ -4324,6 +4326,21 @@ internal constructor(
          */
         public fun sendMessageInterceptor(sendMessageInterceptor: SendMessageInterceptor): Builder {
             this.sendMessageInterceptor = sendMessageInterceptor
+            return this
+        }
+
+        /**
+         * Sets a custom [ShareFileDownloadRequestInterceptor] that will be used to intercept file download requests for
+         * the purpose of sharing the file.
+         * Use this to add custom headers or modify the request in any way.
+         *
+         * @param shareFileDownloadRequestInterceptor Your custom implementation of
+         * [ShareFileDownloadRequestInterceptor].
+         */
+        public fun shareFileDownloadRequestInterceptor(
+            shareFileDownloadRequestInterceptor: ShareFileDownloadRequestInterceptor,
+        ): Builder {
+            this.shareFileDownloadRequestInterceptor = shareFileDownloadRequestInterceptor
             return this
         }
 
@@ -4543,6 +4560,7 @@ internal constructor(
                     fileTransformer = fileTransformer,
                     fileUploader = fileUploader,
                     sendMessageInterceptor = sendMessageInterceptor,
+                    shareFileDownloadRequestInterceptor = shareFileDownloadRequestInterceptor,
                     tokenManager = tokenManager,
                     customOkHttpClient = customOkHttpClient,
                     clientDebugger = clientDebugger,

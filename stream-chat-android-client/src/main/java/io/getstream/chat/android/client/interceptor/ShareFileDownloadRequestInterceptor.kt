@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.helper
+package io.getstream.chat.android.client.interceptor
 
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import okhttp3.Request
@@ -31,11 +31,12 @@ import okhttp3.Request
  *   the SDK's download logic.
  *
  * When it is used
- * - Invoked by [io.getstream.chat.android.ui.common.utils.StreamFileUtil.writeFileToShareableFile]
- *   which internally builds a base OkHttp [Request] with:
- *   - HTTP method: GET
- *   - URL: the attachment file URL
- *   The provided interceptor can then adjust the [Request.Builder] before the request is executed.
+ * - Only during the "Share" flow when the SDK must download a remote file to a
+ *   temporary cache before launching the Android share sheet.
+ * - Triggered from media sharing UIs such as `MediaGalleryPreviewActivity` (Compose)
+ *   and `AttachmentGalleryActivity` (UI Components) when sharing videos or other
+ *   non-image attachments. Image shares use a bitmap path and typically do not hit
+ *   the network.
  *
  * Notes
  * - Intended for additive changes such as headers or query parameters. Changing HTTP method or
