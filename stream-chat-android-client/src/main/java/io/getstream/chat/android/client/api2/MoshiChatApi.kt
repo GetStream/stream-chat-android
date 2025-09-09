@@ -501,8 +501,10 @@ constructor(
                         channelId = channelId,
                         userId = userId,
                         file = transformedFile,
-                        callback,
-                    )
+                        callback = callback,
+                    ).onSuccess { uploadedFile ->
+                        callback.onSuccess(url = uploadedFile.file)
+                    }.onError(callback::onError)
                 } else {
                     fileUploader.sendFile(
                         channelType = channelType,
@@ -528,8 +530,10 @@ constructor(
                         channelId = channelId,
                         userId = userId,
                         file = transformedFile,
-                        callback,
-                    )
+                        callback = callback,
+                    ).onSuccess { uploadedFile ->
+                        callback.onSuccess(url = uploadedFile.file)
+                    }.onError(callback::onError)
                 } else {
                     fileUploader.sendImage(
                         channelType = channelType,
