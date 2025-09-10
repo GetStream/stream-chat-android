@@ -103,9 +103,9 @@ private fun IsReadCount(
 ) {
     val showReadCount = readCount > 1 && ChatTheme.readCountEnabled
     val description = if (showReadCount) {
-        stringResource(R.string.stream_ui_message_list_message_status_read_by, readCount)
+        stringResource(R.string.stream_ui_message_list_semantics_message_status_read_by, readCount)
     } else {
-        stringResource(R.string.stream_ui_message_list_message_status_read)
+        stringResource(R.string.stream_ui_message_list_semantics_message_status_read)
     }
     Row(
         modifier = modifier
@@ -136,7 +136,7 @@ private fun IsPendingIcon(modifier: Modifier) {
     Icon(
         modifier = modifier.testTag("Stream_MessageReadStatus_isPending"),
         painter = painterResource(id = R.drawable.stream_compose_ic_clock),
-        contentDescription = stringResource(R.string.stream_ui_message_list_message_status_pending),
+        contentDescription = stringResource(R.string.stream_ui_message_list_semantics_message_status_pending),
         tint = ChatTheme.colors.textLowEmphasis,
     )
 }
@@ -146,7 +146,7 @@ private fun IsSentIcon(modifier: Modifier) {
     Icon(
         modifier = modifier.testTag("Stream_MessageReadStatus_isSent"),
         painter = painterResource(id = R.drawable.stream_compose_message_sent),
-        contentDescription = stringResource(R.string.stream_ui_message_list_message_status_sent),
+        contentDescription = stringResource(R.string.stream_ui_message_list_semantics_message_status_sent),
         tint = ChatTheme.colors.textLowEmphasis,
     )
 }

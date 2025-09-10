@@ -208,7 +208,7 @@ public fun MediaAttachmentContent(
     val attachmentCount = attachments.size
 
     val description = if (attachmentCount > 1) {
-        stringResource(R.string.stream_ui_message_list_message_attachments, attachmentCount)
+        stringResource(R.string.stream_ui_message_list_semantics_message_attachments, attachmentCount)
     } else {
         null
     }
@@ -486,9 +486,9 @@ internal fun MediaAttachmentContentItem(
     val downloadRequestInterceptor = ChatTheme.streamDownloadRequestInterceptor
 
     val description = if (isImage) {
-        stringResource(R.string.stream_ui_message_list_message_attachment_image)
+        stringResource(R.string.stream_ui_message_list_semantics_message_attachment_image)
     } else if (isVideo) {
-        stringResource(R.string.stream_ui_message_list_message_attachment_video)
+        stringResource(R.string.stream_ui_message_list_semantics_message_attachment_video)
     } else {
         null
     }

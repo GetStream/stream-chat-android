@@ -62,7 +62,7 @@ public fun MessageReactions(
     },
 ) {
     val description = pluralStringResource(
-        R.plurals.stream_ui_message_list_message_reactions,
+        R.plurals.stream_ui_message_list_semantics_message_reactions,
         options.size,
         options.size,
     )
