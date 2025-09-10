@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
+@file:Suppress("TooManyFunctions")
+
 package io.getstream.chat.android.compose.sample.ui.profile
 
-import android.content.res.Resources
-import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,22 +29,34 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.PhotoCamera
+import androidx.compose.material.icons.rounded.PhotoLibrary
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
@@ -76,8 +91,10 @@ import io.getstream.chat.android.models.UnreadCounts
 import io.getstream.chat.android.models.UnreadThread
 import io.getstream.chat.android.models.User
 import kotlinx.coroutines.flow.collectLatest
+import java.io.File
 import java.util.Calendar
 
+@Suppress("LongMethod")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserProfileScreen(
@@ -86,50 +103,159 @@ fun UserProfileScreen(
     val context = LocalContext.current
     val viewModel = viewModel<UserProfileViewModel>()
     val state by viewModel.state.collectAsStateWithLifecycle()
-    var showUnreadCounts by remember { mutableStateOf(false) }
+    var modalSheet by remember { mutableStateOf<ModalSheet?>(null) }
+
+    val pickVisualMediaLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+    ) { result ->
+        result?.let { imageUri ->
+            val imageFile = imageUri.toCacheFile(context)
+            viewModel.updateProfilePicture(imageFile)
+        }
+    }
+
+    var cameraFile by remember { mutableStateOf<File?>(null) }
+    val takePictureLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture(),
+    ) { result ->
+        if (result) {
+            cameraFile?.let(viewModel::updateProfilePicture)
+        }
+    }
+
+    val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {},
-                navigationIcon = {
-                    BackButton(
-                        modifier = Modifier.mirrorRtl(layoutDirection = LocalLayoutDirection.current),
-                        painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
-                        onBackPressed = onNavigationIconClick,
-                    )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = ChatTheme.colors.appBackground,
-                ),
-            )
+            Column {
+                TopBar(onNavigationIconClick = onNavigationIconClick)
+                LinearProgressIndicator(state = state.progressIndicator)
+            }
         },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         containerColor = ChatTheme.colors.appBackground,
     ) { paddingValues ->
         UserProfileScreenContent(
             modifier = Modifier.padding(paddingValues),
             state = state,
             onUnreadCountsClick = {
-                showUnreadCounts = true
+                modalSheet = ModalSheet.UnreadCounts
                 viewModel.loadUnreadCounts()
+            },
+            onUpdateProfilePictureClick = {
+                modalSheet = ModalSheet.UpdateProfilePicture
             },
         )
     }
-    if (showUnreadCounts) {
-        ModalBottomSheet(
-            onDismissRequest = { showUnreadCounts = false },
+    when (modalSheet) {
+        ModalSheet.UnreadCounts -> ModalBottomSheet(
+            onDismissRequest = { modalSheet = null },
             containerColor = ChatTheme.colors.appBackground,
         ) {
             UnreadCounts(state.unreadCounts)
         }
+
+        ModalSheet.UpdateProfilePicture -> ModalBottomSheet(
+            onDismissRequest = { modalSheet = null },
+            containerColor = ChatTheme.colors.appBackground,
+        ) {
+            UpdateProfilePicture(
+                onChooseFromLibraryClick = {
+                    modalSheet = null
+                    pickVisualMediaLauncher.launch(input = PickVisualMediaRequest())
+                },
+                onTakePhotoClick = {
+                    modalSheet = null
+                    cameraFile = context.generateCameraImageFile().also { file ->
+                        takePictureLauncher.launch(input = file.getUri(context))
+                    }
+                },
+                onRemovePhotoClick = {
+                    modalSheet = null
+                    viewModel.removeProfilePicture()
+                },
+            )
+        }
+
+        null -> Unit
     }
+
     LaunchedEffect(viewModel) {
-        viewModel.errors.collectLatest { error ->
-            showUnreadCounts = false
-            Toast.makeText(context, error.message, Toast.LENGTH_SHORT)
-                .show()
+        viewModel.events.collectLatest { event ->
+            when (event) {
+                is UserProfileViewEvent.Failure -> when (event) {
+                    is UserProfileViewEvent.LoadUnreadCountsError -> {
+                        modalSheet = null
+                        snackbarHostState.showSnackbar(message = event.error.message, actionLabel = "Dismiss")
+                    }
+
+                    is UserProfileViewEvent.LoadUserError,
+                    is UserProfileViewEvent.UpdateProfilePictureError,
+                    is UserProfileViewEvent.RemoveProfilePictureError,
+                    ->
+                        snackbarHostState.showSnackbar(message = event.error.message, actionLabel = "Dismiss")
+                }
+
+                is UserProfileViewEvent.UpdateProfilePictureSuccess ->
+                    snackbarHostState.showSnackbar(message = "Profile picture updated")
+            }
         }
     }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun TopBar(onNavigationIconClick: () -> Unit) {
+    TopAppBar(
+        title = {},
+        navigationIcon = {
+            BackButton(
+                modifier = Modifier.mirrorRtl(layoutDirection = LocalLayoutDirection.current),
+                painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
+                onBackPressed = onNavigationIconClick,
+            )
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = ChatTheme.colors.appBackground,
+        ),
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun LinearProgressIndicator(
+    state: UserProfileViewState.ProgressIndicator?,
+) {
+    Box(
+        modifier = Modifier.heightIn(min = ProgressIndicatorDefaults.LinearIndicatorTrackGapSize),
+    ) {
+        when {
+            state == null -> Unit
+
+            state.progress != null -> {
+                LinearProgressIndicator(
+                    modifier = Modifier.fillMaxWidth(),
+                    progress = { state.progress },
+                    color = ChatTheme.colors.primaryAccent,
+                    trackColor = ChatTheme.colors.inputBackground,
+                    drawStopIndicator = { /* Don't draw the stop indicator */ },
+                )
+            }
+
+            else -> {
+                LinearProgressIndicator(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = ChatTheme.colors.primaryAccent,
+                    trackColor = ChatTheme.colors.inputBackground,
+                )
+            }
+        }
+    }
+}
+
+private enum class ModalSheet {
+    UnreadCounts,
+    UpdateProfilePicture,
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -139,6 +265,7 @@ private fun UserProfileScreenContent(
     state: UserProfileViewState,
     modifier: Modifier = Modifier,
     onUnreadCountsClick: () -> Unit = {},
+    onUpdateProfilePictureClick: () -> Unit = {},
 ) {
     when (val user = state.user) {
         null -> {
@@ -154,14 +281,13 @@ private fun UserProfileScreenContent(
                 modifier = modifier
                     .fillMaxWidth(),
             ) {
-                UserAvatar(
+                UserProfilePicture(
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
-                        .padding(bottom = 16.dp)
-                        .size(72.dp),
+                        .padding(16.dp),
                     user = user,
-                    showOnlineIndicator = false,
-                    onClick = null,
+                    enabled = state.progressIndicator == null,
+                    onClick = onUpdateProfilePictureClick,
                 )
                 Column(
                     modifier = Modifier
@@ -195,10 +321,7 @@ private fun UserProfileScreenContent(
                             color = ChatTheme.colors.textHighEmphasis,
                         )
                         Text(
-                            text = formatTime(
-                                resources = LocalContext.current.resources,
-                                seconds = avgResponseTimeInSeconds,
-                            ),
+                            text = LocalContext.current.formatTime(seconds = avgResponseTimeInSeconds),
                             style = ChatTheme.typography.body,
                             color = ChatTheme.colors.textLowEmphasis,
                             maxLines = 1,
@@ -232,6 +355,117 @@ private fun UserProfileScreenContent(
                     )
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun UserProfilePicture(
+    modifier: Modifier,
+    user: User,
+    enabled: Boolean,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .clickable(
+                enabled = enabled,
+                interactionSource = null,
+                indication = ripple(bounded = false),
+                onClick = onClick,
+            ),
+    ) {
+        UserAvatar(
+            modifier = Modifier
+                .size(72.dp),
+            user = user,
+            showOnlineIndicator = false,
+            onClick = null,
+        )
+        Icon(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .size(24.dp)
+                .background(
+                    color = ChatTheme.colors.barsBackground,
+                    shape = CircleShape,
+                )
+                .padding(4.dp),
+            imageVector = Icons.Rounded.Edit,
+            contentDescription = null,
+            tint = ChatTheme.colors.textLowEmphasis,
+        )
+    }
+}
+
+@Suppress("LongMethod")
+@Composable
+private fun UpdateProfilePicture(
+    onChooseFromLibraryClick: () -> Unit = {},
+    onTakePhotoClick: () -> Unit = {},
+    onRemovePhotoClick: () -> Unit = {},
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp),
+    ) {
+        Text(
+            text = "Update Profile Picture",
+            style = ChatTheme.typography.title3Bold,
+            color = ChatTheme.colors.textHighEmphasis,
+            modifier = Modifier.padding(16.dp),
+        )
+        TextButton(
+            shape = RectangleShape,
+            onClick = onChooseFromLibraryClick,
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.PhotoLibrary,
+                contentDescription = null,
+                tint = ChatTheme.colors.textLowEmphasis,
+            )
+            Spacer(modifier = Modifier.size(8.dp))
+            Text(
+                modifier = Modifier.weight(1f),
+                text = "Choose from library",
+                style = ChatTheme.typography.title3,
+                color = ChatTheme.colors.textHighEmphasis,
+            )
+        }
+        TextButton(
+            shape = RectangleShape,
+            onClick = onTakePhotoClick,
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.PhotoCamera,
+                contentDescription = null,
+                tint = ChatTheme.colors.textLowEmphasis,
+            )
+            Spacer(modifier = Modifier.size(8.dp))
+            Text(
+                modifier = Modifier.weight(1f),
+                text = "Take a photo",
+                style = ChatTheme.typography.title3,
+                color = ChatTheme.colors.textHighEmphasis,
+            )
+        }
+        TextButton(
+            shape = RectangleShape,
+            onClick = onRemovePhotoClick,
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.Delete,
+                contentDescription = null,
+                tint = ChatTheme.colors.errorAccent.copy(alpha = 0.8f),
+            )
+            Spacer(modifier = Modifier.size(8.dp))
+            Text(
+                modifier = Modifier.weight(1f),
+                text = "Remove picture",
+                style = ChatTheme.typography.title3,
+                color = ChatTheme.colors.errorAccent,
+            )
         }
     }
 }
@@ -537,24 +771,6 @@ private fun Divider() {
     HorizontalDivider(modifier = Modifier.padding(start = 16.dp))
 }
 
-@Suppress("MagicNumber")
-private fun formatTime(
-    resources: Resources,
-    seconds: Long,
-): String {
-    val minutes = (seconds / 60).toInt()
-    val remainingSeconds = (seconds % 60).toInt()
-    return buildString {
-        if (minutes > 0) {
-            append(resources.getQuantityString(R.plurals.time_minutes, minutes, minutes))
-        }
-        if (remainingSeconds > 0) {
-            if (isNotEmpty()) append(" ")
-            append(resources.getQuantityString(R.plurals.time_seconds, remainingSeconds, remainingSeconds))
-        }
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 private fun UserProfileScreenContentPreview() {
@@ -569,6 +785,14 @@ private fun UserProfileScreenContentPreview() {
                 ),
             ),
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun UpdateProfilePicturePreview() {
+    ChatTheme {
+        UpdateProfilePicture()
     }
 }
 

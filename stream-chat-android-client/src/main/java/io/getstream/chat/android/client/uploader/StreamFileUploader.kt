@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.uploader
 
 import io.getstream.chat.android.client.api.RetrofitCdnApi
+import io.getstream.chat.android.client.api.models.UploadFileResponse
 import io.getstream.chat.android.client.api2.mapping.toUploadedFile
 import io.getstream.chat.android.client.extensions.getMediaType
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -38,40 +39,24 @@ internal class StreamFileUploader(
         userId: String,
         file: File,
         callback: ProgressCallback,
-    ): Result<UploadedFile> {
-        val body = file.asRequestBody(file.getMediaType())
-        val filename = filenameSanitizer.sanitize(file.name)
-        val part = MultipartBody.Part.createFormData("file", filename, body)
-
-        return retrofitCdnApi.sendFile(
-            channelType = channelType,
-            channelId = channelId,
-            file = part,
-            progressCallback = callback,
-        ).execute().map {
-            it.toUploadedFile()
-        }
-    }
+    ): Result<UploadedFile> = retrofitCdnApi.sendFile(
+        channelType = channelType,
+        channelId = channelId,
+        file = file.asBodyPart(),
+        progressCallback = callback,
+    ).execute().map(UploadFileResponse::toUploadedFile)
 
     override fun sendFile(
         channelType: String,
         channelId: String,
         userId: String,
         file: File,
-    ): Result<UploadedFile> {
-        val body = file.asRequestBody(file.getMediaType())
-        val filename = filenameSanitizer.sanitize(file.name)
-        val part = MultipartBody.Part.createFormData("file", filename, body)
-
-        return retrofitCdnApi.sendFile(
-            channelType = channelType,
-            channelId = channelId,
-            file = part,
-            progressCallback = null,
-        ).execute().map {
-            it.toUploadedFile()
-        }
-    }
+    ): Result<UploadedFile> = retrofitCdnApi.sendFile(
+        channelType = channelType,
+        channelId = channelId,
+        file = file.asBodyPart(),
+        progressCallback = null,
+    ).execute().map(UploadFileResponse::toUploadedFile)
 
     override fun sendImage(
         channelType: String,
@@ -79,65 +64,77 @@ internal class StreamFileUploader(
         userId: String,
         file: File,
         callback: ProgressCallback,
-    ): Result<UploadedFile> {
-        val body = file.asRequestBody(file.getMediaType())
-        val filename = filenameSanitizer.sanitize(file.name)
-        val part = MultipartBody.Part.createFormData("file", filename, body)
-
-        return retrofitCdnApi.sendImage(
-            channelType = channelType,
-            channelId = channelId,
-            file = part,
-            progressCallback = callback,
-        ).execute().map {
-            UploadedFile(file = it.file)
-        }
-    }
+    ): Result<UploadedFile> = retrofitCdnApi.sendImage(
+        channelType = channelType,
+        channelId = channelId,
+        file = file.asBodyPart(),
+        progressCallback = callback,
+    ).execute().map(UploadFileResponse::toUploadedFile)
 
     override fun sendImage(
         channelType: String,
         channelId: String,
         userId: String,
         file: File,
-    ): Result<UploadedFile> {
-        val body = file.asRequestBody(file.getMediaType())
-        val filename = filenameSanitizer.sanitize(file.name)
-        val part = MultipartBody.Part.createFormData("file", filename, body)
-
-        return retrofitCdnApi.sendImage(
-            channelType = channelType,
-            channelId = channelId,
-            file = part,
-            progressCallback = null,
-        ).execute().map {
-            UploadedFile(file = it.file)
-        }
-    }
+    ): Result<UploadedFile> = retrofitCdnApi.sendImage(
+        channelType = channelType,
+        channelId = channelId,
+        file = file.asBodyPart(),
+        progressCallback = null,
+    ).execute().map(UploadFileResponse::toUploadedFile)
 
     override fun deleteFile(
         channelType: String,
         channelId: String,
         userId: String,
         url: String,
-    ): Result<Unit> {
-        return retrofitCdnApi.deleteFile(
-            channelType = channelType,
-            channelId = channelId,
-            url = url,
-        ).execute().toUnitResult()
-    }
+    ): Result<Unit> = retrofitCdnApi.deleteFile(
+        channelType = channelType,
+        channelId = channelId,
+        url = url,
+    ).execute().toUnitResult()
 
     override fun deleteImage(
         channelType: String,
         channelId: String,
         userId: String,
         url: String,
-    ): Result<Unit> {
-        return retrofitCdnApi.deleteImage(
-            channelType = channelType,
-            channelId = channelId,
-            url = url,
-        ).execute().toUnitResult()
+    ): Result<Unit> = retrofitCdnApi.deleteImage(
+        channelType = channelType,
+        channelId = channelId,
+        url = url,
+    ).execute().toUnitResult()
+
+    override fun uploadFile(
+        file: File,
+        progressCallback: ProgressCallback?,
+    ): Result<UploadedFile> = retrofitCdnApi.uploadFile(
+        file = file.asBodyPart(),
+        progressCallback = progressCallback,
+    ).execute().map(UploadFileResponse::toUploadedFile)
+
+    override fun deleteFile(
+        url: String,
+    ): Result<Unit> = retrofitCdnApi.deleteFile(url = url)
+        .execute().toUnitResult()
+
+    override fun uploadImage(
+        file: File,
+        progressCallback: ProgressCallback?,
+    ): Result<UploadedFile> = retrofitCdnApi.uploadImage(
+        file = file.asBodyPart(),
+        progressCallback = progressCallback,
+    ).execute().map(UploadFileResponse::toUploadedFile)
+
+    override fun deleteImage(
+        url: String,
+    ): Result<Unit> = retrofitCdnApi.deleteImage(url = url)
+        .execute().toUnitResult()
+
+    private fun File.asBodyPart(): MultipartBody.Part {
+        val body = asRequestBody(contentType = getMediaType())
+        val filename = filenameSanitizer.sanitize(filename = name)
+        return MultipartBody.Part.createFormData(name = "file", filename = filename, body = body)
     }
 }
 

@@ -159,7 +159,8 @@ internal fun createMessageDeletedEventStringJson() =
             "cid": "channelType:channelId",
             "watcher_count": 3,
             "message": ${createMessageJsonString()},
-            "channel_last_message_at": "2020-06-29T06:14:28.000Z"
+            "channel_last_message_at": "2020-06-29T06:14:28.000Z",
+            "channel_message_count": 1
         """.trimIndent(),
     )
 
@@ -172,7 +173,8 @@ internal fun createMessageDeletedServerSideEventStringJson() =
             "cid": "channelType:channelId",
             "message": ${createMessageJsonString()},
             "hard_delete": true,
-            "channel_last_message_at": "2020-06-29T06:14:28.000Z"
+            "channel_last_message_at": "2020-06-29T06:14:28.000Z",
+            "channel_message_count": 1
         """.trimIndent(),
     )
 
@@ -556,7 +558,8 @@ internal fun createNewMessageEventStringJson() =
             "total_unread_count": 4,
             "unread_channels": 5,
             "message": ${createMessageJsonString()},
-            "channel_last_message_at": "2020-06-29T06:14:28.000Z"
+            "channel_last_message_at": "2020-06-29T06:14:28.000Z",
+            "channel_message_count": 1
         """.trimIndent(),
     )
 
@@ -570,7 +573,8 @@ internal fun createNewMessageWithoutUnreadCountsEventStringJson() =
             "cid": "channelType:channelId",
             "watcher_count": 3,
             "message": ${createMessageJsonString()},
-            "channel_last_message_at": "2020-06-29T06:14:28.000Z"
+            "channel_last_message_at": "2020-06-29T06:14:28.000Z",
+            "channel_message_count": 1
         """.trimIndent(),
     )
 

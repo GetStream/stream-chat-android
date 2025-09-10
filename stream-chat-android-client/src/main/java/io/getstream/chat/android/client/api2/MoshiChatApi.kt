@@ -501,8 +501,10 @@ constructor(
                         channelId = channelId,
                         userId = userId,
                         file = transformedFile,
-                        callback,
-                    )
+                        callback = callback,
+                    ).onSuccess { uploadedFile ->
+                        callback.onSuccess(url = uploadedFile.file)
+                    }.onError(callback::onError)
                 } else {
                     fileUploader.sendFile(
                         channelType = channelType,
@@ -528,8 +530,10 @@ constructor(
                         channelId = channelId,
                         userId = userId,
                         file = transformedFile,
-                        callback,
-                    )
+                        callback = callback,
+                    ).onSuccess { uploadedFile ->
+                        callback.onSuccess(url = uploadedFile.file)
+                    }.onError(callback::onError)
                 } else {
                     fileUploader.sendImage(
                         channelType = channelType,
@@ -562,6 +566,56 @@ constructor(
             )
         }
     }
+
+    override fun uploadFile(
+        file: File,
+        progressCallback: ProgressCallback?,
+    ): Call<UploadedFile> = CoroutineCall(coroutineScope) {
+        fileTransformer.transform(file)
+            .let { transformedFile ->
+                fileUploader.uploadFile(
+                    file = transformedFile,
+                    progressCallback = progressCallback,
+                )
+            }.onSuccess { uploadedFile ->
+                progressCallback?.onSuccess(url = uploadedFile.file)
+            }
+            .onError { error ->
+                progressCallback?.onError(error)
+            }
+    }
+
+    override fun deleteFile(
+        url: String,
+    ): Call<Unit> =
+        CoroutineCall(coroutineScope) {
+            fileUploader.deleteFile(url = url)
+        }
+
+    override fun uploadImage(
+        file: File,
+        progressCallback: ProgressCallback?,
+    ): Call<UploadedFile> = CoroutineCall(coroutineScope) {
+        fileTransformer.transform(file)
+            .let { transformedFile ->
+                fileUploader.uploadImage(
+                    file = transformedFile,
+                    progressCallback = progressCallback,
+                )
+            }.onSuccess { uploadedFile ->
+                progressCallback?.onSuccess(url = uploadedFile.file)
+            }
+            .onError { error ->
+                progressCallback?.onError(error)
+            }
+    }
+
+    override fun deleteImage(
+        url: String,
+    ): Call<Unit> =
+        CoroutineCall(coroutineScope) {
+            fileUploader.deleteImage(url = url)
+        }
 
     override fun flagUser(
         userId: String,

@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.suggestions.SuggestionList
@@ -67,6 +68,7 @@ public fun CommandSuggestionList(
         headerContent = {
             Row(
                 modifier = Modifier
+                    .semantics(mergeDescendants = true) {}
                     .fillMaxWidth()
                     .height(40.dp),
                 verticalAlignment = Alignment.CenterVertically,
