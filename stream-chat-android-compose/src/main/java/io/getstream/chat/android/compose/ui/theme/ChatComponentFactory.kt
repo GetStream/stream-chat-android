@@ -1023,7 +1023,7 @@ public interface ChatComponentFactory {
             onGiphyActionClick = onGiphyActionClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onQuotedMessageClick = onQuotedMessageClick,
-            onUserAvatarClick = { onUserAvatarClick?.invoke(messageItem.message.user) },
+            onUserAvatarClick = onUserAvatarClick?.let { { it.invoke(messageItem.message.user) } },
             onLinkClick = onMessageLinkClick,
             onUserMentionClick = onUserMentionClick,
             onAddAnswer = onAddAnswer,

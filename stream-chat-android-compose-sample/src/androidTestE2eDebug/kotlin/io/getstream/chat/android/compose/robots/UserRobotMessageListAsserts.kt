@@ -264,8 +264,8 @@ fun UserRobot.assertThreadMessage(text: String): UserRobot {
 
 fun UserRobot.assertThreadReplyLabelOnParentMessage(): UserRobot {
     assertEquals(
-        Message.threadRepliesLabel.waitToAppear().text,
         appContext.getString(R.string.stream_compose_message_list_thread_footnote_thread_reply),
+        Message.threadRepliesLabel.waitToAppear().text,
     )
     assertTrue(Message.threadParticipantAvatar.isDisplayed())
     return this
@@ -273,8 +273,8 @@ fun UserRobot.assertThreadReplyLabelOnParentMessage(): UserRobot {
 
 fun UserRobot.assertThreadReplyLabelOnThreadMessage(): UserRobot {
     assertEquals(
-        Message.threadRepliesLabel.waitToAppear().text,
         appContext.getString(R.string.stream_compose_thread_reply),
+        Message.threadRepliesLabel.waitToAppear().text,
     )
     assertTrue(Message.threadParticipantAvatar.isDisplayed())
     return this
@@ -282,16 +282,16 @@ fun UserRobot.assertThreadReplyLabelOnThreadMessage(): UserRobot {
 
 fun UserRobot.assertAlsoInTheChannelLabelInChannel(): UserRobot {
     assertEquals(
-        Message.messageHeaderLabel.waitToAppear().text,
         appContext.getString(R.string.stream_compose_replied_to_thread),
+        Message.messageHeaderLabel.waitToAppear().text,
     )
     return this
 }
 
 fun UserRobot.assertAlsoInTheChannelLabelInThread(): UserRobot {
     assertEquals(
-        Message.messageHeaderLabel.waitToAppear().text,
         appContext.getString(R.string.stream_compose_also_sent_to_channel),
+        Message.messageHeaderLabel.waitToAppear().text,
     )
     return this
 }

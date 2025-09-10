@@ -730,7 +730,7 @@ internal fun CommandsButton(
             Icon(
                 modifier = Modifier.size(commandsButtonStyle.icon.size),
                 painter = commandsButtonStyle.icon.painter,
-                contentDescription = null,
+                contentDescription = stringResource(R.string.stream_compose_message_composer_instant_commands),
                 tint = tint,
             )
         },

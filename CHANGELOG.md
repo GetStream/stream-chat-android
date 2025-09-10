@@ -86,6 +86,7 @@
 - Filter out Poll Options differing only on whitespaces. [#5913](https://github.com/GetStream/stream-chat-android/pull/5913)
 
 ### ⬆️ Improved
+- Improved accessibility of the message list items. [#5911](https://github.com/GetStream/stream-chat-android/pull/5911)
 
 ### ✅ Added
 
