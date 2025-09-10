@@ -70,7 +70,6 @@
     <ID>MagicNumber:UserAvatarView.kt$UserAvatarView$0.5f</ID>
     <ID>MagicNumber:UserAvatarView.kt$UserAvatarView$10f</ID>
     <ID>MagicNumber:UserAvatarView.kt$UserAvatarView$8f</ID>
-    <ID>MaxLineLength:AttachmentActivity.kt$AttachmentActivity$Toast.makeText(this, getString(R.string.stream_ui_message_list_attachment_display_error), Toast.LENGTH_SHORT).show()</ID>
     <ID>MaxLineLength:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$deleteOptionHandler = { setResultAndFinish(AttachmentOptionResult.Delete(attachmentGalleryResultItem)) }</ID>
     <ID>MaxLineLength:AttachmentGalleryViewMediaStyle.kt$AttachmentGalleryViewMediaStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconBackgroundColor</ID>
     <ID>MaxLineLength:AttachmentGalleryViewMediaStyle.kt$AttachmentGalleryViewMediaStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconCornerRadius</ID>
