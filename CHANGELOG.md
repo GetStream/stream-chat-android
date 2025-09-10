@@ -62,6 +62,7 @@
 - Ensure any callback action called from the CoilStreamImageLoader is run on the caller thread. [#5915](https://github.com/GetStream/stream-chat-android/pull/5915)
 
 ### ⬆️ Improved
+- Improve the read count calculation on every message based on `channelUserRead.lastReadMessageId`. [#5923](https://github.com/GetStream/stream-chat-android/pull/5923)
 
 ### ✅ Added
 
