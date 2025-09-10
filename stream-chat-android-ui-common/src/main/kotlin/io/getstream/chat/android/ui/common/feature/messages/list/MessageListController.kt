@@ -947,7 +947,7 @@ public class MessageListController(
                     ?: false
 
                 val messageReadBy = channelReadsIndexed
-                    .filter {it.second >= index }
+                    .filter { it.second >= index }
                     .map { it.first }
 
                 val isMessageFocused = message.id == focusedMessage?.id
