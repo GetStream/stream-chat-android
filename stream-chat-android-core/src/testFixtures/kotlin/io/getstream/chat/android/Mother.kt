@@ -429,6 +429,7 @@ public fun randomChannel(
     isInsideSearch: Boolean = randomBoolean(),
     draftMessage: DraftMessage? = randomDraftMessageOrNull(),
     activeLiveLocations: List<Location> = emptyList(),
+    messageCount: Int? = positiveRandomInt().takeIf { randomBoolean() },
 ): Channel = Channel(
     id = id,
     name = name,
@@ -457,6 +458,7 @@ public fun randomChannel(
     isInsideSearch = isInsideSearch,
     draftMessage = draftMessage,
     activeLiveLocations = activeLiveLocations,
+    messageCount = messageCount,
 )
 
 public fun randomChannelUserRead(

@@ -100,6 +100,7 @@ public data class Channel(
     val isInsideSearch: Boolean = false,
     val draftMessage: DraftMessage? = null,
     val activeLiveLocations: List<Location> = emptyList(),
+    val messageCount: Int? = null,
     override val extraData: Map<String, Any> = mapOf(),
 ) : CustomObject, ComparableFieldProvider {
 
@@ -193,6 +194,7 @@ public data class Channel(
         private var isInsideSearch: Boolean = false
         private var draft: DraftMessage? = null
         private var activeLiveLocations: List<Location> = emptyList()
+        private var messageCount: Int? = null
         private var extraData: Map<String, Any> = mapOf()
 
         public constructor(channel: Channel) : this() {
@@ -225,6 +227,7 @@ public data class Channel(
             isInsideSearch = channel.isInsideSearch
             draft = channel.draftMessage
             activeLiveLocations = channel.activeLiveLocations
+            messageCount = channel.messageCount
             extraData = channel.extraData
         }
 
@@ -269,6 +272,9 @@ public data class Channel(
         public fun withActiveLiveLocations(activeLiveLocations: List<Location>): Builder = apply {
             this.activeLiveLocations = activeLiveLocations
         }
+        public fun withMessageCount(messageCount: Int?): Builder = apply {
+            this.messageCount = messageCount
+        }
         public fun withExtraData(extraData: Map<String, Any>): Builder = apply { this.extraData = extraData }
 
         @Deprecated(
@@ -309,6 +315,7 @@ public data class Channel(
             isInsideSearch = isInsideSearch,
             draftMessage = draft,
             activeLiveLocations = activeLiveLocations,
+            messageCount = messageCount,
             extraData = extraData,
         )
     }
@@ -336,6 +343,7 @@ public fun Channel.mergeChannelFromEvent(that: Channel): Channel {
         createdAt = that.createdAt,
         updatedAt = that.updatedAt,
         deletedAt = that.deletedAt,
+        messageCount = that.messageCount ?: messageCount,
         /* Do not merge (messages, watcherCount, watchers, read, ownCapabilities, membership, unreadCount) fields.
         messages = that.messages,
         watcherCount = that.watcherCount,
@@ -369,5 +377,6 @@ public fun Channel.toChannelData(): ChannelData {
         ownCapabilities = ownCapabilities,
         membership = membership,
         draft = draftMessage,
+        messageCount = messageCount,
     )
 }

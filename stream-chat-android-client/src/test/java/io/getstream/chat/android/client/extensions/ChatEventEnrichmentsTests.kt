@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.events.ReactionDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
 import io.getstream.chat.android.client.extensions.internal.enrichIfNeeded
+import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
@@ -54,6 +55,7 @@ internal class ChatEventEnrichmentsTests {
             user = randomUser(),
             channelType = randomString(),
             channelId = randomString(),
+            channelMessageCount = positiveRandomInt(),
         )
         val enrichedEvent = event.enrichIfNeeded() as NewMessageEvent
         enrichedEvent.message.cid shouldBeEqualTo cid
@@ -71,6 +73,7 @@ internal class ChatEventEnrichmentsTests {
             channelType = randomString(),
             channelId = randomString(),
             hardDelete = randomBoolean(),
+            channelMessageCount = positiveRandomInt(),
         )
         val enrichedEvent = event.enrichIfNeeded() as MessageDeletedEvent
         enrichedEvent.message.cid shouldBeEqualTo cid
