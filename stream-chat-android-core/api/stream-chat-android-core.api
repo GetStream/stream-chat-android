@@ -412,8 +412,8 @@ public final class io/getstream/chat/android/models/Channel : io/getstream/chat/
 	public final fun getMemberCount ()I
 	public final fun getMembers ()Ljava/util/List;
 	public final fun getMembership ()Lio/getstream/chat/android/models/Member;
+	public final fun getMessageCount ()Ljava/lang/Integer;
 	public final fun getMessages ()Ljava/util/List;
-	public final fun getMessagesCount ()Ljava/lang/Integer;
 	public final fun getName ()Ljava/lang/String;
 	public final fun getOwnCapabilities ()Ljava/util/Set;
 	public final fun getPendingMessages ()Ljava/util/List;
@@ -455,8 +455,8 @@ public final class io/getstream/chat/android/models/Channel$Builder {
 	public final fun withMemberCount (I)Lio/getstream/chat/android/models/Channel$Builder;
 	public final fun withMembers (Ljava/util/List;)Lio/getstream/chat/android/models/Channel$Builder;
 	public final fun withMembership (Lio/getstream/chat/android/models/Member;)Lio/getstream/chat/android/models/Channel$Builder;
+	public final fun withMessageCount (Ljava/lang/Integer;)Lio/getstream/chat/android/models/Channel$Builder;
 	public final fun withMessages (Ljava/util/List;)Lio/getstream/chat/android/models/Channel$Builder;
-	public final fun withMessagesCount (Ljava/lang/Integer;)Lio/getstream/chat/android/models/Channel$Builder;
 	public final fun withName (Ljava/lang/String;)Lio/getstream/chat/android/models/Channel$Builder;
 	public final fun withOwnCapabilities (Ljava/util/Set;)Lio/getstream/chat/android/models/Channel$Builder;
 	public final fun withPinnedMessages (Ljava/util/List;)Lio/getstream/chat/android/models/Channel$Builder;
@@ -556,7 +556,7 @@ public final class io/getstream/chat/android/models/ChannelData {
 	public final fun getImage ()Ljava/lang/String;
 	public final fun getMemberCount ()I
 	public final fun getMembership ()Lio/getstream/chat/android/models/Member;
-	public final fun getMessagesCount ()Ljava/lang/Integer;
+	public final fun getMessageCount ()Ljava/lang/Integer;
 	public final fun getName ()Ljava/lang/String;
 	public final fun getOwnCapabilities ()Ljava/util/Set;
 	public final fun getTeam ()Ljava/lang/String;

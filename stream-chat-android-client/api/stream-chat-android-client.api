@@ -782,8 +782,8 @@ public abstract interface class io/getstream/chat/android/client/channel/state/C
 	public abstract fun getMembers ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMembersCount ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMessageById (Ljava/lang/String;)Lio/getstream/chat/android/models/Message;
+	public abstract fun getMessageCount ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMessages ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getMessagesCount ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMessagesState ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMuted ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getOldMessages ()Lkotlinx/coroutines/flow/StateFlow;
