@@ -40,8 +40,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -53,7 +51,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.pointerInput
@@ -78,12 +75,10 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryP
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.ui.components.messages.MessageContent
 import io.getstream.chat.android.compose.ui.components.messages.MessageHeaderLabel
-import io.getstream.chat.android.compose.ui.components.messages.MessageReactions
 import io.getstream.chat.android.compose.ui.components.messages.PollMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
 import io.getstream.chat.android.compose.ui.components.messages.getMessageBubbleColor
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.clickable
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
 import io.getstream.chat.android.compose.ui.util.isUploading
@@ -408,24 +403,25 @@ internal fun DefaultMessageItemHeaderContent(
 
     if (!message.isDeleted()) {
         val ownReactions = message.ownReactions
-        val reactionGroups = message.reactionGroups.ifEmpty { return }
         val iconFactory = ChatTheme.reactionIconFactory
-        reactionGroups.filter { iconFactory.isReactionSupported(it.key) }.takeIf { it.isNotEmpty() }?.toList()
-            ?.sortedWith { o1, o2 -> reactionSorting.compare(o1.second, o2.second) }?.map { (type, _) ->
+        message.reactionGroups
+            .filter { iconFactory.isReactionSupported(it.key) }
+            .takeIf { it.isNotEmpty() }
+            ?.toList()
+            ?.sortedWith { o1, o2 -> reactionSorting.compare(o1.second, o2.second) }
+            ?.map { (type, _) ->
                 val isSelected = ownReactions.any { it.type == type }
                 val reactionIcon = iconFactory.createReactionIcon(type)
                 ReactionOptionItemState(
                     painter = reactionIcon.getPainter(isSelected),
                     type = type,
                 )
-            }?.let { options ->
-                MessageReactions(
-                    modifier = Modifier
-                        .minimumInteractiveComponentSize()
-                        .clip(shape = RoundedCornerShape(16.dp))
-                        .clickable { onReactionsClick(message) }
-                        .padding(horizontal = 4.dp, vertical = 2.dp),
-                    options = options,
+            }?.let { reactions ->
+                ChatTheme.componentFactory.MessageReactionList(
+                    modifier = Modifier,
+                    message = message,
+                    reactions = reactions,
+                    onClick = onReactionsClick,
                 )
             }
     }
