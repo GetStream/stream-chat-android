@@ -34,6 +34,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewReactionOptionData
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageReactionItemParams
 
 /**
  * Represents a reaction bubble with a list of reactions this message has.
@@ -46,11 +47,12 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 public fun MessageReactions(
     options: List<ReactionOptionItemState>,
     modifier: Modifier = Modifier,
-    itemContent: @Composable RowScope.(ReactionOptionItemState) -> Unit = { reaction ->
+    itemContent: @Composable RowScope.(ReactionOptionItemState) -> Unit = { state ->
         with(ChatTheme.componentFactory) {
             MessageReactionItem(
-                modifier = Modifier,
-                reaction = reaction,
+                params = MessageReactionItemParams(
+                    state = state,
+                ),
             )
         }
     },

@@ -79,6 +79,7 @@ import io.getstream.chat.android.compose.ui.components.messages.PollMessageConte
 import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
 import io.getstream.chat.android.compose.ui.components.messages.getMessageBubbleColor
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageReactionListParams
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
 import io.getstream.chat.android.compose.ui.util.isUploading
@@ -418,10 +419,11 @@ internal fun DefaultMessageItemHeaderContent(
                 )
             }?.let { reactions ->
                 ChatTheme.componentFactory.MessageReactionList(
-                    modifier = Modifier,
-                    message = message,
-                    reactions = reactions,
-                    onClick = onReactionsClick,
+                    params = MessageReactionListParams(
+                        message = message,
+                        reactions = reactions,
+                        onClick = onReactionsClick,
+                    ),
                 )
             }
     }

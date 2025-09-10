@@ -1191,18 +1191,19 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun MessageReactionList(
-        modifier: Modifier,
-        message: Message,
-        reactions: List<ReactionOptionItemState>,
-        onClick: (message: Message) -> Unit,
+        params: MessageReactionListParams,
     ) {
         MessageReactions(
-            modifier = modifier
+            modifier = params.modifier
                 .minimumInteractiveComponentSize()
                 .clip(shape = RoundedCornerShape(16.dp))
-                .clickable { onClick(message) }
+                .run {
+                    params.onClick?.let { onClick ->
+                        clickable { onClick(params.message) }
+                    } ?: this
+                }
                 .padding(horizontal = 4.dp, vertical = 2.dp),
-            options = reactions,
+            options = params.reactions,
         )
     }
 
@@ -1211,19 +1212,18 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun RowScope.MessageReactionItem(
-        modifier: Modifier,
-        reaction: ReactionOptionItemState,
+        params: MessageReactionItemParams,
     ) {
         MessageReactionItem(
-            modifier = modifier
+            modifier = params.modifier
                 .semantics {
-                    testTag = "Stream_MessageReaction_${reaction.type}"
-                    contentDescription = reaction.type
+                    testTag = "Stream_MessageReaction_${params.state.type}"
+                    contentDescription = params.state.type
                 }
                 .size(20.dp)
                 .padding(2.dp)
                 .align(Alignment.CenterVertically),
-            option = reaction,
+            option = params.state,
         )
     }
 
