@@ -54,6 +54,7 @@ import java.util.Date
  * @param ownCapabilities Channel's capabilities available for the current user. Note that the field is not provided in the events.
  * @param membership Represents relationship of the current user to this channel.
  * @param activeLiveLocations List of active live locations in the channel.
+ * @param messageCount The total number of messages in the channel, if known.
  */
 @Entity(tableName = CHANNEL_ENTITY_TABLE_NAME, indices = [Index(value = ["syncStatus"])])
 internal data class ChannelEntity(
@@ -82,6 +83,7 @@ internal data class ChannelEntity(
     val ownCapabilities: Set<String>,
     val membership: MemberEntity?,
     val activeLiveLocations: List<LocationEntity>,
+    val messageCount: Int?,
 ) {
     /**
      * The channel id in the format messaging:123.

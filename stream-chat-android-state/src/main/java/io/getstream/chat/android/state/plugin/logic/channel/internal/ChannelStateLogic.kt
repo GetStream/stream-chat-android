@@ -827,6 +827,9 @@ internal class ChannelStateLogic(
     }
 
     fun getPoll(pollId: String): Poll? = polls[pollId]
+    fun udpateMessageCount(channelMessageCount: Int) {
+        updateChannelData { it?.copy(messageCount = channelMessageCount) }
+    }
 
     private companion object {
         private const val TAG = "Chat:ChannelStateLogic"
