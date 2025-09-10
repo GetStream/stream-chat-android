@@ -90,6 +90,7 @@
 - Improved accessibility of the message list items. [#5911](https://github.com/GetStream/stream-chat-android/pull/5911)
 
 ### ✅ Added
+- Added `MessageReactionList` and `MessageReactionItem` component factories. [#5925](https://github.com/GetStream/stream-chat-android/pull/5925)
 
 ### ⚠️ Changed
 
