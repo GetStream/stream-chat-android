@@ -87,6 +87,7 @@ internal object MessageDtoTestData {
               }
             ]
           },
+          "member": ${MemberInfoDtoTestData.downstreamJson},
           "extraData": {
             "key1": "value1",
             "key2": true,
@@ -186,6 +187,7 @@ internal object MessageDtoTestData {
                 ),
             ),
         ),
+        member = MemberInfoDtoTestData.downstreamMemberInfo,
     )
 
     @Language("JSON")
@@ -237,7 +239,8 @@ internal object MessageDtoTestData {
                 ]
               }
             ]
-          }
+          },
+          "member": ${MemberInfoDtoTestData.downstreamJson}
         }""".withoutWhitespace()
     val downstreamMessageWithoutExtraData = DownstreamMessageDto(
         id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
@@ -300,6 +303,7 @@ internal object MessageDtoTestData {
                 ),
             ),
         ),
+        member = MemberInfoDtoTestData.downstreamMemberInfo,
     )
 
     @Language("JSON")

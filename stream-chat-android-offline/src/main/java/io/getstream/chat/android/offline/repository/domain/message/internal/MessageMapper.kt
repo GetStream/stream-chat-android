@@ -87,6 +87,7 @@ internal suspend fun MessageEntity.toModel(
         poll = pollId?.let { getPoll(it) },
         reminder = reminder?.toModel(),
         sharedLocation = sharedLocation?.toModel(),
+        channelRole = channelRole,
     )
 }
 
@@ -134,6 +135,7 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
         reminder = reminder?.toEntity(),
         restrictedVisibility = restrictedVisibility,
         sharedLocation = sharedLocation?.toEntity(),
+        channelRole = channelRole,
     ),
     attachments = attachments.mapIndexed { index, attachment -> attachment.toEntity(id, index) },
     latestReactions = latestReactions.map(Reaction::toEntity),
@@ -185,6 +187,7 @@ internal suspend fun ReplyMessageEntity.toModel(
             restrictedVisibility = restrictedVisibility,
             channelInfo = channelInfo?.toModel(),
             reminder = reminder?.toModel(),
+            channelRole = channelRole,
         )
     }
 }
@@ -222,6 +225,7 @@ internal fun Message.toReplyEntity(): ReplyMessageEntity =
             moderationDetails = moderationDetails?.toEntity(),
             pollId = poll?.id,
             reminder = reminder?.toEntity(),
+            channelRole = channelRole,
         ),
         attachments = attachments.mapIndexed { index, attachment -> attachment.toReplyEntity(id, index) },
     )

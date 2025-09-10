@@ -263,6 +263,11 @@ public data class Message(
      * Location shared by the user in the message.
      */
     val sharedLocation: Location? = null,
+
+    /**
+     * The role of the member(who sent the message) in the channel.
+     */
+    val channelRole: String? = null,
 ) : CustomObject, ComparableFieldProvider {
     public companion object {
         /**
@@ -381,6 +386,7 @@ public data class Message(
         if (moderationDetails != null) append(", moderationDetails=").append(moderationDetails)
         if (moderation != null) append(", moderation=").append(moderation)
         if (poll != null) append(", poll=").append(poll)
+        if (channelRole != null) append(", channelRole=").append(channelRole)
         if (extraData.isNotEmpty()) append(", extraData=").append(extraData)
         append(")")
     }.toString()
@@ -437,6 +443,7 @@ public data class Message(
         private var restrictedVisibility: List<String> = emptyList()
         private var reminder: MessageReminderInfo? = null
         private var sharedLocation: Location? = null
+        private var channelRole: String? = null
 
         public constructor(message: Message) : this() {
             id = message.id
@@ -485,6 +492,7 @@ public data class Message(
             restrictedVisibility = message.restrictedVisibility
             reminder = message.reminder
             sharedLocation = message.sharedLocation
+            channelRole = message.channelRole
         }
 
         public fun withId(id: String): Builder = apply { this.id = id }
@@ -565,6 +573,7 @@ public data class Message(
         public fun withSharedLocation(sharedLocation: Location?): Builder = apply {
             this.sharedLocation = sharedLocation
         }
+        public fun withChannelRole(channelRole: String?): Builder = apply { this.channelRole = channelRole }
 
         public fun build(): Message {
             return Message(
@@ -614,6 +623,7 @@ public data class Message(
                 poll = poll,
                 reminder = reminder,
                 sharedLocation = sharedLocation,
+                channelRole = channelRole,
             )
         }
     }

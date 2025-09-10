@@ -28,6 +28,7 @@
 - Introduce `ChatClient.uploadFile`, `ChatClient.deleteFile`, `ChatClient.uploadImage`, and `ChatClient.deleteImage`, to upload/delete files/images that are not related to any channel. [#5909](https://github.com/GetStream/stream-chat-android/pull/5909)
 - Add `NewMessageEvent.channelMessageCount` field representing the total number of messages in the channel. [#5918](https://github.com/GetStream/stream-chat-android/pull/5918)
 - Add `MessageDeletedEvent.channelMessageCount` field representing the total number of messages in the channel. [#5918](https://github.com/GetStream/stream-chat-android/pull/5918)
+- Add `channelRole` property on the `Message` model, representing the role of the member who sent the message in the channel. [#5919](https://github.com/GetStream/stream-chat-android/pull/5919)
 
 ### ⚠️ Changed
 

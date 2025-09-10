@@ -115,6 +115,7 @@ internal fun randomMessageEntity(
     pollId: String? = null,
     reminder: ReminderInfoEntity = randomReminderInfoEntity(),
     sharedLocation: LocationEntity? = randomLocationEntity(),
+    channelRole: String? = null,
 ) = MessageEntity(
     messageInnerEntity = MessageInnerEntity(
         id = id,
@@ -147,6 +148,7 @@ internal fun randomMessageEntity(
         pollId = pollId,
         reminder = reminder,
         sharedLocation = sharedLocation,
+        channelRole = channelRole,
     ),
     attachments = attachments,
     latestReactions = latestReactions,
