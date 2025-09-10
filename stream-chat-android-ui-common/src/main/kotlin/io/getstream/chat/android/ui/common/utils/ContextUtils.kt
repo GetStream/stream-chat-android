@@ -17,7 +17,9 @@
 package io.getstream.chat.android.ui.common.utils
 
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 
 /**
@@ -32,4 +34,23 @@ public fun Context.isPermissionDeclared(permission: String): Boolean {
         .getPackageInfo(packageName, PackageManager.GET_PERMISSIONS)
         ?.requestedPermissions
         ?.contains(permission) == true
+}
+
+/**
+ * Share a local file.
+ *
+ * @param uri The local file [Uri] to share.
+ * @param mimeType The mime type of the local file to share. If null, the system will try to infer it.
+ */
+@InternalStreamChatApi
+public fun Context.shareLocalFile(
+    uri: Uri,
+    mimeType: String? = null,
+) {
+    val intent = Intent(Intent.ACTION_SEND).apply {
+        type = mimeType ?: "*/*"
+        putExtra(Intent.EXTRA_STREAM, uri)
+        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    }
+    startActivity(Intent.createChooser(intent, null))
 }

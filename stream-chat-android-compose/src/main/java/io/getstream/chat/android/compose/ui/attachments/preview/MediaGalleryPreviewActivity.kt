@@ -39,7 +39,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -74,7 +73,7 @@ import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.utils.StreamFileUtil
-import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
+import io.getstream.chat.android.ui.common.utils.shareLocalFile
 import io.getstream.result.Result
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -309,7 +308,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 )
                 when (result) {
                     is Result.Success -> {
-                        shareAttachment(mediaUri = result.value, attachmentType = attachment.type)
+                        shareAttachment(mediaUri = result.value, mimeType = attachment.mimeType)
                     }
                     is Result.Failure -> {
                         mediaGalleryPreviewViewModel.promptedAttachment = attachment
@@ -354,7 +353,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 }
                 shareAttachment(
                     mediaUri = imageUri,
-                    attachmentType = attachment.type,
+                    mimeType = attachment.mimeType,
                 )
             }
         } else {
@@ -374,15 +373,9 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         ).show()
     }
 
-    /**
-     * Starts a picker to share the current image.
-     *
-     * @param mediaUri The URI of the media attachment to share.
-     * @param attachmentType type of attachment being shared.
-     */
     private fun shareAttachment(
         mediaUri: Uri?,
-        attachmentType: String?,
+        mimeType: String?,
     ) {
         mediaGalleryPreviewViewModel.isSharingInProgress = false
 
@@ -391,26 +384,9 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             return
         }
 
-        val mediaType = when (attachmentType) {
-            AttachmentType.IMAGE -> "image/*"
-            AttachmentType.VIDEO -> "video/*"
-            else -> {
-                toastFailedShare()
-                return
-            }
-        }
-
-        ContextCompat.startActivity(
-            this,
-            Intent.createChooser(
-                Intent(Intent.ACTION_SEND).apply {
-                    type = mediaType
-                    putExtra(Intent.EXTRA_STREAM, mediaUri)
-                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                },
-                getString(R.string.stream_compose_attachment_gallery_share),
-            ),
-            null,
+        shareLocalFile(
+            uri = mediaUri,
+            mimeType = mimeType,
         )
     }
 
@@ -432,7 +408,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         when (result) {
             is Result.Success -> shareAttachment(
                 mediaUri = result.value,
-                attachmentType = attachment.type,
+                mimeType = attachment.mimeType,
             )
 
             is Result.Failure -> toastFailedShare()
