@@ -41,15 +41,18 @@ public fun Context.isPermissionDeclared(permission: String): Boolean {
  *
  * @param uri The local file [Uri] to share.
  * @param mimeType The mime type of the local file to share. If null, the system will try to infer it.
+ * @param text An optional text to share along with the file.
  */
 @InternalStreamChatApi
 public fun Context.shareLocalFile(
     uri: Uri,
     mimeType: String? = null,
+    text: String? = null,
 ) {
     val intent = Intent(Intent.ACTION_SEND).apply {
         type = mimeType ?: "*/*"
         putExtra(Intent.EXTRA_STREAM, uri)
+        text?.let { putExtra(Intent.EXTRA_TEXT, it) }
         addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     }
     startActivity(Intent.createChooser(intent, null))
