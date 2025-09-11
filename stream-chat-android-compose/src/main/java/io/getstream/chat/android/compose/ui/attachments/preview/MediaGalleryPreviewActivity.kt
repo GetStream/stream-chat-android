@@ -347,6 +347,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 is Result.Success -> shareLocalFile(
                     uri = result.value,
                     mimeType = attachment.mimeType,
+                    text = attachment.getDisplayableName(),
                 )
 
                 is Result.Failure -> toastFailedShare()
