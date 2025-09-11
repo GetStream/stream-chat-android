@@ -76,7 +76,6 @@ import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.client.token.TokenManager
-import io.getstream.chat.android.client.token.TokenManagerImpl
 import io.getstream.chat.android.client.transformer.ApiModelTransformers
 import io.getstream.chat.android.client.uploader.FileTransformer
 import io.getstream.chat.android.client.uploader.FileUploader
@@ -127,12 +126,12 @@ constructor(
     private val notificationsHandler: NotificationHandler,
     private val apiModelTransformers: ApiModelTransformers,
     private val fileTransformer: FileTransformer,
-    private val fileUploader: FileUploader? = null,
-    private val sendMessageInterceptor: SendMessageInterceptor? = null,
-    private val shareFileDownloadRequestInterceptor: ShareFileDownloadRequestInterceptor? = null,
-    private val tokenManager: TokenManager = TokenManagerImpl(),
-    private val customOkHttpClient: OkHttpClient? = null,
-    private val clientDebugger: ChatClientDebugger? = null,
+    private val fileUploader: FileUploader?,
+    private val sendMessageInterceptor: SendMessageInterceptor?,
+    private val shareFileDownloadRequestInterceptor: ShareFileDownloadRequestInterceptor?,
+    private val tokenManager: TokenManager,
+    private val customOkHttpClient: OkHttpClient?,
+    private val clientDebugger: ChatClientDebugger?,
     private val lifecycle: Lifecycle,
     private val appName: String?,
     private val appVersion: String?,
