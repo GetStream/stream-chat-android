@@ -221,7 +221,8 @@ public object StreamFileUtil {
                 is Success -> {
                     val streamCacheDir = getOrCreateCacheDirResult.value
 
-                    val attachmentHashCode = (attachment.assetUrl)?.hashCode()
+                    val url = attachment.assetUrl ?: attachment.imageUrl // Supports both images and files
+                    val attachmentHashCode = url?.hashCode()
                     val fileName = CACHED_FILE_PREFIX + attachmentHashCode.toString() + attachment.name
 
                     val file = File(streamCacheDir, fileName)
@@ -232,7 +233,7 @@ public object StreamFileUtil {
                     ) {
                         Success(getUriForFile(context, file))
                     } else {
-                        val fileUrl = attachment.assetUrl ?: return Failure(
+                        val fileUrl = url ?: return Failure(
                             Error.GenericError(message = "File URL cannot be null."),
                         )
 
