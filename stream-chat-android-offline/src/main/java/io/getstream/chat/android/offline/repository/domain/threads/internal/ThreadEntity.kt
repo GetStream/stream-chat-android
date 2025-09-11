@@ -40,6 +40,7 @@ internal class ThreadEntity(
     val title: String,
     val read: List<ChannelUserReadEntity>,
     val latestReplyIds: List<String>,
+    val extraData: Map<String, Any>,
 )
 
 internal const val THREAD_ENTITY_TABLE_NAME = "stream_chat_thread"
