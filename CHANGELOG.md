@@ -88,6 +88,7 @@
 
 ### ⬆️ Improved
 - Improved accessibility of the message list items. [#5911](https://github.com/GetStream/stream-chat-android/pull/5911)
+- Show quoted message over messages with attachments. [#5924](https://github.com/GetStream/stream-chat-android/pull/5924)
 
 ### ✅ Added
 - Added `MessageReactionList` and `MessageReactionItem` component factories. [#5925](https://github.com/GetStream/stream-chat-android/pull/5925)
