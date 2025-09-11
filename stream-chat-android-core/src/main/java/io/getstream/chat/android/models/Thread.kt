@@ -72,7 +72,8 @@ public data class Thread(
         get() = parentMessage.replyCount
 
     /**
-     * For more info, see [Filtering and Sorting Threads](https://getstream.io/chat/docs/android/threads/#filtering-and-sorting-threads).
+     * For more info, see
+     * [Filtering and Sorting Threads](https://getstream.io/chat/docs/android/threads/#filtering-and-sorting-threads).
      */
     override fun getComparableField(fieldName: String): Comparable<*>? = when (fieldName) {
         "active_participant_count", "activeParticipantCount" -> activeParticipantCount
