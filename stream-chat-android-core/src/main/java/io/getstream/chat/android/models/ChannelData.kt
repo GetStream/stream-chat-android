@@ -40,6 +40,8 @@ import java.util.Date
  * @param ownCapabilities Channel's capabilities available for the current user. Note that the field is not provided
  * in the events.
  * @param membership Represents relationship of the current user to the channel.
+ * @param draft The current user's draft message for this channel, if any.
+ * @param messageCount The total number of messages in the channel, if known.
  */
 @Immutable
 public data class ChannelData(
@@ -59,6 +61,7 @@ public data class ChannelData(
     val ownCapabilities: Set<String> = setOf(),
     val membership: Member? = null,
     val draft: DraftMessage? = null,
+    val messageCount: Int? = null,
 ) {
 
     /**
@@ -100,6 +103,7 @@ public data class ChannelData(
             ?: currentOwnCapabilities,
         membership = channel.membership,
         draft = channel.draftMessage,
+        messageCount = channel.messageCount,
     )
 
     @Deprecated(
@@ -176,6 +180,7 @@ public data class ChannelData(
             isInsideSearch = insideSearch,
             draftMessage = draft,
             activeLiveLocations = emptyList(),
+            messageCount = messageCount,
         )
     }
 
@@ -210,6 +215,7 @@ public fun ChannelData.mergeFromEvent(that: ChannelData): ChannelData {
         updatedAt = that.updatedAt,
         deletedAt = that.deletedAt,
         createdBy = that.createdBy,
+        messageCount = messageCount ?: this.messageCount,
         /* Do not merge (ownCapabilities, membership) fields.
         ownCapabilities = that.ownCapabilities,
         membership = that.membership,

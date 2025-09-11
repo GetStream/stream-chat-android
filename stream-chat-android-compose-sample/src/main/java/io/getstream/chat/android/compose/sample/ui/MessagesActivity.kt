@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.sample.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -192,12 +191,6 @@ class MessagesActivity : ComponentActivity() {
                 reactionSorting = ReactionSortingByLastReactionAt,
                 onBackPressed = { finish() },
                 onHeaderTitleClick = ::openChannelInfo,
-                onUserAvatarClick = { user ->
-                    Log.i("MessagesActivity", "user avatar clicked: ${user.id}")
-                },
-                onUserMentionClick = { user ->
-                    Log.i("MessagesActivity", "user mention tapped: ${user.id}")
-                },
                 onMessageLinkClick = { _, link ->
                     openLink(link)
                 },

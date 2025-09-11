@@ -275,6 +275,7 @@ public data class MessageDeletedEvent(
     override val message: Message,
     val user: User?,
     val hardDelete: Boolean,
+    val channelMessageCount: Int?,
 ) : CidEvent(), HasMessage
 
 /**
@@ -335,6 +336,7 @@ public data class NewMessageEvent(
     override val watcherCount: Int = 0,
     override val totalUnreadCount: Int = 0,
     override val unreadChannels: Int = 0,
+    val channelMessageCount: Int?,
 ) : CidEvent(), UserEvent, HasMessage, HasWatcherCount, HasUnreadCounts
 
 /**

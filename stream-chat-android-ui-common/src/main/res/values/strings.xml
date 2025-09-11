@@ -58,6 +58,17 @@
 
     <!-- Message List -->
     <string name="stream_ui_message_list_message_deleted">This message was deleted.</string>
+    <string name="stream_ui_message_list_semantics_message_status_read">Message read</string>
+    <string name="stream_ui_message_list_semantics_message_status_read_by">Message read by %d members</string>
+    <string name="stream_ui_message_list_semantics_message_status_pending">Message is pending</string>
+    <string name="stream_ui_message_list_semantics_message_status_sent">Message is sent</string>
+    <string name="stream_ui_message_list_semantics_message_attachments">%d attachments</string>
+    <string name="stream_ui_message_list_semantics_message_attachment_image">Image attachment</string>
+    <string name="stream_ui_message_list_semantics_message_attachment_video">Video attachment</string>
+    <plurals name="stream_ui_message_list_semantics_message_reactions">
+        <item quantity="one">%d message reaction</item>
+        <item quantity="other">%d message reactions</item>
+    </plurals>
 
     <!--Moderation Dialog-->
     <string name="stream_ui_moderation_dialog_title">Failed to send message</string>

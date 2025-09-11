@@ -139,10 +139,10 @@ public fun MessagesScreen(
     reactionSorting: ReactionSorting = ReactionSortingByFirstReactionAt,
     onBackPressed: () -> Unit = {},
     onHeaderTitleClick: (channel: Channel) -> Unit = {},
-    onChannelAvatarClick: () -> Unit = {},
+    onChannelAvatarClick: (() -> Unit)? = null,
     onComposerLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     onMessageLinkClick: ((Message, String) -> Unit)? = null,
-    onUserAvatarClick: (User) -> Unit = {},
+    onUserAvatarClick: ((User) -> Unit)? = null,
     onUserMentionClick: (User) -> Unit = {},
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
@@ -312,7 +312,7 @@ internal fun DefaultTopBarContent(
     viewModelFactory: MessagesViewModelFactory,
     backAction: BackAction,
     onHeaderTitleClick: (channel: Channel) -> Unit,
-    onChannelAvatarClick: () -> Unit,
+    onChannelAvatarClick: (() -> Unit)?,
 ) {
     val listViewModel = viewModel(MessageListViewModel::class.java, factory = viewModelFactory)
 

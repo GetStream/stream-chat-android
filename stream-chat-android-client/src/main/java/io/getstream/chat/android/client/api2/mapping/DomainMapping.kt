@@ -174,6 +174,7 @@ internal class DomainMapping(
             ownCapabilities = own_capabilities.toSet(),
             membership = membership?.toDomain(),
             activeLiveLocations = active_live_locations.map { it.toDomain() },
+            messageCount = message_count,
             extraData = extraData.toMutableMap(),
         ).syncUnreadCountWithReads(currentUserIdProvider())
             .let(channelTransformer::transform)
@@ -237,6 +238,7 @@ internal class DomainMapping(
                 restrictedVisibility = emptyList(),
                 reminder = reminder?.toDomain(),
                 sharedLocation = shared_location?.toDomain(),
+                channelRole = member?.channel_role,
                 extraData = extraData.toMutableMap(),
             ).let(messageTransformer::transform)
         }

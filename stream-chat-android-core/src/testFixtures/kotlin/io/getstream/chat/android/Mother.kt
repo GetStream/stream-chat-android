@@ -332,6 +332,7 @@ public fun randomMessage(
     moderation: Moderation? = null,
     i18n: Map<String, String> = emptyMap(),
     reminder: MessageReminderInfo? = randomMessageReminderInfo(),
+    channelRole: String? = null,
 ): Message = Message(
     id = id,
     cid = cid,
@@ -377,6 +378,7 @@ public fun randomMessage(
     moderation = moderation,
     i18n = i18n,
     reminder = reminder,
+    channelRole = channelRole,
 )
 
 public fun randomPendingMessage(
@@ -429,6 +431,7 @@ public fun randomChannel(
     isInsideSearch: Boolean = randomBoolean(),
     draftMessage: DraftMessage? = randomDraftMessageOrNull(),
     activeLiveLocations: List<Location> = emptyList(),
+    messageCount: Int? = positiveRandomInt().takeIf { randomBoolean() },
 ): Channel = Channel(
     id = id,
     name = name,
@@ -457,6 +460,7 @@ public fun randomChannel(
     isInsideSearch = isInsideSearch,
     draftMessage = draftMessage,
     activeLiveLocations = activeLiveLocations,
+    messageCount = messageCount,
 )
 
 public fun randomChannelUserRead(

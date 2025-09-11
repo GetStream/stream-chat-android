@@ -73,3 +73,13 @@ internal data class DownstreamMemberDto(
     val archived_at: Date?,
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
+
+/**
+ * DTO holding limited data about a channel member.
+ *
+ * @property channel_role The role of the member in the channel.
+ */
+@JsonClass(generateAdapter = true)
+internal data class DownstreamMemberInfoDto(
+    val channel_role: String?,
+)
