@@ -906,7 +906,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun LazyItemScope.messageListItemModifier(): Modifier =
-    // Disable animations in snapshot tests, at least until Paparazzi has a better support for animations.
+        // Disable animations in snapshot tests, at least until Paparazzi has a better support for animations.
         // This is due to the scroll to bottom tests, where the items are not visible in the snapshots.
         if (LocalInspectionMode.current) {
             Modifier
