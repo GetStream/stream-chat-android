@@ -72,6 +72,7 @@ import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import io.getstream.chat.android.ui.common.utils.StreamFileUtil
+import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
 import io.getstream.chat.android.ui.common.utils.shareLocalFile
 import io.getstream.result.Result
 import kotlinx.coroutines.Job
@@ -310,7 +311,11 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 )
                 when (result) {
                     is Result.Success -> {
-                        shareAttachment(mediaUri = result.value, mimeType = attachment.mimeType)
+                        shareAttachment(
+                            mediaUri = result.value,
+                            mimeType = attachment.mimeType,
+                            text = attachment.getDisplayableName(),
+                        )
                     }
 
                     is Result.Failure -> {
@@ -363,6 +368,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
     private fun shareAttachment(
         mediaUri: Uri?,
         mimeType: String?,
+        text: String?,
     ) {
         mediaGalleryPreviewViewModel.isSharingInProgress = false
 
@@ -374,6 +380,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         shareLocalFile(
             uri = mediaUri,
             mimeType = mimeType,
+            text = text,
         )
     }
 
