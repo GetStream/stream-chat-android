@@ -63,15 +63,14 @@ import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPrev
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModelFactory
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.streamcdn.image.StreamCdnCropImageMode
 import io.getstream.chat.android.models.streamcdn.image.StreamCdnResizeImageMode
 import io.getstream.chat.android.ui.common.helper.DefaultDownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
-import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
+import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import io.getstream.chat.android.ui.common.utils.StreamFileUtil
 import io.getstream.chat.android.ui.common.utils.shareLocalFile
 import io.getstream.result.Result
@@ -256,6 +255,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     ),
                 )
             }
+
             is Reply -> {
                 handleResult(
                     MediaGalleryPreviewResult(
@@ -265,9 +265,11 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     ),
                 )
             }
+
             is Delete -> {
                 mediaGalleryPreviewViewModel.deleteCurrentMediaAttachment(attachment)
             }
+
             is SaveMedia -> {
                 onDownloadHandleRequest(
                     context = this,
@@ -301,7 +303,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 mediaGalleryPreviewViewModel.isSharingInProgress = false
             }
 
-            attachment.fileSize >= MaxUnpromptedFileSize -> {
+            attachment.fileSize >= AttachmentConstants.MAX_SIZE_BEFORE_DOWNLOAD_WARNING_IN_BYTES -> {
                 val result = StreamFileUtil.getFileFromCache(
                     context = applicationContext,
                     attachment = attachment,
@@ -310,6 +312,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     is Result.Success -> {
                         shareAttachment(mediaUri = result.value, mimeType = attachment.mimeType)
                     }
+
                     is Result.Failure -> {
                         mediaGalleryPreviewViewModel.promptedAttachment = attachment
                     }
@@ -329,36 +332,20 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         fileSharingJob = lifecycleScope.launch {
             mediaGalleryPreviewViewModel.isSharingInProgress = true
 
-            when (attachment.type) {
-                AttachmentType.IMAGE -> shareImage(attachment)
-                AttachmentType.VIDEO -> shareVideo(attachment)
-                else -> toastFailedShare()
+            val result = withContext(DispatcherProvider.IO) {
+                StreamFileUtil.writeFileToShareableFile(applicationContext, attachment)
             }
-        }
-    }
 
-    /**
-     * Fetches an image from Coil's cache and shares it.
-     *
-     * @param attachment The attachment used to prepare the URI.
-     */
-    private suspend fun shareImage(attachment: Attachment) {
-        val attachmentUrl = attachment.imagePreviewUrl
-        if (attachmentUrl != null) {
-            val bitmap = StreamImageLoader.instance().loadAsBitmap(applicationContext, attachmentUrl)
-            if (bitmap != null) {
-                // Ensure writeImageToSharableFile is called on IO thread, otherwise it can block the UI
-                val imageUri = withContext(DispatcherProvider.IO) {
-                    StreamFileUtil.writeImageToSharableFile(applicationContext, bitmap)
-                }
-                shareAttachment(
-                    mediaUri = imageUri,
+            mediaGalleryPreviewViewModel.isSharingInProgress = false
+
+            when (result) {
+                is Result.Success -> shareLocalFile(
+                    uri = result.value,
                     mimeType = attachment.mimeType,
                 )
+
+                is Result.Failure -> toastFailedShare()
             }
-        } else {
-            mediaGalleryPreviewViewModel.isSharingInProgress = false
-            toastFailedShare()
         }
     }
 
@@ -388,31 +375,6 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             uri = mediaUri,
             mimeType = mimeType,
         )
-    }
-
-    /**
-     * Starts a picker to share the current image.
-     *
-     * @param attachment The attachment to share.
-     */
-    private suspend fun shareVideo(attachment: Attachment) {
-        val result = withContext(DispatcherProvider.IO) {
-            StreamFileUtil.writeFileToShareableFile(
-                context = applicationContext,
-                attachment = attachment,
-            )
-        }
-
-        mediaGalleryPreviewViewModel.isSharingInProgress = false
-
-        when (result) {
-            is Result.Success -> shareAttachment(
-                mediaUri = result.value,
-                mimeType = attachment.mimeType,
-            )
-
-            is Result.Failure -> toastFailedShare()
-        }
     }
 
     /**
@@ -455,14 +417,6 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
     }
 
     public companion object {
-
-        /**
-         * If the file is at least this big or bigger we prompt the user to make sure they
-         * want to download it.
-         *
-         * Expressed in bytes.
-         */
-        private const val MaxUnpromptedFileSize = 10 * 1024 * 1024
 
         /**
          * Represents the key for the ID of the message with the attachments we're browsing.
