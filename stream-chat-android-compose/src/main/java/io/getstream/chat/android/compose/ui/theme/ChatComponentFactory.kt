@@ -1717,7 +1717,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun MessageComposerLabel(state: MessageComposerState) {
-        DefaultComposerLabel(state.ownCapabilities)
+        DefaultComposerLabel(state)
     }
 
     /**
