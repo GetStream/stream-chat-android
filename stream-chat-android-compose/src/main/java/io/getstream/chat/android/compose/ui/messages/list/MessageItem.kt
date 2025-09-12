@@ -727,64 +727,6 @@ private fun getMessageBubbleShape(position: List<MessagePosition>, ownsMessage: 
 }
 
 /**
- * The default text message content. It holds the quoted message in case there is one.
- *
- * @param message The message to show.
- * @param onLongItemClick Handler when the item is long clicked.
- * @param onQuotedMessageClick Handler for quoted message click action.
- * @param onLinkClick Handler for link clicks.
- */
-@Composable
-internal fun DefaultMessageTextContent(
-    message: Message,
-    currentUser: User?,
-    messageContentFactory: MessageContentFactory,
-    onLongItemClick: (Message) -> Unit,
-    onQuotedMessageClick: (Message) -> Unit,
-    onUserMentionClick: (User) -> Unit = {},
-    onLinkClick: ((Message, String) -> Unit)? = null,
-) {
-    Column {
-        if (messageContentFactory == MessageContentFactory.Deprecated) {
-            val quotedMessage = message.replyTo
-            if (quotedMessage != null) {
-                ChatTheme.componentFactory.MessageQuotedContent(
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                    message = quotedMessage,
-                    currentUser = currentUser,
-                    replyMessage = message,
-                    onLongItemClick = onLongItemClick,
-                    onQuotedMessageClick = onQuotedMessageClick,
-                )
-            }
-
-            ChatTheme.componentFactory.MessageTextContent(
-                message = message,
-                currentUser = currentUser,
-                onLongItemClick = onLongItemClick,
-                onLinkClick = onLinkClick,
-                onUserMentionClick = onUserMentionClick,
-            )
-        } else {
-            messageContentFactory.QuotedMessageContent(
-                message = message,
-                currentUser = currentUser,
-                onLongItemClick = onLongItemClick,
-                onQuotedMessageClick = onQuotedMessageClick,
-            )
-
-            messageContentFactory.MessageTextContent(
-                message = message,
-                currentUser = currentUser,
-                onLongItemClick = onLongItemClick,
-                onLinkClick = onLinkClick,
-                onUserMentionClick = onUserMentionClick,
-            )
-        }
-    }
-}
-
-/**
  * Represent a swipe to reply content.
  *
  * @param modifier Modifier for styling.

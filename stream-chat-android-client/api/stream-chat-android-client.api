@@ -264,6 +264,7 @@ public final class io/getstream/chat/android/client/ChatClient$Builder : io/gets
 	public final fun okHttpClient (Lokhttp3/OkHttpClient;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun retryPolicy (Lio/getstream/result/call/retry/RetryPolicy;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun sendMessageInterceptor (Lio/getstream/chat/android/client/interceptor/SendMessageInterceptor;)Lio/getstream/chat/android/client/ChatClient$Builder;
+	public final fun shareFileDownloadRequestInterceptor (Lokhttp3/Interceptor;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun uploadAttachmentsNetworkType (Lio/getstream/chat/android/models/UploadAttachmentsNetworkType;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun withApiModelTransformer (Lio/getstream/chat/android/client/transformer/ApiModelTransformers;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun withPlugins ([Lio/getstream/chat/android/client/plugin/factory/PluginFactory;)Lio/getstream/chat/android/client/ChatClient$Builder;
