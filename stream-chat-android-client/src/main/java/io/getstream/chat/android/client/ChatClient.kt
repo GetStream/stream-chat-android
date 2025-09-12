@@ -104,7 +104,6 @@ import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.client.helpers.AppSettingManager
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
-import io.getstream.chat.android.client.interceptor.ShareFileDownloadRequestInterceptor
 import io.getstream.chat.android.client.interceptor.message.internal.PrepareMessageLogicImpl
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerConfigImpl
@@ -233,6 +232,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.withTimeoutOrNull
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import java.io.File
@@ -4197,7 +4197,7 @@ internal constructor(
         private var notificationConfig: NotificationConfig = NotificationConfig(pushNotificationsEnabled = false)
         private var fileUploader: FileUploader? = null
         private var sendMessageInterceptor: SendMessageInterceptor? = null
-        private var shareFileDownloadRequestInterceptor: ShareFileDownloadRequestInterceptor? = null
+        private var shareFileDownloadRequestInterceptor: Interceptor? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
         private var customOkHttpClient: OkHttpClient? = null
         private var userCredentialStorage: UserCredentialStorage? = null
@@ -4330,16 +4330,14 @@ internal constructor(
         }
 
         /**
-         * Sets a custom [ShareFileDownloadRequestInterceptor] that will be used to intercept file download requests for
-         * the purpose of sharing the file.
+         * Sets a custom [Interceptor] that will be used to intercept file download requests for the purpose of sharing
+         * the file.
          * Use this to add custom headers or modify the request in any way.
          *
-         * @param shareFileDownloadRequestInterceptor Your custom implementation of
-         * [ShareFileDownloadRequestInterceptor].
+         * @param shareFileDownloadRequestInterceptor Your [Interceptor] implementation for the share file download
+         * call.
          */
-        public fun shareFileDownloadRequestInterceptor(
-            shareFileDownloadRequestInterceptor: ShareFileDownloadRequestInterceptor,
-        ): Builder {
+        public fun shareFileDownloadRequestInterceptor(shareFileDownloadRequestInterceptor: Interceptor): Builder {
             this.shareFileDownloadRequestInterceptor = shareFileDownloadRequestInterceptor
             return this
         }

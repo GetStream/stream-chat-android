@@ -59,7 +59,6 @@ import io.getstream.chat.android.client.api2.mapping.EventMapping
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.debugger.ChatClientDebugger
 import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
-import io.getstream.chat.android.client.interceptor.ShareFileDownloadRequestInterceptor
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.notifications.ChatNotifications
@@ -84,6 +83,7 @@ import io.getstream.chat.android.client.user.CurrentUserFetcher
 import io.getstream.chat.android.client.utils.HeadersUtil
 import io.getstream.chat.android.models.UserId
 import io.getstream.log.StreamLog
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.create
@@ -128,7 +128,7 @@ constructor(
     private val fileTransformer: FileTransformer,
     private val fileUploader: FileUploader?,
     private val sendMessageInterceptor: SendMessageInterceptor?,
-    private val shareFileDownloadRequestInterceptor: ShareFileDownloadRequestInterceptor?,
+    private val shareFileDownloadRequestInterceptor: Interceptor?,
     private val tokenManager: TokenManager,
     private val customOkHttpClient: OkHttpClient?,
     private val clientDebugger: ChatClientDebugger?,
@@ -366,18 +366,13 @@ constructor(
      * the Stream CDN, these files are public and don't require the data provided by the interceptors. (Similar to how
      * we can directly load images/videos from the CDN in an image/video loading library).
      *
-     * Additionally, a custom [shareFileDownloadRequestInterceptor] can be provided to add custom headers to the
+     * Additionally, a custom [Interceptor] can be provided to add custom headers to the
      * file download requests (e.g. for authentication).
      */
     private fun buildFileDownloadApi(): FileDownloadApi {
         val okHttpClient = baseClientBuilder(BASE_TIMEOUT)
-            .addInterceptor { chain ->
-                // Apply custom modifications to the request
-                val requestBuilder = chain.request().newBuilder()
-                val modifiedRequestBuilder =
-                    shareFileDownloadRequestInterceptor?.intercept(requestBuilder) ?: requestBuilder
-                val newRequest = modifiedRequestBuilder.build()
-                chain.proceed(newRequest)
+            .apply {
+                shareFileDownloadRequestInterceptor?.let { addInterceptor(it) }
             }
             .build()
         return Retrofit.Builder()
