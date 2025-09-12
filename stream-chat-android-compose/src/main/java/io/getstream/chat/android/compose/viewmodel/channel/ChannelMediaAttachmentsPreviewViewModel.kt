@@ -16,7 +16,8 @@
 
 package io.getstream.chat.android.compose.viewmodel.channel
 
-import android.content.Context
+import android.app.Application
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -26,8 +27,8 @@ import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import io.getstream.chat.android.ui.common.utils.StreamFileUtil
 import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
-import io.getstream.chat.android.ui.common.utils.shareLocalFile
 import io.getstream.log.taggedLogger
+import io.getstream.result.Error
 import io.getstream.result.onErrorSuspend
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -41,7 +42,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 internal class ChannelMediaAttachmentsPreviewViewModel(
-    private val context: Context,
+    private val application: Application,
 ) : ViewModel() {
 
     private val logger by taggedLogger("Chat:ChannelMediaAttachmentsPreviewViewModel")
@@ -90,13 +91,15 @@ internal class ChannelMediaAttachmentsPreviewViewModel(
                         "${AttachmentConstants.MAX_SIZE_BEFORE_DOWNLOAD_WARNING_IN_BYTES} bytes, checking cache..."
                 }
                 withContext(DispatcherProvider.IO) {
-                    StreamFileUtil.getFileFromCache(context, attachment)
+                    StreamFileUtil.getFileFromCache(application, attachment)
                 }.onSuccess { uri ->
                     logger.d { "[startSharing] Attachment found in cache, starting share intent..." }
-                    context.shareLocalFile(
-                        uri = uri,
-                        mimeType = attachment.mimeType,
-                        text = attachment.getDisplayableName(),
+                    _events.tryEmit(
+                        ChannelMediaAttachmentsPreviewViewEvent.ShareLocalFile(
+                            uri = uri,
+                            mimeType = attachment.mimeType,
+                            text = attachment.getDisplayableName(),
+                        ),
                     )
                 }.onErrorSuspend { error ->
                     logger.e { "[startSharing] Attachment not in cache" }
@@ -120,13 +123,15 @@ internal class ChannelMediaAttachmentsPreviewViewModel(
         }
         sharingJob = viewModelScope.launch {
             withContext(DispatcherProvider.IO) {
-                StreamFileUtil.writeFileToShareableFile(context, attachment)
+                StreamFileUtil.writeFileToShareableFile(application, attachment)
             }.onSuccess { uri ->
                 logger.d { "[share] Attachment ready, starting share intent..." }
-                context.shareLocalFile(
-                    uri = uri,
-                    mimeType = attachment.mimeType,
-                    text = attachment.getDisplayableName(),
+                _events.tryEmit(
+                    ChannelMediaAttachmentsPreviewViewEvent.ShareLocalFile(
+                        uri = uri,
+                        mimeType = attachment.mimeType,
+                        text = attachment.getDisplayableName(),
+                    ),
                 )
             }.onError { error ->
                 logger.e { "[share] failed to share attachment: ${error.message}" }
@@ -152,4 +157,33 @@ internal class ChannelMediaAttachmentsPreviewViewModel(
             currentState.copy(promptedAttachment = null)
         }
     }
+}
+
+internal data class ChannelMediaAttachmentsPreviewViewState(
+    val isPreparingToShare: Boolean = false,
+    val promptedAttachment: Attachment? = null,
+)
+
+internal sealed interface ChannelMediaAttachmentsPreviewViewAction {
+
+    data class ShareClick(
+        val attachment: Attachment,
+    ) : ChannelMediaAttachmentsPreviewViewAction
+
+    data class ConfirmSharingClick(
+        val attachment: Attachment,
+    ) : ChannelMediaAttachmentsPreviewViewAction
+
+    data object DismissSharingClick : ChannelMediaAttachmentsPreviewViewAction
+}
+
+internal sealed interface ChannelMediaAttachmentsPreviewViewEvent {
+
+    data class ShareLocalFile(
+        val uri: Uri,
+        val mimeType: String?,
+        val text: String?,
+    ) : ChannelMediaAttachmentsPreviewViewEvent
+
+    data class SharingError(val error: Error) : ChannelMediaAttachmentsPreviewViewEvent
 }

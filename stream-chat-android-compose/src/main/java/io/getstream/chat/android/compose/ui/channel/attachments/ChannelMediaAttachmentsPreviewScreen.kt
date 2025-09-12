@@ -51,6 +51,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.state.channel.attachments.ChannelAttachmentsViewState
+import io.getstream.chat.android.ui.common.utils.shareLocalFile
 import io.getstream.result.Error
 
 /**
@@ -107,9 +108,16 @@ internal fun ChannelMediaAttachmentsPreviewScreen(
         )
     }
 
+    val context = LocalContext.current
     LaunchedEffect(viewModel) {
         viewModel.events.collect { event ->
             when (event) {
+                is ChannelMediaAttachmentsPreviewViewEvent.ShareLocalFile -> context.shareLocalFile(
+                    uri = event.uri,
+                    mimeType = event.mimeType,
+                    text = event.text,
+                )
+
                 is ChannelMediaAttachmentsPreviewViewEvent.SharingError -> onSharingError(event.error)
             }
         }
