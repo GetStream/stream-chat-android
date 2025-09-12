@@ -232,6 +232,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.withTimeoutOrNull
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import java.io.File
@@ -4196,6 +4197,7 @@ internal constructor(
         private var notificationConfig: NotificationConfig = NotificationConfig(pushNotificationsEnabled = false)
         private var fileUploader: FileUploader? = null
         private var sendMessageInterceptor: SendMessageInterceptor? = null
+        private var shareFileDownloadRequestInterceptor: Interceptor? = null
         private val tokenManager: TokenManager = TokenManagerImpl()
         private var customOkHttpClient: OkHttpClient? = null
         private var userCredentialStorage: UserCredentialStorage? = null
@@ -4324,6 +4326,19 @@ internal constructor(
          */
         public fun sendMessageInterceptor(sendMessageInterceptor: SendMessageInterceptor): Builder {
             this.sendMessageInterceptor = sendMessageInterceptor
+            return this
+        }
+
+        /**
+         * Sets a custom [Interceptor] that will be used to intercept file download requests for the purpose of sharing
+         * the file.
+         * Use this to add custom headers or modify the request in any way.
+         *
+         * @param shareFileDownloadRequestInterceptor Your [Interceptor] implementation for the share file download
+         * call.
+         */
+        public fun shareFileDownloadRequestInterceptor(shareFileDownloadRequestInterceptor: Interceptor): Builder {
+            this.shareFileDownloadRequestInterceptor = shareFileDownloadRequestInterceptor
             return this
         }
 
@@ -4543,6 +4558,7 @@ internal constructor(
                     fileTransformer = fileTransformer,
                     fileUploader = fileUploader,
                     sendMessageInterceptor = sendMessageInterceptor,
+                    shareFileDownloadRequestInterceptor = shareFileDownloadRequestInterceptor,
                     tokenManager = tokenManager,
                     customOkHttpClient = customOkHttpClient,
                     clientDebugger = clientDebugger,
