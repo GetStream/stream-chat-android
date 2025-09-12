@@ -64,6 +64,7 @@
 
 ### ⬆️ Improved
 - Avoid marking a pending message as read. [#5926](https://github.com/GetStream/stream-chat-android/pull/5926)
+- Improve the read count calculation on every message based on `channelUserRead.lastReadMessageId`. [#5923](https://github.com/GetStream/stream-chat-android/pull/5923)
 
 ### ✅ Added
 

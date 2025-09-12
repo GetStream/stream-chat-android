@@ -874,7 +874,16 @@ public class MessageListController(
             .filter { it.user.id != currentUser?.id && !it.belongsToFreshlyAddedMember(membersMap) }
             .sortedBy { it.lastRead }
         val lastRead = sortedReads.lastOrNull()?.lastRead
-
+        val channelReadsIndexed = messages
+            .withIndex()
+            .associate { (index, message) -> message.id to index }
+            .let { messageToIndex ->
+                sortedReads.mapNotNull { channelUserRead ->
+                    messageToIndex[channelUserRead.lastReadMessageId]?.let {
+                        channelUserRead to it
+                    }
+                }
+            }
         val isThreadWithNoReplies = isInThread && messages.size == 1
         val isThreadWithReplies = isInThread && messages.size > 1
         val shouldAddDateSeparatorInEmptyThread = isThreadWithNoReplies && showDateSeparatorInEmptyThread
@@ -937,9 +946,9 @@ public class MessageListController(
                     ?.let { lastRead != null && it <= lastRead }
                     ?: false
 
-                val messageReadBy = message.createdAt?.let { messageCreatedAt ->
-                    sortedReads.filter { it.lastRead.after(messageCreatedAt) ?: false }
-                } ?: emptyList()
+                val messageReadBy = channelReadsIndexed
+                    .filter { it.second >= index }
+                    .map { it.first }
 
                 val isMessageFocused = message.id == focusedMessage?.id
                 if (isMessageFocused) removeMessageFocus(message.id)
