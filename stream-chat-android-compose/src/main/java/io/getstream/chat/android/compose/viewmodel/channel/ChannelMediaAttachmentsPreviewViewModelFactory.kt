@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.viewmodel.channel
 
-import android.app.Application
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -32,7 +31,9 @@ internal class ChannelMediaAttachmentsPreviewViewModelFactory(
         }
         @Suppress("UNCHECKED_CAST")
         return ChannelMediaAttachmentsPreviewViewModel(
-            application = context.applicationContext as Application,
+            attachmentFileController = AttachmentFileController(
+                context = context.applicationContext,
+            ),
         ) as T
     }
 }

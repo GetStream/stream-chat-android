@@ -16,11 +16,10 @@
 
 package io.getstream.chat.android.compose.viewmodel.channel
 
-import android.app.Application
+import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewController
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
@@ -29,6 +28,7 @@ import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
+import io.getstream.result.Result
 import io.getstream.result.onErrorSuspend
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -39,10 +39,9 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 internal class ChannelMediaAttachmentsPreviewViewModel(
-    private val application: Application,
+    private val attachmentFileController: AttachmentFileController,
 ) : ViewModel() {
 
     private val logger by taggedLogger("Chat:ChannelMediaAttachmentsPreviewViewModel")
@@ -84,32 +83,31 @@ internal class ChannelMediaAttachmentsPreviewViewModel(
 
     private fun startSharing(attachment: Attachment) {
         logger.d { "[startSharing] mimeType: ${attachment.mimeType}, attachment: ${attachment.imagePreviewUrl}" }
-        viewModelScope.launch {
-            if (attachment.fileSize >= AttachmentConstants.MAX_SIZE_BEFORE_DOWNLOAD_WARNING_IN_BYTES) {
-                logger.d {
-                    "[startSharing] Attachment larger than " +
-                        "${AttachmentConstants.MAX_SIZE_BEFORE_DOWNLOAD_WARNING_IN_BYTES} bytes, checking cache..."
-                }
-                withContext(DispatcherProvider.IO) {
-                    StreamFileUtil.getFileFromCache(application, attachment)
-                }.onSuccess { uri ->
-                    logger.d { "[startSharing] Attachment found in cache, starting share intent..." }
-                    _events.tryEmit(
-                        ChannelMediaAttachmentsPreviewViewEvent.ShareLocalFile(
-                            uri = uri,
-                            mimeType = attachment.mimeType,
-                            text = attachment.getDisplayableName(),
-                        ),
-                    )
-                }.onErrorSuspend { error ->
-                    logger.e { "[startSharing] Attachment not in cache" }
-                    _state.update { currentState ->
-                        currentState.copy(promptedAttachment = attachment)
-                    }
-                }
-            } else {
-                share(attachment)
+        if (attachment.fileSize >= AttachmentConstants.MAX_SIZE_BEFORE_DOWNLOAD_WARNING_IN_BYTES) {
+            logger.d {
+                "[startSharing] Attachment larger than " +
+                    "${AttachmentConstants.MAX_SIZE_BEFORE_DOWNLOAD_WARNING_IN_BYTES} bytes, checking cache..."
             }
+            viewModelScope.launch {
+                attachmentFileController.getFileFromCache(attachment)
+                    .onSuccess { uri ->
+                        logger.d { "[startSharing] Attachment found in cache, starting share intent..." }
+                        _events.tryEmit(
+                            ChannelMediaAttachmentsPreviewViewEvent.ShareLocalFile(
+                                uri = uri,
+                                mimeType = attachment.mimeType,
+                                text = attachment.getDisplayableName(),
+                            ),
+                        )
+                    }.onErrorSuspend { error ->
+                        logger.e { "[startSharing] Attachment not in cache" }
+                        _state.update { currentState ->
+                            currentState.copy(promptedAttachment = attachment)
+                        }
+                    }
+            }
+        } else {
+            share(attachment)
         }
     }
 
@@ -122,21 +120,20 @@ internal class ChannelMediaAttachmentsPreviewViewModel(
             )
         }
         sharingJob = viewModelScope.launch {
-            withContext(DispatcherProvider.IO) {
-                StreamFileUtil.writeFileToShareableFile(application, attachment)
-            }.onSuccess { uri ->
-                logger.d { "[share] Attachment ready, starting share intent..." }
-                _events.tryEmit(
-                    ChannelMediaAttachmentsPreviewViewEvent.ShareLocalFile(
-                        uri = uri,
-                        mimeType = attachment.mimeType,
-                        text = attachment.getDisplayableName(),
-                    ),
-                )
-            }.onError { error ->
-                logger.e { "[share] failed to share attachment: ${error.message}" }
-                _events.tryEmit(ChannelMediaAttachmentsPreviewViewEvent.SharingError(error))
-            }
+            attachmentFileController.downloadFile(attachment)
+                .onSuccess { uri ->
+                    logger.d { "[share] Attachment ready, starting share intent..." }
+                    _events.tryEmit(
+                        ChannelMediaAttachmentsPreviewViewEvent.ShareLocalFile(
+                            uri = uri,
+                            mimeType = attachment.mimeType,
+                            text = attachment.getDisplayableName(),
+                        ),
+                    )
+                }.onError { error ->
+                    logger.e { "[share] failed to share attachment: ${error.message}" }
+                    _events.tryEmit(ChannelMediaAttachmentsPreviewViewEvent.SharingError(error))
+                }
             _state.update { currentState ->
                 currentState.copy(isPreparingToShare = false)
             }
@@ -186,4 +183,15 @@ internal sealed interface ChannelMediaAttachmentsPreviewViewEvent {
     ) : ChannelMediaAttachmentsPreviewViewEvent
 
     data class SharingError(val error: Error) : ChannelMediaAttachmentsPreviewViewEvent
+}
+
+internal class AttachmentFileController(
+    private val context: Context,
+) {
+
+    suspend fun getFileFromCache(attachment: Attachment): Result<Uri> =
+        StreamFileUtil.getFileFromCache(context, attachment)
+
+    suspend fun downloadFile(attachment: Attachment): Result<Uri> =
+        StreamFileUtil.writeFileToShareableFile(context, attachment)
 }

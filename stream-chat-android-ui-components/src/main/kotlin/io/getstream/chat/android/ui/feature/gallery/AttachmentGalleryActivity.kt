@@ -58,7 +58,6 @@ import io.getstream.log.taggedLogger
 import io.getstream.result.Result
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import java.util.Date
 
@@ -235,12 +234,10 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         shareMediaJob?.cancel()
 
         shareMediaJob = lifecycleScope.launch {
-            val result = withContext(DispatcherProvider.IO) {
-                StreamFileUtil.writeFileToShareableFile(
-                    context = applicationContext,
-                    attachment = attachment,
-                )
-            }
+            val result = StreamFileUtil.writeFileToShareableFile(
+                context = applicationContext,
+                attachment = attachment,
+            )
 
             when (result) {
                 is Result.Success -> {

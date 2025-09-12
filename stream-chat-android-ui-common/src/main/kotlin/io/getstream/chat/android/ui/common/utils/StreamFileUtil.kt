@@ -24,6 +24,7 @@ import android.os.Environment
 import androidx.core.content.FileProvider
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.StreamFileProvider
 import io.getstream.result.Error
@@ -31,6 +32,7 @@ import io.getstream.result.Result
 import io.getstream.result.Result.Failure
 import io.getstream.result.Result.Success
 import io.getstream.result.flatMap
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.IOException
 
@@ -158,11 +160,11 @@ public object StreamFileUtil {
      * accessible via [Result.Failure] otherwise.
      */
     @Suppress("TooGenericExceptionCaught")
-    public fun getFileFromCache(
+    public suspend fun getFileFromCache(
         context: Context,
         attachment: Attachment,
-    ): Result<Uri> {
-        return try {
+    ): Result<Uri> = withContext(DispatcherProvider.IO) {
+        try {
             when (val getOrCreateCacheDirResult = getOrCreateStreamCacheDir(context)) {
                 is Failure -> getOrCreateCacheDirResult
                 is Success -> {
@@ -214,8 +216,8 @@ public object StreamFileUtil {
     public suspend fun writeFileToShareableFile(
         context: Context,
         attachment: Attachment,
-    ): Result<Uri> {
-        val runCatching = kotlin.runCatching {
+    ): Result<Uri> = withContext(DispatcherProvider.IO) {
+        val runCatching = runCatching {
             when (val getOrCreateCacheDirResult = getOrCreateStreamCacheDir(context)) {
                 is Failure -> getOrCreateCacheDirResult
                 is Success -> {
@@ -233,7 +235,7 @@ public object StreamFileUtil {
                     ) {
                         Success(getUriForFile(context, file))
                     } else {
-                        val fileUrl = url ?: return Failure(
+                        val fileUrl = url ?: return@withContext Failure(
                             Error.GenericError(message = "File URL cannot be null."),
                         )
 
@@ -255,7 +257,7 @@ public object StreamFileUtil {
             }
         }
 
-        return runCatching.getOrNull() ?: createFailureResultFromException(runCatching.exceptionOrNull())
+        runCatching.getOrNull() ?: createFailureResultFromException(runCatching.exceptionOrNull())
     }
 
     private fun createFailureResultFromException(throwable: Throwable?): Failure {

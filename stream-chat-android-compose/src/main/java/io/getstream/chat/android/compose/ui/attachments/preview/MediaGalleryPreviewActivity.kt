@@ -61,7 +61,6 @@ import io.getstream.chat.android.compose.util.attachmentDownloadState
 import io.getstream.chat.android.compose.util.onDownloadHandleRequest
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModel
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModelFactory
-import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.streamcdn.image.StreamCdnCropImageMode
@@ -77,7 +76,6 @@ import io.getstream.chat.android.ui.common.utils.shareLocalFile
 import io.getstream.result.Result
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 /**
  * Shows an image and video previews along with enabling
@@ -305,21 +303,23 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             }
 
             attachment.fileSize >= AttachmentConstants.MAX_SIZE_BEFORE_DOWNLOAD_WARNING_IN_BYTES -> {
-                val result = StreamFileUtil.getFileFromCache(
-                    context = applicationContext,
-                    attachment = attachment,
-                )
-                when (result) {
-                    is Result.Success -> {
-                        shareAttachment(
-                            mediaUri = result.value,
-                            mimeType = attachment.mimeType,
-                            text = attachment.getDisplayableName(),
-                        )
-                    }
+                lifecycleScope.launch {
+                    val result = StreamFileUtil.getFileFromCache(
+                        context = applicationContext,
+                        attachment = attachment,
+                    )
+                    when (result) {
+                        is Result.Success -> {
+                            shareAttachment(
+                                mediaUri = result.value,
+                                mimeType = attachment.mimeType,
+                                text = attachment.getDisplayableName(),
+                            )
+                        }
 
-                    is Result.Failure -> {
-                        mediaGalleryPreviewViewModel.promptedAttachment = attachment
+                        is Result.Failure -> {
+                            mediaGalleryPreviewViewModel.promptedAttachment = attachment
+                        }
                     }
                 }
             }
@@ -337,9 +337,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         fileSharingJob = lifecycleScope.launch {
             mediaGalleryPreviewViewModel.isSharingInProgress = true
 
-            val result = withContext(DispatcherProvider.IO) {
-                StreamFileUtil.writeFileToShareableFile(applicationContext, attachment)
-            }
+            val result = StreamFileUtil.writeFileToShareableFile(applicationContext, attachment)
 
             mediaGalleryPreviewViewModel.isSharingInProgress = false
 
