@@ -63,6 +63,7 @@
 - Ensure any callback action called from the CoilStreamImageLoader is run on the caller thread. [#5915](https://github.com/GetStream/stream-chat-android/pull/5915)
 
 ### ⬆️ Improved
+- Avoid marking a pending message as read. [#5926](https://github.com/GetStream/stream-chat-android/pull/5926)
 
 ### ✅ Added
 
