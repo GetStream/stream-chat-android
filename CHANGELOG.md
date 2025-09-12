@@ -20,6 +20,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fix API_KEY being sent with the request done to the CDN when sharing a video from the media gallery. [#5921](https://github.com/GetStream/stream-chat-android/pull/5921)
 
 ### ⬆️ Improved
 
@@ -62,6 +63,8 @@
 - Ensure any callback action called from the CoilStreamImageLoader is run on the caller thread. [#5915](https://github.com/GetStream/stream-chat-android/pull/5915)
 
 ### ⬆️ Improved
+- Avoid marking a pending message as read. [#5926](https://github.com/GetStream/stream-chat-android/pull/5926)
+- Improve the read count calculation on every message based on `channelUserRead.lastReadMessageId`. [#5923](https://github.com/GetStream/stream-chat-android/pull/5923)
 
 ### ✅ Added
 
@@ -89,6 +92,7 @@
 ### ⬆️ Improved
 - Improved accessibility of the message list items. [#5911](https://github.com/GetStream/stream-chat-android/pull/5911)
 - Add MessageComposerState.sendEnabled property to be able to locally enable/disable sned action. [#5916](https://github.com/GetStream/stream-chat-android/pull/5916)
+- Show quoted message over messages with attachments. [#5924](https://github.com/GetStream/stream-chat-android/pull/5924)
 
 ### ✅ Added
 - Added `MessageReactionList` and `MessageReactionItem` component factories. [#5925](https://github.com/GetStream/stream-chat-android/pull/5925)

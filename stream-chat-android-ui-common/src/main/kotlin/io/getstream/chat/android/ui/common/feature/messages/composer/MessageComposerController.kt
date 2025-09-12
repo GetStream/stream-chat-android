@@ -720,11 +720,14 @@ public class MessageComposerController(
                 message.copy(showInChannel = isInThread && alsoSendToChannel.value),
             ).doOnResult(scope) { result ->
                 result.onSuccessSuspend { resultMessage ->
-                    chatClient.markMessageRead(
-                        channelType = channelType,
-                        channelId = channelId,
-                        messageId = resultMessage.id,
-                    ).await()
+                    if (channelState.value?.channelConfig?.value?.markMessagesPending == false) {
+                        chatClient.markMessageRead(
+                            channelType = channelType,
+                            channelId = channelId,
+                            messageId = resultMessage.id,
+                        )
+                            .await()
+                    }
                 }
             }
         }

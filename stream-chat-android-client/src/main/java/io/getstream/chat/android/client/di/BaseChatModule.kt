@@ -75,7 +75,6 @@ import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.client.token.TokenManager
-import io.getstream.chat.android.client.token.TokenManagerImpl
 import io.getstream.chat.android.client.transformer.ApiModelTransformers
 import io.getstream.chat.android.client.uploader.FileTransformer
 import io.getstream.chat.android.client.uploader.FileUploader
@@ -84,10 +83,38 @@ import io.getstream.chat.android.client.user.CurrentUserFetcher
 import io.getstream.chat.android.client.utils.HeadersUtil
 import io.getstream.chat.android.models.UserId
 import io.getstream.log.StreamLog
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.create
 import java.util.concurrent.TimeUnit
 
+/**
+ * Dependency wiring for the Stream Chat Android client.
+ *
+ * This module composes the networking stack (Retrofit/OkHttp), socket layer, notifications, and
+ * various mappers and helpers required by the client. It exposes preconfigured instances used by
+ * the rest of the SDK.
+ *
+ * @param appContext Application [Context] used to access system services and to build headers/notifications.
+ * @param clientScope Scope for client-level operations and background work not tied to a specific user.
+ * @param userScope Scope bound to the current user session; used for API calls and socket lifecycle.
+ * @param config Global client configuration including API key, endpoints, timeouts, and feature flags.
+ * @param notificationsHandler Handler responsible for showing and managing chat notifications.
+ * @param apiModelTransformers Transformers that map between network DTOs and domain models (in/outgoing).
+ * @param fileTransformer Transformer applied to files before/after upload (e.g., to adjust metadata).
+ * @param fileUploader Optional custom [FileUploader]; if null, a default [StreamFileUploader] is used.
+ * @param sendMessageInterceptor Interceptor allowing to override the logic for sending messages with your own custom
+ * logic.
+ * @param shareFileDownloadRequestInterceptor Optional interceptor to customize file download requests done for the
+ * purpose of sharing the file.
+ * @param tokenManager Manager that provides and refreshes auth tokens for authenticated requests.
+ * @param customOkHttpClient Optional base [OkHttpClient] to reuse threads/connection pools and customize networking.
+ * @param clientDebugger Optional hooks for debugging client state, sockets, and network operations.
+ * @param lifecycle Host [Lifecycle] used to observe app foreground/background and manage socket behavior.
+ * @param appName Optional app name added to default headers for tracking.
+ * @param appVersion Optional app version added to default headers for tracking.
+ */
 @Suppress("TooManyFunctions")
 internal open class BaseChatModule
 @Suppress("LongParameterList")
@@ -99,15 +126,15 @@ constructor(
     private val notificationsHandler: NotificationHandler,
     private val apiModelTransformers: ApiModelTransformers,
     private val fileTransformer: FileTransformer,
-    private val fileUploader: FileUploader? = null,
-    private val sendMessageInterceptor: SendMessageInterceptor? = null,
-    private val tokenManager: TokenManager = TokenManagerImpl(),
-    private val customOkHttpClient: OkHttpClient? = null,
-    private val clientDebugger: ChatClientDebugger? = null,
+    private val fileUploader: FileUploader?,
+    private val sendMessageInterceptor: SendMessageInterceptor?,
+    private val shareFileDownloadRequestInterceptor: Interceptor?,
+    private val tokenManager: TokenManager,
+    private val customOkHttpClient: OkHttpClient?,
+    private val clientDebugger: ChatClientDebugger?,
     private val lifecycle: Lifecycle,
     private val appName: String?,
     private val appVersion: String?,
-    private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it },
 ) {
 
     private val headersUtil = HeadersUtil(appContext, appName, appVersion)
@@ -147,7 +174,10 @@ constructor(
 
     val lifecycleObserver: StreamLifecycleObserver by lazy { StreamLifecycleObserver(userScope, lifecycle) }
     val networkStateProvider: NetworkStateProvider by lazy {
-        NetworkStateProvider(userScope, appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
+        NetworkStateProvider(
+            userScope,
+            appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager,
+        )
     }
     val userStateService: UserStateService = UserStateService()
 
@@ -200,41 +230,22 @@ constructor(
 
     // Create Builders from a single client to share threadpools
     private val baseClient: OkHttpClient by lazy { customOkHttpClient ?: OkHttpClient() }
-    private fun baseClientBuilder(): OkHttpClient.Builder =
-        baseClient.newBuilder().followRedirects(false)
 
-    protected open fun clientBuilder(
-        timeout: Long,
-        config: ChatClientConfig,
-        parser: ChatParser,
-        isAnonymousApi: Boolean,
-    ): OkHttpClient.Builder {
-        return baseClientBuilder()
+    private fun baseClientBuilder(timeout: Long): OkHttpClient.Builder =
+        baseClient.newBuilder()
+            .followRedirects(false)
             .apply {
+                // timeouts
                 if (baseClient != customOkHttpClient) {
                     connectTimeout(timeout, TimeUnit.MILLISECONDS)
                     writeTimeout(timeout, TimeUnit.MILLISECONDS)
                     readTimeout(timeout, TimeUnit.MILLISECONDS)
                 }
-            }
-            // timeouts
-            // interceptors
-            .addInterceptor(ApiKeyInterceptor(config.apiKey))
-            .addInterceptor(HeadersInterceptor(getAnonymousProvider(config, isAnonymousApi), headersUtil))
-            .apply {
+                // api analysis
                 if (config.debugRequests) {
                     addInterceptor(ApiRequestAnalyserInterceptor(ApiRequestsAnalyser.get()))
                 }
-            }
-            .let(httpClientConfig)
-            .addInterceptor(
-                TokenAuthInterceptor(
-                    tokenManager,
-                    parser,
-                    getAnonymousProvider(config, isAnonymousApi),
-                ),
-            )
-            .apply {
+                // logging
                 if (config.loggerConfig.level != ChatLogLevel.NOTHING) {
                     addInterceptor(HttpLoggingInterceptor())
                     addInterceptor(
@@ -248,6 +259,24 @@ constructor(
                     )
                 }
             }
+
+    protected open fun clientBuilder(
+        timeout: Long,
+        config: ChatClientConfig,
+        parser: ChatParser,
+        isAnonymousApi: Boolean,
+    ): OkHttpClient.Builder {
+        return baseClientBuilder(timeout)
+            // Stream-specific interceptors
+            .addInterceptor(ApiKeyInterceptor(config.apiKey))
+            .addInterceptor(HeadersInterceptor(getAnonymousProvider(config, isAnonymousApi), headersUtil))
+            .addInterceptor(
+                TokenAuthInterceptor(
+                    tokenManager,
+                    parser,
+                    getAnonymousProvider(config, isAnonymousApi),
+                ),
+            )
             .addNetworkInterceptor(ProgressInterceptor())
     }
 
@@ -287,7 +316,7 @@ constructor(
             buildRetrofitApi<GeneralApi>(),
             buildRetrofitApi<ConfigApi>(),
             buildRetrofitApi<VideoCallApi>(),
-            buildRetrofitApi<FileDownloadApi>(),
+            buildFileDownloadApi(),
             buildRetrofitApi<OpenGraphApi>(),
             buildRetrofitApi<ThreadsApi>(),
             buildRetrofitApi<PollsApi>(),
@@ -316,6 +345,44 @@ constructor(
         ).create(apiClass)
     }
 
+    private fun buildRetrofitCdnApi(): RetrofitCdnApi {
+        val apiClass = RetrofitCdnApi::class.java
+        return buildRetrofit(
+            config.cdnHttpUrl,
+            CDN_TIMEOUT,
+            config,
+            moshiParser,
+            apiClass.isAnonymousApi,
+        ).create(apiClass)
+    }
+
+    /**
+     * Builds the [FileDownloadApi] whose purpose is to download a file from a given URL.
+     * This API doesn't use the default Stream interceptors:
+     * - [ApiKeyInterceptor]
+     * - [HeadersInterceptor]
+     * - [TokenAuthInterceptor]
+     * because the files might be hosted on a different server that doesn't require them. Even if the file is hosted on
+     * the Stream CDN, these files are public and don't require the data provided by the interceptors. (Similar to how
+     * we can directly load images/videos from the CDN in an image/video loading library).
+     *
+     * Additionally, a custom [Interceptor] can be provided to add custom headers to the
+     * file download requests (e.g. for authentication).
+     */
+    private fun buildFileDownloadApi(): FileDownloadApi {
+        val okHttpClient = baseClientBuilder(BASE_TIMEOUT)
+            .apply {
+                shareFileDownloadRequestInterceptor?.let { addInterceptor(it) }
+            }
+            .build()
+        return Retrofit.Builder()
+            .baseUrl(config.httpUrl)
+            .client(okHttpClient)
+            .addCallAdapterFactory(RetrofitCallAdapterFactory.create(moshiParser, userScope))
+            .build()
+            .create<FileDownloadApi>()
+    }
+
     private val Class<*>.isAnonymousApi: Boolean
         get() {
             val anon = this.annotations.any { it is AnonymousApi }
@@ -332,17 +399,6 @@ constructor(
 
             throw IllegalStateException("Api class must be annotated with either @AnonymousApi or @AuthenticatedApi")
         }
-
-    private fun buildRetrofitCdnApi(): RetrofitCdnApi {
-        val apiClass = RetrofitCdnApi::class.java
-        return buildRetrofit(
-            config.cdnHttpUrl,
-            CDN_TIMEOUT,
-            config,
-            moshiParser,
-            apiClass.isAnonymousApi,
-        ).create(apiClass)
-    }
 
     private companion object {
         private const val BASE_TIMEOUT = 30_000L

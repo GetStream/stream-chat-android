@@ -30,7 +30,6 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.components.messages.factory.MessageContentFactory
-import io.getstream.chat.android.compose.ui.messages.list.DefaultMessageTextContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -188,6 +187,13 @@ internal fun DefaultMessageContent(
     onLinkClick: ((Message, String) -> Unit)? = null,
 ) {
     Column {
+        DefaultQuotedMessageContent(
+            message = message,
+            currentUser = currentUser,
+            onLongItemClick = onLongItemClick,
+            onQuotedMessageClick = onQuotedMessageClick,
+            messageContentFactory = messageContentFactory,
+        )
         MessageAttachmentsContent(
             message = message,
             currentUser = currentUser,
@@ -201,10 +207,87 @@ internal fun DefaultMessageContent(
                 currentUser = currentUser,
                 messageContentFactory = messageContentFactory,
                 onLongItemClick = onLongItemClick,
-                onQuotedMessageClick = onQuotedMessageClick,
                 onLinkClick = onLinkClick,
                 onUserMentionClick = onUserMentionClick,
             )
         }
+    }
+}
+
+/**
+ * Represents the default quoted message content.
+ *
+ * @param message The message to show.
+ * @param currentUser The currently logged in user.
+ * @param onLongItemClick Handler when the item is long clicked.
+ * @param onQuotedMessageClick Handler for quoted message click action.
+ * @param messageContentFactory Factory for creating message content.
+ */
+@Composable
+private fun DefaultQuotedMessageContent(
+    message: Message,
+    currentUser: User?,
+    onLongItemClick: (Message) -> Unit,
+    onQuotedMessageClick: (Message) -> Unit,
+    messageContentFactory: MessageContentFactory,
+) {
+    if (messageContentFactory == MessageContentFactory.Deprecated) {
+        val quotedMessage = message.replyTo
+        if (quotedMessage != null) {
+            ChatTheme.componentFactory.MessageQuotedContent(
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                message = quotedMessage,
+                currentUser = currentUser,
+                replyMessage = message,
+                onLongItemClick = onLongItemClick,
+                onQuotedMessageClick = onQuotedMessageClick,
+            )
+        }
+    } else {
+        messageContentFactory.QuotedMessageContent(
+            message = message,
+            currentUser = currentUser,
+            onLongItemClick = onLongItemClick,
+            onQuotedMessageClick = onQuotedMessageClick,
+        )
+    }
+}
+
+/**
+ * Represents the default message text content.
+ *
+ * @param message The message to show.
+ * @param currentUser The currently logged in user.
+ * @param onLongItemClick Handler when the item is long clicked.
+ * @param messageContentFactory Factory for creating message content.
+ * @param onUserMentionClick Handler for user mention click action.
+ * @param onLinkClick Handler for clicking on a link in the message.
+ */
+@Composable
+@Suppress("LongParameterList")
+private fun DefaultMessageTextContent(
+    message: Message,
+    currentUser: User?,
+    onLongItemClick: (Message) -> Unit,
+    messageContentFactory: MessageContentFactory,
+    onUserMentionClick: (User) -> Unit,
+    onLinkClick: ((Message, String) -> Unit)?,
+) {
+    if (messageContentFactory == MessageContentFactory.Deprecated) {
+        ChatTheme.componentFactory.MessageTextContent(
+            message = message,
+            currentUser = currentUser,
+            onLongItemClick = onLongItemClick,
+            onLinkClick = onLinkClick,
+            onUserMentionClick = onUserMentionClick,
+        )
+    } else {
+        messageContentFactory.MessageTextContent(
+            message = message,
+            currentUser = currentUser,
+            onLongItemClick = onLongItemClick,
+            onLinkClick = onLinkClick,
+            onUserMentionClick = onUserMentionClick,
+        )
     }
 }
