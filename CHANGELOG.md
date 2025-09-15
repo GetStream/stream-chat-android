@@ -5,31 +5,17 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Add `pendingMessages` field to the `Channel` model holding all current pending messages in the channel. [#5784](https://github.com/GetStream/stream-chat-android/pull/5784)
-- Add `markMessagesPending` flag to the `Config` model indicating whether pending messages are enabled for the channel. [#5784](https://github.com/GetStream/stream-chat-android/pull/5784)
 
 ### ⚠️ Changed
-- Deprecate `AttachmentType.LINK` because it is not officially supported as a separate attachment type. [#5848](https://github.com/GetStream/stream-chat-android/pull/5848)
-- Deprecate `Attachment.isLink()` because it is not officially supported as a separate attachment type. [#5848](https://github.com/GetStream/stream-chat-android/pull/5848)
 
 ### ❌ Removed
 
-## stream-chat-android-core
-### ✅ Added
-- Add `Channel.messageCount` field representing the total number of messages in the channel. [#5918](https://github.com/GetStream/stream-chat-android/pull/5918)
-
 ## stream-chat-android-client
 ### 🐞 Fixed
-- Fix API_KEY being sent with the request done to the CDN when sharing a video from the media gallery. [#5921](https://github.com/GetStream/stream-chat-android/pull/5921)
 
 ### ⬆️ Improved
 
 ### ✅ Added
-- Add `ChatClient.getPendingMessage` to fetch a pending message (and its metadata) by its ID. [#5784](https://github.com/GetStream/stream-chat-android/pull/5784)
-- Introduce `ChatClient.uploadFile`, `ChatClient.deleteFile`, `ChatClient.uploadImage`, and `ChatClient.deleteImage`, to upload/delete files/images that are not related to any channel. [#5909](https://github.com/GetStream/stream-chat-android/pull/5909)
-- Add `NewMessageEvent.channelMessageCount` field representing the total number of messages in the channel. [#5918](https://github.com/GetStream/stream-chat-android/pull/5918)
-- Add `MessageDeletedEvent.channelMessageCount` field representing the total number of messages in the channel. [#5918](https://github.com/GetStream/stream-chat-android/pull/5918)
-- Add `channelRole` property on the `Message` model, representing the role of the member who sent the message in the channel. [#5919](https://github.com/GetStream/stream-chat-android/pull/5919)
 
 ### ⚠️ Changed
 
@@ -52,7 +38,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Add `ChannelState.messageCount` field representing the total number of messages in the channel. [#5918](https://github.com/GetStream/stream-chat-android/pull/5918)
 
 ### ⚠️ Changed
 
@@ -60,10 +45,8 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
-- Ensure any callback action called from the CoilStreamImageLoader is run on the caller thread. [#5915](https://github.com/GetStream/stream-chat-android/pull/5915)
 
 ### ⬆️ Improved
-- Avoid marking a pending message as read. [#5926](https://github.com/GetStream/stream-chat-android/pull/5926)
 
 ### ✅ Added
 
@@ -73,8 +56,6 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Filter out Poll Options differing only on whitespaces. [#5913](https://github.com/GetStream/stream-chat-android/pull/5913)
-- Fix `MessageReplyStyle.linkBackgroundColorMine`, `MessageReplyStyle.linkBackgroundColorTheirs`, `MessageReplyStyle.linkStyleMine` and `MessageReplyStyle.linkStyleTheirs` customizations not applied to the `MessageReplyView`. [#5848](https://github.com/GetStream/stream-chat-android/pull/5848)
 
 ### ⬆️ Improved
 
@@ -86,14 +67,10 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Filter out Poll Options differing only on whitespaces. [#5913](https://github.com/GetStream/stream-chat-android/pull/5913)
 
 ### ⬆️ Improved
-- Improved accessibility of the message list items. [#5911](https://github.com/GetStream/stream-chat-android/pull/5911)
-- Show quoted message over messages with attachments. [#5924](https://github.com/GetStream/stream-chat-android/pull/5924)
 
 ### ✅ Added
-- Added `MessageReactionList` and `MessageReactionItem` component factories. [#5925](https://github.com/GetStream/stream-chat-android/pull/5925)
 
 ### ⚠️ Changed
 
@@ -109,6 +86,60 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# September 12th, 2025 - 6.23.0
+## Common changes for all artifacts
+### ✅ Added
+- Add `pendingMessages` field to the `Channel` model holding all current pending messages in the channel. [#5784](https://github.com/GetStream/stream-chat-android/pull/5784)
+- Add `markMessagesPending` flag to the `Config` model indicating whether pending messages are enabled for the channel. [#5784](https://github.com/GetStream/stream-chat-android/pull/5784)
+
+### ⚠️ Changed
+- Deprecate `AttachmentType.LINK` because it is not officially supported as a separate attachment type. [#5848](https://github.com/GetStream/stream-chat-android/pull/5848)
+- Deprecate `Attachment.isLink()` because it is not officially supported as a separate attachment type. [#5848](https://github.com/GetStream/stream-chat-android/pull/5848)
+
+## stream-chat-android-core
+### ✅ Added
+- Add `Channel.messageCount` field representing the total number of messages in the channel. [#5918](https://github.com/GetStream/stream-chat-android/pull/5918)
+
+## stream-chat-android-client
+### 🐞 Fixed
+- Fix API_KEY being sent with the request done to the CDN when sharing a video from the media gallery. [#5921](https://github.com/GetStream/stream-chat-android/pull/5921)
+
+### ✅ Added
+- Add `ChatClient.getPendingMessage` to fetch a pending message (and its metadata) by its ID. [#5784](https://github.com/GetStream/stream-chat-android/pull/5784)
+- Introduce `ChatClient.uploadFile`, `ChatClient.deleteFile`, `ChatClient.uploadImage`, and `ChatClient.deleteImage`, to upload/delete files/images that are not related to any channel. [#5909](https://github.com/GetStream/stream-chat-android/pull/5909)
+- Add `NewMessageEvent.channelMessageCount` field representing the total number of messages in the channel. [#5918](https://github.com/GetStream/stream-chat-android/pull/5918)
+- Add `MessageDeletedEvent.channelMessageCount` field representing the total number of messages in the channel. [#5918](https://github.com/GetStream/stream-chat-android/pull/5918)
+- Add `channelRole` property on the `Message` model, representing the role of the member who sent the message in the channel. [#5919](https://github.com/GetStream/stream-chat-android/pull/5919)
+
+## stream-chat-android-state
+### ✅ Added
+- Add `ChannelState.messageCount` field representing the total number of messages in the channel. [#5918](https://github.com/GetStream/stream-chat-android/pull/5918)
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+- Ensure any callback action called from the CoilStreamImageLoader is run on the caller thread. [#5915](https://github.com/GetStream/stream-chat-android/pull/5915)
+
+### ⬆️ Improved
+- Avoid marking a pending message as read. [#5926](https://github.com/GetStream/stream-chat-android/pull/5926)
+- Improve the read count calculation on every message based on `channelUserRead.lastReadMessageId`. [#5923](https://github.com/GetStream/stream-chat-android/pull/5923)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Filter out Poll Options differing only on whitespaces. [#5913](https://github.com/GetStream/stream-chat-android/pull/5913)
+- Fix `MessageReplyStyle.linkBackgroundColorMine`, `MessageReplyStyle.linkBackgroundColorTheirs`, `MessageReplyStyle.linkStyleMine` and `MessageReplyStyle.linkStyleTheirs` customizations not applied to the `MessageReplyView`. [#5848](https://github.com/GetStream/stream-chat-android/pull/5848)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Filter out Poll Options differing only on whitespaces. [#5913](https://github.com/GetStream/stream-chat-android/pull/5913)
+
+### ⬆️ Improved
+- Improved accessibility of the message list items. [#5911](https://github.com/GetStream/stream-chat-android/pull/5911)
+- Add MessageComposerState.sendEnabled property to be able to locally enable/disable sned action. [#5916](https://github.com/GetStream/stream-chat-android/pull/5916)
+- Show quoted message over messages with attachments. [#5924](https://github.com/GetStream/stream-chat-android/pull/5924)
+
+### ✅ Added
+- Added `MessageReactionList` and `MessageReactionItem` component factories. [#5925](https://github.com/GetStream/stream-chat-android/pull/5925)
 
 # September 01th, 2025 - 6.22.1
 ## stream-chat-android-client
