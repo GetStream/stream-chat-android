@@ -19,6 +19,8 @@ package io.getstream.chat.android.client.api.models
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.chat.android.models.querysort.QuerySorter
 
 /**
@@ -66,7 +68,10 @@ import io.getstream.chat.android.models.querysort.QuerySorter
  */
 public data class QueryThreadsRequest @JvmOverloads constructor(
     public val filter: FilterObject? = null,
-    public val sort: QuerySorter<Thread>? = null,
+    public val sort: QuerySorter<Thread> = QuerySortByField
+        .descByName<Thread>("has_unread")
+        .descByName("last_message_at")
+        .descByName("parent_message_id"),
     public val watch: Boolean = true,
     public val limit: Int = 10,
     public val memberLimit: Int = 100,

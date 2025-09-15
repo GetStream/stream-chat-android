@@ -45,6 +45,7 @@ import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
+import org.mockito.kotlin.anyOrNull
 import org.mockito.kotlin.doNothing
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -149,7 +150,7 @@ internal class QueryThreadsLogicTest {
             // given
             val stateLogic = mock<QueryThreadsStateLogic>()
             val databaseLogic = mock<QueryThreadsDatabaseLogic>()
-            whenever(databaseLogic.getLocalThreadsOrder()) doReturn listOf("mId1")
+            whenever(databaseLogic.getLocalThreadsOrder(anyOrNull(), any())) doReturn listOf("mId1")
             whenever(databaseLogic.getLocalThreads(any())) doReturn threadList
             val logic = QueryThreadsLogic(stateLogic, databaseLogic)
             // when
@@ -157,7 +158,7 @@ internal class QueryThreadsLogicTest {
             // then
             verify(stateLogic, times(1)).setLoading(true)
             verify(stateLogic, never()).setLoadingMore(any())
-            verify(databaseLogic, times(1)).getLocalThreadsOrder()
+            verify(databaseLogic, times(1)).getLocalThreadsOrder(anyOrNull(), any())
             verify(databaseLogic, times(1)).getLocalThreads(listOf("mId1"))
             verify(stateLogic, times(1)).insertThreadsIfAbsent(threadList)
         }
@@ -184,7 +185,7 @@ internal class QueryThreadsLogicTest {
         // given
         val stateLogic = mock<QueryThreadsStateLogic>()
         val databaseLogic = mock<QueryThreadsDatabaseLogic>()
-        whenever(databaseLogic.getLocalThreadsOrder()) doReturn emptyList()
+        whenever(databaseLogic.getLocalThreadsOrder(anyOrNull(), any())) doReturn emptyList()
         val logic = QueryThreadsLogic(stateLogic, databaseLogic)
         // when
         logic.onQueryThreadsRequest(QueryThreadsRequest(next = "nextCursor"))

@@ -1406,7 +1406,7 @@ constructor(
                 with(dtoMapping) {
                     io.getstream.chat.android.client.api2.model.requests.QueryThreadsRequest(
                         filter = query.filter?.toMap(),
-                        sort = query.sort?.toDto(),
+                        sort = query.sort.toDto(),
                         watch = query.watch,
                         limit = query.limit,
                         member_limit = query.memberLimit,
