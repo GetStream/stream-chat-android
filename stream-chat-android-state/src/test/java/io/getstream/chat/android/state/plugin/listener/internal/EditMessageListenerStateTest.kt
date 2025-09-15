@@ -51,6 +51,7 @@ internal class EditMessageListenerStateTest {
         }
 
         val threadsLogic: QueryThreadsLogic = mock()
+        val activeThreadsLogic = listOf(threadsLogic)
 
         val threadStateLogic: ThreadStateLogic = mock()
         val threadLogic: ThreadLogic = mock {
@@ -58,7 +59,7 @@ internal class EditMessageListenerStateTest {
         }
 
         whenever(logicRegistry.channelFromMessage(any())) doReturn channelLogic
-        whenever(logicRegistry.threads()) doReturn threadsLogic
+        whenever(logicRegistry.getActiveQueryThreadsLogic()) doReturn activeThreadsLogic
         whenever(logicRegistry.threadFromMessage(any())) doReturn threadLogic
 
         val testMessage = randomMessage()
@@ -89,6 +90,7 @@ internal class EditMessageListenerStateTest {
         }
 
         val threadsLogic: QueryThreadsLogic = mock()
+        val activeThreadsLogic = listOf(threadsLogic)
 
         val threadStateLogic: ThreadStateLogic = mock()
         val threadLogic: ThreadLogic = mock {
@@ -96,7 +98,7 @@ internal class EditMessageListenerStateTest {
         }
 
         whenever(logicRegistry.channelFromMessage(any())) doReturn channelLogic
-        whenever(logicRegistry.threads()) doReturn threadsLogic
+        whenever(logicRegistry.getActiveQueryThreadsLogic()) doReturn activeThreadsLogic
         whenever(logicRegistry.threadFromMessage(any())) doReturn threadLogic
         whenever(clientState.isNetworkAvailable) doReturn true
 
@@ -128,6 +130,7 @@ internal class EditMessageListenerStateTest {
         }
 
         val threadsLogic: QueryThreadsLogic = mock()
+        val activeThreadsLogic = listOf(threadsLogic)
 
         val threadStateLogic: ThreadStateLogic = mock()
         val threadLogic: ThreadLogic = mock {
@@ -135,7 +138,7 @@ internal class EditMessageListenerStateTest {
         }
 
         whenever(logicRegistry.channelFromMessage(any())) doReturn channelLogic
-        whenever(logicRegistry.threads()) doReturn threadsLogic
+        whenever(logicRegistry.getActiveQueryThreadsLogic()) doReturn activeThreadsLogic
         whenever(logicRegistry.threadFromMessage(any())) doReturn threadLogic
         whenever(clientState.isNetworkAvailable) doReturn false
 
@@ -167,6 +170,7 @@ internal class EditMessageListenerStateTest {
         }
 
         val threadsLogic: QueryThreadsLogic = mock()
+        val activeThreadsLogic = listOf(threadsLogic)
 
         val threadStateLogic: ThreadStateLogic = mock()
         val threadLogic: ThreadLogic = mock {
@@ -174,7 +178,7 @@ internal class EditMessageListenerStateTest {
         }
 
         whenever(logicRegistry.channelFromMessage(any())) doReturn channelLogic
-        whenever(logicRegistry.threads()) doReturn threadsLogic
+        whenever(logicRegistry.getActiveQueryThreadsLogic()) doReturn activeThreadsLogic
         whenever(logicRegistry.threadFromMessage(any())) doReturn threadLogic
 
         val testMessage = randomMessage()
@@ -206,6 +210,7 @@ internal class EditMessageListenerStateTest {
         }
 
         val threadsLogic: QueryThreadsLogic = mock()
+        val activeThreadsLogic = listOf(threadsLogic)
 
         val threadStateLogic: ThreadStateLogic = mock()
         val threadLogic: ThreadLogic = mock {
@@ -213,7 +218,7 @@ internal class EditMessageListenerStateTest {
         }
 
         whenever(logicRegistry.channelFromMessage(any())) doReturn channelLogic
-        whenever(logicRegistry.threads()) doReturn threadsLogic
+        whenever(logicRegistry.getActiveQueryThreadsLogic()) doReturn activeThreadsLogic
         whenever(logicRegistry.threadFromMessage(any())) doReturn threadLogic
 
         val testMessage = randomMessage()

@@ -106,7 +106,7 @@ internal class ChatClientStateCalls(
         chatClient.queryThreadsResult(request).launch(scope)
         return deferredState
             .await()
-            .queryThreads()
+            .queryThreads(request.filter, request.sort)
     }
 
     /** Reference request of the get thread replies query. */

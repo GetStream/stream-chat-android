@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.api.models
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.User
@@ -68,10 +69,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
  */
 public data class QueryThreadsRequest @JvmOverloads constructor(
     public val filter: FilterObject? = null,
-    public val sort: QuerySorter<Thread> = QuerySortByField
-        .descByName<Thread>("has_unread")
-        .descByName("last_message_at")
-        .descByName("parent_message_id"),
+    public val sort: QuerySorter<Thread> = DefaultSort,
     public val watch: Boolean = true,
     public val limit: Int = 10,
     public val memberLimit: Int = 100,
@@ -81,4 +79,20 @@ public data class QueryThreadsRequest @JvmOverloads constructor(
     public val replyLimit: Int = 2,
     public val user: User? = null,
     public val userId: String? = null,
-)
+) {
+
+    public companion object {
+
+        /**
+         * The default sort order for threads:
+         * 1. Unread status (unread threads first)
+         * 2. Last message timestamp (newest first)
+         * 3. Parent message ID (descending)
+         */
+        @InternalStreamChatApi
+        public val DefaultSort: QuerySorter<Thread> = QuerySortByField
+            .descByName<Thread>("has_unread")
+            .descByName("last_message_at")
+            .descByName("parent_message_id")
+    }
+}
