@@ -49,12 +49,12 @@ public class ChannelAttachmentsViewModel(
     /**
      * @see [ChannelAttachmentsViewController.state]
      */
-    public val state: StateFlow<ChannelAttachmentsViewState> = controller.state
+    public val state: StateFlow<ChannelAttachmentsViewState> by lazy { controller.state }
 
     /**
      * @see [ChannelAttachmentsViewController.events]
      */
-    public val events: SharedFlow<ChannelAttachmentsViewEvent> = controller.events
+    public val events: SharedFlow<ChannelAttachmentsViewEvent> by lazy { controller.events }
 
     /**
      * @see [ChannelAttachmentsViewController.onViewAction]
