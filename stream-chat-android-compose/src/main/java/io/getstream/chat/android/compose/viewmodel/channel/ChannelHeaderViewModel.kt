@@ -40,5 +40,5 @@ public class ChannelHeaderViewModel(
     /**
      * @see [ChannelHeaderViewController.state]
      */
-    public val state: StateFlow<ChannelHeaderViewState> = controller.state
+    public val state: StateFlow<ChannelHeaderViewState> by lazy { controller.state }
 }
