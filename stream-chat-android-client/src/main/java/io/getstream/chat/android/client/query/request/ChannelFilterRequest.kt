@@ -31,7 +31,7 @@ public object ChannelFilterRequest {
      *
      * @param filter - the filter to be included.
      * @param offset - the offset to be included with the filter.
-     * @param limit - the filter to be included with the filter.
+     * @param limit - the maximum number of results to return.
      */
     public suspend fun ChatClient.filterWithOffset(
         filter: FilterObject,
