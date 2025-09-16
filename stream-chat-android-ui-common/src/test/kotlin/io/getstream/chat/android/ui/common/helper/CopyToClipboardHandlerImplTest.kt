@@ -27,7 +27,10 @@ internal class CopyToClipboardHandlerImplTest {
     @Test
     fun `copy to clipboard`() {
         val mockClipboardManager = mock<ClipboardManager>()
-        val sut = CopyToClipboardHandlerImpl(clipboardManager = mockClipboardManager)
+        val sut = CopyToClipboardHandlerImpl(
+            context = mock(),
+            clipboardManagerProvider = { mockClipboardManager },
+        )
 
         val text = "text to copy"
         sut.copy(text)

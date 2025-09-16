@@ -58,12 +58,12 @@ public class ChannelInfoViewModel(
     /**
      * @see [ChannelInfoViewController.state]
      */
-    public val state: StateFlow<ChannelInfoViewState> = controller.state
+    public val state: StateFlow<ChannelInfoViewState> by lazy { controller.state }
 
     /**
      * @see [ChannelInfoViewController.events]
      */
-    public val events: SharedFlow<ChannelInfoViewEvent> = controller.events
+    public val events: SharedFlow<ChannelInfoViewEvent> by lazy { controller.events }
 
     /**
      * @see [ChannelInfoViewController.onViewAction]

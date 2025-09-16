@@ -40,12 +40,13 @@ public interface CopyToClipboardHandler {
 }
 
 internal class CopyToClipboardHandlerImpl(
-    private val clipboardManager: ClipboardManager,
+    private val context: Context,
+    private val clipboardManagerProvider: () -> ClipboardManager = {
+        requireNotNull(context.getSystemService<ClipboardManager>())
+    },
 ) : CopyToClipboardHandler {
 
-    constructor(context: Context) : this(
-        clipboardManager = requireNotNull(context.getSystemService<ClipboardManager>()),
-    )
+    private val clipboardManager: ClipboardManager by lazy { clipboardManagerProvider() }
 
     override fun copy(text: String) {
         clipboardManager.setPrimaryClip(ClipData.newPlainText(PLAIN_TEXT_LABEL, text))
