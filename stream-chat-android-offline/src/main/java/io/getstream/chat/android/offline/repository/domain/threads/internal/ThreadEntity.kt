@@ -26,7 +26,7 @@ import java.util.Date
  */
 @Suppress("LongParameterList")
 @Entity(tableName = THREAD_ENTITY_TABLE_NAME)
-internal class ThreadEntity(
+internal data class ThreadEntity(
     @PrimaryKey val parentMessageId: String,
     val cid: String,
     val createdByUserId: String,

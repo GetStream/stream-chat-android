@@ -25,6 +25,7 @@ import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
+import io.getstream.chat.android.offline.repository.domain.channel.userread.internal.ChannelUserReadEntity
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.LocationEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageEntity
@@ -33,6 +34,7 @@ import io.getstream.chat.android.offline.repository.domain.message.internal.Reac
 import io.getstream.chat.android.offline.repository.domain.message.internal.ReminderInfoEntity
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsEntity
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionEntity
+import io.getstream.chat.android.offline.repository.domain.threads.internal.ThreadEntity
 import io.getstream.chat.android.offline.repository.domain.user.internal.PrivacySettingsEntity
 import io.getstream.chat.android.offline.repository.domain.user.internal.UserEntity
 import io.getstream.chat.android.randomBoolean
@@ -207,3 +209,35 @@ internal fun randomLocationEntity(): LocationEntity =
         longitude = randomDouble(),
         deviceId = randomString(),
     )
+
+internal fun randomThreadEntity(
+    parentMessageId: String = randomString(),
+    cid: String = randomCID(),
+    createdByUserId: String = randomString(),
+    activeParticipantCount: Int = randomInt(),
+    participantCount: Int = randomInt(),
+    threadParticipantIds: List<String> = emptyList(),
+    lastMessageAt: Date = randomDate(),
+    createdAt: Date = randomDate(),
+    updatedAt: Date = randomDate(),
+    deletedAt: Date? = randomDateOrNull(),
+    title: String = randomString(),
+    read: List<ChannelUserReadEntity> = emptyList(),
+    latestReplyIds: List<String> = emptyList(),
+    extraData: Map<String, Any> = emptyMap(),
+): ThreadEntity = ThreadEntity(
+    parentMessageId = parentMessageId,
+    cid = cid,
+    createdByUserId = createdByUserId,
+    activeParticipantCount = activeParticipantCount,
+    participantCount = participantCount,
+    threadParticipantIds = threadParticipantIds,
+    lastMessageAt = lastMessageAt,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    deletedAt = deletedAt,
+    title = title,
+    read = read,
+    latestReplyIds = latestReplyIds,
+    extraData = extraData,
+)
