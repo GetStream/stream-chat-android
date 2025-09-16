@@ -97,4 +97,18 @@ internal class AttachmentsContentTest : SnapshotTest {
             GiphyAttachmentContent()
         }
     }
+
+    @Test
+    fun `single media attachment content`() {
+        snapshotWithDarkModeRow {
+            SingleMediaAttachmentContent()
+        }
+    }
+
+    @Test
+    fun `multiple media attachment content`() {
+        snapshotWithDarkModeRow {
+            MultipleMediaAttachmentContent()
+        }
+    }
 }
