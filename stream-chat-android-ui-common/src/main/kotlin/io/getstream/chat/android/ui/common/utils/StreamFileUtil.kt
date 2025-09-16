@@ -20,7 +20,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
-import android.os.Environment
 import androidx.core.content.FileProvider
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -50,21 +49,23 @@ public object StreamFileUtil {
     public fun getUriForFile(context: Context, file: File): Uri =
         FileProvider.getUriForFile(context, getFileProviderAuthority(context), file)
 
-    public fun writeImageToSharableFile(context: Context, bitmap: Bitmap): Uri? {
-        return try {
-            val file = File(
-                context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: context.cacheDir,
-                "share_image_${System.currentTimeMillis()}.png",
-            )
-            file.outputStream().use { out ->
-                bitmap.compress(Bitmap.CompressFormat.PNG, DEFAULT_BITMAP_QUALITY, out)
-                out.flush()
+    public fun writeImageToSharableFile(context: Context, bitmap: Bitmap): Uri? =
+        try {
+            when (val getOrCreateCacheDirResult = getOrCreateStreamCacheDir(context)) {
+                is Success -> {
+                    val streamCacheDir = getOrCreateCacheDirResult.value
+                    val file = File(streamCacheDir, "shared_image_${System.currentTimeMillis()}.png")
+                    file.outputStream().use { out ->
+                        bitmap.compress(Bitmap.CompressFormat.PNG, DEFAULT_BITMAP_QUALITY, out)
+                        out.flush()
+                    }
+                    getUriForFile(context, file)
+                }
+                is Failure -> null
             }
-            getUriForFile(context, file)
         } catch (_: IOException) {
             null
         }
-    }
 
     /**
      * Creates a Stream cache directory if one doesn't exist already.

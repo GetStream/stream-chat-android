@@ -44,6 +44,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.Delete
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewAction
@@ -68,11 +69,13 @@ import io.getstream.chat.android.models.streamcdn.image.StreamCdnResizeImageMode
 import io.getstream.chat.android.ui.common.helper.DefaultDownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
+import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import io.getstream.chat.android.ui.common.utils.StreamFileUtil
 import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
 import io.getstream.chat.android.ui.common.utils.shareLocalFile
+import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -337,7 +340,13 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         fileSharingJob = lifecycleScope.launch {
             mediaGalleryPreviewViewModel.isSharingInProgress = true
 
-            val result = StreamFileUtil.writeFileToShareableFile(applicationContext, attachment)
+            val imageUrl = attachment.imageUrl
+
+            val result = if (attachment.isImage() && imageUrl != null) {
+                writeImageToSharableFile(imageUrl)
+            } else {
+                StreamFileUtil.writeFileToShareableFile(applicationContext, attachment)
+            }
 
             mediaGalleryPreviewViewModel.isSharingInProgress = false
 
@@ -352,6 +361,16 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             }
         }
     }
+
+    private suspend fun writeImageToSharableFile(imageUrl: String): Result<Uri> =
+        StreamImageLoader.instance().loadAsBitmap(
+            context = applicationContext,
+            url = imageUrl,
+        )?.let { bitmap ->
+            StreamFileUtil.writeImageToSharableFile(applicationContext, bitmap)
+        }?.let { uri ->
+            Result.Success(uri)
+        } ?: Result.Failure(Error.GenericError("Unable to share image: $imageUrl"))
 
     /**
      * Displays a toast saying that sharing the attachment has failed.

@@ -22,6 +22,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewController
+import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import io.getstream.chat.android.ui.common.utils.StreamFileUtil
 import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
@@ -191,6 +192,18 @@ internal class AttachmentFileController(
 
     suspend fun getFileFromCache(attachment: Attachment): Result<Uri> =
         StreamFileUtil.getFileFromCache(context, attachment)
+
+    suspend fun downloadImage(attachment: Attachment): Result<Uri> =
+        attachment.imageUrl?.let { imageUrl ->
+            StreamImageLoader.instance().loadAsBitmap(
+                context = context,
+                url = imageUrl,
+            )?.let { bitmap ->
+                StreamFileUtil.writeImageToSharableFile(context, bitmap)
+            }?.let { uri ->
+                Result.Success(uri)
+            } ?: Result.Failure(Error.GenericError("Unable to share image: $imageUrl"))
+        } ?: Result.Failure(Error.GenericError("Unable to share image"))
 
     suspend fun downloadFile(attachment: Attachment): Result<Uri> =
         StreamFileUtil.writeFileToShareableFile(context, attachment)
