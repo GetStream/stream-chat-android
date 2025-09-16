@@ -16,6 +16,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add filtering and sorting options for `QueryThreads`. [#5931](https://github.com/GetStream/stream-chat-android/pull/5931)
 
 ### ⚠️ Changed
 
@@ -60,8 +61,10 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `ThreadsViewModelFactory(QueryThreadsRequest)` constructor supporting fully customizable queries for threads. [#5931](https://github.com/GetStream/stream-chat-android/pull/5931)
 
 ### ⚠️ Changed
+- Deprecate `ThreadsViewModelFactory(threadLimit, threadReplyLimit, threadParticipantLimit)` constructor in favor of `ThreadsViewModelFactory(QueryThreadsRequest)` constructor. [#5931](https://github.com/GetStream/stream-chat-android/pull/5931)
 
 ### ❌ Removed
 
@@ -71,8 +74,10 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `ThreadsViewModelFactory(QueryThreadsRequest)` constructor supporting fully customizable queries for threads. [#5931](https://github.com/GetStream/stream-chat-android/pull/5931)
 
 ### ⚠️ Changed
+- Deprecate `ThreadsViewModelFactory(threadLimit, threadReplyLimit, threadParticipantLimit)` constructor in favor of `ThreadsViewModelFactory(QueryThreadsRequest)` constructor. [#5931](https://github.com/GetStream/stream-chat-android/pull/5931)
 
 ### ❌ Removed
 
