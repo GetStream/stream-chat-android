@@ -118,6 +118,7 @@ dependencies {
     testImplementation(libs.kluent)
     testImplementation(libs.mockito)
     testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.turbine)
 
     detektPlugins(libs.detekt.formatting)
 
