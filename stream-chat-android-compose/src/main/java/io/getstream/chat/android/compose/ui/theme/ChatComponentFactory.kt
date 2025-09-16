@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -3566,6 +3567,38 @@ public interface ChatComponentFactory {
                 text = subtitle,
                 style = ChatTheme.typography.footnote,
                 color = ChatTheme.colors.textLowEmphasis,
+                maxLines = 1,
+            )
+        }
+    }
+
+    /**
+     * Factory method for creating the bottom bar of the channel media attachments preview screen.
+     *
+     * @param text The text to display in the bottom bar.
+     */
+    @Deprecated(
+        message = "Use ChannelMediaAttachmentsPreviewBottomBar(" +
+            "params: ChannelMediaAttachmentsPreviewBottomBarParams) instead.",
+        replaceWith = ReplaceWith(
+            "ChannelMediaAttachmentsPreviewBottomBar(ChannelMediaAttachmentsPreviewBottomBarParams(" +
+                "centerContent = { Text(text) }))",
+        ),
+    )
+    @Composable
+    public fun ChannelMediaAttachmentsPreviewBottomBar(text: String) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(ChatTheme.colors.barsBackground)
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Text(
+                text = text,
+                style = ChatTheme.typography.title3Bold,
+                color = ChatTheme.colors.textHighEmphasis,
                 maxLines = 1,
             )
         }

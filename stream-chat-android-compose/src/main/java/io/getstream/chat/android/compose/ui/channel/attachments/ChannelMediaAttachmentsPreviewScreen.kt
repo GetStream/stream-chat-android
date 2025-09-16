@@ -30,14 +30,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.ui.attachments.preview.ConfirmShareLargeFileDialog
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPager
-import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewPageIndicator
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewShareIcon
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewSharingInProgressIndicator
 import io.getstream.chat.android.compose.ui.theme.ChannelMediaAttachmentsPreviewBottomBarParams
@@ -194,9 +195,13 @@ private fun ChannelMediaAttachmentsPreviewBottomBar(
                 if (viewState.isPreparingToShare) {
                     MediaGalleryPreviewSharingInProgressIndicator()
                 } else {
-                    MediaGalleryPreviewPageIndicator(
-                        currentPage = pagerState.currentPage,
-                        totalPages = items.size,
+                    // TODO Use MediaGalleryPreviewPageIndicator when this deprecated component is removed
+                    ChatTheme.componentFactory.ChannelMediaAttachmentsPreviewBottomBar(
+                        text = stringResource(
+                            R.string.stream_compose_image_order,
+                            pagerState.currentPage + 1,
+                            items.size,
+                        ),
                     )
                 }
             },
