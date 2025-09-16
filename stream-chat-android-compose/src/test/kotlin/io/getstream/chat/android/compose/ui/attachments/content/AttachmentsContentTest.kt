@@ -90,4 +90,11 @@ internal class AttachmentsContentTest : SnapshotTest {
             FileUploadContent()
         }
     }
+
+    @Test
+    fun `giphy attachment content`() {
+        snapshotWithDarkModeRow {
+            GiphyAttachmentContent()
+        }
+    }
 }

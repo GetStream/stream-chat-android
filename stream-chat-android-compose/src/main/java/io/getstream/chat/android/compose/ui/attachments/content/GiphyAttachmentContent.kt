@@ -30,26 +30,34 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import coil3.ColorImage
+import coil3.compose.LocalAsyncImagePreviewHandler
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDimens
+import io.getstream.chat.android.compose.ui.util.AsyncImagePreviewHandler
 import io.getstream.chat.android.compose.ui.util.StreamAsyncImage
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.utils.GiphyInfoType
 import io.getstream.chat.android.ui.common.utils.GiphySizingMode
@@ -306,3 +314,32 @@ public data class GiphyAttachmentClickData internal constructor(
     val attachment: Attachment,
     val message: Message,
 )
+
+@Composable
+@Preview(showBackground = true)
+private fun GiphyAttachmentContentPreview() {
+    ChatTheme {
+        GiphyAttachmentContent()
+    }
+}
+
+@Composable
+internal fun GiphyAttachmentContent() {
+    val previewHandler = AsyncImagePreviewHandler {
+        ColorImage(color = Color.Red.toArgb(), width = 200, height = 150)
+    }
+    CompositionLocalProvider(LocalAsyncImagePreviewHandler provides previewHandler) {
+        GiphyAttachmentContent(
+            attachmentState = AttachmentState(
+                message = Message(
+                    attachments = listOf(
+                        Attachment(
+                            titleLink = "https://giphy.com/gifs/funny-cat-3oEjI6SIIHBdRxXI40",
+                            type = AttachmentType.GIPHY,
+                        ),
+                    ),
+                ),
+            ),
+        )
+    }
+}
