@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.viewmodel.channel
 import android.net.Uri
 import androidx.core.net.toUri
 import app.cash.turbine.test
+import io.getstream.chat.android.compose.util.AttachmentFileController
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomAttachment

@@ -2815,6 +2815,7 @@ public abstract interface class io/getstream/chat/android/compose/ui/theme/ChatC
 	public abstract fun ChannelMediaAttachmentsLoadingIndicator (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun ChannelMediaAttachmentsLoadingItem (Landroidx/compose/foundation/lazy/grid/LazyGridItemScope;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun ChannelMediaAttachmentsPreviewBottomBar (Lio/getstream/chat/android/compose/ui/theme/ChannelMediaAttachmentsPreviewBottomBarParams;Landroidx/compose/runtime/Composer;I)V
+	public abstract fun ChannelMediaAttachmentsPreviewBottomBar (Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun ChannelMediaAttachmentsPreviewTopBar (Lio/getstream/chat/android/ui/common/state/channel/attachments/ChannelAttachmentsViewState$Content$Item;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun ChannelMediaAttachmentsPreviewTopBarTitle (Lio/getstream/chat/android/ui/common/state/channel/attachments/ChannelAttachmentsViewState$Content$Item;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun ChannelMediaAttachmentsTopBar (Landroidx/compose/foundation/lazy/grid/LazyGridState;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
@@ -2995,6 +2996,7 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatComponentFacto
 	public static fun ChannelMediaAttachmentsLoadingIndicator (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelMediaAttachmentsLoadingItem (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/lazy/grid/LazyGridItemScope;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelMediaAttachmentsPreviewBottomBar (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/compose/ui/theme/ChannelMediaAttachmentsPreviewBottomBarParams;Landroidx/compose/runtime/Composer;I)V
+	public static fun ChannelMediaAttachmentsPreviewBottomBar (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelMediaAttachmentsPreviewTopBar (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/ui/common/state/channel/attachments/ChannelAttachmentsViewState$Content$Item;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelMediaAttachmentsPreviewTopBarTitle (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Lio/getstream/chat/android/ui/common/state/channel/attachments/ChannelAttachmentsViewState$Content$Item;Landroidx/compose/runtime/Composer;I)V
 	public static fun ChannelMediaAttachmentsTopBar (Lio/getstream/chat/android/compose/ui/theme/ChatComponentFactory;Landroidx/compose/foundation/lazy/grid/LazyGridState;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V

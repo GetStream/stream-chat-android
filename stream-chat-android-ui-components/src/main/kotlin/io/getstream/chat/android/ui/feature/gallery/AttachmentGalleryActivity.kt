@@ -211,7 +211,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                     url = imageUrl,
                 )?.let { bitmap ->
                     StreamFileUtil.writeImageToSharableFile(applicationContext, bitmap)
-                }?.let { uri ->
+                }?.onSuccess { uri ->
                     shareLocalFile(
                         uri = uri,
                         mimeType = attachment.mimeType,

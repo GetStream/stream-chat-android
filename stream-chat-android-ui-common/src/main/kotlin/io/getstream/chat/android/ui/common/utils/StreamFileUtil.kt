@@ -49,22 +49,25 @@ public object StreamFileUtil {
     public fun getUriForFile(context: Context, file: File): Uri =
         FileProvider.getUriForFile(context, getFileProviderAuthority(context), file)
 
-    public fun writeImageToSharableFile(context: Context, bitmap: Bitmap): Uri? =
-        try {
+    public suspend fun writeImageToSharableFile(context: Context, bitmap: Bitmap): Result<Uri> =
+        withContext(DispatcherProvider.IO) {
             when (val getOrCreateCacheDirResult = getOrCreateStreamCacheDir(context)) {
                 is Success -> {
-                    val streamCacheDir = getOrCreateCacheDirResult.value
-                    val file = File(streamCacheDir, "shared_image_${System.currentTimeMillis()}.png")
-                    file.outputStream().use { out ->
-                        bitmap.compress(Bitmap.CompressFormat.PNG, DEFAULT_BITMAP_QUALITY, out)
-                        out.flush()
+                    try {
+                        val streamCacheDir = getOrCreateCacheDirResult.value
+                        val file = File(streamCacheDir, "shared_image_${System.currentTimeMillis()}.png")
+                        file.outputStream().use { out ->
+                            bitmap.compress(Bitmap.CompressFormat.PNG, DEFAULT_BITMAP_QUALITY, out)
+                            out.flush()
+                        }
+                        Success(getUriForFile(context, file))
+                    } catch (_: IOException) {
+                        Failure(Error.GenericError("Could not write image to file."))
                     }
-                    getUriForFile(context, file)
                 }
-                is Failure -> null
+
+                is Failure -> getOrCreateCacheDirResult
             }
-        } catch (_: IOException) {
-            null
         }
 
     /**
@@ -251,6 +254,7 @@ public object StreamFileUtil {
 
                                 Success(getUriForFile(context, file))
                             }
+
                             is Failure -> response
                         }
                     }

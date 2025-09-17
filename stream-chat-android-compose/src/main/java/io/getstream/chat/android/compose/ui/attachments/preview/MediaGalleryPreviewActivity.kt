@@ -58,6 +58,7 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.toMediaGaller
 import io.getstream.chat.android.compose.state.mediagallerypreview.toMessage
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
+import io.getstream.chat.android.compose.util.AttachmentFileController
 import io.getstream.chat.android.compose.util.attachmentDownloadState
 import io.getstream.chat.android.compose.util.onDownloadHandleRequest
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModel
@@ -69,13 +70,11 @@ import io.getstream.chat.android.models.streamcdn.image.StreamCdnResizeImageMode
 import io.getstream.chat.android.ui.common.helper.DefaultDownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadAttachmentUriGenerator
 import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
-import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import io.getstream.chat.android.ui.common.utils.StreamFileUtil
 import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
 import io.getstream.chat.android.ui.common.utils.shareLocalFile
-import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -116,6 +115,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
      * The ViewModel that exposes screen data.
      */
     private val mediaGalleryPreviewViewModel by viewModels<MediaGalleryPreviewViewModel>(factoryProducer = { factory })
+
+    private val attachmentFileController by lazy { AttachmentFileController(context = applicationContext) }
 
     /**
      * Sets up the data required to show the previews of images or videos within the given message.
@@ -307,10 +308,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
             attachment.fileSize >= AttachmentConstants.MAX_SIZE_BEFORE_DOWNLOAD_WARNING_IN_BYTES -> {
                 lifecycleScope.launch {
-                    val result = StreamFileUtil.getFileFromCache(
-                        context = applicationContext,
-                        attachment = attachment,
-                    )
+                    val result = attachmentFileController.getFileFromCache(attachment)
                     when (result) {
                         is Result.Success -> {
                             shareAttachment(
@@ -340,12 +338,10 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         fileSharingJob = lifecycleScope.launch {
             mediaGalleryPreviewViewModel.isSharingInProgress = true
 
-            val imageUrl = attachment.imageUrl
-
-            val result = if (attachment.isImage() && imageUrl != null) {
-                writeImageToSharableFile(imageUrl)
+            val result = if (attachment.isImage() && attachment.imageUrl != null) {
+                attachmentFileController.downloadImage(attachment)
             } else {
-                StreamFileUtil.writeFileToShareableFile(applicationContext, attachment)
+                attachmentFileController.downloadFile(attachment)
             }
 
             mediaGalleryPreviewViewModel.isSharingInProgress = false
@@ -361,16 +357,6 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             }
         }
     }
-
-    private suspend fun writeImageToSharableFile(imageUrl: String): Result<Uri> =
-        StreamImageLoader.instance().loadAsBitmap(
-            context = applicationContext,
-            url = imageUrl,
-        )?.let { bitmap ->
-            StreamFileUtil.writeImageToSharableFile(applicationContext, bitmap)
-        }?.let { uri ->
-            Result.Success(uri)
-        } ?: Result.Failure(Error.GenericError("Unable to share image: $imageUrl"))
 
     /**
      * Displays a toast saying that sharing the attachment has failed.

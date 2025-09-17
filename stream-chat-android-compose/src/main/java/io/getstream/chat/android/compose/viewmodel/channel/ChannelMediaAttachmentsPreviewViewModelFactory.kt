@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.viewmodel.channel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import io.getstream.chat.android.compose.util.AttachmentFileController
 
 internal class ChannelMediaAttachmentsPreviewViewModelFactory(
     private val context: Context,

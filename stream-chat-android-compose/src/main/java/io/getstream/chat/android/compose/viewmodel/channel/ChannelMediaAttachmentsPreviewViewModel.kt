@@ -16,20 +16,18 @@
 
 package io.getstream.chat.android.compose.viewmodel.channel
 
-import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import io.getstream.chat.android.client.utils.attachment.isImage
+import io.getstream.chat.android.compose.util.AttachmentFileController
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.feature.channel.attachments.ChannelAttachmentsViewController
-import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
-import io.getstream.chat.android.ui.common.utils.StreamFileUtil
 import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
-import io.getstream.result.Result
 import io.getstream.result.onErrorSuspend
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -121,20 +119,23 @@ internal class ChannelMediaAttachmentsPreviewViewModel(
             )
         }
         sharingJob = viewModelScope.launch {
-            attachmentFileController.downloadFile(attachment)
-                .onSuccess { uri ->
-                    logger.d { "[share] Attachment ready, starting share intent..." }
-                    _events.tryEmit(
-                        ChannelMediaAttachmentsPreviewViewEvent.ShareLocalFile(
-                            uri = uri,
-                            mimeType = attachment.mimeType,
-                            text = attachment.getDisplayableName(),
-                        ),
-                    )
-                }.onError { error ->
-                    logger.e { "[share] failed to share attachment: ${error.message}" }
-                    _events.tryEmit(ChannelMediaAttachmentsPreviewViewEvent.SharingError(error))
-                }
+            if (attachment.isImage() && attachment.imageUrl != null) {
+                attachmentFileController.downloadImage(attachment)
+            } else {
+                attachmentFileController.downloadFile(attachment)
+            }.onSuccess { uri ->
+                logger.d { "[share] Attachment ready, starting share intent..." }
+                _events.tryEmit(
+                    ChannelMediaAttachmentsPreviewViewEvent.ShareLocalFile(
+                        uri = uri,
+                        mimeType = attachment.mimeType,
+                        text = attachment.getDisplayableName(),
+                    ),
+                )
+            }.onError { error ->
+                logger.e { "[share] failed to share attachment: ${error.message}" }
+                _events.tryEmit(ChannelMediaAttachmentsPreviewViewEvent.SharingError(error))
+            }
             _state.update { currentState ->
                 currentState.copy(isPreparingToShare = false)
             }
@@ -184,27 +185,4 @@ internal sealed interface ChannelMediaAttachmentsPreviewViewEvent {
     ) : ChannelMediaAttachmentsPreviewViewEvent
 
     data class SharingError(val error: Error) : ChannelMediaAttachmentsPreviewViewEvent
-}
-
-internal class AttachmentFileController(
-    private val context: Context,
-) {
-
-    suspend fun getFileFromCache(attachment: Attachment): Result<Uri> =
-        StreamFileUtil.getFileFromCache(context, attachment)
-
-    suspend fun downloadImage(attachment: Attachment): Result<Uri> =
-        attachment.imageUrl?.let { imageUrl ->
-            StreamImageLoader.instance().loadAsBitmap(
-                context = context,
-                url = imageUrl,
-            )?.let { bitmap ->
-                StreamFileUtil.writeImageToSharableFile(context, bitmap)
-            }?.let { uri ->
-                Result.Success(uri)
-            } ?: Result.Failure(Error.GenericError("Unable to share image: $imageUrl"))
-        } ?: Result.Failure(Error.GenericError("Unable to share image"))
-
-    suspend fun downloadFile(attachment: Attachment): Result<Uri> =
-        StreamFileUtil.writeFileToShareableFile(context, attachment)
 }
