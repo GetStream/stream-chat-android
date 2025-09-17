@@ -142,6 +142,7 @@ import io.getstream.chat.android.compose.ui.components.suggestions.commands.Comm
 import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionList
 import io.getstream.chat.android.compose.ui.components.suggestions.commands.DefaultCommandSuggestionItemCenterContent
 import io.getstream.chat.android.compose.ui.components.suggestions.commands.DefaultCommandSuggestionItemLeadingContent
+import io.getstream.chat.android.compose.ui.components.suggestions.commands.DefaultCommandSuggestionListHeader
 import io.getstream.chat.android.compose.ui.components.suggestions.mentions.DefaultMentionSuggestionItemCenterContent
 import io.getstream.chat.android.compose.ui.components.suggestions.mentions.DefaultMentionSuggestionItemLeadingContent
 import io.getstream.chat.android.compose.ui.components.suggestions.mentions.DefaultMentionSuggestionItemTrailingContent
@@ -1611,6 +1612,19 @@ public interface ChatComponentFactory {
         onCommandSelected: (Command) -> Unit,
     ) {
         CommandSuggestionList(commands = commandSuggestions, onCommandSelected = onCommandSelected)
+    }
+
+    /**
+     * The default header of the command suggestion list of the message composer.
+     * Shown at the top of the command suggestions list.
+     */
+    @Composable
+    public fun MessageComposerCommandSuggestionListHeader(
+        params: MessageComposerCommandSuggestionListHeaderParams,
+    ) {
+        DefaultCommandSuggestionListHeader(
+            modifier = params.modifier,
+        )
     }
 
     /**
