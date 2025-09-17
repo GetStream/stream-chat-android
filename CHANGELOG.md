@@ -69,6 +69,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Remove the fixed height modifier in `FileUploadItem`. [#5932](https://github.com/GetStream/stream-chat-android/pull/5932)
 
 ### ✅ Added
 
