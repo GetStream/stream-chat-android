@@ -1976,8 +1976,9 @@ public class MessageListController(
      *
      * @param reaction The reaction to add or remove.
      * @param message The currently selected message.
+     * @param skipPush If set to "true", skips sending push notification when reacting to a message.
      */
-    public fun reactToMessage(reaction: Reaction, message: Message) {
+    public fun reactToMessage(reaction: Reaction, message: Message, skipPush: Boolean = false) {
         if (message.ownReactions.any { it.type == reaction.type }) {
             chatClient.deleteReaction(
                 messageId = message.id,
@@ -1996,6 +1997,7 @@ public class MessageListController(
                 enforceUnique = enforceUniqueReactions,
                 reaction = reaction,
                 cid = cid,
+                skipPush = skipPush,
             ).enqueue(
                 onError = { streamError ->
                     logger.e {

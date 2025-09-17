@@ -1191,15 +1191,21 @@ internal constructor(
      * @param reaction The [Reaction] to send.
      * @param enforceUnique Flag to determine whether the reaction should replace other ones added by the current user.
      * @param cid The full channel id, i.e. "messaging:123" to which the message with reaction belongs.
+     * @param skipPush If set to "true", skips sending push notification when reacting to a message.
      *
      * @return Executable async [Call] responsible for sending the reaction.
      */
     @CheckResult
     @JvmOverloads
-    public fun sendReaction(reaction: Reaction, enforceUnique: Boolean, cid: String? = null): Call<Reaction> {
+    public fun sendReaction(
+        reaction: Reaction,
+        enforceUnique: Boolean,
+        cid: String? = null,
+        skipPush: Boolean = false,
+    ): Call<Reaction> {
         val currentUser = getCurrentUser()
         val finalReaction = reaction.copy(createdLocallyAt = now())
-        return api.sendReaction(finalReaction, enforceUnique)
+        return api.sendReaction(finalReaction, enforceUnique, skipPush)
             .retry(scope = userScope, retryPolicy = retryPolicy)
             .doOnStart(userScope) {
                 logger.v { "[sendReaction] #doOnStart; reaction: ${reaction.type}, messageId: ${reaction.messageId}" }

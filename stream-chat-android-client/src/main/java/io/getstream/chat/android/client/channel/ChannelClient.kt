@@ -605,12 +605,17 @@ public class ChannelClient internal constructor(
      *
      * @param reaction The [Reaction] to send.
      * @param enforceUnique Flag to determine whether the reaction should replace other ones added by the current user.
+     * @param skipPush If set to "true", skips sending push notification when reacting to a message.
      *
      * @return Executable async [Call] responsible for sending the reaction.
      */
     @CheckResult
-    public fun sendReaction(reaction: Reaction, enforceUnique: Boolean = false): Call<Reaction> {
-        return client.sendReaction(reaction, enforceUnique, cid)
+    public fun sendReaction(
+        reaction: Reaction,
+        enforceUnique: Boolean = false,
+        skipPush: Boolean = false,
+    ): Call<Reaction> {
+        return client.sendReaction(reaction, enforceUnique, cid, skipPush)
     }
 
     @CheckResult

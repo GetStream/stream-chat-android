@@ -29,7 +29,6 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
-import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.models.Reaction
 
 /**

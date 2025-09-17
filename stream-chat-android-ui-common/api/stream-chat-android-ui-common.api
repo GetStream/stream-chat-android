@@ -748,7 +748,8 @@ public final class io/getstream/chat/android/ui/common/feature/messages/list/Mes
 	public final fun pinMessage (Lio/getstream/chat/android/models/Message;)V
 	public final fun pinMessage (Lio/getstream/chat/android/models/Message;Ljava/util/Date;)V
 	public static synthetic fun pinMessage$default (Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController;Lio/getstream/chat/android/models/Message;Ljava/util/Date;ILjava/lang/Object;)V
-	public final fun reactToMessage (Lio/getstream/chat/android/models/Reaction;Lio/getstream/chat/android/models/Message;)V
+	public final fun reactToMessage (Lio/getstream/chat/android/models/Reaction;Lio/getstream/chat/android/models/Message;Z)V
+	public static synthetic fun reactToMessage$default (Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController;Lio/getstream/chat/android/models/Reaction;Lio/getstream/chat/android/models/Message;ZILjava/lang/Object;)V
 	public final fun removeAttachment (Ljava/lang/String;Lio/getstream/chat/android/models/Attachment;)V
 	public final fun removeOverlay ()V
 	public final fun removeShadowBanFromUser (Ljava/lang/String;)V

@@ -451,6 +451,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         val currentUser = randomUser()
         val reaction = randomReaction()
         val enforceUnique = randomBoolean()
+        val skipPush = randomBoolean()
         val cid = randomCID()
         val plugin = mock<Plugin>()
         val sut = Fixture()
@@ -459,7 +460,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
             .givenSendReactionResult(reaction.asCall())
             .get()
         // when
-        val result = sut.sendReaction(reaction, enforceUnique, cid).await()
+        val result = sut.sendReaction(reaction, enforceUnique, cid, skipPush).await()
         // then
         verifySuccess(result, reaction)
         val inOrder = Mockito.inOrder(plugin)
@@ -838,7 +839,7 @@ internal class ChatClientMessageApiTests : BaseChatClientTest() {
         }
 
         fun givenSendReactionResult(result: Call<Reaction>) = apply {
-            whenever(api.sendReaction(any(), any())).thenReturn(result)
+            whenever(api.sendReaction(any(), any(), any())).thenReturn(result)
         }
 
         fun givenDeleteReactionResult(result: Call<Message>) = apply {

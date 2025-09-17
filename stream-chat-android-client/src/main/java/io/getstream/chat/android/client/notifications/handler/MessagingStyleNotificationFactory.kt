@@ -65,7 +65,10 @@ internal class MessagingStyleNotificationFactory(
     internal fun createNotificationId(notification: ChatNotification): Int = when (notification) {
         is ChatNotification.MessageNew ->
             createChannelNotificationId(notification.channel.type, notification.channel.id)
-
+        is ChatNotification.MessageUpdated ->
+            "${notification.channel.type}:${notification.channel.id}:${notification.message.id}".hashCode()
+        is ChatNotification.ReactionNew ->
+            "${notification.message.id}:${notification.reactionUserId}:${notification.type}".hashCode()
         is ChatNotification.NotificationReminderDue ->
             "${notification.channel.type}:${notification.channel.id}:${notification.message.id}".hashCode()
     }
@@ -104,6 +107,25 @@ internal class MessagingStyleNotificationFactory(
                     .setContentIntent(createContentIntent(notificationId, channel, message))
                     .setStyle(style.addMessage(message.toMessagingStyleMessage(context, currentUser)))
                     .apply { actionsProvider(notificationId, channel, message).forEach(::addAction) }
+            }
+
+            is ChatNotification.MessageUpdated -> {
+                // Note: Handled the same as MessageNew - perhaps in future we want to differentiate them
+                val channel = notification.channel
+                val message = notification.message
+                val style = restoreMessagingStyle(channel) ?: createMessagingStyle(currentUser, channel)
+                builder
+                    .setContentIntent(createContentIntent(notificationId, channel, message))
+                    .setStyle(style.addMessage(message.toMessagingStyleMessage(context, currentUser)))
+                    .apply { actionsProvider(notificationId, channel, message).forEach(::addAction) }
+            }
+
+            is ChatNotification.ReactionNew -> {
+                builder
+                    .setContentTitle(notification.title)
+                    .setContentText(notification.body)
+                    .setContentIntent(createContentIntent(notificationId, notification.channel, notification.message))
+                    .setAutoCancel(true)
             }
 
             is ChatNotification.NotificationReminderDue -> {
