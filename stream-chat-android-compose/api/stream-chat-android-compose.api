@@ -5031,8 +5031,8 @@ public final class io/getstream/chat/android/compose/viewmodel/threads/ThreadLis
 public final class io/getstream/chat/android/compose/viewmodel/threads/ThreadsViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
 	public static final field $stable I
 	public fun <init> ()V
-	public fun <init> (III)V
-	public synthetic fun <init> (IIIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (IIILio/getstream/chat/android/client/ChatClient;)V
+	public synthetic fun <init> (IIILio/getstream/chat/android/client/ChatClient;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 
