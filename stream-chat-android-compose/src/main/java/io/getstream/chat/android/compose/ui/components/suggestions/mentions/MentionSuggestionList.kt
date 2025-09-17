@@ -23,9 +23,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.ui.components.suggestions.SuggestionList
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.previewdata.PreviewUserData
 
 /**
  * Represents the mention suggestion list popup.
@@ -52,13 +55,50 @@ public fun MentionSuggestionList(
             .fillMaxWidth()
             .heightIn(max = ChatTheme.dimens.suggestionListMaxHeight),
     ) {
-        LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
-            items(
-                items = users,
-                key = User::id,
-            ) { user ->
-                itemContent(user)
-            }
+        SuggestionLazyList(
+            users = users,
+            onMentionSelected = onMentionSelected,
+            itemContent = itemContent,
+        )
+    }
+}
+
+@Composable
+private fun SuggestionLazyList(
+    users: List<User>,
+    onMentionSelected: (User) -> Unit = {},
+    itemContent: @Composable (User) -> Unit = { user ->
+        ChatTheme.componentFactory.MessageComposerMentionSuggestionItem(
+            user = user,
+            onMentionSelected = onMentionSelected,
+        )
+    },
+) {
+    LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
+        items(
+            items = users,
+            key = User::id,
+        ) { user ->
+            itemContent(user)
         }
     }
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun MentionSuggestionListPreview() {
+    ChatPreviewTheme {
+        MentionSuggestionList()
+    }
+}
+
+@Composable
+internal fun MentionSuggestionList() {
+    SuggestionLazyList(
+        users = listOf(
+            PreviewUserData.user1,
+            PreviewUserData.user2,
+            PreviewUserData.user3,
+        ),
+    )
 }

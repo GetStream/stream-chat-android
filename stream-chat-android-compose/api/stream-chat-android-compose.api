@@ -2070,6 +2070,13 @@ public final class io/getstream/chat/android/compose/ui/components/suggestions/m
 	public final fun getLambda-4$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
 }
 
+public final class io/getstream/chat/android/compose/ui/components/suggestions/mentions/ComposableSingletons$MentionSuggestionListKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/suggestions/mentions/ComposableSingletons$MentionSuggestionListKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
 public final class io/getstream/chat/android/compose/ui/components/suggestions/mentions/MentionSuggestionItemKt {
 	public static final fun MentionSuggestionItem (Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V
 }
