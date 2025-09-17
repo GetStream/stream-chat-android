@@ -40,6 +40,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridItemScope
 import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Warning
 import androidx.compose.material3.ButtonDefaults
@@ -50,12 +51,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
@@ -64,6 +67,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
@@ -117,6 +123,8 @@ import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageCo
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageDeletedContent
 import io.getstream.chat.android.compose.ui.components.messages.DefaultMessageGiphyContent
 import io.getstream.chat.android.compose.ui.components.messages.MessageFooter
+import io.getstream.chat.android.compose.ui.components.messages.MessageReactionItem
+import io.getstream.chat.android.compose.ui.components.messages.MessageReactions
 import io.getstream.chat.android.compose.ui.components.messages.MessageText
 import io.getstream.chat.android.compose.ui.components.messages.MessageThreadFooter
 import io.getstream.chat.android.compose.ui.components.messages.OwnedMessageVisibilityContent
@@ -1179,6 +1187,47 @@ public interface ChatComponentFactory {
     }
 
     /**
+     * The default list of reactions displayed above the message bubble and is part of [MessageItemHeaderContent].
+     */
+    @Composable
+    public fun MessageReactionList(
+        params: MessageReactionListParams,
+    ) {
+        MessageReactions(
+            modifier = params.modifier
+                .minimumInteractiveComponentSize()
+                .clip(shape = RoundedCornerShape(16.dp))
+                .run {
+                    params.onClick?.let { onClick ->
+                        clickable { onClick(params.message) }
+                    } ?: this
+                }
+                .padding(horizontal = 4.dp, vertical = 2.dp),
+            options = params.reactions,
+        )
+    }
+
+    /**
+     * The default individual reaction item shown inside [MessageReactionList].
+     */
+    @Composable
+    public fun RowScope.MessageReactionItem(
+        params: MessageReactionItemParams,
+    ) {
+        MessageReactionItem(
+            modifier = params.modifier
+                .semantics {
+                    testTag = "Stream_MessageReaction_${params.state.type}"
+                    contentDescription = params.state.type
+                }
+                .size(20.dp)
+                .padding(2.dp)
+                .align(Alignment.CenterVertically),
+            option = params.state,
+        )
+    }
+
+    /**
      * The default Giphy message content.
      */
     @Composable
@@ -1668,7 +1717,7 @@ public interface ChatComponentFactory {
      */
     @Composable
     public fun MessageComposerLabel(state: MessageComposerState) {
-        DefaultComposerLabel(state.ownCapabilities)
+        DefaultComposerLabel(state)
     }
 
     /**
