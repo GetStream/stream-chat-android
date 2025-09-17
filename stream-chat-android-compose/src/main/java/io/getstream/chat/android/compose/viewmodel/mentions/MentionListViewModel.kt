@@ -42,12 +42,12 @@ public class MentionListViewModel(
     /**
      * The current mention list state.
      */
-    public val state: StateFlow<MentionListState> = controller.state
+    public val state: StateFlow<MentionListState> by lazy { controller.state }
 
     /**
      * One shot events.
      */
-    public val events: SharedFlow<MentionListEvent> = controller.events
+    public val events: SharedFlow<MentionListEvent> by lazy { controller.events }
 
     /**
      * Loads more messages if there are more messages to load.
