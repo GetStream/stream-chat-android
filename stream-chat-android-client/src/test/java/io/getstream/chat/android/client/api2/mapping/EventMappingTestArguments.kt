@@ -189,7 +189,6 @@ internal object EventMappingTestArguments {
     private val GENERIC_ERROR = Error.GenericError("generic error")
     private val MEMBER = Mother.randomDownstreamMemberDto()
     private val HARD_DELETE = randomBoolean()
-    private val SOFT_DELETE = randomBoolean()
     private val FIRST_UNREAD_MESSAGE_ID = randomString()
     private val LAST_READ_MESSAGE_ID = randomString()
     private val UNREAD_MESSAGES = positiveRandomInt()
