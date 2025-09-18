@@ -56,7 +56,7 @@ public interface MessageRepository {
      *
      * @param userId The user ID to filter messages.
      */
-    public suspend fun selectMessagesForUser(userId: String): List<Message>
+    public suspend fun selectAllUserMessages(userId: String): List<Message>
 
     /**
      * Selects all messages from a given user in a given channel.
@@ -64,7 +64,7 @@ public interface MessageRepository {
      * @param cid The channel ID to filter messages.
      * @param userId The user ID to filter messages.
      */
-    public suspend fun selectMessagesInChannelForUser(cid: String, userId: String): List<Message>
+    public suspend fun selectAllChannelUserMessages(cid: String, userId: String): List<Message>
 
     /**
      * Selects messages by IDs.

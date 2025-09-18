@@ -697,8 +697,11 @@ internal class ChannelLogic(
             is NotificationChannelMutesUpdatedEvent -> event.me.channelMutes.any { mute ->
                 mute.channel?.cid == mutableState.cid
             }.let(channelStateLogic::updateMute)
-            is UserMessagesDeletedEvent ->
-                channelStateLogic.deleteMessagesFromUser(event.user.id, event.hardDelete, event.createdAt)
+            is UserMessagesDeletedEvent -> channelStateLogic.deleteMessagesFromUser(
+                userId = event.user.id,
+                hard = event.hardDelete,
+                deletedAt = event.createdAt,
+            )
             is ConnectedEvent,
             is ConnectionErrorEvent,
             is ConnectingEvent,

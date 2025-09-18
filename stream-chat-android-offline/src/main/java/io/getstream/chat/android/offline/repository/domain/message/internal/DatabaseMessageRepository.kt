@@ -74,11 +74,11 @@ internal class DatabaseMessageRepository(
         messageDao.messagesForThread(messageId, limit)
             .map { it.toMessage() }
 
-    override suspend fun selectMessagesForUser(userId: String): List<Message> =
+    override suspend fun selectAllUserMessages(userId: String): List<Message> =
         messageDao.selectByUserId(userId)
             .map { it.toMessage() }
 
-    override suspend fun selectMessagesInChannelForUser(cid: String, userId: String): List<Message> =
+    override suspend fun selectAllChannelUserMessages(cid: String, userId: String): List<Message> =
         messageDao.selectByCidAndUserId(cid, userId)
             .map { it.toMessage() }
 

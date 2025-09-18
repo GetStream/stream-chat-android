@@ -223,11 +223,11 @@ internal class MockMessageRepository : MessageRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun selectMessagesForUser(userId: String): List<Message> {
+    override suspend fun selectAllUserMessages(userId: String): List<Message> {
         TODO("Not yet implemented")
     }
 
-    override suspend fun selectMessagesInChannelForUser(cid: String, userId: String): List<Message> {
+    override suspend fun selectAllChannelUserMessages(cid: String, userId: String): List<Message> {
         TODO("Not yet implemented")
     }
 

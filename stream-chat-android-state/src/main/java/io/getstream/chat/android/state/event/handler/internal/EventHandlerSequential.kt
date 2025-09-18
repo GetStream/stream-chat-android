@@ -875,10 +875,10 @@ internal class EventHandlerSequential(
     private suspend fun deleteMessagesFromUser(cid: String?, userId: String, hard: Boolean, deletedAt: Date) {
         val messages = if (cid != null) {
             // Delete messages only in the specified channel
-            repos.selectMessagesInChannelForUser(cid, userId)
+            repos.selectAllChannelUserMessages(cid, userId)
         } else {
             // Delete messages in all channels
-            repos.selectMessagesForUser(userId)
+            repos.selectAllUserMessages(userId)
         }
         if (hard) {
             // Remove messages from DB
