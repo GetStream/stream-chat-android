@@ -52,6 +52,21 @@ public interface MessageRepository {
     ): List<Message>
 
     /**
+     * Selects all messages from a given user.
+     *
+     * @param userId The user ID to filter messages.
+     */
+    public suspend fun selectMessagesForUser(userId: String): List<Message>
+
+    /**
+     * Selects all messages from a given user in a given channel.
+     *
+     * @param cid The channel ID to filter messages.
+     * @param userId The user ID to filter messages.
+     */
+    public suspend fun selectMessagesInChannelForUser(cid: String, userId: String): List<Message>
+
+    /**
      * Selects messages by IDs.
      *
      * @param messageIds A list of [Message.id] as query specification.
@@ -125,14 +140,6 @@ public interface MessageRepository {
      * @param syncStatus [SyncStatus]
      */
     public suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message>
-
-    /**
-     * Selects all messages by user ID.
-     *
-     * @param userId The ID of the user whose messages are to be selected.
-     * @return A list of messages sent by the user.
-     */
-    public suspend fun selectMessagesByUserId(userId: String): List<Message>
 
     /**
      * Insert a draft message.

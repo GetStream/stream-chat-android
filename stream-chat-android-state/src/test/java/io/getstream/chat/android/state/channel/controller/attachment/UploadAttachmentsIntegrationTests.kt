@@ -223,6 +223,14 @@ internal class MockMessageRepository : MessageRepository {
         TODO("Not yet implemented")
     }
 
+    override suspend fun selectMessagesForUser(userId: String): List<Message> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun selectMessagesInChannelForUser(cid: String, userId: String): List<Message> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun selectMessages(messageIds: List<String>): List<Message> {
         return messages.filter { (messageId, _) ->
             messageIds.contains(messageId)
@@ -258,10 +266,6 @@ internal class MockMessageRepository : MessageRepository {
     }
 
     override suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message> {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun selectMessagesByUserId(userId: String): List<Message> {
         TODO("Not yet implemented")
     }
 

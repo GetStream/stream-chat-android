@@ -374,15 +374,19 @@ internal class ChannelStateLogic(
         systemMessage?.let(mutableState::upsertMessage)
     }
 
-    fun deleteMessagesFromUser(userId: String, softDeletedAt: Date? = null) {
-        mutableState.getMessagesFromUser(userId)
-            .takeIf { it.isNotEmpty() }
-            ?.let {
-                when (softDeletedAt == null) {
-                    true -> mutableState.deleteMessages(it)
-                    false -> mutableState.upsertMessages(it.map { it.copy(deletedAt = softDeletedAt) })
-                }
-            }
+    fun deleteMessagesFromUser(userId: String, hard: Boolean, deletedAt: Date) {
+        val messagesFromUser = mutableState.getMessagesFromUser(userId)
+        if (messagesFromUser.isEmpty()) {
+            return
+        }
+        if (hard) {
+            // Remove messages from the state
+            mutableState.deleteMessages(messagesFromUser)
+        } else {
+            // Mark messages as deleted
+            val markedAsDeleted = messagesFromUser.map { it.copy(deletedAt = deletedAt) }
+            mutableState.upsertMessages(markedAsDeleted)
+        }
     }
 
     /**

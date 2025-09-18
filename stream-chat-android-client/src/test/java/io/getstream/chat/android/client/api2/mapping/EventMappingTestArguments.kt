@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.api2.model.dto.ChannelTruncatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedByUserEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUserBannedEventDto
-import io.getstream.chat.android.client.api2.model.dto.ChannelUserMessagesDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChannelVisibleEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
@@ -38,7 +37,6 @@ import io.getstream.chat.android.client.api2.model.dto.DraftMessageDeletedEventD
 import io.getstream.chat.android.client.api2.model.dto.DraftMessageUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
-import io.getstream.chat.android.client.api2.model.dto.GlobalUserMessagesDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserUnbannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.HealthEventDto
 import io.getstream.chat.android.client.api2.model.dto.MarkAllReadEventDto
@@ -76,6 +74,7 @@ import io.getstream.chat.android.client.api2.model.dto.TypingStartEventDto
 import io.getstream.chat.android.client.api2.model.dto.TypingStopEventDto
 import io.getstream.chat.android.client.api2.model.dto.UnknownEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserDeletedEventDto
+import io.getstream.chat.android.client.api2.model.dto.UserMessagesDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserPresenceChangedEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserStartWatchingEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserStopWatchingEventDto
@@ -94,7 +93,6 @@ import io.getstream.chat.android.client.events.ChannelTruncatedEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelUserBannedEvent
-import io.getstream.chat.android.client.events.ChannelUserMessagesDeletedEvent
 import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -105,7 +103,6 @@ import io.getstream.chat.android.client.events.DraftMessageDeletedEvent
 import io.getstream.chat.android.client.events.DraftMessageUpdatedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
-import io.getstream.chat.android.client.events.GlobalUserMessagesDeletedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
@@ -143,6 +140,7 @@ import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.events.UserDeletedEvent
+import io.getstream.chat.android.client.events.UserMessagesDeletedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
@@ -746,21 +744,14 @@ internal object EventMappingTestArguments {
         reminder = REMINDER,
     )
 
-    private val channelUserMessagesDeletedEventDto = ChannelUserMessagesDeletedEventDto(
+    private val userMessagesDeletedEventDto = UserMessagesDeletedEventDto(
         type = EventType.USER_MESSAGES_DELETED,
         created_at = EXACT_DATE,
+        user = USER,
         cid = CID,
         channel_type = CHANNEL_TYPE,
         channel_id = CHANNEL_ID,
-        user = USER,
-        soft_delete = SOFT_DELETE,
-    )
-
-    private val globalUserMessagesDeletedEventDto = GlobalUserMessagesDeletedEventDto(
-        type = EventType.USER_MESSAGES_DELETED,
-        created_at = EXACT_DATE,
-        user = USER,
-        soft_delete = SOFT_DELETE,
+        hard_delete = HARD_DELETE,
     )
 
     private val aiIndicatorUpdatedDto = AIIndicatorUpdatedEventDto(
@@ -1469,23 +1460,15 @@ internal object EventMappingTestArguments {
         user = with(domainMapping) { ioIndicatorClearDto.user.toDomain() },
     )
 
-    private val channelUserMessagesDeletedEvent = ChannelUserMessagesDeletedEvent(
-        type = EventType.USER_MESSAGES_DELETED,
-        createdAt = EXACT_DATE.date,
-        rawCreatedAt = EXACT_DATE.rawDate,
-        cid = CID,
-        channelType = CHANNEL_TYPE,
-        channelId = CHANNEL_ID,
-        user = with(domainMapping) { channelUserMessagesDeletedEventDto.user.toDomain() },
-        softDelete = SOFT_DELETE,
-    )
-
-    private val globalUserMessagesDeletedEvent = GlobalUserMessagesDeletedEvent(
-        type = EventType.USER_MESSAGES_DELETED,
-        createdAt = EXACT_DATE.date,
-        rawCreatedAt = EXACT_DATE.rawDate,
-        user = with(domainMapping) { channelUserMessagesDeletedEventDto.user.toDomain() },
-        softDelete = SOFT_DELETE,
+    private val userMessagesDeletedEvent = UserMessagesDeletedEvent(
+        type = userMessagesDeletedEventDto.type,
+        createdAt = userMessagesDeletedEventDto.created_at.date,
+        rawCreatedAt = userMessagesDeletedEventDto.created_at.rawDate,
+        user = with(domainMapping) { userMessagesDeletedEventDto.user.toDomain() },
+        cid = userMessagesDeletedEventDto.cid,
+        channelType = userMessagesDeletedEventDto.channel_type,
+        channelId = userMessagesDeletedEventDto.channel_id,
+        hardDelete = userMessagesDeletedEventDto.hard_delete == true,
     )
 
     // END: Domain models
@@ -1560,7 +1543,6 @@ internal object EventMappingTestArguments {
         Arguments.of(aiIndicatorUpdatedDto, aiIndicatorUpdated),
         Arguments.of(aiIndicatorStopDto, aiIndicatorStop),
         Arguments.of(ioIndicatorClearDto, aiIndicatorClear),
-        Arguments.of(channelUserMessagesDeletedEventDto, channelUserMessagesDeletedEvent),
-        Arguments.of(globalUserMessagesDeletedEventDto, globalUserMessagesDeletedEvent),
+        Arguments.of(userMessagesDeletedEventDto, userMessagesDeletedEvent),
     )
 }

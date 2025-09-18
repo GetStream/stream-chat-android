@@ -31,7 +31,6 @@ import io.getstream.chat.android.client.events.ChannelTruncatedEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChannelUserBannedEvent
-import io.getstream.chat.android.client.events.ChannelUserMessagesDeletedEvent
 import io.getstream.chat.android.client.events.ChannelUserUnbannedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ChatEvent
@@ -44,7 +43,6 @@ import io.getstream.chat.android.client.events.DraftMessageDeletedEvent
 import io.getstream.chat.android.client.events.DraftMessageUpdatedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
-import io.getstream.chat.android.client.events.GlobalUserMessagesDeletedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
@@ -82,6 +80,7 @@ import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.events.UserDeletedEvent
+import io.getstream.chat.android.client.events.UserMessagesDeletedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
@@ -682,10 +681,6 @@ internal class ChannelLogic(
                     is ReminderCreatedEvent -> upsertReminder(event.messageId, event.reminder)
                     is ReminderUpdatedEvent -> upsertReminder(event.messageId, event.reminder)
                     is ReminderDeletedEvent -> deleteReminder(event.messageId)
-                    is ChannelUserMessagesDeletedEvent -> channelStateLogic.deleteMessagesFromUser(
-                        event.user.id,
-                        event.createdAt.takeUnless { event.hardDelete },
-                    )
                     is AIIndicatorUpdatedEvent,
                     is AIIndicatorClearEvent,
                     is AIIndicatorStopEvent,
@@ -702,10 +697,8 @@ internal class ChannelLogic(
             is NotificationChannelMutesUpdatedEvent -> event.me.channelMutes.any { mute ->
                 mute.channel?.cid == mutableState.cid
             }.let(channelStateLogic::updateMute)
-            is GlobalUserMessagesDeletedEvent -> channelStateLogic.deleteMessagesFromUser(
-                event.user.id,
-                event.createdAt.takeUnless { event.hardDelete },
-            )
+            is UserMessagesDeletedEvent ->
+                channelStateLogic.deleteMessagesFromUser(event.user.id, event.hardDelete, event.createdAt)
             is ConnectedEvent,
             is ConnectionErrorEvent,
             is ConnectingEvent,

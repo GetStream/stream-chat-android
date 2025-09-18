@@ -74,6 +74,14 @@ internal class DatabaseMessageRepository(
         messageDao.messagesForThread(messageId, limit)
             .map { it.toMessage() }
 
+    override suspend fun selectMessagesForUser(userId: String): List<Message> =
+        messageDao.selectByUserId(userId)
+            .map { it.toMessage() }
+
+    override suspend fun selectMessagesInChannelForUser(cid: String, userId: String): List<Message> =
+        messageDao.selectByCidAndUserId(cid, userId)
+            .map { it.toMessage() }
+
     private suspend fun selectRepliedMessage(messageId: String): Message? =
         replyMessageCache[messageId] ?: replyMessageDao.selectById(messageId)?.toModel(getUser, ::getPoll)
 
@@ -216,10 +224,6 @@ internal class DatabaseMessageRepository(
      */
     override suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message> {
         return messageDao.selectBySyncStatus(syncStatus).map { it.toMessage() }
-    }
-
-    override suspend fun selectMessagesByUserId(userId: String): List<Message> {
-        return messageDao.selectByUserId(userId).map { it.toMessage() }
     }
 
     override suspend fun selectMessagesWithPoll(pollId: String): List<Message> =

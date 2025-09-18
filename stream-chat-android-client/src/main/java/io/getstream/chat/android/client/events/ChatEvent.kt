@@ -881,22 +881,19 @@ public data class NotificationReminderDueEvent(
     val userId: String,
 ) : CidEvent(), HasReminder
 
-public data class ChannelUserMessagesDeletedEvent(
+/**
+ * Event triggered after a user was banned and their messages were deleted. Triggered in two scenarios:
+ * 1. User banned in a channel - all messages of the user in that channel were deleted ([cid] != null).
+ * 2. User banned globally - all messages of the user across all channels were deleted ([cid] == null).
+ */
+public data class UserMessagesDeletedEvent(
     override val type: String,
     override val createdAt: Date,
-    override val rawCreatedAt: String,
-    override val cid: String,
-    override val channelType: String,
-    override val channelId: String,
+    override val rawCreatedAt: String?,
     override val user: User,
-    val hardDelete: Boolean,
-) : CidEvent(), UserEvent
-
-public data class GlobalUserMessagesDeletedEvent(
-    override val type: String,
-    override val createdAt: Date,
-    override val rawCreatedAt: String,
-    override val user: User,
+    val cid: String?,
+    val channelType: String?,
+    val channelId: String?,
     val hardDelete: Boolean,
 ) : ChatEvent(), UserEvent
 
