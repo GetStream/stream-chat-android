@@ -57,6 +57,6 @@ internal interface ComposeTest {
 
     @After
     fun tearDown() {
-        reset(MockChatClient)
+        reset(MockChatClient, MockClientState)
     }
 }
