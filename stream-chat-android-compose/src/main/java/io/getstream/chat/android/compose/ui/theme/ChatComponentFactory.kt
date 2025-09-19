@@ -3589,7 +3589,6 @@ public interface ChatComponentFactory {
     public fun ChannelMediaAttachmentsPreviewBottomBar(text: String) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
                 .background(ChatTheme.colors.barsBackground)
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
