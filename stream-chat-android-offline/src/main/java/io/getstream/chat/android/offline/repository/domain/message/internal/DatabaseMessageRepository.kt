@@ -208,6 +208,16 @@ internal class DatabaseMessageRepository(
         scope.launchWithMutex(dbMutex) { messageDao.deleteMessage(message.cid, message.id) }
     }
 
+    override suspend fun deleteMessages(messages: List<Message>) {
+        val ids = messages.map { it.id }
+        ids.forEach {
+            deletedMessageIds.add(it)
+            messageCache.remove(it)
+            replyMessageCache.remove(it)
+        }
+        scope.launchWithMutex(dbMutex) { messageDao.deleteMessages(ids) }
+    }
+
     /**
      * Selects all message ids of a [SyncStatus]
      *

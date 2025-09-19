@@ -31,6 +31,7 @@ internal object NoOpChannelRepository : ChannelRepository {
     override suspend fun insertChannels(channels: Collection<Channel>) { /* No-Op */ }
     override suspend fun deleteChannel(cid: String) { /* No-Op */ }
     override suspend fun deleteChannelMessage(message: Message) { /* No-Op */ }
+    override suspend fun deleteMessages(messages: List<Message>) { /* No-Op */ }
     override suspend fun updateChannelMessage(message: Message) { /* No-Op */ }
     override suspend fun selectAllCids(): List<String> = emptyList()
     override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> = emptyList()

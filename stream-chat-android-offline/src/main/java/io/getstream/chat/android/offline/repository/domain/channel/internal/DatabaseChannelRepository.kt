@@ -109,6 +109,19 @@ internal class DatabaseChannelRepository(
         }
     }
 
+    override suspend fun deleteMessages(messages: List<Message>) {
+        val messagesPerChannel = messages.groupBy { it.cid }
+        messagesPerChannel.forEach { (cid, messages) ->
+            channelCache[cid]?.let { cachedChannel ->
+                val updatedChannel = cachedChannel.copy(
+                    messages = cachedChannel.messages.filter { msg -> messages.none { it.id == msg.id } },
+                    pinnedMessages = cachedChannel.pinnedMessages.filter { msg -> messages.none { it.id == msg.id } },
+                )
+                cacheChannel(updatedChannel)
+            }
+        }
+    }
+
     override suspend fun updateChannelMessage(message: Message) {
         logger.v { "[updateChannelMessage] message.id: ${message.id}, message.text: ${message.text}" }
         channelCache[message.cid]?.let { cachedChannel ->

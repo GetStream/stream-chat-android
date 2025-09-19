@@ -52,4 +52,81 @@ internal class ChannelRepositoryTest : BaseDomainTest2() {
 
         channel shouldBeEqualTo data.channel1Updated
     }
+
+    @Test
+    fun `deleting multiple messages from single channel should work`(): Unit = runTest {
+        // Given: A channel with multiple messages
+        val message1 = data.message1.copy(id = "msg1", cid = data.channel1.cid)
+        val message2 = data.message1.copy(id = "msg2", cid = data.channel1.cid, text = "second message")
+        val message3 = data.message1.copy(id = "msg3", cid = data.channel1.cid, text = "third message")
+        val channelWithMessages = data.channel1.copy(
+            messages = listOf(message1, message2, message3),
+        )
+
+        helper.insertChannels(listOf(channelWithMessages))
+
+        // When: Deleting multiple messages
+        val messagesToDelete = listOf(message1, message3)
+        helper.deleteMessages(messagesToDelete)
+
+        // Then: Only the non-deleted message should remain
+        val updatedChannel = helper.selectChannel(data.channel1.cid)!!
+        updatedChannel.messages.size shouldBeEqualTo 1
+        updatedChannel.messages.first().id shouldBeEqualTo "msg2"
+        updatedChannel.messages.first().text shouldBeEqualTo "second message"
+    }
+
+    @Test
+    fun `deleting messages from multiple channels should work`(): Unit = runTest {
+        // Given: Two channels with messages
+        val message1Channel1 = data.message1.copy(id = "msg1", cid = data.channel1.cid)
+        val message2Channel1 = data.message1.copy(id = "msg2", cid = data.channel1.cid, text = "second message")
+        val message1Channel2 = data.message1.copy(id = "msg3", cid = data.channel2.cid, text = "channel2 message")
+        val message2Channel2 =
+            data.message1.copy(id = "msg4", cid = data.channel2.cid, text = "another channel2 message")
+
+        val channel1WithMessages = data.channel1.copy(
+            messages = listOf(message1Channel1, message2Channel1),
+        )
+        val channel2WithMessages = data.channel2.copy(
+            messages = listOf(message1Channel2, message2Channel2),
+        )
+
+        helper.insertChannels(listOf(channel1WithMessages, channel2WithMessages))
+
+        // When: Deleting messages from both channels
+        val messagesToDelete = listOf(message1Channel1, message1Channel2)
+        helper.deleteMessages(messagesToDelete)
+
+        // Then: Each channel should have only its non-deleted message
+        val updatedChannel1 = helper.selectChannel(data.channel1.cid)!!
+        updatedChannel1.messages.size shouldBeEqualTo 1
+        updatedChannel1.messages.first().id shouldBeEqualTo "msg2"
+
+        val updatedChannel2 = helper.selectChannel(data.channel2.cid)!!
+        updatedChannel2.messages.size shouldBeEqualTo 1
+        updatedChannel2.messages.first().id shouldBeEqualTo "msg4"
+    }
+
+    @Test
+    fun `deleting pinned messages should remove them from pinnedMessages list`(): Unit = runTest {
+        // Given: A channel with both regular and pinned messages
+        val regularMessage = data.message1.copy(id = "regular", cid = data.channel1.cid)
+        val pinnedMessage = data.message1.copy(id = "pinned", cid = data.channel1.cid, text = "pinned message")
+        val channelWithMessages = data.channel1.copy(
+            messages = listOf(regularMessage, pinnedMessage),
+            pinnedMessages = listOf(pinnedMessage),
+        )
+
+        helper.insertChannels(listOf(channelWithMessages))
+
+        // When: Deleting the pinned message
+        helper.deleteMessages(listOf(pinnedMessage))
+
+        // Then: Message should be removed from both messages and pinnedMessages
+        val updatedChannel = helper.selectChannel(data.channel1.cid)!!
+        updatedChannel.messages.size shouldBeEqualTo 1
+        updatedChannel.messages.first().id shouldBeEqualTo "regular"
+        updatedChannel.pinnedMessages.size shouldBeEqualTo 0
+    }
 }

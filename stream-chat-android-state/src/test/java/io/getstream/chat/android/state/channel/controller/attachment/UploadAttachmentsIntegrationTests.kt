@@ -261,6 +261,10 @@ internal class MockMessageRepository : MessageRepository {
         messages.remove(message.id)
     }
 
+    override suspend fun deleteMessages(messages: List<Message>) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun selectMessageIdsBySyncState(syncStatus: SyncStatus): List<String> {
         TODO("Not yet implemented")
     }

@@ -882,7 +882,7 @@ internal class EventHandlerSequential(
         }
         if (hard) {
             // Remove messages from DB
-            messages.forEach { repos.deleteChannelMessage(it) }
+            repos.deleteMessages(messages)
         } else {
             // Mark messages as deleted
             val markedAsDeleted = messages.map { it.copy(deletedAt = deletedAt) }

@@ -56,6 +56,13 @@ public interface ChannelRepository {
     public suspend fun deleteChannelMessage(message: Message)
 
     /**
+     * Deletes all passed [Message] object from their respective [Channel.messages].
+     *
+     * @param messages List of [Message] to delete.
+     */
+    public suspend fun deleteMessages(messages: List<Message>)
+
+    /**
      * Updates a [Message] from a [Channel.messages].
      *
      * @param message [Message] to update.

@@ -38,7 +38,7 @@ import kotlinx.coroutines.awaitAll
 import java.util.Date
 
 @InternalStreamChatApi
-@SuppressWarnings("LongParameterList")
+@SuppressWarnings("LongParameterList", "TooManyFunctions")
 public class RepositoryFacade private constructor(
     private val userRepository: UserRepository,
     private val configsRepository: ChannelConfigRepository,
@@ -133,6 +133,11 @@ public class RepositoryFacade private constructor(
     override suspend fun deleteChannelMessage(message: Message) {
         messageRepository.deleteChannelMessage(message)
         channelsRepository.deleteChannelMessage(message)
+    }
+
+    override suspend fun deleteMessages(messages: List<Message>) {
+        messageRepository.deleteMessages(messages)
+        channelsRepository.deleteMessages(messages)
     }
 
     @InternalStreamChatApi

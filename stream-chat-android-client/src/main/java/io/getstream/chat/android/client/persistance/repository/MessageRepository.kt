@@ -128,6 +128,13 @@ public interface MessageRepository {
     public suspend fun deleteChannelMessage(message: Message)
 
     /**
+     * Deletes the list of [Message] objects.
+     *
+     * @param messages List of [Message]s to delete.
+     */
+    public suspend fun deleteMessages(messages: List<Message>)
+
+    /**
      * Selects all message ids of a [SyncStatus]
      *
      * @param syncStatus [SyncStatus]
