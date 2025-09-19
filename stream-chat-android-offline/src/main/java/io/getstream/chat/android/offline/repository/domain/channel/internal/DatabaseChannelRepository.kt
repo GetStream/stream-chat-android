@@ -115,7 +115,7 @@ internal class DatabaseChannelRepository(
             .foldTo(
                 destination = mutableMapOf(),
                 initialValueSelector = { _, _ -> mutableSetOf<String>() },
-                operation = { _, accumulator, element -> accumulator.apply { add(element.id) } }
+                operation = { _, accumulator, element -> accumulator.apply { add(element.id) } },
             )
 
         messageIdsPerChannel.forEach { (cid, ids) ->

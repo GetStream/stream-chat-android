@@ -686,10 +686,10 @@ public fun randomChannelUserBannedEvent(
 }
 
 public fun randomUserMessagesDeletedEvent(
-    createdAt: Date = Date(),
+    createdAt: Date = randomDate(),
     user: User = randomUser(),
     cid: String? = randomCID(),
-    hardDelete: Boolean = false,
+    hardDelete: Boolean = randomBoolean(),
 ): UserMessagesDeletedEvent {
     val (type, id) = cid?.cidToTypeAndId() ?: (null to null)
     return UserMessagesDeletedEvent(
