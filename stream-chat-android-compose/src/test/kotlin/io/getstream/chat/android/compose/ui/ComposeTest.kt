@@ -18,8 +18,10 @@ package io.getstream.chat.android.compose.ui
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.setup.state.ClientState
+import kotlinx.coroutines.test.TestScope
 import org.junit.After
 import org.junit.Before
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.reset
@@ -53,6 +55,7 @@ internal interface ComposeTest {
             override fun internalBuild(): ChatClient = MockChatClient
         }.build()
         whenever(MockChatClient.clientState) doReturn MockClientState
+        whenever(MockChatClient.inheritScope(any())) doReturn TestScope()
     }
 
     @After
