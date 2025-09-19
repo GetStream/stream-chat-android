@@ -1,4 +1,5 @@
 import io.getstream.chat.android.Configuration
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -30,6 +31,25 @@ android {
     }
 
     resourcePrefix = "stream_compose_"
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            unitTests.isReturnDefaultValues = true
+            // // Show the result of every unit test, even if it passes.
+            all {
+                it.testLogging {
+                    events = setOf(
+                        TestLogEvent.PASSED,
+                        TestLogEvent.SKIPPED,
+                        TestLogEvent.FAILED,
+                        TestLogEvent.STANDARD_OUT,
+                        TestLogEvent.STANDARD_ERROR,
+                    )
+                }
+            }
+        }
+    }
 
     buildTypes {
         getByName("release") {
@@ -110,6 +130,7 @@ dependencies {
     testImplementation(project(":stream-chat-android-test"))
     testImplementation(testFixtures(project(":stream-chat-android-core")))
     testImplementation(project(":stream-chat-android-previewdata"))
+    testImplementation(libs.androidx.compose.ui.test.junit4)
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)
     testRuntimeOnly(libs.junit.jupiter.engine)
@@ -119,6 +140,7 @@ dependencies {
     testImplementation(libs.mockito)
     testImplementation(libs.mockito.kotlin)
     testImplementation(libs.turbine)
+    testImplementation(libs.robolectric)
 
     detektPlugins(libs.detekt.formatting)
 
