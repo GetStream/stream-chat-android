@@ -28,8 +28,8 @@ import java.util.Date
  * @param nextDate Date used to fetch next page of the messages.
  */
 public data class PinnedMessageListState(
-    val canLoadMore: Boolean,
-    val results: List<MessageResult>,
-    val isLoading: Boolean,
-    val nextDate: Date,
+    val canLoadMore: Boolean = false,
+    val results: List<MessageResult> = emptyList(),
+    val isLoading: Boolean = true,
+    val nextDate: Date = Date(),
 )
