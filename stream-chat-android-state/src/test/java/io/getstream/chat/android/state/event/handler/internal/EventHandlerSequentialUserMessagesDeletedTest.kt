@@ -203,6 +203,7 @@ internal class EventHandlerSequentialUserMessagesDeletedTest {
 
             // Verify hard delete - messages should be removed from DB
             verify(repos).deleteMessages(channelMessages)
+            verify(repos).deleteAllChannelUserMessages(testCid, targetUser.id)
         }
 
     @Test
@@ -276,6 +277,7 @@ internal class EventHandlerSequentialUserMessagesDeletedTest {
 
             // Verify hard delete - messages should be removed from DB
             verify(repos).deleteMessages(allUserMessages)
+            verify(repos).deleteAllChannelUserMessages(null, targetUser.id)
         }
 
     @Test

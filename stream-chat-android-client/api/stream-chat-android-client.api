@@ -2796,9 +2796,9 @@ public abstract interface class io/getstream/chat/android/client/persistance/rep
 
 public abstract interface class io/getstream/chat/android/client/persistance/repository/ChannelRepository {
 	public abstract fun clear (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun deleteAllChannelUserMessages (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun deleteChannel (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun deleteChannelMessage (Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun deleteMessages (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun evictChannel (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun insertChannel (Lio/getstream/chat/android/models/Channel;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun insertChannels (Ljava/util/Collection;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

@@ -109,23 +109,32 @@ internal class DatabaseChannelRepository(
         }
     }
 
-    override suspend fun deleteMessages(messages: List<Message>) {
-        val messageIdsPerChannel = messages
-            .groupingBy(Message::cid)
-            .foldTo(
-                destination = mutableMapOf(),
-                initialValueSelector = { _, _ -> mutableSetOf<String>() },
-                operation = { _, accumulator, element -> accumulator.apply { add(element.id) } },
-            )
+    override suspend fun deleteAllChannelUserMessages(cid: String?, userId: String) {
+        if (cid != null) {
+            deleteAllChannelUserMessages(cid, userId)
+        } else {
+            deleteAllUserMessages(userId)
+        }
+    }
 
-        messageIdsPerChannel.forEach { (cid, ids) ->
-            channelCache[cid]?.let { cachedChannel ->
-                val updatedChannel = cachedChannel.copy(
-                    messages = cachedChannel.messages.filter { msg -> msg.id !in ids },
-                    pinnedMessages = cachedChannel.pinnedMessages.filter { msg -> msg.id !in ids },
-                )
-                cacheChannel(updatedChannel)
-            }
+    private fun deleteAllUserMessages(userId: String) {
+        // Find all channels that have messages from the user
+        val cids = channelCache.snapshot().values
+            .filter { channel -> channel.messages.any { msg -> msg.user.id == userId } }
+            .map { it.cid }
+        // Remove messages from the given user from those channels
+        cids.forEach { cid ->
+            deleteAllChannelUserMessages(cid, userId)
+        }
+    }
+
+    private fun deleteAllChannelUserMessages(cid: String, userId: String) {
+        channelCache[cid]?.let { cachedChannel ->
+            val updatedChannel = cachedChannel.copy(
+                messages = cachedChannel.messages.filter { msg -> msg.user.id != userId },
+                pinnedMessages = cachedChannel.pinnedMessages.filter { msg -> msg.user.id != userId },
+            )
+            cacheChannel(updatedChannel)
         }
     }
 

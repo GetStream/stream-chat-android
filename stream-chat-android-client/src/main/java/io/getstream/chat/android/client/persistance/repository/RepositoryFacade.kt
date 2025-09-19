@@ -135,11 +135,6 @@ public class RepositoryFacade private constructor(
         channelsRepository.deleteChannelMessage(message)
     }
 
-    override suspend fun deleteMessages(messages: List<Message>) {
-        messageRepository.deleteMessages(messages)
-        channelsRepository.deleteMessages(messages)
-    }
-
     @InternalStreamChatApi
     public suspend fun markMessageAsDeleted(message: Message) {
         messageRepository.insertMessage(message)
