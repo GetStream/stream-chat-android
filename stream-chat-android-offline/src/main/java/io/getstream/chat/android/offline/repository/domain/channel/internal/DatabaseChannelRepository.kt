@@ -110,12 +110,19 @@ internal class DatabaseChannelRepository(
     }
 
     override suspend fun deleteMessages(messages: List<Message>) {
-        val messagesPerChannel = messages.groupBy { it.cid }
-        messagesPerChannel.forEach { (cid, messages) ->
+        val messageIdsPerChannel = messages
+            .groupingBy(Message::cid)
+            .foldTo(
+                destination = mutableMapOf(),
+                initialValueSelector = { _, _ -> mutableSetOf<String>() },
+                operation = { _, accumulator, element -> accumulator.apply { add(element.id) } }
+            )
+
+        messageIdsPerChannel.forEach { (cid, ids) ->
             channelCache[cid]?.let { cachedChannel ->
                 val updatedChannel = cachedChannel.copy(
-                    messages = cachedChannel.messages.filter { msg -> messages.none { it.id == msg.id } },
-                    pinnedMessages = cachedChannel.pinnedMessages.filter { msg -> messages.none { it.id == msg.id } },
+                    messages = cachedChannel.messages.filter { msg -> msg.id !in ids },
+                    pinnedMessages = cachedChannel.pinnedMessages.filter { msg -> msg.id !in ids },
                 )
                 cacheChannel(updatedChannel)
             }
