@@ -610,6 +610,7 @@ public class ChannelClient internal constructor(
      * @return Executable async [Call] responsible for sending the reaction.
      */
     @CheckResult
+    @JvmOverloads
     public fun sendReaction(
         reaction: Reaction,
         enforceUnique: Boolean = false,

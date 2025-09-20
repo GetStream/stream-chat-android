@@ -726,6 +726,8 @@ public final class io/getstream/chat/android/client/channel/ChannelClient {
 	public final fun sendMessage (Lio/getstream/chat/android/models/Message;)Lio/getstream/result/call/Call;
 	public final fun sendMessage (Lio/getstream/chat/android/models/Message;Z)Lio/getstream/result/call/Call;
 	public static synthetic fun sendMessage$default (Lio/getstream/chat/android/client/channel/ChannelClient;Lio/getstream/chat/android/models/Message;ZILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public final fun sendReaction (Lio/getstream/chat/android/models/Reaction;)Lio/getstream/result/call/Call;
+	public final fun sendReaction (Lio/getstream/chat/android/models/Reaction;Z)Lio/getstream/result/call/Call;
 	public final fun sendReaction (Lio/getstream/chat/android/models/Reaction;ZZ)Lio/getstream/result/call/Call;
 	public static synthetic fun sendReaction$default (Lio/getstream/chat/android/client/channel/ChannelClient;Lio/getstream/chat/android/models/Reaction;ZZILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun shadowBanUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lio/getstream/result/call/Call;
