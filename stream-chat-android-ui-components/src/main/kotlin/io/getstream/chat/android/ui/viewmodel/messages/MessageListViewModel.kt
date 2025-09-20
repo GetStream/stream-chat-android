@@ -237,7 +237,7 @@ public class MessageListViewModel(
             is Event.UnpinMessage -> messageListController.unpinMessage(event.message)
             is Event.GiphyActionSelected -> onGiphyActionSelected(event)
             is Event.RetryMessage -> messageListController.resendMessage(event.message)
-            is Event.MessageReaction -> onMessageReaction(event.message, event.reactionType)
+            is Event.MessageReaction -> onMessageReaction(event.message, event.reactionType, event.emojiCode)
             is Event.MuteUser -> messageListController.muteUser(event.user)
             is Event.UnmuteUser -> messageListController.unmuteUser(event.user)
             is Event.UnbanUser -> messageListController.unbanUser(event.user.id)
@@ -443,12 +443,15 @@ public class MessageListViewModel(
      *
      * @param message The message the user is reacting to.
      * @param reactionType The exact reaction type.
+     * @param emojiCode Optional emoji to be shown in the push notification delivered for the reaction
+     * (instead of :type:).
      */
-    private fun onMessageReaction(message: Message, reactionType: String) {
+    private fun onMessageReaction(message: Message, reactionType: String, emojiCode: String?) {
         val reaction = Reaction(
             messageId = message.id,
             type = reactionType,
             score = 1,
+            emojiCode = emojiCode,
         )
         messageListController.reactToMessage(reaction, message)
     }
@@ -642,10 +645,12 @@ public class MessageListViewModel(
          *
          * @param message The message the user is reacting to
          * @param reactionType The reaction type.
+         * @param emojiCode The optional emoji code to be shown in the push notification text, for the API.
          */
         public data class MessageReaction(
             val message: Message,
             val reactionType: String,
+            val emojiCode: String? = null,
         ) : Event()
 
         /**

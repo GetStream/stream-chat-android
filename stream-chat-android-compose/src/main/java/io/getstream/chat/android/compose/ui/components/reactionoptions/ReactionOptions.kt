@@ -75,12 +75,14 @@ public fun ReactionOptions(
         }
     },
 ) {
+    val pushEmojiFactory = ChatTheme.reactionPushEmojiFactory
     val options = reactionTypes.entries.map { (type, reactionIcon) ->
         val isSelected = ownReactions.any { ownReaction -> ownReaction.type == type }
         val painter = reactionIcon.getPainter(isSelected)
         ReactionOptionItemState(
             painter = painter,
             type = type,
+            emojiCode = pushEmojiFactory.emojiCode(type),
         )
     }
 
