@@ -1589,7 +1589,7 @@ public class MessageListController(
             is BlockUser -> blockUser(messageAction.message.user.id)
             is UnblockUser -> unblockUser(messageAction.message.user.id)
             is Copy -> copyMessage(messageAction.message)
-            is React -> reactToMessage(messageAction.reaction, messageAction.message)
+            is React -> reactToMessage(messageAction.reaction, messageAction.message, messageAction.skipPush)
             is Pin -> updateMessagePin(messageAction.message)
             is MarkAsUnread -> markUnread(messageAction.message)
             else -> {

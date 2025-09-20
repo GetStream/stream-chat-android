@@ -111,7 +111,29 @@ internal class MessageListViewModelTest {
 
         viewModel.performMessageAction(React(reaction1, message1))
 
-        verify(chatClient).sendReaction(eq(reaction1), eq(true), eq(CID))
+        verify(chatClient).sendReaction(eq(reaction1), eq(true), eq(CID), eq(false))
+    }
+
+    @Test
+    fun `Given message list When sending a reaction with skipPush=true Should send the reaction`() = runTest {
+        val chatClient: ChatClient = mock()
+        val messageState = MessagesState.Result(listOf(message1, message2))
+        val viewModel = Fixture(chatClient)
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState(messageState = messageState)
+            .givenSendReaction()
+            .get()
+
+        // Avoid counting date separators
+        val messageItemCount = viewModel.currentMessagesState.value
+            .messageItems
+            .count { it is MessageItemState }
+        messageItemCount `should be equal to` 2
+
+        viewModel.performMessageAction(React(reaction1, message1, skipPush = true))
+
+        verify(chatClient).sendReaction(eq(reaction1), eq(true), eq(CID), eq(true))
     }
 
     @Test
@@ -158,7 +180,7 @@ internal class MessageListViewModelTest {
         }
 
         fun givenSendReaction() = apply {
-            whenever(chatClient.sendReaction(any(), any(), any())) doReturn Reaction().asCall()
+            whenever(chatClient.sendReaction(any(), any(), any(), any())) doReturn Reaction().asCall()
         }
 
         fun givenChannelState(
