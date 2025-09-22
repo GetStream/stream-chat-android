@@ -36,6 +36,11 @@ import androidx.compose.ui.unit.dp
 private const val DEFAULT_TRACKER_HEIGHT_DP = 60
 private const val DEFAULT_TRACKER_WIDTH = 4
 
+@Deprecated(
+    message = "This component is deprecated, not used anywhere, and will be removed in the future. " +
+        "Contact the support team for more information.",
+    level = DeprecationLevel.WARNING,
+)
 @Composable
 public fun AudioWaveVSeekbar(
     waveBars: List<Float>,

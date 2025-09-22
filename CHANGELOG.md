@@ -75,6 +75,7 @@
 - Introduce `MessageComposerCommandSuggestionListHeader` component factory. [#5932](https://github.com/GetStream/stream-chat-android/pull/5932)
 
 ### ⚠️ Changed
+- Deprecate unused component `AudioWaveVSeekbar`. [#5932](https://github.com/GetStream/stream-chat-android/pull/5932)
 
 ### ❌ Removed
 
