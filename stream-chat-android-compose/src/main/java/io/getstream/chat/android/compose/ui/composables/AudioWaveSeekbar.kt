@@ -18,6 +18,8 @@ package io.getstream.chat.android.compose.ui.composables
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +33,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 private const val DEFAULT_TRACKER_HEIGHT_DP = 60
@@ -120,4 +123,23 @@ public fun AudioWaveVSeekbar(
 
         trackerDraw(this, progressToWidth, Size(trackerWidth.dp.toPx(), size.height))
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun AudioWaveVSeekbarPreview() {
+    AudioWaveVSeekbar()
+}
+
+@Suppress("MagicNumber")
+@Composable
+internal fun AudioWaveVSeekbar() {
+    AudioWaveVSeekbar(
+        modifier = Modifier
+            .height(50.dp)
+            .fillMaxWidth(),
+        waveBars = (0..10).map {
+            listOf(0.5f, 0.8f, 0.3f, 0.6f, 0.4f, 0.7f, 0.2f, 0.9f, 0.1f)
+        }.flatten(),
+    )
 }
