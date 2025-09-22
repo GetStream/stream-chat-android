@@ -24,7 +24,6 @@ import androidx.compose.ui.test.onNodeWithText
 import io.getstream.chat.android.compose.ui.ComposeTest
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.ConnectionState
-import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.randomUser
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Before
@@ -47,7 +46,6 @@ internal class ChannelsScreenTest : ComposeTest {
     fun prepare() {
         whenever(mockClientState.user) doReturn MutableStateFlow(randomUser())
         whenever(mockClientState.connectionState) doReturn MutableStateFlow(ConnectionState.Connected)
-        whenever(mockClientState.initializationState) doReturn MutableStateFlow(InitializationState.NOT_INITIALIZED)
     }
 
     @Test
@@ -70,6 +68,20 @@ internal class ChannelsScreenTest : ComposeTest {
         composeTestRule.setContent {
             ChatTheme {
                 ChannelsScreen(searchMode = SearchMode.Messages)
+            }
+        }
+
+        composeTestRule.onNodeWithText("Search").assertExists()
+        composeTestRule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate))
+            .assertExists()
+    }
+
+    @Test
+    @UiThread
+    fun `with search mode channels`() {
+        composeTestRule.setContent {
+            ChatTheme {
+                ChannelsScreen(searchMode = SearchMode.Channels)
             }
         }
 

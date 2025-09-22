@@ -21,14 +21,15 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import kotlinx.coroutines.test.TestScope
 import org.junit.After
 import org.junit.Before
+import org.mockito.Answers
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.reset
 import org.mockito.kotlin.whenever
 
-private val MockClientState = mock<ClientState>()
-private val MockChatClient = mock<ChatClient>()
+private val MockClientState = mock<ClientState>(defaultAnswer = Answers.RETURNS_MOCKS)
+private val MockChatClient = mock<ChatClient>(defaultAnswer = Answers.RETURNS_MOCKS)
 
 internal interface ComposeTest {
 
