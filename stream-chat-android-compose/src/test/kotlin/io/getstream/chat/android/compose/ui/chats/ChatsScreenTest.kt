@@ -25,7 +25,6 @@ import io.getstream.chat.android.compose.ui.ComposeTest
 import io.getstream.chat.android.compose.ui.channels.SearchMode
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.ConnectionState
-import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.randomUser
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.junit.Before
@@ -50,7 +49,6 @@ internal class ChatsScreenTest : ComposeTest {
         whenever(mockChatClient.getCurrentUser()) doReturn user
         whenever(mockClientState.user) doReturn MutableStateFlow(user)
         whenever(mockClientState.connectionState) doReturn MutableStateFlow(ConnectionState.Connected)
-        whenever(mockClientState.initializationState) doReturn MutableStateFlow(InitializationState.NOT_INITIALIZED)
     }
 
     @Test
