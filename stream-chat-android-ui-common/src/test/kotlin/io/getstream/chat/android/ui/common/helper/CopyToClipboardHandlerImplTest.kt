@@ -18,7 +18,9 @@ package io.getstream.chat.android.ui.common.helper
 
 import android.content.ClipData
 import android.content.ClipboardManager
+import android.content.Context
 import org.junit.Test
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 
@@ -26,15 +28,29 @@ internal class CopyToClipboardHandlerImplTest {
 
     @Test
     fun `copy to clipboard`() {
-        val mockClipboardManager = mock<ClipboardManager>()
-        val sut = CopyToClipboardHandlerImpl(
-            context = mock(),
-            clipboardManagerProvider = { mockClipboardManager },
-        )
+        val fixture = Fixture()
+        val sut = fixture.get()
 
         val text = "text to copy"
         sut.copy(text)
 
-        verify(mockClipboardManager).setPrimaryClip(ClipData.newPlainText("plain text", text))
+        fixture.verifyCopy(text)
+    }
+
+    private class Fixture {
+        val mockClipboardManager = mock<ClipboardManager>()
+        val mockContext = mock<Context> {
+            on { applicationContext } doReturn it
+            on { getSystemService(Context.CLIPBOARD_SERVICE) } doReturn mockClipboardManager
+        }
+        val clipboardManager: ClipboardManager = mock()
+
+        fun verifyCopy(text: String) {
+            verify(mockClipboardManager).setPrimaryClip(ClipData.newPlainText("plain text", text))
+        }
+
+        fun get() = CopyToClipboardHandler(
+            context = mockContext,
+        )
     }
 }
