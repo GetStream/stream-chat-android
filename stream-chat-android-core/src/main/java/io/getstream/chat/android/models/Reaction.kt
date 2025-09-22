@@ -33,6 +33,11 @@ import java.util.Date
  * @param deletedAt The date when the reaction was deleted.
  * @param syncStatus The synchronization status of the reaction.
  * @param enforceUnique If true, only one reaction of this type is allowed per user.
+ * IMPORTANT: Don't set this manually when creating the reaction as it will be ignored. This field is used internally
+ * for offline sync and will be overridden. To enforceUnique reactions, use the parameter on relevant method instead.
+ * @param skipPush If true, sending a push notification will be skipped for this reaction.
+ * IMPORTANT: Don't set this manually when creating the reaction as it will be ignored. This field is used internally
+ * for offline sync and will be overridden. To skip push for reactions, use the parameter on relevant method instead.
  * @param emojiCode Optional emoji to be shown in the push notification delivered for the reaction (instead of :type:).
  */
 @Immutable
@@ -49,6 +54,7 @@ public data class Reaction(
     val syncStatus: SyncStatus = SyncStatus.COMPLETED,
     override val extraData: Map<String, Any> = mapOf(),
     val enforceUnique: Boolean = false,
+    val skipPush: Boolean = false,
     val emojiCode: String? = null,
 ) : CustomObject {
 

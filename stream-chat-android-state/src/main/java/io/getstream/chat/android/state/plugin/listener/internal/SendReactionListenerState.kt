@@ -50,33 +50,29 @@ internal class SendReactionListenerState(
      * @param enforceUnique Flag to determine whether the reaction should replace other ones added by the current user.
      * @param currentUser The currently logged in user.
      */
+    @Deprecated(
+        "This method will be removed in the future. " +
+            "Use SendReactionListener#onSendReactionRequest(cid, reaction, enforceUnique, skipPush, currentUser) " +
+            "instead. For backwards compatibility, this method is still called internally by the new, non-deprecated " +
+            "method.",
+    )
     override suspend fun onSendReactionRequest(
         cid: String?,
         reaction: Reaction,
         enforceUnique: Boolean,
         currentUser: User,
     ) {
-        val reactionToSend = reaction.enrichWithDataBeforeSending(
-            currentUser = currentUser,
-            isOnline = clientState.isNetworkAvailable,
-            enforceUnique = enforceUnique,
-        )
+        saveReactionInState(cid, reaction, enforceUnique, null, currentUser)
+    }
 
-        val channelLogic = cid?.cidToTypeAndId()?.let { (type, id) -> logic.channel(type, id) }
-            ?: logic.channelFromMessageId(reaction.messageId)
-        val cachedChannelMessage = channelLogic?.getMessage(reaction.messageId)
-            ?.addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
-        cachedChannelMessage?.let(channelLogic::upsertMessage)
-
-        val threadsLogic = logic.threads()
-        val cachedThreadsMessage = threadsLogic.getMessage(reaction.messageId)
-            ?.addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
-        cachedThreadsMessage?.let(threadsLogic::upsertMessage)
-
-        val threadLogic = logic.threadFromMessageId(reaction.messageId)
-        val cachedThreadMessage = threadLogic?.getMessage(reaction.messageId)
-            ?.addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
-        cachedThreadMessage?.let(threadLogic::upsertMessage)
+    override suspend fun onSendReactionRequest(
+        cid: String?,
+        reaction: Reaction,
+        enforceUnique: Boolean,
+        skipPush: Boolean,
+        currentUser: User,
+    ) {
+        saveReactionInState(cid, reaction, enforceUnique, skipPush, currentUser)
     }
 
     override suspend fun onSendReactionResult(
@@ -169,6 +165,37 @@ internal class SendReactionListenerState(
                 Result.Success(Unit)
             }
         }
+    }
+
+    private fun saveReactionInState(
+        cid: String?,
+        reaction: Reaction,
+        enforceUnique: Boolean,
+        skipPush: Boolean?,
+        currentUser: User,
+    ) {
+        val reactionToSend = reaction.enrichWithDataBeforeSending(
+            currentUser = currentUser,
+            isOnline = clientState.isNetworkAvailable,
+            enforceUnique = enforceUnique,
+            skipPush = skipPush ?: false,
+        )
+
+        val channelLogic = cid?.cidToTypeAndId()?.let { (type, id) -> logic.channel(type, id) }
+            ?: logic.channelFromMessageId(reaction.messageId)
+        val cachedChannelMessage = channelLogic?.getMessage(reaction.messageId)
+            ?.addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
+        cachedChannelMessage?.let(channelLogic::upsertMessage)
+
+        val threadsLogic = logic.threads()
+        val cachedThreadsMessage = threadsLogic.getMessage(reaction.messageId)
+            ?.addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
+        cachedThreadsMessage?.let(threadsLogic::upsertMessage)
+
+        val threadLogic = logic.threadFromMessageId(reaction.messageId)
+        val cachedThreadMessage = threadLogic?.getMessage(reaction.messageId)
+            ?.addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
+        cachedThreadMessage?.let(threadLogic::upsertMessage)
     }
 
     private fun Message.updateReactionSyncStatus(originReaction: Reaction, result: Result<*>): Message = this.copy(

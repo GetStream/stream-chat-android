@@ -1214,6 +1214,7 @@ internal constructor(
                         cid = cid,
                         reaction = finalReaction,
                         enforceUnique = enforceUnique,
+                        skipPush = skipPush,
                         currentUser = currentUser!!,
                     )
                 }
@@ -1230,7 +1231,7 @@ internal constructor(
                     )
                 }
             }
-            .onReactionError(errorHandlers, reaction, enforceUnique, currentUser!!)
+            .onReactionError(errorHandlers, reaction, enforceUnique, skipPush, currentUser!!)
             .precondition(plugins) { onSendReactionPrecondition(cid, currentUser, reaction) }
             .share(userScope) { SendReactionIdentifier(reaction, enforceUnique, cid) }
     }
