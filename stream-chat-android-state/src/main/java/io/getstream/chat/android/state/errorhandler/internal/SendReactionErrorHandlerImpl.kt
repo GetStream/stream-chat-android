@@ -47,6 +47,7 @@ internal class SendReactionErrorHandlerImpl(
      * @param originalCall The original call.
      * @param reaction The [Reaction] to send.
      * @param enforceUnique Flag to determine whether the reaction should replace other ones added by the current user.
+     * @param skipPush Flag to determine if push notification should be sent for this reaction.
      * @param currentUser The currently logged in user.
      *
      * @return result The original or offline related result.
@@ -55,6 +56,7 @@ internal class SendReactionErrorHandlerImpl(
         originalCall: Call<Reaction>,
         reaction: Reaction,
         enforceUnique: Boolean,
+        skipPush: Boolean,
         currentUser: User,
     ): ReturnOnErrorCall<Reaction> {
         return originalCall.onErrorReturn(scope) { originalError ->
@@ -66,6 +68,7 @@ internal class SendReactionErrorHandlerImpl(
                         currentUser = currentUser,
                         isOnline = clientState.isOnline,
                         enforceUnique = enforceUnique,
+                        skipPush = skipPush,
                     ),
                 )
             }

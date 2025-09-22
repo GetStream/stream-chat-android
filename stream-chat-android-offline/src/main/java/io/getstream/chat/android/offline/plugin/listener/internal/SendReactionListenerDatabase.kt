@@ -58,36 +58,29 @@ internal class SendReactionListenerDatabase(
      * @param enforceUnique Flag to determine whether the reaction should replace other ones added by the current user.
      * @param currentUser The currently logged in user.
      */
+    @Deprecated(
+        "This method will be removed in the future. " +
+            "Use SendReactionListener#onSendReactionRequest(cid, reaction, enforceUnique, skipPush, currentUser) " +
+            "instead. For backwards compatibility, this method is still called internally by the new, non-deprecated " +
+            "method.",
+    )
     override suspend fun onSendReactionRequest(
         cid: String?,
         reaction: Reaction,
         enforceUnique: Boolean,
         currentUser: User,
     ) {
-        val reactionToSend = reaction.enrichWithDataBeforeSending(
-            currentUser = currentUser,
-            isOnline = clientState.isNetworkAvailable,
-            enforceUnique = enforceUnique,
-        )
+        saveReactionInDatabase(reaction, enforceUnique, null, currentUser)
+    }
 
-        // Update local storage
-        if (enforceUnique) {
-            // remove all user's reactions to the message
-            reactionsRepository.updateReactionsForMessageByDeletedDate(
-                userId = currentUser.id,
-                messageId = reactionToSend.messageId,
-                deletedAt = Date(),
-            )
-        }
-
-        reaction.user?.let { user -> userRepository.insertUser(user) }
-        reactionsRepository.insertReaction(reaction = reactionToSend)
-
-        messageRepository.selectMessage(messageId = reactionToSend.messageId)?.copy()?.let { cachedMessage ->
-            messageRepository.insertMessage(
-                cachedMessage.addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique),
-            )
-        }
+    override suspend fun onSendReactionRequest(
+        cid: String?,
+        reaction: Reaction,
+        enforceUnique: Boolean,
+        skipPush: Boolean,
+        currentUser: User,
+    ) {
+        saveReactionInDatabase(reaction, enforceUnique, skipPush, currentUser)
     }
 
     /**
@@ -165,6 +158,39 @@ internal class SendReactionListenerDatabase(
             else -> {
                 Result.Success(Unit)
             }
+        }
+    }
+
+    private suspend fun saveReactionInDatabase(
+        reaction: Reaction,
+        enforceUnique: Boolean,
+        skipPush: Boolean?,
+        currentUser: User,
+    ) {
+        val reactionToSend = reaction.enrichWithDataBeforeSending(
+            currentUser = currentUser,
+            isOnline = clientState.isNetworkAvailable,
+            enforceUnique = enforceUnique,
+            skipPush = skipPush ?: false,
+        )
+
+        // Update local storage
+        if (enforceUnique) {
+            // remove all user's reactions to the message
+            reactionsRepository.updateReactionsForMessageByDeletedDate(
+                userId = currentUser.id,
+                messageId = reactionToSend.messageId,
+                deletedAt = Date(),
+            )
+        }
+
+        reaction.user?.let { user -> userRepository.insertUser(user) }
+        reactionsRepository.insertReaction(reaction = reactionToSend)
+
+        messageRepository.selectMessage(messageId = reactionToSend.messageId)?.copy()?.let { cachedMessage ->
+            messageRepository.insertMessage(
+                cachedMessage.addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique),
+            )
         }
     }
 }

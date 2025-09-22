@@ -33,6 +33,12 @@ import java.util.Date
  * @param deletedAt The date when the reaction was deleted.
  * @param syncStatus The synchronization status of the reaction.
  * @param enforceUnique If true, only one reaction of this type is allowed per user.
+ * IMPORTANT: Don't set this manually when creating the reaction as it will be ignored. This field is used internally
+ * for offline sync and will be overridden. To enforceUnique reactions, use the parameter on relevant method instead.
+ * @param skipPush If true, sending a push notification will be skipped for this reaction.
+ * IMPORTANT: Don't set this manually when creating the reaction as it will be ignored. This field is used internally
+ * for offline sync and will be overridden. To skip push for reactions, use the parameter on relevant method instead.
+ * @param emojiCode Optional emoji to be shown in the push notification delivered for the reaction (instead of :type:).
  */
 @Immutable
 public data class Reaction(
@@ -48,6 +54,8 @@ public data class Reaction(
     val syncStatus: SyncStatus = SyncStatus.COMPLETED,
     override val extraData: Map<String, Any> = mapOf(),
     val enforceUnique: Boolean = false,
+    val skipPush: Boolean = false,
+    val emojiCode: String? = null,
 ) : CustomObject {
 
     /**
@@ -80,6 +88,7 @@ public data class Reaction(
         private var syncStatus: SyncStatus = SyncStatus.COMPLETED
         private var extraData: Map<String, Any> = mapOf()
         private var enforceUnique: Boolean = false
+        private var emojiCode: String? = null
 
         public constructor(reaction: Reaction) : this() {
             messageId = reaction.messageId
@@ -94,7 +103,9 @@ public data class Reaction(
             syncStatus = reaction.syncStatus
             extraData = reaction.extraData
             enforceUnique = reaction.enforceUnique
+            emojiCode = reaction.emojiCode
         }
+
         public fun messageId(messageId: String): Builder = apply { this.messageId = messageId }
         public fun withMessageId(messageId: String): Builder = apply { this.messageId = messageId }
         public fun withType(type: String): Builder = apply { this.type = type }
@@ -105,11 +116,13 @@ public data class Reaction(
         public fun withCreatedLocallyAt(createdLocallyAt: Date?): Builder = apply {
             this.createdLocallyAt = createdLocallyAt
         }
+
         public fun withUpdatedAt(updatedAt: Date?): Builder = apply { this.updatedAt = updatedAt }
         public fun withDeletedAt(deletedAt: Date?): Builder = apply { this.deletedAt = deletedAt }
         public fun withSyncStatus(syncStatus: SyncStatus): Builder = apply { this.syncStatus = syncStatus }
         public fun withExtraData(extraData: Map<String, Any>): Builder = apply { this.extraData = extraData }
         public fun withEnforceUnique(enforceUnique: Boolean): Builder = apply { this.enforceUnique = enforceUnique }
+        public fun withEmojiCode(emojiCode: String?): Builder = apply { this.emojiCode = emojiCode }
 
         public fun build(): Reaction {
             return Reaction(
@@ -125,6 +138,7 @@ public data class Reaction(
                 syncStatus = syncStatus,
                 extraData = extraData.toMutableMap(),
                 enforceUnique = enforceUnique,
+                emojiCode = emojiCode,
             )
         }
     }

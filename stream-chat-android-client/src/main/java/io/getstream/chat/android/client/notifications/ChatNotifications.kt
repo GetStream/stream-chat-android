@@ -134,10 +134,16 @@ internal class ChatNotificationsImpl constructor(
 
     private fun handlePushMessage(message: PushMessage) {
         val type = message.type.orEmpty()
-        obtainNotificationData(type, message.channelId, message.channelType, message.messageId)
+        obtainNotificationData(type, message.channelId, message.channelType, message.messageId, message.extraData)
     }
 
-    private fun obtainNotificationData(type: String, channelId: String, channelType: String, messageId: String) {
+    private fun obtainNotificationData(
+        type: String,
+        channelId: String,
+        channelType: String,
+        messageId: String,
+        payload: Map<String, Any?> = emptyMap(),
+    ) {
         logger.d { "[obtainNotificationData] type: $type, channelCid: $channelId:$channelType, messageId: $messageId" }
         LoadNotificationDataWorker.start(
             context = context,
@@ -145,6 +151,7 @@ internal class ChatNotificationsImpl constructor(
             channelId = channelId,
             channelType = channelType,
             messageId = messageId,
+            payload = payload,
         )
     }
 
@@ -182,9 +189,7 @@ internal class ChatNotificationsImpl constructor(
                     handler.showNotification(notification)
                 }
             }
-            is ChatNotification.NotificationReminderDue -> {
-                handler.showNotification(notification)
-            }
+            else -> handler.showNotification(notification)
         }
     }
 

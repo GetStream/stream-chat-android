@@ -68,6 +68,7 @@ import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.helper.DurationFormatter
 import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
+import io.getstream.chat.android.ui.common.helper.ReactionPushEmojiFactory
 import io.getstream.chat.android.ui.common.helper.TimeProvider
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.model.UserPresence
@@ -119,6 +120,9 @@ private val LocalQuotedAttachmentFactories = compositionLocalOf<List<AttachmentF
 }
 private val LocalReactionIconFactory = compositionLocalOf<ReactionIconFactory> {
     error("No reaction icon factory provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+private val LocalReactionPushEmojiFactory = compositionLocalOf<ReactionPushEmojiFactory> {
+    error("No reaction push emoji factory provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 private val LocalReactionOptionsTheme = compositionLocalOf<ReactionOptionsTheme> {
     error("No ReactionOptionsTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
@@ -277,6 +281,7 @@ private val LocalMediaGalleryConfig = compositionLocalOf<MediaGalleryConfig> {
  * @param attachmentPreviewHandlers Attachment preview handlers we provide.
  * @param quotedAttachmentFactories Quoted attachment factories that we provide.
  * @param reactionIconFactory Used to create an icon [Painter] for the given reaction type.
+ * @param reactionPushEmojiFactory Used to create an emoji code for a given reaction type (used for push notifications).
  * @param reactionOptionsTheme [ReactionOptionsTheme] Theme for the reaction option list in the selected message menu.
  * For theming the message option list in the same menu, use [messageOptionsTheme].
  * @param messagePreviewIconFactory Used to create a preview icon for the given message type.
@@ -337,6 +342,7 @@ public fun ChatTheme(
         AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
     quotedAttachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultQuotedFactories(),
     reactionIconFactory: ReactionIconFactory = ReactionIconFactory.defaultFactory(),
+    reactionPushEmojiFactory: ReactionPushEmojiFactory = ReactionPushEmojiFactory.defaultFactory(),
     reactionOptionsTheme: ReactionOptionsTheme = ReactionOptionsTheme.defaultTheme(),
     messagePreviewIconFactory: MessagePreviewIconFactory = MessagePreviewIconFactory.defaultFactory(),
     pollSwitchItemFactory: PollSwitchItemFactory = DefaultPollSwitchItemFactory(context = LocalContext.current),
@@ -439,6 +445,7 @@ public fun ChatTheme(
         LocalQuotedAttachmentFactories provides quotedAttachmentFactories,
         LocalMessageContentFactory provides messageContentFactory,
         LocalReactionIconFactory provides reactionIconFactory,
+        LocalReactionPushEmojiFactory provides reactionPushEmojiFactory,
         LocalMessagePreviewIconFactory provides messagePreviewIconFactory,
         LocalReactionOptionsTheme provides reactionOptionsTheme,
         LocalPollSwitchItemFactory provides pollSwitchItemFactory,
@@ -588,6 +595,14 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalReactionIconFactory.current
+
+    /**
+     * Retrieves the current reaction push emoji factory at the call site's position in the hierarchy.
+     */
+    public val reactionPushEmojiFactory: ReactionPushEmojiFactory
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalReactionPushEmojiFactory.current
 
     /**
      * Retrieves the current [ReactionOptionsTheme] at the call site's position in the hierarchy.

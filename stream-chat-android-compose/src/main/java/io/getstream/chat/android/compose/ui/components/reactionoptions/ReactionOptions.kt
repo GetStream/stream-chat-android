@@ -29,7 +29,6 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
-import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.models.Reaction
 
 /**
@@ -76,12 +75,14 @@ public fun ReactionOptions(
         }
     },
 ) {
+    val pushEmojiFactory = ChatTheme.reactionPushEmojiFactory
     val options = reactionTypes.entries.map { (type, reactionIcon) ->
         val isSelected = ownReactions.any { ownReaction -> ownReaction.type == type }
         val painter = reactionIcon.getPainter(isSelected)
         ReactionOptionItemState(
             painter = painter,
             type = type,
+            emojiCode = pushEmojiFactory.emojiCode(type),
         )
     }
 

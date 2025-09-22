@@ -228,6 +228,7 @@ internal class DtoMappingTest {
             user = reaction.user?.let { with(mapping) { it.toDto() } },
             user_id = reaction.userId,
             extraData = reaction.extraData,
+            emoji_code = reaction.emojiCode,
         )
         dto shouldBeEqualTo expected
     }

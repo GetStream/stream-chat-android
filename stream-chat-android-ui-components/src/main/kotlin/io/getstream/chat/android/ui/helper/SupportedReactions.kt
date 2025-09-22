@@ -21,6 +21,7 @@ import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.helper.ReactionDefaults
 import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionDrawables.lolDrawable
 import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionDrawables.loveDrawable
 import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionDrawables.thumbsDownDrawable
@@ -31,7 +32,6 @@ import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionTyp
 import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionTypes.THUMBS_DOWN
 import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionTypes.THUMBS_UP
 import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionTypes.WUT
-import io.getstream.chat.android.ui.helper.SupportedReactions.ReactionDrawable
 import io.getstream.chat.android.ui.utils.extensions.applyTint
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
@@ -85,11 +85,11 @@ public class SupportedReactions(
      * The reaction types we support by default.
      */
     public object DefaultReactionTypes {
-        public const val LOVE: String = "love"
-        public const val THUMBS_UP: String = "like"
-        public const val THUMBS_DOWN: String = "sad"
-        public const val LOL: String = "haha"
-        public const val WUT: String = "wow"
+        public const val LOVE: String = ReactionDefaults.LOVE
+        public const val THUMBS_UP: String = ReactionDefaults.THUMBS_UP
+        public const val THUMBS_DOWN: String = ReactionDefaults.THUMBS_DOWN
+        public const val LOL: String = ReactionDefaults.LOL
+        public const val WUT: String = ReactionDefaults.WUT
     }
 
     /**

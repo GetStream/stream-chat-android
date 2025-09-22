@@ -19,8 +19,16 @@ package io.getstream.chat.android.client.api2.model.requests
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.model.dto.UpstreamReactionDto
 
+/**
+ * Request for adding a reaction to a message.
+ *
+ * @property reaction The reaction to be added.
+ * @property enforce_unique If true, the reaction will be unique per user per message.
+ * @property skip_push If true, the reaction addition will not trigger a push notification.
+ */
 @JsonClass(generateAdapter = true)
 internal data class ReactionRequest(
     val reaction: UpstreamReactionDto,
     val enforce_unique: Boolean,
+    val skip_push: Boolean,
 )

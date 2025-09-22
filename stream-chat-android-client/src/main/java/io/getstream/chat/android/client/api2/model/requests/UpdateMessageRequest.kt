@@ -27,9 +27,11 @@ import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
  * @param message The upstream version of the message.
  * @param skip_enrich_url If the message should skip enriching the URL. If URl is not enriched, it will not be
  * displayed as a link attachment. False by default.
+ * @param skip_push If the update of the message should skip sending a push notification. False by default.
  * */
 @JsonClass(generateAdapter = true)
 internal data class UpdateMessageRequest(
     val message: UpstreamMessageDto,
     val skip_enrich_url: Boolean = false,
+    val skip_push: Boolean = false,
 )

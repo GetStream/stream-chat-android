@@ -236,6 +236,7 @@ public fun randomReaction(
     syncStatus: SyncStatus = randomSyncStatus(),
     extraData: MutableMap<String, Any> = mutableMapOf(),
     enforceUnique: Boolean = randomBoolean(),
+    emojiCode: String? = randomString(),
 ): Reaction = Reaction(
     messageId = messageId,
     type = type,
@@ -248,6 +249,7 @@ public fun randomReaction(
     syncStatus = syncStatus,
     extraData = extraData,
     enforceUnique = enforceUnique,
+    emojiCode = emojiCode,
 )
 
 public fun randomDraftMessageOrNull(): DraftMessage? = randomDraftMessage().takeIf { randomBoolean() }

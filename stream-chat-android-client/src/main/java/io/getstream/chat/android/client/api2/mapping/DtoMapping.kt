@@ -197,6 +197,7 @@ internal class DtoMapping(
         updated_at = updatedAt,
         user = user?.toDto(),
         user_id = userId,
+        emoji_code = emojiCode,
         extraData = extraData,
     )
 

@@ -209,7 +209,31 @@ internal class MessageListViewModelTest {
             ),
         )
 
-        verify(chatClient).sendReaction(reaction = reaction1, enforceUnique = true, CID)
+        verify(chatClient).sendReaction(reaction = reaction1, enforceUnique = true, cid = CID, skipPush = false)
+    }
+
+    @Test
+    fun `Given no previous own reactions on a message When leaving a reaction with skipPush=true Should leave reaction`() = runTest {
+        val messages = listOf(message1, message2)
+        val messageState = MessagesState.Result(messages)
+        val chatClient = MockChatClientBuilder().build()
+
+        val viewModel = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenChannelState(messageState = messageState, messages = messages)
+            .givenSendReaction()
+            .get()
+
+        viewModel.onEvent(
+            MessageListViewModel.Event.MessageReaction(
+                message = message1,
+                reactionType = reaction1.type,
+                skipPush = true,
+            ),
+        )
+
+        verify(chatClient).sendReaction(reaction = reaction1, enforceUnique = true, cid = CID, skipPush = true)
     }
 
     @Test
@@ -299,7 +323,7 @@ internal class MessageListViewModelTest {
         }
 
         fun givenSendReaction() = apply {
-            whenever(chatClient.sendReaction(any(), any(), any())) doReturn Reaction().asCall()
+            whenever(chatClient.sendReaction(any(), any(), any(), any())) doReturn Reaction().asCall()
         }
 
         fun givenDeleteReaction() = apply {

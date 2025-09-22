@@ -1283,26 +1283,27 @@ internal class ChannelClientTest {
         // given
         val reaction = randomReaction()
         val enforceUnique = randomBoolean()
+        val skipPush = randomBoolean()
         val successCall = RetroSuccess(reaction).toRetrofitCall()
-        whenever(chatClient.sendReaction(any(), any(), any())).thenReturn(successCall)
+        whenever(chatClient.sendReaction(any(), any(), any(), any())).thenReturn(successCall)
         // when
-        val result = channelClient.sendReaction(reaction, enforceUnique).await()
+        val result = channelClient.sendReaction(reaction, enforceUnique, skipPush).await()
         // then
         verifySuccess(result, reaction)
-        verify(chatClient).sendReaction(reaction, enforceUnique, channelClient.cid)
+        verify(chatClient).sendReaction(reaction, enforceUnique, channelClient.cid, skipPush)
     }
 
     @Test
-    fun `sendReaction should return success when ChatClient returns success with default enforceUnique`() = runTest {
+    fun `sendReaction should return success when ChatClient returns success with default args`() = runTest {
         // given
         val reaction = randomReaction()
         val successCall = RetroSuccess(reaction).toRetrofitCall()
-        whenever(chatClient.sendReaction(any(), any(), any())).thenReturn(successCall)
+        whenever(chatClient.sendReaction(any(), any(), any(), any())).thenReturn(successCall)
         // when
         val result = channelClient.sendReaction(reaction).await()
         // then
         verifySuccess(result, reaction)
-        verify(chatClient).sendReaction(reaction, false, channelClient.cid)
+        verify(chatClient).sendReaction(reaction, false, channelClient.cid, false)
     }
 
     @Test
@@ -1310,14 +1311,15 @@ internal class ChannelClientTest {
         // given
         val reaction = randomReaction()
         val enforceUnique = randomBoolean()
+        val skipPush = randomBoolean()
         val errorCode = positiveRandomInt()
         val errorCall = RetroError<Reaction>(errorCode).toRetrofitCall()
-        whenever(chatClient.sendReaction(any(), any(), any())).thenReturn(errorCall)
+        whenever(chatClient.sendReaction(any(), any(), any(), any())).thenReturn(errorCall)
         // when
-        val result = channelClient.sendReaction(reaction, enforceUnique).await()
+        val result = channelClient.sendReaction(reaction, enforceUnique, skipPush).await()
         // then
         verifyNetworkError(result, errorCode)
-        verify(chatClient).sendReaction(reaction, enforceUnique, channelClient.cid)
+        verify(chatClient).sendReaction(reaction, enforceUnique, channelClient.cid, skipPush)
     }
 
     @Test

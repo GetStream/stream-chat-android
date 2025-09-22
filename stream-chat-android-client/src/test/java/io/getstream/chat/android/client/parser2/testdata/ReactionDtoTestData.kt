@@ -33,6 +33,7 @@ internal object ReactionDtoTestData {
           "user_id": "userId",
           "created_at": "2020-06-10T11:04:31.0Z",
           "updated_at": "2020-06-10T11:04:31.588Z",
+          "emoji_code": "👍",
           "extraData": {
             "key1": true
           },
@@ -47,6 +48,7 @@ internal object ReactionDtoTestData {
         user_id = "userId",
         created_at = Date(1591787071000),
         updated_at = Date(1591787071588),
+        emoji_code = "👍",
         extraData = mapOf(
             "extraData" to mapOf(
                 "key1" to true,
@@ -72,6 +74,7 @@ internal object ReactionDtoTestData {
         user_id = "",
         created_at = null,
         updated_at = null,
+        emoji_code = null,
         extraData = emptyMap(),
     )
 
@@ -91,6 +94,7 @@ internal object ReactionDtoTestData {
         updated_at = null,
         user = null,
         user_id = "userId",
+        emoji_code = null,
         extraData = emptyMap(),
     )
 
@@ -104,6 +108,7 @@ internal object ReactionDtoTestData {
           "updated_at": "2020-06-10T11:04:31.588Z",
           "user": ${UserDtoTestData.upstreamJson},
           "user_id": "userId",
+          "emoji_code": "👍",
           "other_score": 42
         }""".withoutWhitespace()
     val upstreamReaction = UpstreamReactionDto(
@@ -114,6 +119,7 @@ internal object ReactionDtoTestData {
         updated_at = Date(1591787071588),
         user = UserDtoTestData.upstreamUser,
         user_id = "userId",
+        emoji_code = "👍",
         extraData = mapOf("other_score" to 42),
     )
 }

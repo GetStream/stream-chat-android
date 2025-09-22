@@ -624,7 +624,7 @@ internal class SyncManager(
             logger.w { "[retryReactionSending] outdated sending($id)" }
             removeReaction(reaction)
         } else {
-            chatClient.sendReaction(reaction, reaction.enforceUnique)
+            chatClient.sendReaction(reaction, reaction.enforceUnique, null, reaction.skipPush)
         }
     }
 

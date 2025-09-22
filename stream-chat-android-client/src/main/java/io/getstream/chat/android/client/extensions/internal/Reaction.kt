@@ -99,9 +99,11 @@ public fun Reaction.enrichWithDataBeforeSending(
     currentUser: User,
     isOnline: Boolean,
     enforceUnique: Boolean,
+    skipPush: Boolean,
 ): Reaction = copy(
     user = currentUser,
     userId = currentUser.id,
     syncStatus = if (isOnline) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED,
     enforceUnique = enforceUnique,
+    skipPush = skipPush,
 )

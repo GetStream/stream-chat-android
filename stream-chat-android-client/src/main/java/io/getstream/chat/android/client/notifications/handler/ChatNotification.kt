@@ -36,6 +36,38 @@ public sealed class ChatNotification {
     ) : ChatNotification()
 
     /**
+     * Notification for an updated message in a channel.
+     *
+     * @property channel The channel where the message was updated.
+     * @property message The updated message that triggered the notification.
+     */
+    public data class MessageUpdated(
+        public val channel: Channel,
+        public val message: Message,
+    ) : ChatNotification()
+
+    /**
+     * Notification for a new reaction added to a message in a channel.
+     *
+     * @property title The default title of the notification as received in the PN.
+     * @property body The default body of the notification as received in the PN.
+     * @property type The type of reaction (e.g., "like", "love", etc.).
+     * @property reactionUserId The ID of the user who added the reaction.
+     * @property reactionUserImageUrl The (optional) image URL of the user who added the reaction.
+     * @property channel The channel where the reaction was added.
+     * @property message The message that received the new reaction.
+     */
+    public data class ReactionNew(
+        public val title: String,
+        public val body: String,
+        public val type: String,
+        public val reactionUserId: String,
+        public val reactionUserImageUrl: String?,
+        public val channel: Channel,
+        public val message: Message,
+    ) : ChatNotification()
+
+    /**
      * Notification for a reminder due in a channel.
      *
      * @property channel The channel where the message was sent.
@@ -54,8 +86,56 @@ public sealed class ChatNotification {
         public const val TYPE_MESSAGE_NEW: String = "message.new"
 
         /**
+         * Type for a message update notification.
+         */
+        public const val TYPE_MESSAGE_UPDATED: String = "message.updated"
+
+        /**
+         * Type for a new reaction notification.
+         */
+        public const val TYPE_REACTION_NEW: String = "reaction.new"
+
+        /**
          * Type for a notification indicating a reminder is due.
          */
         public const val TYPE_NOTIFICATION_REMINDER_DUE: String = "notification.reminder_due"
+
+        /**
+         * Creates a [ChatNotification] instance based on the provided payload, channel, and message.
+         *
+         * @param type The type of notification to create (if all relevant data is available).
+         * @param payload The notification payload containing relevant data.
+         * @param channel The channel associated with the notification.
+         * @param message The message associated with the notification.
+         * @return A [ChatNotification] instance if the type is recognized; otherwise, null.
+         */
+        internal fun create(
+            type: String,
+            payload: Map<String, Any?>,
+            channel: Channel,
+            message: Message,
+        ): ChatNotification? {
+            return when (type) {
+                TYPE_MESSAGE_NEW -> MessageNew(channel, message)
+                TYPE_MESSAGE_UPDATED -> MessageUpdated(channel, message)
+                TYPE_NOTIFICATION_REMINDER_DUE -> NotificationReminderDue(channel, message)
+                TYPE_REACTION_NEW -> createReactionNewNotification(payload, channel, message)
+                else -> null // Unknown notification type
+            }
+        }
+
+        @Suppress("ReturnCount")
+        private fun createReactionNewNotification(
+            payload: Map<String, Any?>,
+            channel: Channel,
+            message: Message,
+        ): ReactionNew? {
+            val title = payload["title"] as? String ?: return null
+            val body = payload["body"] as? String ?: return null
+            val reactionType = payload["reaction_type"] as? String ?: return null
+            val reactionUserId = payload["reaction_user_id"] as? String ?: return null
+            val reactionUserImageUrl = payload["reaction_user_image"] as? String?
+            return ReactionNew(title, body, reactionType, reactionUserId, reactionUserImageUrl, channel, message)
+        }
     }
 }

@@ -25,6 +25,7 @@ import io.getstream.chat.android.ui.common.helper.DownloadRequestInterceptor
 import io.getstream.chat.android.ui.common.helper.DurationFormatter
 import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
+import io.getstream.chat.android.ui.common.helper.ReactionPushEmojiFactory
 import io.getstream.chat.android.ui.common.helper.VideoHeadersProvider
 import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
@@ -126,6 +127,14 @@ public object ChatUI {
      */
     @JvmStatic
     public var supportedReactions: SupportedReactions by lazyVar { SupportedReactions(appContext) }
+
+    /**
+     * Allows overriding default emojis for reactions in push notifications.
+     */
+    @JvmStatic
+    public var reactionPushEmojiFactory: ReactionPushEmojiFactory by lazyVar {
+        ReactionPushEmojiFactory.defaultFactory()
+    }
 
     /**
      * Allows overriding default icons for attachments MIME types.
