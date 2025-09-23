@@ -35,19 +35,21 @@ import kotlinx.coroutines.flow.StateFlow
  */
 public class MentionListViewModel(
     sort: QuerySorter<Message>? = null,
-    controllerProvider: ViewModel.() -> MentionListController = { MentionListController(viewModelScope, sort) },
+    private val controllerProvider: ViewModel.() -> MentionListController = {
+        MentionListController(viewModelScope, sort)
+    },
 ) : ViewModel() {
-    private val controller: MentionListController by lazy { controllerProvider() }
+    private val controller: MentionListController get() = controllerProvider()
 
     /**
      * The current mention list state.
      */
-    public val state: StateFlow<MentionListState> by lazy { controller.state }
+    public val state: StateFlow<MentionListState> get() = controller.state
 
     /**
      * One shot events.
      */
-    public val events: SharedFlow<MentionListEvent> by lazy { controller.events }
+    public val events: SharedFlow<MentionListEvent> get() = controller.events
 
     /**
      * Loads more messages if there are more messages to load.

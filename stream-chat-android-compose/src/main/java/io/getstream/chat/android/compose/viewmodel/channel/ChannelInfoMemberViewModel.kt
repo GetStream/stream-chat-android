@@ -38,7 +38,7 @@ import kotlinx.coroutines.flow.StateFlow
 public class ChannelInfoMemberViewModel(
     private val cid: String,
     private val memberId: String,
-    controllerProvider: ViewModel.() -> ChannelInfoMemberViewController = {
+    private val controllerProvider: ViewModel.() -> ChannelInfoMemberViewController = {
         ChannelInfoMemberViewController(
             cid = cid,
             memberId = memberId,
@@ -47,17 +47,17 @@ public class ChannelInfoMemberViewModel(
     },
 ) : ViewModel() {
 
-    private val controller: ChannelInfoMemberViewController by lazy { controllerProvider() }
+    private val controller: ChannelInfoMemberViewController get() = controllerProvider()
 
     /**
      * @see [ChannelInfoMemberViewController.state]
      */
-    public val state: StateFlow<ChannelInfoMemberViewState> by lazy { controller.state }
+    public val state: StateFlow<ChannelInfoMemberViewState> get() = controller.state
 
     /**
      * @see [ChannelInfoMemberViewController.events]
      */
-    public val events: SharedFlow<ChannelInfoMemberViewEvent> by lazy { controller.events }
+    public val events: SharedFlow<ChannelInfoMemberViewEvent> get() = controller.events
 
     /**
      * @see [ChannelInfoMemberViewController.onViewAction]

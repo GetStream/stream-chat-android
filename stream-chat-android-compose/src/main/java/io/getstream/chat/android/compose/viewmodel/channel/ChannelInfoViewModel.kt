@@ -43,7 +43,7 @@ public class ChannelInfoViewModel(
     private val cid: String,
     private val copyToClipboardHandler: CopyToClipboardHandler,
     private val optionFilter: (option: ChannelInfoViewState.Content.Option) -> Boolean = { true },
-    controllerProvider: ViewModel.() -> ChannelInfoViewController = {
+    private val controllerProvider: ViewModel.() -> ChannelInfoViewController = {
         ChannelInfoViewController(
             cid = cid,
             scope = viewModelScope,
@@ -53,17 +53,17 @@ public class ChannelInfoViewModel(
     },
 ) : ViewModel() {
 
-    private val controller: ChannelInfoViewController by lazy { controllerProvider() }
+    private val controller: ChannelInfoViewController get() = controllerProvider()
 
     /**
      * @see [ChannelInfoViewController.state]
      */
-    public val state: StateFlow<ChannelInfoViewState> by lazy { controller.state }
+    public val state: StateFlow<ChannelInfoViewState> get() = controller.state
 
     /**
      * @see [ChannelInfoViewController.events]
      */
-    public val events: SharedFlow<ChannelInfoViewEvent> by lazy { controller.events }
+    public val events: SharedFlow<ChannelInfoViewEvent> get() = controller.events
 
     /**
      * @see [ChannelInfoViewController.onViewAction]

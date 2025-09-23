@@ -46,7 +46,7 @@ internal class CopyToClipboardHandlerImpl(
     },
 ) : CopyToClipboardHandler {
 
-    private val clipboardManager: ClipboardManager by lazy { clipboardManagerProvider() }
+    private val clipboardManager: ClipboardManager get() = clipboardManagerProvider()
 
     override fun copy(text: String) {
         clipboardManager.setPrimaryClip(ClipData.newPlainText(PLAIN_TEXT_LABEL, text))

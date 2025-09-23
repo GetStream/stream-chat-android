@@ -35,7 +35,7 @@ import kotlinx.coroutines.flow.StateFlow
 public class ChannelAttachmentsViewModel(
     private val cid: String,
     private val attachmentTypes: List<String>,
-    controllerProvider: ViewModel.() -> ChannelAttachmentsViewController = {
+    private val controllerProvider: ViewModel.() -> ChannelAttachmentsViewController = {
         ChannelAttachmentsViewController(
             cid = cid,
             attachmentTypes = attachmentTypes,
@@ -44,17 +44,17 @@ public class ChannelAttachmentsViewModel(
     },
 ) : ViewModel() {
 
-    private val controller: ChannelAttachmentsViewController by lazy { controllerProvider() }
+    private val controller: ChannelAttachmentsViewController get() = controllerProvider()
 
     /**
      * @see [ChannelAttachmentsViewController.state]
      */
-    public val state: StateFlow<ChannelAttachmentsViewState> by lazy { controller.state }
+    public val state: StateFlow<ChannelAttachmentsViewState> get() = controller.state
 
     /**
      * @see [ChannelAttachmentsViewController.events]
      */
-    public val events: SharedFlow<ChannelAttachmentsViewEvent> by lazy { controller.events }
+    public val events: SharedFlow<ChannelAttachmentsViewEvent> get() = controller.events
 
     /**
      * @see [ChannelAttachmentsViewController.onViewAction]
