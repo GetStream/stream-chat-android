@@ -55,7 +55,7 @@ public fun MentionSuggestionList(
             .fillMaxWidth()
             .heightIn(max = ChatTheme.dimens.suggestionListMaxHeight),
     ) {
-        SuggestionLazyList(
+        MentionSuggestionLazyList(
             users = users,
             onMentionSelected = onMentionSelected,
             itemContent = itemContent,
@@ -64,7 +64,7 @@ public fun MentionSuggestionList(
 }
 
 @Composable
-private fun SuggestionLazyList(
+private fun MentionSuggestionLazyList(
     users: List<User>,
     onMentionSelected: (User) -> Unit = {},
     itemContent: @Composable (User) -> Unit = { user ->
@@ -94,7 +94,7 @@ private fun MentionSuggestionListPreview() {
 
 @Composable
 internal fun MentionSuggestionList() {
-    SuggestionLazyList(
+    MentionSuggestionLazyList(
         users = listOf(
             PreviewUserData.user1,
             PreviewUserData.user2,
