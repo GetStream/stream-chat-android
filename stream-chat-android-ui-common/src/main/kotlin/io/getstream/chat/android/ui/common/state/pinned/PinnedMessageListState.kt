@@ -22,13 +22,13 @@ import java.util.Date
 /**
  * Represents the pinned message list state, used to render the required UI.
  *
- * @param canLoadMore Indicator if we've reached the end of messages, to stop triggering pagination.
- * @param results The messages to render.
- * @param isLoading Indicator if we're currently loading data (initial load).
- * @param nextDate Date used to fetch next page of the messages.
+ * @param canLoadMore Indicator if we've reached the end of messages, to stop triggering pagination. Defaults to true.
+ * @param results The messages to render. Defaults to an empty list.
+ * @param isLoading Indicator if we're currently loading data (initial load). Defaults to true.
+ * @param nextDate Date used to fetch next page of the messages. Defaults to current date.
  */
 public data class PinnedMessageListState(
-    val canLoadMore: Boolean = false,
+    val canLoadMore: Boolean = true,
     val results: List<MessageResult> = emptyList(),
     val isLoading: Boolean = true,
     val nextDate: Date = Date(),
