@@ -19,7 +19,11 @@ package io.getstream.chat.android.compose.ui
 import androidx.activity.OnBackPressedDispatcher
 import androidx.activity.OnBackPressedDispatcherOwner
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivityResultRegistryOwner
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.activity.result.ActivityResultRegistry
+import androidx.activity.result.ActivityResultRegistryOwner
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleRegistry
 import app.cash.paparazzi.Paparazzi
@@ -47,6 +52,7 @@ internal interface SnapshotTest : ComposeTest {
             CompositionLocalProvider(
                 LocalInspectionMode provides true,
                 LocalOnBackPressedDispatcherOwner provides FakeBackDispatcherOwner,
+                LocalActivityResultRegistryOwner provides NoOpRegistryOwner,
             ) {
                 ChatTheme(isInDarkMode = isInDarkMode) {
                     Box(modifier = Modifier.background(ChatTheme.colors.appBackground)) {
@@ -62,6 +68,7 @@ internal interface SnapshotTest : ComposeTest {
             CompositionLocalProvider(
                 LocalInspectionMode provides true,
                 LocalOnBackPressedDispatcherOwner provides FakeBackDispatcherOwner,
+                LocalActivityResultRegistryOwner provides NoOpRegistryOwner,
             ) {
                 Column {
                     ChatTheme(isInDarkMode = true) {
@@ -92,6 +99,7 @@ internal interface SnapshotTest : ComposeTest {
             CompositionLocalProvider(
                 LocalInspectionMode provides true,
                 LocalOnBackPressedDispatcherOwner provides FakeBackDispatcherOwner,
+                LocalActivityResultRegistryOwner provides NoOpRegistryOwner,
             ) {
                 Row {
                     ChatTheme(isInDarkMode = true) {
@@ -128,5 +136,25 @@ private val FakeBackDispatcherOwner = object : OnBackPressedDispatcherOwner {
 
     override val lifecycle: Lifecycle = LifecycleRegistry.createUnsafe(this).apply {
         currentState = Lifecycle.State.RESUMED
+    }
+}
+
+/**
+ * A no-op [ActivityResultRegistryOwner] necessary for composable components that use
+ * [androidx.activity.compose.rememberLauncherForActivityResult].
+ */
+private val NoOpRegistryOwner = object : ActivityResultRegistryOwner {
+    override val activityResultRegistry: ActivityResultRegistry
+        get() = NoOpActivityResultRegistry
+}
+
+private val NoOpActivityResultRegistry = object : ActivityResultRegistry() {
+    override fun <I, O> onLaunch(
+        requestCode: Int,
+        contract: ActivityResultContract<I, O>,
+        input: I,
+        options: ActivityOptionsCompat?,
+    ) {
+        // no-op
     }
 }
