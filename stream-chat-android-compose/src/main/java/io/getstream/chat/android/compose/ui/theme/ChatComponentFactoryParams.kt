@@ -45,12 +45,3 @@ public data class MessageReactionItemParams(
     val modifier: Modifier = Modifier,
     val state: ReactionOptionItemState,
 )
-
-/**
- * Parameters for the [ChatComponentFactory.MessageComposerCommandSuggestionListHeader] component.
- *
- * @param modifier Modifier for styling.
- */
-public data class MessageComposerCommandSuggestionListHeaderParams(
-    val modifier: Modifier = Modifier,
-)

@@ -40,7 +40,6 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.suggestions.SuggestionList
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.theme.MessageComposerCommandSuggestionListHeaderParams
 import io.getstream.chat.android.models.Command
 
 /**
@@ -69,11 +68,7 @@ public fun CommandSuggestionList(
             .heightIn(max = ChatTheme.dimens.suggestionListMaxHeight)
             .padding(ChatTheme.dimens.suggestionListPadding)
             .testTag("Stream_SuggestionList"),
-        headerContent = {
-            ChatTheme.componentFactory.MessageComposerCommandSuggestionListHeader(
-                params = MessageComposerCommandSuggestionListHeaderParams(),
-            )
-        },
+        headerContent = { DefaultCommandSuggestionListHeader() },
     ) {
         CommandSuggestionLazyList(
             commands = commands,
@@ -84,7 +79,7 @@ public fun CommandSuggestionList(
 }
 
 @Composable
-internal fun DefaultCommandSuggestionListHeader(modifier: Modifier) {
+internal fun DefaultCommandSuggestionListHeader(modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .semantics(mergeDescendants = true) {}
@@ -142,9 +137,7 @@ private fun CommandSuggestionListPreview() {
 @Composable
 internal fun CommandSuggestionList() {
     Column {
-        ChatTheme.componentFactory.MessageComposerCommandSuggestionListHeader(
-            params = MessageComposerCommandSuggestionListHeaderParams(),
-        )
+        DefaultCommandSuggestionListHeader()
         CommandSuggestionLazyList(
             commands = listOf(
                 Command(
