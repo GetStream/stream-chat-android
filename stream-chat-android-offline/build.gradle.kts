@@ -1,6 +1,4 @@
 import io.getstream.chat.android.Configuration
-import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -31,19 +29,6 @@ android {
         unitTests {
             isIncludeAndroidResources = true
             unitTests.isReturnDefaultValues = true
-            all {
-                it.testLogging {
-                    events = setOf(
-                        TestLogEvent.FAILED,
-                        TestLogEvent.STANDARD_OUT,
-                        TestLogEvent.STANDARD_ERROR,
-                    )
-                    showExceptions = true
-                    showCauses = true
-                    showStackTraces = true
-                    exceptionFormat = TestExceptionFormat.FULL
-                }
-            }
         }
     }
     buildTypes {
