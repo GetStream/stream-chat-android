@@ -1131,7 +1131,7 @@ public fun randomConnectionState(): ConnectionState =
     ConnectionState.values.random()
 
 public fun randomAttachmentType(): String =
-    attachmentTypes().shuffled().random()
+    attachmentTypes().random()
 
 public fun attachmentTypes(): List<String> = listOf(
     AttachmentType.IMAGE,
