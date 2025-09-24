@@ -198,7 +198,7 @@ private fun ChannelMediaAttachmentsPreviewBottomBar(
                     // TODO Use MediaGalleryPreviewPageIndicator when this deprecated component is removed
                     ChatTheme.componentFactory.ChannelMediaAttachmentsPreviewBottomBar(
                         text = stringResource(
-                            R.string.stream_compose_image_order,
+                            R.string.stream_ui_channel_attachments_media_preview_index,
                             pagerState.currentPage + 1,
                             items.size,
                         ),
