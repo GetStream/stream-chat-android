@@ -41,6 +41,6 @@ sonarqube {
         property "sonar.java.coveragePlugin", "jacoco"
         property "sonar.sourceEncoding", "UTF-8"
         property "sonar.java.binaries", "${rootDir}/**/build/tmp/kotlin-classes/debug,${rootDir}/**/build/classes/kotlin/main"
-        property "sonar.coverage.exclusions", rootProject.ext.sonar.excludeFilter
+        property "sonar.exclusions", rootProject.ext.sonar.excludeFilter
     }
 }
