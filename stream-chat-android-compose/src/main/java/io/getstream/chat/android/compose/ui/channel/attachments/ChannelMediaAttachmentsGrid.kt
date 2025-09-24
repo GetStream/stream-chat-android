@@ -71,7 +71,8 @@ internal fun ChannelMediaAttachmentsGrid(
     modifier: Modifier = Modifier,
     gridState: LazyGridState = rememberLazyGridState(),
     gridColumnCount: Int? = null,
-    headerKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String,
+    headerKeySelector: (item: ChannelAttachmentsViewState.Content.Item) -> String =
+        ChannelAttachmentsDefaults.HeaderKeySelector,
     onLoadMoreRequested: () -> Unit = {},
     onVideoPlaybackError: (error: Throwable) -> Unit = {},
     onSharingError: (error: Error) -> Unit = {},
