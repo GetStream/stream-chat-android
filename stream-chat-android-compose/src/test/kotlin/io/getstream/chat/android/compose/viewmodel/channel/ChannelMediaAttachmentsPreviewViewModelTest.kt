@@ -83,21 +83,15 @@ internal class ChannelMediaAttachmentsPreviewViewModelTest {
         sut.events.test {
             sut.onViewAction(ChannelMediaAttachmentsPreviewViewAction.ShareClick(attachment))
 
-            sut.state.test {
-                val startState = awaitItem()
-                assertTrue(startState.isPreparingToShare)
-                assertNull(startState.promptedAttachment)
-
-                val endState = awaitItem()
-                assertFalse(endState.isPreparingToShare)
-                assertNull(endState.promptedAttachment)
-            }
-
             val event = awaitItem()
             assertInstanceOf<ChannelMediaAttachmentsPreviewViewEvent.ShareLocalFile>(event)
             assertEquals(event.uri, localUri)
             assertEquals(event.mimeType, attachment.mimeType)
             assertEquals(event.text, attachment.title)
+
+            val endState = sut.state.value
+            assertFalse(endState.isPreparingToShare)
+            assertNull(endState.promptedAttachment)
         }
     }
 
@@ -236,9 +230,9 @@ internal class ChannelMediaAttachmentsPreviewViewModelTest {
             )
             .get()
 
-        sut.onViewAction(ChannelMediaAttachmentsPreviewViewAction.ShareClick(attachment))
-
         sut.state.test {
+            sut.onViewAction(ChannelMediaAttachmentsPreviewViewAction.ShareClick(attachment))
+
             val startState = awaitItem()
             assertFalse(startState.isPreparingToShare)
             assertNull(startState.promptedAttachment)
@@ -269,19 +263,13 @@ internal class ChannelMediaAttachmentsPreviewViewModelTest {
         sut.events.test {
             sut.onViewAction(ChannelMediaAttachmentsPreviewViewAction.ShareClick(attachment))
 
-            sut.state.test {
-                val startState = awaitItem()
-                assertTrue(startState.isPreparingToShare)
-                assertNull(startState.promptedAttachment)
-
-                val endState = awaitItem()
-                assertFalse(endState.isPreparingToShare)
-                assertNull(endState.promptedAttachment)
-            }
-
             val event = awaitItem()
             assertInstanceOf<ChannelMediaAttachmentsPreviewViewEvent.SharingError>(event)
             assertEquals(event.error, shareError)
+
+            val endState = sut.state.value
+            assertFalse(endState.isPreparingToShare)
+            assertNull(endState.promptedAttachment)
         }
     }
 
