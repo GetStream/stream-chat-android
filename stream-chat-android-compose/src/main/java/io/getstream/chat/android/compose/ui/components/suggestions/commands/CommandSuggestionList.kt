@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.components.suggestions.commands
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,9 +34,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.suggestions.SuggestionList
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Command
 
@@ -65,39 +68,91 @@ public fun CommandSuggestionList(
             .heightIn(max = ChatTheme.dimens.suggestionListMaxHeight)
             .padding(ChatTheme.dimens.suggestionListPadding)
             .testTag("Stream_SuggestionList"),
-        headerContent = {
-            Row(
-                modifier = Modifier
-                    .semantics(mergeDescendants = true) {}
-                    .fillMaxWidth()
-                    .height(40.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .size(24.dp)
-                        .testTag("Stream_SuggestionListTitle"),
-                    painter = painterResource(id = R.drawable.stream_compose_ic_command),
-                    tint = ChatTheme.colors.primaryAccent,
-                    contentDescription = null,
-                )
-                Text(
-                    text = stringResource(id = R.string.stream_compose_message_composer_instant_commands),
-                    style = ChatTheme.typography.body,
-                    maxLines = 1,
-                    color = ChatTheme.colors.textLowEmphasis,
-                )
-            }
-        },
+        headerContent = { DefaultCommandSuggestionListHeader() },
     ) {
-        LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
-            items(
-                items = commands,
-                key = Command::name,
-            ) { command ->
-                itemContent(command)
-            }
+        CommandSuggestionLazyList(
+            commands = commands,
+            onCommandSelected = onCommandSelected,
+            itemContent = itemContent,
+        )
+    }
+}
+
+@Composable
+internal fun DefaultCommandSuggestionListHeader(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier
+            .semantics(mergeDescendants = true) {}
+            .fillMaxWidth()
+            .height(40.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            modifier = Modifier
+                .padding(horizontal = 8.dp)
+                .size(24.dp)
+                .testTag("Stream_SuggestionListTitle"),
+            painter = painterResource(id = R.drawable.stream_compose_ic_command),
+            tint = ChatTheme.colors.primaryAccent,
+            contentDescription = null,
+        )
+        Text(
+            text = stringResource(id = R.string.stream_compose_message_composer_instant_commands),
+            style = ChatTheme.typography.body,
+            maxLines = 1,
+            color = ChatTheme.colors.textLowEmphasis,
+        )
+    }
+}
+
+@Composable
+private fun CommandSuggestionLazyList(
+    commands: List<Command>,
+    onCommandSelected: (Command) -> Unit = {},
+    itemContent: @Composable (Command) -> Unit = { command ->
+        ChatTheme.componentFactory.MessageComposerCommandSuggestionItem(
+            command = command,
+            onCommandSelected = onCommandSelected,
+        )
+    },
+) {
+    LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
+        items(
+            items = commands,
+            key = Command::name,
+        ) { command ->
+            itemContent(command)
         }
+    }
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun CommandSuggestionListPreview() {
+    ChatPreviewTheme {
+        CommandSuggestionList()
+    }
+}
+
+@Composable
+internal fun CommandSuggestionList() {
+    Column {
+        DefaultCommandSuggestionListHeader()
+        CommandSuggestionLazyList(
+            commands = listOf(
+                Command(
+                    name = "giphy",
+                    description = "Search for a GIF on Giphy",
+                    args = "[search term]",
+                    set = "giphy",
+                ),
+                Command(
+                    name = "shout",
+                    description = "Shout your message in uppercase",
+                    args = "[message]",
+                    set = "fun_set",
+                ),
+            ),
+        )
     }
 }

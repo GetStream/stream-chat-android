@@ -13,7 +13,7 @@ ext.sonar = [
             'stream-chat-android-ui-components-sample',
             'stream-chat-android-client-test',
             'stream-chat-android-ui-uitests',
-            'metrics'
+            'stream-chat-android-metrics'
     ],
     excludeFilter : [
             '**/test/**',

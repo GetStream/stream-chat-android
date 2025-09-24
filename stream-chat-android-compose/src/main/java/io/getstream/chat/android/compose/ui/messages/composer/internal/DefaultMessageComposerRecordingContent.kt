@@ -63,6 +63,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -89,7 +90,6 @@ import io.getstream.chat.android.ui.common.state.messages.composer.RecordingStat
 import io.getstream.chat.android.uiutils.util.openSystemSettings
 import kotlinx.coroutines.delay
 import kotlin.math.abs
-import kotlin.random.Random
 
 private const val HOLD_TO_RECORD_THRESHOLD = 1000L
 private const val HOLD_TO_RECORD_DISMISS_TIMEOUT = 1000L
@@ -712,6 +712,9 @@ private fun RecordingControlButtons(
         IconButton(
             onClick = onDeleteRecording,
             modifier = Modifier
+                .semantics {
+                    testTag = "Stream_ComposerDeleteAudioRecordingButton"
+                }
                 .size(deleteStyle.size)
                 .padding(deleteStyle.padding)
                 .focusable(true),
@@ -730,6 +733,9 @@ private fun RecordingControlButtons(
             IconButton(
                 onClick = onStopRecording,
                 modifier = Modifier
+                    .semantics {
+                        testTag = "Stream_ComposerStopAudioRecordingButton"
+                    }
                     .size(stopStyle.size)
                     .padding(stopStyle.padding)
                     .focusable(true),
@@ -748,6 +754,9 @@ private fun RecordingControlButtons(
         IconButton(
             onClick = { onCompleteRecording(sendOnComplete) },
             modifier = Modifier
+                .semantics {
+                    testTag = "Stream_ComposerCompleteAudioRecordingButton"
+                }
                 .size(completeStyle.size)
                 .padding(completeStyle.padding)
                 .focusable(true),
@@ -763,36 +772,82 @@ private fun RecordingControlButtons(
     }
 }
 
-private fun formatMillis(milliseconds: Int): String {
-    val totalSeconds = milliseconds / 1000
-    val minutes = totalSeconds / 60
-    val seconds = totalSeconds % 60
-    return "%02d:%02d".format(minutes, seconds)
-}
-
-@Preview(showBackground = true)
+@Preview(showBackground = true, heightDp = 200)
 @Composable
-internal fun DefaultMessageComposerRecordingContentPreview() {
-    val randomWaveformData = List(150) { Random.nextFloat() }
+private fun MessageComposerRecordingContentHoldPreview() {
     ChatPreviewTheme {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(),
-            contentAlignment = Alignment.Center,
-        ) {
-            DefaultMessageComposerRecordingContent(
-                modifier = Modifier.fillMaxWidth(),
-                waveformVisible = true,
-                waveformThumbVisible = true,
-                waveformData = randomWaveformData,
-                waveformProgress = 0.2f,
-                slideToCancelVisible = true,
-                holdControlsVisible = true,
-                holdControlsLocked = false,
-                holdControlsOffset = IntOffset(0, 0),
-                recordingControlsVisible = true,
-                recordingStopControlVisible = true,
-            )
-        }
+        MessageComposerRecordingContentHold()
     }
 }
+
+@Composable
+internal fun MessageComposerRecordingContentHold() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = BottomCenter,
+    ) {
+        DefaultMessageComposerRecordingContent(
+            durationInMs = DurationInMs,
+            waveformVisible = false,
+            waveformData = WaveformData,
+            holdControlsVisible = true,
+            recordingControlsVisible = false,
+        )
+    }
+}
+
+@Preview(showBackground = true, heightDp = 200)
+@Composable
+private fun MessageComposerRecordingContentLockPreview() {
+    ChatPreviewTheme {
+        MessageComposerRecordingContentLock()
+    }
+}
+
+@Composable
+internal fun MessageComposerRecordingContentLock() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = BottomCenter,
+    ) {
+        DefaultMessageComposerRecordingContent(
+            durationInMs = DurationInMs,
+            waveformData = WaveformData,
+            waveformProgress = 0.3f,
+            slideToCancelVisible = false,
+            holdControlsVisible = true,
+            holdControlsLocked = true,
+        )
+    }
+}
+
+@Preview(showBackground = true, heightDp = 200)
+@Composable
+private fun MessageComposerRecordingContentOverviewPreview() {
+    ChatPreviewTheme {
+        MessageComposerRecordingContentOverview()
+    }
+}
+
+@Composable
+internal fun MessageComposerRecordingContentOverview() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = BottomCenter,
+    ) {
+        DefaultMessageComposerRecordingContent(
+            durationInMs = DurationInMs,
+            waveformThumbVisible = true,
+            waveformData = WaveformData,
+            slideToCancelVisible = false,
+            recordingStopControlVisible = false,
+        )
+    }
+}
+
+private const val DurationInMs = 120_000
+
+@Suppress("MagicNumber")
+private val WaveformData = (0..10).map {
+    listOf(0.5f, 0.8f, 0.3f, 0.6f, 0.4f, 0.7f, 0.2f, 0.9f, 0.1f)
+}.flatten()
