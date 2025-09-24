@@ -80,6 +80,9 @@ public final class io/getstream/chat/android/client/errors/ChatErrorCode$Compani
 public abstract interface annotation class io/getstream/chat/android/core/ExperimentalStreamChatApi : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class io/getstream/chat/android/core/internal/ExcludeFromCoverageGeneratedReport : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class io/getstream/chat/android/core/internal/InternalStreamChatApi : java/lang/annotation/Annotation {
 }
 
