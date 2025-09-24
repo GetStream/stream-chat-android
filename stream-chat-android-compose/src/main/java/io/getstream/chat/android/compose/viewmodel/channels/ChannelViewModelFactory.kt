@@ -49,32 +49,23 @@ public class ChannelViewModelFactory(
     private val isDraftMessageEnabled: Boolean = false,
 ) : ViewModelProvider.Factory {
 
-    private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
-        ChannelListViewModel::class.java to {
-            ChannelListViewModel(
-                chatClient = chatClient,
-                initialSort = querySort,
-                initialFilters = filters,
-                channelLimit = channelLimit,
-                messageLimit = messageLimit,
-                memberLimit = memberLimit,
-                chatEventHandlerFactory = chatEventHandlerFactory,
-                isDraftMessageEnabled = isDraftMessageEnabled,
-            )
-        },
-    )
-
     /**
      * Create a new instance of [ChannelListViewModel] class.
      */
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val viewModel: ViewModel = factories[modelClass]?.invoke()
-            ?: throw IllegalArgumentException(
-                "MessageListViewModelFactory can only create instances of the " +
-                    "following classes: ${factories.keys.joinToString { it.simpleName }}",
-            )
-
+        require(modelClass == ChannelListViewModel::class.java) {
+            "ChannelViewModelFactory can only create instances of ChannelListViewModel"
+        }
         @Suppress("UNCHECKED_CAST")
-        return viewModel as T
+        return ChannelListViewModel(
+            chatClient = chatClient,
+            initialSort = querySort,
+            initialFilters = filters,
+            channelLimit = channelLimit,
+            messageLimit = messageLimit,
+            memberLimit = memberLimit,
+            chatEventHandlerFactory = chatEventHandlerFactory,
+            isDraftMessageEnabled = isDraftMessageEnabled,
+        ) as T
     }
 }

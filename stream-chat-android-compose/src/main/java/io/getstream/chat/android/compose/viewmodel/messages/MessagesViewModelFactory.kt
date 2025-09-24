@@ -177,7 +177,7 @@ public class MessagesViewModelFactory(
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val viewModel: ViewModel = factories[modelClass]?.invoke()
             ?: throw IllegalArgumentException(
-                "MessageListViewModelFactory can only create instances of " +
+                "MessagesViewModelFactory can only create instances of " +
                     "the following classes: ${factories.keys.joinToString { it.simpleName }}",
             )
 

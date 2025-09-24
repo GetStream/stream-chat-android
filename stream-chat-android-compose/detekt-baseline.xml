@@ -32,9 +32,6 @@
     <ID>MagicNumber:AudioWaveSeekbar.kt$10F</ID>
     <ID>MagicNumber:AudioWaveSeekbar.kt$50F</ID>
     <ID>MagicNumber:AvatarPosition.kt$3</ID>
-    <ID>MagicNumber:DefaultMessageComposerRecordingContent.kt$1000</ID>
-    <ID>MagicNumber:DefaultMessageComposerRecordingContent.kt$150</ID>
-    <ID>MagicNumber:DefaultMessageComposerRecordingContent.kt$60</ID>
     <ID>MagicNumber:FilesPicker.kt$6f</ID>
     <ID>MagicNumber:MediaAttachmentContent.kt$0.4f</ID>
     <ID>MagicNumber:MediaAttachmentFactory.kt$0.25f</ID>
@@ -54,7 +51,6 @@
     <ID>MaxLineLength:AttachmentsPickerPollTabFactory.kt$AttachmentsPickerPollTabFactory$var switchItemList: List&lt;PollSwitchItem> by remember { mutableStateOf(pollSwitchItemFactory.providePollSwitchItemList()) }</ID>
     <ID>MaxLineLength:AttachmentsPickerTabFactories.kt$AttachmentsPickerTabFactories$*</ID>
     <ID>MaxLineLength:ChatTheme.kt$error("No attachments picker tab factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")</ID>
-    <ID>MaxLineLength:MediaAttachmentContent.kt$mediaGalleryPreviewLauncher: ManagedActivityResultLauncher&lt;MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?></ID>
     <ID>MaxLineLength:MessageItem.kt$message.isDeleted() &amp;&amp; messageItem.deletedMessageVisibility == DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER</ID>
     <ID>MaxLineLength:MessageOptions.kt$title = if (selectedMessage.pinned) R.string.stream_compose_unpin_message else R.string.stream_compose_pin_message</ID>
     <ID>MaxLineLength:MessagesScreen.kt$*</ID>
@@ -71,6 +67,5 @@
     <ID>TopLevelPropertyNaming:DefaultMessageComposerRecordingContent.kt$private const val HOLD_TO_RECORD_DISMISS_TIMEOUT = 1000L</ID>
     <ID>TopLevelPropertyNaming:DefaultMessageComposerRecordingContent.kt$private const val HOLD_TO_RECORD_THRESHOLD = 1000L</ID>
     <ID>TopLevelPropertyNaming:DefaultMessageComposerRecordingContent.kt$private const val PERMISSION_RATIONALE_DISMISS_TIMEOUT = 1000L</ID>
-    <ID>UnusedPrivateMember:DefaultMessageComposerRecordingContent.kt$private fun formatMillis(milliseconds: Int): String</ID>
   </CurrentIssues>
 </SmellBaseline>

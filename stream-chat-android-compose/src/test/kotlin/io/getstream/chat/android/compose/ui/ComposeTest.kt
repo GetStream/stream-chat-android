@@ -17,10 +17,19 @@
 package io.getstream.chat.android.compose.ui
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.setup.state.ClientState
+import kotlinx.coroutines.test.TestScope
+import org.junit.After
 import org.junit.Before
+import org.mockito.Answers
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.reset
+import org.mockito.kotlin.whenever
 
-private val MockClient: ChatClient = mock<ChatClient>()
+private val MockClientState = mock<ClientState>(defaultAnswer = Answers.RETURNS_MOCKS)
+private val MockChatClient = mock<ChatClient>(defaultAnswer = Answers.RETURNS_MOCKS)
 
 internal interface ComposeTest {
 
@@ -30,12 +39,13 @@ internal interface ComposeTest {
      * ```kotlin
      * @Test
      * fun `my test case`() {
-     *     whenever(chatClient.getCurrentUser()) doReturn PreviewUserData.user1
+     *     whenever(mockChatClient.getCurrentUser()) doReturn PreviewUserData.user1
      *     // Your test code here
      * }
      * ```
      */
-    val chatClient: ChatClient get() = MockClient
+    val mockChatClient: ChatClient get() = MockChatClient
+    val mockClientState: ClientState get() = MockClientState
 
     /**
      * Bind the mocked [ChatClient] instance to the singleton before each test case run.
@@ -43,7 +53,14 @@ internal interface ComposeTest {
     @Before
     fun setUp() {
         object : ChatClient.ChatClientBuilder() {
-            override fun internalBuild(): ChatClient = MockClient
+            override fun internalBuild(): ChatClient = MockChatClient
         }.build()
+        whenever(MockChatClient.clientState) doReturn MockClientState
+        whenever(MockChatClient.inheritScope(any())) doReturn TestScope()
+    }
+
+    @After
+    fun tearDown() {
+        reset(MockChatClient, MockClientState)
     }
 }

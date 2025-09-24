@@ -1,5 +1,4 @@
 import io.getstream.chat.android.Configuration
-import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -30,17 +29,6 @@ android {
         unitTests {
             isIncludeAndroidResources = true
             unitTests.isReturnDefaultValues = true
-            all {
-                it.testLogging {
-                    events = setOf(
-                        TestLogEvent.PASSED,
-                        TestLogEvent.SKIPPED,
-                        TestLogEvent.FAILED,
-                        TestLogEvent.STANDARD_OUT,
-                        TestLogEvent.STANDARD_ERROR,
-                    )
-                }
-            }
         }
     }
 

@@ -30,15 +30,15 @@ import kotlinx.coroutines.flow.StateFlow
  */
 public class ChannelHeaderViewModel(
     private val cid: String,
-    controllerProvider: ViewModel.() -> ChannelHeaderViewController = {
+    private val controllerProvider: ViewModel.() -> ChannelHeaderViewController = {
         ChannelHeaderViewController(cid = cid, scope = viewModelScope)
     },
 ) : ViewModel() {
 
-    private val controller: ChannelHeaderViewController by lazy { controllerProvider() }
+    private val controller: ChannelHeaderViewController get() = controllerProvider()
 
     /**
      * @see [ChannelHeaderViewController.state]
      */
-    public val state: StateFlow<ChannelHeaderViewState> = controller.state
+    public val state: StateFlow<ChannelHeaderViewState> get() = controller.state
 }
