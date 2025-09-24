@@ -39,7 +39,7 @@ public class MentionListViewModel(
         MentionListController(viewModelScope, sort)
     },
 ) : ViewModel() {
-    private val controller: MentionListController get() = controllerProvider()
+    private val controller: MentionListController by lazy { controllerProvider() }
 
     /**
      * The current mention list state.
