@@ -72,11 +72,13 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Remove the fixed height modifier in `FileUploadItem`. [#5932](https://github.com/GetStream/stream-chat-android/pull/5932)
 
 ### ✅ Added
 - Add `ThreadsViewModelFactory(QueryThreadsRequest)` constructor supporting fully customizable queries for threads. [#5931](https://github.com/GetStream/stream-chat-android/pull/5931)
 
 ### ⚠️ Changed
+- Deprecate unused component `AudioWaveVSeekbar`. [#5932](https://github.com/GetStream/stream-chat-android/pull/5932)
 - Deprecate `ThreadsViewModelFactory(threadLimit, threadReplyLimit, threadParticipantLimit)` constructor in favor of `ThreadsViewModelFactory(QueryThreadsRequest)` constructor. [#5931](https://github.com/GetStream/stream-chat-android/pull/5931)
 
 ### ❌ Removed

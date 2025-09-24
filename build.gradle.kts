@@ -23,6 +23,7 @@ plugins {
     alias(libs.plugins.shot) apply false
     alias(libs.plugins.androidx.navigation) apply false
     alias(libs.plugins.sonarqube) apply false
+    alias(libs.plugins.kover) apply false
     id("io.getstream.chat.UnitTestsPlugin")
     id("io.getstream.chat.ReleasePlugin")
     id("io.getstream.chat.ChangelogReleaseSectionPlugin")

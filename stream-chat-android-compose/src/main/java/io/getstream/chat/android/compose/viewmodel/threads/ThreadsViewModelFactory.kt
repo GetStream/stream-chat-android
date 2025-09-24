@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.viewmodel.threads
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.ui.common.feature.threads.ThreadListController
 
 /**

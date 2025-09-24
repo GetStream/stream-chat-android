@@ -18,7 +18,12 @@ package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import io.getstream.android.push.permissions.NotificationPermissionStatus
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.notifications.handler.NotificationConfig
+import io.getstream.chat.android.client.notifications.handler.NotificationHandler
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
 
 @Composable
 internal fun ChatPreviewTheme(content: @Composable () -> Unit) {
@@ -26,7 +31,28 @@ internal fun ChatPreviewTheme(content: @Composable () -> Unit) {
     ChatClient.Builder(
         apiKey = "stream-api-key",
         appContext = context,
+    ).notifications(
+        notificationConfig = NotificationConfig(pushNotificationsEnabled = false),
+        notificationsHandler = NoOpNotificationHandler(),
     ).build()
 
     ChatTheme { content.invoke() }
+}
+
+private class NoOpNotificationHandler : NotificationHandler {
+    override fun showNotification(channel: Channel, message: Message) {
+        // No-op
+    }
+
+    override fun dismissChannelNotifications(channelType: String, channelId: String) {
+        // No-op
+    }
+
+    override fun dismissAllNotifications() {
+        // No-op
+    }
+
+    override fun onNotificationPermissionStatus(status: NotificationPermissionStatus) {
+        // No-op
+    }
 }

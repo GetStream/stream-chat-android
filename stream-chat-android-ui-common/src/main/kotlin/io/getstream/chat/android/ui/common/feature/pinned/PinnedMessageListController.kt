@@ -36,7 +36,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.Date
 
 /**
  * Controller responsible for handling pinned message list state. It acts as a central place for business logic and
@@ -60,7 +59,7 @@ public class PinnedMessageListController(
     /**
      * Exposes the current pinned messages list state.
      */
-    private val _state: MutableStateFlow<PinnedMessageListState> = MutableStateFlow(initialState())
+    private val _state: MutableStateFlow<PinnedMessageListState> = MutableStateFlow(PinnedMessageListState())
     public val state: StateFlow<PinnedMessageListState>
         get() = _state
 
@@ -80,7 +79,7 @@ public class PinnedMessageListController(
     public fun load() {
         scope.launch {
             // Ensure the state is updated with the current date(timestamp) for initial loading
-            _state.value = initialState()
+            _state.value = PinnedMessageListState()
             loadPinnedMessages()
         }
     }
@@ -160,11 +159,4 @@ public class PinnedMessageListController(
             else -> true
         }
     }
-
-    private fun initialState() = PinnedMessageListState(
-        results = emptyList(),
-        isLoading = true,
-        canLoadMore = true,
-        nextDate = Date(),
-    )
 }

@@ -731,6 +731,11 @@ public final class io/getstream/chat/android/models/ConnectionData {
 }
 
 public abstract class io/getstream/chat/android/models/ConnectionState {
+	public static final field Companion Lio/getstream/chat/android/models/ConnectionState$Companion;
+}
+
+public final class io/getstream/chat/android/models/ConnectionState$Companion {
+	public final fun getValues ()Ljava/util/List;
 }
 
 public final class io/getstream/chat/android/models/ConnectionState$Connected : io/getstream/chat/android/models/ConnectionState {

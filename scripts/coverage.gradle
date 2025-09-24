@@ -1,62 +1,72 @@
-if (!rootProject.ext.sonar.ignoreModules.contains(name)) {
-    apply plugin: 'jacoco'
+if (!rootProject.ext.sonar.ignoreModules.contains(name) && file("src/test").exists()) {
+    apply plugin: "org.jetbrains.kotlinx.kover"
     apply plugin: "org.sonarqube"
 
-    def isCore = (name == 'stream-chat-android-core')
-    def isCompose = (name == 'stream-chat-android-compose')
-    def testTask = isCore ? "test" : isCompose ? "verifyPaparazziDebug" : "testDebugUnitTest"
-    def jacocoResults = "${buildDir}/reports/jacoco/report.xml"
+    afterEvaluate {
+        def isAndroidModule = plugins.hasPlugin("com.android.library") || plugins.hasPlugin("com.android.application")
+        def hasPaparazziPlugin = plugins.hasPlugin("app.cash.paparazzi")
 
-    if (hasProperty('android')) {
-        android {
-            buildTypes {
-                debug {
-                    testCoverageEnabled = true
-                    enableUnitTestCoverage = true
-                    enableAndroidTestCoverage true
+        if (isAndroidModule) {
+            android {
+                buildTypes {
+                    debug {
+                        testCoverageEnabled = true
+                        enableUnitTestCoverage = true
+                        enableAndroidTestCoverage true
+                    }
                 }
             }
         }
-    }
 
-    afterEvaluate {
-        tasks.withType(Test).configureEach {
-            jacoco.includeNoLocationClasses = true
-            jacoco.excludes = ['jdk.internal.*']
-        }
+        def testTaskName = isAndroidModule
+                ? (hasPaparazziPlugin ? "verifyPaparazziDebug" : "testDebugUnitTest")
+                : "test"
 
-        tasks.register("testCoverage", JacocoReport) {
-            dependsOn testTask
+        tasks.register("testCoverage") {
+            group = "verification"
+            description = "Run module-specific tests and generate coverage reports"
+            dependsOn(testTaskName)
 
-            reports {
-                xml.required.set(true)
-                xml.outputLocation.set(file(jacocoResults))
+            if (isAndroidModule) {
+                dependsOn "koverXmlReportDebug", "koverHtmlReportDebug"
+            } else {
+                dependsOn "koverXmlReport", "koverHtmlReport"
             }
-
-            executionData.setFrom(fileTree(dir: buildDir, includes: [
-                    "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
-                    "jacoco/test.exec"
-            ]))
-
-            def sources = isCore ? sourceSets.main.java.srcDirs : android.sourceSets.main.java.srcDirs
-            sourceDirectories.setFrom(files(sources))
-            classDirectories.setFrom(files([
-                    fileTree(
-                            dir: "${buildDir}/tmp/kotlin-classes/debug",
-                            excludes: rootProject.ext.sonar.excludeFilter
-                    ),
-                    fileTree(
-                            dir: "${buildDir}/classes/kotlin/main",
-                            excludes: rootProject.ext.sonar.excludeFilter
-                    )
-            ]))
         }
-    }
 
-    sonarqube {
-        properties {
-            property "sonar.junit.reportPaths", "${buildDir}/test-results/${testTask}"
-            property "sonar.coverage.jacoco.xmlReportPaths", jacocoResults
+        kover {
+            reports {
+                verify {
+                    warningInsteadOfFailure = true
+                }
+                filters {
+                    excludes {
+                        // Existing sonar excludes
+                        classes(rootProject.ext.sonar.excludeFilter as String[])
+                        // Exclude Compose-generated singletons
+                        classes("*ComposableSingletons*")
+                        // Exclude Compose previews
+                        annotatedBy("androidx.compose.ui.tooling.preview.Preview")
+                    }
+                }
+            }
+        }
+
+        sonarqube {
+            properties {
+                def mainSources = []
+                if (file("src/main/java").exists()) mainSources += "src/main/java"
+                if (file("src/main/kotlin").exists()) mainSources += "src/main/kotlin"
+
+                property "sonar.sources", mainSources.join(",")
+
+                def xmlReportPaths = isAndroidModule
+                        ? "$buildDir/reports/kover/reportDebug.xml"
+                        : "$buildDir/reports/kover/report.xml"
+
+                property "sonar.junit.reportPaths", "${buildDir}/test-results/${testTaskName}"
+                property "sonar.coverage.jacoco.xmlReportPaths", xmlReportPaths
+            }
         }
     }
 }
