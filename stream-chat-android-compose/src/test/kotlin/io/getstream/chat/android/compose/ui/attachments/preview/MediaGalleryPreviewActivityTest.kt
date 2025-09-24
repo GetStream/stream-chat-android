@@ -38,7 +38,7 @@ internal class MediaGalleryPreviewActivityTest : ComposeTest {
         val intent = contract.createIntent(
             context = ApplicationProvider.getApplicationContext(),
             input = MediaGalleryPreviewContract.Input(
-                message = randomMessage(attachments = listOf(randomAttachment())),
+                message = randomMessage(attachments = listOf(randomAttachment(), randomAttachment())),
                 videoThumbnailsEnabled = true,
                 downloadAttachmentUriGenerator = DefaultDownloadAttachmentUriGenerator,
                 downloadRequestInterceptor = {},
