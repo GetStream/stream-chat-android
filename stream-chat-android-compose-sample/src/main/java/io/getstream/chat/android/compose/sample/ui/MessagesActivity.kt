@@ -132,6 +132,17 @@ class MessagesActivity : ComponentActivity() {
         }
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        val messageId = intent.getStringExtra(KEY_MESSAGE_ID) ?: return
+        val parentMessageId = intent.getStringExtra(KEY_PARENT_MESSAGE_ID)
+
+        listViewModel.scrollToMessage(
+            messageId = messageId,
+            parentMessageId = parentMessageId
+        )
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
