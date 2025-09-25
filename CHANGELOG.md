@@ -60,6 +60,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added the `focusRequestFlow` that emits one-shot focus events used to request focus on the message input field.
 
 ### ⚠️ Changed
 
@@ -72,6 +73,7 @@
 - Remove the fixed height modifier in `FileUploadItem`. [#5932](https://github.com/GetStream/stream-chat-android/pull/5932)
 
 ### ✅ Added
+- Introduce `focusRequestFlow` in `MessageComposerViewModel` to request focus on the message input field triggered by certain `MessageAction`.
 
 ### ⚠️ Changed
 - Deprecate unused component `AudioWaveVSeekbar`. [#5932](https://github.com/GetStream/stream-chat-android/pull/5932)
