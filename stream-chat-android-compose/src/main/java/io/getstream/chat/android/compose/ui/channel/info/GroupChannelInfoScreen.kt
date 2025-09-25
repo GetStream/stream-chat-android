@@ -346,6 +346,7 @@ internal fun GroupChannelInfoExpandMembersItem(
 ) {
     CompositionLocalProvider(LocalContentColor.provides(ChatTheme.colors.textLowEmphasis)) {
         ChannelInfoOption(
+            modifier = Modifier.fillMaxWidth(),
             onClick = onClick,
         ) {
             Icon(
