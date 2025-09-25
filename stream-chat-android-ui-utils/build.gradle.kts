@@ -24,13 +24,6 @@ android {
 
     resourcePrefix = "stream_"
 
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-            unitTests.isReturnDefaultValues = true
-        }
-    }
-
     sourceSets {
         all {
             java.srcDir("src/$name/kotlin")
